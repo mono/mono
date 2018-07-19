@@ -5,24 +5,18 @@ include ../../build/rules.make
 LIBRARY = System.Web.WebPages.Razor.dll
 LIBRARY_NAME = System.Web.WebPages.Razor.dll
 
-System.Web.WebPages.Razor.Common.CommonResources.resources: ../../../external/aspnetwebstack/src/CommonResources.resx
-	$(RESGEN) "$<" "$@"
-	
-System.Web.WebPages.Razor.Resources.RazorWebResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages.Razor/Resources/RazorWebResources.resx
-	$(RESGEN) "$<" "$@"
+RESOURCE_DEFS = \
+	System.Web.WebPages.Razor.Common.CommonResources,../../../external/aspnetwebstack/src/CommonResources.resx \
+	System.Web.WebPages.Razor.Resources.RazorWebResources,../../../external/aspnetwebstack/src/System.Web.WebPages.Razor/Resources/RazorWebResources.resx
 
 LIB_REFS = System System.Core System.Configuration System.Web System.Web.WebPages System.Web.Razor
+KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
-		/warn:1 \
-		/keyfile:../winfx.pub \
-		/delaysign \
-	        /d:ASPNETWEBPAGES \
-		/resource:System.Web.WebPages.Razor.Resources.RazorWebResources.resources \
-		/resource:System.Web.WebPages.Razor.Common.CommonResources.resources
+			/warn:1 \
+			/delaysign \
+	        /d:ASPNETWEBPAGES
 
 include ../../build/library.make
 
-$(build_lib): System.Web.WebPages.Razor.Resources.RazorWebResources.resources \
-		System.Web.WebPages.Razor.Common.CommonResources.resources
 
 

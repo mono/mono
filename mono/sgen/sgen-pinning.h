@@ -1,21 +1,11 @@
-/*
- * sgen-pinning.h: All about pinning objects.
+/**
+ * \file
+ * All about pinning objects.
  *
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGEN_PINNING_H__
 #define __MONO_SGEN_PINNING_H__
@@ -29,10 +19,15 @@ enum {
 	PIN_TYPE_MAX
 };
 
+void sgen_pinning_init (void);
 void sgen_pin_stage_ptr (void *ptr);
 void sgen_optimize_pin_queue (void);
 void sgen_init_pinning (void);
+void sgen_init_pinning_for_conc (void);
+void sgen_finish_pinning_for_conc (void);
 void sgen_finish_pinning (void);
+void sgen_pinning_register_pinned_in_nursery (GCObject *obj);
+void sgen_scan_pin_queue_objects (ScanCopyContext ctx);
 void sgen_pin_queue_clear_discarded_entries (GCMemSection *section, size_t max_pin_slot);
 size_t sgen_get_pinned_count (void);
 void sgen_pinning_setup_section (GCMemSection *section);
@@ -56,6 +51,8 @@ void sgen_pin_stats_reset (void);
 
 void sgen_cement_init (gboolean enabled);
 void sgen_cement_reset (void);
+void sgen_cement_force_pinned (void);
+gboolean sgen_cement_is_forced (GCObject *obj);
 gboolean sgen_cement_lookup (GCObject *obj);
 gboolean sgen_cement_lookup_or_register (GCObject *obj);
 void sgen_pin_cemented_objects (void);

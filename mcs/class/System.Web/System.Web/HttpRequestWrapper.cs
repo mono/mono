@@ -212,7 +212,7 @@ namespace System.Web
 			get { return w.ServerVariables; }
 		}
 
-		public virtual CancellationToken TimedOutToken {
+		public override CancellationToken TimedOutToken {
 			get { return w.TimedOutToken; }
 		}
 
@@ -252,7 +252,7 @@ namespace System.Web
 			get { return w.UserLanguages; }
 		}
 
-		public void Abort ()
+		public override void Abort ()
 		{
 			w.WorkerRequest.CloseConnection();
 		}

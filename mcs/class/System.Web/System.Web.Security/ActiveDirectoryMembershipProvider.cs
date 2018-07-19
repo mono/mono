@@ -37,19 +37,19 @@ namespace System.Web.Security {
 	public class ActiveDirectoryMembershipProvider : MembershipProvider {
 		
 		[MonoTODO ("Not implemented")]
-		public override bool ChangePassword (string username, string oldPwd, string newPwd)
+		public override bool ChangePassword (string username, string oldPassword, string newPassword)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO ("Not implemented")]
-		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPwdQuestion, string newPwdAnswer)
+		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPasswordQuestion, string newPasswordAnswer)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO ("Not implemented")]
-		public override MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
+		public override MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
 		{
 			throw new NotImplementedException ();
 		}
@@ -73,7 +73,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO ("Not implemented")]
-		public override MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
+		public override MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			throw new NotImplementedException ();
 		}
@@ -91,7 +91,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO("Not implemented")]
-		public override string GetPassword (string username, string answer)
+		public override string GetPassword (string username, string passwordAnswer)
 		{
 			throw new NotImplementedException ();
 		}
@@ -121,7 +121,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO("Not implemented")]
-		public override string ResetPassword (string username, string answer)
+		public override string ResetPassword (string username, string passwordAnswer)
 		{
 			throw new NotImplementedException ();
 		}
@@ -139,7 +139,7 @@ namespace System.Web.Security {
 		}
 		
 		[MonoTODO("Not implemented")]
-		public override bool UnlockUser (string userName)
+		public override bool UnlockUser (string username)
 		{
 			throw new NotImplementedException ();
 		}

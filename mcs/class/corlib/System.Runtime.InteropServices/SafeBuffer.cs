@@ -155,10 +155,9 @@ namespace System.Runtime.InteropServices
 				int size = Marshal.SizeOf (typeof (T)) * count;
 				if (target >= last_byte || target + size > last_byte)
 					throw new ArgumentException ("would overrite");
-				
+
 				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count);
 			}
 		}
 	}
 }
-

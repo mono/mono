@@ -90,8 +90,8 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
 		}
 
-		[Test()]
-		[Category ("NotWorking")] // it depends on "mcs" existence
+		[Test]
+	    [Category ("MobileNotWorking")]
 		public void MsxslTest() {
 			string _styleSheet = @"
 			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" 
@@ -171,6 +171,33 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			t.Load (new XPathDocument (new StringReader (xsl)));
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
 		}
+
+		[Test]
+		[Category ("MobileNotWorking")]
+		public void MSXslFormatDate ()
+		{
+			var arguments = new XsltArgumentList();
+			arguments.AddParam("date", "", new DateTime (2010, 11, 22, 5, 4, 3));
+
+			string xsl = @"
+<xsl:stylesheet version=""1.0"" xmlns=""http://www.w3.org/1999/xhtml"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" exclude-result-prefixes=""msxsl"">
+<xsl:param name='date'/>
+<xsl:template match='/'>
+	<root>
+		<p>The current date is <xsl:value-of select=""msxsl:format-date($date, 'd MMMM yyyy')""/> and current time is <xsl:value-of select=""msxsl:format-time($date, 'HH:mm')""/>.</p>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
+
+			StringWriter sw = new StringWriter ();
+			var t = new XslCompiledTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root></root>"))), arguments, sw);
+
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root xmlns=\"http://www.w3.org/1999/xhtml\"><p>The current date is 22 November 2010 and current time is 05:04.</p></root>", sw.ToString ());
+		}
+
 
 		[Test]
 		public void EvaluateEmptyVariableAsBoolean ()
@@ -361,7 +388,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			StringWriter sw_raw = new StringWriter ();
 			t.Transform (d, null, sw_raw);
 
-			Assert.AreEqual (ref_out, sw_raw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (ref_out.Replace ("\r\n", "\n"), sw_raw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		// http://support.microsoft.com/default.aspx?scid=kb;en-us;829014
@@ -1026,7 +1053,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html_DocType ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1065,7 +1091,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"    <else>{0}" +
 				"    </else>{0}" +
 				"  </something>{0}" +
-				"</test>", Environment.NewLine), sw.ToString (), "#1");
+				"</test>", end_of_line), sw.ToString (), "#1");
 
 			// set indent to no
 			sw.GetStringBuilder ().Length = 0;
@@ -1093,7 +1119,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"    <else>{0}" +
 				"    </else>{0}" +
 				"  </something>{0}" +
-				"</test>", Environment.NewLine), sw.ToString (), "#3");
+				"</test>", end_of_line), sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -1159,7 +1185,6 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #77081: mono does not output newline and indentation for non-html elements
 		public void Output_Indent_Html ()
 		{
 			XsltArgumentList xsltArgs = new XsltArgumentList ();
@@ -1213,7 +1238,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"      </whatever>{0}" +
 				"    </p>{0}" +
 				"  </body>{0}" +
-				"</html>", Environment.NewLine), sw.ToString (), "#1");
+				"</html>", end_of_line), sw.ToString (), "#1");
 
 			// set indent to no
 			sw.GetStringBuilder ().Length = 0;
@@ -1249,7 +1274,7 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 				"      </whatever>{0}" +
 				"    </p>{0}" +
 				"  </body>{0}" +
-				"</html>", Environment.NewLine), sw.ToString (), "#3");
+				"</html>", end_of_line), sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -2276,8 +2301,7 @@ NO
 		}
 
 		[Test] // reverse case of #349375
-		[Category ("NotWorking")]
-//		[Category ("NotDotNet")]
+	    [Category ("MobileNotWorking")]
 		public void PreserveWhitespace2 ()
 		{
 			XslCompiledTransform xslt = new XslCompiledTransform ();
@@ -2361,7 +2385,7 @@ NO
 		}
 
 		[Test]
-		[Category ("NotWorking")] // FIXME: SRE related regression
+	    [Category ("MobileNotWorking")]
 		public void Bug487065 ()
 		{
 			using (XmlReader input = GetInput ()) {

@@ -39,404 +39,155 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading
 {
-	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-	public abstract class WaitHandle
+	public abstract partial class WaitHandle
 		: MarshalByRefObject, IDisposable
 	{
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
-		
-		static void CheckArray (WaitHandle [] handles, bool waitAll)
-		{
-			if (handles == null)
-				throw new ArgumentNullException ("waitHandles");
-
-			int length = handles.Length;
-			if (length > 64)
-				throw new NotSupportedException ("Too many handles");
-
-			if (handles.Length == 0) {
-				// MS throws different exceptions from the different methods.
-				if (waitAll)
-					throw new ArgumentNullException ("waitHandles");
-				else
-					throw new ArgumentException ();
-			}
-
-#if false
-			//
-			// Although we should thrown an exception if this is an STA thread,
-			// Mono does not know anything about STA threads, and just makes
-			// things like Paint.NET not even possible to work.
-			//
-			// See bug #78455 for the bug this is supposed to fix. 
-			// 
-			if (waitAll && length > 1 && IsSTAThread)
-				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
-#endif
-			foreach (WaitHandle w in handles) {
-				if (w == null)
-					throw new ArgumentNullException ("waitHandles", "null handle");
-
-				if (w.safe_wait_handle == null)
-					throw new ArgumentException ("null element found", "waitHandle");
-
-			}
-		}
-#if false
-		// usage of property is commented - see above
-		static bool IsSTAThread {
-			get {
-				bool isSTA = Thread.CurrentThread.ApartmentState ==
-					ApartmentState.STA;
-
-				// FIXME: remove this check after Thread.ApartmentState
-				// has been properly implemented.
-				if (!isSTA) {
-					Assembly asm = Assembly.GetEntryAssembly ();
-					if (asm != null)
-						isSTA = asm.EntryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length > 0;
-				}
-
-				return isSTA;
-			}
-		}
-#endif
-		public static bool WaitAll(WaitHandle[] waitHandles)
-		{
-			CheckArray (waitHandles, true);
-			return(WaitAll_internal(waitHandles, Timeout.Infinite, false));
-		}
-
-		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext)
-		{
-			CheckArray (waitHandles, true);
-			// check negative - except for -1 (which is Timeout.Infinite)
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			try {
-				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				return(WaitAll_internal(waitHandles, millisecondsTimeout, false));
-			}
-			finally {
-				if (exitContext) SynchronizationAttribute.EnterContext ();
-			}
-		}
-
-		public static bool WaitAll(WaitHandle[] waitHandles,
-					   TimeSpan timeout,
-					   bool exitContext)
-		{
-			CheckArray (waitHandles, true);
-			long ms = (long) timeout.TotalMilliseconds;
-			
-			if (ms < -1 || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout");
-
-			try {
-				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				return (WaitAll_internal (waitHandles, (int) ms, exitContext));
-			}
-			finally {
-				if (exitContext) SynchronizationAttribute.EnterContext ();
-			}
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int WaitAny_internal(WaitHandle[] handles, int ms, bool exitContext);
-
-		// LAMESPEC: Doesn't specify how to signal failures
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int WaitAny(WaitHandle[] waitHandles)
-		{
-			CheckArray (waitHandles, false);
-			return(WaitAny_internal(waitHandles, Timeout.Infinite, false));
-		}
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int WaitAny(WaitHandle[] waitHandles,
-					  int millisecondsTimeout,
-					  bool exitContext)
-		{
-			CheckArray (waitHandles, false);
-			// check negative - except for -1 (which is Timeout.Infinite)
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			try {
-				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
-			}
-			finally {
-				if (exitContext) SynchronizationAttribute.EnterContext ();
-			}
-		}
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int WaitAny(WaitHandle[] waitHandles, TimeSpan timeout)
-		{
-			return WaitAny (waitHandles, timeout, false);
-		}
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int WaitAny(WaitHandle[] waitHandles, int millisecondsTimeout)
-		{
-			return WaitAny (waitHandles, millisecondsTimeout, false);
-		}
-
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int WaitAny(WaitHandle[] waitHandles,
-					  TimeSpan timeout, bool exitContext)
-		{
-			CheckArray (waitHandles, false);
-			long ms = (long) timeout.TotalMilliseconds;
-			
-			if (ms < -1 || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout");
-
-			try {
-				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				return (WaitAny_internal(waitHandles, (int) ms, exitContext));
-			}
-			finally {
-				if (exitContext) SynchronizationAttribute.EnterContext ();
-			}
-		}
-
-		protected WaitHandle()
-		{
-			// FIXME
-		}
-
-		public virtual void Close ()
-		{
-			Dispose(true);
-		}
-
-		public void Dispose ()
-		{
-			Close ();
-		}
-
-		public const int WaitTimeout = 258;
-
-		//
-		// In 2.0 we use SafeWaitHandles instead of IntPtrs
-		//
-		SafeWaitHandle safe_wait_handle;
-
-		[Obsolete ("In the profiles > 2.x, use SafeHandle instead of Handle")]
-		public virtual IntPtr Handle {
-			get {
-				return safe_wait_handle.DangerousGetHandle ();
-			}
-
-			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
-			set {
-				if (value == InvalidHandle)
-					safe_wait_handle = new SafeWaitHandle (InvalidHandle, false);
-				else
-					safe_wait_handle = new SafeWaitHandle (value, true);
-			}
-		}
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
-
-		protected virtual void Dispose (bool explicitDisposing)
-		{
-			if (!disposed){
-
-				//
-				// This is only the case if the handle was never properly initialized
-				// most likely a bug in the derived class
-				//
-				if (safe_wait_handle == null)
-					return;
-
-				lock (this){
-					if (disposed)
-						return;
-
-					disposed = true;
-					if (safe_wait_handle != null)
-						safe_wait_handle.Dispose ();
-				}
-			}
-		}
-
-		public SafeWaitHandle SafeWaitHandle {
-			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-			get {
-				return safe_wait_handle;
-			}
-
-			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-			set {
-				if (value == null)
-					safe_wait_handle = new SafeWaitHandle (InvalidHandle, false);
-				else
-					safe_wait_handle = value;
-			}
-		}
-
-		public static bool SignalAndWait (WaitHandle toSignal,
-						  WaitHandle toWaitOn)
-		{
-			return SignalAndWait (toSignal, toWaitOn, -1, false);
-		}
-		
-		public static bool SignalAndWait (WaitHandle toSignal,
-						  WaitHandle toWaitOn,
-						  int millisecondsTimeout,
-						  bool exitContext)
-		{
-			if (toSignal == null)
-				throw new ArgumentNullException ("toSignal");
-			if (toWaitOn == null)
-				throw new ArgumentNullException ("toWaitOn");
-
-			if (millisecondsTimeout < -1)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			return SignalAndWait_Internal (toSignal.Handle, toWaitOn.Handle, millisecondsTimeout, exitContext);
-		}
-		
-		public static bool SignalAndWait (WaitHandle toSignal,
-						  WaitHandle toWaitOn,
-						  TimeSpan timeout,
-						  bool exitContext)
-		{
-			double ms = timeout.TotalMilliseconds;
-			if (ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout");
-
-			return SignalAndWait (toSignal, toWaitOn, Convert.ToInt32 (ms), false);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms, bool exitContext);
-
-		public virtual bool WaitOne()
-		{
-			CheckDisposed ();
-			bool release = false;
-			try {
-				safe_wait_handle.DangerousAddRef (ref release);
-				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), Timeout.Infinite, false));
-			} finally {
-				if (release)
-					safe_wait_handle.DangerousRelease ();
-			}
-		}
-
-		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext)
-		{
-			CheckDisposed ();
-			// check negative - except for -1 (which is Timeout.Infinite)
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
-
-			bool release = false;
-			try {
-				if (exitContext) {
-#if !MONOTOUCH
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				safe_wait_handle.DangerousAddRef (ref release);
-				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), millisecondsTimeout, exitContext));
-			} finally {
-#if !MONOTOUCH
-				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
-#endif
-				if (release)
-					safe_wait_handle.DangerousRelease ();
-			}
-		}
-
-		public virtual bool WaitOne (int millisecondsTimeout)
-		{
-			return WaitOne (millisecondsTimeout, false);
-		}
-
-		public virtual bool WaitOne (TimeSpan timeout)
-		{
-			return WaitOne (timeout, false);
-		}
-
-		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
-		{
-			CheckDisposed ();
-			long ms = (long) timeout.TotalMilliseconds;
-			if (ms < -1 || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout");
-
-			bool release = false;
-			try {
-				if (exitContext) {
-#if !MONOTOUCH
-					SynchronizationAttribute.ExitContext ();
-#endif
-				}
-				safe_wait_handle.DangerousAddRef (ref release);
-				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), (int) ms, exitContext));
-			}
-			finally {
-#if !MONOTOUCH
-				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
-#endif
-				if (release)
-					safe_wait_handle.DangerousRelease ();
-			}
-		}
-
-		internal void CheckDisposed ()
-		{
-			if (disposed || safe_wait_handle == null)
-				throw new ObjectDisposedException (GetType ().FullName);
-		}
-
-		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout)
-		{
-			return WaitAll (waitHandles, millisecondsTimeout, false);
-		}
-
-		public static bool WaitAll(WaitHandle[] waitHandles, TimeSpan timeout)
-		{
-			return WaitAll (waitHandles, timeout, false);
-		}
-		
 		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
-		bool disposed = false;
+
+		internal const int MaxWaitHandles = 64;
+
+		// We rely on the reference source implementation of WaitHandle, and it delegates to a function named
+		//  WaitOneNative to perform the actual operation of waiting on a handle.
+		// This native operation actually has to call back into managed code and invoke .Wait
+		//  on the current SynchronizationContext. As such, our implementation of this "native" method
+		//  is actually managed code, and the real native icall being used is Wait_internal.
+		static int WaitOneNative (SafeHandle waitableSafeHandle, uint millisecondsTimeout, bool hasThreadAffinity, bool exitContext)
+		{
+			bool release = false;
+#if !MONODROID
+			var context = SynchronizationContext.Current;
+#endif
+			try {
+				waitableSafeHandle.DangerousAddRef (ref release);
+
+#if !DISABLE_REMOTING
+				if (exitContext)
+					SynchronizationAttribute.ExitContext ();
+#endif
+
+#if !MONODROID
+				// HACK: Documentation (and public posts by experts like Joe Duffy) suggests that
+				//  users must first call SetWaitNotificationRequired to flag that a given synchronization
+				//  context overrides .Wait. Because invoking the Wait method is somewhat expensive, we use
+				//  the notification-required flag to determine whether or not we should invoke the managed
+				//  wait method.
+				// Another option would be to check whether this context uses the default Wait implementation,
+				//  but I don't know of a cheap way to do this that handles derived types correctly.
+				// If the thread does not have a synchronization context set at all, we can safely just
+				//  jump directly to invoking Wait_internal.
+				if ((context != null) && context.IsWaitNotificationRequired ()) {
+					return context.Wait (
+						new IntPtr[] { waitableSafeHandle.DangerousGetHandle () },
+						false, 
+						(int)millisecondsTimeout
+					);
+				} else
+#endif
+				{
+					unsafe {
+						IntPtr handle = waitableSafeHandle.DangerousGetHandle ();
+						return Wait_internal (&handle, 1, false, (int)millisecondsTimeout);
+					}
+				}
+			} finally {
+				if (release)
+					waitableSafeHandle.DangerousRelease ();
+
+#if !DISABLE_REMOTING
+				if (exitContext)
+					SynchronizationAttribute.EnterContext ();
+#endif
+			}
+
+		}
+
+		static int WaitMultiple(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext, bool WaitAll)
+		{
+			if (waitHandles.Length > MaxWaitHandles)
+				return WAIT_FAILED;
+
+			int release_last = -1;
+			var context = SynchronizationContext.Current;
+
+			try {
+#if !DISABLE_REMOTING
+				if (exitContext)
+					SynchronizationAttribute.ExitContext ();
+#endif
+
+				for (int i = 0; i < waitHandles.Length; ++i) {
+					try {} finally {
+						/* we have to put it in a finally block, to avoid having a ThreadAbortException
+						 * between the return from DangerousAddRef and the assignement to release_last */
+						bool release = false;
+						waitHandles [i].SafeWaitHandle.DangerousAddRef (ref release);
+						release_last = i;
+					}
+				}
+
+				if ((context != null) && context.IsWaitNotificationRequired ()) {
+					IntPtr[] handles = new IntPtr[waitHandles.Length];
+					for (int i = 0; i < waitHandles.Length; ++i)
+						handles[i] = waitHandles[i].SafeWaitHandle.DangerousGetHandle ();
+
+					return context.Wait (
+						handles,
+						false, 
+						(int)millisecondsTimeout
+					);
+				} else {
+					unsafe {
+						IntPtr* handles = stackalloc IntPtr[waitHandles.Length];
+
+						for (int i = 0; i < waitHandles.Length; ++i)
+							handles[i] = waitHandles[i].SafeWaitHandle.DangerousGetHandle ();
+
+						return Wait_internal (handles, waitHandles.Length, WaitAll, millisecondsTimeout);
+					}
+				}
+			} finally {
+				for (int i = release_last; i >= 0; --i) {
+					waitHandles [i].SafeWaitHandle.DangerousRelease ();
+				}
+
+#if !DISABLE_REMOTING
+				if (exitContext)
+					SynchronizationAttribute.EnterContext ();
+#endif
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
+
+		static int SignalAndWaitOne (SafeWaitHandle waitHandleToSignal,SafeWaitHandle waitHandleToWaitOn, int millisecondsTimeout, bool hasThreadAffinity,  bool exitContext)
+		{
+			bool releaseHandleToSignal = false, releaseHandleToWaitOn = false;
+			try {
+				waitHandleToSignal.DangerousAddRef (ref releaseHandleToSignal);
+				waitHandleToWaitOn.DangerousAddRef (ref releaseHandleToWaitOn);
+
+				return SignalAndWait_Internal (waitHandleToSignal.DangerousGetHandle (), waitHandleToWaitOn.DangerousGetHandle (), millisecondsTimeout);
+			} finally {
+				if (releaseHandleToSignal)
+					waitHandleToSignal.DangerousRelease ();
+				if (releaseHandleToWaitOn)
+					waitHandleToWaitOn.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms);
+
+		internal static int ToTimeoutMilliseconds(TimeSpan timeout)
+		{
+			var timeoutMilliseconds = (long)timeout.TotalMilliseconds;
+			if (timeoutMilliseconds < -1 || timeoutMilliseconds > int.MaxValue)
+			{
+				throw new ArgumentOutOfRangeException(nameof(timeout), SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
+			}
+			return (int)timeoutMilliseconds;
+		}
 	}
 }

@@ -695,6 +695,20 @@ namespace Mono.CSharp.Nullable
 					Right = Unwrap.CreateUnwrapped (Right);
 					UnwrapRight = Right as Unwrap;
 				}
+
+				if (Left.Type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
+					var decimal_operators = MemberCache.GetUserOperator (Left.Type, Binary.ConvertBinaryToUserOperator (Binary.Oper), false);
+
+					Arguments args = new Arguments (2);
+					args.Add (new Argument (Left));
+					args.Add (new Argument (Right));
+
+					const OverloadResolver.Restrictions restr = OverloadResolver.Restrictions.ProbingOnly |
+						OverloadResolver.Restrictions.NoBaseMembers | OverloadResolver.Restrictions.BaseMembersIncluded;
+
+					var res = new OverloadResolver (decimal_operators, restr, loc);
+					UserOperator = res.ResolveOperator (rc, ref args);
+				}
 			}
 
 			type = Binary.Type;
@@ -897,6 +911,18 @@ namespace Mono.CSharp.Nullable
 
 					ec.MarkLabel (is_null_label);
 					LiftedNull.Create (type, loc).Emit (ec);
+				} else if (Left.IsNull && UnwrapRight != null) {
+					UnwrapRight.Emit (ec);
+
+					ec.Emit (or ? OpCodes.Brtrue_S : OpCodes.Brfalse_S, load_right);
+
+					LiftedNull.Create (type, loc).Emit (ec);
+
+					ec.Emit (OpCodes.Br_S, end_label);
+
+					ec.MarkLabel (load_right);
+
+					UnwrapRight.Load (ec);
 				} else {
 					Right.Emit (ec);
 					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_left);
@@ -1198,7 +1224,7 @@ namespace Mono.CSharp.Nullable
 						//
 						// Special case null ?? null
 						//
-						if (right.IsNull && ltype == right.Type)
+						if (right is NullLiteral && ltype == right.Type)
 							return null;
 
 						return ReducedExpression.Create (lc != null ? right : left, this, false);
@@ -1208,6 +1234,11 @@ namespace Mono.CSharp.Nullable
 					type = ltype;
 					return this;
 				}
+			} else if (ltype == InternalType.ThrowExpr) {
+				//
+				// LAMESPEC: I am not really sure what's point of allowing throw on left side
+				//
+				return ReducedExpression.Create (right, this, false).Resolve (ec);
 			} else {
 				return null;
 			}

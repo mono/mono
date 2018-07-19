@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.Security.Cryptography;
@@ -33,11 +34,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			Assert.IsNull (reference.Uri, "Uri (null)");
 			Assert.IsNotNull (reference.TransformChain, "TransformChain");
-			Assert.AreEqual ("System.Security.Cryptography.Xml.Reference", reference.ToString (), "ToString()");
 			// test uri constructor
 			string uri = "uri";
 			reference = new Reference (uri);
-			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#sha1", reference.DigestMethod, "DigestMethod");
+			Assert.AreEqual (SignedXml.XmlDsigSHA256Url, reference.DigestMethod, "DigestMethod");
 			Assert.IsNull (reference.DigestValue, "DigestValue");
 			Assert.IsNull (reference.Id, "Id");
 			Assert.IsNull (reference.Type, "Type");
@@ -158,17 +158,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		// MS throws a NullReferenceException (reported as FDBK25886) but only when executed in NUnit
-		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=3596d1e3-362b-40bd-bca9-2e8be75261ff
 		public void AddAllTransforms () 
 		{
-			// adding an empty hash value
-			byte[] hash = new byte [20];
-			reference.DigestValue = hash;
-			XmlElement xel = reference.GetXml ();
-			// this is the minimal Reference (DigestValue)!
-			Assert.IsNotNull (xel, "GetXml");
+			reference.DigestMethod = SignedXml.XmlDsigSHA1Url;
+			reference.DigestValue = new byte [20];
 
 			reference.AddTransform (new XmlDsigBase64Transform ());
 			reference.AddTransform (new XmlDsigC14NTransform ());
@@ -177,13 +170,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			reference.AddTransform (new XmlDsigXPathTransform ());
 			reference.AddTransform (new XmlDsigXsltTransform ());
 
-			// MS's results
-			string test1 = "<Reference xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#base64\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\" /><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xpath-19991116\"><XPath></XPath></Transform><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\" /></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>AAAAAAAAAAAAAAAAAAAAAAAAAAA=</DigestValue></Reference>";
-			// Mono's result (xml is equivalent but not identical)
-			string test2 = test1.Replace ("<XPath></XPath>", "<XPath xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
-			string result = reference.GetXml().OuterXml;
-			Assert.IsTrue (((result == test1) || (result == test2)), result);
-			// however this value cannot be loaded as it's missing some transform (xslt) parameters
+			const string expected = "<Reference xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#base64\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><Transform Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\" /><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xpath-19991116\"><XPath /></Transform><Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xslt-19991116\" /></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\" /><DigestValue>AAAAAAAAAAAAAAAAAAAAAAAAAAA=</DigestValue></Reference>";
+			Assert.That (reference.GetXml ().OuterXml, Is.EqualTo (expected), "OuterXml");
 
 			// can we add them again ?
 			reference.AddTransform (new XmlDsigBase64Transform ());
@@ -248,3 +236,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
+#endif

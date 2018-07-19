@@ -208,9 +208,9 @@ namespace Mono.Data.Sqlite
 #else
         ResetConnection(db);
         int n;
-        try {
+        if (UnsafeNativeMethods.use_sqlite3_close_v2) {
           n = UnsafeNativeMethods.sqlite3_close_v2(db);
-        } catch (EntryPointNotFoundException) {
+        } else {
           n = UnsafeNativeMethods.sqlite3_close(db);
         }
 #endif

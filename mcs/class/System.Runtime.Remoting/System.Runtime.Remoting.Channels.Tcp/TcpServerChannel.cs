@@ -71,7 +71,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					else {
 						IPHostEntry he = Dns.Resolve (Dns.GetHostName());
 						if (he.AddressList.Length == 0) throw new RemotingException ("IP address could not be determined for this host");
-						host = he.AddressList [0].ToString ();
+						AddressFamily addressFamily = (Socket.OSSupportsIPv4) ? AddressFamily.InterNetwork : AddressFamily.InterNetworkV6;
+						IPAddress addr = GetMachineAddress (he, addressFamily);
+						if (addr != null)
+							host = addr.ToString ();
+						else
+							host = he.AddressList [0].ToString ();
 					}
 				}
 				else
@@ -258,6 +263,22 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			threadPool.Free ();
 			server_thread.Join ();
 			server_thread = null;			
+		}
+
+		private static IPAddress GetMachineAddress (IPHostEntry host, AddressFamily addressFamily)
+		{
+			IPAddress result = null;
+			if (host != null) {
+				IPAddress[] addressList = host.AddressList;
+				for (int i = 0; i < addressList.Length; i++) {
+					if (addressList[i].AddressFamily == addressFamily) {
+						result = addressList[i];
+						break;
+					}
+				}
+			}
+
+			return result;
 		}
 	}
 

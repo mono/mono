@@ -40,7 +40,7 @@ using System.Text;
 
 namespace System.Security.Cryptography {
 	
-#if !NET_2_1
+#if !MOBILE
 	[ComVisible (true)]
 #endif
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
@@ -53,36 +53,40 @@ namespace System.Security.Cryptography {
 				_lock = new object ();
 		}
 
-		public RNGCryptoServiceProvider ()
+		unsafe public RNGCryptoServiceProvider ()
 		{
-			_handle = RngInitialize (null);
+			_handle = RngInitialize (null, IntPtr.Zero);
 			Check ();
 		}
-#if !NET_2_1
-		public RNGCryptoServiceProvider (byte[] rgb)
+
+		unsafe public RNGCryptoServiceProvider (byte[] rgb)
 		{
-			_handle = RngInitialize (rgb);
+			fixed (byte* fixed_rgb = rgb)
+				_handle = RngInitialize (fixed_rgb, (rgb != null) ? (IntPtr)rgb.Length : IntPtr.Zero);
 			Check ();
 		}
 		
-		public RNGCryptoServiceProvider (CspParameters cspParams)
+		unsafe public RNGCryptoServiceProvider (CspParameters cspParams)
 		{
 			// CSP selection isn't supported but we still return 
 			// random data (no exception) for compatibility
-			_handle = RngInitialize (null);
+			_handle = RngInitialize (null, IntPtr.Zero);
 			Check ();
 		}
 		
-		public RNGCryptoServiceProvider (string str) 
+		unsafe public RNGCryptoServiceProvider (string str)
 		{
 			if (str == null)
-				_handle = RngInitialize (null);
-			else
-				_handle = RngInitialize (Encoding.UTF8.GetBytes (str));
+				_handle = RngInitialize (null, IntPtr.Zero);
+			else {
+				byte[] bytes = Encoding.UTF8.GetBytes (str);
+				fixed (byte* fixed_bytes = bytes)
+					_handle = RngInitialize (fixed_bytes, (IntPtr)bytes.Length);
+			}
 			Check ();
 		}
-#endif
-		private void Check () 
+
+		private void Check ()
 		{
 			if (_handle == IntPtr.Zero) {
 				throw new CryptographicException (
@@ -94,51 +98,67 @@ namespace System.Security.Cryptography {
 		private static extern bool RngOpen ();
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern IntPtr RngInitialize (byte[] seed);
+		unsafe private static extern IntPtr RngInitialize (byte* seed, IntPtr seed_length);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern IntPtr RngGetBytes (IntPtr handle, byte[] data);
+		unsafe private static extern IntPtr RngGetBytes (IntPtr handle, byte* data, IntPtr data_length);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void RngClose (IntPtr handle);
 		
-		public override void GetBytes (byte[] data) 
+		unsafe public override void GetBytes (byte[] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			if (_lock == null) {
-				_handle = RngGetBytes (_handle, data);
-			} else {
-				// using a global handle for randomness
-				lock (_lock) {
-					_handle = RngGetBytes (_handle, data);
+			fixed (byte* fixed_data = data) {
+				if (_lock == null) {
+					_handle = RngGetBytes (_handle, fixed_data, (IntPtr)data.LongLength);
+				} else {
+					// using a global handle for randomness
+					lock (_lock) {
+						_handle = RngGetBytes (_handle, fixed_data, (IntPtr)data.LongLength);
+					}
 				}
 			}
 			Check ();
 		}
-		
-		public override void GetNonZeroBytes (byte[] data) 
+
+		unsafe internal void GetBytes (byte* data, IntPtr data_length)
+		{
+			if (_lock == null) {
+				_handle = RngGetBytes (_handle, data, data_length);
+			} else {
+				// using a global handle for randomness
+				lock (_lock) {
+					_handle = RngGetBytes (_handle, data, data_length);
+				}
+			}
+			Check ();
+		}
+
+		unsafe public override void GetNonZeroBytes (byte[] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-        		byte[] random = new byte [data.Length * 2];
-        		int i = 0;
-        		// one pass should be enough but hey this is random ;-)
-        		while (i < data.Length) {
-                		_handle = RngGetBytes (_handle, random);
+			byte[] random = new byte [data.LongLength * 2];
+			long i = 0;
+			// one pass should be enough but hey this is random ;-)
+			while (i < data.LongLength) {
+				fixed (byte* fixed_random = random)
+					_handle = RngGetBytes (_handle, fixed_random, (IntPtr)random.LongLength);
 				Check ();
-                		for (int j=0; j < random.Length; j++) {
-                        		if (i == data.Length)
-                                		break;
-                        		if (random [j] != 0)
-                                		data [i++] = random [j];
+				for (long j = 0; j < random.LongLength; j++) {
+					if (i == data.LongLength)
+						break;
+					if (random [j] != 0)
+						data [i++] = random [j];
                 		}
         		}
 		}
 		
-		~RNGCryptoServiceProvider () 
+		~RNGCryptoServiceProvider ()
 		{
 			if (_handle != IntPtr.Zero) {
 				RngClose (_handle);

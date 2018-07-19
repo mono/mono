@@ -47,8 +47,6 @@ namespace System.Runtime.Remoting.Contexts
 		int _flavor;
 
 		[NonSerialized]
-		bool _locked;
-		[NonSerialized]
 		int _lockCount;
 		
 		[NonSerialized]
@@ -90,32 +88,26 @@ namespace System.Runtime.Remoting.Contexts
 		{
 			get 
 			{ 
-				return _locked; 
+				return _lockCount > 0; 
 			}
 			
 			set 
 			{
 				if (value)
 				{
-					_mutex.WaitOne ();
+					AcquireLock ();
 					lock (this)
 					{
-						_lockCount++;
 						if (_lockCount > 1)
 							ReleaseLock (); // Thread already had the lock
-							
-						_ownerThread = Thread.CurrentThread;
 					}
 				}
 				else
 				{
 					lock (this)
 					{
-						while (_lockCount > 0 && _ownerThread == Thread.CurrentThread)
-						{
-							_lockCount--;
-							_mutex.ReleaseMutex ();
-							_ownerThread = null;
+						while (_lockCount > 0 && _ownerThread == Thread.CurrentThread) {
+							ReleaseLock ();
 						}
 					}
 				}
@@ -140,7 +132,9 @@ namespace System.Runtime.Remoting.Contexts
 				if (_lockCount > 0 && _ownerThread == Thread.CurrentThread) {
 					_lockCount--;
 					_mutex.ReleaseMutex ();
-					_ownerThread = null;
+					if (_lockCount == 0) {
+						_ownerThread = null;
+					}
 				}
 			}
 		}

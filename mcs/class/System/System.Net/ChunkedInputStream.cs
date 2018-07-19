@@ -25,15 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if SECURITY_DEP
-
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 namespace System.Net {
 	class ChunkedInputStream : RequestStream {
 		bool disposed;
-		ChunkStream decoder;
+		MonoChunkParser decoder;
 		HttpListenerContext context;
 		bool no_more_data;
 
@@ -60,10 +58,10 @@ namespace System.Net {
 		{
 			this.context = context;
 			WebHeaderCollection coll = (WebHeaderCollection) context.Request.Headers;
-			decoder = new ChunkStream (coll);
+			decoder = new MonoChunkParser (coll);
 		}
 
-		public ChunkStream Decoder {
+		public MonoChunkParser Decoder {
 			get { return decoder; }
 			set { decoder = value; }
 		}
@@ -173,4 +171,3 @@ namespace System.Net {
 		}
 	}
 }
-#endif

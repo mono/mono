@@ -16,6 +16,8 @@ using System.IO;
 using System.Reflection;
 using Microsoft.CSharp;
 using NUnit.Framework;
+using System.Text;
+using System.Linq;
 
 namespace MonoTests.Microsoft.CSharp
 {
@@ -566,6 +568,39 @@ namespace MonoTests.Microsoft.CSharp
 			AssertCompileResults (results, true);
 		}
 
+		[Test]
+		public void EncodingMismatch ()
+		{
+			var source = @"
+				#warning Trigger Some Warning
+				public class MyClass {
+					public static string MyMethod () { return ""data""; }
+				}";
+
+			var p = new CompilerParameters () {
+				GenerateInMemory = false,
+				GenerateExecutable = false,
+				IncludeDebugInformation = true,
+				TreatWarningsAsErrors = false,
+				TempFiles = new TempFileCollection (_tempDir, true),
+			};
+
+			var prov = new CSharpCodeProvider ();
+			CompilerResults results;
+
+			var prev = Console.OutputEncoding;
+			try {
+				Console.OutputEncoding = Encoding.Unicode;
+
+				results = prov.CompileAssemblyFromSource (p, source);
+			} finally {
+				Console.OutputEncoding = prev;
+			}
+
+			Assert.IsNotNull (results.Errors);
+			Assert.IsTrue (results.Output.Cast<string>().ToArray ()[1].Contains ("Trigger Some Warning"));
+		}
+
 		private static string CreateTempDirectory ()
 		{
 			// create a uniquely named zero-byte file
@@ -604,7 +639,7 @@ namespace MonoTests.Microsoft.CSharp
 					continue;
 				}
 
-				throw new Exception (compilerError.ToString ());
+				Assert.Fail (compilerError.ToString ());
 			}
 		}
 

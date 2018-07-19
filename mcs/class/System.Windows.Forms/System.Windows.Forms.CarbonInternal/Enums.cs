@@ -105,4 +105,21 @@ namespace System.Windows.Forms.CarbonInternal {
 		kMouseTrackingTimedOut = 8,
 		kMouseTrackingMouseMoved = 9
 	}
+
+	internal enum CFStringEncoding : uint {
+		kCFStringEncodingMacRoman = 0,
+		kCFStringEncodingWindowsLatin1 = 0x0500,
+		kCFStringEncodingISOLatin1 = 0x0201,
+		kCFStringEncodingNextStepLatin = 0x0B01,
+		kCFStringEncodingASCII = 0x0600,
+		kCFStringEncodingUnicode = 0x0100,
+		kCFStringEncodingUTF8 = 0x08000100,
+		kCFStringEncodingNonLossyASCII = 0x0BFF,
+		kCFStringEncodingUTF16 = 0x0100,
+		kCFStringEncodingUTF16BE = 0x10000100,
+		kCFStringEncodingUTF16LE = 0x14000100,
+		kCFStringEncodingUTF32 = 0x0c000100,
+		kCFStringEncodingUTF32BE = 0x18000100,
+		kCFStringEncodingUTF32LE = 0x1c000100
+	}
 }

@@ -153,6 +153,8 @@ namespace System.Windows.Forms
 
 			SetStyle(ControlStyles.ContainerControl | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.Selectable, false);
+
+			can_cache_preferred_size = true;
 		}
 
 		#region Public Properties

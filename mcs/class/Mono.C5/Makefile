@@ -5,7 +5,8 @@ include ../../build/rules.make
 LIBRARY = Mono.C5.dll
 LIBRARY_SNK = c5.snk
 LIB_REFS = System
-LIB_MCS_FLAGS = /r:$(corlib) -nowarn:169,219,414,1030,3001,3005,3006
+KEYFILE = c5.pub
+LIB_MCS_FLAGS = -nowarn:169,219,414,1030,3001,3005,3006
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
 EXTRA_DISTFILES = \

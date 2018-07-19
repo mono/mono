@@ -71,7 +71,12 @@ namespace System.Security.AccessControl
 				inheritanceFlags, propagationFlags, auditFlags,
 				objectFlags, objectType, inheritedObjectType);
 		}
-		
+
+		public void AddAudit (SecurityIdentifier sid, ObjectAuditRule rule)
+		{
+			AddAudit (rule.AuditFlags, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		[MonoTODO]
 		public bool RemoveAudit (AuditFlags auditFlags,
 					 SecurityIdentifier sid,
@@ -94,7 +99,12 @@ namespace System.Security.AccessControl
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public bool RemoveAudit (SecurityIdentifier sid, ObjectAuditRule rule)
+		{
+			return RemoveAudit (rule.AuditFlags, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		public void RemoveAuditSpecific (AuditFlags auditFlags,
 						 SecurityIdentifier sid,
 						 int accessMask,
@@ -120,7 +130,12 @@ namespace System.Security.AccessControl
 					   objectFlags, objectType, inheritedObjectType);
 
 		}
-		
+
+		public void RemoveAuditSpecific (SecurityIdentifier sid, ObjectAuditRule rule)
+		{
+			RemoveAuditSpecific (rule.AuditFlags, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		public void SetAudit (AuditFlags auditFlags,
 				      SecurityIdentifier sid,
 				      int accessMask,
@@ -144,7 +159,12 @@ namespace System.Security.AccessControl
 				inheritanceFlags, propagationFlags, auditFlags,
 				objectFlags, objectType, inheritedObjectType);
 		}
-		
+
+		public void SetAudit (SecurityIdentifier sid, ObjectAuditRule rule)
+		{
+			SetAudit (rule.AuditFlags, sid, rule.AccessMask, rule.InheritanceFlags, rule.PropagationFlags, rule.ObjectFlags, rule.ObjectType, rule.InheritedObjectType);
+		}
+
 		internal override void ApplyCanonicalSortToExplicitAces ()
 		{
 			int explicitCount = GetCanonicalExplicitAceCount ();

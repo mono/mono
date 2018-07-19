@@ -124,11 +124,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		public void GetProxy ()
-		{
-		}
-
-		[Test]
 		public void IsByPassed ()
 		{
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);

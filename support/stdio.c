@@ -16,23 +16,25 @@
 
 G_BEGIN_DECLS
 
-#ifndef HOST_WIN32
 gint32
 Mono_Posix_Syscall_L_ctermid (void)
 {
+#ifndef HOST_WIN32
 	return L_ctermid;
+#else
+	return -1;
+#endif
 }
 
 gint32
 Mono_Posix_Syscall_L_cuserid (void)
 {
-#if defined(__APPLE__) || defined (__OpenBSD__)
+#if defined(__APPLE__) || defined (__OpenBSD__) || defined (HOST_WIN32)
 	return -1;
 #else
 	return L_cuserid;
 #endif
 }
-#endif /* ndef HOST_WIN32 */
 
 mph_size_t
 Mono_Posix_Stdlib_fread (unsigned char *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
@@ -49,7 +51,21 @@ Mono_Posix_Stdlib_fwrite (unsigned char *ptr, mph_size_t size, mph_size_t nmemb,
 	mph_return_if_size_t_overflow (size);
 	mph_return_if_size_t_overflow (nmemb);
 
-	return fwrite (ptr, (size_t) size, (size_t) nmemb, (FILE*) stream);
+	size_t ret = fwrite (ptr, (size_t) size, (size_t) nmemb, (FILE*) stream);
+#ifdef HOST_WIN32
+	// Workaround for a particular weirdness on Windows triggered by the
+	// StdioFileStreamTest.Write() test method. The test writes 15 bytes to a
+	// file, then rewinds the file pointer and reads the same bytes. It then
+	// writes 15 additional bytes to the file. This second write fails on
+	// Windows with 0 returned from fwrite(). Calling fseek() followed by a retry
+	// of fwrite() like we do here fixes the issue.
+	if (ret != nmemb)
+	{
+		fseek (stream, 0, SEEK_CUR);
+		ret = fwrite (ptr + (ret * nmemb), (size_t) size, (size_t) nmemb - ret, (FILE*) stream);
+	}
+#endif
+	return ret;
 }
 
 #ifdef HAVE_VSNPRINTF
@@ -142,6 +158,12 @@ Mono_Posix_Stdlib_TMP_MAX (void)
 	return TMP_MAX;
 }
 
+void*
+Mono_Posix_Stdlib_tmpfile (void)
+{
+	return tmpfile ();
+}
+
 gint32
 Mono_Posix_Stdlib_setvbuf (void* stream, void *buf, int mode, mph_size_t size)
 {
@@ -154,6 +176,60 @@ Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
 {
 	setbuf (stream, buf);
 	return 0;
+}
+
+void*
+Mono_Posix_Stdlib_fopen (char* path, char* mode)
+{
+	return fopen (path, mode);
+}
+
+void*
+Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream)
+{
+	return freopen (path, mode, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message)
+{
+	return fprintf (stream, format, message);
+}
+
+gint32
+Mono_Posix_Stdlib_fgetc (void* stream)
+{
+	return fgetc (stream);
+}
+
+char*
+Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream)
+{
+	return fgets (str, size, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fputc (gint32 c, void* stream)
+{
+	return fputc (c, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fputs (char* s, void* stream)
+{
+	return fputs (s, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fclose (void* stream)
+{
+	return fclose (stream);
+}
+
+gint32
+Mono_Posix_Stdlib_fflush (void* stream)
+{
+	return fflush (stream);
 }
 
 gint32
@@ -205,6 +281,24 @@ Mono_Posix_Stdlib_clearerr (void* stream)
 {
 	clearerr (((FILE*) stream));
 	return 0;
+}
+
+gint32
+Mono_Posix_Stdlib_ungetc (gint32 c, void* stream)
+{
+	return ungetc (c, stream);
+}
+
+gint32
+Mono_Posix_Stdlib_feof (void* stream)
+{
+	return feof (((FILE*) stream));
+}
+
+gint32
+Mono_Posix_Stdlib_ferror (void* stream)
+{
+	return ferror (((FILE*) stream));
 }
 
 int

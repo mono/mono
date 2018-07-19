@@ -52,7 +52,6 @@ namespace System.Reflection.Emit {
 		private String name;
 		private object def_value;
 		private int offset;
-		private int table_idx;
 		internal TypeBuilder typeb;
 		private byte[] rva_data;
 		private CustomAttributeBuilder[] cattrs;
@@ -74,7 +73,6 @@ namespace System.Reflection.Emit {
 			this.modOpt = modOpt;
 			offset = -1;
 			typeb = tb;
-			table_idx = tb.get_next_table_index (this, 0x04, true);
 
 			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
@@ -124,6 +122,8 @@ namespace System.Reflection.Emit {
 				throw CreateNotSupportedException ();
 		}
 
+		public override int MetadataToken { get { return ((ModuleBuilder) typeb.Module).GetToken (this); } }
+
 		public FieldToken GetToken() {
 			return new FieldToken (MetadataToken);
 		}
@@ -155,6 +155,9 @@ namespace System.Reflection.Emit {
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder) {
 			RejectIfCreated ();
+
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
 
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.FieldOffsetAttribute") {
@@ -202,6 +205,8 @@ namespace System.Reflection.Emit {
 
 		public void SetOffset( int iOffset) {
 			RejectIfCreated ();
+			if (iOffset < 0)
+				throw new ArgumentException ("Negative field offset is not allowed");
 			offset = iOffset;
 		}
 
@@ -218,6 +223,20 @@ namespace System.Reflection.Emit {
 		{
 			if (typeb.is_created)
 				throw new InvalidOperationException ("Unable to change after type has been created.");
+		}
+
+		internal void ResolveUserTypes () {
+			type = TypeBuilder.ResolveUserType (type);
+			TypeBuilder.ResolveUserTypes (modReq);
+			TypeBuilder.ResolveUserTypes (modOpt);
+			if (marshal_info != null)
+				marshal_info.marshaltyperef = TypeBuilder.ResolveUserType (marshal_info.marshaltyperef);
+		}
+
+		internal FieldInfo RuntimeResolve () {
+			// typeb.CreateType() populates this.handle
+			var type_handle = new RuntimeTypeHandle (typeb.CreateType () as RuntimeType);
+			return FieldInfo.GetFieldFromHandle (handle, type_handle);
 		}
 
 		public override Module Module {

@@ -68,9 +68,8 @@ namespace System.ServiceModel.Description
 			get { return behaviors; }
 		}
 
-		[MonoTODO]
 		public KeyedCollection<Type,IEndpointBehavior> EndpointBehaviors {
-			get { throw new NotImplementedException (); }
+			get { return behaviors; }
 		}
 
 		public ContractDescription Contract {

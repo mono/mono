@@ -238,6 +238,16 @@
 #    define BEOS
 #    define mach_type_known
 # endif
+# if defined(__HAIKU__) && defined(_X86_)
+#    define I386
+#    define HAIKU
+#    define mach_type_known
+# endif
+# if defined(__HAIKU__) && defined(__amd64__)
+#    define X86_64
+#    define HAIKU
+#    define mach_type_known
+# endif
 # if defined(LINUX) && (defined(i386) || defined(__i386__))
 #    define I386
 #    define mach_type_known
@@ -733,7 +743,7 @@
 #	     if defined(__GLIBC__)&& __GLIBC__>=2
 #              define SEARCH_FOR_DATA_START
 #	     else /* !GLIBC2 */
-#              if defined(PLATFORM_ANDROID)
+#              if defined(HOST_ANDROID)
 #                      define __environ environ
 #              endif
                extern char **__environ;
@@ -1163,6 +1173,15 @@
 #     define GETPAGESIZE() B_PAGE_SIZE
       extern int etext[];
 #     define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
+#   endif
+#   ifdef HAIKU
+#     define OS_TYPE "HAIKU"
+#     include <OS.h>
+#     define GETPAGESIZE() B_PAGE_SIZE
+      extern int etext[];
+#     define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
+#     define DYNAMIC_LOADING
+#     define MPROTECT_VDB
 #   endif
 #   ifdef SUNOS5
 #	define OS_TYPE "SUNOS5"
@@ -1965,7 +1984,7 @@
 #	     include <features.h>
 #	     if defined(__GLIBC__) && __GLIBC__ >= 2
 #		 define SEARCH_FOR_DATA_START
-#	     elif defined(PLATFORM_ANDROID)
+#	     elif defined(HOST_ANDROID)
 #		 define SEARCH_FOR_DATA_START
 #	     else
      	         extern char **__environ;
@@ -2134,6 +2153,15 @@
       /* There seems to be some issues with trylock hanging on darwin. This
          should be looked into some more */
 #   endif
+#   ifdef HAIKU
+#     define OS_TYPE "HAIKU"
+#     include <OS.h>
+#     define GETPAGESIZE() B_PAGE_SIZE
+      extern int etext[];
+#     define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
+#     define DYNAMIC_LOADING
+#     define MPROTECT_VDB
+#   endif
 #   ifdef FREEBSD
 #	define OS_TYPE "FREEBSD"
 #	ifndef GC_FREEBSD_THREADS
@@ -2251,7 +2279,7 @@
 # if defined(SVR4) || defined(LINUX) || defined(IRIX5) || defined(HPUX) \
 	    || defined(OPENBSD) || defined(NETBSD) || defined(FREEBSD) \
 	    || defined(DGUX) || defined(BSD) || defined(SUNOS4) \
-	    || defined(_AIX) || defined(DARWIN) || defined(OSF1)
+	    || defined(_AIX) || defined(DARWIN) || defined(OSF1) || defined(HAIKU)
 #   define UNIX_LIKE   /* Basic Unix-like system calls work.	*/
 # endif
 
@@ -2507,6 +2535,9 @@
 #           if defined(SN_TARGET_PS3)
 	           extern void *ps3_get_mem (size_t size);
 #              define GET_MEM(bytes) (struct hblk*) ps3_get_mem (bytes)
+#           elif defined(HAIKU)
+              ptr_t GC_haiku_get_mem(GC_word bytes);
+#             define GET_MEM(bytes) (struct  hblk*)GC_haiku_get_mem(bytes)
 #           else
 		extern ptr_t GC_unix_get_mem(word size);
 #               define GET_MEM(bytes) (struct hblk *)GC_unix_get_mem(bytes)

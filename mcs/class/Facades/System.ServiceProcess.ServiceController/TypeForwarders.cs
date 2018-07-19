@@ -20,10 +20,14 @@
 // THE SOFTWARE.
 // 
 
+#if !MOBILE && !XAMMAC_4_5
+
+// TODO: These are implemented as stubs in the facade directly on mobile 
+
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceProcess.ServiceController))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceProcess.ServiceControllerStatus))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceProcess.ServiceStartMode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceProcess.ServiceType))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceProcess.TimeoutException))]
 
-
+#endif

@@ -68,7 +68,7 @@ namespace Mono.Interop
 		{
 			// called from unmanaged code after .ctor is invoked
 			// we need .ctor to create unmanaged object and thus IUnknown property value
-			if (FindProxy(com_object.IUnknown) == null)
+			if (FindProxy (com_object.IUnknown) == null)
 				AddProxy (com_object.IUnknown, this);
 			else
 				System.Threading.Interlocked.Increment (ref ref_count);
@@ -82,7 +82,7 @@ namespace Mono.Interop
 		internal ComInteropProxy (IntPtr pUnk, Type t)
 			: base (t)
 		{
-			com_object = new __ComObject (pUnk);
+			com_object = new __ComObject (pUnk, this);
 			CacheProxy ();
 		}
 
@@ -108,17 +108,20 @@ namespace Mono.Interop
 		// already known, a cached proxy will be returned.
 		internal static ComInteropProxy CreateProxy (Type t)
 		{
-			ComInteropProxy proxy = new ComInteropProxy (t);
-			proxy.com_object.Initialize (t);
-
-			ComInteropProxy cachedProxy = FindProxy (proxy.com_object.IUnknown);
+			IntPtr iunknown = __ComObject.CreateIUnknown (t);
+			ComInteropProxy proxy;
+			ComInteropProxy cachedProxy = FindProxy (iunknown);
 			if (cachedProxy != null) {
 				// check that the COM type of the cached proxy matches
 				// the requested type. See 2nd part of bug #520437.
 				Type cachedType = cachedProxy.com_object.GetType ();
 				if (cachedType != t)
 					throw new InvalidCastException (String.Format ("Unable to cast object of type '{0}' to type '{1}'.", cachedType, t));
-				return cachedProxy;
+				proxy = cachedProxy;
+				Marshal.Release (iunknown);
+			} else {
+				proxy = new ComInteropProxy (t);
+				proxy.com_object.Initialize (iunknown, proxy);
 			}
 			return proxy;
 		}

@@ -277,7 +277,7 @@ namespace MonoTests.System.Security.Cryptography {
 			CreateEncryptor_IV (size);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has
@@ -324,7 +324,7 @@ namespace MonoTests.System.Security.Cryptography {
 			int size = (aes.BlockSize >> 3);
 			CreateDecryptor_IV (size);
 		}
-#if !NET_2_1
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		// Rijndael is the only implementation that has

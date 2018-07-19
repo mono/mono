@@ -1,3 +1,5 @@
+../../test-helpers/NunitHelpers.cs
+../../test-helpers/NetworkHelpers.cs
 System.Runtime.Remoting.Channels.Tcp/TcpChannelTest.cs
 ServerObject.cs
 ContextsTest.cs

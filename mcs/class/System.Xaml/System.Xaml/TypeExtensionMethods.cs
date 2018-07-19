@@ -124,7 +124,7 @@ namespace System.Xaml
 			return TypeDescriptor.GetConverter (type);
 		}
 		
-		// FIXME: I want this to cover all the existing types and make it valid in both NET_2_1 and !NET_2_1.
+		// FIXME: I want this to cover all the existing types and make it valid in both MOBILE and !MOBILE.
 		class ConvertibleTypeConverter<T> : TypeConverter
 		{
 			Type type;

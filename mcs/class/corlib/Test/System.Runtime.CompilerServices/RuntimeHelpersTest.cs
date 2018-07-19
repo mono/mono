@@ -7,6 +7,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -45,6 +46,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			}
 		}
 
+		[Test]
 		public void TestOffsetToStringData () 
 		{
 			Assert.AreEqual (
@@ -52,6 +54,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 						  RuntimeHelpers.OffsetToStringData, "OffsetToStringData is not constant");
 		}
 
+		[Test]
 		public void TestGetObjectValue ()
 		{
 			FooStruct s1;
@@ -75,6 +78,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.AreEqual (s2.j, "FOO");
 		}
 
+		[Test]
 		public void TestRunClassConstructor ()
 		{
 			RuntimeHelpers.RunClassConstructor (typeof(FooClass).TypeHandle);
@@ -169,6 +173,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			RuntimeHelpers.InitializeArray (new Fielder ().array, rfh);
 		}
 
+		[Test]
 		public void TestGetHashCode ()
 		{
 			Assert.AreEqual (0, RuntimeHelpers.GetHashCode (null));
@@ -177,6 +182,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			Assert.IsTrue (5 != RuntimeHelpers.GetHashCode (new FooClass ()));
 		}			
 
+		[Test]
 		public void TestEquals ()
 		{
 			Assert.IsTrue (RuntimeHelpers.Equals (null, null));
@@ -196,6 +202,23 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			// This should do a bit-by-bit comparison for valuetypes
 			Assert.IsTrue (RuntimeHelpers.Equals (o1, o3));
 			Assert.IsTrue (!RuntimeHelpers.Equals (o1, o4));
+		}
+
+		[Test]
+		[Category ("MultiThreaded")]
+		public void TestEnsureSufficientExecutionStack ()
+		{
+			var t = new Thread (() => {
+				unsafe {
+					var s = stackalloc byte [1024];
+				}
+
+				RuntimeHelpers.EnsureSufficientExecutionStack ();
+			});
+
+
+			t.Start ();
+			t.Join ();
 		}
 	}
 }

@@ -58,10 +58,10 @@ namespace System.DirectoryServices
 			
 		}
 
-		public ResultPropertyValueCollection this[string key]
+		public ResultPropertyValueCollection this[string name]
 		{
 			get {
-				return (ResultPropertyValueCollection) this.Dictionary[key.ToLower()];
+				return (ResultPropertyValueCollection) this.Dictionary[name.ToLower()];
 			}
 //			set { this.Dictionary[key] = value; } 
 		}
@@ -72,9 +72,9 @@ namespace System.DirectoryServices
 		} 
 		
 		//see if collection contains an entry corresponding to key
-		public bool Contains(string key)
+		public bool Contains(string propertyName)
 		{
-			return this.Dictionary.Contains(key.ToLower());
+			return this.Dictionary.Contains(propertyName.ToLower());
 		}
 		
 		public ICollection PropertyNames 
@@ -93,10 +93,10 @@ namespace System.DirectoryServices
 			}
 		}
 
-		public void CopyTo (ResultPropertyValueCollection[] copy_to, int index)
+		public void CopyTo (ResultPropertyValueCollection[] array, int index)
 		{
 			foreach (ResultPropertyValueCollection vals in Values)
-				copy_to[index++] = vals;
+				array[index++] = vals;
 		}
 	}
 }

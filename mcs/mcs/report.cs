@@ -42,7 +42,7 @@ namespace Mono.CSharp {
 		public static readonly int[] AllWarnings = new int[] {
 			28, 67, 78,
 			105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
-			219, 251, 252, 253, 278, 282,
+			219, 251, 252, 253, 278, 280, 282,
 			402, 414, 419, 420, 429, 436, 437, 440, 458, 464, 465, 467, 469, 472, 473,
 			612, 618, 626, 628, 642, 649, 652, 657, 658, 659, 660, 661, 665, 672, 675, 693,
 			728,
@@ -58,15 +58,13 @@ namespace Mono.CSharp {
 			3021, 3022, 3023, 3024, 3026, 3027,
 			4014, 4024, 4025, 4026,
 			7035, 7080, 7081, 7082, 7095,
-			8009, 8094
+			8009, 8094, 8123
 		};
-
-		static HashSet<int> AllWarningsHashSet;
 
 		public Report (CompilerContext context, ReportPrinter printer)
 		{
 			if (context == null)
-				throw new ArgumentNullException ("settings");
+				throw new ArgumentNullException ("context");
 			if (printer == null)
 				throw new ArgumentNullException ("printer");
 
@@ -105,6 +103,18 @@ namespace Mono.CSharp {
 				break;
 			case LanguageVersion.V_6:
 				version = "6.0";
+				break;
+			case LanguageVersion.V_7:
+				version = "7.0";
+				break;
+			case LanguageVersion.V_7_1:
+				version = "7.1";
+				break;
+			case LanguageVersion.V_7_2:
+				version = "7.2";
+				break;
+			case LanguageVersion.V_7_3:
+				version = "7.3";
 				break;
 			default:
 				throw new InternalErrorException ("Invalid feature version", compiler.Settings.Version);
@@ -173,18 +183,6 @@ namespace Mono.CSharp {
 				return;
 
 			extra_information.Add (msg);
-		}
-
-		public bool CheckWarningCode (int code, Location loc)
-		{
-			if (AllWarningsHashSet == null)
-				AllWarningsHashSet = new HashSet<int> (AllWarnings);
-
-			if (AllWarningsHashSet.Contains (code))
-				return true;
-
-			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
-			return false;
 		}
 
 		public void ExtraInformation (Location loc, string msg)
@@ -1109,8 +1107,7 @@ namespace Mono.CSharp {
 
 		public void WarningDisable (Location location, int code, Report Report)
 		{
-			if (Report.CheckWarningCode (code, location))
-				regions.Add (new Disable (location.Row, code));
+			regions.Add (new Disable (location.Row, code));
 		}
 
 		public void WarningEnable (int line)
@@ -1120,9 +1117,6 @@ namespace Mono.CSharp {
 
 		public void WarningEnable (Location location, int code, CompilerContext context)
 		{
-			if (!context.Report.CheckWarningCode (code, location))
-				return;
-
 			if (context.Settings.IsWarningDisabledGlobally (code))
 				context.Report.Warning (1635, 1, location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
 

@@ -1,3 +1,9 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+../../../build/common/MonoTODOAttribute.cs
+ServiceController_mobile.cs
+ServiceControllerStatus_mobile.cs
+ServiceStartMode_mobile.cs
+ServiceType_mobile.cs
+TimeoutException_mobile.cs

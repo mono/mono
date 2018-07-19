@@ -365,12 +365,15 @@ namespace MonoTests.System.Windows.Forms
 		public void PropertyMaximumSize ()
 		{
 			Control c = new Control ();
-			EventWatcher ew = new EventWatcher (c);
+			c.Size = new Size(10, 10);
 
+			// Chaning MaximumSize below Size forces a size change
+			EventWatcher ew = new EventWatcher (c);
 			c.MaximumSize = new Size (5, 5);
 			Assert.AreEqual (new Size (5, 5), c.MaximumSize, "B1");
-			Assert.AreEqual (string.Empty, ew.ToString (), "B2");
+			Assert.AreEqual ("Layout;Resize;SizeChanged;ClientSizeChanged", ew.ToString (), "B2");
 
+			// Changing MaximumSize when Size is already smaller or equal doesn't raise any events
 			ew.Clear ();
 			c.MaximumSize = new Size (5, 5);
 			Assert.AreEqual (string.Empty, ew.ToString (), "B3");

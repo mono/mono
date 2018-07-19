@@ -30,7 +30,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	public class DataProvider
 	{
@@ -47,7 +47,7 @@ namespace MonoTests.System.Data
 			query += "Select * from datetime_family order by id ASC;";
 
 			SqlDataAdapter adapter = new SqlDataAdapter (query,
-				ConnectionManager.Singleton.ConnectionString);
+				ConnectionManager.Instance.Sql.ConnectionString);
 			adapter.TableMappings.Add ("Table", "numeric_family");
 			adapter.TableMappings.Add ("Table1", "string_family");
 			adapter.TableMappings.Add ("Table2", "binary_family");

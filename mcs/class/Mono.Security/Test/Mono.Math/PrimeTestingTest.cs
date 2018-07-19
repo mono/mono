@@ -81,12 +81,12 @@ namespace MonoTests.Mono.Math {
 
 		private void ExpectComposite (BigInteger bi)
 		{
-			Assertion.AssertEquals (false, bi.IsProbablePrime ());
+			Assert.AreEqual (false, bi.IsProbablePrime ());
 		}
 
 		private void ExpectPrime (BigInteger bi)
 		{
-			Assertion.AssertEquals (true, bi.IsProbablePrime ());
+			Assert.AreEqual (true, bi.IsProbablePrime ());
 		}
 	}
 
@@ -195,7 +195,7 @@ namespace MonoTests.Mono.Math {
 	// Adapted from http://lists.ximian.com/archives/public/mono-devel-list/2003-November/003026.html
 	// Note: these primes are taken from RFC 2412 [http://www.faqs.org/rfcs/rfc2412.html]
 	[TestFixture]
-	public class Rfc2412WellTestedPrimes : Assertion {
+	public class Rfc2412WellTestedPrimes {
 
 		// E.1. Well-Known Group 1:  A 768 bit prime
 		[Test]
@@ -203,8 +203,8 @@ namespace MonoTests.Mono.Math {
 		{
 			string prime = "1552518092300708935130918131258481755631334049434514313202351194902966239949102107258669453876591642442910007680288864229150803718918046342632727613031282983744380820890196288509170691316593175367469551763119843371637221007210577919";
 			BigInteger bi = BigInteger.Parse (prime);
-			Assert ("isProbablePrime-768", bi.IsProbablePrime ());
-			AssertEquals ("ToString()", prime, bi.ToString ());
+			Assert.IsTrue (bi.IsProbablePrime (), "isProbablePrime-768");
+			Assert.AreEqual (prime, bi.ToString (), "ToString()");
 		}
 
 		// E.2. Well-Known Group 2:  A 1024 bit prime
@@ -213,8 +213,8 @@ namespace MonoTests.Mono.Math {
 		{
 			string prime = "179769313486231590770839156793787453197860296048756011706444423684197180216158519368947833795864925541502180565485980503646440548199239100050792877003355816639229553136239076508735759914822574862575007425302077447712589550957937778424442426617334727629299387668709205606050270810842907692932019128194467627007";
 			BigInteger bi = BigInteger.Parse (prime);
-			Assert ("isProbablePrime-1024", bi.IsProbablePrime ());
-			AssertEquals ("ToString()", prime, bi.ToString ());
+			Assert.IsTrue (bi.IsProbablePrime (), "isProbablePrime-1024");
+			Assert.AreEqual (prime, bi.ToString (), "ToString()");
 		}
 
 		// Note: E.3 and E.4 are for Elliptic Curve Groups
@@ -225,8 +225,8 @@ namespace MonoTests.Mono.Math {
 		{
 			string prime = "2410312426921032588552076022197566074856950548502459942654116941958108831682612228890093858261341614673227141477904012196503648957050582631942730706805009223062734745341073406696246014589361659774041027169249453200378729434170325843778659198143763193776859869524088940195577346119843545301547043747207749969763750084308926339295559968882457872412993810129130294592999947926365264059284647209730384947211681434464714438488520940127459844288859336526896320919633919";
 			BigInteger bi = BigInteger.Parse (prime);
-			Assert ("isProbablePrime-1536", bi.IsProbablePrime ());
-			AssertEquals ("ToString()", prime, bi.ToString ());
+			Assert.IsTrue (bi.IsProbablePrime (), "isProbablePrime-1536");
+			Assert.AreEqual (prime, bi.ToString (), "ToString()");
 		}
 	}
 

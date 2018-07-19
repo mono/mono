@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #include "mini.h"
 
 /* Dummy versions of some arch specific functions to avoid ifdefs at call sites */
@@ -33,23 +37,6 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 #endif
 
-#if defined(MONO_ARCH_GSHAREDVT_SUPPORTED) && !defined(ENABLE_GSHAREDVT)
-
-gboolean
-mono_arch_gsharedvt_sig_supported (MonoMethodSignature *sig)
-{
-	return FALSE;
-}
-
-gpointer
-mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
-{
-	NOT_IMPLEMENTED;
-	return NULL;
-}
-
-#endif
-
 #ifndef MONO_ARCH_HAVE_DECOMPOSE_OPTS
 void
 mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
@@ -72,10 +59,35 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 }
 #endif
 
-#ifndef MONO_ARCH_HAVE_OP_TAIL_CALL
-gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+#ifndef MONO_ARCH_INTERPRETER_SUPPORTED
+
+gpointer
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
-	return mono_metadata_signature_equal (caller_sig, callee_sig) && !MONO_TYPE_ISSTRUCT (callee_sig->ret);
+	g_assert_not_reached ();
+	return NULL;
 }
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *context)
+{
+	g_assert_not_reached ();
+}
+
+#endif
+
+#ifndef MONO_ARCH_HAVE_EXCEPTIONS_INIT
+
+void
+mono_arch_exceptions_init (void)
+{
+}
+
 #endif

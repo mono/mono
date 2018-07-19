@@ -35,4 +35,5 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.StringWriter))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.TextReader))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.TextWriter))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.BufferedStream))]
 

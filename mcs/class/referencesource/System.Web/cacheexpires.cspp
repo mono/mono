@@ -1,0 +1,1328 @@
+//------------------------------------------------------------------------------
+// <copyright file="CacheExpires.cs" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>                                                                
+//------------------------------------------------------------------------------
+
+namespace System.Web.Caching {
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading;
+    using System.Web;
+    using System.Web.Util;
+    using System.Collections;
+
+    
+    // ExpiresEntryRef defines a reference to a ExpiresEntry in the ExpiresBucket data structure.
+    // An entry is identified by its index into the ExpiresBucket._pages array, and its
+    // index into the ExpiresPage._entries array. 
+    //
+    // Bytes 0-7 of the reference are for the index into the ExpiresPage._entries array.
+    // Bytes 8-31 of the reference are for the index into the ExpiresBucket._pages array.
+    //
+    struct ExpiresEntryRef {
+        // The invalid reference is 0.
+        static internal readonly ExpiresEntryRef INVALID = new ExpiresEntryRef(0, 0);
+
+        const uint   ENTRY_MASK  = 0x000000ffu;
+        const uint   PAGE_MASK   = 0xffffff00u;
+        const int    PAGE_SHIFT  = 8;
+
+        uint _ref;
+
+        internal ExpiresEntryRef(int pageIndex, int entryIndex) {
+            Debug.Assert((pageIndex & 0x00ffffff) == pageIndex, "(pageIndex & 0x00ffffff) == pageIndex");
+            Debug.Assert((entryIndex & ENTRY_MASK) == entryIndex, "(entryIndex & ENTRY_MASK) == entryIndex");
+            Debug.Assert(entryIndex != 0 || pageIndex == 0, "entryIndex != 0 || pageIndex == 0");
+
+            _ref = ( (((uint)pageIndex) << PAGE_SHIFT) | (((uint)(entryIndex)) & ENTRY_MASK) );
+        }
+
+        public override bool Equals(object value) {
+            if (value is ExpiresEntryRef) {
+                return _ref == ((ExpiresEntryRef)value)._ref;
+            }
+
+            return false;
+        }
+#if NOT_USED
+        public static bool Equals(ExpiresEntryRef r1, ExpiresEntryRef r2) {
+            return r1._ref == r2._ref;
+        }
+#endif    
+        public static bool operator !=(ExpiresEntryRef r1, ExpiresEntryRef r2) {
+            return r1._ref != r2._ref;
+        }
+        public static bool operator ==(ExpiresEntryRef r1, ExpiresEntryRef r2) {
+            return r1._ref == r2._ref;
+        }
+        
+        public override int GetHashCode() {
+            return (int) _ref;
+        }
+    
+#if DBG
+        public override string ToString() {
+            return PageIndex + ":" + Index;
+        }
+#endif
+
+        // The index into the ExpiresBucket._pages array.
+        internal int PageIndex {
+            get {
+                int result = (int) (_ref >> PAGE_SHIFT);
+                return result;
+            }
+        }
+
+        
+        // The index into the _entries array.
+        internal int Index {
+            get {
+                int result = (int) (_ref & ENTRY_MASK);
+                return result;
+            }
+        }
+
+        // Is the reference invalid?
+        internal bool IsInvalid {
+            get {
+                return _ref == 0;
+            }
+        }
+    }
+
+    // overhead is 12 bytes
+    [StructLayout(LayoutKind.Explicit)]
+    struct ExpiresEntry {
+        // _utcExpires holds the expiration time of the item.
+        // When an ExpiresEntry is not in use, _utcExpires is
+        // no longer needed, so we can use its memory to hold
+        // an index into the page's free list, and a count
+        // of free entries and whether or not it is on an expires list.
+        [FieldOffset(0)]
+        internal DateTime           _utcExpires;    // expires
+
+        [FieldOffset(0)]
+        internal ExpiresEntryRef    _next;          // free list
+
+        [FieldOffset(4)]
+        internal int                _cFree;         // count of free entries in list at expires[0]
+                                                    // 1 if inFlush, 0 if free 
+        [FieldOffset(8)]
+        internal CacheEntry         _cacheEntry;    // cache entry
+    }
+
+    // A page to hold the array of ExpiresEntry. 
+    struct ExpiresPage {
+        internal ExpiresEntry[] _entries;       // array of ExpiresEntry.
+        internal int            _pageNext;      // next page on the free page or free entry list
+        internal int            _pagePrev;      // prev page on the free page or free entry list
+    }
+
+    // A list of ExpiresPages.
+    struct ExpiresPageList {
+        internal int            _head;          // head of list
+        internal int            _tail;          // tail of list
+    }
+
+    //
+    // Class ExpiresBucket contains all the entries that expire within a given interval
+    // every cycle of buckets.
+    // 
+    // For example, if the inverval length is 20 seconds, and there are 60 buckets,
+    // then bucket 4 will contain all items that expire between:
+    //          00:01:20 and 00:01:40
+    //          00:21:20 and 00:21:40
+    //          00:41:20 and 00:41:40
+    //          01:01:20 and 01:01:40
+    //          ...
+    //
+    // When we flush expired items, we need to examine every item in every bucket to 
+    // determine its expiration time. We potentially call FlushExpiredItems() every time
+    // we need to trim items from the cache when there is memory pressure, which can
+    // occur several times a second.
+    //
+    // To avoid a full scan on every call to FlushExpiredItems(), we maintain a count
+    // of the items that expire within the first interval since the last full scan, and
+    // only scan all entries in the bucket when there are items to flush. The first
+    // interval is split into smaller intervals, and counts are kept of all items that need to
+    // be flushed up to the time of that interval.
+    //
+    // Continuing with the example above, the first interval would be split into 
+    // 4 intervals of 5 seconds:
+    // 
+    //      If the last full scan occurred at 00:01:20 ...
+    //         _counts[0] contains the number of items expiring before 00:01:25 
+    //         _counts[1] contains the number of items expiring before 00:01:30 
+    //         _counts[2] contains the number of items expiring before 00:01:35 
+    //         _counts[3] contains the number of items expiring before 00:01:40 
+    //
+    //      If there were 3 items in this bucket expiring at 00:01:27, 00:01:31, and 00:01:34 ...
+    //         _counts[0] == 0
+    //         _counts[1] == 1
+    //         _counts[2] == 3
+    //         _counts[3] == 3
+    //
+    // We further reduce the number of scans by keeping the minimum expiration time
+    // of an item in the bucket. If FlushExpiredItems() is called before the minimum
+    // expiration time, we do not need to perform the scan. Note that if the item with the
+    // minimum expiration time is removed, we do not update the minimum expiration time,
+    // so it is only a heuristic.
+    //
+    sealed class ExpiresBucket {
+        // We use _entries[0] to hold the head of the free list, and the count of items in the free list.
+        internal const int  NUM_ENTRIES     = 127;
+        const int           LENGTH_ENTRIES  = 128;
+
+        const int           MIN_PAGES_INCREMENT = 10;   
+        const int           MAX_PAGES_INCREMENT = 340;   // (size of a page on x86) / (12 bytes per UsagePage)
+        const double        MIN_LOAD_FACTOR = 0.5;      // minimum ratio of used to total entries before we will reduce
+
+        const int                   COUNTS_LENGTH=4;    // length of _counts array
+
+        // timespan represented by each count entry
+        static readonly TimeSpan    COUNT_INTERVAL= new TimeSpan(CacheExpires._tsPerBucket.Ticks / COUNTS_LENGTH);
+
+        readonly CacheExpires   _cacheExpires;          // parent CacheExpires object
+        readonly byte           _bucket;                // index of this bucket
+
+        ExpiresPage[]           _pages;                 // page array
+
+#if IA64 
+        volatile 
+#endif
+        int                     _cEntriesInUse;         // count of ExpiresEntry's in use                      
+#if IA64 
+        volatile 
+#endif
+        int                     _cPagesInUse;           // count of ExpiresPage's in use                       
+#if IA64 
+        volatile 
+#endif
+        int                     _cEntriesInFlush;       // count of ExpiresEntry's in process of being flushed 
+#if IA64 
+        volatile 
+#endif
+        int                     _minEntriesInUse;       // minimum number of entries in use before we reduce 
+
+        ExpiresPageList         _freePageList;          // list of free pages (_entries == null)
+        ExpiresPageList         _freeEntryList;         // list of pages with free entries (entry.FreeCountCount > 0)
+
+#if IA64 
+        volatile 
+#endif
+        bool                    _blockReduce;           // block calls to Reduce() while in FlushExpiredItems
+
+        // Minimum expiration date of the items in this bucket.
+        // Note that it is only a heursitic - if an item that is
+        // the minimum is removed, the minimum will not be updated.
+        // The minimum is reset when the bucket is flushed.
+        DateTime                _utcMinExpires;         
+
+        // An exact count of the number of items that expire in the first period
+        // since the last full scan. We use this to determine whether or not to 
+        // flush expired items when we are trimming items from the cache.
+        int[]                   _counts;
+
+        // The last time a flush occured, at which time we recalculate the counts.
+        DateTime                _utcLastCountReset;
+
+        internal ExpiresBucket(CacheExpires cacheExpires, byte bucket, DateTime utcNow) {
+            _cacheExpires = cacheExpires;
+            _bucket = bucket;
+            _counts = new int[COUNTS_LENGTH];
+            ResetCounts(utcNow);
+            InitZeroPages();
+
+            Debug.Validate("CacheValidateExpires", this);
+        }
+
+        void InitZeroPages() {
+            Debug.Assert(_cPagesInUse == 0, "_cPagesInUse == 0");
+            Debug.Assert(_cEntriesInUse == 0, "_cEntriesInUse == 0");
+            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+
+            _pages = null;
+            _minEntriesInUse = -1;
+            _freePageList._head = -1;
+            _freePageList._tail = -1;
+            _freeEntryList._head = -1;
+            _freeEntryList._tail = -1;
+        }
+
+// Use macros so that the code is inlined in the function
+#define EntriesI(i)                     (_pages[(i)]._entries)
+
+#define EntriesR(entryRef)              (_pages[(entryRef.PageIndex)]._entries)
+
+#define PagePrev(i)                     (_pages[(i)]._pagePrev)
+
+#define PageNext(i)                     (_pages[(i)]._pageNext)
+
+#define FreeEntryHead(entries)          ((entries)[0]._next)
+
+#define FreeEntryCount(entries)         ((entries)[0]._cFree)
+
+#if DBG
+        bool EntryIsFree(ExpiresEntryRef entryRef) {
+            return EntriesR(entryRef)[entryRef.Index]._cacheEntry == null;
+        }
+#endif
+
+        // Reset the counts array and min expiration time.
+        void ResetCounts(DateTime utcNow) {
+            _utcLastCountReset = utcNow;
+            _utcMinExpires = DateTime.MaxValue;
+
+            for (int i = 0; i < _counts.Length; i++) {
+                _counts[i] = 0;
+            }
+        }
+
+        // Return the index into the _counts array of all items that
+        // expire by the given expiration time. Note that the index
+        // may be larger than the length of the array.
+        int GetCountIndex(DateTime utcExpires) {
+            return Math.Max(0, (int) ((utcExpires - _utcLastCountReset).Ticks / COUNT_INTERVAL.Ticks));
+        }
+
+        // Add counts for the expiration time.
+        void AddCount(DateTime utcExpires) {
+            int ci = GetCountIndex(utcExpires);
+            for (int i = _counts.Length - 1; i >= ci; i--) {
+                _counts[i]++;
+            }
+
+            if (utcExpires < _utcMinExpires) {
+                _utcMinExpires = utcExpires;
+            }
+        }
+
+        // Remove counts for the expiration time
+        void RemoveCount(DateTime utcExpires) {
+            int ci = GetCountIndex(utcExpires);
+            for (int i = _counts.Length - 1; i >= ci; i--) {
+                _counts[i]--;
+            }
+        }
+
+        // Get the number of items that expire before utcExpires.
+        int GetExpiresCount(DateTime utcExpires) {
+            if (utcExpires < _utcMinExpires)
+                return 0;
+
+            int ci = GetCountIndex(utcExpires);
+            if (ci >= _counts.Length)
+                return _cEntriesInUse;
+
+            return _counts[ci];
+        }
+
+        // Add a page to the head of a list.
+        void AddToListHead(int pageIndex, ref ExpiresPageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            PagePrev(pageIndex) = -1;
+            PageNext(pageIndex) = list._head;
+            if (list._head != -1) {
+                Debug.Assert(PagePrev(list._head) == -1, "PagePrev(list._head) == -1");
+                PagePrev(list._head) = pageIndex;
+            }
+            else {
+                list._tail = pageIndex;
+            }
+
+            list._head = pageIndex;
+        }
+
+        // Add a page to the tail of a list.
+        void AddToListTail(int pageIndex, ref ExpiresPageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            PageNext(pageIndex) = -1;
+            PagePrev(pageIndex) = list._tail;
+            if (list._tail != -1) {
+                Debug.Assert(PageNext(list._tail) == -1, "PageNext(list._tail) == -1");
+                PageNext(list._tail) = pageIndex;
+            }
+            else {
+                list._head = pageIndex;
+            }
+
+            list._tail = pageIndex;
+        }
+
+        // Remove a page from the head of a list.
+        int RemoveFromListHead(ref ExpiresPageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+
+            int oldHead = list._head;
+            RemoveFromList(oldHead, ref list);
+            return oldHead;
+        }
+
+        // Remove a page from the list.
+        void RemoveFromList(int pageIndex, ref ExpiresPageList list) {
+            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+
+            if (PagePrev(pageIndex) != -1) {
+                Debug.Assert(PageNext(PagePrev(pageIndex)) == pageIndex, "PageNext(PagePrev(pageIndex)) == pageIndex");
+                PageNext(PagePrev(pageIndex)) = PageNext(pageIndex);
+            }
+            else {
+                Debug.Assert(list._head == pageIndex, "list._head == pageIndex");
+                list._head = PageNext(pageIndex);
+            }
+
+            if (PageNext(pageIndex) != -1) {
+                Debug.Assert(PagePrev(PageNext(pageIndex)) == pageIndex, "PagePrev(PageNext(pageIndex)) == pageIndex");
+                PagePrev(PageNext(pageIndex)) = PagePrev(pageIndex);
+            }
+            else {
+                Debug.Assert(list._tail == pageIndex, "list._tail == pageIndex");
+                list._tail = PagePrev(pageIndex);
+            }
+
+            PagePrev(pageIndex) = -1;
+            PageNext(pageIndex) = -1;
+        }
+
+        // Move a page to the head of the list
+        void MoveToListHead(int pageIndex, ref ExpiresPageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+            Debug.Assert(list._tail != -1, "list._tail != -1");
+
+            // already at head?
+            if (list._head == pageIndex)
+                return;
+
+            // remove from list
+            RemoveFromList(pageIndex, ref list);
+
+            // add to head
+            AddToListHead(pageIndex, ref list);
+        }
+
+        // Move to the tail of the list
+        void MoveToListTail(int pageIndex, ref ExpiresPageList list) {
+            Debug.Assert(list._head != -1, "list._head != -1");
+            Debug.Assert(list._tail != -1, "list._tail != -1");
+
+            // already at tail?
+            if (list._tail == pageIndex)
+                return;
+
+            // remove from list
+            RemoveFromList(pageIndex, ref list);
+
+            // add to head
+            AddToListTail(pageIndex, ref list);
+        }
+
+        // Update _minEntriesInUse when _cPagesInUse changes.
+        // When _cEntriesInUse falls below _minEntriesInUse,
+        // a call to Reduce() will consolidate entries onto fewer pages.
+        // If _minEntries == -1, then a call to Reduce() will never reduce the number of pages.
+        void UpdateMinEntries() {
+            if (_cPagesInUse <= 1) {
+                _minEntriesInUse = -1;
+            }
+            else {
+                int capacity = _cPagesInUse * NUM_ENTRIES;
+                Debug.Assert(capacity > 0, "capacity > 0");
+                Debug.Assert(MIN_LOAD_FACTOR < 1.0, "MIN_LOAD_FACTOR < 1.0");
+
+                _minEntriesInUse = (int) (capacity * MIN_LOAD_FACTOR);
+
+                // Don't allow a reduce if there are not enough free entries to
+                // remove a page.
+                if ((_minEntriesInUse - 1) > ((_cPagesInUse - 1) * NUM_ENTRIES)) {
+                    _minEntriesInUse = -1;
+                }
+            }
+
+#if DBG
+            if (Debug.IsTagPresent("CacheExpiresNoReduce") && Debug.IsTagEnabled("CacheExpiresNoReduce")) {
+                _minEntriesInUse = -1;
+            }
+#endif
+
+        }
+
+        // Remove a ExpiresPage that is in use, and put in on the list of free pages.
+        void RemovePage(int pageIndex) {
+            Debug.Assert(FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES, "FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES");
+
+            // release the page from the free entries list
+            RemoveFromList(pageIndex, ref _freeEntryList);
+
+            // Add the page to the free pages list
+            AddToListHead(pageIndex, ref _freePageList);
+
+            // remove reference to page
+            Debug.Assert(EntriesI(pageIndex) != null, "EntriesI(pageIndex) != null");
+            EntriesI(pageIndex) = null;
+
+            // decrement count of pages and update _cMinEntriesInUse
+            _cPagesInUse--;
+            if (_cPagesInUse == 0) {
+                InitZeroPages();
+            }
+            else {
+                UpdateMinEntries();
+            }
+        }
+
+        // Get a free ExpiresEntry.
+        ExpiresEntryRef GetFreeExpiresEntry() {
+            // get the page of the free entry
+            Debug.Assert(_freeEntryList._head >= 0, "_freeEntryList._head >= 0");
+            int pageIndex = _freeEntryList._head;
+
+            // get a free entry from _entries
+            ExpiresEntry[] entries = EntriesI(pageIndex);
+            int entryIndex = FreeEntryHead(entries).Index;
+
+            // fixup free list and count
+            FreeEntryHead(entries) = entries[entryIndex]._next;
+            FreeEntryCount(entries)--;
+            if (FreeEntryCount(entries) == 0) {
+                // remove page from list of free pages
+                Debug.Assert(FreeEntryHead(entries).IsInvalid, "FreeEntryHead(entries).IsInvalid");
+                RemoveFromList(pageIndex, ref _freeEntryList);
+            }
+
+#if DBG
+            Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex)), "EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex))");
+            if (!FreeEntryHead(entries).IsInvalid) {
+                Debug.Assert(FreeEntryHead(entries).Index != entryIndex, "FreeEntryHead(entries).Index != entryIndex");
+                Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index)), "EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index))");
+            }
+#endif
+
+            return new ExpiresEntryRef(pageIndex, entryIndex);
+        }
+
+
+        // Add a ExpiresEntry to the free entry list.
+        void AddExpiresEntryToFreeList(ExpiresEntryRef entryRef) {
+            ExpiresEntry[] entries = EntriesR(entryRef);
+            int entryIndex = entryRef.Index;
+
+            Debug.Assert(entries[entryIndex]._cacheEntry == null, "entries[entryIndex]._cacheEntry == null");
+            entries[entryIndex]._cFree = 0;
+
+            entries[entryIndex]._next = FreeEntryHead(entries);
+            FreeEntryHead(entries) = entryRef;
+
+            _cEntriesInUse--;
+            int pageIndex = entryRef.PageIndex;
+            FreeEntryCount(entries)++;
+            if (FreeEntryCount(entries) == 1) {
+                // add page to head of list of free pages
+                AddToListHead(pageIndex, ref _freeEntryList);
+            }
+            else if (FreeEntryCount(entries) == NUM_ENTRIES) {
+                RemovePage(pageIndex);
+            }
+        }
+
+        // Expand the capacity of the ExpiresBucket to hold more CacheEntry's.
+        // We will need to allocate a new page, and perhaps expand the _pages array.
+        // Note that we never collapse the _pages array.
+        void Expand() {
+            Debug.Assert(_cPagesInUse * NUM_ENTRIES == _cEntriesInUse, "_cPagesInUse * NUM_ENTRIES == _cEntriesInUse");
+            Debug.Assert(_freeEntryList._head == -1, "_freeEntryList._head == -1");
+            Debug.Assert(_freeEntryList._tail == -1, "_freeEntryList._tail == -1");
+
+            // exapnd _pages if there are no more
+            if (_freePageList._head == -1) {
+                // alloc new pages array
+                int oldLength;
+                if (_pages == null) {
+                    oldLength = 0;
+                }
+                else {
+                    oldLength = _pages.Length;
+                }
+
+                Debug.Assert(_cPagesInUse == oldLength, "_cPagesInUse == oldLength");
+                Debug.Assert(_cEntriesInUse == oldLength * NUM_ENTRIES, "_cEntriesInUse == oldLength * ExpiresEntryRef.NUM_ENTRIES");
+
+                int newLength = oldLength * 2;
+                newLength = Math.Max(oldLength + MIN_PAGES_INCREMENT, newLength);
+                newLength = Math.Min(newLength, oldLength + MAX_PAGES_INCREMENT);
+                Debug.Assert(newLength > oldLength, "newLength > oldLength");
+
+                ExpiresPage[] newPages = new ExpiresPage[newLength];
+
+                // copy original pages
+                for (int i = 0; i < oldLength; i++) {
+                    newPages[i] = _pages[i];
+                }
+
+                // setup free list of new pages
+                for (int i = oldLength; i < newPages.Length; i++) {
+                    newPages[i]._pagePrev = i - 1;
+                    newPages[i]._pageNext = i + 1;
+                }
+
+                newPages[oldLength]._pagePrev = -1;
+                newPages[newPages.Length - 1]._pageNext = -1;
+
+                // use new pages array
+                _freePageList._head = oldLength;
+                _freePageList._tail = newPages.Length - 1;
+
+                _pages = newPages;
+            }
+
+            // move from free page list to free entries list
+            int pageIndex = RemoveFromListHead(ref _freePageList);
+            AddToListHead(pageIndex, ref _freeEntryList);
+
+            // create the entries
+            ExpiresEntry[] entries = new ExpiresEntry[LENGTH_ENTRIES];
+            FreeEntryCount(entries) = NUM_ENTRIES;
+            
+            // init free list
+            for (int i = 0; i < entries.Length - 1; i++) {
+                entries[i]._next = new ExpiresEntryRef(pageIndex, i + 1);
+            }
+            entries[entries.Length - 1]._next = ExpiresEntryRef.INVALID;
+
+            EntriesI(pageIndex) = entries;
+
+            // increment count of pages and update _minEntriesInUse
+            _cPagesInUse++;
+            UpdateMinEntries();
+        }
+
+        // Consolidate ExpiresEntry's onto fewer pages when there are too many
+        // free entries.
+        void Reduce() {
+            // Test if we need to consolidate.
+            if (_cEntriesInUse >= _minEntriesInUse || _blockReduce)
+                return;
+
+            Debug.Assert(_freeEntryList._head != -1, "_freeEntryList._head != -1");
+            Debug.Assert(_freeEntryList._tail != -1, "_freeEntryList._tail != -1");
+            Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+
+            // Rearrange free page list to put pages with more free entries at the tail
+            int meanFree = (int) (NUM_ENTRIES - (NUM_ENTRIES * MIN_LOAD_FACTOR));
+            int pageIndexLast = _freeEntryList._tail;
+            int pageIndexCurrent = _freeEntryList._head;
+            int pageIndexNext;
+            ExpiresEntry[] entries;
+
+            for (;;) {
+                pageIndexNext = PageNext(pageIndexCurrent);
+
+                // move pages with greater than mean number
+                // of free items to tail, move the others to head
+                if (FreeEntryCount(EntriesI(pageIndexCurrent)) > meanFree) {
+                    MoveToListTail(pageIndexCurrent, ref _freeEntryList);
+                }
+                else {
+                    MoveToListHead(pageIndexCurrent, ref _freeEntryList);
+                }
+
+                // check if entire list has been examined
+                if (pageIndexCurrent == pageIndexLast)
+                    break;
+
+                // iterate
+                pageIndexCurrent = pageIndexNext;
+            }
+
+            // Move entries from the free pages at the tail to the 
+            // free pages at the front, and release the free pages at the tail.
+            for (;;) {
+                // See if there is room left to move entries used by the page.
+                if (_freeEntryList._tail == -1)
+                    break;
+
+                entries = EntriesI(_freeEntryList._tail);
+                Debug.Assert(FreeEntryCount(entries) > 0, "FreeEntryCount(entries) > 0");
+                int availableFreeEntries = (_cPagesInUse * NUM_ENTRIES) - FreeEntryCount(entries) - _cEntriesInUse;
+                if (availableFreeEntries < (NUM_ENTRIES - FreeEntryCount(entries)))
+                    break;
+
+                // Move each entry from the page at the tail to a page at the head.
+                for (int i = 1; i < entries.Length; i++) {
+                    // skip the free entries
+                    if (entries[i]._cacheEntry == null)
+                        continue;
+
+                    // get a free ExpiresEntry from the head of the list.
+                    Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+                    ExpiresEntryRef newRef = GetFreeExpiresEntry();
+                    Debug.Assert(newRef.PageIndex != _freeEntryList._tail, "newRef.PageIndex != _freeEntryList._tail");
+
+                    // update the CacheEntry
+                    CacheEntry cacheEntry = entries[i]._cacheEntry;
+
+#if DBG
+                    ExpiresEntryRef oldRef = new ExpiresEntryRef(_freeEntryList._tail, i);
+                    Debug.Assert(cacheEntry.ExpiresEntryRef == oldRef, "cacheEntry.ExpiresEntryRef == oldRef");
+#endif
+
+                    cacheEntry.ExpiresEntryRef = newRef;
+
+                    // copy old entry to new entry
+                    ExpiresEntry[] newEntries = EntriesR(newRef);
+                    newEntries[newRef.Index] = entries[i];
+
+                    // Update free entry count for debugging. We don't bother
+                    // to fix up the free entry list for this page as we are
+                    // going to release the page.
+                    FreeEntryCount(entries)++;
+                }
+
+                // now the page is free - release its memory
+                RemovePage(_freeEntryList._tail);
+
+                Debug.Validate("CacheValidateExpires", this);
+            }
+        }
+
+        // Add an entry to the bucket. This may occur the first time an item is added to the cache,
+        // or when the CacheEntry has a sliding expiration and is moved from one bucket to another.
+        internal void AddCacheEntry(CacheEntry cacheEntry) {
+            lock (this) {
+                // Test if the item is still added to the cache. When CacheExpires.UtcUpdate() is called, 
+                // the item is removed from CacheExpires, and the CacheEntry could be removed by Cache.Remove()
+                // on another thread while we are in this function.
+                if ((cacheEntry.State & (CacheEntry.EntryState.AddedToCache | CacheEntry.EntryState.AddingToCache)) == 0)
+                    return;
+
+                // If item is already added to a bucket, do nothing.
+                ExpiresEntryRef entryRef = cacheEntry.ExpiresEntryRef;
+                Debug.Assert((cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid, "(cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid");
+                if (cacheEntry.ExpiresBucket != 0xff || !entryRef.IsInvalid)
+                    return;
+
+                // Expand if there are no free ExpiresEntry's available.
+                if (_freeEntryList._head == -1) {
+                    Expand();
+                }
+
+                // get the free entry
+                ExpiresEntryRef freeRef = GetFreeExpiresEntry();
+                Debug.Assert(cacheEntry.ExpiresBucket == 0xff, "cacheEntry.ExpiresBucket == 0xff");
+                Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
+                cacheEntry.ExpiresBucket = _bucket;
+                cacheEntry.ExpiresEntryRef = freeRef;
+
+                // initialize index
+                ExpiresEntry[] entries = EntriesR(freeRef);
+                int entryIndex = freeRef.Index;
+                entries[entryIndex]._cacheEntry = cacheEntry;
+                entries[entryIndex]._utcExpires = cacheEntry.UtcExpires;
+
+                // update the count
+                AddCount(cacheEntry.UtcExpires);
+
+                _cEntriesInUse++;
+
+#if DBG 
+                {
+                    Debug.Trace("CacheExpiresAdd", 
+                                "Added item=" + cacheEntry.Key + 
+                                ",_bucket=" + _bucket + 
+                                ",_ref=" + freeRef + 
+                                ",now=" + Debug.FormatLocalDate(DateTime.Now) + 
+                                ",expires=" + DateTimeUtil.ConvertToLocalTime(cacheEntry.UtcExpires));
+    
+                    Debug.Validate("CacheValidateExpires", this);
+                    Debug.Dump("CacheExpiresAdd", this);
+                }
+#endif
+
+                // Test again if the item is still added to the cache. When an update occurs, 
+                // the item is removed from CacheExpires, and the CacheEntry could be removed
+                // on another thread while we are in this function.
+                // Since we don't know whether or not CacheSingle.UpdateCache has called CacheExpires.Remove(),
+                // we remove the item ourselves. RemoveCacheEntryNoLock protects itself against more than
+                // one remove of the cache item.
+                if ((cacheEntry.State & (CacheEntry.EntryState.AddedToCache | CacheEntry.EntryState.AddingToCache)) == 0) {
+                    RemoveCacheEntryNoLock(cacheEntry);
+                }
+            }
+        }
+
+        // Remove an item from the bucket. The caller must have a lock.
+        void RemoveCacheEntryNoLock(CacheEntry cacheEntry) {
+            ExpiresEntryRef entryRef = cacheEntry.ExpiresEntryRef;
+            if (cacheEntry.ExpiresBucket != _bucket || entryRef.IsInvalid)
+                return;
+
+            ExpiresEntry[]  entries = EntriesR(entryRef);
+            int             entryIndex = entryRef.Index;
+
+#if DBG
+            Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry, "cacheEntry == entries[entryIndex]._cacheEntry");
+#endif
+
+            // update Count
+            RemoveCount(entries[entryIndex]._utcExpires);
+
+            // update the cache entry
+            cacheEntry.ExpiresBucket = 0xff;
+            cacheEntry.ExpiresEntryRef = ExpiresEntryRef.INVALID;
+            entries[entryIndex]._cacheEntry = null;
+
+            // add to free list
+            AddExpiresEntryToFreeList(entryRef);
+
+            // reset count if able
+            if (_cEntriesInUse == 0) {
+                ResetCounts(DateTime.UtcNow);
+            }
+
+            // remove pages if necessary
+            Reduce();
+
+            Debug.Trace("CacheExpiresRemove", 
+                        "Removed item=" + cacheEntry.Key + 
+                        ",_bucket=" + _bucket + 
+                        ",ref=" + entryRef + 
+                        ",now=" + Debug.FormatLocalDate(DateTime.Now) +
+                        ",expires=" + DateTimeUtil.ConvertToLocalTime(cacheEntry.UtcExpires));
+
+
+            Debug.Validate("CacheValidateExpires", this);
+            Debug.Dump("CacheExpiresRemove", this);
+        }
+
+        // Remove an item from the bucket.
+        internal void RemoveCacheEntry(CacheEntry cacheEntry) {
+            lock (this) {
+                RemoveCacheEntryNoLock(cacheEntry);
+            }
+        }
+
+        // Update the expiration time of a cache entry, and the count.
+        internal void UtcUpdateCacheEntry(CacheEntry cacheEntry, DateTime utcExpires) {
+            lock (this) {
+                ExpiresEntryRef entryRef = cacheEntry.ExpiresEntryRef;
+                if (cacheEntry.ExpiresBucket != _bucket || entryRef.IsInvalid)
+                    return;
+
+                ExpiresEntry[]  entries = EntriesR(entryRef);
+                int             entryIndex = entryRef.Index;
+
+                Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry);
+
+                // update count
+                RemoveCount(entries[entryIndex]._utcExpires);
+                AddCount(utcExpires);
+
+                // update expires entry
+                entries[entryIndex]._utcExpires = utcExpires;
+
+                // update the cache entry
+                cacheEntry.UtcExpires = utcExpires;
+
+                Debug.Validate("CacheValidateExpires", this);
+                Debug.Trace("CacheExpiresUpdate", "Updated item " + cacheEntry.Key + " in bucket " + _bucket);
+            }
+        }
+
+        // Flush expired items from the cache.
+        internal int FlushExpiredItems(DateTime utcNow, bool useInsertBlock) {
+            // Check if there is something to flush
+            if (_cEntriesInUse == 0 || GetExpiresCount(utcNow) == 0)
+                return 0;
+
+            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+
+            // We create a list of ExpiresEntry's that we wish to flush. These entries
+            // are not considered free, so the page that holds them will not be removed.
+            ExpiresEntryRef inFlushHead = ExpiresEntryRef.INVALID;
+
+            ExpiresEntry[] entries;
+            int entryIndex;
+            CacheEntry cacheEntry;
+            int flushed = 0;
+
+            try {
+                if (useInsertBlock) {
+                    // Block insertion into the Cache if we're under high memory pressure
+                    _cacheExpires.CacheSingle.BlockInsertIfNeeded();
+                }
+                
+                lock (this) {
+                    Debug.Assert(_blockReduce == false, "_blockReduce == false");
+
+                    // Recheck if there is something to flush.
+                    if (_cEntriesInUse == 0 || GetExpiresCount(utcNow) == 0)
+                        return 0;
+
+#if DBG
+                    Debug.Trace("CacheExpiresFlush", "FlushExpiredItems ExpiresCount=" + GetExpiresCount(utcNow) +
+                                " bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+#endif
+
+                    // Walk through all ExpiresEntries, create a list of expired items, 
+                    // and recalculate count heuristics.
+                    ResetCounts(utcNow);
+                    int cPages = _cPagesInUse;
+                    for (int i = 0; i < _pages.Length; i++) {
+                        entries = _pages[i]._entries;
+                        if (entries != null) {
+                            int cEntries = NUM_ENTRIES - FreeEntryCount(entries);
+                            for (int j = 1; j < entries.Length; j++) {
+                                cacheEntry = entries[j]._cacheEntry;
+                                if (cacheEntry != null) {
+                                    if (entries[j]._utcExpires > utcNow) {
+                                        AddCount(entries[j]._utcExpires);
+                                    }
+                                    else {
+                                        // Remove reference from CacheEntry. We must do this before we
+                                        // release the lock, otherwise the item would be corrupted if
+                                        // UpdateCacheEntry or RemoveCacheEntry were called.
+                                        cacheEntry.ExpiresBucket = 0xff;
+                                        cacheEntry.ExpiresEntryRef = ExpiresEntryRef.INVALID;
+
+                                        // distinguish between items on free list and inflush list for debugging
+                                        entries[j]._cFree = 1;
+
+                                        // add it to the inFlush list
+                                        entries[j]._next = inFlushHead;
+                                        inFlushHead = new ExpiresEntryRef(i, j);
+
+                                        flushed++;
+                                        _cEntriesInFlush++;
+                                    }
+
+                                    cEntries--;
+                                    if (cEntries == 0)
+                                        break;
+                                }
+                            }
+
+                            cPages--;
+                            if (cPages == 0)
+                                break;
+                        }
+                    }
+
+                    if (flushed == 0) {
+                        Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
+                                    " expired items, bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+
+                        return 0;
+                    }
+
+                    // prevent pages from being moved by blocking Reduce().
+                    _blockReduce = true;
+                }
+            }
+            finally {
+                if (useInsertBlock) {
+                    // Don't hold any insertblock before we remove Cache items.  If not, the following
+                    // deadlock scenario may happen:
+                    // - 3rd party code hold lock A, call Cache.Insert, which wait for the Cache insertblock
+                    // - FlushExpiredItems holds the Cache insertBlock, call Cache.Remove, which call
+                    //   3rd party CacheItemRemovedCallback, which then try to get lock A
+                    
+                    _cacheExpires.CacheSingle.UnblockInsert();
+                }
+            }
+
+            Debug.Assert(!inFlushHead.IsInvalid, "!inFlushHead.IsInvalid");
+
+            // Remove items on the inFlush list from the rest of the cache.
+            CacheSingle cacheSingle = _cacheExpires.CacheSingle;
+            ExpiresEntryRef current = inFlushHead;
+            ExpiresEntryRef next;
+            while (!current.IsInvalid) {
+                entries = EntriesR(current);
+                entryIndex = current.Index;
+
+                next = entries[entryIndex]._next;
+                
+                // remove the entry
+                cacheEntry = entries[entryIndex]._cacheEntry;
+                entries[entryIndex]._cacheEntry = null;
+                Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
+                cacheSingle.Remove(cacheEntry, CacheItemRemovedReason.Expired);
+
+                //iterate
+                current = next;
+            }
+
+            try {
+                if (useInsertBlock) {
+                    // Block insertion into the Cache if we're under high memory pressure
+                    _cacheExpires.CacheSingle.BlockInsertIfNeeded();
+                }
+
+                lock (this) {
+                    // add each ExpiresEntry to the free list
+                    current = inFlushHead;
+                    while (!current.IsInvalid) {
+                        entries = EntriesR(current);
+                        entryIndex = current.Index;
+
+                        next = entries[entryIndex]._next;
+
+                        _cEntriesInFlush--;
+                        AddExpiresEntryToFreeList(current);
+
+                        //iterate
+                        current = next;
+                    }
+
+                    // try to reduce
+                    Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+                    _blockReduce = false;
+                    Reduce();
+
+                    Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
+                                " expired items, bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+
+                    Debug.Validate("CacheValidateExpires", this);
+                    Debug.Dump("CacheExpiresFlush", this);
+                }
+            }
+            finally {
+                if (useInsertBlock) {
+                    _cacheExpires.CacheSingle.UnblockInsert();
+                }
+            }
+
+            return flushed;
+        }
+
+#if DBG
+        internal void DebugValidate() {
+            int cFree = 0;               
+            int cEntriesInUse = 0;              
+            int cPagesInUse = 0;
+            int pagesLength;
+            int[] counts = new int[COUNTS_LENGTH];
+
+            if (_pages == null) {
+                pagesLength = 0;
+            }
+            else {
+                pagesLength = _pages.Length;
+            }
+
+            Debug.CheckValid(-1 <= _freePageList._head && _freePageList._head <= pagesLength, "-1 <= _freePageList._head && _freePageList._head <= pagesLength");
+            Debug.CheckValid(-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength, "-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength");
+            Debug.CheckValid(-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength, "-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength");
+            Debug.CheckValid((_freeEntryList._head == -1) == (_freeEntryList._tail == -1), "(_freeEntryList._head == -1) == (_freeEntryList._tail == -1)");
+            Debug.CheckValid(_minEntriesInUse >= -1, "_minEntriesInUse >= -1");
+            Debug.CheckValid(_cEntriesInFlush >= 0, "_cEntriesInFlush >= 0");
+
+            // check counts
+            for (int i = 0; i < pagesLength; i++) {
+                ExpiresEntry[] entries = _pages[i]._entries;
+                if (entries != null) {
+                    cPagesInUse++;
+                    cFree = 0;
+
+                    Debug.CheckValid(entries[0]._cacheEntry == null, "entries[0]._cacheEntry == null");
+
+                    for (int j = 1; j < entries.Length; j++) {
+                        if (entries[j]._cacheEntry == null && entries[j]._cFree == 0) {
+                            cFree++;
+                        }
+                        else {
+                            cEntriesInUse++;
+                        }
+                        
+                        if (entries[j]._cacheEntry != null && entries[j]._cFree != 1) {
+                            int ci = GetCountIndex(entries[j]._utcExpires);
+                            for (int k = _counts.Length - 1; k >= ci; k--) {
+                                counts[k]++;
+                            }
+                        }
+                    }
+
+                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+
+                    // walk the free list
+                    cFree = 0;
+                    if (!FreeEntryHead(entries).IsInvalid) {
+                        int j = FreeEntryHead(entries).Index;
+                        for (;;) {
+                            cFree++;
+                            Debug.CheckValid(cFree <= FreeEntryCount(entries), "cFree <= FreeEntryCount(entries)");
+
+                            if (entries[j]._next.IsInvalid)
+                                break;
+
+                            j = entries[j]._next.Index;
+                        }
+                    }
+                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+                }
+            }
+
+            Debug.CheckValid(cPagesInUse == _cPagesInUse, "cPagesInUse == _cPagesInUse");
+            Debug.CheckValid(cEntriesInUse == _cEntriesInUse, "cEntriesInUse == _cEntriesInUse");
+
+            for (int i = 0; i < _counts.Length; i++) {
+                Debug.CheckValid(_counts[i] == counts[i], "_counts[i] == counts[i]");
+            }
+
+            // walk the free slot list
+            int cFreeSlots = 0;
+            if (_freePageList._head != -1) {
+                for (int i = _freePageList._head; i != -1; i = _pages[i]._pageNext) {
+                    cFreeSlots++;
+                    Debug.CheckValid(cFreeSlots <= pagesLength, "cFreeSlots <= pagesLength");
+                    Debug.CheckValid(_pages[i]._entries == null, "_pages[i]._entries == null");
+                    if (_freePageList._head != i) {
+                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                    }
+
+                    if (_freePageList._tail != i) {
+                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                    }
+                }
+            }
+            Debug.CheckValid(cFreeSlots == pagesLength - _cPagesInUse, "cFreeSlots == pagesLength - _cPagesInUse");
+
+            // walk the free page list
+            int cFreeEntries = 0;
+            int cFreePages = 0;
+            if (_freeEntryList._head != -1) {
+                for (int i = _freeEntryList._head; i != -1; i = _pages[i]._pageNext) {
+                    cFreePages++;
+                    Debug.CheckValid(cFreePages <= pagesLength, "cFreePages < pagesLength");
+                    ExpiresEntry[] entries = _pages[i]._entries;
+                    Debug.CheckValid(entries != null, "entries != null");
+                    cFreeEntries += FreeEntryCount(entries);
+                    if (_freeEntryList._head != i) {
+                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                    }
+
+                    if (_freeEntryList._tail != i) {
+                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                    }
+                }
+            }
+
+            Debug.CheckValid(cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse, "cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse");
+        }
+
+        internal string DebugDescription(string indent) {
+            StringBuilder   sb = new StringBuilder();
+            string          i2 = indent + "    ";
+
+            sb.Append(indent + 
+                      "_bucket=" + _bucket + 
+                      ",_cEntriesInUse=" + _cEntriesInUse + 
+                      ",_cPagesInUse=" + _cPagesInUse + 
+                      ",_pages is " + (_pages == null ? "null" : "non-null") + 
+                      ",_minEntriesInUse=" + _minEntriesInUse + 
+                      ",_freePageList._head=" + _freePageList._head + 
+                      ",_freeEntryList._head=" + _freeEntryList._head + 
+                      ",_freeEntryList._tail=" + _freeEntryList._tail +
+                      "\n");
+
+            return sb.ToString();
+        }
+#endif
+    }
+
+    
+    /*
+     * Provides an expiration service for entries in the cache.
+     * Items with expiration times are placed into a configurable
+     * number of buckets. Each minute a bucket is examined for 
+     * expired items.
+     */
+    sealed class CacheExpires {
+        internal static readonly TimeSpan   MIN_UPDATE_DELTA = new TimeSpan(0, 0, 1);
+        internal static readonly TimeSpan   MIN_FLUSH_INTERVAL = new TimeSpan(0, 0, 1);
+        internal static readonly TimeSpan   _tsPerBucket = new TimeSpan(0, 0, 20);
+
+        const int                   NUMBUCKETS = 30;
+        static readonly TimeSpan    _tsPerCycle = new TimeSpan(NUMBUCKETS * _tsPerBucket.Ticks);
+
+        readonly CacheSingle      _cacheSingle;
+        readonly ExpiresBucket[]    _buckets;
+        DisposableGCHandleRef<Timer> _timerHandleRef;
+        DateTime                    _utcLastFlush;
+        int                         _inFlush;
+
+
+        internal CacheExpires(CacheSingle cacheSingle) {
+            Debug.Assert(NUMBUCKETS < Byte.MaxValue);
+
+            DateTime utcNow = DateTime.UtcNow;
+
+            _cacheSingle = cacheSingle;
+            _buckets = new ExpiresBucket[NUMBUCKETS];
+            for (byte b = 0; b < _buckets.Length; b++) {
+                _buckets[b] = new ExpiresBucket(this, b, utcNow);
+            }
+        }
+
+        int UtcCalcExpiresBucket(DateTime utcDate) {
+            long    ticksFromCycleStart = utcDate.Ticks % _tsPerCycle.Ticks;
+            int     bucket = (int) (((ticksFromCycleStart / _tsPerBucket.Ticks) + 1) % NUMBUCKETS);
+
+            return bucket;
+        }
+
+        int FlushExpiredItems(bool checkDelta, bool useInsertBlock) {
+            int flushed = 0;
+
+            if (Interlocked.Exchange(ref _inFlush, 1) == 0) {
+                try {
+                    // if the timer was disposed, return without doing anything
+                    if (_timerHandleRef == null) {
+                        return 0;
+                    }
+                    DateTime utcNow = DateTime.UtcNow;
+                    if (!checkDelta || utcNow - _utcLastFlush >= MIN_FLUSH_INTERVAL || utcNow < _utcLastFlush) {
+                        _utcLastFlush = utcNow;
+                        foreach (ExpiresBucket bucket in _buckets) {
+                            flushed += bucket.FlushExpiredItems(utcNow, useInsertBlock);
+                        }
+
+                        Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed a total of " + flushed + " items; Time=" + Debug.FormatLocalDate(DateTime.Now));
+                        Debug.Dump("CacheExpiresFlush", this);
+                    }
+
+                }
+                finally {
+                    Interlocked.Exchange(ref _inFlush, 0);
+                }
+            }
+
+            return flushed;
+        }
+
+        internal int FlushExpiredItems(bool useInsertBlock) {
+            return FlushExpiredItems(true, useInsertBlock);
+        }
+
+        void TimerCallback(object state) {
+            FlushExpiredItems(false, false);
+        }
+
+        internal void EnableExpirationTimer(bool enable) {
+#if DBG
+            if (Debug.IsTagPresent("Timer") && !Debug.IsTagEnabled("Timer")) {
+                enable = false;
+            }
+#endif
+
+            if (enable) {
+                if (_timerHandleRef == null) {
+                    DateTime utcNow = DateTime.UtcNow;
+                    TimeSpan due = _tsPerBucket - (new TimeSpan(utcNow.Ticks % _tsPerBucket.Ticks));
+                    Timer timer = new Timer(new TimerCallback(this.TimerCallback), null, 
+                            due.Ticks / TimeSpan.TicksPerMillisecond, _tsPerBucket.Ticks / TimeSpan.TicksPerMillisecond);
+                    _timerHandleRef = new DisposableGCHandleRef<Timer>(timer);
+
+                    Debug.Trace("Cache", "Cache expiration timer created.");
+                }
+            }
+            else {
+                DisposableGCHandleRef<Timer> timerHandleRef = _timerHandleRef;
+                if (timerHandleRef != null && Interlocked.CompareExchange(ref _timerHandleRef, null, timerHandleRef) == timerHandleRef) {
+                    timerHandleRef.Dispose();
+                    Debug.Trace("Cache", "Cache expiration timer disposed.");
+                    while (_inFlush != 0) {
+                        Thread.Sleep(100);
+                    }
+                }
+            }
+        }
+
+        internal CacheSingle CacheSingle {
+            get {
+                return _cacheSingle;
+            }
+        }
+
+        /*
+         * Adds an entry to the expires list.
+         * 
+         * @param entry The cache entry to add.
+         */
+        internal void Add(CacheEntry cacheEntry) {
+            DateTime utcNow = DateTime.UtcNow;
+            if (utcNow > cacheEntry.UtcExpires) {
+                cacheEntry.UtcExpires = utcNow;
+            }
+
+            int bucket = UtcCalcExpiresBucket(cacheEntry.UtcExpires);
+            _buckets[bucket].AddCacheEntry(cacheEntry);
+        }
+
+        /*
+         * Removes an entry from the expires list.
+         * 
+         * @param entry The cache entry to remove.
+         */
+        internal void Remove(CacheEntry cacheEntry) {
+            byte bucket = cacheEntry.ExpiresBucket;
+            if (bucket != 0xff) {
+                _buckets[bucket].RemoveCacheEntry(cacheEntry);
+            }
+        }
+
+        /*
+         * Updates an entry.
+         * 
+         */
+        internal void UtcUpdate(CacheEntry cacheEntry, DateTime utcNewExpires) {
+            int oldBucket = cacheEntry.ExpiresBucket;
+            int newBucket = UtcCalcExpiresBucket(utcNewExpires);
+            
+            if (oldBucket != newBucket) {
+                Debug.Trace("CacheExpiresUpdate", 
+                            "Updating item " + cacheEntry.Key + " from bucket " + oldBucket + " to new bucket " + newBucket);
+
+                if (oldBucket != 0xff) {
+                    _buckets[oldBucket].RemoveCacheEntry(cacheEntry);
+                    cacheEntry.UtcExpires = utcNewExpires;
+                    _buckets[newBucket].AddCacheEntry(cacheEntry);
+                }
+            } else {
+                if (oldBucket != 0xff) {
+                    _buckets[oldBucket].UtcUpdateCacheEntry(cacheEntry, utcNewExpires);
+                }
+            }
+        }
+
+
+#if DBG
+        internal void DebugValidate() {
+            int i;
+
+            for (i = 0; i < _buckets.Length; i++) {
+                _buckets[i].DebugValidate();
+            }
+        }
+
+        internal string DebugDescription(string indent) {
+            int             i;
+            StringBuilder   sb = new StringBuilder();
+            string          i2 = indent + "    ";
+
+            sb.Append(indent);
+            sb.Append("Cache expires\n");
+
+            for (i = 0; i < _buckets.Length; i++) {
+                sb.Append(_buckets[i].DebugDescription(i2));
+            }
+
+            return sb.ToString();
+        }
+#endif
+    }
+}
+

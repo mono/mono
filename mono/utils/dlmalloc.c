@@ -342,7 +342,7 @@ HAVE_MMAP                 default: 1 (true)
   able to unmap memory that may have be allocated using multiple calls
   to MMAP, so long as they are adjacent.
 
-HAVE_MREMAP               default: 1 on linux, else 0
+HAVE_MREMAP               default: 1 on linux and NetBSD, else 0
   If true realloc() uses mremap() to re-allocate large blocks and
   extend or shrink allocation spaces.
 
@@ -461,7 +461,9 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 #endif  /* _WIN32 */
 #endif  /* WIN32 */
 #ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #define HAVE_MMAP 1
 #define HAVE_MORECORE 0
@@ -483,13 +485,6 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 #define HAVE_MMAP 1
 #endif  /* HAVE_MORECORE */
 #endif  /* DARWIN */
-
-#if defined(__native_client__)
-#undef HAVE_MMAP
-#undef HAVE_MREMAP
-#define HAVE_MMAP 0
-#define HAVE_MREMAP 0
-#endif
 
 #ifndef LACKS_SYS_TYPES_H
 #include <sys/types.h>  /* For size_t */
@@ -536,11 +531,11 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 #define MMAP_CLEARS 1
 #endif  /* MMAP_CLEARS */
 #ifndef HAVE_MREMAP
-#ifdef linux
+#if defined(linux) || defined(__NetBSD__)
 #define HAVE_MREMAP 1
-#else   /* linux */
+#else   /* linux || __NetBSD__ */
 #define HAVE_MREMAP 0
-#endif  /* linux */
+#endif  /* linux || __NetBSD__ */
 #endif  /* HAVE_MREMAP */
 #ifndef MALLOC_FAILURE_ACTION
 #define MALLOC_FAILURE_ACTION  errno = ENOMEM;
@@ -1221,7 +1216,7 @@ extern void*     sbrk(ptrdiff_t);
 #      define _SC_PAGE_SIZE _SC_PAGESIZE
 #    endif
 #  endif
-#  ifdef _SC_PAGE_SIZE
+#  if defined (HAVE_SYSCONF) && defined (_SC_PAGESIZE)
 #    define malloc_getpagesize sysconf(_SC_PAGE_SIZE)
 #  else
 #    if defined(BSD) || defined(DGUX) || defined(HAVE_GETPAGESIZE)
@@ -1375,7 +1370,13 @@ static int win32munmap(void* ptr, size_t size) {
 #endif /* HAVE_MMAP */
 
 #if HAVE_MMAP && HAVE_MREMAP
+#if defined(linux)
 #define CALL_MREMAP(addr, osz, nsz, mv) mremap((addr), (osz), (nsz), (mv))
+#elif defined(__NetBSD__)
+#define CALL_MREMAP(addr, osz, nsz, mv) mremap((addr), (osz), (addr), (nsz), (mv))
+#else
+#define CALL_MREMAP(addr, osz, nsz, mv) MFAIL
+#endif
 #else  /* HAVE_MMAP && HAVE_MREMAP */
 #define CALL_MREMAP(addr, osz, nsz, mv) MFAIL
 #endif /* HAVE_MMAP && HAVE_MREMAP */

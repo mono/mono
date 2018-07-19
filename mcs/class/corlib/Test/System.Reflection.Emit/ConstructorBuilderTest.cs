@@ -195,23 +195,20 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
-	[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=341439
 	public void DefineParameter_Position_Zero ()
 	{
+		// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=341439
+		// https://msdn.microsoft.com/en-us/library/system.reflection.emit.constructorbuilder.defineparameter(v=vs.110).aspx
+		// "If you specify 0 (zero) for iSequence, this method returns
+		// a ParameterBuilder instead of throwing an exception. There
+		// is nothing useful that you can do with this
+		// ParameterBuilder."
+
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			0, 0, new Type [2] { typeof (int), typeof (int) });
 
-		try {
-			cb.DefineParameter (0, ParameterAttributes.In, "param1");
-			Assert.Fail ("#1");
-		} catch (ArgumentOutOfRangeException ex) {
-			// Specified argument was out of the range of valid values
-			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-			Assert.IsNull (ex.ActualValue, "#3");
-			Assert.IsNull (ex.InnerException, "#4");
-			Assert.IsNotNull (ex.Message, "#5");
-			Assert.IsNotNull (ex.ParamName, "#6");
-		}
+		var pb = cb.DefineParameter (0, ParameterAttributes.In, "param1");
+		Assert.IsNotNull (pb);
 	}
 
 	[Test]

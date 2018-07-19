@@ -16,6 +16,27 @@ namespace Mono.Data.Sqlite
 #endif
   internal static class UnsafeNativeMethods
   {
+    internal static readonly bool use_sqlite3_close_v2 = false;
+    internal static readonly bool use_sqlite3_open_v2 = false;
+    internal static readonly bool use_sqlite3_create_function_v2 = false;
+    static UnsafeNativeMethods()
+    {
+      // calculate the version number parts
+      // https://www.sqlite.org/c3ref/c_source_id.html
+      // (<major> * 1000000) + (<minor> * 1000) + (<release>)
+      int versionNumber = sqlite3_libversion_number();
+      int release = versionNumber % 1000;
+      int minor = (versionNumber / 1000) % 1000;
+      int major = versionNumber / 1000000;
+      Version version = new Version(major, minor, release);
+
+      // set the various versions
+      // https://sqlite.org/changes.html
+      use_sqlite3_open_v2 = version >= new Version(3, 5, 0);
+      use_sqlite3_close_v2 = version >= new Version(3, 7, 14);
+      use_sqlite3_create_function_v2 = version >= new Version(3, 7, 3);
+    }
+
 #if !SQLITE_STANDARD
 
 #if !USE_INTEROP_DLL
@@ -729,6 +750,13 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern int sqlite3_free (IntPtr ptr);
+
+#if !PLATFORM_COMPACTFRAMEWORK
+    [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+    [DllImport(SQLITE_DLL)]
+#endif
+    internal static extern int sqlite3_libversion_number();
 
     #endregion
   }

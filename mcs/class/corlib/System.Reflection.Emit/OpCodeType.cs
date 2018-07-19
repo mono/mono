@@ -25,7 +25,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME || IOS_REFLECTION
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -75,4 +74,3 @@ namespace System.Reflection.Emit {
 	}
 
 }
-#endif

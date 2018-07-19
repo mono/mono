@@ -29,7 +29,7 @@ namespace Mono.ILASM {
 
                 private PEFile pefile;
                 private ExternAssembly current_assemblyref;
-                private ExternModule current_moduleref;
+//                private ExternModule current_moduleref;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -61,17 +61,18 @@ namespace Mono.ILASM {
                 private long stack_reserve;
 
                 private string output_file;
-		private string debug_file;
                 private bool is_dll;
                 private bool entry_point;
+                bool noautoinherit;
 
                 private Module this_module;
 
-                public CodeGen (string output_file, bool is_dll, bool debugging_info)
+                public CodeGen (string output_file, bool is_dll, bool debugging_info, bool noautoinherit)
                 {
                         this.output_file = output_file;
                         this.is_dll = is_dll;
-
+                        this.noautoinherit = noautoinherit;
+                        
 			if (debugging_info)
 				symwriter = new SymbolWriter (output_file);
 
@@ -119,9 +120,9 @@ namespace Mono.ILASM {
                         get { return current_assemblyref; }
                 }
 
-                public ExternModule CurrentModuleRef {
-                        get { return current_moduleref; }
-                }
+//                public ExternModule CurrentModuleRef {
+//                        get { return current_moduleref; }
+//                }
 
                 public ICustomAttrTarget CurrentCustomAttrTarget {
                         get { return current_customattrtarget; }
@@ -314,7 +315,7 @@ namespace Mono.ILASM {
 
                         typedef = new TypeDef (attr, current_namespace,
                                         name, parent, impl_list, location, gen_params, outer);
-
+                        typedef.NoAutoInherit = noautoinherit && parent == null;
                         type_manager[cache_name] = typedef;
                         current_customattrtarget = current_typedef = typedef;
                         current_declsectarget = typedef;

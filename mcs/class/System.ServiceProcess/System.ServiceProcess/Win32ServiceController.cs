@@ -390,17 +390,17 @@ namespace System.ServiceProcess
 							throw new Win32Exception (err);
 						}
 					} else {
-						int iPtr = buffer.ToInt32 ();
+						IntPtr iPtr = buffer;
 
 						services = new ServiceController [servicesReturned];
 						for (int i = 0; i < servicesReturned; i++) {
 							ENUM_SERVICE_STATUS serviceStatus = (ENUM_SERVICE_STATUS) Marshal.PtrToStructure (
-								new IntPtr (iPtr), typeof (ENUM_SERVICE_STATUS));
+								iPtr, typeof (ENUM_SERVICE_STATUS));
 							// TODO: use internal ctor that takes displayname too ?
 							services [i] = new ServiceController (serviceStatus.pServiceName,
 								machineName);
 							// move on to the next services
-							iPtr += ENUM_SERVICE_STATUS.SizeOf;
+							iPtr = IntPtr.Add(iPtr, ENUM_SERVICE_STATUS.SizeOf);
 						}
 
 						// we're done, so exit the loop
@@ -611,17 +611,17 @@ namespace System.ServiceProcess
 							throw new Win32Exception (err);
 						}
 					} else {
-						int iPtr = buffer.ToInt32 ();
+						IntPtr iPtr = buffer;
 
 						services = new ServiceController [servicesReturned];
 						for (int i = 0; i < servicesReturned; i++) {
 							ENUM_SERVICE_STATUS_PROCESS serviceStatus = (ENUM_SERVICE_STATUS_PROCESS) Marshal.PtrToStructure (
-								new IntPtr (iPtr), typeof (ENUM_SERVICE_STATUS_PROCESS));
+								iPtr, typeof (ENUM_SERVICE_STATUS_PROCESS));
 							// TODO: use internal ctor that takes displayname too
 							services [i] = new ServiceController (serviceStatus.pServiceName,
 								machineName);
 							// move on to the next services
-							iPtr += ENUM_SERVICE_STATUS_PROCESS.SizeOf;
+							iPtr = IntPtr.Add(iPtr, ENUM_SERVICE_STATUS_PROCESS.SizeOf);
 						}
 
 						// we're done, so exit the loop

@@ -235,9 +235,9 @@ namespace System.Web
 			w.AppendToLog (param);
 		}
 
-		public override string ApplyAppPathModifier (string overridePath)
+		public override string ApplyAppPathModifier (string virtualPath)
 		{
-			return w.ApplyAppPathModifier (overridePath);
+			return w.ApplyAppPathModifier (virtualPath);
 		}
 
 		public override void BinaryWrite (byte [] buffer)

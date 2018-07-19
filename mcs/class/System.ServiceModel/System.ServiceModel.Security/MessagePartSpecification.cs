@@ -95,14 +95,14 @@ namespace System.ServiceModel.Security
 				header_types = new ReadOnlyCollection<XmlQualifiedName> (header_types);
 		}
 
-		public void Union (MessagePartSpecification other)
+		public void Union (MessagePartSpecification specification)
 		{
-			if (other == null)
-				throw new ArgumentNullException ("other");
+			if (specification == null)
+				throw new ArgumentNullException ("specification");
 			if (header_types.IsReadOnly)
 				throw new InvalidOperationException ("This MessagePartSpecification is read-only.");
-			body |= other.body;
-			foreach (XmlQualifiedName q in other.header_types)
+			body |= specification.body;
+			foreach (XmlQualifiedName q in specification.header_types)
 				// Sigh. It could be much better here.
 				//if (!header_types.Contains (q))
 					header_types.Add (q);

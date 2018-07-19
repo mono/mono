@@ -53,7 +53,7 @@ namespace SoapShared
 			Serialize(obj, ms);
 			ms.Position = 0;
 			Object des = Deserialize(ms);
-			Assertion.AssertEquals(obj.GetType(), des.GetType());
+			Assert.AreEqual (obj.GetType(), des.GetType());
 		}
 
 		private void Serialize(object ob, Stream stream)

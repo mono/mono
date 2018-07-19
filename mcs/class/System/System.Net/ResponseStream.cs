@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -81,19 +79,25 @@ namespace System.Net {
 				byte [] bytes = null;
 				MemoryStream ms = GetHeaders (true);
 				bool chunked = response.SendChunked;
-				if (ms != null) {
-					long start = ms.Position;
-					if (chunked && !trailer_sent) {
-						bytes = GetChunkSizeBytes (0, true);
-						ms.Position = ms.Length;
-						ms.Write (bytes, 0, bytes.Length);
+				if (stream.CanWrite) {
+					try {
+						if (ms != null) {
+							long start = ms.Position;
+							if (chunked && !trailer_sent) {
+								bytes = GetChunkSizeBytes (0, true);
+								ms.Position = ms.Length;
+								ms.Write (bytes, 0, bytes.Length);
+							}
+							InternalWrite (ms.GetBuffer (), (int) start, (int) (ms.Length - start));
+							trailer_sent = true;
+						} else if (chunked && !trailer_sent) {
+							bytes = GetChunkSizeBytes (0, true);
+							InternalWrite (bytes, 0, bytes.Length);
+							trailer_sent = true;
+						}
+					} catch (IOException) {
+						// Ignore error due to connection reset by peer
 					}
-					InternalWrite (ms.GetBuffer (), (int) start, (int) (ms.Length - start));
-					trailer_sent = true;
-				} else if (chunked && !trailer_sent) {
-					bytes = GetChunkSizeBytes (0, true);
-					InternalWrite (bytes, 0, bytes.Length);
-					trailer_sent = true;
 				}
 				response.Close ();
 			}
@@ -137,6 +141,8 @@ namespace System.Net {
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+			if (count == 0)
+				return;
 
 			byte [] bytes = null;
 			MemoryStream ms = GetHeaders (false);
@@ -240,5 +246,4 @@ namespace System.Net {
 		}
 	}
 }
-#endif
 

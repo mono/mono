@@ -1,21 +1,22 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
-../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+ReferenceSources/SR.missing.cs
 
-System.Web.Configuration/MembershipPasswordCompatibilityMode.cs
+../referencesource/System.Web.ApplicationServices/Configuration/MembershipPasswordCompatibilityMode.cs
+../referencesource/System.Web.ApplicationServices/Security/IMembershipAdapter.cs
 System.Web.Security/IMembershipHelper.cs
 
 System.Web.UI/KeyedList.cs
 System.Web.UI/KeyedListEnumerator.cs
-System.Web.Security/MembershipCreateStatus.cs
-System.Web.Security/MembershipCreateUserException.cs
-System.Web.Security/MembershipPasswordException.cs
-System.Web.Security/MembershipPasswordFormat.cs
-System.Web.Security/MembershipProviderCollection.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipCreateStatus.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipCreateUserException.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipPasswordException.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipPasswordFormat.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipProviderCollection.cs
 System.Web.Security/MembershipProvider.cs
-System.Web.Security/MembershipUserCollection.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipUserCollection.cs
 System.Web.Security/MembershipUser.cs
-System.Web.Security/MembershipValidatePasswordEventHandler.cs
+../referencesource/System.Web.ApplicationServices/Security/MembershipValidatePasswordEventHandler.cs
 System.Web.Security/RoleProvider.cs
-System.Web.Security/ValidatePasswordEventArgs.cs
+../referencesource/System.Web.ApplicationServices/Security/ValidatePasswordEventArgs.cs

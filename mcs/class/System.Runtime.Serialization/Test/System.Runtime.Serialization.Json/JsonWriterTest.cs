@@ -420,7 +420,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			w.WriteStartElement ("root");
 			w.WriteWhitespace ("\t  \n\r");
 			w.Close ();
-			Assert.AreEqual (@"""\u0009  \u000a\u000d""", ResultString);
+			Assert.AreEqual (@"""\t  \n\r""", ResultString);
 		}
 
 		[Test]

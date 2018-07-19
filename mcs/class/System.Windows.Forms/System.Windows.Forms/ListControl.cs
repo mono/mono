@@ -203,7 +203,7 @@ namespace System.Windows.Forms
 			set;
 		}
 
-		[Bindable(BindableSupport.Yes)]
+		[Bindable(true)]
 		[Browsable(false)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

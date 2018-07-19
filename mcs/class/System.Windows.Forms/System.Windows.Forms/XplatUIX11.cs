@@ -66,11 +66,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-
-// Only do the poll when building with mono for now
-#if __MonoCS__
 using Mono.Unix.Native;
-#endif
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -107,11 +103,9 @@ namespace System.Windows.Forms {
 		// Message Loop
 		static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
 		static ArrayList	unattached_timer_list; // holds timers that are enabled but not attached to a window.
-		#if __MonoCS__						//
 		static Pollfd[]		pollfds;		// For watching the X11 socket
 		static bool wake_waiting;
 		static object wake_waiting_lock = new object ();
-		#endif							//
 		static X11Keyboard	Keyboard;		//
 		static X11Dnd		Dnd;
 		static Socket		listen;			//
@@ -507,7 +501,6 @@ namespace System.Windows.Forms {
 
 				wake_receive = listen.Accept();
 
-				#if __MonoCS__
 				pollfds = new Pollfd [2];
 				pollfds [0] = new Pollfd ();
 				pollfds [0].fd = XConnectionNumber (DisplayHandle);
@@ -516,7 +509,6 @@ namespace System.Windows.Forms {
 				pollfds [1] = new Pollfd ();
 				pollfds [1].fd = wake_receive.Handle.ToInt32 ();
 				pollfds [1].events = PollEvents.POLLIN;
-				#endif
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
 				Dnd = new X11Dnd (DisplayHandle, Keyboard);
@@ -1732,7 +1724,6 @@ namespace System.Windows.Forms {
 				}
 
 				if (timeout > 0) {
-					#if __MonoCS__
 					int length = pollfds.Length - 1;
 					lock (wake_waiting_lock) {
 						if (wake_waiting == false) {
@@ -1750,7 +1741,6 @@ namespace System.Windows.Forms {
 							wake_waiting = false;
 						}
 					}
-					#endif
 					lock (XlibLock) {
 						pending = XPending (DisplayHandle);
 					}
@@ -2800,7 +2790,7 @@ namespace System.Windows.Forms {
 			//else if (format == "PenData" ) return 10;
 			//else if (format == "RiffAudio" ) return 11;
 			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UTF16_STRING.ToInt32();
+			else if (format == "UnicodeText" ) return UTF8_STRING.ToInt32();
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;
@@ -2842,7 +2832,7 @@ namespace System.Windows.Forms {
 					try {
 						var clipboardAtom = gdk_atom_intern ("CLIPBOARD", true);
 						var clipboard = gtk_clipboard_get (clipboardAtom);
-						if (clipboard != null) {
+						if (clipboard != IntPtr.Zero) {
 							// for now we only store text
 							var text = Clipboard.GetRtfText ();
 							if (string.IsNullOrEmpty (text))
@@ -2932,9 +2922,8 @@ namespace System.Windows.Forms {
 			}
 
 			// Set the default location location for forms.
-			Point next;
-			if (cp.control is Form) {
-				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				Point next = Hwnd.GetNextStackedFormLocation (cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -3058,7 +3047,7 @@ namespace System.Windows.Forms {
 					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 			}
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height)
@@ -3904,13 +3893,18 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle)
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
 			return IntPtr.Zero;
 		}
@@ -5121,9 +5115,6 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearInvalidArea();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
@@ -5138,26 +5129,16 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearNcInvalidArea ();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client)
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == true) {
 				ShowCaret();
@@ -5850,12 +5831,11 @@ namespace System.Windows.Forms {
 		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner)
 		{
 			Hwnd hwnd;
-			Hwnd hwnd_owner;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (handle_owner != IntPtr.Zero) {
-				hwnd_owner = Hwnd.ObjectFromHandle(handle_owner);
+				hwnd.owner = Hwnd.ObjectFromHandle(handle_owner);
 				lock (XlibLock) {
 					int[]	atoms;
 
@@ -5864,13 +5844,14 @@ namespace System.Windows.Forms {
 					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					if (hwnd_owner != null) {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
+					if (hwnd.owner != null) {
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.owner.whole_window);
 					} else {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
 					}
 				}
 			} else {
+				hwnd.owner = null;
 				lock (XlibLock) {
 					XDeleteProperty(DisplayHandle, hwnd.whole_window, (IntPtr)Atom.XA_WM_TRANSIENT_FOR);
 				}
@@ -6005,14 +5986,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				//Hack?
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				if (hwnd.fixed_size) {
 					SetWindowMinMax(handle, Rectangle.Empty, new Size(width, height), new Size(width, height));
 				}

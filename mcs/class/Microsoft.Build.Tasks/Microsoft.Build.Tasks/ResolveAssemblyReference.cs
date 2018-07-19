@@ -128,6 +128,10 @@ namespace Microsoft.Build.Tasks {
 			relatedFiles = tempRelatedFiles.Values.ToArray ();
 			resolvedDependencyFiles = tempResolvedDepFiles.Values.ToArray ();
 
+#if XBUILD_14
+			DependsOnSystemRuntime = resolvedDependencyFiles.Any (x => Path.GetFileName (x.ItemSpec) == "System.Runtime.dll").ToString ();
+#endif
+
 			tempResolvedFiles.Clear ();
 			tempCopyLocalFiles.Clear ();
 			tempSatelliteFiles.Clear ();

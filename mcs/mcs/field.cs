@@ -244,6 +244,10 @@ namespace Mono.CSharp
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
 			}
 
+			if (member_type.HasNamedTupleElement) {
+				Module.PredefinedAttributes.TupleElementNames.EmitAttribute (FieldBuilder, member_type, Location);
+			}
+
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
@@ -257,7 +261,8 @@ namespace Mono.CSharp
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute", GetSignatureForError ());
 			}
 
-			ConstraintChecker.Check (this, member_type, type_expr.Location);
+			if (!IsCompilerGenerated)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
 		}
@@ -311,7 +316,7 @@ namespace Mono.CSharp
 			}
 		}
 
-#endregion
+		#endregion
 
 		public FieldInfo GetMetaInfo ()
 		{
@@ -537,7 +542,7 @@ namespace Mono.CSharp
 				}
 			);
 
-			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out _));
 #endif
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
@@ -554,7 +559,8 @@ namespace Mono.CSharp
 			encoder.Encode (buffer_size);
 			encoder.EncodeEmptyNamedArguments ();
 
-			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			Module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -693,6 +699,16 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		protected override void DoMemberTypeIndependentChecks ()
+		{
+			if ((Parent.PartialContainer.ModFlags & Modifiers.READONLY) != 0 && (ModFlags & (Modifiers.READONLY | Modifiers.STATIC)) == 0) {
+				Report.Error (8340, Location, "`{0}': Instance fields in readonly structs must be readonly",
+					GetSignatureForError ());
+			}
+
+			base.DoMemberTypeIndependentChecks ();
 		}
 
 		protected override void DoMemberTypeDependentChecks ()

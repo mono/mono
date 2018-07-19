@@ -5,10 +5,8 @@ include ../../../build/rules.make
 LIBRARY = nunit.core.extensions.dll
 LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LIB_MCS_FLAGS = \
-	-debug \
-	/r:nunit.core.dll /r:nunit.core.interfaces.dll \
-	/r:System.Xml.dll /r:System.dll /d:StronglyNamedAssembly
+LIB_MCS_FLAGS =  /d:StronglyNamedAssembly /publicsign /keyfile:../../nunit.snk
+LIB_REFS = nunit.core nunit.core.interfaces System.Xml System
 NO_TEST = yo
 
 EXTRA_DISTFILES = \

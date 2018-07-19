@@ -1,4 +1,6 @@
-/* NOTE NOTE NOTE
+/**
+ * \file
+ * NOTE NOTE NOTE
  * No additional wrapper types should be added.
  * If a new wrapper is asolutely necessary, an existing one needs
  * to be removed first (with all the change that implies).
@@ -17,11 +19,8 @@ WRAPPER(XDOMAIN_INVOKE, "xdomain-invoke")
 WRAPPER(XDOMAIN_DISPATCH, "xdomain-dispatch")
 WRAPPER(LDFLD, "ldfld")
 WRAPPER(STFLD, "stfld")
-WRAPPER(LDFLD_REMOTE, "ldfld-remote")
-WRAPPER(STFLD_REMOTE, "stfld-remote")
 WRAPPER(SYNCHRONIZED, "synchronized")
 WRAPPER(DYNAMIC_METHOD, "dynamic-method")
-WRAPPER(ISINST, "isinst")
 WRAPPER(CASTCLASS, "castclass")
 WRAPPER(PROXY_ISINST, "proxy_isinst")
 WRAPPER(STELEMREF, "stelemref")

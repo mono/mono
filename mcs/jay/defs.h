@@ -162,6 +162,7 @@ struct bucket
     short value;
     short index;
     short prec;
+#define class clas
     char class;
     char assoc;
 };
@@ -236,23 +237,24 @@ extern char *input_file_name;
 extern char *prolog_file_name;
 extern char *local_file_name;
 extern char *verbose_file_name;
+extern char *output_file_name;
 
 extern FILE *action_file;
 extern FILE *input_file;
 extern FILE *prolog_file;
 extern FILE *local_file;
 extern FILE *verbose_file;
+extern FILE *output_file;
 
 extern int nitems;
 extern int nrules;
 extern int nsyms;
 extern int ntokens;
 extern int nvars;
-extern int ntags;
 extern int nmethods;
 
-extern char *line_format;
-extern char *default_line_format;
+extern const char *line_format;
+extern const char *default_line_format;
 
 extern int   start_symbol;
 extern char  **symbol_name;
@@ -300,8 +302,155 @@ extern short final_state;
 
 /* global functions */
 
-extern char *allocate();
-extern bucket *lookup();
-extern bucket *make_bucket();
+char *
+allocate (unsigned);
 
+bucket *
+lookup (const char *);
 
+bucket *
+make_bucket (const char *);
+
+void
+reflexive_transitive_closure (unsigned *R, int n);
+
+void
+done (int);
+
+void
+fatal (const char*);
+
+void
+no_space (void);
+
+void
+finalize_closure (void);
+
+void
+closure (short *nucleus, int n);
+
+void
+set_first_derives (void);
+
+void
+open_error (const char *filename);
+
+void
+make_parser (void);
+
+void
+free_parser (void);
+
+void
+lr0 (void);
+
+void
+output (void);
+
+void
+verbose (void);
+
+void
+xxlr0 (void);
+
+void
+reader (void);
+
+void
+lalr (void);
+
+void
+free_symbols (void);
+
+void
+free_symbol_table (void);
+
+void
+create_symbol_table (void);
+
+void
+fatal (const char *msg);
+
+void
+no_space (void);
+
+void
+open_error (const char *filename);
+
+void
+unexpected_EOF (void);
+
+void
+syntax_error (int st_lineno, const char *st_line, const char *st_cptr);
+
+void
+unterminated_comment (int c_lineno, const char *c_line, const char *c_cptr);
+
+void
+unterminated_string (int s_lineno, const char *s_line, const char *s_cptr);
+
+void
+unterminated_text (int t_lineno, const char *t_line, const char *t_cptr);
+
+void
+illegal_tag (int t_lineno, const char *t_line, const char *t_cptr);
+
+void
+illegal_character (const char *c_cptr);
+
+void
+used_reserved (const char *s);
+
+void
+tokenized_start (const char *s);
+
+void
+retyped_warning (const char *s);
+
+void
+reprec_warning (const char *s);
+
+void
+revalued_warning (const char *s);
+
+void
+terminal_start (const char *s);
+
+void
+restarted_warning (void);
+
+void
+no_grammar (void);
+
+void
+terminal_lhs (int s_lineno);
+
+void
+prec_redeclared (void);
+
+void
+unterminated_action (int a_lineno, const char *a_line, const char *a_cptr);
+
+void
+dollar_warning (int a_lineno, int i);
+
+void
+dollar_error (int a_lineno, const char *a_line, char *a_cptr);
+
+void
+untyped_lhs (void);
+
+void
+untyped_rhs (int i,  const char *s);
+
+void
+unknown_rhs (int i);
+
+void
+default_action_warning (void);
+
+void
+undefined_goal (const char *s);
+
+void
+undefined_symbol_warning (const char *s);

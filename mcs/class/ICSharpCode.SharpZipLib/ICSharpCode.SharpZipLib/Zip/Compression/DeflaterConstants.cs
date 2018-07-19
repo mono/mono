@@ -45,6 +45,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// <summary>
 	/// This class contains constants used for deflation.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DeflaterConstants 
 	{
 		/// <summary>

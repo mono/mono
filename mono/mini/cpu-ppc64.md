@@ -45,14 +45,14 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
-tailcall: len:120 clob:c
+tailcall: len:124 clob:c
+tailcall_parameter: len:0 # PowerPC outputs a nice fixed size memcpy loop for larger stack_usage, so 0.
 memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
 break: len:40
 seq_point: len:48
 il_seq_point: len:0
-jmp: len:96
 call: dest:a clob:c len:36
 br: len:4
 throw: src1:i len:40
@@ -133,6 +133,10 @@ storer8_memindex: dest:b src1:i src2:i len:4
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
 fmove: dest:f src1:f len:4
+move_f_to_i4: dest:i src1:f len:8
+move_i4_to_f: dest:f src1:i len:8
+move_f_to_i8: dest:i src1:f len:8
+move_i8_to_f: dest:f src1:i len:8
 add_imm: dest:i src1:i len:4
 sub_imm: dest:i src1:i len:4
 mul_imm: dest:i src1:i len:4
@@ -201,6 +205,9 @@ float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
+float_cneq: dest:i src1:f src2:f len:16
+float_cge: dest:i src1:f src2:f len:16
+float_cle: dest:i src1:f src2:f len:16
 call_handler: len:12 clob:c
 endfilter: src1:i len:20
 aot_const: dest:i len:8
@@ -217,11 +224,13 @@ ppc_subfic: dest:i src1:i len:4
 ppc_subfze: dest:i src1:i len:4
 bigmul: len:12 dest:i src1:i src2:i
 bigmul_un: len:12 dest:i src1:i src2:i
-tls_get: len:8 dest:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -293,6 +302,12 @@ int_cgt: dest:i len:12
 int_cgt_un: dest:i len:12
 int_clt: dest:i len:12
 int_clt_un: dest:i len:12
+
+int_cneq: dest:i len:12
+int_cge: dest:i len:12
+int_cle: dest:i len:12
+int_cge_un: dest:i len:12
+int_cle_un: dest:i len:12
 
 cond_exc_ieq: len:8
 cond_exc_ine_un: len:8
@@ -387,4 +402,6 @@ atomic_add_i8: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 atomic_cas_i8: src1:b src2:i src3:i dest:i len:38
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

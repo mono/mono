@@ -569,6 +569,7 @@ public class BinaryWriterTest {
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void AsynchronousModeWrites ()
 	{
 		string filename = Path.Combine (TempFolder, "myfilename");

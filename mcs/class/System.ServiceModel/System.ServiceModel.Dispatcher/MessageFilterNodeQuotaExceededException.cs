@@ -38,19 +38,19 @@ namespace System.ServiceModel.Dispatcher
 		Collection<MessageFilter> filters;
 
 		public MessageFilterException () : this ("MessageFilter node quota exceeded.") {}
-		public MessageFilterException (string msg) : base (msg) {}
-		public MessageFilterException (string msg, Exception inner) : base (msg, inner) {}		
+		public MessageFilterException (string message) : base (message) {}
+		public MessageFilterException (string message, Exception innerException) : base (message, innerException) {}		
 		protected MessageFilterException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}
 
-		public MessageFilterException (string msg, Collection<MessageFilter> filters)
-			: base (msg)
+		public MessageFilterException (string message, Collection<MessageFilter> filters)
+			: base (message)
 		{
 			this.filters = filters;
 		}
 
-		public MessageFilterException (string msg, Exception inner, Collection<MessageFilter> filters)
-			: base (msg, inner)
+		public MessageFilterException (string message, Exception innerException, Collection<MessageFilter> filters)
+			: base (message, innerException)
 		{
 			this.filters = filters;
 		}

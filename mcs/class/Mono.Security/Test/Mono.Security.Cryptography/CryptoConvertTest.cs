@@ -15,7 +15,7 @@ using Mono.Security.Cryptography;
 namespace MonoTests.Mono.Security.Cryptography {
 
 	[TestFixture]
-	public class CryptoConvertTest : Assertion {
+	public class CryptoConvertTest {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -23,9 +23,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Fail (msg + " -> First array is NULL");
+				Assert.Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Fail (msg + " -> Second array is NULL");
+				Assert.Fail (msg + " -> Second array is NULL");
 	        
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -38,7 +38,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			}
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
-			Assert (msg, a);
+			Assert.IsTrue (a, msg);
 		}
 
 		// strongname generated using "sn -k unit.snk"
@@ -163,16 +163,16 @@ namespace MonoTests.Mono.Security.Cryptography {
 		{
 			// keypair
 			RSA rsa = CryptoConvert.FromCapiKeyBlob (strongName, 0);
-			AssertEquals ("KeyPair", strongNameString, rsa.ToXmlString (true));
-			AssertEquals ("PublicKey-1", strongNamePublicKeyString, rsa.ToXmlString (false));
+			Assert.AreEqual (strongNameString, rsa.ToXmlString (true), "KeyPair");
+			Assert.AreEqual (strongNamePublicKeyString, rsa.ToXmlString (false), "PublicKey-1");
 
 			// public key (direct)
 			rsa = CryptoConvert.FromCapiKeyBlob (strongNamePublicKey, 12);
-			AssertEquals ("PublicKey-2", strongNamePublicKeyString, rsa.ToXmlString (false));
+			Assert.AreEqual (strongNamePublicKeyString, rsa.ToXmlString (false), "PublicKey-2");
 
 			// public key (indirect - inside header)
 			rsa = CryptoConvert.FromCapiKeyBlob (strongNamePublicKey, 0);
-			AssertEquals ("PublicKey-3", strongNamePublicKeyString, rsa.ToXmlString (false));
+			Assert.AreEqual (strongNamePublicKeyString, rsa.ToXmlString (false), "PublicKey-3");
 		}
 
 		[Test]
@@ -201,7 +201,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromCapiPrivateKeyBlob () 
 		{
 			RSA rsa = CryptoConvert.FromCapiPrivateKeyBlob (strongName, 0);
-			AssertEquals ("KeyPair", strongNameString, rsa.ToXmlString (true));
+			Assert.AreEqual (strongNameString, rsa.ToXmlString (true), "KeyPair");
 		}
 
 		[Test]
@@ -229,7 +229,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromCapiPublicKeyBlob () 
 		{
 			RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (strongNamePublicKey, 12);
-			AssertEquals ("PublicKey", strongNamePublicKeyString, rsa.ToXmlString (false));
+			Assert.AreEqual (strongNamePublicKeyString, rsa.ToXmlString (false), "PublicKey");
 		}
 
 		[Test]
@@ -262,12 +262,12 @@ namespace MonoTests.Mono.Security.Cryptography {
 			AssertEquals ("RSA-KeyPair", strongName, keypair);
 
 			byte[] publicKey = CryptoConvert.ToCapiKeyBlob (rsa, false);
-			AssertEquals ("RSA-PublicKey", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+			Assert.AreEqual (BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey), "RSA-PublicKey");
 			
 			AsymmetricAlgorithm dsa = DSA.Create ();
 			dsa.FromXmlString (dsaKeyPairString);
 			AssertEquals ("DSA-KeyPair", dsaPrivBlob, CryptoConvert.ToCapiKeyBlob (dsa, true));
-			AssertEquals ("DSA-PublicKey", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (CryptoConvert.ToCapiKeyBlob (dsa, false)));
+			Assert.AreEqual (BitConverter.ToString (dsaPubBlob), BitConverter.ToString (CryptoConvert.ToCapiKeyBlob (dsa, false)), "DSA-PublicKey");
 		}
 
 		[Test]
@@ -279,7 +279,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			AssertEquals ("KeyPair", strongName, keypair);
 
 			byte[] publicKey = CryptoConvert.ToCapiKeyBlob (rsa, false);
-			AssertEquals ("PublicKey", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+			Assert.AreEqual (BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey), "PublicKey");
 		}
 
 		[Test]
@@ -323,11 +323,11 @@ namespace MonoTests.Mono.Security.Cryptography {
 			// full keypair
 			rsa.FromXmlString (strongNameString);
 			byte[] publicKey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
-			AssertEquals ("PublicKey-1", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+			Assert.AreEqual (BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey), "PublicKey-1");
 			// public key only
 			rsa.FromXmlString (strongNamePublicKeyString);
 			publicKey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
-			AssertEquals ("PublicKey-2", BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey));
+			Assert.AreEqual (BitConverter.ToString (strongNamePublicKey, 12), BitConverter.ToString (publicKey), "PublicKey-2");
 		}
 
 		/* DSA key tests */
@@ -419,8 +419,8 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromCapiKeyBlobDSA ()
 		{
 			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (dsaPrivBlob);
-			AssertEquals ("KeyPair", dsaKeyPairString, dsa.ToXmlString (true));
-			AssertEquals ("PublicKey", dsaPubKeyString, dsa.ToXmlString (false));
+			Assert.AreEqual (dsaKeyPairString, dsa.ToXmlString (true), "KeyPair");
+			Assert.AreEqual (dsaPubKeyString, dsa.ToXmlString (false), "PublicKey");
 		}
 
 		[Test]
@@ -449,7 +449,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromCapiPrivateKeyBlobDSA ()
 		{
 			DSA dsa = CryptoConvert.FromCapiPrivateKeyBlobDSA (dsaPrivBlob, 0);
-			AssertEquals ("KeyPair", dsaKeyPairString, dsa.ToXmlString (true));
+			Assert.AreEqual (dsaKeyPairString, dsa.ToXmlString (true), "KeyPair");
 		}
 
 		[Test]
@@ -478,7 +478,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void FromCapiPublicKeyBlobDSA ()
 		{
 			DSA dsa = CryptoConvert.FromCapiPublicKeyBlobDSA (dsaPubBlob, 0);
-			AssertEquals ("PublicKey", dsaPubKeyString, dsa.ToXmlString (false));
+			Assert.AreEqual (dsaPubKeyString, dsa.ToXmlString (false), "PublicKey");
 		}
 
 		[Test]
@@ -512,7 +512,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			AssertEquals ("KeyPair", dsaPrivBlob, keypair);
 
 			byte[] pubkey = CryptoConvert.ToCapiKeyBlob (dsa, false);
-			AssertEquals ("PublicKey", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
+			Assert.AreEqual (BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey), "PublicKey");
 		}
 
 		[Test]
@@ -548,20 +548,20 @@ namespace MonoTests.Mono.Security.Cryptography {
 			// full keypair
 			dsa.FromXmlString (dsaKeyPairString);
 			byte[] pubkey = CryptoConvert.ToCapiPublicKeyBlob (dsa);
-			AssertEquals ("PublicKey-1", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
+			Assert.AreEqual (BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey), "PublicKey-1");
 
 			// public key only
 			dsa.FromXmlString (dsaPubKeyString);
 			pubkey = CryptoConvert.ToCapiPublicKeyBlob (dsa);
-			AssertEquals ("PublicKey-2", BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey));
+			Assert.AreEqual (BitConverter.ToString (dsaPubBlob), BitConverter.ToString (pubkey), "PublicKey-2");
 		}
 
 		[Test]
 		public void FromHex () 
 		{
-			AssertNull ("FromHex(null)", CryptoConvert.FromHex (null));
+			Assert.IsNull (CryptoConvert.FromHex (null), "FromHex(null)");
 			string result = BitConverter.ToString (CryptoConvert.FromHex ("0123456789aBcDeF"));
-			AssertEquals ("0123456789abcdef", "01-23-45-67-89-AB-CD-EF", result);
+			Assert.AreEqual ("01-23-45-67-89-AB-CD-EF", result, "0123456789abcdef");
 		}
 
 		[Test]
@@ -581,9 +581,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 		[Test]
 		public void ToHex () 
 		{
-			AssertNull ("FromHex(null)", CryptoConvert.FromHex (null));
+			Assert.IsNull (CryptoConvert.FromHex (null), "FromHex(null)");
 			byte[] data = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef };
-			AssertEquals ("0123456789abcdef", "0123456789ABCDEF", CryptoConvert.ToHex (data));
+			Assert.AreEqual ("0123456789ABCDEF", CryptoConvert.ToHex (data), "0123456789abcdef");
 		}
 		
 		[Test]
@@ -595,8 +595,8 @@ namespace MonoTests.Mono.Security.Cryptography {
 			RSA rsa = CryptoConvert.FromCapiKeyBlob (strongNameNUnit, 0);
 			// note the bad D parameters !!!
 			// this only works because CRT is being used
-			AssertEquals ("KeyPair", "<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent><P>2d4pGForvc792ztFxhNuzxIihDnXp+qK9F8t/NduhRBdu+JXK4d8a9EGwzpMxLUPlHjCZfXRraZiSQszkH+nzQ==</P><Q>yj9BeGmOrucOUCNZYTtXI0ykzz+1g+cVMSxi+6xzoLEOqmdE4gjcWaxak4MF1+pIR6UycnNa/jg1LBl7MKxpCw==</Q><DP>cMkAjznG4Sjx4/dIRKU0vP/PXJIxIR1bN+y5+uVvsnTpgWVH6SHneE0qahCZQ0/UM/Fb+bqLBJFY2iVxWUGslQ==</DP><DQ>gz6TXPGbLzMv3Z9i5C8e+ABHv1pHj6ZI4VU9kraxfmkH7FsBn3FClUq8qJdRFnGpoBy65Pyo4upUzx5mDAsGSw==</DQ><InverseQ>x+UShV+0d9cicoiB9fkSLqpLDyF4dYzVu0uqX0eCcoGJpk19jtSaMI3Eo8VN6MJAW1zrRy+MA1Fqb9qeThLqZQ==</InverseQ><D>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</D></RSAKeyValue>", rsa.ToXmlString (true));
-			AssertEquals ("PublicKey", "<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", rsa.ToXmlString (false));
+			Assert.AreEqual ("<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent><P>2d4pGForvc792ztFxhNuzxIihDnXp+qK9F8t/NduhRBdu+JXK4d8a9EGwzpMxLUPlHjCZfXRraZiSQszkH+nzQ==</P><Q>yj9BeGmOrucOUCNZYTtXI0ykzz+1g+cVMSxi+6xzoLEOqmdE4gjcWaxak4MF1+pIR6UycnNa/jg1LBl7MKxpCw==</Q><DP>cMkAjznG4Sjx4/dIRKU0vP/PXJIxIR1bN+y5+uVvsnTpgWVH6SHneE0qahCZQ0/UM/Fb+bqLBJFY2iVxWUGslQ==</DP><DQ>gz6TXPGbLzMv3Z9i5C8e+ABHv1pHj6ZI4VU9kraxfmkH7FsBn3FClUq8qJdRFnGpoBy65Pyo4upUzx5mDAsGSw==</DQ><InverseQ>x+UShV+0d9cicoiB9fkSLqpLDyF4dYzVu0uqX0eCcoGJpk19jtSaMI3Eo8VN6MJAW1zrRy+MA1Fqb9qeThLqZQ==</InverseQ><D>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</D></RSAKeyValue>", rsa.ToXmlString (true), "KeyPair");
+			Assert.AreEqual ("<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", rsa.ToXmlString (false), "PublicKey");
 		}
 	}
 }

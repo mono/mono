@@ -1,4 +1,3 @@
-﻿#if NET_4_5
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -137,4 +136,3 @@ namespace MonoTests.System.Web.Security {
 		}
 	}
 }
-#endif

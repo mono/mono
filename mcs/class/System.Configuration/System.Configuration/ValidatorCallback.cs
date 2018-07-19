@@ -30,6 +30,6 @@ using System;
 using System.IO;
 
 namespace System.Configuration {
-	public delegate void ValidatorCallback (object o);
+	public delegate void ValidatorCallback (object value);
 }
 

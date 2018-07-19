@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -131,7 +131,8 @@ namespace MonoTests.System.ServiceModel
 		public void InitializeRuntime () {
 			Poker host = new Poker ();
 			host.CallInitializeDescription ();
-			EndpointAddress address = new EndpointAddress ("http://localhost:8090/");
+			var port = NetworkHelpers.FindFreePort ();
+			EndpointAddress address = new EndpointAddress ("http://localhost:" + port + "/");
 			ContractDescription contract = ContractDescription.GetContract (typeof (IMyContract));
 			ServiceEndpoint endpoint = new ServiceEndpoint (contract, new BasicHttpBinding (), address);
 			endpoint.ListenUri = address.Uri;
@@ -377,7 +378,8 @@ namespace MonoTests.System.ServiceModel
 		public void AddServiceEndpoint_Directly ()
 		{
 			var host = new ServiceHost (typeof (DummyService));
-			var address = new EndpointAddress ("http://localhost:30158");
+			var port = NetworkHelpers.FindFreePort ();
+			var address = new EndpointAddress ("http://localhost:" + port);
 			var binding = new BasicHttpBinding ();
 			var contract = ContractDescription.GetContract (typeof (IDummyService));
 			host.AddServiceEndpoint (new ServiceEndpoint (contract, binding, address));
@@ -398,7 +400,8 @@ namespace MonoTests.System.ServiceModel
 		public void AddServiceEndpoint_Directly_NullBinding ()
 		{
 			var host = new ServiceHost (typeof (DummyService));
-			var address = new EndpointAddress ("http://localhost:30158");
+			var port = NetworkHelpers.FindFreePort ();
+			var address = new EndpointAddress ("http://localhost:" + port);
 			var contract = ContractDescription.GetContract (typeof (IDummyService));
 			host.AddServiceEndpoint (new ServiceEndpoint (contract, null, address));
 		}
@@ -416,7 +419,8 @@ namespace MonoTests.System.ServiceModel
 		public void AddServiceEndpoint_Directly_ContractMismatch ()
 		{
 			var host = new ServiceHost (typeof (DummyService));
-			var address = new EndpointAddress ("http://localhost:30158");
+			var port = NetworkHelpers.FindFreePort ();
+			var address = new EndpointAddress ("http://localhost:" + port);
 			var binding = new BasicHttpBinding ();
 			var contract = ContractDescription.GetContract (typeof (INotImplementedService));
 			host.AddServiceEndpoint (new ServiceEndpoint (contract, binding, address));
@@ -741,3 +745,4 @@ namespace MonoTests.System.ServiceModel
 		#endregion
 	}
 }
+#endif

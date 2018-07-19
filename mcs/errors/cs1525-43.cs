@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `)', expecting `[', `out', `params', `ref', `this', or `type'
+// CS1525: Unexpected symbol `)'
 // Line: 6
 
 class TestClass

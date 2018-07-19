@@ -27,7 +27,7 @@
 //
 
 using System.ComponentModel;
-#if !NET_2_1
+#if !MOBILE
 using System.ComponentModel.Design.Serialization;
 #endif
 using System.Globalization;
@@ -49,7 +49,7 @@ namespace System {
 				return true;
 			if (type == typeof (Uri))
 				return true;
-#if NET_2_1
+#if MOBILE
 			return false;
 #else
 			return (type == typeof (InstanceDescriptor));
@@ -75,7 +75,7 @@ namespace System {
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if (value == null) {
-#if NET_2_1
+#if MOBILE
 				throw new NotSupportedException (Locale.GetText ("Cannot convert from value."));
 #else
 				throw new ArgumentNullException ("value");
@@ -90,14 +90,14 @@ namespace System {
 
 			string s = (value as string);
 			if (s != null) {
-#if NET_2_1
+#if MOBILE
 				if (s == "")
 					return null;
 #endif
 				return new Uri (s, UriKind.RelativeOrAbsolute);
 			}
 
-#if !NET_2_1
+#if !MOBILE
 			InstanceDescriptor id = (value as InstanceDescriptor);
 			if (id != null) {
 				return id.Invoke ();
@@ -117,7 +117,7 @@ namespace System {
 					return uri.ToString ();
 				if (destinationType == typeof (Uri))
 					return uri;
-#if !NET_2_1
+#if !MOBILE
 				if (destinationType == typeof (InstanceDescriptor)) {
 					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [2] { typeof (string), typeof (UriKind) });
 					return new InstanceDescriptor (ci , new object [] { uri.ToString (), uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative });
@@ -127,14 +127,14 @@ namespace System {
 #endif
 			}
 
-#if NET_2_1
+#if MOBILE
 			throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
 #else
 			return base.ConvertTo (context, culture, value, destinationType);
 #endif
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public override bool IsValid (ITypeDescriptorContext context, object value)
 		{
 			if (value == null)

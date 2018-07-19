@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -108,8 +109,17 @@ namespace System.Runtime.InteropServices
 
 		public void Free()
 		{
-			FreeHandle(handle);
-			handle = 0;
+			// Copy the handle instance member to a local variable. This is required to prevent
+			// race conditions releasing the handle.
+			int local_handle = handle;
+
+			// Free the handle if it hasn't already been freed.
+			if (local_handle != 0 && Interlocked.CompareExchange (ref handle, 0, local_handle) == local_handle) {
+				FreeHandle (local_handle);
+			}
+			else {
+				throw new InvalidOperationException ("Handle is not initialized.");
+			}
 		}
 		
 		public static explicit operator IntPtr (GCHandle value)
@@ -120,7 +130,7 @@ namespace System.Runtime.InteropServices
 		public static explicit operator GCHandle(IntPtr value)
 		{
 			if (value == IntPtr.Zero)
-				throw new ArgumentException ("GCHandle value cannot be zero");
+				throw new InvalidOperationException ("GCHandle value cannot be zero");
 			if (!CheckCurrentDomain ((int)value))
 				throw new ArgumentException ("GCHandle value belongs to a different domain");
 			return new GCHandle (value);

@@ -47,7 +47,7 @@ namespace MonoTests.System.Resources {
 
 			Assert.IsNotNull (returnedNode, "#A1");
 			object val = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A2");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A2");
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A3");
 		}
 
@@ -84,7 +84,7 @@ namespace MonoTests.System.Resources {
 			node = GetNodeFileRefToSerializable ("ser.bbb",true);
 
 			object val = node.GetValue (new ReturnSerializableSubClassITRS ());
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A1");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), val, "#A1");
 			Assert.IsInstanceOfType (typeof (serializable), val, "#A2");
 		}
 

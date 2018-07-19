@@ -62,7 +62,7 @@ class Program {
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if !MOBILE
 
 namespace System.Security.Cryptography {
 

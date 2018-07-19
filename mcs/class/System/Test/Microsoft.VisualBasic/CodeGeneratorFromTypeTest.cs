@@ -202,9 +202,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public MustInherit Class Test1{0}" +
 				"    {0}" +
 				"    Public MustOverride Property Name() As String{0}" +
-				"        Get{0}" +
-				"        Set{0}" +
-				"    End Property{0}" +
 				"End Class{0}", NewLine), code);
 		}
 

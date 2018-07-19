@@ -87,7 +87,7 @@ namespace System.Web.Security
 			return dbp;
 		}
 
-		public override void AddUsersToRoles (string [] usernames, string [] rolenames)
+		public override void AddUsersToRoles (string [] usernames, string [] roleNames)
 		{
 			Hashtable h = new Hashtable ();
 
@@ -102,7 +102,7 @@ namespace System.Web.Security
 			}
 
 			h = new Hashtable ();
-			foreach (string r in rolenames) {
+			foreach (string r in roleNames) {
 				if (r == null)
 					throw new ArgumentNullException ("null element in rolenames array");
 				if (h.ContainsKey (r))
@@ -119,7 +119,7 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 
-				AddParameter (command, "@RoleNames", String.Join (",", rolenames));
+				AddParameter (command, "@RoleNames", String.Join (",", roleNames));
 				AddParameter (command, "@UserNames", String.Join (",", usernames));
 				AddParameter (command, "@ApplicationName", ApplicationName);
 				AddParameter (command, "@CurrentTimeUtc", DateTime.UtcNow);
@@ -139,12 +139,12 @@ namespace System.Web.Security
 			}
 		}
 
-		public override void CreateRole (string rolename)
+		public override void CreateRole (string roleName)
 		{
-			if (rolename == null)
-				throw new ArgumentNullException ("rolename");
+			if (roleName == null)
+				throw new ArgumentNullException ("roleName");
 
-			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (',') != -1)
+			if (roleName.Length == 0 || roleName.Length > 256 || roleName.IndexOf (',') != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
 			using (DbConnection connection = CreateConnection ()) {
@@ -154,25 +154,25 @@ namespace System.Web.Security
 				command.CommandType = CommandType.StoredProcedure;
 				
 				AddParameter (command, "@ApplicationName", ApplicationName);
-				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@RoleName", roleName);
 				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();
 				int returnValue = (int) dbpr.Value;
 
 				if (returnValue == 1)
-					throw new ProviderException (rolename + " already exists in the database");
+					throw new ProviderException (roleName + " already exists in the database");
 				else
 					return;
 			}
 		}
 
-		public override bool DeleteRole (string rolename, bool throwOnPopulatedRole)
+		public override bool DeleteRole (string roleName, bool throwOnPopulatedRole)
 		{
-			if (rolename == null)
-				throw new ArgumentNullException ("rolename");
+			if (roleName == null)
+				throw new ArgumentNullException ("roleName");
 
-			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (',') != -1)
+			if (roleName.Length == 0 || roleName.Length > 256 || roleName.IndexOf (',') != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
 			using (DbConnection connection = CreateConnection ()) {
@@ -182,7 +182,7 @@ namespace System.Web.Security
 				command.Connection = connection;
 				command.CommandType = CommandType.StoredProcedure;
 				AddParameter (command, "@ApplicationName", ApplicationName);
-				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@RoleName", roleName);
 				AddParameter (command, "@DeleteOnlyIfRoleIsEmpty", throwOnPopulatedRole);
 				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
@@ -194,7 +194,7 @@ namespace System.Web.Security
 				if (returnValue == 1)
 					return false; //role does not exist
 				else if (returnValue == 2 && throwOnPopulatedRole)
-					throw new ProviderException (rolename + " is not empty");
+					throw new ProviderException (roleName + " is not empty");
 				else
 					return false;
 			}
@@ -272,7 +272,7 @@ namespace System.Web.Security
 			}
 		}
 
-		public override string [] GetUsersInRole (string rolename)
+		public override string [] GetUsersInRole (string roleName)
 		{
 			using (DbConnection connection = CreateConnection ()) {
 				DbCommand command = factory.CreateCommand ();
@@ -280,7 +280,7 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@RoleName", roleName);
 				AddParameter (command, "@ApplicationName", ApplicationName);
 
 				DbDataReader reader = command.ExecuteReader ();
@@ -327,7 +327,7 @@ namespace System.Web.Security
 				ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
 
-		public override bool IsUserInRole (string username, string rolename)
+		public override bool IsUserInRole (string username, string roleName)
 		{
 			using (DbConnection connection = CreateConnection ()) {
 				DbCommand command = factory.CreateCommand ();
@@ -335,7 +335,7 @@ namespace System.Web.Security
 				command.Connection = connection;
 
 				command.CommandType = CommandType.StoredProcedure;
-				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@RoleName", roleName);
 				AddParameter (command, "@UserName", username);
 				AddParameter (command, "@ApplicationName", ApplicationName);
 				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
@@ -350,7 +350,7 @@ namespace System.Web.Security
 			}
 		}
 
-		public override void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
+		public override void RemoveUsersFromRoles (string [] usernames, string [] roleNames)
 		{
 			Hashtable h = new Hashtable ();
 
@@ -365,7 +365,7 @@ namespace System.Web.Security
 			}
 
 			h = new Hashtable ();
-			foreach (string r in rolenames) {
+			foreach (string r in roleNames) {
 				if (r == null)
 					throw new ArgumentNullException ("null element in rolenames array");
 				if (h.ContainsKey (r))
@@ -382,7 +382,7 @@ namespace System.Web.Security
 				command.CommandType = CommandType.StoredProcedure;
 
 				AddParameter (command, "@UserNames", String.Join (",", usernames));
-				AddParameter (command, "@RoleNames", String.Join (",", rolenames));
+				AddParameter (command, "@RoleNames", String.Join (",", roleNames));
 				AddParameter (command, "@ApplicationName", ApplicationName);
 				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
@@ -402,7 +402,7 @@ namespace System.Web.Security
 			}
 		}
 
-		public override bool RoleExists (string rolename)
+		public override bool RoleExists (string roleName)
 		{
 			using (DbConnection connection = CreateConnection ()) {
 
@@ -412,7 +412,7 @@ namespace System.Web.Security
 				command.CommandType = CommandType.StoredProcedure;
 
 				AddParameter (command, "@ApplicationName", ApplicationName);
-				AddParameter (command, "@RoleName", rolename);
+				AddParameter (command, "@RoleName", roleName);
 				DbParameter dbpr = AddParameter (command, "@ReturnVal", ParameterDirection.ReturnValue, DbType.Int32, null);
 
 				command.ExecuteNonQuery ();

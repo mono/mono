@@ -20,8 +20,11 @@
 // THE SOFTWARE.
 // 
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.AuthenticatedStream))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.EncryptionPolicy))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.LocalCertificateSelectionCallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.NegotiateStream))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.ProtectionLevel))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.RemoteCertificateValidationCallback))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Security.SslStream))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Authentication.AuthenticationException))]
@@ -29,5 +32,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Authentication.ExtendedProtection.PolicyEnforcement))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Authentication.ExtendedProtection.ProtectionScenario))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Authentication.ExtendedProtection.ServiceNameCollection))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.Authentication.InvalidCredentialException))]
 
 

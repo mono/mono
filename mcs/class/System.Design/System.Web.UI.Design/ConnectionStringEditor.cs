@@ -46,13 +46,13 @@ namespace System.Web.UI.Design
 		}
 
 		[MonoTODO]
-		public virtual object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
+		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			throw new NotImplementedException ();
 		}

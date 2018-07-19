@@ -225,7 +225,7 @@ namespace System.Security.Policy {
 		// "possible" presence of an Authenticode signature
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool IsAuthenticodePresent (Assembly a);
-#if NET_2_1
+#if MOBILE
 		static internal Evidence GetDefaultHostEvidence (Assembly a)
 		{
 			return new Evidence ();
@@ -251,7 +251,7 @@ namespace System.Security.Policy {
 			}
 
 			// strongnamed assemblies gets a StrongName evidence
-			AssemblyName an = a.UnprotectedGetName ();
+			AssemblyName an = a.GetName ();
 			byte[] pk = an.GetPublicKey ();
 			if ((pk != null) && (pk.Length > 0)) {
 				StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (pk);
@@ -287,7 +287,7 @@ namespace System.Security.Policy {
 			return e;
 		}
 
-#endif // NET_2_1
+#endif // MOBILE
 
 		private class EvidenceEnumerator : IEnumerator {
 			

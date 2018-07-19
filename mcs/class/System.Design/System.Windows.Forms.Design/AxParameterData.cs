@@ -134,6 +134,6 @@ namespace System.Windows.Forms.Design
 		private bool isOut;
 		private string name;
 		private Type type;
-		private string typeName;
+//		private string typeName;
 	}
 }

@@ -42,11 +42,11 @@ namespace System.Reflection.Emit
 	internal class ConstructorOnTypeBuilderInst : ConstructorInfo
 	{
 		#region Keep in sync with object-internals.h
-		MonoGenericClass instantiation;
-		ConstructorInfo cb;
+		internal TypeBuilderInstantiation instantiation;
+		internal ConstructorInfo cb;
 		#endregion
 
-		public ConstructorOnTypeBuilderInst (MonoGenericClass instantiation, ConstructorInfo cb)
+		public ConstructorOnTypeBuilderInst (TypeBuilderInstantiation instantiation, ConstructorInfo cb)
 		{
 			this.instantiation = instantiation;
 			this.cb = cb;
@@ -132,6 +132,25 @@ namespace System.Reflection.Emit
 				}
 			}
 			return res;
+		}
+
+		internal override Type[] GetParameterTypes () {
+			if (cb is ConstructorBuilder) {
+				return (cb as ConstructorBuilder).parameters;
+			} else {
+				ParameterInfo[] parms = cb.GetParameters ();
+				var res = new Type [parms.Length];
+				for (int i = 0; i < parms.Length; i++) {
+					res [i] = parms [i].ParameterType;
+				}
+				return res;
+			}
+		}
+
+		// Called from the runtime to return the corresponding finished ConstructorInfo object
+		internal ConstructorInfo RuntimeResolve () {
+			var type = instantiation.InternalResolve ();
+			return type.GetConstructor (cb);
 		}
 
 		public override int MetadataToken {

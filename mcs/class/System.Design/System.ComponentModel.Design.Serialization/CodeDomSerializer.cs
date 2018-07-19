@@ -101,47 +101,47 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		public virtual CodeStatementCollection SerializeMember (IDesignerSerializationManager manager, 
-									object owningobject, MemberDescriptor member)
+									object owningObject, MemberDescriptor member)
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");
-			if (owningobject == null)
-				throw new ArgumentNullException ("owningobject");
+			if (owningObject == null)
+				throw new ArgumentNullException ("owningObject");
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
 			CodeStatementCollection statements = new CodeStatementCollection ();
 
-			CodeExpression expression = base.GetExpression (manager, owningobject);
+			CodeExpression expression = base.GetExpression (manager, owningObject);
 			if (expression == null) {
-				string name = manager.GetName (owningobject);
+				string name = manager.GetName (owningObject);
 				if (name == null)
-					name = base.GetUniqueName (manager, owningobject);
+					name = base.GetUniqueName (manager, owningObject);
 				expression = new CodeVariableReferenceExpression (name);
-				base.SetExpression (manager, owningobject, expression);
+				base.SetExpression (manager, owningObject, expression);
 			}
 
 			if (member is PropertyDescriptor)
-				base.SerializeProperty (manager, statements, owningobject, (PropertyDescriptor) member);
+				base.SerializeProperty (manager, statements, owningObject, (PropertyDescriptor) member);
 			if (member is EventDescriptor)
-				base.SerializeEvent (manager, statements, owningobject, (EventDescriptor) member);
+				base.SerializeEvent (manager, statements, owningObject, (EventDescriptor) member);
 
 			return statements;
 		}
 
 		public virtual CodeStatementCollection SerializeMemberAbsolute (IDesignerSerializationManager manager, 
-										object owningobject, MemberDescriptor member)
+										object owningObject, MemberDescriptor member)
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");
-			if (owningobject == null)
-				throw new ArgumentNullException ("owningobject");
+			if (owningObject == null)
+				throw new ArgumentNullException ("owningObject");
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
 			SerializeAbsoluteContext context = new SerializeAbsoluteContext (member);
 			manager.Context.Push (context);
-			CodeStatementCollection result = this.SerializeMember (manager, owningobject, member);
+			CodeStatementCollection result = this.SerializeMember (manager, owningObject, member);
 			manager.Context.Pop ();
 			return result;
 		}

@@ -604,6 +604,8 @@ static void printConvertSwitch(int forString)
 		else {
 			printf("\t\t\t\tdefault:\n");
 			printf("\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
+			printf("\t\t\t\t\tcharIndex++;\n");
+			printf("\t\t\t\t\tcharCount--;\n");
 			printf("\t\t\t\t\tcontinue;\n");
 		}
 	}
@@ -621,6 +623,8 @@ static void printConvertSwitch(int forString)
 			printf("\t\t\t\t\t\tch = 0x3F;\n");
 		else {
 			printf("\t\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
+			printf("\t\t\t\t\t\tcharIndex++;\n");
+			printf("\t\t\t\t\t\tcharCount--;\n");
 			printf("\t\t\t\t\t\tcontinue;\n");
 		}
 		printf("\t\t\t\t\t}\n");
@@ -644,12 +648,11 @@ static void printCharToByte(void)
 	printf("\t\t\treturn GetBytesImpl(chars, count, null, 0);\n");
 	printf("\t\t}\n");
 	printf("\t\telse\n");
-	printf("\t\t\n");
 	printf("\t\t{\n");
 	printf("\t\t\treturn count;\n");
 	printf("\t\t}\n");
 	printf("\t}\n");
-	printf("\t\n");
+	printf("\n");
 	printf("\t// Get the number of bytes needed to encode a character buffer.\n");
 	printf("\tpublic override int GetByteCount (String s)\n");
 	printf("\t{\n");
@@ -670,7 +673,7 @@ static void printCharToByte(void)
 	printf("\t\t\treturn s.Length;\n");
 	printf("\t\t}\n");
 	printf("\t}\n");
-	printf("\t\n");
+	printf("\n");
 	printf("\t//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count\n");
 	printf("\tprotected unsafe override void ToBytes(char* chars, int charCount,\n");
 	printf("\t                                byte* bytes, int byteCount)\n");
@@ -680,7 +683,7 @@ static void printCharToByte(void)
 	printf("\t\t\tthrow new ArgumentNullException(\"bytes\");\n");
 	printf("\t\tGetBytesImpl(chars, charCount, bytes, byteCount);\n");
 	printf("\t}\n");
-	printf("\t\n");
+	printf("\n");
 
 	/* Print the conversion method for character buffers */
 	//printf("\tprotected unsafe override void ToBytes(char* chars, int charCount,\n");
@@ -695,31 +698,15 @@ static void printCharToByte(void)
 	printf("\t\twhile (charCount > 0)\n");
 	printf("\t\t{\n");
 	printf("\t\t\tch = (int)(chars[charIndex]);\n");
-	printf("\t\t\tcharIndex++;\n");
-	printf("\t\t\tcharCount--;\n");
 	printConvertSwitch(0);
 	printf("\t\t\t//Write encoded byte to buffer, if buffer is defined and fallback was not used\n");
 	printf("\t\t\tif (bytes != null)\n");
 	printf("\t\t\t\tbytes[byteIndex] = (byte)ch;\n");
 	printf("\t\t\tbyteIndex++;\n");
 	printf("\t\t\tbyteCount--;\n");
+	printf("\t\t\tcharIndex++;\n");
+	printf("\t\t\tcharCount--;\n");
 	printf("\t\t}\n");
 	printf("\t\treturn byteIndex;\n");
-	printf("\t}\n\n");
-
-	/* Print the conversion method for string buffers */
-	printf("\t/*\n");
-	printf("\tprotected override void ToBytes(String s, int charIndex, int charCount,\n");
-	printf("\t                                byte[] bytes, int byteIndex)\n");
-	printf("\t{\n");
-	printf("\t\tint ch;\n");
-	printf("\t\twhile(charCount > 0)\n");
-	printf("\t\t{\n");
-	printf("\t\t\tch = (int)(s[charIndex++]);\n");
-	printConvertSwitch(1);
-	printf("\t\t\tbytes[byteIndex++] = (byte)ch;\n");
-	printf("\t\t\t--charCount;\n");
-	printf("\t\t}\n");
 	printf("\t}\n");
-	printf("\t*/\n\n");
 }

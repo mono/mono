@@ -45,6 +45,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// header chars) into another stream.
 	/// TODO: Update to BZip2 1.0.1, 1.0.2
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class BZip2OutputStream : Stream
 	{
 		/// <summary>

@@ -89,9 +89,11 @@ if test x$NOCONFIGURE = x && test -z "$*"; then
   echo
 fi
 
+am_opt="--add-missing --copy --gnu -Wno-portability -Wno-obsolete"
+
 case $CC in
 xlc )
-  am_opt=--include-deps;;
+  am_opt="$am_opt --include-deps";;
 esac
 
 
@@ -142,8 +144,8 @@ if grep "^AC_CONFIG_HEADERS" configure.ac >/dev/null; then
   autoheader || { echo "**Error**: autoheader failed."; exit 1; }
 fi
 
-echo "Running automake --gnu $am_opt ..."
-automake --add-missing --gnu -Wno-portability -Wno-obsolete $am_opt ||
+echo "Running automake $am_opt ..."
+automake $am_opt ||
   { echo "**Error**: automake failed."; exit 1; }
 echo "Running autoconf ..."
 autoconf || { echo "**Error**: autoconf failed."; exit 1; }
@@ -154,14 +156,11 @@ if test -d $srcdir/libgc; then
   echo Done running libgc/autogen.sh ...
 fi
 
-if test -d $srcdir/eglib; then
-  echo Running eglib/autogen.sh ...
-  (cd $srcdir/eglib ; NOCONFIGURE=1 ./autogen.sh "$@")
-  echo Done running eglib/autogen.sh ...
+if test x$MONO_EXTRA_CONFIGURE_FLAGS != x; then
+	echo "MONO_EXTRA_CONFIGURE_FLAGS is $MONO_EXTRA_CONFIGURE_FLAGS"
 fi
 
-
-conf_flags="--enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
+conf_flags="$MONO_EXTRA_CONFIGURE_FLAGS --enable-maintainer-mode --enable-compile-warnings" #--enable-iso-c
 
 if test x$NOCONFIGURE = x; then
   echo Running $srcdir/configure $conf_flags "$@" ...

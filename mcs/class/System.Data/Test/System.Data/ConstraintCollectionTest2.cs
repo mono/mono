@@ -447,7 +447,7 @@ namespace MonoTests.System.Data
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
 			dt.Constraints.Add("UniqueConstraint",dt.Columns["ParentId"],true);
-			Assert.AreEqual(1,dt.Constraints.Count,1); 
+			Assert.AreEqual(1,(double) dt.Constraints.Count,1); 
 			Assert.AreEqual("UniqueConstraint",dt.Constraints[0].ConstraintName,"CN34");			
 		}
 		

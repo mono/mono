@@ -29,7 +29,13 @@
 #ifndef _COMPLEX_H
 #define	_COMPLEX_H
 
+#include <config.h>
 #include <sys/cdefs.h>
+
+#if HOST_ANDROID && !defined(__pure2)
+/* NDK unified headers don't define __pure2 */
+#define __pure2 __attribute__((__const__))
+#endif
 
 #ifdef __GNUC__
 #if __STDC_VERSION__ < 199901

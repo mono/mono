@@ -98,10 +98,10 @@ namespace System.ServiceModel.Channels
 			return OnGetBody<T> (GetReaderAtBodyContents ());
 		}
 
-		public T GetBody<T> (XmlObjectSerializer xmlFormatter)
+		public T GetBody<T> (XmlObjectSerializer serializer)
 		{
 			// FIXME: Somehow use OnGetBody() here as well?
-			return (T)xmlFormatter.ReadObject (GetReaderAtBodyContents ());
+			return (T)serializer.ReadObject (GetReaderAtBodyContents ());
 		}
 
 		protected virtual T OnGetBody<T> (XmlDictionaryReader reader)
@@ -334,19 +334,19 @@ namespace System.ServiceModel.Channels
 
 		// 1)
 		public static Message CreateMessage (MessageVersion version,
-			FaultCode code, string reason, string action)
+			FaultCode faultCode, string reason, string action)
 		{
-			MessageFault fault = MessageFault.CreateFault (code, reason);
+			MessageFault fault = MessageFault.CreateFault (faultCode, reason);
 			return CreateMessage (version, fault, action);
 		}
 
 		// 2)
 		public static Message CreateMessage (MessageVersion version,
-			FaultCode code, string reason, object detail,
+			FaultCode faultCode, string reason, object detail,
 			string action)
 		{
 			MessageFault fault = MessageFault.CreateFault (
-				code, new FaultReason (reason), detail);
+				faultCode, new FaultReason (reason), detail);
 			return CreateMessage (version, fault, action);
 		}
 
@@ -369,13 +369,13 @@ namespace System.ServiceModel.Channels
 
 		// 5)
 		public static Message CreateMessage (MessageVersion version,
-			string action, object body, XmlObjectSerializer xmlFormatter)
+			string action, object body, XmlObjectSerializer serializer)
 		{
 			return body == null ?
 				CreateMessage (version, action) :
 				CreateMessage (
 					version, action,
-					new XmlObjectSerializerBodyWriter (body, xmlFormatter));
+					new XmlObjectSerializerBodyWriter (body, serializer));
 		}
 
 		// 6)

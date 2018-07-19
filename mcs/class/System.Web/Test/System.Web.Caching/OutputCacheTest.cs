@@ -36,7 +36,6 @@ using System.Web.Caching;
 using System.Web.Configuration;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Caching
 {
@@ -166,17 +165,17 @@ namespace MonoTests.System.Web.Caching
 		{
 			ResponseElement data = new MemoryResponseElement (new byte[10], 10);
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				OutputCache.Serialize (null, data);
 			}, "#A1");
 
 			var ms = new MemoryStream ();
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				OutputCache.Serialize (ms, null);
 			}, "#A2");
 
 			foreach (object o in serializeObjects) {
-				AssertExtensions.Throws<ArgumentException> (() => {
+				Assert.Throws<ArgumentException> (() => {
 					OutputCache.Serialize (ms, o);
 				}, String.Format ("#A3-{0}", o.GetType ()));
 			}
@@ -194,28 +193,28 @@ namespace MonoTests.System.Web.Caching
 #endif
 			
 			byte[] bytes = SerializeElement (mre);
-			AssertExtensions.AreEqual (bytes, memoryResponseElement, "#B1");
+			Assert.AreEqual (bytes, memoryResponseElement, "#B1");
 
 			bytes = SerializeElement (fre);
-			AssertExtensions.AreEqual (bytes, fileResponseElement, "#B2");
+			Assert.AreEqual (bytes, fileResponseElement, "#B2");
 
 			bytes = SerializeElement (sre);
-			AssertExtensions.AreEqual (bytes, substitutionResponseElement, "#B3");
+			Assert.AreEqual (bytes, substitutionResponseElement, "#B3");
 
 			bytes = SerializeElement (sreBad);
-			AssertExtensions.AreEqual (bytes, badSubstitutionResponseElement, "#B4");
+			Assert.AreEqual (bytes, badSubstitutionResponseElement, "#B4");
 		}
 
 		[Test]
 		public void Deserialize ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				OutputCache.Deserialize (null);
 			}, "#A1");
 
 			foreach (object o in serializeObjects) {
 				using (var m = new MemoryStream (SerializeToBinary (o))) {
-					AssertExtensions.Throws<ArgumentException> (() => {
+					Assert.Throws<ArgumentException> (() => {
 						OutputCache.Deserialize (m);
 					}, String.Format ("#A2-{0}", o.GetType ()));
 				}
@@ -231,7 +230,7 @@ namespace MonoTests.System.Web.Caching
 			using (ms = new MemoryStream (memoryResponseElement))
 				mreOrig = OutputCache.Deserialize (ms) as MemoryResponseElement;
 			Assert.IsNotNull (mreOrig, "#B1-1");
-			AssertExtensions.AreEqual (mreOrig.Buffer, mre.Buffer, "#B1-2");
+			Assert.AreEqual (mreOrig.Buffer, mre.Buffer, "#B1-2");
 			Assert.AreEqual (mreOrig.Length, mre.Length, "#B1-3");
 
 			using (ms = new MemoryStream (fileResponseElement))
@@ -247,7 +246,7 @@ namespace MonoTests.System.Web.Caching
 			Assert.AreEqual (sreOrig.Callback, sre.Callback, "#D1");
 
 			// Callback here is not a static method - Substitution delegates must be static
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				using (ms = new MemoryStream (badSubstitutionResponseElement))
 					sreBadOrig = OutputCache.Deserialize (ms) as SubstitutionResponseElement;
 			}, "#E1");

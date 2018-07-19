@@ -66,12 +66,12 @@ namespace System.Data.Design {
 				errorList.Add (info.GetString("KEY_ARRAYVALUES" + i));
 		}
 
-		public TypedDataSetGeneratorException (String error) : base (error)
+		public TypedDataSetGeneratorException (String message) : base (message)
 		{
 		}
 		
-		public TypedDataSetGeneratorException (String error, Exception inner) 
-			: base (error, inner)
+		public TypedDataSetGeneratorException (String message, Exception innerException) 
+			: base (message, innerException)
 		{
 		}
 		#endregion //Constructors	
@@ -82,15 +82,15 @@ namespace System.Data.Design {
 
 		#region Methods
                                                                                                     
-                public override void GetObjectData (SerializationInfo si, StreamingContext context)
+                public override void GetObjectData (SerializationInfo info, StreamingContext context)
                 {
-			base.GetObjectData (si, context);
+			base.GetObjectData (info, context);
                                                 
 			int count = (errorList != null) ? ErrorList.Count : 0;
-			si.AddValue ("KEY_ARRAYCOUNT", count);
+			info.AddValue ("KEY_ARRAYCOUNT", count);
 
 			for (int i=0; i < count; i++)
-				si.AddValue("KEY_ARRAYVALUES" + i, ErrorList [i]);
+				info.AddValue("KEY_ARRAYVALUES" + i, ErrorList [i]);
                 }
                                                                                                     
                 #endregion // Methods

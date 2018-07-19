@@ -193,7 +193,7 @@ namespace System.Net.Http.Headers
 							continue;
 						}
 
-						throw new FormatException ();
+						throw new FormatException ($"Could not parse value for header '{name}'");
 					}
 
 					if (headerInfo.AllowsMany) {
@@ -481,23 +481,28 @@ namespace System.Net.Http.Headers
 				headers.Add (name, value);
 			}
 
+			var col = (HttpHeaderValueCollection<T>) value.Parsed;
+
 			if (value.HasStringValues) {
 				var hinfo = known_headers[name];
-				if (value.Parsed == null)
-					value.Parsed = hinfo.CreateCollection (this);
+				if (col == null) {
+					value.Parsed = col = new HttpHeaderValueCollection<T> (this, hinfo);
+				}
 
 				object pvalue;
 				for (int i = 0; i < value.Values.Count; ++i) {
-					if (!hinfo.TryParse (value.Values[i], out pvalue))
-						continue;
-
-					hinfo.AddToCollection (value.Parsed, pvalue);
-					value.Values.RemoveAt (i);
-					--i;
+					var svalue = value.Values[i];
+					if (!hinfo.TryParse (svalue, out pvalue)) {
+						col.AddInvalidValue (svalue);
+					} else {
+						hinfo.AddToCollection (col, pvalue);
+					}
 				}
+
+				value.Values.Clear ();
 			}
 
-			return (HttpHeaderValueCollection<T>) value.Parsed;
+			return col;
 		}
 
 		internal void SetValue<T> (string name, T value, Func<object, string> toStringConverter = null)

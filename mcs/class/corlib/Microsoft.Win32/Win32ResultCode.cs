@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if WIN_PLATFORM || XAMMAC_4_5
 
 using System;
 using System.Runtime.InteropServices;
@@ -58,8 +58,9 @@ namespace Microsoft.Win32
 		public const int NetworkPathNotFound = 53;
 		public const int NoMoreEntries = 259;
 		public const int MarkedForDeletion = 1018;
+		public const int ChildMustBeVolatile = 1021;
 	}
 }
 
-#endif // NET_2_1
+#endif // MOBILE
 

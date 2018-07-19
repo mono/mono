@@ -517,7 +517,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCellPositioning14 ()
 		{
 			// Col span = 3, fixed grow style
@@ -946,10 +945,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (31, p.GetRowHeights ()[0], "D1");
 			Assert.AreEqual (31, p.GetRowHeights ()[1], "D2");
 			Assert.AreEqual (81, p.GetColumnWidths ()[0], "D3");
-			Assert.LessOrEqual (75, p.GetColumnWidths ()[1], "D4");
-			Assert.GreaterOrEqual (78, p.GetColumnWidths ()[1], "D5");
-			Assert.LessOrEqual (78, p.GetColumnWidths ()[2], "D6");
-			Assert.GreaterOrEqual (81, p.GetColumnWidths ()[2], "D7");
+			AssertHelper.LessOrEqual (75, p.GetColumnWidths ()[1], "D4");
+			AssertHelper.GreaterOrEqual (78, p.GetColumnWidths ()[1], "D5");
+			AssertHelper.LessOrEqual (78, p.GetColumnWidths ()[2], "D6");
+			AssertHelper.GreaterOrEqual (81, p.GetColumnWidths ()[2], "D7");
 		}
 		
 		[Test]
@@ -1702,7 +1701,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (4, tlp.RowCount, "X18638-1");
 			Assert.AreEqual (3, tlp.ColumnCount, "X18638-2");
 			Assert.AreEqual (60, widths[0], "X18638-3");
-			Assert.Greater (label2.Width, widths[1], "X18638-5");
+			AssertHelper.Greater (label2.Width, widths[1], "X18638-5");
 			Assert.AreEqual (45, widths[2], "X18638-4");
 		}
 

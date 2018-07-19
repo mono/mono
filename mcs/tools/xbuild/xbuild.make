@@ -6,13 +6,13 @@ ifeq (14.0, $(XBUILD_VERSION))
 NAME_SUFFIX = .Core
 endif
 
-XBUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Framework.dll
-XBUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Engine.dll
-XBUILD_UTILITIES := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Utilities$(NAME_SUFFIX).dll
-XBUILD_TASKS := $(topdir)/class/lib/$(PROFILE)/Mono.XBuild.Tasks.dll
-XBUILD_MSTASKS := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Tasks$(NAME_SUFFIX).dll
+XBUILD_FRAMEWORK := Microsoft.Build.Framework
+XBUILD_ENGINE := Microsoft.Build.Engine
+XBUILD_UTILITIES := Microsoft.Build.Utilities$(NAME_SUFFIX)
+XBUILD_TASKS := Mono.XBuild.Tasks
+XBUILD_MSTASKS := Microsoft.Build.Tasks$(NAME_SUFFIX)
 ifeq (14.0, $(XBUILD_VERSION))
-XBUILD_MSTASKS := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Tasks.Core.dll
+XBUILD_MSTASKS := Microsoft.Build.Tasks.Core
 endif
 
 XBUILD_ASSEMBLY_VERSION = $(XBUILD_VERSION).0.0

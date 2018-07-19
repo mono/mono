@@ -30,7 +30,6 @@ using System.Net;
 using System.Net.Security;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 using MX = Mono.Security.X509;
 using Mono.Net.Security;
 
@@ -95,13 +94,14 @@ namespace Mono.Security.Interface
 		 * If @serverMode is true, then we're a server and want to validate a certificate that we received from a client.
 		 */
 		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509CertificateCollection certificates);
+	}
 
+	internal interface ICertificateValidator2 : ICertificateValidator
+	{
 		/*
-		 * On OS X and Mobile, the @chain will be initialized with the @certificates, but not actually built.
+		 * Internal use only.
 		 */
-		bool InvokeSystemValidator (
-			string targetHost, bool serverMode, X509CertificateCollection certificates,
-			X509Chain chain, ref MonoSslPolicyErrors errors, ref int status11);
+		ValidationResult ValidateCertificate (string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain);
 	}
 
 	public static class CertificateValidationHelper
@@ -137,25 +137,12 @@ namespace Mono.Security.Interface
 			get { return supportsTrustAnchors; }
 		}
 
-		static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
-		{
-			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (provider, settings);
-		}
-
-		/*
-		 * Internal API, intended to be used by MonoTlsProvider implementations.
-		 */
-		public static ICertificateValidator GetValidator (MonoTlsProvider provider, MonoTlsSettings settings)
-		{
-			return GetDefaultValidator (provider, settings);
-		}
-
 		/*
 		 * Use this overloaded version in user code.
 		 */
 		public static ICertificateValidator GetValidator (MonoTlsSettings settings)
 		{
-			return GetDefaultValidator (null, settings);
+			return (ICertificateValidator)NoReflectionHelper.GetDefaultValidator (settings);
 		}
 	}
 }

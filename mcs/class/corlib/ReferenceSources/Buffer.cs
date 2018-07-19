@@ -1,3 +1,12 @@
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
+using System.Runtime.CompilerServices;
+using System.Runtime;
+
 namespace System
 {
 	partial class Buffer
@@ -181,34 +190,60 @@ namespace System
 				((byte*)dest) [0] = ((byte*)src) [0];
 		}
 
-		internal static unsafe void Memcpy (byte *dest, byte *src, int size) {
+		internal static unsafe void Memcpy (byte *dest, byte *src, int len) {
 			// FIXME: if pointers are not aligned, try to align them
 			// so a faster routine can be used. Handle the case where
 			// the pointers can't be reduced to have the same alignment
 			// (just ignore the issue on x86?)
 			if ((((int)dest | (int)src) & 3) != 0) {
-				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && size >= 1) {
+				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && len >= 1) {
 					dest [0] = src [0];
 					++dest;
 					++src;
-					--size;
+					--len;
 				}
-				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && size >= 2) {
+				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && len >= 2) {
 					((short*)dest) [0] = ((short*)src) [0];
 					dest += 2;
 					src += 2;
-					size -= 2;
+					len -= 2;
 				}
 				if ((((int)dest | (int)src) & 1) != 0) {
-					memcpy1 (dest, src, size);
+					memcpy1 (dest, src, len);
 					return;
 				}
 				if ((((int)dest | (int)src) & 2) != 0) {
-					memcpy2 (dest, src, size);
+					memcpy2 (dest, src, len);
 					return;
 				}
 			}
-			memcpy4 (dest, src, size);
+			memcpy4 (dest, src, len);
+		}
+
+		internal static unsafe void Memmove (byte *dest, byte *src, uint len)
+		{
+            if (((nuint)dest - (nuint)src < len) || ((nuint)src - (nuint)dest < len))
+				goto PInvoke;
+			Memcpy (dest, src, (int) len);
+			return;
+
+            PInvoke:
+            RuntimeImports.Memmove(dest, src, len);
+		}
+
+		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
+		{
+            if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        Memmove(pDestination, pSource, (uint)elementCount * (uint)Unsafe.SizeOf<T>());
+                }
+			} else {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        RuntimeImports.Memmove_wbarrier(pDestination, pSource, (uint)elementCount, typeof(T).TypeHandle.Value);
+				}
+			}
 		}
 	}
 }

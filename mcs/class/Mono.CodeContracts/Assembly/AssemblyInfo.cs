@@ -53,4 +53,3 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 
-[assembly: AssemblyKeyFile ("../mono.pub")]

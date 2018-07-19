@@ -130,13 +130,12 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_Instance ()
 		{
 			Font f1 = SystemFonts.CaptionFont;
 			float height = f1.GetHeight (72f);
 			f1.Dispose ();
-			f1.GetHeight (72f);
+			Assert.Throws<ArgumentException> (() => f1.GetHeight (72f));
 		}
 
 		[Test]

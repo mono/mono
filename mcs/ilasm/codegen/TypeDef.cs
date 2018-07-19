@@ -93,6 +93,8 @@ namespace Mono.ILASM {
                                 this.attr |= PEAPI.TypeAttr.Abstract;
                 }
 
+				public bool NoAutoInherit { get; set; }
+
                 public string Name {
                         get { return name; }
                 }
@@ -205,9 +207,9 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        if (IsInterface && !methoddef.IsStatic && (!methoddef.IsVirtual || !methoddef.IsAbstract)) {
-                                Report.Warning (methoddef.StartLocation, "Non-virtual or non-abstract instance method in interface, set to such");
-                                methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
+                        if (IsInterface && !methoddef.IsStatic && !methoddef.IsVirtual) {
+                                Report.Warning (methoddef.StartLocation, "Non-virtual instance method in interface, set to such");
+                                methoddef.Attributes |= PEAPI.MethAttr.Virtual;
                         }
 
                         if (method_table [methoddef.Signature] != null)
@@ -348,8 +350,10 @@ namespace Mono.ILASM {
 
                                 if (IsValueType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
                                         is_value_class = true;
-                                else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
+                                else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name)) {
                                         is_enum_class = true;
+                                        is_value_class = false;
+                                }
 
                                 if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
                                         is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
@@ -387,7 +391,7 @@ namespace Mono.ILASM {
                                                         name_space, name);
                                         }
                                 }
-                                if (FullName == "System.Object")
+                                if (FullName == "System.Object" || NoAutoInherit)
                                         classdef.SpecialNoSuper ();
                         }
 

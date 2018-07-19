@@ -91,6 +91,11 @@ namespace System.Globalization
 			this.options = opt;
 		}
 
+		internal SortKey (String localeName, String str, CompareOptions options, byte[] keyData)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual string OriginalString {
 			get { return source; }
 		}

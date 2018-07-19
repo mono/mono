@@ -15,10 +15,11 @@ public class MdbDump
 			return 1;
 		}
 
-		var assembly = AssemblyDefinition.ReadAssembly (args[0]);
+		using (var assembly = AssemblyDefinition.ReadAssembly (args[0])) {
 
-		var f = MonoSymbolFile.ReadSymbolFile (args[0] + ".mdb");
-		DumpSymbolFile (assembly, f, Console.Out);
+			var f = MonoSymbolFile.ReadSymbolFile (args[0] + ".mdb");
+			DumpSymbolFile (assembly, f, Console.Out);
+		}
 
 		return 0;
 	}
@@ -47,6 +48,7 @@ public class MdbDump
 			writer.WriteStartDocument ();
 
 			writer.WriteStartElement ("symbols");
+			writer.WriteAttributeString ("guid", symbolFile.Guid.ToString ());
 
 			writer.WriteStartElement ("files");
 			foreach (var file in symbolFile.Sources) {

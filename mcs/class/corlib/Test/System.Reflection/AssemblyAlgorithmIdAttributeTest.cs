@@ -5,8 +5,6 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MONOTOUCH && !MOBILE_STATIC
-
 using System;
 using System.Threading;
 using System.Reflection;
@@ -22,6 +20,7 @@ namespace MonoTests.System.Reflection {
 	[TestFixture]
 	public class AssemblyAlgorithmIdAttributeTest
 	{
+#if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
 		AssemblyAlgorithmIdAttribute attr;
@@ -84,7 +83,14 @@ namespace MonoTests.System.Reflection {
 				attr.Match (new AssemblyAlgorithmIdAttribute (AssemblyHashAlgorithm.SHA1)),
 				false, "#1");
 		}
+#endif
+
+		[Test]
+		public void CtorTest ()
+		{
+			var a = new AssemblyAlgorithmIdAttribute (AssemblyHashAlgorithm.SHA256);
+			Assert.AreEqual ((uint)AssemblyHashAlgorithm.SHA256, a.AlgorithmId);
+		}
 	}
 }
 
-#endif

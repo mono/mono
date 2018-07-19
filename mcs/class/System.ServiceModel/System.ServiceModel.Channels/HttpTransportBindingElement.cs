@@ -32,7 +32,7 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Authentication.ExtendedProtection;
 using System.ServiceModel.Channels;
-#if !NET_2_1
+#if !MOBILE
 using System.ServiceModel.Channels.Http;
 #endif
 using System.ServiceModel.Description;
@@ -67,28 +67,28 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected HttpTransportBindingElement (
-			HttpTransportBindingElement other)
-			: base (other)
+			HttpTransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			allow_cookies = other.allow_cookies;
-			bypass_proxy_on_local = other.bypass_proxy_on_local;
-			unsafe_ntlm_auth = other.unsafe_ntlm_auth;
-			use_default_proxy = other.use_default_proxy;
-			keep_alive_enabled = other.keep_alive_enabled;
-			max_buffer_size = other.max_buffer_size;
-			host_cmp_mode = other.host_cmp_mode;
-			proxy_address = other.proxy_address;
-			realm = other.realm;
-			transfer_mode = other.transfer_mode;
+			allow_cookies = elementToBeCloned.allow_cookies;
+			bypass_proxy_on_local = elementToBeCloned.bypass_proxy_on_local;
+			unsafe_ntlm_auth = elementToBeCloned.unsafe_ntlm_auth;
+			use_default_proxy = elementToBeCloned.use_default_proxy;
+			keep_alive_enabled = elementToBeCloned.keep_alive_enabled;
+			max_buffer_size = elementToBeCloned.max_buffer_size;
+			host_cmp_mode = elementToBeCloned.host_cmp_mode;
+			proxy_address = elementToBeCloned.proxy_address;
+			realm = elementToBeCloned.realm;
+			transfer_mode = elementToBeCloned.transfer_mode;
 			// FIXME: it does not look safe
-			timeouts = other.timeouts;
-			auth_scheme = other.auth_scheme;
-			proxy_auth_scheme = other.proxy_auth_scheme;
+			timeouts = elementToBeCloned.timeouts;
+			auth_scheme = elementToBeCloned.auth_scheme;
+			proxy_auth_scheme = elementToBeCloned.proxy_auth_scheme;
 
-			DecompressionEnabled = other.DecompressionEnabled;
-			LegacyExtendedProtectionPolicy = other.LegacyExtendedProtectionPolicy;
-			ExtendedProtectionPolicy = other.ExtendedProtectionPolicy;
-			cookie_manager = other.cookie_manager;
+			DecompressionEnabled = elementToBeCloned.DecompressionEnabled;
+			LegacyExtendedProtectionPolicy = elementToBeCloned.LegacyExtendedProtectionPolicy;
+			ExtendedProtectionPolicy = elementToBeCloned.ExtendedProtectionPolicy;
+			cookie_manager = elementToBeCloned.cookie_manager;
 		}
 
 		[DefaultValue (AuthenticationSchemes.Anonymous)]
@@ -185,7 +185,7 @@ namespace System.ServiceModel.Channels
 			return typeof (TChannel) == typeof (IRequestChannel);
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -201,7 +201,7 @@ namespace System.ServiceModel.Channels
 			return new HttpChannelFactory<TChannel> (this, context);
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		internal static object ListenerBuildLock = new object ();
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
@@ -242,7 +242,7 @@ namespace System.ServiceModel.Channels
 			set { throw new NotImplementedException (); }
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
 			PolicyConversionContext context)

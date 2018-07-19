@@ -11,6 +11,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Reflection;
 using System.IO;
 using System.Text;
 
@@ -1042,7 +1043,9 @@ namespace MonoTests.System.Text
 		[Category ("MobileNotWorking")]
 		public void Bug415628 ()
 		{
-			using (var f = File.Open ("Test/resources/415628.bin", FileMode.Open)) {
+			DirectoryInfo bcl_output_dir = Directory.GetParent (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location)).Parent;
+			string namespace_dir = Path.Combine (bcl_output_dir.Parent.FullName, "corlib");
+			using (var f = File.Open (Path.Combine (namespace_dir, "Test/resources/415628.bin"), FileMode.Open)) {
 				BinaryReader br = new BinaryReader (f);
 				byte [] buf = br.ReadBytes (8000);
 				Encoding.UTF8.GetString(buf);

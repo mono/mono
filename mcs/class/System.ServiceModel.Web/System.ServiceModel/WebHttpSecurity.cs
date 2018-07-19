@@ -34,7 +34,7 @@ namespace System.ServiceModel
 		public WebHttpSecurity ()
 		{
 			// there is no public constructor for transport ...
-#if !NET_2_1
+#if !MOBILE
 			Transport = new BasicHttpBinding ().Security.Transport;
 #endif
 		}

@@ -1,4 +1,4 @@
-﻿//
+//
 // ReliableSession.cs
 //
 // Author:
@@ -39,12 +39,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		public ReliableSession (ReliableSessionBindingElement binding)
+		public ReliableSession (ReliableSessionBindingElement reliableSessionBindingElement)
 		{
-			if (binding == null)
-				throw new ArgumentNullException ("binding");
-			InactivityTimeout = binding.InactivityTimeout;
-			Ordered = binding.Ordered;
+			if (reliableSessionBindingElement == null)
+				throw new ArgumentNullException ("reliableSessionBindingElement");
+			InactivityTimeout = reliableSessionBindingElement.InactivityTimeout;
+			Ordered = reliableSessionBindingElement.Ordered;
 		}
 
 		public TimeSpan InactivityTimeout { get; set; }

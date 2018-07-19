@@ -5,6 +5,7 @@ include ../../build/rules.make
 LIBRARY = System.Dynamic.dll
 
 LIB_REFS = System.Core System
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = -unsafe -d:CODEPLEX_40 -nowarn:414,169
 
 # This is a .NET 4.0+ only assembly

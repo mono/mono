@@ -41,7 +41,10 @@ namespace Microsoft.Build.Internal
 		public BuildNodeManager (BuildManager buildManager)
 		{
 			BuildManager = buildManager;
-			new Thread (RunLoop).Start ();
+			new Thread (RunLoop) {
+				IsBackground = true,
+				Name = "xbuild request handler"
+			}.Start ();
 		}
 
 		~BuildNodeManager ()
@@ -77,6 +80,9 @@ namespace Microsoft.Build.Internal
 					if (!queued_builds.TryDequeue (out build))
 						continue;
 					StartOneBuild (build);
+				} catch (ThreadAbortException) {
+					// do nothing
+					break;
 				} catch (Exception ex) {
 					// FIXME: I guess INodeLogger should be used instead.
 					Console.Error.WriteLine ("Uncaught build node exception occured");

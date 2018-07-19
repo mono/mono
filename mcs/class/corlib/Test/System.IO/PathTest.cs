@@ -37,6 +37,7 @@ namespace MonoTests.System.IO
 		static string path3;
 		static OsType OS;
 		static char DSC = Path.DirectorySeparatorChar;
+		static char ADSC = Path.AltDirectorySeparatorChar;
 
 		[SetUp]
 		public void SetUp ()
@@ -360,6 +361,12 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void GetDirectoryName_Replaces_AltDirectorySeparatorChar ()
+		{
+			Assert.AreEqual ($"foo{DSC}bar", Path.GetDirectoryName ($"foo{ADSC}bar{ADSC}dingus"), "#1");
+		}
+
+		[Test]
 		public void GetExtension ()
 		{
 			string testExtn = Path.GetExtension (path1);
@@ -427,7 +434,7 @@ namespace MonoTests.System.IO
 			string testFileName = Path.GetFileName (path1);
 
 			Assert.AreEqual ("test.txt", testFileName, "#1");
-			testFileName = Path.GetFileName (null);
+			testFileName = Path.GetFileName ((string)null);
 			Assert.AreEqual (null, testFileName, "#2");
 			testFileName = Path.GetFileName (String.Empty);
 			Assert.AreEqual (String.Empty, testFileName, "#3");
@@ -688,6 +695,11 @@ namespace MonoTests.System.IO
 						i, root + test [i, 0], ex.GetType ()));
 				}
 			}
+
+			// These cases require that we don't pass a root to GetFullPath - it should return the proper drive root.
+			string root4 = Path.GetPathRoot(Directory.GetCurrentDirectory());
+			Assert.AreEqual(root4, Path.GetFullPath(@"\"));
+			Assert.AreEqual(root4, Path.GetFullPath("/"));
 		}
 
 		[Test]

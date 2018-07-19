@@ -27,6 +27,7 @@ Mono.Security.Cryptography/PKCS8Test.cs
 Mono.Security.Cryptography/RSAManagedTest.cs
 Mono.Security.Cryptography/SHA224ManagedTest.cs
 Mono.Security.Cryptography/SHA224Test.cs
+Mono.Security.Interface/TestProvider.cs
 Mono.Security.Protocol.Ntlm/ChallengeResponseTest.cs
 Mono.Security.Protocol.Ntlm/MessageBaseTest.cs
 Mono.Security.Protocol.Ntlm/Type1MessageTest.cs

@@ -102,6 +102,7 @@ System.Windows/RectConverter.cs
 System.Windows/Size.cs
 System.Windows/SizeConverter.cs
 System.Windows/SplashScreen.cs
+System.Windows/NumericListTokenizer.cs
 System.Windows/ValidateValueCallback.cs
 System.Windows/Vector.cs
 System.Windows/VectorConverter.cs
@@ -181,6 +182,7 @@ System.Windows.Threading/DispatcherUnhandledExceptionEventArgs.cs
 System.Windows.Threading/DispatcherUnhandledExceptionEventHandler.cs
 System.Windows.Threading/DispatcherUnhandledExceptionFilterEventArgs.cs
 System.Windows.Threading/DispatcherUnhandledExceptionFilterEventHandler.cs
+ZipSharp/NativeVersion.cs
 ZipSharp/IOFunctions.cs
 ZipSharp/ZipArchive.cs
 ZipSharp/UnzipArchive.cs

@@ -13,6 +13,7 @@ namespace MonoTests.System.ServiceModel.Channels
 	[TestFixture]
 	public class MessageBufferTest
 	{
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		public void TestCreateNavigator ()
 		{
@@ -23,7 +24,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			Assert.IsTrue (nav is SeekableXPathNavigator);
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCreateBufferedCopyTwice ()

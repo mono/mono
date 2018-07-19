@@ -1,4 +1,4 @@
-../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
+../../test-helpers/NunitHelpers.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/AssemblyInfo.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/crc32.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/Header.cs
@@ -271,7 +271,6 @@ System.Web.UI.WebControls/RadioButtonTest.cs
 System.Web.UI.WebControls/RangeValidatorTest.cs
 System.Web.UI.WebControls/RectangleHotSpotTest.cs
 System.Web.UI.WebControls/RegularExpressionValidatorTest.cs
-System.Web.UI.WebControls/RepeatInfoTest.auto.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.4.0.cs
 System.Web.UI.WebControls/RepeatInfoTest.cs
 System.Web.UI.WebControls/RepeatInfoUser.cs

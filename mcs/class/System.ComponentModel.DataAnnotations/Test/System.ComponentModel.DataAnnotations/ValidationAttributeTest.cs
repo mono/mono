@@ -31,7 +31,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
@@ -351,7 +350,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			var attr = new ValidateFooAttribute ();
 
-			AssertExtensions.Throws <NotImplementedException> (() => {
+			Assert.Throws <NotImplementedException> (() => {
 				// It calls IsValid (object, validationContext) which throws the NIEX, but when that overload is called directly, there's
 				// no exception.
 				//
@@ -361,7 +360,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				attr.IsValid (null);
 			}, "#A1-1");
 			
-			AssertExtensions.Throws <NotImplementedException> (() => {
+			Assert.Throws <NotImplementedException> (() => {
 				attr.IsValid ("stuff");
 			}, "#A1-2");
 		}
@@ -371,7 +370,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			var attr = new ValidateBarAttribute ();
 
-			AssertExtensions.Throws <NullReferenceException> (() => {
+			Assert.Throws <NullReferenceException> (() => {
 				attr.CallIsValid (null, null);
 			}, "#A1");
 
@@ -406,7 +405,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			var attr = new ValidateSomethingAttribute ();
 
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				// Thrown from the IsValid (object, ValidationContext) overload!
 				//
 				// MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_02:

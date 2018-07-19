@@ -596,6 +596,7 @@ namespace Mono.Terminal {
 					
 			if (completions.Length == 1){
 				InsertTextAtCursor (completions [0]);
+				HideCompletions ();
 			} else {
 				int last = -1;
 

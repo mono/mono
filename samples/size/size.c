@@ -121,7 +121,7 @@ GetMemoryUsage (MonoObject *this)
 
 static int installed = 0;
 
-void install_icall (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, int result)
+void install_icall (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo)
 {
 	if (installed)
 		return;
@@ -131,8 +131,8 @@ void install_icall (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, 
 }
 
 void
-mono_profiler_startup (const char *desc)
+mono_profiler_init_size (const char *desc)
 {
-	mono_profiler_install_jit_end (install_icall);
-	mono_profiler_set_events (MONO_PROFILE_JIT_COMPILATION);
+	MonoProfilerHandle handle = mono_profiler_create (NULL);
+	mono_profiler_set_jit_done_callback (handle, install_icall);
 }

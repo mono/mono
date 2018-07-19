@@ -95,7 +95,6 @@ namespace System.ServiceModel.Channels
 				if (message.Headers.RelatesTo == null)
 					message.Headers.RelatesTo = request.Headers.MessageId;
 
-				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
 				owner.frame.WriteEndRecord ();
 				owner.server.Close ();
@@ -106,7 +105,6 @@ namespace System.ServiceModel.Channels
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
 			try {
-				DateTime start = DateTime.Now;
 				context = ReceiveRequest (timeout);
 				return context != null;
 			} catch (TimeoutException) {
@@ -126,8 +124,6 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
-
 			// FIXME: use timeout
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, server, true) { Encoder = this.Encoder };
 			frame.ProcessPreambleRecipient ();

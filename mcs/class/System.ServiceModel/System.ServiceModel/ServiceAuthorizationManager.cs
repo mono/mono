@@ -33,24 +33,24 @@ namespace System.ServiceModel
 {
 	public class ServiceAuthorizationManager
 	{
-		public virtual bool CheckAccess (OperationContext context)
+		public virtual bool CheckAccess (OperationContext operationContext)
 		{
-			return CheckAccessCore (context);
+			return CheckAccessCore (operationContext);
 		}
 
-		public virtual bool CheckAccess (OperationContext context, ref Message message)
+		public virtual bool CheckAccess (OperationContext operationContext, ref Message message)
 		{
-			return CheckAccessCore (context);
+			return CheckAccessCore (operationContext);
 		}
 
 		[MonoTODO]
-		protected virtual bool CheckAccessCore (OperationContext context)
+		protected virtual bool CheckAccessCore (OperationContext operationContext)
 		{
 			return false;
 		}
 
 		[MonoTODO]
-		protected virtual ReadOnlyCollection<IAuthorizationPolicy> GetAuthorizationPolicies (OperationContext context)
+		protected virtual ReadOnlyCollection<IAuthorizationPolicy> GetAuthorizationPolicies (OperationContext operationContext)
 		{
 			throw new NotImplementedException ();
 		}

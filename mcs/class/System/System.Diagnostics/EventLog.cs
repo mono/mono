@@ -32,13 +32,14 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+
+#pragma warning disable 618
 
 namespace System.Diagnostics 
 {

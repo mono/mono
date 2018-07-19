@@ -38,8 +38,6 @@ using System.Web.Caching;
 
 using NUnit.Framework;
 
-using MonoTests.Common;
-
 namespace MonoTests.System.Web {
 
 	public class FakeHttpWorkerRequest2 : HttpWorkerRequest {
@@ -547,7 +545,7 @@ namespace MonoTests.System.Web {
 
 			KnownResponseHeader known;
 
-			Assert.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
+			AssertHelper.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
 
 			known = (KnownResponseHeader)f.KnownResponseHeaders ["Content-Type"];
 			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B2");
@@ -571,7 +569,7 @@ namespace MonoTests.System.Web {
 
 			KnownResponseHeader known;
 
-			Assert.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
+			AssertHelper.LessOrEqual (1, f.KnownResponseHeaders.Count, "#B1");
 
 			known = (KnownResponseHeader)f.KnownResponseHeaders ["Content-Type"];
 			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B2");
@@ -637,19 +635,19 @@ namespace MonoTests.System.Web {
 		{
 			FakeHttpWorkerRequest2 request;
 			HttpContext context = Cook (1, out request);
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				context.Response.RedirectPermanent (null);
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				context.Response.RedirectPermanent ("http://invalid\nurl.com");
 			}, "#A2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				context.Response.RedirectPermanent (null, true);
 			}, "#A3");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				context.Response.RedirectPermanent ("http://invalid\nurl.com", true);
 			}, "#A4");
 		}
@@ -659,7 +657,7 @@ namespace MonoTests.System.Web {
 		{
 			var resp = new HttpResponse (new StringWriter ());
 			// Ho, ho, ho!
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				resp.RedirectToRoute ("SomeRoute");
 			}, "#A1");
 
@@ -667,11 +665,11 @@ namespace MonoTests.System.Web {
 			HttpContext context = Cook (1, out request);
 
 			// From RouteCollection.GetVirtualPath
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				context.Response.RedirectToRoute ("SomeRoute");
 			}, "#A2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				context.Response.RedirectToRoute (new { productId = "1", category = "widgets" });
 			}, "#A3");
 		}
@@ -679,22 +677,22 @@ namespace MonoTests.System.Web {
 		[Test]
 		public void RemoveOutputCacheItem ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				HttpResponse.RemoveOutputCacheItem (null, "MyProvider");
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				HttpResponse.RemoveOutputCacheItem ("badPath", null);
 			}, "#A2");
 
 			Assert.IsNull (OutputCache.Providers, "#A3");
 			HttpResponse.RemoveOutputCacheItem ("/Path", null);
 
-			AssertExtensions.Throws<ProviderException> (() => {
+			Assert.Throws<ProviderException> (() => {
 				HttpResponse.RemoveOutputCacheItem ("/Path", String.Empty);
 			}, "#A3");
 
-			AssertExtensions.Throws<ProviderException> (() => {
+			Assert.Throws<ProviderException> (() => {
 				HttpResponse.RemoveOutputCacheItem ("/Path", "MyProvider");
 			}, "#A4");
 		}
@@ -710,23 +708,23 @@ namespace MonoTests.System.Web {
 			Assert.IsNull (context.Response.Output, "#A2");
 
 			// Classy...
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				context.Response.Write ('t');
 			}, "#A3-1");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				context.Response.Write ((object) 5);
 			}, "#A3-2");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				context.Response.Write ("string");
 			}, "#A3-3");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				context.Response.Write (new char [] { '1' }, 0, 1);
 			}, "#A3-4");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				context.Response.Write ((object) null);
 			}, "#A3-5");
 		}

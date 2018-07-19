@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Drawing.Design.dll
 LIB_REFS = System System.Drawing System.Windows.Forms
-LIB_MCS_FLAGS = /r:$(corlib)
+KEYFILE = ../msfinal.pub
+LIB_MCS_FLAGS =
 NO_TEST = yes
 
 include ../../build/library.make

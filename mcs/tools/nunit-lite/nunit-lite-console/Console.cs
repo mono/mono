@@ -73,9 +73,12 @@ namespace NUnitLite
         //             Example usage: -exclude:category1,category2 this command can be used
         //             in combination with the -include option also note that exclude takes priority
         //             over all includes
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            new TextUI().Execute(args);
+            var runner = new TextUI();
+            runner.Execute(args);
+            
+            return (runner.Failure ? 1 : 0);
         }
     }
 }

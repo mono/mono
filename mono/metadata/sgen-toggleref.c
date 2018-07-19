@@ -1,5 +1,6 @@
-/*
- * sgen-toggleref.c: toggleref support for sgen
+/**
+ * \file
+ * toggleref support for sgen
  *
  * Author:
  *  Rodrigo Kumpera (kumpera@gmail.com)
@@ -7,18 +8,7 @@
  * Copyright 2011 Xamarin, Inc.
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include "config.h"
@@ -193,12 +183,12 @@ mono_gc_toggleref_add (MonoObject *object, mono_bool strong_ref)
 
 /**
  * mono_gc_toggleref_register_callback:
- * @callback callback used to determine the new state of the given object.
+ * \param callback callback used to determine the new state of the given object.
  *
- * The callback must decide the status of a given object. It must return one of the values in the MONO_TOGGLE_REF_ enum.
+ * The callback must decide the status of a given object. It must return one of the values in the \c MONO_TOGGLE_REF_ enum.
  * This function is called with the world running but with the GC locked. This means that you can do everything that doesn't
  * require GC interaction. This includes, but not limited to, allocating objects, (de)registering for finalization, manipulating
- *gchandles, storing to reference fields or interacting with other threads that might perform such operations.
+ * gchandles, storing to reference fields or interacting with other threads that might perform such operations.
  */
 void
 mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (MonoObject *obj))
@@ -213,11 +203,12 @@ test_toggleref_callback (MonoObject *obj)
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
 	if (!mono_toggleref_test_field) {
-		mono_toggleref_test_field = mono_class_get_field_from_name (mono_object_get_class (obj), "__test");
+		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_get_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
 	}
 
-	mono_field_get_value (obj, mono_toggleref_test_field, &status);
+	/* In coop mode, important to not call a helper that will pin obj! */
+	mono_field_get_value_internal (obj, mono_toggleref_test_field, &status);
 	printf ("toggleref-cb obj %d\n", status);
 	return status;
 }

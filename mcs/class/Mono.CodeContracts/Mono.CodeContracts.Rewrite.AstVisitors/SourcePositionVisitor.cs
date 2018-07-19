@@ -96,6 +96,7 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 
 		public override Expr Visit (Expr e)
 		{
+			/*
 			Instruction inst;
 			if (this.instructionLookup.TryGetValue (e, out inst)) {
 				var seq = inst.SequencePoint;
@@ -111,6 +112,8 @@ namespace Mono.CodeContracts.Rewrite.AstVisitors {
 					}
 				}
 			}
+			*/
+			
 			return base.Visit (e);
 		}
 

@@ -1,5 +1,6 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
+#include <mono/utils/mono-publib.h>
 #include <stdlib.h>
 
 /*
@@ -31,6 +32,13 @@ static void main_function (MonoDomain *domain, const char *file, int argc, char*
 	mono_jit_exec (domain, assembly, argc, argv);
 }
 
+static int malloc_count = 0;
+
+static void* custom_malloc(size_t bytes)
+{
+	++malloc_count;
+	return malloc(bytes);
+}
 
 int 
 main(int argc, char* argv[]) {
@@ -43,6 +51,9 @@ main(int argc, char* argv[]) {
 		return 1;
 	}
 	file = argv [1];
+
+	MonoAllocatorVTable mem_vtable = {custom_malloc};
+	mono_set_allocator_vtable (&mem_vtable);
 
 	/*
 	 * Load the default Mono configuration file, this is needed
@@ -66,6 +77,9 @@ main(int argc, char* argv[]) {
 	retval = mono_environment_exitcode_get ();
 	
 	mono_jit_cleanup (domain);
+
+	fprintf (stdout, "custom malloc calls = %d\n", malloc_count);
+
 	return retval;
 }
 

@@ -1,26 +1,12 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_BITSET_H__
 #define __MONO_BITSET_H__
 
 #include <glib.h>
-#ifdef SGEN_WITHOUT_MONO
-#include "mono/utils/mono-compiler.h"
-#define MONO_API
-#else
 #include <mono/utils/mono-publib.h>
-#endif
-
-/*
- * When embedding, you have to define MONO_ZERO_LEN_ARRAY before including any
- * other Mono header file if you use a different compiler from the one used to
- * build Mono.
- */
-#ifndef MONO_ZERO_LEN_ARRAY
-#ifdef __GNUC__
-#define MONO_ZERO_LEN_ARRAY 0
-#else
-#define MONO_ZERO_LEN_ARRAY 1
-#endif
-#endif
 
 #define MONO_BITSET_BITS_PER_CHUNK (8 * sizeof (gsize))
 

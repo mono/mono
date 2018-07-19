@@ -68,9 +68,9 @@ namespace System.ServiceModel.Dispatcher
 			Initialize (xpath, namespaces);
 		}
 
-		public XPathMessageFilter (string xpath, XsltContext namespaces)
+		public XPathMessageFilter (string xpath, XsltContext context)
 		{
-			Initialize (xpath, namespaces);
+			Initialize (xpath, context);
 		}
 
 		[MonoTODO]
@@ -86,9 +86,9 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		[MonoTODO]
-		public XPathMessageFilter (XmlReader reader, XsltContext namespaces)
+		public XPathMessageFilter (XmlReader reader, XsltContext context)
 		{
-			Initialize (reader.ReadString (), namespaces);
+			Initialize (reader.ReadString (), context);
 		}
 
 		private void Initialize (string xpath, XmlNamespaceManager nsmgr)

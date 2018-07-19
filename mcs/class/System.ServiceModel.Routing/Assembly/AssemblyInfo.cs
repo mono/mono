@@ -54,8 +54,3 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
-[assembly: AssemblyKeyFile ("../silverlight.pub")]
-#else
-[assembly: AssemblyKeyFile("../winfx.pub")]
-#endif

@@ -929,7 +929,7 @@ namespace MonoTests.System.Xml
 				if (success)
 					return;
 				Assert.Fail (s + "should fail");
-			} catch (XmlException ex) {
+			} catch (XmlException) {
 				if (success)
 					Assert.Fail (s + "should not fail");
 			}

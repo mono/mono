@@ -40,6 +40,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// <summary>
 	/// TarExceptions are used for exceptions specific to tar classes and code.	
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarException : SharpZipBaseException
 	{
 		/// <summary>

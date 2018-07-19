@@ -446,7 +446,7 @@ namespace MonoTests.System.Xml
 			string ret = @"<one>
   <two>Some data.</two>
 </one>";
-			Assert.AreEqual (ret, nav.OuterXml.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (ret.Replace ("\r\n", "\n"), nav.OuterXml.Replace ("\r\n", "\n"), "#1");
 		}
 
 		[Test]

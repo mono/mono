@@ -33,10 +33,8 @@
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -44,10 +42,16 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
+#if !FULL_AOT_RUNTIME
 	[ComDefaultInterface (typeof (_LocalBuilder))]
+#endif
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class LocalBuilder : LocalVariableInfo, _LocalBuilder {
+	public sealed class LocalBuilder : LocalVariableInfo
+#if !FULL_AOT_RUNTIME
+		, _LocalBuilder
+#endif
+	{
 
 		// Some fields are already defined in LocalVariableInfo
 		#region Sync with reflection.h
@@ -108,7 +112,7 @@ namespace System.Reflection.Emit {
 		internal int EndOffset {
 			get { return endOffset; }
 		}
-
+#if !FULL_AOT_RUNTIME
 		void _LocalBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -128,6 +132,6 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }
-#endif

@@ -98,29 +98,29 @@ namespace System.ServiceModel.Channels
 		}
 
 		public TChannel CreateChannel (
-			EndpointAddress remoteAddress)
+			EndpointAddress address)
 		{
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
-			return CreateChannel (remoteAddress, remoteAddress.Uri);
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			return CreateChannel (address, address.Uri);
 		}
 
 		public TChannel CreateChannel (
-			EndpointAddress remoteAddress, Uri via)
+			EndpointAddress address, Uri via)
 		{
-			if (remoteAddress == null)
-				throw new ArgumentNullException ("remoteAddress");
+			if (address == null)
+				throw new ArgumentNullException ("address");
 			if (via == null)
 				throw new ArgumentNullException ("via");
 
 			ValidateCreateChannel ();
-			var ch = OnCreateChannel (remoteAddress, via);
+			var ch = OnCreateChannel (address, via);
 			channels.Add (ch);
 			return ch;
 		}
 
 		protected abstract TChannel OnCreateChannel (
-			EndpointAddress remoteAddress, Uri via);
+			EndpointAddress address, Uri via);
 
 		protected override void OnAbort ()
 		{
@@ -132,11 +132,11 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			// this implicitly premises: TChannel is IChannel
 			foreach (IChannel ch in channels)
-				ch.Close (timeout - (DateTime.Now - start));
-			base.OnClose (timeout - (DateTime.Now - start));
+				ch.Close (timeout - (DateTime.UtcNow - start));
+			base.OnClose (timeout - (DateTime.UtcNow - start));
 		}
 
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)

@@ -2,7 +2,8 @@ thisdir = tools/mono-shlib-cop
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:Mono.Posix.dll
+LOCAL_MCS_FLAGS =
+LIB_REFS = Mono.Posix System System.Xml
 
 PROGRAM = mono-shlib-cop.exe
 

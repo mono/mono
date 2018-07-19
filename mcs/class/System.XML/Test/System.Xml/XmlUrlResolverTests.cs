@@ -10,9 +10,7 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-#if NET_4_5
 using System.Reflection;
-#endif
 
 namespace MonoTests.System.Xml
 {
@@ -98,8 +96,8 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("view:Standard.xslt", uri.AbsoluteUri, "#2");
 		}
 
-#if NET_4_5
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
 		public void TestAsync ()
 		{
 			var loc = Assembly.GetExecutingAssembly ().Location;
@@ -126,6 +124,5 @@ namespace MonoTests.System.Xml
 				Assert.IsTrue (ex is XmlException);
 			}
 		}
-#endif
 	}
 }

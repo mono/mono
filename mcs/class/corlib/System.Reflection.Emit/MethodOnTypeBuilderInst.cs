@@ -50,7 +50,7 @@ namespace System.Reflection.Emit
 		#endregion
 		MethodInfo generic_method_definition;
 
-		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodInfo base_method)
+		public MethodOnTypeBuilderInst (TypeBuilderInstantiation instantiation, MethodInfo base_method)
 		{
 			this.instantiation = instantiation;
 			this.base_method = base_method;
@@ -98,6 +98,19 @@ namespace System.Reflection.Emit
 				return null;				
 
 			return instantiation.GetGenericArguments ();
+		}
+
+		// Called from the runtime to return the corresponding finished MethodInfo object
+		internal MethodInfo RuntimeResolve () {
+			var type = instantiation.InternalResolve ();
+			var m = type.GetMethod (base_method);
+			if (method_arguments != null) {
+				var args = new Type [method_arguments.Length];
+				for (int i = 0; i < method_arguments.Length; ++i)
+					args [i] = method_arguments [i].InternalResolve ();
+				m = m.MakeGenericMethod (args);
+			}
+			return m;
 		}
 
 		//
@@ -281,6 +294,12 @@ namespace System.Reflection.Emit
 		public override MethodInfo GetBaseDefinition ()
 		{
 			throw new NotSupportedException ();
+		}
+
+		public override ParameterInfo ReturnParameter {
+			get {
+				throw new NotSupportedException();
+			}
 		}
 
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {

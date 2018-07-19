@@ -55,6 +55,8 @@ namespace MonoTests.System.Windows.Forms
 			}
 			// with bug 694908 we don't come here. Instead NUnit exits.
 			Assert.IsTrue (CrashingForm.HasHandledException);
+
+			Application.ThreadException -= CrashingForm.HandleThreadException;
 		}
 
 		class CrashingForm: Form
@@ -91,6 +93,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Ignore ("causes an infinite restart loop since we're not in a separate AppDomain with nunit-lite")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void RestartNotSupportedExceptionTest ()
 		{

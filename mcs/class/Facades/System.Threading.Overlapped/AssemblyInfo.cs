@@ -24,18 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Threading.Overlapped.dll")]
-[assembly: AssemblyDescription ("System.Threading.Overlapped.dll")]
-[assembly: AssemblyDefaultAlias ("System.Threading.Overlapped.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Threading.Overlapped")]
+[assembly: AssemblyDescription ("System.Threading.Overlapped")]
+[assembly: AssemblyDefaultAlias ("System.Threading.Overlapped")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)")]
-[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
+[assembly: AssemblyVersion ("4.1.1.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-

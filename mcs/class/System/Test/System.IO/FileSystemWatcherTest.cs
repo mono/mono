@@ -22,7 +22,7 @@ namespace MonoTests.System.IO
 		{
 			FileSystemWatcher fw = new FileSystemWatcher ();
 			Assert.AreEqual (fw.EnableRaisingEvents, false, "#01");
-			Assert.AreEqual (fw.Filter, "*.*", "#02");
+			Assert.AreEqual (fw.Filter, "*", "#02");
 			Assert.AreEqual (fw.IncludeSubdirectories, false, "#03");
 			Assert.AreEqual (fw.InternalBufferSize, 8192, "#04");
 			Assert.AreEqual (fw.NotifyFilter, NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite, "#05");

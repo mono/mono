@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_ODBC
+
 using System;
 using System.Text;
 using System.Data;
@@ -68,3 +70,5 @@ namespace MonoTests.System.Data.Odbc
 
         }
 }
+
+#endif

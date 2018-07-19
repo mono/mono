@@ -108,7 +108,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsNull (fvi.SpecialBuild, "#27");
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		public void GetVersionInfo_NoNativeResources ()
 		{

@@ -63,24 +63,24 @@ namespace System.IdentityModel.Tokens
 		}
 
 		public virtual bool MatchesKeyIdentifierClause (
-			SecurityKeyIdentifierClause skiClause)
+			SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			return false;
 		}
 
 		[MonoTODO]
 		public virtual SecurityKey ResolveKeyIdentifierClause (
-			SecurityKeyIdentifierClause skiClause)
+			SecurityKeyIdentifierClause keyIdentifierClause)
 		{
-			if (skiClause == null)
-				throw new ArgumentNullException ("skiClause");
-			if (!MatchesKeyIdentifierClause (skiClause))
-				throw new InvalidOperationException (String.Format ("This '{0}' security token does not support resolving '{1}' key identifier clause.", GetType (), skiClause));
-			if (skiClause.CanCreateKey)
-				return skiClause.CreateKey ();
+			if (keyIdentifierClause == null)
+				throw new ArgumentNullException ("keyIdentifierClause");
+			if (!MatchesKeyIdentifierClause (keyIdentifierClause))
+				throw new InvalidOperationException (String.Format ("This '{0}' security token does not support resolving '{1}' key identifier clause.", GetType (), keyIdentifierClause));
+			if (keyIdentifierClause.CanCreateKey)
+				return keyIdentifierClause.CreateKey ();
 			// FIXME: examine it.
 			if (SecurityKeys.Count == 0)
-				throw new InvalidOperationException (String.Format ("This '{0}' security token does not have any keys that can be resolved.", GetType (), skiClause));
+				throw new InvalidOperationException (String.Format ("This '{0}' security token does not have any keys that can be resolved.", GetType (), keyIdentifierClause));
 			return SecurityKeys [0];
 		}
 	}

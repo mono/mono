@@ -40,5 +40,4 @@ using MonoTests.Common;
 //[assembly: AssemblyFileVersion ("1.0.0.0")]
 #if !TARGET_DOTNET
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
 #endif

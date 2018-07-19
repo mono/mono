@@ -56,6 +56,7 @@
   <Types>
     <Namespace Name="System.Net.Http">
       <Type Name="ByteArrayContent" Kind="Class" />
+      <Type Name="CFNetworkHandler" Kind="Class" />
       <Type Name="ClientCertificateOption" Kind="Enumeration" />
       <Type Name="DelegatingHandler" Kind="Class" />
       <Type Name="FormUrlEncodedContent" Kind="Class" />

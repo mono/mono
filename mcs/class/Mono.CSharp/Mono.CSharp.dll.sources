@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+aot.cs
 ../../mcs/anonymous.cs
 ../../mcs/argument.cs
 ../../mcs/assign.cs
@@ -47,6 +49,7 @@
 ../../mcs/support.cs
 ../../mcs/typemanager.cs
 ../../mcs/typespec.cs
+../../mcs/tuples.cs
 ../../mcs/visit.cs
 ../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
@@ -54,5 +57,3 @@
 ../../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
 ../../build/common/Consts.cs
 ../../tools/monop/outline.cs
-../../mcs/cs-parser.cs
-Assembly/AssemblyInfo.cs

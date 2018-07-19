@@ -1958,5 +1958,56 @@ namespace MonoTests.System.Windows.Forms
 				return base.IsInputChar (charCode);
 			}
 		}
+
+		[Test]  // Should not throw IndexOutOfBoundsException
+		public void ReaddingItem ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			ListView lvw1 = new ListView ();
+			ListView lvw2 = new ListView ();
+			lvw1.View = View.Details;
+			lvw2.View = View.Details;
+			lvw1.Columns.Add (new ColumnHeader ("1"));
+			lvw2.Columns.Add (new ColumnHeader ("2"));
+			form.Controls.Add (lvw1);
+			form.Controls.Add (lvw2);
+			form.Show ();
+
+			for (int i = 0; i < 50; i++)
+				lvw1.Items.Add ("A");
+			lvw2.Items.Add ("B1");
+
+			ListViewItem item = lvw1.Items [lvw1.Items.Count - 1];
+			item.Selected = true;
+			item.Remove ();
+			lvw2.Items.Add (item);
+			item.Selected = true;
+
+			Assert.AreEqual (lvw1.Items.Count, 49, "#1");
+			Assert.AreEqual (lvw2.Items.Count, 2, "#2");
+			Assert.AreEqual (lvw2.Items [1].Selected, true, "#3");
+
+			form.Dispose ();
+		}
+
+		[Test]  // Should not throw ArgumentOutOfRangeException
+		public void DeleteNotFocusedItem ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			ListView lvw = new ListView ();
+			form.Controls.Add (lvw);
+			form.Show ();
+
+			for (int i = 0; i < 3; i++)
+				lvw.Items.Add ("A");
+
+			lvw.Items [lvw.Items.Count - 1].Focused = true;
+			lvw.Items [0].Remove ();
+			lvw.Items [0].Remove ();
+
+			form.Dispose ();
+		}
 	}
 }

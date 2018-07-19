@@ -29,7 +29,7 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.Configuration;

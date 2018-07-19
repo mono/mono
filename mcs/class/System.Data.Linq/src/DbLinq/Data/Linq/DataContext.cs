@@ -192,12 +192,12 @@ namespace DbLinq.Data.Linq
         /// </summary>
         /// <param name="connectionString">specifies file or server connection</param>
         [DbLinqToDo]
-        public DataContext(string connectionString)
+        public DataContext(string fileOrServerOrConnection)
         {
             Profiler.At("START DataContext(string)");
-            IVendor ivendor = GetVendor(ref connectionString);
+            IVendor ivendor = GetVendor(ref fileOrServerOrConnection);
 
-            IDbConnection dbConnection = ivendor.CreateDbConnection(connectionString);
+            IDbConnection dbConnection = ivendor.CreateDbConnection(fileOrServerOrConnection);
             Init(new DatabaseContext(dbConnection), null, ivendor);
 
             Profiler.At("END DataContext(string)");

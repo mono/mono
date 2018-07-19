@@ -26,7 +26,7 @@ some combination of the two.
 	
 	To be clearer, and give an idea of what the algorithm can and
 	cannot do without describing it in detail... keep in mind that
-	only "redunant" checks cannot be removed. By "redundant", I
+	only "redundant" checks cannot be removed. By "redundant", I
 	mean "already explicitly checked" in the method code.
 	
 	Unfortunately, analyzing complex expressions is not so easy
@@ -136,7 +136,7 @@ some combination of the two.
 	In the first case, the BB has exactly two exit BBs, and their
 	execution conditions are easy to get from the condition of the
 	branch (see the "get_relation_from_branch_instruction"
-	function, and expecially the end of "analyze_block" in
+	function, and especially the end of "analyze_block" in
 	abcremoval.c.
 
 	If there is a switch, the jump condition of every exit BB is
@@ -303,7 +303,7 @@ some combination of the two.
 	each BB tried to examine all possible conditions between all
 	variables, filling a sort of "evaluation matrix". The problem
 	was that the complexity of this evaluation was quadratic (or
-	worse) on the number of variables, and that many wariables
+	worse) on the number of variables, and that many variables
 	were examined even if they were not involved in any array
 	access.
 	
@@ -332,7 +332,7 @@ some combination of the two.
 
 		    [1b] Prepare the evaluation graph (empty)
 
-		    [1b] Summarize each varible definition, and put
+		    [1b] Summarize each variable definition, and put
 		         the resulting relations in the evaluation
 		         graph
 

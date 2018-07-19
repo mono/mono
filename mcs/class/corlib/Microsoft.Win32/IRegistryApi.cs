@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1
+#if WIN_PLATFORM || XAMMAC_4_5
 
 using System;
 using System.Text;
@@ -67,5 +67,5 @@ namespace Microsoft.Win32 {
 	}
 }
 
-#endif // NET_2_1
+#endif // MOBILE
 

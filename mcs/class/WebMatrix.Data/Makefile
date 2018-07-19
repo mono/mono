@@ -5,7 +5,9 @@ include ../../build/rules.make
 LIBRARY = WebMatrix.Data.dll
 
 LIB_REFS = System System.Data System.Core System.Configuration
-LIB_MCS_FLAGS = -r:$(corlib)
-TEST_MCS_FLAGS = -r:System.dll -r:System.Core.dll -r:System.Data.dll -r:Mono.Data.Sqlite.dll -r:Microsoft.CSharp.dll
+KEYFILE = ../mono.pub
+LIB_MCS_FLAGS =
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Core System.Data Mono.Data.Sqlite Microsoft.CSharp
 
 include ../../build/library.make

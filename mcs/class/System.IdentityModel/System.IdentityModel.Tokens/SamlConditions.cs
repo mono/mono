@@ -102,7 +102,7 @@ namespace System.IdentityModel.Tokens
 		[MonoTODO]
 		public virtual void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			throw new NotImplementedException ();
@@ -110,7 +110,7 @@ namespace System.IdentityModel.Tokens
 
 		public virtual void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer)
+			SecurityTokenSerializer keyInfoSerializer)
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
@@ -123,7 +123,7 @@ namespace System.IdentityModel.Tokens
 			if (has_not_on_after)
 				writer.WriteAttributeString ("NotOnOrAfter", NotOnOrAfter.ToString (SamlConstants.DateFormat, invariant));
 			foreach (SamlCondition cond in Conditions)
-				cond.WriteXml (writer, samlSerializer, keyInfoTokenSerializer);
+				cond.WriteXml (writer, samlSerializer, keyInfoSerializer);
 			writer.WriteEndElement ();
 		}
 	}

@@ -11,6 +11,7 @@
 /chktrust
 /cilc
 /crlupdate
+/csi
 /csharp
 /csharp2
 /disco
@@ -29,6 +30,7 @@
 /ilasm
 /ilasm1
 /ilasm2
+/illinkanalyzer
 /installvst
 /lc
 /macpack
@@ -50,6 +52,7 @@
 /mono-abi-info
 /mono-api-diff
 /mono-api-info
+/mono-api-html
 /mono-api-info1
 /mono-api-info2
 /mono-cil-strip
@@ -84,7 +87,9 @@
 /sgen
 /sgen1
 /signcode
-/smcs
+/csc
+/csc-dim
+/vbc
 /sn
 /soapsuds
 /sqlmetal

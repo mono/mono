@@ -45,7 +45,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: AssemblyTitle ("cscompmgd.dll")]
 [assembly: AssemblyDefaultAlias ("cscompmgd.dll")]

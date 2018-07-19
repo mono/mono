@@ -62,9 +62,9 @@ namespace System.Web.UI {
                         }
                 }
 
-		protected internal override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter output)
                 {
-                        writer.Write (_text);
+                        output.Write (_text);
                 }
 
 		protected override ControlCollection CreateControlCollection ()

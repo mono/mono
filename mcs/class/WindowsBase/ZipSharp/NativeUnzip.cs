@@ -65,43 +65,58 @@ namespace zipsharp
 			return unztell(handle).ToInt64 ();
 		}
 
-		public static long CurrentFileLength (UnzipHandle handle)
+		public static long CurrentFileLength32 (UnzipHandle handle)
 		{
-			UnzipFileInfo info;
-			int result = unzGetCurrentFileInfo (handle, out info, null, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, null,  IntPtr.Zero);
-			
-			if (result != 0)
-				return -1;
-			else
-				return (long)info.UncompressedSize;
-		}
-		
-		static string GetCurrentFileName (UnzipHandle handle)
-		{
-			UnzipFileInfo info;
-			int result = unzGetCurrentFileInfo (handle, out info, null, IntPtr.Zero, IntPtr.Zero, new IntPtr (0), null,  IntPtr.Zero);
-
-			if (result != 0)
-				return null;
-			
-			StringBuilder sbName = new StringBuilder ((int)info.SizeFilename+1); // +1 to account for extra \0 at the end
-			result = unzGetCurrentFileInfo (handle, out info, sbName, new IntPtr (sbName.Capacity), IntPtr.Zero, new IntPtr (0), null,  IntPtr.Zero);
-			
-			if (result != 0)
-				return null;
-			else
-				return sbName.ToString ();
+			UnzipFileInfo32 info;
+			int result = unzGetCurrentFileInfo_32 (handle, out info, null, 0, IntPtr.Zero, 0, null,  0);
+			return result != 0 ? -1 : (long) info.uncompressed_size;
 		}
 
-		public static string[] GetFiles (UnzipHandle handle)
+		public static long CurrentFileLength64 (UnzipHandle handle)
 		{
-			List<string> files = new List<string> ();
+			UnzipFileInfo64 info;
+			int result = unzGetCurrentFileInfo_64 (handle, out info, null, 0, IntPtr.Zero, 0, null,  0);
+			return result != 0 ? -1 : (long) info.uncompressed_size;
+		}
 
+		static string GetCurrentFileName32 (UnzipHandle handle)
+		{
+			UnzipFileInfo32 info;
+			if (unzGetCurrentFileInfo_32 (handle, out info, null, 0, IntPtr.Zero, 0, null, 0) != 0)
+				return null;
+			var sbName = new StringBuilder ((int) info.size_filename + 1); // +1 to account for extra \0 at the end
+			if (unzGetCurrentFileInfo_32 (handle, out info, sbName, (uint) sbName.Capacity, IntPtr.Zero, 0, null, 0) != 0)
+				return null;
+			return sbName.ToString ();
+		}
+
+		static string GetCurrentFileName64 (UnzipHandle handle)
+		{
+			UnzipFileInfo64 info;
+			if (unzGetCurrentFileInfo_64 (handle, out info, null, 0, IntPtr.Zero, 0, null, 0) != 0)
+				return null;
+			var sbName = new StringBuilder ((int) info.size_filename + 1); // +1 to account for extra \0 at the end
+			if (unzGetCurrentFileInfo_64 (handle, out info, sbName, (uint) sbName.Capacity, IntPtr.Zero, 0, null, 0) != 0)
+				return null;
+			return sbName.ToString ();
+		}
+
+		public static string[] GetFiles32 (UnzipHandle handle)
+		{
+			return GetFiles (handle, GetCurrentFileName32);
+		}
+
+		public static string[] GetFiles64 (UnzipHandle handle)
+		{
+			return GetFiles (handle, GetCurrentFileName64);
+		}
+
+		private static string[] GetFiles (UnzipHandle handle, Func<UnzipHandle, string> getCurrentFileName)
+		{
 			GoToFirstFile (handle);
-
+			var files = new List<string> ();
 			string name;
-			while ((name = GetCurrentFileName(handle)) != null)
-			{
+			while ((name = getCurrentFileName (handle)) != null) {
 				files.Add (name);
 				if (!NativeUnzip.GoToNextFile (handle))
 					break;
@@ -121,9 +136,17 @@ namespace zipsharp
 			return unzGoToNextFile(handle) == 0;
 		}
 		
-		public static UnzipHandle OpenArchive (ZlibFileFuncDef fileFuncs)
+		public static UnzipHandle OpenArchive32 (ZlibFileFuncDef32 fileFuncs)
 		{
-			UnzipHandle handle = unzOpen2 ("", ref fileFuncs);
+			UnzipHandle handle = unzOpen2_32 ("", ref fileFuncs);
+			if (handle.IsInvalid)
+				throw new Exception ("Could not open unzip archive");
+			return handle;
+		}
+
+		public static UnzipHandle OpenArchive64 (ZlibFileFuncDef64 fileFuncs)
+		{
+			UnzipHandle handle = unzOpen2_64 ("", ref fileFuncs);
 			if (handle.IsInvalid)
 				throw new Exception ("Could not open unzip archive");
 			return handle;
@@ -160,9 +183,13 @@ namespace zipsharp
 		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzGoToFirstFile (UnzipHandle handle);
 
-		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
-		static extern UnzipHandle unzOpen2 (string path,
-		                                            ref ZlibFileFuncDef pzlib_filefunc_def);
+		[DllImport ("MonoPosixHelper", EntryPoint="unzOpen2", CallingConvention=CallingConvention.Cdecl)]
+		static extern UnzipHandle unzOpen2_32 (string path,
+		                                       ref ZlibFileFuncDef32 pzlib_filefunc_def);
+
+		[DllImport ("MonoPosixHelper", EntryPoint="unzOpen2", CallingConvention=CallingConvention.Cdecl)]
+		static extern UnzipHandle unzOpen2_64 (string path,
+		                                       ref ZlibFileFuncDef64 pzlib_filefunc_def);
 
 		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static extern int unzGoToNextFile (UnzipHandle handle);
@@ -178,15 +205,25 @@ namespace zipsharp
 		                                       out int level,
 		                                       int raw);
 
-		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
-		static extern int unzGetCurrentFileInfo (UnzipHandle handle,
-		                                                 out UnzipFileInfo pfile_info,
-		                                                 StringBuilder szFileName,
-		                                                 IntPtr fileNameBufferSize,   // uLong
-		                                                 IntPtr extraField,           // void *
-		                                                 IntPtr extraFieldBufferSize, // uLong
-		                                                 StringBuilder szComment,
-		                                                 IntPtr commentBufferSize);   // uLong
+		[DllImport ("MonoPosixHelper", EntryPoint="unzGetCurrentFileInfo", CallingConvention=CallingConvention.Cdecl)]
+		static extern int unzGetCurrentFileInfo_32 (UnzipHandle handle,
+		                                            out UnzipFileInfo32 pfile_info,
+		                                            StringBuilder szFileName,
+		                                            uint fileNameBufferSize,   // uLong
+		                                            IntPtr extraField,         // void *
+		                                            uint extraFieldBufferSize, // uLong
+		                                            StringBuilder szComment,
+		                                            uint commentBufferSize);   // uLong
+
+		[DllImport ("MonoPosixHelper", EntryPoint="unzGetCurrentFileInfo", CallingConvention=CallingConvention.Cdecl)]
+		static extern int unzGetCurrentFileInfo_64 (UnzipHandle handle,
+		                                            out UnzipFileInfo64 pfile_info,
+		                                            StringBuilder szFileName,
+		                                            ulong fileNameBufferSize,   // uLong
+		                                            IntPtr extraField,          // void *
+		                                            ulong extraFieldBufferSize, // uLong
+		                                            StringBuilder szComment,
+		                                            ulong commentBufferSize);   // uLong
 
 		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
 		static unsafe extern int unzReadCurrentFile (UnzipHandle handle,

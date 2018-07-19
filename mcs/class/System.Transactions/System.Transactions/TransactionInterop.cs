@@ -15,6 +15,8 @@ namespace System.Transactions
 	[MonoTODO]
 	public static class TransactionInterop
 	{
+		public static readonly Guid PromoterTypeDtc = new Guid ("14229753-FFE1-428D-82B7-DF73045CB8DA");
+
 		[MonoTODO]
 		public static IDtcTransaction GetDtcTransaction (Transaction transaction)
 		{
@@ -23,27 +25,27 @@ namespace System.Transactions
 
 		[MonoTODO]
 		public static byte [] GetExportCookie (Transaction transaction,
-			byte [] exportCookie)
+			byte [] whereabouts)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static Transaction GetTransactionFromDtcTransaction (
-			IDtcTransaction dtc)
+			IDtcTransaction transactionNative)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static Transaction GetTransactionFromExportCookie (
-			byte [] exportCookie)
+			byte [] cookie)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static Transaction GetTransactionFromTransmitterPropagationToken (byte [] token)
+		public static Transaction GetTransactionFromTransmitterPropagationToken (byte [] propagationToken)
 		{
 			throw new NotImplementedException ();
 		}

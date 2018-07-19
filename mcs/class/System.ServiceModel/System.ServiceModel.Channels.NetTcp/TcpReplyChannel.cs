@@ -58,8 +58,6 @@ namespace System.ServiceModel.Channels.NetTcp
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 
-			DateTime start = DateTime.Now;
-
 			// FIXME: use timeout
 			if (client == null)
 				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
@@ -110,7 +108,6 @@ namespace System.ServiceModel.Channels.NetTcp
 			{
 				Logger.LogMessage (MessageLogSourceKind.TransportSend, ref message, owner.info.BindingElement.MaxReceivedMessageSize);
 
-				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
 				// FIXME: consider timeout here too.
 				owner.frame.WriteEndRecord ();
@@ -120,7 +117,6 @@ namespace System.ServiceModel.Channels.NetTcp
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
 			try {
-				DateTime start = DateTime.Now;
 				context = ReceiveRequest (timeout);
 				return context != null;
 			} catch (Exception ex) {

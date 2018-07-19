@@ -24,18 +24,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Data.SqlClient.dll")]
-[assembly: AssemblyDescription ("System.Data.SqlClient.dll")]
-[assembly: AssemblyDefaultAlias ("System.Data.SqlClient.dll")]
-[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyTitle ("System.Data.SqlClient")]
+[assembly: AssemblyDescription ("System.Data.SqlClient")]
+[assembly: AssemblyDefaultAlias ("System.Data.SqlClient")]
+[assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)")]
-[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: AssemblyCopyright ("(c) Various Mono authors")]
+[assembly: AssemblyVersion ("4.2.0.0")]
 [assembly: AssemblyInformationalVersion ("4.0.0.0")]
 [assembly: AssemblyFileVersion ("4.0.0.0")]
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
-
-[assembly: ReferenceAssembly]
-
-

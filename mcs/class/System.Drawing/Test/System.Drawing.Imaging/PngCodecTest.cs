@@ -38,7 +38,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PngCodecTest {
 
 		/* Get suffix to add to the filename */
@@ -69,6 +68,27 @@ namespace MonoTests.System.Drawing.Imaging {
 				sRslt = "Test/System.Drawing/" + file;
 
 			return sRslt;
+		}
+
+		private bool IsArm64Process ()
+		{
+			if (Environment.OSVersion.Platform != PlatformID.Unix || !Environment.Is64BitProcess)
+				return false;
+
+			try {
+				var process = new global::System.Diagnostics.Process ();
+				process.StartInfo.FileName = "uname";
+				process.StartInfo.Arguments = "-m";
+				process.StartInfo.RedirectStandardOutput = true;
+				process.StartInfo.UseShellExecute = false;
+				process.Start ();
+				process.WaitForExit ();
+				var output = process.StandardOutput.ReadToEnd ();
+
+				return output.Trim () == "aarch64";
+			} catch {
+				return false;
+			}
 		}
 
 		/* Checks bitmap features on a known 1bbp bitmap */
@@ -288,8 +308,12 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		/* Checks bitmap features on a known 2bbp bitmap */
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitFeatures ()
 		{
+			if (IsArm64Process ())
+				Assert.Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=41171");
+
 			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
@@ -316,8 +340,12 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitPixels ()
 		{
+			if (IsArm64Process ())
+				Assert.Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=41171");
+
 			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
@@ -348,8 +376,12 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Bitmap2bitData ()
 		{
+			if (IsArm64Process ())
+				Assert.Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=41171");
+
 			string sInFile = getInFile ("bitmaps/81674-2bpp.png");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);

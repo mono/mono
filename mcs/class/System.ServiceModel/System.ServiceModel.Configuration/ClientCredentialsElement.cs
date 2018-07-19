@@ -147,21 +147,21 @@ namespace System.ServiceModel.Configuration
 			return cb;
 		}
 
-		protected internal void ApplyConfiguration (ClientCredentials cb)
+		protected internal void ApplyConfiguration (ClientCredentials behavior)
 		{
-			cb.SupportInteractive = SupportInteractive;
+			behavior.SupportInteractive = SupportInteractive;
 			// how is "Type" used?
 
 			// ClientCertificate
 			if (!String.IsNullOrEmpty (ClientCertificate.FindValue))
-				cb.ClientCertificate.SetCertificate (ClientCertificate.StoreLocation, ClientCertificate.StoreName, ClientCertificate.X509FindType, ClientCertificate.FindValue);
+				behavior.ClientCertificate.SetCertificate (ClientCertificate.StoreLocation, ClientCertificate.StoreName, ClientCertificate.X509FindType, ClientCertificate.FindValue);
 
 			// HttpDigest
 			if (HttpDigest.ImpersonationLevel != TokenImpersonationLevel.None)
 				throw new NotImplementedException ();
 
 			// IssuedToken
-			var bi = cb.IssuedToken;
+			var bi = behavior.IssuedToken;
 			var ci = IssuedToken;
 			bi.CacheIssuedTokens = ci.CacheIssuedTokens;
 			bi.DefaultKeyEntropyMode = ci.DefaultKeyEntropyMode;
@@ -174,19 +174,19 @@ namespace System.ServiceModel.Configuration
 
 			// Peer
 			if (!String.IsNullOrEmpty (Peer.Certificate.FindValue))
-				cb.Peer.SetCertificate (Peer.Certificate.StoreLocation, Peer.Certificate.StoreName, Peer.Certificate.X509FindType, Peer.Certificate.FindValue);
+				behavior.Peer.SetCertificate (Peer.Certificate.StoreLocation, Peer.Certificate.StoreName, Peer.Certificate.X509FindType, Peer.Certificate.FindValue);
 			// cb.Peer.MeshPassword = /* cannot fill it here */
-			cb.Peer.MessageSenderAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.MessageSenderAuthentication.CustomCertificateValidatorType);
-			cb.Peer.MessageSenderAuthentication.CertificateValidationMode = Peer.MessageSenderAuthentication.CertificateValidationMode;
-			cb.Peer.MessageSenderAuthentication.RevocationMode = Peer.MessageSenderAuthentication.RevocationMode;
-			cb.Peer.MessageSenderAuthentication.TrustedStoreLocation = Peer.MessageSenderAuthentication.TrustedStoreLocation;
-			cb.Peer.PeerAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.PeerAuthentication.CustomCertificateValidatorType);
-			cb.Peer.PeerAuthentication.CertificateValidationMode = Peer.PeerAuthentication.CertificateValidationMode;
-			cb.Peer.PeerAuthentication.RevocationMode = Peer.PeerAuthentication.RevocationMode;
-			cb.Peer.PeerAuthentication.TrustedStoreLocation = Peer.PeerAuthentication.TrustedStoreLocation;
+			behavior.Peer.MessageSenderAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.MessageSenderAuthentication.CustomCertificateValidatorType);
+			behavior.Peer.MessageSenderAuthentication.CertificateValidationMode = Peer.MessageSenderAuthentication.CertificateValidationMode;
+			behavior.Peer.MessageSenderAuthentication.RevocationMode = Peer.MessageSenderAuthentication.RevocationMode;
+			behavior.Peer.MessageSenderAuthentication.TrustedStoreLocation = Peer.MessageSenderAuthentication.TrustedStoreLocation;
+			behavior.Peer.PeerAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.PeerAuthentication.CustomCertificateValidatorType);
+			behavior.Peer.PeerAuthentication.CertificateValidationMode = Peer.PeerAuthentication.CertificateValidationMode;
+			behavior.Peer.PeerAuthentication.RevocationMode = Peer.PeerAuthentication.RevocationMode;
+			behavior.Peer.PeerAuthentication.TrustedStoreLocation = Peer.PeerAuthentication.TrustedStoreLocation;
 
 			// ServiceCertificate
-			var bsc = cb.ServiceCertificate;
+			var bsc = behavior.ServiceCertificate;
 			var csc = ServiceCertificate;
 			var bsca = bsc.Authentication;
 			var csca = csc.Authentication;
@@ -202,8 +202,8 @@ namespace System.ServiceModel.Configuration
 			// cb.UserNamePassword : not configurable ...
 
 			// Windows
-			cb.Windows.AllowedImpersonationLevel = Windows.AllowedImpersonationLevel;
-			cb.Windows.AllowNtlm = Windows.AllowNtlm;
+			behavior.Windows.AllowedImpersonationLevel = Windows.AllowedImpersonationLevel;
+			behavior.Windows.AllowNtlm = Windows.AllowNtlm;
 		}
 
 		object CreateInstance (string typeName)

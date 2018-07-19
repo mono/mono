@@ -36,7 +36,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
@@ -51,8 +51,8 @@ namespace MonoTests.System.Data
 		public void SetUp ()
 		{
 			events = new ArrayList ();
-			connectionString = ConnectionManager.Singleton.ConnectionString;
-			engine = ConnectionManager.Singleton.Engine;
+			connectionString = ConnectionManager.Instance.Sql.ConnectionString;
+			engine = ConnectionManager.Instance.Sql.EngineConfig;
 		}
 
 		[TearDown]
@@ -60,7 +60,8 @@ namespace MonoTests.System.Data
 		{
 			if (conn != null)
 				conn.Dispose ();
-			SqlConnection.ClearAllPools ();
+			if (connectionString != null)
+				SqlConnection.ClearAllPools ();
 		}
 
 		[Test]
@@ -143,7 +144,6 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ((byte) 14, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'invalidLogin'") != -1, "#6");
 				Assert.AreEqual (18456, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
@@ -165,7 +165,6 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ((byte) 11, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("invalidDB") != -1, "#6: " + ex.Message);
 				Assert.AreEqual (4060, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
@@ -220,10 +219,10 @@ namespace MonoTests.System.Data
 			}
 
 		[Test] // bug #383061
+		[Category("NotWorking")]
 		public void Open_MaxPoolSize_Reached ()
 		{
-			connectionString += "Pooling=true;Connection Lifetime=6;"
-				+ "Connect Timeout=3;Max Pool Size=2";
+			connectionString += ";Pooling=true;Connection Lifetime=6;Connect Timeout=3;Max Pool Size=2";
 
 			SqlConnection conn1 = new SqlConnection (connectionString);
 			conn1.Open ();
@@ -289,15 +288,27 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ChangeDatabase ()
 		{
-			conn = new SqlConnection (connectionString);
-			conn.Open ();
-			conn.ChangeDatabase ("master");
-			Assert.AreEqual ("master", conn.Database);
+			conn = new SqlConnection(connectionString);
+			conn.Open();
+
+			if (ConnectionManager.Instance.Sql.IsAzure)
+			{
+				var exc = Assert.Throws<SqlException>(() => conn.ChangeDatabase("master"));
+				Assert.Equals(40508, exc.Number); //USE statement is not supported to switch between databases (Azure).
+			}
+			else
+			{
+				conn.ChangeDatabase("master");
+				Assert.AreEqual("master", conn.Database);
+			}
 		}
 
 		[Test]
 		public void ChangeDatabase_DatabaseName_DoesNotExist ()
 		{
+			if (ConnectionManager.Instance.Sql.IsAzure)
+				Assert.Ignore("SQL Azure doesn't support 'ChangeDatabase'");
+
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
 
@@ -386,6 +397,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ClearAllPools ()
 		{
 			SqlConnection conn1 = new SqlConnection (connectionString + ";Pooling=false");
@@ -410,6 +422,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #443131
+		[Category("NotWorking")]
 		public void ClearPool ()
 		{
 			SqlConnection conn1 = new SqlConnection (connectionString);
@@ -616,7 +629,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("", conn.Database, "#C2");
 			Assert.AreEqual (8000, conn.PacketSize, "#C3");
 			Assert.AreEqual (15, conn.ConnectionTimeout, "#C4");
-			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#C5");
 		}
 
 		[Test]
@@ -668,6 +680,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void Database ()
 		{
+			if (ConnectionManager.Instance.Sql.IsAzure)
+				Assert.Ignore("SQL Azure doesn't support 'use [db]'");
+
 			conn = new SqlConnection (connectionString);
 			string database = conn.Database;
 
@@ -706,6 +721,17 @@ namespace MonoTests.System.Data
 			conn.Close ();
 		}
 
+		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22871
+		public void WorkstationId()
+		{
+			var connection1 = new SqlConnection (connectionString + ";Workstation Id=Desktop");
+			var connection2 = new SqlConnection (connectionString);
+			connection1.Dispose();
+			Assert.AreEqual (Environment.MachineName, connection1.WorkstationId);
+			Assert.AreEqual (Environment.MachineName, connection2.WorkstationId);
+		}
+
 		[Test] // bug #412571
 		public void Dispose ()
 		{
@@ -724,7 +750,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, conn.DataSource, "#A5");
 			Assert.AreEqual (8000, conn.PacketSize, "#A6");
 			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A7");
-			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#A8");
 			Assert.AreEqual (2, events.Count, "#A9");
 
 			stateChangeArgs = events [0] as StateChangeEventArgs;
@@ -776,6 +801,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ChangePasswordTest ()
 		{
 			string tmpPassword = "modifiedbymonosqlclient";
@@ -811,10 +837,10 @@ namespace MonoTests.System.Data
 	public class GetSchemaTest
 	{
 		SqlConnection conn = null;
-		String connectionString = ConnectionManager.Singleton.ConnectionString;
+		String connectionString = ConnectionManager.Instance.Sql.ConnectionString;
 
 		[SetUp]
-		public void Setup()
+		public void SetUp()
 		{
 			conn = new SqlConnection(connectionString);
 			conn.Open();
@@ -823,19 +849,22 @@ namespace MonoTests.System.Data
 		[TearDown]
 		public void TearDown()
 		{
-			conn.Close();
+			conn?.Close();
 		}
 
 		[Test]
 		public void GetSchemaTest1()
 		{
+			if (ConnectionManager.Instance.Sql.IsAzure)
+				Assert.Ignore("SQL Azure - Not supported'");
+
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("databases");
 			foreach (DataRow row in tab1.Rows)
 			{
 				foreach (DataColumn col in tab1.Columns)
 				{
-					if (col.ColumnName.ToString() == "database_name" && row[col].ToString() == "monotest")
+					if (col.ColumnName.ToString() == "database_name" && row[col].ToString() == ConnectionManager.Instance.DatabaseName)
 					{
 						flag = true;
 						break;
@@ -1003,6 +1032,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetSchemaTest9()
 		{
+			if (ConnectionManager.Instance.Sql.IsAzure)
+				Assert.Ignore("SQL Azure - Not supported'");
+
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("Columns");
 			foreach (DataRow row in tab1.Rows)
@@ -1130,12 +1162,13 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore("TODO: fix restrictions")]
 		public void GetSchemaTest14()
 		{
 			bool flag = false;
 			string [] restrictions = new string[4];
 
-			restrictions[0] = "monotest";
+			restrictions[0] = ConnectionManager.Instance.DatabaseName;
 			restrictions[1] = "dbo";
 			restrictions[2] = null;
 			restrictions[3] = "BASE TABLE";
@@ -1160,12 +1193,13 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore("TODO: fix restrictions")]
 		public void GetSchemaTest15()
 		{
 			bool flag = false;
 			string [] restrictions = new string[4];
 
-			restrictions[0] = "monotest";
+			restrictions[0] = ConnectionManager.Instance.DatabaseName;
 			restrictions[1] = null;
 			restrictions[2] = "binary_family";
 			restrictions[3] = null;
@@ -1190,12 +1224,13 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore("TODO: fix restrictions")]
 		public void GetSchemaTest16()
 		{
 			bool flag = false;
 			string [] restrictions = new string[4];
 
-			restrictions[0] = "monotest";
+			restrictions[0] = ConnectionManager.Instance.DatabaseName;
 			restrictions[1] = null;
 			restrictions[2] = "sp_get_age";
 			restrictions[3] = null;
@@ -1376,7 +1411,7 @@ namespace MonoTests.System.Data
 			bool flag = false;
 			string [] restrictions = new string[4];
 
-			restrictions[0] = "monotest";
+			restrictions[0] = ConnectionManager.Instance.DatabaseName;
 			restrictions[1] = null;
 			restrictions[2] = "sp_get_age";
 			restrictions[3] = null;

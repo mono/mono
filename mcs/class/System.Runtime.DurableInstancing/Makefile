@@ -6,12 +6,17 @@ LIBRARY = System.Runtime.DurableInstancing.dll
 LIB_REFS = System System.Xml System.Core System.Xml.Linq System.Transactions System.ServiceModel.Internals System.Runtime.Serialization
 LIB_MCS_FLAGS =
 
+ifdef MOBILE_PROFILE
+KEYFILE = ../silverlight.pub
+else
+KEYFILE = ../winfx.pub
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
-VALID_PROFILE := $(filter 2.0 4.0 4.5, $(FRAMEWORK_VERSION))
-ifndef VALID_PROFILE
+ifneq (4.5, $(FRAMEWORK_VERSION))
 LIBRARY_NAME = dummy-System.Runtime.DurableInstancing.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes

@@ -3,7 +3,6 @@
 # Platform-specific makefile rules. This one's for linux.
 #
 
-PLATFORM_DEBUG_FLAGS = -debug
 PLATFORM_MCS_FLAGS =
 PLATFORM_RUNTIME = $(RUNTIME)
 PLATFORM_CORLIB = mscorlib.dll
@@ -22,8 +21,6 @@ PLATFORM_PATH_SEPARATOR = :
 
 # This is for changing / to \ on windows
 PLATFORM_CHANGE_SEPARATOR_CMD = cat
-
-PLATFORM_AOT_SUFFIX = .so
 
 hidden_prefix = .
 hidden_suffix = 

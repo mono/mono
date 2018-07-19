@@ -11,29 +11,21 @@ LOCAL_MCS_FLAGS = \
 	-resource:$(dbmetal_src)/Language/EnglishWords.txt,$(ns).EnglishWords.txt \
 	-resource:$(dbmetal_src)/Language/FrenchWords.txt,$(ns).FrenchWords.txt   \
 	-resource:$(dbmetal_src)/Language/GermanWords.txt,$(ns).GermanWords.txt   \
-	-r:System.Configuration                                             \
-	-r:System.Core                                                      \
-	-r:System.Data                                                      \
-	-r:System.Data.Linq                                                 \
-	-r:System.Xml
+	-publicsign
 
+LIB_REFS = System.Configuration System.Core System.Data System.Data.Linq System.Xml System
+	
 SQLMETAL_RESOURCES = \
 	$(dbmetal_src)/Language/EnglishWords.txt \
 	$(dbmetal_src)/Language/FrenchWords.txt  \
 	$(dbmetal_src)/Language/GermanWords.txt
 
-SQLMETAL_TEST_FILES = \
-	Test/AssemblyInfo.cs
-
 EXTRA_DISTFILES = \
-	$(SQLMETAL_RESOURCES) \
-	$(SQLMETAL_TEST_FILES)
+	$(SQLMETAL_RESOURCES)
 
 PROGRAM = sqlmetal.exe
 
 $(PROGRAM) : Makefile $(SQLMETAL_RESOURCES)
-
-HAS_NUNIT_TEST = yes
 
 include ../../build/executable.make
 

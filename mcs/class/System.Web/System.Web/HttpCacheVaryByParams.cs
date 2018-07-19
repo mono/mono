@@ -84,23 +84,23 @@ namespace System.Web
 			}
 		}
 
-		public bool this [ string param ] {
+		public bool this [ string header ] {
 			get {
-				if (param == null)
+				if (header == null)
 					throw new ArgumentNullException ();
 
-				return parms.Contains (param);
+				return parms.Contains (header);
 			}
 			set {
-				if (param == null)
+				if (header == null)
 					throw new ArgumentNullException ();
 
 				ignore_parms = false;
 				if (value)
-					if (!parms.Contains (param))
-						parms.Add (param, true);
+					if (!parms.Contains (header))
+						parms.Add (header, true);
 				else
-					parms.Remove (param);
+					parms.Remove (header);
 			}
 		}
 	}

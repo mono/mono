@@ -118,9 +118,9 @@ namespace System.Web.UI.WebControls {
 			return View.Delete (null, null);
 		}
 		
-		public IEnumerable Select (DataSourceSelectArguments args)
+		public IEnumerable Select (DataSourceSelectArguments arguments)
 		{
-			return View.Select (args);			
+			return View.Select (arguments);			
 		}
 		
 		public int Update ()

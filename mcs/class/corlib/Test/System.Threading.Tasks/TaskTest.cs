@@ -34,10 +34,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
-
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
@@ -409,7 +405,6 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (tasks[1].IsCanceled, "#4");
 		}
 
-#if NET_4_5		
 		[Test]
 		public void WaitAll_CancelledAndTimeout ()
 		{
@@ -418,7 +413,6 @@ namespace MonoTests.System.Threading.Tasks
 			var t2 = Task.Delay (3000);
 			Assert.IsFalse (Task.WaitAll (new[] { t1, t2 }, 10));
 		}
-#endif
 
 		[Test]
 		public void WaitAllExceptionThenCancelled ()
@@ -853,7 +847,7 @@ namespace MonoTests.System.Threading.Tasks
 				int r1 = 0, r2 = 0;
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						if (!t.Wait (1000))
+						if (!t.Wait (2000))
 							r1 = 20; // 20 -> task wait failed
 						else if (t.Result != 1)
 							r1 = 30 + t.Result; // 30 -> task result is bad
@@ -867,7 +861,7 @@ namespace MonoTests.System.Threading.Tasks
 					});
 				ThreadPool.QueueUserWorkItem (delegate {
 						cntd.Signal ();
-						if (!t.Wait (1000))
+						if (!t.Wait (2000))
 							r2 = 40; // 40 -> task wait failed
 						else if (t.Result != 1)
 							r2 = 50 + t.Result; // 50 -> task result is bad
@@ -880,9 +874,9 @@ namespace MonoTests.System.Threading.Tasks
 							Monitor.Pulse (monitor);
 						}
 					});
-				Assert.IsTrue (cntd.Wait (2000), "#1");
+				Assert.IsTrue (cntd.Wait (4000), "#1");
 				evt.Set ();
-				Assert.IsTrue (cntd2.Wait (2000), "#2");
+				Assert.IsTrue (cntd2.Wait (4000), "#2");
 				Assert.AreEqual (2, r1, "r1");
 				Assert.AreEqual (3, r2, "r2");
 
@@ -990,6 +984,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void UnobservedExceptionOnFinalizerThreadTest ()
 		{
 			bool wasCalled = false;
@@ -1057,24 +1052,21 @@ namespace MonoTests.System.Threading.Tasks
 			var token = source.Token;
 			var evt = new ManualResetEventSlim ();
 			bool result = false;
-			bool thrown = false;
 
-			var task = Task.Factory.StartNew (() => evt.Wait (100));
+			var task = Task.Factory.StartNew (() => { Assert.IsTrue (evt.Wait (2000), "#1"); });
 			var cont = task.ContinueWith (t => result = true, token, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
 
 			source.Cancel();
 			evt.Set ();
-			task.Wait (100);
+			Assert.IsTrue (task.Wait (2000), "#2");
 			try {
-				cont.Wait (100);
-			} catch (Exception ex) {
-				thrown = true;
+				Assert.IsFalse (cont.Wait (4000), "#3");
+			} catch (AggregateException ex) {
 			}
 
-			Assert.IsTrue (task.IsCompleted);
-			Assert.IsTrue (cont.IsCanceled);
-			Assert.IsFalse (result);
-			Assert.IsTrue (thrown);
+			Assert.IsTrue (task.IsCompleted, "#4");
+			Assert.IsTrue (cont.IsCanceled, "#5");
+			Assert.IsFalse (result, "#6");
 		}
 
 		[Test]
@@ -1219,7 +1211,6 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
-#if NET_4_5
 		[Test]
 		public void ContinuationOnBrokenScheduler ()
 		{
@@ -1268,7 +1259,7 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var t = Task.Delay (300);
 			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
-			Assert.IsTrue (t.Wait (400), "#2");
+			Assert.IsTrue (t.Wait (1200), "#2");
 		}
 
 		[Test]
@@ -2114,6 +2105,5 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 		
-#endif
 	}
 }

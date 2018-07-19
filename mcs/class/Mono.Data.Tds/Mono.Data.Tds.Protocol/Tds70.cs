@@ -151,7 +151,7 @@ namespace Mono.Data.Tds.Protocol
 					p.Precision = (p.Precision !=0  ? p.Precision : (byte) Precision);
 										
 				parms.Append (p.Prepare ());
-				if (p.Direction == TdsParameterDirection.Output)
+				if (p.Direction == TdsParameterDirection.Output || p.Direction == TdsParameterDirection.InputOutput)
 					parms.Append (" output");
 			}
 			return parms.ToString ();

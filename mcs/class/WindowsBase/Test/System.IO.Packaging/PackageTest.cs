@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.IO.Packaging;
 using System.Linq;
 using System.Text;
@@ -116,7 +117,7 @@ namespace MonoTests.System.IO.Packaging {
             package = Package.Open (path);
             package.Close ();
             package = Package.Open (path);
-        }
+        } 
 		
 		[Test]
 		public void Close_FileStreamNotClosed ()
@@ -416,5 +417,27 @@ namespace MonoTests.System.IO.Packaging {
             File.Create (path).Close ();
             package = Package.Open (path, FileMode.OpenOrCreate, FileAccess.Write);
         }
+
+        [Test]
+        public void Check_ZipDateTime ()
+        {
+            using (var zipStream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (package = Package.Open (zipStream, FileMode.OpenOrCreate)) {
+                var part = package.CreatePart (new Uri ("/test", UriKind.Relative), "test/type");
+                using (var stream = part.GetStream ())
+                    stream.Write (new byte [1024 * 1024], 0, 1024 * 1024);
+            }
+
+            using (var stream = new FileStream (path, FileMode.Open, FileAccess.Read))
+            using (var archive = new ZipArchive(stream))
+            {                
+                foreach (var entry in archive.Entries)
+                {
+                    Assert.AreEqual (DateTime.Now.Year, entry.LastWriteTime.Year);
+                    Assert.AreEqual (DateTime.Now.Month, entry.LastWriteTime.Month);
+                    Assert.AreEqual (DateTime.Now.Day, entry.LastWriteTime.Day);
+                }
+            }
+        }           
     }
 }

@@ -1979,6 +1979,8 @@ void GC_err_puts GC_PROTO((GC_CONST char *s));
        /* Linuxthreads itself uses SIGUSR1 and SIGUSR2.			*/
 #      define SIG_SUSPEND SIGPWR
 #    endif
+#   elif defined(GC_OPENBSD_THREADS)
+#     define SIG_SUSPEND SIGXFSZ
 #   else  /* !GC_LINUX_THREADS */
 #     if defined(_SIGRTMIN)
 #       define SIG_SUSPEND _SIGRTMIN + 6

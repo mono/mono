@@ -36,9 +36,9 @@ namespace System.ServiceModel
 	public class MsmqException : ExternalException
 	{
 		public MsmqException () : base () {}
-		public MsmqException (string msg) : base (msg) {}
-		public MsmqException (string msg, int win32ErrorCode) : base (msg, win32ErrorCode) {}
-		public MsmqException (string msg, Exception inner) : base (msg, inner) {}
+		public MsmqException (string message) : base (message) {}
+		public MsmqException (string message, int error) : base (message, error) {}
+		public MsmqException (string message, Exception inner) : base (message, inner) {}
 		protected MsmqException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

@@ -38,21 +38,21 @@ namespace System.Web.UI {
 		object propertyValue;
 		Type propertyType;
 
-		public ControlValuePropertyAttribute (string propName) 
+		public ControlValuePropertyAttribute (string name) 
 		{
-			this.propertyName = propName;
+			this.propertyName = name;
 		}
 
-		public ControlValuePropertyAttribute (string propName, object propValue) 
+		public ControlValuePropertyAttribute (string name, object defaultValue) 
 		{
-			this.propertyName = propName;
-			this.propertyValue = propValue;
+			this.propertyName = name;
+			this.propertyValue = defaultValue;
 		}
 
-		public ControlValuePropertyAttribute (string propName, Type type, string propValue) 
+		public ControlValuePropertyAttribute (string name, Type type, string defaultValue) 
 		{
-			this.propertyName = propName;
-			this.propertyValue = propValue;
+			this.propertyName = name;
+			this.propertyValue = defaultValue;
 			this.propertyType = type;
 		}
 

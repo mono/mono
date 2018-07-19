@@ -39,16 +39,6 @@ namespace MonoTests.System.Drawing.Drawing2D
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class MatrixTest {
 
-		private Matrix default_matrix;
-		private Rectangle rect;
-		private RectangleF rectf;
-
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			default_matrix = new Matrix ();
-		}
-
 		[Test]
 		public void Constructor_Default ()
 		{
@@ -83,24 +73,21 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_Int_Null ()
 		{
-			new Matrix (rect, null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix (default (Rectangle), null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_Int_Empty ()
 		{
-			new Matrix (rect, new Point[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix (default (Rectangle), new Point[0]));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_Int_4Point ()
 		{
-			new Matrix (rect, new Point[4]);
+			Assert.Throws<ArgumentException> (() => new Matrix (default (Rectangle), new Point[4]));
 		}
 
 		[Test]
@@ -118,24 +105,21 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_Float_Null ()
 		{
-			new Matrix (rectf, null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix (default (RectangleF), null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_Float_Empty ()
 		{
-			new Matrix (rectf, new PointF[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix (default (RectangleF), new PointF[0]));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_Float_2PointF ()
 		{
-			new Matrix (rectf, new PointF[2]);
+			Assert.Throws<ArgumentException> (() => new Matrix (default (RectangleF), new PointF[2]));
 		}
 
 		[Test]
@@ -332,10 +316,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Rotate_InvalidOrder ()
 		{
-			new Matrix ().Rotate (180, (MatrixOrder) Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => new Matrix ().Rotate (180, (MatrixOrder) Int32.MinValue));
 		}
 
 		[Test]
@@ -353,17 +336,15 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void RotateAt_InvalidOrder ()
 		{
-			new Matrix ().RotateAt (180, new PointF (10, 10), (MatrixOrder) Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => new Matrix ().RotateAt (180, new PointF (10, 10), (MatrixOrder) Int32.MinValue));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Multiply_Null ()
 		{
-			new Matrix (10, 20, 30, 40, 50, 60).Multiply (null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix (10, 20, 30, 40, 50, 60).Multiply (null));
 		}
 
 		[Test]
@@ -381,10 +362,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Multiply_Null_Order ()
 		{
-			new Matrix (10, 20, 30, 40, 50, 60).Multiply (null, MatrixOrder.Append);
+			Assert.Throws<ArgumentNullException> (() => new Matrix (10, 20, 30, 40, 50, 60).Multiply (null, MatrixOrder.Append));
 		}
 
 		[Test]
@@ -416,11 +396,10 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Multiply_InvalidOrder ()
 		{
 			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
-			matrix.Multiply (new Matrix (10, 20, 30, 40, 50, 60), (MatrixOrder)Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => matrix.Multiply (new Matrix (10, 20, 30, 40, 50, 60), (MatrixOrder)Int32.MinValue));
 		}
 
 		[Test]
@@ -513,10 +492,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Scale_InvalidOrder ()
 		{
-			new Matrix ().Scale (2, 1, (MatrixOrder) Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => new Matrix ().Scale (2, 1, (MatrixOrder) Int32.MinValue));
 		}
 		
 		[Test]
@@ -544,10 +522,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Shear_InvalidOrder ()
 		{
-			new Matrix ().Shear (-1, 1, (MatrixOrder) Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => new Matrix ().Shear (-1, 1, (MatrixOrder) Int32.MinValue));
 		}
 		
 		[Test]
@@ -571,31 +548,27 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TransformPoints_Point_Null ()
 		{
-			new Matrix ().TransformPoints ((Point[]) null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix ().TransformPoints ((Point[]) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TransformPoints_PointF_Null ()
 		{
-			new Matrix ().TransformPoints ((PointF[]) null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix ().TransformPoints ((PointF[]) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TransformPoints_Point_Empty ()
 		{
-			new Matrix ().TransformPoints (new Point[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix ().TransformPoints (new Point[0]));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TransformPoints_PointF_Empty ()
 		{
-			new Matrix ().TransformPoints (new PointF[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix ().TransformPoints (new PointF[0]));
 		}
 		
 		[Test]
@@ -619,31 +592,27 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TransformVectors_Point_Null ()
 		{
-			new Matrix ().TransformVectors ((Point[]) null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix ().TransformVectors ((Point[]) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TransformVectors_PointF_Null ()
 		{
-			new Matrix ().TransformVectors ((PointF[]) null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix ().TransformVectors ((PointF[]) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TransformVectors_Point_Empty ()
 		{
-			new Matrix ().TransformVectors (new Point[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix ().TransformVectors (new Point[0]));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void TransformVectors_PointF_Empty ()
 		{
-			new Matrix ().TransformVectors (new PointF[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix ().TransformVectors (new PointF[0]));
 		}
 
 		[Test]
@@ -661,24 +630,21 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Translate_InvalidOrder ()
 		{
-			new Matrix ().Translate (-1, 1, (MatrixOrder) Int32.MinValue);
+			Assert.Throws<ArgumentException> (() => new Matrix ().Translate (-1, 1, (MatrixOrder) Int32.MinValue));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void VectorTransformPoints_Null ()
 		{
-			new Matrix ().VectorTransformPoints ((Point[]) null);
+			Assert.Throws<ArgumentNullException> (() => new Matrix ().VectorTransformPoints ((Point[]) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void VectorTransformPoints_Empty ()
 		{
-			new Matrix ().VectorTransformPoints (new Point[0]);
+			Assert.Throws<ArgumentException> (() => new Matrix ().VectorTransformPoints (new Point[0]));
 		}
 	}
 }

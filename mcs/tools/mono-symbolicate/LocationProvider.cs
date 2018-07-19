@@ -2,166 +2,386 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Reflection;
-using System.Diagnostics;
 using System.Collections.Generic;
 using Mono.Cecil;
-using Mono.CompilerServices.SymbolWriter;
+using Mono.Cecil.Cil;
+using Mono.Collections.Generic;
 
-namespace Symbolicate
+namespace Mono
 {
-	struct Location {
-		public string FileName;
-		public int Line;
-	}
+	class AssemblyLocationProvider
+	{
+		string assemblyFullPath;
+		Logger logger;
 
-	class LocationProvider {
-		class AssemblyLocationProvider {
-			Assembly assembly;
-			MonoSymbolFile symbolFile;
-			string seqPointDataPath;
-
-			public AssemblyLocationProvider (Assembly assembly, MonoSymbolFile symbolFile, string seqPointDataPath)
-			{
-				this.assembly = assembly;
-				this.symbolFile = symbolFile;
-				this.seqPointDataPath = seqPointDataPath;
-			}
-
-			public bool TryGetLocation (string methodStr, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
-			{
-				location = default (Location);
-				if (symbolFile == null)
-					return false;
-
-				var type = assembly.GetTypes().FirstOrDefault (t => t.FullName == typeFullName);
-				if (type == null)
-					return false;
-
-				var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-				var method = type.GetMethods(bindingflags).FirstOrDefault (m => GetMethodFullName (m) == methodStr);
-				if (method == null)
-					return false;
-
-				int ilOffset = (isOffsetIL)? offset : GetILOffsetFromFile (method.MetadataToken, methodIndex, offset);
-				if (ilOffset < 0)
-					return false;
-
-				var methodSymbol = symbolFile.Methods [(method.MetadataToken & 0x00ffffff) - 1];
-
-				var lineNumbers = methodSymbol.GetLineNumberTable ().LineNumbers;
-				var lineNumber = lineNumbers.FirstOrDefault (l => l.Offset >= ilOffset) ?? lineNumbers.Last ();
-
-				location.FileName = symbolFile.Sources [lineNumber.File-1].FileName;
-				location.Line = lineNumber.Row;
-				return true;
-			}
-
-			static MethodInfo methodGetIL;
-			private int GetILOffsetFromFile (int methodToken, uint methodIndex, int nativeOffset)
-			{
-				if (string.IsNullOrEmpty (seqPointDataPath))
-					return -1;
-
-				if (methodGetIL == null)
-					methodGetIL = typeof (StackFrame).GetMethod ("GetILOffsetFromFile", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetIL == null)
-					throw new Exception ("System.Diagnostics.StackFrame.GetILOffsetFromFile could not be found, make sure you have an updated mono installed.");
-
-				return (int) methodGetIL.Invoke (null, new object[] {seqPointDataPath, methodToken, methodIndex, nativeOffset});
-			}
-
-			static MethodInfo methodGetMethodFullName;
-			private string GetMethodFullName (MethodBase m)
-			{
-
-				if (methodGetMethodFullName == null)
-					methodGetMethodFullName = typeof (StackTrace).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
-
-				if (methodGetMethodFullName == null)
-					throw new Exception ("System.Exception.GetFullNameForStackTrace could not be found, make sure you have an updated mono installed.");
-
-				StringBuilder sb = new StringBuilder ();
-				methodGetMethodFullName.Invoke (null, new object[] {sb, m});
-
-				return sb.ToString ();
-			}
-		}
-
-		Dictionary<string, AssemblyLocationProvider> assemblies;
-		HashSet<string> directories;
-
-		public LocationProvider () {
-			assemblies = new Dictionary<string, AssemblyLocationProvider> ();
-			directories = new HashSet<string> ();
-		}
-
-		public void AddAssembly (string assemblyPath)
+		public AssemblyLocationProvider (string assemblyPath, Logger logger)
 		{
 			assemblyPath = Path.GetFullPath (assemblyPath);
-			if (assemblies.ContainsKey (assemblyPath))
-				return;
+			this.logger = logger;
 
 			if (!File.Exists (assemblyPath))
 				throw new ArgumentException ("assemblyPath does not exist: "+ assemblyPath);
 
-			var assembly = Assembly.LoadFrom (assemblyPath);
-			MonoSymbolFile symbolFile = null;
+			assemblyFullPath = assemblyPath;
+		}
 
-			var symbolPath = assemblyPath + ".mdb";
-			if (!File.Exists (symbolPath))
-				Debug.WriteLine (".mdb file was not found for " + assemblyPath);
-			else
-				symbolFile = MonoSymbolFile.ReadSymbolFile (assemblyPath + ".mdb");
+		public bool TryResolveLocation (StackFrameData sfData, SeqPointInfo seqPointInfo, out Location location)
+		{
+			var readerParameters = new ReaderParameters { ReadSymbols = true };
+			using (var assembly = AssemblyDefinition.ReadAssembly (assemblyFullPath, readerParameters)) {
 
-			var seqPointDataPath = assemblyPath + ".msym";
-			if (!File.Exists (seqPointDataPath))
-				seqPointDataPath = null;
-
-			assemblies.Add (assemblyPath, new AssemblyLocationProvider (assembly, symbolFile, seqPointDataPath));
-
-			directories.Add (Path.GetDirectoryName (assemblyPath));
-
-			foreach (var assemblyRef in assembly.GetReferencedAssemblies ()) {
-				string refPath = null;
-				foreach (var dir in directories) {
-					refPath = Path.Combine (dir, assemblyRef.Name);
-					if (File.Exists (refPath))
-						break;
-					refPath = Path.Combine (dir, assemblyRef.Name + ".dll");
-					if (File.Exists (refPath))
-						break;
-					refPath = Path.Combine (dir, assemblyRef.Name + ".exe");
-					if (File.Exists (refPath))
-						break;
-					refPath = null;
+				if (!assembly.MainModule.HasSymbols) {
+					location = default;
+					return false;
 				}
-				if (refPath != null)
-					AddAssembly (refPath);
-			}
-		}
 
-		public void AddDirectory (string directory)
-		{
-			directory = Path.GetFullPath (directory);
-			if (!Directory.Exists (directory)) {
-				Console.Error.WriteLine ("Directory " + directory + " does not exist.");
-				return;
-			}
+				TypeDefinition type = null;
+				string[] nested;
+				if (sfData.TypeFullName.IndexOf ('/') >= 0)
+					nested = sfData.TypeFullName.Split ('/');
+				else
+					nested = sfData.TypeFullName.Split ('+');
 
-			directories.Add (directory);
-		}
+				var types = assembly.MainModule.Types;
+				foreach (var ntype in nested) {
+					if (type == null) {
+						// Use namespace first time.
+						type = types.FirstOrDefault (t => t.FullName == ntype);
+					} else {
+						type = types.FirstOrDefault (t => t.Name == ntype);
+					}
 
-		public bool TryGetLocation (string method, string typeFullName, int offset, bool isOffsetIL, uint methodIndex, out Location location)
-		{
-			location = default (Location);
-			foreach (var assembly in assemblies.Values) {
-				if (assembly.TryGetLocation (method, typeFullName, offset, isOffsetIL, methodIndex, out location))
+					if (type == null) {
+						logger.LogWarning ("Could not find type: {0}", ntype);
+						location = default;
+						return false;
+					}
+
+					types = type.NestedTypes;
+				}
+
+				var parensStart = sfData.MethodSignature.IndexOf ('(');
+				var methodName = sfData.MethodSignature.Substring (0, parensStart).TrimEnd ();
+				var methodParameters = sfData.MethodSignature.Substring (parensStart);
+				var methods = type.Methods.Where (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters)).ToArray ();
+				if (methods.Length == 0) {
+					logger.LogWarning ("Could not find method: {0}", methodName);
+					location = default;
+					return false;
+				}
+				if (methods.Length > 1) {
+					logger.LogWarning ("Ambiguous match for method: {0}", sfData.MethodSignature);
+					location = default;
+					return false;
+				}
+				var method = methods [0];
+
+				int ilOffset;
+				if (sfData.IsILOffset) {
+					ilOffset = sfData.Offset;
+				} else {
+					if (seqPointInfo == null) {
+						location = default;
+						return false;
+					}
+
+					ilOffset = seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
+				}
+
+				if (ilOffset < 0) {
+					location = default;
+					return false;
+				}
+
+				if (!method.DebugInformation.HasSequencePoints) {
+					var async_method = GetAsyncStateMachine (method);
+					if (async_method?.ConstructorArguments?.Count == 1) {
+						string state_machine = ((TypeReference)async_method.ConstructorArguments [0].Value).FullName;
+						return TryResolveLocation (sfData.Relocate (state_machine, "MoveNext ()"), seqPointInfo, out location);
+					}
+
+					location = default;
+					return false;
+				}
+
+				SequencePoint prev = null;
+				foreach (var sp in method.DebugInformation.SequencePoints.OrderBy (l => l.Offset)) {
+					if (sp.Offset >= ilOffset) {
+						location = new Location (sp.Document.Url, sp.StartLine);
+						return true;
+					}
+
+					prev = sp;
+				}
+
+				if (prev != null) {
+					location = new Location (prev.Document.Url, prev.StartLine);
 					return true;
+				}
+
+				location = default;
+				return false;
+			}
+		}
+
+		static CustomAttribute GetAsyncStateMachine (MethodDefinition method)
+		{
+			if (!method.HasCustomAttributes)
+				return null;
+
+			return method.CustomAttributes.FirstOrDefault (l =>
+				l.AttributeType.Name == "AsyncStateMachineAttribute" && l.AttributeType.Namespace == "System.Runtime.CompilerServices");
+		}
+
+		static bool CompareName (MethodDefinition candidate, string expected)
+		{
+			if (candidate.Name == expected)
+				return true;
+
+			if (!candidate.HasGenericParameters)
+				return false;
+
+			var genStart = expected.IndexOf ('[');
+			if (genStart < 0)
+				genStart = expected.IndexOf ('<');
+
+			if (genStart < 0)
+				return false;
+
+			if (candidate.Name != expected.Substring (0, genStart))
+				return false;
+
+			int arity = 1;
+			for (int pos = genStart; pos < expected.Length; ++pos) {
+				if (expected [pos] == ',')
+					++arity;
 			}
 
+			return candidate.GenericParameters.Count == arity;
+		}
+
+		static string RemoveGenerics (string expected, char open, char close)
+		{
+			if (expected.IndexOf (open) < 0)
+				return expected;
+
+			var sb = new StringBuilder ();
+			for (int i = 0; i < expected.Length;) {
+				int start = expected.IndexOf (open, i);
+				int end = expected.IndexOf (close, i);
+				if (start < 0 || end < 0) {
+					sb.Append (expected, i, expected.Length - i);
+					break;
+				}
+
+				bool is_ginst = false;
+				for (int j = start + 1; j < end; ++j) {
+					if (expected [j] != ',')
+						is_ginst = true;
+				}
+
+				if (is_ginst) //discard the the generic args
+					sb.Append (expected, i, start - i);
+				else //include array arity
+					sb.Append (expected, i, end + 1 - i);
+				i = end + 1;
+
+			}
+			return sb.ToString ();
+		}
+
+		static bool CompareParameters (Collection<ParameterDefinition> candidate, string expected)
+		{
+			var builder = new StringBuilder ();
+			builder.Append ("(");
+
+			for (int i = 0; i < candidate.Count; i++) {
+				var parameter = candidate [i];
+				if (i > 0)
+					builder.Append (", ");
+
+				if (parameter.ParameterType.IsSentinel)
+					builder.Append ("...,");
+
+				var pt = parameter.ParameterType;
+				FormatElementType (pt, builder);
+
+				builder.Append (" ");
+				builder.Append (parameter.Name);
+			}
+
+			builder.Append (")");
+
+			if (builder.ToString () == RemoveGenerics (expected, '[', ']'))
+				return true;
+
+			//now try the compact runtime format.
+
+			builder.Clear ();
+
+			builder.Append ("(");
+
+			for (int i = 0; i < candidate.Count; i++) {
+				var parameter = candidate [i];
+				if (i > 0)
+					builder.Append (",");
+
+				if (parameter.ParameterType.IsSentinel)
+					builder.Append ("...,");
+
+				var pt = parameter.ParameterType;
+
+				RuntimeFormatElementType (pt, builder);
+			}
+
+			builder.Append (")");
+
+			if (builder.ToString () == RemoveGenerics (expected, '<', '>'))
+				return true;
 			return false;
+
+		}
+
+		static void RuntimeFormatElementType (TypeReference tr, StringBuilder builder)
+		{
+			var ts = tr as TypeSpecification;
+			if (ts != null) {
+				if (ts.IsByReference) {
+					RuntimeFormatElementType (ts.ElementType, builder);
+					builder.Append ("&");
+					return;
+				}
+			}
+
+			switch (tr.MetadataType) {
+			case MetadataType.Void:
+				builder.Append ("void");
+				break;
+			case MetadataType.Boolean:
+				builder.Append ("bool");
+				break;
+			case MetadataType.Char:
+				builder.Append ("char");
+				break;
+			case MetadataType.SByte:
+				builder.Append ("sbyte");
+				break;
+			case MetadataType.Byte:
+				builder.Append ("byte");
+				break;
+			case MetadataType.Int16:
+				builder.Append ("int16");
+				break;
+			case MetadataType.UInt16:
+				builder.Append ("uint16");
+				break;
+			case MetadataType.Int32:
+				builder.Append ("int");
+				break;
+			case MetadataType.UInt32:
+				builder.Append ("uint");
+				break;
+			case MetadataType.Int64:
+				builder.Append ("long");
+				break;
+			case MetadataType.UInt64:
+				builder.Append ("ulong");
+				break;
+			case MetadataType.Single:
+				builder.Append ("single");
+				break;
+			case MetadataType.Double:
+				builder.Append ("double");
+				break;
+			case MetadataType.String:
+				builder.Append ("string");
+				break;
+			case MetadataType.Pointer:
+				builder.Append (((TypeSpecification)tr).ElementType);
+				builder.Append ("*");
+				break;
+			case MetadataType.ValueType:
+			case MetadataType.Class:
+			case MetadataType.GenericInstance: {
+				FormatName (tr, builder, '/');
+				break;
+			}
+			case MetadataType.Var:
+			case MetadataType.MVar:
+				builder.Append (tr.Name);
+				builder.Append ("_REF");
+				break;
+			case MetadataType.Array: {
+				var array = (ArrayType)tr;
+				RuntimeFormatElementType (array.ElementType, builder);
+				builder.Append ("[");
+
+				for (int i = 0; i < array.Rank - 1; ++i)
+					builder.Append (",");
+
+				builder.Append ("]");
+				break;
+			}
+
+			case MetadataType.TypedByReference:
+				builder.Append ("typedbyref");
+				break;
+			case MetadataType.IntPtr:
+				builder.Append ("intptr");
+				break;
+			case MetadataType.UIntPtr:
+				builder.Append ("uintptr");
+				break;
+			case MetadataType.FunctionPointer:
+				builder.Append ("*()");
+				break;
+			case MetadataType.Object:
+				builder.Append ("object");
+				break;
+			default:
+				builder.Append ("-unknown-");
+				break;
+			}
+		}
+
+		static void FormatName (TypeReference tr, StringBuilder builder, char sep)
+		{
+			if (tr.IsNested && !(tr.MetadataType == MetadataType.Var || tr.MetadataType == MetadataType.MVar)) {
+				FormatName (tr.DeclaringType, builder, sep);
+				builder.Append (sep);
+			}
+			if (!string.IsNullOrEmpty (tr.Namespace)) {
+				builder.Append (tr.Namespace);
+				builder.Append (".");
+			}
+
+			builder.Append (tr.Name);
+		}
+
+		static void FormatElementType (TypeReference tr, StringBuilder builder)
+		{
+			var ts = tr as TypeSpecification;
+			if (ts != null) {
+				if (ts.IsByReference) {
+					FormatElementType (ts.ElementType, builder);
+					builder.Append ("&");
+					return;
+				}
+
+				var array = ts as ArrayType;
+				if (array != null) {
+					FormatElementType (ts.ElementType, builder);
+					builder.Append ("[");
+
+					for (int ii = 0; ii < array.Rank - 1; ++ii) {
+						builder.Append (",");
+					}
+
+					builder.Append ("]");
+					return;
+				}
+			}
+			FormatName (tr, builder, '+');
 		}
 	}
 }

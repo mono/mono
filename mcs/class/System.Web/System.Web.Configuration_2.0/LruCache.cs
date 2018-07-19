@@ -40,7 +40,6 @@ namespace System.Web.Configuration {
 
 		bool eviction_warning_shown;
 		int evictions;
-		bool size_overriden;
 
 		internal string EvictionWarning { set; private get; }
 

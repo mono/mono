@@ -106,7 +106,8 @@ namespace PEAPI {
 		private static readonly string dllHintNameTable = "\0\0_CorDllMain\0";
 		private static readonly string runtimeEngineName = "mscoree.dll\0\0";
 
-		private Section text, sdata, rsrc;
+		private Section text, sdata;
+		static readonly Section rsrc = null;
 		ArrayList data;
 		BinaryWriter reloc = new BinaryWriter(new MemoryStream());
 		uint dateStamp = 0;

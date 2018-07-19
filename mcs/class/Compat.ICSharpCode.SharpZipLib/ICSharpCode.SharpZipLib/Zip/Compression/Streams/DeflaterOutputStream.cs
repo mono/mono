@@ -49,6 +49,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 	/// 
 	/// authors of the original java version : Tom Tromey, Jochen Hoenicke 
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DeflaterOutputStream : Stream
 	{
 		/// <summary>

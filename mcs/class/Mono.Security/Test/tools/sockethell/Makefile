@@ -2,7 +2,7 @@ thisdir = class/Mono.Security/Test/tools/sockethell
 SUBDIRS = 
 include ../../../../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:System.dll -r:Mono.Security.dll -r:../../../../lib/net_4_x/nunit.framework.dll
+LOCAL_MCS_FLAGS = -r:System.dll -r:Mono.Security.dll -r:../../../../lib/net_4_x/nunitlite.dll
 
 all-local install-local uninstall-local:
 

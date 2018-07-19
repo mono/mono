@@ -100,7 +100,7 @@ namespace System.IdentityModel.Tokens
 		public virtual void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer, 
 			SecurityTokenSerializer keyInfoSerializer, 
-			SecurityTokenResolver resolver)
+			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
@@ -118,7 +118,7 @@ namespace System.IdentityModel.Tokens
 				switch (reader.LocalName) {
 				case "Assertion":
 					SamlAssertion a = new SamlAssertion ();
-					a.ReadXml (reader, samlSerializer, keyInfoSerializer, resolver);
+					a.ReadXml (reader, samlSerializer, keyInfoSerializer, outOfBandTokenResolver);
 					assertions.Add (a);
 					break;
 				case "AssertionIDReference":

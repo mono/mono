@@ -31,7 +31,7 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IClientMessageFormatter
 	{
-		object DeserializeReply (Message message, object [] paremeters);
-		Message SerializeRequest (MessageVersion version, object [] inputs);
+		object DeserializeReply (Message message, object [] parameters);
+		Message SerializeRequest (MessageVersion messageVersion, object [] parameters);
 	}
 }

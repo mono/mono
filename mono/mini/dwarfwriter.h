@@ -1,5 +1,6 @@
-/*
- * dwarfwriter.h: Creation of DWARF debug information
+/**
+ * \file
+ * Creation of DWARF debug information
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -14,13 +15,13 @@
 #include "image-writer.h"
 #include "mini.h"
 
-#include <mono/metadata/debug-mono-symfile.h>
+#include <mono/metadata/debug-internals.h>
 
 #include <glib.h>
 
 typedef struct _MonoDwarfWriter MonoDwarfWriter;
 
-MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending, gboolean emit_line_numbers);
+MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean emit_line_numbers);
 
 void mono_dwarf_writer_destroy (MonoDwarfWriter *w);
 

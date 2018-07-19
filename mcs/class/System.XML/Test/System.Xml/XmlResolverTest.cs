@@ -103,7 +103,6 @@ namespace MonoTests.System.Xml {
 			Assert.IsTrue (u2.IsAbsoluteUri, "null,absolute/file");
 		}
 
-#if NET_4_5
 		class AsyncXmlResolver : XmlResolver
 		{
 			public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
@@ -121,6 +120,5 @@ namespace MonoTests.System.Xml {
 			var uri = new Uri ("http://www.mono-project.com");
 			ar.GetEntityAsync (uri, null, typeof(string));
 		}
-#endif
 	}
 }

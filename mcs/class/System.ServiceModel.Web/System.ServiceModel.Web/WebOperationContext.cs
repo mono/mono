@@ -31,7 +31,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
-#if NET_2_1 // Note that moonlight System.ServiceModel.Web.dll does not contain this class.
+#if MOBILE // Note that moonlight System.ServiceModel.Web.dll does not contain this class.
 using IncomingWebRequestContext = System.Object;
 using OutgoingWebResponseContext = System.Object;
 #else
@@ -44,11 +44,11 @@ using System.Xml.Serialization;
 namespace System.ServiceModel.Web
 {
 	public class WebOperationContext
-#if !NET_2_1
+#if !MOBILE
 	 : IExtension<OperationContext>
 #endif
 	{
-#if !NET_2_1
+#if !MOBILE
 		public static WebOperationContext Current {
 			get {
 				if (OperationContext.Current == null)
@@ -68,20 +68,20 @@ namespace System.ServiceModel.Web
 		OutgoingWebRequestContext outgoing_request;
 		OutgoingWebResponseContext outgoing_response;
 
-		public WebOperationContext (OperationContext operation)
+		public WebOperationContext (OperationContext operationContext)
 		{
-			if (operation == null)
-				throw new ArgumentNullException ("operation");
+			if (operationContext == null)
+				throw new ArgumentNullException ("operationContext");
 
 			outgoing_request = new OutgoingWebRequestContext ();
-			incoming_response = new IncomingWebResponseContext (operation);
-#if !NET_2_1
-			incoming_request = new IncomingWebRequestContext (operation);
+			incoming_response = new IncomingWebResponseContext (operationContext);
+#if !MOBILE
+			incoming_request = new IncomingWebRequestContext (operationContext);
 			outgoing_response = new OutgoingWebResponseContext ();
 #endif
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public IncomingWebRequestContext IncomingRequest {
 			get { return incoming_request; }
 		}
@@ -95,18 +95,18 @@ namespace System.ServiceModel.Web
 			get { return outgoing_request; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public OutgoingWebResponseContext OutgoingResponse {
 			get { return outgoing_response; }
 		}
 #endif
 
-		public void Attach (OperationContext context)
+		public void Attach (OperationContext owner)
 		{
 			// do nothing
 		}
 
-		public void Detach (OperationContext context)
+		public void Detach (OperationContext owner)
 		{
 			// do nothing
 		}

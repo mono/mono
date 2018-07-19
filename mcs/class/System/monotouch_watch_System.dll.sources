@@ -1,1 +1,23 @@
 #include monotouch_System.dll.sources
+System.Net.Mail/SmtpClient.platformnotsupported.cs
+System.Net.Security/SslStream.platformnotsupported.cs
+System.Net.Sockets/TcpClient.platformnotsupported.cs
+System.Net.Sockets/TcpListener.platformnotsupported.cs
+System.Net.Sockets/UdpClient.platformnotsupported.cs
+System.Net/AuthenticationManager.platformnotsupported.cs
+System.Net/FtpRequestCreator.platformnotsupported.cs
+System.Net/FtpWebRequest.platformnotsupported.cs
+System.Net/FtpWebResponse.platformnotsupported.cs
+System.Net/HttpListener.platformnotsupported.cs
+System.Net/HttpListenerBasicIdentity.platformnotsupported.cs
+System.Net/HttpListenerContext.platformnotsupported.cs
+System.Net/HttpListenerPrefixCollection.platformnotsupported.cs
+System.Net/HttpListenerRequest.platformnotsupported.cs
+System.Net/HttpListenerResponse.platformnotsupported.cs
+System.Net/HttpListenerTimeoutManager.platformnotsupported.cs
+System.Net/HttpWebRequest.platformnotsupported.cs
+System.Net/HttpWebResponse.platformnotsupported.cs
+System.Net/ServicePoint.platformnotsupported.cs
+System.Net/ServicePointManager.platformnotsupported.cs
+System.Net.WebSockets/HttpListenerWebSocketContext.platformnotsupported.cs
+../Mono.Security/Mono.Security.X509.Extensions/AuthorityKeyIdentifierExtension.cs

@@ -65,6 +65,6 @@ namespace System.ServiceModel.Dispatcher {
 			set { transport_handler = value; }
 		}
 
-		public abstract bool HandleException (Exception e);
+		public abstract bool HandleException (Exception exception);
 	}
 }

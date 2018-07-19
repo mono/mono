@@ -1,0 +1,596 @@
+###########################################################
+###########################################################
+####   Strings for System.Web.Mobile                   ####
+###########################################################
+###########################################################
+
+ConfigSect_MissingAttr=Required attribute '{0}' is missing.
+ConfigSect_UnknownAttr=Unexpected attribute '{0}'.
+ConfigSect_UnrecognizedXML=Unrecognized XML.
+ConfigSect_MissingValue=Attribute '{0}' must have a value.
+ConfigSect_InvalidBooleanAttr=Invalid boolean attribute '{0}'.
+ConfigSect_InvalidIntegerAttr=Invalid integer attribute '{0}'.
+
+DevCapSect_EmptyClass=The type attribute cannot be null or an empty string.
+DevCapSect_ExtraCompareDelegator=An evaluator delegate has already been specified.  A compare attribute is not necessary.
+DevCapSect_ExtraArgumentDelegator=An evaluator delegate has already been specified.  An argument attribute is not necessary.
+DevCapSect_NoTypeInfo=Unable to get type information for type '{0}'. Specify a valid type.
+DevCapSect_NoCapabilityEval=Could not create capability evaluator for method '{0}' because of the following error: '{1}'.
+DevCapSect_MustSpecify=You must specify either a filter name and comparison value (e.g., <filter name="capability" compare="capabilityName" argument="argument"/>) or a type and method (e.g., <filter name="capability" type="typeName" method="methodName"/>).
+DevCapSect_ComparisonAlreadySpecified=A comparison has already been specified. You need not specify a method attribute.
+DevCapSect_UnableAddDelegate=Delegate '{0}' cannot be added because of the following error: '{1}'.
+DevCapSect_UnrecognizedTag=Unrecognized tag '{0}'.
+
+DevFiltDict_FoundLoop=The filter '{0}' is already directly or indirectly dependent on the filter '{1}'. Construct your filters to avoid loops.
+
+MobCap_DelegateNameNoValue=delegateName must have a value.
+MobCap_CantFindCapability=Cannot find a capability named '{0}'.
+
+MobileRedirect_RedirectNotAllowed=Calling Response.Redirect on a postback can have unpredictable results on mobile devices and gateways. Use RedirectToMobilePage method instead.
+
+###########################################################
+###########################################################
+####   Strings for System.Web.UI.MobileControls        ####
+###########################################################
+###########################################################
+
+FactoryGenerator_Error_FactoryInterface=An error has occurred in FactoryGenerator.  The return type is not correctly defined.
+
+#######################################################
+## In the runtime, used by the designer              ##
+#######################################################
+
+RTL=RTL_False
+
+Category_Action=Action
+Category_Appearance=Appearance
+Category_Behavior=Behavior
+Category_Data=Data
+Category_Navigation=Navigation
+Category_Paging=Paging
+Category_Style=Style
+
+MSHTMLHost_Not_Implemented=Not Implemented
+
+AdRotator_AdvertisementFile=XML file that contains advertisements.
+AdRotator_ImageKey=XML element name that specifies which image URL to retrieve.
+AdRotator_NavigateUrlKey=XML element name that specifies which advertisement Web page URL to retrieve.
+AdRotator_KeywordFilter=Keyword for limiting selection of advertisements.
+AdRotator_AdCreated=Raises an event after an advertisement is retrieved from the AdvertisementFile.
+
+BaseValidator_ControlToValidate=ID of the control to validate.
+BaseValidator_Display=Appearance of the validator.
+BaseValidator_ErrorMessage=Message to display when validation fails.
+
+Calendar_FirstDayOfWeek=The day of the week that appears first.
+Calendar_SelectedDate=The currently selected date.
+Calendar_SelectionMode=Determines whether days, weeks, and months are selectable.
+Calendar_ShowDayHeader=True if showing days of week header.
+Calendar_VisibleDate=The month that appears.
+Calendar_CalendarEntryText=Text for the link that provides date selection. This link is only used when a series of steps is needed.
+Calendar_OnSelectionChanged=Raises an event when the user changes the selection.
+
+PhoneCall_AlternateFormat=Text format that appears for devices that cannot make phone calls.
+PhoneCall_AlternateUrl=The target URL for devices that cannot make phone calls.
+PhoneCall_PhoneNumber=The phone number to dial for devices that can make phone calls.
+PhoneCall_SoftkeyLabel=Label used for the phone call when rendered on a softkey. Only applies to devices that support softkeys.
+
+Command_CommandArgument=The argument associated with the command.
+Command_CommandName=The name associated with the command.
+Command_CausesValidation=Whether to invoke validation on the form when activated.
+Command_OnClick=Raises an event when the user activates the command.
+Command_OnItemCommand=Raises an event when the user activates the command. The event is bubbled up to parent controls.
+Command_SoftkeyLabel=Label used for the command when rendered on a softkey. Only applies to devices that support softkeys.
+Command_Format=The visual appearance of the control.
+
+CompareValidator_ControlToCompare=ID of the control to compare to.
+CompareValidator_Operator=Comparison operation to apply to values.
+CompareValidator_Type=Data type of values for comparison.
+CompareValidator_ValueToCompare=Value to compare to.
+
+Control_AccessKey=The access key used to give focus to the control on i-mode phones, using the directkey function.
+
+CustomValidator_OnServerValidate=Called to perform validation on the server.
+
+FontInfo_Bold=Bold setting for the font.
+FontInfo_Italic=Italic setting for the font.
+FontInfo_Name=The preferred font for the control.
+FontInfo_Size=The relative size of the font.
+
+Form_OnActivate=Raises an event when the form becomes active.
+Form_OnDeactivate=Raises an event when a previously active form becomes inactive.
+Form_OnPaginated=Raises an event after the form is paginated.
+Form_Action=The URL to which the form should be submitted.
+Form_Method=The method used to submit the form to the server.
+Form_PagerStyle=The styles used for pagination properties in the control.
+Form_Title=The title used to identify the form.
+
+Image_AlternateText=The alternate text displayed when the image cannot be rendered.
+Image_AutoFormat=Whether the source image should be auto-formatted to match device capabilities.
+Image_Coverage=Percentage of the screen area the image should use.
+Image_ImageUrl=The URL of the image to be rendered.
+Image_NavigateUrl=The URL or Form to navigate to.
+Image_SoftkeyLabel=Label used for the image when rendered on a softkey. Only applies to devices that support softkeys.
+
+Link_NavigateUrl=The URL or Form to link to.
+Link_SoftkeyLabel=Label used for the link when rendered on a softkey. Only used on devices that support softkeys.
+
+List_DataMember=Table used for binding when a DataSet is used as the data source.
+List_DataSource=Data source that populates items in the list.
+List_DataTextField=Specifies which property of a databound item to use to determine the item's text property.
+List_DataValueField=Specifies which property of a databound item to use to determine the item's value property.
+List_Decoration=List format used for the items.
+List_ItemsAsLinks=Whether the items in the list should be interpreted as hyperlinks.
+List_Items=Collection of items in the list.
+List_OnItemCommand=Raises an event when an individual list item generates an event as a result of a user action.
+List_OnItemDataBind=Raises an event after an item has been databound.
+
+MobileControl_Alignment=Horizontal alignment of the control.
+MobileControl_BackColor=Background color of the control.
+MobileControl_BreakAfter=Whether to add a line break after the control at run time.
+MobileControl_Font=Font that this control uses.
+MobileControl_InfiniteTemplateRecursion=A circular reference was detected in a template.
+MobileControl_StyleReference=Style that this control uses.
+MobileControl_Wrapping=The wrapping behavior of text in the control.
+
+ObjectList_DataSource=Data source that populates items in the list.
+ObjectList_LabelField=Field in the data source to use for a compact representation of the items in list view.
+ObjectList_TableFields=Fields in the data source to use for an expanded representation of the items in list view.
+ObjectList_AutoGenerateFields=Whether the fields are generated automatically at run time based on the associated data source.
+ObjectList_Fields=Collection of fields representing the items in details view.
+ObjectList_Commands=Collection of commands for each item in the list.
+ObjectList_OnItemCommand=Raises an event when the user selects a command associated with the item.
+ObjectList_OnItemSelect=Raises an event when the user selects an item in the list view.
+ObjectList_OnItemDataBind=Raises an event after an item is bound to a data source.
+ObjectList_OnShowItemCommands=Raises an event before showing the set of commands for an item.
+ObjectList_DefaultCommand=Command raised when an item is selected in list view.
+ObjectList_DetailsCommandText=Text for the link to details view.
+ObjectList_BackCommandText=Text for back link in details view.
+ObjectList_MoreText=Text for the link to more details and commands.
+ObjectList_CommandStyle=The style applied to the commands in the list.
+ObjectList_LabelStyle=The style applied to the header label.
+
+PagedControl_ItemCount=Number of items to render in the control. The value '0' indicates automatic pagination.
+PagedControl_ItemsPerPage=Number of items to render in each page of the control. The value '0' indicates default pagination.
+PagedControl_OnLoadItems=Raises an event when the control uses custom paging and requests more data.
+
+PagerStyle_NextPageText=Label for the link to the next page.
+PagerStyle_PageLabel=Label for current page.
+PagerStyle_PreviousPageText=Label for the link to the previous page.
+
+Panel_Paginate=Whether the contents can be divided into pages.
+
+RangeValidator_MaximumValue=Maximum value for the control being validated.
+RangeValidator_MinimumValue=Minimum value of the control being validated.
+RangeValidator_Type=Data type of values for comparison.
+
+RegularExpressionValidator_ValidationExpression=Regular expression to determine validity.
+
+RequiredFieldValidator_InitialValue=Initial value of the field to validate.
+
+SelectionList_OnSelectedIndexChanged=Raises an event when the user changes a selection.
+SelectionList_Rows=The number of visible rows to render.
+SelectionList_SelectType=The type of selection list.
+Input_Title=The title shown above the input area on devices that support it.
+
+
+Style_Alignment=Horizontal alignment of the control.
+Style_BackColor=Background color of the control.
+Style_Font=Font for text within the control.
+Style_ForeColor=Color of the text within the control.
+Style_Name=Name of the style.
+Style_Reference=Reference to another style to inherit from.
+Style_Wrapping=Wrapping behavior of text in the control.
+
+StyleSheet_ReferencePath=Relative file path to a user control containing a StyleSheet control.
+
+TextBox_Numeric=Whether the input is restricted to numeric values.
+TextBox_MaxLength=The maximum number of characters that can be entered.
+TextBox_OnTextChanged=Raises an event after the user changes the text property. The event occurs only after a postback to the server.
+TextBox_Password=Whether the input is hidden.
+TextBox_Size=The expected character length of the input.
+
+TextControl_Text=Text that appears in the control.
+
+TextView_Text=Text that appears in the control.
+
+ValidationSummary_BackLabel=Label for the link that returns to the offending form.
+ValidationSummary_FormToValidate=ID of the form to validate.
+ValidationSummary_HeaderText=Header text that appears in the summary.
+
+#######################################################
+## In the runtime, actually used by the runtime      ##
+#######################################################
+
+BaseValidator_ControlToValidateBlank=The ControlToValidate property of '{0}' cannot be blank.
+BaseValidator_ControlNotFound=Unable to find control with the id '{0}' referenced by the {1} property of the control '{2}'.
+BaseValidator_BadControlType=The control with the id '{0}', referenced by the '{1}' property of the control '{2}', cannot be validated.
+
+PhoneCall_InvalidPhoneNumberFormat=The value of the '{0}' property is not in a correct format: '{1}'
+PhoneCall_EmptyPhoneNumber=The property PhoneNumber of the following PhoneCall control cannot be empty: '{0}'
+
+CompareValidator_BadCompareControl=Control '{0}' cannot have the same value '{1}' for both ControlToValidate and ControlToCompare.
+
+ControlAdapter_BackLabel=Back
+ControlAdapter_GoLabel=Go
+ControlAdapter_OKLabel=OK
+ControlAdapter_MoreLabel=More
+ControlAdapter_OptionsLabel=Options
+ControlAdapter_NextLabel=Next
+ControlAdapter_PreviousLabel=Prev
+ControlAdapter_LinkLabel=Link
+ControlAdapter_PhoneCallLabel=Call
+ControlAdapter_InvalidDefaultLabel=The default label ID specified is invalid.
+
+ControlsConfig_NoDeviceConfigRegistered=No mobile controls device configuration was registered for the requesting device.  User agent string is '{0}'.
+
+DataSourceHelper_MissingDataMember=Missing data member '{0}'
+DataSourceHelper_DataSourceWithoutDataMember={0} without data member
+
+DeviceSpecific_OnlyChoiceElementsAllowed=Only Choice elements are allowed in a DeviceSpecific element.
+
+DeviceSpecificChoice_OverridingPropertyNotFound=Property '{0}' to override not found.
+DeviceSpecificChoice_OverridingPropertyTypeCast=Property '{0}' cannot be converted from text.
+DeviceSpecificChoice_OverridingPropertyNotDeclarable=Property '{0}' is not declarable, and cannot be overridden.
+DeviceSpecificChoice_InvalidPropertyOverride=Invalid property override: '{0}'
+DeviceSpecificChoice_PropertyNotAnAttribute=Specified property is not an attribute.
+DeviceSpecificChoice_ChoiceOnlyExistInDeviceSpecific=Choice elements can only exist in a DeviceSpecific element.
+DeviceSpecificChoice_CantFindFilter=Can find neither a device capability named '{0}' nor a public non-static method on the page named '{0}' that returns a System.Boolean and takes System.Web.Mobile.MobileCapabilities and System.String as arguments.
+
+ErrorFormatterPage_ServerError=Server Error in {0}
+ErrorFormatterPage_MiscErrorMessage={0}: {1}
+ErrorFormatterPage_File=File: {0}
+ErrorFormatterPage_Line=Line: {0}
+
+Form_NestedForms=Forms cannot be nested.  Found Form with ID '{0}' inside Form with ID '{1}'.
+Form_PropertyNotAccessible=The '{0}' property is not accessible for the Form.
+Form_PropertyNotSettable=The '{0}' property is not settable on the Form.
+Form_InvalidSubControlType='{0}' cannot be a top-level form element.
+Form_InvalidControlToPaginateForm=ControlToPaginate must be inside the active form.
+
+IndividualDeviceConfig_TypeMustSupportInterface=The type '{0}' is not a valid device adapter, because it does not implement the interface '{1}'.  Use another type, or modify the type to implement the interface.
+IndividualDeviceConfig_ControlWithIncorrectPageAdapter=Control '{0}' is not registered with device with page adapter '{1}'.
+
+LiteralTextParser_InvalidTagFormat=The text contains a tag with invalid syntax.  Specify tags that use correct syntax.
+
+MobileControl_MustBeInMobilePage=MobileControl must be contained within a MobilePage: {0}
+MobileControl_MustBeInForm=The control with id {0} of type {1} must be contained within a Form.
+MobileControl_NoTemplatesDefined=Cannot create templated UI because no templates are defined.
+MobileControl_NoMultipleDeviceSpecifics=You can specify only one DeviceSpecific element per control.
+MobileControl_NoCustomAttributes=Cannot set custom attributes on mobile controls in this page.  Custom attributes specified are: {0}.
+MobileControl_InvalidAccessKey=The following AccessKey property must be 0-9, # or *: '{0}'
+MobileControl_InnerTextCannotContainTags=The control with id {1} contains tags in its inner text.  A {0} control cannot contain tags in its inner text.
+MobileControl_TextCannotContainNewlines=The control with id {1} contains newline characters in its inner text.  A {0} control cannot contain newline characters in its inner text.
+
+MobileControlBuilder_ControlMustBeTopLevelOfPage={0} must be defined at the top level of a page.
+MobileControlBuilder_StyleMustBeInStyleSheet=Styles must be defined in a StyleSheet.
+
+MobileControlsSectionHandler_UnknownElementName=Unknown element name - {0} expected.
+MobileControlsSectionHandler_DeviceConfigNotFound=The following device configuration is not found: '{0}'
+MobileControlsSectionHandler_CantCreateMethodOnClass=Unable to find suitable predicate method '{0}' on class '{1}'
+MobileControlsSectionHandler_TypeNotFound=Type '{0}' used as {1} not found.
+MobileControlsSectionHandler_DuplicatedDeviceName=The following device adapter set is already registered: '{0}'
+MobileControlsSectionHandler_NotAssignable='{0}' is not assignable to '{1}'
+MobileControlsSectionHandler_CircularReference=The device configuration '{0}' contains a circular reference
+
+MobileErrorInfo_Unknown=Unknown
+MobileErrorInfo_CompilationErrorType=Compilation Error
+MobileErrorInfo_CompilationErrorMiscTitle=Compiler Error Message
+MobileErrorInfo_CompilationErrorDescription=An error occurred during the compilation of a resource required to service this request. Please review the following specific error details and modify your source code appropriately.
+MobileErrorInfo_ParserErrorType=Parser Error
+MobileErrorInfo_ParserErrorMiscTitle=Parser Error Message
+MobileErrorInfo_ParserErrorDescription=An error occurred during the parsing of a resource required to service this request. Please review the following specific parse error details and modify your source file appropriately.
+MobileErrorInfo_SourceObject=Source Object
+
+MobileListItemCollection_ViewStateManagementError=Viewstate management error
+
+MobilePage_InvalidApplicationUrl=Invalid application URL - {0}
+MobilePage_AtLeastOneFormInPage=Page must contain at least one Form.
+MobilePage_FormNotFound=Form not found: '{0}'
+MobilePage_RequiresSessionState=The page needs to save viewstate, but session state is disabled or readonly. Enable session state, or disable viewstate for the page.
+
+MobileTypeNameConverter_TypeNotResolved=The type '{0}' cannot be resolved. Please verify the spelling is correct or that the full type name is provided.
+MobileTypeNameConverter_UnsupportedValueType=The converter cannot convert value '{0}' with type '{1}'.
+
+ObjectList_FieldNotFound=Field {0} not found
+ObjectList_ItemTitle=Item
+ObjectList_SelectedIndexTooSmall=The SelectedIndex property cannot be set to less than -1: '{0}'.
+ObjectList_SelectedIndexTooBig=SelectedIndex must be less than the item count.  SelectedIndex is being set to {0}, but the item count is {1}.  
+ObjectList_CannotSetViewModeWithNoSelectedItem=To set the ViewMode to Commands or Details, you must first select an item.
+ObjectList_MustBeInListModeToClearSelectedIndex=To set the SelectedIndex to -1, the ViewMode property must first be set to ObjectListViewMode.List.
+ObjectList_MustBeInDetailsModeToGetDetails=Cannot access the Details property unless the ViewMode property is first set to ObjectListViewMode.Details.
+ObjectList_MustHaveOneOrMoreFields=Must have one or more fields to databind.  (Application may have autogenerated fields from an empty DataSource.  To clear items, set DataSource to null.)
+ObjectListField_DataFieldNotFound=The DataField '{0}' does not exist in the source data.  Specify a different DataField property, or remove the field.
+ObjectListField_DataBoundText=DataBound
+
+PagedControl_ItemCountCantBeNegative=ItemCount cannot be negative: {0}
+PagedControl_ItemsPerPageCantBeNegative=ItemsPerPage cannot be negative: {0}
+
+PagerStyle_NextPageText_DefaultValue=Next
+PagerStyle_PreviousPageText_DefaultValue=Previous
+
+RangeValidator_RangeOverlap=The MaximumValue {0} cannot be less than the MinimumValue {1} of {2}.
+
+SessionViewState_InvalidSessionStateHistory=Invalid value for session state history.
+SessionViewState_ExpiredOrCookieless=The page requires session state that is no longer available. Either the session has expired, the client did not send a valid session cookie, or the session state history size is too small. Try increasing the history size or session expiry limit.
+
+SelectionList_AdapterNotHandlingLoadPostData=Device adapter must handle LoadPostData for SelectionList.
+
+Style_DuplicateName=A style with that name already exists. Please choose another name.
+Style_NameChangeCauseCircularLoop=This name change creates a circular loop. Please choose another name.
+Style_ReferenceCauseCircularLoop=This reference creates a circular loop. Please choose another style reference.
+Style_StyleNotFound=Style not found: {0}
+Style_EmptyName=A style name cannot be empty.
+Style_StyleNotFoundOnGenericUserControl=Style not found: {0}.  Note that Styles will never be found on a System.Web.UI.UserControl.  Use System.Web.UI.MobileControls.MobileUserControl instead.
+Style_CircularReference=The following style contains a circular reference: '{0}'
+Style_UnregisteredProperty=Unregistered property: {0}
+Style_ErrorMessageTitle=Styles Editor
+
+StyleSheet_DuplicateName=Duplicate Style elements named {0} found within a style sheet.
+StyleSheet_MustContainID=Style elements must contain a 'Name' attribute.
+StyleSheet_NoStyleSheetInExternalFile=External file does not contain a style sheet control.
+StyleSheet_PropertyNotAccessible=The following style sheet property is not accessible: '{0}'
+StyleSheet_PropertyNotSettable=The following style sheet property is not settable: '{0}'
+StyleSheet_InvalidStyleName=Attempting to set Style named '{0}' into style sheet key '{1}'.  These values must match.
+StyleSheet_StyleAlreadyOwned=Attempting to insert Style named '{0}' into style sheet even though it's already in another style sheet named '{1}'.  Only one style sheet can own a given Style.
+StyleSheet_LoopReference=The following style sheet contains a circular reference to an external style sheet: '{0}'
+
+Theme_Not_Supported_On_MobileControls=The 'Theme' feature is not supported on mobile controls.
+Feature_Not_Supported_On_MobilePage=The '{0}' feature is not supported on a mobile page.
+
+# Used in ArgumentException where concatenation will occur.
+TextBox_NotNegativeNumber=must be greater than or equal to zero.
+
+SelectionList_OutOfRange=Unexpected value {0}.  The value of SelectedIndex must be at least -1 and less than the number of items.
+ValidationSummary_InvalidFormToValidate=The form with id {0}, referenced by the ValidationSummary control '{1}', does not exist. Change the FormToValidate property to a valid form.
+
+Validator_ValueBadType=The {1} property of the control with id {2} is set to the value {0}, which cannot be converted to the required type {3}. Use a legal value.
+
+###########################################################
+###########################################################
+####  Strings for System.Web.UI.Design.MobileControls  ####
+###########################################################
+###########################################################
+
+AppliedDeviceFiltersDialog_Title=Applied Device Filters
+AppliedDeviceFiltersDialog_AppliedDeviceFilters=A&pplied Device Filters:
+AppliedDeviceFiltersDialog_AssociatedItemsWillBeLost=Any templates and property overrides associated with this device filter will be lost. Are you sure you want to continue?
+AppliedDeviceFiltersDialog_ApplyDeviceFilter=&Add To List
+AppliedDeviceFiltersDialog_AvailableDeviceFilters=A&vailable Device Filters:
+AppliedDeviceFiltersDialog_Argument=A&rgument:
+AppliedDeviceFiltersDialog_DuplicateChoices=The following filters have been applied multiple times with the same argument: '{0}'.  Please remove the duplicate filters or change their arguments.
+AppliedDeviceFiltersDialog_DefaultFilterAlreadyApplied=The default filter may only be applied once.
+
+BaseTemplatedMobileComponentEditor_TemplateModeErrorMessage=The control does not support property editing while it is in template editing mode. You must complete template editing before using the Property Builder.
+BaseTemplatedMobileComponentEditor_TemplateModeErrorTitle=Property Builder
+
+Category_DeviceSpecific=Device Specific
+
+DeviceFilter_DefaultChoice=(Default)
+DeviceFilter_NoChoice=(None)
+
+DeviceFilterEditorDialog_Header=Create device filters for control templating and property overrides in this application.  These filters are stored in the Web.config management file.
+DeviceFilterEditorDialog_DeviceFilters=Device &Filters:
+DeviceFilterEditorDialog_NewDeviceFilter=&New Device Filter
+DeviceFilterEditorDialog_UnnamedFilter=A device filter name cannot be empty. Please type a name.
+DeviceFilterEditorDialog_DuplicateName=The following device filter already exists: '{0}'. Please choose another name.
+DeviceFilterEditorDialog_IllegalDefaultName=You cannot create a device filter named '(Default)'. This name is reserved for the default filter. Please choose another name.
+DeviceFilterEditorDialog_Argument=&Argument:
+DeviceFilterEditorDialog_Attributes=Attributes
+DeviceFilterEditorDialog_Method=&Method:
+DeviceFilterEditorDialog_TypeGl=Type
+DeviceFilterEditorDialog_Equality=Equality &Comparison
+DeviceFilterEditorDialog_Compare=C&ompare:
+DeviceFilterEditorDialog_Evaluator=Evaluator &Delegate
+DeviceFilterEditorDialog_TypeTxt=&Type:
+DeviceFilterEditorDialog_Title=Device Filter Editor
+DeviceFilterEditorDialog_InvalidFilter=The following device filters are not valid as specified:\n\n{0}\n\nEquality Comparison device filters must have a defined Compare property.  Evaluator Delegate device filters must have defined Type and Method properties.  Please correct these filters.
+DeviceFilterEditorDialog_DuplicateNames=This action could not be completed because multiple device filters that share the same name exist in this project's Web.config file.  Please correct these duplicate filter definitions in the Web.config file.
+DeviceFilterEditorDialog_WebConfigMissingOnOpen=Before you can create Device Filters you must add a Web.config file to this project.
+DeviceFilterEditorDialog_WebConfigMissing=The action could not be completed because this project's Web.config file has been deleted or renamed.
+DeviceFilterEditorDialog_WebConfigParsingError=The following error was encountered while attempting to parse this project's Web.config file:\n\n{0}\n\nPlease correct this condition in the Web.config file.
+
+DeviceFilterNode_DefaultFilterName=DeviceFilter
+
+DeviceSpecific_DefaultMessage=Right-click and select the Templating Options command to apply device filters.
+DeviceSpecific_TemplateEditingMessage=Right-click and select a set of templates to edit their device-specific content.
+DeviceSpecific_DuplicateWarningMessage=Only one DeviceSpecific control is allowed in this container. Please remove all extra DeviceSpecific controls.
+DeviceSpecific_PropNotSet=(None)
+
+EditableTreeList_Rename=&Rename
+EditableTreeList_AddName=Add
+EditableTreeList_AddDescription=Add a new item to the list.
+EditableTreeList_MoveUpName=Move Up
+EditableTreeList_MoveUpDescription=Move the selected item up in the list
+EditableTreeList_MoveDownName=Move Down
+EditableTreeList_MoveDownDescription=Move the selected item down in the list
+EditableTreeList_DeleteName=Delete
+EditableTreeList_DeleteDescription=Delete the selected item from the list
+
+PropertyOverridesDialog_AppliedDeviceFilters=&Applied Device Filter:
+PropertyOverridesDialog_Title=Property Overrides
+PropertyOverridesDialog_DeviceSpecificProperties=Device-Specific &Properties:
+PropertyOverridesDialog_InvalidPropertyValue='{0}' is an invalid value for the following property: '{1}'.  This property has been reset to its default value.
+PropertyOverridesDialog_NotICloneable='{0}' uses ExpandableObjectConverter, but type '{1}' does not implement ICloneable.
+PropertyOverridesDialog_DuplicateChoices=The following filters have been applied multiple times with the same argument: '{0}'.  Please remove the duplicate filters in the Applied Device Filters dialog before editing property overrides.
+
+GenericDialog_OKBtnCaption=OK
+GenericDialog_CancelBtnCaption=Cancel
+GenericDialog_HelpBtnCaption=Help
+GenericDialog_CloseBtnCaption=Close
+GenericDialog_Edit=&Edit...
+
+ImageUrlPicker_ImageCaption=Select Image
+ImageUrlPicker_ImageFilter=Image Files(*.gif;*.jpg;*.jpeg;*.bmp;*.wmf;*.png;*.wbmp)|*.gif;*.jpg;*.jpeg;*.bmp;*.wmf;*.png;*.wbmp|All Files(*.*)|*.*|
+
+ListGeneralPage_Title=General
+ListGeneralPage_DataGroupLabel=Data
+ListGeneralPage_PagingGroupLabel=Paging
+ListGeneralPage_AppearanceGroupLabel=Appearance
+ListGeneralPage_DataSourceCaption=&DataSource:
+ListGeneralPage_DataMemberCaption=Data&Member:
+ListGeneralPage_DataTextFieldCaption=Data&TextField:
+ListGeneralPage_DataValueFieldCaption=Data&ValueField:
+ListGeneralPage_ItemCountCaption=Item&Count:
+ListGeneralPage_ItemsPerPageCaption=ItemsPer&Page:
+ListGeneralPage_DecorationCaption=Deco&ration:
+ListGeneralPage_DecorationNone=None
+ListGeneralPage_DecorationBulleted=Bulleted
+ListGeneralPage_DecorationNumbered=Numbered
+ListGeneralPage_SelectTypeCaption=&SelectType:
+ListGeneralPage_SelectTypeDropDown=DropDown
+ListGeneralPage_SelectTypeListBox=ListBox
+ListGeneralPage_SelectTypeRadio=Radio
+ListGeneralPage_SelectTypeMultiSelectListBox=MultiSelectListBox
+ListGeneralPage_SelectTypeCheckBox=CheckBox
+ListGeneralPage_RowsCaption=&Rows:
+ListGeneralPage_NoneComboEntry=(None)
+ListGeneralPage_UnboundComboEntry=(Unbound)
+ListGeneralPage_PrivateMemberMessage={0} is marked as private member.
+ListGeneralPage_PrivateMemberCaption=The DataSource's modifier must be changed to public before you can select it.
+
+ListItemsPage_Title=Items
+ListItemsPage_ItemsAsLinksCaption=&Render list items as hyperlinks
+ListItemsPage_ItemListGroupLabel=Item list
+ListItemsPage_DefaultItemText=Text
+ListItemsPage_ItemCaption=Item &Text:
+ListItemsPage_NewItemCaption=&Create New Item
+ListItemsPage_ItemValueCaption=&Value:
+ListItemsPage_ItemSelectedCaption=&Selected
+
+MarkupSchema_HTML32=http://schemas.microsoft.com/mobile/html32template
+MarkupSchema_cHTML10=http://schemas.microsoft.com/mobile/chtml10template
+
+MobileControl_FormPanelContainmentErrorMessage=This control must be placed in a Form or Panel control, or within a template. Please move or delete this control.
+MobileControl_StrictlyFormPanelContainmentErrorMessage=This control must be placed in a Form or Panel control. Please move or delete this control.
+MobileControl_TopPageContainmentErrorMessage=This control must be placed directly on the page. Please move or delete this control.
+MobileControl_MobilePageErrorMessage=This control only works in pages of type MobilePage.
+MobileControl_NonHtmlSchemaErrorMessage=You can edit only HTML-based templates in Design view. Switch to HTML view to edit the template contents.
+MobileControl_DefaultErrorMessage=An internal error occurred.
+MobileControl_SettingGenericChoiceDescription=Select the device filters to use for property overrides.
+MobileControl_DeviceSpecificPropsDescription=The collection of property overrides associated with this control.
+MobileControl_AppliedDeviceFiltersDescription=The collection of device filters you can use to customize this control.
+MobileControl_InnerTextCannotContainTagsDesigner=This control cannot contain tags in its inner text.
+MobileControl_UserControlWarningMessage=This control is not supported in Design view when placed inside a Web User Control, use Mobile User Control instead.
+
+MobileWebFormDesigner_NonMobileControlOnPageWarning=Non-mobile controls are permitted only inside templates.\nPlease delete these controls or move them into templates.
+MobileWebFormDesigner_NonMobileControlCreatedWarning=Non-mobile controls are permitted only inside templates.\nPlease delete this control or move it into a template.
+MobileWebFormDesigner_MessageBoxTitle=Mobile Internet Designer
+
+NavigateUrlConverter_SelectURITarget=(Select URL...)
+
+ObjectListCommandsPage_Title=Commands
+ObjectListCommandsPage_DefaultCommandCaption=&Default command:
+ObjectListCommandsPage_CommandListGroupLabel=Command list
+ObjectListCommandsPage_DataGroupLabel=Data
+ObjectListCommandsPage_DefaultCommandName=Command
+ObjectListCommandsPage_CommandNameCaption=Command &Name:
+ObjectListCommandsPage_NewCommandBtnCaption=&Create New Command
+ObjectListCommandsPage_PropertiesGroupLabel=Properties
+ObjectListCommandsPage_TextCaption=&Text:
+ObjectListCommandsPage_EmptyNameError=A command name cannot be empty. Please type a name.
+ObjectListCommandsPage_ErrorMessageTitle=Commands Editor Page
+
+ObjectListFieldsPage_Title=Fields
+ObjectListFieldsPage_AutoGenerateFieldsCaption=Create &fields automatically at run time
+ObjectListFieldsPage_FieldListGroupLabel=Field list
+ObjectListFieldsPage_DefaultFieldName=Field
+ObjectListFieldsPage_FieldNameCaption=Field &Name:
+ObjectListFieldsPage_NewFieldBtnCaption=&Create New Field
+ObjectListFieldsPage_PropertiesGroupLabel=Properties
+ObjectListFieldsPage_DataFieldCaption=&DataField:
+ObjectListFieldsPage_NoneComboEntry=(None)
+ObjectListFieldsPage_DataFormatStringCaption=DataFormat&String:
+ObjectListFieldsPage_TitleCaption=&Title:
+ObjectListFieldsPage_VisibleCaption=&Visible
+ObjectListFieldsPage_EmptyNameError=A field name cannot be empty. Please type a name.
+ObjectListFieldsPage_ErrorMessageTitle=Fields Editor Page
+
+ObjectListGeneralPage_Title=General
+ObjectListGeneralPage_AppearanceGroupLabel=Appearance
+ObjectListGeneralPage_DataGroupLabel=Data
+ObjectListGeneralPage_PagingGroupLabel=Paging
+ObjectListGeneralPage_NoneComboEntry=(None)
+ObjectListGeneralPage_UnboundComboEntry=(Unbound)
+ObjectListGeneralPage_BackCommandTextCaption=&BackCommandText:
+ObjectListGeneralPage_DetailsCommandTextCaption=De&tailsCommandText:
+ObjectListGeneralPage_MoreTextCaption=M&oreText:
+ObjectListGeneralPage_DataSourceCaption=&DataSource:
+ObjectListGeneralPage_DataMemberCaption=Data&Member:
+ObjectListGeneralPage_LabelFieldCaption=&LabelField:
+ObjectListGeneralPage_PrivateDataSourceMessage={0} is marked as private member.
+ObjectListGeneralPage_TableFieldsGroupLabel=TableFields
+ObjectListGeneralPage_TableFieldsAvailableListLabel=A&vailable Fields:
+ObjectListGeneralPage_TableFieldsSelectedListLabel=&Selected Fields:
+
+PropertyBuilderVerb=Property &Builder...
+
+Security_ReturnUrlCannotBeAbsolute=The ReturnUrl value "{0}" is invalid because it is absolute.
+
+StylesEditorDialog_DuplicateStyleException=StylesEditorDialog cannot edit a style sheet with multiple styles declared which share the same name.
+StylesEditorDialog_DuplicateStyleNames=This action could not be completed because there are multiple styles defined in this style sheet that share the same name.  Please first correct this problem in the HTML view.
+StylesEditorDialog_Title=Styles Editor
+StylesEditorDialog_PreviewText=AaBbYyZz
+StylesEditorDialog_StyleListGroupLabel=Style List
+StylesEditorDialog_AvailableStylesCaption=Style &Types:
+StylesEditorDialog_AddBtnCation=>
+StylesEditorDialog_DefinedStylesCaption=&Defined Styles:
+StylesEditorDialog_StylePropertiesGroupLabel=Style Properties
+StylesEditorDialog_TypeCaption=T&ype:
+StylesEditorDialog_SampleCaption=Sample:
+StylesEditorDialog_PropertiesCaption=&Properties:
+StylesEditorDialog_DeleteStyleMessage=This will remove any templates and property overrides associated with this style.\nAre you sure you want to continue?
+StylesEditorDialog_DeleteStyleCaption=Confirm Style Deletion
+StylesEditorDialog_EmptyName=A style name cannot be empty. Please type a name.
+
+StyleSheet_DefaultMessage=Right-click and choose the Edit Styles command to define styles.
+StyleSheet_TemplateEditingMessage=Right-click and choose the Edit Styles command to define styles. Use the Edit Template command to edit templates for the current style and device filter.
+StyleSheet_DuplicateStyleNamesMessage=This style sheet contains multiple styles which have the following names: {0}. Each style must have a unique 'Name' attribute.
+StyleSheet_DuplicateWarningMessage=You can specify only one style sheet per page. Please remove all extra style sheets.
+StyleSheet_RefCycleErrorMessage=A circular reference is present: {0}. Please correct this problem.
+StyleSheet_PropNotSet=(None)
+StyleSheet_StylesCaption=St&yle:
+StyleSheet_TemplateStyleDescription=The style used for the templating of this control.
+StyleSheet_StylesEditorVerb=Edit Sty&les...
+StyleSheet_SettingTemplatingStyleChoiceDescription=For each style, select the device filters to use for this stylesheet's templates.
+StyleSheet_SettingGenericStyleChoiceDescription=For each style, select the device filters to use for this style sheet's templates and property overrides.
+Stylesheet_EditBtnCaption=E&dit...
+
+StyleSheetRefUrlEditor_Filter=ASCX Files(*.ascx)|*.ascx|
+StyleSheetRefUrlEditor_Caption=Select ASCX File
+
+TemplateableDesigner_SetTemplatesFilterVerb=Templating &Options...
+TemplateableDesigner_SettingTemplatingChoiceDescription=Select the device filters to use for this control's templates.
+TemplateableDesigner_SettingGenericChoiceDescription=Select the device filters to use for this control's templates and property overrides.
+TemplateableDesigner_TemplateChoiceDescription=Identifies the device filter used to display or edit this control's templates.
+
+TemplatingOptionsDialog_Title=Templating Options
+TemplatingOptionsDialog_FilterCaption=Applied Device &Filter:
+TemplatingOptionsDialog_EditBtnCaption=&Edit...
+TemplatingOptionsDialog_SchemaCaption=Mar&kup Schema:
+TemplatingOptionsDialog_HTMLSchemaFriendly=Mobile HTML 3.2 Template
+TemplatingOptionsDialog_CHTMLSchemaFriendly=Mobile cHTML 1.0 Template
+
+Toolbox_TabName=Mobile Web Forms
+
+UrlPicker_DefaultFilter=All Files(*.*)|*.*|
+UrlPicker_DefaultCaption=Select URL
+
+TemplateFrame_HeaderFooterTemplates=&Header and Footer Templates
+TemplateFrame_ItemTemplates=&Item Templates
+TemplateFrame_ContentTemplate=&Content Template
+TemplateFrame_SeparatorTemplate=&Separator Template
+TemplateFrame_IllFormedWarning=This template is not well formed. Switch to HTML view to edit the content.
+
+UrlPath_EmptyPathHasNoDirectory=Empty path has no directory.
+UrlPath_PathMustBeRooted=Path must be rooted.
+UrlPath_PhysicalPathNotAllowed='{0}' is a physical path, which is not allowed here
+UrlPath_CannotExitUpTopDirectory=Cannot use a leading '..' to refer to locations outside the root directory.
+
+UnsettableComboBox_NotSetText=<Not Set>
+UnsettableComboBox_NotSetCompactText=NotSet
+
+ValidationSummary_ErrorMessage=Error message {0}.
+
+WebConfig_FileNotFoundException=No Web.config file exists in this project's directory.
+WebConfig_FileLoadException=An error occurred when attempting to read the Web.config file.

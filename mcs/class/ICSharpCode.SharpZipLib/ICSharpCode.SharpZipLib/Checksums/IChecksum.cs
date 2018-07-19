@@ -45,6 +45,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// <code>getValue</code>. The complete checksum object can also be reset
 	/// so it can be used again with new data.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public interface IChecksum
 	{
 		/// <summary>

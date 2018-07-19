@@ -30,6 +30,11 @@ namespace Mono.Debugger.Soft
 			if (args != null && args.Length != 0)
 				throw new NotSupportedException ();
 
+			//If method is virtual we can't optimize(execute IL) because it's maybe
+			//overriden... call runtime to invoke overriden version...
+			if (method.IsVirtual)
+				throw new NotSupportedException ();
+
 			if (method.IsStatic || method.DeclaringType.IsValueType || this_val == null || !(this_val is ObjectMirror))
 				throw new NotSupportedException ();
 
@@ -347,6 +352,12 @@ namespace Mono.Debugger.Soft
 								case "char": res = new PrimitiveValue (method.VirtualMachine, Convert.ToChar (primitive.Value)); break;
 								case "bool": res = new PrimitiveValue (method.VirtualMachine, Convert.ToBoolean (primitive.Value)); break;
 								}
+							} catch {
+								throw new NotSupportedException ();
+							}
+						} else if (method.ReturnType.IsEnum && primitive != null) {
+							try {
+								res = method.VirtualMachine.CreateEnumMirror (method.ReturnType, primitive);
 							} catch {
 								throw new NotSupportedException ();
 							}

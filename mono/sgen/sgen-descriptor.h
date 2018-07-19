@@ -1,24 +1,14 @@
-/*
- * sgen-descriptor.h: GC descriptors describe object layout.
-
+/**
+ * \file
+ * GC descriptors describe object layout.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
  *
  * Copyright (C) 2012 Xamarin Inc
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License 2.0 as published by the Free Software Foundation;
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License 2.0 along with this library; if not, write to the Free
- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #ifndef __MONO_SGEN_DESCRIPTOR_H__
 #define __MONO_SGEN_DESCRIPTOR_H__
@@ -125,12 +115,14 @@ enum {
 	ROOT_DESC_BITMAP,
 	ROOT_DESC_RUN_LEN, 
 	ROOT_DESC_COMPLEX,
+	ROOT_DESC_VECTOR,
 	ROOT_DESC_USER,
 	ROOT_DESC_TYPE_MASK = 0x7,
 	ROOT_DESC_TYPE_SHIFT = 3,
 };
 
 typedef void (*SgenUserMarkFunc)     (GCObject **addr, void *gc_data);
+typedef void (*SgenUserReportRootFunc)     (void *addr, GCObject *obj, void *gc_data);
 typedef void (*SgenUserRootMarkFunc) (void *addr, SgenUserMarkFunc mark_func, void *gc_data);
 
 SgenDescriptor sgen_make_user_root_descriptor (SgenUserRootMarkFunc marker);
@@ -226,7 +218,7 @@ sgen_gc_descr_has_references (SgenDescriptor desc)
 	} while (0)
 #endif
 
-#define OBJ_COMPLEX_FOREACH_PTR(vt,obj)	do {	\
+#define OBJ_COMPLEX_FOREACH_PTR(desc,obj)	do {	\
 		/* there are pointers */	\
 		void **_objptr = (void**)(obj);	\
 		gsize *bitmap_data = sgen_get_complex_descriptor ((desc)); \

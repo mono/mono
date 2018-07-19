@@ -1,3 +1,6 @@
+/**
+ * \file
+ */
 
 #ifndef __MONO_CIL_COFF_H__
 #define __MONO_CIL_COFF_H__
@@ -295,8 +298,8 @@ typedef struct {
 #define CLI_FLAGS_ILONLY         0x01
 #define CLI_FLAGS_32BITREQUIRED  0x02
 #define CLI_FLAGS_STRONGNAMESIGNED 0x8
-#define CLI_FLAGS_PREFERRED32BIT  0x10
 #define CLI_FLAGS_TRACKDEBUGDATA 0x00010000
+#define CLI_FLAGS_PREFERRED32BIT 0x00020000
 	guint32        ch_flags;
 
 	guint32        ch_entry_point;

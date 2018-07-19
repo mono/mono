@@ -233,7 +233,9 @@ namespace System.ServiceModel.Description
 			 */
 
 			var inherited = new Collection<ContractDescription> ();
-		var interfaces = cd.ContractType.GetInterfaces ();
+			var interfaces = cd.ContractType.GetInterfaces ()
+				.Where (t => t != givenContractType);
+				
 			foreach (var it in interfaces ) {
 				var icd = GetContractInternal (it, givenServiceType, null);
 				if (icd != null)
@@ -373,7 +375,7 @@ namespace System.ServiceModel.Description
 					var fname = a.Name ?? a.DetailType.Name + "Fault";
 					var fns = a.Namespace ?? cd.Namespace;
 					var fd = new FaultDescription (a.Action ?? cd.Namespace + cd.Name + "/" + od.Name + fname) { DetailType = a.DetailType, Name = fname, Namespace = fns };
-#if !NET_2_1
+#if !MOBILE
 					if (a.HasProtectionLevel)
 						fd.ProtectionLevel = a.ProtectionLevel;
 #endif
@@ -400,7 +402,7 @@ namespace System.ServiceModel.Description
 				foreach (object obj in serviceMethod.GetCustomAttributes (typeof(IOperationBehavior),true))
 					od.Behaviors.Add ((IOperationBehavior) obj);
 			}
-#if !NET_2_1
+#if !MOBILE
 			if (od.Behaviors.Find<OperationBehaviorAttribute>() == null)
 				od.Behaviors.Add (new OperationBehaviorAttribute ());
 #endif
@@ -497,7 +499,6 @@ namespace System.ServiceModel.Description
 				mb.WrapperNamespace = mca.WrapperNamespace ?? defaultNamespace;
 			}
 
-			int index = 0;
 			foreach (MemberInfo bmi in messageType.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 				Type mtype = null;
 				string mname = null;
@@ -531,13 +532,14 @@ namespace System.ServiceModel.Description
 				var mba = GetMessageBodyMemberAttribute (bmi);
 				if (mba != null) {
 					var pd = CreatePartCore (mba, mname, defaultNamespace);
-					if (pd.Index <= 0)
-						pd.Index = index++;
 					pd.Type = MessageFilterOutByRef (mtype);
 					pd.MemberInfo = bmi;
 					mb.Parts.Add (pd);
 				}
 			}
+			int index = 0;
+			foreach (var part in mb.Parts)
+				part.Index = index++;			
 
 			return md;
 		}

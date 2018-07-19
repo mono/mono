@@ -41,6 +41,10 @@ class X {
 			return 3;
 		if (Test.A == Test.B)
 			return 4;
+
+		const A e2 = 3 - A.b;
+		if (e2 != A.a)
+			return 5;
 		
 		return 0;
 	}

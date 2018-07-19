@@ -34,8 +34,8 @@ namespace System.IdentityModel.Tokens
 {
 	public class X509ThumbprintKeyIdentifierClause : BinaryKeyIdentifierClause
 	{
-		public X509ThumbprintKeyIdentifierClause (byte [] certificateThumbprint)
-			: base (null, certificateThumbprint, true)
+		public X509ThumbprintKeyIdentifierClause (byte [] thumbprint)
+			: base (null, thumbprint, true)
 		{
 		}
 

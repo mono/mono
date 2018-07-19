@@ -1158,6 +1158,9 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, evProp.NewIndex, "#10");
 			Assert.AreEqual (-1, evProp.OldIndex, "#11");
 			Assert.AreEqual (ListChangedType.Reset, evProp.lstType, "#12");
+
+			// Keep the view alive otherwise we might miss events
+			GC.KeepAlive (view);
 		}
 
 		[Test]

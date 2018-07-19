@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -73,7 +74,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public enum ParamEnum {
 			None = 0,
 			Foo = 1,
@@ -97,14 +98,12 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (ParamEnum.Foo, info [5].DefaultValue, "#2");
 		}
 
-#if NET_4_5
 		[Test]
 		public void HasDefaultValueEnum () {
 			ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();
 
 			Assert.IsTrue (info [5].HasDefaultValue);
 		}
-#endif
 
 		public static void Sample2 ([DecimalConstantAttribute(2,2,2,2,2)] decimal a, [DateTimeConstantAttribute(123456)] DateTime b) {}
 
@@ -125,7 +124,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (pi [1].DefaultValue.GetType (), typeof (Missing), "#2");
 		}
 
-#if NET_4_5
 		[Test]
 		public void TestHasDefaultValues ()
 		{
@@ -135,7 +133,6 @@ namespace MonoTests.System.Reflection
 			Assert.IsFalse (pi [1].HasDefaultValue, "#2");
 			Assert.IsTrue (pi [2].HasDefaultValue, "#3");
 		}
-#endif
 
 		public void Sample (int a, [Optional] int b, object c = null)
 		{
@@ -252,13 +249,11 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (decimal.MaxValue, info [0].DefaultValue);
 		}
 
-#if NET_4_5
 		[Test]
 		public void HasDefaultValueDecimal () {
 			var info = typeof (ParameterInfoTest).GetMethod ("TestC").GetParameters ();
 			Assert.IsTrue (info [0].HasDefaultValue);
 		}
-#endif
 
 		class TestParamAttribute : Attribute
 		{
@@ -344,13 +339,11 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (0, p.GetCustomAttributes (typeof (FlagsAttribute), false).Length, "#3");
 			Assert.AreEqual (0, p.GetOptionalCustomModifiers ().Length, "#4");
 			Assert.AreEqual (0, p.GetRequiredCustomModifiers ().Length, "#5");
-#if NET_4_5
 			try {
 				var ign = p.HasDefaultValue;
 				Assert.Fail ("#6");
 			} catch (NotImplementedException) {
 			}
-#endif
 			Assert.IsFalse (p.IsIn, "#7");
 #if FEATURE_USE_LCID
 			Assert.IsFalse (p.IsLcid, "#8");
@@ -358,13 +351,11 @@ namespace MonoTests.System.Reflection
 			Assert.IsFalse (p.IsOptional, "#9");
 			Assert.IsFalse (p.IsOut, "#10");
 			Assert.IsFalse (p.IsRetval, "#10");
-#if NET_4_5
 			try {
 				var ign = p.CustomAttributes;
 				Assert.Fail ("#11");
 			} catch (NotImplementedException) {
 			}
-#endif
 			try {
 				p.GetCustomAttributesData ();
 				Assert.Fail ("#12");
@@ -440,15 +431,78 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void SubClassWithOverrides()
+		public void SubClassWithOverrides ()
 		{
 			var p2 = new MyParameterInfo2 ();
 			Assert.IsFalse (p2.IsIn, "#1");
 			p2.MyAttrsImpl = ParameterAttributes.In;
 			Assert.IsTrue (p2.IsIn, "#2");
-#if NET_4_5
 			Assert.AreEqual (p2.myList, p2.CustomAttributes, "#3");
-#endif
+		}
+
+		[Test] 
+		public void ParameterInfoToString ()
+		{
+			var method = typeof (TestNestedClass).GetTypeInfo ().GetMethod ("TestMethod");
+			var sb = new StringBuilder ();
+			
+			foreach (var parameter in method.GetParameters ())
+			{
+				sb.Append (parameter + "\n");
+			}
+
+			string actual = sb.ToString ();
+			string expected = "Int32 a0\n" +
+"System.String a1\n" +
+"TestNestedClass a2\n" +
+"System.Collections.Generic.List`1[System.Int32] a3\n" +
+"System.Collections.Generic.List`1[System.Text.StringBuilder] a4\n" +
+"System.Collections.Generic.List`1[MonoTests.System.Reflection.ParameterInfoTest+TestNestedClass] a5\n" +
+"System.Text.StringBuilder a6\n" +
+"System.Collections.Generic.Dictionary`2[System.Int32,System.String] a7\n" +
+"Int32& a8\n" +
+"Int32& a9\n" +
+"TestNestedClass& a10\n" +
+"System.Collections.Generic.List`1[System.Int32]& a11\n";
+
+			Assert.AreEqual (expected, actual, "#1");
+		}
+
+		public class TestNestedClass
+		{
+			public static void TestMethod (int a0, string a1, 
+				TestNestedClass a2, List<int> a3, 
+				List<StringBuilder> a4, List<TestNestedClass> a5, 
+				StringBuilder a6, Dictionary<int, string> a7,
+				out int a8, ref int a9, out TestNestedClass a10, out List<int> a11) 
+				{
+					a8 = 0;
+					a9 = 0;
+					a10 = null;
+					a11 = null;
+				}
+		}
+
+		[Test] // https://github.com/mono/mono/issues/8312
+		public void ParameterInfoToStringForQueryableSkipWhile ()
+		{
+			var sb = new StringBuilder ();
+			var methods = typeof (Queryable).GetTypeInfo ().GetMethods ().Where (m => m.Name == "SkipWhile");
+			foreach (var methodInfo in methods)
+			{
+				foreach (var parameter in methodInfo.GetParameters ())
+				{
+					sb.Append (parameter + "\n");
+				}
+			}
+
+			string actual = sb.ToString ();
+			string expected = "System.Linq.IQueryable`1[TSource] source\n" +
+"System.Linq.Expressions.Expression`1[System.Func`2[TSource,System.Boolean]] predicate\n" +
+"System.Linq.IQueryable`1[TSource] source\n" +
+"System.Linq.Expressions.Expression`1[System.Func`3[TSource,System.Int32,System.Boolean]] predicate\n";
+			
+			Assert.AreEqual (expected, actual, "#1");
 		}
 	}
 }

@@ -37,6 +37,8 @@ using System.Xml;
 using XmlNode = System.Object;
 #endif
 
+#pragma warning disable 618
+
 namespace System.Configuration
 {
 	public class NameValueFileSectionHandler : IConfigurationSectionHandler

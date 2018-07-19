@@ -11,8 +11,7 @@ Generating and updating the XML Samples:
 Mono's WsdlExporter is not yet capable of generating the wsdl files that
 are used as test input here.
 
-To generate the XML files, compile the ExportUtil.exe tool either by using the
-ExportUtil.csproj or compiling it manually:
+To generate the XML files, compile the ExportUtil.exe tool:
 
   mcs -r:System.ServiceModel -r:System.Web.Services ExportUtil.cs MetadataSamples.cs TestContext.cs 
 

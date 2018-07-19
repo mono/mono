@@ -37,8 +37,8 @@ namespace System.Web.Hosting
         public interface IAppManagerAppDomainFactory
         {
 		[return: MarshalAs (UnmanagedType.Interface)]
-                object Create ([In, MarshalAs(UnmanagedType.BStr)] string s,
-			       [In, MarshalAs(UnmanagedType.BStr)] string app_id);
+                object Create ([In, MarshalAs(UnmanagedType.BStr)] string appId,
+			       [In, MarshalAs(UnmanagedType.BStr)] string appPath);
                 void Stop ();
         }
 }

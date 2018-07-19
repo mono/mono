@@ -38,7 +38,6 @@ using System.Security.Permissions;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class JpegCodecTest {
 
 		/* Get suffix to add to the filename */
@@ -96,8 +95,6 @@ namespace MonoTests.System.Drawing.Imaging {
 
 				Assert.AreEqual (72, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (72, bmp.VerticalResolution, "VerticalResolution");
-
-				Assert.AreEqual (77896, bmp.Flags, "Flags");
 
 				ColorPalette cp = bmp.Palette;
 				Assert.AreEqual (256, cp.Entries.Length, "Palette.Entries");
@@ -232,8 +229,6 @@ namespace MonoTests.System.Drawing.Imaging {
 
 				Assert.AreEqual (72, bmp.HorizontalResolution, "HorizontalResolution");
 				Assert.AreEqual (72, bmp.VerticalResolution, "VerticalResolution");
-
-				Assert.AreEqual (77960, bmp.Flags, "Flags");
 
 				Assert.AreEqual (0, bmp.Palette.Entries.Length, "Palette.Entries");
 				/* note: under MS flags aren't constant between executions in this case (no palette) */

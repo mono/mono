@@ -28,7 +28,6 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
-		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=36634")]
 		public void Bug609381 ()
 		{
 			string portName = "ipc" + Guid.NewGuid ().ToString ("N");
@@ -78,7 +77,7 @@ namespace MonoTests.Remoting
 			IpcServerChannel chan = new IpcServerChannel (channelName, portName);
 			string[] uris = chan.GetUrlsForUri ("server.rem");
 			Assert.IsNotNull (uris);
-			Assert.Greater (uris.Length, 0);
+			AssertHelper.Greater (uris.Length, 0);
 
 			bool found = false;
 			foreach (string s in uris) {
@@ -101,7 +100,7 @@ namespace MonoTests.Remoting
 			IpcChannel chan = new IpcChannel (props, null, null);
 			string[] uris = chan.GetUrlsForUri ("server.rem");
 			Assert.IsNotNull (uris);
-			Assert.Greater (uris.Length, 0);
+			AssertHelper.Greater (uris.Length, 0);
 
 			bool found = false;
 			foreach (string s in uris) {

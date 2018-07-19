@@ -43,6 +43,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CountTestCase()
 		{
 			const int numThread = 5;

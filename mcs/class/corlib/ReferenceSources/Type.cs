@@ -43,22 +43,12 @@ namespace System
 
 		public static Type GetType(string typeName)
 		{
-			if (typeName == null)
-				throw new ArgumentNullException ("TypeName");
-
-			return internal_from_name (typeName, false, false);
+			return GetType (typeName, false, false);
 		}
 
 		public static Type GetType(string typeName, bool throwOnError)
 		{
-			if (typeName == null)
-				throw new ArgumentNullException ("TypeName");
-
-			Type type = internal_from_name (typeName, throwOnError, false);
-			if (throwOnError && type == null)
-				throw new TypeLoadException ("Error loading '" + typeName + "'");
-
-			return type;
+			return GetType (typeName, throwOnError, false);
 		}
 
 		public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
@@ -66,6 +56,11 @@ namespace System
 			if (typeName == null)
 				throw new ArgumentNullException ("TypeName");
 
+			if (typeName == String.Empty)
+				if (throwOnError)
+					throw new TypeLoadException ("A null or zero length string does not represent a valid Type.");
+				else
+					return null;
 			Type t = internal_from_name (typeName, throwOnError, ignoreCase);
 			if (throwOnError && t == null)
 				throw new TypeLoadException ("Error loading '" + typeName + "'");
@@ -82,6 +77,8 @@ namespace System
 		{
 			if (typeName == null)
 				throw new ArgumentNullException ("typeName");
+			if (typeName == String.Empty && throwIfNotFound)
+				throw new TypeLoadException ("A null or zero length string does not represent a valid Type");
 			int idx = typeName.IndexOf (',');
 			if (idx < 0 || idx == 0 || idx == typeName.Length - 1)
 				throw new ArgumentException ("Assembly qualifed type name is required", "typeName");
@@ -100,6 +97,12 @@ namespace System
 		internal virtual Type InternalResolve ()
 		{
 			return UnderlyingSystemType;
+		}
+
+		// Called from the runtime to return the corresponding finished Type object
+		internal virtual Type RuntimeResolve ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		internal virtual bool IsUserType {

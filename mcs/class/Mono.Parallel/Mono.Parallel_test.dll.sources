@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 Mono.Collections.Concurrent/CollectionStressTestHelper.cs
 Mono.Collections.Concurrent/ConcurrentSkipListTests.cs
 Mono.Threading/ParallelTestHelper.cs

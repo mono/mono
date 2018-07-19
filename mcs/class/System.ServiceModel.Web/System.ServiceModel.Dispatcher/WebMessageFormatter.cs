@@ -41,7 +41,7 @@ using System.ServiceModel.Web;
 using System.Text;
 using System.Xml;
 
-#if NET_2_1
+#if MOBILE
 using XmlObjectSerializer = System.Object;
 #endif
 
@@ -81,7 +81,7 @@ namespace System.ServiceModel.Dispatcher
 			this.converter = converter;
 			this.behavior = behavior;
 			ApplyWebAttribute ();
-#if !NET_2_1
+#if !MOBILE
 			// This is a hack for WebScriptEnablingBehavior
 			var jqc = converter as JsonQueryStringConverter;
 			if (jqc != null)
@@ -248,7 +248,7 @@ namespace System.ServiceModel.Dispatcher
 		
 		protected object ReadObjectBody (XmlObjectSerializer serializer, XmlReader reader)
 		{
-#if NET_2_1
+#if MOBILE
 			return (serializer is DataContractJsonSerializer) ?
 				((DataContractJsonSerializer) serializer).ReadObject (reader) :
 				((DataContractSerializer) serializer).ReadObject (reader, true);
@@ -283,7 +283,7 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		internal class RequestDispatchFormatter : WebDispatchMessageFormatter
 		{
 			public RequestDispatchFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)
@@ -363,7 +363,7 @@ namespace System.ServiceModel.Dispatcher
 				// FIXME: get encoding from somewhere
 				hp.Headers ["Content-Type"] = mediaType + "; charset=utf-8";
 
-#if !NET_2_1
+#if !MOBILE
 				if (WebOperationContext.Current != null)
 					WebOperationContext.Current.OutgoingRequest.Apply (hp);
 #endif
@@ -382,7 +382,7 @@ namespace System.ServiceModel.Dispatcher
 					throw new ArgumentNullException ("parameters");
 				CheckMessageVersion (message.Version);
 
-#if !NET_2_1
+#if !MOBILE
 				if (OperationContext.Current != null) {
 					// Set response in the context
 					OperationContext.Current.IncomingMessage = message;
@@ -423,7 +423,7 @@ namespace System.ServiceModel.Dispatcher
 			object value;
 			XmlObjectSerializer serializer;
 
-#if !NET_2_1
+#if !MOBILE
 			protected override BodyWriter OnCreateBufferedCopy (int maxBufferSize)
 			{
 				return new WrappedBodyWriter (value, serializer, name, ns, fmt);
@@ -473,7 +473,7 @@ namespace System.ServiceModel.Dispatcher
 			void WriteObject (XmlObjectSerializer serializer, XmlDictionaryWriter writer, object value)
 			{
 				if (serializer != null){
-#if NET_2_1
+#if MOBILE
 					if (serializer is DataContractJsonSerializer)
 						((DataContractJsonSerializer) serializer).WriteObject (writer, value);
 					else
@@ -485,7 +485,7 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		internal abstract class WebDispatchMessageFormatter : WebMessageFormatter, IDispatchMessageFormatter
 		{
 			protected WebDispatchMessageFormatter (OperationDescription operation, ServiceEndpoint endpoint, QueryStringConverter converter, WebHttpBehavior behavior)

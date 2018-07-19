@@ -1299,13 +1299,13 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 		
-		protected internal override void LoadControlState (object ob)
+		protected internal override void LoadControlState (object state)
 		{
-			if (ob == null) return;
-			object[] state = (object[]) ob;
-			base.LoadControlState (state[0]);
-			activeStepIndex = (int) state[1];
-			history = (ArrayList) state[2];
+			if (state == null) return;
+			object[] controlState = (object[]) state;
+			base.LoadControlState (controlState[0]);
+			activeStepIndex = (int) controlState[1];
+			history = (ArrayList) controlState[2];
 		}
 		
 		protected internal override object SaveControlState ()

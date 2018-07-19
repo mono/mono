@@ -186,12 +186,12 @@ namespace System.Web.UI.WebControls
 			get { return true; }
 		}
 		
-		protected virtual string FormatDataValue (object value, bool encode)
+		protected virtual string FormatDataValue (object dataValue, bool encode)
 		{
 			string res;
 			bool htmlEncodeFormatString = HtmlEncodeFormatString;
-			string stringValue = (value != null) ? value.ToString () : String.Empty;
-			if (value == null || (stringValue.Length == 0 && ConvertEmptyStringToNull)) {
+			string stringValue = (dataValue != null) ? dataValue.ToString () : String.Empty;
+			if (dataValue == null || (stringValue.Length == 0 && ConvertEmptyStringToNull)) {
 				if (NullDisplayText.Length == 0) {
 					encode = false;
 					res = "&nbsp;";
@@ -201,7 +201,7 @@ namespace System.Web.UI.WebControls
 				string format = DataFormatString;
 				if (!String.IsNullOrEmpty (format)) {
 					if (!encode || htmlEncodeFormatString)
-						res = String.Format (format, value);
+						res = String.Format (format, dataValue);
 					else
 						res = String.Format (format, encode ? HttpUtility.HtmlEncode (stringValue) : stringValue);
 				} else

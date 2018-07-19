@@ -1,0 +1,12 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+gapidir=${prefix}/share/gapi-2.0
+
+
+Name: Gtk#
+Description: Gtk# - GNOME .NET Binding
+Version: 2.12.26
+Cflags: -I:${gapidir}/pango-api.xml -I:${gapidir}/atk-api.xml -I:${gapidir}/gdk-api.xml -I:${gapidir}/gtk-api.xml
+Libs: -r:${libdir}/gtk-sharp-2.0/pango-sharp.dll -r:${libdir}/gtk-sharp-2.0/atk-sharp.dll -r:${libdir}/gtk-sharp-2.0/gdk-sharp.dll -r:${libdir}/gtk-sharp-2.0/gtk-sharp.dll
+Requires: glib-sharp-2.0

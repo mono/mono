@@ -10,6 +10,9 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <string.h>
+#ifdef __HAIKU__
+#include <os/kernel/OS.h>
+#endif
 
 #include "map.h"
 #include "mph.h"
@@ -64,7 +67,12 @@ Mono_Posix_Syscall_settimeofday (
 		ptz = &_tz;
 	}
 
+#ifdef __HAIKU__
+	set_real_time_clock(ptv->tv_sec);
+	r = 0;
+#else
 	r = settimeofday (ptv, ptz);
+#endif
 
 	return r;
 }

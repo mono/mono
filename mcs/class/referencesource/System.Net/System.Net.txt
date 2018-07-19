@@ -1,0 +1,143 @@
+;==++==
+;
+;   Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;==--==
+
+; NOTE: do not use \", use ' instead
+; NOTE: Use # or ; for comments
+#=------------------------------------------------------------------=
+# File system.net.txt
+#=------------------------------------------------------------------=
+
+#=------------------------------------------------------------------=
+# Common strings
+#=------------------------------------------------------------------=
+NullUserToken=Parameter userToken cannot be null.
+DuplicateUserToken=The userToken must be unique. A duplicate userToken already exists for this operation.
+InvalidSecurityElem=Invalid security element.
+InvalidSecurityElemNoClass=Invalid security element - no class name.
+InvalidSecurityElemNoType=Invalid security element - no type name.
+SynchronizingObject=The object used to marshal the event handler calls issued by stand alone events.
+MemoryAllocFailed=Memory allocation failed.
+
+#=------------------------------------------------------------------=
+# PNRP Permission
+#=------------------------------------------------------------------=
+PnrpPermission_CantUnionWithNonPnrpPermission=Union not valid with a non PnrpPermission object.
+PnrpPermission_CantIntersectWithNonPnrpPermission=Intersection not valid with a non PnrpPermission object.
+PnrpPermission_TargetNotAPnrpPermission=Target is not a PnrpPermission object.
+
+#=------------------------------------------------------------------=
+# PNRP String
+#=------------------------------------------------------------------=
+Pnrp_StartupFailed=Pnrp could not be started.
+Pnrp_CommentMaxLengthExceeded=Comment length can't be greater than {0} characters.
+Pnrp_CommentCantBeNull=Comment can't be null or empty.
+Pnrp_CloudNameCantBeNull=Cloud name can't be null or empty.
+Pnrp_PeerNameCantBeNull=Peer Name can't be null or empty.
+Pnrp_InvalidPeerName=Invalid peer name.
+Pnrp_InvalidClassifier=Invalid classifier.
+Pnrp_InvalidPeerHostName=Invalid peer host name.
+Pnrp_MaxRecordsParameterMustBeGreaterThanZero=Max Records must be greater than 0.
+Pnrp_DataCantBeNull=Data can't be null or 0 bytes.
+Pnrp_DataLengthExceeded=Data length can't be greater than {0} bytes.
+Pnrp_PortOutOfRange=Port must be between IPEndPoint.MinPort and IPEndPoint.MaxPort.
+Pnrp_UseUpdateInsteadOfRegister=A previous registration is active. Use the Update method to update the registration.
+Pnrp_BlobOrEndpointListNeeded=When auto endpoint selection is disabled, you must specify either a data blob or specify explicit list of endpoints to register.
+Pnrp_CallRegisterBeforeUpdate=No registration found. Please use Register method before calling the Update method.
+Pnrp_CantChangePeerNameAfterRegistration=Peer Name can't be changed after registration.
+Pnrp_NoRegistrationFound=No current registration found.
+Pnrp_PeerNameCantBeResolved=Peer Name can't be resolved. No endpoints found.
+Pnrp_CouldNotEnumerateClouds=Could not enumerate clouds.
+Pnrp_CouldNotCreateUnsecuredPeerName=Could not create unsecured peer name.
+Pnrp_CouldNotCreateSecuredPeerName=Could not create secured peer name.
+Pnrp_CouldNotGetDefaultIdentity=Could not get the default identity.
+Pnrp_CouldNotGetPeerNameFromPeerHostName=Could not get peer name from peer host name.
+Pnrp_CouldNotCreateRelativePeerName=Could not create relative peer name.
+Pnrp_CouldNotGetPeerHostNameFromPeerName=Could not get peer host name from peer name.
+Pnrp_CouldNotRegisterPeerName=Could not register peer name.
+Pnrp_CouldNotResolvePeerName=Could not resolve peer name.
+Pnrp_CouldNotStartNameResolution=Could not start name resolution.
+Pnrp_ExceptionWhileResolvingAPeerName=Exception occurred while resolving a PeerName.
+Pnrp_AtleastOneEvenHandlerNeeded=No event handlers added for ResolveAsync. Please add a handler for ResolveCompleted before calling ResolveAsync.
+
+#=------------------------------------------------------------------=
+# P2P strings
+#=------------------------------------------------------------------=
+P2P_NotAvailable=P2P is not available.
+P2P_empty_osinstalltype=The Registry value '{0}' was either empty or not a string type.
+P2P_cant_determine_osinstalltype=Can't determine OS installation type: Can't read key '{0}'. Exception message: {1}
+
+#=------------------------------------------------------------------=
+# Collaboration strings
+#=------------------------------------------------------------------=
+Collab_StartupFailed=Peer collaboration startup failed.
+Collab_CredentialsError=Credentials Error. Cannot open certificate store from credentials.
+Collab_PresenceChangedRegFailed=Peer collaboration presence change event register failed.
+Collab_GetPresenceChangedDataFailed=Peer collaboration get presence changed event data failed.
+Collab_PeerNearMeChangedRegFailed=Peer collaboration peer near me change event register failed.
+Collab_GetPeerNearMeChangedDataFailed=Peer collaboration get peer near me changed event data failed.
+Collab_ApplicationChangedRegFailed=Peer collaboration application change event register failed.
+Collab_GetApplicationChangedDataFailed=Peer collaboration get application event data failed.
+Collab_ObjectChangedRegFailed=Peer collaboration object change event register failed.
+Collab_GetObjectChangedDataFailed=Peer collaboration get object changed event data failed.
+Collab_ReqStatusChangedRegFailed=Peer collaboration request status change event register failed.
+Collab_SubListChangedRegFailed=Peer collaboration subscription list change event register failed.
+Collab_GetSubListChangedDataFailed=Peer collaboration get subscription list changed event data failed.
+Collab_NameChangedRegFailed=Peer collaboration name change event register failed.
+Collab_GetNameChangedDataFailed=Peer collaboration get name changed event data failed.
+Collab_GetContactsFailed=Peer collaboration get contacts failed.
+Collab_ContactNotFound=Contact not found in contact manager.
+Collab_ContactExists=Contact already exists in contact manager.
+Collab_GetContactFailed=Peer collaboration get contact failed.
+Collab_NoEndpointFound=Could not find a PeerEndPoint or Endpoint to use for operation.
+Collab_NoEndPointInPeerEndPoint=No EndPoint specified in PeerEndPoint.
+Collab_CreateContactFailed=Peer collaboration create contact failed.
+Collab_AddContactFailed=Peer collaboration add contact failed.
+Collab_AddContactFailedNoXml=Add contact failed. No XML data present. Create this contact again and retry.
+Collab_DeleteContactFailed=Peer collaboration delete contact failed.
+Collab_NoPeerNameInContact=No PeerName found in PeerContact.
+Collab_UpdateContactFailed=Peer collaboration update contact failed.
+Collab_SubscribeLocalContactFailed=Cannot set subscribe on local contact. Value is always Allowed.
+Collab_DuplicateSubscribeAsync=Another SubscribeAsync operation already in progress.
+Collab_DuplicateRefreshAsync=Another RefreshDataAsync operation already in progress.
+Collab_UnsubscribeLocalContactFail=Cannot unsubscribe from local contact. It is always subscribed.
+Collab_GetPresenceFailed=Peer collaboration get presence information failed.
+Collab_GetObjectsFailed=Peer collaboration get objects failed.
+Collab_GetAppsFailed=Peer collaboration get application failed.
+Collab_InviteFailed=Peer collaboration send invite failed.
+Collab_AsyncInviteFailed=Peer collaboration async invite failed.
+Collab_AsyncInviteException=Exception occurred while async inviting an endpoint.
+Collab_SetLocalPresenceFailed=Peer collaboration LocalPresenceInfo set failed.
+Collab_SetLocalEndPointNameFailed=Peer collaboration LocalEndPointName change failed.
+Collab_SignInWithNone=Cannot SignIn with None scope.
+Collab_SignInFailed=Peer collaboration SignIn failed.
+Collab_SignOutFailed=Peer collaboration SignOut failed.
+Collab_GetPeersNearMeFailed=Peer collaboration get peers near me failed.
+Collab_AppRegNoPathError=Path in PeerApplication is required for registration.
+Collab_AppRegFailed=Peer collaboration register application failed.
+Collab_AppExists=Application already registered.
+Collab_EmptyGuidError=Cannot specify empty Guid.
+Collab_AppUnregFailed=Peer collaboration unregister application failed.
+Collab_GetLocalAppsFailed=Peer collaboration get local registered applications failed.
+Collab_ObjectSetFailed=Peer collaboration set object failed.
+Collab_ObjectExists=Object already exists.
+Collab_ObjectDeleteFailed=Peer collaboration delete object failed.
+Collab_GetLocalObjectsFailed=Peer collaboration get local objects failed.
+Collab_PermissionUnionError=Cannot union with non peer collaboration permission objects.
+Collab_PermissionIntersectError=Cannot intersect with non peer collaboration permission objects.
+Collab_BadPermissionTarget=Target is not a peer collaboration permission.
+Collab_ContactToXmlFailed=Peer collaboration contact to xml failed.
+Collab_ContactFromXmlFailed=Peer collaboration contact from xml failed.
+Collab_NoGuidForCurrApp=No Guid found to send invite for. Current application may not be registered in Collaboration.
+Collab_EndPointNotIPv6Error=Peer Collaboration endpoints have to be IPv6.
+Collab_AddToContactMgrFailed=Add to Contact Manager failed.
+Collab_AddToContactMgrFailedUpdate=Base contact from peer added but display name, nick name and email address not updated.
+Collab_EndPointNotAPeerNearMe=Given Endpoint is not an endpoint of any PeerNearMe.
+Collab_RefreshDataFailed=Peer collaboration refresh data failed.
+Collab_SubscribeFailed=Peer collaboration subscribe failed.
+Collab_UnsubscribeFailed=Peer collaboration unsubscribe failed.
+Collab_SetPresenceOffline=Local presence cannot be set to Offline. 
+Collab_ApplicationDataSizeFailed=Peer Application data size cannot exceed 16 kilobytes.
+Collab_ObjectDataSizeFailed=Peer Object data size cannot exceed 16 kilobytes.

@@ -507,11 +507,15 @@ namespace System.Runtime.Serialization
 						} else {
 							var typeHandleValue = Type.GetTypeHandle (memberValue);
 							var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (memberValue, memberType, Globals.TypeOfObject));
-							if (isNullableOfT)
+							if (isNullableOfT) {
 								ctx.InternalSerialize (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
-							else
-								ctx.InternalSerializeReference (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);								
-							//InternalSerialize((isNullableOfT ? XmlFormatGeneratorStatics.InternalSerializeMethod : XmlFormatGeneratorStatics.InternalSerializeReferenceMethod), () => memberValue, memberType, writeXsiType);
+							} else if (memberType == Globals.TypeOfObject) {
+								var dataContract = DataContract.GetDataContract (memberValue.GetType());
+								writer.WriteAttributeQualifiedName (Globals.XsiPrefix, DictionaryGlobals.XsiTypeLocalName, DictionaryGlobals.SchemaInstanceNamespace, dataContract.Name, dataContract.Namespace);
+								ctx.InternalSerializeReference (writer, memberValue, false, false, -1, typeHandleValue);
+							} else {
+								ctx.InternalSerializeReference (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
+							}
 						}
 					}
 				}

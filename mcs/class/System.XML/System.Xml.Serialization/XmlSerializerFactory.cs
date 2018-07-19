@@ -61,6 +61,11 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		public XmlSerializer CreateSerializer (Type type, XmlAttributeOverrides overrides, Type[] extraTypes, XmlRootAttribute root, string defaultNamespace, string location)
+		{
+			return CreateSerializer (type, overrides, extraTypes, root, defaultNamespace, location, null);
+		}
+
 		public XmlSerializer CreateSerializer (Type type, string defaultNamespace)
 		{
 			return CreateSerializer (type, null, null, null, defaultNamespace);

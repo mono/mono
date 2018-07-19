@@ -1,5 +1,6 @@
-/*
- * mono-membar.h: Memory barrier inline functions
+/**
+ * \file
+ * Memory barrier inline functions
  *
  * Author:
  *	Mark Probst (mark.probst@gmail.com)
@@ -14,7 +15,22 @@
 
 #include <glib.h>
 
-#ifdef _MSC_VER
+
+#ifdef TARGET_WASM
+
+static inline void mono_memory_barrier (void)
+{
+}
+
+static inline void mono_memory_read_barrier (void)
+{
+}
+
+static inline void mono_memory_write_barrier (void)
+{
+}
+
+#elif _MSC_VER
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -49,21 +65,6 @@ static inline void mono_memory_write_barrier (void)
 static inline void mono_memory_barrier (void)
 {
 	__sync_synchronize ();
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	mono_memory_barrier ();
-}
-#elif defined(__ia64__)
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ ("mf" : : : "memory");
 }
 
 static inline void mono_memory_read_barrier (void)

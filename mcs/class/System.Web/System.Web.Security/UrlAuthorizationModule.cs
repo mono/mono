@@ -77,6 +77,21 @@ namespace System.Web.Security
 
 			return config == null ? true : config.IsValidUser (user, verb);
 		}
+
+		internal static void ReportUrlAuthorizationFailure(HttpContext context, object webEventSource) {
+			// Deny access
+			context.Response.StatusCode = 401;
+			context.Response.Write (new HttpException(401, "Unauthorized").GetHtmlErrorMessage ());
+
+#if false // Sys.Web.Mng not implemented on mono.
+			if (context.User != null && context.User.Identity.IsAuthenticated) {
+				// We don't raise failure audit event for anonymous user
+				WebBaseEvent.RaiseSystemEvent(webEventSource, WebEventCodes.AuditUrlAuthorizationFailure);
+			}
+#endif
+			context.ApplicationInstance.CompleteRequest();
+		}
+
 	}
 }
 

@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NO_ODBC
+
 using System;
 using System.Text;
 using System.Data;
@@ -35,7 +37,7 @@ using System.Data.Odbc;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Odbc
+namespace MonoTests.System.Data.Connected.Odbc
 {
 	[TestFixture]
 	[Category ("odbc")]
@@ -48,8 +50,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ParameterLengthTrimTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand cmd = conn.CreateCommand ();
@@ -61,15 +62,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (15, param.Size, "#1");
 				Assert.AreEqual (0, cmd.ExecuteScalar(), "#2");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -105,7 +105,7 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#13 Parameters with null value must be of type NVarChar");
 				Assert.AreEqual (OdbcType.Text,OdbcCmd.Parameters[0].OdbcType, "#14 Parameter at index 0 is of type Text");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -116,8 +116,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void InsertNoOverwriteTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -144,15 +143,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual ("Parameter1", OdbcCmd.Parameters[1].ParameterName, "#8 Parameters inserted without any name must get a default name");
 				Assert.AreEqual (null, OdbcCmd.Parameters[1].Value, "#9 Parameters inserted without any value must have null value");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertNullTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -169,15 +167,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter after Insert failed");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertEmptyTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -195,15 +192,14 @@ namespace MonoTests.System.Data.Odbc
 				}
 					
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertAlreadyContainedParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -223,15 +219,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#3 The collection must contain 2 parameters after Insert failed");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertArgumentGreaterThanCountTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -248,15 +243,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertNegativeArgumentTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -273,15 +267,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void InsertNonOdbcParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -298,7 +291,7 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -306,8 +299,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -332,7 +324,7 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual ("Parameter1", OdbcCmd.Parameters[1].ParameterName, "#5 Parameters added without any name must get a default name");
 				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#6 Parameters with null value must be of type NVarChar");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -343,8 +335,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeParameterAlreadyContainedTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -366,7 +357,7 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 The collection must contain excatly 2 elements after AddRange failed for the third element");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -376,8 +367,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeArgumentNullExceptionTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -399,15 +389,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 If any of the parameters in the range is null, none of them should be added");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void AddRangeParameterContainedInAnotherCollTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -436,15 +425,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd2.Parameters.Count, "#4 All the elements before the invalid element must be added to the collection of OdbcCmd2");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void AddRangeMultiDimensionalArrayTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -468,15 +456,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (4, OdbcCmd.Parameters.IndexOf (p5Tmp), "#4 Not all elements are added");
 				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[4].OdbcType, "#5 Parameters with null value must be of type NVarChar");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void AddRangeArrayValuesArgumentNullExceptionTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -500,7 +487,7 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 None of the elememts must be added if any one of them is null");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
@@ -510,8 +497,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ContainsTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -531,15 +517,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsFalse (OdbcCmd.Parameters.Contains ((Object)null), "#6 Contains must return false for empty string");
 				Assert.IsFalse (OdbcCmd.Parameters.Contains ((String)null), "#6 Contains must return false for empty string");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void ContainsNonOdbcParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -555,15 +540,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#3 The collection must contain only one parameter");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void ContainsCaseSensitivityTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -578,15 +562,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@LNAME"), "#3 Case sensitivity failed for Contains, should be case insensitive");
 				Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@LnAmE"), "#4 Case sensitivity failed for Contains, should be case insensitive");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void ContainsNotMineTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd1 = conn.CreateCommand ();
@@ -602,15 +585,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsTrue (OdbcCmd1.Parameters.Contains (p1));
 				Assert.IsFalse (OdbcCmd1.Parameters.Contains (p2));
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void IndexOfTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -632,15 +614,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf ((Object)p3Tmp), "#9 non-existing parameter passed as Object did not return index -1");
 				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf ((Object)null), "#10 null parameter passed as Object should return index -1");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void IndexOfCaseSensitivityTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -655,15 +636,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@AGE"), "#4 Case sensitivity failed for IndexOf, should be case insensitive");
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@age"), "#5 Case sensitivity failed for IndexOf, should be case insensitive");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void IndexOfNonOdbcParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -679,15 +659,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#3 The collection must contain only one parameter");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void CopyToTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -707,15 +686,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (null, DestinationParamArray [0], "#5 The remaining elements must remain un-initialized");
 				Assert.AreEqual (null, DestinationParamArray [3], "#6 The remaining elements must remain un-initialized");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void CopyToArgumentExceptionTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -736,15 +714,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (null, DestinationParamArray [3], "#5 The DestinationParamArray must remain un-initialized");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void CopyToMultiDimensionalArrayTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -766,15 +743,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (null, DestinationParamArray [1, 3], "#5 The DestinationParamArray must remain un-initialized");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void CopyToLowerBoundCheckTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -795,15 +771,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (null, DestinationParamArray [3], "#5 The DestinationParamArray must remain un-initialized");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void DuplicateParameterNameTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -827,15 +802,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf ((object) p1Lname));
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ((object) p2Lname));
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -848,15 +822,14 @@ namespace MonoTests.System.Data.Odbc
 				OdbcCmd.Parameters.Remove (p1Lname);
 				Assert.AreEqual (0, OdbcCmd.Parameters.Count, "#2 Collection should not contain any parameters");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveNullTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -873,15 +846,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 		
 		[Test]
 		public void RemoveEmptyTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -898,15 +870,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveNonOdbcParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -923,15 +894,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveNonExistingParameterTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -951,15 +921,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (0, OdbcCmd.Parameters.Count, "#3 The collection should not contain any parameters");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveParameterContainedInAnotherCollTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -986,15 +955,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (2, OdbcCmd2.Parameters.Count, "#6 The parameter collection of OdbcCmd2 should contain 2 parameters");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 		
 		[Test]
 		public void RemoveAtTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1028,15 +996,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p2Age), "#13 p2Age should be at index 0");
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf(p3Tmp), "#14 p3Tmp should be at index 1");				
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void RemoveAtOutOfRangeIndexTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1055,15 +1022,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 		
 		[Test]
 		public void RemoveAtNegativeIndexTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1082,15 +1048,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 		
 		[Test]
 		public void RemoveAtBoundaryTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1109,15 +1074,14 @@ namespace MonoTests.System.Data.Odbc
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void AddWithValueTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1201,15 +1165,14 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (2,OdbcCmd.Parameters[8].Value, "#50 The parameter at index 8 must have value as 2");                                                    
 				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[8].OdbcType, "#51 Parameter must be of type NVarChar");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void DefaultNamesAndValuesTest ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			OdbcConnection conn = ConnectionManager.Instance.Odbc.Connection;
 
 			try {
 				OdbcCommand OdbcCmd = conn.CreateCommand ();
@@ -1238,8 +1201,10 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual ("Parameter2",OdbcCmd.Parameters[2].ParameterName, "#12 The parameter must have a default name");
 				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[2].OdbcType, "#13 Parameters with null value must be of type NVarChar");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Instance.Odbc.CloseConnection ();
 			}
 		}
 	}
 }
+
+#endif

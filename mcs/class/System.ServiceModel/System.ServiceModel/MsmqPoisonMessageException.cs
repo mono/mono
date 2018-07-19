@@ -35,8 +35,8 @@ namespace System.ServiceModel
 	public class MsmqPoisonMessageException : PoisonMessageException
 	{
 		public MsmqPoisonMessageException () : base () {}
-		public MsmqPoisonMessageException (string msg) : base (msg) {}
-		public MsmqPoisonMessageException (string msg, Exception inner) : base (msg, inner) {}
+		public MsmqPoisonMessageException (string message) : base (message) {}
+		public MsmqPoisonMessageException (string message, Exception innerException) : base (message, innerException) {}
 		protected MsmqPoisonMessageException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

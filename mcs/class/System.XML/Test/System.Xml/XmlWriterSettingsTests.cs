@@ -40,9 +40,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (false, s.NewLineOnAttributes);
 			Assert.AreEqual (false, s.OmitXmlDeclaration);
 			Assert.AreEqual (NewLineHandling.Replace, s.NewLineHandling);
-#if NET_4_5
 			Assert.IsFalse (s.Async);
-#endif
 		}
 
 		[Test]
@@ -305,7 +303,7 @@ namespace MonoTests.System.Xml
 <!--AAA-->
 
 <root />";
-			Assert.AreEqual (xml, sw.ToString ().Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (xml.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"), "#1");
 		}
 
 		[Test]
@@ -381,7 +379,6 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (xml, sw.ToString ());
 		}
 
-#if NET_4_5
 		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void ReadonlyAsync ()
@@ -408,7 +405,6 @@ namespace MonoTests.System.Xml
 			var w2 = XmlWriter.Create (w, c);
 			Assert.IsTrue (w2.Settings.Async);
 		}
-#endif
 
 	}
 }

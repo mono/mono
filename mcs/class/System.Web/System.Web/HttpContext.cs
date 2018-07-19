@@ -519,9 +519,9 @@ namespace System.Web
 			return GetLocalObjectFromFactory (virtualPath, resourceKey, culture);
 		}
 
-		public object GetSection (string name)
+		public object GetSection (string sectionName)
 		{
-			return WebConfigurationManager.GetSection (name);
+			return WebConfigurationManager.GetSection (sectionName);
 		}
 
 		object IServiceProvider.GetService (Type service)

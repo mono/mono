@@ -53,8 +53,6 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 
-[assembly: AssemblyKeyFile("../winfx.pub")]
-
 [assembly: ComVisible (false)]
 
 [assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=00000000000000000400000000000000")]

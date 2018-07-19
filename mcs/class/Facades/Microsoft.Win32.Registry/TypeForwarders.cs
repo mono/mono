@@ -20,16 +20,18 @@
 // THE SOFTWARE.
 // 
 
-#if !MOBILE
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.Registry))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryHive))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryKey))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryKeyPermissionCheck))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryOptions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryValueKind))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryValueOptions))]
-#endif
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryOptions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.RegistryView))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(Microsoft.Win32.SafeHandles.SafeRegistryHandle))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistryAccessRule))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistryAuditRule))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistryRights))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.RegistrySecurity))]
 
 

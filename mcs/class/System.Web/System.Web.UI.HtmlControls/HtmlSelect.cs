@@ -585,7 +585,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
-		protected override void RenderAttributes (HtmlTextWriter w)
+		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			Page page = Page;
 			if (page != null)
@@ -594,7 +594,7 @@ namespace System.Web.UI.HtmlControls
 			/* If there is no "name" attribute,
 			 * LoadPostData doesn't work...
 			 */
-			w.WriteAttribute ("name", Name);
+			writer.WriteAttribute ("name", Name);
 			Attributes.Remove ("name");
 			
 			/* Don't render the databinding attributes */
@@ -602,24 +602,24 @@ namespace System.Web.UI.HtmlControls
 			Attributes.Remove ("datatextfield");
 			Attributes.Remove ("datavaluefield");
 			
-			base.RenderAttributes (w);
+			base.RenderAttributes (writer);
 		}
 		
-		protected internal override void RenderChildren (HtmlTextWriter w)
+		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
-			base.RenderChildren (w);
+			base.RenderChildren (writer);
 
 			if (items == null)
 				return;
 			
-			w.WriteLine ();
+			writer.WriteLine ();
 
 			bool done_sel = false;
 			
 			int count = items.Count;
 			for (int i = 0; i < count; i++) {
 				ListItem item = items[i];
-				w.Indent++;
+				writer.Indent++;
 				
 				/* Write the <option> elements this
 				 * way so that the output HTML matches
@@ -628,29 +628,29 @@ namespace System.Web.UI.HtmlControls
 				 * element, cos that breaks other
 				 * stuff.)
 				 */
-				w.WriteBeginTag ("option");
+				writer.WriteBeginTag ("option");
 				if (item.Selected && !done_sel) {
 
-					w.WriteAttribute ("selected", "selected");
+					writer.WriteAttribute ("selected", "selected");
 
 					if (!Multiple) {
 						done_sel = true;
 					}
 				}
 				
-				w.WriteAttribute ("value", item.Value, true);
+				writer.WriteAttribute ("value", item.Value, true);
 				if (item.HasAttributes) {
 					AttributeCollection attrs = item.Attributes;
 					foreach (string key in attrs.Keys)
-						w.WriteAttribute (key, HttpUtility.HtmlAttributeEncode (attrs [key]));
+						writer.WriteAttribute (key, HttpUtility.HtmlAttributeEncode (attrs [key]));
 				}
-				w.Write (HtmlTextWriter.TagRightChar);
+				writer.Write (HtmlTextWriter.TagRightChar);
 				
-				w.Write (HttpUtility.HtmlEncode(item.Text));
-				w.WriteEndTag ("option");
-				w.WriteLine ();
+				writer.Write (HttpUtility.HtmlEncode(item.Text));
+				writer.WriteEndTag ("option");
+				writer.WriteLine ();
 
-				w.Indent--;
+				writer.Indent--;
 			}
 		}
 

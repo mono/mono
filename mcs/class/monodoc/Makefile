@@ -4,11 +4,10 @@ include ../../build/rules.make
 
 LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
+KEYFILE = ../../class/mono.snk
 # Remove a bunch of "obsolete"-type warning for Lucene.NET
 # also activate legacy mode to compile old monodoc.dll api
-LOCAL_MCS_FLAGS = /nowarn:618,612,672,809 /define:LEGACY_MODE
-
-JAY_FLAGS = -ct
+LOCAL_MCS_FLAGS = /nowarn:618,612,672,809,414,649 /define:LEGACY_MODE
 
 IMAGES = \
 	Resources/images/bc_bg.png		\
@@ -53,10 +52,9 @@ IMAGES = \
 	Resources/images/reference.png		\
 	Resources/images/treebg.png		
 
-IMAGE_RESOURCE_COMMAND = $(foreach file,$(IMAGES),/resource:$(file),$(notdir $(file)))
+IMAGE_RESOURCE_COMMAND = $(foreach file,$(IMAGES),/resource:../../../external/api-doc-tools/monodoc/$(file),$(notdir $(file)))
 
 RESOURCE_FILES = \
-	../../docs/monodoc.xml            \
 	Resources/base.css                \
 	Resources/ecmaspec-html-css.xsl   \
 	Resources/ecmaspec-html.xsl       \
@@ -74,75 +72,31 @@ RESOURCE_FILES = \
 	Resources/mono-ecma-impl.xsl      \
 	Resources/mono-ecma.css           \
 	Resources/mono-ecma.xsl			\
-	Resources/toc-html.xsl           \
-	$(IMAGES)
+	Resources/toc-html.xsl
+
+RESOURCE_COMMAND = $(foreach file,$(RESOURCE_FILES),/resource:../../../external/api-doc-tools/monodoc/$(file),$(notdir $(file)))
+
 
 EXTRA_DISTFILES = \
-	jay.sh \
 	monodoc.dll.config.in   \
-	$(RESOURCE_FILES)   \
-	Monodoc.Ecma/EcmaUrlParser.jay \
-	Test/monodoc_test/monodoc.xml \
-	Test/monodoc_test/trees/tree-from-2-10.tree \
-	Test/monodoc_test/trees/tree-from-3-0-old.tree \
-	Test/monodoc_test/trees/tree-from-3-0.tree
 
 LIB_REFS = ICSharpCode.SharpZipLib System System.Core System.Xml System.Xml.Linq System.Configuration
 LIB_MCS_FLAGS = \
 	/unsafe                                                           \
-	/codepage:utf8                                                    \
 	/nowarn:169,164,162,168,219,618,612                               \
 	/resource:../../docs/monodoc.xml,monodoc.xml                      \
-	/resource:Resources/base.css,base.css                             \
-	/resource:Resources/ecmaspec-html-css.xsl,ecmaspec-html-css.xsl   \
-	/resource:Resources/ecmaspec-html.xsl,ecmaspec-html.xsl           \
-	/resource:Resources/ecmaspec.css,ecmaspec.css                     \
-	/resource:Resources/helper.js,helper.js                           \
-	/resource:Resources/home.html,home.html                           \
-	/resource:Resources/Lminus.gif,Lminus.gif                         \
-	/resource:Resources/Lplus.gif,Lplus.gif                           \
-	/resource:Resources/creativecommons.png,creativecommons.png       \
-	/resource:Resources/mdoc-html-format.xsl,mdoc-html-format.xsl     \
-	/resource:Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl       \
-	/resource:Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl   \
-	/resource:Resources/mdoc-sections.xsl,mdoc-sections.xsl           \
-	/resource:Resources/mono-ecma-css.xsl,mono-ecma-css.xsl           \
-	/resource:Resources/mono-ecma-impl.xsl,mono-ecma-impl.xsl         \
-	/resource:Resources/mono-ecma.css,mono-ecma.css                   \
-	/resource:Resources/mono-ecma.xsl,mono-ecma.xsl                   \
-	/resource:Resources/toc-html.xsl,toc-html.xsl                     \
-	$(IMAGE_RESOURCE_COMMAND)					                      \
-	/r:$(corlib)
+	$(RESOURCE_COMMAND) \
+	$(IMAGE_RESOURCE_COMMAND)
 
 CLEAN_FILES += $(the_lib).config
 
-TEST_MCS_FLAGS = /r:System.dll /r:System.Core.dll /r:System.Xml.dll
-
-DOC_SOURCE_DIRS = \
-	../../docs \
-	../../../docs
-
-DOC_SOURCES = $(foreach dir,$(DOC_SOURCE_DIRS),$(wildcard $(dir)/*.source $(dir)/*.tree $(dir)/*.zip))
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Core System.Xml
 
 include ../../build/library.make
 
-$(the_lib): Makefile $(RESOURCE_FILES)
+all-local: $(the_lib).config
 
-all-local: $(the_lib).config Monodoc.Ecma/EcmaUrlParser.cs
-
-test-local: setup-doc-sources
-
-dist-local: Monodoc.Ecma/EcmaUrlParser.cs
-
-$(the_lib).config: Makefile monodoc.dll.config.in
+$(the_lib).config: monodoc.dll.config.in
 	sed 's,@monodoc_refdir@,$(mono_libdir)/monodoc,g' monodoc.dll.config.in > $@
 
-Monodoc.Ecma/EcmaUrlParser.cs: Monodoc.Ecma/EcmaUrlParser.jay $(topdir)/jay/skeleton.cs jay.sh
-	$(topdir)/$(thisdir)/jay.sh $(topdir) $< $@ $(JAY_FLAGS)
-
-parser.exe: Monodoc.Ecma/EcmaUrlParser.cs Monodoc.Ecma/EcmaUrlTokenizer.cs Monodoc.Ecma/EcmaUrlParserDriver.cs Monodoc.Ecma/EcmaDesc.cs
-	mcs /out:$@ /debug $^
-
-setup-doc-sources: $(DOC_SOURCES)
-	mkdir -p ./Test/monodoc_test/sources/
-	cp $(DOC_SOURCES) ./Test/monodoc_test/sources/

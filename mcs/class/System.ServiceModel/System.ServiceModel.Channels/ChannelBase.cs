@@ -39,9 +39,9 @@ namespace System.ServiceModel.Channels
 	{
 		ChannelManagerBase manager;
 
-		protected ChannelBase (ChannelManagerBase manager)
+		protected ChannelBase (ChannelManagerBase channelManager)
 		{
-			this.manager = manager;
+			this.manager = channelManager;
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {

@@ -33,4 +33,3 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.SemaphoreRights))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Security.AccessControl.SemaphoreSecurity))]
 
-//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.ThreadingAclExtensions))]

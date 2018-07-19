@@ -62,6 +62,8 @@ namespace System
 		private IntPtr delegate_trampoline;
 		private IntPtr extra_arg;
 		private IntPtr method_code;
+		private IntPtr interp_method;
+		private IntPtr interp_invoke_impl;
 		private MethodInfo method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.
@@ -115,6 +117,8 @@ namespace System
 			}
 		}
 
+		internal IntPtr GetNativeFunctionPointer () => method_ptr;
+
 		//
 		// Methods
 		//
@@ -133,6 +137,8 @@ namespace System
 			// enum basetypes
 			if (!match) {
 				if (delArgType.IsEnum && Enum.GetUnderlyingType (delArgType) == argType)
+					match = true;
+				else if (argType.IsEnum && Enum.GetUnderlyingType (argType) == delArgType)
 					match = true;
 			}
 
@@ -495,8 +501,11 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			/* same implementation as CoreCLR */
-			return GetType ().GetHashCode ();
+			MethodInfo m;
+
+			m = Method;
+
+			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ RuntimeHelpers.GetHashCode (m_target);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
@@ -533,6 +542,12 @@ namespace System
 		{
 			if (a == null)
 				return b;
+
+			if (b == null)
+				return a;
+
+			if (a.GetType () != b.GetType ())
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
 
 			return a.CombineImpl (b);
 		}

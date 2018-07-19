@@ -69,7 +69,7 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 		
-#if !NET_2_1
+#if !MOBILE
 		[MonoTODO]
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (BindingContext context)
 		{

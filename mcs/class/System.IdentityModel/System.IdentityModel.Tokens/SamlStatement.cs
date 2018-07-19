@@ -49,11 +49,11 @@ namespace System.IdentityModel.Tokens
 
 		public abstract void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver);
 
 		public abstract void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer);
+			SecurityTokenSerializer keyInfoSerializer);
 	}
 }

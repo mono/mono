@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -203,7 +204,7 @@ namespace MonoTests.System.ServiceModel
 		public void TestSessionInstancesNetTcp ()
 		{
 			Binding binding = new NetTcpBinding (SecurityMode.None, false);
-			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			Uri address = new Uri (binding.Scheme + "://localhost:" + NetworkHelpers.FindFreePort () + "/test");
 			TestSessionbehaviour (binding, address);
 		}
 
@@ -212,7 +213,7 @@ namespace MonoTests.System.ServiceModel
 		public void TestSessionInstancesWsHttp ()
 		{
 			Binding binding = new WSHttpBinding (SecurityMode.None, true);
-			Uri address = new Uri (binding.Scheme + "://localhost:9999/test");
+			Uri address = new Uri (binding.Scheme + "://localhost:" + NetworkHelpers.FindFreePort () + "/test");
 			TestSessionbehaviour(binding, address);
 		}
 	}
@@ -330,3 +331,4 @@ namespace MonoTests.System.ServiceModel
 
 	#endregion
 }
+#endif

@@ -38,7 +38,6 @@ namespace Microsoft.Build.Utilities
 		string			helpKeywordPrefix;
 		ITaskHost		hostObject;
 		TaskLoggingHelper	log;
-		ResourceManager		taskResources;
 		
 		protected Task()
 			: this (null, null)
@@ -53,7 +52,8 @@ namespace Microsoft.Build.Utilities
 		protected Task(ResourceManager taskResources,
 			       string helpKeywordPrefix)
 		{
-			this.taskResources = taskResources;
+			log = new TaskLoggingHelper (this);
+			log.TaskResources = taskResources;
 			this.helpKeywordPrefix = helpKeywordPrefix;
 		}
 
@@ -65,7 +65,6 @@ namespace Microsoft.Build.Utilities
 			}
 			set {
 				buildEngine = value;
-				log = new TaskLoggingHelper (this); 
 			}
 		}
 
@@ -99,10 +98,10 @@ namespace Microsoft.Build.Utilities
 
 		protected ResourceManager TaskResources	{
 			get {
-				return taskResources;
+				return log.TaskResources;
 			}
 			set {
-				taskResources = value;
+				log.TaskResources = value;
 			}
 		}
 	}

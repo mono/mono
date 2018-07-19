@@ -1,2 +1,5 @@
 #include mobile_System.dll.sources
-MonoTouch/MonoPInvokeCallbackAttribute.cs
+#include appletls.sources
+
+Mono.AppleTls/MonoCertificatePal.Mobile.cs
+Mono.AppleTls/SafeHandles.cs

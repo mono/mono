@@ -42,12 +42,14 @@ namespace System
 			var displayName = DeserializeString (ref input);
 			var standardName = DeserializeString (ref input);
 			var daylightName = DeserializeString (ref input);
-			var rules = new List<TimeZoneInfo.AdjustmentRule> ();
+			List<TimeZoneInfo.AdjustmentRule> rules = null;
 			while (input [0] != ';') {
+				if (rules == null)
+					rules = new List<TimeZoneInfo.AdjustmentRule> ();
 				rules.Add (DeserializeAdjustmentRule (ref input));
 			}
 			var offsetSpan = TimeSpan.FromMinutes (offset);
-			return TimeZoneInfo.CreateCustomTimeZone (tzId, offsetSpan, displayName, standardName, daylightName, rules.ToArray ());
+			return TimeZoneInfo.CreateCustomTimeZone (tzId, offsetSpan, displayName, standardName, daylightName, rules?.ToArray ());
 		}
 
 		public string ToSerializedString ()

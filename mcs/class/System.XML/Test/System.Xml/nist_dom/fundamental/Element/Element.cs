@@ -1764,7 +1764,7 @@ namespace nist_dom.fundamental
                 {
                     employeeIdElement.SetAttributeNode(newAttribute);//.node.
                 }
-                catch(System.InvalidOperationException ex) 
+                catch(System.InvalidOperationException) 
                 { 
                     computedValue = "InvalidOperationException"; 
                 }

@@ -1,0 +1,477 @@
+;
+; Resources for System.Web.Services component
+;
+; Copyright (c) 2000 Microsoft Corporation
+;
+
+;
+; Exceptions messages
+;
+NonClsCompliantException=A non-CLS Compliant Exception (i.e. an object that does not derive from System.Exception) was thrown.
+
+WebConfigInvalidExtensionPriority={0} is an invalid value for the extension priority. The priority must be nonnegative.
+ConfigKeyNotFoundInElementCollection=No elements matching the key {0} were found in the ConfigurationElementCollection.
+ConfigKeysDoNotMatch=The key does not match the indexer key. Key on element (expected value): {0}. Key provided to indexer: {1}.
+Invalid_priority_group_value=The Group attribute must be set to a valid PriorityGroup value.
+WebSchemaNotFound=Schema not found.
+WebReflectionError=Error reflecting {0}.{1}.
+WebInvalidMethodName={0} Web Service method name is not valid.
+WebInvalidMethodNameCase=Invalid method name '{0}',  method names are case sensitive.   The method name '{1}' with the same name but different casing was found.
+WebInvalidRequestFormat=Request format is invalid.
+WebInvalidRequestFormatDetails=Request format is invalid: {0}.
+WebMethodStatic=Web Service methods cannot be static.
+WebMethodMissingParams=The last two parameters of method {0}.{1} must be of type {2} and {3}.
+WebBadOutParameter=The {0} parameter of the {1}.{2} method must be an input-only parameter.
+WebInOutParameter=The {0} parameter of the {1}.{2} method must be an output-only parameter.
+WebAsyncMissingEnd=Asynchronous method {0}.{1} does not have a corresponding {2} method.
+WebMissingPath=Path property must be set before calling the Send method.
+WebResponseKnownError=The request failed with HTTP status {0}: {1}.
+WebResponseUnknownError=The request failed with the error message:
+WebResponseUnknownErrorEmptyBody=The request failed with an empty response.
+WebResponseContent=Client found response content type of '{0}', but expected '{1}'.
+WebBadStreamState=Properties and methods of the stream can't be accessed in the BeforeSerialize stage.
+WebResponseBadXml=Response is not well-formed XML.
+WebCannotUnderstandHeader=SOAP header {0} was not understood.
+WebMissingHeader=Missing required header '{0}'.
+WebNoReturnValue=There is no return value.
+WebCannotAccessValue=The value can not be accessed because there was an exception during message processing.
+WebCannotAccessValueStage=The value may not be accessed in message stage {0}.
+WebInvalidBindingPlacement=The Binding property of {0} may not be specified in this context.
+WebInvalidBindingName=The Binding property '{0}' does not match interface binding '{1}'.
+WebBothMethodAttrs=A web service method can't have both a SoapDocumentMethodAttribute and a SoapRpcMethodAttribute. Use one or the other.
+WebBothServiceAttrs=A web service can't have both a SoapDocumentServiceAttribute and a SoapRpcServiceAttribute. Use one or the other.
+WebOneWayOutParameters=One-way methods cannot have out or ref parameters.
+WebOneWayReturnValue=One-way methods cannot have return values.
+WebReflectionErrorMethod=Method {0}.{1} can not be reflected.
+WebMultiDimArray=Multi-dimensional arrays are not supported. Use a jagged array instead.
+WebHeaderMissing=The header property/field {0}.{1} is missing or not public.
+WebHeaderStatic=The header property/field {0}.{1} cannot be static.
+WebHeaderRead=The header property/field {0}.{1} could not be  read.
+WebHeaderWrite=The header property/field {0}.{1} could not be written to.
+WebHeaderType=The header property/field {0}.{1} must be of type SoapHeader or a derived type, or an array of SoapHeader or SoapUnknownHeader.
+WebHeaderOneWayOut=The header property/field {0}.{1} cannot be an out header because the method is one-way.
+WebHeaderInvalidMustUnderstand='{0}' is not a valid value for the field EncodedMustUnderstand. Valid values are '0', '1', 'true', and 'false'.
+WebMultiplyDeclaredHeaderTypes=An operation can have only one in or out header of a given type. {0}.{1} conflicts with another header field of the same type and direction.
+WebHttpHeader=Server did not recognize the value of HTTP Header {0}: {1}.
+WebRequestContent=Server found request content type to be '{0}', but expected '{1}'.
+WebRequestUnableToRead=Server was unable to read request.
+WebRequestUnableToProcess=Server was unable to process request.
+WebMissingParameter=Missing parameter: {0}.
+WebUnrecognizedRequestFormat=Request format is unrecognized.
+WebUnrecognizedRequestFormatUrl=Request format is unrecognized for URL unexpectedly ending in '{0}'.
+WebTimeout=The timeout period expired before the response was received.
+WebMissingHelpContext=HttpContext is not available.   This class can only be used in the context of an ASP.NET request.
+WebMissingCustomAttribute={0} must have the {1} custom attribute.
+WebMissingClientProtocol=ClientProtocol must be set first.
+WebResolveMissingClientProtocol=ClientProtocol property must be set before calling Resolve.
+WebPathNotFound=Path:{0} could not be found.
+WebMissingResource=The document at the url {0} was not recognized as a known document type.\r\nThe error message from each known type may help you fix the problem:
+WebContractReferenceName=WSDL Document
+WebShemaReferenceName=XML Schema
+WebDiscoveryDocumentReferenceName=DISCO Document
+WebMissingDocument=Discovery document at the URL {0} could not be found.
+WebInvalidContentType=The document format is not recognized (the content type is '{0}').
+WebInvalidFormat=The document format is not recognized.
+WebInvalidEnvelopeNamespace=Possible SOAP version mismatch: Envelope namespace {0} was unexpected. Expecting {1}.
+WebResultNotXml=Result was not XML.
+WebDescriptionMissingItem=Element {0} named {1} from namespace {2} is missing.
+WebDescriptionMissing=Cannot find definition for {0}.  Service Description with namespace {1} is missing.
+WebDescriptionPartElementRequired=Part '{0}' from message '{1}' in namespace '{2}' is missing the element attribute. The element attribute is required for headers when Use=Literal.
+WebDescriptionPartTypeRequired=Part '{0}' from message '{1}' in namespace '{2}' is missing the type attribute. The type attribute is required for headers when Use=Encoded.
+WebDescriptionPartElementWarning=Part '{0}' from message '{1}' in namespace '{2}' defines both the element and type attributes. Only the element attribute is used for headers when Use=Literal.
+WebDescriptionPartTypeWarning=Part '{0}' from message '{1}' in namespace '{2}' defines both the element and type attributes. Only the type attribute is used for headers when Use=Encoded.
+WebDescriptionMissingBodyUseAttribute=Missing required 'use' attribute on 'soap:body' element.
+WebDescriptionTooManyMessages=No more than one input and one output message may be specified.
+WebDescriptionHeaderAndBodyUseMismatch=The value of use defined on the soap:header element must match that defined on the soap:body element.
+WebQNamePrefixUndefined=Namespace prefix '{0}' not defined
+WebNegativeValue=The value for '{0}' cannot be negative.
+WebEmptyRef=Invalid empty reference of type '{0}' encountered in the document at URI '{1}'.
+WebNullRef=Invalid null web reference encountered in the discovery document.
+WebRefInvalidAttribute=Invalid web reference encountered. Missing required '{0}' attribute.
+WebRefInvalidAttribute2=Invalid empty reference of type '{0}' encountered. Missing required '{1}' attribute.
+WebInvalidDocType=Invalid Document type. Expecting '{0}', got '{1}'.\r\nDocument URI is '{2}'.
+WebDiscoRefReport=Report from '{0}' is '{1}'.
+WebTextMatchMissingPattern=Each match element must have a pattern attribute containing a valid regular expression.
+WebTextMatchIgnoredTypeWarning=Optional attribute 'type' was ignored because the match does not contain sub-matches.
+WebTextMatchBadCaptureIndex={0} is not a valid capture index for match '{1}'. The highest valid capture index for this match is {2}.
+WebTextMatchBadGroupIndex={0} is not a valid group index for match '{1}'. The highest valid group index for this match is {2}.
+WebServiceDescriptionIgnoredOptional=The optional WSDL extension element '{0}' from namespace '{1}' was not handled.
+WebServiceDescriptionIgnoredRequired=The required WSDL extension element '{0}' from namespace '{1}' was not handled.
+WebDuplicateServiceDescription=More than one service description with targetNamespace '{0}' was specified.
+WebDuplicateFormatExtension=More than one format extension named '{0}' was specified. Each format extension must have a unique name.
+WebDuplicateOperationMessage=More than one operation message named '{0}' was specified. Each operation message must have a unique name.
+WebDuplicateImport=More than one import named '{0}' was specified. Each import must have a unique name.
+WebDuplicateMessage=More than one message named '{0}' was specified. Each message must have a unique name.
+WebDuplicatePort=More than one port named '{0}' was specified. Each port must have a unique name.
+WebDuplicatePortType=More than one port type named '{0}' was specified. Each port type must have a unique name.
+WebDuplicateBinding=More than one binding named '{0}' was specified. Each binding must have a unique name.
+WebDuplicateService=More than one service named '{0}' was specified. Each service must have a unique name.
+WebDuplicateMessagePart=More than one message part named '{0}' was specified. Each message part must have a unique name.
+WebDuplicateOperationBinding=More than one operation binding named '{0}' was specified. Each operation binding must have a unique name.
+WebDuplicateFaultBinding=More than one fault binding named '{0}' was specified. Each fault binding must have a unique name.
+WebDuplicateOperation=More than one operation named '{0}' was specified. Each operation must have a unique name.
+WebDuplicateOperationFault=More than one operation fault named '{0}' was specified. Each operation fault must have a unique name.
+WebDuplicateUnknownElement=More than one {0} named '{1}' was specified. Each {0} must have a unique name.
+WebUnknownEncodingStyle=The encoding style '{0}' is not supported.
+WebSoap11EncodingStyleNotSupported1=The SOAP 1.1 encoding style is not supported for operations that use SOAP 1.2. Use the URI '{0}' to refer to the SOAP 1.2 encoding style.
+WebNullAsyncResultInBegin=For server-side asynchronous method calls, your Begin method must return a valid IAsyncResult. Your Begin method cannot return null.
+WebNullAsyncResultInEnd=For asynchronous method calls, you must supply a non-null IAsyncResult instance when you call the End method.
+WebAsyncTransaction=Transactions are not supported for asynchronous method calls. Provide a synchronous version of the method or unset the TransactionOption property of the WebMethodAttribute.
+WebConfigExtensionError=There was an exception running the extensions specified in the config file.
+WebExtensionError=There was an exception running the extensions specified in the config file (or via an attribute).
+WebChangeTypeFailed=Cannot convert {0} to {1}.
+WebBadEnum=The value '{0}' was not found in the enum type '{1}'.
+WebBadHex=Invalid hex digit: '{0}'.
+WebClientBindingAttributeRequired=WebServiceBindingAttribute is required on proxy classes.
+WebHeaderInvalidRelay='{0}' is not a valid value for the 'relay' attribute. Valid values are '0', '1', 'true', and 'false'.
+WebVirtualDisoRoot=Web Directory '{0}' must be same or below to '{1}'.
+WebRefDuplicateSchema=Ignoring duplicate schema with TargetNamespace='{0}' from '{1}'.
+WebRefDuplicateService=Ignoring duplicate service description with TargetNamespace='{0}' from '{1}'.
+WebWsiContentTypeEncoding=Input message does not conform to Simple SOAP Binding Profile Version 1.0. Requirement R1012: A MESSAGE MUST serialize the envelope using either UTF-8 or UTF-16 character encoding.
+WebWsiViolation=Service '{0}' does not conform to WS-I Basic Profile v1.1. Please examine each of the normative statement violations below. To turn off conformance check set the ConformanceClaims property on corresponding WebServiceBinding attribute to WsiClaims.None.\r\n{1}
+WebNullReaderForMessage=The GetReaderForMessage method cannot return null.
+WebNullWriterForMessage=The GetWriterForMessage method cannot return null.
+NeedConcreteType=Cannot create an instance of an interface {0}. Please specify a concrete implementation of the interface instead.
+
+WebUnknownElement=The element was not expected in this context: {0}.
+WebUnknownElement1=An unexpected element was encountered: {0}. No elements were expected in this scope.
+WebUnknownElement2=The element was not expected in this context: {0}. Expected elements: {1}.
+WebUnknownAttribute=An unexpected attribute was encountered: {0}='{1}'.
+WebUnknownAttribute2=An unexpected attribute was encountered: {0}='{1}'. No attributes were expected in this scope.
+WebUnknownAttribute3=The attribute was not expected in this context: {0}='{1}'. Expected attributes: {2}.
+WebUnreferencedObject=Item id='{0}' was not referenced: {1}.
+WebSuppressedExceptionMessage=An error occurred on the server.
+
+CannotRunInPartialTrustOutsideAspNet=Cannot run in partial trust outside the ASP.NET environment.
+
+
+; DescriptionAttributes
+
+WebServiceContext=The ASP.NET context object for the current request.
+WebServiceSession=The ASP.NET session object for the current request.
+WebServiceServer=The ASP.NET utility object for the current request.
+WebServiceUser=The ASP.NET user object for the current request.  The object is used for authorization.
+WebServiceSoapVersion=The version of the SOAP protocol used for the request.
+ClientProtocolAllowAutoRedirect=Enable automatic handling of server redirects.
+ClientProtocolCookieContainer=A container for all cookies received from servers in the current session.
+ClientProtocolPreAuthenticate=Enables pre authentication of the request.
+ClientProtocolClientCertificates=The client certificates that will be sent to the server, if the server requests them.
+ClientProtocolUrl=The base URL to the server to use for requests.
+ClientProtocolEncoding=The encoding to use for requests.
+ClientProtocolTimeout=Sets the timeout in milliseconds to be used for synchronous calls.  The default of -1 means infinite.
+ClientProtocolUserAgent=Sets the user agent http header for the request.
+ClientProtocolUsername=The user name to be sent for basic and digest authentication.
+ClientProtocolPassword=The password to be used for basic and digest authentication.
+ClientProtocolDomain=The domain to be used for basic and digest authentication.
+ClientProtocolProxyName=The name of the proxy server to use for requests.
+ClientProtocolProxyPort=The port number of the proxy server to use for requests.
+ClientProtocolSoapVersion=The version of the SOAP protocol to use for requests. By default, SOAP 1.1 will be used.
+ClientProtocolEnableDecompression=This allows user to easily leverage HTTP compression that's built into IIS 6.
+
+; Soap localized text
+
+; this constant is Code for the representation of names of languages [ISO 639].
+; some of the values are
+; ar Arabic
+; cs Czech
+; da Danish
+; de German
+; el Greek
+; es Spanish
+; fa Persian
+; fi Finnish
+; fr French
+; he Hebrew (formerly iw)
+; hi Hindi
+; hu Hungarian
+; it Italian
+; ja Japanese
+; zh Chinese
+;
+; for the full list plase refer to http://ftp.ics.uci.edu/pub/ietf/http/related/iso639.txt
+XmlLang=en
+
+; DefaultWsdlHelpGenerator.aspx localized text
+
+HelpGeneratorHttpGetTitle=HTTP GET
+HelpGeneratorHttpGetText=The following is a sample HTTP GET request and response.  The <font class=value>placeholders</font> shown need to be replaced with actual values.
+HelpGeneratorHttpPostTitle=HTTP POST
+HelpGeneratorHttpPostText=The following is a sample HTTP POST request and response.  The <font class=value>placeholders</font> shown need to be replaced with actual values.
+HelpGeneratorSoapTitle=SOAP 1.1
+HelpGeneratorSoap1_2Title=SOAP 1.2
+HelpGeneratorSoapText=The following is a sample SOAP 1.1 request and response.  The <font class=value>placeholders</font> shown need to be replaced with actual values.
+HelpGeneratorSoap1_2Text=The following is a sample SOAP 1.2 request and response.  The <font class=value>placeholders</font> shown need to be replaced with actual values.
+HelpGeneratorInvokeButton=Invoke
+HelpGeneratorParameter=Parameter
+HelpGeneratorValue=Value
+HelpGeneratorTestHeader=Test
+HelpGeneratorTestText=To test the operation using the HTTP POST protocol, click the 'Invoke' button.
+HelpGeneratorNoTestFormRemote=The test form is only available for requests from the local machine.
+HelpGeneratorLinkBack=Click <a href=\"{0}\">here</a> for a complete list of operations.
+HelpGeneratorEnableHttpPostHeader=Enabling http post protocol in configuration
+HelpGeneratorEnableHttpPostInstructions=To enable the http post protocol add the following to the web.config file in your application or site root directory.
+HelpGeneratorOperationsIntro=The following operations are supported.  For a formal definition, please review the <a href=\"{0}\">Service Description</a>.
+HelpGeneratorWebService=Web Service
+HelpGeneratorNoHttpGetTest=No test form is available as this service or method does not support the HTTP GET protocol.
+HelpGeneratorNoHttpPostTest=No test form is available as this service or method does not support the HTTP POST protocol.
+HelpGeneratorNoTestNonPrimitive=The test form is only available for methods with primitive types as parameters.
+HelpGeneratorMethodNotFound=Method Not Found
+HelpGeneratorMethodNotFoundText=Method '{0}' was not found in service {1}.
+HelpGeneratorStyleBODY=color: #000000; background-color: white; font-family: Verdana; margin-left: 0px; margin-top: 0px;
+HelpGeneratorStylecontent=margin-left: 30px; font-size: .70em; padding-bottom: 2em;
+HelpGeneratorStyleAlink=color: #336699; font-weight: bold; text-decoration: underline;
+HelpGeneratorStyleAvisited=color: #6699cc; font-weight: bold; text-decoration: underline;
+HelpGeneratorStyleAactive=color: #336699; font-weight: bold; text-decoration: underline;
+HelpGeneratorStyleAhover=color: cc3300; font-weight: bold; text-decoration: underline;
+HelpGeneratorStyleP=color: #000000; margin-top: 0px; margin-bottom: 12px; font-family: Verdana;
+HelpGeneratorStylepre=background-color: #e5e5cc; padding: 5px; font-family: Courier New; font-size: x-small; margin-top: -5px; border: 1px #f0f0e0 solid;
+HelpGeneratorStyletd=color: #000000; font-family: Verdana; font-size: .7em;
+HelpGeneratorStyleh2=font-size: 1.5em; font-weight: bold; margin-top: 25px; margin-bottom: 10px; border-top: 1px solid #003366; margin-left: -15px; color: #003366;
+HelpGeneratorStyleh3=font-size: 1.1em; color: #000000; margin-left: -15px; margin-top: 10px; margin-bottom: 10px;
+HelpGeneratorStyleul=margin-top: 10px; margin-left: 20px;
+HelpGeneratorStyleol=margin-top: 10px; margin-left: 20px;
+HelpGeneratorStyleli=margin-top: 10px; color: #000000;
+HelpGeneratorStylefontvalue=color: darkblue; font: bold;
+HelpGeneratorStylefontkey=color: darkgreen; font: bold;
+HelpGeneratorStylefontError=color: darkred; font: bold;
+HelpGeneratorStyleheading1=color: #ffffff; font-family: Tahoma; font-size: 26px; font-weight: normal; background-color: #003366; margin-top: 0px; margin-bottom: 0px; margin-left: -30px; padding-top: 10px; padding-bottom: 3px; padding-left: 15px; width: 105%;
+HelpGeneratorStylebutton=background-color: #dcdcdc; font-family: Verdana; font-size: 1em; border-top: #cccccc 1px solid; border-bottom: #666666 1px solid; border-left: #cccccc 1px solid; border-right: #666666 1px solid;
+HelpGeneratorStylefrmheader=color: #000000; background: #dcdcdc; font-family: Verdana; font-size: .7em; font-weight: normal; border-bottom: 1px solid #dcdcdc; padding-top: 2px; padding-bottom: 2px;
+HelpGeneratorStylefrmtext=font-family: Verdana; font-size: .7em; margin-top: 8px; margin-bottom: 0px; margin-left: 32px;
+HelpGeneratorStylefrmInput=font-family: Verdana; font-size: 1em;
+HelpGeneratorStyleintro=margin-left: -15px;
+HelpGeneratorImplementation=implementation
+HelpGeneratorDefaultNamespaceWarning1=This web service is using http://tempuri.org/ as its default namespace.
+HelpGeneratorDefaultNamespaceWarning2=Recommendation: Change the default namespace before the XML Web service is made public.
+HelpGeneratorDefaultNamespaceHelp1=Each XML Web service needs a unique namespace in order for client applications to distinguish it from other services on the Web. http://tempuri.org/ is available for XML Web services that are under development, but published XML Web services should use a more permanent namespace.
+HelpGeneratorDefaultNamespaceHelp2=Your XML Web service should be identified by a namespace that you control. For example, you can use your company's Internet domain name as part of the namespace. Although many XML Web service namespaces look like URLs, they need not point to actual resources on the Web. (XML Web service namespaces are URIs.)
+HelpGeneratorDefaultNamespaceHelp3=For XML Web services creating using ASP.NET, the default namespace can be changed using the WebService attribute's Namespace property. The WebService attribute is an attribute applied to the class that contains the XML Web service methods. Below is a code example that sets the namespace to "http://microsoft.com/webservices/":
+HelpGeneratorDefaultNamespaceHelp4=For more details on XML namespaces, see the W3C recommendation on <a href="http://www.w3.org/TR/REC-xml-names/">Namespaces in XML</A>.
+HelpGeneratorDefaultNamespaceHelp5=For more details on WSDL, see the <a href="http://www.w3.org/TR/wsdl">WSDL Specification</a>.
+HelpGeneratorDefaultNamespaceHelp6=For more details on URIs, see <a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396</a>.
+
+HelpGeneratorServiceConformance=This web service does not conform to WS-I Basic Profile v1.1.
+HelpGeneratorServiceConformanceDetails=Please examine each of the normative statement violations below. Follow the recommendations to remedy it, or add setting to the &lt;webServices&gt; config section to turn off BP 1.1 conformance warnings for the entire vroot.
+HelpGeneratorServiceConformanceConfig=To turn off BP 1.1 conformance warnings for the entire vroot remove the 'BP1.1' value from the &lt;conformanceWarnings&gt; section of the configuration file of your application:
+HelpGeneratorRecommendation=Recommendation
+
+Rxxxx=SOAP 1.1 binding was not found
+HelpGeneratorServiceConformanceRxxxx=WS-I's Basic Profile 1.1 consists of implementation guidelines that recommend how a set of core Web services specifications should be used together to develop interoperable Web services. For the 1.1 Profile, those specifications are SOAP 1.1, WSDL 1.1, UDDI 2.0, XML 1.0 and XML Schema.
+HelpGeneratorServiceConformanceRxxxx_r=Consider changing config settings in web.config file in your application or site root directory to enable SOAP 1.1 protocol for your Web service.
+HelpGeneratorServiceConformanceR2028=A DESCRIPTION using the WSDL namespace and the WSDL SOAP binding namespace MUST be valid according to the XML Schemas found at http://schemas.xmlsoap.org/wsdl/2003-02-11.xsd and http://schemas.xmlsoap.org/wsdl/soap/2003-02-11.xsd.
+HelpGeneratorServiceConformanceR2026=A DESCRIPTION SHOULD NOT include extension elements with a wsdl:required attribute value of "true" on any WSDL construct (wsdl:binding, wsdl:portType, wsdl:message, wsdl:types or wsdl:import) that claims conformance to the Profile.
+HelpGeneratorServiceConformanceR2705=A DESCRIPTION MUST use the same value of, either 'rpc' or 'document' for the style attribute for all of its operations in a portType, in the SOAP Binding description. 
+HelpGeneratorServiceConformanceR2705_r=To make binding conformant add explicit SoapRpcMethod or SoapDocumentMethod attribute to all WebMethods of this binding.
+HelpGeneratorServiceConformanceR2706=A wsdl:binding in a DESCRIPTION MUST use the value of "literal" for the use attribute in all soapbind:body, soapbind:fault, soapbind:header and soapbind:headerfault elements. 
+HelpGeneratorServiceConformanceR2706_r=To make it conformant change the implementation of the service to use 'rpc-literal' or 'document-literal' SOAP messages. You need to add explicit <font class=value>Use=SoapBindingUse.Literal</font> property to all service and method level attributes: SoapRpcService, SoapRpcMethod, SoapDocumentService, SoapDocumentMethod.
+HelpGeneratorServiceConformanceR2007=A DESCRIPTION MUST specify a non-empty location attribute on the wsdl:import element. Although the wsdl:import statement is modeled after the xsd:import statement, the location attribute is required by wsdl:import while the corresponding attribute on xsd:import, schemaLocation is optional. Consistent with location being required, its content is not intended to be empty.
+HelpGeneratorServiceConformanceR2007_r=To make it conformant modify all import statements to include a non-empty location attribute.
+HelpGeneratorServiceConformanceR2803=In a DESCRIPTION, the namespace attribute of the wsdl:import MUST NOT be a relative URI.
+HelpGeneratorServiceConformanceR2803_r=To make it conformant modify all import statements to use an absolute URI for namespace attribute value.
+HelpGeneratorServiceConformanceR2105=All xsd:schema elements contained in a wsdl:types element of a DESCRIPTION MUST have a targetNamespace attribute with a valid and non-null value, UNLESS the xsd:schema element has xsd:import and/or xsd:annotation as its only child element(s). 
+HelpGeneratorServiceConformanceR2105_r=Please examine your schema definitions and add explicit targetNamespace attribute. Requiring a targetNamespace on all xsd:schema elements that are children of wsdl:types is a good practice, places a minimal burden on authors of WSDL documents, and avoids the cases that are not as clearly defined as they might be.
+HelpGeneratorServiceConformanceR1014=The children of the soap:Body element in a ENVELOPE MUST be namespace qualified. The use of unqualified element names may cause naming conflicts, therefore qualified names must be used for the children of soap:Body.
+HelpGeneratorServiceConformanceR1014_r=To make binding conformant make sure that all response and request elements are namespace qualified. Use RequestNamespace and ResponseNamespace properties on the SoapDocumentMethod or SoapRpcMethod attribute to control the namespace.
+
+HelpGeneratorServiceConformanceR2201=A document-literal binding in a DESCRIPTION MUST, in each of its soapbind:body element(s), have at most one part listed in the parts attribute, if the parts attribute is specified.
+HelpGeneratorServiceConformanceR2210=If a document-literal binding in a DESCRIPTION does not specify the parts attribute on a soapbind:body element, the corresponding abstract wsdl:message MUST define zero or one wsdl:parts.
+HelpGeneratorServiceConformanceR2210_r=For Document-literal bindings, the Profile requires that at most one part, abstractly defined with the element attribute, be serialized into the soap:Body element. When using a Bare parameter style, a conformant method must have at most one parameter.
+HelpGeneratorServiceConformanceR2306=A wsdl:message in a DESCRIPTION MUST NOT specify both type and element attributes on the same wsdl:part.
+HelpGeneratorServiceConformanceR2203=An rpc-literal binding in a DESCRIPTION MUST refer, in its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the type attribute. 
+HelpGeneratorServiceConformanceR2204=A document-literal binding in a DESCRIPTION MUST refer, in each of its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the element attribute. 
+HelpGeneratorServiceConformanceR2205=A wsdl:binding in a DESCRIPTION MUST refer, in each of its soapbind:header, soapbind:headerfault and soapbind:fault elements, only to wsdl:part element(s) that have been defined using the element attribute. Because faults and headers do not contain parameters, soapbind:fault, soapbind:header and soapbind:headerfault assume, per WSDL 1.1, that the value of the style attribute is 'document'. R2204 requires that all wsdl:part elements with a style attribute whose value is 'document' that are bound to soapbind:body be defined using the element attribute. This requirement does the same for soapbind:fault, soapbind:header and soapbind:headerfault elements. 
+HelpGeneratorServiceConformanceR2303=A DESCRIPTION MUST NOT use Solicit-Response and Notification type operations in a wsdl:portType definition. Solicit-Response and Notification operations are not well defined by WSDL 1.1; furthermore, WSDL 1.1 does not define bindings for them. 
+HelpGeneratorServiceConformanceR2304=Operation name overloading in a wsdl:portType is disallowed by the Profile. A wsdl:portType in a DESCRIPTION MUST have operations with distinct values for their name attributes. Note that this requirement applies only to the wsdl:operations within a given wsdl:portType. A wsdl:portType may have wsdl:operations with names that are the same as those found in other wsdl:portTypes.
+HelpGeneratorServiceConformanceR2304_r=To make service conformant please make sure that all web methods belonging to the same binding have unique names.
+HelpGeneratorServiceConformanceR2701=The wsdl:binding element in a DESCRIPTION MUST be constructed so that its soapbind:binding child element specifies the transport attribute. 
+HelpGeneratorServiceConformanceR2702=A wsdl:binding element in a DESCRIPTION MUST specify the HTTP transport protocol with SOAP binding. Specifically, the transport attribute of its soapbind:binding child MUST have the value "http://schemas.xmlsoap.org/soap/http". Note that this requirement does not prohibit the use of HTTPS; See R5000.
+HelpGeneratorServiceConformanceR2710=The operations in a wsdl:binding in a DESCRIPTION MUST result in wire signatures that are different from one another. An endpoint that supports multiple operations must unambiguously identify the operation being invoked based on the input message that it receives. This is only possible if all the operations specified in the wsdl:binding associated with an endpoint have a unique wire signature. 
+HelpGeneratorServiceConformanceR2710_r=The Profile defines the "wire signature" of an operation in a wsdl:binding to be the fully qualified name of the child element of the soap:Body of the SOAP input message it describes. For the case of an empty soap:Body this name is an empty string. In the case of rpc-literal binding, the operation name is used as a wrapper for the part accessors. In the document-literal case, since a wrapper with the operation name is not present, the message signatures must be correctly designed so that they meet this requirement.
+HelpGeneratorServiceConformanceR2716=A document-literal binding in a DESCRIPTION MUST NOT have the namespace attribute specified on contained soapbind:body, soapbind:header, soapbind:headerfault and soapbind:fault elements. 
+HelpGeneratorServiceConformanceR2717=An rpc-literal binding in a DESCRIPTION MUST have the namespace attribute specified, the value of which MUST be an absolute URI, on contained soapbind:body elements. 
+HelpGeneratorServiceConformanceR2726=An rpc-literal binding in a DESCRIPTION MUST NOT have the namespace attribute specified on contained soapbind:header, soapbind:headerfault and soapbind:fault elements. 
+HelpGeneratorServiceConformanceR2718=A wsdl:binding in a DESCRIPTION MUST have the same set of wsdl:operations as the wsdl:portType to which it refers.
+HelpGeneratorServiceConformanceR2720=A wsdl:binding in a DESCRIPTION MUST use the attribute named part with a schema type of "NMTOKEN" on all contained soapbind:header and soapbind:headerfault elements.
+HelpGeneratorServiceConformanceR2749=A wsdl:binding in a DESCRIPTION MUST NOT use the attribute named parts on contained soapbind:header and soapbind:headerfault elements. 
+HelpGeneratorServiceConformanceR2721=A wsdl:binding in a DESCRIPTION MUST have the name attribute specified on all contained soapbind:fault elements. 
+HelpGeneratorServiceConformanceR2754=In a DESCRIPTION, the value of the name attribute on a soapbind:fault element MUST match the value of the name attribute on its parent wsdl:fault element. 
+HelpGeneratorServiceConformanceHelp=For more details on Basic Profile Version 1.1, see the <a href="http://www.ws-i.org/Profiles/BasicProfile-1.1.html"> Basic Profile Specification</a>.
+
+BindingMissingAttribute=Binding '{0}' from namespace '{1}' missing required '{2}' attribute.
+BindingInvalidAttribute=Binding '{0}' from namespace '{1}' has invalid attribute: {2}='{3}'.
+OperationFlowNotification=Operation '{0}' on portType '{1}' from namespace '{2}' defined as Notification.
+OperationFlowSolicitResponse=Operation '{0}' on portType '{1}' from namespace '{2}' defined as Solicit-Response.
+
+PortTypeOperationMissing=Operation '{0}' on binding '{1}' from namespace '{2}' has no matching operation on portType '{3}' from namespace '{4}'.
+BindingOperationMissing=Binding '{0}' from namespace '{1}' missing some operations defined on portType '{2}' from namespace '{3}'.
+BindingMultipleParts=One of the extensibility elements on Binding '{0}' from namespace '{1}' has more then one part listed in the '{2}' attribute.
+ElementEncodedExtension=Element '{0}' on Binding '{1}' from namespace '{2}' has invalid attribute {3}='{4}'.
+InputElement=Input element {0} of operation '{1}' on portType '{2}' from namespace '{3}'. {4}
+OutputElement=Output element {0} of operation '{1}' on portType '{2}' from namespace '{3}'. {4}
+Fault=soapbind:fault '{0}' on operation '{1}' on portType '{2}' from namespace '{3}'. {4}
+HeaderFault={0} on operation '{1}' on portType '{2}' from namespace '{3}'. {4}
+Binding=Binding '{0}' from namespace '{1}'.
+Operation=Operation '{0}' on portType '{1}' from namespace '{2}'.
+OperationBinding=Operation '{0}' on binding '{1}' from namespace '{2}'.
+FaultBinding=Fault '{0}' on operation '{1}' on binding '{2}' from namespace '{3}'.
+Description=Service description with targetNamespace='{0}'.
+Element={0} from service description with targetNamespace='{1}'.
+Port=Port '{0}' on service {1} from namespace='{2}'.
+Message=Message '{0}' from service description with targetNamespace='{1}'.
+Part=Part '{0}' of message '{1}' from service description with targetNamespace='{2}'.
+OperationMissingBinding=Operation '{0}' on portType '{1}' from namespace '{2}' has no matching binding.
+UriValueRelative=Value '{0}' is not an absolute URI.
+HelpGeneratorLanguageConfig=There is no CodeDom provider defined for the language '{0}'.
+HelpGeneratorInternalError=The XML Web service help page encountered an internal error.
+OperationOverload=Binding '{0}' from namespace '{1}' contains operations with matching wire signatures. Wire signature of message '{2}' matches message '{3}'.
+WireSignature=Input message '{0}' from namespace '{1}' has wire signature '{2}:{3}'.
+WireSignatureEmpty=Input message '{0}' from namespace '{1}' has no elements (empty wire signature)
+
+; wsdl validation
+WsdlInstanceValidation=Warning: {0}
+WsdlInstanceValidationDetails=Warning: {0} Line {1}, position {2}.
+
+WhenUsingAMessageStyleOfParametersAsDocument0=When using a Bare parameter style and a service RoutingStyle of RequestElement, the method must have exactly one parameter.
+UnsupportedMessageStyle1=Message style {0} is not supported.
+TheMethodsAndUseTheSameSoapActionWhenTheService3=The methods {0} and {1} use the same SOAPAction '{2}'. When the RoutingStyle of the XML Web service is SoapAction, SOAPAction values must be unique across methods on the XML Web service. You can change the SOAPAction with the Action parameter to the SoapDocumentMethod or SoapRpcMethod attributes, or you can specify a RoutingStyle of RequestElement on the XML Web service.
+TheMethodDoesNotHaveARequestElementEither1=The method {0} does not have a request element. You can use a RoutingStyle of SoapAction on the XML Web service, use the Wrapped parameter style on the method, or add a parameter to the method.
+TheMethodsAndUseTheSameRequestElementXmlns4=The methods {0} and {1} use the same request element <{2} xmlns='{3}'>. When the RoutingStyle of the XML Web service is RequestElement, request elements must be unique across methods on the XML Web service. If you are using the Rpc style, you can change the message name with the RequestElementName and RequestElementNamespace parameters to SoapRpcMethodAttribute. For document style using wrapped parameter style, use the RequestElementName and RequestElementNamespace parameters to SoapDocumentMethodAttribute. For the bare parameter style, you must change the element that represents the parameter. Alternatively, you can specify a RoutingStyle of SoapAction on the XML Web service.
+TheMethodsAndUseTheSameRequestElementAndSoapActionXmlns6=The methods {0} and {1} use the same request element <{2} xmlns='{3}'> and the methods {0} and {4} use the same SOAPAction '{5}'. Each method on the XML Web service must have a unique SOAPAction or request element. If you are using the Rpc style, you can change the message name with the RequestElementName and RequestElementNamespace parameters to SoapRpcMethodAttribute. For document style using wrapped parameter style, use the RequestElementName and RequestElementNamespace parameters to SoapDocumentMethodAttribute. For the bare parameter style, you must change the element that represents the parameter. Alternatively, you can specify a unique SoapAction for each method using the Action parameter to SoapRpcMethodAttribute or SoapDocumentMethodAttribute.
+TheRootElementForTheRequestCouldNotBeDetermined0=The root element for the request could not be determined. When RoutingStyle is set to RequestElement, SoapExtensions configured via an attribute on the method cannot modify the request stream before it is read. The extension must be configured via the SoapExtensionTypes element in web.config, or the request must arrive at the server as clear text.
+TheRequestElementXmlnsWasNotRecognized2=The request element <{0} xmlns='{1}'> was not recognized.
+ServiceDescriptionWasNotFound0=XML Web service description was not found.
+internalError0=An internal error occurred.
+DiscoveryIsNotPossibleBecauseTypeIsMissing1=Discovery is not possible because type '{0}' is missing a WebServiceBinding attribute.
+TheBindingNamedFromNamespaceWasNotFoundIn3=The binding named '{0}' from namespace '{1}' was not found in the discovery document found at '{2}'.
+Missing2=Missing {0}.{1}
+MissingHttpOperationElement0=Missing http:operation element.
+MessageHasNoParts1=Message '{0}' has no parts.
+DuplicateInputOutputNames0=Duplicate input/output names.
+MissingBinding0=The operation has no matching binding. Check if the operation, input and output names in the Binding section match with the corresponding names in the PortType section.
+MissingInputBinding0=Missing input binding.
+MissingOutputBinding0=Missing output binding.
+UnableToImportOperation1=Unable to import operation '{0}'.
+UnableToImportBindingFromNamespace2=Unable to import binding '{0}' from namespace '{1}'.
+TheOperationFromNamespaceHadInvalidSyntax3=The operation '{0}' on portType '{1}' from namespace '{2}' had the following syntax error:  {3}
+TheOperationBindingFromNamespaceHadInvalid3=The operation binding '{0}' from namespace '{1}' had invalid syntax.  {2}
+IfAppSettingBaseUrlArgumentIsSpecifiedThen0=If 'appSettingBaseUrl' argument is specified then 'url' argument must also be specified.
+MissingMessagePartForMessageFromNamespace3=Missing message part '{0}' for message '{1}' from namespace '{2}'.
+MissingMessage2=Missing message '{0}' from namespace '{1}'.
+OnlyXmlElementsOrTypesDerivingFromServiceDescriptionFormatExtension0=Only XmlElements or types deriving from ServiceDescriptionFormatExtension may be added.
+OnlyOperationInputOrOperationOutputTypes=Only objects of type OperationInput or OperationOutput may be added.
+ProtocolWithNameIsNotRecognized1=Protocol with name '{0}' is not recognized.
+BothAndUseTheMessageNameUseTheMessageName3=Both {0} and {1} use the message name '{2}'.  Use the MessageName property of the WebMethod custom attribute to specify unique message names for the methods.
+MissingSoapOperationBinding0=Missing soap:operation binding.
+OnlyOneWebServiceBindingAttributeMayBeSpecified1=Only one WebServiceBinding attribute may be specified on type '{0}'.
+ContractOverride=Method {0} on type {1} is an implementation of the service contract interface {2}. Service Description altering attributes cannot be specified on service implementation.  Please place custom attribute on the interface declaration: interface: {2}, method: {3}, attribute: {4}.
+TypeIsMissingWebServiceBindingAttributeThat2=Type '{0}' is missing WebServiceBinding attribute that defines a binding named '{1}'.
+MultipleBindingsWithSameName2=Type '{0}' has multiple WebServiceBinding attributes that define a binding named '{1}'.
+UnknownWebServicesProtocolInConfigFile1=Unknown XML Web services protocol '{0}' in config file.
+RequiredXmlFormatExtensionAttributeIsMissing1=Required XmlFormatExtension attribute is missing on class {0}.
+TheSyntaxOfTypeMayNotBeExtended1=The syntax of type {0} may not be extended.
+InternalConfigurationError0=Internal configuration error.
+ThereIsNoSoapTransportImporterThatUnderstands1=There is no SoapTransportImporter that understands the transport '{0}'.
+MissingSoapBodyInputBinding0=Missing soap:body input binding.
+MissingSoapBodyOutputBinding0=Missing soap:body output binding.
+TheOperationStyleRpcButBothMessagesAreNot0=The operation style=rpc but both messages are not use=encoded.
+TheCombinationOfStyleRpcWithUseLiteralIsNot0=The combination of style=rpc with use=literal is not supported.
+TheEncodingIsNotSupported1=The encoding '{0}' is not supported.
+SpecifyingAnElementForUseEncodedMessageParts0=Specifying an element for use=encoded message parts is not supported.
+EachMessagePartInAnUseEncodedMessageMustSpecify0=Each message part in an use=encoded message must specify a type.
+SpecifyingATypeForUseLiteralMessagesIs0=Specifying a type for use=literal messages is not supported.
+SpecifyingATypeForUseLiteralMessagesIsAny=Specifying a type for use=literal messages is not supported. Type name='{0}' from targetNamespace='{1}' cannot be used as top-level any element.
+EachMessagePartInAUseLiteralMessageMustSpecify0=Each message part in a use=literal message must specify an element.
+EachMessagePartInRpcUseLiteralMessageMustSpecify0=Each message part in a use=literal style=rpc message must specify a type.
+NoInputMIMEFormatsWereRecognized0=No input MIME formats were recognized.
+NoInputHTTPFormatsWereRecognized0=No input HTTP formats were recognized.
+NoOutputMIMEFormatsWereRecognized0=No output MIME formats were recognized.
+MissingMatchElement0=Missing match element.
+SolicitResponseIsNotSupported0=SolicitResponse is not supported.
+RequestResponseIsNotSupported0=RequestResponse is not supported.
+OneWayIsNotSupported0=OneWay is not supported.
+NotificationIsNotSupported0=Notification is not supported.
+SyntaxErrorInWSDLDocumentMessageDoesNotHave1=Syntax error in WSDL document: Message '{0}' does not have an operation associated with it in the portType.
+WebMissingBodyElement=Request format is invalid: Missing required soap:Body element.
+WebMissingEnvelopeElement=Request format is invalid: Missing required soap:Envelope element.
+UnableToHandleRequestActionNotRecognized1=Unable to handle request. The action '{0}' was not recognized.
+UnableToHandleRequestActionRequired0=Unable to handle request without a valid action parameter. Please supply a valid soap action.
+UnableToHandleRequest0=Unable to handle request.
+FailedToHandleRequest0=Failed to handle request.
+CodeGenSupportReferenceParameters=Declaring parameters to be 'out' or 'ref' is not supported by {0}.
+CodeGenSupportParameterAttributes=Custom attributes on parameter declarations are not supported by {0}.
+CodeGenSupportReturnTypeAttributes=Custom attributes on return value are not supported by {0}.
+
+TheBinding0FromNamespace1WasIgnored2=The binding '{0}' from namespace '{1}' was ignored.  {2}
+TheOperation0FromNamespace1WasIgnored2=The operation '{0}' from namespace '{1}' was ignored.  {2}
+TheOperationBinding0FromNamespace1WasIgnored=The operation binding '{0}' from namespace '{1}' was ignored.  {2}
+NoMethodsWereFoundInTheWSDLForThisProtocol=No methods were found in the WSDL for this protocol.
+UnexpectedFlush=Unexpected flush
+ThereWasAnErrorDuringAsyncProcessing=There was an error during async processing.
+CanTCallTheEndMethodOfAnAsyncCallMoreThan=Can't call the end method of an async call more than once.
+AsyncDuplicateUserState=There was an error during asynchronous processing. Unique state object is required for multiple asynchronous simultaneous operations to be outstanding.
+StreamDoesNotSeek=This stream does not support seeking operations.
+StreamDoesNotRead=This stream does not support read operations.
+ElementTypeMustBeObjectOrSoapReflectedException=The elementType must be one of SoapReflectedExtension or Object.
+ElementTypeMustBeObjectOrSoapExtensionOrSoapReflectedException=The elementType must be one of SoapExtension, SoapReflectedExtension, or Object.
+ProtocolDoesNotAsyncSerialize=The protocol does not support async serialization.
+ThereWasAnErrorDownloading0=There was an error downloading '{0}'.
+TheHTMLDocumentDoesNotContainDiscoveryInformation=The HTML document does not contain Web service discovery information.
+TheDocumentWasNotRecognizedAsAKnownDocumentType=The document was not recognized as a known document type (WSDL, XML Schema, or Discovery document) for the following reason: \n  - {0}
+TheDocumentWasUnderstoodButContainsErrors=The document was understood, but it could not be processed.
+TheWSDLDocumentContainsLinksThatCouldNotBeResolved=The WSDL document contains links that could not be resolved.
+TheSchemaDocumentContainsLinksThatCouldNotBeResolved=The XML schema document contains links that could not be resolved.
+CanTSpecifyElementOnEncodedMessagePartsPart=The element attribute is not allowed on encoded message parts. The erroneous part is named '{0}' in message '{1}'.
+CanTMergeMessage=Cannot add service description with targetNamespace='{0}': message with name='{1}' already present in the description collection.
+CanTMergePortType=Cannot add service description with targetNamespace='{0}': portType with name='{1}' already present in the description collection.
+CanTMergeBinding=Cannot add service description with targetNamespace='{0}': binding with name='{1}' already present in the description collection.
+CanTMergeTypes=Cannot add service description with targetNamespace='{0}': schema with targetNamespace='{1}' already present in the description collection.
+CanTMergeService=Cannot add service description with targetNamespace='{0}': service with name='{1}' already present in the description collection.
+indexMustBeBetweenAnd0Inclusive=index must be between 0 and {0}, inclusive.
+BPConformanceSoapEncodedMethod=WebMethod {0} on WebService {1} claims conformance, but use=encoded is non-conformant according to WS-I Basic Profile v1.1.
+BPConformanceHeaderFault=WebMethod {0} on WebService {1} claims conformance. Using SOAP header with {2}={3}.{4} is not allowed on conformant methods. 
+WsdlGenRpcLitAnonimousType=Method {0}.{1} can not be reflected. Parameter '{2}' may not be used with Rpc\\Literal SOAP messages because it is declared using an anonymous schema type, only top-level named types can be used with rpc\\literal SOAP messages.
+WsdlGenRpcLitAccessorNamespace=Method {0}.{1} can not be reflected. Parameter '{2}' has invalid accessor: If you are using the Rpc\\Literal method, you can set the part's namespace.
+StackTraceEnd=--- End of inner exception stack trace ---
+CodeRemarks=<remarks/>
+CodegenWarningDetails=CODEGEN: {0}
+
+ValidationError=Error: {0} Line {1}, position {2}.
+SchemaValidationError=Schema validation error: {0}
+SchemaValidationWarning=Schema validation warning: {0}
+SchemaSyntaxErrorDetails=Schema with targetNamespace='{0}' has invalid syntax. {1} Line {2}, position {3}.
+SchemaSyntaxErrorItemDetails=Schema with targetNamespace='{0}' has invalid syntax. Check schema item '{1}' named '{2}': {3}
+InitFailed=Initialization failure. Please review input options and documents for validity.
+
+XmlSchemaElementReference=Element reference '{0}' declared in schema type '{1}' from namespace '{2}'.
+XmlSchemaAttributeReference=Attribute reference '{0}' declared in schema type '{1}' from namespace '{2}'.
+XmlSchemaItem=Schema item '{1}' from namespace '{0}'. {2}
+XmlSchemaNamedItem=Schema item '{1}' named '{2}' from namespace '{0}' is invalid. {3}
+XmlSchemaContentDef=Check content definition of schema type '{0}' from namespace '{1}'. {2}
+XmlSchema=Schema with targetNamespace='{0}' has invalid syntax. {1}
+
+;
+; Tracing messages
+;
+TraceCallEnter=Calling {0}\r\n    Caller: {1}
+TraceCallEnterDetails=Calling {0}\r\n    Method: {2}\r\n    Caller: {1}
+TraceCallExit=Return from {0}\r\n    Caller: {1}
+TraceExceptionThrown=Exception thrown in {0}.\r\n    {1}: {2}
+TraceExceptionCought=Exception caught in {0}.\r\n    {1}: {2}
+TraceExceptionIgnored=Exception ignored in {0}.\r\n    {1}: {2}
+TraceExceptionDetails=Exception Details:\r\n{0}
+TracePostWorkItemIn=Calling WorkItem.Post({0})
+TracePostWorkItemOut=Return from WorkItem.Post({0})
+
+;Caller HttpRequest info
+TraceUserHostName=Request Host Name: {0}
+TraceUserHostAddress=Request Host Address: {0}
+TraceUrl=Request Url: [{0}] {1}
+TraceUrlReferrer=Http referrer: {0}
+
+TraceCreateSerializer=XmlSerializer [Create XmlSerializer]
+TraceWriteRequest=XmlSerializer [Write Request]
+TraceWriteResponse=XmlSerializer [Write Response]
+TraceWriteHeaders=XmlSerializer [Write SOAP Headers]
+TraceReadRequest=XmlSerializer [Read Request]
+TraceReadResponse=XmlSerializer [Read Response]
+TraceReadHeaders=XmlSerializer [Read SOAP Headers]

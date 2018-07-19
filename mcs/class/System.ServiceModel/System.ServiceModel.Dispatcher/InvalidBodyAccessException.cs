@@ -34,8 +34,8 @@ namespace System.ServiceModel.Dispatcher
 	[Serializable]
 	public abstract class InvalidBodyAccessException : SystemException
 	{
-		protected InvalidBodyAccessException (string msg) : base (msg) {}
-		protected InvalidBodyAccessException (string msg, Exception inner) : base (msg, inner) {}
+		protected InvalidBodyAccessException (string message) : base (message) {}
+		protected InvalidBodyAccessException (string message, Exception innerException) : base (message, innerException) {}
 		protected InvalidBodyAccessException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}
 	}

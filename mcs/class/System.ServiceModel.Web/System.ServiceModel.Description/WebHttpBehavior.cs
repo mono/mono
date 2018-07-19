@@ -40,7 +40,6 @@ namespace System.ServiceModel.Description
 		public static WebAttributeInfo GetWebAttributeInfo (this OperationDescription od)
 		{
 			foreach (IOperationBehavior ob in od.Behaviors) {
-				WebAttributeInfo info = null;
 				var wg = ob as WebGetAttribute;
 				if (wg != null)
 					return wg.Info;
@@ -84,7 +83,7 @@ namespace System.ServiceModel.Description
 			// clientRuntime.MessageInspectors.Add (something);
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		protected virtual void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (new WebHttpErrorHandler ());
@@ -103,7 +102,7 @@ namespace System.ServiceModel.Description
 
 		public virtual void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 			throw new NotImplementedException ();
 #else
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
@@ -146,7 +145,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		internal class DispatchPairFormatter : IDispatchMessageFormatter
 		{
 			public DispatchPairFormatter (IDispatchMessageFormatter request, IDispatchMessageFormatter reply)
@@ -185,7 +184,7 @@ namespace System.ServiceModel.Description
 			return new WebMessageFormatter.ReplyClientFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		protected virtual IDispatchMessageFormatter GetReplyDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return new WebMessageFormatter.ReplyDispatchFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
@@ -197,7 +196,7 @@ namespace System.ServiceModel.Description
 			return new WebMessageFormatter.RequestClientFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		protected virtual IDispatchMessageFormatter GetRequestDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return new WebMessageFormatter.RequestDispatchFormatter (operationDescription, endpoint, GetQueryStringConverter (operationDescription), this);
@@ -287,7 +286,7 @@ namespace System.ServiceModel.Description
 				throw new InvalidOperationException ("ManualAddressing in the transport binding element in the binding must be true for WebHttpBehavior");
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		internal class WebHttpErrorHandler : IErrorHandler
 		{
 			public void ProvideFault (Exception error, MessageVersion version, ref Message fault)

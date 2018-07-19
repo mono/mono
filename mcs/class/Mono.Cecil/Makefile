@@ -2,11 +2,19 @@ thisdir = class/Mono.Cecil
 include ../../build/rules.make
 
 LIBRARY = Mono.Cecil.dll
-LIBRARY_SNK = ../mono.snk
+KEYFILE = ../mono.snk
 LIBRARY_PACKAGE = none
 
-LIB_REFS = System.Core
-LIB_MCS_FLAGS = /r:$(corlib) -keyfile:$(LIBRARY_SNK) -d:NET_3_5
+API_BUILD := $(filter basic build, $(PROFILE))
+
+ifdef API_BUILD
+DEFAULT_REFERENCES =
+API_BIN_REFS = System.Core System mscorlib
+else
+LIB_REFS = System.Core System
+endif
+
+LIB_MCS_FLAGS = -d:NET_4_0
 
 NO_TEST = yes
 

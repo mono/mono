@@ -39,7 +39,11 @@ namespace System.Security.AccessControl
 {
 	public abstract class ObjectSecurity
 	{
-		internal ObjectSecurity (CommonSecurityDescriptor securityDescriptor)
+		protected ObjectSecurity ()
+		{
+		}
+
+		protected ObjectSecurity (CommonSecurityDescriptor securityDescriptor)
 		{
 			if (securityDescriptor == null)
 				throw new ArgumentNullException ("securityDescriptor");

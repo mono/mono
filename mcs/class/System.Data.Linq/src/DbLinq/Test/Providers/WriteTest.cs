@@ -165,7 +165,7 @@ using Id = System.Int32;
             newProd.QuantityPerUnit = "33 1/2";
             db.Products.InsertOnSubmit(newProd);
             db.SubmitChanges();
-            Assert.Greater(newProd.ProductID, 0, "After insertion, ProductID should be non-zero");
+            AssertHelper.Greater(newProd.ProductID, 0, "After insertion, ProductID should be non-zero");
             //Assert.IsFalse(newProd.IsModified, "After insertion, Product.IsModified should be false");
             return (int)newProd.ProductID; //this test cab be used from delete tests
         }
@@ -180,7 +180,7 @@ using Id = System.Int32;
         public void G2_DeleteTest()
         {
             int insertedID = insertProduct_priv();
-            Assert.Greater(insertedID, 0, "DeleteTest cannot operate if row was not inserted");
+            AssertHelper.Greater(insertedID, 0, "DeleteTest cannot operate if row was not inserted");
 
             Northwind db = CreateDB();
 
@@ -200,7 +200,7 @@ using Id = System.Int32;
         public void G3_DeleteTest()
         {
             int insertedID = insertProduct_priv();
-            Assert.Greater(insertedID, 0, "DeleteTest cannot operate if row was not inserted");
+            AssertHelper.Greater(insertedID, 0, "DeleteTest cannot operate if row was not inserted");
 
             Northwind db = CreateDB();
 

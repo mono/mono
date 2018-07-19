@@ -1,5 +1,8 @@
 #include System.Runtime.Serialization.dll.sources
 #include ReferenceSource.common.sources
 
-ReferenceSources/SchemaExporter_mobile.cs
 ReferenceSources/SimplifiedCodeTypeReference.cs
+
+corefx/DiagnosticUtility.cs
+
+../../../external/corefx/src/System.Private.DataContractSerialization/src/System/Runtime/Serialization/XsdDataContractExporter.cs

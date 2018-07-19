@@ -7,7 +7,7 @@
 // (C) 2005 Novell
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System.Net.Configuration;
 

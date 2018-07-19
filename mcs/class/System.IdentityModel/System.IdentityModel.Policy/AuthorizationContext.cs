@@ -39,15 +39,15 @@ namespace System.IdentityModel.Policy
 	{
 		[MonoTODO]
 		public static AuthorizationContext 
-			CreateDefaultAuthorizationContext (IList<IAuthorizationPolicy> policies)
+			CreateDefaultAuthorizationContext (IList<IAuthorizationPolicy> authorizationPolicies)
 		{
-			if (policies == null)
-				throw new ArgumentNullException ("policies");
+			if (authorizationPolicies == null)
+				throw new ArgumentNullException ("authorizationPolicies");
 
 			string id = new UniqueId ().ToString ();
 			DefaultEvaluationContext ctx =
 				new DefaultEvaluationContext ();
-			foreach (IAuthorizationPolicy a in policies) {
+			foreach (IAuthorizationPolicy a in authorizationPolicies) {
 				object o = null;
 				a.Evaluate (ctx, ref o);
 			}

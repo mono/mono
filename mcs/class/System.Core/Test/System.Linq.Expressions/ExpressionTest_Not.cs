@@ -163,7 +163,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedNotNullable ()
 		{
 			var s = Expression.Parameter (typeof (Slot?), "s");

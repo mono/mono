@@ -488,7 +488,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			int raised = 0;
 			source.PositionChanged += delegate (object sender, EventArgs e) { raised ++; };
 
-			Console.WriteLine ("count = {0}", source.Count);
+			Assert.AreEqual (5, source.Count, "0");
 			source.Position = 3;
 			Assert.AreEqual (3, source.Position, "1");
 
@@ -1632,9 +1632,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsFalse (source.SupportsSearching, "2");
 
 			c.supports_searching = true;
-
-			Console.WriteLine ("set c.supports_searching to {0}, so c.SupportsSearching = {1}",
-					   c.supports_searching, c.SupportsSearching);
 
 			Assert.IsTrue (source.SupportsSearching, "3");
 		}

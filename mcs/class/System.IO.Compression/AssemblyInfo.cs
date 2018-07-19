@@ -36,4 +36,4 @@ using System.Reflection;
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
+[assembly: CLSCompliant (true)]

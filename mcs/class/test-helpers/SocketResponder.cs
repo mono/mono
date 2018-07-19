@@ -64,7 +64,7 @@ namespace MonoTests.Helpers
 			tcpListener = new TcpListener (ep);
 			tcpListener.Start ();
 
-			listenTask = Task.Run (Listen);
+			listenTask = Task.Run ((Action) Listen);
 		}
 
 		public void Dispose ()
@@ -91,8 +91,11 @@ namespace MonoTests.Helpers
 					listenSocket = tcpListener.AcceptSocket ();
 					listenSocket.Send (requestHandler (listenSocket));
 					try {
-						listenSocket.Shutdown (SocketShutdown.Receive);
+						// On Windows a Receive() is needed here before Shutdown() to consume the data some tests send.
+						listenSocket.ReceiveTimeout = 10 * 1000;
+						listenSocket.Receive (new byte [0]);
 						listenSocket.Shutdown (SocketShutdown.Send);
+						listenSocket.Shutdown (SocketShutdown.Receive);
 					} catch {
 					}
 				} catch (SocketException ex) {

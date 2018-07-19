@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 Test/standalone-tests/Consts.cs
 Test/standalone-tests/Locations.cs
 Test/standalone-tests/OutputCacheProvider.cs

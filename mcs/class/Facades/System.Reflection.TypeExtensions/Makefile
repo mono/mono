@@ -9,12 +9,13 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.Reflection.TypeExtensions.dll
 
-KEY_FILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
+KEYFILE = ../../msfinal.pub
+SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib
+LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
-PLATFORM_DEBUG_FLAGS =
+RESX_RESOURCE_STRING = \
+	../../../../external/corefx/src/System.Reflection.TypeExtensions/src/Resources/Strings.resx
 
 NO_TEST = yes
 

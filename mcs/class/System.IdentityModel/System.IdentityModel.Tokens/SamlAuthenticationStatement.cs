@@ -124,7 +124,7 @@ namespace System.IdentityModel.Tokens
 		[MonoTODO]
 		public override void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer,
+			SecurityTokenSerializer keyInfoSerializer,
 			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			throw new NotImplementedException ();
@@ -132,7 +132,7 @@ namespace System.IdentityModel.Tokens
 
 		public override void WriteXml (XmlDictionaryWriter writer,
 			SamlSerializer samlSerializer,
-			SecurityTokenSerializer keyInfoTokenSerializer)
+			SecurityTokenSerializer keyInfoSerializer)
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
@@ -145,7 +145,7 @@ namespace System.IdentityModel.Tokens
 			writer.WriteAttributeString ("AuthenticationMethod", AuthenticationMethod);
 			writer.WriteAttributeString ("AuthenticationInstant", 
 				AuthenticationInstant.ToString (SamlConstants.DateFormat, CultureInfo.InvariantCulture));
-			SamlSubject.WriteXml (writer, samlSerializer, keyInfoTokenSerializer);
+			SamlSubject.WriteXml (writer, samlSerializer, keyInfoSerializer);
 			if (DnsAddress != null || IPAddress != null) {
 				writer.WriteStartElement ("saml", "SubjectLocality", SamlConstants.Namespace);
 				if (IPAddress != null)

@@ -43,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// FastZipEvents supports all events applicable to <see cref="FastZip">FastZip</see> operations.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class FastZipEvents
 	{
 		/// <summary>
@@ -122,6 +123,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// FastZip provides facilities for creating and extracting zip files.
 	/// Only relative paths are supported.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class FastZip
 	{
 		/// <summary>

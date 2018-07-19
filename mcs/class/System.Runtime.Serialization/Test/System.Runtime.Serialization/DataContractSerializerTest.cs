@@ -122,5 +122,17 @@ namespace MonoTests.System.Runtime.Serialization
 				Assert.IsTrue (s.Contains ("<Flags>All</Flags>"));
 			}
 		}
+
+		// Bug #37116
+		[Test]
+		public void KeyPairOfAny ()
+		{
+			var dict = new Dictionary<string, object> ();
+			dict.Add ("test", new List<string> () { "test entry" });
+
+			var dcs = new DataContractSerializer (typeof(Dictionary<string, object>));
+			dcs.WriteObject (new MemoryStream (), dict);
+			// Should not throw exception.
+		}
 	}
 }

@@ -29,10 +29,10 @@ namespace System.ServiceModel.PeerResolvers
 		{
 		}
 		
-		public UnregisterInfo (string meshId, Guid registration_id)
+		public UnregisterInfo (string meshId, Guid registrationId)
 		{
 			Body.MeshId = meshId;
-			Body.RegistrationId = registration_id;
+			Body.RegistrationId = registrationId;
 		}
 		
 		public string MeshId {

@@ -40,7 +40,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
-using MonoTests.Common;
 
 using System.Web.UI.Adapters;
 
@@ -1059,7 +1058,7 @@ namespace MonoTests.System.Web.UI
 			var ctl = new Control ();
 			object obj = new { foo = "one", bar = "two" };
 			string path;
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				path = ctl.GetRouteUrl ("myroute1", obj);
 			}, "#A1");
 
@@ -1090,7 +1089,7 @@ namespace MonoTests.System.Web.UI
 				{"bar", "two"}
 			};
 			string path;
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				path = ctl.GetRouteUrl ("myroute", rvd);
 			}, "#A1");
 

@@ -31,22 +31,28 @@ namespace System.ServiceModel
 {
 	public sealed class MessageSecurityOverTcp
 	{
+#if !MOBILE && !XAMMAC_4_5
 		SecurityAlgorithmSuite alg_suite;
+#endif
 		MessageCredentialType client_credential_type;
 
-		internal MessageSecurityOverTcp ()
+		public MessageSecurityOverTcp ()
 		{
+#if !MOBILE && !XAMMAC_4_5
 			alg_suite = SecurityAlgorithmSuite.Default;
+#endif
 			// This default value is *silly* but anyways
 			// such code that does not change this ClientCredentialType 
 			// won't work on Mono.
 			client_credential_type = MessageCredentialType.Windows;
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public SecurityAlgorithmSuite AlgorithmSuite {
 			get { return alg_suite; }
 			set { alg_suite = value; }
 		}
+#endif
 
 		public MessageCredentialType ClientCredentialType {
 			get { return client_credential_type; }

@@ -371,7 +371,7 @@ namespace MonoTests.Remoting
 			
 			try {
 				testerSurrogate.ProcessContextData ();
-				Assert.IsTrue (false, "Exception not thrown");
+				Assert.Fail ("Exception not thrown");
 			} catch (Exception ex) {
 				if (ex.InnerException != null)
 					ex = ex.InnerException;

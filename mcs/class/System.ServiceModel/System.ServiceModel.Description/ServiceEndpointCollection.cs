@@ -38,27 +38,27 @@ namespace System.ServiceModel.Description
 		{
 		}
 
-		public ServiceEndpoint Find (Type type)
+		public ServiceEndpoint Find (Type contractType)
 		{
 			foreach (ServiceEndpoint e in this)
-				if (e.Contract.ContractType == type)
+				if (e.Contract.ContractType == contractType)
 					return e;
 			return null;
 		}
 
-		public ServiceEndpoint Find (Uri uri)
+		public ServiceEndpoint Find (Uri address)
 		{
 			foreach (ServiceEndpoint e in this)
-				if (e.Address.Uri == uri)
+				if (e.Address.Uri == address)
 					return e;
 			return null;
 		}
 
-		public ServiceEndpoint Find (XmlQualifiedName name)
+		public ServiceEndpoint Find (XmlQualifiedName contractName)
 		{
 			foreach (ServiceEndpoint e in this)
-				if (e.Contract.Name == name.Name &&
-					e.Contract.Namespace == name.Namespace)
+				if (e.Contract.Name == contractName.Name &&
+					e.Contract.Namespace == contractName.Namespace)
 					return e;
 			return null;
 		}
@@ -96,13 +96,13 @@ namespace System.ServiceModel.Description
 			return list;
 		}
 
-		public Collection<ServiceEndpoint> FindAll (XmlQualifiedName name)
+		public Collection<ServiceEndpoint> FindAll (XmlQualifiedName contractName)
 		{
 			Collection<ServiceEndpoint> list =
 				new Collection<ServiceEndpoint> ();
 			foreach (ServiceEndpoint e in this)
-				if (e.Contract.Name == name.Name &&
-				    e.Contract.Namespace == name.Namespace)
+				if (e.Contract.Name == contractName.Name &&
+				    e.Contract.Namespace == contractName.Namespace)
 					list.Add (e);
 			return list;
 		}

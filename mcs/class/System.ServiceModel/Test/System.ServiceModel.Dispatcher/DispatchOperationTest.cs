@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -105,23 +105,53 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 					Assert.AreEqual (5, p.ErrorCode, "#2");
 					Assert.AreEqual ("foobarerror", p.Text, "#3");
 				}
+			} finally {
+				host.Close ();
+			}
+		}
+
+		[Test]
+		public void FaultContractInfos_2 ()
+		{
+			var host = new ServiceHost (typeof (TestFaultContract));
+			int port = NetworkHelpers.FindFreePort ();
+			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = false;
+			host.AddServiceEndpoint (typeof (ITestFaultContract), new BasicHttpBinding (), new Uri ("http://localhost:" + port));
+			host.Open ();
+			try {
+				var cf = new ChannelFactory<ITestFaultContract> (new BasicHttpBinding (), new EndpointAddress ("http://localhost:" + port));
+				var cli = cf.CreateChannel ();
 
 				try {
 					cli.Run ("deriveddata");
 					Assert.Fail ("#4");
-				} catch (Exception ex) {
+				} catch (FaultException ex) {
 					// The type must be explicitly listed in the [FaultContract],
 					// it is not allowed to use a subclass of the exception data type.
-					Assert.AreEqual (typeof (FaultException), ex.GetType (), "#5");
 				}
+			} finally {
+				host.Close ();
+			}
+		}
 
+		[Test]
+		public void FaultContractInfos_3 ()
+		{
+			var host = new ServiceHost (typeof (TestFaultContract));
+			int port = NetworkHelpers.FindFreePort ();
+			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = false;
+			host.AddServiceEndpoint (typeof (ITestFaultContract), new BasicHttpBinding (), new Uri ("http://localhost:" + port));
+			host.Open ();
+			try {
+				var cf = new ChannelFactory<ITestFaultContract> (new BasicHttpBinding (), new EndpointAddress ("http://localhost:" + port));
+				var cli = cf.CreateChannel ();
+				
 				try {
 					cli.Run ("derivedexception");
 					Assert.Fail ("#6");
-				} catch (Exception ex) {
+				} catch (FaultException<PrivateAffairError> ex) {
 					// However, it is allowed to derive from FaultException<T>, provided
 					// that T is explicitly listed in [FaultContract].  Bug #7177.
-					Assert.AreEqual (typeof (FaultException<PrivateAffairError>), ex.GetType (), "#7");
 				}
 			} finally {
 				host.Close ();
@@ -182,3 +212,4 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 	}
 }
+#endif

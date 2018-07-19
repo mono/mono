@@ -1,5 +1,0 @@
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title type="text" />
-  <id>Id should be guid if not set</id>
-  <updated>2000-05-12T04:00:00Z</updated>
-</feed>

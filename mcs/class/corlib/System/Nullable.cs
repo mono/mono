@@ -38,133 +38,8 @@ using System.Diagnostics;
 
 namespace System
 {
-	[ComVisible (true)]
-	public static class Nullable {
-
-#if NET_2_1
-		[ComVisible (false)]
-#endif
-		public static int Compare<T> (T? n1, T? n2) where T: struct
-		{
-			if (n1.has_value) {
-				if (!n2.has_value)
-					return 1;
-
-				return Comparer<T>.Default.Compare (n1.value, n2.value);
-			}
-			
-			return n2.has_value ? -1 : 0;
-		}
-
-#if NET_2_1
-		[ComVisible (false)]
-#endif
-		public static bool Equals<T> (T? n1, T? n2) where T: struct
-		{
-			if (n1.has_value != n2.has_value)
-				return false;
-
-			if (!n1.has_value)
-				return true;
-
-			return EqualityComparer<T>.Default.Equals (n1.value, n2.value);
-		}
-
-		public static Type GetUnderlyingType (Type nullableType)
-		{
-			if (nullableType == null)
-				throw new ArgumentNullException ("nullableType");
-
-			return nullableType.IsGenericType && !nullableType.IsGenericTypeDefinition && nullableType.GetGenericTypeDefinition () == typeof(Nullable<>) ?
-				nullableType.GetGenericArguments () [0] : null;
-		}
-	}
-
-	[Serializable]
-	[DebuggerStepThrough]
-	public struct Nullable<T> where T: struct
+	public partial struct Nullable<T> where T: struct
 	{
-		#region Sync with runtime code
-		internal T value;
-		internal bool has_value;
-		#endregion
-
-		public Nullable (T value)
-		{
-			this.has_value = true;
-			this.value = value;
-		}
-
-		public bool HasValue {
-			get { return has_value; }
-		}
-
-		public T Value {
-			get { 
-				if (!has_value)
-					throw new InvalidOperationException ("Nullable object must have a value.");
-				
-				return value; 
-			}
-		}
-
-		public override bool Equals (object other)
-		{
-			if (other == null)
-				return has_value == false;
-			if (!(other is Nullable<T>))
-				return false;
-
-			return Equals ((Nullable <T>) other);
-		}
-
-		bool Equals (Nullable<T> other)
-		{
-			if (other.has_value != has_value)
-				return false;
-
-			if (has_value == false)
-				return true;
-
-			return other.value.Equals (value);
-		}
-
-		public override int GetHashCode ()
-		{
-			if (!has_value)
-				return 0;
-
-			return value.GetHashCode ();
-		}
-
-		public T GetValueOrDefault ()
-		{
-			return value;
-		}
-
-		public T GetValueOrDefault (T defaultValue)
-		{
-			return has_value ? value : defaultValue;
-		}
-
-		public override string ToString ()
-		{
-			if (has_value)
-				return value.ToString ();
-			else
-				return String.Empty;
-		}
-
-		public static implicit operator Nullable<T> (T value)
-		{
-			return new Nullable<T> (value);
-		}
-
-		public static explicit operator T (Nullable<T> value)
-		{
-			return value.Value;
-		}
-
 		//
 		// These are called by the JIT
 		//
@@ -174,7 +49,7 @@ namespace System
 		//
 		static object Box (T? o)
 		{
-			if (!o.has_value)
+			if (!o.hasValue)
 				return null;
 				
 			return o.value;
@@ -186,6 +61,17 @@ namespace System
 				return null;
 			return (T) o;
 		}
+
+		static T? UnboxExact (object o)
+		{
+			if (o == null)
+				return null;
+			if (o.GetType() != typeof (T))
+				throw new InvalidCastException();
+
+			return (T) o;
+		}
+
 #pragma warning restore 169
 	}
 }

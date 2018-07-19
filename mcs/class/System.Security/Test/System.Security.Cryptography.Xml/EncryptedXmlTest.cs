@@ -6,7 +6,7 @@
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
-
+#if !MOBILE
 
 using System;
 using System.Collections;
@@ -180,11 +180,22 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			Assert.IsNull (ex.GetIdElement (null, "value"));
 		}
 
-		[Test]
-		public void GetIdElement_StringNull ()
+		[TestCase (null, TestName = "null")]
+		[TestCase ("", TestName = "empty")]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItIsNotProvided_ThrowsArgumentNullException (string elementName)
 		{
-			EncryptedXml ex = new EncryptedXml ();
-			Assert.IsNull (ex.GetIdElement (new XmlDocument (), null));
+			var sut = new EncryptedXml ();
+
+			var ex = Assert.Throws<ArgumentNullException> (() => sut.GetIdElement (new XmlDocument (), elementName), "Exception");
+			Assert.That (ex.ParamName, Is.EqualTo ("name"), "ParamName");
+		}
+
+		[Test]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItContainsColon_ReturnsNull ()
+		{
+			var sut = new EncryptedXml ();
+
+			Assert.That (sut.GetIdElement (new XmlDocument (), "t:test"), Is.Null);
 		}
 
 		[Test]
@@ -295,3 +306,4 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		}
 	}
 }
+#endif

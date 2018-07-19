@@ -63,14 +63,14 @@ namespace System.Web
 			Add (value);
 		}
 		
-		public SiteMapNodeCollection (SiteMapNode[] values)
+		public SiteMapNodeCollection (SiteMapNode[] value)
 		{
-			AddRangeInternal (values);
+			AddRangeInternal (value);
 		}
 		
-		public SiteMapNodeCollection (SiteMapNodeCollection values)
+		public SiteMapNodeCollection (SiteMapNodeCollection value)
 		{
-			AddRangeInternal (values);
+			AddRangeInternal (value);
 		}
 		
 		internal static SiteMapNodeCollection EmptyCollection {

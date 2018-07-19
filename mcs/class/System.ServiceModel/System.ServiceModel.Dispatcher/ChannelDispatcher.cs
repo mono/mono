@@ -356,16 +356,22 @@ namespace System.ServiceModel.Dispatcher
 				owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
-				foreach (var ed in owner.Endpoints)
-					if (ed.DispatchRuntime.InstanceContextProvider == null && (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null))
+				foreach (var ed in owner.Endpoints) {
+					if ((ed.DispatchRuntime.InstanceProvider == null && ed.DispatchRuntime.InstanceContextProvider == null)
+						&& (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null)) {
 						throw new InvalidOperationException ("There is no default constructor for the service Type in the DispatchRuntime");
+					}
+				}
 				SetupChannelAcceptor ();
 			}
 
 			public void Start ()
 			{
-				if (loop_thread == null)
+				if (loop_thread == null) {
 					loop_thread = new Thread (new ThreadStart (Loop));
+					loop_thread.IsBackground = true;
+				}
+
 				loop_thread.Start ();
 			}
 
@@ -411,7 +417,7 @@ namespace System.ServiceModel.Dispatcher
 				if (loop_thread == null)
 					return;
 
-				close_started = DateTime.Now;
+				close_started = DateTime.UtcNow;
 				close_timeout = timeout;
 				loop = false;
 				creator_handle.Set ();
@@ -425,8 +431,10 @@ namespace System.ServiceModel.Dispatcher
 					Logger.Warning (String.Format ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ()));
 					owner.Listener.Abort ();
 				}
-				if (loop_thread != null && loop_thread.IsAlive)
-					loop_thread.Abort ();
+				if (loop_thread != null && loop_thread.IsAlive) {
+					if (!loop_thread.Join (500))
+						loop_thread.Abort ();
+				}
 				loop_thread = null;
 			}
 
@@ -462,7 +470,7 @@ namespace System.ServiceModel.Dispatcher
 					}
 					else {
 						try {
-							ch.Close (close_timeout - (DateTime.Now - close_started));
+							ch.Close (close_timeout - (DateTime.UtcNow - close_started));
 						} catch (Exception ex) {
 							// FIXME: log it.
 							Logger.Error (String.Format ("Exception on closing channel ({0})", ch.GetType ()), ex);
@@ -610,16 +618,16 @@ namespace System.ServiceModel.Dispatcher
 
 					if ((!(ex is SocketException)) && 
 					    (!(ex is XmlException)) &&
-					    (!(ex is IOException)))
+					    (!(ex is IOException)) &&
+					    rc != null)
 						rc.Reply (res);
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				} finally {
 					if (rc != null)
 						rc.Close ();
-					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (loop && reply.State != CommunicationState.Closed)
-						ProcessRequestOrInput (reply);
+
+					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				}
 			}
 

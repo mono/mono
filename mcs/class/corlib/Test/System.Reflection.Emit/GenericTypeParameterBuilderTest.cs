@@ -353,5 +353,60 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (TypeAttributes.Public, gparam.Attributes, "#1");
 		}
+
+		[Test]
+		public void ActionConstructorInfoTest ()
+		{
+			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=58454
+			//
+			// Need to check that GenericTypeParameterBuilderTest:InternalResolve() passes the declaring type to GetMethodFromHandle()
+			//
+			/* Want to generate:
+
+			   public class Store<TState> {
+			   public Action<TSelection> Subscribe<TSelection> (TState state) {
+			   	return new Action<TSelection> (Foo<TSelection>);
+			   }
+			   public static void Foo<X> (X x) { }
+			   }
+
+			   ...  and then: new Store<string>().Subscribe<int>("x");
+			*/
+
+			SetUp (AssemblyBuilderAccess.Run);
+
+			var tb = module.DefineType ("Store");
+			var tparsStore = tb.DefineGenericParameters ("TState");
+
+			tb.DefineDefaultConstructor (MethodAttributes.Public);
+
+			var methFoo = tb.DefineMethod ("Foo", MethodAttributes.Public | MethodAttributes.Static);
+			var tparsFoo = methFoo.DefineGenericParameters ("X");
+			methFoo.SetReturnType (typeof(void));
+			methFoo.SetParameters (tparsFoo[0]);
+			methFoo.GetILGenerator().Emit (OpCodes.Ret);
+
+			var methSub = tb.DefineMethod ("Subscribe", MethodAttributes.Public | MethodAttributes.Static);
+			var tparsSub = methSub.DefineGenericParameters ("TSelection");
+			var actOfSel = typeof(Action<>).MakeGenericType (tparsSub[0]); // Action<TSelection>
+			methSub.SetReturnType  (actOfSel);
+			methSub.SetParameters (tparsStore[0]); // TState
+			var ilg = methSub.GetILGenerator ();
+			ilg.Emit (OpCodes.Ldnull); // instance == null
+			ilg.Emit (OpCodes.Ldftn, methFoo.MakeGenericMethod (tparsSub[0])); // ldftn void class Store`1<!TState>::Foo<!!0> (!!0)
+			var aaa = TypeBuilder.GetConstructor (actOfSel, typeof(Action<>).GetConstructors()[0]);
+			ilg.Emit (OpCodes.Newobj, aaa); // new Action<TSelection> (Foo<TSelection>);
+			ilg.Emit (OpCodes.Ret);
+
+			var tgen = tb.CreateType (); // TState`1
+
+			var t = tgen.MakeGenericType(typeof(string));
+			var x = t.GetConstructor(Type.EmptyTypes).Invoke (null); // x = new Store<string> ()
+			var mgen = t.GetMethod("Subscribe");
+			var m = mgen.MakeGenericMethod (typeof (int)); // Action<int> Store<string>.Subscribe<int> (string)
+			var y = m.Invoke (x, new object[] {"hello"}); // x.Subscribte<int> ("hello")
+			Assert.IsNotNull (y);
+		}
+
 	}
 }

@@ -142,7 +142,9 @@ namespace Microsoft.Build.Tasks
 					framework_dir = Path.Combine (redistlist_dir, framework_dir);
 
 				var directories = new List<string> ();
-				directories.Add (MSBuildUtils.FromMSBuildPath (framework_dir));
+
+				//MSBuild has a trailing slash on this value
+				directories.Add (MSBuildUtils.FromMSBuildPath (framework_dir) + Path.DirectorySeparatorChar);
 
 				string include = xr.GetAttribute ("IncludeFramework");
 				if (!String.IsNullOrEmpty (include)) {

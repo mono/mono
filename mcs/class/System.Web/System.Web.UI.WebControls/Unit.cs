@@ -376,14 +376,14 @@ namespace System.Web.UI.WebControls {
 			return ToString (Helpers.InvariantCulture);
 		}
 
-		public string ToString (IFormatProvider provider)
+		public string ToString (IFormatProvider formatProvider)
 		{
 			if (type == 0)
 				return String.Empty;
 
 			string ex = GetExtension (type);
 
-			return value.ToString (provider) + ex;
+			return value.ToString (formatProvider) + ex;
 		}
 	}
 

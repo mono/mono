@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -34,7 +35,6 @@ using System.ServiceModel.Description;
 using System.Text;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using TextElement = System.ServiceModel.Channels.TextMessageEncodingBindingElement;
 using BinaryElement = System.ServiceModel.Channels.BinaryMessageEncodingBindingElement;
@@ -136,3 +136,5 @@ namespace MonoTests.System.ServiceModel.Channels
 
 	}
 }
+#endif
+

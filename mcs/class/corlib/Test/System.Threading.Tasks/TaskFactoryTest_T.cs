@@ -32,9 +32,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Threading.Tasks
 {

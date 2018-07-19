@@ -47,7 +47,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		public override string ContentType {
-#if NET_2_1
+#if MOBILE
 			get { return MediaType; }
 #else
 			get { return MediaType + "; charset=" + source.WriteEncoding.HeaderName; }
@@ -114,7 +114,7 @@ namespace System.ServiceModel.Channels
 				break;
 			case WebContentFormat.Json:
 				// FIXME: is it safe/unsafe/required to keep XmlReader open?
-#if NET_2_1
+#if MOBILE
 				msg = Message.CreateMessage (MessageVersion.None, null, JsonReaderWriterFactory.CreateJsonReader (stream, source.ReaderQuotas));
 #else
 				msg = Message.CreateMessage (MessageVersion.None, null, JsonReaderWriterFactory.CreateJsonReader (stream, enc, source.ReaderQuotas, null));
@@ -174,7 +174,7 @@ namespace System.ServiceModel.Channels
 
 			switch (GetContentFormat (message)) {
 			case WebContentFormat.Xml:
-#if NET_2_1
+#if MOBILE
 				using (XmlWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (new StreamWriter (stream, source.WriteEncoding))))
 					message.WriteMessage (w);
 #else

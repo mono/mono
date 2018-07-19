@@ -142,6 +142,9 @@ namespace Mono.CSharp {
 	}
 
 	public class ParamsParameter : Parameter {
+
+		bool ParamsAttributeEmit;
+
 		public ParamsParameter (FullNamedExpression type, string name, Attributes attrs, Location loc):
 			base (type, name, Parameter.Modifier.PARAMS, attrs, loc)
 		{
@@ -158,13 +161,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			var mc = ec as MemberCore;
+			ParamsAttributeEmit = mc == null || (mc.ModFlags & Modifiers.OVERRIDE) == 0;
+
 			return parameter_type;
 		}
 
 		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, PredefinedAttributes pa)
 		{
 			base.ApplyAttributes (mb, cb, index, pa);
-			pa.ParamArray.EmitAttribute (builder);
+
+			if (ParamsAttributeEmit)
+				pa.ParamArray.EmitAttribute (builder);
 		}
 	}
 
@@ -213,12 +221,13 @@ namespace Mono.CSharp {
 			REF = 1 << 1,
 			OUT = 1 << 2,
 			This = 1 << 3,
-			CallerMemberName = 1 << 4,
-			CallerLineNumber = 1 << 5,
-			CallerFilePath = 1 << 6,
+			ReadOnly = 1 << 4,
+			CallerMemberName = 1 << 5,
+			CallerLineNumber = 1 << 6,
+			CallerFilePath = 1 << 7,
 
 			RefOutMask = REF | OUT,
-			ModifierMask = PARAMS | REF | OUT | This,
+			ModifierMask = PARAMS | REF | OUT | This | ReadOnly,
 			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
 		}
 
@@ -717,6 +726,10 @@ namespace Mono.CSharp {
 					pa.Dynamic.EmitAttribute (builder);
 				} else if (parameter_type.HasDynamicElement) {
 					pa.Dynamic.EmitAttribute (builder, parameter_type, Location);
+				}
+
+				if (parameter_type.HasNamedTupleElement) {
+					pa.TupleElementNames.EmitAttribute (builder, parameter_type, Location);
 				}
 			}
 		}
@@ -1435,7 +1448,7 @@ namespace Mono.CSharp {
 
 			expr = Child;
 
-			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsGeneratedStructConstructor))) {
+			if (!(expr is Constant || expr is DefaultValueExpression || expr is DefaultLiteralExpression || (expr is New && ((New) expr).IsGeneratedStructConstructor))) {
 				if (!(expr is ErrorExpression)) {
 					rc.Report.Error (1736, Location,
 						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
@@ -1462,9 +1475,9 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
+				if (!res.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
-						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+						"Optional parameter `{0}' of type `{1}' can only be initialized with default value",
 						p.Name, parameter_type.GetSignatureForError ());
 
 					return;

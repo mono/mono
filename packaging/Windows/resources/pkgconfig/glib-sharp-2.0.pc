@@ -1,0 +1,12 @@
+prefix=${pcfiledir}../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+gapidir=${prefix}/share/gapi-2.0
+
+
+Name: GLib#
+Description: GLib# - .NET Binding for the glib library.
+Version: 2.12.26
+Cflags: -I:${gapidir}/glib-api.xml
+Libs: -r:${libdir}/gtk-sharp-2.0/glib-sharp.dll
+

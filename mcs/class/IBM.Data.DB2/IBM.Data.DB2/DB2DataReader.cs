@@ -462,14 +462,16 @@ namespace IBM.Data.DB2
 			for(int i = 0; i < columnInfo.Length; i++)
 			{
 				short sqlRet;
-				short strlen;
-				int numericAttribute;
-
-				sqlRet = DB2CLIWrapper.SQLColAttribute(hwndStmt, (short)(i + 1), (short)DB2Constants.SQL_DESC_BASE_COLUMN_NAME, sb, (short)sb.Capacity, out strlen, out numericAttribute);
+				short strlen = 0;
+				int numericAttribute = 0;
+				
+				sb.Clear();
+				sqlRet = DB2CLIWrapper.SQLColAttribute(hwndStmt, (short)(i + 1), (short)DB2Constants.SQL_DESC_COLUMN_NAME, sb, (short)sb.Capacity, out strlen, out numericAttribute);
 				DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "GetSchemaTable");
 				columnInfo[i].Colname = sb.ToString();
 				columnsNames[columnInfo[i].Colname.ToUpper()] = i;
-
+				
+				strlen = 0;
 				sqlRet = DB2CLIWrapper.SQLColAttribute(hwndStmt, (short)(i + 1), (short)DB2Constants.SQL_DESC_CONCISE_TYPE, sb, (short)sb.Capacity, out strlen, out columnInfo[i].Sqltype);
 				DB2ClientUtils.DB2CheckReturn(sqlRet, DB2Constants.SQL_HANDLE_STMT, hwndStmt, "GetSchemaTable");
 

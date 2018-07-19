@@ -14,6 +14,9 @@ class X
 		if (fvi.FileVersion != "2011.02.0.0")
 			return 1;
 
+		if (fvi.ProductVersion != "2011.02.0.0")
+			return 2;
+
 		return 0;
 	}
 }

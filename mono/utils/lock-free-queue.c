@@ -1,5 +1,6 @@
-/*
- * lock-free-queue.c: Lock free queue.
+/**
+ * \file
+ * Lock free queue.
  *
  * (C) Copyright 2011 Novell, Inc
  *
@@ -61,6 +62,9 @@
 #define END_MARKER	((MonoLockFreeQueueNode *volatile)-2)
 #define FREE_NEXT	((MonoLockFreeQueueNode *volatile)-3)
 
+/*
+ * Initialize a lock-free queue in-place at @q.
+ */
 void
 mono_lock_free_queue_init (MonoLockFreeQueue *q)
 {
@@ -77,17 +81,30 @@ mono_lock_free_queue_init (MonoLockFreeQueue *q)
 	q->has_dummy = 1;
 }
 
+/*
+ * Initialize @node's state. If @poison is TRUE, @node may not be enqueued to a
+ * queue - @mono_lock_free_queue_node_unpoison must be called first; otherwise,
+ * the node can be enqueued right away.
+ *
+ * The poisoning feature is mainly intended for ensuring correctness in complex
+ * lock-free code that uses the queue. For example, in some code that reuses
+ * nodes, nodes can be poisoned when they're dequeued, and then unpoisoned and
+ * enqueued in their hazard free callback.
+ */
 void
-mono_lock_free_queue_node_init (MonoLockFreeQueueNode *node, gboolean to_be_freed)
+mono_lock_free_queue_node_init (MonoLockFreeQueueNode *node, gboolean poison)
 {
-	node->next = to_be_freed ? INVALID_NEXT : FREE_NEXT;
+	node->next = poison ? INVALID_NEXT : FREE_NEXT;
 #ifdef QUEUE_DEBUG
 	node->in_queue = FALSE;
 #endif
 }
 
+/*
+ * Unpoisons @node so that it may be enqueued.
+ */
 void
-mono_lock_free_queue_node_free (MonoLockFreeQueueNode *node)
+mono_lock_free_queue_node_unpoison (MonoLockFreeQueueNode *node)
 {
 	g_assert (node->next == INVALID_NEXT);
 #ifdef QUEUE_DEBUG
@@ -96,6 +113,10 @@ mono_lock_free_queue_node_free (MonoLockFreeQueueNode *node)
 	node->next = FREE_NEXT;
 }
 
+/*
+ * Enqueue @node to @q. @node must have been initialized by a prior call to
+ * @mono_lock_free_queue_node_init, and must not be in a poisoned state.
+ */
 void
 mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 {
@@ -113,7 +134,7 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 	for (;;) {
 		MonoLockFreeQueueNode *next;
 
-		tail = (MonoLockFreeQueueNode *) get_hazardous_pointer ((gpointer volatile*)&q->tail, hp, 0);
+		tail = (MonoLockFreeQueueNode *) mono_get_hazardous_pointer ((gpointer volatile*)&q->tail, hp, 0);
 		mono_memory_read_barrier ();
 		/*
 		 * We never dereference next so we don't need a
@@ -135,11 +156,11 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 				 * might append to a node that isn't
 				 * in the queue anymore here.
 				 */
-				if (InterlockedCompareExchangePointer ((gpointer volatile*)&tail->next, node, END_MARKER) == END_MARKER)
+				if (mono_atomic_cas_ptr ((gpointer volatile*)&tail->next, node, END_MARKER) == END_MARKER)
 					break;
 			} else {
 				/* Try to advance tail */
-				InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, next, tail);
+				mono_atomic_cas_ptr ((gpointer volatile*)&q->tail, next, tail);
 			}
 		}
 
@@ -148,7 +169,7 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 	}
 
 	/* Try to advance tail */
-	InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, node, tail);
+	mono_atomic_cas_ptr ((gpointer volatile*)&q->tail, node, tail);
 
 	mono_memory_write_barrier ();
 	mono_hazard_pointer_clear (hp, 0);
@@ -158,7 +179,7 @@ static void
 free_dummy (gpointer _dummy)
 {
 	MonoLockFreeQueueDummy *dummy = (MonoLockFreeQueueDummy *) _dummy;
-	mono_lock_free_queue_node_free (&dummy->node);
+	mono_lock_free_queue_node_unpoison (&dummy->node);
 	g_assert (dummy->in_use);
 	mono_memory_write_barrier ();
 	dummy->in_use = 0;
@@ -174,7 +195,7 @@ get_dummy (MonoLockFreeQueue *q)
 		if (dummy->in_use)
 			continue;
 
-		if (InterlockedCompareExchange (&dummy->in_use, 1, 0) == 0)
+		if (mono_atomic_cas_i32 (&dummy->in_use, 1, 0) == 0)
 			return dummy;
 	}
 	return NULL;
@@ -183,7 +204,7 @@ get_dummy (MonoLockFreeQueue *q)
 static gboolean
 is_dummy (MonoLockFreeQueue *q, MonoLockFreeQueueNode *n)
 {
-	return n >= &q->dummies [0].node && n < &q->dummies [MONO_LOCK_FREE_QUEUE_NUM_DUMMIES].node;
+	return n >= &q->dummies [0].node && n <= &q->dummies [MONO_LOCK_FREE_QUEUE_NUM_DUMMIES-1].node;
 }
 
 static gboolean
@@ -198,7 +219,7 @@ try_reenqueue_dummy (MonoLockFreeQueue *q)
 	if (!dummy)
 		return FALSE;
 
-	if (InterlockedCompareExchange (&q->has_dummy, 1, 0) != 0) {
+	if (mono_atomic_cas_i32 (&q->has_dummy, 1, 0) != 0) {
 		dummy->in_use = 0;
 		return FALSE;
 	}
@@ -208,6 +229,11 @@ try_reenqueue_dummy (MonoLockFreeQueue *q)
 	return TRUE;
 }
 
+/*
+ * Dequeues a node from @q. Returns NULL if no nodes are available. The returned
+ * node is hazardous and must be freed with @mono_thread_hazardous_try_free or
+ * @mono_thread_hazardous_queue_free - it must not be freed directly.
+ */
 MonoLockFreeQueueNode*
 mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 {
@@ -218,7 +244,7 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 	for (;;) {
 		MonoLockFreeQueueNode *tail, *next;
 
-		head = (MonoLockFreeQueueNode *) get_hazardous_pointer ((gpointer volatile*)&q->head, hp, 0);
+		head = (MonoLockFreeQueueNode *) mono_get_hazardous_pointer ((gpointer volatile*)&q->head, hp, 0);
 		tail = (MonoLockFreeQueueNode*)q->tail;
 		mono_memory_read_barrier ();
 		next = head->next;
@@ -249,11 +275,11 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 				}
 
 				/* Try to advance tail */
-				InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, next, tail);
+				mono_atomic_cas_ptr ((gpointer volatile*)&q->tail, next, tail);
 			} else {
 				g_assert (next != END_MARKER);
 				/* Try to dequeue head */
-				if (InterlockedCompareExchangePointer ((gpointer volatile*)&q->head, next, head) == head)
+				if (mono_atomic_cas_ptr ((gpointer volatile*)&q->head, next, head) == head)
 					break;
 			}
 		}
@@ -286,7 +312,7 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 		g_assert (q->has_dummy);
 		q->has_dummy = 0;
 		mono_memory_write_barrier ();
-		mono_thread_hazardous_free_or_queue (head, free_dummy, FALSE, TRUE);
+		mono_thread_hazardous_try_free (head, free_dummy);
 		if (try_reenqueue_dummy (q))
 			goto retry;
 		return NULL;

@@ -37,7 +37,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-#if !NET_2_1
+#if !MOBILE
 using System.Security.Cryptography.Xml;
 #endif
 
@@ -70,11 +70,11 @@ namespace System.ServiceModel
 		{
 		}
 
-		public EndpointAddress (Uri uri, params AddressHeader [] headers)
-			: this (uri, null, new AddressHeaderCollection (headers), null, null) {}
+		public EndpointAddress (Uri uri, params AddressHeader [] addressHeaders)
+			: this (uri, null, new AddressHeaderCollection (addressHeaders), null, null) {}
 
-		public EndpointAddress (Uri uri, EndpointIdentity identity, params AddressHeader [] headers)
-			: this (uri, identity, new AddressHeaderCollection (headers), null, null) {}
+		public EndpointAddress (Uri uri, EndpointIdentity identity, params AddressHeader [] addressHeaders)
+			: this (uri, identity, new AddressHeaderCollection (addressHeaders), null, null) {}
 
 		public EndpointAddress (Uri uri, EndpointIdentity identity, AddressHeaderCollection headers)
 			: this (uri, identity, headers, null, null) {}
@@ -116,7 +116,7 @@ namespace System.ServiceModel
 			get { return address; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		internal static XmlSchema Schema {
 			get {
 				if (schema == null) {
@@ -187,7 +187,7 @@ namespace System.ServiceModel
 			return ! (address1 == address2);
 		}
 
-//#if !NET_2_1
+//#if !MOBILE
 		public static EndpointAddress ReadFrom (
 			XmlDictionaryReader reader)
 		{
@@ -296,7 +296,7 @@ namespace System.ServiceModel
 					addressingVersion.Namespace, reader.LocalName, reader.NamespaceURI));
 
 			reader.MoveToContent ();
-#if !NET_2_1
+#if !MOBILE
 			MetadataSet metadata = null;
 			if (reader.LocalName == "Metadata" &&
 			    reader.NamespaceURI == addressingVersion.Namespace &&
@@ -317,7 +317,7 @@ namespace System.ServiceModel
 			if (addressingVersion == AddressingVersion.WSAddressing10 && uri == w3c_anonymous)
 				uri = anonymous_role;
 
-#if NET_2_1
+#if MOBILE
 			return new EndpointAddress (uri, identity);
 #else
 			if (metadata == null)
@@ -338,7 +338,7 @@ namespace System.ServiceModel
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
-#if NET_2_1
+#if MOBILE
 			if (addressingVersion == AddressingVersion.None) {
 				writer.WriteString (Uri.AbsoluteUri);
 			} else {
@@ -406,19 +406,19 @@ namespace System.ServiceModel
 		public void WriteTo (
 			AddressingVersion addressingVersion,
 			XmlDictionaryWriter writer,
-			XmlDictionaryString localname,
+			XmlDictionaryString localName,
 			XmlDictionaryString ns)
 		{
-			writer.WriteStartElement (localname, ns);
+			writer.WriteStartElement (localName, ns);
 			WriteContentsTo (addressingVersion, writer);
 			writer.WriteEndElement ();
 		}
 
 		public void WriteTo (
 			AddressingVersion addressingVersion,
-			XmlWriter writer, string localname, string ns)
+			XmlWriter writer, string localName, string ns)
 		{
-			writer.WriteStartElement (localname, ns);
+			writer.WriteStartElement (localName, ns);
 			WriteContentsTo (addressingVersion, writer);
 			writer.WriteEndElement ();
 		}

@@ -172,7 +172,7 @@ namespace System.Web.UI.Design
 
 
 		[Obsolete ("Use ControlDesigner.InTemplateMode instead")]
-		public bool InTemplateMode {
+		public new bool InTemplateMode {
 			get {
 				return _templateMode;
 			}

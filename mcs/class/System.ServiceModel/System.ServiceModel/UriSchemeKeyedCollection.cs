@@ -35,24 +35,24 @@ namespace System.ServiceModel
 	public class UriSchemeKeyedCollection
 		: SynchronizedKeyedCollection<string, Uri>
 	{
-		public UriSchemeKeyedCollection (params Uri [] uris)
+		public UriSchemeKeyedCollection (params Uri [] addresses)
 			: base (new object ())
 		{
-			if (uris == null)
+			if (addresses == null)
 				/* FIXME: masterinfo says, param name should be
 				   baseAddresses */
-				throw new ArgumentNullException ("uris");
+				throw new ArgumentNullException ("addresses");
 
-			for (int i = 0; i < uris.Length; i ++) {
-				if (!uris [i].IsAbsoluteUri)
+			for (int i = 0; i < addresses.Length; i ++) {
+				if (!addresses [i].IsAbsoluteUri)
 					throw new ArgumentException ("Only an absolute URI can be used as a base address");
 
-				if (Contains (uris [i].Scheme))
-					throw new ArgumentException ("Collection already contains an address with scheme "+ uris [i].Scheme);
-				if (uris [i].Query != String.Empty)
+				if (Contains (addresses [i].Scheme))
+					throw new ArgumentException ("Collection already contains an address with scheme "+ addresses [i].Scheme);
+				if (addresses [i].Query != String.Empty)
 					throw new ArgumentException ("A base address cannot contain a query string.");
 
-				InsertItem (i, uris [i]);
+				InsertItem (i, addresses [i]);
 			}
 		}
 

@@ -1,5 +1,6 @@
-/*
- * networking-fallbacks.c: Fallback networking code that rely on old BSD apis or whatever else is available.
+/**
+ * \file
+ * Fallback networking code that rely on old BSD apis or whatever else is available.
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -9,6 +10,7 @@
 
 #include <mono/utils/networking.h>
 #include <glib.h>
+#include <mono/utils/mono-compiler.h>
 
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
@@ -77,5 +79,7 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 }
 
 #endif /* defined (HAVE_GETHOSTBYNAME) || defined (HAVE_GETHOSTBYNAME2) */
+#else /* !defined (HAVE_GETADDRINFO) */
 
+MONO_EMPTY_SOURCE_FILE (networking_fallback);
 #endif /* !defined (HAVE_GETADDRINFO) */

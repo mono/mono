@@ -3,6 +3,9 @@ SUBDIRS =
 NO_INSTALL = 1
 include ../../build/rules.make
 
+LOCAL_MCS_FLAGS =
+LIB_REFS = System.Xml
+
 EXTRA_DISTFILES = \
 	Media/*.png		\
 	Media/scripts.js	\

@@ -14,9 +14,9 @@ IFS=$'\n'
 filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
 monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
 
-# Only include files with /gac/ in path
+# Only include files with /gac/, /Facades/ or /4.5/ in path
 #  (Allows packages to contain private assemblies that don't conflict with other packages)
-monolist=($(printf "%s\n" "${monolist[@]}" | egrep "/gac/"))
+monolist=($(printf "%s\n" "${monolist[@]}" | egrep "/(gac|Facades|4\\.5)/"))
 # Disabled... see ChangeLog
 
 # Set the prefix, unless it is overriden (used when building mono rpms)

@@ -56,7 +56,6 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]

@@ -258,6 +258,11 @@ namespace Mono.CSharp {
 			Report.Error (1970, loc, "Do not use `{0}' directly. Use `dynamic' keyword instead", GetSignatureForError ());
 		}
 
+		public void Error_MisusedTupleAttribute ()
+		{
+			Report.Error (8138, loc, "Do not use `{0}' directly. Use the tuple syntax instead", GetSignatureForError ());
+		}
+
 		void Error_AttributeEmitError (string inner)
 		{
 			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
@@ -784,6 +789,17 @@ namespace Mono.CSharp {
 			return ((BoolConstant) pos_args[0].Expr).Value;
 		}
 
+		public TypeSpec GetAsyncMethodBuilderValue ()
+		{
+			if (!arg_resolved)
+				Resolve ();
+
+			if (resolve_error)
+				return null;
+
+			return GetArgumentType ();
+		}
+
 		public TypeSpec GetCoClassAttributeValue ()
 		{
 			if (!arg_resolved)
@@ -1048,8 +1064,10 @@ namespace Mono.CSharp {
 			}
 
 			byte[] cdata;
+			List<Assembly> references;
 			if (pos_args == null && named_values == null) {
 				cdata = AttributeEncoder.Empty;
+				references = null;
 			} else {
 				AttributeEncoder encoder = new AttributeEncoder ();
 
@@ -1122,10 +1140,15 @@ namespace Mono.CSharp {
 					encoder.EncodeEmptyNamedArguments ();
 				}
 
-				cdata = encoder.ToArray ();
+				cdata = encoder.ToArray (out references);
 			}
 
-			if (!ctor.DeclaringType.IsConditionallyExcluded (context)) {
+			if (!IsConditionallyExcluded (ctor.DeclaringType)) {
+				if (Type == predefined.TupleElementNames) {
+					Error_MisusedTupleAttribute ();
+					return;
+				}
+
 				try {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
@@ -1136,6 +1159,8 @@ namespace Mono.CSharp {
 					Error_AttributeEmitError (e.Message);
 					return;
 				}
+
+				context.Module.AddAssemblyReferences (references);
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {
@@ -1164,6 +1189,18 @@ namespace Mono.CSharp {
 
 				NamedArguments.CheckArrayAsAttribute (context.Module.Compiler);
 			}
+		}
+
+		bool IsConditionallyExcluded (TypeSpec type)
+		{
+			do {
+				if (type.IsConditionallyExcluded (context))
+					return true;
+
+				type = type.BaseType;
+			} while (type != null);
+
+			return false;
 		}
 
 		private Expression GetValue () 
@@ -1382,6 +1419,7 @@ namespace Mono.CSharp {
 		byte[] buffer;
 		int pos;
 		const ushort Version = 1;
+		List<Assembly> imports;
 
 		static AttributeEncoder ()
 		{
@@ -1561,7 +1599,15 @@ namespace Mono.CSharp {
 		public void EncodeTypeName (TypeSpec type)
 		{
 			var old_type = type.GetMetaInfo ();
-			Encode (type.MemberDefinition.IsImported ? old_type.AssemblyQualifiedName : old_type.FullName);
+			if (type.MemberDefinition.IsImported) {
+				if (imports == null)
+					imports = new List<Assembly> ();
+
+				imports.Add (old_type.Assembly);
+				Encode (old_type.AssemblyQualifiedName);
+			} else {
+				Encode (old_type.FullName);
+			}
 		}
 
 		public void EncodeTypeName (TypeContainer type)
@@ -1642,8 +1688,10 @@ namespace Mono.CSharp {
 			Encode (value);
 		}
 
-		public byte[] ToArray ()
+		public byte[] ToArray (out List<Assembly> assemblyReferences)
 		{
+			assemblyReferences = imports;
+
 			byte[] buf = new byte[pos];
 			Array.Copy (buffer, buf, pos);
 			return buf;
@@ -1700,6 +1748,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute AssemblyAlgorithmId;
 		public readonly PredefinedAttribute AssemblyFlags;
 		public readonly PredefinedAttribute AssemblyFileVersion;
+		public readonly PredefinedAttribute AssemblyInformationalVersion;
 		public readonly PredefinedAttribute ComImport;
 		public readonly PredefinedAttribute CoClass;
 		public readonly PredefinedAttribute AttributeUsage;
@@ -1728,6 +1777,14 @@ namespace Mono.CSharp {
 
 		// New in .NET 4.5
 		public readonly PredefinedStateMachineAttribute AsyncStateMachine;
+
+		// New in .NET 4.7
+		public readonly PredefinedTupleElementNamesAttribute TupleElementNames;
+		public readonly PredefinedAttribute AsyncMethodBuilder;
+
+		// New in .NET 4.7.1
+		public readonly PredefinedAttribute IsReadOnly;
+		public readonly PredefinedAttribute IsByRefLike;
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1800,12 +1857,18 @@ namespace Mono.CSharp {
 			AssemblyCompany = new PredefinedAttribute (module, "System.Reflection", "AssemblyCompanyAttribute");
 			AssemblyCopyright = new PredefinedAttribute (module, "System.Reflection", "AssemblyCopyrightAttribute");
 			AssemblyTrademark = new PredefinedAttribute (module, "System.Reflection", "AssemblyTrademarkAttribute");
+			AssemblyInformationalVersion = new PredefinedAttribute (module, "System.Reflection", "AssemblyInformationalVersionAttribute");
 
 			AsyncStateMachine = new PredefinedStateMachineAttribute (module, "System.Runtime.CompilerServices", "AsyncStateMachineAttribute");
 
 			CallerMemberNameAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerMemberNameAttribute");
 			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
 			CallerFilePathAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerFilePathAttribute");
+
+			AsyncMethodBuilder = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "AsyncMethodBuilderAttribute");
+			TupleElementNames = new PredefinedTupleElementNamesAttribute (module, "System.Runtime.CompilerServices", "TupleElementNamesAttribute");
+			IsReadOnly = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "IsReadOnlyAttribute");
+			IsByRefLike = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "IsByRefLikeAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
 			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |
@@ -1942,7 +2005,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((int) state);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -1976,7 +2040,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((int) modes);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2002,7 +2067,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 
 		public void EmitAttribute (FieldBuilder builder, decimal value, Location loc)
@@ -2020,7 +2086,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2044,7 +2111,8 @@ namespace Mono.CSharp {
 			encoder.EncodeTypeName (type);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2155,6 +2223,85 @@ namespace Mono.CSharp {
 
 			tctor = module.PredefinedMembers.DynamicAttributeCtor.Resolve (loc);
 			return tctor != null;
+		}
+	}
+
+	public class PredefinedTupleElementNamesAttribute : PredefinedAttribute
+	{
+		MethodSpec tctor;
+
+		public PredefinedTupleElementNamesAttribute (ModuleContainer module, string ns, string name)
+			: base (module, ns, name)
+		{
+		}
+
+		public void EmitAttribute (FieldBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (ParameterBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (PropertyBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		public void EmitAttribute (TypeBuilder builder, TypeSpec type, Location loc)
+		{
+			var cab = CreateCustomAttributeBuilder (type, loc);
+			if (cab != null)
+				builder.SetCustomAttribute (cab);
+		}
+
+		CustomAttributeBuilder CreateCustomAttributeBuilder (TypeSpec type, Location loc)
+		{
+			if (tctor == null) {
+				tctor = module.PredefinedMembers.TupleElementNamesAttributeCtor.Resolve (loc);
+				if (tctor == null)
+					return null;
+			}
+
+			var names = new List<string> (type.TypeArguments.Length);
+			BuildStringElements (type, names);
+			return new CustomAttributeBuilder ((ConstructorInfo)tctor.GetMetaInfo (), new object [] { names.ToArray () });
+		}
+
+		//
+		// Returns an array of names when any element of the type is
+		// tuple with named element. The array is built for top level
+		// type therefore it can contain multiple tuple types
+		//
+		// Example: Func<(int, int), int, (int a, int b)[]>
+		// Output: { null, null, "a", "b" }
+		//
+		static void BuildStringElements (TypeSpec type, List<string> names)
+		{
+			while (type is ArrayContainer) {
+				type = ((ArrayContainer)type).Element;
+			}
+
+			var nts = type as NamedTupleSpec;
+			if (nts != null) {
+				names.AddRange (nts.Elements);
+			} else {
+				for (int i = 0; i < type.Arity; ++i) {
+					names.Add (null);
+				}
+			}
+
+			foreach (var ta in type.TypeArguments) {
+				BuildStringElements (ta, names);
+			}
 		}
 	}
 }

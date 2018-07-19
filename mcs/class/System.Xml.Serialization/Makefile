@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Xml.Serialization.dll
 LIB_REFS = System.Xml System.ServiceModel
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS =
 
 PLATFORM_DEBUG_FLAGS =

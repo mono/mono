@@ -61,34 +61,21 @@ namespace System.CodeDom.Compiler
 		}
 		
 		[MonoTODO]
-                protected override void PostDeserialize ()
-                {
-                        base.PostDeserialize ();
-                }
+		protected override void PostDeserialize () => base.PostDeserialize ();
 
-                protected override object GetRuntimeObject ()
-                {
-                        return this;
-                }
+		protected override object GetRuntimeObject () => this;
 
 		[ConfigurationProperty ("compilers")]
-                public CompilerCollection Compilers {
-                        get { return (CompilerCollection) base [compilersProp]; }
-                }
+		public CompilerCollection Compilers => (CompilerCollection) base [compilersProp];
 
 		public CompilerInfo[] CompilerInfos {
 			get {
-				CompilerCollection cc = (CompilerCollection)base [compilersProp];
-				if (cc == null)
-					return null;
-				return cc.CompilerInfos;
+				var cc = (CompilerCollection) base [compilersProp];
+				return cc?.CompilerInfos;
 			}
 		}
 		
-		protected override ConfigurationPropertyCollection Properties {
-                        get { return properties; }
-                }
+		protected override ConfigurationPropertyCollection Properties => properties;
 	}
 }
 #endif
-

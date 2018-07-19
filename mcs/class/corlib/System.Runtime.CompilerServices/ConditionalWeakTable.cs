@@ -1,10 +1,12 @@
-//
+﻿//
 // ConditionalWeakTable.cs
 //
 // Author:
 //   Rodrigo Kumpera (rkumpera@novell.com)
+//   Tautvydas Žilys <zilys@unity3d.com>
 //
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2016 Unity Technologies (https://unity3d.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,12 +49,14 @@ namespace System.Runtime.CompilerServices
 		Look into using quatratic probing/double hashing to reduce clustering problems.
 		Make reads and non-expanding writes (add/remove) lock free.
 	*/
-	public sealed class ConditionalWeakTable<TKey, TValue> 
+	public sealed class ConditionalWeakTable<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 		where TKey : class
 		where TValue : class
 	{
 		const int INITIAL_SIZE = 13;
 		const float LOAD_FACTOR = 0.7f;
+		const float COMPACT_FACTOR = 0.5f;
+		const float EXPAND_FACTOR = 1.1f;
 
 		Ephemeron[] data;
 		object _lock = new object ();
@@ -66,12 +70,74 @@ namespace System.Runtime.CompilerServices
 			GC.register_ephemeron_array (data);
 		}
 
-		/*LOCKING: _lock must be held*/
-		void Rehash () {
-			uint newSize = (uint)HashHelpers.GetPrime ((data.Length << 1) | 1);
-			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
+		~ConditionalWeakTable ()
+		{
+		}
 
-			Ephemeron[] tmp = new Ephemeron [newSize];
+		private void RehashWithoutResize ()
+		{
+			int len = data.Length;
+
+			for (int i = 0; i < len; i++) {
+				if (data [i].key == GC.EPHEMERON_TOMBSTONE)
+					data [i].key = null;
+			}
+
+			for (int i = 0; i < len; i++) {
+				object key = data [i].key;
+				if (key != null) {
+					int idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+
+					while (true) {
+						if (data [idx].key == null) {
+							// The object was not stored in its normal slot. Rehash
+							data [idx].key = key;
+							data [idx].value = data [i].value;
+							// At this point we have this Ephemeron entry duplicated in the array. Shouldn't
+							// be a problem.
+							data [i].key = null;
+							data [i].value = null;
+							break;
+						} else if (data [idx].key == key) {
+							/* We already have the key in the first available position, finished */
+							break;
+						}
+
+						if (++idx == len) //Wrap around
+							idx = 0;
+					}
+				}
+			}
+		}
+
+		private void RecomputeSize ()
+		{
+			size = 0;
+			for (int i = 0; i < data.Length; i++) {
+				if (data [i].key != null)
+					size++;
+			}
+		}
+
+		/*LOCKING: _lock must be held*/
+		private void Rehash ()
+		{
+			// Size doesn't track elements that die without being removed. Before attempting
+			// to rehash we traverse the array to see how many entries are left alive. We
+			// rehash the array into a new one which has a capacity relative to the number of
+			// live entries.
+			RecomputeSize ();
+
+			uint newLength = (uint)HashHelpers.GetPrime (((int)(size / LOAD_FACTOR) << 1) | 1);
+
+			if (newLength > data.Length * COMPACT_FACTOR && newLength < data.Length * EXPAND_FACTOR) {
+				/* Avoid unnecessary LOS allocations */
+				RehashWithoutResize ();
+				return;
+			}
+			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newLength);
+
+			Ephemeron[] tmp = new Ephemeron [newLength];
 			GC.register_ephemeron_array (tmp);
 			size = 0;
 
@@ -219,25 +285,101 @@ namespace System.Runtime.CompilerServices
 
 			return res;
 		}
-		
+
+		//--------------------------------------------------------------------------------------------
+		// Find a key that equals (value equality) with the given key - don't use in perf critical path
+		// Note that it calls out to Object.Equals which may calls the override version of Equals
+		// and that may take locks and leads to deadlock
+		// Currently it is only used by WinRT event code and you should only use this function
+		// if you know for sure that either you won't run into dead locks or you need to live with the
+		// possiblity
+		//--------------------------------------------------------------------------------------------
+		[System.Security.SecuritySafeCritical]
+		[FriendAccessAllowed]
+		internal TKey FindEquivalentKeyUnsafe(TKey key, out TValue value)
+		{
+			lock (_lock)
+			{
+				for (int i = 0; i < data.Length; ++i)
+				{
+					var item = data[i];
+					if (Object.Equals(item.key, key))
+					{
+						value = (TValue)item.value;
+						return (TKey)item.key;
+					}
+				}
+			}
+
+			value = default(TValue);
+			return null;
+		}
+
+		//--------------------------------------------------------------------------------------------
+		// Clear all the key/value pairs
+		//--------------------------------------------------------------------------------------------
+		[System.Security.SecuritySafeCritical]
+		internal void Clear()
+		{
+			lock (_lock)
+			{
+				for (int i = 0; i < data.Length; i++)
+				{
+					data[i].key = GC.EPHEMERON_TOMBSTONE;
+					data[i].value = null;
+				}
+
+				size = 0;
+			}
+		}
+
 		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/
 		internal ICollection<TKey> Keys
 		{
 			[System.Security.SecuritySafeCritical]
 			get
 			{
+				var tombstone = GC.EPHEMERON_TOMBSTONE;
 				List<TKey> list = new List<TKey>(data.Length);
 				lock (_lock)
 				{
 					for (int i = 0; i < data.Length; ++i)
 					{
 						TKey key = (TKey) data [i].key;
-						if (key != null)
+						if (key != null && key != tombstone)
 							list.Add (key);
 					}
 				}
 				return list;
 			}
 		}
+
+		internal ICollection<TValue> Values
+		{
+			[System.Security.SecuritySafeCritical]
+			get
+			{
+				var tombstone = GC.EPHEMERON_TOMBSTONE;
+				List<TValue> list = new List<TValue>(data.Length);
+				lock (_lock)
+				{
+					for (int i = 0; i < data.Length; ++i)
+					{
+						var item = data[i];
+						if (item.key != null && item.key != tombstone)
+							list.Add((TValue)item.value);
+					}
+				}
+
+				return list;
+			}
+		}
+
+		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () => ((IEnumerable<KeyValuePair<TKey, TValue>>)this).GetEnumerator ();
 	}
 }

@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !FULL_AOT_RUNTIME
 using System;
 using NUnit.Framework;
 using Mono.CSharp;
@@ -120,7 +120,8 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("var a = new int[]{1,2,3};");
 
 			object res = Evaluator.Evaluate ("from x in a select x + 1;");
-			CollectionAssert.AreEqual (new int[] { 2, 3, 4 }, ((IEnumerable<int>) res).ToArray ());
+
+			Assert.AreEqual (new int[] { 2, 3, 4 }, ((IEnumerable<int>) res).ToArray ());
 		}
 
 		[Test]
@@ -202,3 +203,4 @@ namespace MonoTests.EvaluatorTest
 
 	}
 }
+#endif

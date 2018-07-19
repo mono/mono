@@ -50,10 +50,10 @@ namespace MonoTests.System.Resources {
 
 			object defaultVal = returnedNode.GetValue ((ITypeResolutionService) null);
 			Assert.IsInstanceOfType (typeof (serializable), defaultVal, "#A2");
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), defaultVal, "#A3");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), defaultVal, "#A3");
 
 			object newVal = returnedNode.GetValue (new ReturnSerializableSubClassITRS ());
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), newVal, "#A4");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), newVal, "#A4");
 			Assert.IsInstanceOfType (typeof (serializable), newVal, "#A5");
 		}
 
@@ -88,7 +88,7 @@ namespace MonoTests.System.Resources {
 
 			// get value passing null params
 			object val = returnedNode.GetValue ((ITypeResolutionService) null);
-			// Assert.IsNotInstanceOfType (typeof (serializable), val, "#A5"); this would fail as subclasses are id-ed as instances of parents
+			// AssertHelper.IsNotInstanceOfType (typeof (serializable), val, "#A5"); this would fail as subclasses are id-ed as instances of parents
 			Assert.IsInstanceOfType (typeof (serializableSubClass), val, "#A4");
 		}
 

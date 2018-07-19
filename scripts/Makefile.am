@@ -34,8 +34,13 @@ bin_SCRIPTS = \
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mono-test-install	\
-	peverify			\
-	mcs					\
+	peverify		\
+	mcs			\
+	csc			\
+	csc-dim		\
+	vbc			\
+	csi			\
+	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
@@ -69,7 +74,6 @@ scripts_4_0 = \
 	macpack$(SCRIPT_SUFFIX)			\
 	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
-	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
 	caspol$(SCRIPT_SUFFIX)			\
 	cert-sync$(SCRIPT_SUFFIX)		\
@@ -79,11 +83,13 @@ scripts_4_0 = \
 	crlupdate$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
+	illinkanalyzer$(SCRIPT_SUFFIX)		\
 	lc$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
 	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
+	mono-api-html$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	mozroots$(SCRIPT_SUFFIX)		\
 	permview$(SCRIPT_SUFFIX)		\
@@ -152,14 +158,20 @@ EXTRA_DIST =			\
 	mono-find-requires.in	\
 	peverify.in			\
 	xbuild.in			\
-	update_submodules		\
+	update_submodules.sh	\
 	mcs.in				\
+	csc.in				\
+	csc-dim.in				\
+	vbc.in				\
 	dmcs.in				\
+	csi.in			\
+	mono-package-runtime	\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	get-cygwin-deps.sh	\
-	mono-configuration-crypto.in
+	mono-configuration-crypto.in	\
+	submodules/versions.mk	\
+	submodules/versions.py
 
 mono_interp = mono
 
@@ -185,14 +197,9 @@ REWRITE_COMMON = sed \
 
 REWRITE = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp),g'
 REWRITE_DEBUG = $(REWRITE_COMMON) -e 's,@''mono_interp@,$(mono_interp) --debug,g'
-REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
-REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
-REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
-if INSTALL_4_x
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
-endif
 
 peverify: peverify.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/peverify.in > $@.tmp
@@ -202,8 +209,24 @@ mcs: mcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/mcs.in > $@.tmp
 	mv -f $@.tmp $@
 
+csc: csc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
+	mv -f $@.tmp $@
+
+csc-dim: csc-dim.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csc-dim.in > $@.tmp
+	mv -f $@.tmp $@
+
+vbc: vbc.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/vbc.in > $@.tmp
+	mv -f $@.tmp $@
+
 dmcs: dmcs.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/dmcs.in > $@.tmp
+	mv -f $@.tmp $@
+
+csi: csi.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/csi.in > $@.tmp
 	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile
@@ -211,7 +234,7 @@ mono-service: mono-service.in Makefile
 	mv -f $@.tmp $@
 
 mono-service2: mono-service.in Makefile
-	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
+	$(REWRITE4) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
 	mv -f $@.tmp $@
 
 nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
@@ -219,7 +242,7 @@ nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	mv -f $@.tmp $@
 
 nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 nunit-console4$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
@@ -232,7 +255,7 @@ xbuild: xbuild.in Makefile
 
 #FIXME: this is not the correct rule for mod.bat.
 mod$(SCRIPT_SUFFIX): mod.in Makefile
-	$(REWRITE2) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
+	$(REWRITE4) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
 	mv -f $@.tmp $@
 
 #FIXME: this is not the correct rule for bat files.

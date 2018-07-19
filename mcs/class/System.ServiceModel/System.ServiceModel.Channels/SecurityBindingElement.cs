@@ -30,12 +30,12 @@ using System.Collections.ObjectModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 using System.ServiceModel.Channels.Security;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
-using System.ServiceModel.Security.Tokens;
 #endif
+using System.ServiceModel.Security.Tokens;
 using System.Text;
 
 namespace System.ServiceModel.Channels
@@ -44,11 +44,13 @@ namespace System.ServiceModel.Channels
 	{
 		internal SecurityBindingElement ()
 		{
-#if !NET_2_1 && !XAMMAC_4_5
-			DefaultAlgorithmSuite = SecurityAlgorithmSuite.Default;
+#if !XAMMAC_4_5
 			MessageSecurityVersion = MessageSecurityVersion.Default;
-			KeyEntropyMode = SecurityKeyEntropyMode.CombinedEntropy;
+#endif
 			endpoint = new SupportingTokenParameters ();
+#if !MOBILE && !XAMMAC_4_5
+			DefaultAlgorithmSuite = SecurityAlgorithmSuite.Default;
+			KeyEntropyMode = SecurityKeyEntropyMode.CombinedEntropy;
 			operation = new Dictionary<string,SupportingTokenParameters> ();
 			opt_endpoint = new SupportingTokenParameters ();
 			opt_operation = new Dictionary<string,SupportingTokenParameters> ();
@@ -60,12 +62,12 @@ namespace System.ServiceModel.Channels
 
 		internal SecurityBindingElement (SecurityBindingElement other)
 		{
-#if !NET_2_1 && !XAMMAC_4_5
-			alg_suite = other.alg_suite;
-			key_entropy_mode = other.key_entropy_mode;
 			security_header_layout = other.security_header_layout;
 			msg_security_version = other.msg_security_version;
 			endpoint = other.endpoint.Clone ();
+#if !MOBILE && !XAMMAC_4_5
+			alg_suite = other.alg_suite;
+			key_entropy_mode = other.key_entropy_mode;
 			opt_endpoint = other.opt_endpoint.Clone ();
 			operation = new Dictionary<string,SupportingTokenParameters> ();
 			foreach (KeyValuePair<string,SupportingTokenParameters> p in other.operation)
@@ -79,12 +81,14 @@ namespace System.ServiceModel.Channels
 			LocalClientSettings = other.LocalClientSettings.Clone ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
-		SecurityAlgorithmSuite alg_suite;
-		SecurityKeyEntropyMode key_entropy_mode;
 		SecurityHeaderLayout security_header_layout;
 		MessageSecurityVersion msg_security_version;
-		SupportingTokenParameters endpoint, opt_endpoint;
+		SupportingTokenParameters endpoint;
+
+#if !MOBILE && !XAMMAC_4_5
+		SecurityAlgorithmSuite alg_suite;
+		SecurityKeyEntropyMode key_entropy_mode;
+		SupportingTokenParameters opt_endpoint;
 		IDictionary<string,SupportingTokenParameters> operation, opt_operation;
 		LocalServiceSecuritySettings service_settings;
 #endif
@@ -92,21 +96,6 @@ namespace System.ServiceModel.Channels
 		public bool IncludeTimestamp { get; set; }
 
 		public LocalClientSecuritySettings LocalClientSettings { get; private set; }
-
-#if !NET_2_1 && !XAMMAC_4_5
-		public SecurityAlgorithmSuite DefaultAlgorithmSuite {
-			get { return alg_suite; }
-			set { alg_suite = value; }
-		}
-
-		public SecurityKeyEntropyMode KeyEntropyMode {
-			get { return key_entropy_mode; }
-			set { key_entropy_mode = value; }
-		}
-
-		public LocalServiceSecuritySettings LocalServiceSettings {
-			get { return service_settings; }
-		}
 
 		public SecurityHeaderLayout SecurityHeaderLayout {
 			get { return security_header_layout; }
@@ -120,6 +109,21 @@ namespace System.ServiceModel.Channels
 
 		public SupportingTokenParameters EndpointSupportingTokenParameters {
 			get { return endpoint; }
+		}
+
+#if !MOBILE && !XAMMAC_4_5
+		public SecurityAlgorithmSuite DefaultAlgorithmSuite {
+			get { return alg_suite; }
+			set { alg_suite = value; }
+		}
+
+		public SecurityKeyEntropyMode KeyEntropyMode {
+			get { return key_entropy_mode; }
+			set { key_entropy_mode = value; }
+		}
+
+		public LocalServiceSecuritySettings LocalServiceSettings {
+			get { return service_settings; }
 		}
 
 		public IDictionary<string,SupportingTokenParameters> OperationSupportingTokenParameters {
@@ -138,7 +142,7 @@ namespace System.ServiceModel.Channels
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 			// not sure this should be like this, but there isn't Symmetric/Asymmetric elements in 2.1 anyways.
 			return context.CanBuildInnerChannelFactory<TChannel> ();
 #else
@@ -183,7 +187,7 @@ namespace System.ServiceModel.Channels
 		protected abstract IChannelFactory<TChannel>
 			BuildChannelFactoryCore<TChannel> (BindingContext context);
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
@@ -270,7 +274,7 @@ namespace System.ServiceModel.Channels
 #endif
 
 		#region Factory methods
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		public static SymmetricSecurityBindingElement 
 			CreateAnonymousForCertificateBindingElement ()
 		{
@@ -445,32 +449,6 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		public static SecurityBindingElement 
-			CreateSecureConversationBindingElement (SecurityBindingElement binding)
-		{
-			return CreateSecureConversationBindingElement (binding, false);
-		}
-
-		public static SecurityBindingElement 
-			CreateSecureConversationBindingElement (
-			SecurityBindingElement binding, bool requireCancellation)
-		{
-			return CreateSecureConversationBindingElement (binding, requireCancellation, null);
-		}
-
-		public static SecurityBindingElement 
-			CreateSecureConversationBindingElement (
-			SecurityBindingElement binding, bool requireCancellation,
-			ChannelProtectionRequirements protectionRequirements)
-		{
-			SymmetricSecurityBindingElement be =
-				new SymmetricSecurityBindingElement ();
-			be.ProtectionTokenParameters =
-				new SecureConversationSecurityTokenParameters (
-					binding, requireCancellation, protectionRequirements);
-			return be;
-		}
-
 		public static SymmetricSecurityBindingElement 
 			CreateSslNegotiationBindingElement (bool requireClientCertificate)
 		{
@@ -554,19 +532,49 @@ namespace System.ServiceModel.Channels
 		}
 #endif
 
+		public static SecurityBindingElement 
+			CreateSecureConversationBindingElement (SecurityBindingElement bootstrapSecurity)
+		{
+			return CreateSecureConversationBindingElement (bootstrapSecurity, false);
+		}
+
+		public static SecurityBindingElement 
+			CreateSecureConversationBindingElement (
+			SecurityBindingElement bootstrapSecurity, bool requireCancellation)
+		{
+			return CreateSecureConversationBindingElement (bootstrapSecurity, requireCancellation, null);
+		}
+
+		public static SecurityBindingElement 
+			CreateSecureConversationBindingElement (
+			SecurityBindingElement bootstrapSecurity, bool requireCancellation,
+			ChannelProtectionRequirements bootstrapProtectionRequirements)
+		{
+#if !MOBILE && !XAMMAC_4_5
+			SymmetricSecurityBindingElement be =
+				new SymmetricSecurityBindingElement ();
+			be.ProtectionTokenParameters =
+				new SecureConversationSecurityTokenParameters (
+					bootstrapSecurity, requireCancellation, bootstrapProtectionRequirements);
+			return be;
+#else
+			throw new NotImplementedException ();
+#endif
+		}
+
 		[MonoTODO]
 		public static TransportSecurityBindingElement 
 			CreateUserNameOverTransportBindingElement ()
 		{
 			var be = new TransportSecurityBindingElement ();
-#if !NET_2_1 && !XAMMAC_4_5 // FIXME: there should be whatever else to do for 2.1 instead.
+#if !MOBILE && !XAMMAC_4_5 // FIXME: there should be whatever else to do for 2.1 instead.
 			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new UserNameSecurityTokenParameters ());
 #endif
 			return be;
 		}
 		#endregion
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		// It seems almost internal, hardcoded like this (I tried
 		// custom parameters that sets IssuedTokenSecurityTokenParameters
 		// like below ones, but that didn't trigger this method).

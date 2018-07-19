@@ -1,10 +1,12 @@
-/*
- * attach.c: Support for attaching to the runtime from other processes.
+/**
+ * \file
+ * Support for attaching to the runtime from other processes.
  *
  * Author:
  *   Zoltan Varga (vargaz@gmail.com)
  *
  * Copyright 2007-2009 Novell, Inc (http://www.novell.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 #include <config.h>
@@ -23,8 +25,6 @@
 #include <sys/stat.h>
 #include <sys/un.h>
 #include <netinet/in.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <pwd.h>
@@ -32,7 +32,7 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object-internals.h>
@@ -40,6 +40,8 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads.h>
 #include "attach.h"
+
+#include <mono/utils/w32api.h>
 
 /*
  * This module enables other processes to attach to a running mono process and
@@ -93,7 +95,7 @@ static char *ipc_filename;
 
 static char *server_uri;
 
-static HANDLE receiver_thread_handle;
+static MonoThreadHandle *receiver_thread_handle;
 
 static gboolean stop_receiver_thread;
 
@@ -101,7 +103,7 @@ static gboolean needs_to_start, started;
 
 static void transport_connect (void);
 
-static guint32 WINAPI receiver_thread (void *arg);
+static gsize WINAPI receiver_thread (void *arg);
 
 static void transport_start_receive (void);
 
@@ -259,13 +261,13 @@ mono_attach_cleanup (void)
 
 	/* Wait for the receiver thread to exit */
 	if (receiver_thread_handle)
-		WaitForSingleObjectEx (receiver_thread_handle, 0, FALSE);
+		mono_thread_info_wait_one_handle (receiver_thread_handle, 0, FALSE);
 }
 
 static int
 mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject **exc)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoAssembly *agent_assembly;
 	MonoImage *image;
 	MonoMethod *method;
@@ -274,7 +276,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	gpointer pa [1];
 	MonoImageOpenStatus open_status;
 
-	agent_assembly = mono_assembly_open (agent, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -285,7 +287,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	 * Can't use mono_jit_exec (), as it sets things which might confuse the
 	 * real Main method.
 	 */
-	image = mono_assembly_get_image (agent_assembly);
+	image = mono_assembly_get_image_internal (agent_assembly);
 	entry = mono_image_get_entry_point (image);
 	if (!entry) {
 		g_print ("Assembly '%s' doesn't have an entry point.\n", mono_image_get_filename (image));
@@ -293,26 +295,45 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 		return 1;
 	}
 
-	method = mono_get_method_checked (image, entry, NULL, NULL, &error);
+	method = mono_get_method_checked (image, entry, NULL, NULL, error);
 	if (method == NULL){
-		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (&error));
-		mono_error_cleanup (&error);
+		g_print ("The entry point method of assembly '%s' could not be loaded due to %s\n", agent, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		g_free (agent);
 		return 1;
 	}
 	
+	
+	main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, (args == NULL) ? 0 : 1, error);
+	if (main_args == NULL) {
+		g_print ("Could not allocate main method args due to %s\n", mono_error_get_message (error));
+		mono_error_cleanup (error);
+		g_free (agent);
+		return 1;
+	}
+
 	if (args) {
-		main_args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, 1);
-		mono_array_set (main_args, MonoString*, 0, mono_string_new (domain, args));
-	} else {
-		main_args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, 0);
+		MonoString *args_str = mono_string_new_checked (domain, args, error);
+		if (!is_ok (error)) {
+			g_print ("Could not allocate main method arg string due to %s\n", mono_error_get_message (error));
+			mono_error_cleanup (error);
+			g_free (agent);
+			return 1;
+		}
+		mono_array_set (main_args, MonoString*, 0, args_str);
+	}
+
+
+	pa [0] = main_args;
+	mono_runtime_try_invoke (method, NULL, pa, exc, error);
+	if (!is_ok (error)) {
+		g_print ("The entry point method of assembly '%s' could not be executed due to %s\n", agent, mono_error_get_message (error));
+		mono_error_cleanup (error);
+		g_free (agent);
+		return 1;
 	}
 
 	g_free (agent);
-
-	pa [0] = main_args;
-	mono_runtime_try_invoke (method, NULL, pa, exc, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return 0;
 }
@@ -462,22 +483,40 @@ transport_send (int fd, guint8 *data, int len)
 static void
 transport_start_receive (void)
 {
+	ERROR_DECL (error);
+	MonoInternalThread *internal;
+
 	transport_connect ();
 
 	if (!listen_fd)
 		return;
 
-	receiver_thread_handle = mono_threads_create_thread (receiver_thread, NULL, 0, 0, NULL);
+	internal = mono_thread_create_internal (mono_get_root_domain (), receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	mono_error_assert_ok (error);
+
+	receiver_thread_handle = mono_threads_open_thread_handle (internal->handle);
 	g_assert (receiver_thread_handle);
 }
 
-static guint32 WINAPI
+static gsize WINAPI
 receiver_thread (void *arg)
 {
+	ERROR_DECL (error);
 	int res, content_len;
 	guint8 buffer [256];
 	guint8 *p, *p_end;
 	MonoObject *exc;
+	MonoInternalThread *internal;
+
+	internal = mono_thread_internal_current ();
+	MonoString *attach_str = mono_string_new_checked (mono_domain_get (), "Attach receiver", error);
+	mono_error_assert_ok (error);
+	mono_thread_set_name_internal (internal, attach_str, TRUE, FALSE, error);
+	mono_error_assert_ok (error);
+	/* Ask the runtime to not abort this thread */
+	//internal->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
+	/* Ask the runtime to not wait for this thread */
+	internal->state |= ThreadState_Background;
 
 	printf ("attach: Listening on '%s'...\n", server_uri);
 
@@ -488,12 +527,6 @@ receiver_thread (void *arg)
 			return 0;
 
 		printf ("attach: Connected.\n");
-
-		mono_thread_attach (mono_get_root_domain ());
-		/* Ask the runtime to not abort this thread */
-		//mono_thread_current ()->flags |= MONO_THREAD_FLAG_DONT_MANAGE;
-		/* Ask the runtime to not wait for this thread */
-		mono_thread_internal_current ()->state |= ThreadState_Background;
 
 		while (TRUE) {
 			char *cmd, *agent_name, *agent_args;

@@ -69,6 +69,11 @@ namespace System.Configuration
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
 		{
 			Type type = Type.GetType (typeName);
+
+			// This code is in System.Configuration.dll, but some of the classes we might want to load here are in System.dll.
+			if (type == null)
+				type = Type.GetType (typeName + ",System");
+
 			if (type == null && throwOnError)
 				throw new ConfigurationErrorsException ("Type '" + typeName + "' not found.");
 			return type;
@@ -325,7 +330,7 @@ namespace System.Configuration
 
 			CheckFileMap (level, map);
 
-			if (locationSubPath == null)
+			if (locationSubPath == null) {
 				switch (level) {
 				case ConfigurationUserLevel.PerUserRoaming:
 					if (map.RoamingUserConfigFilename == null)
@@ -338,35 +343,37 @@ namespace System.Configuration
 					locationSubPath = "local";
 					break;
 				}
-
-			configPath = null;
-			string next = null;
-
-			locationConfigPath = null;
+			}
 
 			if (locationSubPath == "exe" || locationSubPath == null && map.ExeConfigFilename != null) {
 				configPath = "exe";
-				next = "machine";
+				locationSubPath = "machine";
 				locationConfigPath = map.ExeConfigFilename;
+				return;
 			}
 			
 			if (locationSubPath == "local" && map.LocalUserConfigFilename != null) {
 				configPath = "local";
-				next = "roaming";
+				locationSubPath = "roaming";
 				locationConfigPath = map.LocalUserConfigFilename;
+				return;
 			}
 			
 			if (locationSubPath == "roaming" && map.RoamingUserConfigFilename != null) {
 				configPath = "roaming";
-				next = "exe";
+				locationSubPath = "exe";
 				locationConfigPath = map.RoamingUserConfigFilename;
+				return;
 			}
 			
-			if ((locationSubPath == "machine" || configPath == null) && map.MachineConfigFilename != null) {
+			if (locationSubPath == "machine" && map.MachineConfigFilename != null) {
 				configPath = "machine";
-				next = null;
+				locationSubPath = null;
+				locationConfigPath = null;
+				return;
 			}
-			locationSubPath = next;
+
+			throw new NotImplementedException ();
 		}
 	}
 	

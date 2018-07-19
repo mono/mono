@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_SPARC_H__
 #define __MONO_MINI_SPARC_H__
 
@@ -33,7 +37,6 @@
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 #ifdef SPARCV9
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? sparc_o0 : -1)
 #else
@@ -103,6 +106,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_IMT_REG sparc_g1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 #define MONO_ARCH_HAVE_TLS_INIT 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 void mono_arch_tls_init (void);
 

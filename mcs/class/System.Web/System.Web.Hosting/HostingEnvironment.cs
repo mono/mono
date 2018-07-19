@@ -31,9 +31,12 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
@@ -53,6 +56,8 @@ namespace System.Web.Hosting {
 		static VirtualPathProvider vpath_provider = (HttpRuntime.AppDomainAppVirtualPath == null) ? null :
 								new DefaultVirtualPathProvider ();
 		static int busy_count;
+		static BackgroundWorkScheduler _backgroundWorkScheduler = null; // created on demand
+		static readonly Task<object> _completedTask = Task.FromResult<object>(null);
 
 		internal static bool HaveCustomVPP {
 			get;
@@ -211,6 +216,73 @@ namespace System.Web.Hosting {
 
 			if (Host != null)
 				Host.UnregisterObject (obj);
+		}
+
+		// Schedules a task which can run in the background, independent of any request.
+		// This differs from a normal ThreadPool work item in that ASP.NET can keep track
+		// of how many work items registered through this API are currently running, and
+		// the ASP.NET runtime will try not to delay AppDomain shutdown until these work
+		// items have finished executing.
+		//
+		// Usage notes:
+		// - This API cannot be called outside of an ASP.NET-managed AppDomain.
+		// - The caller's ExecutionContext is not flowed to the work item.
+		// - Scheduled work items are not guaranteed to ever execute, e.g., when AppDomain
+		//   shutdown has already started by the time this API was called.
+		// - The provided CancellationToken will be signaled when the application is
+		//   shutting down. The work item should make every effort to honor this token.
+		//   If a work item does not honor this token and continues executing it will
+		//   eventually be considered rogue, and the ASP.NET runtime will rudely unload
+		//   the AppDomain without waiting for the work item to finish.
+		//
+		// This overload of QueueBackgroundWorkItem takes a void-returning callback; the
+		// work item will be considered finished when the callback returns.
+		[SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+		public static void QueueBackgroundWorkItem(Action<CancellationToken> workItem) {
+			if (workItem == null) {
+				throw new ArgumentNullException("workItem");
+			}
+
+			QueueBackgroundWorkItem(ct => { workItem(ct); return _completedTask; });
+		}
+
+		// See documentation on the other overload for a general API overview.
+		//
+		// This overload of QueueBackgroundWorkItem takes a Task-returning callback; the
+		// work item will be considered finished when the returned Task transitions to a
+		// terminal state.
+		[SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+		public static void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem) {
+			if (workItem == null) {
+				throw new ArgumentNullException("workItem");
+			}
+			if (Host == null) {
+				throw new InvalidOperationException(); // can only be called within an ASP.NET AppDomain
+			}
+
+			QueueBackgroundWorkItemInternal(workItem);
+		}
+
+		static void QueueBackgroundWorkItemInternal(Func<CancellationToken, Task> workItem) {
+			Debug.Assert(workItem != null);
+
+			BackgroundWorkScheduler scheduler = Volatile.Read(ref _backgroundWorkScheduler);
+
+			// If the scheduler doesn't exist, lazily create it, but only allow one instance to ever be published to the backing field
+			if (scheduler == null) {
+				BackgroundWorkScheduler newlyCreatedScheduler = new BackgroundWorkScheduler(UnregisterObject, WriteUnhandledException);
+				scheduler = Interlocked.CompareExchange(ref _backgroundWorkScheduler, newlyCreatedScheduler, null) ?? newlyCreatedScheduler;
+				if (scheduler == newlyCreatedScheduler) {
+					RegisterObject(scheduler); // Only call RegisterObject if we just created the "winning" one
+				}
+			}
+
+			scheduler.ScheduleWorkItem(workItem);
+		}
+
+		static void WriteUnhandledException (AppDomain appDomain, Exception exception)
+		{
+			Console.Error.WriteLine ("Error in background work item: " + exception);
 		}
 	}
 }

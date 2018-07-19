@@ -37,6 +37,8 @@ namespace System.Net.Http
 		readonly Stream content;
 		readonly int bufferSize;
 		readonly CancellationToken cancellationToken;
+		readonly long startPosition;
+		bool contentCopied;
 
 		public StreamContent (Stream content)
 			: this (content, 16 * 1024)
@@ -53,6 +55,10 @@ namespace System.Net.Http
 
 			this.content = content;
 			this.bufferSize = bufferSize;
+
+			if (content.CanSeek) {
+				startPosition = content.Position;
+			}
 		}
 
 		//
@@ -83,6 +89,16 @@ namespace System.Net.Http
 
 		protected internal override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
+			if (contentCopied) {
+				if (!content.CanSeek) {
+					throw new InvalidOperationException ("The stream was already consumed. It cannot be read again.");
+				}
+
+				content.Seek (startPosition, SeekOrigin.Begin);
+			} else {
+				contentCopied = true;
+			}
+
 			return content.CopyToAsync (stream, bufferSize, cancellationToken);
 		}
 
@@ -92,7 +108,7 @@ namespace System.Net.Http
 				length = 0;
 				return false;
 			}
-			length = content.Length;
+			length = content.Length - startPosition;
 			return true;
 		}
 	}

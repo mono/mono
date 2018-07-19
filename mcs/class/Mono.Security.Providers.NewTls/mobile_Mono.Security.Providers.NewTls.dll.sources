@@ -1,7 +1,0 @@
-Properties/AssemblyInfo.cs
-
-Mono.Security.Providers.NewTls/ITlsConfiguration.cs
-Mono.Security.Providers.NewTls/ITlsContext.cs
-
-Mono.Security.Providers.NewTls/MonoNewTlsStream.cs
-Mono.Security.Providers.NewTls/MonoNewTlsStreamFactory.cs

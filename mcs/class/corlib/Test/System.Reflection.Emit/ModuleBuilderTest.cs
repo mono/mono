@@ -116,7 +116,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void TestGlobalMethods ()
 		{
 			AssemblyBuilder builder = genAssembly ();
@@ -136,11 +135,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Null ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType ((string) null);
 				Assert.Fail ("#1");
@@ -153,11 +151,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Empty ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType (string.Empty);
 				Assert.Fail ("#1");
@@ -171,11 +168,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_NullChar ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 			try {
 				mb.DefineType ("\0test");
 				Assert.Fail ("#1");
@@ -191,11 +187,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			try {
 				mb.DefineType ("ITest1", TypeAttributes.Interface);
@@ -228,13 +223,12 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;
 
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			tb = mb.DefineType ("Foo", TypeAttributes.Class,
 				typeof (ICollection));
@@ -246,11 +240,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_TypeSize ()
 		{
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
 				typeof (ValueType), 1);
@@ -258,11 +251,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
-			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", false);
 
 			var itb = module.DefineType ("TBase", TypeAttributes.Public);
 
@@ -274,7 +266,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
+		[Category ("MobileNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -303,6 +295,59 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (str);
 			// Don't compare string, since MS returns System.Reflection.Emit.SymbolMethod here 
 			// (they do not provide an implementation of ToString).
+		}
+
+		[Test]
+		public void GetArrayMethodMultipleCallsTest ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder modb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = modb.DefineType ("TestType");
+			var int2D = typeof (int[,]);
+			var mb = tb.DefineMethod ("TestMeth", MethodAttributes.Static | MethodAttributes.Public,
+						  typeof(int), new Type[] { int2D });
+			var ilg = mb.GetILGenerator ();
+
+			// static int TestMeth(int[,] a)
+			// {
+			//   int x;
+			//   x = a.Get(0,0);
+			//   return a.Get(0,1) + x;
+			// }
+			//
+
+			var x = ilg.DeclareLocal (typeof (int));
+
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			var arrmi = modb.GetArrayMethod (int2D, "Get",
+							 CallingConventions.Standard | CallingConventions.HasThis,
+							 typeof(int),
+							 new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Call, arrmi);
+			ilg.Emit (OpCodes.Stloc, x);
+			var arrmi2 = modb.GetArrayMethod (int2D, "Get",
+							  CallingConventions.Standard | CallingConventions.HasThis,
+							  typeof(int),
+							  new Type[] { typeof(int), typeof(int) });
+			ilg.Emit (OpCodes.Ldarg_0);
+			ilg.Emit (OpCodes.Ldc_I4_0);
+			ilg.Emit (OpCodes.Ldc_I4_1);
+			ilg.Emit (OpCodes.Call, arrmi2);
+			ilg.Emit (OpCodes.Ldloc, x);
+			ilg.Emit (OpCodes.Add);
+			ilg.Emit (OpCodes.Ret);
+			Assert.AreNotSame (arrmi, arrmi2); // fresh MonoArrayMethods each time
+	    
+			var t = tb.CreateType ();
+			Assert.IsNotNull (t);
+			var a = new int[,] { { 5, 7 }, { 11, 19 } };
+			var mi = t.GetMethod ("TestMeth");
+			Assert.IsNotNull (t);
+			var o = mi.Invoke (null, new object[] { a });
+			Assert.AreEqual (12, (int)o);
 		}
 
 		private static void AssertArrayEqualsSorted (Array o1, Array o2)
@@ -480,7 +525,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			var field = type.DefineField ("field", t, FieldAttributes.Public);
 
-			type.CreateType ();
+			var tc = type.CreateType ();
 
 			var resolved_field = (FieldInfo) module.ResolveMember (0x04000001, new [] { typeof (string) }, Type.EmptyTypes);
 			Assert.IsNotNull (resolved_field);
@@ -506,6 +551,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		// The token is not guaranteed to be 0x0a000001
+		[Category ("NotWorking")]
 		public void ResolveFieldMemberRefWithGenericArguments ()
 		{
 			var assembly = genAssembly ();
@@ -533,6 +580,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		// The token is not guaranteed to be 0x0a000002
+		[Category ("NotWorking")]
 		public void ResolveMethodMemberRefWithGenericArguments ()
 		{
 			var assembly = genAssembly ();
@@ -566,6 +615,8 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		// The token is not guaranteed to be 0x2b000001
+		[Category("NotWorking")]
 		public void ResolveMethodSpecWithGenericArguments ()
 		{
 			var assembly = genAssembly ();
@@ -793,6 +844,396 @@ namespace MonoTests.System.Reflection.Emit
 
 			// ArgumentNullException should not occur.
 			module.GetConstructorToken (method, null);
+		}
+
+		[Test]
+		public void GetType ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+			TypeBuilder tb = module.DefineType ("t1", TypeAttributes.Public);
+
+			Assert.AreEqual ("t1[]", module.GetType ("t1[]").FullName);
+			Assert.AreEqual ("t1*", module.GetType ("t1*").FullName);
+			Assert.AreEqual ("t1&", module.GetType ("t1&").FullName);
+			Assert.AreEqual ("t1[]&", module.GetType ("t1[]&").FullName);
+		}
+
+		[AttributeUsage(AttributeTargets.All)]
+		public class MyAttribute : Attribute {
+			public String Contents;
+			public MyAttribute (String contents) 
+			{
+				this.Contents = contents;
+			}
+		}
+
+		[Test]
+		public void GetMethodsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+
+			// Added to make sure fields and methods not mixed up by getters
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
+				MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
+				CallingConventions.Standard, typeof (void), new Type [] { typeof (string) }, CallingConvention.Winapi,
+				CharSet.Auto);
+			method.SetImplementationFlags (MethodImplAttributes.PreserveSig |
+										   method.GetMethodImplementationFlags ());
+
+			module.CreateGlobalFunctions ();
+
+			// Make sure method is defined, but field is not
+			Assert.AreEqual (1, module.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length);
+		}
+
+		[Test]
+		public void GetFieldsBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+			module.CreateGlobalFunctions ();
+
+			var fieldG = module.GetField (fieldBuilder.Name);
+			Assert.IsNotNull (fieldG);
+			Assert.AreEqual (1, module.GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Length);
+		}
+
+		[Test]
+		public void GetCustomAttributesBeforeInstantiation ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			Assert.AreEqual (1, module.GetCustomAttributes (false).Length);
+			Assert.AreEqual (typeof (MyAttribute), ((MyAttribute) module.GetCustomAttributes (false)[0]).GetType ());
+			Assert.AreEqual ("hi", ((MyAttribute) module.GetCustomAttributes (false)[0]).Contents);
+		}
+
+		[Test]
+		public void GetCustomAttributesIgnoresArg ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			var first = module.GetCustomAttributes (false);
+			var second = module.GetCustomAttributes (true);
+
+			Assert.AreEqual (first.Length, second.Length);
+
+			for (int i=0; i < first.Length; i++)
+				Assert.AreEqual (first [i].GetType (), second [i].GetType ());
+
+			Assert.AreEqual ("hi", ((MyAttribute) first [0]).Contents);
+			Assert.AreEqual ("hi", ((MyAttribute) second [0]).Contents);
+		}
+
+		[Test]
+		public void GetCustomAttributesThrowsUnbakedAttributeType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			TypeBuilder tb = module.DefineType ("foo");
+			module.CreateGlobalFunctions ();
+
+			ConstructorInfo ctor = typeof(MyAttribute).GetConstructor (new Type [] {typeof(String)});
+			ctor.GetHashCode ();
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, new object [] {"hi"});
+			module.SetCustomAttribute (cab);
+
+			try {
+				module.GetCustomAttributes (tb, false);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetExternalTypeBuilderCAttr ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+
+			ModuleBuilder module_two = assm.DefineDynamicModule ("ModuleTwo");
+			TypeBuilder tb = module_two.DefineType ("foo");
+
+			ConstructorInfo ctor = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, Array.Empty<object> ());
+
+			// Set the custom attribute to have a type builder from another module
+			module.SetCustomAttribute (cab);
+
+			module.CreateGlobalFunctions ();
+
+			try {
+				module.GetCustomAttributes (false);
+			} 
+			catch (NotSupportedException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetFieldsNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			try {
+				module.GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetFieldNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			try {
+				module.GetField (fieldBuilder.Name);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetMethodsNoGlobalType ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			FieldBuilder fieldBuilder = module.DefineInitializedData ("GlobalField", new byte[4], FieldAttributes.Public);
+
+			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
+															  MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
+															  CallingConventions.Standard, typeof (void), new Type [] { typeof (string) }, CallingConvention.Winapi,
+															  CharSet.Auto);
+			method.SetImplementationFlags (MethodImplAttributes.PreserveSig |
+										   method.GetMethodImplementationFlags ());
+
+			try {
+				module.GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+			} 
+			catch (InvalidOperationException e) {
+				// Correct behavior
+				return;
+			}
+			Assert.Fail ("Supposed to throw");
+		}
+
+		[Test]
+		public void GetMetadataToken ()
+		{
+			AssemblyBuilder assm = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("Name"), AssemblyBuilderAccess.Run);
+			ModuleBuilder module = assm.DefineDynamicModule ("Module");
+			module.CreateGlobalFunctions ();
+			Assert.AreEqual (0, module.MetadataToken);
+		}
+
+		[Test]
+		public void SaveMemberRefGtd () {
+			// Ensure that the a memberref token is emitted for a
+			// field or for a method of a gtd in the same dynamic assembly.
+			// Regression test for GitHub #6192
+
+			// class T {
+			//   public string F () {
+			//      int i = new C<int>().Foo (42).field1;
+			//      return i.ToString();
+			//   }
+			//   public string F2 () {
+			//     int i = new C<int>().Bar (42);
+			//     return i.ToString ();
+			//   }
+			// }
+			// class C<X> {
+			//    public X field1;
+			//    public C<X> Foo (X x) {
+			//       this.field1 = x;
+			//       return this;
+		        //    }
+			//    public X Bar (X x) {
+			//       return this.Foo (x).field1;
+			//    }
+			//}
+
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (an, AssemblyBuilderAccess.RunAndSave, tempDir);
+			ModuleBuilder modulebuilder = ab.DefineDynamicModule (an.Name, an.Name + ".dll");
+
+			var tb = modulebuilder.DefineType ("T", TypeAttributes.Public);
+			var il_gen = tb.DefineMethod ("F", MethodAttributes.Public, typeof(string), null).GetILGenerator ();
+			var il_gen2 = tb.DefineMethod ("F2", MethodAttributes.Public, typeof(string), null).GetILGenerator ();
+
+			var cbuilder = modulebuilder.DefineType ("C", TypeAttributes.Public);
+			var genericParams = cbuilder.DefineGenericParameters ("X");
+
+			var field1builder = cbuilder.DefineField ("field1", genericParams[0], FieldAttributes.Public);
+
+			var cOfX = cbuilder.MakeGenericType(genericParams);
+
+			var fooBuilder = cbuilder.DefineMethod ("Foo",
+								MethodAttributes.Public,
+								cOfX,
+								new Type [] { genericParams[0] });
+			var cdefaultCtor = cbuilder.DefineDefaultConstructor (MethodAttributes.Public);
+
+			var fooIL = fooBuilder.GetILGenerator ();
+
+			fooIL.Emit (OpCodes.Ldarg_0);
+			fooIL.Emit (OpCodes.Ldarg_1);
+			// Emit (Stfld, field1builder) must generate a memberref token, not fielddef.
+			fooIL.Emit (OpCodes.Stfld, field1builder);
+			fooIL.Emit (OpCodes.Ldarg_0);
+			fooIL.Emit (OpCodes.Ret);
+
+			var barBuilder = cbuilder.DefineMethod ("Bar",
+								MethodAttributes.Public,
+								genericParams [0],
+								new Type [] { genericParams [0] });
+			var barIL = barBuilder.GetILGenerator ();
+
+			barIL.Emit (OpCodes.Ldarg_0);
+			barIL.Emit (OpCodes.Ldarg_1);
+			// Emit (Call, fooBuilder) must generate a memberref token, not a methoddef.
+			barIL.Emit (OpCodes.Call, fooBuilder);
+			barIL.Emit (OpCodes.Ldfld, field1builder);
+			barIL.Emit (OpCodes.Ret);
+
+			var cOfInt32 = cbuilder.MakeGenericType (new Type [] { typeof (int) });
+			var fooOfInt32 = TypeBuilder.GetMethod (cOfInt32, fooBuilder);
+			var cfield1OfInt32 = TypeBuilder.GetField (cOfInt32, field1builder);
+			var intToString = typeof(int).GetMethod ("ToString", Type.EmptyTypes);
+
+			var ilocal = il_gen.DeclareLocal (typeof(int));
+			il_gen.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (cOfInt32, cdefaultCtor));
+			il_gen.Emit (OpCodes.Ldc_I4, 42);
+			il_gen.Emit (OpCodes.Call, fooOfInt32);
+			il_gen.Emit (OpCodes.Ldfld, cfield1OfInt32);
+			il_gen.Emit (OpCodes.Stloc, ilocal);
+			il_gen.Emit (OpCodes.Ldloca, ilocal);
+			il_gen.Emit (OpCodes.Call, intToString);
+			il_gen.Emit (OpCodes.Ret);
+
+
+			var i2local = il_gen2.DeclareLocal (typeof (int));
+			var barOfInt32 = TypeBuilder.GetMethod (cOfInt32, barBuilder);
+			il_gen2.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (cOfInt32, cdefaultCtor));
+			il_gen2.Emit (OpCodes.Ldc_I4, 17);
+			il_gen2.Emit (OpCodes.Call, barOfInt32);
+			il_gen2.Emit (OpCodes.Stloc, i2local);
+			il_gen2.Emit (OpCodes.Ldloca, i2local);
+			il_gen2.Emit (OpCodes.Call, intToString);
+			il_gen2.Emit (OpCodes.Ret);
+
+			cbuilder.CreateType ();
+			tb.CreateType ();
+
+			ab.Save (an.Name + ".dll");
+
+			/* Yes the test really needs to roundtrip through SRE.Save().
+			 * The regression is in the token fixup code on the saving codepath.
+			 */
+
+			var assm = Assembly.LoadFrom (Path.Combine (tempDir, an.Name + ".dll"));
+			
+			var baked = assm.GetType ("T");
+
+			var x = Activator.CreateInstance (baked);
+			var m = baked.GetMethod ("F");
+
+			var s = m.Invoke (x, null);
+
+			Assert.AreEqual ("42", s);
+
+			var m2 = baked.GetMethod ("F2");
+
+			var s2 = m2.Invoke (x, null);
+
+			Assert.AreEqual ("17", s2);
+		}
+
+		[Test]
+		public void FieldBuilder_DistinctTokens ()
+		{
+			// Regression test for #33208
+			// Fields of distinct classes in the same
+			// module should have distinct tokens.
+
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			var tb1 = module.DefineType ("T1", TypeAttributes.Public);
+
+			var tb2 = module.DefineType ("T2", TypeAttributes.Public);
+
+			FieldBuilder fbX1 = tb1.DefineField ("X", typeof (Object), FieldAttributes.Public);
+
+			FieldBuilder fbX2 = tb2.DefineField ("X", typeof (Object), FieldAttributes.Public);
+
+			FieldBuilder fbY1 = tb1.DefineField ("Y", typeof (int), FieldAttributes.Public);
+
+			Assert.AreNotEqual (fbX1.GetToken (), fbX2.GetToken (), "GetToken() T1.X != T2.X");
+			Assert.AreNotEqual (fbX1.GetToken (), fbY1.GetToken (), "GetToken() T1.X != T1.Y");
+			Assert.AreNotEqual (fbY1.GetToken (), fbX2.GetToken (), "GetToken() T1.Y != T2.X");
+
+			// .NET throws NotSupportedException for
+			// FieldBuilder.MetadataToken, Mono doesn't.
+			// We'll check that the metadata tokens are
+			// distinct, but it's also okay to take these
+			// assertions out if we start following .NET
+			// behavior.
+			Assert.AreNotEqual (fbX1.MetadataToken, fbX2.MetadataToken, "MetadataToken T1.X != T2.X");
+			Assert.AreNotEqual (fbX1.MetadataToken, fbY1.MetadataToken, "MetadataToken T1.X != T1.Y");
+			Assert.AreNotEqual (fbY1.MetadataToken, fbX2.MetadataToken, "MetadataToken T1.Y != T2.X");
+
+			var t1 = tb1.CreateType ();
+			var t2 = tb2.CreateType ();
+
+			FieldInfo fX1 = t1.GetField ("X");
+			FieldInfo fX2 = t2.GetField ("X");
+
+			FieldInfo fY1 = t1.GetField ("Y");
+
+			Assert.AreNotEqual (fX1.MetadataToken, fX2.MetadataToken, "T1.X != T2.X");
+			Assert.AreNotEqual (fX1.MetadataToken, fY1.MetadataToken, "T1.X != T1.Y");
+			Assert.AreNotEqual (fY1.MetadataToken, fX2.MetadataToken, "T1.Y != T2.X");
+
+			Assert.AreEqual (module.ResolveField (fX1.MetadataToken), fX1, "resolve T1.X");
+			Assert.AreEqual (module.ResolveField (fX2.MetadataToken), fX2, "resolve T2.X");
+			Assert.AreEqual (module.ResolveField (fY1.MetadataToken), fY1, "resolve T1.Y");
 		}
 	}
 }

@@ -38,36 +38,10 @@ namespace System.Windows.Forms.Theming
 
 		static ThemeElements ()
 		{
-			string theme_var;
-
-			theme_var = Environment.GetEnvironmentVariable ("MONO_THEME");
-
-			if (theme_var == null)
-				theme_var = "win32";
+			if (Application.VisualStylesEnabled)
+				theme = new ThemeElementsVisualStyles ();
 			else
-				theme_var = theme_var.ToLower ();
-	
-			theme = LoadTheme (theme_var);
-
-		}
-
-		private static ThemeElementsDefault LoadTheme (string themeName) 
-		{
-			if (themeName == "visualstyles")
-				if (Application.VisualStylesEnabled)
-					return new ThemeElementsVisualStyles ();
-				else
-					return new ThemeElementsDefault ();
-			Assembly ass = Assembly.GetExecutingAssembly ();
-			string iname = typeof(ThemeElements).FullName;
-			string assemblyname = iname + themeName;
-			Type type = ass.GetType (assemblyname, false, true);
-			if (type != null) {
-				object o = ass.CreateInstance (type.FullName);
-				if (o != null)
-					return (ThemeElementsDefault) o;
-			}
-			return new ThemeElementsDefault ();
+				theme = new ThemeElementsDefault ();
 		}
 
 		#region Buttons

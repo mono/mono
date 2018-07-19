@@ -47,6 +47,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 	/// While it has been superceded by more recent and more powerful algorithms, its still in use and 
 	/// is viable for preventing casual snooping
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public abstract class PkzipClassic  : SymmetricAlgorithm
 	{
 		/// <summary>
@@ -368,6 +369,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 	/// Defines a wrapper object to access the Pkzip algorithm. 
 	/// This class cannot be inherited.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class PkzipClassicManaged : PkzipClassic
 	{
 		/// <summary>

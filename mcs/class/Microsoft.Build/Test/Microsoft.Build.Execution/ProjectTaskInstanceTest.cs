@@ -42,7 +42,6 @@ namespace MonoTests.Microsoft.Build.Execution
 	[TestFixture]
 	public class ProjectTaskInstanceTest
 	{
-#if NET_4_5
 		[Test]
 		public void OutputPropertyExists ()
 		{
@@ -78,7 +77,6 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.AreEqual (string.Empty, foo.Outputs, "#6");
 			Assert.AreEqual ("True", proj.GetPropertyValue ("C"), "#7");
 		}
-#endif
 	}
 }
 

@@ -52,7 +52,7 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-#if NET_2_1
+#if MOBILE
 	// attributes specific to FX 3.5
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else

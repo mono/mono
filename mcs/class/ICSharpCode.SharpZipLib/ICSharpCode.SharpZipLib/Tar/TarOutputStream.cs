@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// by writing to this stream using write().
 	/// </summary>
 	/// public
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarOutputStream : Stream
 	{
 		/// <summary>

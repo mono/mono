@@ -6,22 +6,14 @@ export TESTING_MONO=a
 export MSBuildExtensionsPath=$(XBUILD_DATA_DIR)
 export XBUILD_FRAMEWORK_FOLDERS_PATH= $(topdir)/class/Microsoft.Build/xbuild-testing
 
-ifeq (4.0, $(FRAMEWORK_VERSION))
-NO_TEST=true
-else
-test-local: copy-targets $(test_lib).config
+test-local: copy-targets Test/test-config-file-$(PROFILE)
 clean-local: clean-targets clean-test-config
-endif
 
-xbuild-net4-fail:
-	@echo "The net_4_0 profile contains reference assemblies only and cannot be installed/tested as an xbuild toolset"
-	@exit 1
-
-$(test_lib).config: $(XBUILD_DATA_DIR)/xbuild.exe.config.in
-	sed -e 's/@ASM_VERSION@/$(XBUILD_ASSEMBLY_VERSION)/g' $(XBUILD_DATA_DIR)/xbuild.exe.config.in > $(test_lib).config
+Test/test-config-file-$(PROFILE): $(XBUILD_DATA_DIR)/xbuild.exe.config_test.in
+	sed -e 's/@ASM_VERSION@/$(XBUILD_ASSEMBLY_VERSION)/g' $(XBUILD_DATA_DIR)/xbuild.exe.config_test.in > Test/test-config-file-$(PROFILE)
 
 clean-test-config:
-	rm -f $(test_lib).config
+	rm -f Test/test-config-file-$(PROFILE)
 
 copy-targets: copy-targets-$(XBUILD_VERSION)
 

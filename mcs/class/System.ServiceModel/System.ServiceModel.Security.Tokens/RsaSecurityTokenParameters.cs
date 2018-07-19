@@ -39,8 +39,8 @@ namespace System.ServiceModel.Security.Tokens
 			RequireDerivedKeys = true;
 		}
 
-		protected RsaSecurityTokenParameters (RsaSecurityTokenParameters source)
-			: base (source)
+		protected RsaSecurityTokenParameters (RsaSecurityTokenParameters other)
+			: base (other)
 		{
 		}
 

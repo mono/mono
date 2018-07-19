@@ -109,7 +109,7 @@ namespace MonoTests.System.Windows.Forms
 			o = child1.Anchor;
 			child1.Anchor = AnchorStyles.Right;
 			Assert.IsFalse (child1.IsHandleCreated, "A6");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.AutoScrollOffset;
 			child1.AutoScrollOffset = new Point (40, 40);
@@ -164,7 +164,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.AutoScrollMinSize = new Size (child1.AutoScrollMinSize.Width + 1, child1.AutoScrollMinSize.Height + 1);
 			Assert.IsFalse (child1.IsHandleCreated, "FA9");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.AutoScrollOffset;
 			child1.AutoScrollOffset = new Point (child1.AutoScrollOffset.X + 1, child1.AutoScrollOffset.Y + 1);
@@ -180,7 +180,7 @@ namespace MonoTests.System.Windows.Forms
 			o = child1.AutoSize;
 			child1.AutoSize = !child1.AutoSize;
 			Assert.IsFalse (child1.IsHandleCreated, "FA12");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.AutoSizeMode;
 			child1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -410,7 +410,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.HelpButton = !child1.HelpButton;
 			Assert.IsFalse (child1.IsHandleCreated, "FH1");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.HorizontalScroll;
 			Assert.IsFalse (child1.IsHandleCreated, "FH2"); 
@@ -431,7 +431,7 @@ namespace MonoTests.System.Windows.Forms
 			SetUp ();
 			o = child1.IsDisposed;
 			Assert.IsFalse (child1.IsHandleCreated, "A43");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.IsMirrored;
 			Assert.IsFalse (child1.IsHandleCreated, "A44");
@@ -614,7 +614,7 @@ namespace MonoTests.System.Windows.Forms
 			o = child1.ParentForm;
 			Assert.IsFalse (child1.IsHandleCreated, "FP1");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.RestoreBounds;
 			Assert.IsFalse (child1.IsHandleCreated, "FR1"); 
@@ -654,7 +654,7 @@ namespace MonoTests.System.Windows.Forms
 			SetUp ();
 			o = child1.TopLevelControl;
 			Assert.IsFalse (child1.IsHandleCreated, "A67");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.UseWaitCursor;
 			child1.UseWaitCursor = true;
@@ -732,7 +732,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.TransparencyKey = Color.BurlyWood;
 			Assert.IsFalse (child1.IsHandleCreated, "FT4");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.VerticalScroll;
 			Assert.IsFalse (child1.IsHandleCreated, "FV1"); 
@@ -752,7 +752,7 @@ namespace MonoTests.System.Windows.Forms
 			// Not a surprise, but none of these cause handle creation.
 			// Included just to absolutely certain.
 			object o;
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.PublicCanRaiseEvents;
 			Assert.IsFalse (child1.IsHandleCreated, "A1");
@@ -803,7 +803,7 @@ namespace MonoTests.System.Windows.Forms
 			o = child1.PublicResizeRedraw;
 			child1.PublicResizeRedraw = !child1.PublicResizeRedraw;
 			Assert.IsFalse (child1.IsHandleCreated, "A13");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			o = child1.PublicScaleChildren;
 			Assert.IsFalse (child1.IsHandleCreated, "A14");
@@ -1033,7 +1033,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.LayoutMdi (MdiLayout.Cascade);
 			Assert.IsFalse (child1.IsHandleCreated, "F5");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.PerformAutoScale ();
 			Assert.IsFalse (child1.IsHandleCreated, "F6");
@@ -1086,7 +1086,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.Validate ();
 			Assert.IsFalse (child1.IsHandleCreated, "F15");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.ValidateChildren ();
 			Assert.IsFalse (child1.IsHandleCreated, "F16"); 
@@ -1096,16 +1096,14 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Show ()
 		{
+			bool handle_created_called = false;
+
 			SetUp ();
 			Assert.IsFalse (child1.IsHandleCreated, "A1");
-			child1.HandleCreated += new EventHandler (HandleCreated_WriteStackTrace);
+			child1.HandleCreated += (sender, e) => handle_created_called = true;
 			child1.Show ();
-			Assert.IsTrue (child1.IsHandleCreated, "A2");
-		}
-
-		void HandleCreated_WriteStackTrace (object sender, EventArgs e)
-		{
-			Console.WriteLine ("Stacktrace?");//Environment.StackTrace);
+			Assert.IsTrue (handle_created_called, "A2");
+			Assert.IsTrue (child1.IsHandleCreated, "A3");
 		}
 
 		public delegate void InvokeDelegate ();
@@ -1144,7 +1142,7 @@ namespace MonoTests.System.Windows.Forms
 			SetUp ();
 			child1.PublicGetAccessibilityObjectById (0);
 			Assert.IsFalse (child1.IsHandleCreated, "A6");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.PublicGetAutoSizeMode ();
 			Assert.IsFalse (child1.IsHandleCreated, "A7");
@@ -1240,7 +1238,7 @@ namespace MonoTests.System.Windows.Forms
 			SetUp ();
 			child1.PublicRtlTranslateLeftRight (LeftRightAlignment.Left);
 			Assert.IsFalse (child1.IsHandleCreated, "A30");
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.PublicScaleControl (new SizeF (1.5f, 1.5f), BoundsSpecified.All);
 			Assert.IsFalse (child1.IsHandleCreated, "A31");
@@ -1253,7 +1251,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.PublicSelect ();
 			Assert.IsTrue (child1.IsHandleCreated, "A33");
 			
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.PublicSetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			Assert.IsFalse (child1.IsHandleCreated, "A34");
@@ -1363,7 +1361,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.PublicProcessTabKey (true);
 			Assert.IsFalse (child1.IsHandleCreated, "F14");
 
-#if !__MonoCS__
+#if !MONO
 			SetUp ();
 			child1.Controls.Add (new Control ());
 			child1.PublicScrollToControl (child1.Controls [0]);
@@ -1391,7 +1389,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			// Properties
 			public SizeF PublicAutoScaleFactor { get { return base.AutoScaleFactor; } } 
-#if !__MonoCS__
+#if !MONO
 			public bool PublicCanRaiseEvents { get { return base.CanRaiseEvents; } }
 #endif
 			public CreateParams PublicCreateParams { get { return base.CreateParams; } }
@@ -1410,7 +1408,7 @@ namespace MonoTests.System.Windows.Forms
 			public Rectangle PublicMaximizedBounds { get {return base.MaximizedBounds; } set { base.MaximizedBounds = value; }}
 			public bool PublicRenderRightToLeft { get { return base.RenderRightToLeft; } }
 			public bool PublicResizeRedraw { get { return base.ResizeRedraw; } set { base.ResizeRedraw = value; } }
-#if !__MonoCS__
+#if !MONO
 			public bool PublicScaleChildren { get { return base.ScaleChildren; } }
 #endif
 			public bool PublicShowFocusCues { get { return base.ShowFocusCues; } }
@@ -1430,7 +1428,7 @@ namespace MonoTests.System.Windows.Forms
 			public void PublicCreateHandle () { base.CreateHandle (); }
 			public void PublicDestroyHandle () { base.DestroyHandle (); }
 			public AccessibleObject PublicGetAccessibilityObjectById (int objectId) { return base.GetAccessibilityObjectById (objectId); }
-#if !__MonoCS__
+#if !MONO
 			public AutoSizeMode PublicGetAutoSizeMode () { return base.GetAutoSizeMode (); }
 			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified) { return base.GetScaledBounds (bounds, factor, specified); }
 #endif
@@ -1466,17 +1464,17 @@ namespace MonoTests.System.Windows.Forms
 			public ContentAlignment PublicRtlTranslateContent (ContentAlignment align) { return base.RtlTranslateContent (align); }
 			public HorizontalAlignment PublicRtlTranslateHorizontal (HorizontalAlignment align) { return base.RtlTranslateHorizontal (align); }
 			public LeftRightAlignment PublicRtlTranslateLeftRight (LeftRightAlignment align) { return base.RtlTranslateLeftRight (align); }
-#if !__MonoCS__
+#if !MONO
 			public void PublicScaleControl (SizeF factor, BoundsSpecified specified) { base.ScaleControl (factor, specified); }
 #endif
 			public void PublicScaleCore (float dx, float dy) { base.ScaleCore (dx, dy); }
-#if !__MonoCS__
+#if !MONO
 			public void PublicScrollToControl (Control activeControl) { base.ScrollToControl (activeControl); } 
 #endif
 			public void PublicSelect () { base.Select (); }
 			public void PublicSelect (bool directed, bool forward) { base.Select (directed, forward); }
 
-#if !__MonoCS__
+#if !MONO
 			public void PublicSetAutoSizeMode (AutoSizeMode mode) { base.SetAutoSizeMode (mode); }
 #endif
 			public void PublicSetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) { base.SetBoundsCore (x, y, width, height, specified); }

@@ -11,7 +11,8 @@ SCARY_LIB=/lib:$(prefix)/lib
 endif
 
 LIB_REFS = System System.Xml
-LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib)
+KEYFILE = ../ecma.pub
+LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
@@ -28,13 +29,13 @@ Mono.Xml.XPath2/XQueryParser.jay: Mono.Xml.XPath2/ParserBase.jay $(SKELETON)
 Mono.Xml.XPath2/XPath2Parser.cs: Mono.Xml.XPath2/XPath2Parser.jay
 	echo "#define XPATH2_PARSER" > $@
 	echo "#if NET_2_0" >> $@
-	$(topdir)/jay/jay -ct < $(SKELETON) $(CURDIR)/$< >>$@
+	$(topdir)/jay/jay -ct $(CURDIR)/$< < $(SKELETON) >>$@
 	echo "#endif" >> $@
 
 Mono.Xml.XPath2/XQueryParser.cs: Mono.Xml.XPath2/XQueryParser.jay $(SKELETON)
 	echo "#define XQUERY_PARSER" > $@
 	echo "#if NET_2_0" >> $@
-	$(topdir)/jay/jay -ct < $(SKELETON) $(CURDIR)/$< >>$@
+	$(topdir)/jay/jay -ct $(CURDIR)/$< < $(SKELETON) >>$@
 	echo "#endif" >> $@
 
 Mono.Xml.XPath2/XPath2Tokenizer.cs: Mono.Xml.XPath2/TokenizerBase.cs

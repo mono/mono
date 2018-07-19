@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using NUnit.Framework;
 using System;
@@ -3115,6 +3115,26 @@ namespace MonoTests.System
 			tester.AssertLoadMissingAssemblyType ();
 		}
 
+		[Test]
+		public void ShadowCopyDontChangeAssemblyCodeBase ()
+		{
+			var setup = new AppDomainSetup ();
+			setup.ApplicationBase = tempDir;
+			setup.ApplicationName = "testdomain";
+			setup.ShadowCopyFiles = "true";
+			var ad = CreateTestDomain (setup, true);
+
+			string assemblyFile = Path.Combine (tempDir, "TestAssembly.dll");
+			AssemblyName aname = new AssemblyName ();
+			aname.Name = "TestAssembly";
+			GenerateAssembly (aname, assemblyFile);
+
+			var tester = CreateCrossDomainTester (ad);
+			var codeBaseFromShadowCopy = tester.LoadAndGetName ("TestAssembly");
+			var expected = Assembly.LoadFrom (Path.Combine (tempDir, "TestAssembly.dll"));
+			Assert.AreEqual (expected.GetName ().CodeBase, codeBaseFromShadowCopy);
+		}
+
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -3257,6 +3277,12 @@ namespace MonoTests.System
 			public object ReturnArg0 (object obj)
 			{
 				return obj;
+			}
+
+			public string LoadAndGetName (string assemblyName)
+			{
+				var assembly = Assembly.Load (assemblyName);
+				return assembly.GetName ().CodeBase;
 			}
 		}
 

@@ -69,7 +69,6 @@ namespace System.ServiceModel.Channels
 		{
 Console.WriteLine ("NamedPipeChannelListener.OnAcceptChannel");
 
-			DateTime start = DateTime.Now;
 			if (active_server != null) {
 				try {
 					server_release_handle.WaitOne (timeout);

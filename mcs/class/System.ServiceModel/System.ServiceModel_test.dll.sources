@@ -1,5 +1,5 @@
+../../test-helpers/NunitHelpers.cs
 NUnitMoonHelper.cs
-../../test-helpers/NetworkHelpers.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
 FeatureBased/Features.Client/DataContractTesterProxy.cs
@@ -129,6 +129,7 @@ System.ServiceModel.Dispatcher/ActionFilterTest.cs
 System.ServiceModel.Dispatcher/Bug652331Test.cs
 System.ServiceModel.Dispatcher/Bug652331_2Test.cs
 System.ServiceModel.Dispatcher/Bug32886Test.cs
+System.ServiceModel.Dispatcher/Bug46971Test.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherTest.cs
 System.ServiceModel.Dispatcher/DispatchOperationTest.cs
 System.ServiceModel.Dispatcher/DispatchRuntimeTest.cs
@@ -148,8 +149,6 @@ System.ServiceModel.Security.Tokens/SecureConversationSecurityTokenParametersTes
 System.ServiceModel.Security.Tokens/SecurityContextSecurityTokenTest.cs
 System.ServiceModel.Security.Tokens/SecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/ServiceModelSecurityTokenTypesTest.cs
-System.ServiceModel.Security.Tokens/SslSecurityTokenParametersTest.cs
-System.ServiceModel.Security.Tokens/SspiSecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/UserNameSecurityTokenParametersTest.cs
 System.ServiceModel.Security.Tokens/WrappedKeySecurityTokenTest.cs
 System.ServiceModel.Security.Tokens/X509ListedCertificateValidator.cs
@@ -166,6 +165,7 @@ System.ServiceModel.Security/SupportingTokenParametersTest.cs
 System.ServiceModel.Security/TransportSecurityBindingElementTest.cs
 System.ServiceModel.Security/WSSecurityTokenSerializerTest.cs
 System.ServiceModel/BasicHttpBindingTest.cs
+System.ServiceModel/Bug36080Test.cs
 System.ServiceModel/CallbackBehaviorAttributeTest.cs
 System.ServiceModel/ChannelFactoryTest.cs
 System.ServiceModel/ChannelFactory_1Test.cs

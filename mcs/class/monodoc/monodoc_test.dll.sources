@@ -1,8 +1,9 @@
-Monodoc/HelpSourceTests.cs
-Monodoc/EcmaDocTests.cs
-Monodoc/TreeTest.cs
-Monodoc.Ecma/EcmaUrlTests.cs
-Monodoc/SettingsTest.cs
-Monodoc.Generators/RawGeneratorTests.cs
-Monodoc/NodeTest.cs
-Monodoc/RootTreeTest.cs
+../../test-helpers/NunitHelpers.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/EcmaDocTests.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/HelpSourceTests.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/NodeTest.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/RootTreeTest.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/SettingsTest.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc/TreeTest.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc.Ecma/EcmaUrlTests.cs
+../../../../external/api-doc-tools/monodoc/Test/Monodoc.Generators/RawGeneratorTests.cs

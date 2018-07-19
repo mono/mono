@@ -1,6 +1,3 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 ../System.Web/System.Web.Util/MachineKeySectionUtils.cs
 ../System.Web/System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
 ../System.Web/System.Web.Handlers/AssemblyResourceLoader.cs

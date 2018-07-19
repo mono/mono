@@ -156,7 +156,6 @@ namespace MonoTests.System
 			Assert.AreEqual (myArrSeg_1 != myArrSeg_2, true);
 		}
 
-#if NET_4_5
 		[Test]
 		public void IList_NotSupported ()
 		{
@@ -278,6 +277,5 @@ namespace MonoTests.System
 			IList<byte> seg = new ArraySegment<byte> (arr);
 			seg[4] = 3;
 		}
-#endif
 	}
 }

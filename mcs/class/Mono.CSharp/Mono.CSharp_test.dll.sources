@@ -5,3 +5,4 @@ Evaluator/EvaluatorFixture.cs
 Evaluator/EvaluatorTest.cs
 Evaluator/ExpressionsTest.cs
 Evaluator/TypesTest.cs
+Visit/ASTVisitorTest.cs

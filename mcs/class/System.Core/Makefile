@@ -4,72 +4,59 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
+ifeq ($(PROFILE),build)
+CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE)/csc.$(LIBRARY).aotprofile
+endif
+
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,PFX_LEGACY_3_5,FEATURE_NETCORE
 LIB_REFS = System
-LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC -unsafe
-RESOURCE_STRINGS = ../../../external/referencesource/System.Core/System.Core.txt
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) -d:INSIDE_SYSCORE -d:LIBC -unsafe -nowarn:436
+TXT_RESOURCE_STRINGS = ../referencesource/System.Core/System.Core.txt
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Linq.Expressions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq.Parallel/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Linq.Queryable/src/Resources/Strings.resx
+
+LIBRARY_WARN_AS_ERROR = yes
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
+LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
-ifdef MOBILE_DYNAMIC
-LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
-endif
-
-system_core_plain_libdir = $(the_libdir_base)plaincore
-
-ifdef MOBILE_STATIC
-extra_test_flags := -exclude:NotWorkingInterpreter
-system_core_library_deps = $(the_libdir_base)Mono.Dynamic.Interpreter.dll $(system_core_plain_libdir)/System.Core.dll
-LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
-
-ifneq (plaincore/,$(intermediate))
-LIB_REFS += Mono.Dynamic.Interpreter
-LIB_MCS_FLAGS += -d:MONO_INTERPRETER
-endif
-
+ifdef AOT_FRIENDLY_PROFILE
+extra_test_flags := -exclude:NotWorkingLinqInterpreter
+LIB_MCS_FLAGS += -d:NO_FEATURE_STATIC_DELEGATE,FEATURE_MAKE_RUN_METHODS
+else
+LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER,FEATURE_PDB_GENERATOR
 endif
 
 ifeq (monotouch_runtime, $(PROFILE))
 LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
 endif
 
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,FEATURE_PDBEMIT
-endif
-
 ifneq (basic, $(PROFILE))
-CLR_PROFILE := $(filter 2.0 4.0 4.5, $(FRAMEWORK_VERSION))
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_REFS += Mono.Posix
+endif
 endif
 
-ifdef CLR_PROFILE
-LIB_REFS += Mono.Posix
+CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
+ifdef CC_PROFILE
+BUILT_SOURCES = \
+	../corlib/CommonCrypto/AesManaged.g.cs \
+	../corlib/CommonCrypto/AesCryptoServiceProvider.g.cs
+
+../corlib/CommonCrypto/%.g.cs:
+	$(MAKE) -C ../corlib/CommonCrypto
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+XTEST_LIB_REFS = System Facades/System.Threading.Tasks Microsoft.CSharp Facades/System.Text.RegularExpressions Facades/System.Reflection Facades/System.Reflection.Extensions Facades/System.Runtime.InteropServices.RuntimeInformation Facades/System.Reflection.Emit
+# FEATURE_INTERPRET, FEATURE_COMPILE, NO_FEATURE_STATIC_DELEGATE
+XTEST_LIB_FLAGS = -unsafe -d:FEATURE_COMPILE
+XTEST_RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Collections.Immutable/src/Resources/Strings.resx
 
 include ../../build/library.make
 
-$(the_libdir_base)System.Core.dll: $(system_core_library_deps)
-
-.NOTPARALLEL: $(system_core_plain_libdir)/System.Core.dll $(the_libdir_base)Mono.Dynamic.Interpreter.dll
-
-ifneq (plaincore/,$(intermediate))
-$(system_core_plain_libdir)/System.Core.dll:
-	$(MAKE) intermediate=plaincore/ $(system_core_plain_libdir)/System.Core.dll
-endif
-
-$(the_libdir_base)Mono.Dynamic.Interpreter.dll:
-	(cd ../Mono.Dynamic.Interpreter; $(MAKE))
-
 TEST_HARNESS_EXCLUDES += $(extra_test_flags)
-
-CLEAN_FILES = $(system_core_plain_libdir)/System.Core.dll
-
-ifndef intermediate
-ifneq ($(PROFILE),basic)
-csproj-local:
-	$(MAKE) csproj-local intermediate=plaincore/
-endif
-endif

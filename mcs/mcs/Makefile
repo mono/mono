@@ -6,24 +6,15 @@ thisdir := mcs
 SUBDIRS := 
 include ../build/rules.make
 
+PROGRAM = mcs.exe
+
 EXTRA_DISTFILES = \
 	mcs.csproj		\
 	mcs.sln		\
 	cs-parser.jay		\
 	mcs.exe.sources
 
-LIB_REFS = System System.Core System.Xml
-
-ifeq (basic, $(PROFILE))
-PROGRAM = basic.exe
-sourcefile = mcs.exe.sources
-else
-PROGRAM_USE_INTERMEDIATE_FILE = true
-PROGRAM = mcs.exe
-the_libdir = $(topdir)/class/lib/build/
-LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
-endif
-
+LIB_REFS = System.Core System.Xml System
 LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
 
 ifndef NO_THREAD_ABORT
@@ -36,16 +27,12 @@ endif
 
 LOCAL_MCS_FLAGS += $(REFERENCE_SOURCES_FLAGS)
 
-PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
-
-PROGRAM_COMPILE = $(BOOT_COMPILE)
-
 BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
 
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay $(JAY_FLAGS) < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+	$(topdir)/jay/jay $(JAY_FLAGS) -o jay-tmp.out $< < $(topdir)/jay/skeleton.cs && mv jay-tmp.out $@
 
 KEEP_OUTPUT_FILE_COPY = yes
 
@@ -66,10 +53,10 @@ btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: $(PROGRAM)
-	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) $(PROGRAM) $(USE_MCS_FLAGS) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) ./mcs2.exe $(USE_MCS_FLAGS) -target:exe -out:$@ $(BUILT_SOURCES) @$(response)
+	$(TIME) $(RUNTIME) $(RUNTIME_FLAGS) ./mcs2.exe $(USE_MCS_FLAGS) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 
 wc:
 	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`

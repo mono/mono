@@ -67,6 +67,20 @@ ${UCM2CP} --region Rare --page 708 --wpage 1256 \
 	--no-browser-save --no-mailnews-display \
 	--no-mailnews-save Rare/ibm-1089.ucm >Rare/CP708.cs
 
+${UCM2CP} --region Rare --page 737 --wpage 1253 \
+	--name 'Greek (DOS)' \
+	--webname ibm737 --bodyname ibm737 \
+	--headername ibm737 --no-browser-display \
+	--no-browser-save --no-mailnews-display \
+	--no-mailnews-save Rare/ibm-737.ucm >Rare/CP737.cs
+
+${UCM2CP} --region Rare --page 775 --wpage 1257 \
+	--name 'Baltic (DOS)' \
+	--webname ibm775 --bodyname ibm775 \
+	--headername ibm775 --no-browser-display \
+	--no-browser-save --no-mailnews-display \
+	--no-mailnews-save Rare/ibm-775.ucm >Rare/CP775.cs
+
 ${UCM2CP} --region West --page 850 --wpage 1252 \
 	--name 'Western European (DOS)' \
 	--webname ibm850 --bodyname ibm850 \
@@ -481,8 +495,6 @@ exit 0
 #  709   Arabic - ASMO 449+, BCON V4
 #  710   Arabic - Transparent Arabic
 #  720   Arabic - Transparent ASMO
-#  737   OEM - Greek (formerly 437G)
-#  775   OEM - Baltic
 #  936   Chinese Simplified (GB2312)
 #  949   Korean
 #  950   Chinese Traditional (Big5)

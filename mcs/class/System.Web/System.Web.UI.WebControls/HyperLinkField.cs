@@ -45,9 +45,9 @@ namespace System.Web.UI.WebControls
 		PropertyDescriptor[] urlProperties;
 		static string[] emptyFields;
 		
-		public override bool Initialize (bool sortingEnabled, Control control)
+		public override bool Initialize (bool enableSorting, Control control)
 		{
-			return base.Initialize (sortingEnabled, control);
+			return base.Initialize (enableSorting, control);
 		}
 		
 		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]

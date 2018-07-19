@@ -80,14 +80,17 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void SetHandleAsInvalid ()
 		{
-			int old_state, new_state;
+			try {}
+			finally {
+				int old_state, new_state;
 
-			do {
-				old_state = _state;
-				new_state = old_state | (int) State.Closed;
-			} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
+				do {
+					old_state = _state;
+					new_state = old_state | (int) State.Closed;
+				} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
 
-			GC.SuppressFinalize (this);
+				GC.SuppressFinalize (this);
+			}
 		}
 
 		/*
@@ -108,21 +111,24 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void DangerousAddRef (ref bool success)
 		{
-			if (!_fullyInitialized)
-				throw new InvalidOperationException ();
+			try {}
+			finally {
+				if (!_fullyInitialized)
+					throw new InvalidOperationException ();
 
-			int old_state, new_state;
+				int old_state, new_state;
 
-			do {
-				old_state = _state;
+				do {
+					old_state = _state;
 
-				if ((old_state & (int) State.Closed) != 0)
-					throw new ObjectDisposedException ("handle");
+					if ((old_state & (int) State.Closed) != 0)
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
-				new_state = old_state + RefCount_One;
-			} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
+					new_state = old_state + RefCount_One;
+				} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
 
-			success = true;
+				success = true;
+			}
 		}
 
 		/*
@@ -159,73 +165,67 @@ namespace System.Runtime.InteropServices
 
 		void DangerousReleaseInternal (bool dispose)
 		{
-			if (!_fullyInitialized)
-				throw new InvalidOperationException ();
+			try {}
+			finally {
+				if (!_fullyInitialized)
+					throw new InvalidOperationException ();
 
-			int old_state, new_state;
+				int old_state, new_state;
 
-			/* See AddRef above for the design of the synchronization here. Basically we
-			 * will try to decrement the current ref count and, if that would take us to
-			 * zero refs, set the closed state on the handle as well. */
-			bool perform_release = false;
+				/* See AddRef above for the design of the synchronization here. Basically we
+				 * will try to decrement the current ref count and, if that would take us to
+				 * zero refs, set the closed state on the handle as well. */
+				bool perform_release = false;
 
-			do {
-				old_state = _state;
+				do {
+					old_state = _state;
 
-				/* If this is a Dispose operation we have additional requirements (to
-				 * ensure that Dispose happens at most once as the comments in AddRef
-				 * detail). We must check that the dispose bit is not set in the old
-				 * state and, in the case of successful state update, leave the disposed
-				 * bit set. Silently do nothing if Dispose has already been called
-				 * (because we advertise that as a semantic of Dispose). */
-				if (dispose && (old_state & (int) State.Disposed) != 0)
-					return;
+					/* If this is a Dispose operation we have additional requirements (to
+					 * ensure that Dispose happens at most once as the comments in AddRef
+					 * detail). We must check that the dispose bit is not set in the old
+					 * state and, in the case of successful state update, leave the disposed
+					 * bit set. Silently do nothing if Dispose has already been called
+					 * (because we advertise that as a semantic of Dispose). */
+					if (dispose && (old_state & (int) State.Disposed) != 0) {
+						/* we cannot use `return` in a finally block, so we have to ensure
+						 * that we are not releasing the handle */
+						perform_release = false;
+						break;
+					}
 
-				/* We should never see a ref count of zero (that would imply we have
-				 * unbalanced AddRef and Releases). (We might see a closed state before
-				 * hitting zero though -- that can happen if SetHandleAsInvalid is
-				 * used). */
-				if ((old_state & RefCount_Mask) == 0)
-					throw new ObjectDisposedException ("handle");
+					/* We should never see a ref count of zero (that would imply we have
+					 * unbalanced AddRef and Releases). (We might see a closed state before
+					 * hitting zero though -- that can happen if SetHandleAsInvalid is
+					 * used). */
+					if ((old_state & RefCount_Mask) == 0)
+						throw new ObjectDisposedException (null, "Safe handle has been closed");
 
-				if ((old_state & RefCount_Mask) != RefCount_One)
-					perform_release = false;
-				else if ((old_state & (int) State.Closed) != 0)
-					perform_release = false;
-				else if (!_ownsHandle)
-					perform_release = false;
-				else if (IsInvalid)
-					perform_release = false;
-				else
-					perform_release = true;
+					if ((old_state & RefCount_Mask) != RefCount_One)
+						perform_release = false;
+					else if ((old_state & (int) State.Closed) != 0)
+						perform_release = false;
+					else if (!_ownsHandle)
+						perform_release = false;
+					else if (IsInvalid)
+						perform_release = false;
+					else
+						perform_release = true;
 
-				/* Attempt the update to the new state, fail and retry if the initial
-				 * state has been modified in the meantime. Decrement the ref count by
-				 * substracting SH_RefCountOne from the state then OR in the bits for
-				 * Dispose (if that's the reason for the Release) and closed (if the
-				 * initial ref count was 1). */
-				new_state = (old_state & RefCount_Mask) - RefCount_One;
-				if ((old_state & RefCount_Mask) == RefCount_One)
-					new_state |= (int) State.Closed;
-				if (dispose)
-					new_state |= (int) State.Disposed;
-			} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
+					/* Attempt the update to the new state, fail and retry if the initial
+					 * state has been modified in the meantime. Decrement the ref count by
+					 * substracting SH_RefCountOne from the state then OR in the bits for
+					 * Dispose (if that's the reason for the Release) and closed (if the
+					 * initial ref count was 1). */
+					new_state = (old_state & RefCount_Mask) - RefCount_One;
+					if ((old_state & RefCount_Mask) == RefCount_One)
+						new_state |= (int) State.Closed;
+					if (dispose)
+						new_state |= (int) State.Disposed;
+				} while (Interlocked.CompareExchange (ref _state, new_state, old_state) != old_state);
 
-			if (perform_release)
-				ReleaseHandle ();
+				if (perform_release)
+					ReleaseHandle ();
+			}
 		}
-
-		/*
-		 * Implement this abstract method in your derived class to specify how to
-		 * free the handle. Be careful not write any code that's subject to faults
-		 * in this method (the runtime will prepare the infrastructure for you so
-		 * that no jit allocations etc. will occur, but don't allocate memory unless
-		 * you can deal with the failure and still free the handle).
-		 * The boolean returned should be true for success and false if the runtime
-		 * should fire a SafeHandleCriticalFailure MDA (CustomerDebugProbe) if that
-		 * MDA is enabled.
-		 */
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		protected abstract bool ReleaseHandle ();
 	}
 }

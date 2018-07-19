@@ -35,8 +35,8 @@ namespace System.ServiceModel
 	public class ChannelTerminatedException : CommunicationException
 	{
 		public ChannelTerminatedException () : base () {}
-		public ChannelTerminatedException (string msg) : base (msg) {}
-		public ChannelTerminatedException (string msg, Exception inner) : base (msg, inner) {}
+		public ChannelTerminatedException (string message) : base (message) {}
+		public ChannelTerminatedException (string message, Exception innerException) : base (message, innerException) {}
 		protected ChannelTerminatedException (SerializationInfo info, StreamingContext context) :
 			base (info, context) {}
 	}

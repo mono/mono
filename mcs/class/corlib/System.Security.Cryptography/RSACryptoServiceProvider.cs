@@ -36,8 +36,7 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-	[ComVisible (true)]
-	public sealed class RSACryptoServiceProvider : RSA, ICspAsymmetricAlgorithm {
+	public partial class RSACryptoServiceProvider {
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
 		private const int AT_KEYEXCHANGE = 1;
 		private const int AT_SIGNATURE = 2;
@@ -102,7 +101,7 @@ namespace System.Security.Cryptography {
 
 			// no need to load - it cannot exists
 			var p = new CspParameters (PROV_RSA_FULL);
-			if (useMachineKeyStore)
+			if (UseMachineKeyStore)
 				p.Flags |= CspProviderFlags.UseMachineKeyStore;
 			store = new KeyPairPersistence (p);
 		}
@@ -112,6 +111,7 @@ namespace System.Security.Cryptography {
 			store = new KeyPairPersistence (p);
 			bool exists = store.Load ();
 			bool required = (p.Flags & CspProviderFlags.UseExistingKey) != 0;
+			privateKeyExportable = (p.Flags & CspProviderFlags.UseNonExportableKey) == 0;
 
 			if (required && !exists)
 				throw new CryptographicException ("Keyset does not exist");
@@ -120,13 +120,6 @@ namespace System.Security.Cryptography {
 				persisted = true;
 				FromXmlString (store.KeyValue);
 			}
-		}
-
-		private static bool useMachineKeyStore;
-
-		public static bool UseMachineKeyStore {
-			get { return useMachineKeyStore; }
-			set { useMachineKeyStore = value; }
 		}
 	
 		~RSACryptoServiceProvider () 
@@ -161,11 +154,7 @@ namespace System.Security.Cryptography {
 		public bool PublicOnly {
 			get { return rsa.PublicOnly; }
 		}
-	
-		public override string SignatureAlgorithm {
-			get { return "http://www.w3.org/2000/09/xmldsig#rsa-sha1"; }
-		}
-	
+
 		public byte[] Decrypt (byte[] rgb, bool fOAEP) 
 		{
 			if (rgb == null)
@@ -339,6 +328,29 @@ namespace System.Security.Cryptography {
 			return PKCS1.Sign_v15 (this, hash, rgbHash);
 		}
 
+		byte[] SignHash(byte[] rgbHash, int calgHash)
+		{
+			return PKCS1.Sign_v15 (this, InternalHashToHashAlgorithm (calgHash), rgbHash);
+		}
+
+		static HashAlgorithm InternalHashToHashAlgorithm (int calgHash)
+		{
+			switch (calgHash) {
+			case Constants.CALG_MD5:
+				return MD5.Create ();
+			case Constants.CALG_SHA1:
+				return SHA1.Create ();
+			case Constants.CALG_SHA_256:
+				return SHA256.Create ();
+			case Constants.CALG_SHA_384:
+				return SHA384.Create ();
+			case Constants.CALG_SHA_512:
+				return SHA512.Create ();
+			}
+
+			throw new NotImplementedException (calgHash.ToString ());
+		}
+
 		// NOTE: this method can work with ANY configured (OID in machine.config) 
 		// HashAlgorithm descendant
 		public bool VerifyData (byte[] buffer, object halg, byte[] signature) 
@@ -363,6 +375,11 @@ namespace System.Security.Cryptography {
 			string hashName = (str == null) ? "SHA1" : GetHashNameFromOID (str);
 			HashAlgorithm hash = HashAlgorithm.Create (hashName);
 			return PKCS1.Verify_v15 (this, hash, rgbHash, rgbSignature);
+		}
+
+		bool VerifyHash(byte[] rgbHash, int calgHash, byte[] rgbSignature)
+		{
+			return PKCS1.Verify_v15 (this, InternalHashToHashAlgorithm (calgHash), rgbHash, rgbSignature);
 		}
 	
 		protected override void Dispose (bool disposing) 
@@ -444,7 +461,7 @@ namespace System.Security.Cryptography {
 
 			var p = new CspParameters (PROV_RSA_FULL);
 			p.KeyNumber = keyBlob [5] == 0x24 ? AT_SIGNATURE : AT_KEYEXCHANGE;
-			if (useMachineKeyStore)
+			if (UseMachineKeyStore)
 				p.Flags |= CspProviderFlags.UseMachineKeyStore;
 			store = new KeyPairPersistence (p);
 		}

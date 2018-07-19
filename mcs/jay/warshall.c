@@ -40,9 +40,8 @@ static char sccsid[] = "@(#)warshall.c	5.4 (Berkeley) 5/24/93";
 
 #include "defs.h"
 
-transitive_closure(R, n)
-unsigned *R;
-int n;
+static void
+transitive_closure (unsigned *R, int n)
 {
     register int rowsize;
     register unsigned i;
@@ -92,9 +91,8 @@ int n;
     }
 }
 
-reflexive_transitive_closure(R, n)
-unsigned *R;
-int n;
+void
+reflexive_transitive_closure (unsigned *R, int n)
 {
     register int rowsize;
     register unsigned i;

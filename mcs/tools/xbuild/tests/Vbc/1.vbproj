@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+	
+	<ItemGroup>
+		<Input Include="test.vb" />
+		<Output Include="test.exe" />
+	</ItemGroup>
+	
+	<Target Name="Compile1" >
+		<Vbc
+			Sources="@(Input)"
+                        OutputAssembly="@(Output)"
+		/>
+	</Target>
+	
+	<Target Name="Clean" >
+		<Delete Files="@(Output)" />
+	</Target>
+	
+	<Target Name="Execute" >
+		<Exec Command="@(Output)" />
+	</Target>
+</Project>

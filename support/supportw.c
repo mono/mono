@@ -9,6 +9,7 @@
  * (C) 2005 Novell, Inc.
  *
  */
+#include <config.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +19,6 @@
 #include "mono/metadata/class.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
-#include "mono/io-layer/wapi.h"
 
 typedef struct {
 	const char *fname;
@@ -53,7 +53,7 @@ get_function (const char *name)
 			compare_names);
 
 	if (ptr == NULL) {
-		g_warning ("Function '%s' not not found.", name);
+		g_warning ("Function '%s' not found.", name);
 		return NULL;
 	}
 

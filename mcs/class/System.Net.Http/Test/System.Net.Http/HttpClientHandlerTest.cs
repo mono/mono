@@ -61,6 +61,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Properties_Defaults ()
 		{
 			var h = new HttpClientHandler ();
@@ -83,6 +86,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Properties_Invalid ()
 		{
 			var h = new HttpClientHandler ();
@@ -107,6 +113,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Properties_AfterClientCreation ()
 		{
 			var h = new HttpClientHandler ();
@@ -119,6 +128,9 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Disposed ()
 		{
 			var h = new HttpClientHandler ();

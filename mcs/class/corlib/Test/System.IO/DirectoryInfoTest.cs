@@ -168,6 +168,8 @@ namespace MonoTests.System.IO
 					info = new DirectoryInfo ("/test/");
 					Assert.AreEqual ("test", info.Name, "#4");
 				} else {
+					Directory.SetCurrentDirectory (@"C:\");
+
 					info = new DirectoryInfo (@"c:");
 					Assert.AreEqual (@"C:\", info.Name, "#4");
 
@@ -217,6 +219,8 @@ namespace MonoTests.System.IO
 					Assert.IsNotNull (info.Parent, "#7a");
 					Assert.AreEqual ("/", info.Parent.FullName, "#7b");
 				} else {
+					Directory.SetCurrentDirectory (@"C:\");
+
 					info = new DirectoryInfo (@"c:");
 					Assert.IsNull (info.Parent, "#4");
 
@@ -418,6 +422,8 @@ namespace MonoTests.System.IO
 				di = new DirectoryInfo ("/test/");
 				Assert.AreEqual ("/test/", di.FullName, "#D4");
 			} else {
+				Directory.SetCurrentDirectory (@"C:\");
+
 				di = new DirectoryInfo (@"c:");
 				Assert.AreEqual (@"C:\", di.FullName, "#D1");
 
@@ -972,7 +978,7 @@ namespace MonoTests.System.IO
 		public void LastAccessTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
-			info.LastAccessTimeUtc = DateTime.Now;
+			info.LastAccessTimeUtc = DateTime.UtcNow;
 		}
 
 		[Test]
@@ -986,7 +992,7 @@ namespace MonoTests.System.IO
 		public void CreationTimeUtc ()
 		{
 			DirectoryInfo info = new DirectoryInfo (TempFolder);
-			info.CreationTimeUtc = DateTime.Now;
+			info.CreationTimeUtc = DateTime.UtcNow;
 		}
 
 		[Test]

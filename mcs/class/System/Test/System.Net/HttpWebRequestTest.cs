@@ -27,9 +27,6 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using Mono.Security.Authenticode;
-#if !MOBILE
-using Mono.Security.Protocol.Tls;
-#endif
 
 using MonoTests.Helpers;
 
@@ -44,11 +41,16 @@ namespace MonoTests.System.Net
 		[TestFixtureSetUp]
 		public void Setup ()
 		{
+#if !FEATURE_NO_BSD_SOCKETS
 				ServicePointManager.Expect100Continue = false;
+#endif
 				rand.NextBytes (data64KB);
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Proxy_Null ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
@@ -59,6 +61,9 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Sync ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
@@ -80,6 +85,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AddRange ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
@@ -95,6 +103,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #471782
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseRequestStreamAfterReadingResponse ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -121,7 +132,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		//[Category("InetAccess")]
+		[Category("InetAccess")]
 		[Category ("NotWorking")] // Disabled until a server that meets requirements is found
 		public void Cookies1 ()
 		{
@@ -146,41 +157,10 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !MOBILE
 		[Test]
-		[Ignore ("Fails on MS.NET")]
-		public void SslClientBlock ()
-		{
-			// This tests that the write request/initread/write body sequence does not hang
-			// when using SSL.
-			// If there's a regression for this, the test will hang.
-			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
-			try {
-				SslHttpServer server = new SslHttpServer ();
-				server.Start ();
-
-				string url = String.Format ("https://{0}:{1}/nothing.html", server.IPAddress, server.Port);
-				HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
-				request.Method = "POST";
-				Stream stream = request.GetRequestStream ();
-				byte [] bytes = new byte [100];
-				stream.Write (bytes, 0, bytes.Length);
-				stream.Close ();
-				HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
-				Assert.AreEqual (200, (int) resp.StatusCode, "StatusCode");
-				StreamReader sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
-				sr.ReadToEnd ();
-				sr.Close ();
-				resp.Close ();
-				server.Stop ();
-				if (server.Error != null)
-					throw server.Error;
-			} finally {
-				ServicePointManager.CertificatePolicy = null;
-			}
-		}
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
-		[Test]
 		public void Missing_ContentEncoding ()
 		{
 			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
@@ -203,6 +183,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BadServer_ChunkedClose ()
 		{
 			// The server will send a chunked response without a 'last-chunked' mark
@@ -268,6 +251,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStream_Body_NotAllowed ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -280,7 +266,8 @@ namespace MonoTests.System.Net
 				request.Method = "GET";
 
 				try {
-					request.BeginGetRequestStream (null, null);
+					var result = request.BeginGetRequestStream (null, null);
+					request.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// Cannot send a content-body with this
@@ -293,7 +280,8 @@ namespace MonoTests.System.Net
 				request.Method = "HEAD";
 
 				try {
-					request.BeginGetRequestStream (null, null);
+					var res = request.BeginGetRequestStream (null, null);
+					request.EndGetRequestStream (res);
 					Assert.Fail ("#B1");
 				} catch (ProtocolViolationException ex) {
 					// Cannot send a content-body with this
@@ -305,6 +293,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #465613
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStream_NoBuffering ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -332,7 +323,8 @@ namespace MonoTests.System.Net
 				req.AllowWriteStreamBuffering = false;
 
 				try {
-					req.BeginGetRequestStream (null, null);
+					var result = req.BeginGetRequestStream (null, null);
+					req.EndGetRequestStream (result);
 					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// When performing a write operation with
@@ -454,6 +446,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #511851
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStream_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -479,6 +474,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #511851
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetResponse_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -504,6 +502,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void EndGetRequestStream_AsyncResult_Null ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -582,6 +583,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void EndGetResponse_AsyncResult_Null ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -613,6 +617,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #429200
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetRequestStream ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -635,6 +642,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #511851
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetRequestStream_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -930,6 +940,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #511851
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetResponse_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -958,7 +971,7 @@ namespace MonoTests.System.Net
 		[Ignore ("This does not timeout any more. That's how MS works when reading small responses")]
 		public void ReadTimeout ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -986,9 +999,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #324300
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AllowAutoRedirect ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// allow autoredirect
@@ -1032,9 +1048,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PostAndRedirect_NoCL ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8769);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1060,9 +1079,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PostAndRedirect_CL ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8770);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1088,9 +1110,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PostAnd401 ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8771);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			using (SocketResponder responder = new SocketResponder (localEP, s => RedirectRequestHandler (s))) {
@@ -1119,7 +1144,7 @@ namespace MonoTests.System.Net
 		[Category ("NotWorking")]
 		public void InternalServerError ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8766);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// POST
@@ -1176,7 +1201,7 @@ namespace MonoTests.System.Net
 		[Category ("NotWorking")] // #B3 fails; we get a SocketException: An existing connection was forcibly closed by the remote host
 		public void NoContentLength ()
 		{
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8767);
+			IPEndPoint localEP = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + localEP.ToString () + "/original/";
 
 			// POST
@@ -1249,6 +1274,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #513087
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NonStandardVerb ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -1294,7 +1322,7 @@ namespace MonoTests.System.Net
 				req.Headers.Add (HttpRequestHeader.IfNoneMatch, "898bbr2347056cc2e096afc66e104653");
 				req.IfModifiedSince = new DateTime (2010, 01, 04);
 
-				DateTime start = DateTime.Now;
+				var sw = global::System.Diagnostics.Stopwatch.StartNew ();
 				HttpWebResponse response = null;
 
 				try {
@@ -1311,7 +1339,7 @@ namespace MonoTests.System.Net
 					Assert.AreEqual (0, bytesRead, "#3");
 				}
 
-				TimeSpan elapsed = DateTime.Now - start;
+				TimeSpan elapsed = sw.Elapsed;
 				Assert.IsTrue (elapsed.TotalMilliseconds < 2000, "#4");
 			}
 		}
@@ -1360,18 +1388,18 @@ namespace MonoTests.System.Net
 
 			internal void LaunchWebRequest ()
 			{
-				var req = (HttpWebRequest) WebRequest.Create (url_to_test);
-				req.Timeout = TimeOutInMilliSeconds;
-
-				Start = DateTime.Now;
 				try {
+					var req = (HttpWebRequest) WebRequest.Create (url_to_test);
+					req.Timeout = TimeOutInMilliSeconds;
+
+					Start = DateTime.UtcNow;
 					using (var resp = (HttpWebResponse) req.GetResponse ())
 					{
 						var sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
 						Body = sr.ReadToEnd ();
 					}
 				} catch (Exception e) {
-					End = DateTime.Now;
+					End = DateTime.UtcNow;
 					Exception = e;
 				}
 			}
@@ -1415,9 +1443,12 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestTimeoutPropertyWithServerThatExistsAndRespondsButTooLate ()
 		{
-			var ep = new IPEndPoint (IPAddress.Loopback, 8123);
+			var ep = NetworkHelpers.LocalEphemeralEndPoint ();
 			string url = "http://" + ep + "/foobar/";
 
 			using (var responder = new SocketResponder (ep, TimeOutHandler))
@@ -1427,6 +1458,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		[Category ("RequiresBSDSockets")] // Requires some test refactoring to assert that a PlatformNotSupportedException is thrown, so don't bother (there's plenty of other tests asserting the PlatformNotSupported exceptions).
 		public void TestTimeoutWithEndpointThatDoesntExistThrowsConnectFailureBeforeTimeout ()
 		{
 			string url = "http://127.0.0.1:8271/"; // some endpoint that is unlikely to exist
@@ -1681,6 +1713,9 @@ namespace MonoTests.System.Net
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NtlmAuthentication ()
 		{
 			NtlmServer server = new NtlmServer ();
@@ -1718,7 +1753,9 @@ namespace MonoTests.System.Net
 				Where = "first write";
 				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
 				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
-						"WWW-Authenticate: NTLM\r\n" +
+					"WWW-Authenticate: ignore\r\n" +
+					"WWW-Authenticate: NTLM\r\n" +
+					"WWW-Authenticate: ignore,K\r\n" +
 						"Content-Length: 5\r\n\r\nWRONG");
 
 				writer.Flush ();
@@ -1821,6 +1858,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStream ()
 		{
 			this.DoRequest (
@@ -1839,6 +1879,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStreamNoClose ()
 		{
 			this.DoRequest (
@@ -1856,6 +1899,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetRequestStreamCancelIfNotAllBytesWritten ()
 		{
 			this.DoRequest (
@@ -1880,6 +1926,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetRequestStream2 ()
 		{
 			this.DoRequest (
@@ -1896,6 +1945,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetRequestStreamNotAllBytesWritten ()
 		{
 			this.DoRequest (
@@ -1911,6 +1963,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void GetRequestStreamTimeout ()
 		{
 			this.DoRequest (
@@ -1926,6 +1981,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginWrite ()
 		{
 			byte[] received = new byte[data64KB.Length];
@@ -1958,6 +2016,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginWriteAfterAbort ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -1985,6 +2046,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PrematureStreamCloseAborts ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2012,6 +2076,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2083,6 +2150,9 @@ namespace MonoTests.System.Net
 		**/
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Read ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2110,6 +2180,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReadTimeout2 ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2139,6 +2212,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReadServerAborted ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2163,6 +2239,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetResponse2 ()
 		{
 			byte [] received = new byte [data64KB.Length];
@@ -2193,6 +2272,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetResponseAborts ()
 		{
 			ManualResetEvent aborted = new ManualResetEvent(false);
@@ -2222,70 +2304,6 @@ namespace MonoTests.System.Net
 			return;
 		}
 		
-		[Test]
-		public void TestLargeDataReading ()
-		{
-			int near2GBStartPosition = rand.Next (int.MaxValue - 500, int.MaxValue);
-			AutoResetEvent readyGetLastPortionEvent = new AutoResetEvent (false);
-			Exception testException = null;
-
-			DoRequest (
-			(request, waitHandle) =>
-			{
-				try
-				{
-					const int timeoutMs = 5000;
-
-					request.Timeout = timeoutMs;
-					request.ReadWriteTimeout = timeoutMs;
-
-					WebResponse webResponse = request.GetResponse ();
-					Stream webResponseStream = webResponse.GetResponseStream ();
-					Assert.IsNotNull (webResponseStream, null, "#1");
-					
-					Type webConnectionStreamType = webResponseStream.GetType ();
-					FieldInfo totalReadField = webConnectionStreamType.GetField ("totalRead", BindingFlags.NonPublic | BindingFlags.Instance);
-					Assert.IsNotNull (totalReadField, "#2");
-					totalReadField.SetValue (webResponseStream, near2GBStartPosition);
-					
-					byte[] readBuffer = new byte[int.MaxValue - near2GBStartPosition];
-					Assert.AreEqual (webResponseStream.Read (readBuffer, 0, readBuffer.Length), readBuffer.Length, "#3");
-					readyGetLastPortionEvent.Set ();
-					Assert.IsTrue (webResponseStream.Read (readBuffer, 0, readBuffer.Length) > 0);
-					readyGetLastPortionEvent.Set ();
-					
-					webResponse.Close();
-				}
-				catch (Exception e)
-				{
-					testException = e;
-				}
-				finally
-				{
-					waitHandle.Set ();
-				}
-			},
-			processor =>
-			{
-				processor.Request.InputStream.Close ();
-				
-				HttpListenerResponse response = processor.Response;
-				response.SendChunked = true;
-				
-				Stream outputStream = response.OutputStream;
-				var writeBuffer = new byte[int.MaxValue - near2GBStartPosition];
-				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
-				readyGetLastPortionEvent.WaitOne ();
-				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
-				readyGetLastPortionEvent.WaitOne ();
-				
-				response.Close();
-			});
-
-			if (testException != null)
-				throw testException;
-		}
-
 		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request)
 		{
 			int port = NetworkHelpers.FindFreePort ();
@@ -2309,7 +2327,6 @@ namespace MonoTests.System.Net
 			completed [1] = new ManualResetEvent (false);
 
 			using (ListenerScope scope = new ListenerScope (processor, port, completed [0])) {
-				ManualResetEvent clientCompleted = new ManualResetEvent (false);
 				Uri address = new Uri (string.Format ("http://localhost:{0}", port));
 				HttpWebRequest client = (HttpWebRequest) WebRequest.Create (address);
 
@@ -2321,7 +2338,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void NullHost ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2329,6 +2350,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NoHost ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2336,7 +2360,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void EmptyHost ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2344,6 +2372,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HostAndPort ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:80");
@@ -2353,6 +2384,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PortRange ()
 		{
 			for (int i = 0; i < 65536; i++) {
@@ -2365,7 +2399,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void PortBelow ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2373,7 +2411,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void PortAbove ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2381,7 +2423,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void HostTooLong ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2401,6 +2447,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void NoDate ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2408,6 +2457,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UtcDate ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
@@ -2417,6 +2469,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AddAndRemoveDate ()
 		{
 			// Neil Armstrong set his foot on Moon
@@ -2450,6 +2505,9 @@ namespace MonoTests.System.Net
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		// Bug #12393
 		public void TestIPv6Host ()
 		{
@@ -2459,7 +2517,8 @@ namespace MonoTests.System.Net
 			var hwr = (HttpWebRequest)WebRequest.Create (uri);
 
 			hwr.Host = address2;
-			Assert.AreEqual (address2, hwr.Host, "#1");
+			var expected = "[2001::1:1:1:157:0]";
+			Assert.AreEqual (expected, hwr.Host, "#1");
 		}
 
 		[Test]
@@ -2479,20 +2538,6 @@ namespace MonoTests.System.Net
 				;
 			}
 		}
-
-#if NET_4_5
-		[Test]
-		public void AllowReadStreamBuffering ()
-		{
-			var hr = WebRequest.CreateHttp ("http://www.google.com");
-			Assert.IsFalse (hr.AllowReadStreamBuffering, "#1");
-			try {
-				hr.AllowReadStreamBuffering = true;
-				Assert.Fail ("#2");
-			} catch (InvalidOperationException) {
-			}
-		}
-#endif
 
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;
@@ -2540,65 +2585,6 @@ namespace MonoTests.System.Net
 			public void Dispose ()
 			{
 				this.listener.Stop ();
-			}
-		}
-
-#if !MOBILE
-		class SslHttpServer : HttpServer {
-			X509Certificate _certificate;
-
-			protected override void Run ()
-			{
-				try {
-					Socket client = sock.Accept ();
-					NetworkStream ns = new NetworkStream (client, true);
-					SslServerStream s = new SslServerStream (ns, Certificate, false, false);
-					s.PrivateKeyCertSelectionDelegate += new PrivateKeySelectionCallback (GetPrivateKey);
-
-					StreamReader reader = new StreamReader (s);
-					StreamWriter writer = new StreamWriter (s, Encoding.ASCII);
-
-					string line;
-					string hello = "<html><body><h1>Hello World!</h1></body></html>";
-					string answer = "HTTP/1.0 200\r\n" +
-							"Connection: close\r\n" +
-							"Content-Type: text/html\r\n" +
-							"Content-Encoding: " + Encoding.ASCII.WebName + "\r\n" +
-							"Content-Length: " + hello.Length + "\r\n" +
-							"\r\n" + hello;
-
-					// Read the headers
-					do {
-						line = reader.ReadLine ();
-					} while (line != "" && line != null && line.Length > 0);
-
-					// Now the content. We know it's 100 bytes.
-					// This makes BeginRead in sslclientstream block.
-					char [] cs = new char [100];
-					reader.Read (cs, 0, 100);
-
-					writer.Write (answer);
-					writer.Flush ();
-					if (evt.WaitOne (5000, false))
-						error = new Exception ("Timeout when stopping the server");
-				} catch (Exception e) {
-					error = e;
-				}
-			}
-
-			X509Certificate Certificate {
-				get {
-					if (_certificate == null)
-						_certificate = new X509Certificate (CertData.Certificate);
-
-					return _certificate;
-				}
-			}
-
-			AsymmetricAlgorithm GetPrivateKey (X509Certificate certificate, string targetHost)
-			{
-				PrivateKey key = new PrivateKey (CertData.PrivateKey, null);
-				return key.RSA;
 			}
 		}
 
@@ -2677,9 +2663,11 @@ namespace MonoTests.System.Net
 				238, 60, 227, 77, 217, 93, 117, 122, 111, 46, 173, 113, 
 			};
 		}
-#endif
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CookieContainerTest ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2764,6 +2752,9 @@ namespace MonoTests.System.Net
 	public class HttpRequestStreamTest
 	{
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginRead ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2819,6 +2810,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CanRead ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2841,6 +2835,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CanSeek ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2863,6 +2860,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #324182
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CanTimeout ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2885,6 +2885,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CanWrite ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2898,7 +2901,8 @@ namespace MonoTests.System.Net
 				try {
 					Assert.IsTrue (rs.CanWrite, "#1");
 					rs.Close ();
-					Assert.IsFalse (rs.CanWrite, "#2");
+					// CanRead and CanWrite do not change status after closing.
+					Assert.IsTrue (rs.CanWrite, "#2");
 				} finally {
 					rs.Close ();
 					req.Abort ();
@@ -2907,6 +2911,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Read ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2934,6 +2941,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReadByte ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2960,6 +2970,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ReadTimeout ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -2982,6 +2995,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Seek ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3008,6 +3024,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Buffer_Null ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3034,6 +3053,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Count_Negative ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3053,7 +3075,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 						Assert.IsNull (ex.InnerException, "#A3");
 						Assert.IsNotNull (ex.Message, "#A4");
-						Assert.AreEqual ("size", ex.ParamName, "#A5");
+						Assert.AreEqual ("count", ex.ParamName, "#A5");
 					}
 				}
 
@@ -3062,6 +3084,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Count_Overflow ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3081,7 +3106,7 @@ namespace MonoTests.System.Net
 						Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
 						Assert.IsNull (ex.InnerException, "#3");
 						Assert.IsNotNull (ex.Message, "#4");
-						Assert.AreEqual ("size", ex.ParamName, "#5");
+						Assert.AreEqual ("count", ex.ParamName, "#5");
 					}
 				}
 
@@ -3090,6 +3115,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Offset_Negative ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3118,6 +3146,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Offset_Overflow ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3146,6 +3177,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Write_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3201,6 +3235,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void WriteByte_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3228,6 +3265,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void WriteTimeout ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
@@ -3250,6 +3290,10 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		[Category ("MobileNotWorking")] // https://github.com/xamarin/xamarin-macios/issues/3827
 		// Bug6737
 		// This test is supposed to fail prior to .NET 4.0
 		public void Post_EmptyRequestStream ()

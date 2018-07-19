@@ -42,6 +42,9 @@ namespace MonoTests.System.Data.SqlClient
 		const string COMMAND_TEXT = "SELECT * FROM Authors";
 
 		[Test] // SqlCommand ()
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor1 ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -52,7 +55,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#6");
 			Assert.IsNull (cmd.Notification, "#7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#8");
+			// Not implemented in corefx:
+			//Assert.IsTrue (cmd.NotificationAutoEnlist, "#8");
 			Assert.IsNotNull (cmd.Parameters, "#9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#10");
 			Assert.IsNull (cmd.Site, "#11");
@@ -61,6 +65,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor2 ()
 		{
 			SqlCommand cmd = new SqlCommand (COMMAND_TEXT);
@@ -71,7 +78,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#A5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#A6");
 			Assert.IsNull (cmd.Notification, "#A7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
 			Assert.IsNotNull (cmd.Parameters, "#A9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#A10");
 			Assert.IsNull (cmd.Site, "#A11");
@@ -86,7 +94,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#B5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#B6");
 			Assert.IsNull (cmd.Notification, "#B7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
 			Assert.IsNotNull (cmd.Parameters, "#B9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#B10");
 			Assert.IsNull (cmd.Site, "#B11");
@@ -95,6 +104,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string, SqlConnection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor3 ()
 		{
 			SqlConnection conn = new SqlConnection ();
@@ -108,7 +120,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#A5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#A6");
 			Assert.IsNull (cmd.Notification, "#A7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
 			Assert.IsNotNull (cmd.Parameters, "#A9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#A10");
 			Assert.IsNull (cmd.Site, "#A11");
@@ -123,7 +136,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#B5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#B6");
 			Assert.IsNull (cmd.Notification, "#B7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
+			// Not implemented in corefx:
+			//Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
 			Assert.IsNotNull (cmd.Parameters, "#B9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#B10");
 			Assert.IsNull (cmd.Site, "#B11");
@@ -138,7 +152,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#C5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#C6");
 			Assert.IsNull (cmd.Notification, "#C7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#C8");
+			// Not implemented in corefx:
+			//Assert.IsTrue (cmd.NotificationAutoEnlist, "#C8");
 			Assert.IsNotNull (cmd.Parameters, "#C9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#C10");
 			Assert.IsNull (cmd.Site, "#C11");
@@ -147,6 +162,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // SqlCommand (string, SqlConnection, SqlTransaction)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Constructor4 ()
 		{
 			SqlConnection conn = new SqlConnection ();
@@ -160,7 +178,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#A5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#A6");
 			Assert.IsNull (cmd.Notification, "#A7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
 			Assert.IsNotNull (cmd.Parameters, "#A9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#A10");
 			Assert.IsNull (cmd.Site, "#A11");
@@ -175,7 +194,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#B5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#B6");
 			Assert.IsNull (cmd.Notification, "#B7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
 			Assert.IsNotNull (cmd.Parameters, "#B9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#B10");
 			Assert.IsNull (cmd.Site, "#B11");
@@ -190,7 +210,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#C5");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#C6");
 			Assert.IsNull (cmd.Notification, "#C7");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#C8");
+			// Not implemented in corefx:
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#C8");
 			Assert.IsNotNull (cmd.Parameters, "#C9");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#C10");
 			Assert.IsNull (cmd.Site, "#C11");
@@ -199,6 +220,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Clone ()
 		{
 			SqlNotificationRequest notificationReq = new SqlNotificationRequest ();
@@ -209,7 +233,8 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.DesignTimeVisible = false;
 			cmd.Notification = notificationReq;
-			cmd.NotificationAutoEnlist = false;
+			// not implemented in corefx
+			//cmd.NotificationAutoEnlist = false;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters ["@TestPar1"].Value = DBNull.Value;
 			cmd.Parameters.AddWithValue ("@BirthDate", DateTime.Now);
@@ -222,7 +247,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Connection, "#4");
 			Assert.IsFalse (cmd.DesignTimeVisible, "#5");
 			Assert.AreSame (notificationReq, cmd.Notification, "#6");
-			Assert.IsFalse (cmd.NotificationAutoEnlist, "#7");
+			// not implemented in corefx
+			//Assert.IsFalse (cmd.NotificationAutoEnlist, "#7");
 			Assert.AreEqual (2, clone.Parameters.Count, "#8");
 			Assert.AreEqual (100, clone.CommandTimeout, "#9");
 			clone.Parameters.AddWithValue ("@test", DateTime.Now);
@@ -237,6 +263,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandText ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -251,6 +280,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandTimeout ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -263,6 +295,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandTimeout_Value_Negative ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -279,6 +314,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CommandType_Value_Invalid ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -296,6 +334,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #324386
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Dispose ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -307,6 +348,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteNonQuery_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -329,6 +373,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteNonQuery_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("delete from whatever");
@@ -346,6 +393,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteReader_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -368,6 +418,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteReader_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select * from whatever");
@@ -385,6 +438,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteScalar_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -407,6 +463,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #412584
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ExecuteScalar_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select count(*) from whatever");
@@ -425,17 +484,12 @@ namespace MonoTests.System.Data.SqlClient
 
 		// FIXME: this actually doesn't match .NET behavior. It shouldn't throw NRE.
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Prepare_Connection_Null ()
 		{
 			SqlCommand cmd;
-
-			// Text, without parameters
-			cmd = new SqlCommand ("select count(*) from whatever");
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#A1");
-			} catch (NullReferenceException) {
-			}
 
 			// Text, with parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
@@ -443,40 +497,14 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#B1");
-			} catch (NullReferenceException) {
-			}
-
-			// Text, without parameters
-			cmd = new SqlCommand ("select count(*) from whatever");
-			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
-			cmd.Parameters.Clear ();
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#C1");
-			} catch (NullReferenceException) {
-			}
-
-			// StoredProcedure, without parameters
-			cmd = new SqlCommand ("FindCustomer");
-			cmd.CommandType = CommandType.StoredProcedure;
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#D1");
-			} catch (NullReferenceException) {
-			}
-
-			// StoredProcedure, with parameters
-			cmd = new SqlCommand ("FindCustomer");
-			cmd.CommandType = CommandType.StoredProcedure;
-			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
-			try {
-				cmd.Prepare ();
-				Assert.Fail ("#E1");
-			} catch (NullReferenceException) {
+			} catch (InvalidOperationException) {
 			}
 		}
 		
 		[Test] // bug #412586
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Prepare_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -527,6 +555,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ResetCommandTimeout ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -537,6 +568,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdatedRowSource ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -547,6 +581,9 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void UpdatedRowSource_Value_Invalid ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -565,6 +602,9 @@ namespace MonoTests.System.Data.SqlClient
 
 
 		[Test] // bug #381100
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ParameterCollectionTest ()
 		{
 			SqlCommand cmd = new SqlCommand();

@@ -215,5 +215,42 @@ namespace MonoTests.System.IO.Packaging
             
             return pack;
         }
+
+        Package CreateSpreadsheet(Stream stream)
+        {
+            Package pack = Package.Open(stream, FileMode.Create);
+
+            // Create package parts.
+            PackagePart workbookPart = pack.CreatePart(new Uri("/xl/workbook.xml", UriKind.Relative), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+            PackagePart sharedStringsPart = pack.CreatePart(new Uri("/xl/sharedStrings.xml", UriKind.Relative), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+
+            workbookPart.CreateRelationship(new Uri("/xl/sharedStrings.xml", UriKind.Relative), TargetMode.Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings", "rel1");
+
+            // Load some basic data into the different parts.
+            foreach (PackagePart part in package.GetParts())
+                using (Stream s = part.GetStream())
+                    s.Write(new byte[10], 0, 10);
+
+            return pack;
+        }
+
+        [Test]
+        public void TestExcelWorkbook()
+        {
+            MemoryStream stream = new MemoryStream();
+            Package package = CreateSpreadsheet(stream);
+            Assert.IsTrue(package.PartExists(new Uri("/xl/workbook.xml", UriKind.Relative)), "#1");
+            Assert.IsTrue(package.PartExists(new Uri("/xl/sharedStrings.xml", UriKind.Relative)), "#2");
+
+            package.Close();
+            package = Package.Open(new MemoryStream(stream.ToArray()), FileMode.Open);
+
+            PackagePart workbookPart = package.GetPart(new Uri("/xl/workbook.xml", UriKind.Relative));
+            Assert.IsTrue(workbookPart.RelationshipExists("rel1"), "#3");
+
+            var r = workbookPart.GetRelationship("rel1");
+            Assert.IsFalse(r.TargetUri.IsAbsoluteUri, "#4");
+            package.Close();
+        }
     }
 }

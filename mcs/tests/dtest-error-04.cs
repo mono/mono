@@ -16,7 +16,7 @@ public class Test
 			d.Value = (object)"value";
 			return 1;
 		} catch (RuntimeBinderException e) {
-			if (e.Message != "Cannot implicitly convert type `object' to `string'. An explicit conversion exists (are you missing a cast?)")
+			if (e.Message != "Cannot implicitly convert type 'object' to 'string'. An explicit conversion exists (are you missing a cast?)")
 				return 2;
 		}
 		

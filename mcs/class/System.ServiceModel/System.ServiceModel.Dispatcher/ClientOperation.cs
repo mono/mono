@@ -39,7 +39,7 @@ namespace System.ServiceModel.Dispatcher
 	public sealed class ClientOperation
 	{
 		internal class ClientOperationCollection :
-#if NET_2_1
+#if MOBILE
 			KeyedCollection<string, ClientOperation>
 #else
 			SynchronizedKeyedCollection<string, ClientOperation>

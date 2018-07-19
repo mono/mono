@@ -81,30 +81,30 @@ namespace System.ServiceModel.Description
 			set { service_type = value; }
 		}
 
-		public static ServiceDescription GetService (Type type)
+		public static ServiceDescription GetService (Type serviceType)
 		{
 			// null Type is not rejected
 			ServiceDescription sd = new ServiceDescription ();
-			sd.ServiceType = type;
-			if (type != null) {
-				var att = type.GetCustomAttribute<ServiceBehaviorAttribute> (true);
+			sd.ServiceType = serviceType;
+			if (serviceType != null) {
+				var att = serviceType.GetCustomAttribute<ServiceBehaviorAttribute> (true);
 				if (att != null) {
 					sd.Name = att.Name;
 					sd.Namespace = att.Namespace;
 				}
 				if (sd.Name == null)
-					sd.Name = type.Name;
+					sd.Name = serviceType.Name;
 				if (sd.Namespace == null)
 					sd.Namespace = "http://tempuri.org/";
 			}
 			return sd;
 		}
 
-		public static ServiceDescription GetService (object wellKnown)
+		public static ServiceDescription GetService (object serviceImplementation)
 		{
 			// null instance is not rejected
 			ServiceDescription sd = new ServiceDescription ();
-			sd.ServiceType = wellKnown != null ? wellKnown.GetType () : null;
+			sd.ServiceType = serviceImplementation != null ? serviceImplementation.GetType () : null;
 			return sd;
 		}
 	}

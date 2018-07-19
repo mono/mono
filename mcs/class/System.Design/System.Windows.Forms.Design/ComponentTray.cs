@@ -235,10 +235,10 @@ namespace System.Windows.Forms.Design
 			return false;
 		}
 
-		protected override object GetService (Type service)
+		protected override object GetService (Type serviceType)
 		{
 			if (_serviceProvider != null) {
-				return _serviceProvider.GetService (service);
+				return _serviceProvider.GetService (serviceType);
 			}
 			return null;
 		}

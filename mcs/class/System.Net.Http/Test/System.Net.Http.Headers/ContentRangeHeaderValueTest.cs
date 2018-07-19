@@ -101,6 +101,12 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.IsNull (res.To, "#22");
 			Assert.IsNull (res.Length, "#23");
 			Assert.AreEqual ("by */*", res.ToString (), "#24");
+
+			res = ContentRangeHeaderValue.Parse("bytes  199999999999999999 - 999999999999999999/ 9223372036854775807");
+			Assert.AreEqual (199999999999999999, res.From, "#31");
+			Assert.AreEqual (999999999999999999, res.To, "#32");
+			Assert.AreEqual (9223372036854775807, res.Length, "#33");
+			Assert.AreEqual ("bytes 199999999999999999-999999999999999999/9223372036854775807", res.ToString (), "#34");
 		}
 
 		[Test]

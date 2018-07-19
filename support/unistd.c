@@ -20,9 +20,19 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>     /* for swab(3) on Mac OS X */
+#if defined(_AIX)
+#include <netdb.h> /* for get/setdomainname */
+/*
+ * Yet more stuff in libc that isn't in headers.
+ * Python does the same thing we do here.
+ * see: bugs.python.org/issue18259
+ */
+extern int sethostname(const char *, size_t);
+extern int sethostid(long);
+#endif
 
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 
@@ -230,7 +240,7 @@ Mono_Posix_Syscall_setdomainname (const char *name, mph_size_t len)
 /* Android implements truncate, but doesn't declare it.
  * Result is a warning during compilation, so skip it.
  */
-#ifndef PLATFORM_ANDROID
+#ifndef HOST_ANDROID
 gint32
 Mono_Posix_Syscall_truncate (const char *path, mph_off_t length)
 {

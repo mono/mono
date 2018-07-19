@@ -314,7 +314,7 @@ namespace MonoTests.System.Resources {
 
 			object o = node.GetValue ((AssemblyName []) null);
 
-			Assert.IsNotInstanceOfType (typeof (serializableSubClass), o, "#A2");
+			AssertHelper.IsNotInstanceOfType (typeof (serializableSubClass), o, "#A2");
 			Assert.IsInstanceOfType (typeof (serializable), o, "#A3");
 			rr.Close ();
 		}

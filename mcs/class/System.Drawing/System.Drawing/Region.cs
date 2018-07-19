@@ -30,7 +30,6 @@
 
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -53,7 +52,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipCreateRegionPath (path.NativeObject, out nativeRegion);
+			Status status = GDIPlus.GdipCreateRegionPath (path.nativePath, out nativeRegion);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -88,7 +87,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Union);
+			Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Union);
                         GDIPlus.CheckStatus (status);                        
 		}
 
@@ -121,7 +120,7 @@ namespace System.Drawing
                 {
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Intersect);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Intersect);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -152,7 +151,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Complement);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Complement);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -183,7 +182,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Exclude);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Exclude);
                         GDIPlus.CheckStatus (status);                                                   
 		}
 
@@ -214,7 +213,7 @@ namespace System.Drawing
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.NativeObject, CombineMode.Xor);
+                        Status status = GDIPlus.GdipCombineRegionPath (nativeRegion, path.nativePath, CombineMode.Xor);
                         GDIPlus.CheckStatus (status);  
 		}
 
@@ -510,7 +509,6 @@ namespace System.Drawing
 			return result;			
 		}
 		
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static Region FromHrgn (IntPtr hrgn)
 		{
 			if (hrgn == IntPtr.Zero)
@@ -556,8 +554,7 @@ namespace System.Drawing
 			status = GDIPlus.GdipGetRegionData (nativeRegion, buff, size, out filled);
 			GDIPlus.CheckStatus (status);                      
 			
-			RegionData rgndata = new RegionData();
-			rgndata.Data = buff;
+			RegionData rgndata = new RegionData (buff);
 			
 			return rgndata;
 		}
@@ -639,7 +636,6 @@ namespace System.Drawing
 			}
 		}
 		// why is this a instance method ? and not static ?
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHrgn (IntPtr regionHandle)		
 		{
 			if (regionHandle == IntPtr.Zero) 

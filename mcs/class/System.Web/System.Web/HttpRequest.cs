@@ -841,7 +841,7 @@ namespace System.Web
 			byte [] buffer;
 			buffer = worker_request.GetPreloadedEntityBody ();
 			// we check the instance field 'content_length' here, not the local var.
-			if (this.content_length <= 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
+			if (this.content_length == 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
 				if (buffer == null || content_length == 0) {
 					input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
 				} else {
@@ -2068,11 +2068,19 @@ namespace System.Web
 
 		static string GetContentDispositionAttribute (string l, string name)
 		{
-			int idx = l.IndexOf (name + "=\"");
+			int idx = l.IndexOf (name + "=");
 			if (idx < 0)
 				return null;
-			int begin = idx + name.Length + "=\"".Length;
-			int end = l.IndexOf ('"', begin);
+			int begin = idx + name.Length + "=".Length;
+			int end;
+			if (l.Length > begin && l [begin] == '"') {
+				begin++;
+				end = l.IndexOf ('"', begin);
+			} else {
+				end = l.IndexOf (';', begin);
+				if (end == -1)
+					end = l.Length;
+			}
 			if (end < 0)
 				return null;
 			if (begin == end)
@@ -2082,11 +2090,19 @@ namespace System.Web
 
 		string GetContentDispositionAttributeWithEncoding (string l, string name)
 		{
-			int idx = l.IndexOf (name + "=\"");
+			int idx = l.IndexOf (name + "=");
 			if (idx < 0)
 				return null;
-			int begin = idx + name.Length + "=\"".Length;
-			int end = l.IndexOf ('"', begin);
+			int begin = idx + name.Length + "=".Length;
+			int end;
+			if (l.Length > begin && l [begin] == '"') {
+				begin++;
+				end = l.IndexOf ('"', begin);
+			} else {
+				end = l.IndexOf (';', begin);
+				if (end == -1)
+					end = l.Length;
+			}
 			if (end < 0)
 				return null;
 			if (begin == end)

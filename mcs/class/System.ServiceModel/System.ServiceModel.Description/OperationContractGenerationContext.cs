@@ -53,7 +53,7 @@ namespace System.ServiceModel.Description
 			ServiceContractGenerationContext contract,
 			OperationDescription operation,
 			CodeTypeDeclaration declaringType,
-			CodeMemberMethod method,
+			CodeMemberMethod syncMethod,
 			CodeMemberMethod beginMethod,
 			CodeMemberMethod endMethod)
 		{
@@ -61,7 +61,7 @@ namespace System.ServiceModel.Description
 			this.contract = contract;
 			this.operation = operation;
 			declaring_type = declaringType;
-			this.method = method;
+			this.method = syncMethod;
 			this.begin_method = beginMethod;
 			this.end_method = endMethod;
 		}

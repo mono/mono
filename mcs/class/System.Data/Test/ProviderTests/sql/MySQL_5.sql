@@ -37,8 +37,6 @@ Reason: "Return" is only allowed in a function not in a procedure, u can use "IN
 ===========================================================================================
 */
 
-use monotest;
-
 /*
 =================================== OBJECT NUMERIC_FAMILY =========================
 -- TABLE : NUMERIC_FAMILY
@@ -144,8 +142,6 @@ create table `string_family` (
 	`type_text` text NULL,
 	`type_ntext` longtext CHARACTER SET ucs2 COLLATE ucs2_general_ci NULL);
 
-grant all privileges on string_family to monotester;
-
 insert into string_family values (1, 'char', 'nchभाr', 'varchar', 'nvभारतr', 'text', 'ntभाxt');
 insert into string_family values (2, '0123456789', '0123456789', 'varchar ', 'nvभारतr ', 'longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext ', 'ntभाxt ');
 insert into string_family values (3, '', '', '', '', '', '');
@@ -169,9 +165,7 @@ create table `datetime_family` (
         `type_time` time NULL,
         `type_date` date NULL);
 
-grant all privileges on datetime_family to monotester;
-
-insert into `datetime_family` values (1,'2037-12-31 23:59:00','9999-12-31 23:59:59.997','23:58:59.953','9999-12-31');
+insert into `datetime_family` values (1,'2037-12-31 23:59:00','9999-12-31 23:59:59','23:58:59','9999-12-31');
 insert into `datetime_family` values (4,null,null,null,null);
 
 /*
@@ -193,8 +187,6 @@ create table `employee` (
 	`doj` datetime NOT NULL,
 	`email` varchar (50));
 
-grant all privileges on employee to monotester;
-
 insert into `employee` values (1, 'suresh', 'kumar', '1978-08-22', '2001-03-12', 'suresh@gmail.com');
 insert into `employee` values (2, 'ramesh', 'rajendran', '1977-02-15', '2005-02-11', 'ramesh@yahoo.com');
 insert into `employee` values (3, 'venkat', 'ramakrishnan', '1977-06-12', '2003-12-11', 'ramesh@yahoo.com');
@@ -208,7 +200,7 @@ insert into `employee` values (4, 'ramu', 'dhasarath', '1977-02-15', '2005-02-11
 delimiter //
 drop procedure if exists sp_clean_employee_table
 //
-CREATE DEFINER=`monotester`@`localhost` PROCEDURE `sp_clean_employee_table`()
+CREATE PROCEDURE `sp_clean_employee_table`()
 begin
 	delete from employee where `id` > 6000;
 end

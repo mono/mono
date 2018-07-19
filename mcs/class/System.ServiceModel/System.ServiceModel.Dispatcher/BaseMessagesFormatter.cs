@@ -70,17 +70,14 @@ namespace System.ServiceModel.Dispatcher
 
 		internal static void Validate (OperationDescription od, bool isRpc, bool isEncoded)
 		{
-			bool hasParameter = false, hasVoid = false;
+			bool hasVoid = false;
 			foreach (var md in od.Messages) {
 				if (md.IsTypedMessage || md.IsUntypedMessage) {
 					if (isRpc && !isEncoded)
 						throw new InvalidOperationException ("Message with action {0} is either strongly-typed or untyped, but defined as RPC and encoded.");
-					if (hasParameter && !md.IsVoid)
-						throw new InvalidOperationException (String.Format ("Operation '{0}' contains a message with parameters. Strongly-typed or untyped message can be paired only with strongly-typed, untyped or void message.", od.Name));
 					if (isRpc && hasVoid)
 						throw new InvalidOperationException (String.Format ("This operation '{0}' is defined as RPC and contains a message with void, which is not allowed.", od.Name));
 				} else {
-					hasParameter |= !md.IsVoid;
 					hasVoid |= md.IsVoid;
 				}
 			}
@@ -243,7 +240,7 @@ namespace System.ServiceModel.Dispatcher
 			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
-#if NET_2_1
+#if MOBILE
 				parameters [0] = Activator.CreateInstance (md.MessageType);
 #else
 				parameters [0] = Activator.CreateInstance (md.MessageType, true);
@@ -271,7 +268,7 @@ namespace System.ServiceModel.Dispatcher
 			var headers = MessageToHeaderObjects (md, message);
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
-#if NET_2_1
+#if MOBILE
 				object msgObject = Activator.CreateInstance (md.MessageType);
 #else
 				object msgObject = Activator.CreateInstance (md.MessageType, true);
@@ -355,14 +352,14 @@ namespace System.ServiceModel.Dispatcher
 	class DataContractMessagesFormatter : BaseMessagesFormatter
 	{
 		DataContractFormatAttribute attr;
-#if !NET_2_1
+#if !MOBILE
 		DataContractSerializerOperationBehavior serializerBehavior;
 #endif
 
 		public DataContractMessagesFormatter (OperationDescription desc, DataContractFormatAttribute attr)
 			: base (desc)
 		{
-#if !NET_2_1
+#if !MOBILE
 			this.serializerBehavior = desc.Behaviors.Find<DataContractSerializerOperationBehavior>();
 #endif
 			this.attr = attr;
@@ -442,7 +439,7 @@ namespace System.ServiceModel.Dispatcher
 		XmlObjectSerializer GetSerializer (MessagePartDescription partDesc)
 		{
 			if (!serializers.ContainsKey (partDesc))
-#if !NET_2_1
+#if !MOBILE
 				if (serializerBehavior != null)
 					serializers [partDesc] = serializerBehavior.CreateSerializer(
 						partDesc.Type, partDesc.Name, partDesc.Namespace, OperationKnownTypes as IList<Type>);

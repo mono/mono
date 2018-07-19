@@ -1,5 +1,6 @@
-/*
- * dominators.c: Dominator computation on the control flow graph
+/**
+ * \file
+ * Dominator computation on the control flow graph
  *
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
@@ -7,7 +8,9 @@
  *
  * (C) 2003 Ximian, Inc.
  * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
+#include <config.h>
 #include <string.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mempool.h>

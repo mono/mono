@@ -63,6 +63,9 @@ namespace System
 		#endregion
 #pragma warning restore 169
 
+		// keep a reference to the proxy so it doesn't get garbage collected before the RCW
+		ComInteropProxy proxy;
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern __ComObject CreateRCW (Type t);
 
@@ -71,10 +74,13 @@ namespace System
 
 		~__ComObject ()
 		{	
-			if (synchronization_context != null)
-				synchronization_context.Post ((state) => ReleaseInterfaces (), this);
-			else
-				ReleaseInterfaces ();				
+			if (hash_table != IntPtr.Zero) {
+				if (synchronization_context != null)
+					synchronization_context.Post ((state) => ReleaseInterfaces (), this);
+				else
+					ReleaseInterfaces ();
+			}
+			proxy = null;
 		}
 
 		public __ComObject ()
@@ -86,12 +92,20 @@ namespace System
 			Initialize (t);
 		}
 
-		internal __ComObject (IntPtr pItf)
+		internal __ComObject (IntPtr pItf, ComInteropProxy p)
 		{
+			proxy = p;
 			InitializeApartmentDetails ();
 			Guid iid = IID_IUnknown;
 			int hr = Marshal.QueryInterface (pItf, ref iid, out iunknown);
 			Marshal.ThrowExceptionForHR (hr);
+		}
+
+		internal void Initialize (IntPtr pUnk, ComInteropProxy p)
+		{
+			proxy = p;
+			InitializeApartmentDetails ();
+			iunknown = pUnk;
 		}
 
 		internal void Initialize (Type t)
@@ -101,8 +115,14 @@ namespace System
 			if (iunknown != IntPtr.Zero)
 				return;
 
+			iunknown = CreateIUnknown (t);
+		}
+
+		internal static IntPtr CreateIUnknown(Type t)
+		{
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (t.TypeHandle);
-			
+
+			IntPtr iunknown;
 			ObjectCreationDelegate ocd = ExtensibleClassFactory.GetObjectCreationCallback (t);
 			if (ocd != null) {
 				iunknown = ocd (IntPtr.Zero);
@@ -113,6 +133,8 @@ namespace System
 				int hr = CoCreateInstance (GetCLSID (t), IntPtr.Zero, 0x1 | 0x4 | 0x10, IID_IUnknown, out iunknown);
 				Marshal.ThrowExceptionForHR (hr);
 			}
+
+			return iunknown;
 		}
 
 		private void InitializeApartmentDetails ()
@@ -228,6 +250,18 @@ namespace System
 		   uint dwClsContext,
 		  [In, MarshalAs (UnmanagedType.LPStruct)] Guid riid,
 			out IntPtr pUnk);
+	}
+}
+#else
+namespace System
+{
+	// this is a shim class so we can AOT during full AOT builds without --enable-minimal=com
+	internal class __ComObject
+	{
+		__ComObject ()
+		{
+			throw new NotSupportedException ();
+		}
 	}
 }
 #endif

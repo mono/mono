@@ -20,7 +20,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Unix.Native
 {
-	[TestFixture, Category ("NotDotNet")]
+	[TestFixture, Category ("NotDotNet"), Category ("NotOnWindows")]
 	public class SocketTest {
 
 		string TempFolder;
@@ -176,6 +176,9 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+#if MONODROID
+		[ExpectedException (typeof (ArgumentOutOfRangeException))] // IPPROTO_TCP not supported
+#endif
 		public void SockOptLinger ()
 		{
 			WithSockets (UnixAddressFamily.AF_INET, UnixSocketType.SOCK_STREAM, UnixSocketProtocol.IPPROTO_TCP, (so1, so2) => {
@@ -347,6 +350,9 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+#if MONODROID
+		[ExpectedException (typeof (ArgumentOutOfRangeException))] // IPPROTO_UDP not supported
+#endif
 		public void BindConnect ()
 		{
 			WithSockets (UnixAddressFamily.AF_INET, UnixSocketType.SOCK_DGRAM, UnixSocketProtocol.IPPROTO_UDP, (so1, so2) => {
@@ -516,6 +522,9 @@ namespace MonoTests.Mono.Unix.Native
 
 		[Test]
 		[Category ("NotOnMac")]
+#if MONODROID
+		[ExpectedException (typeof (ArgumentOutOfRangeException))] // SOCK_NONBLOCK, SOCK_CLOEXEC not supported
+#endif
 		public void Accept4 ()
 		{
 			WithSockets (UnixAddressFamily.AF_UNIX, UnixSocketType.SOCK_STREAM, 0, (so1, so2) => {
@@ -553,6 +562,9 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+#if MONODROID
+		[ExpectedException (typeof (ArgumentOutOfRangeException))] // IPPROTO_UDP not supported
+#endif
 		public void SendToRecvFrom ()
 		{
 			WithSockets (UnixAddressFamily.AF_INET, UnixSocketType.SOCK_DGRAM, UnixSocketProtocol.IPPROTO_UDP, (so1, so2) => {
@@ -643,6 +655,9 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+#if MONODROID
+		[ExpectedException (typeof (ArgumentOutOfRangeException))] // IPPROTO_UDP not supported
+#endif
 		public unsafe void SendMsgRecvMsgAddress ()
 		{
 			WithSockets (UnixAddressFamily.AF_INET, UnixSocketType.SOCK_DGRAM, UnixSocketProtocol.IPPROTO_UDP, (so1, so2) => {

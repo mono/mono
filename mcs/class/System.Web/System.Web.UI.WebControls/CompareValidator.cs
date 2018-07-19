@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		protected override void AddAttributesToRender (HtmlTextWriter w)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			if (RenderUplevel) {
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "CompareValidatorEvaluateIsValid");
@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 				RegisterExpandoAttribute (ClientID, "operator", Operator.ToString ());
 			}
 
-			base.AddAttributesToRender (w);
+			base.AddAttributesToRender (writer);
 		}
 
 		protected override bool ControlPropertiesValid ()

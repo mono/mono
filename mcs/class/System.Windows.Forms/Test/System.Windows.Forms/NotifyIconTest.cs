@@ -42,8 +42,10 @@ namespace MonoTests.System.Windows.Forms
 			ni.BalloonTipTitle = "Balloon Tip Title";
 			ni.BalloonTipText = "Balloon Tip Text.";
 			ni.BalloonTipIcon = ToolTipIcon.None;
+			ni.Icon = SystemIcons.Information;
 			ni.Visible = true;
 			ni.ShowBalloonTip (1);
+			ni.Dispose ();
 		}
 	}
 }

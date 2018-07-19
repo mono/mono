@@ -140,50 +140,38 @@ namespace System.Net.Sockets
 
 		public void Complete ()
 		{
-			if (operation != SocketOperation.Receive && socket.is_disposed)
+			if (operation != SocketOperation.Receive && socket.CleanedUp)
 				DelayedException = new ObjectDisposedException (socket.GetType ().ToString ());
 
 			IsCompleted = true;
 
-			AsyncCallback callback = AsyncCallback;
-			if (callback != null) {
-				ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
+			/* It is possible that this.socket is modified by this.Init which has been called by the callback. This
+			 * would lead to inconsistency, as we would for example not release the correct socket.ReadSem or
+			 * socket.WriteSem.
+			 * For example, this can happen with AcceptAsync followed by a ReceiveAsync on the same
+			 * SocketAsyncEventArgs */
+			Socket completedSocket = socket;
+			SocketOperation completedOperation = operation;
+
+			if (this.AsyncCallback != null) {
+				ThreadPool.UnsafeQueueUserWorkItem(state => ((SocketAsyncResult)state).AsyncCallback((SocketAsyncResult)state), this);
 			}
 
-			Queue<KeyValuePair<IntPtr, IOSelectorJob>> queue = null;
-			switch (operation) {
+			/* Warning: any field on the current SocketAsyncResult might have changed, as the callback might have
+			 * called this.Init */
+
+			switch (completedOperation) {
 			case SocketOperation.Receive:
 			case SocketOperation.ReceiveFrom:
 			case SocketOperation.ReceiveGeneric:
 			case SocketOperation.Accept:
-				queue = socket.readQ;
+				completedSocket.ReadSem.Release ();
 				break;
 			case SocketOperation.Send:
 			case SocketOperation.SendTo:
 			case SocketOperation.SendGeneric:
-				queue = socket.writeQ;
+				completedSocket.WriteSem.Release ();
 				break;
-			}
-
-			if (queue != null) {
-				lock (queue) {
-					/* queue.Count will only be 0 if the socket is closed while receive/send/accept
-					 * operation(s) are pending and at least one call to this method is waiting
-					 * on the lock while another one calls CompleteAllOnDispose() */
-					if (queue.Count > 0)
-						queue.Dequeue (); /* remove ourselves */
-					if (queue.Count > 0) {
-						if (!socket.is_disposed) {
-							IOSelector.Add (queue.Peek ().Key, queue.Peek ().Value);
-						} else {
-							/* CompleteAllOnDispose */
-							KeyValuePair<IntPtr, IOSelectorJob> [] jobs = queue.ToArray ();
-							for (int i = 0; i < jobs.Length; i++)
-								ThreadPool.QueueUserWorkItem (j => ((IOSelectorJob) j).MarkDisposed (), jobs [i].Value);
-							queue.Clear ();
-						}
-					}
-				}
 			}
 
 			// IMPORTANT: 'callback', if any is scheduled from unmanaged code

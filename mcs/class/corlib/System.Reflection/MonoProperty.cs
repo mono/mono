@@ -359,7 +359,7 @@ namespace System.Reflection {
 			}
 
 			getterType = getterDelegateType.MakeGenericType (typeVector);
-#if NET_2_1
+#if MOBILE
 			// with Silverlight a coreclr failure (e.g. Transparent caller creating a delegate on a Critical method)
 			// would normally throw an ArgumentException, so we set throwOnBindFailure to false and check for a null
 			// delegate that we can transform into a MethodAccessException

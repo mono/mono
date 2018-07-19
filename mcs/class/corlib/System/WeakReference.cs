@@ -54,7 +54,7 @@ namespace System
 		}
 
 		//Constructors
-#if NET_2_1
+#if MOBILE
 		protected WeakReference ()
 		{
 		}

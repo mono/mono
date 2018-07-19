@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 using System;
 using System.Net;
 using System.Runtime.Serialization;
@@ -37,6 +37,8 @@ using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Web;
 using System.Text;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Description
 {
@@ -64,7 +66,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void ScriptGenerator ()
 		{
-			var url = "http://localhost:37564";
+			var url = "http://localhost:" + NetworkHelpers.FindFreePort ();
 			var host = new MyHostFactory ().CreateServiceHost (typeof (HogeService));
 			var binding = new WebHttpBinding ();
 			host.AddServiceEndpoint (typeof (IHogeService), binding, url);

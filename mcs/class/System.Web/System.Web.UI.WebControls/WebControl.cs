@@ -284,7 +284,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Browsable (true)]
-		public virtual new string SkinID
+		public override string SkinID
 		{
 			get { return base.SkinID; }
 			set { base.SkinID = value; }

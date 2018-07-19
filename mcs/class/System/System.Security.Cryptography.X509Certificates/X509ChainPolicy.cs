@@ -35,7 +35,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private OidCollection apps;
 		private OidCollection cert;
-		private X509Certificate2Collection store;
+		private X509CertificateCollection store;
+		private X509Certificate2Collection store2;
 		private X509RevocationFlag rflag;
 		private X509RevocationMode mode;
 		private TimeSpan timeout;
@@ -46,6 +47,24 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509ChainPolicy () 
 		{
+			Reset ();
+		}
+
+		/*
+		 * Lazy-init ExtraStore from X509CertificateCollection.
+		 * This is called from Mono.Net.Security.SystemCertificateValidator.CreateX509Chain.
+		 *
+		 * AppleTLS supports a lazily-initialized X509Certificate, but not X509Certificate2 so
+		 * we need to fall-back to using Mono.Security.X509 whenever we need an X509Certificate2.
+		 * To avoid unnecessary fallbacks, the private Mono.Net.Security APIs use X509Certificate
+		 * instead of X509Certificate2.
+		 *
+		 * Since 'ExtraStore' returns X509Certificate2Collection, we need to convert these to
+		 * X509Certificate2.
+		 */
+		internal X509ChainPolicy (X509CertificateCollection store)
+		{
+			this.store = store;
 			Reset ();
 		}
 
@@ -60,7 +79,21 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Certificate2Collection ExtraStore {
-			get { return store; }
+			get {
+				if (store2 != null)
+					return store2;
+
+				store2 = new X509Certificate2Collection ();
+				if (store != null) {
+					foreach (var cert in store) {
+						store2.Add (new X509Certificate2 (cert));
+					}
+				}
+				return store2;
+			}
+			internal set {
+				store2 = value;
+			}
 		}
 
 		public X509RevocationFlag RevocationFlag {
@@ -106,7 +139,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			apps = new OidCollection ();
 			cert = new OidCollection ();
-			store = new X509Certificate2Collection ();
+			store2 = null;
 			rflag = X509RevocationFlag.ExcludeRoot;
 			mode = X509RevocationMode.Online;
 			timeout = TimeSpan.Zero;

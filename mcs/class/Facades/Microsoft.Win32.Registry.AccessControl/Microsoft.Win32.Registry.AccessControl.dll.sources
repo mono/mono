@@ -1,3 +1,4 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+../../../../external/corefx/src/Microsoft.Win32.Registry.AccessControl/src/Microsoft/Win32/RegistryAclExtensions.cs

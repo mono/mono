@@ -33,7 +33,6 @@ using System.Security.Permissions;
 using System.Text;
 
 using Mono.Security;
-using Mono.Security.X509;
 
 using System.Runtime.Serialization;
 using Mono.Security.Authenticode;
@@ -48,7 +47,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
-#if NET_2_1
+#if MOBILE
 	public partial class X509Certificate {
 #else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
@@ -106,20 +105,42 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (handle == IntPtr.Zero)
 				throw new ArgumentException ("Invalid handle.");
 
-			impl = X509Helper.InitFromHandle (handle);
+			throw new PlatformNotSupportedException ("Initializing `X509Certificate` from native handle is not supported.");
 		}
 
-		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
+		internal X509Certificate (X509CertificateImpl impl)
+		{
+			this.impl = X509Helper.InitFromCertificate (impl);
+		}
+
+		public X509Certificate (X509Certificate cert) 
 		{
 			if (cert == null)
 				throw new ArgumentNullException ("cert");
 
-			X509Helper.ThrowIfContextInvalid (cert.impl);
-
-			impl = X509Helper.InitFromCertificate (cert.impl);
-			hideDates = false;
+			impl = X509Helper.InitFromCertificate (cert);
 		}
 
+		internal void ImportHandle (X509CertificateImpl impl)
+		{
+			Reset ();
+			this.impl = impl;
+		}
+
+		internal X509CertificateImpl Impl {
+			get {
+				return impl;
+			}
+		}
+
+		internal bool IsValid {
+			get { return X509Helper.IsValid (impl); }
+		}
+
+		internal void ThrowIfContextInvalid ()
+		{
+			X509Helper.ThrowIfContextInvalid (impl);
+		}
 
 		// public methods
 	
@@ -161,7 +182,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				return null;
 			X509Helper.ThrowIfContextInvalid (impl);
 
-			return impl.GetEffectiveDateString ().ToString ();
+			return impl.GetValidFrom ().ToLocalTime ().ToString ();
 		}
 	
 		// strangly there are no DateTime returning function
@@ -171,7 +192,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				return null;
 			X509Helper.ThrowIfContextInvalid (impl);
 
-			return impl.GetExpirationDateString ().ToString ();
+			return impl.GetValidUntil ().ToLocalTime ().ToString ();
 		}
 	
 		// well maybe someday there'll be support for PGP or SPKI ?

@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/crc32.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/Header.cs
 ../../System.Web/Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlAttribute.cs
@@ -36,7 +37,6 @@
 
 Assembly/AssemblyInfo.cs
 Common/AFieldTemplate.cs
-Common/AssertExtensions.cs
 Common/AssociatedBar.cs
 Common/AssociatedFoo.cs
 Common/BazColumnAttributes.cs
@@ -71,7 +71,6 @@ Common/FooWithToString.cs
 Common/ITestDataContext.cs
 Common/KnownResponseHeader.cs
 Common/MiscExtensions.cs
-Common/Mocks.cs
 Common/MyDynamicDataRouteHandler.cs
 Common/MyHttpContextWrapper.cs
 Common/MyHttpRequestWrapper.cs

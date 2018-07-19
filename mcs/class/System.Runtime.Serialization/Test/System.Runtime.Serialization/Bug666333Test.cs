@@ -1,4 +1,4 @@
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.Runtime.Serialization;

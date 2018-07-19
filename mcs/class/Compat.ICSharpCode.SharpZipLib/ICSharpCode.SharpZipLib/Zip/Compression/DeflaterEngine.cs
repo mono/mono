@@ -42,6 +42,7 @@ using ICSharpCode.SharpZipLib.Checksums;
 namespace ICSharpCode.SharpZipLib.Zip.Compression 
 {
 	
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public enum DeflateStrategy 
 	{
 		// The default strategy.
@@ -57,6 +58,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		HuffmanOnly = 2
 	}
 	
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class DeflaterEngine : DeflaterConstants 
 	{
 		static int TOO_FAR = 4096;

@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		protected override void AddAttributesToRender (HtmlTextWriter w)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			if (RenderUplevel) {
 				if (Page != null) {
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			base.AddAttributesToRender (w);
+			base.AddAttributesToRender (writer);
 		}
 
 		public static bool CanConvert (string text,
@@ -87,9 +87,9 @@ namespace System.Web.UI.WebControls
             		return BaseCompareValidator.Convert(text, type, false, out value);
 		}
 
-		protected static bool Compare (string left, string right, ValidationCompareOperator op, ValidationDataType type)
+		protected static bool Compare (string leftText, string rightText, ValidationCompareOperator op, ValidationDataType type)
 		{
-            		return BaseCompareValidator.Compare(left, false, right, false, op, type);	
+            		return BaseCompareValidator.Compare(leftText, false, rightText, false, op, type);	
 		}
 
 		protected override bool DetermineRenderUplevel ()
@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls
 			return order.ToString ();
 		}
 
-		protected static int GetFullYear (int two_digit_year)
+		protected static int GetFullYear (int shortYear)
 		{
 			/* This is an implementation that matches the
 			 * docs on msdn, but MS doesn't seem to go by
@@ -142,10 +142,10 @@ namespace System.Web.UI.WebControls
 			int cutoff = CutoffYear;
 			int twodigitcutoff = cutoff % 100;
 
-			if (two_digit_year <= twodigitcutoff)
-				return cutoff - twodigitcutoff + two_digit_year;
+			if (shortYear <= twodigitcutoff)
+				return cutoff - twodigitcutoff + shortYear;
 			else
-				return cutoff - twodigitcutoff - 100 + two_digit_year;
+				return cutoff - twodigitcutoff - 100 + shortYear;
 		}
 
 		[DefaultValue (false)]
@@ -175,16 +175,16 @@ namespace System.Web.UI.WebControls
             		return Convert(text, type, cultureInvariant, out value);
 		}
 
-		protected static bool Compare (string left, 
+		protected static bool Compare (string leftText, 
 					       bool cultureInvariantLeftText, 
-					       string right, 
+					       string rightText, 
 					       bool cultureInvariantRightText, 
 					       ValidationCompareOperator op, 
 					       ValidationDataType type)
 		{
 			object lo, ro;
 
-			if (!Convert(left, type, cultureInvariantLeftText, out lo))
+			if (!Convert(leftText, type, cultureInvariantLeftText, out lo))
 				return false;
 
 			/* DataTypeCheck is a unary operator that only
@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls
 			/* pretty crackladen, but if we're unable to
 			 * convert the rhs to @type, the comparison
 			 * succeeds */
-			if (!Convert(right, type, cultureInvariantRightText, out ro))
+			if (!Convert(rightText, type, cultureInvariantRightText, out ro))
 				return true;
 
 			int comp = ((IComparable)lo).CompareTo((IComparable)ro);

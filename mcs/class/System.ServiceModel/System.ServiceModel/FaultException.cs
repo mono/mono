@@ -44,13 +44,13 @@ namespace System.ServiceModel
 		{
 		}
 
-		public FaultException (string msg)
-			: this (new FaultReason (msg))
+		public FaultException (string reason)
+			: this (new FaultReason (reason))
 		{
 		}
 
-		public FaultException (string msg, FaultCode code)
-			: this (new FaultReason (msg), code)
+		public FaultException (string reason, FaultCode code)
+			: this (new FaultReason (reason), code)
 		{
 		}
 
@@ -100,7 +100,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public static FaultException CreateFault (MessageFault fault,  params Type [] details)
+		public static FaultException CreateFault (MessageFault messageFault,  params Type [] faultDetailTypes)
 		{
 			throw new NotImplementedException ();
 		}

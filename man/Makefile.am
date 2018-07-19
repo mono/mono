@@ -2,6 +2,7 @@ man_MANS = \
 	al.1                  \
 	cert2spc.1            \
 	certmgr.1             \
+	cert-sync.1           \
 	chktrust.1            \
 	cilc.1                \
 	crlupdate.1           \
@@ -12,12 +13,14 @@ man_MANS = \
 	genxs.1               \
 	httpcfg.1             \
 	ilasm.1               \
+	illinkanalyzer.1      \
 	lc.1		      \
 	macpack.1             \
 	makecert.1            \
 	mconfig.1             \
 	mcs.1                 \
 	mdassembler.1         \
+	mdb2ppdb.1	      \
 	mdoc.1                \
 	mdoc.5                \
 	mdoc-assemble.1       \
@@ -42,7 +45,6 @@ man_MANS = \
 	mozroots.1            \
 	pdb2mdb.1	      \
 	permview.1            \
-	prj2make.1            \
 	resgen.1              \
 	secutil.1             \
 	setreg.1              \
@@ -57,6 +59,7 @@ man_MANS = \
 	mono-configuration-crypto.1 \
 	ccrewrite.1			\
 	cccheck.1			\
-	mono-symbolicate.1
+	mono-symbolicate.1			\
+	mono-profilers.1
 
 EXTRA_DIST = $(man_MANS)

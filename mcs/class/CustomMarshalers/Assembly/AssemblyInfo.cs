@@ -39,7 +39,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: AssemblyTitle ("CustomMarshalers.dll")]
 [assembly: AssemblyDescription ("CustomMarshalers.dll")]

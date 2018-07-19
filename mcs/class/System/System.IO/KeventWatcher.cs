@@ -232,8 +232,8 @@ namespace System.IO {
 					conn = -1;
 				}
 
-				if (!thread.Join (2000))
-					thread.Abort ();
+				while (!thread.Join (2000))
+					thread.Interrupt ();
 
 				requestStop = false;
 				started = false;
@@ -300,11 +300,14 @@ namespace System.IO {
 			else
 				fullPathNoLastSlash = fsw.FullPath;
 				
-			// GetFilenameFromFd() returns the *realpath* which can be different than fsw.FullPath because symlinks.
+			// realpath() returns the *realpath* which can be different than fsw.FullPath because symlinks.
 			// If so, introduce a fixup step.
-			int fd = open (fullPathNoLastSlash, O_EVTONLY, 0);
-			var resolvedFullPath = GetFilenameFromFd (fd);
-			close (fd);
+			var sb = new StringBuilder (__DARWIN_MAXPATHLEN);
+			if (realpath(fsw.FullPath, sb) == IntPtr.Zero) {
+				var errMsg = String.Format ("realpath({0}) failed, error code = '{1}'", fsw.FullPath, Marshal.GetLastWin32Error ());
+				throw new IOException (errMsg);
+			}
+			var resolvedFullPath = sb.ToString();
 
 			if (resolvedFullPath != fullPathNoLastSlash)
 				fixupPath = resolvedFullPath;
@@ -317,10 +320,17 @@ namespace System.IO {
 			var eventBuffer = new kevent[0]; // we don't want to take any events from the queue at this point
 			var changes = CreateChangeList (ref initialFds);
 
-			int numEvents = kevent (conn, changes, changes.Length, eventBuffer, eventBuffer.Length, ref immediate_timeout);
+			int numEvents;
+			int errno = 0;
+			do {
+				numEvents = kevent (conn, changes, changes.Length, eventBuffer, eventBuffer.Length, ref immediate_timeout);
+				if (numEvents == -1) {
+					errno = Marshal.GetLastWin32Error ();
+				}
+			} while (numEvents == -1 && errno == EINTR);
 
 			if (numEvents == -1) {
-				var errMsg = String.Format ("kevent() error at initial event registration, error code = '{0}'", Marshal.GetLastWin32Error ());
+				var errMsg = String.Format ("kevent() error at initial event registration, error code = '{0}'", errno);
 				throw new IOException (errMsg);
 			}
 		}
@@ -384,9 +394,10 @@ namespace System.IO {
 					// Stop () signals us to stop by closing the connection
 					if (requestStop)
 						break;
-					if (++retries == 3)
+					int errno = Marshal.GetLastWin32Error ();
+					if (errno != EINTR && ++retries == 3)
 						throw new IOException (String.Format (
-							"persistent kevent() error, error code = '{0}'", Marshal.GetLastWin32Error ()));
+							"persistent kevent() error, error code = '{0}'", errno));
 
 					continue;
 				}
@@ -606,14 +617,14 @@ namespace System.IO {
 				return;
 
 			// e.Name
-			string name = path.Substring (fullPathNoLastSlash.Length + 1); 
+			string name = (path.Length > fullPathNoLastSlash.Length) ? path.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 
 			// only post events that match filter pattern. check both old and new paths for renames
 			if (!fsw.Pattern.IsMatch (path) && (newPath == null || !fsw.Pattern.IsMatch (newPath)))
 				return;
 				
 			if (action == FileAction.RenamedNewName) {
-				string newName = newPath.Substring (fullPathNoLastSlash.Length + 1);
+				string newName = (newPath.Length > fullPathNoLastSlash.Length) ? newPath.Substring (fullPathNoLastSlash.Length + 1) : String.Empty;
 				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, fsw.Path, newName, name);
 			}
 				
@@ -646,6 +657,7 @@ namespace System.IO {
 		const int O_EVTONLY = 0x8000;
 		const int F_GETPATH = 50;
 		const int __DARWIN_MAXPATHLEN = 1024;
+		const int EINTR = 4;
 		static readonly kevent[] emptyEventList = new System.IO.kevent[0];
 		int maxFds = Int32.MaxValue;
 
@@ -665,19 +677,22 @@ namespace System.IO {
 		string fixupPath = null;
 		string fullPathNoLastSlash = null;
 
-		[DllImport ("libc", EntryPoint="fcntl", CharSet=CharSet.Auto, SetLastError=true)]
+		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
 		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
+		static extern IntPtr realpath (string pathname, StringBuilder sb);
+
+		[DllImport ("libc", SetLastError=true)]
 		extern static int open (string path, int flags, int mode_t);
 
 		[DllImport ("libc")]
 		extern static int close (int fd);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		extern static int kqueue ();
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		extern static int kevent (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, [In] ref timespec time);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -721,8 +736,9 @@ namespace System.IO {
 			return true;
 		}
 
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor;
 
 			if (watches.ContainsKey (fsw)) {
@@ -735,13 +751,19 @@ namespace System.IO {
 			monitor.Start ();
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
 			if (monitor == null)
 				return;
 
 			monitor.Stop ();
+		}
+
+		public void Dispose (object handle)
+		{
+			// does nothing
 		}
 			
 		[DllImport ("libc")]

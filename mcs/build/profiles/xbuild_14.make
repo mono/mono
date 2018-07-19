@@ -1,7 +1,7 @@
 # -*- makefile -*-
 
-include $(topdir)/build/profiles/net_4_x.make
+include $(topdir)/build/profiles/xbuild_12.make
 
-PROFILE_MCS_FLAGS := $(PROFILE_MCS_FLAGS) -d:XBUILD_12 -d:XBUILD_14 -d:MONO -d:DISABLE_CAS_USE  -lib:$(topdir)/class/lib/net_4_x
+PROFILE_MCS_FLAGS += -d:XBUILD_14
 
 XBUILD_VERSION = 14.0

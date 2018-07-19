@@ -29,9 +29,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Threading.Tasks
 {

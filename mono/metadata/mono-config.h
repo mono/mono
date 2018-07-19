@@ -1,5 +1,5 @@
-/*
- * mono-config.h
+/**
+ * \file
  *
  * Author: Paolo Molaro (lupus@ximian.com)
  *
@@ -12,6 +12,10 @@
 #include <mono/metadata/image.h>
 
 MONO_BEGIN_DECLS
+
+MONO_API const char *mono_config_get_os (void);
+MONO_API const char *mono_config_get_cpu (void);
+MONO_API const char *mono_config_get_wordsize (void);
 
 MONO_API const char* mono_get_config_dir (void);
 MONO_API void        mono_set_config_dir (const char *dir);

@@ -13,15 +13,21 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
+#ifdef HOST_WIN32
+#include <corecrt_io.h>
+#endif
 
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 
+#ifndef HOST_WIN32
 gint32
 Mono_Posix_Syscall_fcntl (gint32 fd, gint32 cmd)
 {
@@ -95,6 +101,7 @@ Mono_Posix_Syscall_fcntl_lock (gint32 fd, gint32 cmd, struct Mono_Posix_Flock *l
 
 	return r;
 }
+#endif
 
 gint32
 Mono_Posix_Syscall_open (const char *pathname, gint32 flags)

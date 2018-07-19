@@ -49,7 +49,6 @@ using System.Web.DynamicData.ModelProviders;
 using System.Web.Routing;
 
 using NUnit.Framework;
-using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
@@ -299,7 +298,7 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 			
-			AssertExtensions.Throws <ArgumentException> (() => {
+			Assert.Throws <ArgumentException> (() => {
 				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
 			}, "#A1");
 		}
@@ -445,7 +444,7 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
 			}, "#A1");
 		}

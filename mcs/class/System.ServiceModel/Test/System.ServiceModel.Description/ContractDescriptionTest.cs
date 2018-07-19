@@ -26,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -1086,5 +1087,29 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsTrue (cd.Name == "IS");
 		}
 
+		[Test]
+		public void GetContractWithInterface()
+		{
+			var contractType = typeof(IDisposableService);
+			var serviceType = typeof(DisposableService);
+			var cd = ContractDescription.GetContract (contractType, serviceType);
+			
+			Assert.IsNotNull(cd);
+			Assert.IsTrue (cd.Name == "IDisposableService");
+		}
+
+		[ServiceContract]
+		private interface IDisposableService : IDisposable 
+		{
+		}
+
+		private class DisposableService : IDisposableService 
+		{
+			public void Dispose()
+			{
+			}
+		}
 	}
 }
+#endif
+

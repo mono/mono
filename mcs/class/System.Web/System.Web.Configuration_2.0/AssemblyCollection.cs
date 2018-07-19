@@ -45,9 +45,9 @@ namespace System.Web.Configuration
 			properties = new ConfigurationPropertyCollection();
 		}
 
-		public void Add (AssemblyInfo info)
+		public void Add (AssemblyInfo assemblyInformation)
 		{
-			BaseAdd (info, false);
+			BaseAdd (assemblyInformation, false);
 		}
 		
 		public void Clear ()

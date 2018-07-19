@@ -73,7 +73,7 @@ namespace System.ServiceModel.Channels.NetTcp
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			// Close channels that are incorrectly kept open first.
 			var l = new List<TcpDuplexSessionChannel> ();
@@ -83,9 +83,9 @@ namespace System.ServiceModel.Channels.NetTcp
 					l.Add (dch);
 			}
 			foreach (var dch in l)
-				dch.Close (timeout - (DateTime.Now - start));
+				dch.Close (timeout - (DateTime.UtcNow - start));
 
-			TcpClient client = AcceptTcpClient (timeout - (DateTime.Now - start));
+			TcpClient client = AcceptTcpClient (timeout - (DateTime.UtcNow - start));
 			if (client == null)
 				return null; // onclose
 
@@ -109,7 +109,7 @@ namespace System.ServiceModel.Channels.NetTcp
 		// TcpReplyChannel requires refreshed connection after each request processing.
 		internal TcpClient AcceptTcpClient (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			TcpClient client = accepted_clients.Count == 0 ? null : accepted_clients.Dequeue ();
 			if (client == null) {
@@ -121,7 +121,7 @@ namespace System.ServiceModel.Channels.NetTcp
 				}
 				accept_handles.Remove (wait);
 				// recurse with new timeout, or return null if it's either being closed or timed out.
-				timeout -= (DateTime.Now - start);
+				timeout -= (DateTime.UtcNow - start);
 				return State == CommunicationState.Opened && timeout > TimeSpan.Zero ? AcceptTcpClient (timeout) : null;
 			}
 
@@ -132,7 +132,7 @@ namespace System.ServiceModel.Channels.NetTcp
 					continue;
 				if (((IPEndPoint) dch.TcpClient.Client.RemoteEndPoint).Equals (client.Client.RemoteEndPoint))
 					// ... then it should be handled in another BeginTryReceive/EndTryReceive loop in ChannelDispatcher.
-					return AcceptTcpClient (timeout - (DateTime.Now - start));
+					return AcceptTcpClient (timeout - (DateTime.UtcNow - start));
 			}
 
 			return client;
@@ -201,13 +201,13 @@ namespace System.ServiceModel.Channels.NetTcp
 					if (accept_handles.Count > 0)
 						accept_handles [0].Set ();
 				}
-			} catch {
+			} catch (ObjectDisposedException) {
 				/* If an accept fails, just ignore it. Maybe the remote peer disconnected already */
 			} finally {
 				if (State == CommunicationState.Opened) {
 					try {
 						listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, listener);
-					} catch {
+					} catch (ObjectDisposedException) {
 						/* If this fails, we must have disposed the listener */
 					}
 				}

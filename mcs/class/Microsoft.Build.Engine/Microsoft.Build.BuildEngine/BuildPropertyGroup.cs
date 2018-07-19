@@ -168,19 +168,19 @@ namespace Microsoft.Build.BuildEngine {
 					yield return kvp.Value;
 		}
 
-		public void RemoveProperty (BuildProperty propertyToRemove)
+		public void RemoveProperty (BuildProperty property)
 		{
-			if (propertyToRemove == null)
-				throw new ArgumentNullException ("propertyToRemove");
+			if (property == null)
+				throw new ArgumentNullException ("property");
 
 			if (FromXml) {
-				if (!propertyToRemove.FromXml)
+				if (!property.FromXml)
 					throw new InvalidOperationException ("The specified property does not belong to the current property group.");
 
-				propertyToRemove.XmlElement.ParentNode.RemoveChild (propertyToRemove.XmlElement);
-				properties.Remove (propertyToRemove);
+				property.XmlElement.ParentNode.RemoveChild (property.XmlElement);
+				properties.Remove (property);
 			} else
-				propertiesByName.Remove (propertyToRemove.Name);
+				propertiesByName.Remove (property.Name);
 		}
 
 		public void RemoveProperty (string propertyName)

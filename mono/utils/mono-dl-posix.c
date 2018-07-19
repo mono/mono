@@ -1,11 +1,13 @@
-/*
- * mono-dl.c: Interface to the dynamic linker
+/**
+ * \file
+ * Interface to the dynamic linker
  *
  * Author:
  *    Mono Team (http://www.mono-project.com)
  *
  * Copyright 2001-2004 Ximian, Inc.
  * Copyright 2004-2009 Novell, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 
@@ -13,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(_POSIX_VERSION)
+#if defined(_POSIX_VERSION) && !defined (HOST_WASM)
 
 #include "mono/utils/mono-dl.h"
 #include "mono/utils/mono-embed.h"
@@ -59,12 +61,24 @@ mono_dl_get_system_dir (void)
 void *
 mono_dl_open_file (const char *file, int flags)
 {
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	/* Bionic doesn't support NULL filenames */
 	if (!file)
 		return NULL;
 #endif
+#if defined(_AIX)
+	/*
+	 * dlopen is /weird/ on AIX 
+	 * shared libraries (really, all oobjects are, since PPC is PIC)
+	 * can cohabitate with not just SOs of the other arch, but also
+	 * with regular objects in an archive used for static linking
+	 * 
+	 * we have to pass RTLD_MEMBER, otherwise lib.a(lib.o) doesn't work
+	 */
+	return dlopen (file, flags | RTLD_MEMBER);
+#else
 	return dlopen (file, flags);
+#endif
 }
 
 void

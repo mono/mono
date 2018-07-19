@@ -5,17 +5,21 @@
 // <c> 2002 Mike Kestner
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
-
 namespace MonoTests.System.Text
 {
+	//
+	// NOTE: when adding/updating tests here consider updating
+	//       the following files as well since they have similar tests:
+	//
+	// - mcs/class/corlib/Test/System.Text/Latin1EncodingTest.cs
+	// - mcs/class/I18N/EncodingTestBase.cs
+	//
 	[TestFixture]
 	public class ASCIIEncodingTest
 	{
@@ -119,6 +123,40 @@ namespace MonoTests.System.Text
 				Assert.AreEqual (testchars [i], (char) bytes [i]);
 		}
 
+		[Test] // Test GetBytes(string)
+		public void TestGetBytes7 ()
+		{
+			var latin1_encoding = Encoding.GetEncoding ("latin1");
+
+			var expected = new byte [] { 0x3F, 0x20, 0x3F, 0x20, 0x3F };
+			var actual = latin1_encoding.GetBytes("\u24c8 \u2075 \u221e"); // normal replacement
+			Assert.AreEqual (expected, actual, "#1");
+
+			expected = new byte [] { 0x3F, 0x3F };
+			actual = latin1_encoding.GetBytes("\ud83d\ude0a"); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#2");
+
+			expected = new byte [] { 0x3F, 0x3F, 0x20 };
+			actual = latin1_encoding.GetBytes("\ud83d\ude0a "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#3");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud83d\ude0a  "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#4");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud834\udd1e  "); // surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#5");
+
+			expected = new byte [] { 0x41, 0x42, 0x43, 0x00, 0x41, 0x42, 0x43 };
+			actual = latin1_encoding.GetBytes("ABC\0ABC"); // embedded zero byte not replaced
+			Assert.AreEqual (expected, actual, "#6");
+
+			expected = new byte [] { 0x20, 0x20, 0x3F, 0x20, 0x20 };
+			actual = latin1_encoding.GetBytes("  \ud834  "); // invalid surrogate pair replacement
+			Assert.AreEqual (expected, actual, "#7");
+		}
+
 		[Test] // Test GetChars(byte[])
 		public void TestGetChars1 () 
 		{
@@ -213,6 +251,40 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		[ExpectedException (typeof (EncoderFallbackException))]
+		public void EncoderFallback ()
+		{
+			Encoding e = Encoding.ASCII.Clone () as Encoding;
+			e.EncoderFallback = new EncoderExceptionFallback ();
+			e.GetBytes ("\u24c8");
+		}
+
+		[Test]
+		public void EncoderFallback2 ()
+		{
+			Encoding e = Encoding.ASCII.Clone () as Encoding;
+			e.EncoderFallback = new BackslashEncoderReplaceFallback ();
+
+			byte[] bytes = e.GetBytes ("a\xac\u1234\u20ac\u8000");
+			var expected = new byte[] { 0x61, 0x5C, 0x78, 0x61, 0x63, 0x5C, 0x75, 0x31, 0x32, 0x33, 0x34, 0x5C, 0x75, 0x32, 0x30, 0x61, 0x63, 0x5C, 0x75, 0x38, 0x30, 0x30, 0x30 };
+			Assert.AreEqual (expected, bytes);
+
+			bytes = e.GetBytes ("1\u04d92");
+			expected = new byte[] { 0x31, 0x5C, 0x75, 0x30, 0x34, 0x64, 0x39, 0x32 };
+			Assert.AreEqual (expected, bytes);
+
+			e.EncoderFallback = new EncoderExceptionOnWrongIndexFallback ('\u04d9', 1);
+			bytes = e.GetBytes ("1\u04d92");
+			expected = new byte[] { 0x31, 0x21, 0x32 };
+			Assert.AreEqual (expected, bytes);
+
+			e.EncoderFallback = new EncoderExceptionOnWrongIndexFallback ('\u04d9', 0);
+			bytes = e.GetBytes ("\u04d921");
+			expected = new byte[] { 0x21, 0x32, 0x31 };
+			Assert.AreEqual (expected, bytes);
+		}
+
+		[Test]
 		[ExpectedException (typeof (DecoderFallbackException))]
 		public void DecoderFallback ()
 		{
@@ -233,12 +305,6 @@ namespace MonoTests.System.Text
 			
 			var chars = new char [7];
 			var ret = enc.GetChars (bytes, 0, bytes.Length, chars, 0);
-			Console.WriteLine (ret);
-			
-			for (int i = 0; i < chars.Length; i++) {
-				Console.Write ("{0:x2} ", (int)chars [i]);
-			}
-			Console.WriteLine ();
 		}
 		
 		[Test]
@@ -310,7 +376,143 @@ namespace MonoTests.System.Text
 				}
 			}
 		}
-		
 
+		class BackslashEncoderReplaceFallback : EncoderFallback
+		{
+			class BackslashReplaceFallbackBuffer : EncoderFallbackBuffer
+			{
+				List<char> _buffer = new List<char> ();
+				int _index;
+
+				public override bool Fallback (char charUnknownHigh, char charUnknownLow, int index)
+				{
+					throw new NotImplementedException ();
+					return false;
+				}
+
+				public override bool Fallback (char charUnknown, int index)
+				{
+					_buffer.Add('\\');
+					int val = (int)charUnknown;
+					if (val > 0xFF) {
+						_buffer.Add ('u');
+						AddCharacter (val >> 8);
+						AddCharacter (val & 0xFF);
+					} else {
+						_buffer.Add ('x');
+						AddCharacter (charUnknown);
+					}
+					return true;
+				}
+
+				private void AddCharacter (int val)
+				{
+					AddOneDigit (((val) & 0xF0) >> 4);
+					AddOneDigit (val & 0x0F);
+				}
+
+				private void AddOneDigit (int val)
+				{
+					if (val > 9) {
+						_buffer.Add ((char)('a' + val - 0x0A));
+					} else {
+						_buffer.Add ((char)('0' + val));
+					}
+				}
+
+				public override char GetNextChar ()
+				{
+					if (_index == _buffer.Count)
+						return Char.MinValue;
+
+					return _buffer[_index++];
+				}
+
+				public override bool MovePrevious ()
+				{
+					if (_index > 0){
+						_index--;
+						return true;
+					}
+					return false;
+				}
+
+				public override int Remaining
+				{
+					get { return _buffer.Count - _index; }
+				}
+			}
+
+			public override EncoderFallbackBuffer CreateFallbackBuffer ()
+			{
+				return new BackslashReplaceFallbackBuffer ();
+			}
+
+			public override int MaxCharCount
+			{
+				get { throw new NotImplementedException (); }
+			}
+		}
+
+		class EncoderExceptionOnWrongIndexFallback : EncoderFallback
+		{
+			char _expectedCharUnknown;
+			int _expectedIndex;
+
+			public EncoderExceptionOnWrongIndexFallback (char expectedCharUnknown, int expectedIndex)
+			{
+				_expectedCharUnknown = expectedCharUnknown;
+				_expectedIndex = expectedIndex;
+			}
+
+			public override EncoderFallbackBuffer CreateFallbackBuffer ()
+			{
+				return new EncoderExceptionOnWrongIndexFallbackBuffer (_expectedCharUnknown, _expectedIndex);
+			}
+
+			public override int MaxCharCount => 1;
+
+			class EncoderExceptionOnWrongIndexFallbackBuffer : EncoderFallbackBuffer
+			{
+				char _expectedCharUnknown;
+				int _expectedIndex;
+				bool read;
+
+				public EncoderExceptionOnWrongIndexFallbackBuffer (char expectedCharUnknown, int expectedIndex)
+				{
+					_expectedCharUnknown = expectedCharUnknown;
+					_expectedIndex = expectedIndex;
+				}
+
+				public override int Remaining => read ? 0 : 1;
+
+				public override bool Fallback (char charUnknown, int index)
+				{
+					Assert.AreEqual (_expectedCharUnknown, charUnknown);
+					Assert.AreEqual (_expectedIndex, index);
+					return true;
+				}
+
+				public override bool Fallback (char charUnknownHigh, char charUnknownLow, int index)
+				{
+					throw new NotImplementedException ();
+					return true;
+				}
+
+				public override char GetNextChar ()
+				{
+					if (!read) {
+						read = true;
+						return '!';
+					}
+					return '\0';
+				}
+
+				public override bool MovePrevious ()
+				{
+					return false;
+				}
+			}
+		}
 	}
 }

@@ -13,6 +13,7 @@ using Microsoft.Internal;
 using System.Reflection.Emit;
 using System.Collections;
 using System.Security;
+using Lock = Microsoft.Internal.Lock;
 
 namespace System.ComponentModel.Composition
 {

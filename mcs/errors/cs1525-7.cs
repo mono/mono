@@ -1,4 +1,4 @@
-// CS1525: Unexpected symbol `this', expecting `[', `{', or `type'
+// CS1525: Unexpected symbol `this', expecting `(', `[', `{', or `type'
 // Line: 8
 
 class M

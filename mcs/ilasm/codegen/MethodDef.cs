@@ -455,6 +455,7 @@ namespace Mono.ILASM {
 
                         if (methref == null) {
                                 methref = methoddef.MakeVarArgSignature (opt);
+                                methref.AddCallConv (call_conv);
                                 vararg_sig_table [full_signature] = methref;
                         }
 
@@ -511,9 +512,6 @@ namespace Mono.ILASM {
                                 meth_attr &= ~PEAPI.MethAttr.Abstract;
                                 meth_attr |= PEAPI.MethAttr.Static;
                         } else {
-                                if ((inst_list.Count > 0) && type_def.IsInterface && !IsStatic)
-                                        Report.Error (start, "Method cannot have body if it is non-static declared in an interface");
-                                
                                 if (IsAbstract) {
                                         if (!type_def.IsAbstract)
                                                 Report.Error (start, String.Format ("Abstract method '{0}' in non-abstract class '{1}'", 

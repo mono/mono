@@ -10,7 +10,7 @@
 //
 
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 using NUnit.Framework;
 
 using System;

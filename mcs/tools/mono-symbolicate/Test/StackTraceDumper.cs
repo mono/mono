@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 class StackTraceDumper {
 
@@ -46,6 +48,28 @@ class StackTraceDumper {
 		Catch (() => InnerGenericClass<string>.InnerInnerGenericClass<int>.ThrowException ("Stack trace with 2 inner generic class and generic overload"));
 
 		Catch (() => InnerGenericClass<int>.InnerInnerGenericClass<string>.ThrowException ("Stack trace with 2 inner generic class and generic overload"));
+
+		Catch (() => InnerGenericClass<int>.ThrowException ("Stack trace with nested type argument", "string", null));
+
+		Catch (() => {
+			var d = new Dictionary<string, string> ();
+			d.ContainsKey (null); // ArgumentNullException
+		});
+
+		Catch (() => TestAsync ().Wait ());
+
+		Catch (() => TestIterator ().ToArray ());
+
+		/*
+		The following test include ambiguous methods we can't resolve. Testing this is hard, so I'm leaving a test behind but disabling it for the time being
+		In this case the ambiguous methods are:
+			public static void Foo<K> (int a, bool hard_crash, GenClass<T> arg, List<int> zz)
+			public static void Foo<K> (int a, bool hard_crash, GenClass<T> arg, List<double> zz)
+
+		The are ambiguous because the only difference is the instantiation on the last parameter which we can't
+		figure out from a stacktrace.
+		*/
+		//Catch (() => ComplicatedTestCase.Run ());
 	}
 
 	public static void Catch (Action action)
@@ -108,6 +132,19 @@ class StackTraceDumper {
 		throw new Exception (message);
 	}
 
+	public static async Task TestAsync ()
+	{
+		await Task.Yield ();
+		throw new ApplicationException ();
+	}
+
+	public static IEnumerable<int> TestIterator ()
+	{
+		yield return 1;
+		yield return 3;
+		throw new ApplicationException ();
+	}
+
 	class InnerClass {
 		public static void ThrowException (string message)
 		{
@@ -132,6 +169,11 @@ class StackTraceDumper {
 			throw new Exception (message);
 		}
 
+		public static void ThrowException<T1> (string message, T1 arg, InnerGenericClass<T1> _ignore)
+		{
+			throw new Exception (message as string);
+		}
+
 		public class InnerInnerGenericClass<T2> {
 			public static void ThrowException (T message)
 			{
@@ -142,6 +184,43 @@ class StackTraceDumper {
 			{
 				throw new Exception (message as string);
 			}
+		}
+	}
+
+	class GenClass<T> {
+		public static void Foo (int a, bool hard_crash) {
+			GenPair<T>.Foo<object> (a, hard_crash, new GenClass<T> (), new List<int> ());
+		}
+	}
+
+	class GenPair<T> {
+		public static void Foo<K> (int a, bool hard_crash, GenClass<T> arg, List<int> zz) {
+			Foo<K,K,K> (a, hard_crash, null, null);
+		}
+
+		public static void Foo<K,J,F> (int a, bool hard_crash, GenClass<J> arg, List<int> zz) {
+			Foo<double> (a, hard_crash, null, new List<double> ());
+		}
+
+		public static void Foo<K> (int a, bool hard_crash, GenClass<T> arg, List<double> zz) {
+			ComplicatedTestCase.ArrayAndRef (a, new int[2], new int[2,2], ref hard_crash);
+		}
+	}
+
+	class ComplicatedTestCase {
+		public static int ArrayAndRef (int a, int[] b, int[,] c, ref bool hard_crash) {
+			Object o = null;
+			for (int x = 0; x < a; ++x)
+				throw new Exception ("Stack trace with ambiguity");
+			return 99;
+		}
+
+		public static void Foo (int a, bool hard_crash) {
+			GenClass<string>.Foo (a, hard_crash);
+		}
+
+		public static void Run () {
+			Foo (10, false);
 		}
 	}
 }

@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 System.Collections.Generic/HashSetTest.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileTest.cs
 System.IO.Pipes/PipeSecurityTest.cs
@@ -34,6 +35,7 @@ System.Linq.Expressions/ExpressionTest_LeftShift.cs
 System.Linq.Expressions/ExpressionTest_Lift.cs
 System.Linq.Expressions/ExpressionTest_ListBind.cs
 System.Linq.Expressions/ExpressionTest_ListInit.cs
+System.Linq.Expressions/ExpressionTest_Loop.cs
 System.Linq.Expressions/ExpressionTest_MakeBinary.cs
 System.Linq.Expressions/ExpressionTest_MemberBind.cs
 System.Linq.Expressions/ExpressionTest_MemberInit.cs
@@ -60,11 +62,12 @@ System.Linq.Expressions/ExpressionTest_TypeIs.cs
 System.Linq.Expressions/ExpressionTest_UnaryPlus.cs
 System.Linq.Expressions/ExpressionTest_Utils.cs
 System.Threading/ReaderWriterLockSlimTest.cs
-../../corlib/Test/System.Security.Cryptography/HashAlgorithmTest.cs
-../../corlib/Test/System.Security.Cryptography/SHA1Test.cs
-../../corlib/Test/System.Security.Cryptography/SHA256Test.cs
-../../corlib/Test/System.Security.Cryptography/SHA384Test.cs
-../../corlib/Test/System.Security.Cryptography/SHA512Test.cs
+../../corlib/Test/System.Security.Cryptography/HashAlgorithmTestBase.cs
+../../corlib/Test/System.Security.Cryptography/SHA1TestBase.cs
+../../corlib/Test/System.Security.Cryptography/SHA256TestBase.cs
+../../corlib/Test/System.Security.Cryptography/SHA384TestBase.cs
+../../corlib/Test/System.Security.Cryptography/SHA512TestBase.cs
+System.Security.Cryptography/X509Certificate2ExtensionsTests.cs
 System.Security.Cryptography/AesCryptoServiceProviderTest.cs
 System.Security.Cryptography/AesManagedTest.cs
 System.Security.Cryptography/CngAlgorithmTest.cs

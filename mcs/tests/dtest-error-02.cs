@@ -34,7 +34,7 @@ public class Test
 			d.Foo ();
 			return 1;
 		} catch (RuntimeBinderException e) {
-			if (e.Message != "`A.N.Foo()' is inaccessible due to its protection level")
+			if (e.Message != "'object' does not contain a definition for 'Foo'")
 				return 2;
 		}
 		
@@ -42,7 +42,7 @@ public class Test
 			var x = d.Property;
 			return 3;
 		} catch (RuntimeBinderException e) {
-			if (e.Message != "`A.N.Property.get' is inaccessible due to its protection level")
+			if (e.Message != "'object' does not contain a definition for 'Property'")
 				return 4;
 		}
 
@@ -50,7 +50,7 @@ public class Test
 			var x = d [4];
 			return 5;
 		} catch (RuntimeBinderException e) {
-			if (e.Message != "`A.N.this[int]' is inaccessible due to its protection level")
+			if (e.Message != "Cannot apply indexing with [] to an expression of type 'object'")
 				return 6;
 		}
 

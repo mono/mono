@@ -8,33 +8,30 @@
 //
 
 using NUnit.Framework;
-#if !MONODROID
-using NUnit.Framework.SyntaxHelpers;
-#endif
+
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Android;
 using Mono.Unix.Native;
-#if !MONODROID
-namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
-#endif
+
 namespace MonoTests.Mono.Unix {
 
-	[TestFixture]
+	[TestFixture, Category ("NotOnWindows")]
 	public class UnixSignalTest {
 
 		// helper method to create a thread waiting on a UnixSignal
 		static Thread CreateWaitSignalThread (UnixSignal signal, int timeout)
 		{
 			Thread t1 = new Thread(delegate() {
-						DateTime start = DateTime.Now;
+						var sw = Stopwatch.StartNew ();
 						bool r = signal.WaitOne (timeout, false);
-						DateTime end = DateTime.Now;
+						sw.Stop ();
 						Assert.AreEqual (signal.Count, 1);
 						Assert.AreEqual (r, true);
-						if ((end - start) > new TimeSpan (0, 0, timeout/1000))
+						if (sw.Elapsed > new TimeSpan (0, 0, timeout/1000))
 							throw new InvalidOperationException ("Signal slept too long");
 					});
 			return t1;
@@ -140,14 +137,16 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
-		[ExpectedException]
 		[Category ("NotOnMac")]
 		public void TestSignumPropertyThrows ()
 		{
 			if (!TestHelper.CanUseRealTimeSignals ())
 				return;
-			UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
-			Signum s = signal1.Signum;
+
+			Assert.Throws<InvalidOperationException> (() => {
+				UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
+				Signum s = signal1.Signum;
+			});
 		}
 
 		[Test]
@@ -162,14 +161,16 @@ namespace MonoTests.Mono.Unix {
 		}
 	
 		[Test]
-		[ExpectedException]
 		[Category ("NotOnMac")]
 		public void TestRealTimePropertyThrows ()
 		{
 			if (!TestHelper.CanUseRealTimeSignals ())
-				return;
-			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
-			RealTimeSignum s = signal1.RealTimeSignum;
+					return;
+
+			Assert.Throws<InvalidOperationException> (() => {
+				UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
+				RealTimeSignum s = signal1.RealTimeSignum;
+			});
 		}
 
 		[Test]
@@ -248,12 +249,12 @@ namespace MonoTests.Mono.Unix {
 		{
 			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {
-						DateTime start = DateTime.Now;
+						var sw = Stopwatch.StartNew ();
 						bool r = a.WaitOne (5000, false);
-						DateTime end = DateTime.Now;
+						sw.Stop ();
 						Assert.AreEqual (a.Count, 1);
 						Assert.AreEqual (r, true);
-						if ((end - start) > new TimeSpan (0, 0, 5))
+						if (sw.Elapsed > new TimeSpan (0, 0, 5))
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
@@ -272,12 +273,12 @@ namespace MonoTests.Mono.Unix {
 		{
 			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {
-						DateTime start = DateTime.Now;
+						var sw = Stopwatch.StartNew ();
 						int idx = UnixSignal.WaitAny (new UnixSignal[]{a}, 5000);
-						DateTime end = DateTime.Now;
+						sw.Stop ();
 						Assert.AreEqual (idx, 0);
 						Assert.AreEqual (a.Count, 1);
-						if ((end - start) > new TimeSpan (0, 0, 5))
+						if (sw.Elapsed > new TimeSpan (0, 0, 5))
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
@@ -297,13 +298,13 @@ namespace MonoTests.Mono.Unix {
 			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT))
 					using (UnixSignal b = new UnixSignal (Signum.SIGTERM)) {
-						DateTime start = DateTime.Now;
+						var sw = Stopwatch.StartNew ();
 						int idx = UnixSignal.WaitAny (new UnixSignal[]{a, b}, 5000);
-						DateTime end = DateTime.Now;
+						sw.Stop ();
 						Assert.AreEqual (idx, 1);
 						Assert.AreEqual (a.Count, 0);
 						Assert.AreEqual (b.Count, 1);
-						if ((end - start) > new TimeSpan (0, 0, 5))
+						if (sw.Elapsed > new TimeSpan (0, 0, 5))
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
@@ -321,12 +322,12 @@ namespace MonoTests.Mono.Unix {
 		public void TestNoEmit ()
 		{
 			using (UnixSignal u = new UnixSignal (Signum.SIGINT)) {
-				DateTime start = DateTime.Now;
+				var sw = Stopwatch.StartNew ();
 				bool r = u.WaitOne (5100, false);
 				Assert.AreEqual (r, false);
-				DateTime end = DateTime.Now;
-				if ((end - start) < new TimeSpan (0, 0, 5))
-					throw new InvalidOperationException ("Signal didn't block for 5s; blocked for " + (end-start).ToString());
+				sw.Stop ();
+				if (sw.Elapsed < new TimeSpan (0, 0, 5))
+					throw new InvalidOperationException ("Signal didn't block for 5s; blocked for " + sw.Elapsed.TotalSeconds.ToString());
 			}
 		}
 

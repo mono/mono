@@ -94,8 +94,8 @@ namespace System.Web.Configuration {
 			BaseRemoveAt (index);
 		}
 
-		public new RuleSettings this [string name] {
-			get { return (RuleSettings) BaseGet (name); }
+		public new RuleSettings this [string key] {
+			get { return (RuleSettings) BaseGet (key); }
 		}
 
 		public RuleSettings this [int index] {

@@ -358,7 +358,7 @@ namespace MonoTests.System.Xml
 				XmlDocument document = new XmlDocument ();
 				document.Load (reader);
 				document.Validate (null);
-			} catch (Exception e) {
+			} catch (Exception) {
 				if (!shouldFail)
 					throw;
 				return;

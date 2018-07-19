@@ -49,17 +49,15 @@ namespace System.Drawing {
 			nativeFontFamily = fntfamily;		
 		}
 		
-		internal void refreshName()
+		internal unsafe void refreshName()
 		{
-			StringBuilder sb;
-
 			if (nativeFontFamily == IntPtr.Zero)
 				return;
 
-			sb = new StringBuilder (GDIPlus.FACESIZE);
-			Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sb, 0);
+			char* namePtr = stackalloc char[GDIPlus.FACESIZE];
+			Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, (IntPtr)namePtr, 0);
 			GDIPlus.CheckStatus (status);
-			name = sb.ToString();
+			name = Marshal.PtrToStringUni((IntPtr)namePtr);
 		}
 		
 		~FontFamily()
@@ -68,6 +66,15 @@ namespace System.Drawing {
 		}
 
 		internal IntPtr NativeObject
+		{            
+			get	
+			{
+				return nativeFontFamily;
+			}
+		}
+
+		// For CoreFX compatibility
+		internal IntPtr NativeFamily
 		{            
 			get	
 			{
@@ -99,7 +106,7 @@ namespace System.Drawing {
 
 		public FontFamily (string name, FontCollection fontCollection) 
 		{
-			IntPtr handle = (fontCollection == null) ? IntPtr.Zero : fontCollection.nativeFontCollection;
+			IntPtr handle = (fontCollection == null) ? IntPtr.Zero : fontCollection._nativeFontCollection;
 			Status status = GDIPlus.GdipCreateFontFamilyFromName (name, handle, out nativeFontFamily);
 			GDIPlus.CheckStatus (status);
 		}

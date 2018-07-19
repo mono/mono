@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Converters;
 using System.Windows.Markup;
 
@@ -40,13 +41,13 @@ namespace System.Windows {
 			if (width < 0 || height < 0)
 				throw new ArgumentException ("Width and Height must be non-negative.");
 
-			this.width = width;
-			this.height = height;
+			this._width = width;
+			this._height = height;
 		}
 
 		public bool Equals (Size value)
 		{
-			return width == value.Width && height == value.Height;
+			return _width == value.Width && _height == value.Height;
 		}
 		
 		public override bool Equals (object o)
@@ -64,40 +65,74 @@ namespace System.Windows {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				return (_width.GetHashCode () * 397) ^ _height.GetHashCode ();
+			}
 		}
 
 		public static Size Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Size value;
+			if (source.Trim () == "Empty")
+			{
+				return Empty;
+			}
+			var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+			double width;
+			double height;
+			if (!double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out width) ||
+			    !double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out height))
+			{
+				throw new FormatException (string.Format ("Invalid Size format: {0}", source));
+			}
+			if (!tokenizer.HasNoMoreTokens ())
+			{
+				throw new InvalidOperationException ("Invalid Size format: " + source);
+			}
+			return new Size(width, height);
 		}
 
 		public override string ToString ()
 		{
-			if (IsEmpty)
-				return "Empty";
-			return String.Format ("{0},{1}", width, height);
+			return ConvertToString (null, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (null, provider);
 		}
 
 		string IFormattable.ToString (string format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ConvertToString (format, provider);
+		}
+
+		private string ConvertToString (string format, IFormatProvider provider)
+		{
+			if (IsEmpty)
+				return "Empty";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+			if (format == null)
+				format = string.Empty;
+			var separator = NumericListTokenizer.GetSeparator (provider);
+			var vectorFormat  = string.Format ("{{0:{0}}}{1}{{1:{0}}}", format, separator);
+			return string.Format (provider, vectorFormat, _width, _height);
 		}
 
 		public bool IsEmpty {
 			get {
-				return (width == Double.NegativeInfinity &&
-					height == Double.NegativeInfinity);
+				return (_width == Double.NegativeInfinity &&
+					_height == Double.NegativeInfinity);
 			}
 		}
 
 		public double Height {
-			get { return height; }
+			get { return _height; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Size.");
@@ -105,12 +140,12 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("height must be non-negative.");
 
-				height = value;
+				_height = value;
 			}
 		}
 
 		public double Width {
-			get { return width; }
+			get { return _width; }
 			set {
 				if (IsEmpty)
 					throw new InvalidOperationException ("Cannot modify this property on the Empty Size.");
@@ -118,14 +153,14 @@ namespace System.Windows {
 				if (value < 0)
 					throw new ArgumentException ("width must be non-negative.");
 
-				width = value;
+				_width = value;
 			}
 		}
 
 		public static Size Empty {
 			get {
 				Size s = new Size ();
-				s.width = s.height = Double.NegativeInfinity;
+				s._width = s._height = Double.NegativeInfinity;
 				return s;
 			}
 		}
@@ -151,7 +186,7 @@ namespace System.Windows {
 			return !size1.Equals (size2);
 		}
 
-		double width;
-		double height;
+		double _width;
+		double _height;
 	}
 }

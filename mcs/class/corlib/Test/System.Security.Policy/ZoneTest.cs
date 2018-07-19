@@ -229,7 +229,7 @@ namespace MonoTests.System.Security.Policy {
 			"http://*.go-mono.com",
 			"http://www.go-mono.com:8080/index.html",
 			"mono://unknown/protocol",
-			Path.DirectorySeparatorChar + "mono" + Path.DirectorySeparatorChar + "index.html",
+			"/mono/index.html",
 		};
 
 		[Test]

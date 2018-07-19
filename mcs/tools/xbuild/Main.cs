@@ -51,9 +51,10 @@ namespace Mono.XBuild.CommandLine {
 		Project		project;
 		ConsoleReportPrinter printer;
 		
+#pragma warning disable 169
 		// this does nothing but adds strong reference to Microsoft.Build.Tasks*.dll that we need to load consistently.
 		Microsoft.Build.Tasks.Copy dummy;
-
+#pragma warning restore
 		public static void Main (string[] args)
 		{
 			MainClass mc = new MainClass ();
@@ -74,12 +75,20 @@ namespace Mono.XBuild.CommandLine {
 			bool show_stacktrace = false;
 			
 			try {
-				parameters.ParseArguments (args);
+				try {
+					parameters.ParseArguments (args);
+				} catch {
+					ShowDeprecationNotice ();
+					throw;
+				}
+
 				show_stacktrace = (parameters.LoggerVerbosity == LoggerVerbosity.Detailed ||
 					parameters.LoggerVerbosity == LoggerVerbosity.Diagnostic);
 				
-				if (!parameters.NoLogo)
+				if (!parameters.NoLogo) {
+					ShowDeprecationNotice ();
 					ErrorUtilities.ShowVersion (false);
+				}
 				
 				engine  = Engine.GlobalEngine;
 				if (!String.IsNullOrEmpty (parameters.ToolsVersion)) {
@@ -163,6 +172,15 @@ namespace Mono.XBuild.CommandLine {
 				Environment.Exit (result ? 0 : 1);
 			}
 
+		}
+
+		void ShowDeprecationNotice ()
+		{
+			Console.ForegroundColor = ConsoleColor.DarkRed;
+			Console.WriteLine ();
+			Console.WriteLine (">>>> xbuild tool is deprecated and will be removed in future updates, use msbuild instead <<<<");
+			Console.WriteLine ();
+			Console.ResetColor ();
 		}
 	}
 

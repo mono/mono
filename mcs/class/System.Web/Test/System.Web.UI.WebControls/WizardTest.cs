@@ -46,9 +46,6 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Threading;
 
-using MonoTests.Common;
-
-
 namespace MonoTests.System.Web.UI.WebControls
 {
 
@@ -1501,7 +1498,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.UserData = "Empty";
 			string result;
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A1");
 		}
@@ -1517,7 +1514,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
 
 			t.UserData = "OptionalSideBar_WithSideBar";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A2");
 		}
@@ -1538,7 +1535,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Console.WriteLine ("----------------------------");
 			Console.WriteLine (renderedHtml);
 			
-			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A1");
 		}
 
 		[Test]
@@ -1552,7 +1549,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
 
 			t.UserData = "OptionalHeader_WithHeaderTemplate";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A2");
 		}
@@ -1566,13 +1563,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			string origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\n\t</tr>\n</table>Step";
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
 
-			Assert.AreEqual (origHtml, renderedHtml, "#A1");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A1");
 
 			t.UserData = "RenderHeader_InSpan";
 			result = t.Run ();
 			origHtml = "Header<table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\n\t</tr>\n</table>Step";
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
-			Assert.AreEqual (origHtml, renderedHtml, "#A2");
+			Assert.AreEqual (origHtml.Replace ("\r", ""), renderedHtml.Replace ("\r", ""), "#A2");
 		}
 
 		[Test]
@@ -1580,7 +1577,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
 			t.UserData = "StepPlaceHolder";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string result = t.Run ();
 			}, "#A1");
 		}
@@ -1590,7 +1587,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
 			t.UserData = "NavigationPlaceHolder";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string result = t.Run ();
 			}, "#A1");
 		}

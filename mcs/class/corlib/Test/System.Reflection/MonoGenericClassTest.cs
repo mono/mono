@@ -7,7 +7,7 @@
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 
 using System;
 using System.Collections;
@@ -71,7 +71,7 @@ namespace MonoTests.System.Reflection.Emit
 #if !MOBILE
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", inst.FullName, "#3");
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
-#elif NET_2_1 || MOBILE
+#elif MOBILE || MOBILE
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]", inst.FullName, "#3");
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
 			Assert.AreEqual ("foo.type[System.Double,System.String]", inst.ToString (), "#5");

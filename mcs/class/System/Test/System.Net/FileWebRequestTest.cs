@@ -55,6 +55,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void Async ()
 		{
 			WebResponse res = null;
@@ -463,6 +464,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void GetRequestStream_File_Exists ()
 		{
 			Stream s = File.Create (_tempFile);
@@ -660,7 +662,7 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.IsFalse (ex.ParamName == "value", "#6");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
 		}

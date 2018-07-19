@@ -5,43 +5,41 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace zipsharp
 {
-	struct ZipFileInfo
+	[StructLayoutAttribute (LayoutKind.Sequential)]
+	struct ZipFileInfo32
 	{
 		ZipTime date;
-		IntPtr dosDate;
-		IntPtr internalFileAttributes;
-		IntPtr externalFileAttributes;
+		uint dosDate;
+		uint internalFileAttributes;
+		uint externalFileAttributes;
 
-		public DateTime FileTime
-		{
-			get { return date.Date; }
-		}
-
-		public long DosDate
-		{
-			get { return dosDate.ToInt64 (); }
-		}
-		
-		internal long InternalFileAttributes
-		{
-			get { return internalFileAttributes.ToInt64 (); }
-		}
-
-		internal long ExternalFileAttributes
-		{
-			get { return externalFileAttributes.ToInt64 (); }
-		}
-		
-		public ZipFileInfo (DateTime fileTime)
+		public ZipFileInfo32 (DateTime fileTime)
 		{
 			date = new ZipTime (fileTime);
-			dosDate = new IntPtr ((int)fileTime.ToFileTime ());
-			internalFileAttributes = IntPtr.Zero;
-			externalFileAttributes = IntPtr.Zero;
+			dosDate = 0;
+			internalFileAttributes = 0;
+			externalFileAttributes = 0;
 		}
+	}
 
+	[StructLayoutAttribute (LayoutKind.Sequential)]
+	struct ZipFileInfo64
+	{
+		ZipTime date;
+		ulong dosDate;
+		ulong internalFileAttributes;
+		ulong externalFileAttributes;
+
+		public ZipFileInfo64 (DateTime fileTime)
+		{
+			date = new ZipTime (fileTime);
+			dosDate = 0;
+			internalFileAttributes = 0;
+			externalFileAttributes = 0;
+		}
 	}
 }

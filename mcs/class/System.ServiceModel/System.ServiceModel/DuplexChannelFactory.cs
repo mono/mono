@@ -93,47 +93,47 @@ namespace System.ServiceModel
 			callback_instance_type = callbackInstanceType;
 		}
 
-		public DuplexChannelFactory (object callbackInstance)
-			: this (new InstanceContext (callbackInstance))
+		public DuplexChannelFactory (object callbackObject)
+			: this (new InstanceContext (callbackObject))
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			string endpointConfigurationName)
-			: this (new InstanceContext (callbackInstance), endpointConfigurationName)
+			: this (new InstanceContext (callbackObject), endpointConfigurationName)
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			string endpointConfigurationName,
 			EndpointAddress remoteAddress)
-			: this (new InstanceContext (callbackInstance), endpointConfigurationName, remoteAddress)
+			: this (new InstanceContext (callbackObject), endpointConfigurationName, remoteAddress)
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			ServiceEndpoint endpoint)
-			: this (new InstanceContext (callbackInstance), endpoint)
+			: this (new InstanceContext (callbackObject), endpoint)
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			Binding binding)
-			: this (new InstanceContext (callbackInstance), binding)
+			: this (new InstanceContext (callbackObject), binding)
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			Binding binding,
 			string remoteAddress)
-			: this (callbackInstance, binding, new EndpointAddress (remoteAddress))
+			: this (callbackObject, binding, new EndpointAddress (remoteAddress))
 		{
 		}
 
-		public DuplexChannelFactory (object callbackInstance,
+		public DuplexChannelFactory (object callbackObject,
 			Binding binding,
 			EndpointAddress remoteAddress)
-			: this (new InstanceContext (callbackInstance), binding, remoteAddress)
+			: this (new InstanceContext (callbackObject), binding, remoteAddress)
 		{
 		}
 
@@ -217,8 +217,11 @@ namespace System.ServiceModel
 			// no special magic), we have to use different approach
 			// that should work either.
 			object proxy = Activator.CreateInstance (type, new object [] {Endpoint, this, address, via});
-#else
+#elif !MOBILE && !XAMMAC_4_5
 			object proxy = new ClientRealProxy (typeof (TChannel), new DuplexClientRuntimeChannel (Endpoint, this, address, via), true).GetTransparentProxy ();
+#else
+			object proxy;
+			throw new NotImplementedException ();
 #endif
 
 			((IDuplexContextChannel) proxy).CallbackInstance = callbackInstance;

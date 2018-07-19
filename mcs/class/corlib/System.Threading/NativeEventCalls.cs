@@ -33,6 +33,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using Microsoft.Win32.SafeHandles;
 
 #if !MOBILE
 using System.Security.AccessControl;
@@ -44,20 +45,44 @@ namespace System.Threading
  	internal static class NativeEventCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern IntPtr CreateEvent_internal(bool manual,bool initial,string name, out bool created);
+		public static extern IntPtr CreateEvent_internal (bool manual, bool initial, string name, out int errorCode);
+
+		public static bool SetEvent (SafeWaitHandle handle)
+		{
+			bool release = false;
+			try {
+				handle.DangerousAddRef (ref release);
+				return SetEvent_internal (handle.DangerousGetHandle ());
+			} finally {
+				if (release)
+					handle.DangerousRelease ();
+			}
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern bool SetEvent_internal(IntPtr handle);
+		static extern bool SetEvent_internal(IntPtr handle);
+
+		public static bool ResetEvent (SafeWaitHandle handle)
+		{
+			bool release = false;
+			try {
+				handle.DangerousAddRef (ref release);
+				return ResetEvent_internal (handle.DangerousGetHandle ());
+			} finally {
+				if (release)
+					handle.DangerousRelease ();
+			}
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern bool ResetEvent_internal(IntPtr handle);
+		static extern bool ResetEvent_internal(IntPtr handle);
 	
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void CloseEvent_internal (IntPtr handle);
 
 #if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out MonoIOError error);
+		public static extern IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out int errorCode);
 #endif
 	}
 }

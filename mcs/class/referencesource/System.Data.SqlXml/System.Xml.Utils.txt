@@ -1,0 +1,214 @@
+;==++==
+;
+;   Copyright (c) Microsoft Corporation.  All rights reserved.
+;
+;==--==
+
+; NOTE: do not use \", use ' instead
+; NOTE: Use # or ; for comments
+
+; These are the managed resources for System.Data.SqlXml.dll.  See
+; ResourceManager documentation and the ResGen tool.
+
+Xml_UserException={0}
+Xml_ErrorFilePosition=An error occurred at {0}({1},{2}).
+Xml_InvalidOperation=Operation is not valid due to the current state of the object.
+
+; Copy of Exception_EndOfInnerExceptionStack from mscorlib
+Xml_EndOfInnerExceptionStack=--- End of inner exception stack trace ---
+
+; XPath error messages
+XPath_UnclosedString=String literal was not closed.
+XPath_ScientificNotation=Scientific notation is not allowed.
+XPath_UnexpectedToken=Unexpected token '{0}' in the expression.
+XPath_NodeTestExpected=Expected a node test, found '{0}'.
+XPath_EofExpected=Expected end of the expression, found '{0}'.
+XPath_TokenExpected=Expected token '{0}', found '{1}'.
+XPath_InvalidAxisInPattern=Only 'child' and 'attribute' axes are allowed in a pattern outside predicates.
+XPath_PredicateAfterDot=Abbreviated step '.' cannot be followed by a predicate. Use the full form 'self::node()[predicate]' instead.
+XPath_PredicateAfterDotDot=Abbreviated step '..' cannot be followed by a predicate. Use the full form 'parent::node()[predicate]' instead.
+XPath_NArgsExpected=Function '{0}()' must have {1} argument(s).
+XPath_NOrMArgsExpected=Function '{0}()' must have {1} or {2} argument(s).
+XPath_AtLeastNArgsExpected=Function '{0}()' must have at least {1} argument(s).
+; NOTE: {2} below is not a typo
+XPath_AtMostMArgsExpected=Function '{0}()' must have no more than {2} arguments.
+XPath_NodeSetArgumentExpected=Argument {1} of function '{0}()' cannot be converted to a node-set.
+XPath_NodeSetExpected=Expression must evaluate to a node-set.
+XPath_RtfInPathExpr=To use a result tree fragment in a path expression, first convert it to a node-set using the msxsl:node-set() function.
+
+; Xslt error messages
+; NOTE: Do not append '.' to the following message
+Xslt_WarningAsError=Warning as Error: {0}
+Xslt_InputTooComplex=The stylesheet is too complex.
+Xslt_CannotLoadStylesheet=Cannot load the stylesheet object referenced by URI '{0}', because the provided XmlResolver returned an object of type '{1}'. One of Stream, XmlReader, and IXPathNavigable types was expected.
+Xslt_WrongStylesheetElement=Stylesheet must start either with an 'xsl:stylesheet' or an 'xsl:transform' element, or with a literal result element that has an 'xsl:version' attribute, where prefix 'xsl' denotes the 'http://www.w3.org/1999/XSL/Transform' namespace.
+Xslt_WdXslNamespace=The 'http://www.w3.org/TR/WD-xsl' namespace is no longer supported.
+Xslt_NotAtTop='{0}' element children must precede all other children of the '{1}' element.
+Xslt_UnexpectedElement='{0}' cannot be a child of the '{1}' element.
+Xslt_NullNsAtTopLevel=Top-level element '{0}' may not have a null namespace URI.
+Xslt_TextNodesNotAllowed='{0}' element cannot have text node children.
+Xslt_NotEmptyContents=The contents of '{0}' must be empty.
+Xslt_InvalidAttribute='{0}' is an invalid attribute for the '{1}' element.
+Xslt_MissingAttribute=Missing mandatory attribute '{0}'.
+Xslt_InvalidAttrValue='{1}' is an invalid value for the '{0}' attribute.
+Xslt_BistateAttribute=The value of the '{0}' attribute must be '{1}' or '{2}'.
+Xslt_CharAttribute=The value of the '{0}' attribute must be a single character.
+Xslt_CircularInclude=Stylesheet '{0}' cannot directly or indirectly include or import itself.
+Xslt_SingleRightBraceInAvt=The right curly brace in an attribute value template '{0}' outside an expression must be doubled.
+Xslt_VariableCntSel2=The variable or parameter '{0}' cannot have both a 'select' attribute and non-empty content.
+Xslt_KeyCntUse='xsl:key' has a 'use' attribute and has non-empty content, or it has empty content and no 'use' attribute.
+Xslt_DupTemplateName='{0}' is a duplicate template name.
+Xslt_BothMatchNameAbsent='xsl:template' must have either a 'match' attribute or a 'name' attribute, or both.
+Xslt_InvalidVariable=The variable or parameter '{0}' is either not defined or it is out of scope.
+Xslt_DupGlobalVariable=The variable or parameter '{0}' was duplicated with the same import precedence.
+Xslt_DupLocalVariable=The variable or parameter '{0}' was duplicated within the same scope.
+Xslt_DupNsAlias=Namespace URI '{0}' is declared to be an alias for multiple different namespace URIs with the same import precedence.
+Xslt_EmptyAttrValue=The value of the '{0}' attribute cannot be empty.
+Xslt_EmptyNsAlias=The value of the '{0}' attribute cannot be empty. Use '#default' to specify the default namespace.
+Xslt_UnknownXsltFunction='{0}()' is an unknown XSLT function.
+Xslt_UnsupportedXsltFunction='{0}()' is an unsupported XSLT function.
+Xslt_NoAttributeSet=A reference to attribute set '{0}' cannot be resolved. An 'xsl:attribute-set' of this name must be declared at the top level of the stylesheet.
+Xslt_UndefinedKey=A reference to key '{0}' cannot be resolved. An 'xsl:key' of this name must be declared at the top level of the stylesheet.
+Xslt_CircularAttributeSet=Circular reference in the definition of attribute set '{0}'.
+Xslt_InvalidCallTemplate=The named template '{0}' does not exist.
+Xslt_InvalidPrefix=Prefix '{0}' is not defined.
+Xslt_ScriptXsltNamespace=Script block cannot implement the XSLT namespace.
+Xslt_ScriptInvalidLanguage=Scripting language '{0}' is not supported.
+Xslt_ScriptMixedLanguages=All script blocks implementing the namespace '{0}' must use the same language.
+; NOTE: Do not append '.' to the following message
+Xslt_ScriptCompileException=Error occurred while compiling the script: {0}
+Xslt_ScriptNotAtTop=Element '{0}' must precede script code.
+Xslt_AssemblyNameHref='msxsl:assembly' must have either a 'name' attribute or an 'href' attribute, but not both.
+Xslt_ScriptAndExtensionClash=Cannot have both an extension object and a script implementing the same namespace '{0}'.
+Xslt_NoDecimalFormat=Decimal format '{0}' is not defined.
+Xslt_DecimalFormatSignsNotDistinct=The '{0}' and '{1}' attributes of 'xsl:decimal-format' must have distinct values.
+Xslt_DecimalFormatRedefined=The '{0}' attribute of 'xsl:decimal-format' cannot be redefined with a value of '{1}'.
+Xslt_UnknownExtensionElement='{0}' is not a recognized extension element.
+Xslt_ModeWithoutMatch=An 'xsl:template' element without a 'match' attribute cannot have a 'mode' attribute.
+Xslt_ModeListEmpty=List of modes in 'xsl:template' element can't be empty. 
+Xslt_ModeListDup=List of modes in 'xsl:template' element can't contain duplicates ('{0}'). 
+Xslt_ModeListAll=List of modes in 'xsl:template' element can't contain token '#all' together with any other value. 
+Xslt_PriorityWithoutMatch=An 'xsl:template' element without a 'match' attribute cannot have a 'priority' attribute.
+Xslt_InvalidApplyImports=An 'xsl:apply-imports' element can only occur within an 'xsl:template' element with a 'match' attribute, and cannot occur within an 'xsl:for-each' element.
+Xslt_DuplicateWithParam=Value of parameter '{0}' cannot be specified more than once within a single 'xsl:call-template' or 'xsl:apply-templates' element.
+Xslt_ReservedNS=Elements and attributes cannot belong to the reserved namespace '{0}'.
+Xslt_XmlnsAttr=An attribute with a local name 'xmlns' and a null namespace URI cannot be created.
+Xslt_NoWhen=An 'xsl:choose' element must have at least one 'xsl:when' child.
+Xslt_WhenAfterOtherwise='xsl:when' must precede the 'xsl:otherwise' element.
+Xslt_DupOtherwise=An 'xsl:choose' element can have only one 'xsl:otherwise' child.
+Xslt_AttributeRedefinition=Attribute '{0}' of 'xsl:output' cannot be defined more than once with the same import precedence.
+Xslt_InvalidMethod='{0}' is not a supported output method. Supported methods are 'xml', 'html', and 'text'.
+Xslt_InvalidEncoding='{0}' is not a supported encoding name.
+Xslt_InvalidLanguage='{0}' is not a supported language identifier.
+Xslt_InvalidCompareOption=String comparison option(s) '{0}' are either invalid or cannot be used together.
+Xslt_KeyNotAllowed=The 'key()' function cannot be used in 'use' and 'match' attributes of 'xsl:key' element.
+Xslt_VariablesNotAllowed=Variables cannot be used within this expression.
+Xslt_CurrentNotAllowed=The 'current()' function cannot be used in a pattern.
+Xslt_DocumentFuncProhibited=Execution of the 'document()' function was prohibited. Use the XsltSettings.EnableDocumentFunction property to enable it.
+Xslt_ScriptsProhibited=Execution of scripts was prohibited. Use the XsltSettings.EnableScript property to enable it.
+Xslt_ItemNull=Extension functions cannot return null values.
+Xslt_NodeSetNotNode=Cannot convert a node-set which contains zero nodes or more than one node to a single node.
+Xslt_UnsupportedClrType=Extension function parameters or return values which have Clr type '{0}' are not supported.
+Xslt_NotYetImplemented='{0}' is not yet implemented.
+Xslt_SchemaDeclaration='{0}' declaration is not permitted in non-schema aware processor.
+Xslt_SchemaAttribute=Attribute '{0}' is not permitted in basic XSLT processor (http://www.w3.org/TR/xslt20/#dt-basic-xslt-processor).
+Xslt_SchemaAttributeValue=Value '{1}' of attribute '{0}' is not permitted in basic XSLT processor (http://www.w3.org/TR/xslt20/#dt-basic-xslt-processor).
+Xslt_ElementCntSel=The element '{0}' cannot have both a 'select' attribute and non-empty content.
+Xslt_PerformSortCntSel=The element 'xsl:perform-sort' cannot have 'select' attribute any content other than 'xsl:sort' and 'xsl:fallback' instructions.
+Xslt_RequiredAndSelect=Mandatory parameter '{0}' must be empty and must not have a 'select' attribute.
+Xslt_NoSelectNoContent=Element '{0}' must have either 'select' attribute or non-empty content.
+Xslt_NonTemplateTunnel=Stylesheet or function parameter '{0}' cannot have attribute 'tunnel'.
+Xslt_RequiredOnFunction=The 'required' attribute must not be specified for parameter '{0}'. Function parameters are always mandatory. 
+Xslt_ExcludeDefault=Value '#default' is used within the 'exclude-result-prefixes' attribute and the parent element of this attribute has no default namespace.
+Xslt_CollationSyntax=The value of an 'default-collation' attribute contains no recognized collation URI.
+Xslt_AnalyzeStringDupChild='xsl:analyze-string' cannot have second child with name '{0}'.
+Xslt_AnalyzeStringChildOrder=When both 'xsl:matching-string' and 'xsl:non-matching-string' elements are present, 'xsl:matching-string' element must come first.
+Xslt_AnalyzeStringEmpty='xsl:analyze-string' must contain either 'xsl:matching-string' or 'xsl:non-matching-string' elements or both.
+Xslt_SortStable=Only the first 'xsl:sort' element may have 'stable' attribute.
+Xslt_InputTypeAnnotations=It is an error if there is a stylesheet module in the stylesheet that specifies 'input-type-annotations'="strip" and another stylesheet module that specifies 'input-type-annotations'="preserve".
+
+; Collation error messages
+Coll_BadOptFormat=Collation option '{0}' is invalid. Options must have the following format: <option-name>=<option-value>.
+Coll_Unsupported=The collation '{0}' is not supported.
+Coll_UnsupportedLanguage=Collation language '{0}' is not supported.
+Coll_UnsupportedOpt=Unsupported option '{0}' in collation.
+Coll_UnsupportedOptVal=Collation option '{0}' cannot have the value '{1}'.
+Coll_UnsupportedSortOpt=Unsupported sort option '{0}' in collation.
+
+; Qil validation error message
+Qil_Validation=QIL Validation Error! '{0}'.
+
+; XmlIl engine error messages
+XmlIl_TooManyParameters=Functions may not have more than 65535 parameters.
+XmlIl_BadXmlState=An item of type '{0}' cannot be constructed within a node of type '{1}'.
+XmlIl_BadXmlStateAttr=Attribute and namespace nodes cannot be added to the parent element after a text, comment, pi, or sub-element node has already been added.
+XmlIl_NmspAfterAttr=Namespace nodes cannot be added to the parent element after an attribute node has already been added.
+XmlIl_NmspConflict=Cannot construct namespace declaration xmlns{0}{1}='{2}'. Prefix '{1}' is already mapped to namespace '{3}'.
+XmlIl_CantResolveEntity=Cannot query the data source object referenced by URI '{0}', because the provided XmlResolver returned an object of type '{1}'. Only Stream, XmlReader, and IXPathNavigable data source objects are currently supported.
+XmlIl_NoDefaultDocument=Query requires a default data source, but no default was supplied to the query engine.
+XmlIl_UnknownDocument=Data source '{0}' cannot be located.
+XmlIl_UnknownParam=Supplied XsltArgumentList does not contain a parameter with local name '{0}' and namespace '{1}'.
+XmlIl_UnknownExtObj=Cannot find a script or an extension object associated with namespace '{0}'.
+XmlIl_CantStripNav=White space cannot be stripped from input documents that have already been loaded. Provide the input document as an XmlReader instead.
+XmlIl_ExtensionError=An error occurred during a call to extension function '{0}'. See InnerException for a complete description of the error.
+XmlIl_TopLevelAttrNmsp=XmlWriter cannot process the sequence returned by the query, because it contains an attribute or namespace node.
+XmlIl_NoExtensionMethod=Extension object '{0}' does not contain a matching '{1}' method that has {2} parameter(s).
+XmlIl_AmbiguousExtensionMethod=Ambiguous method call. Extension object '{0}' contains multiple '{1}' methods that have {2} parameter(s).
+XmlIl_NonPublicExtensionMethod=Method '{1}' of extension object '{0}' cannot be called because it is not public.
+XmlIl_GenericExtensionMethod=Method '{1}' of extension object '{0}' cannot be called because it is generic.
+XmlIl_ByRefType=Method '{1}' of extension object '{0}' cannot be called because it has one or more ByRef parameters.
+XmlIl_DocumentLoadError=An error occurred while loading document '{0}'. See InnerException for a complete description of the error.
+
+; XsltOld errors
+Xslt_CompileError=XSLT compile error at {0}({1},{2}). See InnerException for details.
+Xslt_CompileError2=XSLT compile error.
+Xslt_UnsuppFunction='{0}()' is an unsupported XSLT function.
+Xslt_NotFirstImport='xsl:import' instructions must precede all other element children of an 'xsl:stylesheet' element.
+Xslt_UnexpectedKeyword='{0}' cannot be a child of the '{1}' element.
+Xslt_InvalidContents=The contents of '{0}' are invalid.
+Xslt_CantResolve=Cannot resolve the referenced document '{0}'.
+Xslt_SingleRightAvt=Right curly brace in the attribute value template '{0}' must be doubled.
+Xslt_OpenBracesAvt=The braces are not closed in AVT expression '{0}'.
+Xslt_OpenLiteralAvt=The literal in AVT expression is not correctly closed '{0}'.
+Xslt_NestedAvt=AVT cannot be nested in AVT '{0}'.
+Xslt_EmptyAvtExpr=XPath Expression in AVT cannot be empty: '{0}'.
+Xslt_InvalidXPath='{0}' is an invalid XPath expression.
+Xslt_InvalidQName='{0}' is an invalid QName.
+Xslt_NoStylesheetLoaded=No stylesheet was loaded.
+Xslt_TemplateNoAttrib=The 'xsl:template' instruction must have the 'match' and/or 'name' attribute present.
+Xslt_DupVarName=Variable or parameter '{0}' was duplicated within the same scope.
+Xslt_WrongNumberArgs=XSLT function '{0}()' has the wrong number of arguments.
+Xslt_NoNodeSetConversion=Cannot convert the operand to a node-set.
+Xslt_NoNavigatorConversion=Cannot convert the operand to 'Result tree fragment'.
+Xslt_FunctionFailed=Function '{0}()' has failed.
+Xslt_InvalidFormat=Format cannot be empty.
+Xslt_InvalidFormat1=Format '{0}' cannot have digit symbol after zero digit symbol before a decimal point.
+Xslt_InvalidFormat2=Format '{0}' cannot have zero digit symbol after digit symbol after decimal point.
+Xslt_InvalidFormat3=Format '{0}' has two pattern separators.
+Xslt_InvalidFormat4=Format '{0}' cannot end with a pattern separator.
+Xslt_InvalidFormat5=Format '{0}' cannot have two decimal separators.
+Xslt_InvalidFormat8=Format string should have at least one digit or zero digit.
+Xslt_ScriptCompileErrors=Script compile errors:\n{0}
+Xslt_ScriptInvalidPrefix=Cannot find the script or external object that implements prefix '{0}'.
+Xslt_ScriptDub=Namespace '{0}' has a duplicate implementation.
+Xslt_ScriptEmpty=The 'msxsl:script' element cannot be empty.
+Xslt_DupDecimalFormat=Decimal format '{0}' has a duplicate declaration.
+Xslt_CircularReference=Circular reference in the definition of variable '{0}'.
+Xslt_InvalidExtensionNamespace=Extension namespace cannot be 'null' or an XSLT namespace URI.
+Xslt_InvalidModeAttribute=An 'xsl:template' element without a 'match' attribute cannot have a 'mode' attribute.
+Xslt_MultipleRoots=There are multiple root elements in the output XML.
+Xslt_ApplyImports=The 'xsl:apply-imports' instruction cannot be included within the content of an 'xsl:for-each' instruction or within an 'xsl:template' instruction without the 'match' attribute.
+Xslt_Terminate=Transform terminated: '{0}'.
+Xslt_InvalidPattern='{0}' is an invalid XSLT pattern.
+
+; Unused Error messages. We keep them to allow deserialization of XsltException serialised in Eveteret  
+Xslt_EmptyTagRequired=The tag '{0}' must be empty.
+Xslt_WrongNamespace=The wrong namespace was used for XSL. Use 'http://www.w3.org/1999/XSL/Transform'.
+Xslt_InvalidFormat6=Format '{0}' has both  '*' and '_' which is invalid. 
+Xslt_InvalidFormat7=Format '{0}' has '{1}' which is invalid.
+Xslt_ScriptMixLang=Multiple scripting languages for the same namespace is not supported.
+Xslt_ScriptInvalidLang=The scripting language '{0}' is not supported.
+Xslt_InvalidExtensionPermitions=Extension object should not have wider permissions than the caller of the AddExtensionObject(). If wider permissions are needed, wrap the extension object. 
+Xslt_InvalidParamNamespace=Parameter cannot belong to XSLT namespace.
+Xslt_DuplicateParametr=Duplicate parameter: '{0}'.
+Xslt_VariableCntSel=The '{0}' variable has both a select attribute of '{1}' and non-empty contents.

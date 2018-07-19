@@ -423,6 +423,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("{Width=0, Height=0}", mycmbbox.MinimumSize.ToString (), "#27");
 			Assert.AreEqual ("{Left=0,Top=0,Right=0,Bottom=0}", mycmbbox.Padding.ToString (), "#28");
 			
+			Assert.AreEqual (SystemColors.Window, mycmbbox.BackColor, "#29");
+			Assert.AreEqual (SystemColors.WindowText, mycmbbox.ForeColor, "#30");
 		}
 
 		[Test]

@@ -5,11 +5,8 @@ include ../../../build/rules.make
 LIBRARY = nunit.util.dll
 LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LOCAL_MCS_FLAGS= \
-	/resource:Transform.resources,NUnit.Util.Transform.resources \
-	-r:nunit.core.dll -r:nunit.core.interfaces.dll -r:System.dll \
-	-r:System.Xml.dll -r:System.Runtime.Remoting.dll \
-	/d:MONO /d:StronglyNamedAssembly -warn:1
+LOCAL_MCS_FLAGS= /resource:Transform.resources,NUnit.Util.Transform.resources /d:MONO /d:StronglyNamedAssembly /publicsign -warn:1 /keyfile:../../nunit.snk
+LIB_REFS = nunit.core nunit.core.interfaces System System.Xml System.Runtime.Remoting
 NO_TEST = yo
 
 RESX_RES = Transform.resources

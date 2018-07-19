@@ -46,29 +46,29 @@ namespace System.Web.Security {
 		}
 
 
-		public static void AddUsersToRole (string [] usernames, string rolename)
+		public static void AddUsersToRole (string [] usernames, string roleName)
 		{
-			Provider.AddUsersToRoles (usernames, new string[] {rolename});
+			Provider.AddUsersToRoles (usernames, new string[] {roleName});
 		}
 		
-		public static void AddUsersToRoles (string [] usernames, string [] rolenames)
+		public static void AddUsersToRoles (string [] usernames, string [] roleNames)
 		{
-			Provider.AddUsersToRoles (usernames, rolenames);
+			Provider.AddUsersToRoles (usernames, roleNames);
 		}
 		
-		public static void AddUserToRole (string username, string rolename)
+		public static void AddUserToRole (string username, string roleName)
 		{
-			Provider.AddUsersToRoles (new string[] {username}, new string[] {rolename});
+			Provider.AddUsersToRoles (new string[] {username}, new string[] {roleName});
 		}
 		
-		public static void AddUserToRoles (string username, string [] rolenames)
+		public static void AddUserToRoles (string username, string [] roleNames)
 		{
-			Provider.AddUsersToRoles (new string[] {username}, rolenames);
+			Provider.AddUsersToRoles (new string[] {username}, roleNames);
 		}
 		
-		public static void CreateRole (string rolename)
+		public static void CreateRole (string roleName)
 		{
-			Provider.CreateRole (rolename);
+			Provider.CreateRole (roleName);
 		}
 		
 		public static void DeleteCookie ()
@@ -91,14 +91,14 @@ namespace System.Web.Security {
 			}
 		}
 		
-		public static bool DeleteRole (string rolename)
+		public static bool DeleteRole (string roleName)
 		{
-			return Provider.DeleteRole (rolename, true);
+			return Provider.DeleteRole (roleName, true);
 		}
 		
-		public static bool DeleteRole (string rolename, bool throwOnPopulatedRole)
+		public static bool DeleteRole (string roleName, bool throwOnPopulatedRole)
 		{
-			return Provider.DeleteRole (rolename, throwOnPopulatedRole);
+			return Provider.DeleteRole (roleName, throwOnPopulatedRole);
 		}
 		
 		public static string [] GetAllRoles ()
@@ -125,51 +125,51 @@ namespace System.Web.Security {
 			return Provider.GetRolesForUser (username);
 		}
 		
-		public static string [] GetUsersInRole (string rolename)
+		public static string [] GetUsersInRole (string roleName)
 		{
-			return Provider.GetUsersInRole (rolename);
+			return Provider.GetUsersInRole (roleName);
 		}
 		
-		public static bool IsUserInRole (string rolename)
+		public static bool IsUserInRole (string roleName)
 		{
-			return IsUserInRole (CurrentUser, rolename);
+			return IsUserInRole (CurrentUser, roleName);
 		}
 		
-		public static bool IsUserInRole (string username, string rolename)
+		public static bool IsUserInRole (string username, string roleName)
 		{
 			if (String.IsNullOrEmpty (username))
 				return false;
-			return Provider.IsUserInRole (username, rolename);
+			return Provider.IsUserInRole (username, roleName);
 		}
 		
-		public static void RemoveUserFromRole (string username, string rolename)
+		public static void RemoveUserFromRole (string username, string roleName)
 		{
-			Provider.RemoveUsersFromRoles (new string[] {username}, new string[] {rolename});
+			Provider.RemoveUsersFromRoles (new string[] {username}, new string[] {roleName});
 		}
 		
-		public static void RemoveUserFromRoles (string username, string [] rolenames)
+		public static void RemoveUserFromRoles (string username, string [] roleNames)
 		{
-			Provider.RemoveUsersFromRoles (new string[] {username}, rolenames);
+			Provider.RemoveUsersFromRoles (new string[] {username}, roleNames);
 		}
 		
-		public static void RemoveUsersFromRole (string [] usernames, string rolename)
+		public static void RemoveUsersFromRole (string [] usernames, string roleName)
 		{
-			Provider.RemoveUsersFromRoles (usernames, new string[] {rolename});
+			Provider.RemoveUsersFromRoles (usernames, new string[] {roleName});
 		}
 		
-		public static void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
+		public static void RemoveUsersFromRoles (string [] usernames, string [] roleNames)
 		{
-			Provider.RemoveUsersFromRoles (usernames, rolenames);
+			Provider.RemoveUsersFromRoles (usernames, roleNames);
 		}
 		
-		public static bool RoleExists (string rolename)
+		public static bool RoleExists (string roleName)
 		{
-			return Provider.RoleExists (rolename);
+			return Provider.RoleExists (roleName);
 		}
 		
-		public static string[] FindUsersInRole (string rolename, string usernameToMatch)
+		public static string[] FindUsersInRole (string roleName, string usernameToMatch)
 		{
-			return Provider.FindUsersInRole (rolename, usernameToMatch);
+			return Provider.FindUsersInRole (roleName, usernameToMatch);
 		}
 		
 		public static string ApplicationName {

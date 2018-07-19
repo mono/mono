@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_COUNTERS_H__
 #define __MONO_COUNTERS_H__
 
@@ -26,6 +30,7 @@ enum {
 	MONO_COUNTER_RUNTIME  = 1 << 13,
 	MONO_COUNTER_SYSTEM   = 1 << 14,
 	MONO_COUNTER_PERFCOUNTERS = 1 << 15,
+	MONO_COUNTER_PROFILER = 1 << 16,
 	MONO_COUNTER_LAST_SECTION,
 
 	/* Unit, bits 24-27 (4 bits) */

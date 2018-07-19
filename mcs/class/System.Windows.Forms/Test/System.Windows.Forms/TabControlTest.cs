@@ -724,6 +724,8 @@ namespace MonoTests.System.Windows.Forms
 			b2.Focus ();
 			Assert.AreEqual ("tc_OnGotFocus0;p2_OnEnter1;tc_OnSelectedIndexChanged1;", events, "A1");
 			Assert.IsTrue (tc.Focused, "A2");
+
+			f.Close ();
 		}
 
         	// Make sure that setting focus for TabControl is *not* resetting SelectedIndex when
@@ -749,6 +751,8 @@ namespace MonoTests.System.Windows.Forms
 			tc.Focus ();
 
 			Assert.AreEqual (-1, tc.SelectedIndex, "#A0");
+
+			f.Close ();
 		}
 	}
 

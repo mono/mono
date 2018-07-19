@@ -53,12 +53,12 @@ namespace MonoTests.System.Web.Routing
 		{
 			RequestContext rc;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rc = new RequestContext (null, new RouteData ());
 			}, "#A1");
 
 			var ctx = new HttpContextWrapper (new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty), new HttpResponse (new StringWriter ())));
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rc = new RequestContext (ctx, null);
 			}, "#A2");
 		}

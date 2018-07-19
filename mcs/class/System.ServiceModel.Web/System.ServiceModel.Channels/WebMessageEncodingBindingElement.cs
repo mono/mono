@@ -34,7 +34,7 @@ using System.Xml;
 namespace System.ServiceModel.Channels
 {
 	public sealed class WebMessageEncodingBindingElement
-#if NET_2_1
+#if MOBILE
 		: MessageEncodingBindingElement
 #else
 		: MessageEncodingBindingElement, IWsdlExportExtension
@@ -109,7 +109,7 @@ namespace System.ServiceModel.Channels
 			return base.BuildChannelFactory<TChannel> (context);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		[MonoTODO ("Why is it overriden?")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
@@ -146,7 +146,7 @@ namespace System.ServiceModel.Channels
 			return context.GetInnerProperty<T> ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter, WsdlContractConversionContext context)
 		{

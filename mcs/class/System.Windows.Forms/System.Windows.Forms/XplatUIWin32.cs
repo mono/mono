@@ -64,7 +64,6 @@ namespace System.Windows.Forms {
 		private static Hashtable	wm_nc_registered;
 		private static RECT		clipped_cursor_rect;
 		private Hashtable		registered_classes;
-		private Hwnd HwndCreating; // the Hwnd we are currently creating (see CreateWindow)
 
 		#endregion	// Local Variables
 
@@ -1617,9 +1616,6 @@ namespace System.Windows.Forms {
 		internal override IntPtr CreateWindow(CreateParams cp) {
 			IntPtr	WindowHandle;
 			IntPtr	ParentHandle;
-			Hwnd	hwnd;
-
-			hwnd = new Hwnd();
 
 			ParentHandle=cp.Parent;
 
@@ -1635,14 +1631,13 @@ namespace System.Windows.Forms {
 			}
 
 			Point location;
-			if (cp.HasWindowManager) {
-				location = Hwnd.GetNextStackedFormLocation (cp, Hwnd.ObjectFromHandle (cp.Parent));
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				location = Hwnd.GetNextStackedFormLocation (cp);
 			} else {
 				location = new Point (cp.X, cp.Y);
 			}
 
 			string class_name = RegisterWindowClass (cp.ClassStyle);
-			HwndCreating = hwnd;
 
 			// We cannot actually send the WS_EX_MDICHILD flag to Windows because we
 			// are faking MDI, not uses Windows' version.
@@ -1651,16 +1646,12 @@ namespace System.Windows.Forms {
 				
 			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, location.X, location.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
-			HwndCreating = null;
-
 			if (WindowHandle==IntPtr.Zero) {
 				int error = Marshal.GetLastWin32Error ();
 
 				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
 
-			hwnd.ClientWindow = WindowHandle;
-			hwnd.Mapped = true;
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (uint)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
 			return WindowHandle;
@@ -1685,12 +1676,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DestroyWindow(IntPtr handle) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
 			Win32DestroyWindow(handle);
-			hwnd.Dispose();
-			return;
 		}
 
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
@@ -1810,20 +1796,28 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
+		class Win32PaintEventArgs : PaintEventArgs
+		{
+			public Win32PaintEventArgs(Graphics g, Rectangle clip, object context)
+				: base(g, clip)
+			{
+				this.Context = context;
+			}
+
+			public object Context { get; private set; }
+		}
+
 		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
 			PaintEventArgs	paint_event;
 			RECT		rect;
 			Rectangle	clip_rect;
-			Hwnd		hwnd;
 
 			clip_rect = new Rectangle();
 			rect = new RECT();
 			ps = new PAINTSTRUCT();
 
-			hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
-			
 			if (client) {
 				if (Win32GetUpdateRect(msg.HWnd, ref rect, false)) {
 					if (handle != msg.HWnd) {
@@ -1852,29 +1846,24 @@ namespace System.Windows.Forms {
 			// If we called BeginPaint, store the PAINTSTRUCT,
 			// otherwise store hdc, so that PaintEventEnd can know
 			// whether to call EndPaint or ReleaseDC.
+			object context;
 			if (ps.hdc != IntPtr.Zero) {
-				hwnd.drawing_stack.Push (ps);
+				context = ps;
 			} else {
-				hwnd.drawing_stack.Push (hdc);
+				context = hdc;
 			}
-			
-			Graphics dc = Graphics.FromHdc(hdc);
-			hwnd.drawing_stack.Push (dc);
 
-			paint_event = new PaintEventArgs(dc, clip_rect);
+			Graphics dc = Graphics.FromHdc(hdc);
+			paint_event = new Win32PaintEventArgs(dc, clip_rect, context);
 
 			return paint_event;
 		}
 
-		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client) {
-			Hwnd		hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(m.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-			dc.Dispose ();
-
-			object o = hwnd.drawing_stack.Pop();
+		internal override void PaintEventEnd(ref Message m, IntPtr handle, bool client, PaintEventArgs pevent) {
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose ();
+ 
+			object o = ((Win32PaintEventArgs)pevent).Context;
 			if (o is IntPtr) {
 				IntPtr hdc = (IntPtr) o;
 				Win32ReleaseDC (handle, hdc);
@@ -1955,8 +1944,6 @@ namespace System.Windows.Forms {
 
 		private IntPtr InternalWndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
 		{
-			if (HwndCreating != null && HwndCreating.ClientWindow == IntPtr.Zero)
-				HwndCreating.ClientWindow = hWnd;
 			return NativeWindow.WndProc (hWnd, msg, wParam, lParam);
 		}
 
@@ -2290,8 +2277,12 @@ namespace System.Windows.Forms {
 		}
 
 		// If we ever start using this, we should probably replace FosterParent with IntPtr.Zero
-		internal override IntPtr GetParent(IntPtr handle) {
-			return Win32GetParent(handle);
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner) {
+			if (with_owner) {
+				return Win32GetParent(handle);
+			} else {
+				return Win32GetAncestor(handle, AncestorType.GA_PARENT);
+			}
 		}
 
 		// This is a nop on win32 and x11

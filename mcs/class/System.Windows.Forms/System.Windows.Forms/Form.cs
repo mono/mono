@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 		private	Icon			icon;
 		private Size			maximum_size;
 		private Size			minimum_size;
+		private Size			minimum_auto_size;
 		private SizeGripStyle		size_grip_style;
 		private SizeGrip		size_grip;
 		private Rectangle		maximized_bounds;
@@ -158,44 +159,6 @@ namespace System.Windows.Forms {
 		{
 			this.OnClosed (EventArgs.Empty);
 			this.OnFormClosed (new FormClosedEventArgs (reason));
-		}
-		
-		internal override Size GetPreferredSizeCore (Size proposedSize)
-		{
-			Size retsize = Size.Empty;
-			
-			foreach (Control child in Controls) {
-				Size child_preferred_size;
-				if (child.AutoSize)
-					child_preferred_size = child.PreferredSize;
-				else
-					child_preferred_size = child.ExplicitBounds.Size;
-				int child_right = child.Bounds.X + child_preferred_size.Width;
-				int child_bottom = child.Bounds.Y + child_preferred_size.Height;
-
-				if (child.Dock == DockStyle.Fill) {
-					if (child_right > retsize.Width)
-						retsize.Width = child_right;
-				} 
-				else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && child_right > retsize.Width)
-					retsize.Width = child_right + child.Margin.Right;
-
-				if (child.Dock == DockStyle.Fill) {
-					if (child_bottom > retsize.Height)
-						retsize.Height = child_bottom;
-				}
-				else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && child_bottom > retsize.Height)
-					retsize.Height = child_bottom + child.Margin.Bottom;
-			}
-
-			if (retsize == Size.Empty) { // no child controls
-				retsize.Height += this.Padding.Top;
-				retsize.Width += this.Padding.Left;
-			}
-			retsize.Height += this.Padding.Bottom;
-			retsize.Width += this.Padding.Right;
-
-			return SizeFromClientSize (retsize);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -552,6 +515,10 @@ namespace System.Windows.Forms {
 			set { 
 				if (base.AutoSize != value) {
 					base.AutoSize = value;
+					if (!value) {
+						minimum_auto_size = Size.Empty;
+						UpdateMinMax ();
+					}
 					PerformLayout (this, "AutoSize");
 				}
 			}
@@ -865,7 +832,7 @@ namespace System.Windows.Forms {
 						
 					OnMaximumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
-						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+						UpdateMinMax();
 					}
 				}
 			}
@@ -1052,7 +1019,7 @@ namespace System.Windows.Forms {
 
 					OnMinimumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
-						XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+						UpdateMinMax();
 					}
 				}
 			}
@@ -1551,7 +1518,7 @@ namespace System.Windows.Forms {
 				maximized_bounds = value;
 				OnMaximizedBoundsChanged(EventArgs.Empty);
 				if (IsHandleCreated) {
-					XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+					UpdateMinMax();
 				}
 			}
 		}
@@ -1924,7 +1891,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
+			UpdateMinMax();
 			
 			if (show_icon && (FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
 				XplatUI.SetIcon(window.Handle, icon);
@@ -2403,6 +2370,8 @@ namespace System.Windows.Forms {
 			if (value && IsMdiChild){
 				PerformLayout ();
 				ThemeEngine.Current.ManagedWindowSetButtonLocations (window_manager);
+				if (ActivateOnShow && MdiParent != null)
+					MdiParent.ActivateMdiChild (this);
 			}
 			
 			// Shown event is only called once, the first time the form is made visible
@@ -2673,7 +2642,7 @@ namespace System.Windows.Forms {
 
 				IsActive = true;
 			} else {
-				if (XplatUI.IsEnabled (Handle) && XplatUI.GetParent (m.LParam) != Handle)
+				if (XplatUI.IsEnabled (Handle) && !IsChild (Handle, m.LParam))
 					ToolStripManager.FireAppFocusChanged (this);
 				IsActive = false;
 			}
@@ -2787,7 +2756,7 @@ namespace System.Windows.Forms {
 				if (ActiveMaximizedMdiChild != null)
 					ActiveMaximizedMdiChild.DrawMaximizedButtons (ActiveMenu, pe);
 
-				XplatUI.PaintEventEnd (ref m, Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false, pe);
 			}
 
 			base.WndProc (ref m);
@@ -2926,6 +2895,13 @@ namespace System.Windows.Forms {
 			
 			is_loaded = true;
 		}
+
+		private void UpdateMinMax()
+		{
+			var min_size = AutoSize ? new Size (Math.Max (minimum_auto_size.Width, minimum_size.Width), Math.Max (minimum_auto_size.Height, minimum_size.Height)) : minimum_size;
+			if (IsHandleCreated)
+				XplatUI.SetWindowMinMax (Handle, maximized_bounds, min_size, maximum_size);
+		}		
 		#endregion
 		
 		#region Events
@@ -3175,10 +3151,12 @@ namespace System.Windows.Forms {
 
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
-			base.OnLayout (levent);
-			
 			if (AutoSize) {
 				Size new_size = GetPreferredSizeCore (Size.Empty);
+				if (new_size != minimum_auto_size) {
+					minimum_auto_size = new_size;
+					UpdateMinMax();
+				}				
 				if (AutoSizeMode == AutoSizeMode.GrowOnly) {
 					new_size.Width = Math.Max (new_size.Width, Width);
 					new_size.Height = Math.Max (new_size.Height, Height);
@@ -3186,8 +3164,10 @@ namespace System.Windows.Forms {
 				if (new_size == Size)
 					return;
 
-				SetBoundsInternal (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
+				SetBoundsCore (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
 			}
+
+			base.OnLayout (levent);			
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

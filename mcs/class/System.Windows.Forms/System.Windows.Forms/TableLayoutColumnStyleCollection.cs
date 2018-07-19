@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 
 	public class TableLayoutColumnStyleCollection : TableLayoutStyleCollection {
 		
-		internal TableLayoutColumnStyleCollection (TableLayoutPanel panel) : base (panel)
+		internal TableLayoutColumnStyleCollection (IArrangedContainer panel) : base (panel, "ColumnStyles")
 		{
 		}
 		

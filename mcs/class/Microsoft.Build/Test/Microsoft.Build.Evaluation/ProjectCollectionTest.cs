@@ -44,9 +44,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		{
 			var g = ProjectCollection.GlobalProjectCollection;
 			Assert.AreEqual (0, g.GlobalProperties.Count, "#1");
-			#if NET_4_5
 			Assert.IsTrue (g.GlobalProperties.IsReadOnly, "#2");
-			#endif
 		}
 		
 		[Test]

@@ -38,9 +38,6 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Collections.Generic
 {

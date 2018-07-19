@@ -67,12 +67,15 @@ namespace Microsoft.Build.Tasks {
 					commandLine.AppendSwitch ("/delaysign-");
 			if (Bag ["EmitDebugInformation"] != null)
 				if (EmitDebugInformation)
-					commandLine.AppendSwitch ("/debug+");
+					commandLine.AppendSwitch ("/debug:portable");
 				else
 					commandLine.AppendSwitch ("/debug-");
 			//fileAlignment
 			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
+			if (KeyFile != null && !DelaySign)
+				commandLine.AppendSwitch("/publicsign");
+
 			// FIXME: add ids from metadata
 			if (LinkResources != null)
 				foreach (ITaskItem item in LinkResources)

@@ -42,14 +42,14 @@ namespace System.IdentityModel.Tokens
 		}
 
 		[MonoTODO]
-		public WindowsSecurityToken (WindowsIdentity identity)
+		public WindowsSecurityToken (WindowsIdentity windowsIdentity)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public WindowsSecurityToken (WindowsIdentity identity, string id)
+		public WindowsSecurityToken (WindowsIdentity windowsIdentity, string id)
 		{
-			this.identity = identity;
+			this.identity = windowsIdentity;
 			this.id = id;
 		}
 

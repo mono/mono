@@ -38,9 +38,6 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Runtime.Serialization
 {

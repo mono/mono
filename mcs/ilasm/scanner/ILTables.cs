@@ -195,6 +195,7 @@ namespace Mono.ILASM {
                                 keywords ["internalcall"] = new ILToken (Token.K_INTERNALCALL, "internalcall");
                                 keywords ["synchronized"] = new ILToken (Token.K_SYNCHRONIZED, "synchronized");
                                 keywords ["noinlining"] = new ILToken (Token.K_NOINLINING, "noinlining");
+                                keywords ["nooptimization"] = new ILToken (Token.K_NOOPTIMIZATION, "nooptimization");
                                 keywords ["custom"] = new ILToken (Token.K_CUSTOM, "custom");
                                 keywords ["fixed"] = new ILToken (Token.K_FIXED, "fixed");
                                 keywords ["sysstring"] = new ILToken (Token.K_SYSSTRING, "sysstring");
@@ -223,6 +224,7 @@ namespace Mono.ILASM {
                                 keywords ["lpstr"] = new ILToken (Token.K_LPSTR, "lpstr");
                                 keywords ["lpwstr"] = new ILToken (Token.K_LPWSTR, "lpwstr");
                                 keywords ["lptstr"] = new ILToken (Token.K_LPTSTR, "lptstr");
+                                keywords ["vbbyrefstr"] = new ILToken (Token.K_VBBYREFSTR, "vbbyrefstr");
                                 keywords ["objectref"] = new ILToken (Token.K_OBJECTREF, "objectref");
                                 keywords ["iunknown"] = new ILToken (Token.K_IUNKNOWN, "iunknown");
                                 keywords ["idispatch"] = new ILToken (Token.K_IDISPATCH, "idispatch");
@@ -320,6 +322,7 @@ namespace Mono.ILASM {
                                 keywords ["legacy"] = new ILToken (Token.K_LEGACY, "legacy");
                                 keywords ["library"] = new ILToken (Token.K_LIBRARY, "library");
                                 keywords ["auto"] = new ILToken (Token.K_AUTO, "auto");
+                                keywords ["aggressiveinlining"] = new ILToken (Token.K_AGGRESSIVEINLINING, "aggressiveinlining");
 
                                 return keywords;
                         }

@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 			base.TabStop = false;
 			SetStyle(ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Constructors & Destructors
 
@@ -162,23 +163,11 @@ namespace System.Windows.Forms {
 		#region Internal Methods
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			Size retsize = Size.Empty;
-
-			foreach (Control child in Controls) {
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Right > retsize.Width)
-						retsize.Width = child.Bounds.Right;
-				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
-					retsize.Width = child.Bounds.Right + child.Margin.Right;
-
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Bottom > retsize.Height)
-						retsize.Height = child.Bounds.Bottom;
-				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
-					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
-			}
-
-			return retsize;
+			// Translating 0, 0 from ClientSize to actual Size tells us how much space
+			// is required for the borders.
+			Size borderSize = SizeFromClientSize(Size.Empty);
+			Size totalPadding = borderSize + Padding.Size;
+			return LayoutEngine.GetPreferredSize(this, proposedSize - totalPadding) + totalPadding;
 		}
 		#endregion
 	}

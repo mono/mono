@@ -58,9 +58,9 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 	
-		public static ListItem FromString (string text)
+		public static ListItem FromString (string s)
 		{
-			return new ListItem (text);
+			return new ListItem (s);
 		}
 	
 		public override bool Equals (object o)

@@ -528,7 +528,7 @@ namespace Mono.Data.Sqlite
     }
 
 #if MONOTOUCH
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCollation))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteCollation))]
     internal static int collation_callback (IntPtr puser, int len1, IntPtr pv1, int len2, IntPtr pv2)
     {
       var handle = GCHandle.FromIntPtr (puser);
@@ -536,7 +536,7 @@ namespace Mono.Data.Sqlite
       return func._CompareFunc (IntPtr.Zero, len1, pv1, len2, pv2);
     }
 
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCollation))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteCollation))]
     internal static int collation_callback16 (IntPtr puser, int len1, IntPtr pv1, int len2, IntPtr pv2)
     {
       var handle = GCHandle.FromIntPtr (puser);

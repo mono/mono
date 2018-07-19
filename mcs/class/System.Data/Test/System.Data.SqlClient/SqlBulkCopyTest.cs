@@ -39,21 +39,33 @@ namespace MonoTests.System.Data.SqlClient {
 		private const string testFailParamNameMessage = "We have to provide the same parameter name as in original .NET";
 		
 		[Test] // .ctor(SqlConnection connection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull1 ()
 		{
 			new SqlBulkCopy ((SqlConnection)null);
 		}
 		
 		[Test] // .ctor(string connectionString)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull2 ()
 		{
 			new SqlBulkCopy ((string)null);
 		}
 		
 		[Test] // .ctor(SqlConnection connection)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull3 ()
 		{
 			try {
@@ -65,7 +77,11 @@ namespace MonoTests.System.Data.SqlClient {
 		}
 		
 		[Test] // .ctor(string connectionString)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull4 ()
 		{
 			try {
@@ -77,7 +93,11 @@ namespace MonoTests.System.Data.SqlClient {
 		}
 		
 		[Test] // .ctor(string connectionString)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull5 ()
 		{
 			try {
@@ -89,7 +109,11 @@ namespace MonoTests.System.Data.SqlClient {
 		}
 		
 		[Test] // .ctor(string connectionString)
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof(ArgumentNullException))]
+#endif
 		public void ConstructorNotNull6 ()
 		{
 			try {

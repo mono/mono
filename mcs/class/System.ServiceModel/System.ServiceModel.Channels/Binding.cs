@@ -133,7 +133,7 @@ namespace System.ServiceModel.Channels
 			return CreateContext (parameters).BuildInnerChannelFactory<TChannel> ();
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public virtual IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			Uri listenUriBaseAddress,
@@ -176,7 +176,7 @@ namespace System.ServiceModel.Channels
 
 		public virtual IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
-			Uri listenUri,
+			Uri listenUriBaseAddress,
 			params object [] parameters)
 			where TChannel : class, IChannel
 		{
@@ -184,16 +184,16 @@ namespace System.ServiceModel.Channels
 				new BindingParameterCollection ();
 			foreach (object o in parameters)
 				pl.Add (o);
-			return BuildChannelListener<TChannel> (listenUri, pl);
+			return BuildChannelListener<TChannel> (listenUriBaseAddress, pl);
 		}
 
 		public virtual IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
-			Uri listenUri,
+			Uri listenUriBaseAddress,
 			BindingParameterCollection parameters)
 			where TChannel : class, IChannel
 		{
-			return BuildChannelListener<TChannel> (listenUri,
+			return BuildChannelListener<TChannel> (listenUriBaseAddress,
 				String.Empty, parameters);
 		}
 
@@ -267,7 +267,7 @@ namespace System.ServiceModel.Channels
 			return CreateContext (parameters).CanBuildInnerChannelFactory<TChannel> ();
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public bool CanBuildChannelListener<TChannel> (
 			params object [] parameters)
 			where TChannel : class, IChannel

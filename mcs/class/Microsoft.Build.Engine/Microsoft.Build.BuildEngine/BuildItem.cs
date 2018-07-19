@@ -227,6 +227,14 @@ namespace Microsoft.Build.BuildEngine {
 					 string metadataValue,
 					 bool treatMetadataValueAsLiteral)
 		{
+			SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral, false);
+		}
+
+		void SetMetadata (string metadataName,
+					 string metadataValue,
+					 bool treatMetadataValueAsLiteral,
+					 bool fromDynamicItem)
+		{
 			if (metadataName == null)
 				throw new ArgumentNullException ("metadataName");
 			
@@ -251,9 +259,11 @@ namespace Microsoft.Build.BuildEngine {
 			} else if (HasParentItem) {
 				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
-				parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
+				parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral, fromDynamicItem);
 			}
-			if (FromXml || HasParentItem) {
+
+			// We don't want to reevalute the project for dynamic items
+			if (!fromDynamicItem && !IsDynamic && (FromXml || HasParentItem)) {
 				parent_item_group.ParentProject.MarkProjectAsDirty ();
 				parent_item_group.ParentProject.NeedToReevaluate ();
 			}
@@ -374,7 +384,7 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 				
 				foreach (string name in evaluatedMetadata.Keys) {
-					item.SetMetadata (name, (string)evaluatedMetadata [name]);
+					item.SetMetadata (name, (string)evaluatedMetadata [name], false, IsDynamic);
 				}
 
 				AddAndRemoveMetadata (project, item);

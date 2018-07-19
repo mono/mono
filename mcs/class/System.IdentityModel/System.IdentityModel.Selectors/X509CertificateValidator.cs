@@ -27,8 +27,6 @@
 //
 using System;
 using System.Collections.ObjectModel;
-using System.IdentityModel.Policy;
-using System.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.IdentityModel.Selectors

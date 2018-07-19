@@ -169,7 +169,7 @@ namespace System.Diagnostics
 				(otherEntry.CategoryNumber == categoryNumber) &&
 				(otherEntry.Data.Equals (data)) &&
 				(otherEntry.EntryType == entryType) &&
-				(otherEntry.EventID == eventID) &&
+				(otherEntry.InstanceId == instanceId) &&
 				(otherEntry.Index == index) &&
 				(otherEntry.MachineName == machineName) &&
 				(otherEntry.Message == message) &&

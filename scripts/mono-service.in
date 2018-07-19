@@ -33,7 +33,6 @@ if test x$assembly = x; then
 	exit 1
 fi
 
-export MONO_DISABLE_SHM=1
 if $debug; then
    exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args
 else

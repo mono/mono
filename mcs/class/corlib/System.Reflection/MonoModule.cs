@@ -90,7 +90,7 @@ namespace System.Reflection {
 		public override
 		string FullyQualifiedName {
 			get {
-#if !NET_2_1
+#if !MOBILE
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
 				}
@@ -283,7 +283,7 @@ namespace System.Reflection {
 			UnitySerializationHolder.GetUnitySerializationInfo (info, UnitySerializationHolder.ModuleUnity, this.ScopeName, this.GetRuntimeAssembly ());
 		}
 
-#if !NET_2_1
+#if !MOBILE
 
 		public
 		override

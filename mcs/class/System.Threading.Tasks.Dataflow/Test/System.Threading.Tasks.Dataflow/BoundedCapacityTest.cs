@@ -131,7 +131,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (transform.Post (1));
 			Assert.IsTrue (transform.Post (2));
 
-			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
+			AssertHelper.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
 			Assert.AreEqual (2, Volatile.Read (ref n));
 		}
@@ -154,7 +154,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (transform.Post (1));
 			Assert.IsTrue (transform.Post (2));
 
-			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
+			AssertHelper.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
 			Assert.AreEqual (2, Volatile.Read (ref n));
 		}
@@ -177,7 +177,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsFalse (transform.Post (101));
 
-			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
+			AssertHelper.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
 			Assert.IsFalse (transform.Post (102));
 

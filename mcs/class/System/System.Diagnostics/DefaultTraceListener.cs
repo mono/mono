@@ -216,12 +216,15 @@ namespace System.Diagnostics {
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void WriteWindowsDebugString (string message);
+		unsafe private extern static void WriteWindowsDebugString (char* message);
 
-		private void WriteDebugString (string message)
+		unsafe private void WriteDebugString (string message)
 		{
-			if (OnWin32)
-				WriteWindowsDebugString (message);
+			if (OnWin32) {
+				fixed (char* fmessage = message) {
+					WriteWindowsDebugString (fmessage);
+				}
+			}
 			else
 				WriteMonoTrace (message);
 		}
@@ -255,10 +258,10 @@ namespace System.Diagnostics {
 				WritePrefix ();
 			}
 
-			WriteDebugString (message);
-
 			if (Debugger.IsLogging())
 				Debugger.Log (0, null, message);
+			else
+				WriteDebugString (message);
 
 			WriteLogFile (message, LogFileName);
 		}

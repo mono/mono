@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.Mono.Security.Protocol.Ntlm {
 
 	[TestFixture]
-	public class MessageBaseTest : Assertion {
+	public class MessageBaseTest {
 	
 		// 
 	

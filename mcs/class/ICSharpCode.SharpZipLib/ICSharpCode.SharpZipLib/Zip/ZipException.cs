@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// Represents errors specific to Zip file handling
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ZipException : SharpZipBaseException
 	{
 		/// <summary>

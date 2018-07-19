@@ -37,13 +37,33 @@ using NUnit.Framework;
 
 namespace MonoTests.Mono.Data.Sqlite
 {
-        [TestFixture]
-        public class SqliteConnectionTest
-        {
-                readonly static string _uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "test.db");
-                readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-                SqliteConnection _conn = new SqliteConnection ();
+	[TestFixture]
+	public class SqliteConnectionTest
+	{
+		string _dataFolder;
+		string _uri;
+		string _connectionString;
+		SqliteConnection _conn;
 
+		[SetUp]
+		public void SetUp ()
+		{
+			_dataFolder = Path.GetTempFileName ();
+			if (File.Exists (_dataFolder))
+				File.Delete (_dataFolder);
+			Directory.CreateDirectory (_dataFolder);
+
+			_uri = Path.Combine (_dataFolder, "test.db");
+			_connectionString = "URI=file://" + _uri + ", version=3";
+			_conn = new SqliteConnection ();
+		}
+
+		[TearDown]
+		public void TeatDown ()
+		{
+			if (Directory.Exists (_dataFolder))
+				Directory.Delete (_dataFolder, true);
+		}
 		[Test]
 		public void ReleaseDatabaseFileHandles ()
 		{
@@ -64,49 +84,49 @@ namespace MonoTests.Mono.Data.Sqlite
 			File.Delete (_uri);
 		}
 
-                [Test]
-                [ExpectedException (typeof (ArgumentNullException))]
-                public void ConnectionStringTest_Null ()
-                {
-                        _conn.ConnectionString = null;
-                }
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConnectionStringTest_Null ()
+		{
+			_conn.ConnectionString = null;
+		}
 
-                [Test]
-                [ExpectedException (typeof (InvalidOperationException))]
-                public void ConnectionStringTest_MustBeClosed ()
-                {
-                        _conn.ConnectionString = _connectionString;
-                        try {
-                    		_conn.Open ();
-                    		_conn.ConnectionString = _connectionString;
-                    	} finally {
-                    		_conn.Close ();
-                    	}
-                }
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConnectionStringTest_MustBeClosed ()
+		{
+			_conn.ConnectionString = _connectionString;
+			try {
+				_conn.Open ();
+				_conn.ConnectionString = _connectionString;
+			} finally {
+				_conn.Close ();
+			}
+		}
 
-				// behavior has changed, I guess
-                //[Test]
-                [Ignore ("opening a connection should not create db! though, leave for now")]
-                public void OpenTest ()
-                {
-                        try {
-                                _conn.ConnectionString = _connectionString;
-                                _conn.Open ();
-                                Assert.AreEqual (ConnectionState.Open, _conn.State, "#1 not opened");
-                                _conn.Close ();
+		// behavior has changed, I guess
+		//[Test]
+		[Ignore ("opening a connection should not create db! though, leave for now")]
+		public void OpenTest ()
+		{
+			try {
+				_conn.ConnectionString = _connectionString;
+				_conn.Open ();
+				Assert.AreEqual (ConnectionState.Open, _conn.State, "#1 not opened");
+				_conn.Close ();
 
-                                // negative test: try opening a non-existent file
-                                _conn.ConnectionString = "URI=file://abcdefgh.db, version=3";
-                                try {
-                                        _conn.Open ();
-                                        Assert.Fail ("#1 should have failed on opening a non-existent db");
-                                } catch (ArgumentException e) {Console.WriteLine (e);}
-                                
-                        } finally {
-                                if (_conn != null && _conn.State != ConnectionState.Closed)
-                                        _conn.Close ();
-                        }
-                }
+				// negative test: try opening a non-existent file
+				_conn.ConnectionString = "URI=file://abcdefgh.db, version=3";
+				try {
+					_conn.Open ();
+					Assert.Fail ("#1 should have failed on opening a non-existent db");
+				} catch (ArgumentException e) {Console.WriteLine (e);}
+								
+			} finally {
+				if (_conn != null && _conn.State != ConnectionState.Closed)
+					_conn.Close ();
+			}
+		}
 
-        }
+	}
 }

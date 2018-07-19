@@ -71,6 +71,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestExpires ()
 		{
 			var cookies = DoRequest (A);
@@ -81,6 +84,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestInvalidCookie ()
 		{
 			var cookies = DoRequest (B);
@@ -91,6 +97,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestLocalCulture ()
 		{
 			var old = Thread.CurrentThread.CurrentCulture;
@@ -108,6 +117,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestMultiple ()
 		{
 			var cookies = DoRequest (D);
@@ -118,6 +130,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestMultiple2 ()
 		{
 			var cookies = DoRequest (E);
@@ -127,6 +142,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TestQuotation ()
 		{
 			var cookies = DoRequest (F);
@@ -139,6 +157,7 @@ namespace MonoTests.System.Net
 		{
 			Socket socket;
 			string[] headers;
+			Exception ex;
 
 			public Listener (params string[] headers)
 			{
@@ -154,9 +173,19 @@ namespace MonoTests.System.Net
 				socket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
 				socket.Listen (1);
 				socket.BeginAccept ((result) => {
-					var accepted = socket.EndAccept (result);
-					HandleRequest (accepted);
+					try {
+						var accepted = socket.EndAccept (result);
+						HandleRequest (accepted);
+					} catch (Exception e) {
+						ex = e;
+					}
 				}, null);
+			}
+
+			void ThrowIfException ()
+			{
+				if (ex != null)
+					throw ex;
 			}
 
 			public void Dispose ()
@@ -165,6 +194,7 @@ namespace MonoTests.System.Net
 					socket.Close ();
 					socket = null;
 				}
+				ThrowIfException ();
 			}
 
 			void HandleRequest (Socket accepted)
@@ -182,11 +212,17 @@ namespace MonoTests.System.Net
 			}
 
 			public EndPoint EndPoint {
-				get { return socket.LocalEndPoint; }
+				get {
+					ThrowIfException ();
+					return socket.LocalEndPoint;
+				}
 			}
 
 			public string URI {
-				get { return string.Format ("http://{0}/", EndPoint); }
+				get {
+					ThrowIfException ();
+					return string.Format ("http://{0}/", EndPoint);
+				}
 			}
 		}
 	}

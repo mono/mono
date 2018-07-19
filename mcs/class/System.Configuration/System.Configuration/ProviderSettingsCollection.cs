@@ -58,15 +58,15 @@ namespace System.Configuration
 			return ((ProviderSettings)element).Name;
 		}
 		
-		public void Remove (string key)
+		public void Remove (string name)
 		{
-			BaseRemove (key);
+			BaseRemove (name);
 		}
 		
-		public ProviderSettings this [int n]
+		public ProviderSettings this [int index]
 		{
-			get { return (ProviderSettings) BaseGet (n); }
-			set { BaseAdd (n, value); }
+			get { return (ProviderSettings) BaseGet (index); }
+			set { BaseAdd (index, value); }
 		}
 		
 		public new ProviderSettings this [string key]

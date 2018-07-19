@@ -98,7 +98,7 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public SecurityMessageProperty Security {
 			get { return (SecurityMessageProperty) this ["Security"]; }
 			set { this ["Security"] = value; }

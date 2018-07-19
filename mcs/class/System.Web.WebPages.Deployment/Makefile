@@ -5,21 +5,16 @@ include ../../build/rules.make
 LIBRARY = System.Web.WebPages.Deployment.dll
 LIBRARY_NAME = System.Web.WebPages.Deployment.dll
 
-System.Web.WebPages.Deployment.Common.CommonResources.resources: ../../../external/aspnetwebstack/src/CommonResources.resx
-	$(RESGEN) "$<" "$@"
-	
-System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources: ../../../external/aspnetwebstack/src/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx
-	$(RESGEN) "$<" "$@"
+RESOURCE_DEFS = \
+	System.Web.WebPages.Deployment.Common.CommonResources,../../../external/aspnetwebstack/src/CommonResources.resx \
+	System.Web.WebPages.Deployment.Resources.ConfigurationResources,../../../external/aspnetwebstack/src/System.Web.WebPages.Deployment/Resources/ConfigurationResources.resx
+
 
 LIB_REFS = System System.Core System.Configuration System.Web Microsoft.Web.Infrastructure
+KEYFILE=../winfx.pub
 LIB_MCS_FLAGS = \
-		/warn:1 \
-		/keyfile:../winfx.pub -delaysign \
-	        /d:ASPNETWEBPAGES \
-		/resource:System.Web.WebPages.Deployment.Common.CommonResources.resources \
-		/resource:System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources
+			/warn:1 \
+			-delaysign \
+			/d:ASPNETWEBPAGES 
 
 include ../../build/library.make
-
-$(build_lib): System.Web.WebPages.Deployment.Common.CommonResources.resources \
-		System.Web.WebPages.Deployment.Resources.ConfigurationResources.resources

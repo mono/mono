@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
-#if !NET_2_1
+#if !MOBILE
 using System.IdentityModel.Policy;
 #if !XAMMAC_4_5
 using System.Web.Security;
@@ -45,7 +45,7 @@ namespace System.ServiceModel.Dispatcher
 {
 	public sealed class DispatchRuntime
 	{
-#if NET_2_1 || XAMMAC_4_5
+#if MOBILE || XAMMAC_4_5
 		internal DispatchRuntime (EndpointDispatcher dispatcher, ClientRuntime callbackClientRuntime)
 		{
 			UnhandledDispatchOperation = new DispatchOperation (

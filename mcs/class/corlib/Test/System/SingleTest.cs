@@ -15,10 +15,6 @@ using System.Threading;
 
 using NUnit.Framework;
 
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
-
 namespace MonoTests.System
 {
 	[TestFixture]

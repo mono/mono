@@ -25,21 +25,20 @@ sqlite_tests_dep = \
 
 $(sqlite_tests): $(sqlite_tests_dep)
 	$(TEST_COMPILE) -target:library -out:$@ \
-		-r:System.Data.dll -r:$(the_assembly) -r:Mono.Data.Sqlite $(test_nunit_ref) \
+		-r:$(topdir)/class/lib/$(PROFILE)/System.Data.dll -r:$(the_assembly) -r:$(topdir)/class/lib/$(PROFILE)/Mono.Data.Sqlite.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Xml.dll $(test_nunit_ref) \
 		$(TEST_MCS_FLAGS) -d:MONO_STRICT -d:SQLITE \
 		@$< $(TEST_SOURCES_WITH_SPACES)
 
 test-sqlite: $(sqlite_tests)
 
 RUN_TEST_COMMAND = \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(1) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(1:.dll=)-$(PROFILE).xml -out:TestResult-$(1:.dll=)-$(PROFILE).out $(FIXTURE_ARG) $(TESTNAME_ARG) ; \
-	xsltproc $(topdir)/build/nunit-summary.xsl TestResult-$(1)-$(PROFILE).xml > TestResult-$(1:.dll=)-$(PROFILE).log
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(1) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -labels -format:nunit2 -result=TestResult-$(1:.dll=)-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) ;
 
 run-test-sqlite:
 	$(call RUN_TEST_COMMAND,$(sqlite_tests))
 
 foo:
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(sqlite_tests) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(sqlite_tests) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
 all-local: $(sqlite_tests)

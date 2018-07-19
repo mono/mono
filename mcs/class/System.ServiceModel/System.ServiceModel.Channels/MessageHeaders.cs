@@ -50,10 +50,10 @@ namespace System.ServiceModel.Channels
 			new Dictionary<Type, XmlObjectSerializer> ();
 		MessageVersion version;
 
-		public MessageHeaders (MessageHeaders headers)
-			: this (headers.MessageVersion)
+		public MessageHeaders (MessageHeaders collection)
+			: this (collection.MessageVersion)
 		{
-			CopyHeadersFrom (headers);
+			CopyHeadersFrom (collection);
 		}
 
 		public MessageHeaders (MessageVersion version)
@@ -61,10 +61,10 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public MessageHeaders (MessageVersion version, int capacity)
+		public MessageHeaders (MessageVersion version, int initialSize)
 		{
 			this.version = version;
-			l = new List<MessageHeaderInfo> (capacity);
+			l = new List<MessageHeaderInfo> (initialSize);
 		}
 		
 		public void Add (MessageHeader header)
@@ -72,9 +72,9 @@ namespace System.ServiceModel.Channels
 			l.Add (header);
 		}
 
-		public void CopyHeaderFrom (Message m, int index)
+		public void CopyHeaderFrom (Message message, int headerIndex)
 		{
-			CopyHeaderFrom (m.Headers, index);
+			CopyHeaderFrom (message.Headers, headerIndex);
 		}
 
 		public void Clear ()
@@ -82,25 +82,25 @@ namespace System.ServiceModel.Channels
 			l.Clear ();
 		}
 
-		public void CopyHeaderFrom (MessageHeaders headers, int index)
+		public void CopyHeaderFrom (MessageHeaders collection, int headerIndex)
 		{
-			l.Add (headers [index]);
+			l.Add (collection [headerIndex]);
 		}
 
-		public void CopyHeadersFrom (Message m)
+		public void CopyHeadersFrom (Message message)
 		{
-			CopyHeadersFrom (m.Headers);
+			CopyHeadersFrom (message.Headers);
 		}
 
-		public void CopyHeadersFrom (MessageHeaders headers)
+		public void CopyHeadersFrom (MessageHeaders collection)
 		{
-			foreach (MessageHeaderInfo h in headers)
+			foreach (MessageHeaderInfo h in collection)
 				l.Add (h);
 		}
 
-		public void CopyTo (MessageHeaderInfo [] dst, int index)
+		public void CopyTo (MessageHeaderInfo [] array, int index)
 		{
-			l.CopyTo (dst, index);
+			l.CopyTo (array, index);
 		}
 
 		public int FindHeader (string name, string ns)
@@ -203,11 +203,11 @@ namespace System.ServiceModel.Channels
 			return GetHeader<T> (idx, serializer);
 		}
 
-		public XmlDictionaryReader GetReaderAtHeader (int index)
+		public XmlDictionaryReader GetReaderAtHeader (int headerIndex)
 		{
-			if (index >= l.Count)
-				throw new ArgumentOutOfRangeException (String.Format ("Index is out of range. Current header count is {0}", index));
-			MessageHeader item = (MessageHeader) l [index];
+			if (headerIndex >= l.Count)
+				throw new ArgumentOutOfRangeException (String.Format ("Index is out of range. Current header count is {0}", l.Count));
+			MessageHeader item = (MessageHeader) l [headerIndex];
 
 			XmlReader reader =
 				item is MessageHeader.XmlMessageHeader ?
@@ -231,9 +231,9 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		public void Insert (int index, MessageHeader header)
+		public void Insert (int headerIndex, MessageHeader header)
 		{
-			l.Insert (index, header);
+			l.Insert (headerIndex, header);
 		}
 
 		public void RemoveAll (string name, string ns)
@@ -251,9 +251,9 @@ namespace System.ServiceModel.Channels
 				l.RemoveAt (l.Count - 1);
 		}
 
-		public void RemoveAt (int index)
+		public void RemoveAt (int headerIndex)
 		{
-			l.RemoveAt (index);
+			l.RemoveAt (headerIndex);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -261,48 +261,48 @@ namespace System.ServiceModel.Channels
 			return ((IEnumerable) l).GetEnumerator ();
 		}
 
-		public void WriteHeader (int index, XmlDictionaryWriter writer)
+		public void WriteHeader (int headerIndex, XmlDictionaryWriter writer)
 		{
 			if (version.Envelope == EnvelopeVersion.None)
 				return;
-			WriteStartHeader (index, writer);
-			WriteHeaderContents (index, writer);
+			WriteStartHeader (headerIndex, writer);
+			WriteHeaderContents (headerIndex, writer);
 			writer.WriteEndElement ();
 		}
 
-		public void WriteHeader (int index, XmlWriter writer)
+		public void WriteHeader (int headerIndex, XmlWriter writer)
 		{
-			WriteHeader (index, XmlDictionaryWriter.CreateDictionaryWriter (writer));
+			WriteHeader (headerIndex, XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
 
-		public void WriteHeaderContents (int index, XmlDictionaryWriter writer)
+		public void WriteHeaderContents (int headerIndex, XmlDictionaryWriter writer)
 		{
-			if (index > l.Count)
-				throw new ArgumentOutOfRangeException ("There is no header at position " + index + ".");
+			if (headerIndex > l.Count)
+				throw new ArgumentOutOfRangeException ("There is no header at position " + headerIndex + ".");
 			
-			MessageHeader h = l [index] as MessageHeader;
+			MessageHeader h = l [headerIndex] as MessageHeader;
 
 			h.WriteHeaderContents (writer, version);
 		}
 
-		public void WriteHeaderContents (int index, XmlWriter writer)
+		public void WriteHeaderContents (int headerIndex, XmlWriter writer)
 		{
-			WriteHeaderContents (index, XmlDictionaryWriter.CreateDictionaryWriter (writer));
+			WriteHeaderContents (headerIndex, XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
 
-		public void WriteStartHeader (int index, XmlDictionaryWriter writer)
+		public void WriteStartHeader (int headerIndex, XmlDictionaryWriter writer)
 		{
-			if (index > l.Count)
-				throw new ArgumentOutOfRangeException ("There is no header at position " + index + ".");
+			if (headerIndex > l.Count)
+				throw new ArgumentOutOfRangeException ("There is no header at position " + headerIndex + ".");
 
-			MessageHeader h = l [index] as MessageHeader;
+			MessageHeader h = l [headerIndex] as MessageHeader;
 			
 			h.WriteStartHeader (writer, version);
 		}
 
-		public void WriteStartHeader (int index, XmlWriter writer)
+		public void WriteStartHeader (int headerIndex, XmlWriter writer)
 		{
-			WriteStartHeader (index, XmlDictionaryWriter.CreateDictionaryWriter (writer));
+			WriteStartHeader (headerIndex, XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
 
 		public string Action {
@@ -327,7 +327,7 @@ namespace System.ServiceModel.Channels
 				return;
 			if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressing10))
 				Add (MessageHeader.CreateHeader (name, ns, EndpointAddress10.FromEndpointAddress (address)));
-#if !NET_2_1
+#if !MOBILE
 			else if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressingAugust2004))
 				Add (MessageHeader.CreateHeader (name, ns, EndpointAddressAugust2004.FromEndpointAddress (address)));
 #endif

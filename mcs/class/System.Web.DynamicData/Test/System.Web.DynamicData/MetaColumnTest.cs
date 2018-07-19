@@ -47,7 +47,6 @@ using System.Web.DynamicData.ModelProviders;
 using System.Web.Routing;
 
 using NUnit.Framework;
-using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
@@ -110,32 +109,32 @@ namespace MonoTests.System.Web.DynamicData
 			MetaColumn mc = t.GetColumn ("ColumnNoAttributes");
 			Assert.IsNotNull (mc, "#A1");
 			Assert.IsNotNull (mc.Attributes, "#A2");
-			Assert.AreEqual (6, mc.Attributes.Count, "#A3");
+			Assert.AreEqual (4, mc.Attributes.Count, "#A3");
 			Assert.IsTrue (mc.IsRequired, "#A3-1");
 
 			mc = t.GetColumn ("ColumnFormatInEditMode");
 			Assert.IsNotNull (mc, "#A4");
 			Assert.IsNotNull (mc.Attributes, "#A4-1");
-			Assert.AreEqual (7, mc.Attributes.Count, "#A4-2");
+			Assert.AreEqual (5, mc.Attributes.Count, "#A4-2");
 			Assert.AreEqual (1, mc.Attributes.OfType <DisplayFormatAttribute> ().Count (), "#A4-3");
 
 			mc = t.GetColumn ("ColumnWithDataType");
 			Assert.IsNotNull (mc, "#A5");
 			Assert.IsNotNull (mc.Attributes, "#A5-1");
-			Assert.AreEqual (7, mc.Attributes.Count, "#A5-2");
+			Assert.AreEqual (5, mc.Attributes.Count, "#A5-2");
 			Assert.AreEqual (1, mc.Attributes.OfType<DataTypeAttribute> ().Count (), "#A5-3");
 
 			t = m.Tables[TestDataContext.TableFooWithMetadataType];
 			mc = t.GetColumn ("Column1");
 			Assert.IsNotNull (mc, "#B1");
 			Assert.IsNotNull (mc.Attributes, "#B1-1");
-			Assert.AreEqual (9, mc.Attributes.Count, "#B1-2");
+			Assert.AreEqual (7, mc.Attributes.Count, "#B1-2");
 			Assert.AreEqual (1, mc.Attributes.OfType<DisplayFormatAttribute> ().Count (), "#B1-3");
 
 			mc = t.GetColumn ("Column2");
 			Assert.IsNotNull (mc, "#B2");
 			Assert.IsNotNull (mc.Attributes, "#B2-1");
-			Assert.AreEqual (8, mc.Attributes.Count, "#B2-2");
+			Assert.AreEqual (6, mc.Attributes.Count, "#B2-2");
 			Assert.AreEqual (1, mc.Attributes.OfType<DataTypeAttribute> ().Count (), "#B2-3");
 		}
 

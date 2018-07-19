@@ -15,12 +15,14 @@ main (int argc, char *argv [])
 
 	if (last == NULL){
 		fprintf (stderr, "Do not know how to invoke the program given [%s]\n", argv [0]);
+		free (nargv);
 		return 1;
 	}
 	len = strlen (last) + strlen (PROFILE_BASE_DIR) + 1;
 	command = malloc (len);
 	if (command == NULL){
 		fprintf (stderr, "Error allocating memory");
+		free (nargv);
 		return 1;
 	}
 	strcpy (command, PROFILE_BASE_DIR);

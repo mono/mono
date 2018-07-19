@@ -22,6 +22,9 @@ namespace MyNamespace {
 		#endif
 	}
 
+	public static class MyClassExtensions {
+		public static bool AnExtension (this MyClass value) { return false; }
+	}
 	#if DELETETEST
 	public struct nint {
 

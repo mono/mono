@@ -51,10 +51,10 @@ namespace System.ServiceModel.Security.Tokens
 			InclusionMode = inclusionMode;
 		}
 
-		protected X509SecurityTokenParameters (X509SecurityTokenParameters source)
-			: base (source)
+		protected X509SecurityTokenParameters (X509SecurityTokenParameters other)
+			: base (other)
 		{
-			reference_style = source.reference_style;
+			reference_style = other.reference_style;
 		}
 
 		public X509KeyIdentifierClauseType X509ReferenceStyle {

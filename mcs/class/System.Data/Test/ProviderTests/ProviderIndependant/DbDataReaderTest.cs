@@ -30,19 +30,14 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Globalization;
-
-using Mono.Data;
-
 using NUnit.Framework;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
 	[TestFixture]
-	[Category ("odbc")]
 	[Category ("sqlserver")]
 	public class DbDataReaderTest
 	{
@@ -53,19 +48,16 @@ namespace MonoTests.System.Data
 		[SetUp]
 		public void SetUp ()
 		{
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			conn = ConnectionManager.Instance.Sql.Connection;
 			cmd = conn.CreateCommand ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (cmd != null)
-				cmd.Dispose ();
-			if (rdr != null)
-				rdr.Dispose ();
-			ConnectionManager.Singleton.CloseConnection ();
+			cmd?.Dispose ();
+			rdr?.Dispose ();
+			ConnectionManager.Instance.Close ();
 		}
 
 		[Test]

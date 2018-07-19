@@ -49,11 +49,11 @@ namespace System.ServiceModel
 			throw new NotImplementedException ();
 		}
 
-		public RsaEndpointIdentity (X509Certificate2 cert)
+		public RsaEndpointIdentity (X509Certificate2 certificate)
 		{
-			if (cert == null)
-				throw new ArgumentNullException ("cert");
-			rsa = (RSA) cert.PublicKey.Key;
+			if (certificate == null)
+				throw new ArgumentNullException ("certificate");
+			rsa = (RSA) certificate.PublicKey.Key;
 		}
 	}
 }

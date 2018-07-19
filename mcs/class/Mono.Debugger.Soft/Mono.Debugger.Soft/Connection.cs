@@ -36,7 +36,7 @@ namespace Mono.Debugger.Soft
 
 	struct SourceInfo {
 		public string source_file;
-		public byte[] guid, hash;
+		public byte[] hash;
 	}
 
 	class DebugInfo {
@@ -117,6 +117,8 @@ namespace Mono.Debugger.Soft
 		public string[] names;
 		public int[] live_range_start;
 		public int[] live_range_end;
+		public int[] scopes_start;
+		public int[] scopes_end;
 	}
 
 	struct PropInfo {
@@ -418,7 +420,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 42;
+		internal const int MINOR_VERSION = 47;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -440,7 +442,8 @@ namespace Mono.Debugger.Soft
 			TYPE = 23,
 			MODULE = 24,
 			FIELD = 25,
-			EVENT = 64
+			EVENT = 64,
+			POINTER = 65
 		}
 
 		enum EventKind {
@@ -530,7 +533,13 @@ namespace Mono.Debugger.Soft
 			GET_MANIFEST_MODULE = 3,
 			GET_OBJECT = 4,
 			GET_TYPE = 5,
-			GET_NAME = 6
+			GET_NAME = 6,
+			GET_DOMAIN = 7,
+			GET_METADATA_BLOB = 8,
+			GET_IS_DYNAMIC = 9,
+			GET_PDB_BLOB = 10,
+			GET_TYPE_FROM_TOKEN = 11,
+			GET_METHOD_FROM_TOKEN = 12
 		}
 
 		enum CmdModule {
@@ -571,7 +580,8 @@ namespace Mono.Debugger.Soft
 			GET_INTERFACES = 16,
 			GET_INTERFACE_MAP = 17,
 			IS_INITIALIZED = 18,
-			CREATE_INSTANCE = 19
+			CREATE_INSTANCE = 19,
+			GET_VALUE_SIZE = 20
 		}
 
 		enum CmdField {
@@ -588,6 +598,7 @@ namespace Mono.Debugger.Soft
 			GET_THIS = 2,
 			SET_VALUES = 3,
 			GET_DOMAIN = 4,
+			SET_THIS = 5,
 		}
 
 		enum CmdArrayRef {
@@ -600,6 +611,10 @@ namespace Mono.Debugger.Soft
 			GET_VALUE = 1,
 			GET_LENGTH = 2,
 			GET_CHARS = 3
+		}
+
+		enum CmdPointer {
+			GET_VALUE = 1
 		}
 
 		enum CmdObjectRef {
@@ -636,6 +651,17 @@ namespace Mono.Debugger.Soft
 
 		static int decode_byte (byte[] packet, ref int offset) {
 			return packet [offset++];
+		}
+
+		static byte[] decode_bytes (byte[] packet, ref int offset, int length)
+		{
+			if (length + offset > packet.Length)
+				throw new ArgumentOutOfRangeException ();
+
+			var bytes = new byte[length];
+			Array.Copy (packet, offset, bytes, 0, length);
+			offset += length;
+			return bytes;
 		}
 
 		static int decode_short (byte[] packet, ref int offset) {
@@ -726,10 +752,12 @@ namespace Mono.Debugger.Soft
 		}
 
 		class PacketReader {
+			Connection connection;
 			byte[] packet;
 			int offset;
 
-			public PacketReader (byte[] packet) {
+			public PacketReader (Connection connection, byte[] packet) {
+				this.connection = connection;
 				this.packet = packet;
 
 				// For event packets
@@ -841,9 +869,16 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl { Type = etype, Value = ReadDouble () };
 				case ElementType.I:
 				case ElementType.U:
-				case ElementType.Ptr:
 					// FIXME: The client and the debuggee might have different word sizes
 					return new ValueImpl { Type = etype, Value = ReadLong () };
+				case ElementType.Ptr:
+					long value = ReadLong ();
+					if (connection.Version.AtLeast (2, 46)) {
+						long pointerClass = ReadId ();
+						return new ValueImpl { Type = etype, Klass = pointerClass, Value = value };
+					} else {
+						return new ValueImpl { Type = etype, Value = value };
+					}
 				case ElementType.String:
 				case ElementType.SzArray:
 				case ElementType.Class:
@@ -875,6 +910,15 @@ namespace Mono.Debugger.Soft
 				for (int i = 0; i < n; ++i)
 					res [i] = ReadId ();
 				return res;
+			}
+			
+			public byte[] ReadByteArray () {
+				var length = ReadInt ();
+				return decode_bytes (packet, ref offset, length);
+			}
+
+			public bool ReadBool () {
+				return ReadByte () != 0;
 			}
 		}
 
@@ -1232,6 +1276,8 @@ namespace Mono.Debugger.Soft
 					bool res = ReceivePacket ();
 					if (!res)
 						break;
+				} catch (ThreadAbortException) {
+					break;
 				} catch (Exception ex) {
 					if (!closed) {
 						Console.WriteLine (ex);
@@ -1277,7 +1323,7 @@ namespace Mono.Debugger.Soft
 					if (cb != null)
 						cb.Invoke (id, packet);
 				} else {
-					PacketReader r = new PacketReader (packet);
+					PacketReader r = new PacketReader (this, packet);
 
 					if (r.CommandSet == CommandSet.EVENT && r.Command == (int)CmdEvent.COMPOSITE) {
 						int spolicy = r.ReadByte ();
@@ -1496,7 +1542,7 @@ namespace Mono.Debugger.Soft
 						if (EnableConnectionLogging)
 							LogPacket (packet_id, encoded_packet, p, command_set, command, watch);
 						/* Run the callback on a tp thread to avoid blocking the receive thread */
-						PacketReader r = new PacketReader (p);
+						PacketReader r = new PacketReader (this, p);
 						cb.BeginInvoke (r, null, null);
 					};
 					reply_cb_counts [id] = count;
@@ -1543,7 +1589,7 @@ namespace Mono.Debugger.Soft
 					if (reply_packets.ContainsKey (packetId)) {
 						byte[] reply = reply_packets [packetId];
 						reply_packets.Remove (packetId);
-						PacketReader r = new PacketReader (reply);
+						PacketReader r = new PacketReader (this, reply);
 
 						if (EnableConnectionLogging)
 							LogPacket (packetId, encoded_packet, reply, command_set, command, watch);
@@ -1910,6 +1956,19 @@ namespace Mono.Debugger.Soft
 			var res = SendReceive (CommandSet.METHOD, (int)CmdMethod.GET_LOCALS_INFO, new PacketWriter ().WriteId (id));
 
 			LocalsInfo info = new LocalsInfo ();
+
+			if (Version.AtLeast (2, 43)) {
+				int nscopes = res.ReadInt ();
+				info.scopes_start = new int [nscopes];
+				info.scopes_end = new int [nscopes];
+				int last_start = 0;
+				for (int i = 0; i < nscopes; ++i) {
+					info.scopes_start [i] = last_start + res.ReadInt ();
+					info.scopes_end [i] = info.scopes_start [i] + res.ReadInt ();
+					last_start = info.scopes_start [i];
+				}
+			}
+
 			int nlocals = res.ReadInt ();
 			info.types = new long [nlocals];
 			for (int i = 0; i < nlocals; ++i)
@@ -2098,6 +2157,30 @@ namespace Mono.Debugger.Soft
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
+		internal long Assembly_GetIdDomain (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_DOMAIN, new PacketWriter ().WriteId (id)).ReadId ();
+		}
+		
+		internal byte[] Assembly_GetMetadataBlob (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_METADATA_BLOB, new PacketWriter ().WriteId (id)).ReadByteArray ();
+		}
+
+		internal bool Assembly_IsDynamic (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int) CmdAssembly.GET_IS_DYNAMIC, new PacketWriter ().WriteId (id)).ReadBool ();
+		}
+		
+		internal byte[] Assembly_GetPdbBlob (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_PDB_BLOB, new PacketWriter ().WriteId (id)).ReadByteArray ();
+		}
+
+		internal long Assembly_GetType (long id, uint token) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_TYPE_FROM_TOKEN, new PacketWriter ().WriteId (id).WriteInt ((int)token)).ReadId ();
+		}
+
+		internal long Assembly_GetMethod (long id, uint token) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_METHOD_FROM_TOKEN, new PacketWriter ().WriteId (id).WriteInt ((int)token)).ReadId ();
+		}
+
 		/*
 		 * TYPE
 		 */
@@ -2191,7 +2274,7 @@ namespace Mono.Debugger.Soft
 		internal ValueImpl[] Type_GetValues (long id, long[] fields, long thread_id) {
 			int len = fields.Length;
 			PacketReader r;
-			if (thread_id != 0)
+			if (thread_id != 0 && Version.AtLeast(2, 3))
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES_2, new PacketWriter ().WriteId (id).WriteId (thread_id).WriteInt (len).WriteIds (fields));
 			else
 				r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUES, new PacketWriter ().WriteId (id).WriteInt (len).WriteIds (fields));
@@ -2272,6 +2355,11 @@ namespace Mono.Debugger.Soft
 		internal long Type_CreateInstance (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CREATE_INSTANCE, new PacketWriter ().WriteId (id));
 			return r.ReadId ();
+		}
+
+		internal int Type_GetValueSize (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_VALUE_SIZE, new PacketWriter ().WriteId (id));
+			return r.ReadInt ();
 		}
 
 		/*
@@ -2395,6 +2483,10 @@ namespace Mono.Debugger.Soft
 			return SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.GET_DOMAIN, new PacketWriter ().WriteId (thread_id).WriteId (id)).ReadId ();
 		}
 
+		internal void StackFrame_SetThis (long thread_id, long id, ValueImpl value) {
+			SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.SET_THIS, new PacketWriter ().WriteId (thread_id).WriteId (id).WriteValue (value));
+		}
+
 		/*
 		 * ARRAYS
 		 */
@@ -2448,7 +2540,16 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < length; ++i)
 				res [i] = (char)r.ReadShort ();
 			return res;
-		}			
+		}
+
+		/*
+		 * POINTERS
+		 */
+
+		internal ValueImpl Pointer_GetValue (long address, TypeMirror type)
+		{
+			return SendReceive (CommandSet.POINTER, (int)CmdPointer.GET_VALUE, new PacketWriter ().WriteLong (address).WriteId (type.Id)).ReadValue ();
+		}
 
 		/*
 		 * OBJECTS

@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_METADATA_BASIC_BLOCK_H__
 #define __MONO_METADATA_BASIC_BLOCK_H__
 
@@ -19,15 +23,20 @@ struct _MonoSimpleBasicBlock {
 };
 
 MonoSimpleBasicBlock*
-mono_basic_block_split (MonoMethod *method, MonoError *error);
+mono_basic_block_split (MonoMethod *method, MonoError *error, MonoMethodHeader *header);
 
 void
 mono_basic_block_free (MonoSimpleBasicBlock *bb);
 
 
 /*This function is here because opcodes.h is a public header*/
+
+#ifndef __MONO_METADATA_OPCODES_H__
+typedef enum _MonoOpcodeEnum MonoOpcodeEnum;
+#endif
+
 int
-mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, int *value);
+mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, MonoOpcodeEnum *value);
 
 int
 mono_opcode_size (const unsigned char *ip, const unsigned char *end);

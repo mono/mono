@@ -1,0 +1,1463 @@
+<Type Name="CommandSet" FullName="Mono.Options.CommandSet">
+  <TypeSignature Language="C#" Value="public class CommandSet : System.Collections.ObjectModel.KeyedCollection&lt;string,Mono.Options.Command&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CommandSet extends System.Collections.ObjectModel.KeyedCollection`2&lt;string, class Mono.Options.Command&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Options</AssemblyName>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadingSafetyStatement>
+    Public <c>static</c> members of this type are thread safe.
+    Any instance members are not guaranteed to be thread safe.
+  </ThreadingSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,Mono.Options.Command&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.String</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!1">Mono.Options.Command</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      A <i>suite</i> of commands, global program options, and associated documentation.
+    </summary>
+    <remarks>
+      <para>
+        A common requirement of some programs are discrete <i>commands</i>.
+        A <c>CommandSet</c> represents a <i>suite</i> of commands, intermixed
+        with suite documentation. Commands are managed by
+        <see cref="T:Mono.Options.Command" /> instances, which have a required
+        <i>name</i> and optional help text, and <c>CommandSet</c> will use the
+        intermixed documentation, options, and commands to produce <c>help</c>
+        command output.
+      </para>
+      <para>
+        To create a <c>CommandSet</c> instance, use the
+        <see cref="C:Mono.Options.CommandSet(System.String, System.Converter, System.IO.TextWriter, System.IO.TextWriter)" />
+        constructor. Only the suite name is required; all other parameters are
+        optional.
+      </para>
+      <para>
+        Once a <c>CommandSet</c> instance has been constructed, use the
+        <see cref="M:Mono.Options.CommandSet.Add" /> methods to add and
+        intermix suite documentation, global options, and commands.
+        Documentation is any string constant, global options are handled
+        by <see cref="T:Mono.Options.Option" /> instances and associated
+        <c>Add()</c> method overloads which implicitly create <c>Option</c>
+        instances, and commands are through <c>Command</c> instances.
+      </para>
+      <para>
+        Once the <c>CommandSet</c> instance has been initialized, call the
+        <see cref="M:Mono.Options.CommandSet.Run(System.String[])" />
+        method to process the arguments provided to <c>Main()</c>.
+        The appropriate <c>Command</c> instance will be determined, it's
+        options parsed, and <see cref="M:Mono.Options.Command.Invoke" />
+        will be executed. The return value of <c>Command.Invoke()</c>
+        is returned from <c>CommandSet.Run()</c>, and should be treated
+        as the process exit value.
+      </para>
+    </remarks>
+    <example>
+      <para>
+        The following <c>commands</c> example demonstrates some simple usage
+        of <see cref="T:Mono.Options.CommandSet" />.
+      </para>
+      <code lang="C#" src="examples/commands.cs">// Sub-commands with Mono.Options.CommandSet
+//
+// Compile as:
+//   mcs -r:Mono.Options.dll commands.cs
+
+using System;
+using System.Collections.Generic;
+
+using Mono.Options;
+
+class CommandDemo {
+	public static int Main (string[] args)
+	{
+		var commands = new CommandSet ("commands") {
+			"usage: commands COMMAND [OPTIONS]",
+			"",
+			"Mono.Options.CommandSet sample app.",
+			"",
+			"Global options:",
+			{ "v:",
+			  "Output verbosity.",
+			  (int? n) =&gt; Verbosity = n.HasValue ? n.Value : Verbosity + 1 },
+			"",
+			"Available commands:",
+			new Command ("echo", "Echo arguments to the screen") {
+				Run = ca =&gt; Console.WriteLine ("{0}", string.Join (" ", ca)),
+			},
+			new RequiresArgsCommand (),
+			"Commands with spaces are supported:",
+			new Command ("has spaces", "spaces?!") {
+				Run = ca =&gt; Console.WriteLine ("spaces, yo! {0}", string.Join (" ", ca)),
+			},
+			"Nested CommandSets are also supported. They're invoked similarly to commands with spaces.",
+			new CommandSet ("set") {
+				new Command ("file type", "Does something or other.") {
+					Run = ca =&gt; Console.WriteLine ("File type set to: {0}", string.Join (" ", ca)),
+				},
+			},
+		};
+		commands.Add (commands);
+		return commands.Run (args);
+	}
+
+	public static int Verbosity;
+}
+
+class RequiresArgsCommand : Command {
+
+	public RequiresArgsCommand ()
+		: base ("requires-args", "Class-based Command subclass")
+	{
+		Options = new OptionSet () {
+			"usage: commands requires-args [OPTIONS]",
+			"",
+			"Class-based Command subclass example.",
+			{ "name|n=",
+			  "{name} of person to greet.",
+			  v =&gt; Name = v },
+			{ "help|h|?",
+			  "Show this message and exit.",
+			  v =&gt; ShowHelp = v != null },
+		};
+	}
+
+	public        bool    ShowHelp    {get; private set;}
+	public  new   string  Name        {get; private set;}
+
+	public override int Invoke (IEnumerable&lt;string&gt; args)
+	{
+		try {
+			var extra = Options.Parse (args);
+			if (ShowHelp) {
+				Options.WriteOptionDescriptions (CommandSet.Out);
+				return 0;
+			}
+			if (string.IsNullOrEmpty (Name)) {
+				Console.Error.WriteLine ("commands: Missing required argument `--name=NAME`.");
+				Console.Error.WriteLine ("commands: Use `commands help requires-args` for details.");
+				return 1;
+			}
+			Console.WriteLine ($"Hello, {Name}!");
+			return 0;
+		}
+		catch (Exception e) {
+			Console.Error.WriteLine ("commands: {0}", CommandDemo.Verbosity &gt;= 1 ? e.ToString () : e.Message);
+			return 1;
+		}
+	}
+}
+</code>
+      <para>
+        The output, under the influence of different command-line arguments, is:
+      </para>
+      <code lang="sh" src="examples/commands.txt">$ mono commands.exe
+Use `commands help` for usage.
+
+$ mono commands.exe --help
+# HelpCommand.Invoke: arguments=
+usage: commands COMMAND [OPTIONS]
+
+Mono.Options.CommandSet sample app.
+
+Global options:
+  -v[=VALUE]                 Output verbosity.
+
+Available commands:
+        echo                 Echo arguments to the screen
+        requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
+
+$ mono commands.exe help
+# HelpCommand.Invoke: arguments=
+usage: commands COMMAND [OPTIONS]
+
+Mono.Options.CommandSet sample app.
+
+Global options:
+  -v[=VALUE]                 Output verbosity.
+
+Available commands:
+        echo                 Echo arguments to the screen
+        requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
+
+$ mono commands.exe help --help
+# HelpCommand.Invoke: arguments=--help
+Usage: commands COMMAND [OPTIONS]
+Use `commands help COMMAND` for help on a specific command.
+
+Available commands:
+
+        echo                 Echo arguments to the screen
+        has spaces           spaces?!
+        requires-args        Class-based Command subclass
+        set file type        Does something or other.
+        help                 Show this message and exit
+
+$ mono commands.exe help echo
+# HelpCommand.Invoke: arguments=echo
+--help
+
+$ mono commands.exe echo --help
+--help
+
+$ mono commands.exe echo hello, world
+hello, world
+
+$ mono commands.exe requires-args
+commands: Missing required argument `--name=NAME`.
+commands: Use `commands help requires-args` for details.
+
+$ mono commands.exe help requires-args
+# HelpCommand.Invoke: arguments=requires-args
+usage: commands requires-args [OPTIONS]
+
+Class-based Command subclass example.
+      --name, -n=name        name of person to greet.
+      --help, -h, -?         Show this message and exit.
+
+$ mono commands.exe requires-args --help
+usage: commands requires-args [OPTIONS]
+
+Class-based Command subclass example.
+      --name, -n=name        name of person to greet.
+      --help, -h, -?         Show this message and exit.
+
+$ mono commands.exe requires-args -n World
+Hello, World!
+
+$ mono commands.exe invalid-command
+commands: Unknown command: invalid-command
+commands: Use `commands help` for usage.
+
+$ mono commands.exe help invalid-command
+# HelpCommand.Invoke: arguments=invalid-command
+commands: Unknown command: invalid-command
+commands: Use `commands help` for usage.
+
+$ mono commands.exe has spaces
+spaces, yo! 
+
+$ mono commands.exe set file type whatever
+File type set to: whatever
+</code>
+      <para>
+        The <c>commands.exe</c> output is short, informing the user that
+        commands are required for use.
+      </para>
+      <para>
+        The <c>commands.exe --help</c> is identical to the <c>commands help</c>
+        output, and shows the provided suite documentation.
+      </para>
+      <para>
+        <c>commands.exe COMMAND --help</c> and <c>commands.exe help COMMAND</c>
+        output is likewise identical, and will attempt to generate documentation
+        for the specified command, if available. This is performed by invoking
+        <see cref="M:Mono.Options.Command.Invoke(System.Collections.Generic.IEnumerable{System.String})" />
+        with the value <c>{ "--help" }</c>. This can be seen in the
+        <c>commands.exe help echo</c> and <c>commands.exe echo --help</c>
+        output, which simply prints <c>--help</c>. If a command wants
+        to partake in <c>help COMMAND</c> support, it needs to explicitly
+        handle the <c>--help</c> option in its associated
+        <see cref="T:Mono.Options.OptionSet" /> instance, referenced by the
+        <see cref="P:Mono.Options.Command.Options" /> property.
+      </para>
+      <para>
+        Finally, if an invalid command is specified, then an error is written
+        to <see cref="P:Mono.Options.CommandSet.Error" />, prefixed with the
+        <see cref="P:Mono.Options.CommandSet.Suite" /> value.
+      </para>
+    </example>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CommandSet (string suite, Converter&lt;string,string&gt; localizer = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string suite, class System.Converter`2&lt;string, string&gt; localizer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="suite" Type="System.String" />
+        <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="suite">
+          A <see cref="T:System.String" /> containing the name of the suite.
+          This value is used in default <c>help</c> text output.
+        </param>
+        <param name="localizer">
+          A <see cref="T:System.Converter{System.String,System.String}" />
+          instance that will be used to translate strings.
+          If <see langword="null" />, then no localization is performed.
+        </param>
+        <summary>
+          Creates and initializes a new <c>CommandSet</c> instance.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes
+            the <see cref="P:Mono.Options.CommandSet.Suite" /> property
+            of the new instance using <paramref name="suite" />,
+            the <see cref="P:Mono.Options.CommandSet.MessageLocalizer" /> property
+            of the new instance using <paramref name="localizer" />,
+            the <see cref="P:Mono.Options.CommandSet.Out" /> property
+            to <see cref="P:System.Console.Out" />, and
+            the <see cref="P:Mono.Options.CommandSet.Error" /> property
+            to <see cref="P:System.Console.Error" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="suite" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CommandSet (string suite, System.IO.TextWriter output, System.IO.TextWriter error, Converter&lt;string,string&gt; localizer = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string suite, class System.IO.TextWriter output, class System.IO.TextWriter error, class System.Converter`2&lt;string, string&gt; localizer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="suite" Type="System.String" />
+        <Parameter Name="output" Type="System.IO.TextWriter" />
+        <Parameter Name="error" Type="System.IO.TextWriter" />
+        <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="suite">
+          A <see cref="T:System.String" /> containing the name of the suite.
+          This value is used in default <c>help</c> text output.
+        </param>
+        <param name="output">
+          A <see cref="T:System.IO.TextWriter" /> where output messages will be
+          written to.
+        </param>
+        <param name="error">
+          A <see cref="T:System.IO.TextWriter" /> where error messages will be
+          written to.
+        </param>
+        <param name="localizer">
+          A <see cref="T:System.Converter{System.String,System.String}" />
+          instance that will be used to translate strings.
+          If <see langword="null" />, then no localization is performed.
+        </param>
+        <summary>
+          Creates and initializes a new <c>CommandSet</c> instance.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes
+            the <see cref="P:Mono.Options.CommandSet.Suite" /> property
+            of the new instance using <paramref name="suite" />,
+            the <see cref="P:Mono.Options.CommandSet.MessageLocalizer" /> property
+            of the new instance using <paramref name="localizer" />,
+            the <see cref="P:Mono.Options.CommandSet.Out" /> property
+            of the new instance using <paramref name="output" />, and
+            the <see cref="P:Mono.Options.CommandSet.Error" /> property
+            of the new instance using <paramref name="error" />.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="suite" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="output" /> is <see langword="null" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="error" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (Mono.Options.ArgumentSource source);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(class Mono.Options.ArgumentSource source) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="source" Type="Mono.Options.ArgumentSource" />
+      </Parameters>
+      <Docs>
+        <param name="source">
+          A <see cref="T:Mono.Options.ArgumentSource" /> to register for
+          argument processing.
+        </param>
+        <summary>
+          Registers <paramref name="source" /> so that it may be consulted
+          during argument processing within
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="source" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (Mono.Options.Command value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(class Mono.Options.Command value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="Mono.Options.Command" />
+      </Parameters>
+      <Docs>
+        <param name="value">
+          A <see cref="T:Mono.Options.Command" /> to add to the suite.
+        </param>
+        <summary>
+          Add a <c>Command</c> to the suite.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            A <c>Command</c> with the same value for
+            <c><paramref name="value" />.Name</c>
+            has already been added to the <c>CommandSet</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="value" /> has been <c>Add()</c>ed to a different
+            <c>CommandSet</c> instance.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="value" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (Mono.Options.CommandSet nestedCommands);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(class Mono.Options.CommandSet nestedCommands) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nestedCommands" Type="Mono.Options.CommandSet" />
+      </Parameters>
+      <Docs>
+        <param name="nestedCommands">
+          The <see cref="T:Mono.Options.OptionSet" /> to register.
+        </param>
+        <summary>Adds <paramref name="nestedCommands" /> as a suite of sub-commands.</summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            When a <c>CommandSet</c> is a child of a <c>CommandSet</c>, the nested
+            <c>CommandSet</c> commands can be invoked by prefixing the command name
+            with the <c>CommandSet</c> suite name within the arguments array.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="option" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (Mono.Options.Option option);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(class Mono.Options.Option option) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="option" Type="Mono.Options.Option" />
+      </Parameters>
+      <Docs>
+        <param name="option">
+          The <see cref="T:Mono.Options.Option" /> to register.
+        </param>
+        <summary>
+          Adds <paramref name="option" /> as a global suite option.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            Registers each option name returned by
+            <see cref="M:Mono.Options.Option.GetNames" />, ensuring that any
+            option with a matching name will be handled by the
+            <paramref name="option" /> instance.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="option" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string header);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string header) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="header">
+          A <see cref="T:System.String" /> containing the header to display
+          during <see cref="M:Mono.Options.CommandSet.Run" /><c>help</c> processing.
+        </param>
+        <summary>
+          Declare a header to be printed during for <c>help</c> output.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, Mono.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, class Mono.Options.OptionAction`2&lt;string, string&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          Calls 
+          <see cref="M:Mono.Options.CommandSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
+          with a <paramref name="description" /> value of 
+          <see langword="null" />.
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prototype" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, Action&lt;string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, class System.Action`1&lt;string&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          Calls 
+          <see cref="M:Mono.Options.CommandSet.Add(System.String,System.String,System.Action{System.String})" />
+          with a <paramref name="description" /> value of 
+          <see langword="null" />.
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(System.String,System.String,System.Action{System.String})" />
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prototype" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, string description, Mono.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, string description, class Mono.Options.OptionAction`2&lt;string, string&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> to be used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            Use this method when <paramref name="prototype" /> should accept
+            two values, generally a key and a value.
+          </para>
+          <block subset="none" type="note">
+            If <paramref name="prototype" /> specifies a 
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> option,
+            then it's possible that both the key and the value will be
+            <see langword="null" /> in the callback function.
+          </block>
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prototype" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, string description, Action&lt;string&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, string description, class System.Action`1&lt;string&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, string description, Mono.Options.OptionAction&lt;string,string&gt; action, bool hidden);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, string description, class Mono.Options.OptionAction`2&lt;string, string&gt; action, bool hidden) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
+        <Parameter Name="hidden" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <param name="hidden">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          Option should be displayed in
+          <see cref="M:Mono.Options.CommandSet.Run" /><c>help</c> output.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (string prototype, string description, Action&lt;string&gt; action, bool hidden);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(string prototype, string description, class System.Action`1&lt;string&gt; action, bool hidden) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;System.String&gt;" />
+        <Parameter Name="hidden" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{System.String}" />
+          to invoke when an option is parsed.
+        </param>
+        <param name="hidden">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          Option should be displayed in
+          <see cref="M:Mono.Options.CommandSet.Run" /><c>help</c> output.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add&lt;T&gt; (string prototype, Action&lt;T&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add&lt;T&gt;(string prototype, class System.Action`1&lt;!!T&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">
+          The type of the option to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{``0}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          Calls 
+          <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+          with a <paramref name="description" /> value of 
+          <see langword="null" />.
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <altmember cref="M:Mono.Options.CommandSet.Add``1(System.String,System.String,System.Action{``0})" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add&lt;T&gt; (string prototype, string description, Action&lt;T&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add&lt;T&gt;(string prototype, string description, class System.Action`1&lt;!!T&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="System.Action&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">
+          The type of the option to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing to used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:System.Action{``0}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            Use this typed overload when you want strongly typed option values
+            that correspond to a managed type.
+            <see cref="M:System.ComponentModel.TypeDescriptor.GetConverter(System.Type)" />
+            is used to lookup the
+            <see cref="T:System.ComponentModel.TypeConverter" /> to use when
+            performing the string-to-type conversion.
+          </para>
+          <para>
+            Special support is provided for <see cref="T:System.Nullable{X}" />
+            types; <see cref="T:System.ComponentModel.TypeConverter" />
+            doesn't currently support their use, but if 
+            <typeparamref name="T" /> is a nullable type, then this method
+            will instead use the 
+            <see cref="T:System.ComponentModel.TypeConverter" /> for the 
+            <typeparamref name="X" /> type.  This allows straightforward use
+            of nullable types, identical to using any other strongly typed
+            value.
+          </para>
+          <block subset="none" type="note">
+            <para>
+              If <paramref name="prototype" /> specifies an
+              <see cref="F:Mono.Options.OptionValueType.Optional" /> value
+              and the value is not provided, then <c>default(T)</c> is
+              provided as the value to <paramref name="action" />.
+            </para>
+          </block>
+        </remarks>
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="option" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add&lt;TKey,TValue&gt; (string prototype, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add&lt;TKey, TValue&gt;(string prototype, class Mono.Options.OptionAction`2&lt;!!TKey, !!TValue&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TValue" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TKey">
+          The type of the first argument to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <typeparam name="TValue">
+          The type of the second argument to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{TKey,TValue}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          Calls 
+          <see cref="M:Mono.Options.OptionSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
+          with a <paramref name="description" /> value of 
+          <see langword="null" />.
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <altmember cref="M:Mono.Options.CommandSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prototype" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add&lt;TKey,TValue&gt; (string prototype, string description, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add&lt;TKey, TValue&gt;(string prototype, string description, class Mono.Options.OptionAction`2&lt;!!TKey, !!TValue&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TValue" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;TKey,TValue&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TKey">
+          The type of the first argument to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <typeparam name="TValue">
+          The type of the second argument to parse and provide to the 
+          <paramref name="action" /> callback.
+        </typeparam>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing all option aliases to
+          register, an (optional) type specifier, and an (optional) value
+          separator list; see 
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+          for details.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> to be used to initialize
+          the <see cref="P:Mono.Options.Option.Description" /> property.
+        </param>
+        <param name="action">
+          A <see cref="T:Mono.Options.OptionAction{TKey,TValue}" />
+          to invoke when an option is parsed.
+        </param>
+        <summary>
+          Registers each alias within <paramref name="prototype" /> so that any 
+          options matching the aliases in <paramref name="prototype" /> will be
+          handled by <paramref name="action" /> during any subsequent
+          <see cref="M:Mono.Options.CommandSet.Run(System.Collections.Generic.IEnumerable{System.String})" />
+          calls.
+        </summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            Use this method when <paramref name="prototype" /> should accept
+            two typed values, generally a key and a value.
+          </para>
+          <block subset="none" type="note">
+            <para>
+              If <paramref name="prototype" /> specifies an
+              <see cref="F:Mono.Options.OptionValueType.Optional" /> value
+              and the value is not provided, then <c>default(TKey)</c> and
+              <c>default(TValue)</c> may be provided as the values to
+              <paramref name="action" />.
+            </para>
+          </block>
+        </remarks>
+        <altmember cref="M:Mono.Options.CommandSet.Add(Mono.Options.Option)" />
+        <exception cref="T:System.ArgumentException">
+          <paramref name="prototype" /> has an alias (as returned from
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="prototype" /> is <see langword="null" /></para>
+          <para>-or-</para>
+          <para>
+            <paramref name="action" /> is <see langword="null" /></para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Error">
+      <MemberSignature Language="C#" Value="public System.IO.TextWriter Error { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.TextWriter Error" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Where <c>CommandSet</c> should write error messages.
+        </summary>
+        <value>
+          A <see cref="T:System.IO.TextWriter" /> where error messages will
+          be written to.
+        </value>
+        <remarks>
+          <para>
+            This value may be set by providing the <paramref name="error" />
+            constructor parameter. If not specified, then
+            <see cref="P:System.Console.Error" /> will be used.
+          </para>
+          <para>
+            Error messages by <c>CommandSet</c> are written to the <c>Error</c>
+            property. <c>Command</c> instances may also choose to write error
+            messages to the <c>CommandSet.Error</c> property. This is suggested
+            to help with unit testing.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetKeyForItem">
+      <MemberSignature Language="C#" Value="protected override string GetKeyForItem (Mono.Options.Command item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance string GetKeyForItem(class Mono.Options.Command item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="Mono.Options.Command" />
+      </Parameters>
+      <Docs>
+        <param name="item">
+          An <see cref="T:Mono.Options.Command" /> to return the key of.
+        </param>
+        <summary>
+          Returns <c><paramref name="item" />.Name</c>.
+        </summary>
+        <returns>
+          A <see cref="T:System.String" /> containing the command name.
+        </returns>
+        <remarks>
+          <para>
+            This is to support the
+            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Command}" />
+            infrastructure.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageLocalizer">
+      <MemberSignature Language="C#" Value="public Converter&lt;string,string&gt; MessageLocalizer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Converter`2&lt;string, string&gt; MessageLocalizer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Converter&lt;System.String,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Permits access to the message localization facility.
+        </summary>
+        <value>
+          A <see cref="T:System.Converter{System.String,System.String}" />
+          that can be used to localize messages.
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Out">
+      <MemberSignature Language="C#" Value="public System.IO.TextWriter Out { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.TextWriter Out" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.TextWriter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Where <c>CommandSet</c> should write output messages.
+        </summary>
+        <value>
+          A <see cref="T:System.IO.TextWriter" /> where output messages will
+          be written to.
+        </value>
+        <remarks>
+          <para>
+            This value may be set by providing the <paramref name="output" />
+            constructor parameter. If not specified, then
+            <see cref="P:System.Console.Out" /> will be used.
+          </para>
+          <para>
+            Output messages by <c>CommandSet</c> are written to the <c>Out</c>
+            property. <c>Command</c> instances may also choose to write output
+            messages to the <c>CommandSet.Out</c> property. This is suggested
+            to help with unit testing.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Run">
+      <MemberSignature Language="C#" Value="public int Run (System.Collections.Generic.IEnumerable&lt;string&gt; arguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Run(class System.Collections.Generic.IEnumerable`1&lt;string&gt; arguments) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="arguments" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="arguments">
+          A <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
+          containing the command-line arguments to process.
+        </param>
+        <summary>
+          Processes command-line arguments and invokes the specified command.
+        </summary>
+        <returns>
+          A <see cref="T:System.Int32" /> containing the command's exit value.
+          Normal Unix process exit values should be used: <c>0</c> for success,
+          non-zero values for failures.
+        </returns>
+        <remarks>
+          <para>
+            Processes <paramref name="arguments" />, parsing global options in the first pass.
+            The first unprocessed argument is treated as a command name, and the
+            <see cref="T:Mono.Options.Command" /> instance with a
+            <see cref="P:Mono.Options.Command.Name" /> value matching the command name
+            has its <see cref="M:Mono.Options.Command.Invoke" /> method invoked with the
+            unprocessed arguments.
+          </para>
+          <block subset="none" type="behaviors">
+            <para>
+              If no command is specified within <paramref name="arguments" /><i>or</i> an invalid command name is specified, then <c>1</c> is returned.
+              Otherwise, the value returned from
+              <see cref="M:Mono.Options.Command.Invoke" /> is returned.
+            </para>
+          </block>
+          <para>
+            If the <c>help</c> command is provided with no arguments, then the
+            suite help text will be written to
+            <see cref="P:Mono.Options.CommandSet.Out" />
+            consisting of the descriptive text ("headers"), options, and
+            <c>Command</c> values provided to
+            <see cref="M:Mono.Options.CommandSet.Add" />.
+          </para>
+          <para>
+            If the <c>help</c> command is provided with <c>--help</c> as an
+            argument, then all registered <c>Command</c> instances are written to
+            <see cref="P:Mono.Options.CommandSet.Out" />.
+          </para>
+          <para>
+            If the <c>help</c> command is provided with any other string, the
+            following value is treated as a command name, and the output of
+            <c>command --help</c> is written to
+            <see cref="P:Mono.Options.CommandSet.Out" />. If the specified
+            command name has not been registered, then an error message is written to
+            <see cref="P:Mono.Options.CommandSet.Error" />.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Suite">
+      <MemberSignature Language="C#" Value="public string Suite { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Suite" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The name of the suite.
+        </summary>
+        <value>
+          A <see cref="T:System.String" /> containing the name of the command suite.
+        </value>
+        <remarks>
+          <para>
+            The <c>Suite</c> value is used when no command is specified, or
+            when an unregistered command name is provided.
+          </para>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

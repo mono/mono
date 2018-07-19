@@ -243,5 +243,44 @@ namespace MonoTests.System.Web.Services.Protocols
 				}
 			}
 		}
+
+		public class RequestHeader : SoapHeader
+		{
+		}
+
+		public class ResponseHeader : SoapHeader
+		{
+		}
+
+		[WebServiceBindingAttribute(Name = "ServiceWithHeaders", Namespace = "https://example.com")]
+		public class ServiceWithHeaders : SoapHttpClientProtocol
+		{
+			public RequestHeader RequestHeader { get; set; }
+			public ResponseHeader ResponseHeader { get; set; }
+
+			[SoapHeaderAttribute("ResponseHeader", Direction = SoapHeaderDirection.Out)]
+			[SoapHeaderAttribute("RequestHeader")]
+			[SoapDocumentMethodAttribute("", RequestNamespace = "https://example.com", ResponseNamespace = "https://example.com", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+			public int method1()
+			{
+				return 0;
+			}
+
+			[SoapHeaderAttribute("ResponseHeader", Direction = SoapHeaderDirection.Out)]
+			[SoapHeaderAttribute("RequestHeader")]
+			[SoapDocumentMethodAttribute("", RequestNamespace = "https://example.com", ResponseNamespace = "https://example.com", Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+			public int method2()
+			{
+				return 0;
+			}
+		}
+
+		[Test] // Covers #41564
+		public void ServiceWithHeader () {
+			var service = new ServiceWithHeaders ();
+			Assert.IsNotNull (service);
+			// Should not throw an exception
+			// XAMMAC specific bug
+		}
 	}
 }

@@ -1,6 +1,6 @@
 .\" 
 .\" ccrewrite manual page.
-.\" Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+.\" Copyright (C) 2010 Chris Bacon.
 .\" Author:
 .\"   Chris Bacon <chrisbacon76@gmail.com>
 .\"
@@ -28,7 +28,7 @@ specified assembly.
 .TP
 .I "--assembly <assembly-name>"
 The assembly to rewrite. If no --output option is specified, then this file
-overwritten with the rewritten version.
+is overwritten with the rewritten version.
 .TP
 .I "--debug"
 Use debug information if available to improve the usefulness of contract
@@ -38,7 +38,7 @@ failure messages.
 Show help for ccrewrite, listing configuration options.
 .TP
 .I "--level <level> (default=4)"
-Set the which contract types are present in rewritten assembly:
+Set which contract types are present in rewritten assembly:
 0 = No contracts;
 1 = Release requires;
 2 = Requires;

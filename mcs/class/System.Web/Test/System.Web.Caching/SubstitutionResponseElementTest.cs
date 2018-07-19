@@ -33,7 +33,6 @@ using System.Web;
 using System.Web.Caching;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Caching
 {
@@ -50,7 +49,7 @@ namespace MonoTests.System.Web.Caching
 		{
 			SubstitutionResponseElement sre;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				sre = new SubstitutionResponseElement (null);
 			}, "#A1");
 

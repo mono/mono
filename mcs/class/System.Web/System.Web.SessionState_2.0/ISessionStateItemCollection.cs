@@ -36,7 +36,7 @@ namespace System.Web.SessionState {
 	{
 		///methods
 		void Clear ();
-		void Remove (string itemName);
+		void Remove (string name);
 		void RemoveAt (int index);
 	
 		///properties

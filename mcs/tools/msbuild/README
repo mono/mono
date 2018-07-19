@@ -1,7 +1,0 @@
-WARNING: you are most likely NOT seeing what you are looking for. It is still
-experimental implementation of "MSBuild" tool that is based on MSBuild's
-"new" build engine a.k.a Microsoft.Build.dll (available only in .NET 4.0 or
-later).
-
-For old .NET 2.0-based MSBuild implementation, check out "xbuild" instead.
-

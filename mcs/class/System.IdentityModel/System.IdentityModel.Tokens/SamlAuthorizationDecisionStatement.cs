@@ -132,7 +132,7 @@ namespace System.IdentityModel.Tokens
 		public override void ReadXml (XmlDictionaryReader reader,
 			SamlSerializer samlSerializer, 
 			SecurityTokenSerializer keyInfoSerializer, 
-			SecurityTokenResolver resolver)
+			SecurityTokenResolver outOfBandTokenResolver)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
@@ -159,20 +159,20 @@ namespace System.IdentityModel.Tokens
 
 			reader.MoveToContent ();
 			SamlSubject = new SamlSubject ();
-			SamlSubject.ReadXml (reader, samlSerializer, keyInfoSerializer, resolver);
+			SamlSubject.ReadXml (reader, samlSerializer, keyInfoSerializer, outOfBandTokenResolver);
 			SamlActions.Clear ();
 			for (reader.MoveToContent ();
 			     reader.LocalName == "Action" &&
 			     reader.NamespaceURI == SamlConstants.Namespace;
 			     reader.MoveToContent ()) {
 				SamlAction action = new SamlAction ();
-				action.ReadXml (reader, samlSerializer, keyInfoSerializer, resolver);
+				action.ReadXml (reader, samlSerializer, keyInfoSerializer, outOfBandTokenResolver);
 				SamlActions.Add (action);
 			}
 			if (reader.LocalName == "Evidence" &&
 			    reader.NamespaceURI == SamlConstants.Namespace) {
 				Evidence = new SamlEvidence ();
-				Evidence.ReadXml (reader, samlSerializer, keyInfoSerializer, resolver);
+				Evidence.ReadXml (reader, samlSerializer, keyInfoSerializer, outOfBandTokenResolver);
 				reader.MoveToContent ();
 			}
 			reader.ReadEndElement ();

@@ -522,6 +522,18 @@ namespace Mono.Debugger.Soft
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
 
+		// Return a mirror if it exists
+		// Does not call into the debuggee
+		internal T TryGetObject<T> (long id) where T : ObjectMirror {
+			lock (objects_lock) {
+				if (objects == null)
+					objects = new Dictionary <long, ObjectMirror> ();
+				ObjectMirror obj;
+				objects.TryGetValue (id, out obj);
+				return (T)obj;
+			}
+		}
+
 		internal T GetObject<T> (long id, long domain_id, long type_id) where T : ObjectMirror {
 			lock (objects_lock) {
 				if (objects == null)
@@ -573,6 +585,10 @@ namespace Mono.Debugger.Soft
 			return GetObject <ThreadMirror> (id);
 		}
 
+		internal ThreadMirror TryGetThread (long id) {
+			return TryGetObject <ThreadMirror> (id);
+		}
+
 		Dictionary <long, FieldInfoMirror> fields;
 		object fields_lock = new object ();
 
@@ -616,8 +632,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal Value DecodeValue (ValueImpl v, Dictionary<int, Value> parent_vtypes) {
-			if (v.Value != null)
+			if (v.Value != null) {
+				if (Version.AtLeast (2, 46) && v.Type == ElementType.Ptr)
+					return new PointerValue(this, GetType(v.Klass), (long)v.Value);
 				return new PrimitiveValue (this, v.Value);
+			}
 
 			switch (v.Type) {
 			case ElementType.Void:
@@ -665,7 +684,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
-		internal ValueImpl EncodeValue (Value v) {
+		internal ValueImpl EncodeValue (Value v, List<Value> duplicates = null) {
 			if (v is PrimitiveValue) {
 				object val = (v as PrimitiveValue).Value;
 				if (val == null)
@@ -675,16 +694,25 @@ namespace Mono.Debugger.Soft
 			} else if (v is ObjectMirror) {
 				return new ValueImpl { Type = ElementType.Object, Objid = (v as ObjectMirror).Id };
 			} else if (v is StructMirror) {
-				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeValues ((v as StructMirror).Fields) };
+				if (duplicates == null)
+					duplicates = new List<Value> ();
+				if (duplicates.Contains (v))
+					return new ValueImpl { Type = (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL, Objid = 0 };
+				duplicates.Add (v);
+
+				return new ValueImpl { Type = ElementType.ValueType, Klass = (v as StructMirror).Type.Id, Fields = EncodeValues ((v as StructMirror).Fields, duplicates) };
+			} else if (v is PointerValue) {
+				PointerValue val = (PointerValue)v;
+				return new ValueImpl { Type = ElementType.Ptr, Klass = val.Type.Id, Value = val.Address };
 			} else {
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("Value of type " + v.GetType());
 			}
 		}
 
-		internal ValueImpl[] EncodeValues (IList<Value> values) {
+		internal ValueImpl[] EncodeValues (IList<Value> values, List<Value> duplicates = null) {
 			ValueImpl[] res = new ValueImpl [values.Count];
 			for (int i = 0; i < values.Count; ++i)
-				res [i] = EncodeValue (values [i]);
+				res [i] = EncodeValue (values [i], duplicates);
 			return res;
 		}
 
@@ -724,6 +752,11 @@ namespace Mono.Debugger.Soft
 					l.Add (new ThreadStartEvent (vm, req_id, id));
 					break;
 				case EventType.ThreadDeath:
+					// Avoid calling GetThread () since it might call into the debuggee
+					// and we can't do that in the event handler
+					var thread = vm.TryGetThread (id);
+					if (thread != null)
+						thread.InvalidateFrames ();
 					vm.InvalidateThreadCache ();
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;

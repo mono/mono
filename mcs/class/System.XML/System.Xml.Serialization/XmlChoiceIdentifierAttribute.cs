@@ -60,7 +60,7 @@ namespace System.Xml.Serialization
 			set { memberName = value; }
 		}
 
-#if NET_2_1
+#if MOBILE
 		MemberInfo member;
 		// It is used only in 2.1 S.X.Serialization.dll in MS SDK.
 		internal MemberInfo MemberInfo {

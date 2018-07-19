@@ -62,12 +62,12 @@ namespace System.IdentityModel.Tokens
 			get { return owner_type; }
 		}
 
-		public override bool Matches (SecurityKeyIdentifierClause clause)
+		public override bool Matches (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
-			if (clause == null)
-				throw new ArgumentNullException ("clause");
+			if (keyIdentifierClause == null)
+				throw new ArgumentNullException ("keyIdentifierClause");
 			LocalIdKeyIdentifierClause c =
-				clause as LocalIdKeyIdentifierClause;
+				keyIdentifierClause as LocalIdKeyIdentifierClause;
 			return c != null && Matches (c.LocalId, c.OwnerType);
 		}
 

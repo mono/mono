@@ -32,4 +32,3 @@ using System.Runtime.InteropServices;
 
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]

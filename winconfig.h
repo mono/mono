@@ -1,5 +1,4 @@
-/* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.ac by autoheader.  */
+#pragma once
 
 #ifndef _MSC_VER
 #include "cygconfig.h"
@@ -26,13 +25,39 @@
 #error "Mono requires Windows Vista or later"
 #endif /* _WIN32_WINNT < 0x0600 */
 
+#ifndef HAVE_WINAPI_FAMILY_SUPPORT
+
+#define HAVE_WINAPI_FAMILY_SUPPORT
+
+/* WIN API Family support */
+#include <winapifamily.h>
+
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+	#define HAVE_CLASSIC_WINAPI_SUPPORT 1
+	#define HAVE_UWP_WINAPI_SUPPORT 0
+#elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+	#define HAVE_CLASSIC_WINAPI_SUPPORT 0
+	#define HAVE_UWP_WINAPI_SUPPORT 1
+#ifndef HAVE_EXTERN_DEFINED_WINAPI_SUPPORT
+	#error Unsupported WINAPI family
+#endif
+#else
+	#define HAVE_CLASSIC_WINAPI_SUPPORT 0
+	#define HAVE_UWP_WINAPI_SUPPORT 0
+#ifndef HAVE_EXTERN_DEFINED_WINAPI_SUPPORT
+	#error Unsupported WINAPI family
+#endif
+#endif
+
+#endif
+
 /*
  * Features that are not required in the Windows port
  */
 #define DISABLE_PORTABILITY 1
 
 /* Windows does not have symlinks */
-#define PLATFORM_NO_SYMLINKS 1
+#define HOST_NO_SYMLINKS 1
 
 /* String of disabled features */
 #define DISABLED_FEATURES "none"
@@ -70,6 +95,12 @@
 /* Disable advanced SSA JIT optimizations */
 /* #undef DISABLE_SSA */
 
+/* Disable interpreter */
+/* #undef DISABLE_INTERPRETER */
+
+/* Some VES is available at runtime */
+#define ENABLE_ILGEN 1
+
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
 
@@ -101,7 +132,10 @@
 #define HAVE_COMPLEX_H 1
 
 /* Define to 1 if you have the `system' function. */
+#if HAVE_WINAPI_FAMILY_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #define HAVE_SYSTEM 1
+#endif
+
 
 /* Have /dev/random */
 #define HAVE_CRYPT_RNG 1
@@ -255,7 +289,11 @@
 /* #undef HAVE_KQUEUE */
 
 /* Have __thread keyword */
-/* #undef HAVE_KW_THREAD */
+#ifdef _MSC_VER
+#define MONO_KEYWORD_THREAD __declspec (thread)
+#else
+#define MONO_KEYWORD_THREAD __thread
+#endif
 
 /* Have large file support */
 /* #undef HAVE_LARGE_FILE_SUPPORT */
@@ -298,9 +336,6 @@
 
 /* No GC support. */
 /* #undef HAVE_NULL_GC */
-
-/* Have oprofile support */
-/* #undef HAVE_OPROFILE */
 
 /* Define to 1 if you have the `poll' function. */
 /* #undef HAVE_POLL */
@@ -370,6 +405,9 @@
 
  /* Have signal */
 #define HAVE_SIGNAL 1
+
+ /* Define to 1 if you have the <signal.h> header file. */
+#define HAVE_SIGNAL_H 1
 
 /* Have signbit */
 /* #undef HAVE_SIGNBIT */
@@ -557,6 +595,15 @@
 /* Define to 1 if you have the <wchar.h> header file. */
 #define HAVE_WCHAR_H 1
 
+/* Define to 1 if you have IPv6 support. */
+#define HAVE_STRUCT_SOCKADDR_IN6 1
+
+/* Defined as strtok_s in eglib-config.hw */
+#define HAVE_STRTOK_R 1
+
+/* Define to 1 if you have the `access' function. */
+#define HAVE_ACCESS 1
+
 /* Have a working sigaltstack */
 /* #undef HAVE_WORKING_SIGALTSTACK */
 
@@ -641,6 +688,48 @@
 /* Use mono_mutex_t */
 /* #undef USE_MONO_MUTEX */
 
+#ifdef ENABLE_LLVM
+	#define ENABLE_LLVM 1
+	#define ENABLE_LLVM_RUNTIME 1
+	#define LLVM_VERSION "3.6.0svn-mono-"
+	#define LLVM_API_VERSION 4
+#endif
+
 /* Version number of package */
 #define VERSION "#MONO_VERSION#"
+
+/* Version of the corlib-runtime interface */
+#define MONO_CORLIB_VERSION #MONO_CORLIB_VERSION#
+
+#endif
+
+#ifdef _MSC_VER
+// FIXME This is all questionable but the logs are flooded and nothing else is fixing them.
+#define _CRT_SECURE_NO_WARNINGS 1
+#pragma warning(disable:4013) // function undefined; assuming extern returning int
+#pragma warning(disable:4018) // signed/unsigned mismatch
+#pragma warning(disable:4022) // call and prototype disagree
+#pragma warning(disable:4047) // call and prototype disagree
+#pragma warning(disable:4090) // const problem
+#pragma warning(disable:4098) // void return returns a value
+#pragma warning(disable:4101) // unreferenced local variable
+#pragma warning(disable:4113) // call and prototype disagree
+#pragma warning(disable:4146) // unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable:4172) // returning address of local variable or temporary
+#pragma warning(disable:4189) // local variable is initialized but not referenced
+#pragma warning(disable:4197) // top-level volatile in cast is ignored
+#pragma warning(disable:4244) // integer conversion, possible loss of data
+#pragma warning(disable:4245) // signed/unsigned mismatch
+#pragma warning(disable:4267) // integer conversion, possible loss of data
+#pragma warning(disable:4273) // inconsistent dll linkage
+#pragma warning(disable:4293) // shift count negative or too big, undefined behavior
+#pragma warning(disable:4305) // truncation from 'double' to 'float'
+#pragma warning(disable:4312) // 'type cast': conversion from 'MonoNativeThreadId' to 'gpointer' of greater size
+#pragma warning(disable:4389) // signed/unsigned mismatch
+#pragma warning(disable:4456) // declaration of 'j' hides previous local declaration
+#pragma warning(disable:4457) // declaration of 'text' hides function parameter
+#pragma warning(disable:4702) // unreachable code
+#pragma warning(disable:4706) // assignment within conditional expression
+#pragma warning(disable:4715) // 'keyword' not all control paths return a value
+#pragma warning(disable:4996) // deprecated function GetVersion GetVersionExW fopen inet_addr mktemp sprintf strcat strcpy strtok unlink etc.
 #endif

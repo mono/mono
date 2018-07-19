@@ -1,4 +1,6 @@
 #include mobile_System.ServiceModel.dll.sources
+../../build/common/SR.cs
+corefx/SR.cs
 System.ServiceModel.Channels/IChannelListener.cs
 System.ServiceModel.Channels/IReplyChannel.cs
 System.ServiceModel.Channels/IReplySessionChannel.cs
@@ -32,6 +34,7 @@ System.ServiceModel.Dispatcher/SeekableXPathNavigator.cs
 System.ServiceModel.Dispatcher/XPathMessageFilter.cs
 System.ServiceModel.Security.Tokens/SecurityContextSecurityToken.cs
 System.ServiceModel.Security.Tokens/SslnegoCookieResolver.cs
+System.ServiceModel.Security.Tokens/SupportingTokenParameters.cs
 System.ServiceModel.Security/ChannelProtectionRequirements.cs
 System.ServiceModel.Security/IdentityVerifier.cs
 System.ServiceModel.Security/IssuedTokenClientCredential.cs
@@ -40,7 +43,6 @@ System.ServiceModel.Security/MessagePartSpecification.cs
 System.ServiceModel.Security/PeerCredential.cs
 System.ServiceModel.Security/ScopedMessagePartSpecification.cs
 System.ServiceModel.Security/SecurityAlgorithmSuite.cs
-System.ServiceModel.Security/SecurityContextKeyIdentifierClause.cs
 System.ServiceModel.Security/SecurityMessageProperty.cs
 System.ServiceModel.Security/SecurityStateEncoder.cs
 System.ServiceModel.Security/SecurityTokenAttachmentMode.cs

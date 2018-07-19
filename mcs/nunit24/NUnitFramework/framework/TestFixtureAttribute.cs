@@ -14,6 +14,7 @@ namespace NUnit.Framework
 	/// {}
 	/// </example>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited=true)]
+	[Obsolete ("The NUnit framework shipped with Mono is deprecated and will be removed in a future release. It was based on NUnit 2.4 which is long outdated. Please move to the NUnit NuGet package or some other form of acquiring NUnit.", true)]
 	public class TestFixtureAttribute : Attribute
 	{
 		private string description;

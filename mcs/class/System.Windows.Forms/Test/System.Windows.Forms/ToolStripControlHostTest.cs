@@ -108,7 +108,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.Control, tsi.BackColor, "B4");
 
 			tsi = new ToolStripControlHost (new TextBox ());
-			Assert.AreEqual (SystemColors.Control, tsi.BackColor, "B5");
+			Assert.AreEqual (SystemColors.Window, tsi.BackColor, "B5");
 
 			tsi = new ToolStripControlHost (new ProgressBar ());
 			Assert.AreEqual (SystemColors.Control, tsi.BackColor, "B6");
@@ -239,7 +239,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (SystemColors.ControlText, tsi.ForeColor, "B4");
 
 			tsi = new ToolStripControlHost (new TextBox ());
-			Assert.AreEqual (SystemColors.ControlText, tsi.ForeColor, "B5");
+			Assert.AreEqual (SystemColors.WindowText, tsi.ForeColor, "B5");
 		}
 
 		[Test]

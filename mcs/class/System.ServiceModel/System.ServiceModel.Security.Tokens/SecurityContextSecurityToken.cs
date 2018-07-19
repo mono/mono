@@ -200,10 +200,10 @@ namespace System.ServiceModel.Security.Tokens
 			throw new NotSupportedException (String.Format ("X509SecurityToken does not support creation of {0}.", t));
 		}
 
-		public override bool MatchesKeyIdentifierClause (SecurityKeyIdentifierClause clause)
+		public override bool MatchesKeyIdentifierClause (SecurityKeyIdentifierClause keyIdentifierClause)
 		{
 			SecurityContextKeyIdentifierClause sctic =
-				clause as SecurityContextKeyIdentifierClause;
+				keyIdentifierClause as SecurityContextKeyIdentifierClause;
 			return sctic != null && sctic.ContextId == ContextId &&
 			       sctic.Generation == KeyGeneration;
 		}

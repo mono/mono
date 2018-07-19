@@ -71,7 +71,7 @@ using MsNorthwind;
             
 
             Assert.IsNotNull(dbCommand.CommandText);
-            Assert.Greater(dbCommand.Parameters.Count, 0);
+            AssertHelper.Greater(dbCommand.Parameters.Count, 0);
         }
     }
 }

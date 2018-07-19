@@ -265,7 +265,7 @@ namespace System.Windows.Forms {
 				clip = new Rectangle (0, 0, form.Width, form.Height);
 				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
 			}
-			XplatUI.PaintEventEnd (ref m, form.Handle, false);
+			XplatUI.PaintEventEnd (ref m, form.Handle, false, pe);
 			return true;
 		}
 

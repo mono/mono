@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 System.Xml.Linq/ExtensionsTest.cs
 System.Xml.Linq/XAttributeTest.cs
 System.Xml.Linq/XCommentTest.cs

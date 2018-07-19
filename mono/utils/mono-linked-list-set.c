@@ -1,5 +1,6 @@
-/*
- * mono-split-ordered-list.c: A lock-free split ordered list.
+/**
+ * \file
+ * A lock-free split ordered list.
  *
  * Author:
  *	Rodrigo Kumpera (kumpera@gmail.com)
@@ -25,7 +26,7 @@ mask (gpointer n, uintptr_t bit)
 }
 
 gpointer
-get_hazardous_pointer_with_mask (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
+mono_lls_get_hazardous_pointer_with_mask (gpointer volatile *pp, MonoThreadHazardPointers *hp, int hazard_index)
 {
 	gpointer p;
 
@@ -56,7 +57,6 @@ get_hazardous_pointer_with_mask (gpointer volatile *pp, MonoThreadHazardPointers
 /*
 Initialize @list and will use @free_node_func to release memory.
 If @free_node_func is null the caller is responsible for releasing node memory.
-@free_node_func must be lock-free.  That implies that it cannot use malloc/free.
 */
 void
 mono_lls_init (MonoLinkedListSet *list, void (*free_node_func)(void *))
@@ -69,11 +69,6 @@ mono_lls_init (MonoLinkedListSet *list, void (*free_node_func)(void *))
 Search @list for element with key @key.
 The nodes next, cur and prev are returned in @hp.
 Returns true if a node with key @key was found.
-This function cannot be called from a signal nor within interrupt context*.
-XXX A variant that works within interrupted is possible if needed.
-
-* interrupt context is when the current thread is reposible for another thread
-been suspended at an arbritary point. This is a limitation of our SMR implementation.
 */
 gboolean
 mono_lls_find (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, uintptr_t key)
@@ -94,12 +89,12 @@ try_again:
 	 */
 	mono_hazard_pointer_set (hp, 2, prev);
 
-	cur = (MonoLinkedListSetNode *) get_hazardous_pointer_with_mask ((gpointer*)prev, hp, 1);
+	cur = (MonoLinkedListSetNode *) mono_lls_get_hazardous_pointer_with_mask ((gpointer*)prev, hp, 1);
 
 	while (1) {
 		if (cur == NULL)
 			return FALSE;
-		next = (MonoLinkedListSetNode *) get_hazardous_pointer_with_mask ((gpointer*)&cur->next, hp, 0);
+		next = (MonoLinkedListSetNode *) mono_lls_get_hazardous_pointer_with_mask ((gpointer*)&cur->next, hp, 0);
 		cur_key = cur->key;
 
 		/*
@@ -120,12 +115,12 @@ try_again:
 			mono_hazard_pointer_set (hp, 2, cur);
 		} else {
 			next = (MonoLinkedListSetNode *) mono_lls_pointer_unmask (next);
-			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, next, cur) == cur) {
+			if (mono_atomic_cas_ptr ((volatile gpointer*)prev, next, cur) == cur) {
 				/* The hazard pointer must be cleared after the CAS. */
 				mono_memory_write_barrier ();
 				mono_hazard_pointer_clear (hp, 1);
 				if (list->free_node_func)
-					mono_thread_hazardous_free_or_queue (cur, list->free_node_func, FALSE, TRUE);
+					mono_thread_hazardous_queue_free (cur, list->free_node_func);
 			} else
 				goto try_again;
 		}
@@ -139,7 +134,6 @@ Insert @value into @list.
 The nodes value, cur and prev are returned in @hp.
 Return true if @value was inserted by this call. If it returns FALSE, it's the caller
 resposibility to release memory.
-This function cannot be called from a signal nor with the world stopped.
 */
 gboolean
 mono_lls_insert (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLinkedListSetNode *value)
@@ -159,16 +153,15 @@ mono_lls_insert (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLink
 		mono_hazard_pointer_set (hp, 0, value);
 		/* The CAS must happen after setting the hazard pointer. */
 		mono_memory_write_barrier ();
-		if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, value, cur) == cur)
+		if (mono_atomic_cas_ptr ((volatile gpointer*)prev, value, cur) == cur)
 			return TRUE;
 	}
 }
 
 /*
-Search @list for element with key @key.
+Search @list for element with key @key and remove it.
 The nodes next, cur and prev are returned in @hp
 Returns true if @value was removed by this call.
-This function cannot be called from a signal nor with the world stopped.
 */
 gboolean
 mono_lls_remove (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLinkedListSetNode *value)
@@ -184,16 +177,16 @@ mono_lls_remove (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLink
 
 		g_assert (cur == value);
 
-		if (InterlockedCompareExchangePointer ((volatile gpointer*)&cur->next, mask (next, 1), next) != next)
+		if (mono_atomic_cas_ptr ((volatile gpointer*)&cur->next, mask (next, 1), next) != next)
 			continue;
 		/* The second CAS must happen before the first. */
 		mono_memory_write_barrier ();
-		if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, mono_lls_pointer_unmask (next), cur) == cur) {
+		if (mono_atomic_cas_ptr ((volatile gpointer*)prev, mono_lls_pointer_unmask (next), cur) == cur) {
 			/* The CAS must happen before the hazard pointer clear. */
 			mono_memory_write_barrier ();
 			mono_hazard_pointer_clear (hp, 1);
 			if (list->free_node_func)
-				mono_thread_hazardous_free_or_queue (value, list->free_node_func, FALSE, TRUE);
+				mono_thread_hazardous_queue_free (value, list->free_node_func);
 		} else
 			mono_lls_find (list, hp, value->key);
 		return TRUE;

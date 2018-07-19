@@ -19,6 +19,7 @@ namespace MonoTests.System.Reflection.Emit
 	[TestFixture]
 	public class ILGeneratorTest
 	{
+		ModuleBuilder modulebuilder;
 		TypeBuilder tb;
 		ILGenerator il_gen;
 
@@ -38,8 +39,8 @@ namespace MonoTests.System.Reflection.Emit
 			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
 				assemblyName, AssemblyBuilderAccess.Run);
 
-			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
-			tb = module.DefineType ("T", TypeAttributes.Public);
+			modulebuilder = assembly.DefineDynamicModule ("module1");
+			tb = modulebuilder.DefineType ("T", TypeAttributes.Public);
 		}
 
 		[Test]
@@ -479,6 +480,136 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (0x1B, il [9]); //typespec
 			Assert.AreEqual (0x02, il [14]); //typedef
 			Assert.AreEqual (0x01, il [19]); //typeref
+		}
+
+		[Test]
+		public void MethodRefTokenSame () {
+			// Get the same non-virtual method from a base and a derived type so
+			// that the MemberInfo:DeclaredType differs but the tokens are the same.
+			//
+			// Regression test for bugzilla #59364
+
+			DefineBasicMethod ();
+
+			var m1 = typeof (object).GetMethod ("GetType");
+			var m2 = typeof (string).GetMethod ("GetType");
+
+			var value_getter = typeof (RuntimeMethodHandle).GetProperty ("Value").GetMethod;
+
+			var il = il_gen;
+
+			var loc = il.DeclareLocal (typeof (RuntimeMethodHandle));
+
+			// return ((int)(RuntimeMethodHandle (m1).Value == RuntimeMethodHandle (m2).Value)).ToString ()
+			il.Emit (OpCodes.Ldtoken, m1);
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloca, loc);
+			il.Emit (OpCodes.Call, value_getter);
+			il.Emit (OpCodes.Ldtoken, m2);
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloca, loc);
+			il.Emit (OpCodes.Call, value_getter);
+			il.Emit (OpCodes.Ceq);
+			il.Emit (OpCodes.Box, typeof (Int32));
+			il.Emit (OpCodes.Callvirt, typeof (object).GetMethod ("ToString"));
+			il.Emit (OpCodes.Ret);
+
+			var baked = tb.CreateType ();
+
+			var x = Activator.CreateInstance (baked);
+			var m = baked.GetMethod ("F");
+
+			var s = m.Invoke (x, null);
+
+			Assert.AreEqual ("1", s);
+			
+		}
+
+		public class Base<T> {
+			public int x;
+
+			public void M () { }
+		}
+
+		public class Derived : Base<string> {
+		}
+
+		[Test]
+		public void FieldRefTokenSame () {
+			DefineBasicMethod ();
+
+			// Get the same field from a base and a derived type so hat
+			// the MemberInfo:DeclaredType differs but the tokens are the same.
+			//
+			// Regression test for bugzilla #59364
+
+			var f1 = typeof (Base<string>).GetField ("x");
+			var f2 = typeof (Derived).GetField ("x");
+
+			var value_getter = typeof (RuntimeFieldHandle).GetProperty("Value").GetMethod;
+
+			var il = il_gen;
+
+			var loc = il.DeclareLocal (typeof (RuntimeFieldHandle));
+
+			il.Emit (OpCodes.Ldtoken, f1);
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloca, loc);
+			il.Emit (OpCodes.Call, value_getter);
+			il.Emit (OpCodes.Ldtoken, f2);
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloca, loc);
+			il.Emit (OpCodes.Call, value_getter);
+			il.Emit (OpCodes.Ceq);
+			il.Emit (OpCodes.Box, typeof (Int32));
+			il.Emit (OpCodes.Callvirt, typeof (object).GetMethod ("ToString"));
+			il.Emit (OpCodes.Ret);
+
+			var baked = tb.CreateType ();
+
+			var x = Activator.CreateInstance (baked);
+			var m = baked.GetMethod ("F");
+
+			var s = m.Invoke (x, null);
+
+			Assert.AreEqual ("1", s);
+		}
+
+		[Test]
+		public void MethodSpecTokenSame () {
+			DefineBasicMethod ();
+			// Get the same method from a base generic instance and
+			// a type derived from it so that the
+			// MemberInfo:DeclaredType differs but the tokens are
+			// the same.
+			//
+			// Regression test for bugzilla #60233
+
+			var m1 = typeof (Base<string>).GetMethod ("M");
+			var m2 = typeof (Derived).GetMethod ("M");
+
+			var il = il_gen;
+
+			var loc = il.DeclareLocal (typeof (Derived));
+
+			il.Emit (OpCodes.Newobj, typeof (Derived).GetConstructor(new Type[]{}));
+			il.Emit (OpCodes.Stloc, loc);
+			il.Emit (OpCodes.Ldloc, loc);
+			il.Emit (OpCodes.Call, m1);
+			il.Emit (OpCodes.Ldloc, loc);
+			il.Emit (OpCodes.Call, m2);
+			il.Emit (OpCodes.Ldstr, "1");
+			il.Emit (OpCodes.Ret);
+
+			var baked = tb.CreateType ();
+
+			var x = Activator.CreateInstance (baked);
+			var m = baked.GetMethod ("F");
+
+			var s = m.Invoke (x, null);
+
+			Assert.AreEqual ("1", s);
+
 		}
 	}
 }

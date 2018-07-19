@@ -86,7 +86,7 @@ LOCK RULES
 Simple locks:
  	Can be acquired at any point regardless of which locks are taken or not.
 	No other locks can be acquired or released while holding a simple lock.
-	Reentrancy is not recomended. (warning)
+	Reentrancy is not recommended. (warning)
 	Simple locks are leaf locks on the lock lattice.
 
 Complex locks:
@@ -129,7 +129,7 @@ ERROR: tried to acquire lock DomainLock at mono_domain_code_reserve_align while 
 WARNING: tried to acquire lock ImageDataLock at mono_image_init_name_cache while holding ImageDataLock at mono_class_from_name
 WARNING: tried to acquire lock ImageDataLock at mono_image_init_name_cache while holding ImageDataLock at mono_image_add_to_name_cache
 	Both of those happen when filling up the name_cache, as it needs to alloc image memory.
-	This one is fixable by spliting mono_image_init_name_cache into a locked and an unlocked variants and calling them appropriatedly.
+	This one is fixable by splitting mono_image_init_name_cache into a locked and an unlocked variants and calling them appropriately.
 
 */
 

@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_UTILS_DL_FALLBACK_H__
 #define __MONO_UTILS_DL_FALLBACK_H__
 
@@ -6,6 +10,7 @@
 MONO_BEGIN_DECLS
 
 enum {
+	MONO_DL_EAGER = 0,
 	MONO_DL_LAZY  = 1,
 	MONO_DL_LOCAL = 2,
 	MONO_DL_MASK  = 3

@@ -227,8 +227,10 @@ namespace System.Security {
 		// - SecurityManager.InternalDemand (declarative)
 		internal void CasOnlyDemand (int skip)
 		{
+#if !MONO
 			Assembly current = null;
 			AppDomain domain = null;
+#endif
 
 			if (_ignored == null) {
 				// special case when directly called from CodeAccessPermission.Demand

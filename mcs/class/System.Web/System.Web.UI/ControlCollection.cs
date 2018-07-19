@@ -183,12 +183,12 @@ namespace System.Web.UI {
 			return new SimpleEnumerator (this);
 		}
 
-		public virtual int IndexOf (Control c)
+		public virtual int IndexOf (Control value)
 		{
-			if (controls == null || c == null)
+			if (controls == null || value == null)
 				return -1;
 
-			return Array.IndexOf (controls, c);
+			return Array.IndexOf (controls, value);
 		}
 
 		public virtual void Remove (Control value)

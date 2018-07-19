@@ -1,3 +1,4 @@
 TypeForwarders.cs
 AssemblyInfo.cs
 
+../../../../external/corefx/src/System.IO.FileSystem.AccessControl/src/System/IO/FileSystemAclExtensions.net46.cs

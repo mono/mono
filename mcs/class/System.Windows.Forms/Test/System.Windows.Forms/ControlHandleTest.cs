@@ -65,7 +65,7 @@ namespace MonoTests.System.Windows.Forms
 			o = c.Anchor;
 			c.Anchor = AnchorStyles.Right;
 			Assert.IsFalse (c.IsHandleCreated, "A6");
-#if !__MonoCS__
+#if !MONO
 			o = c.AutoScrollOffset;
 			c.AutoScrollOffset = new Point (40, 40);
 			Assert.IsFalse (c.IsHandleCreated, "A7");
@@ -174,7 +174,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A42");
 			o = c.IsDisposed;
 			Assert.IsFalse (c.IsHandleCreated, "A43");
-#if !__MonoCS__
+#if !MONO
 			o = c.IsMirrored;
 			Assert.IsFalse (c.IsHandleCreated, "A44");
 #endif
@@ -245,7 +245,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A66");
 			o = c.TopLevelControl;
 			Assert.IsFalse (c.IsHandleCreated, "A67");
-#if !__MonoCS__
+#if !MONO
 			o = c.UseWaitCursor;
 			c.UseWaitCursor = true;
 			Assert.IsFalse (c.IsHandleCreated, "A68");
@@ -270,7 +270,7 @@ namespace MonoTests.System.Windows.Forms
 			ProtectedPropertyControl c = new ProtectedPropertyControl ();
 
 			object o;
-#if !__MonoCS__
+#if !MONO
 			o = c.PublicCanRaiseEvents;
 			Assert.IsFalse (c.IsHandleCreated, "A1");
 #endif
@@ -301,7 +301,7 @@ namespace MonoTests.System.Windows.Forms
 			o = c.PublicResizeRedraw;
 			c.PublicResizeRedraw = !c.PublicResizeRedraw;
 			Assert.IsFalse (c.IsHandleCreated, "A13");
-#if !__MonoCS__
+#if !MONO
 			o = c.PublicScaleChildren;
 			Assert.IsFalse (c.IsHandleCreated, "A14");
 #endif
@@ -448,7 +448,7 @@ namespace MonoTests.System.Windows.Forms
 		
 		private class ProtectedPropertyControl : Control
 		{
-#if !__MonoCS__
+#if !MONO
 			public bool PublicCanRaiseEvents { get { return base.CanRaiseEvents; } }
 #endif
 			public CreateParams PublicCreateParams { get { return base.CreateParams; } }
@@ -463,7 +463,7 @@ namespace MonoTests.System.Windows.Forms
 			public int PublicFontHeight { get { return base.FontHeight; } set { base.FontHeight = value; } }
 			public bool PublicRenderRightToLeft { get { return base.RenderRightToLeft; } }
 			public bool PublicResizeRedraw { get { return base.ResizeRedraw; } set { base.ResizeRedraw = value; } }
-#if !__MonoCS__
+#if !MONO
 			public bool PublicScaleChildren { get { return base.ScaleChildren; } }
 #endif
 			public bool PublicShowFocusCues { get { return base.ShowFocusCues; } }
@@ -495,7 +495,7 @@ namespace MonoTests.System.Windows.Forms
 			c = new ProtectedMethodsControl ();
 			c.PublicGetAccessibilityObjectById (0);
 			Assert.IsFalse (c.IsHandleCreated, "A6");
-#if !__MonoCS__
+#if !MONO
 			c.PublicGetAutoSizeMode ();
 			Assert.IsFalse (c.IsHandleCreated, "A7");
 			c.PublicGetScaledBounds (new Rectangle (0, 0, 100, 100), new SizeF (1.5f, 1.5f), BoundsSpecified.All);
@@ -549,7 +549,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A29");
 			c.PublicRtlTranslateLeftRight (LeftRightAlignment.Left);
 			Assert.IsFalse (c.IsHandleCreated, "A30");
-#if !__MonoCS__
+#if !MONO
 			c.PublicScaleControl (new SizeF (1.5f, 1.5f), BoundsSpecified.All);
 			Assert.IsFalse (c.IsHandleCreated, "A31");
 #endif
@@ -557,7 +557,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.IsHandleCreated, "A32");
 			c.PublicSelect ();
 			Assert.IsFalse (c.IsHandleCreated, "A33");
-#if !__MonoCS__
+#if !MONO
 			c.PublicSetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			Assert.IsFalse (c.IsHandleCreated, "A34");
 #endif
@@ -594,7 +594,7 @@ namespace MonoTests.System.Windows.Forms
 			public void PublicCreateHandle () { base.CreateHandle (); }
 			public void PublicDestroyHandle () { base.DestroyHandle (); }
 			public AccessibleObject PublicGetAccessibilityObjectById (int objectId) { return base.GetAccessibilityObjectById (objectId); }
-#if !__MonoCS__
+#if !MONO
 			public AutoSizeMode PublicGetAutoSizeMode () { return base.GetAutoSizeMode (); }
 			public Rectangle PublicGetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified) { return base.GetScaledBounds (bounds, factor, specified); }
 #endif
@@ -620,12 +620,12 @@ namespace MonoTests.System.Windows.Forms
 			public ContentAlignment PublicRtlTranslateContent (ContentAlignment align) { return base.RtlTranslateContent (align); }
 			public HorizontalAlignment PublicRtlTranslateHorizontal (HorizontalAlignment align) { return base.RtlTranslateHorizontal (align); }
 			public LeftRightAlignment PublicRtlTranslateLeftRight (LeftRightAlignment align) { return base.RtlTranslateLeftRight (align); }
-#if !__MonoCS__
+#if !MONO
 			public void PublicScaleControl (SizeF factor, BoundsSpecified specified) { base.ScaleControl (factor, specified); }
 #endif
 			public void PublicScaleCore (float dx, float dy) { base.ScaleCore (dx, dy); }
 			public void PublicSelect () { base.Select (); }
-#if !__MonoCS__
+#if !MONO
 			public void PublicSetAutoSizeMode (AutoSizeMode mode) { base.SetAutoSizeMode (mode); }
 #endif
 			public void PublicSetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) { base.SetBoundsCore (x, y, width, height, specified); }

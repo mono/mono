@@ -1,29 +1,27 @@
 
 #include ReferenceSource.common.sources
 
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ConfigurationStrings.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DataContractSerializerSection.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeElementCollection.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeElement.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeValidatorAttribute.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeValidator.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/NetDataContractSerializerSection.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ParameterElementCollection.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ParameterElement.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/Properties.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/SerializationSectionGroup.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/TypeElementCollection.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/TypeElement.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ConfigurationStrings.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DataContractSerializerSection.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeElementCollection.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeElement.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeValidatorAttribute.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/DeclaredTypeValidator.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/NetDataContractSerializerSection.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ParameterElementCollection.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/ParameterElement.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/Properties.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/SerializationSectionGroup.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/TypeElementCollection.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Configuration/TypeElement.cs
 
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CodeExporter.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ContractCodeDomInfo.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CodeExporter.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ContractCodeDomInfo.cs
 
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ExportOptions.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ImportOptions.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaExporter.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaHelper.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaImporter.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractExporter.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractImporter.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ExportOptions.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ImportOptions.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaImporter.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractExporter.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XsdDataContractImporter.cs
 
 

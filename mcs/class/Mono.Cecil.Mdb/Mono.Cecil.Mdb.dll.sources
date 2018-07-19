@@ -1,7 +1,3 @@
-../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/AssemblyInfo.cs
-../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbReader.cs
-../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbWriter.cs
-../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
-../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
-../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
-../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs
+../../../external/cecil/ProjectInfo.cs
+../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/*.cs
+../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/*.cs

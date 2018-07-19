@@ -1,8 +1,0 @@
-This is fork of Microsoft DLR source code. The original code was published at
-http://dlr.codeplex.com/ which had the code used for .NET 4.0
-System.Linq.Expression public API. Since them the code was migrated to
-https://github.com/IronLanguages/main but it no longer has the goal to offer
-compatible System.Linq.Expression API and we cannot use some part of it.
-
-We want to have minimum local changes. Importatant changes need to be marked
-using easily recognizable marker (like MONO_INTERPRETER) for easier merging.

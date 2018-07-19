@@ -120,17 +120,17 @@ namespace System.Web.UI.WebControls
 			
 			return true;
 		}
-		protected virtual void LoadViewState (object savedState)
+		protected virtual void LoadViewState (object state)
 		{
-			if (savedState is Pair) {
-				Pair p = (Pair) savedState;
+			if (state is Pair) {
+				Pair p = (Pair) state;
 				object[] akeys = (object[]) p.First;
 				object[] avals = (object[]) p.Second;
 				for (int n=0; n<akeys.Length; n++) {
 					keyTable [akeys[n]] = avals [n];
 				}
-			} else if (savedState is object[]) {
-				object[] avals = (object[]) savedState;
+			} else if (state is object[]) {
+				object[] avals = (object[]) state;
 				for (int n=0; n<avals.Length; n++)
 					keyTable [keyNames[n]] = avals [n];
 			}

@@ -2222,7 +2222,7 @@ namespace System.Windows.Forms
 
 		protected virtual bool ShouldSerializeLinkHoverColor ()
 		{
-			return grid_style.LinkHoverColor != grid_style.LinkHoverColor;
+			return grid_style.LinkHoverColor != default_style.LinkHoverColor;
 		}
 
 		protected virtual bool ShouldSerializeParentRowsBackColor ()

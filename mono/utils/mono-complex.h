@@ -1,16 +1,18 @@
-/*
-* mono-complex.h: C99 Complex math cross-platform support code
+/**
+ * \file
+* C99 Complex math cross-platform support code
 *
 * Author:
 *	Joao Matos (joao.matos@xamarin.com)
 *
 * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
+* Licensed under the MIT license. See LICENSE file in the project root for full license information.
 */
 
 #include <config.h>
 #include <glib.h>
 
-#if !defined (HAVE_COMPLEX_H)
+#if !defined (HAVE_COMPLEX_H) || (defined (ANDROID_UNIFIED_HEADERS) && __ANDROID_API__ < 23)
 #include <../../support/libm/complex.h>
 #else
 #include <complex.h>

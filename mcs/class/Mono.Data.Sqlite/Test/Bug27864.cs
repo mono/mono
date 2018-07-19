@@ -9,7 +9,6 @@
 // Copyright 2015 Xamarin Inc.
 //
 
-#if MONOTOUCH
 using System;
 using System.Data;
 using System.IO;
@@ -21,13 +20,24 @@ namespace MonoTests.Mono.Data.Sqlite {
 	
 	[TestFixture]
 	public class SqliteiOS82BugTests {
-		readonly static string dbPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "adodemo.db3");
-		readonly static string connectionString = "Data Source=" + dbPath;
-		static SqliteConnection cnn = new SqliteConnection (connectionString);
+		string dbPath;
+		string connectionString;
+		SqliteConnection cnn;
 		
 		[SetUp]
 		public void Create()
 		{
+			dbPath = Path.GetTempFileName ();
+
+			// We want to start with a fresh db for each full run
+			// The database is created on the first open()
+			// but TempFile does create a file
+			if (File.Exists (dbPath))
+				File.Delete (dbPath);
+
+			connectionString = "Data Source=" + dbPath;
+			cnn = new SqliteConnection (connectionString);
+
 			try {
 				if(File.Exists(dbPath)) {
 					cnn.Dispose();
@@ -55,6 +65,13 @@ namespace MonoTests.Mono.Data.Sqlite {
 			finally {
 				cnn.Close();  
 			}
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (File.Exists (dbPath))
+				File.Delete (dbPath);
 		}
 
 		// Ref: https://bugzilla.xamarin.com/show_bug.cgi?id=27864
@@ -96,13 +113,14 @@ namespace MonoTests.Mono.Data.Sqlite {
 					}
 				}
 			} catch (SqliteException ex) {
+#if MONOTOUCH
 				// Expected Exception from iOS 8.2 (broken) to 9.0 (fixed)
 				if (BCL.Tests.TestRuntime.CheckSystemVersion (8,2) && !BCL.Tests.TestRuntime.CheckSystemVersion (9,0)) 
 					Assert.That (ex.Message.Contains ("no such column: com.Name"));
 				else
-					throw new AssertionException ("Unexpected Sqlite Error", ex); // This should not happen
+					throw;
+#endif
 			}
 		}
 	}
 }
-#endif

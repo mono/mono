@@ -23,6 +23,8 @@ namespace MonoTests.System.Net
 public class ServicePointTest
 {
 	static private int max;
+
+#if !FEATURE_NO_BSD_SOCKETS
 	[SetUp]
 	public void SaveMax () {
 		max = ServicePointManager.MaxServicePoints;
@@ -33,9 +35,10 @@ public class ServicePointTest
 	public void RestoreMax () {
 		ServicePointManager.MaxServicePoints = max;
 	}
+#endif
 
         [Test]
-		[Category ("InetAccess")]
+		[Category ("NotWorking")]
         public void All ()
         {
 		ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -121,7 +124,7 @@ public class ServicePointTest
 	// while ConnectionLimit equals 2
 
 	[Test]
-	[Category ("InetAccess")]
+	[Category ("NotWorking")]
 	public void ConnectionLimit ()
 	{		
 		// the default is already 2, just in case it isn't..
@@ -153,8 +156,7 @@ public class ServicePointTest
 	}
 
 	[Test]
-	[Category ("InetAccess")]
-	[Category ("AndroidNotWorking")] // #A1 fails
+	[Category ("NotWorking")] // #A1 fails
 	public void EndPointBind ()
 	{
 		Uri uri = new Uri ("http://www.go-mono.com/");
@@ -184,30 +186,8 @@ public class ServicePointTest
 		Assert.IsTrue (called, "#A2");
 	}
 
-	public static void GetRequestStreamCallback (IAsyncResult asynchronousResult)
-	{
-	}
-
-	[Test] //Covers #19823
-	public void CloseConnectionGroupConcurency ()
-	{
-		// Try with multiple service points
-		for (var i = 0; i < 10; i++) {
-			Uri targetUri = new Uri ("http://" + i + ".mono-project.com");
-			var req = (HttpWebRequest) HttpWebRequest.Create (targetUri);
-			req.ContentType = "application/x-www-form-urlencoded";
-			req.Method = "POST";
-			req.ConnectionGroupName = "" + i;
-			req.ServicePoint.MaxIdleTime = 1;
-
-			req.BeginGetRequestStream (new AsyncCallback (GetRequestStreamCallback), req);
-			Thread.Sleep (1);
-			req.ServicePoint.CloseConnectionGroup (req.ConnectionGroupName);
-		}
-	}
-
-
 	[Test]
+	[Category ("RequiresBSDSockets")] // Tests internals, so it doesn't make sense to assert that PlatformNotSupportedExceptions are thrown.
 	public void DnsRefreshTimeout ()
 	{
 		const int dnsRefreshTimeout = 2000;
@@ -219,7 +199,7 @@ public class ServicePointTest
 
 		ServicePointManager.DnsRefreshTimeout = dnsRefreshTimeout;
 
-		uri = new Uri ("http://www.google.com/");
+		uri = new Uri ("http://localhost/");
 		sp = ServicePointManager.FindServicePoint (uri);
 
 		hostEntryProperty = typeof (ServicePoint).GetProperty ("HostEntry", BindingFlags.NonPublic | BindingFlags.Instance);

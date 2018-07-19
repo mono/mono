@@ -1,5 +1,6 @@
-/*
- * mini-unwind.h: Stack Unwinding Interface
+/**
+ * \file
+ * Stack Unwinding Interface
  *
  * Authors:
  *   Zoltan Varga (vargaz@gmail.com)
@@ -72,6 +73,14 @@
  */
 #define DW_CFA_mono_advance_loc DW_CFA_lo_user
 
+/*
+ * Mono extension, Windows x64 unwind ABI needs some more details around sp alloc size and fp offset.
+ */
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+#define DW_CFA_mono_sp_alloc_info_win64 (DW_CFA_lo_user + 1)
+#define DW_CFA_mono_fp_alloc_info_win64 (DW_CFA_lo_user + 2)
+#endif
+
 /* Represents one unwind instruction */
 typedef struct {
 	guint8 op; /* One of DW_CFA_... */
@@ -107,12 +116,28 @@ typedef struct {
  */
 #define mono_emit_unwind_op_mark_loc(cfg,ip,n) mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_mono_advance_loc, 0, (n))
 
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+#define mono_emit_unwind_op_sp_alloc(cfg,ip,size) mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_mono_sp_alloc_info_win64, 0, (size))
+#define mono_emit_unwind_op_fp_alloc(cfg,ip,reg,size) mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_mono_fp_alloc_info_win64, (reg), (size))
+#else
+#define mono_emit_unwind_op_sp_alloc(cfg,ip,size)
+#define mono_emit_unwind_op_fp_alloc(cfg,ip,reg,size)
+#endif
+
 /* Similar macros usable when a cfg is not available, like for trampolines */
 #define mono_add_unwind_op_def_cfa(op_list,code,buf,reg,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_def_cfa, (reg), (offset))); } while (0)
 #define mono_add_unwind_op_def_cfa_reg(op_list,code,buf,reg) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_def_cfa_register, (reg), (0))); } while (0)
 #define mono_add_unwind_op_def_cfa_offset(op_list,code,buf,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_def_cfa_offset, 0, (offset))); } while (0)
 #define mono_add_unwind_op_same_value(op_list,code,buf,reg) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_same_value, (reg), 0)); } while (0)
 #define mono_add_unwind_op_offset(op_list,code,buf,reg,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_offset, (reg), (offset))); } while (0)
+
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+#define mono_add_unwind_op_sp_alloc(op_list,code,buf,size) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_mono_sp_alloc_info_win64, 0, (size))); } while (0)
+#define mono_add_unwind_op_fp_alloc(op_list,code,buf,reg,size) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_mono_fp_alloc_info_win64, (reg), (size))); } while (0)
+#else
+#define mono_add_unwind_op_sp_alloc(op_list,code,buf,size)
+#define mono_add_unwind_op_fp_alloc(op_list,code,buf,reg,size)
+#endif
 
 #define mono_free_unwind_info(op_list) do { GSList *l; for (l = op_list; l; l = l->next) g_free (l->data); g_slist_free (op_list); op_list = NULL; } while (0)
 
@@ -171,18 +196,15 @@ guint8* mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len
 
 /* Data retrieved from an LLVM Mono FDE entry */
 typedef struct {
-	/* Malloc'ed */
-	guint8 *unw_info;
 	guint32 unw_info_len;
-	MonoJitExceptionInfo *ex_info;
 	guint32 ex_info_len;
-	gpointer *type_info;
+	int type_info_len;
 	int this_reg;
 	int this_offset;
 } MonoLLVMFDEInfo;
 
 void
-mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res);
+mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res, MonoJitExceptionInfo *ei, gpointer *type_info, guint8 *unw_info) MONO_LLVM_INTERNAL;
 
 GSList* mono_unwind_get_cie_program (void);
 

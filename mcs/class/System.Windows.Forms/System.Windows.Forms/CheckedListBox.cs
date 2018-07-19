@@ -423,7 +423,19 @@ namespace System.Windows.Forms
 				owner.UpdateCollections ();
 				return idx;
 			}
-		}
+
+			public override void Clear ()
+			{
+				owner.check_states.Clear ();
+				base.Clear ();
+			}
+
+			internal override void UpdateSelection (int removed_index)
+			{
+				owner.check_states.Remove (this[removed_index]);
+				base.UpdateSelection (removed_index);
+			}
+		}	
 
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{

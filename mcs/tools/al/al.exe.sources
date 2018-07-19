@@ -1,2 +1,9 @@
 Al.cs
 ../../build/common/Consts.cs
+../../../external/ikvm/reflect/*.cs
+../../../external/ikvm/reflect/Emit/*.cs
+../../../external/ikvm/reflect/Metadata/*.cs
+../../../external/ikvm/reflect/Reader/*.cs
+../../../external/ikvm/reflect/Writer/*.cs
+../../../external/ikvm/reflect/Impl/*.cs
+../../../external/ikvm/reflect/Properties/*.cs

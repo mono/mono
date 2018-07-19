@@ -1,0 +1,11 @@
+	<generatePublisherEvidence enabled="false" />
+	<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+		<dependentAssembly>
+			<assemblyIdentity name="Microsoft.Build.Framework" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+			<bindingRedirect oldVersion="0.0.0.0-100.0.0.0" newVersion="@ASM_VERSION@" />
+		</dependentAssembly>
+		<dependentAssembly>
+			<assemblyIdentity name="Microsoft.Build.Engine" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+			<bindingRedirect oldVersion="0.0.0.0-100.0.0.0" newVersion="@ASM_VERSION@" />
+		</dependentAssembly>
+	</assemblyBinding>

@@ -45,9 +45,9 @@ namespace Microsoft.Build.Construction
 			get { return Line == 0 ? File : String.Format ("{0} ({1}{2})", File, Line, Column != 0 ? "," + Column : String.Empty); }
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			var o = other as ElementLocation;
+			var o = obj as ElementLocation;
 			return (object) o != null && o.File == File && o.Line == Line && o.Column == Column;
 		}
 

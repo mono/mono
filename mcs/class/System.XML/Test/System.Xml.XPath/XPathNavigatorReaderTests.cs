@@ -668,7 +668,6 @@ namespace MonoTests.System.Xml.XPath
 		[Test]
 		public void ReadSubtreeAttributesByIndex ()
 		{
-			XmlWriter xw;
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<u:Timestamp u:Id='ID1' xmlns:u='urn:foo'></u:Timestamp>");
 			XmlReader r = doc.CreateNavigator ().ReadSubtree ();

@@ -33,7 +33,6 @@ using System.IO;
 using System.Collections.Specialized;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web {
 
@@ -55,7 +54,7 @@ namespace MonoTests.System.Web {
 		public void HtmlAttributeEncode_String_TextWriter ()
 		{
 			var sw = new StringWriter ();
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlAttributeEncode ("string", null);
 			}, "#A1");
 
@@ -96,7 +95,7 @@ namespace MonoTests.System.Web {
 		public void HtmlDecode_String_TextWriter ()
 		{
 			StringWriter sw;
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlDecode ("string", null);
 			}, "#A1");
 
@@ -237,7 +236,7 @@ namespace MonoTests.System.Web {
 		public void HtmlEncode_2 ()
 		{
 			StringWriter sw;
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlEncode ("string", null);
 			}, "#A1");
 

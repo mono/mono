@@ -19,7 +19,7 @@ relatively easy to adapt to new compilers with a different set of predefined
 macros.  Currently these macros generally identify platforms instead of
 features.  In many cases, this is a mistake.
 
-3) The code currently avoids #elif, eventhough that would make it more
+3) The code currently avoids #elif, even though that would make it more
 readable.  This was done since #elif would need to be understood by ALL
 compilers used to build the collector, and that hasn't always been the case.
 It makes sense to reconsider this decision at some point, since #elif has been

@@ -39,9 +39,9 @@ namespace System.Web.UI.WebControls
 		IOrderedDictionary keys;
 		IOrderedDictionary values;
 		
-		public GridViewDeleteEventArgs (int index)
+		public GridViewDeleteEventArgs (int rowIndex)
 		{
-			this.rowIndex = index;
+			this.rowIndex = rowIndex;
 		}
 		
 		internal GridViewDeleteEventArgs (int index, IOrderedDictionary keys, IOrderedDictionary values)

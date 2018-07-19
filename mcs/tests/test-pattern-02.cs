@@ -48,14 +48,14 @@ class ConstantPattern
 
 		object o4 = (byte?)255;
 		var ggg = o4 is 255;
-		if (!ggg)
+		if (ggg)
 			return 8;
 
 		if (o4 is null)
 			return 9;
 
 		object o5 = (double)-255;
-		if (!(o5 is -byte.MaxValue))
+		if (o5 is -byte.MaxValue)
 			return 10;
 
 		object o6 = MyEnum.V_4;

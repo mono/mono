@@ -506,17 +506,17 @@ namespace System.Web.UI.WebControls
 			Expanded = !Expanded.GetValueOrDefault(false);
 		}
 
-		void IStateManager.LoadViewState (object savedState)
+		void IStateManager.LoadViewState (object state)
 		{
-			LoadViewState (savedState);
+			LoadViewState (state);
 		}
 
-		protected virtual void LoadViewState (object savedState)
+		protected virtual void LoadViewState (object state)
 		{
-			if (savedState == null)
+			if (state == null)
 				return;
 
-			object[] states = (object[]) savedState;
+			object[] states = (object[]) state;
 			ViewState.LoadViewState (states [0]);
 			
 			if (tree != null && SelectedFlag)

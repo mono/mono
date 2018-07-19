@@ -32,7 +32,6 @@ using System.Text;
 using System.Web.Security;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Security {
 
@@ -70,19 +69,19 @@ namespace MonoTests.System.Web.Security {
 		{
 			MembershipUser user;
 
-			AssertExtensions.Throws<MembershipCreateUserException> (() => {
+			Assert.Throws<MembershipCreateUserException> (() => {
 				user = Membership.CreateUser (null, "password");
 			}, "#A1");
 
-			AssertExtensions.Throws<MembershipCreateUserException> (() => {
+			Assert.Throws<MembershipCreateUserException> (() => {
 				user = Membership.CreateUser (String.Empty, "password");
 			}, "#A2");
 
-			AssertExtensions.Throws<MembershipCreateUserException> (() => {
+			Assert.Throws<MembershipCreateUserException> (() => {
 				user = Membership.CreateUser ("user", null);
 			}, "#B1");
 
-			AssertExtensions.Throws<MembershipCreateUserException> (() => {
+			Assert.Throws<MembershipCreateUserException> (() => {
 				user = Membership.CreateUser ("user", String.Empty);
 			}, "#B2");
 		}

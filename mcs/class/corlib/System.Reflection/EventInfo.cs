@@ -28,6 +28,7 @@
 //
 
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection {
@@ -252,7 +253,7 @@ namespace System.Reflection {
 			}
 
 			addHandlerType = addHandlerDelegateType.MakeGenericType (typeVector);
-#if NET_2_1
+#if MOBILE
 			// with Silverlight a coreclr failure (e.g. Transparent caller creating a delegate on a Critical method)
 			// would normally throw an ArgumentException, so we set throwOnBindFailure to false and check for a null
 			// delegate that we can transform into a MethodAccessException
@@ -276,6 +277,26 @@ namespace System.Reflection {
 		}
 		public virtual MethodInfo RemoveMethod {
 			get { return GetRemoveMethod (true); }
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern EventInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
+
+		internal static EventInfo GetEventFromHandle (Mono.RuntimeEventHandle handle)
+		{
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
+			return internal_from_handle_type (handle.Value, IntPtr.Zero);
+		}
+
+		internal static EventInfo GetEventFromHandle (Mono.RuntimeEventHandle handle, RuntimeTypeHandle reflectedType)
+		{
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
+			EventInfo ei = internal_from_handle_type (handle.Value, reflectedType.Value);
+			if (ei == null)
+				throw new ArgumentException ("The event handle and the type handle are incompatible.");
+			return ei;
 		}
 	}
 }

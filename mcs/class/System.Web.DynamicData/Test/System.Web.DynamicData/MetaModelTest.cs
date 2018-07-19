@@ -48,7 +48,6 @@ using System.Web.DynamicData.ModelProviders;
 using System.Web.Routing;
 
 using NUnit.Framework;
-using NUnit.Mocks;
 using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.Common;
@@ -238,8 +237,8 @@ namespace MonoTests.System.Web.DynamicData
 		public void GetModel ()
 		{
 			Utils.GetModel<UseOnlyInGetModelTestDataContext> ();
-			AssertExtensions.Throws<ArgumentNullException> (() => MetaModel.GetModel (null), "#A1");
-			AssertExtensions.Throws<InvalidOperationException> (() => MetaModel.GetModel (typeof (object)), "#A2");
+			Assert.Throws<ArgumentNullException> (() => MetaModel.GetModel (null), "#A1");
+			Assert.Throws<InvalidOperationException> (() => MetaModel.GetModel (typeof (object)), "#A2");
 			Assert.IsNotNull (MetaModel.GetModel (typeof (UseOnlyInGetModelTestDataContext)));
 		}
 
@@ -249,7 +248,7 @@ namespace MonoTests.System.Web.DynamicData
 			MetaModel m = Utils.GetModel<MyDataContext2> ();
 			MetaTable t;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => m.TryGetTable (null, out t), "#A1");
+			Assert.Throws<ArgumentNullException> (() => m.TryGetTable (null, out t), "#A1");
 
 			Assert.IsTrue (m.TryGetTable ("FooTable", out t), "#B1");
 			Assert.IsNotNull (t, "#B2");
@@ -269,17 +268,17 @@ namespace MonoTests.System.Web.DynamicData
 			string str = null;
 			Type type = null;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => t = m.GetTable (str), "#A1");
-			AssertExtensions.Throws<ArgumentNullException> (() => t = m.GetTable (type), "#A2");
-			AssertExtensions.Throws<ArgumentNullException> (() => t = m.GetTable (null, null), "#A3");
-			AssertExtensions.Throws<ArgumentNullException> (() => t = m.GetTable (null, typeof (Foo)), "#A4");
-			AssertExtensions.Throws<ArgumentNullException> (() => t = m.GetTable ("FooTable", null), "#A5");
+			Assert.Throws<ArgumentNullException> (() => t = m.GetTable (str), "#A1");
+			Assert.Throws<ArgumentNullException> (() => t = m.GetTable (type), "#A2");
+			Assert.Throws<ArgumentNullException> (() => t = m.GetTable (null, null), "#A3");
+			Assert.Throws<ArgumentNullException> (() => t = m.GetTable (null, typeof (Foo)), "#A4");
+			Assert.Throws<ArgumentNullException> (() => t = m.GetTable ("FooTable", null), "#A5");
 
-			AssertExtensions.Throws<ArgumentException> (() => t = m.GetTable (String.Empty), "#B1");
-			AssertExtensions.Throws<ArgumentException> (() => t = m.GetTable ("NoSuchName"), "#B2");
-			AssertExtensions.Throws<ArgumentException> (() => t = m.GetTable (typeof (object)), "#B3");
-			AssertExtensions.Throws<ArgumentException> (() => t = m.GetTable ("FooTable", typeof (object)), "#B4");
-			AssertExtensions.Throws<ArgumentException> (() => t = m.GetTable ("NoSuchTable", typeof (object)), "#B5");
+			Assert.Throws<ArgumentException> (() => t = m.GetTable (String.Empty), "#B1");
+			Assert.Throws<ArgumentException> (() => t = m.GetTable ("NoSuchName"), "#B2");
+			Assert.Throws<ArgumentException> (() => t = m.GetTable (typeof (object)), "#B3");
+			Assert.Throws<ArgumentException> (() => t = m.GetTable ("FooTable", typeof (object)), "#B4");
+			Assert.Throws<ArgumentException> (() => t = m.GetTable ("NoSuchTable", typeof (object)), "#B5");
 
 			Assert.IsNotNull (t = m.GetTable ("FooTable"), "#C1");
 			Assert.AreEqual (typeof (Foo), t.EntityType, "#C2");
@@ -297,11 +296,11 @@ namespace MonoTests.System.Web.DynamicData
 
 			// None of those are thrown from GetTable - it seems this method performs NO checks at all, sigh...
 			//
-			//AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
-			//AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath (String.Empty, PageAction.List, foo), "#A2");
-			//AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", null, foo), "#A3");
-			//AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", PageAction.List, null), "#A4");
-			//AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A5");
+			//Assert.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
+			//Assert.Throws<ArgumentException> (() => m.GetActionPath (String.Empty, PageAction.List, foo), "#A2");
+			//Assert.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", null, foo), "#A3");
+			//Assert.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", PageAction.List, null), "#A4");
+			//Assert.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A5");
 		}
 
 		[Test]
@@ -324,10 +323,10 @@ namespace MonoTests.System.Web.DynamicData
 			//
 			// at System.Web.DynamicData.MetaModel.TryGetTable(String uniqueTableName, MetaTable& table)
 			// at System.Web.DynamicData.MetaModel.GetTable(String uniqueTableName)
-			AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
+			Assert.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
 			Assert.AreEqual (String.Empty, m.GetActionPath ("FooTable", null, foo), "#A2");
 			Assert.AreEqual ("/FooTable/List.aspx", m.GetActionPath ("FooTable", PageAction.List, null), "#A3");
-			AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A4");
+			Assert.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A4");
 
 			Assert.AreEqual ("/FooTable/List.aspx", m.GetActionPath ("FooTable", "List", foo), "#B1");
 		}

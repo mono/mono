@@ -100,7 +100,7 @@ namespace Mono.XBuild.Utilities {
 				else
 					return String.Empty;
 			case "identity":
-				return Path.Combine (Path.GetDirectoryName (itemSpec), Path.GetFileName (itemSpec));
+				return itemSpec;
 			case "modifiedtime":
 				if (File.Exists (itemSpec))
 					return File.GetLastWriteTime (itemSpec).ToString ();

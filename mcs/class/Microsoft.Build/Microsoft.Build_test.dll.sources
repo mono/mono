@@ -1,3 +1,4 @@
+../../test-helpers/NunitHelpers.cs
 FunctionalTest.cs
 Microsoft.Build.Construction/ProjectItemElementTest.cs
 Microsoft.Build.Construction/ProjectRootElementTest.cs

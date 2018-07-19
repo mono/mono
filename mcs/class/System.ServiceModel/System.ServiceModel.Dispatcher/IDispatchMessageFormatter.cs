@@ -32,6 +32,6 @@ namespace System.ServiceModel.Dispatcher
 	public interface IDispatchMessageFormatter
 	{
 		void DeserializeRequest (Message message, object [] parameters);
-		Message SerializeReply (MessageVersion version, object [] parameters, object result);
+		Message SerializeReply (MessageVersion messageVersion, object [] parameters, object result);
 	}
 }

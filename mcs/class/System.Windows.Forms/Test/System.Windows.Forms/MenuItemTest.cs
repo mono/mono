@@ -253,8 +253,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(mi1.Text, mi2.Text, "Text #1");
 			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #1");
 			
-			Assert.AreEqual(mi1.Name, mi2.Name, "Name #1");
-			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #1");
+			Assert.AreEqual("", mi2.Name, "Name #1");
+			Assert.AreEqual(null, mi2.Tag, "Tag #1");
 			
 			mi1.BarBreak = false;
 			mi1.Break = false;
@@ -288,8 +288,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(mi1.ShowShortcut, mi2.ShowShortcut, "ShowShortcut #2");
 			Assert.AreEqual(mi1.Text, mi2.Text, "Text #2");
 			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #2");
-			Assert.AreEqual(mi1.Name, mi2.Name, "Name #2");
-			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #2");
+			Assert.AreEqual("", mi2.Name, "Name #2");
+			Assert.AreEqual(null, mi2.Tag, "Tag #2");
 		}
 	
 		[Test]

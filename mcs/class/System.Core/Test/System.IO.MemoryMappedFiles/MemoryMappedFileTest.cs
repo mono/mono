@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.IO.MemoryMappedFiles {
 
 	[TestFixture]
+	[Category("NotWasm")]
 	public class MemoryMappedFileTest {
 
 		void AssertThrows<ExType> (Action del) where ExType : Exception {
@@ -56,16 +57,28 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			return "test-" + named_index++;
 		}
 
-
+		static string baseTempDir = Path.Combine (Path.GetTempPath (), typeof (MemoryMappedFileTest).FullName);
 		static string tempDir = Path.Combine (Path.GetTempPath (), typeof (MemoryMappedFileTest).FullName);
 
 		string fname;
 
-		[SetUp]
-		protected void SetUp () {
-			if (Directory.Exists (tempDir))
-				Directory.Delete (tempDir, true);
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			try {
+				// Try to cleanup from any previous NUnit run.
+				Directory.Delete (baseTempDir, true);
+			} catch (Exception) {
+			}
+		}
 
+		[SetUp]
+		public void SetUp ()
+		{
+			int i = 0;
+			do {
+				tempDir = Path.Combine (baseTempDir, (++i).ToString());
+			} while (Directory.Exists (tempDir));
 			Directory.CreateDirectory (tempDir);
 
 			fname = Path.Combine (tempDir, "basic.txt");
@@ -77,9 +90,14 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[TearDown]
-		protected void TearDown () {
-			if (Directory.Exists (tempDir))
+		public void TearDown ()
+		{
+			try {
+				// This throws an exception under MS.NET and Mono on Windows,
+				// since the directory contains open files.
 				Directory.Delete (tempDir, true);
+			} catch (Exception) {
+			}
 		}
 
 		[Test]
@@ -102,26 +120,16 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		public void CreateNew ()
 		{
 			// This must succeed
-			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
-		}
-
-		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void CreateNew_OnExistingFile ()
-		{
-			// This must succeed
-			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
-			
-			// This should fail, the file exists
-			MemoryMappedFile.CreateNew (Path.Combine (tempDir, "createNew.test"), 8192);
+			MemoryMappedFile.CreateNew (MkNamedMapping (), 8192);
 		}
 
 		// Call this twice, it should always work
 		[Test]
 		public void CreateOrOpen_Multiple ()
 		{
-			MemoryMappedFile.CreateOrOpen (Path.Combine (tempDir, "createOrOpen.test"), 8192);
-			MemoryMappedFile.CreateOrOpen (Path.Combine (tempDir, "createOrOpen.test"), 8192);
+			var name = MkNamedMapping ();
+			MemoryMappedFile.CreateOrOpen (name, 8192);
+			MemoryMappedFile.CreateOrOpen (name, 8192);
 		}
 
 		[Test]
@@ -134,7 +142,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			// We are requesting fewer bytes to map.
 			MemoryMappedFile.CreateFromFile (f, FileMode.Open, "myMap", 4192);
 		}
-	
+
 		[Test]
 		public void CreateFromFile_Null () {
 			AssertThrows<ArgumentNullException> (delegate () {
@@ -252,6 +260,9 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		[Test]
 		public void NamedMappingToInvalidFile ()
 		{
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+				Assert.Ignore ("Backslashes in mapping names are disallowed on .NET and Mono on Windows");
+			}
 			var fileName = Path.Combine (tempDir, "temp_file_123");
 	        if (File.Exists (fileName))
 	            File.Delete (fileName);
@@ -291,9 +302,12 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			var name = MkNamedMapping ();
 			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite)) {
 				using (var m1 = MemoryMappedFile.CreateOrOpen (name, 4096, MemoryMappedFileAccess.ReadWrite)) {
-					using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor ()) {
-						v0.Write (10, 0x12345);
-						Assert.AreEqual (0x12345, v1.ReadInt32 (10));
+					using (var m2 = MemoryMappedFile.OpenExisting (name)) {
+						using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor (), v1 = m1.CreateViewAccessor (), v2 = m2.CreateViewAccessor ()) {
+							v0.Write (10, 0x12345);
+							Assert.AreEqual (0x12345, v1.ReadInt32 (10));
+							Assert.AreEqual (0x12345, v2.ReadInt32 (10));
+						}
 					}
 				}
 			}
@@ -352,7 +366,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
+		[ExpectedException(typeof(UnauthorizedAccessException))]
 		public void CreateViewStreamWithOffsetPastFileEnd ()
 		{
 			string f = Path.Combine (tempDir, "8192-file");
@@ -365,7 +379,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		}
 
 		[Test]
-		[ExpectedException(typeof(IOException))]
+		[ExpectedException(typeof(UnauthorizedAccessException))]
 		public void CreateViewStreamWithOffsetPastFileEnd2 ()
 		{
 			string f = Path.Combine (tempDir, "8192-file");
@@ -379,7 +393,9 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		[Test]
 		public void CreateViewStreamAlignToPageSize ()
 		{
-#if MONOTOUCH
+#if __WATCHOS__
+			int pageSize = 4096;
+#elif MONOTOUCH
 			// iOS bugs on ARM64 - bnc #27667 - apple #
 			int pageSize = (IntPtr.Size == 4) ? Environment.SystemPageSize : 4096;
 #else
@@ -392,7 +408,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 
 			MemoryMappedViewStream stream = mappedFile.CreateViewStream (pageSize * 2, 0, MemoryMappedFileAccess.ReadWrite);
 #if !MONOTOUCH
-			Assert.AreEqual (stream.Capacity, Environment.SystemPageSize);
+			Assert.AreEqual (Environment.SystemPageSize, stream.Capacity);
 #endif
 			stream.Write (new byte [pageSize], 0, pageSize);
 		}
@@ -405,9 +421,62 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			File.WriteAllBytes (f, new byte [size]);
 
 			FileStream file = File.OpenRead (f);
-			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.ReadExecute, null, 0, false);
+			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.Read, null, 0, false);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateNewLargerThanLogicalAddressSpace ()
+		{
+			if (IntPtr.Size != 4) {
+				Assert.Ignore ("Only applies to 32-bit systems");
+			}
+			MemoryMappedFile.CreateNew (MkNamedMapping (), (long) uint.MaxValue + 1);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CreateOrOpenLargerThanLogicalAddressSpace ()
+		{
+			if (IntPtr.Size != 4) {
+				Assert.Ignore ("Only applies to 32-bit systems");
+			}
+			MemoryMappedFile.CreateOrOpen (MkNamedMapping (), (long) uint.MaxValue + 1);
+		}
+
+		[Test]
+		public void NamedMappingWithDelayAllocatePages ()
+		{
+			var name = MkNamedMapping ();
+			using (var m0 = MemoryMappedFile.CreateNew(name, 4096, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, HandleInheritability.None)) {
+				using (MemoryMappedViewAccessor v0 = m0.CreateViewAccessor ()) {
+					Assert.AreEqual (0, v0.ReadInt32 (0));
+				}
+			}
+		}
+
+		[Test]
+		public void OpenSameFileMultipleTimes ()
+		{
+			// See bug 56493 - https://bugzilla.xamarin.com/show_bug.cgi?id=56493
+			for (var iteration = 0; iteration < 5; iteration++) {
+				using (var mmf = MemoryMappedFile.CreateFromFile(fname, FileMode.Open)) {
+					using (var accessor = mmf.CreateViewAccessor(0, 5)) {
+						var a = new byte [5];
+						accessor.ReadArray (0, a, 0, a.Length);
+						var s = new string (Array.ConvertAll (a, b => (char) b));
+						Assert.AreEqual ("Hello", s);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void OpenExistingWithNoExistingThrows()
+		{
+			Assert.Throws<FileNotFoundException>(() => {
+				MemoryMappedFile.OpenExisting (MkNamedMapping ());
+			});
 		}
 	}
 }
-
-

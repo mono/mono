@@ -174,9 +174,9 @@ namespace MonoTests.System.Data.Xml
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xw = new XmlTextWriter (sw);
 			Doc.DataSet.WriteXml (xw);
-			string s = sw.ToString ();
+			string s = sw.ToString ().Replace ("\r", "").Replace ("\n", Environment.NewLine);
 			Assert.AreEqual (xml, s, "#1");
-			Assert.AreEqual (xml, Doc.InnerXml, "#2");
+			Assert.AreEqual (xml, Doc.InnerXml.Replace ("\r", "").Replace ("\n", Environment.NewLine), "#2");
 			Assert.AreEqual ("EndOfFile", Reader.ReadState.ToString (), "test#01");
 
 			DataSet Set = Doc.DataSet;

@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// An input stream that decompresses from the BZip2 format (without the file
 	/// header chars) to be read as any other stream.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class BZip2InputStream : Stream
 	{
 		/// <summary>

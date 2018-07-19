@@ -61,8 +61,8 @@ namespace System.Windows.Forms
 				
 				if (height != value) {
 					height = value; 
-					if (base.Owner != null)
-						base.Owner.PerformLayout ();
+					if (Owner != null)
+						Owner.PerformLayout (Owner, "Style");						
 				}
 			}
 		}		

@@ -35,7 +35,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.Design.WebControls
 {
-	class CompositeControlDesigner : ControlDesigner
+	public class CompositeControlDesigner : ControlDesigner
 	{
 		public CompositeControlDesigner () {
 			throw new NotImplementedException ();
@@ -49,7 +49,7 @@ namespace System.Web.UI.Design.WebControls
 			throw new NotImplementedException ();
 		}
 
-		public virtual string GetDesignTimeHtml (DesignerRegionCollection regions) {
+		public override string GetDesignTimeHtml (DesignerRegionCollection regions) {
 			throw new NotImplementedException ();
 		}
 

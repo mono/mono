@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
 	public sealed class RepeatInfo {
 
 		// What is baseControl for ?
-		public void RenderRepeater (HtmlTextWriter w, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
+		public void RenderRepeater (HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			PrintValues (user);
 			RepeatLayout layout = RepeatLayout;
@@ -60,13 +60,13 @@ namespace System.Web.UI.WebControls {
 			}
 			if (RepeatDirection == RepeatDirection.Vertical) {
 				if (listLayout)
-					RenderList (w, user, controlStyle, baseControl);
+					RenderList (writer, user, controlStyle, baseControl);
 				else
-					RenderVert (w, user, controlStyle, baseControl);
+					RenderVert (writer, user, controlStyle, baseControl);
 			} else {
 				if (listLayout)
 						throw new InvalidOperationException ("The UnorderedList and OrderedList layouts only support vertical layout.");
-				RenderHoriz (w, user, controlStyle, baseControl);
+				RenderHoriz (writer, user, controlStyle, baseControl);
 			}
 		}
 

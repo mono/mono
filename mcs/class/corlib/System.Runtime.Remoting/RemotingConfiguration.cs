@@ -106,7 +106,12 @@ namespace System.Runtime.Remoting
 		{
 			lock (channelTemplates) {
 				if (!defaultConfigRead) {
-					ReadConfigFile (Environment.GetMachineConfigPath ());
+					var bundled = Environment.GetBundledMachineConfig ();
+					if (bundled != null)
+						ReadConfigString (bundled);
+
+					if (File.Exists (Environment.GetMachineConfigPath ()))
+						ReadConfigFile (Environment.GetMachineConfigPath ());
 					defaultConfigRead = true;
 				}
 
@@ -119,6 +124,22 @@ namespace System.Runtime.Remoting
 		public static void Configure (string filename) 
 		{
 			Configure (filename, false);
+		}
+
+		private static void ReadConfigString (string filename)
+		{
+			try
+			{
+				SmallXmlParser parser = new SmallXmlParser ();
+				using (TextReader rreader = new StringReader (filename)) {
+					ConfigHandler handler = new ConfigHandler (false);
+					parser.Parse (rreader, handler);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new RemotingException ("Configuration string could not be loaded: " + ex.Message, ex);
+			}
 		}
 
 		private static void ReadConfigFile (string filename)

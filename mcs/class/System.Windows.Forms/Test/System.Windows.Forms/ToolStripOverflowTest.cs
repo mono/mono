@@ -38,7 +38,6 @@ namespace MonoTests.System.Windows.Forms
 	public class ToolStripOverflowTests : TestHelper
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor ()
 		{
 			ToolStripOverflow tso = (ToolStripOverflow)new ToolStrip ().OverflowButton.DropDown;

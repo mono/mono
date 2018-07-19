@@ -31,6 +31,7 @@ System.Transactions/TransactionManagerCommunicationException.cs
 System.Transactions/TransactionOptions.cs
 System.Transactions/TransactionPromotionException.cs
 System.Transactions/TransactionScope.cs
+System.Transactions/TransactionScopeAsyncFlowOption.cs
 System.Transactions/TransactionScopeOption.cs
 System.Transactions/TransactionStatus.cs
 System.Transactions/Configuration/DefaultSettingsSection.cs

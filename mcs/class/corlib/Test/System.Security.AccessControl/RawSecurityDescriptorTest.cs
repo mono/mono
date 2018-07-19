@@ -9,7 +9,6 @@ using System;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.Security.AccessControl {
 

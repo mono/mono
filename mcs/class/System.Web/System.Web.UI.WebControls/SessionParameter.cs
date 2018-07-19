@@ -68,12 +68,12 @@ namespace System.Web.UI.WebControls {
 			return new SessionParameter (this);
 		}
 		protected internal
-		override object Evaluate (HttpContext ctx, Control control)
+		override object Evaluate (HttpContext context, Control control)
 		{
-			if (ctx == null || ctx.Session == null)
+			if (context == null || context.Session == null)
 				return null;
 			
-			return ctx.Session [SessionField];
+			return context.Session [SessionField];
 		}
 		
 		[DefaultValueAttribute ("")]

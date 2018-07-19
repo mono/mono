@@ -56,7 +56,6 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 
 	[assembly: AssemblyDelaySign (true)]
-	[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: ImportedFromTypeLib ("Accessibility")]
 

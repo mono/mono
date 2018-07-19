@@ -40,7 +40,7 @@ namespace Mono.CodeGeneration
 			AppDomain myDomain = System.Threading.Thread.GetDomain();
 			AssemblyName myAsmName = new AssemblyName();
 			myAsmName.Name = name;
-#if NET_2_1
+#if MOBILE
 			AssemblyBuilder myAsmBuilder = myDomain.DefineDynamicAssembly (myAsmName, AssemblyBuilderAccess.Run);
 #else
 			AssemblyBuilder myAsmBuilder = myDomain.DefineDynamicAssembly (myAsmName, AssemblyBuilderAccess.RunAndSave);

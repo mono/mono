@@ -197,7 +197,7 @@ namespace RabbitMQ.Client.Apigen {
 	    m_primitiveTypeFlagMap[amqpType] = isReference;
 	}
 
-        public void HandleOption(string opt) {
+        public bool HandleOption(string opt) {
             if (opt.StartsWith("/n:")) {
                 m_framingSubnamespace = opt.Substring(3);
             } else if (opt.StartsWith("/apiName:")) {
@@ -210,9 +210,9 @@ namespace RabbitMQ.Client.Apigen {
             } else if (opt == "/c") {
                 m_emitComments = true;
             } else {
-                Console.Error.WriteLine("Unsupported command-line option: " + opt);
-                Usage();
+		return false;
             }
+	    return true;
         }
 
         public void Usage() {
@@ -227,7 +227,8 @@ namespace RabbitMQ.Client.Apigen {
 
         public Apigen(ArrayList args) {
             while (args.Count > 0 && ((string) args[0]).StartsWith("/")) {
-                HandleOption((string) args[0]);
+		if (!HandleOption((string) args[0]))
+		  break;
                 args.RemoveAt(0);
             }
             if ((args.Count < 2)

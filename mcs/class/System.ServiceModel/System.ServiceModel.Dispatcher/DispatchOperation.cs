@@ -54,7 +54,7 @@ namespace System.ServiceModel.Dispatcher
 			tx_auto_complete, tx_required,
 			auto_dispose_params = true;
 		IDispatchMessageFormatter formatter;
-#if !NET_2_1
+#if !MOBILE
 		ImpersonationOption impersonation;
 		IOperationInvoker invoker;
 		SynchronizedCollection<IParameterInspector> inspectors
@@ -93,7 +93,7 @@ namespace System.ServiceModel.Dispatcher
 			get { return action; }
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		public SynchronizedCollection<ICallContextInitializer> CallContextInitializers {
 			get { return ctx_initializers; }
 		}
@@ -214,7 +214,7 @@ namespace System.ServiceModel.Dispatcher
 
 		void ThrowIfOpened ()
 		{
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 			// FIXME: get callback client runtime status when ChannelDispatcher is not available.
 			var state = Parent.ChannelDispatcher != null ? Parent.ChannelDispatcher.State : CommunicationState.Created; // Parent.CallbackClientRuntime.ChannelFactory.State;
 			switch (state) {

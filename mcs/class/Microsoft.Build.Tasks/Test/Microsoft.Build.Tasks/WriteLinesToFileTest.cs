@@ -115,6 +115,9 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		[Test]
 		public void TestLineWithEscapedQuote ()
 		{
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+				Assert.Ignore ("Throws \"Illegal characters in path\" on Windows since \" is not a legal Windows path character");
+			}
 			string[] lines = new string[] { "%22abc test%22 123 %22def%22" };
 			CreateProjectAndCheck (full_filepath, lines, false, true, delegate () {
 				CheckFileExists (full_filepath, true);

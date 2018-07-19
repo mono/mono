@@ -23,6 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -176,9 +177,9 @@ namespace MonoTests.System.ServiceModel.Discovery
 			Assert.IsNull (cf.GetProperty<DiscoveryEndpoint> (), "#1");
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
 			Assert.IsNull (ch.GetProperty<DiscoveryEndpoint> (), "#2");
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			ch.Open (TimeSpan.FromSeconds (5));
-			Assert.IsTrue (DateTime.Now - start < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
+			Assert.IsTrue (sw.Elapsed < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
 		}
 
 		[Test]
@@ -193,9 +194,9 @@ namespace MonoTests.System.ServiceModel.Discovery
 			var cf = be.BuildChannelFactory<IDuplexSessionChannel> (bc);
 			cf.Open ();
 			var ch = cf.CreateChannel (DiscoveryClientBindingElement.DiscoveryEndpointAddress);
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew ();
 			ch.Open (TimeSpan.FromSeconds (5));
-			Assert.IsTrue (DateTime.Now - start < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
+			Assert.IsTrue (sw.Elapsed < TimeSpan.FromSeconds (15), "It is likely that FindCriteria.Duration is ignored");
 		}
 
 		[Test]

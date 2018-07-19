@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Net;
 using System.Net.Security;
@@ -37,7 +37,6 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using NUnit.Framework.SyntaxHelpers;
 
 using QName = System.Xml.XmlQualifiedName;
 using WS = System.Web.Services.Description;
@@ -91,7 +90,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		static void CheckSoapBinding (object extension, string transport, TestLabel label)
 		{
 			label.EnterScope ("soap");
-			Assert.That (extension, Is.InstanceOfType (typeof (WS.SoapBinding)), label.Get ());
+			Assert.That (extension, Is.AssignableTo<WS.SoapBinding>(), label.Get ());
 			var soap = (WS.SoapBinding)extension;
 			Assert.That (soap.Style, Is.EqualTo (WS.SoapBindingStyle.Document), label.Get ());
 			Assert.That (soap.Transport, Is.EqualTo (transport), label.Get ());
@@ -107,9 +106,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			label.EnterScope ("http");
 
 			if (security == BasicHttpSecurityMode.Message) {
-				Assert.That (binding, Is.InstanceOfType (typeof(CustomBinding)), label.Get ());
+				Assert.IsInstanceOfType (typeof(CustomBinding), binding, label.Get ());
 			} else {
-				Assert.That (binding, Is.InstanceOfType (typeof(BasicHttpBinding)), label.Get ());
+				Assert.IsInstanceOfType (typeof(BasicHttpBinding), binding, label.Get ());
 				var basicHttp = (BasicHttpBinding)binding;
 				Assert.That (basicHttp.EnvelopeVersion, Is.EqualTo (EnvelopeVersion.Soap11), label.Get ());
 				Assert.That (basicHttp.MessageVersion, Is.EqualTo (MessageVersion.Soap11), label.Get ());
@@ -157,7 +156,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			label.EnterScope ("text");
 			if (encoding == WSMessageEncoding.Text) {
 				Assert.That (textElement, Is.Not.Null, label.Get ());
-				Assert.That (textElement.WriteEncoding, Is.InstanceOfType (typeof(UTF8Encoding)), label.Get ());
+				Assert.IsInstanceOfType (typeof(UTF8Encoding), textElement.WriteEncoding, label.Get ());
 			} else {
 				Assert.That (textElement, Is.Null, label.Get ());
 			}
@@ -409,9 +408,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		{
 			label.EnterScope ("net-tcp");
 			if (security == SecurityMode.Message) {
-				Assert.That (binding, Is.InstanceOfType (typeof(CustomBinding)), label.Get ());
+				Assert.IsInstanceOfType (typeof(CustomBinding), binding, label.Get ());
 			} else {
-				Assert.That (binding, Is.InstanceOfType (typeof(NetTcpBinding)), label.Get ());
+				Assert.IsInstanceOfType (typeof(NetTcpBinding), binding, label.Get ());
 				var netTcp = (NetTcpBinding)binding;
 				Assert.That (netTcp.EnvelopeVersion, Is.EqualTo (EnvelopeVersion.Soap12), label.Get ());
 				Assert.That (netTcp.MessageVersion, Is.EqualTo (MessageVersion.Soap12WSAddressing10), label.Get ());
@@ -751,7 +750,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			foreach (var node in all.ChildNodes) {
 				if (node is XmlWhitespace)
 					continue;
-				Assert.That (node, Is.InstanceOfType (typeof (XmlElement)), label.ToString ());
+				Assert.IsInstanceOfType (typeof (XmlElement), node, label.ToString ());
 				collection.Add ((XmlElement)node);
 			}
 			label.LeaveScope ();
@@ -789,7 +788,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			label.EnterScope ("extensions");
 			Assert.That (op.Extensions, Is.Not.Null, label.Get ());
 			Assert.That (op.Extensions.Count, Is.EqualTo (1), label.Get ());
-			Assert.That (op.Extensions [0], Is.InstanceOfType (typeof (WS.SoapOperationBinding)), label.Get ());
+			Assert.That (op.Extensions [0], Is.AssignableTo<WS.SoapOperationBinding>(), label.Get ());
 			var soap = (WS.SoapOperationBinding)op.Extensions [0];
 			TestSoap (soap, soap12, label);
 			label.LeaveScope ();
@@ -821,7 +820,7 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			Assert.That (binding.ExtensibleAttributes, Is.Null, label.Get ());
 			Assert.That (binding.Extensions, Is.Not.Null, label.Get ());
 			Assert.That (binding.Extensions.Count, Is.EqualTo (1), label.Get ());
-			Assert.That (binding.Extensions [0], Is.InstanceOfType (typeof (WS.SoapBodyBinding)), label.Get ());
+			Assert.That (binding.Extensions [0], Is.AssignableTo<WS.SoapBodyBinding> (), label.Get ());
 			var body = (WS.SoapBodyBinding)binding.Extensions [0];
 			TestSoapBody (body, soap12, label);
 			label.LeaveScope ();
@@ -860,3 +859,5 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		}
 	}
 }
+#endif
+

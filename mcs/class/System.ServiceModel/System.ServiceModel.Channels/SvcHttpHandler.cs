@@ -28,6 +28,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
@@ -51,7 +52,7 @@ namespace System.ServiceModel.Channels
 		Type factory_type;
 		string path;
 		ServiceHostBase host;
-		Dictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new Dictionary<HttpContext,ManualResetEvent> ();
+		ConcurrentDictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new ConcurrentDictionary<HttpContext,ManualResetEvent> ();
 		int close_state;
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
@@ -90,10 +91,9 @@ namespace System.ServiceModel.Channels
 		public void EndHttpRequest (HttpContext context)
 		{
 			ManualResetEvent wait;
-			if (!wcf_wait_handles.TryGetValue (context, out wait))
+			if (!wcf_wait_handles.TryRemove (context, out wait))
 				return;
 
-			wcf_wait_handles.Remove (context);
 			if (wait != null)
 				wait.Set ();
 		}
@@ -128,10 +128,10 @@ namespace System.ServiceModel.Channels
 
 			//ServiceHost for this not created yet
 			var baseUri = new Uri (new Uri (HttpContext.Current.Request.Url.GetLeftPart (UriPartial.Authority)), path);
-//			if (factory_type != null) {
-//				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type, new Uri [] {baseUri});
-//			}
-//			else
+			if (factory_type != null) {
+				host = ((ServiceHostFactory) Activator.CreateInstance (factory_type)).CreateServiceHost (type.ToString(), new Uri [] {baseUri});
+			}
+			else
 				host = new ServiceHost (type, baseUri);
 			host.Extensions.Add (new VirtualPathExtension (baseUri.AbsolutePath));
 

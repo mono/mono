@@ -1439,5 +1439,43 @@ namespace MonoTests.System.Web.Script.Serialization
 			Assert.AreEqual (1337.0, obj.d);
 			Assert.AreEqual (null, obj.o);
 		}
+
+		[Test]
+		public void DeserializeInCultureWithCommaSeparator ()
+		{
+			var origCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+				CommaSeparatorTest ();
+
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
+				CommaSeparatorTest ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = origCulture;
+			}
+		}
+
+		public class DoubleTest
+		{
+			public double[] value { get; set; }
+		}
+
+		void CommaSeparatorTest()
+		{
+			JavaScriptSerializer serializer = new JavaScriptSerializer ();
+
+			DoubleTest array = new DoubleTest ();
+			array.value = new[] { 123.345, 0.69 };
+
+			string arrayJson = serializer.Serialize (array);
+			Console.WriteLine (arrayJson);
+
+			// This throwed incorrectly a "System.ArgumentException: Invalid JSON primitive: 123.345" with a CurrentThread.CultureInfo that has a comma as the number separator.
+			DoubleTest obj = serializer.Deserialize<DoubleTest> (arrayJson);
+
+			Assert.AreEqual (123.345, obj.value[0], "#1");
+			Assert.AreEqual (0.69, obj.value[1], "#2");
+		}
 	}
 }

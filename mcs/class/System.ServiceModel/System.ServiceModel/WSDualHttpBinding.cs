@@ -58,7 +58,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected WSDualHttpBinding (WSDualHttpSecurityMode securityMode)
+		public WSDualHttpBinding(string configName)
+			: this (WSDualHttpSecurityMode.Message)
+		{
+		}
+
+		public WSDualHttpBinding (WSDualHttpSecurityMode securityMode)
 		{
 			security = new WSDualHttpSecurity (securityMode);
 		}

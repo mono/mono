@@ -46,12 +46,12 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected ChannelFactory (Type type)
+		protected ChannelFactory (Type channelType)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (!type.IsInterface)
-				throw new InvalidOperationException ("The type argument to the generic ChannelFactory constructor must be an interface type.");
+			if (channelType == null)
+				throw new ArgumentNullException ("channelType");
+			if (!channelType.IsInterface)
+				throw new InvalidOperationException ("The channelType argument to the generic ChannelFactory constructor must be an interface type.");
 
 			InitializeEndpoint (CreateDescription ());
 		}
@@ -125,14 +125,14 @@ namespace System.ServiceModel
 			return ch;
 		}
 
-		public static TChannel CreateChannel (Binding binding, EndpointAddress address)
+		public static TChannel CreateChannel (Binding binding, EndpointAddress endpointAddress)
 		{
-			return CreateChannelCore (new ChannelFactory<TChannel> (binding, address), f => f.CreateChannel ());
+			return CreateChannelCore (new ChannelFactory<TChannel> (binding, endpointAddress), f => f.CreateChannel ());
 		}
 
-		public static TChannel CreateChannel (Binding binding, EndpointAddress address, Uri via)
+		public static TChannel CreateChannel (Binding binding, EndpointAddress endpointAddress, Uri via)
 		{
-			return CreateChannelCore (new ChannelFactory<TChannel> (binding), f => f.CreateChannel (address, via));
+			return CreateChannelCore (new ChannelFactory<TChannel> (binding), f => f.CreateChannel (endpointAddress, via));
 		}
 
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)

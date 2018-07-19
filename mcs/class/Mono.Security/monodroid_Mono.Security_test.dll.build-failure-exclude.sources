@@ -1,0 +1,20 @@
+# These fail because of reliance on full NUnit framework
+Mono.Math/ArithmeticBigTest.cs
+Mono.Math/BigIntegerSetTest.cs
+Mono.Math/BitwiseTest.cs
+Mono.Math/GcdBigTest.cs
+Mono.Math/ModInverseBigTest.cs
+Mono.Math/ModRingTest.cs
+Mono.Math/PrimeGenerationTest.cs
+Mono.Math/PrimeTestingTest.cs
+Mono.Math/SearchGeneratorTest.cs
+Mono.Security.Authenticode/PrivateKeyTest.cs
+Mono.Security.Cryptography/CryptoConvertTest.cs
+Mono.Security.Cryptography/DiffieHellmanManagedTest.cs
+Mono.Security.Cryptography/PKCS8Test.cs
+Mono.Security.Protocol.Ntlm/ChallengeResponseTest.cs
+Mono.Security.Protocol.Ntlm/MessageBaseTest.cs
+Mono.Security.Protocol.Ntlm/Type1MessageTest.cs
+Mono.Security.Protocol.Ntlm/Type2MessageTest.cs
+Mono.Security.Protocol.Ntlm/Type3MessageTest.cs
+Mono.Security/StrongNameTest.cs

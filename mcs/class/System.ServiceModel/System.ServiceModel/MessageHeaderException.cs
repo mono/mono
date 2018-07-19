@@ -35,8 +35,8 @@ namespace System.ServiceModel {
 	public class MessageHeaderException : ProtocolException
 	{
 		public MessageHeaderException () : this ("Message header exception") {}
-		public MessageHeaderException (string msg) : this (msg, null) {}
-		public MessageHeaderException (string msg, Exception inner) : base (msg, inner) {}
+		public MessageHeaderException (string message) : this (message, null) {}
+		public MessageHeaderException (string message, Exception innerException) : base (message, innerException) {}
 		protected MessageHeaderException (SerializationInfo info, StreamingContext context) :
 			base (info, context)
 		{

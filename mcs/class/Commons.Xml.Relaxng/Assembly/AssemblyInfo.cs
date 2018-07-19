@@ -44,5 +44,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../mono.pub")]
 

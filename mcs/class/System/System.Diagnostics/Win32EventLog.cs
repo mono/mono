@@ -7,7 +7,6 @@
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 //
-// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -48,7 +47,7 @@ namespace System.Diagnostics
 		private IntPtr _readHandle;
 		private Thread _notifyThread;
 		private int _lastEntryWritten;
-		private bool _notifying;
+		private Object _eventLock = new object();
 
 		public Win32EventLog (EventLog coreEventLog)
 			: base (coreEventLog)
@@ -68,9 +67,11 @@ namespace System.Diagnostics
 
 		public override void Close ()
 		{
-			if (_readHandle != IntPtr.Zero) {
-				CloseEventLog (_readHandle);
-				_readHandle = IntPtr.Zero;
+			lock (_eventLock) {
+				if (_readHandle != IntPtr.Zero) {
+					CloseEventLog (_readHandle);
+					_readHandle = IntPtr.Zero;
+				}
 			}
 		}
 
@@ -703,45 +704,59 @@ namespace System.Diagnostics
 
 		public override void DisableNotification ()
 		{
-			if (_notifyResetEvent != null) {
-				_notifyResetEvent.Close ();
-				_notifyResetEvent = null;
-			}
-
-			if (_notifyThread != null) {
-				if (_notifyThread.ThreadState == System.Threading.ThreadState.Running)
-					_notifyThread.Abort ();
+			lock (_eventLock) {
+				if (_notifyResetEvent != null) {
+					_notifyResetEvent.Close ();
+					_notifyResetEvent = null;
+				}
 				_notifyThread = null;
 			}
 		}
 
 		public override void EnableNotification ()
 		{
-			_notifyResetEvent = new ManualResetEvent (false);
-			_lastEntryWritten = OldestEventLogEntry + EntryCount;
-			if (PInvoke.NotifyChangeEventLog (ReadHandle, _notifyResetEvent.Handle) == 0)
-				throw new InvalidOperationException (string.Format (
-					CultureInfo.InvariantCulture, "Unable to receive notifications"
-					+ " for log '{0}' on computer '{1}'.", CoreEventLog.GetLogName (),
-					CoreEventLog.MachineName), new Win32Exception ());
-			_notifyThread = new Thread (new ThreadStart (NotifyEventThread));
-			_notifyThread.IsBackground = true;
-			_notifyThread.Start ();
+			lock (_eventLock) {
+				if (_notifyResetEvent != null)
+					return;
+
+				_notifyResetEvent = new ManualResetEvent (false);
+				_lastEntryWritten = OldestEventLogEntry + EntryCount;
+				if (PInvoke.NotifyChangeEventLog (ReadHandle, _notifyResetEvent.SafeWaitHandle.DangerousGetHandle ()) == 0)
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "Unable to receive notifications"
+						+ " for log '{0}' on computer '{1}'.", CoreEventLog.GetLogName (),
+						CoreEventLog.MachineName), new Win32Exception ());
+				_notifyThread = new Thread (() => NotifyEventThread(_notifyResetEvent));
+				_notifyThread.IsBackground = true;
+				_notifyThread.Start ();
+			}
 		}
 
-		private void NotifyEventThread ()
+		private void NotifyEventThread (ManualResetEvent resetEvent)
 		{
+			if (resetEvent == null)
+				return;
+
 			while (true) {
-				_notifyResetEvent.WaitOne ();
-				lock (this) {
-					// after a clear, we something get notified
-					// twice for the same entry
-					if (_notifying)
-						return;
-					_notifying = true;
+				try {
+					resetEvent.WaitOne ();
+				} catch (ObjectDisposedException) {
+					// Notifications have been disabled and event 
+					// has been closed but not yet nulled. End thread.
+					break;
 				}
 
-				try {
+				lock (_eventLock) {
+					if (resetEvent != _notifyResetEvent) {
+						// A new thread has started with another reset event instance
+ 						// or DisableNotifications has been called, setting
+ 						// _notifyResetEvent to null. In both cases end this thread.
+						break;
+					}
+
+					if (_readHandle == IntPtr.Zero)
+						break;
+
 					int oldest_entry = OldestEventLogEntry;
 					if (_lastEntryWritten < oldest_entry)
 						_lastEntryWritten = oldest_entry;
@@ -752,9 +767,6 @@ namespace System.Diagnostics
 						CoreEventLog.OnEntryWritten (entry);
 					}
 					_lastEntryWritten = last_entry;
-				} finally {
-					lock (this)
-						_notifying = false;
 				}
 			}
 		}

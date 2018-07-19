@@ -478,7 +478,7 @@ namespace Mono.CSharp {
 			catch
 			{
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), target.GetSignatureForError ());
+					GetValueAsLiteral (), target.GetSignatureForError ());
 			}
 		}
 
@@ -1697,7 +1697,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -1820,7 +1820,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString ();
+			return Value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override long GetValueAsLong ()
@@ -2021,7 +2021,7 @@ namespace Mono.CSharp {
 
 		public override string GetValueAsLiteral ()
 		{
-			return Value.ToString () + "M";
+			return Value.ToString (CultureInfo.InvariantCulture) + "M";
 		}
 
 		public override long GetValueAsLong ()
@@ -2149,11 +2149,6 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
-		static void Error_MethodGroupWithTypeArguments (ResolveContext rc, Location loc)
-		{
-			rc.Report.Error (8084, loc, "An argument to nameof operator cannot be method group with type arguments");
-		}
-
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			throw new NotSupportedException ();
@@ -2169,9 +2164,9 @@ namespace Mono.CSharp {
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
 				var res = sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity | MemberLookupRestrictions.NameOfExcluded);
-				if (sn.HasTypeArguments && res is MethodGroupExpr) {
-					Error_MethodGroupWithTypeArguments (rc, expr.Location);
-				}
+				var me = res as MemberExpr;
+				if (me != null)
+					me.ResolveNameOf (rc, sn);
 
 				return true;
 			}
@@ -2179,8 +2174,11 @@ namespace Mono.CSharp {
 			var ma = expr as MemberAccess;
 			if (ma != null) {
 				var lexpr = ma.LeftExpression;
+				Expression res;
 
-				var res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+				using (rc.Set (ResolveContext.Options.NameOfScope)) {
+					res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+				}
 
 				if (res == null) {
 					return false;
@@ -2194,25 +2192,17 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (!IsLeftExpressionValid (lexpr)) {
-					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
-					return false;
+				var me = res as MemberExpr;
+				if (me != null) {
+					me.ResolveNameOf (rc, ma);
 				}
 
-				var mg = res as MethodGroupExpr;
-				if (mg != null) {
-					var emg = res as ExtensionMethodGroupExpr;
-					if (emg != null && !emg.ResolveNameOf (rc, ma)) {
-						return true;
-					}
-
-					if (!mg.HasAccessibleCandidate (rc)) {
-						ErrorIsInaccesible (rc, ma.GetSignatureForError (), loc);
-					}
-
-					if (ma.HasTypeArguments) {
-						Error_MethodGroupWithTypeArguments (rc, ma.Location);
-					}
+				//
+				// LAMESPEC: Why is conditional access not allowed?
+				//
+				if (!IsLeftResolvedExpressionValid (ma.LeftExpression) || ma.HasConditionalAccess ()) {
+					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
+					return false;
 				}
 
 				Value = ma.Name;
@@ -2223,25 +2213,24 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static bool IsLeftExpressionValid (Expression expr)
+		static bool IsLeftResolvedExpressionValid (Expression expr)
 		{
-			if (expr is SimpleName)
-				return true;
-
-			if (expr is This)
-				return true;
-
-			if (expr is NamespaceExpression)
-				return true;
-
-			if (expr is TypeExpr)
-				return true;
-
-			var ma = expr as MemberAccess;
-			if (ma != null) {
-				// TODO: Will conditional access be allowed?
-				return IsLeftExpressionValid (ma.LeftExpression);
+			var fe = expr as FieldExpr;
+			if (fe != null) {
+				return fe.InstanceExpression == null || IsLeftResolvedExpressionValid (fe.InstanceExpression);
 			}
+
+			var pe = expr as PropertyExpr;
+			if (pe != null)
+				return pe.InstanceExpression == null || IsLeftResolvedExpressionValid (pe.InstanceExpression);
+
+			var dmb = expr as DynamicMemberBinder;
+			if (dmb != null) {
+				return IsLeftResolvedExpressionValid (dmb.Arguments [0].Expr);
+			}
+
+			if (expr is ConstantExpr || expr is TypeExpr || expr is NamespaceExpression || expr is VariableReference)
+				return true;
 
 			return false;
 		}

@@ -37,7 +37,7 @@ namespace System.ServiceModel.Security
 	[MonoTODO]
 	public class X509ServiceCertificateAuthentication
 	{
-		internal X509ServiceCertificateAuthentication ()
+		public X509ServiceCertificateAuthentication ()
 		{
 		}
 

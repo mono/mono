@@ -16,7 +16,6 @@ namespace Mono.ILASM {
         public abstract class Report {
 
                 private static int error_count;
-                private static int mark_count;
                 private static bool quiet;
                 /* Current file being processed */
                 private static string file_path;

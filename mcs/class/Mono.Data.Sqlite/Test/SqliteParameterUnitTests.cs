@@ -15,14 +15,24 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteParameterUnitTests
 	{
-		readonly static string _uri = "SqliteTest.db";
-		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-		static SqliteConnection _conn = new SqliteConnection (_connectionString);
+		string _uri;
+		string _connectionString;
+		SqliteConnection _conn;
 
-		public SqliteParameterUnitTests()
+		[SetUp]
+		public void SetUp ()
 		{
+			_uri = Path.GetTempFileName ();
+			_connectionString = "URI=file://" + _uri + ", version=3";
+			_conn = new SqliteConnection (_connectionString);
 		}
-		
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (File.Exists (_uri))
+				File.Delete (_uri);
+		}
 		[Test]
 		[Category ("NotWorking")]
 		// fails randomly :)
@@ -61,7 +71,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			textP.Value=builder.ToString();
 			floatP.Value=Convert.ToInt64(random.Next(999));
 			integerP.Value=random.Next(999);
-			blobP.Value=System.Text.Encoding.UTF8.GetBytes("\u05D0\u05D1\u05D2" + builder.ToString());
+			blobP.Value=global::System.Text.Encoding.UTF8.GetBytes("\u05D0\u05D1\u05D2" + builder.ToString());
 			
 			SqliteCommand selectCmd = new SqliteCommand("SELECT * from t1", _conn);
 
@@ -79,7 +89,7 @@ namespace MonoTests.Mono.Data.Sqlite
 					
 					object compareValue;
 					if (blobP.Value is byte[])
-						compareValue = System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value);
+						compareValue = global::System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value);
 					else
 						compareValue = blobP.Value;
 					Assert.AreEqual(reader["b"], compareValue);

@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -39,7 +40,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing {
 
 	[TestFixture]	
-	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class IconTest {
 		
 		Icon icon;
@@ -93,10 +93,9 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_IconNull_Int_Int ()
 		{
-			new Icon ((Icon)null, 32, 32);
+			Assert.Throws<ArgumentException> (() => new Icon ((Icon)null, 32, 32));
 		}
 
 		[Test]
@@ -108,10 +107,9 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_IconNull_Size ()
 		{
-			new Icon ((Icon) null, new Size (32, 32));
+			Assert.Throws<ArgumentException> (() => new Icon ((Icon) null, new Size (32, 32)));
 		}
 
 		[Test]
@@ -173,58 +171,50 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_StreamNull ()
 		{
-			new Icon ((Stream) null);
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_StreamNull_Int_Int ()
 		{
-			new Icon ((Stream) null, 32, 32);
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null, 32, 32));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_StringNull ()
 		{
-			new Icon ((string) null);
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Constructor_TypeNull_String ()
 		{
-			new Icon ((Type) null, "mono.ico");
+			Assert.Throws<NullReferenceException> (() => new Icon ((Type) null, "mono.ico"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_Type_StringNull ()
 		{
-			new Icon (typeof (Icon), null);
+			Assert.Throws<ArgumentException> (() => new Icon (typeof (Icon), null));
 		}
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_StreamNull_Size ()
 		{
-			new Icon ((Stream) null, new Size (32, 32));
+			Assert.Throws<ArgumentException> (() => new Icon ((Stream) null, new Size (32, 32)));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_StringNull_Size ()
 		{
-			new Icon ((string) null, new Size (32, 32));
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null, new Size (32, 32)));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_StringNull_Int_Int ()
 		{
-			new Icon ((string) null, 32, 32);
+			Assert.Throws<ArgumentNullException> (() => new Icon ((string) null, 32, 32));
 		}
 
 		[Test]
@@ -380,10 +370,9 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void Save_Null ()
 		{
-			icon.Save (null);
+			Assert.Throws<NullReferenceException> (() => icon.Save (null));
 		}
 
 		[Test]
@@ -499,34 +488,31 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
-		[Test, ExpectedException ()] //ToDo: System.ComponentModel.Win32Exception
+		[Test]
 		public void Only256InFile ()
 		{
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
-				Icon icon = new Icon (fs, 0, 0);
+				Assert.Throws<Win32Exception> (() => new Icon (fs, 0, 0));
 			}
 		}
 
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ExtractAssociatedIcon_Null ()
 		{
-			Icon.ExtractAssociatedIcon (null);
+			Assert.Throws<ArgumentException> (() => Icon.ExtractAssociatedIcon (null));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ExtractAssociatedIcon_Empty ()
 		{
-			Icon.ExtractAssociatedIcon (String.Empty);
+			Assert.Throws<ArgumentException> (() => Icon.ExtractAssociatedIcon (String.Empty));
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		public void ExtractAssociatedIcon_DoesNotExists ()
 		{
-			Icon.ExtractAssociatedIcon ("does-not-exists.png");
+			Assert.Throws<FileNotFoundException> (() => Icon.ExtractAssociatedIcon ("does-not-exists.png"));
 		}
 
 		private static bool RunningOnUnix {

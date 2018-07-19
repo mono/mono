@@ -58,7 +58,6 @@ using System.EnterpriseServices;
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
 
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]

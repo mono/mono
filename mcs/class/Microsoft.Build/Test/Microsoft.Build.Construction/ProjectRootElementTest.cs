@@ -30,8 +30,13 @@ namespace MonoTests.Microsoft.Build.Construction
 			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, "file:///foo.xml");
 			// This creator does not fill FullPath...
 			var root = ProjectRootElement.Create (xml);
+
+			// Expected to run from mcs/class/lib/profile/tests
+			var dir_name = Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath);
+			var namespace_path = Path.Combine (Directory.GetParent (dir_name).Parent.Parent.FullName, "Microsoft.Build");
+
 			Assert.IsNull (root.FullPath, "#2");
-			Assert.AreEqual (Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath), root.DirectoryPath, "#3");
+			Assert.AreEqual (namespace_path, root.DirectoryPath, "#3");
 		}
 
 		[Test]
@@ -39,7 +44,11 @@ namespace MonoTests.Microsoft.Build.Construction
 		{
 			var root = ProjectRootElement.Create ();
 			root.FullPath = "test" + Path.DirectorySeparatorChar + "foo.xml";
-			var full = Path.Combine (Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath), "test", "foo.xml");
+
+			// Expected to run from mcs/class/lib/profile/tests
+			var dir_name = Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath);
+			var namespace_path = Path.Combine (Directory.GetParent (dir_name).Parent.Parent.FullName, "Microsoft.Build");
+			var full = Path.Combine (namespace_path, "test", "foo.xml");
 			Assert.AreEqual (full, root.FullPath, "#1");
 			Assert.AreEqual (Path.GetDirectoryName (full), root.DirectoryPath, "#1");
 		}
@@ -58,11 +67,9 @@ namespace MonoTests.Microsoft.Build.Construction
 				ProjectRootElement.Create (XmlReader.Create (new StringReader (" <root/>")));
 				Assert.Fail ("should throw InvalidProjectFileException");
 			} catch (InvalidProjectFileException ex) {
-				#if NET_4_5
 				Assert.AreEqual (1, ex.LineNumber, "#1");
 				// it is very interesting, but unlike XmlReader.LinePosition it returns the position for '<'.
 				Assert.AreEqual (2, ex.ColumnNumber, "#2");
-				#endif
 			}
 		}
 
@@ -102,11 +109,9 @@ namespace MonoTests.Microsoft.Build.Construction
 				ProjectRootElement.Create (xml);
 				Assert.Fail ("should throw InvalidProjectFileException");
 			} catch (InvalidProjectFileException ex) {
-				#if NET_4_5
 				Assert.AreEqual (1, ex.LineNumber, "#1");
 				// unlike unexpected element case which returned the position for '<', it does return the name start char...
 				Assert.AreEqual (70, ex.ColumnNumber, "#2");
-				#endif
 			}
 		}
 

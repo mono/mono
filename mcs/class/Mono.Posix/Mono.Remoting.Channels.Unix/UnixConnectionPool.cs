@@ -153,7 +153,7 @@ namespace Mono.Remoting.Channels.Unix
 			_pool = pool;
 			_client = client;
 			_stream = new BufferedStream (client.GetStream());
-			_controlTime = DateTime.Now;
+			_controlTime = DateTime.UtcNow;
 			_buffer = new byte[UnixMessageIO.DefaultStreamBufferSize];
 		}
 
@@ -270,7 +270,7 @@ namespace Mono.Remoting.Channels.Unix
 		{
 			lock (_pool)
 			{
-				entry.ControlTime = DateTime.Now;	// Initialize timeout
+				entry.ControlTime = DateTime.UtcNow;	// Initialize timeout
 				_pool.Add (entry);
 				Monitor.Pulse (_pool);
 			}
@@ -295,7 +295,7 @@ namespace Mono.Remoting.Channels.Unix
 				for (int n=0; n < _pool.Count; n++)
 				{
 					UnixConnection entry = (UnixConnection)_pool[n];
-					if ( (DateTime.Now - entry.ControlTime).TotalSeconds > UnixConnectionPool.KeepAliveSeconds)
+					if ( (DateTime.UtcNow - entry.ControlTime).TotalSeconds > UnixConnectionPool.KeepAliveSeconds)
 					{
 						CancelConnection (entry);
 						_pool.RemoveAt(n);

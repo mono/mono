@@ -99,7 +99,7 @@ namespace System.Security.Cryptography {
 				exKey [i] = exKey [i-Nk] ^ temp;
 			}
 
-#if NET_2_1
+#if MOBILE
 			// Silverlight 2.0 only supports CBC
 			if (!encryption) {
 #else

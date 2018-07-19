@@ -220,6 +220,7 @@ namespace MonoTests.System.Runtime.Remoting
 		public void TestLocked1 ()
 		{
 			sincob.Lock (false);
+
 			Thread tr = new Thread (new ThreadStart (FirstSyncThread));
 			tr.Start ();
 			Thread.Sleep (200);
@@ -328,6 +329,21 @@ namespace MonoTests.System.Runtime.Remoting
 			notreentrant.CheckContext (Thread.CurrentContext);
 			
 			tr.Join ();
+			Assert.IsTrue (!otResult, "Concurrency detected in CallbackThread");
+		}
+
+		[Test]
+		public void TestSynchronizationReleasedOnMultipleAcquire ()
+		{
+
+			otResult = notreentrant.TestCallback ();
+		    
+			Thread tr = new Thread (new ThreadStart (CallbackThread));
+			tr.Start();
+			
+			bool terminated = tr.Join(10000);
+			Assert.IsTrue(terminated, "Thread didn't get lock of context bound object.");
+			
 			Assert.IsTrue (!otResult, "Concurrency detected in CallbackThread");
 		}
 

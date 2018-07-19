@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// An output stream that compresses into the BZip2 format 
 	/// including file header chars into another stream.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class BZip2OutputStream : Stream
 	{
 		/// <summary>

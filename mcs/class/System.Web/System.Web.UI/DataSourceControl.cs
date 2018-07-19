@@ -108,9 +108,9 @@ namespace System.Web.UI {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override void RenderControl (HtmlTextWriter tw)
+		public override void RenderControl (HtmlTextWriter writer)
 		{
-			base.RenderControl (tw);
+			base.RenderControl (writer);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]

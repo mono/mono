@@ -120,7 +120,6 @@ namespace MonoTests.System.IO
 			Assert.IsFalse (s.CanRead, "#1");
 		}
 
-#if NET_4_5
 		[Test]
 		public void CopyAsync ()
 		{
@@ -211,6 +210,5 @@ namespace MonoTests.System.IO
 			} catch (AggregateException) {
 			}
 		}
-#endif
 	}
 }

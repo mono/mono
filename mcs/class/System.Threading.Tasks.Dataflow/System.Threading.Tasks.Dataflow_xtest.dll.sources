@@ -1,0 +1,3 @@
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/System.Threading.Tasks.Dataflow/tests/Dataflow/*.cs:EtwTests.cs,DataflowBlockExtensionTests.cs

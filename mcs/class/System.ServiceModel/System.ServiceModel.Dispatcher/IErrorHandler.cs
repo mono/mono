@@ -31,8 +31,8 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IErrorHandler
 	{
-		bool HandleError (Exception exception);
-		void ProvideFault (Exception exception, MessageVersion version,
+		bool HandleError (Exception error);
+		void ProvideFault (Exception error, MessageVersion version,
 			ref Message fault);
 	}
 }

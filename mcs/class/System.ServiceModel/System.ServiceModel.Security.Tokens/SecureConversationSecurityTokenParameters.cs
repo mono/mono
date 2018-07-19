@@ -25,22 +25,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
+#endif
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 
+#if !MOBILE && !XAMMAC_4_5
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
+#endif
 
 namespace System.ServiceModel.Security.Tokens
 {
 	public class SecureConversationSecurityTokenParameters : SecurityTokenParameters
 	{
+#if !MOBILE && !XAMMAC_4_5
 		static readonly ChannelProtectionRequirements default_channel_protection_requirements;
+#endif
 		static readonly BindingContext dummy_context;
 
 		static SecureConversationSecurityTokenParameters ()
 		{
+#if !MOBILE && !XAMMAC_4_5
 			ChannelProtectionRequirements r =
 				new ChannelProtectionRequirements ();
 			r.IncomingSignatureParts.ChannelParts.IsBodyIncluded = true;
@@ -49,6 +56,7 @@ namespace System.ServiceModel.Security.Tokens
 			r.OutgoingEncryptionParts.ChannelParts.IsBodyIncluded = true;
 			r.MakeReadOnly ();
 			default_channel_protection_requirements = r;
+#endif
 
 			dummy_context = new BindingContext (
 				new CustomBinding (),
@@ -56,7 +64,9 @@ namespace System.ServiceModel.Security.Tokens
 		}
 
 		SecurityBindingElement element;
+#if !MOBILE && !XAMMAC_4_5
 		ChannelProtectionRequirements requirements;
+#endif
 		bool cancellable;
 
 		public SecureConversationSecurityTokenParameters ()
@@ -65,37 +75,50 @@ namespace System.ServiceModel.Security.Tokens
 		}
 
 		public SecureConversationSecurityTokenParameters (
-			SecurityBindingElement element)
-			: this (element, true)
+			SecurityBindingElement bootstrapSecurityBindingElement)
+			: this (bootstrapSecurityBindingElement, true)
 		{
 		}
 
 		public SecureConversationSecurityTokenParameters (
-			SecurityBindingElement element,
+			SecurityBindingElement bootstrapSecurityBindingElement,
 			bool requireCancellation)
-			: this (element, requireCancellation, null)
+			: this (bootstrapSecurityBindingElement, requireCancellation, null)
 		{
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public SecureConversationSecurityTokenParameters (
+			SecurityBindingElement bootstrapSecurityBindingElement,
+			bool requireCancellation,
+			ChannelProtectionRequirements bootstrapProtectionRequirements)
+		{
+			this.element = bootstrapSecurityBindingElement;
+			this.cancellable = requireCancellation;
+			if (bootstrapProtectionRequirements == null)
+				this.requirements = new ChannelProtectionRequirements (default_channel_protection_requirements);
+			else
+				this.requirements = new ChannelProtectionRequirements (bootstrapProtectionRequirements);
+		}
+#else
+		internal SecureConversationSecurityTokenParameters (
 			SecurityBindingElement element,
 			bool requireCancellation,
-			ChannelProtectionRequirements requirements)
+			object dummy)
 		{
 			this.element = element;
 			this.cancellable = requireCancellation;
-			if (requirements == null)
-				this.requirements = new ChannelProtectionRequirements (default_channel_protection_requirements);
-			else
-				this.requirements = new ChannelProtectionRequirements (requirements);
 		}
+#endif
 
-		protected SecureConversationSecurityTokenParameters (SecureConversationSecurityTokenParameters source)
-			: base (source)
+		protected SecureConversationSecurityTokenParameters (SecureConversationSecurityTokenParameters other)
+			: base (other)
 		{
-			this.element = (SecurityBindingElement) source.element.Clone ();
-			this.cancellable = source.cancellable;
+			this.element = (SecurityBindingElement) other.element.Clone ();
+			this.cancellable = other.cancellable;
+#if !MOBILE && !XAMMAC_4_5
 			this.requirements = new ChannelProtectionRequirements (default_channel_protection_requirements);
+#endif
 		}
 
 		public bool RequireCancellation {
@@ -108,9 +131,11 @@ namespace System.ServiceModel.Security.Tokens
 			set { element = value; }
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		public ChannelProtectionRequirements BootstrapProtectionRequirements {
 			get { return requirements; }
 		}
+#endif
 
 		// SecurityTokenParameters
 
@@ -135,13 +160,13 @@ namespace System.ServiceModel.Security.Tokens
 			return new SecureConversationSecurityTokenParameters (this);
 		}
 
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		protected override SecurityKeyIdentifierClause CreateKeyIdentifierClause (
 			SecurityToken token, SecurityTokenReferenceStyle referenceStyle)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
 		protected internal override void InitializeSecurityTokenRequirement (SecurityTokenRequirement requirement)
 		{
@@ -154,6 +179,7 @@ namespace System.ServiceModel.Security.Tokens
 			requirement.Properties [ReqType.IssuedSecurityTokenParametersProperty] = this.Clone ();
 			requirement.KeyType = SecurityKeyType.SymmetricKey;
 		}
+#endif
 
 		public override string ToString ()
 		{

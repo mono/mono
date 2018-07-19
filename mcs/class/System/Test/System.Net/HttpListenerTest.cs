@@ -39,14 +39,21 @@ namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerTest {
 
-		int port;
+		int? _port;
+		int port {
+			get { return _port ?? (_port = NetworkHelpers.FindFreePort ()).Value; }
+		}
 
-		[SetUp]
-		public void SetUp () {
-			port = NetworkHelpers.FindFreePort ();
+		[TearDown]
+		public void Teardown ()
+		{
+			_port = null;
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultProperties ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -60,6 +67,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Start1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -67,6 +77,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Stop1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -74,7 +87,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (InvalidOperationException))]
+#endif
 		public void GetContext1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -83,7 +100,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (InvalidOperationException))]
+#endif
 		public void GetContext2 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -93,7 +114,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (InvalidOperationException))]
+#endif
 		public void BeginGetContext1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -102,6 +127,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void BeginGetContext2 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -134,6 +162,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultHttpPort ()
 		{
 			if (!CanOpenPort (80))
@@ -147,6 +178,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DefaultHttpsPort ()
 		{
 			if (!CanOpenPort (443))
@@ -160,6 +194,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void TwoListeners_SameAddress ()
 		{
 			if (!CanOpenPort (port))
@@ -173,7 +210,12 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (HttpListenerException))]
+#endif
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TwoListeners_SameURL ()
 		{
 			if (!CanOpenPort (port))
@@ -187,7 +229,12 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (HttpListenerException))]
+#endif
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void MultipleSlashes ()
 		{
 			if (!CanOpenPort (port))
@@ -199,7 +246,12 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (HttpListenerException))]
+#endif
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PercentSign ()
 		{
 			if (!CanOpenPort (port))
@@ -211,6 +263,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseBeforeStart ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -218,6 +273,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseTwice ()
 		{
 			if (!CanOpenPort (port))
@@ -230,6 +288,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void StartStopStart ()
 		{
 			if (!CanOpenPort (port))
@@ -243,6 +304,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void StartStopDispose ()
 		{
 			if (!CanOpenPort (port))
@@ -255,6 +319,9 @@ namespace MonoTests.System.Net {
 		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AbortBeforeStart ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -262,6 +329,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AbortTwice ()
 		{
 			if (!CanOpenPort (port))
@@ -274,6 +344,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PropertiesWhenClosed1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -287,7 +360,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosed2 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -296,7 +373,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosedSet1 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -305,7 +386,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosedSet2 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -314,7 +399,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosedSet3 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -323,7 +412,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosedSet4 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -332,7 +425,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (ObjectDisposedException))]
+#endif
 		public void PropertiesWhenClosedSet5 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -341,6 +438,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void PropertiesWhenClosed3 ()
 		{
 			HttpListener listener = new HttpListener ();
@@ -349,10 +449,13 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void CloseWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/closewhilebegin/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhilebegin/");
 			listener.Start ();
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
@@ -365,10 +468,13 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AbortWhileBegin ()
 		{
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/abortwhilebegin/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhilebegin/");
 			listener.Start ();
 			CallMe cm = new CallMe ();
 			listener.BeginGetContext (cm.Callback, listener);
@@ -381,7 +487,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (HttpListenerException))]
+#endif
 		public void CloseWhileGet ()
 		{
 			// "System.Net.HttpListener Exception : The I/O operation has been aborted
@@ -390,7 +500,7 @@ namespace MonoTests.System.Net {
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/closewhileget/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/closewhileget/");
 			listener.Start ();
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Close), new object [0]);
 			rm.Start ();
@@ -398,7 +508,11 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#else
 		[ExpectedException (typeof (HttpListenerException))]
+#endif
 		public void AbortWhileGet ()
 		{
 			// "System.Net.HttpListener Exception : The I/O operation has been aborted
@@ -407,7 +521,7 @@ namespace MonoTests.System.Net {
 			//   at MonoTests.System.Net.HttpListenerTest.CloseWhileGet()
 
 			HttpListener listener = new HttpListener ();
-			listener.Prefixes.Add ("http://127.0.0.1:9001/abortwhileget/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + NetworkHelpers.FindFreePort () + "/abortwhileget/");
 			listener.Start ();
 			RunMe rm = new RunMe (1000, new ThreadStart (listener.Abort), new object [0]);
 			rm.Start ();
@@ -478,6 +592,9 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void ConnectionReuse ()
 		{
 			var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
@@ -533,8 +650,41 @@ namespace MonoTests.System.Net {
 
 			return clientEndPoint;
 		}
+
+		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
+		public void UserHeaderWithDoubleMultiValue ()
+		{
+			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+
+			var l = new HttpListener ();
+			l.Prefixes.Add (uri);
+			l.Start ();
+			l.BeginGetContext (ar => {
+				var ctx = l.EndGetContext (ar);
+
+				var response = ctx.Response;
+				response.Headers.Add ("X-Custom-Header", "A");
+				response.Headers.Add ("X-Custom-Header", "B");
+
+				response.Close ();
+			}, null);
+
+			HttpWebRequest wr = HttpWebRequest.CreateHttp (uri);
+			var resp = wr.GetResponse ();
+			var vls = resp.Headers.GetValues ("X-Custom-Header");
+
+			Assert.AreEqual (2, vls.Length);
+
+			l.Close ();
+		}
 		
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void HttpClientIsDisconnectedCheckForWriteException()
 		{
 			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";

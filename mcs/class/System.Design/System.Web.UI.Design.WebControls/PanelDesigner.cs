@@ -37,7 +37,7 @@ namespace System.Web.UI.Design.WebControls {
 		{
 		}
 
-		protected override void MapPropertyToStyle (string name, object value)
+		protected override void MapPropertyToStyle (string propName, object varPropValue)
 		{
 			throw new NotImplementedException ();
 		}

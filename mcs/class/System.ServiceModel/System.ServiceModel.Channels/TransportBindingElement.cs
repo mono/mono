@@ -48,15 +48,15 @@ namespace System.ServiceModel.Channels
 		}
 
 		protected TransportBindingElement (
-			TransportBindingElement other)
-			: base (other)
+			TransportBindingElement elementToBeCloned)
+			: base (elementToBeCloned)
 		{
-			manual_addressing = other.manual_addressing;
-			max_buffer_pool_size = other.max_buffer_pool_size;
-			max_recv_message_size = other.max_recv_message_size;
+			manual_addressing = elementToBeCloned.manual_addressing;
+			max_buffer_pool_size = elementToBeCloned.max_buffer_pool_size;
+			max_recv_message_size = elementToBeCloned.max_recv_message_size;
 		}
 
-		public bool ManualAddressing {
+		public virtual bool ManualAddressing {
 			get { return manual_addressing; }
 			set { manual_addressing = value; }
 		}
@@ -81,7 +81,7 @@ namespace System.ServiceModel.Channels
 				q.MaxStringContentLength = (int) MaxReceivedMessageSize;
 				return (T) (object) q;
 			}
-#if !NET_2_1
+#if !MOBILE
 			if (typeof (T) == typeof (ChannelProtectionRequirements))
 				// blank one, basically it should not be used
 				// for any secure channels (
@@ -92,7 +92,7 @@ namespace System.ServiceModel.Channels
 			return context.GetInnerProperty<T> ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		internal static XmlElement CreateTransportBinding (XmlElement transportToken)
 		{
 			var doc = new XmlDocument ();

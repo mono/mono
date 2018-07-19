@@ -4,7 +4,11 @@ include ../../build/rules.make
 
 LIBRARY = System.Runtime.Caching.dll
 LIB_REFS = System System.Data System.Configuration System.Core
+KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = -nowarn:414
+
+RESX_RESOURCE_STRING = \
+	../referencesource/System.Runtime.Caching/R.resx
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

@@ -38,10 +38,14 @@ obj/
 [Rr]elease*/
 Ankh.NoLoad
 *.gpState
+.vscode/
+*.exp
+.vs/
 
 # Tooling
 _ReSharper*/
 *.resharper
+.idea/*
 [Tt]est[Rr]esult*
 *.orig
 *.rej
@@ -86,6 +90,7 @@ stamp-h.in
 *.swp
 *.o
 .deps
+.libs
 
 # Libtool
 libtool.m4
@@ -126,4 +131,4 @@ mono-*.tar.*
 tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
-
+*.mlpd

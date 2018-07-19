@@ -41,6 +41,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// <summary>
 	/// GZipException represents a Gzip specific exception	
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class GZipException : SharpZipBaseException
 	{
 		/// <summary>

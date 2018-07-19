@@ -582,7 +582,7 @@ namespace System.Security.Policy {
 
 		internal bool IsFullTrustAssembly (Assembly a)
 		{
-			AssemblyName an = a.UnprotectedGetName ();
+			AssemblyName an = a.GetName ();
 			StrongNamePublicKeyBlob snpkb = new StrongNamePublicKeyBlob (an.GetPublicKey ());
 			StrongNameMembershipCondition snMC = new StrongNameMembershipCondition (snpkb, an.Name, an.Version);
 			foreach (StrongNameMembershipCondition sn in full_trust_assemblies) {

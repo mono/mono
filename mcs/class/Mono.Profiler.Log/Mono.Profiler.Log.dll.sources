@@ -1,0 +1,14 @@
+Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+Mono.Profiler.Log/LogBufferHeader.cs
+Mono.Profiler.Log/LogEnums.cs
+Mono.Profiler.Log/LogEvent.cs
+Mono.Profiler.Log/LogEventVisitor.cs
+Mono.Profiler.Log/LogEvents.cs
+Mono.Profiler.Log/LogException.cs
+Mono.Profiler.Log/LogProcessor.cs
+Mono.Profiler.Log/LogProfiler.cs
+Mono.Profiler.Log/LogReader.cs
+Mono.Profiler.Log/LogStream.cs
+Mono.Profiler.Log/LogStreamHeader.cs

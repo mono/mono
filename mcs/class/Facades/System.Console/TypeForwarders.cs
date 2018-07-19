@@ -24,6 +24,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleCancelEventArgs))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleCancelEventHandler))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleColor))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleKey))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleKeyInfo))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleModifiers))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ConsoleSpecialKey))]
-
-

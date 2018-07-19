@@ -35,9 +35,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
-#if !MOBILE
-using NUnit.Framework.SyntaxHelpers;
-#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -342,7 +339,6 @@ namespace MonoTests.System.Threading.Tasks
 			bool result = false;
 
 			Func<int, int> func = (i) => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread);
 				result = true; return i + 3;
 			};
 
@@ -454,7 +450,6 @@ namespace MonoTests.System.Threading.Tasks
 			bool? valid = null;
 
 			Action<IAsyncResult> end = l => {
-				Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#2");
 				valid = l == completed;
 			};
 			Task task = factory.FromAsync (completed, end);
@@ -559,7 +554,6 @@ namespace MonoTests.System.Threading.Tasks
 			factory = new TaskFactory (scheduler);
 
 			Task task = factory.FromAsync (result, l => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread, "#6");
 				called = true;
 			}, TaskCreationOptions.AttachedToParent);
 
@@ -584,11 +578,10 @@ namespace MonoTests.System.Threading.Tasks
 					if ((TaskCreationOptions) c != TaskCreationOptions.AttachedToParent)
 						Assert.Fail ("#11");
 
-					Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#12");
-
 					called2 = true;
-					b.Invoke (null);
-					return null;
+					var ar = Task.CompletedTask;
+					b.Invoke (ar);
+					return ar;
 				},
 				l => {
 					called = true;

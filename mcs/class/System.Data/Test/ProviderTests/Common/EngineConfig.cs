@@ -28,13 +28,12 @@
 //
 
 using System;
-using System.Configuration;
 using System.Globalization;
 using System.Xml;
 
-namespace MonoTests.System.Data
+namespace MonoTests.System.Data.Connected
 {
-	internal sealed class EngineConfig
+	public sealed class EngineConfig
 	{
 		private string name;
 		private string quoteCharacter;
@@ -48,7 +47,7 @@ namespace MonoTests.System.Data
 		private EngineType type;
 		private int clientVersion;
 
-		private EngineConfig ()
+		public EngineConfig ()
 		{
 		}
 
@@ -61,42 +60,52 @@ namespace MonoTests.System.Data
 		/// </summary>
 		public string QuoteCharacter {
 			get { return quoteCharacter; }
+			set { quoteCharacter = value; }
 		}
 
 		public EngineType Type {
 			get { return type; }
+			set { type = value; }
 		}
 
 		public bool RemovesTrailingSpaces {
 			get { return removesTrailingSpaces; }
+			set { removesTrailingSpaces = value; }
 		}
 
 		public bool EmptyBinaryAsNull {
 			get { return emptyBinaryAsNull; }
+			set { emptyBinaryAsNull = value; }
 		}
 
 		public bool SupportsMicroseconds {
 			get { return supportsMicroseconds; }
+			set { supportsMicroseconds = value; }
 		}
 
 		public bool SupportsUniqueIdentifier {
 			get { return supportsUniqueIdentifier; }
+			set { supportsUniqueIdentifier = value; }
 		}
 
 		public bool SupportsDate {
 			get { return supportsDate; }
+			set { supportsDate = value; }
 		}
 
 		public bool SupportsTime {
 			get { return supportsTime; }
+			set { supportsTime = value; }
 		}
 
 		public bool SupportsTimestamp {
 			get { return supportsTimestamp; }
+			set { supportsTimestamp = value; }
 		}
 
 		public int ClientVersion {
 		       get { return clientVersion; }
+		       set { clientVersion = value; }
 		}
 
 		public static EngineConfig FromXml (XmlNode config)
@@ -183,14 +192,14 @@ namespace MonoTests.System.Data
 			string msg = string.Format (CultureInfo.InvariantCulture,
 					"Invalid value '{0}' for attribute {1}.",
 					value, name);
-			throw new ConfigurationErrorsException (msg, cause, node);
+			throw new ArgumentOutOfRangeException (msg, cause);
 		}
 
 		static Exception CreateAttributeMissingException (string name, XmlNode node)
 		{
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"Missing '{0}' attribute.", name);
-			throw new ConfigurationErrorsException (msg, node);
+			throw new ArgumentException (msg);
 		}
 	}
 }

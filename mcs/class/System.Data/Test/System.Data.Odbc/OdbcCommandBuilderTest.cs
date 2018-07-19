@@ -26,6 +26,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#if !NO_ODBC
+
 using System;
 using System.Data;
 using System.Data.Common;
@@ -36,6 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.Odbc
 {
 	[TestFixture]
+	[Category("NotWorking")] // needs https://github.com/dotnet/corefx/pull/22499
 	public class OdbcCommandBuilderTest
 	{
 		[Test]
@@ -406,3 +409,5 @@ namespace MonoTests.System.Data.Odbc
 		}
 	}
 }
+
+#endif

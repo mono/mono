@@ -53,6 +53,7 @@ namespace Mono.CSharp
 		DEBUGGER_HIDDEN			= 0x400000,
 		DEBUGGER_STEP_THROUGH	= 0x800000,
 		AutoProperty			= 0x1000000,
+		REF                     = 0x2000000,
 
 		AccessibilityMask = PUBLIC | PROTECTED | INTERNAL | PRIVATE,
 		AllowedExplicitImplFlags = UNSAFE | EXTERN,
@@ -73,6 +74,8 @@ namespace Mono.CSharp
 				return "internal";
 			case Modifiers.PRIVATE:
 				return "private";
+			case Modifiers.PRIVATE | Modifiers.PROTECTED:
+				return "private protected";
 			default:
 				throw new NotImplementedException (mod.ToString ());
 			}
@@ -128,12 +131,16 @@ namespace Mono.CSharp
 			if ((modB & Modifiers.PUBLIC) != 0) {
 				flags = Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
 			} else if ((modB & Modifiers.PROTECTED) != 0) {
-				if ((modB & Modifiers.INTERNAL) != 0)
-					flags = Modifiers.PROTECTED | Modifiers.INTERNAL;
-
-				flags |= Modifiers.PRIVATE;
-			} else if ((modB & Modifiers.INTERNAL) != 0)
+				if ((modB & Modifiers.INTERNAL) != 0) {
+					flags = Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
+				} else {
+					modA &= ~Modifiers.PROTECTED;
+					flags = Modifiers.PRIVATE;
+				}
+			} else if ((modB & Modifiers.INTERNAL) != 0) {
+				modA &= ~Modifiers.PROTECTED;
 				flags = Modifiers.PRIVATE;
+			}
 
 			return modB != modA && (modA & (~flags)) == 0;
 		}
@@ -150,6 +157,8 @@ namespace Mono.CSharp
 			} else {
 				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					t = TypeAttributes.NestedPublic;
+				else if ((mod_flags & (Modifiers.PROTECTED | Modifiers.PRIVATE)) == (Modifiers.PROTECTED | Modifiers.PRIVATE))
+					t = TypeAttributes.NestedFamANDAssem;
 				else if ((mod_flags & Modifiers.PRIVATE) != 0)
 					t = TypeAttributes.NestedPrivate;
 				else if ((mod_flags & (Modifiers.PROTECTED | Modifiers.INTERNAL)) == (Modifiers.PROTECTED | Modifiers.INTERNAL))
@@ -172,18 +181,27 @@ namespace Mono.CSharp
 		{
 			FieldAttributes fa = 0;
 
-			if ((mod_flags & Modifiers.PUBLIC) != 0)
+			switch (mod_flags & Modifiers.AccessibilityMask) {
+			case Modifiers.PUBLIC:
 				fa |= FieldAttributes.Public;
-			if ((mod_flags & Modifiers.PRIVATE) != 0)
+				break;
+			case Modifiers.PRIVATE:
 				fa |= FieldAttributes.Private;
-			if ((mod_flags & Modifiers.PROTECTED) != 0) {
-				if ((mod_flags & Modifiers.INTERNAL) != 0)
-					fa |= FieldAttributes.FamORAssem;
-				else 
-					fa |= FieldAttributes.Family;
-			} else {
-				if ((mod_flags & Modifiers.INTERNAL) != 0)
-					fa |= FieldAttributes.Assembly;
+				break;
+			case Modifiers.PROTECTED | Modifiers.INTERNAL:
+				fa |= FieldAttributes.FamORAssem;
+				break;
+			case Modifiers.PROTECTED:
+				fa |= FieldAttributes.Family;
+				break;
+			case Modifiers.INTERNAL:
+				fa |= FieldAttributes.Assembly;
+				break;
+			case Modifiers.PRIVATE | Modifiers.PROTECTED:
+				fa |= FieldAttributes.FamANDAssem;
+				break;
+			default:
+				throw new NotImplementedException (mod_flags.ToString ());
 			}
 
 			if ((mod_flags & Modifiers.STATIC) != 0)
@@ -213,6 +231,9 @@ namespace Mono.CSharp
 				break;
 			case Modifiers.INTERNAL:
 				ma |= MethodAttributes.Assembly;
+				break;
+			case Modifiers.PRIVATE | Modifiers.PROTECTED:
+				ma |= MethodAttributes.FamANDAssem;
 				break;
 			default:
 				throw new NotImplementedException (mod_flags.ToString ());

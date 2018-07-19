@@ -107,10 +107,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			_location = storeLocation;
 		}
 
-		public void Dispose ()
-		{
-		}
-
 		// properties
 
 		public X509Certificate2Collection Certificates {
@@ -210,6 +206,11 @@ namespace System.Security.Cryptography.X509Certificates {
 			store = null;
 			if (list != null)
 				list.Clear ();
+		}
+
+		public void Dispose ()
+		{
+			Close ();
 		}
 
 		public void Open (OpenFlags flags)

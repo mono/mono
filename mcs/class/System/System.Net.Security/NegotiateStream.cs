@@ -149,6 +149,12 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
+		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, ChannelBinding binding, string targetName, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, string targetName, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
@@ -156,6 +162,12 @@ namespace System.Net.Security
 
 		[MonoTODO]
 		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual IAsyncResult BeginAuthenticateAsClient (NetworkCredential credential, ChannelBinding binding, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -173,7 +185,19 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
+		public virtual IAsyncResult BeginAuthenticateAsServer (NetworkCredential credential, ExtendedProtectionPolicy policy, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public virtual IAsyncResult BeginAuthenticateAsServer (NetworkCredential credential, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel, AsyncCallback asyncCallback, object asyncState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual IAsyncResult BeginAuthenticateAsServer (ExtendedProtectionPolicy policy, AsyncCallback asyncCallback, object asyncState)
 		{
 			throw new NotImplementedException ();
 		}
@@ -197,6 +221,18 @@ namespace System.Net.Security
 		}
 
 		[MonoTODO]
+		public virtual void AuthenticateAsClient (NetworkCredential credential, ChannelBinding binding, string targetName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void AuthenticateAsClient (NetworkCredential credential, ChannelBinding binding, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel)
+ 		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public virtual void AuthenticateAsClient (NetworkCredential credential, string targetName, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel allowedImpersonationLevel)
 		{
 			throw new NotImplementedException ();
@@ -204,6 +240,18 @@ namespace System.Net.Security
 
 		[MonoTODO]
 		public virtual void AuthenticateAsServer ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void AuthenticateAsServer (ExtendedProtectionPolicy policy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void AuthenticateAsServer (NetworkCredential credential, ExtendedProtectionPolicy policy, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel)
 		{
 			throw new NotImplementedException ();
 		}

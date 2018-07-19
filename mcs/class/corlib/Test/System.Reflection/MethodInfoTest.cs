@@ -33,7 +33,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Reflection;
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -54,7 +54,7 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 		// use an existing symbol - so we can build without dlsym. It does not matter that the signature does not match for the test
 		[DllImport ("libc", EntryPoint="readlink", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 #else
@@ -115,7 +115,7 @@ namespace MonoTests.System.Reflection
 			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
 			Assert.AreEqual (CallingConvention.Winapi, attr.CallingConvention, "#1");
-#if MONOTOUCH || MOBILE_STATIC
+#if MONOTOUCH || FULL_AOT_RUNTIME
 			Assert.AreEqual ("readlink", attr.EntryPoint, "#2");
 			Assert.AreEqual ("libc", attr.Value, "#3");
 #else
@@ -287,12 +287,28 @@ namespace MonoTests.System.Reflection
 		class GBD_D : GBD_C { public new virtual void f () {} }
 		class GBD_E : GBD_D { public override    void f () {} }
 
+		class GBD_E2 : GBD_D { }
+		class GBD_F : GBD_E { }
+
+
 		[Test]
 		public void GetBaseDefinition ()
 		{
 			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#1r");
+
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#2r");
+
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#3r");
+
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E2).GetMethod ("f").GetBaseDefinition ().DeclaringType, "#4");
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E2).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#4r");
+
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_F).GetMethod ("f").GetBaseDefinition ().DeclaringType, "#5");
+			Assert.AreEqual (typeof (GBD_D), typeof (GBD_F).GetMethod ("f").GetBaseDefinition ().ReflectedType, "#5r");
+
 		}
 
 		class GenericBase<T,H> {
@@ -397,7 +413,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody ()
 		{
-#if (MONOTOUCH || MOBILE_STATIC) && !DEBUG
+#if (MONOTOUCH || FULL_AOT_RUNTIME) && !DEBUG
 			Assert.Ignore ("Release app (on devices) are stripped of (managed) IL so this test would fail");
 #endif
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
@@ -415,8 +431,10 @@ namespace MonoTests.System.Reflection
 						Assert.IsFalse (lvi.IsPinned, "#3-1");
 
 					if (/* mcs */ lvi.LocalType == typeof (byte*) || /* csc */ lvi.LocalType == typeof (byte).MakeByRefType ()) {
-						foundPinnedBytePointer = true;
-						Assert.IsTrue (lvi.IsPinned, "#3-2");
+						// We have three locals. There's b the byte[], there's a byte* and there's a byte&.
+						// mcs emits a byte* for the latter type.
+						// We need to find one such pinned byte pointer. Therefore we're folding with logical or
+						foundPinnedBytePointer = foundPinnedBytePointer || lvi.IsPinned;
 					}
 				}
 			}
@@ -600,7 +618,7 @@ namespace MonoTests.System.Reflection
 			} catch (InvalidOperationException ex) {
 			}
 		}
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		public TFoo SimpleGenericMethod2<TFoo, TBar> () { return default (TFoo); }
 		/*Test for the uggly broken behavior of SRE.*/
 		[Test]
@@ -854,7 +872,7 @@ namespace MonoTests.System.Reflection
 
 		}
 
-#if !MONOTOUCH && !MOBILE_STATIC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		class GenericClass<T>
 		{
 			public void Method ()

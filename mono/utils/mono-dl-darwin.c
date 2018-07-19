@@ -1,11 +1,13 @@
-/*
- * mono-dl.c: Interface to the dynamic linker
+/**
+ * \file
+ * Interface to the dynamic linker
  *
  * Author:
  *    Mono Team (http://www.mono-project.com)
  *
  * Copyright 2001-2004 Ximian, Inc.
  * Copyright 2004-2009 Novell, Inc.
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 #include <config.h>
 

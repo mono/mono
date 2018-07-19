@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.Data.Services.Providers;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Data.Services.Providers
 {
@@ -40,11 +39,11 @@ namespace MonoTests.System.Data.Services.Providers
 		public void TypeIs ()
 		{
 			var rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, null, "System", "String", false);
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.TypeIs ("test", rt);
 			}, "#A1");
 
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.TypeIs (null, null);
 			}, "#A2");
 		}
@@ -53,11 +52,11 @@ namespace MonoTests.System.Data.Services.Providers
 		public void Convert ()
 		{
 			var rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, null, "System", "String", false);
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.Convert ("test", rt);
 			}, "#A1");
 
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.Convert (null, null);
 			}, "#A2");
 		}
@@ -67,11 +66,11 @@ namespace MonoTests.System.Data.Services.Providers
 		{
 			var rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, null, "System", "String", false);
 			var rp = new ResourceProperty ("Length", ResourcePropertyKind.ComplexType, rt);
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.GetSequenceValue<string> ("test", rp);
 			}, "#A1");
 
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.GetSequenceValue<string> (null, null);
 			}, "#A2");
 		}
@@ -81,11 +80,11 @@ namespace MonoTests.System.Data.Services.Providers
 		{
 			var rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, null, "System", "String", false);
 			var rp = new ResourceProperty ("Length", ResourcePropertyKind.ComplexType, rt);
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.GetValue ("test", rp);
 			}, "#A1");
 
-			AssertExtensions.Throws<NotImplementedException> (() => {
+			Assert.Throws<NotImplementedException> (() => {
 				DataServiceProviderMethods.GetValue (null, null);
 			}, "#A2");
 		}

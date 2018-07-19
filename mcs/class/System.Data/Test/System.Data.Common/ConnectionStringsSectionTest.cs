@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOBILE
+#if !MOBILE && !MONOMAC
 
 using System;
 using System.Configuration;

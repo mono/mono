@@ -20,9 +20,7 @@
 // THE SOFTWARE.
 // 
 
-#if !MOBILE && !XAMMAC_4_5
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.CallbackBehaviorAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexChannelFactory<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexClientBase<>))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.InstanceContext))]

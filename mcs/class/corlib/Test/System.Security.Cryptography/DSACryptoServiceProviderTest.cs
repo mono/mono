@@ -857,7 +857,7 @@ public class DSACryptoServiceProviderTest {
 		}
 	}
 		
-#if !NET_2_1
+#if !MOBILE
 	[Test]
 	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()
@@ -1045,6 +1045,16 @@ public class DSACryptoServiceProviderTest {
 		byte[] blob = new byte [148]; // valid size for public key
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		dsa.ImportCspBlob (blob);
+	}
+
+	[Test] //bug 38054
+	public void NonExportableKeysAreNonExportable ()
+	{
+		var cspParams = new CspParameters (13, null, "Mono1024");
+		cspParams.KeyContainerName = "TestDSAKey";
+		cspParams.Flags = CspProviderFlags.UseNonExportableKey;
+		var rsa = new DSACryptoServiceProvider(cspParams);
+		Assert.Throws<CryptographicException>(() => rsa.ExportParameters(true));
 	}
 }
 

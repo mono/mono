@@ -83,12 +83,12 @@ namespace System.Web.Security
 			return usr;
 		}
 		
-		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, out MembershipCreateStatus status)
+		public static MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, out MembershipCreateStatus status)
 		{
-			return CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, null, out status);
+			return CreateUser (username, password, email, passwordQuestion, passwordAnswer, isApproved, null, out status);
 		}
 		
-		public static MembershipUser CreateUser (string username, string password, string email, string pwdQuestion, string pwdAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
+		public static MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
 		{
 			if (String.IsNullOrEmpty (username)) {
 				status = MembershipCreateStatus.InvalidUserName;
@@ -100,7 +100,7 @@ namespace System.Web.Security
 				return null;
 			}
 
-			return Provider.CreateUser (username, password, email, pwdQuestion, pwdAnswer, isApproved, providerUserKey, out status);
+			return Provider.CreateUser (username, password, email, passwordQuestion, passwordAnswer, isApproved, providerUserKey, out status);
 		}
 		
 		public static bool DeleteUser (string username)
@@ -221,9 +221,9 @@ namespace System.Web.Security
 			return Provider.GetUser (providerUserKey, userIsOnline);
 		}
 		
-		public static string GetUserNameByEmail (string email)
+		public static string GetUserNameByEmail (string emailToMatch)
 		{
-			return Provider.GetUserNameByEmail (email);
+			return Provider.GetUserNameByEmail (emailToMatch);
 		}
 		
 		public static void UpdateUser (MembershipUser user)
@@ -247,15 +247,15 @@ namespace System.Web.Security
 			return Provider.FindUsersByEmail (emailToMatch, pageIndex, pageSize, out totalRecords);
 		}
 		
-		public static MembershipUserCollection FindUsersByName (string nameToMatch)
+		public static MembershipUserCollection FindUsersByName (string usernameToMatch)
 		{
 			int totalRecords;
-			return Provider.FindUsersByName (nameToMatch, 0, int.MaxValue, out totalRecords);
+			return Provider.FindUsersByName (usernameToMatch, 0, int.MaxValue, out totalRecords);
 		}
 		
-		public static MembershipUserCollection FindUsersByName (string nameToMatch, int pageIndex, int pageSize, out int totalRecords)
+		public static MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
-			return Provider.FindUsersByName (nameToMatch, pageIndex, pageSize, out totalRecords);
+			return Provider.FindUsersByName (usernameToMatch, pageIndex, pageSize, out totalRecords);
 		}
 
 		public static string ApplicationName {

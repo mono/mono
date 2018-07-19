@@ -11,9 +11,11 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -441,6 +443,31 @@ namespace MonoTests.System.Reflection.Emit
 			f.Method.GetMethodBody ();
 		}
 
+		[Test]
+		public void GetCustomAttributes ()
+		{
+			var method = new DynamicMethod ("method", typeof (void), new Type [] { });
+
+			var methodImplAttrType = typeof (MethodImplAttribute);
+			Assert.IsTrue (method.IsDefined (methodImplAttrType, true), "MethodImplAttribute is defined");
+
+			// According to the spec, MethodImplAttribute is the
+			// only custom attr that's present on a DynamicMethod.
+			// And it's always a managed method with no inlining.
+			var a1 = method.GetCustomAttributes (true);
+			Assert.AreEqual (a1.Length, 1, "a1.Length == 1");
+			Assert.AreEqual (a1[0].GetType (), methodImplAttrType, "a1[0] is a MethodImplAttribute");
+			var options = (a1[0] as MethodImplAttribute).Value;
+			Assert.IsTrue ((options & MethodImplOptions.NoInlining) != 0, "NoInlining is set");
+			Assert.IsTrue ((options & MethodImplOptions.Unmanaged) == 0, "Unmanaged isn't set");
+
+
+			// any other custom attribute type
+			var extensionAttrType = typeof (ExtensionAttribute);
+			Assert.IsFalse (method.IsDefined (extensionAttrType, true));
+			Assert.AreEqual (Array.Empty<object>(), method.GetCustomAttributes (extensionAttrType, true));
+		}
+
 	public delegate object RetObj();
 		[Test] //#640702
 		public void GetCurrentMethodWorksWithDynamicMethods ()
@@ -517,7 +544,10 @@ namespace MonoTests.System.Reflection.Emit
 			invoke (456324);
 
 			Assert.IsNotNull (ExceptionHandling_Test_Support.Caught, "#1");
-			Assert.AreEqual (2, ExceptionHandling_Test_Support.CaughtStackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.None).Length, "#2");
+
+			var lines = ExceptionHandling_Test_Support.CaughtStackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.None);
+			lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
+			Assert.AreEqual (2, lines.Length, "#2");
 
 			var st = new StackTrace (ExceptionHandling_Test_Support.Caught, 0, true);
 
@@ -552,9 +582,12 @@ namespace MonoTests.System.Reflection.Emit
 
 			public static void Handler (Exception e)
 			{
-				var split = e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				Assert.AreEqual (5, split.Length, "#1");
-				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				var lines = e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				// Ignore Metadata
+				lines = lines.Where (l => !l.StartsWith ("[")).ToArray ();
+
+				Assert.AreEqual (4, lines.Length, "#1");
+				Assert.IsTrue (lines [1].Contains ("---"), "#2");
 			}
 		}
 
@@ -575,6 +608,102 @@ namespace MonoTests.System.Reflection.Emit
 
 			var invoke = (Action<int>) method.CreateDelegate (typeof(Action<int>));
 			invoke (444);
+		}
+
+		static Func<int> EmitDelegate (DynamicMethod dm) {
+			ILGenerator il = dm.GetILGenerator ();
+			var ret_val = il.DeclareLocal (typeof (int));
+			var leave_label = il.DefineLabel ();
+
+			//ret = 1;
+			il.Emit (OpCodes.Ldc_I4, 1);
+			il.Emit (OpCodes.Stloc, ret_val);
+
+			// try {
+			il.BeginExceptionBlock ();
+			//	throw "hello";
+			il.Emit (OpCodes.Ldstr, "hello");
+			il.Emit (OpCodes.Throw, typeof (string));
+			//	ret = 2
+			il.Emit (OpCodes.Ldc_I4, 2);
+			il.Emit (OpCodes.Stloc, ret_val);
+			// }
+			il.Emit (OpCodes.Leave, leave_label);
+			//catch (string)
+			il.BeginCatchBlock (typeof (string));
+			il.Emit (OpCodes.Pop);
+			//	ret = 3
+			il.Emit (OpCodes.Ldc_I4, 3);
+			il.Emit (OpCodes.Stloc, ret_val);
+			//}
+			il.Emit (OpCodes.Leave, leave_label);
+			il.EndExceptionBlock ();
+
+			il.MarkLabel (leave_label);
+			//return ret;
+			il.Emit (OpCodes.Ldloc, ret_val);
+			il.Emit (OpCodes.Ret);
+
+			var dele = (Func<int>)dm.CreateDelegate (typeof (Func<int>));
+			return dele;
+		}
+
+		[Test] //see bxc #59334
+		public void ExceptionWrapping ()
+		{
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("ehatevfheiw"), AssemblyBuilderAccess.Run);
+			AssemblyBuilder ab2 = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("ddf4234"), AssemblyBuilderAccess.Run);
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (
+					typeof (RuntimeCompatibilityAttribute).GetConstructor (new Type [0]),
+					new object [0],
+					new PropertyInfo[] { typeof (RuntimeCompatibilityAttribute).GetProperty ("WrapNonExceptionThrows") },
+					new object[] { true });
+			ab2.SetCustomAttribute (cab);
+
+			AssemblyBuilder ab3 = AppDomain.CurrentDomain.DefineDynamicAssembly (new AssemblyName ("frfhfher"), AssemblyBuilderAccess.Run);
+			//1 NamedArg. Property name: WrapNonExceptionThrows value: true (0x01) 
+			byte[] blob = new byte[] { 0x01, 0x00, 0x01, 0x00, 0x54, 0x02, 0x16, 0x57, 0x72, 0x61, 0x70, 0x4E, 0x6F, 0x6E, 0x45, 0x78,
+				0x63, 0x65, 0x70, 0x74, 0x69, 0x6F, 0x6E, 0x54, 0x68, 0x72, 0x6F, 0x77, 0x73, 0x01 };
+			ab3.SetCustomAttribute (typeof (RuntimeCompatibilityAttribute).GetConstructor (new Type [0]), blob);
+		
+			DynamicMethod invoke_no_module = new DynamicMethod("throw_1", typeof (int), new Type [0]);
+			DynamicMethod invoke_with_module = new DynamicMethod("throw_2", typeof (int), new Type [0], typeof (DynamicMethodTest).Module);
+			DynamicMethod invoke_with_ab = new DynamicMethod("throw_3", typeof (int), new Type [0], ab.ManifestModule);
+			DynamicMethod invoke_with_ab2 = new DynamicMethod("throw_4", typeof (int), new Type [0], ab2.ManifestModule);
+			DynamicMethod invoke_with_ab3 = new DynamicMethod("throw_5", typeof (int), new Type [0], ab3.ManifestModule);
+
+			int result = 0;
+			try {
+				int res = EmitDelegate (invoke_no_module)();
+				Assert.AreEqual (3, res, "invoke_no_module bad return value");
+			} catch (RuntimeWrappedException e) {
+				Assert.Fail ("invoke_no_module threw RWE");
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_module)();
+				Assert.Fail ("invoke_with_module did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab)();
+				Assert.AreEqual (3, res, "invoke_with_ab bad return value");
+			} catch (RuntimeWrappedException e) {
+				Assert.Fail ("invoke_with_ab threw RWE");
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab2)();
+				Assert.Fail ("invoke_with_ab2 did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}
+
+			try {
+				int res = EmitDelegate (invoke_with_ab3)();
+				Assert.Fail ("invoke_with_a3 did not throw RWE");
+			} catch (RuntimeWrappedException e) {
+			}			
 		}
 
 #if !MONODROID
@@ -611,6 +740,55 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (TypedRefTarget), TypedReference.GetTargetType (tr));
 		}
 #endif
+
+	    static Action GenerateProblematicMethod (bool add_extra, bool mismatch = false, bool use_vts = false)
+	    {
+			Type this_type = typeof(object);
+			Type bound_type = typeof(object);
+			if (mismatch) {
+				this_type = typeof (string);
+				bound_type = typeof (DynamicMethodTest);
+			} else if (use_vts) {
+				this_type = typeof (int);
+				bound_type = typeof (long);
+			}
+
+	        Type[] args;
+			if (add_extra)
+				args = new[] { this_type };
+			else
+				args = new Type [0];
+
+	        var mb = new DynamicMethod("Peek", null, args, bound_type, true);
+	        var il = mb.GetILGenerator ();
+	        il.Emit(OpCodes.Ret);
+	        return (Action) mb.CreateDelegate(typeof(Action));
+	    }
+
+		[Test]
+		public void ExtraArgGetsIgnored ()
+		{
+			GenerateProblematicMethod (true) ();
+		}
+
+		[Test]
+		public void ExactNumberOfArgsWork ()
+		{
+			GenerateProblematicMethod (false) ();
+		}
+
+		[Test]
+		public void ExtraArgWithMismatchedTypes ()
+		{
+			GenerateProblematicMethod (true, mismatch: true) ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ExtraArgWithValueType ()
+		{
+			GenerateProblematicMethod (true, use_vts: true) ();
+		}
 	}
 }
 

@@ -187,12 +187,12 @@ namespace System.ServiceModel.Channels.NetTcp
 			if (client.Available > 0)
 				return true;
 
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 			do {
 				Thread.Sleep (50);
 				if (client.Available > 0)
 					return true;
-			} while (DateTime.Now - start < timeout);
+			} while (DateTime.UtcNow - start < timeout);
 			return false;
 		}
 		

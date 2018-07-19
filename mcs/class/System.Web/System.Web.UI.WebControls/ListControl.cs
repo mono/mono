@@ -254,9 +254,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		protected override void AddAttributesToRender (HtmlTextWriter w)
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			base.AddAttributesToRender (w);
+			base.AddAttributesToRender (writer);
 		}
 
 		public virtual void ClearSelection ()

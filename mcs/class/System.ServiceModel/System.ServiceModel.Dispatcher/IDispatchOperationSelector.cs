@@ -32,6 +32,6 @@ namespace System.ServiceModel.Dispatcher
 {
 	public interface IDispatchOperationSelector
 	{
-		string SelectOperation (ref Message msg);
+		string SelectOperation (ref Message message);
 	}
 }

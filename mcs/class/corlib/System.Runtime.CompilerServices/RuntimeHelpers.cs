@@ -100,6 +100,11 @@ namespace System.Runtime.CompilerServices
 			throw new InsufficientExecutionStackException ();
 		}
 
+		public static bool TryEnsureSufficientExecutionStack ()
+		{
+			return SufficientExecutionStack ();
+		}
+
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
 		{
@@ -136,8 +141,6 @@ namespace System.Runtime.CompilerServices
 		[MonoTODO("Currently a no-op")]
 		public static void PrepareDelegate (Delegate d)
 		{
-			if (d == null)
-				throw new ArgumentNullException ("d");
 		}
 
 		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/runtimehelpers.cs
@@ -179,5 +182,11 @@ namespace System.Runtime.CompilerServices
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void RunModuleConstructor (IntPtr module);
+
+		// This is implemented as a JIT intrinsic
+		public static bool IsReferenceOrContainsReferences<T>()
+		{
+			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
+		}
 	}
 }

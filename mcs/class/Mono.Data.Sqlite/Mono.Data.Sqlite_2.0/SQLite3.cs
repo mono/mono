@@ -125,9 +125,9 @@ namespace Mono.Data.Sqlite
 	// Compatibility with versions < 3.5.0
         int n;
 
-	try {
+	if (UnsafeNativeMethods.use_sqlite3_open_v2) {
 		n = UnsafeNativeMethods.sqlite3_open_v2(ToUTF8(strFilename), out db, (int)flags, IntPtr.Zero);
-	} catch (EntryPointNotFoundException) {
+	} else {
 		Console.WriteLine ("Your sqlite3 version is old - please upgrade to at least v3.5.0!");
 		n = UnsafeNativeMethods.sqlite3_open (ToUTF8 (strFilename), out db);
 	}
@@ -706,7 +706,7 @@ namespace Mono.Data.Sqlite
     }
 
 #if MONOTOUCH
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteCallback))]
     internal static void scalar_callback(IntPtr context, int nArgs, IntPtr argsptr)
     {
       var handle = GCHandle.FromIntPtr (UnsafeNativeMethods.sqlite3_user_data(context));
@@ -714,7 +714,7 @@ namespace Mono.Data.Sqlite
       func.Func(context, nArgs, argsptr);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteCallback))]
     internal static void step_callback(IntPtr context, int nArgs, IntPtr argsptr)
     {
       var handle = GCHandle.FromIntPtr(UnsafeNativeMethods.sqlite3_user_data(context));
@@ -722,7 +722,7 @@ namespace Mono.Data.Sqlite
       func.FuncStep(context, nArgs, argsptr);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
     internal static void final_callback(IntPtr context)
     {
       var handle = GCHandle.FromIntPtr(UnsafeNativeMethods.sqlite3_user_data(context));
@@ -730,7 +730,7 @@ namespace Mono.Data.Sqlite
       func.FuncFinal(context);
     }
 
-    [MonoTouch.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
+    [Mono.Util.MonoPInvokeCallback(typeof(SQLiteFinalCallback))]
     internal static void destroy_callback(IntPtr context)
     {
       GCHandle.FromIntPtr(context).Free();
@@ -929,36 +929,32 @@ namespace Mono.Data.Sqlite
       return UnsafeNativeMethods.sqlite3_aggregate_context(context, 1);
     }
 
-#if MONOTOUCH
-	internal override void SetPassword(byte[] passwordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-
-	internal override void ChangePassword(byte[] newPasswordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-#else
     internal override void SetPassword(byte[] passwordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_key(_sql, passwordBytes, passwordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
+#endif
     }
 
     internal override void ChangePassword(byte[] newPasswordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
-    }
 #endif
+    }
 		
 #if MONOTOUCH
     SQLiteUpdateCallback update_callback;
     SQLiteCommitCallback commit_callback;
     SQLiteRollbackCallback rollback_callback;
 		
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteUpdateCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteUpdateCallback))]
     static void update (IntPtr puser, int type, IntPtr database, IntPtr table, Int64 rowid)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
@@ -974,7 +970,7 @@ namespace Mono.Data.Sqlite
         UnsafeNativeMethods.sqlite3_update_hook (_sql, update, GCHandle.ToIntPtr (gch));
     }
 
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCommitCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteCommitCallback))]
     static int commit (IntPtr puser)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;
@@ -990,7 +986,7 @@ namespace Mono.Data.Sqlite
         UnsafeNativeMethods.sqlite3_commit_hook (_sql, commit, GCHandle.ToIntPtr (gch));
     }
 
-    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteRollbackCallback))]
+    [Mono.Util.MonoPInvokeCallback (typeof (SQLiteRollbackCallback))]
     static void rollback (IntPtr puser)
     {
       SQLite3 instance = GCHandle.FromIntPtr (puser).Target as SQLite3;

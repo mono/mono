@@ -65,14 +65,14 @@ namespace System.Collections.Generic
 			return list;
 		}
 
-		protected override void InsertItem (int index, TItem kind)
+		protected override void InsertItem (int index, TItem item)
 		{
-			base.InsertItem (index, kind);
+			base.InsertItem (index, item);
 		}
 
-		protected override void SetItem (int index, TItem kind)
+		protected override void SetItem (int index, TItem item)
 		{
-			base.SetItem (index, kind);
+			base.SetItem (index, item);
 		}
 
 		public T Remove<T> ()

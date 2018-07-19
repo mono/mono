@@ -42,9 +42,9 @@ namespace System.ServiceModel.Channels
 
 		[MonoTODO]
 		public
-		MessageEncodingBindingElement (MessageEncodingBindingElement source)
+		MessageEncodingBindingElement (MessageEncodingBindingElement elementToBeCloned)
 		{
-			MessageVersion = source.MessageVersion;
+			MessageVersion = elementToBeCloned.MessageVersion;
 		}
 
 		public abstract MessageEncoderFactory
@@ -52,14 +52,14 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageVersion MessageVersion { get; set; }
 
-		public override T GetProperty<T> (BindingContext ctx)
+		public override T GetProperty<T> (BindingContext context)
 		{
 			if (typeof (T) == typeof (MessageVersion))
 				return (T) (object) MessageVersion;
-			return ctx.GetInnerProperty<T> ();
+			return context.GetInnerProperty<T> ();
 		}
 
-#if !NET_2_1 && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[MonoTODO]
 		protected virtual void OnImportPolicy (XmlElement assertion,
 			MessageVersion messageVersion,

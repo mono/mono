@@ -5,29 +5,19 @@ include ../../build/rules.make
 
 LIBRARY = System.Configuration.dll
 
-LOCAL_MCS_FLAGS = -lib:$(secxml_libdir) -lib:$(bare_libdir)
-test_remove = $(LOCAL_MCS_FLAGS)
-LIB_REFS = System System.Xml System.Security
-LIB_MCS_FLAGS = -r:$(corlib) -nowarn:618
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) 
+LOCAL_MCS_FLAGS = 
+LIB_REFS = System.Security System System.Xml
+KEYFILE = ../msfinal.pub
+LIB_MCS_FLAGS = -nowarn:618
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System.Xml System
+TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
+LIBRARY_WARN_AS_ERROR = yes
 
 include ../../build/library.make
 
-configuration_library_deps = \
-	$(secxml_libdir)/System.dll 	\
-	$(the_libdir_base)System.Security.dll 	\
-	$(bare_libdir)/System.Xml.dll
+test-local:
+	cp Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/Test-appSettings.config
 
-$(build_lib): $(configuration_library_deps)
-
-.NOTPARALLEL: $(configuration_library_deps)
-
-$(secxml_libdir)/System.dll:
-	@echo System.Configuration: GETTING: $@
-	(cd ../System; $(MAKE) $@)
-
-$(the_libdir_base)System.Security.dll:
-	(cd ../System.Security; $(MAKE) $@)
-
-$(bare_libdir)/System.Xml.dll:
-	(cd ../System.XML; $(MAKE) $@)
+run-test:
+	$(MAKE) -C Test/standalone

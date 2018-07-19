@@ -30,66 +30,27 @@
 //
 using System;
 using System.Text;
+using System.Threading;
 using System.Runtime.InteropServices;
-#if !NET_2_1
+#if !MOBILE
 using System.Security.Permissions;
 #endif
-using MX = Mono.Security.X509;
+using Mono;
 
 namespace System.Security.Cryptography.X509Certificates
 {
 	static partial class X509Helper
 	{
-#if !NET_2_1
-		// typedef struct _CERT_CONTEXT {
-		//	DWORD                   dwCertEncodingType;
-		//	BYTE                    *pbCertEncoded;
-		//	DWORD                   cbCertEncoded;
-		//	PCERT_INFO              pCertInfo;
-		//	HCERTSTORE              hCertStore;
-		// } CERT_CONTEXT, *PCERT_CONTEXT;
-		// typedef const CERT_CONTEXT *PCCERT_CONTEXT;
-		[StructLayout (LayoutKind.Sequential)]
-		internal struct CertificateContext {
-			public UInt32 dwCertEncodingType;
-			public IntPtr pbCertEncoded;
-			public UInt32 cbCertEncoded;
-			public IntPtr pCertInfo;
-			public IntPtr hCertStore;
-		}
-		// NOTE: We only define the CryptoAPI structure (from WINCRYPT.H)
-		// so we don't create any dependencies on Windows DLL in corlib
+		static ISystemCertificateProvider CertificateProvider => DependencyInjector.SystemProvider.CertificateProvider;
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
+		public static X509CertificateImpl InitFromCertificate (X509Certificate cert)
 		{
-			// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
-			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
-			byte[] data = new byte [cc.cbCertEncoded];
-			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
-			var x509 = new MX.X509Certificate (data);
-			return new X509CertificateImplMono (x509);
+			return CertificateProvider.Import (cert, CertificateImportFlags.None);
 		}
-#elif !MONOTOUCH && !XAMMAC
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
-		{
-			throw new NotSupportedException ();
-		}
-#endif
 
 		public static X509CertificateImpl InitFromCertificate (X509CertificateImpl impl)
 		{
-			ThrowIfContextInvalid (impl);
-			var copy = impl.Clone ();
-			if (copy != null)
-				return copy;
-
-			var data = impl.GetRawCertData ();
-			if (data == null)
-				return null;
-
-			var x509 = new MX.X509Certificate (data);
-			return new X509CertificateImplMono (x509);
+			return impl?.Clone ();
 		}
 
 		public static bool IsValid (X509CertificateImpl impl)
@@ -108,60 +69,10 @@ namespace System.Security.Cryptography.X509Certificates
 			return new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 		}
 
-		internal static MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
-		{
-			var pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
-			if (pfx.Certificates.Count == 0) {
-				// no certificate was found
-				return null;
-			} else if (pfx.Keys.Count == 0) {
-				// no key were found - pick the first certificate
-				return pfx.Certificates [0];
-			} else {
-				// find the certificate that match the first key
-				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
-				string pubkey = keypair.ToXmlString (false);
-				foreach (var c in pfx.Certificates) {
-					if ((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false)))
-						return c;
-					if ((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))
-						return c;
-				}
-				return pfx.Certificates [0]; // no match, pick first certificate without keys
-			}
-		}
-
-#if !MONOTOUCH && !XAMMAC
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			MX.X509Certificate x509;
-			if (password == null) {
-				try {
-					x509 = new MX.X509Certificate (rawData);
-				} catch (Exception e) {
-					try {
-						x509 = ImportPkcs12 (rawData, null);
-					} catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					x509 = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					x509 = new MX.X509Certificate (rawData);
-				}
-			}
-
-			return new X509CertificateImplMono (x509);
+			return CertificateProvider.Import (rawData, password, keyStorageFlags);
 		}
-#endif
 
 		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
 		{

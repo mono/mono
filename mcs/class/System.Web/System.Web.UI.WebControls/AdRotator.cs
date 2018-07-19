@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls
 			base.OnInit(e);
 		}
 
-		protected internal override void OnPreRender (EventArgs eee)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			Hashtable ht = null;
 			
@@ -62,9 +62,9 @@ namespace System.Web.UI.WebControls
 				ht = ChooseAd ();
 			}
 
-		 	AdCreatedEventArgs e = new AdCreatedEventArgs (ht);
-			OnAdCreated (e);
-			createdargs = e;
+		 	AdCreatedEventArgs ev = new AdCreatedEventArgs (ht);
+			OnAdCreated (ev);
+			createdargs = ev;
 			
 		}
 
@@ -80,27 +80,27 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		protected internal override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			AdCreatedEventArgs e = createdargs;
 
-			base.AddAttributesToRender (w);
+			base.AddAttributesToRender (writer);
 
 			if (e.NavigateUrl != null && e.NavigateUrl.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveAdUrl (e.NavigateUrl));
+				writer.AddAttribute (HtmlTextWriterAttribute.Href, ResolveAdUrl (e.NavigateUrl));
 			if (Target != null && Target.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Target, Target);
+				writer.AddAttribute (HtmlTextWriterAttribute.Target, Target);
 			
-			w.RenderBeginTag (HtmlTextWriterTag.A);
+			writer.RenderBeginTag (HtmlTextWriterTag.A);
 
 			if (e.ImageUrl != null && e.ImageUrl.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
+				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
 
-			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? String.Empty : e.AlternateText);
-			w.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
-			w.RenderBeginTag (HtmlTextWriterTag.Img);
-			w.RenderEndTag (); // img
-			w.RenderEndTag (); // a
+			writer.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? String.Empty : e.AlternateText);
+			writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
+			writer.RenderBeginTag (HtmlTextWriterTag.Img);
+			writer.RenderEndTag (); // img
+			writer.RenderEndTag (); // a
 		}
 
 		string ResolveAdUrl (string url)

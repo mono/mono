@@ -31,7 +31,7 @@ namespace zipsharp
 		public ZipArchive (Stream stream, Append append, bool ownsStream)
 		{
 			Stream = new ZipStream (stream, ownsStream);
-			Handle = NativeZip.OpenArchive (Stream.IOFunctions, append);
+			Handle = NativeVersion.Use32Bit ? NativeZip.OpenArchive32 (Stream.IOFunctions32, append) : NativeZip.OpenArchive64 (Stream.IOFunctions64, append);
 		}
 
 		
@@ -61,8 +61,11 @@ namespace zipsharp
 		{
 			if (FileActive)
 				throw new InvalidOperationException ("A file is already open");
-			
-			NativeZip.OpenFile (Handle, filename, ConvertCompression (option));
+
+			if (NativeVersion.Use32Bit)
+				NativeZip.OpenFile32 (Handle, filename, ConvertCompression (option));
+			else
+				NativeZip.OpenFile64 (Handle, filename, ConvertCompression (option));
 			return new ZipWriteStream (this);
 		}
 

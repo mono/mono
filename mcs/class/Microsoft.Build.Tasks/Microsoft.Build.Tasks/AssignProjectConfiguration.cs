@@ -41,6 +41,8 @@ namespace Microsoft.Build.Tasks {
 		ITaskItem[]	assignedProjects;
 		string		solutionConfigurationContents;
 		ITaskItem[]	unassignedProjects;
+		Dictionary<Guid, string> guidToConfigPlatform;
+		Dictionary<string, string> absolutePathToConfigPlatform;
 	
 		public AssignProjectConfiguration ()
 		{
@@ -53,10 +55,10 @@ namespace Microsoft.Build.Tasks {
 				return true;
 
 			XmlReader xr = null;
-			Dictionary<Guid, string> guidToConfigPlatform = null;
+			guidToConfigPlatform = new Dictionary<Guid, string> ();
+			absolutePathToConfigPlatform = new Dictionary<string, string> ();
 			try {
 				xr = XmlReader.Create (new StringReader (solutionConfigurationContents));
-				guidToConfigPlatform = new Dictionary<Guid, string> ();
 
 				xr.Read ();
 				while (!xr.EOF) {
@@ -65,12 +67,20 @@ namespace Microsoft.Build.Tasks {
 						continue;
 
 					string guid_str = xr.GetAttribute ("Project");
+					string abs_path = xr.GetAttribute ("AbsolutePath");
 					string config_str = xr.ReadString ();
 
+					if (String.IsNullOrEmpty (config_str))
+						continue;
+
 					Guid guid;
-					if (!String.IsNullOrEmpty (guid_str) && !String.IsNullOrEmpty (config_str) &&
-						TryParseGuid (guid_str, out guid))
+					if (TryParseGuid (guid_str, out guid))
 						guidToConfigPlatform [guid] = config_str;
+
+					if (!String.IsNullOrEmpty (abs_path)) {
+						abs_path = Path.GetFullPath (abs_path);
+						absolutePathToConfigPlatform [abs_path] = config_str;
+					}
 				}
 			} catch (XmlException xe) {
 				Log.LogError ("XmlException while parsing SolutionConfigurationContents: {0}",
@@ -84,32 +94,22 @@ namespace Microsoft.Build.Tasks {
 			List<ITaskItem> tempAssignedProjects = new List<ITaskItem> ();
 			List<ITaskItem> tempUnassignedProjects = new List<ITaskItem> ();
 			foreach (ITaskItem item in ProjectReferences) {
-				string config;
+				string config = GetConfigPlatformFromProjectReference (item);
 
-				string guid_str = item.GetMetadata ("Project");
-
-				Guid guid = Guid.Empty;
-				if (!string.IsNullOrEmpty(guid_str) && !TryParseGuid (guid_str, out guid)) {
-					Log.LogError ("Project reference '{0}' has invalid or missing guid for metadata 'Project'.",
-							item.ItemSpec);
-					return false;
-				}
-
-				if (guid != Guid.Empty && guidToConfigPlatform.TryGetValue (guid, out config)) {
-					string [] parts = config.Split (new char [] {'|'}, 2);
-
-					ITaskItem new_item = new TaskItem (item);
-
-					new_item.SetMetadata ("SetConfiguration", "Configuration=" + parts [0]);
-					new_item.SetMetadata ("SetPlatform", "Platform=" +
-							((parts.Length > 1) ? parts [1] : String.Empty));
-
-					tempAssignedProjects.Add (new_item);
-				} else {
-					Log.LogWarning ("Project reference '{0}' could not be resolved.",
-							item.ItemSpec);
+				if (String.IsNullOrEmpty (config)) {
 					tempUnassignedProjects.Add (item);
+					continue;
 				}
+
+				string [] parts = config.Split (new char [] {'|'}, 2);
+
+				ITaskItem new_item = new TaskItem (item);
+
+				new_item.SetMetadata ("SetConfiguration", "Configuration=" + parts [0]);
+				new_item.SetMetadata ("SetPlatform", "Platform=" +
+						((parts.Length > 1) ? parts [1] : String.Empty));
+
+				tempAssignedProjects.Add (new_item);
 			}
 
 			assignedProjects = tempAssignedProjects.ToArray ();
@@ -118,9 +118,29 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		string GetConfigPlatformFromProjectReference (ITaskItem item)
+		{
+			string guid_str = item.GetMetadata ("Project");
+			string proj_full_path = item.GetMetadata ("FullPath");
+
+			string config;
+			Guid guid = Guid.Empty;
+			if (TryParseGuid (guid_str, out guid) && guidToConfigPlatform.TryGetValue (guid, out config))
+				return config;
+
+			string abs_path = item.GetMetadata ("FullPath");
+			if (absolutePathToConfigPlatform.TryGetValue (abs_path, out config))
+				return config;
+
+			return null;
+		}
+
 		bool TryParseGuid (string guid_str, out Guid guid)
 		{
 			guid = Guid.Empty;
+			if (String.IsNullOrEmpty (guid_str))
+				return false;
+
 			try {
 				guid = new Guid (guid_str);
 			} catch (ArgumentNullException) {

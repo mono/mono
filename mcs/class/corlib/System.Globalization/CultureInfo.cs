@@ -59,7 +59,6 @@ namespace System.Globalization
 		[NonSerialized]
 		int default_calendar_type;
 		bool m_useUserOverride;
-		[NonSerialized]
 		internal volatile NumberFormatInfo numInfo;
 		internal volatile DateTimeFormatInfo dateTimeInfo;
 		volatile TextInfo textInfo;
@@ -116,7 +115,12 @@ namespace System.Globalization
 		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
+		internal const int LOCALE_INVARIANT = 0x007F;
+
 		const string MSG_READONLY = "This instance is read only";
+
+		static volatile CultureInfo s_DefaultThreadCurrentUICulture;
+		static volatile CultureInfo s_DefaultThreadCurrentCulture;
 		
 		public static CultureInfo InvariantCulture {
 			get {
@@ -128,11 +132,17 @@ namespace System.Globalization
 			get {
 				return Thread.CurrentThread.CurrentCulture;
 			}
+			set {
+				Thread.CurrentThread.CurrentCulture = value;
+			}
 		}
 
 		public static CultureInfo CurrentUICulture { 
 			get {
 				return Thread.CurrentThread.CurrentUICulture;
+			}
+			set {
+				Thread.CurrentThread.CurrentUICulture = value;
 			}
 		}
 
@@ -172,7 +182,8 @@ namespace System.Globalization
 			get { return territory; }
 		}
 
-#if !NET_2_1
+		internal string _name => m_name;
+
 		// FIXME: It is implemented, but would be hell slow.
 		[ComVisible (false)]
 		public CultureTypes CultureTypes {
@@ -258,7 +269,6 @@ namespace System.Globalization
 				}
 			}
 		}
-#endif
 
 		public virtual int LCID {
 			get {
@@ -506,7 +516,7 @@ namespace System.Globalization
 			}
 		}
 
-		internal void CheckNeutral ()
+		void CheckNeutral ()
 		{
 		}
 
@@ -1065,19 +1075,19 @@ namespace System.Globalization
 		
 		public static CultureInfo DefaultThreadCurrentCulture {
 			get {
-				return Thread.default_culture;
+				return s_DefaultThreadCurrentCulture;
 			}
 			set {
-				Thread.default_culture = value;
+				s_DefaultThreadCurrentCulture = value;
 			}
 		}
 		
 		public static CultureInfo DefaultThreadCurrentUICulture {
 			get {
-				return Thread.default_ui_culture;
+				return s_DefaultThreadCurrentUICulture;
 			}
 			set {
-				Thread.default_ui_culture = value;
+				s_DefaultThreadCurrentUICulture = value;
 			}
 		}
 
@@ -1086,6 +1096,19 @@ namespace System.Globalization
 				return m_name;
 			}
 		}
+
+		internal static CultureInfo UserDefaultUICulture {
+			get {
+				return ConstructCurrentUICulture ();
+			}
+		}
+
+		internal static CultureInfo UserDefaultCulture {
+			get {
+				return ConstructCurrentCulture ();
+			}
+		}
+
 
 #region reference sources
 		// TODO:
@@ -1137,6 +1160,19 @@ namespace System.Globalization
                 return false;
             }
             return true;
+        }
+
+        internal static bool VerifyCultureName(CultureInfo culture, bool throwException) {
+            Contract.Assert(culture!=null, "[CultureInfo.VerifyCultureName]culture!=null");
+
+            //If we have an instance of one of our CultureInfos, the user can't have changed the
+            //name and we know that all names are valid in files.
+            if (!culture.m_isInherited) {
+                return true;
+            }
+
+            return VerifyCultureName(culture.Name, throwException);
+
         }
 
 #endregion

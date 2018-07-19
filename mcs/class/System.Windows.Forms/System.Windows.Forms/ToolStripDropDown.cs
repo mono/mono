@@ -50,11 +50,17 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw, true);
 
+			SetTopLevel (true);
+
+			SuspendLayout ();
+			this.LayoutStyle = ToolStripLayoutStyle.Flow;
 			this.auto_close = true;
 			is_visible = false;
 			this.DefaultDropDownDirection = ToolStripDropDownDirection.Right;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.is_toplevel = true;
+			this.AutoSize = true;
+			ResumeLayout (false);
 		}
 		#endregion
 
@@ -548,7 +554,11 @@ namespace System.Windows.Forms
 
 		protected override LayoutSettings CreateLayoutSettings (ToolStripLayoutStyle style)
 		{
-			return base.CreateLayoutSettings (style);
+			LayoutSettings layout_settings = base.CreateLayoutSettings (style);
+			if (style == ToolStripLayoutStyle.Flow) {
+				((FlowLayoutSettings)layout_settings).FlowDirection = FlowDirection.TopDown;
+			}
+			return layout_settings;
 		}
 		
 		protected override void Dispose (bool disposing)
@@ -585,49 +595,9 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			// Find the widest menu item, so we know how wide to make our dropdown
-			int widest = 0;
-
-			foreach (ToolStripItem tsi in this.Items) {
-				if (!tsi.Available) 
-					continue;
-					
-				tsi.SetPlacement (ToolStripItemPlacement.Main);
-				
-				widest = Math.Max (widest, tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Horizontal);
-			}
-			
-			// Add any padding our dropdown has set
-			widest += this.Padding.Horizontal;
-			
-			int x = this.Padding.Left;
-			int y = this.Padding.Top;
-
-			foreach (ToolStripItem tsi in this.Items) {
-				if (!tsi.Available)
-					continue;
-
-				y += tsi.Margin.Top;
-
-				int height = 0;
-
-				Size preferred_size = tsi.GetPreferredSize (Size.Empty);
-
-				if (preferred_size.Height > 22)
-					height = preferred_size.Height;
-				else if (tsi is ToolStripSeparator)
-					height = 7;
-				else
-					height = 22;
-
-				tsi.SetBounds (new Rectangle (x, y, preferred_size.Width, height));
-				y += height + tsi.Margin.Bottom;
-			}
-
-			this.Size = new Size (widest, y + this.Padding.Bottom);
-			this.SetDisplayedItems ();
-			this.OnLayoutCompleted (EventArgs.Empty);
-			this.Invalidate ();
+			if (AutoSize)
+				this.Size = GetPreferredSize (Size.Empty);
+			base.OnLayout (e);
 		}
 
 		protected override void OnMouseUp (MouseEventArgs mea)

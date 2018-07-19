@@ -32,11 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if CONFIGURATION_DEP
-extern alias PrebuiltSystem;
-using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
-#endif
-
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -47,6 +42,8 @@ using System.Security.Permissions;
 using System.Xml;
 using System.Xml.XPath;
 #endif
+
+#pragma warning disable 618
 
 namespace System.Configuration
 {

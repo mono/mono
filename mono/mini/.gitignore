@@ -8,6 +8,7 @@
 /*.dll
 /*.mdb
 /*.lo
+/interp/*.lo
 /*.loT
 /*.la
 /.libs
@@ -32,4 +33,4 @@
 /mono-boehm
 /buildver-sgen.h
 /buildver-boehm.h
-/regressionexitcode.out
+/regressiontests.out

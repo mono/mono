@@ -1,0 +1,15 @@
+System.Security.Cryptography/MD5CryptoServiceProvider.cs
+System.Security.Cryptography/SHA1CryptoServiceProvider.cs
+System.Security.Cryptography/SHA1CryptoServiceProvider.cs
+System.Security.Cryptography/RNGCryptoServiceProvider.cs
+../referencesource/mscorlib/system/security/cryptography/descryptoserviceprovider.cs
+../referencesource/mscorlib/system/security/cryptography/rc2cryptoserviceprovider.cs
+../referencesource/mscorlib/system/security/cryptography/rijndaelmanaged.cs
+../referencesource/mscorlib/system/security/cryptography/sha1managed.cs
+../referencesource/mscorlib/system/security/cryptography/sha256managed.cs
+../referencesource/mscorlib/system/security/cryptography/sha384managed.cs
+../referencesource/mscorlib/system/security/cryptography/sha512managed.cs
+../referencesource/mscorlib/system/security/cryptography/tripledescryptoserviceprovider.cs
+../Mono.Security/Mono.Security.Cryptography/ARC4Managed.cs
+../Mono.Security/Mono.Security.Cryptography/MD2Managed.cs
+../Mono.Security/Mono.Security.Cryptography/MD4Managed.cs

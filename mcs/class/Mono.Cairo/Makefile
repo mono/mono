@@ -3,6 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Cairo.dll
+KEYFILE = ../mono.pub
 #LIB_MCS_FLAGS = -d:CAIRO_1_2
 NO_TEST = yes
 

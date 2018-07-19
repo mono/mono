@@ -113,7 +113,7 @@ namespace MonoTests.System.Web.Routing
 			Route r;
 
 			foreach (TestUrl tu in __invalidUrls) {
-				AssertExtensions.Throws (tu.ExpectedExceptionType, () => r = new Route (tu.Url, null), tu.Label);
+				Assert.Throws (tu.ExpectedExceptionType, () => r = new Route (tu.Url, null), tu.Label);
 			}
 		}
 
@@ -1763,18 +1763,18 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsFalse (route.DoProcessConstraint (null, "regex", "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#1");
 
 			// constraint is null
-			AssertExtensions.Throws <InvalidOperationException> (
+			Assert.Throws <InvalidOperationException> (
 				() => route.DoProcessConstraint (null, null, "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest),
 				"#2"
 			);
 
 			// constraint is neither a string or an IRouteConstraint instance
-			AssertExtensions.Throws <InvalidOperationException> (
+			Assert.Throws <InvalidOperationException> (
 				() => route.DoProcessConstraint (null, 1, "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest),
 				"#3"
 			);
 
-			AssertExtensions.Throws <ArgumentNullException> (
+			Assert.Throws <ArgumentNullException> (
 				() => route.DoProcessConstraint (null, "regex", null, new RouteValueDictionary (), RouteDirection.IncomingRequest),
 				"#4"
 			);
@@ -1782,7 +1782,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsFalse (route.DoProcessConstraint (null, "regex", String.Empty, new RouteValueDictionary (), RouteDirection.IncomingRequest), "#5");
 			
 			// This is a .NET programming error, so not sure if we should test for this...
-			AssertExtensions.Throws <NullReferenceException> (
+			Assert.Throws <NullReferenceException> (
 				() => route.DoProcessConstraint (null, "regex", "parameter", null, RouteDirection.IncomingRequest),
 				"#6"
 			);

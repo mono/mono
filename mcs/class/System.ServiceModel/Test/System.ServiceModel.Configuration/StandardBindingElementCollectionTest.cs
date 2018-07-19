@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using NUnit.Framework;
 using System;
 using System.Configuration;
@@ -92,3 +92,4 @@ namespace MonoTests.System.ServiceModel.Configuration
 		}
 	}
 }
+#endif

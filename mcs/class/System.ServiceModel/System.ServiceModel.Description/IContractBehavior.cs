@@ -35,22 +35,22 @@ namespace System.ServiceModel.Description
 	public interface IContractBehavior
 	{
 		void AddBindingParameters (
-			ContractDescription description,
+			ContractDescription contractDescription,
 			ServiceEndpoint endpoint,
-			BindingParameterCollection parameters);
+			BindingParameterCollection bindingParameters);
 
 		void ApplyClientBehavior (
-			ContractDescription description,
+			ContractDescription contractDescription,
 			ServiceEndpoint endpoint,
-			ClientRuntime proxy);
+			ClientRuntime clientRuntime);
 
 		void ApplyDispatchBehavior (
-			ContractDescription description,
+			ContractDescription contractDescription,
 			ServiceEndpoint endpoint,
-			DispatchRuntime dispatch);
+			DispatchRuntime dispatchRuntime);
 
 		void Validate (
-			ContractDescription description,
+			ContractDescription contractDescription,
 			ServiceEndpoint endpoint);
 	}
 }

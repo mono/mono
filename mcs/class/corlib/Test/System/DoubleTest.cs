@@ -147,6 +147,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[SetCulture ("en-US")]
 		public void Parse ()
 		{
 			int i = 0;

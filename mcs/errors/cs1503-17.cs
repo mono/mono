@@ -1,15 +1,31 @@
-// CS1501: Argument `#1' cannot convert `ref string' expression to type `ref int'
-// Line: 8
-// Compiler options: -langversion:experimental
+// CS1503: Argument `#1' cannot convert `ref long' expression to type `ref int'
+// Line: 18
 
-class C
+using System;
+
+class X
 {
-	public static void Main ()
+	long field;
+
+	static void Main ()
 	{
-		Foo (ref var x = "");
+		var x = new X ();
+		x.Run ();
 	}
 
-	static void Foo (ref int i)
+	void Run ()
 	{
+		Test (ref Prop);
+	}
+
+	static int Test (ref int y)
+	{
+		return y;
+	}
+
+	ref long Prop {
+		get {
+			return ref field;
+		}
 	}
 }

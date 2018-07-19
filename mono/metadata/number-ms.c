@@ -1,10 +1,12 @@
-/*
- * number-ms.c: System.Double, System.Single and System.Number runtime support
+/**
+ * \file
+ * System.Double, System.Single and System.Number runtime support
  *
  * Author:
  *	Ludovic Henry (ludovic@xamarin.com)
  *
  * Copyright 2015 Xamarin, Inc (http://www.xamarin.com)
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
 //

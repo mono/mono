@@ -34,16 +34,16 @@ namespace System.Security.AccessControl {
 	public sealed class SemaphoreAccessRule : AccessRule
 	{
 		public SemaphoreAccessRule (IdentityReference identity,
-					    SemaphoreRights semaphoreRights,
+					    SemaphoreRights eventRights,
 					    AccessControlType type)
-			: base (identity, (int)semaphoreRights, false, InheritanceFlags.None, PropagationFlags.None, type)
+			: base (identity, (int)eventRights, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
 		}
 
 		public SemaphoreAccessRule (string identity,
-					    SemaphoreRights semaphoreRights,
+					    SemaphoreRights eventRights,
 					    AccessControlType type)
-			: this (new NTAccount (identity), semaphoreRights, type)
+			: this (new NTAccount (identity), eventRights, type)
 		{
 		}
 		

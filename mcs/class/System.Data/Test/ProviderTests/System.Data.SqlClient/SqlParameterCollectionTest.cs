@@ -34,14 +34,21 @@ using System.Data.SqlClient;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.SqlClient
+namespace MonoTests.System.Data.Connected.SqlClient
 {
 	[TestFixture]
 	[Category ("sqlserver")]
 
 	public class SqlParameterCollectionTest
-	{	
-	
+	{
+		EngineConfig engine;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			engine = ConnectionManager.Instance.Sql.EngineConfig;
+		}
+
 		[Test]
 		public void CopyToTest ()
 		{
@@ -60,6 +67,5 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (p1Lname, destinationArray[2], "#5 The parameter at index 2 must be p1Lname");
 			Assert.AreEqual (null, destinationArray[3], "#6 The parameter at index 3 must not change");
 		}
-		
 	}
 }

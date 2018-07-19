@@ -195,20 +195,6 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (identity.Target);
 		}
 
-		class Foo {
-			public string gazonk;
-		}
-
-		struct Bar {
-			public int baz;
-
-			public override string ToString ()
-			{
-				return baz.ToString ();
-			}
-		}
-
-
 		[Test]
 		public void SimpleHoistedParameter ()
 		{

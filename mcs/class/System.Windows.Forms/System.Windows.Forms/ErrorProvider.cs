@@ -278,17 +278,15 @@ namespace System.Windows.Forms {
 
 			private void window_Tick(object sender, EventArgs e) {
 				if (timer.Enabled && control.IsHandleCreated && control.Visible) {
-					Graphics g;
-
 					blink_count++;
 
-					g = window.CreateGraphics();
-					if ((blink_count % 2) == 0) {
-						g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.Parent.BackColor), window.ClientRectangle);
-					} else {
-						g.DrawIcon(this.ep.icon, 0, 0);
+					using (Graphics g = window.CreateGraphics()) {
+						if ((blink_count % 2) == 0) {
+							g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.Parent.BackColor), window.ClientRectangle);
+						} else {
+							g.DrawIcon(this.ep.icon, 0, 0);
+						}
 					}
-					g.Dispose();
 
 					switch (ep.blinkstyle) {
 					case ErrorBlinkStyle.AlwaysBlink:

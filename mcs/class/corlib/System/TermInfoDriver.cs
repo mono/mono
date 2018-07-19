@@ -33,7 +33,7 @@
 // https://github.com/dotnet/corefx
 // src/System.Console/src/System/ConsolePal.Unix.cs
 //
-#if !NET_2_1
+#if MONO_FEATURE_CONSOLE
 
 //
 // Defining this writes the output to console.log
@@ -391,6 +391,10 @@ namespace System {
 
 		void ChangeColor (string format, ConsoleColor color)
 		{
+			if (String.IsNullOrEmpty (format))
+				// the terminal doesn't support colors
+				return;
+
 			int ccValue = (int)color;
 			if ((ccValue & ~0xF) != 0)
 				throw new ArgumentException("Invalid Console Color");
@@ -1103,6 +1107,16 @@ namespace System {
 
 		public string ReadLine ()
  		{
+			return ReadUntilConditionInternal (true);
+ 		}
+
+		public string ReadToEnd ()
+ 		{
+			return ReadUntilConditionInternal (false);
+ 		}
+
+		private string ReadUntilConditionInternal (bool haltOnNewLine)
+ 		{
 			if (!inited)
 				Init ();
 
@@ -1120,6 +1134,8 @@ namespace System {
 			rl_starty = cursorTop;
 			char eof = (char) control_characters [ControlCharacters.EOF];
 
+			bool treatAsEnterKey;
+
 			do {
 				key = ReadKeyInternal (out fresh);
 				echo = echo || fresh;
@@ -1128,7 +1144,9 @@ namespace System {
 				if (c == eof && c != 0 && builder.Length == 0)
 					return null;
 
-				if (key.Key != ConsoleKey.Enter) {
+				treatAsEnterKey = haltOnNewLine && (key.Key == ConsoleKey.Enter);
+
+				if (!treatAsEnterKey) {
 					if (key.Key != ConsoleKey.Backspace) {
 						builder.Append (c);
 					} else if (builder.Length > 0) {
@@ -1142,7 +1160,7 @@ namespace System {
 				// echo fresh keys back to the console
 				if (echo)
 					Echo (key);
-			} while (key.Key != ConsoleKey.Enter);
+			} while (!treatAsEnterKey);
 
 			EchoFlush ();
 
@@ -1556,22 +1574,52 @@ namespace System {
 				case 'O':                                         // logical
 					int second = stack.Pop().Int32; // it's a stack... the second value was pushed last
 					int first = stack.Pop().Int32;
-					char c = format[pos];
-					stack.Push(
-						c == '+' ? (first + second) :
-						c == '-' ? (first - second) :
-						c == '*' ? (first * second) :
-						c == '/' ? (first / second) :
-						c == 'm' ? (first % second) :
-						c == '^' ? (first ^ second) :
-						c == '&' ? (first & second) :
-						c == '|' ? (first | second) :
-						c == '=' ? AsInt(first == second) :
-						c == '>' ? AsInt(first > second) :
-						c == '<' ? AsInt(first < second) :
-						c == 'A' ? AsInt(AsBool(first) && AsBool(second)) :
-						c == 'O' ? AsInt(AsBool(first) || AsBool(second)) :
-						0); // not possible; we just validated above
+					int res;
+					switch (format[pos]) {
+					case '+':
+						res = first + second;
+						break;
+					case '-':
+						res = first - second;
+						break;
+					case '*':
+						res = first * second;
+						break;
+					case '/':
+						res = first / second;
+						break;
+					case 'm':
+						res = first % second;
+						break;
+					case '^':
+						res = first ^ second;
+						break;
+					case '&':
+						res = first & second;
+						break;
+					case '|':
+						res = first | second;
+						break;
+					case '=':
+						res = AsInt(first == second);
+						break;
+					case '>':
+						res = AsInt(first > second);
+						break;
+					case '<':
+						res = AsInt(first < second);
+						break;
+					case 'A':
+						res = AsInt(AsBool(first) && AsBool(second));
+						break;
+					case 'O':
+						res = AsInt(AsBool(first) || AsBool(second));
+						break;
+					default:
+						res = 0;
+						break;
+					}
+					stack.Push(res);
 					break;
 
 					// Unary operations

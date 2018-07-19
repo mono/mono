@@ -50,6 +50,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StressEnqueueTestCase ()
 		{
 			/*ParallelTestHelper.Repeat (delegate {
@@ -79,6 +80,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StressDequeueTestCase ()
 		{
 			/*ParallelTestHelper.Repeat (delegate {
@@ -116,6 +118,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StressTryPeekTestCase ()
 		{
 			ParallelTestHelper.Repeat (delegate {

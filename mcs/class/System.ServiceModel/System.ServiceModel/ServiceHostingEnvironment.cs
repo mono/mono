@@ -26,21 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !HAS_ACTIVATION
-
 namespace System.ServiceModel {
 
-	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
-	public static class ServiceHostingEnvironment
+	static class ServiceHostingEnvironmentInternal
 	{
 		internal static bool InAspNet { get; set; }
-
-		public static bool AspNetCompatibilityEnabled { get; internal set; }
-
-		public static void EnsureServiceAvailable (string virtualPath)
-		{
-		}
 	}
 }
-
-#endif

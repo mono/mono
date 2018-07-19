@@ -4,13 +4,12 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.Services.Client.dll
 
-Client/System.Data.Services.Client.resources: Client/System.Data.Services.Client.txt
-	$(RESGEN) "$<" "$@"
+RESOURCE_DEFS = System.Data.Services.Client,Client/System.Data.Services.Client.txt
 
 LIB_REFS = System System.Core System.Xml.Linq System.Data System.Xml
+KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
-	-resource:Client/System.Data.Services.Client.resources \
 	-warn:2
 
 ifndef NO_WINDOWS_BASE
@@ -21,7 +20,5 @@ endif
 
 include ../../build/library.make
 
-$(the_lib): Client/System.Data.Services.Client.resources
-
 EXTRA_DISTFILES = Client/System.Data.Services.Client.txt
-CLEAN_FILES += Client/System.Data.Services.Client.resources
+

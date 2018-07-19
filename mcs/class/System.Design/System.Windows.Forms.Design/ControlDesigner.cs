@@ -554,19 +554,19 @@ namespace System.Windows.Forms.Design
 
 		
 #region Parenting
-		protected void HookChildControls (Control firstControl)
+		protected void HookChildControls (Control firstChild)
 		{
-			if (firstControl != null) {
-				foreach (Control control in firstControl.Controls) {
+			if (firstChild != null) {
+				foreach (Control control in firstChild.Controls) {
 					control.WindowTarget = (IWindowTarget) new WndProcRouter (control, (IMessageReceiver) this);
 				}
 			}
 		}
 
-		protected void UnhookChildControls (Control firstControl)
+		protected void UnhookChildControls (Control firstChild)
 		{
-			if (firstControl != null) {
-				foreach (Control control in firstControl.Controls) {
+			if (firstChild != null) {
+				foreach (Control control in firstChild.Controls) {
 					if (control.WindowTarget is WndProcRouter)
 						((WndProcRouter) control.WindowTarget).Dispose ();
 				}
@@ -662,11 +662,11 @@ namespace System.Windows.Forms.Design
 			e.UseDefaultCursors = false;
 		}
 
-		protected virtual void OnDragDrop (DragEventArgs e)
+		protected virtual void OnDragDrop (DragEventArgs de)
 		{
 		}
 
-		protected virtual void OnDragEnter (DragEventArgs e)
+		protected virtual void OnDragEnter (DragEventArgs de)
 		{
 		}
 
@@ -674,7 +674,7 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-		protected virtual void OnDragOver (DragEventArgs e)
+		protected virtual void OnDragOver (DragEventArgs de)
 		{
 		}
 #endregion

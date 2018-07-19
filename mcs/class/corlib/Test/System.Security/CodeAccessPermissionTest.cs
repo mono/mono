@@ -7,6 +7,8 @@
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
 //
 
+#if MONO_FEATURE_CAS
+
 using NUnit.Framework;
 using System;
 using System.Security;
@@ -89,3 +91,5 @@ namespace MonoTests.System.Security {
 		}
 	}
 }
+
+#endif

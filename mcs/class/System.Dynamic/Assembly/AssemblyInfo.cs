@@ -53,7 +53,6 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 
-[assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: SecurityCritical]
 

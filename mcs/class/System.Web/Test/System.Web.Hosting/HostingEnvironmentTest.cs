@@ -77,13 +77,13 @@ namespace MonoTests.System.Web.Hosting {
 			Assert.IsNull (HostingEnvironment.InitializationException, "During:InitializationException");
 			Assert.IsTrue (HostingEnvironment.IsHosted, "During:IsHosted");
 			Assert.IsNotNull (HostingEnvironment.ApplicationID, "During:ApplicationID:Null");
-			Assert.IsNotEmpty (HostingEnvironment.ApplicationID, "During:ApplicationID:Empty");
+			AssertHelper.IsNotEmpty (HostingEnvironment.ApplicationID, "During:ApplicationID:Empty");
 			Assert.IsNotNull (HostingEnvironment.ApplicationPhysicalPath, "During:ApplicationPhysicalPath:Null");
-			Assert.IsNotEmpty (HostingEnvironment.ApplicationPhysicalPath, "During:ApplicationPhysicalPath:Empty");
+			AssertHelper.IsNotEmpty (HostingEnvironment.ApplicationPhysicalPath, "During:ApplicationPhysicalPath:Empty");
 			Assert.IsNotNull (HostingEnvironment.ApplicationVirtualPath, "During:ApplicationVirtualPath:Null");
-			Assert.IsNotEmpty (HostingEnvironment.ApplicationVirtualPath, "During:ApplicationVirtualPath:Empty");
+			AssertHelper.IsNotEmpty (HostingEnvironment.ApplicationVirtualPath, "During:ApplicationVirtualPath:Empty");
 			Assert.IsNotNull (HostingEnvironment.SiteName, "During:SiteName:Null");
-			Assert.IsNotEmpty (HostingEnvironment.SiteName, "During:SiteName:Empty");
+			AssertHelper.IsNotEmpty (HostingEnvironment.SiteName, "During:SiteName:Empty");
 			Assert.IsNotNull (HostingEnvironment.Cache, "During:Cache");
 			Assert.AreEqual (ApplicationShutdownReason.None, HostingEnvironment.ShutdownReason, "During:ShutdownReason");
 			Assert.IsNotNull (HostingEnvironment.VirtualPathProvider, "During:VirtualPathProvider");

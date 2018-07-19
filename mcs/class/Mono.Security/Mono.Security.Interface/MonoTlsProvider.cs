@@ -30,7 +30,6 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Interface
 {
@@ -122,17 +121,33 @@ namespace Mono.Security.Interface
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null);
 
+		internal abstract IMonoSslStream CreateSslStreamInternal (
+			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
+			MonoTlsSettings settings);
+
 #endregion
 
-#region Certificate Validation
+#region Native Certificate Implementation
 
-		/*
-		 * Allows a TLS provider to provide a custom system certificiate validator.
-		 */
-		public virtual bool HasCustomSystemCertificateValidator {
+		internal virtual bool HasNativeCertificates {
 			get { return false; }
 		}
 
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			byte[] data, string password, X509KeyStorageFlags flags)
+		{
+			throw new InvalidOperationException ();
+		}
+
+		internal virtual X509Certificate2Impl GetNativeCertificate (
+			X509Certificate certificate)
+		{
+			throw new InvalidOperationException ();
+		}
+
+#endregion
+
+#region Certificate Validation
 		/*
 		 * If @serverMode is true, then we're a server and want to validate a certificate
 		 * that we received from a client.
@@ -142,33 +157,19 @@ namespace Mono.Security.Interface
 		 * Returns `true` if certificate validation has been performed and `false` to invoke the
 		 * default system validator.
 		 */
-		public virtual bool InvokeSystemCertificateValidator (
-			ICertificateValidator validator, string targetHost, bool serverMode,
-			X509CertificateCollection certificates, X509Chain chain, out bool success,
-			ref MonoSslPolicyErrors errors, ref int status11)
-		{
-			success = false;
-			return false;
-		}
-
+		internal abstract bool ValidateCertificate (
+			ICertificateValidator2 validator, string targetHost, bool serverMode,
+			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
+			ref MonoSslPolicyErrors errors, ref int status11);
 #endregion
 
-#region Manged SSPI
+#region Misc
 
-		/*
-		 * The managed SSPI implementation from the new TLS code.
-		 */
-
-		internal abstract bool SupportsTlsContext {
+		internal abstract bool SupportsCleanShutdown {
 			get;
 		}
 
-		internal abstract IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,
-			MonoTlsSettings settings);
-
 #endregion
+
 	}
 }

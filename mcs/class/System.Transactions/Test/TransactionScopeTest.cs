@@ -25,14 +25,14 @@ namespace MonoTests.System.Transactions
 				TransactionScope scope = new TransactionScope (TransactionScopeOption.Required, TimeSpan.FromSeconds (-1));
 				Assert.Fail ("Expected exception when passing TransactionScopeOption and an invalid TimeSpan.");
 			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (ex.ParamName, "timeout");
+				Assert.AreEqual ("scopeTimeout", ex.ParamName);
 			}
 
 			try {
 				TransactionScope scope = new TransactionScope (null, TimeSpan.FromSeconds (-1));
 				Assert.Fail ("Expected exception when passing TransactionScopeOption and an invalid TimeSpan.");
 			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (ex.ParamName, "timeout");
+				Assert.AreEqual ("scopeTimeout", ex.ParamName);
 			}
 		}
 

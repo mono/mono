@@ -1,3 +1,7 @@
+/**
+ * \file
+ */
+
 #ifndef __MONO_MINI_MIPS_H__
 #define __MONO_MINI_MIPS_H__
 
@@ -162,7 +166,6 @@ typedef gdouble		mips_freg;
 #define mips_ftemp mips_f18
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 /* Parameters used by the register allocator */
 
@@ -233,6 +236,15 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_EMULATE_FREM 1
 #endif
 
+/*
+ * mips backend misses some instructions that enable emitting of optimal
+ * code on other targets and, additionally, the register allocator gets
+ * confused by this optimization, failing to allocate all hw regs.
+ */
+#if SIZEOF_REGISTER == 4
+#define MONO_ARCH_NO_DIV_WITH_MUL
+#endif
+
 #if SIZEOF_REGISTER == 8
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 #endif
@@ -264,7 +276,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_DECOMPOSE_OPTS 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
-#define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
+#define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -276,6 +288,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_USE_SIGACTION
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_NO_IOV_CHECK 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 #define MIPS_NUM_REG_ARGS (MIPS_LAST_ARG_REG-MIPS_FIRST_ARG_REG+1)
 #define MIPS_NUM_REG_FPARGS (MIPS_LAST_FPARG_REG-MIPS_FIRST_FPARG_REG+1)

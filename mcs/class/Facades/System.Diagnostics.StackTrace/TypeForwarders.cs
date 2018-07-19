@@ -21,6 +21,21 @@
 // 
 
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackFrame))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackFrameExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackTrace))]
-//Missing: [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.StackFrameExtensions))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolBinder))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolBinder1))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolDocument))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolDocumentWriter))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolMethod))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolNamespace))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolReader))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolScope))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolVariable))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.ISymbolWriter))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.SymAddressKind))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.SymDocumentType))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.SymLanguageType))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.SymLanguageVendor))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.SymbolStore.SymbolToken))]
 

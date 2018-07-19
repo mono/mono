@@ -1,0 +1,26 @@
+diff --git a/src/fsharp/FSharp.Build/Microsoft.FSharp.Targets b/src/fsharp/FSharp.Build/Microsoft.FSharp.Targets
+index 34d716485..ec99e87ed 100644
+--- a/src/fsharp/FSharp.Build/Microsoft.FSharp.Targets
++++ b/src/fsharp/FSharp.Build/Microsoft.FSharp.Targets
+@@ -41,6 +41,21 @@ this file.
+         <RootNamespace Condition="'$(RootNamespace)'==''">RootNamespace</RootNamespace>
+         <Actual32Bit Condition="'$(TargetFrameworkVersion)'=='v2.0' or '$(TargetFrameworkVersion)'=='v3.0' or '$(TargetFrameworkVersion)'=='v3.5' or '$(TargetFrameworkVersion)'=='v4.0'">false</Actual32Bit>
+         <Actual32Bit Condition="!('$(TargetFrameworkVersion)'=='v2.0' or '$(TargetFrameworkVersion)'=='v3.0' or '$(TargetFrameworkVersion)'=='v3.5' or '$(TargetFrameworkVersion)'=='v4.0')">$(Prefer32Bit)</Actual32Bit>
++        <!--
++             `/debug+` is produced based on `$(DebugSymols)`, which gets a default value of 'true' in
++             Microsoft.Common.CurrentVersion.targets, with a condition:
++               Condition=" '$(ConfigurationName)' == 'Debug' and '$(DebugSymbols)' == '' and '$(DebugType)'=='' "
++             But that file is imported later, so we cannot depend on the default value of `$(DebugSymbols)` or `$(ConfigurationName)`.
++        -->
++        <_ConfigurationNameTmp>$(ConfigurationName)</_ConfigurationNameTmp>
++        <_ConfigurationNameTmp Condition="'$(ConfigurationName)' == ''">$(Configuration)</_ConfigurationNameTmp>
++
++        <!-- _DebugFileExt is not an upstream msbuild feature yet -->
++        <_DebugFileExt>.pdb</_DebugFileExt>
++        <_DebugFileExt Condition="'$(FscDebugFileExt)' != ''">$(FscDebugFileExt)</_DebugFileExt>
++
++        <DebugType Condition="'$(OS)' != 'Windows_NT' And ('$(DebugSymbols)'=='True' or ('$(DebugSymbols)'=='' And '$(_ConfigurationNameTmp)'=='Debug'))">portable</DebugType>
++        <DebugType Condition="'$(FscDebugType)' != ''">$(FscDebugType)</DebugType>
+     </PropertyGroup>
+ 
+     <!--

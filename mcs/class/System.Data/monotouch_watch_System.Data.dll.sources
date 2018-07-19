@@ -1,1 +1,12 @@
-#include mobile_System.Data.dll.sources
+#include corefx.common.sources
+#include corefx.unix.sources
+
+System.Data.SqlClient/SqlBulkCopy.platformnotsupported.cs
+System.Data.SqlClient/SqlCommand.platformnotsupported.cs
+System.Data.SqlClient/SqlCommandBuilder.platformnotsupported.cs
+System.Data.SqlClient/SqlConnection.platformnotsupported.cs
+System.Data.SqlClient/SqlDataAdapter.platformnotsupported.cs
+System.Data.SqlClient/SqlException.platformnotsupported.cs
+System.Data.SqlClient/SqlParameter.platformnotsupported.cs
+System.Data.SqlClient/SqlParameterCollection.platformnotsupported.cs
+System.Data.SqlClient/SqlTransaction.platformnotsupported.cs

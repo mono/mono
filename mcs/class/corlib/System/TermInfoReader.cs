@@ -27,12 +27,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if !NET_2_1
+#if MONO_FEATURE_CONSOLE
 using System.IO;
 using System.Text;
 namespace System {
 	// This class reads data from a byte array or file containing the terminfo capabilities
-	// information for any given terminal. The maximum allowed size is 4096 bytes.
+	// information for any given terminal. The maximum allowed size is 4096 (or
+	// 32768 for terminfo2) bytes.
 	//
 	// Terminfo database files are divided in the following sections:
 	//
@@ -45,7 +46,7 @@ namespace System {
 	//
 	// The header is as follows:
 	//
-	//	Magic number (0x1 and 0x1A)
+	//	Magic number (0x11A/0432 or 0x21e/01036 for terminfo2)
 	//	Terminal names size
 	//	Boolean section size
 	//	Numeric section size
@@ -58,8 +59,9 @@ namespace System {
 	// The boolean capabilities section has bytes that are set to 1 if the capability is supported
 	// and 0 otherwise. If the index of a capability is greater than the section size, 0 is assumed.
 	//
-	// The numeric capabilities section holds 2-byte integers in little endian format. No negative
-	// values are allowed and the absence of a capability is marked as two 0xFF.
+	// The numeric capabilities section holds 2-byte integers (4-byte integers for terminfo2) in
+	// little endian format. No negative values are allowed and the absence of a capability is marked
+	// as two 0xFF (four 0xFF for terminfo2).
 	//
 	// The string offsets section contains 2-byte integer offsets into the string capabilies section.
 	// If the capability is not supported, the index will be two 0xFF bytes.
@@ -72,16 +74,16 @@ namespace System {
 	//
 
 	class TermInfoReader {
-		//short nameSize;
-		short boolSize;
-		short numSize;
-		short strOffsets;
-		//short strSize;
+		int boolSize;
+		int numSize;
+		int strOffsets;
 
 		//string [] names; // Last one is the description
 		byte [] buffer;
 		int booleansOffset;
 		//string term;
+
+		int intOffset;
 
 		public TermInfoReader (string term, string filename)
 		{
@@ -114,12 +116,21 @@ namespace System {
 //			get { return term; }
 //		}
 
+		void DetermineVersion (short magic)
+		{
+			if (magic == 0x11a)
+				intOffset = 2;
+			else if (magic == 0x21e)
+				intOffset = 4;
+			else
+				throw new Exception (String.Format ("Magic number is unexpected: {0}", magic));
+		}
+
 		void ReadHeader (byte [] buffer, ref int position)
 		{
 			short magic = GetInt16 (buffer, position);
 			position += 2;
-			if (magic != 282)
-				throw new Exception (String.Format ("Magic number is wrong: {0}", magic));
+			DetermineVersion (magic);
 			
 			/*nameSize =*/ GetInt16 (buffer, position);
 			position += 2;
@@ -161,7 +172,7 @@ namespace System {
 			if ((offset % 2) == 1)
 				offset++;
 
-			offset += ((int) number) * 2;
+			offset += ((int) number) * intOffset;
 			return GetInt16 (buffer, offset);
 		}
 
@@ -175,7 +186,7 @@ namespace System {
 			if ((offset % 2) == 1)
 				offset++;
 
-			offset += numSize * 2;
+			offset += numSize * intOffset;
 			int off2 = GetInt16 (buffer, offset + (int) tstr * 2);
 			if (off2 == -1)
 				return null;
@@ -193,7 +204,7 @@ namespace System {
 			if ((offset % 2) == 1)
 				offset++;
 
-			offset += numSize * 2;
+			offset += numSize * intOffset;
 			int off2 = GetInt16 (buffer, offset + (int) tstr * 2);
 			if (off2 == -1)
 				return null;

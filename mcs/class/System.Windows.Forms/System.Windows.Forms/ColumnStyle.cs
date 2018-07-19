@@ -60,8 +60,8 @@ namespace System.Windows.Forms
 				
 				if (width != value) {
 					width = value; 
-					if (base.Owner != null)
-						base.Owner.PerformLayout ();
+					if (Owner != null)
+						Owner.PerformLayout (Owner, "Style");
 				}
 			}
 		}
