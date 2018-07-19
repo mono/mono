@@ -126,7 +126,15 @@ public static class Program {
             .Distinct ()
             .ToList ();
 
-        if ((result.ErrorCount > 0) || (fileNames.Count == 0)) {
+        var unexpectedEmptyResult = (fileNames.Count == 0);
+
+        // HACK: We have sources files that are literally empty, so as long as *some* sources files were
+        //  parsed during this invocation and they are all empty, producing no matching file names is not
+        //  an error.
+        if ((result.SourcesFiles.Count > 0) && result.SourcesFiles.Values.All(sf => sf.Sources.Count == 0))
+            unexpectedEmptyResult = false;
+
+        if ((result.ErrorCount > 0) || unexpectedEmptyResult) {
             Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {fileNames.Count} filename(s)");
             Console.Error.WriteLine ($"// Invoked with '{Environment.CommandLine}'");
             Console.Error.WriteLine ($"// Working directory was '{Environment.CurrentDirectory}'");
