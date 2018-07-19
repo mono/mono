@@ -1147,6 +1147,42 @@ interp_icall_op_for_sig (MonoMethodSignature *sig)
 				op = MINT_ICALL_PPPP_P;
 		}
 		break;
+	case 5:
+		if (MONO_TYPE_IS_VOID (sig->ret)) {
+			if (INTERP_TYPE_AS_PTR (sig->params [0]) &&
+					INTERP_TYPE_AS_PTR (sig->params [1]) &&
+					INTERP_TYPE_AS_PTR (sig->params [2]) &&
+					INTERP_TYPE_AS_PTR (sig->params [3]) &&
+					INTERP_TYPE_AS_PTR (sig->params [4]))
+				op = MINT_ICALL_PPPPP_V;
+		} else if (INTERP_TYPE_AS_PTR (sig->ret)) {
+			if (INTERP_TYPE_AS_PTR (sig->params [0]) &&
+					INTERP_TYPE_AS_PTR (sig->params [1]) &&
+					INTERP_TYPE_AS_PTR (sig->params [2]) &&
+					INTERP_TYPE_AS_PTR (sig->params [3]) &&
+					INTERP_TYPE_AS_PTR (sig->params [4]))
+				op = MINT_ICALL_PPPPP_P;
+		}
+		break;
+	case 6:
+		if (MONO_TYPE_IS_VOID (sig->ret)) {
+			if (INTERP_TYPE_AS_PTR (sig->params [0]) &&
+					INTERP_TYPE_AS_PTR (sig->params [1]) &&
+					INTERP_TYPE_AS_PTR (sig->params [2]) &&
+					INTERP_TYPE_AS_PTR (sig->params [3]) &&
+					INTERP_TYPE_AS_PTR (sig->params [4]) &&
+					INTERP_TYPE_AS_PTR (sig->params [5]))
+				op = MINT_ICALL_PPPPPP_V;
+		} else if (INTERP_TYPE_AS_PTR (sig->ret)) {
+			if (INTERP_TYPE_AS_PTR (sig->params [0]) &&
+					INTERP_TYPE_AS_PTR (sig->params [1]) &&
+					INTERP_TYPE_AS_PTR (sig->params [2]) &&
+					INTERP_TYPE_AS_PTR (sig->params [3]) &&
+					INTERP_TYPE_AS_PTR (sig->params [4]) &&
+					INTERP_TYPE_AS_PTR (sig->params [5]))
+				op = MINT_ICALL_PPPPPP_P;
+		}
+		break;
 	}
 	return op;
 }

@@ -1822,6 +1822,30 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p, sp [1].data.p, sp [2].data.p);
 		break;
 	}
+	case MINT_ICALL_PPPPP_V: {
+		void (*func)(gpointer,gpointer,gpointer,gpointer,gpointer) = ptr;
+		sp -= 5;
+		func (sp [0].data.p, sp [1].data.p, sp [2].data.p, sp [3].data.p, sp [4].data.p);
+		break;
+	}
+	case MINT_ICALL_PPPPP_P: {
+		gpointer (*func)(gpointer,gpointer,gpointer,gpointer,gpointer) = ptr;
+		sp -= 4;
+		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p, sp [1].data.p, sp [2].data.p, sp [3].data.p);
+		break;
+	}
+	case MINT_ICALL_PPPPPP_V: {
+		void (*func)(gpointer,gpointer,gpointer,gpointer,gpointer,gpointer) = ptr;
+		sp -= 6;
+		func (sp [0].data.p, sp [1].data.p, sp [2].data.p, sp [3].data.p, sp [4].data.p, sp [5].data.p);
+		break;
+	}
+	case MINT_ICALL_PPPPPP_P: {
+		gpointer (*func)(gpointer,gpointer,gpointer,gpointer,gpointer,gpointer) = ptr;
+		sp -= 5;
+		sp [-1].data.p = func (sp [-1].data.p, sp [0].data.p, sp [1].data.p, sp [2].data.p, sp [3].data.p, sp [4].data.p);
+		break;
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -4891,6 +4915,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_ICALL_PPP_P)
 		MINT_IN_CASE(MINT_ICALL_PPPP_V)
 		MINT_IN_CASE(MINT_ICALL_PPPP_P)
+		MINT_IN_CASE(MINT_ICALL_PPPPP_V)
+		MINT_IN_CASE(MINT_ICALL_PPPPP_P)
+		MINT_IN_CASE(MINT_ICALL_PPPPPP_V)
+		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
 			sp = do_icall (context, *ip, sp, rtm->data_items [*(guint16 *)(ip + 1)]);
 			EXCEPTION_CHECKPOINT;
