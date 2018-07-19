@@ -492,7 +492,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\TaskReplicator.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Collections\Generic\LowLevelList.cs" />
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Diagnostics\Debug.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\AsyncCausalityTracer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Runtime\Augments\TaskTraceCallbacks.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Internal\Threading\Tasks\Tracing\TaskTrace.cs" />
@@ -1242,6 +1241,7 @@
     <Compile Include="System.Diagnostics.Tracing\EventSourceSettings.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventWrittenEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\NonEventAttribute.cs" />
+    <Compile Include="System.Diagnostics\Debug.cs" />
     <Compile Include="System.Diagnostics\Debugger.cs" />
     <Compile Include="System.Diagnostics\StackFrame.cs" />
     <Compile Include="System.Diagnostics\StackTrace.cs" />
@@ -1972,7 +1972,6 @@
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
-    <Compile Include="corert\Debug.cs" />
     <Compile Include="corert\DependencyReductionRootAttribute.cs" />
     <Compile Include="corert\EnvironmentAugments.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />

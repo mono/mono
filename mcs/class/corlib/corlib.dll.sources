@@ -167,6 +167,7 @@ System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
 System.Configuration.Assemblies/ProcessorID.cs
 System.Deployment.Internal/InternalActivationContextHelper.cs
 System.Deployment.Internal/InternalApplicationIdentityHelper.cs
+System.Diagnostics/Debug.cs
 System.Diagnostics/Debugger.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
@@ -1547,7 +1548,6 @@ corefx/RuntimeImports.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
-corert/Debug.cs
 corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
@@ -1561,8 +1561,6 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
