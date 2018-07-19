@@ -290,9 +290,9 @@
 
 /* Have __thread keyword */
 #ifdef _MSC_VER
-#define HAVE_KW_THREAD __declspec (thread)
+#define MONO_KEYWORD_THREAD __declspec (thread)
 #else
-#define HAVE_KW_THREAD __thread
+#define MONO_KEYWORD_THREAD __thread
 #endif
 
 /* Have large file support */

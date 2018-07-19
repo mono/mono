@@ -27,7 +27,8 @@
 	 * it if it is the included one.
 	 */
 #ifndef HOST_WIN32 // FIXME?
-#	if defined(HAVE_KW_THREAD) && !defined(__powerpc__)
+#	if defined(MONO_KEYWORD_THREAD) && !defined(__powerpc__)
+	
         /* The local alloc stuff is in pthread_support.c, but solaris uses solaris_threads.c */
         /* It is also disabled on solaris/x86 by libgc/configure.ac */
         /* 
