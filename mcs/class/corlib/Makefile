@@ -42,10 +42,12 @@ RESX_RESOURCE_STRING = \
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-ifneq ($(PROFILE),basic)
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 include il/il.make
 
+RESOURCE_STRINGS_FILES = --mscorlib-debug
+
+ifneq ($(PROFILE),basic)
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE)
 endif
 

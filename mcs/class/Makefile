@@ -10,6 +10,9 @@ endif
 
 # The minimal set of csc dependencies
 basic_SUBDIRS := \
+	Mono.Cecil \
+	$(MCS_MODE_dirs) \
+	../tools/cil-stringreplacer \
 	corlib \
 	Mono.Security \
 	System \
@@ -19,15 +22,15 @@ basic_SUBDIRS := \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
 	System.Xml.Linq \
-	Mono.Cecil \
-	$(MCS_MODE_dirs) \
 	Mono.CompilerServices.SymbolWriter	\
 	PEAPI \
-	../tools/cil-stringreplacer \
 	../ilasm \
 	corlib/il
 
 build_SUBDIRS :=  \
+	Mono.Cecil \
+	$(MCS_MODE_dirs) \
+	../tools/cil-stringreplacer \
 	corlib \
 	Mono.Security \
 	System \
@@ -41,11 +44,8 @@ build_SUBDIRS :=  \
 	System.Xml.Linq \
 	System.IO.Compression \
 	System.Drawing			\
-	Mono.Cecil \
-	$(MCS_MODE_dirs) \
 	Mono.CompilerServices.SymbolWriter	\
-	PEAPI \
-	../tools/cil-stringreplacer
+	PEAPI
 
 ifdef MCS_MODE
 basic_PARALLEL_SUBDIRS := ../mcs $(pcl_facade_dirs)
