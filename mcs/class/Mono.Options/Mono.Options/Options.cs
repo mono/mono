@@ -658,15 +658,23 @@ namespace Mono.Options
 
 					for (int i = 0; i < t; i++) {
 						char c = line [i];
-						
+
 						if (c == '"' || c == '\'') {
+							bool escaped = false;
 							char end = c;
 							
 							for (i++; i < t; i++){
 								c = line [i];
 
-								if (c == end)
+								if (escaped) {
+									escaped = false;
+								} else if (c == '\\') {
+									escaped = true;
+									continue;
+								} else if (c == end) {
 									break;
+								}
+
 								arg.Append (c);
 							}
 						} else if (c == ' ') {
