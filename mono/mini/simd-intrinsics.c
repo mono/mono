@@ -3045,7 +3045,84 @@ get_opcode (const SimdIntrinsic *intrins, MonoType *etype)
 	return opcode;
 }
 
-/* Return NULL if the intrinsic is not supported/implemented */
+/*
+ * emit_intrins_general:
+ *
+ *   Emit generalized versions of some intrinsic whose native version only accepts immediates as some arguments.
+ */
+static MonoInst*
+emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethodSignature *fsig, MonoType *etype, MonoInst **args)
+{
+	MonoBasicBlock **targets;
+	MonoBasicBlock *tblock, *end_bb;
+	MonoInst *ins;
+	int opcode;
+
+	switch (intrins->name) {
+	case SN_Shuffle:
+	case SN_ShuffleHigh:
+	case SN_ShuffleLow:
+		opcode = get_opcode (intrins, etype);
+		g_assert (opcode != -1);
+
+		/* Emit a switch for all possible values */
+
+		int n = 256;
+		targets = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
+		for (int i = 0; i < n; ++i) {
+			NEW_BBLOCK (cfg, tblock);
+			targets [i] = tblock;
+			targets [i]->flags |= BB_INDIRECT_JUMP_TARGET;
+		}
+		NEW_BBLOCK (cfg, end_bb);
+
+		mini_emit_switch (cfg, args [2]->dreg, targets, targets [0], n);
+
+		int dreg = alloc_xreg (cfg);
+		for (int i = 0; i < n; ++i) {
+			MONO_START_BB (cfg, targets [i]);
+
+			MONO_INST_NEW (cfg, ins, opcode);
+			if (fsig->param_count == 3) {
+				ins->dreg = dreg;
+				ins->sreg1 = args [0]->dreg;
+				ins->sreg2 = args [1]->dreg;
+			} else {
+				ins->dreg = dreg;
+				ins->sreg1 = args [0]->dreg;
+			}
+			ins->inst_c0 = i;
+			ins->klass = mono_class_from_mono_type (fsig->params [0]);
+			MONO_ADD_INS (cfg->cbb, ins);
+
+			MONO_INST_NEW (cfg, ins, OP_BR);
+			mono_link_bblock (cfg, cfg->cbb, end_bb);
+			ins->inst_target_bb = end_bb;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+		MONO_START_BB (cfg, end_bb);
+		/* Just a placeholder to return */
+		MONO_INST_NEW (cfg, ins, OP_XMOVE);
+		ins->dreg = dreg;
+		ins->sreg1 = dreg;
+
+		return ins;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+	return NULL;
+}
+
+/*
+ * mono_emit_sys_runtime_sse_intrinsics:
+ *
+ * Return NULL if the intrinsic is not supported/implemented.
+ * Also return NULL if the CMETHOD is not an intrinsics.
+ * Also return NULL if the intrinsic doesn't support non-immediate arguments. In that case,
+ * the caller should emit a call to CMETHOD, and when CMETHOD is compiled, a fully-expanded
+ * version of the intrinsic will be emitted which supports non-immediate arguments.
+ */
 MonoInst*
 mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args, MonoError *error)
 {
@@ -3196,33 +3273,32 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 		break;
 	case SN_Shuffle:
 	case SN_ShuffleHigh:
-	case SN_ShuffleLow:
+	case SN_ShuffleLow: {
 		opcode = get_opcode (intrins, etype);
 		g_assert (opcode != -1);
 
-		if (fsig->param_count == 3) {
-			if (args [2]->opcode != OP_ICONST) {
-				mono_error_set_not_implemented (error, NULL);
-				break;
-			}
-			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->sreg2 = args [1]->dreg;
-			ins->inst_c0 = args [2]->inst_c0;
-			MONO_ADD_INS (cfg->cbb, ins);
-		} else {
-			if (args [1]->opcode != OP_ICONST) {
-				mono_error_set_not_implemented (error, NULL);
-				break;
-			}
-			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = alloc_xreg (cfg);
-			ins->sreg1 = args [0]->dreg;
-			ins->inst_c0 = args [1]->inst_c0;
-			MONO_ADD_INS (cfg->cbb, ins);
+		MonoInst *imm;
+		if (fsig->param_count == 3)
+			imm = args [2];
+		else
+			imm = args [1];
+		if (imm->opcode != OP_ICONST) {
+			if (cfg->method != cmethod)
+				/* Handle it when the IL method is JITted */
+				return NULL;
+			ins = emit_intrins_general (cfg, intrins, fsig, etype, args);
+			break;
 		}
+
+		MONO_INST_NEW (cfg, ins, opcode);
+		ins->dreg = alloc_xreg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		if (fsig->param_count == 3)
+			ins->sreg2 = args [1]->dreg;
+		ins->inst_c0 = imm->inst_c0;
+		MONO_ADD_INS (cfg->cbb, ins);
 		break;
+	}
 	case SN_SetZeroVector128:
 		MONO_INST_NEW (cfg, ins, OP_XZERO);
 		ins->dreg = alloc_xreg (cfg);
@@ -3446,6 +3522,8 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 			MONO_ADD_INS (cfg->cbb, ins);
 		} else {
 			opcode = intrins_and_type_to_op (intrins->name, etype);
+			if (!opcode)
+				return NULL;
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->dreg = alloc_xreg (cfg);
 			ins->sreg1 = args [0]->dreg;

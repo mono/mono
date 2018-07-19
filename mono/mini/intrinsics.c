@@ -1455,7 +1455,10 @@ emit_sys_runtime_intrinsics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, M
 			mono_error_cleanup (error);
 		} else {
 			//printf ("%s\n", mono_method_full_name (cmethod, 1));
-			/* No such intrinsic */
+			/*
+			 * Either this is not an intrinsics, or some arguments are not supported, make a normal call
+			 * to the intrinsics method.
+			 */
 			return NULL;
 		}
 	}
