@@ -1,8 +1,3 @@
 #include common_System.Core.dll.sources
 #include interpreter_System.Core.dll.sources
-
-System.IO.Pipes/AnonymousPipeServerStream.NotSupported.cs
-System.IO.Pipes/NamedPipeClientStream.NotSupported.cs
-System.IO.Pipes/NamedPipeServerStream.NotSupported.cs
-System.IO.Pipes/PipeStream.NotSupported.cs
-System.IO.Pipes/SafePipeHandle.NotSupported.cs
+#include pipes_pns.sources
