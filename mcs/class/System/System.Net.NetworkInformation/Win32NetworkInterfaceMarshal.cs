@@ -25,22 +25,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Collections.Generic;
-using System.Net;
+#if WIN_PLATFORM
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace System.Net.NetworkInformation
 {
-
-
 	class Win32NetworkInterface {
-				// Can't have unresolvable pinvokes on ios
-#if WIN_PLATFORM
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetNetworkParams (IntPtr ptr, ref int size);
-#endif
 
 		static Win32_FIXED_INFO fixedInfo;
 		static bool initialized = false;
@@ -48,16 +40,12 @@ namespace System.Net.NetworkInformation
 		public static Win32_FIXED_INFO FixedInfo {
 			get {
 				if (!initialized) {
-#if WIN_PLATFORM
 					int len = 0;
 					IntPtr ptr = IntPtr.Zero;
 					GetNetworkParams (ptr, ref len);
 					ptr = Marshal.AllocHGlobal(len);
 					GetNetworkParams (ptr, ref len);
 					fixedInfo = Marshal.PtrToStructure<Win32_FIXED_INFO> (ptr);
-#else
-					throw new NotImplementedException ();
-#endif
 					initialized = true;
 				}
 				return fixedInfo;
@@ -317,4 +305,4 @@ namespace System.Net.NetworkInformation
 		const int AF_INET6 = 23;
 	}
 }
-
+#endif

@@ -43,8 +43,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -68,27 +68,27 @@
     <Compile Include="Mono.Cairo\FontType.cs" />
     <Compile Include="Mono.Cairo\FontWeight.cs" />
     <Compile Include="Mono.Cairo\Format.cs" />
-    <Compile Include="Mono.Cairo\GlitzSurface.cs" />
     <Compile Include="Mono.Cairo\GLSurface.cs" />
     <Compile Include="Mono.Cairo\GLXDevice.cs" />
+    <Compile Include="Mono.Cairo\GlitzSurface.cs" />
     <Compile Include="Mono.Cairo\Glyph.cs" />
     <Compile Include="Mono.Cairo\Gradient.cs" />
     <Compile Include="Mono.Cairo\HintMetrics.cs" />
     <Compile Include="Mono.Cairo\HintStyle.cs" />
     <Compile Include="Mono.Cairo\ImageSurface.cs" />
-    <Compile Include="Mono.Cairo\LinearGradient.cs" />
     <Compile Include="Mono.Cairo\LineCap.cs" />
     <Compile Include="Mono.Cairo\LineJoin.cs" />
+    <Compile Include="Mono.Cairo\LinearGradient.cs" />
     <Compile Include="Mono.Cairo\Matrix.cs" />
     <Compile Include="Mono.Cairo\NativeMethods.cs" />
     <Compile Include="Mono.Cairo\Operator.cs" />
+    <Compile Include="Mono.Cairo\PSSurface.cs" />
     <Compile Include="Mono.Cairo\Path.cs" />
     <Compile Include="Mono.Cairo\Pattern.cs" />
     <Compile Include="Mono.Cairo\PatternType.cs" />
     <Compile Include="Mono.Cairo\PdfSurface.cs" />
     <Compile Include="Mono.Cairo\Point.cs" />
     <Compile Include="Mono.Cairo\PointD.cs" />
-    <Compile Include="Mono.Cairo\PSSurface.cs" />
     <Compile Include="Mono.Cairo\RadialGradient.cs" />
     <Compile Include="Mono.Cairo\Rectangle.cs" />
     <Compile Include="Mono.Cairo\Region.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Mono.Cairo\XcbSurface.cs" />
     <Compile Include="Mono.Cairo\XlibSurface.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

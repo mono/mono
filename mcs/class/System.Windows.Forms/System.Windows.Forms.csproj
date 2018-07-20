@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\System\System\MonoToolsLocator.cs" />
@@ -107,8 +107,8 @@
     <Compile Include="System.Windows.Forms.RTF\Color.cs" />
     <Compile Include="System.Windows.Forms.RTF\DestinationDelegate.cs" />
     <Compile Include="System.Windows.Forms.RTF\Font.cs" />
-    <Compile Include="System.Windows.Forms.RTF\KeysInit.cs" />
     <Compile Include="System.Windows.Forms.RTF\KeyStruct.cs" />
+    <Compile Include="System.Windows.Forms.RTF\KeysInit.cs" />
     <Compile Include="System.Windows.Forms.RTF\Major.cs" />
     <Compile Include="System.Windows.Forms.RTF\Minor.cs" />
     <Compile Include="System.Windows.Forms.RTF\Picture.cs" />
@@ -143,8 +143,8 @@
     <Compile Include="System.Windows.Forms.VisualStyles\ComboBoxState.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\ContentAlignment.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\EdgeEffects.cs" />
-    <Compile Include="System.Windows.Forms.VisualStyles\Edges.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\EdgeStyle.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\Edges.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\EnumProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\FilenameProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\FillType.cs" />
@@ -156,11 +156,11 @@
     <Compile Include="System.Windows.Forms.VisualStyles\HitTestCode.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\HitTestOptions.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\HorizontalAlign.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\IVisualStyles.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\IconEffect.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\ImageOrientation.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\ImageSelectType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\IntegerProperty.cs" />
-    <Compile Include="System.Windows.Forms.VisualStyles\IVisualStyles.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\MarginProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\OffsetType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\PointProperty.cs" />
@@ -186,10 +186,10 @@
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleElement.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleInformation.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleRenderer.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleState.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesEngine.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesGtkPlus.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesNative.cs" />
-    <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleState.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\AlertCheck.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\Generic.cs" />
@@ -230,8 +230,8 @@
     <Compile Include="System.Windows.Forms\BindingManagerDataErrorEventHandler.cs" />
     <Compile Include="System.Windows.Forms\BindingMemberInfo.cs" />
     <Compile Include="System.Windows.Forms\BindingNavigator.cs" />
-    <Compile Include="System.Windows.Forms\BindingsCollection.cs" />
     <Compile Include="System.Windows.Forms\BindingSource.cs" />
+    <Compile Include="System.Windows.Forms\BindingsCollection.cs" />
     <Compile Include="System.Windows.Forms\BootMode.cs" />
     <Compile Include="System.Windows.Forms\Border3DSide.cs" />
     <Compile Include="System.Windows.Forms\Border3DStyle.cs" />
@@ -249,8 +249,8 @@
     <Compile Include="System.Windows.Forms\CharacterCasing.cs" />
     <Compile Include="System.Windows.Forms\CheckBox.cs" />
     <Compile Include="System.Windows.Forms\CheckBoxRenderer.cs" />
-    <Compile Include="System.Windows.Forms\CheckedListBox.cs" />
     <Compile Include="System.Windows.Forms\CheckState.cs" />
+    <Compile Include="System.Windows.Forms\CheckedListBox.cs" />
     <Compile Include="System.Windows.Forms\Clipboard.cs" />
     <Compile Include="System.Windows.Forms\CloseReason.cs" />
     <Compile Include="System.Windows.Forms\ColorDepth.cs" />
@@ -376,9 +376,9 @@
     <Compile Include="System.Windows.Forms\DataGridViewDataErrorContexts.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewDataErrorEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewDataErrorEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\DataGridViewEditMode.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewEditingControlShowingEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewEditingControlShowingEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\DataGridViewEditMode.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewElement.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewElementStates.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewHeaderBorderStyle.cs" />
@@ -412,12 +412,12 @@
     <Compile Include="System.Windows.Forms\DataGridViewRowPostPaintEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowPrePaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowPrePaintEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsAddedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewRowsRemovedEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventArgs.cs" />
-    <Compile Include="System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewSelectedCellCollection.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewSelectedColumnCollection.cs" />
     <Compile Include="System.Windows.Forms\DataGridViewSelectedRowCollection.cs" />
@@ -439,9 +439,9 @@
     <Compile Include="System.Windows.Forms\DateTimePickerFormat.cs" />
     <Compile Include="System.Windows.Forms\Day.cs" />
     <Compile Include="System.Windows.Forms\DialogResult.cs" />
+    <Compile Include="System.Windows.Forms\DockStyle.cs" />
     <Compile Include="System.Windows.Forms\DockingAttribute.cs" />
     <Compile Include="System.Windows.Forms\DockingBehavior.cs" />
-    <Compile Include="System.Windows.Forms\DockStyle.cs" />
     <Compile Include="System.Windows.Forms\DomainUpDown.cs" />
     <Compile Include="System.Windows.Forms\DragAction.cs" />
     <Compile Include="System.Windows.Forms\DragDropEffects.cs" />
@@ -496,10 +496,12 @@
     <Compile Include="System.Windows.Forms\GridItem.cs" />
     <Compile Include="System.Windows.Forms\GridItemCollection.cs" />
     <Compile Include="System.Windows.Forms\GridItemType.cs" />
-    <Compile Include="System.Windows.Forms\GridTablesFactory.cs" />
     <Compile Include="System.Windows.Forms\GridTableStylesCollection.cs" />
+    <Compile Include="System.Windows.Forms\GridTablesFactory.cs" />
     <Compile Include="System.Windows.Forms\GroupBox.cs" />
     <Compile Include="System.Windows.Forms\GroupBoxRenderer.cs" />
+    <Compile Include="System.Windows.Forms\HScrollBar.cs" />
+    <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\HandledMouseEventArgs.cs" />
     <Compile Include="System.Windows.Forms\Help.cs" />
     <Compile Include="System.Windows.Forms\HelpEventArgs.cs" />
@@ -507,8 +509,6 @@
     <Compile Include="System.Windows.Forms\HelpNavigator.cs" />
     <Compile Include="System.Windows.Forms\HelpProvider.cs" />
     <Compile Include="System.Windows.Forms\HorizontalAlignment.cs" />
-    <Compile Include="System.Windows.Forms\HScrollBar.cs" />
-    <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\HtmlDocument.cs" />
     <Compile Include="System.Windows.Forms\HtmlElement.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementCollection.cs" />
@@ -536,6 +536,11 @@
     <Compile Include="System.Windows.Forms\IFeatureSupport.cs" />
     <Compile Include="System.Windows.Forms\IFileReaderService.cs" />
     <Compile Include="System.Windows.Forms\IKeyFilter.cs" />
+    <Compile Include="System.Windows.Forms\IMessageFilter.cs" />
+    <Compile Include="System.Windows.Forms\IRootGridEntry.cs" />
+    <Compile Include="System.Windows.Forms\IToolStripData.cs" />
+    <Compile Include="System.Windows.Forms\IWin32Window.cs" />
+    <Compile Include="System.Windows.Forms\IWindowTarget.cs" />
     <Compile Include="System.Windows.Forms\ImageIndexConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageKeyConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageLayout.cs" />
@@ -543,7 +548,6 @@
     <Compile Include="System.Windows.Forms\ImageListConverter.cs" />
     <Compile Include="System.Windows.Forms\ImageListStreamer.cs" />
     <Compile Include="System.Windows.Forms\ImeMode.cs" />
-    <Compile Include="System.Windows.Forms\IMessageFilter.cs" />
     <Compile Include="System.Windows.Forms\ImplicitHScrollBar.cs" />
     <Compile Include="System.Windows.Forms\ImplicitVScrollBar.cs" />
     <Compile Include="System.Windows.Forms\InputLanguage.cs" />
@@ -556,25 +560,21 @@
     <Compile Include="System.Windows.Forms\InternalWindowManager.cs" />
     <Compile Include="System.Windows.Forms\InvalidateEventArgs.cs" />
     <Compile Include="System.Windows.Forms\InvalidateEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\IRootGridEntry.cs" />
     <Compile Include="System.Windows.Forms\ItemActivation.cs" />
     <Compile Include="System.Windows.Forms\ItemBoundsPortion.cs" />
     <Compile Include="System.Windows.Forms\ItemChangedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ItemChangedEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\ItemCheckedEventArgs.cs" />
-    <Compile Include="System.Windows.Forms\ItemCheckedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ItemCheckEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ItemCheckEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\ItemCheckedEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\ItemCheckedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ItemDragEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ItemDragEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\IToolStripData.cs" />
-    <Compile Include="System.Windows.Forms\IWin32Window.cs" />
-    <Compile Include="System.Windows.Forms\IWindowTarget.cs" />
-    <Compile Include="System.Windows.Forms\KeyboardLayouts.cs" />
     <Compile Include="System.Windows.Forms\KeyEventArgs.cs" />
     <Compile Include="System.Windows.Forms\KeyEventHandler.cs" />
     <Compile Include="System.Windows.Forms\KeyPressEventArgs.cs" />
     <Compile Include="System.Windows.Forms\KeyPressEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\KeyboardLayouts.cs" />
     <Compile Include="System.Windows.Forms\Keys.cs" />
     <Compile Include="System.Windows.Forms\KeysConverter.cs" />
     <Compile Include="System.Windows.Forms\Label.cs" />
@@ -618,11 +618,13 @@
     <Compile Include="System.Windows.Forms\ListViewItemStates.cs" />
     <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\MWFCategoryAttribute.cs" />
+    <Compile Include="System.Windows.Forms\MWFDescriptionAttribute.cs" />
     <Compile Include="System.Windows.Forms\MainMenu.cs" />
-    <Compile Include="System.Windows.Forms\MaskedTextBox.cs" />
     <Compile Include="System.Windows.Forms\MaskFormat.cs" />
     <Compile Include="System.Windows.Forms\MaskInputRejectedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\MaskInputRejectedEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\MaskedTextBox.cs" />
     <Compile Include="System.Windows.Forms\MdiClient.cs" />
     <Compile Include="System.Windows.Forms\MdiControlStrip.cs" />
     <Compile Include="System.Windows.Forms\MdiLayout.cs" />
@@ -649,8 +651,6 @@
     <Compile Include="System.Windows.Forms\MouseButtons.cs" />
     <Compile Include="System.Windows.Forms\MouseEventArgs.cs" />
     <Compile Include="System.Windows.Forms\MouseEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\MWFCategoryAttribute.cs" />
-    <Compile Include="System.Windows.Forms\MWFDescriptionAttribute.cs" />
     <Compile Include="System.Windows.Forms\NativeWindow.cs" />
     <Compile Include="System.Windows.Forms\NavigateEventArgs.cs" />
     <Compile Include="System.Windows.Forms\NavigateEventHandler.cs" />
@@ -661,11 +661,11 @@
     <Compile Include="System.Windows.Forms\NumericUpDown.cs" />
     <Compile Include="System.Windows.Forms\NumericUpDownAcceleration.cs" />
     <Compile Include="System.Windows.Forms\NumericUpDownAccelerationCollection.cs" />
+    <Compile Include="System.Windows.Forms\OSFeature.cs" />
     <Compile Include="System.Windows.Forms\OpacityConverter.cs" />
     <Compile Include="System.Windows.Forms\OpenFileDialog.cs" />
     <Compile Include="System.Windows.Forms\OpenTreeNodeEnumerator.cs" />
     <Compile Include="System.Windows.Forms\Orientation.cs" />
-    <Compile Include="System.Windows.Forms\OSFeature.cs" />
     <Compile Include="System.Windows.Forms\OwnerDrawPropertyBag.cs" />
     <Compile Include="System.Windows.Forms\Padding.cs" />
     <Compile Include="System.Windows.Forms\PaddingConverter.cs" />
@@ -687,8 +687,8 @@
     <Compile Include="System.Windows.Forms\PrintDialog.cs" />
     <Compile Include="System.Windows.Forms\PrintPreviewControl.cs" />
     <Compile Include="System.Windows.Forms\PrintPreviewDialog.cs" />
-    <Compile Include="System.Windows.Forms\ProfessionalColors.cs" />
     <Compile Include="System.Windows.Forms\ProfessionalColorTable.cs" />
+    <Compile Include="System.Windows.Forms\ProfessionalColors.cs" />
     <Compile Include="System.Windows.Forms\ProgressBar.cs" />
     <Compile Include="System.Windows.Forms\ProgressBarRenderer.cs" />
     <Compile Include="System.Windows.Forms\ProgressBarStyle.cs" />
@@ -729,7 +729,6 @@
     <Compile Include="System.Windows.Forms\SaveFileDialog.cs" />
     <Compile Include="System.Windows.Forms\Screen.cs" />
     <Compile Include="System.Windows.Forms\ScreenOrientation.cs" />
-    <Compile Include="System.Windows.Forms\ScrollableControl.cs" />
     <Compile Include="System.Windows.Forms\ScrollBar.cs" />
     <Compile Include="System.Windows.Forms\ScrollBarRenderer.cs" />
     <Compile Include="System.Windows.Forms\ScrollBars.cs" />
@@ -739,6 +738,7 @@
     <Compile Include="System.Windows.Forms\ScrollEventType.cs" />
     <Compile Include="System.Windows.Forms\ScrollOrientation.cs" />
     <Compile Include="System.Windows.Forms\ScrollProperties.cs" />
+    <Compile Include="System.Windows.Forms\ScrollableControl.cs" />
     <Compile Include="System.Windows.Forms\SearchDirectionHint.cs" />
     <Compile Include="System.Windows.Forms\SearchForVirtualItemEventArgs.cs" />
     <Compile Include="System.Windows.Forms\SearchForVirtualItemEventHandler.cs" />
@@ -783,6 +783,9 @@
     <Compile Include="System.Windows.Forms\TabControlEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TabControlEventHandler.cs" />
     <Compile Include="System.Windows.Forms\TabDrawMode.cs" />
+    <Compile Include="System.Windows.Forms\TabPage.cs" />
+    <Compile Include="System.Windows.Forms\TabRenderer.cs" />
+    <Compile Include="System.Windows.Forms\TabSizeMode.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventHandler.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutColumnStyleCollection.cs" />
@@ -795,9 +798,6 @@
     <Compile Include="System.Windows.Forms\TableLayoutSettings.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyle.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutStyleCollection.cs" />
-    <Compile Include="System.Windows.Forms\TabPage.cs" />
-    <Compile Include="System.Windows.Forms\TabRenderer.cs" />
-    <Compile Include="System.Windows.Forms\TabSizeMode.cs" />
     <Compile Include="System.Windows.Forms\TextBox.cs" />
     <Compile Include="System.Windows.Forms\TextBoxBase.cs" />
     <Compile Include="System.Windows.Forms\TextBoxRenderer.cs" />
@@ -833,9 +833,9 @@
     <Compile Include="System.Windows.Forms\ToolStripControlHost.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDown.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownButton.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripDropDownCloseReason.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownClosedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownClosedEventHandler.cs" />
-    <Compile Include="System.Windows.Forms\ToolStripDropDownCloseReason.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownClosingEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownClosingEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ToolStripDropDownDirection.cs" />
@@ -877,10 +877,10 @@
     <Compile Include="System.Windows.Forms\ToolStripPanelRow.cs" />
     <Compile Include="System.Windows.Forms\ToolStripProfessionalRenderer.cs" />
     <Compile Include="System.Windows.Forms\ToolStripProgressBar.cs" />
-    <Compile Include="System.Windows.Forms\ToolStripRenderer.cs" />
     <Compile Include="System.Windows.Forms\ToolStripRenderEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolStripRenderEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ToolStripRenderMode.cs" />
+    <Compile Include="System.Windows.Forms\ToolStripRenderer.cs" />
     <Compile Include="System.Windows.Forms\ToolStripSeparator.cs" />
     <Compile Include="System.Windows.Forms\ToolStripSeparatorRenderEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ToolStripSeparatorRenderEventHandler.cs" />
@@ -925,10 +925,10 @@
     <Compile Include="System.Windows.Forms\UpDownEventArgs.cs" />
     <Compile Include="System.Windows.Forms\UpDownEventHandler.cs" />
     <Compile Include="System.Windows.Forms\UserControl.cs" />
-    <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
-    <Compile Include="System.Windows.Forms\View.cs" />
     <Compile Include="System.Windows.Forms\VScrollBar.cs" />
     <Compile Include="System.Windows.Forms\VScrollProperties.cs" />
+    <Compile Include="System.Windows.Forms\ValidationConstraints.cs" />
+    <Compile Include="System.Windows.Forms\View.cs" />
     <Compile Include="System.Windows.Forms\WebBrowser.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserBase.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserDocumentCompletedEventArgs.cs" />
@@ -959,6 +959,7 @@
     <Compile Include="System.Windows.Forms\XplatUIWin32.cs" />
     <Compile Include="System.Windows.Forms\XplatUIX11.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

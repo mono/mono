@@ -2,9 +2,9 @@
 include runtime.mk
 
 ANDROID_URI?=https://dl.google.com/android/repository/
-ANDROID_TOOLCHAIN_PREFIX?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_DIR?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_CACHE_DIR?=$(TOP)/sdks/builds/toolchains/android
+ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
+ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
+ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
 
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
@@ -51,14 +51,14 @@ AndroidSDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),$(2),sdk,
 
 ifeq ($(UNAME),Darwin)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platform-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-darwin-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
 $(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-darwin-x86_64,cmake/3.6.4111459))
 else
 ifeq ($(UNAME),Linux)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-linux,platform-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-linux-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-linux-4266726,emulator))
 $(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-linux-x86_64,cmake/3.6.4111459))

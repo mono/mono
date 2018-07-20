@@ -74,8 +74,8 @@ public static class Program {
 
         var outFile = Path.GetFullPath (args[0]);
         var libraryFullName = Path.GetFullPath (args[1]);
-        var platformName = args[2];
-        var profileName = args[3];
+        var platformName = args[2].Trim ();
+        var profileName = args[3].Trim ();
         var platformsFolder = Path.Combine (executableDirectory, "platforms");
         var profilesFolder = Path.Combine (executableDirectory, "profiles");
 
@@ -95,7 +95,12 @@ public static class Program {
             output = new StreamWriter (outFile);
 
         using (output) {
-            foreach (var fileName in result.GetFileNames ().OrderBy (s => s, StringComparer.Ordinal))
+            var fileNames = result.GetMatches ()
+                .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
+                .Select (e => e.RelativePath)
+                .Distinct();
+
+            foreach (var fileName in fileNames)
                 output.WriteLine (fileName);
         }
 
@@ -106,23 +111,48 @@ public static class Program {
     }
 }
 
-public struct ParseEntry {
-    public string SourcesFileName;
-    public string Directory;
-    public string Pattern;
-    public string HostPlatform;
-    public string ProfileName;
+public class SourcesFile {
+    public readonly string FileName;
+    public readonly bool   IsExclusion;
+
+    public readonly List<ParseEntry>  Sources = new List<ParseEntry> ();
+    public readonly List<ParseEntry>  Exclusions = new List<ParseEntry> ();
+    public readonly List<SourcesFile> Includes = new List<SourcesFile> ();
+
+    public SourcesFile (string fileName, bool isExclusion) {
+        FileName = fileName;
+        IsExclusion = isExclusion;
+    }
 }
 
-public struct Source {
-    public string FileName;
+public struct ParseEntry {
+    public string Directory;
+    public string Pattern;
+}
+
+public struct MatchEntry {
+    public SourcesFile SourcesFile;
+    public string RelativePath;
+}
+
+public class TargetParseResult {
+    public (string hostPlatform, string profile) Key;
+    public SourcesFile Sources, Exclusions;
+    public bool IsFallback;
+
+    public override string ToString () {
+        var fallbackString = IsFallback ? " fallback" : "";
+        return $"{Key}{fallbackString} -> [{Sources?.FileName}, {Exclusions?.FileName}]";
+    }
 }
 
 public class ParseResult {
     public readonly string LibraryDirectory, LibraryName;
 
-    public readonly List<ParseEntry> Sources = new List<ParseEntry> ();
-    public readonly List<ParseEntry> Exclusions = new List<ParseEntry> ();
+    public readonly Dictionary<(string hostPlatform, string profile), TargetParseResult> TargetDictionary = new Dictionary<(string hostPlatform, string profile), TargetParseResult> ();
+
+    public readonly Dictionary<string, SourcesFile> SourcesFiles = new Dictionary<string, SourcesFile> ();
+    public readonly Dictionary<string, SourcesFile> ExclusionFiles = new Dictionary<string, SourcesFile> ();
 
     // FIXME: This is a bad spot for this value but enumerators don't have outparam support
     public int ErrorCount = 0;
@@ -132,54 +162,52 @@ public class ParseResult {
         LibraryName = libraryName;
     }
 
-    private static string GetRelativePath (string fullPath, string relativeToDirectory) {
-        fullPath = fullPath.Replace (SourcesParser.DirectorySeparator, "/");
-        relativeToDirectory = relativeToDirectory.Replace (SourcesParser.DirectorySeparator, "/");
+    public IEnumerable<TargetParseResult> Targets {
+        get {
+            return TargetDictionary.Values;
+        }
+    }
 
-        if (!relativeToDirectory.EndsWith (SourcesParser.DirectorySeparator))
-            relativeToDirectory += SourcesParser.DirectorySeparator;
+    private static string GetRelativePath (string fullPath, string relativeToDirectory) {
+        fullPath = fullPath.Replace ("\\", "/");
+        relativeToDirectory = relativeToDirectory.Replace ("\\", "/");
+
+        if (!relativeToDirectory.EndsWith ("/"))
+            relativeToDirectory += "/";
         var dirUri = new Uri (relativeToDirectory);
         var pathUri = new Uri (fullPath);
 
-        var relativeUri = Uri.UnescapeDataString (
+        var relativePath = Uri.UnescapeDataString (
             dirUri.MakeRelativeUri (pathUri).OriginalString
         ).Replace ("/", SourcesParser.DirectorySeparator)
          .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
 
+        /*
         if (SourcesParser.TraceLevel >= 4)
-            Console.Error.WriteLine ($"// {fullPath} -> {relativeUri}");
+            Console.Error.WriteLine ($"// {fullPath} -> {relativePath}");
+        */
 
-        return relativeUri;
+        return relativePath;
     }
 
-    private IEnumerable<string> EnumerateMatches (
-        IEnumerable<ParseEntry> entries,
-        string hostPlatformName, string profileName
+    public IEnumerable<MatchEntry> EnumerateMatches (
+        SourcesFile sourcesFile,
+        IEnumerable<ParseEntry> entries
     ) {
         var patternChars = new [] { '*', '?' };
-        foreach (var entry in entries) {
-            if (
-                (hostPlatformName != null) &&
-                (entry.HostPlatform ?? hostPlatformName) != hostPlatformName
-            )
-                continue;
-            if (
-                (profileName != null) &&
-                (entry.ProfileName ?? profileName) != profileName
-            )
-                continue;
 
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern).Trim ();
+        foreach (var entry in entries) {
+            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
-            if (SourcesParser.TraceLevel >= 3) {
+            if (SourcesParser.TraceLevel >= 4) {
                 if ((absolutePattern != entry.Pattern) || (absoluteDirectory != entry.Directory))
                     Console.Error.WriteLine ($"// {entry.Directory} / {entry.Pattern} -> {absoluteDirectory} / {absolutePattern}");
             }            
 
             if (!Directory.Exists (absoluteDirectory)) {
-                Console.Error.WriteLine ($"Directory does not exist: {Path.GetFullPath (absoluteDirectory)}");
+                Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
                 ErrorCount += 1;
                 continue;
             }
@@ -187,13 +215,16 @@ public class ParseResult {
             if (absolutePattern.IndexOfAny (patternChars) >= 0) {
                 var matchingFiles = Directory.GetFiles (absoluteDirectory, absolutePattern);
                 if (matchingFiles.Length == 0) {
-                    Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
-                    ErrorCount += 1;
+                    if (SourcesParser.TraceLevel > 0)
+                        Console.Error.WriteLine ($"// No matches for pattern '{absolutePattern}'");
                 }
 
                 foreach (var fileName in matchingFiles) {
                     var relativePath = GetRelativePath (fileName, LibraryDirectory);
-                    yield return relativePath;
+                    yield return new MatchEntry {
+                        SourcesFile = sourcesFile,
+                        RelativePath = relativePath,
+                    };
                 }
             } else {
                 if (!File.Exists (absolutePath)) {
@@ -201,38 +232,71 @@ public class ParseResult {
                     ErrorCount += 1;
                 } else {
                     var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
-                    yield return relativePath;
+                    yield return new MatchEntry {
+                        SourcesFile = sourcesFile,
+                        RelativePath = relativePath,
+                    };
                 }
             }
         }
     }
 
-    // If you loaded sources files for multiple profiles, you can use the arguments here
-    //  to filter the results
-    public IEnumerable<string> GetFileNames (
-        string hostPlatformName = null, string profileName = null
+    private IEnumerable<MatchEntry> GetMatchesFromFile (
+        SourcesFile sourcesFile, HashSet<string> excludedFiles = null
     ) {
-        var encounteredFileNames = new HashSet<string> (StringComparer.Ordinal);
+        if (sourcesFile == null)
+            yield break;
 
-        var excludedFiles = new HashSet<string> (
-            EnumerateMatches (Exclusions, hostPlatformName, profileName),
-            StringComparer.Ordinal
-        );
+        if (excludedFiles == null)
+            excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
-        foreach (var fileName in EnumerateMatches (Sources, hostPlatformName, profileName)) {
-            if (excludedFiles.Contains (fileName)) {
+        foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions))
+            excludedFiles.Add (m.RelativePath);
+
+        foreach (var include in sourcesFile.Includes) {
+            foreach (var m in GetMatchesFromFile (include, excludedFiles))
+                yield return m;
+        }
+
+        // FIXME: This is order-sensitive
+        foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources)) {
+            if (excludedFiles.Contains (entry.RelativePath)) {
                 if (SourcesParser.TraceLevel >= 3)
-                    Console.Error.WriteLine ($"// Excluding {fileName}");
+                    Console.Error.WriteLine ($"// Excluding {entry.RelativePath}");
                 continue;
             }
 
-            // Skip duplicates
-            if (encounteredFileNames.Contains (fileName))
-                continue;
-
-            encounteredFileNames.Add (fileName);
-            yield return fileName;
+            yield return entry;
         }
+    }
+
+    public IEnumerable<MatchEntry> GetMatches (TargetParseResult target = null) {
+        var excludedFiles = new HashSet<string> (StringComparer.Ordinal);
+
+        if (target == null) {
+            if (TargetDictionary.Count == 0)
+                yield break;
+
+            target = Targets.First ();
+        }
+
+        if (target == null)
+            throw new ArgumentNullException ("target");
+
+        if (SourcesParser.TraceLevel >= 3)
+            Console.Error.WriteLine ($"// Scanning sources file tree for {target.Key}");
+
+        int count = 0;
+        foreach (var m in GetMatchesFromFile (target.Exclusions, excludedFiles))
+            excludedFiles.Add (m.RelativePath);
+
+        foreach (var m in GetMatchesFromFile (target.Sources, excludedFiles)) {
+            count++;
+            yield return m;
+        }
+
+        if (SourcesParser.TraceLevel >= 3)
+            Console.Error.WriteLine ($"// Scan complete. Generated {count} successful matches.");
     }
 }
 
@@ -246,18 +310,6 @@ public class SourcesParser {
         public string ProfileName;
 
         public int SourcesFilesParsed, ExclusionsFilesParsed;
-
-        public List<ParseEntry> ParsedSources {
-            get {
-                return Result.Sources;
-            }
-        }
-
-        public List<ParseEntry> ParsedExclusions {
-            get {
-                return Result.Exclusions;
-            }
-        }
     }
 
     public readonly string[] AllHostPlatformNames;
@@ -284,43 +336,53 @@ public class SourcesParser {
         };
 
         var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{profile}_{libraryName}");
-        var ok = TryParseSingleFile (state, testPath + ".sources", false);
-        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+        var ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
         state.HostPlatform = null;
 
         testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
-        ok = TryParseSingleFile (state, testPath + ".sources", false);
-        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+        ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
         testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
-        ok = TryParseSingleFile (state, testPath + ".sources", false);
-        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+        ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
-            PrintSummary (state);
+            PrintSummary (state, testPath);
             return state.Result;
         }
 
         state.ProfileName = null;
 
         testPath = Path.Combine (libraryDirectory, libraryName);
-        TryParseSingleFile (state, testPath + ".sources", false);
-        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+        ok = TryParseTargetInto (state, testPath);
 
-        PrintSummary (state);
+        PrintSummary (state, testPath);
 
         return state.Result;
+    }
+
+    private void StripFallbackTargetsOrDefaultTarget (
+        State state, TargetParseResult defaultTarget, List<TargetParseResult> fallbackTargets, int maximumCount
+    ) {
+        if (fallbackTargets.Count == maximumCount) {
+            // If we didn't find any platform specific targets, remove them and just leave one single
+            //  platform-specific target entry
+            foreach (var target in fallbackTargets)
+                state.Result.TargetDictionary.Remove (target.Key);
+        } else if (defaultTarget != null) {
+            // Otherwise, strip the non-platform-specific target
+            state.Result.TargetDictionary.Remove (defaultTarget.Key);
+        }
     }
 
     public ParseResult Parse (string libraryDirectory, string libraryName) {
@@ -328,59 +390,137 @@ public class SourcesParser {
             Result = new ParseResult (libraryDirectory, libraryName)
         };
 
-        string testPath = Path.Combine (libraryDirectory, libraryName);
-        TryParseSingleFile (state, testPath + ".sources", false);
-        TryParseSingleFile (state, testPath + ".exclude.sources", true);
+        string originalTestPath = Path.Combine (libraryDirectory, libraryName);
+        var defaultTarget = ParseTarget (state, originalTestPath, null);
+        var profileFallbackTargets = new List<TargetParseResult> ();
 
         foreach (var profile in AllProfileNames) {
             state.ProfileName = profile;
+            state.HostPlatform = null;
+
+            var testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
+            var profileTarget = ParseTarget (state, testPath, defaultTarget);
+            if ((profileTarget != null) && profileTarget.IsFallback)
+                profileFallbackTargets.Add (profileTarget);
+
+            var fallbackTargets = new List<TargetParseResult> ();
 
             foreach (var hostPlatform in AllHostPlatformNames) {
                 state.HostPlatform = hostPlatform;
 
                 testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{profile}_{libraryName}");
-                TryParseSingleFile (state, testPath + ".sources", false);
-                TryParseSingleFile (state, testPath + ".exclude.sources", true);
+                var target = ParseTarget (state, testPath, profileTarget ?? defaultTarget);
+                if ((target != null) && target.IsFallback)
+                    fallbackTargets.Add (target);
             }
 
-            state.HostPlatform = null;
-
-            testPath = Path.Combine (libraryDirectory, $"{profile}_{libraryName}");
-            TryParseSingleFile (state, testPath + ".sources", false);
-            TryParseSingleFile (state, testPath + ".exclude.sources", true);
+            StripFallbackTargetsOrDefaultTarget (state, profileTarget, fallbackTargets, AllHostPlatformNames.Length);
         }
 
-        PrintSummary (state);
+        StripFallbackTargetsOrDefaultTarget (state, defaultTarget, profileFallbackTargets, AllProfileNames.Length);
+
+        var platformFallbackTargets = new List<TargetParseResult> ();
+
+        foreach (var hostPlatform in AllHostPlatformNames) {
+            state.ProfileName = null;
+            state.HostPlatform = hostPlatform;
+
+            var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+            var target = ParseTarget (state, testPath, defaultTarget);
+            if ((target != null) && target.IsFallback)
+                platformFallbackTargets.Add (target);
+        }
+
+        StripFallbackTargetsOrDefaultTarget (state, defaultTarget, platformFallbackTargets, AllHostPlatformNames.Length);
+
+        PrintSummary (state, originalTestPath);
 
         return state.Result;
     }
 
-    private void PrintSummary (State state) {
+    private void PrintSummary (State state, string testPath) {
         if (TraceLevel > 0)
-            Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s).");
+            Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s) from path '{testPath}'.");
     }
 
-    private void HandleMetaDirective (State state, string directory, bool asExclusionsList, string directive) {
+    private void HandleMetaDirective (State state, SourcesFile file, string directory, bool asExclusionsList, string directive) {
         var include = "#include ";
-        if (directive.StartsWith (include))
-            ParseSingleFile (state, Path.Combine (directory, directive.Substring (include.Length)), asExclusionsList);
+        if (directive.StartsWith (include)) {
+            var fileName = Path.Combine (directory, directive.Substring (include.Length));
+            var newFile = ParseSingleFile (state, fileName, asExclusionsList);
+            if (newFile == null) {
+                Console.Error.WriteLine($"// Include not found: {fileName}");
+                state.Result.ErrorCount++;
+            } else {
+                file.Includes.Add (newFile);
+            }
+        }
     }
 
-    private bool TryParseSingleFile (State state, string fileName, bool asExclusionsList) {
-        if (!File.Exists (fileName))
-            return false;
-
-        ParseSingleFile (state, fileName, asExclusionsList);
-        return true;
+    private bool TryParseTargetInto (State state, string prefix) {
+        var result = ParseTarget (state, prefix, null);
+        return (result != null);
     }
 
-    private void ParseSingleFile (State state, string fileName, bool asExclusionsList) {
+    private TargetParseResult ParseTarget (State state, string prefix, TargetParseResult fallbackTarget) {
+        // FIXME: We determine the prefix for the pair of sources and exclusions,
+        //  which may not match intended behavior:
+        // if linux_net_4_x_foo.sources is present, but linux_net_4_x_foo.exclude.sources is not present,
+        //  should net_4_x_foo.exclude.sources be used as a fallback? Maybe it should.
+        // This won't do that though.
+
+        var tpr = new TargetParseResult {
+            Key = (hostPlatform: state.HostPlatform, profile: state.ProfileName)
+        };
+
+        var sourcesFileName = prefix + ".sources";
+        var exclusionsFileName = prefix + ".exclude.sources";
+
+        if (!File.Exists (sourcesFileName)) {
+            if (fallbackTarget != null) {
+                if (TraceLevel >= 2)
+                    Console.Error.WriteLine($"// Not found: {sourcesFileName}, falling back to {fallbackTarget}");
+                tpr.Sources = fallbackTarget.Sources;
+                tpr.Exclusions = fallbackTarget.Exclusions;
+                tpr.IsFallback = true;
+                state.Result.TargetDictionary.Add (tpr.Key, tpr);
+                return tpr;
+            } else {
+                if (TraceLevel >= 2)
+                    Console.Error.WriteLine($"// Not found: {sourcesFileName}");
+                return null;
+            }
+        }
+
+        tpr.Sources = ParseSingleFile (state, sourcesFileName, false);
+
+        if (File.Exists (exclusionsFileName))
+            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true);
+
+        state.Result.TargetDictionary.Add (tpr.Key, tpr);
+        return tpr;
+    }
+
+    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
+        var fileTable = asExclusionsList ? state.Result.ExclusionFiles : state.Result.SourcesFiles;
+
         var nullStr = "<none>";
-        if (TraceLevel >= 1)
-            Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
+
+        if (fileTable.ContainsKey (fileName)) {
+            if (TraceLevel >= 2)
+                Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  (already parsed)");
+
+            return fileTable[fileName];
+        } else {
+            if (TraceLevel >= 2)
+                Console.Error.WriteLine ($"// {new String (' ', ParseDepth * 2)}{fileName}  [{state.HostPlatform ?? nullStr}] [{state.ProfileName ?? nullStr}]");
+        }
+
         ParseDepth += 1;
 
         var directory = Path.GetDirectoryName (fileName);
+        var result = new SourcesFile (fileName, asExclusionsList);
+        fileTable.Add (fileName, result);
 
         using (var sr = new StreamReader (fileName)) {
             if (asExclusionsList)
@@ -390,13 +530,15 @@ public class SourcesParser {
 
             string line;
             while ((line = sr.ReadLine ()) != null) {
-                if (String.IsNullOrWhiteSpace (line))
-                    continue;
-
                 if (line.StartsWith ("#")) {
-                    HandleMetaDirective (state, directory, asExclusionsList, line);
+                    HandleMetaDirective (state, result, directory, asExclusionsList, line);
                     continue;
                 }
+
+                line = line.Trim ();
+
+                if (String.IsNullOrWhiteSpace (line))
+                    continue;
 
                 var parts = line.Split (':');
 
@@ -411,27 +553,22 @@ public class SourcesParser {
                     var mainPatternDirectory = Path.GetDirectoryName (parts[0]);
 
                     foreach (var pattern in explicitExclusions) {
-                        state.ParsedExclusions.Add (new ParseEntry {
-                            SourcesFileName = fileName,
+                        result.Exclusions.Add (new ParseEntry {
                             Directory = directory,
-                            Pattern = Path.Combine (mainPatternDirectory, pattern),
-                            HostPlatform = state.HostPlatform,
-                            ProfileName = state.ProfileName
+                            Pattern = Path.Combine (mainPatternDirectory, pattern)
                         });
                     }
                 }
 
-                (asExclusionsList ? state.ParsedExclusions : state.ParsedSources)
+                (asExclusionsList ? result.Exclusions : result.Sources)
                     .Add (new ParseEntry {
-                        SourcesFileName = fileName,
                         Directory = directory,
-                        Pattern = parts[0],
-                        HostPlatform = state.HostPlatform,
-                        ProfileName = state.ProfileName
+                        Pattern = parts[0]
                     });
             }
         }
 
         ParseDepth -= 1;
+        return result;
     }
 }

@@ -250,7 +250,9 @@ namespace Mono.Btls
 				throw new InvalidOperationException ();
 			if (fallback != null)
 				return;
-			fallback = X509Helper2.Import (GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet, true);
+			fallback = SystemDependencyProvider.Instance.CertificateProvider.Import (
+				GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet,
+				CertificateImportFlags.DisableNativeBackend);
 		}
 
 		internal override X509Certificate2Impl FallbackImpl {

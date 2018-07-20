@@ -28,6 +28,7 @@ EXTRA_DISTFILES = \
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/Resources/Strings.resx
 
 include ../../build/library.make

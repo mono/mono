@@ -99,6 +99,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\System\Mono.Util\MonoPInvokeCallbackAttribute.cs" />
@@ -116,7 +117,6 @@
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConvert.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataAdapter.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataReader.cs" />
-    <Compile Include="Mono.Data.Sqlite_2.0\SqliteDataSourceEnumerator.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteEnlistment.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteException.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFactory.cs" />
@@ -129,8 +129,10 @@
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteStatement.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SQLiteTransaction.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SR.Designer.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SqliteDataSourceEnumerator.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\UnsafeNativeMethods.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

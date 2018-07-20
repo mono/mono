@@ -46,19 +46,21 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\ecmadoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\exceptions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\AssemblySet.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkEntry.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkIndex.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkTypeEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\ecmadoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\exceptions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\frameworksbootstrapper.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\index.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\mdoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2slashdoc.cs" />
@@ -66,7 +68,6 @@
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\normalize.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\validate.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\webdoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\ObjectRocks.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\StreamRocks.cs" />
     <Compile Include="..\..\..\external\cecil\rocks\Mono.Cecil.Rocks\DocCommentId.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="cecil.mixin.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/monodoc/monodoc.csproj" />

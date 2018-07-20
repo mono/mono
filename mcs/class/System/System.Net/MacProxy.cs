@@ -426,10 +426,10 @@ namespace Mono.Net
 		}
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static /* CFIndex */ IntPtr CFDataGetLength (/* CFDataRef */ IntPtr theData);
+		internal extern static /* CFIndex */ IntPtr CFDataGetLength (/* CFDataRef */ IntPtr theData);
 
 		[DllImport (CoreFoundationLibrary)]
-		extern static /* UInt8* */ IntPtr CFDataGetBytePtr (/* CFDataRef */ IntPtr theData);
+		internal extern static /* UInt8* */ IntPtr CFDataGetBytePtr (/* CFDataRef */ IntPtr theData);
 
 		/*
 		 * Exposes a read-only pointer to the underlying storage.

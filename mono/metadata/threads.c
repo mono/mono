@@ -574,7 +574,7 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 	guint32 offset;
 
 	if (!current_thread_field) {
-		current_thread_field = mono_class_get_field_from_name (mono_defaults.thread_class, "current_thread");
+		current_thread_field = mono_class_get_field_from_name_full (mono_defaults.thread_class, "current_thread", NULL);
 		g_assert (current_thread_field);
 	}
 
@@ -864,7 +864,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	g_assert (thread != NULL);
 	SET_CURRENT_OBJECT (thread);
 
-	info = (MonoThreadInfo*) thread->thread_info;
+	info = thread->thread_info;
 	g_assert (info);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
@@ -2144,13 +2144,13 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (gpointer toSignal,
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 	
-	MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
+	MONO_ENTER_GC_SAFE;
 	ret = mono_w32handle_convert_wait_ret (mono_win32_signal_object_and_wait (toSignal, toWait, ms, TRUE), 1);
+	MONO_EXIT_GC_SAFE;
 #else
 	ret = mono_w32handle_signal_and_wait (toSignal, toWait, ms, TRUE);
 #endif
-	MONO_EXIT_GC_SAFE;
 	
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
@@ -3871,7 +3871,8 @@ mono_local_time (const struct timeval *tv, struct tm *tm) {
 #ifdef HAVE_LOCALTIME_R
 	localtime_r(&tv->tv_sec, tm);
 #else
-	*tm = *localtime(&tv->tv_sec);
+	time_t const tv_sec = tv->tv_sec; // Copy due to Win32/Posix contradiction.
+	*tm = *localtime (&tv_sec);
 #endif
 }
 
@@ -5441,8 +5442,12 @@ mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread)
 mono_bool
 mono_thread_is_foreign (MonoThread *thread)
 {
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
 	MonoThreadInfo *info = (MonoThreadInfo *)thread->internal_thread->thread_info;
-	return info->runtime_thread == FALSE;
+	result = (info->runtime_thread == FALSE);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 #ifndef HOST_WIN32
@@ -5585,10 +5590,10 @@ threads_add_unique_joinable_thread_nolock (gpointer tid)
 }
 
 void
-mono_threads_add_joinable_runtime_thread (gpointer thread_info)
+mono_threads_add_joinable_runtime_thread (MonoThreadInfo *thread_info)
 {
 	g_assert (thread_info);
-	MonoThreadInfo *mono_thread_info = (MonoThreadInfo*)thread_info;
+	MonoThreadInfo *mono_thread_info = thread_info;
 
 	if (mono_thread_info->runtime_thread) {
 		gpointer tid = (gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (mono_thread_info_get_tid (mono_thread_info)));
@@ -5767,7 +5772,7 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 			*cookie = mono_threads_enter_gc_unsafe_region_cookie ();
 		} else {
 			/* thread state (BLOCKING|RUNNING) -> RUNNING */
-			*cookie = mono_threads_enter_gc_unsafe_region_internal (stackdata);
+			*cookie = mono_threads_enter_gc_unsafe_region_unbalanced_internal (stackdata);
 		}
 	}
 
@@ -5809,7 +5814,7 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
-		mono_threads_exit_gc_unsafe_region_internal (cookie, stackdata);
+		mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
 	}
 
 	if (orig != domain) {
@@ -5868,7 +5873,7 @@ mono_thread_internal_describe (MonoInternalThread *internal, GString *text)
 
 	if (internal->thread_info) {
 		g_string_append (text, ", state : ");
-		mono_thread_info_describe_interrupt_token ((MonoThreadInfo*) internal->thread_info, text);
+		mono_thread_info_describe_interrupt_token (internal->thread_info, text);
 	}
 
 	if (internal->owned_mutexes) {
@@ -5982,7 +5987,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 
 	MonoNativeThreadId current = mono_native_thread_id_get ();
 
-	MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer from %zu\n", current);
+	MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer from %zx\n", current);
 
 	if (not_started) {
 		// Setup state
@@ -6013,7 +6018,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 				continue;
 
 			// Request every other thread dumps themselves before us
-			MonoThreadInfo *info = (MonoThreadInfo*) thread_array [i]->thread_info;
+			MonoThreadInfo *info = thread_array [i]->thread_info;
 
 			mono_memory_barrier ();
 			size_t old_num_summarized = num_threads_summarized;
@@ -6038,7 +6043,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 				sleep (1);
 				mono_memory_barrier ();
 				const char *name = thread_summary_state_to_str (summarizing_thread_state);
-				MOSTLY_ASYNC_SAFE_PRINTF("Waiting for signalled thread %zu to collect stacktrace. Status: %s\n", tid, name);
+				MOSTLY_ASYNC_SAFE_PRINTF("Waiting for signalled thread %zx to collect stacktrace. Status: %s\n", tid, name);
 				count--;
 			}
 			if (count == 0) {
@@ -6071,7 +6076,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 					MOSTLY_ASYNC_SAFE_PRINTF("Timed out, thread did not respond to signal\n");
 
 					MonoNativeThreadId old_val = mono_atomic_cas_ptr ((gpointer) &summarizing_thread, NULL /* set */, GINT_TO_POINTER(tid) /* compare */);
-					g_assertf (tid == old_val, "Attempting to abandon dumping of thread %zu, and thread changed to %zu.", tid, old_val);
+					g_assertf (tid == old_val, "Attempting to abandon dumping of thread %zx, and thread changed to %zx.", tid, old_val);
 
 					gint32 timeout_abort_state = mono_atomic_cas_i32(&summarizing_thread_state, MONO_SUMMARY_EMPTY /* set */, MONO_SUMMARY_EXPECT /* compare */);
 					g_assertf (timeout_abort_state == MONO_SUMMARY_EXPECT, "Thread state changed during timeout abort", NULL);
@@ -6090,7 +6095,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 
 	mono_memory_barrier ();
 
-	MOSTLY_ASYNC_SAFE_PRINTF("Self-reporting for thread %zu. Registered summarizing thread right now is %zu\n", current, summarizing_thread);
+	MOSTLY_ASYNC_SAFE_PRINTF("Self-reporting for thread %zx. Registered summarizing thread right now is %zx\n", current, summarizing_thread);
 	g_assert (current == summarizing_thread);
 
 	if (!not_started) {

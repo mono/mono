@@ -61,7 +61,7 @@ ${TESTCMD} --label=Microsoft.Build.Tasks --timeout=5m make -w -C mcs/class/Micro
 ${TESTCMD} --label=Microsoft.Build.Utilities --timeout=5m make -w -C mcs/class/Microsoft.Build.Utilities run-test
 ${TESTCMD} --label=Mono.C5 --timeout=5m make -w -C mcs/class/Mono.C5 run-test
 ${TESTCMD} --label=Mono.Options --timeout=5m make -w -C mcs/class/Mono.Options run-test
-if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'coop-gc'* ]]
+if [[ ${CI_TAGS} == *'win-'* ]]
 then ${TESTCMD} --label=Mono.Profiler.Log-xunit --skip;
 else ${TESTCMD} --label=Mono.Profiler.Log-xunit --timeout=30m make -w -C mcs/class/Mono.Profiler.Log run-xunit-test
 fi
@@ -77,6 +77,7 @@ ${TESTCMD} --label=System.Data.DSE --timeout=5m make -w -C mcs/class/System.Data
 ${TESTCMD} --label=System.Web.Abstractions --timeout=5m make -w -C mcs/class/System.Web.Abstractions run-test
 ${TESTCMD} --label=System.Web.Routing --timeout=5m make -w -C mcs/class/System.Web.Routing run-test
 ${TESTCMD} --label=System.Runtime.Serialization --timeout=5m make -w -C mcs/class/System.Runtime.Serialization run-test
+${TESTCMD} --label=System.Runtime.Serialization-xunit --timeout=5m make -w -C mcs/class/System.Runtime.Serialization run-xunit-test
 ${TESTCMD} --label=System.IdentityModel --timeout=5m make -w -C mcs/class/System.IdentityModel run-test
 ${TESTCMD} --label=System.ServiceModel --timeout=15m make -w -C mcs/class/System.ServiceModel run-test
 ${TESTCMD} --label=System.ServiceModel.Web --timeout=5m make -w -C mcs/class/System.ServiceModel.Web run-test
@@ -142,5 +143,13 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
     fi
 else ${TESTCMD} --label=csprojdiff --skip
+fi
+if [[ $CI_TAGS == *'bclsizediff'* ]]; then
+    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+    if ${TESTCMD} --label=bclsizediff --timeout=5m --fatal make -w -C mcs/tools/linker bcl-size-diff
+    then report_github_status "success" "BCL Linked Size Diff" "No BCL size changes found." || true
+    else report_github_status "error" "BCL Linked Size Diff" "The BCL size changed." "$BUILD_URL/BCL_20Size_20Diff/" || true
+    fi
+else ${TESTCMD} --label=bclsizediff --skip
 fi
 rm -fr /tmp/jenkins-temp-aspnet*

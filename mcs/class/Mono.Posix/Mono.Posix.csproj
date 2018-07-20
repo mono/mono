@@ -54,6 +54,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -116,6 +117,15 @@
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="Mono.Unix.Android\AndroidUtils.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' "></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

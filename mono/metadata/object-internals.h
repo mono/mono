@@ -25,22 +25,18 @@
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
 	{								\
-		char *msg = g_strdup_printf ("assertion `%s' failed",	\
-		#expr);							\
-		if (arg) {} /* check if the name exists */		\
+		if (0) { (void)(arg); } /* check if the name exists */	\
 		ERROR_DECL (error);					\
-		mono_error_set_argument (error, #arg, msg);		\
+		mono_error_set_argument_format (error, #arg, "assertion `%s' failed", #expr); \
 		mono_error_set_pending_exception (error);		\
-		g_free (msg);						\
 		return retval;						\
 	} 								\
 } while (0)
 
 /* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
 #define MONO_CHECK_ARG_NULL(arg, retval) do { 			\
-	if (G_UNLIKELY (arg == NULL))				\
+	if (G_UNLIKELY (!(arg)))				\
 	{							\
-		if (arg) {} /* check if the name exists */	\
 		ERROR_DECL (error);				\
 		mono_error_set_argument_null (error, #arg, "");	\
 		mono_error_set_pending_exception (error);	\
@@ -48,9 +44,18 @@
 	}							\
 } while (0)
 
+/* Use this as MONO_CHECK_ARG_NULL_HANDLE (arg,) in functions returning void */
+#define MONO_CHECK_ARG_NULL_HANDLE(arg, retval) do { 		\
+	if (G_UNLIKELY (MONO_HANDLE_IS_NULL (arg)))		\
+	{							\
+		mono_error_set_argument_null (error, #arg, "");	\
+		return retval;					\
+	}							\
+} while (0)
+
 /* Use this as MONO_CHECK_NULL (arg,) in functions returning void */
 #define MONO_CHECK_NULL(arg, retval) do { 			\
-	if (G_UNLIKELY (arg == NULL))				\
+	if (G_UNLIKELY (!(arg)))				\
 	{							\
 		ERROR_DECL (error);				\
 		mono_error_set_null_reference (error);		\
@@ -74,7 +79,7 @@
 #define mono_class_get_field_from_name_cached(klass,name) ({ \
 			static MonoClassField *tmp_field; \
 			if (!tmp_field) { \
-				tmp_field = mono_class_get_field_from_name ((klass), (name)); \
+				tmp_field = mono_class_get_field_from_name_full ((klass), (name), NULL); \
 				g_assert (tmp_field); \
 			}; \
 			tmp_field; })
@@ -94,11 +99,20 @@
 		__arr = mono_array_new_specific_checked (__vtable, (size), (error)); \
 	__arr; })
 
+/* eclass should be a run-time constant */
+#define mono_array_new_cached_handle(domain, eclass, size, error) ({	\
+	MonoVTable *__vtable = mono_class_vtable_checked ((domain), mono_array_class_get_cached ((eclass), 1), (error)); \
+	MonoArrayHandle __arr = NULL_HANDLE_ARRAY;			\
+	if (is_ok ((error)))						\
+		__arr = mono_array_new_specific_handle (__vtable, (size), (error)); \
+	__arr; })
+
 #else
 
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
 #define mono_array_class_get_cached(eclass,rank) mono_class_create_array ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size, error) mono_array_new_checked ((domain), (eclass), (size), (error))
+#define mono_array_new_cached_handle(domain, eclass, size, error) (mono_array_new_handle ((domain), (eclass), (size), (error)))
 
 #endif
 
@@ -144,6 +158,10 @@ struct _MonoString {
 #define mono_string_length_fast(s) ((s)->length)
 
 #define mono_array_length_fast(array) ((array)->max_length)
+
+// Equivalent to mono_array_addr_with_size, except:
+// 1. A macro instead of a function.
+// 2. No GC enter/exit unsafe transition.
 #define mono_array_addr_with_size_fast(array,size,index) ( ((char*)(array)->vector) + (size) * (index) )
 
 #define mono_array_addr_fast(array,type,index) ((type*)(void*) mono_array_addr_with_size_fast (array, sizeof (type), index))
@@ -175,10 +193,8 @@ mono_handle_array_has_bounds (MonoArrayHandle arr)
 static inline void
 mono_handle_array_get_bounds_dim (MonoArrayHandle arr, gint32 dim, MonoArrayBounds *bounds)
 {
-	MonoArrayBounds *src = MONO_HANDLE_GETVAL (arr, bounds);
-	memcpy (bounds, &src[dim], sizeof (MonoArrayBounds));
+	*bounds = MONO_HANDLE_GETVAL (arr, bounds [dim]);
 }
-
 
 typedef struct {
 	MonoObject obj;
@@ -319,9 +335,31 @@ typedef struct {
 /* Safely access System.Runtime.Remoting.Proxies.RealProxy from native code */
 TYPED_HANDLE_DECL (MonoRealProxy);
 
+typedef struct _MonoIUnknown MonoIUnknown;
+typedef struct _MonoIUnknownVTable MonoIUnknownVTable;
+
+/* STDCALL on windows, CDECL everywhere else to work with XPCOM and MainWin COM */
+#ifdef HOST_WIN32
+#define STDCALL __stdcall
+#else
+#define STDCALL
+#endif
+
+struct _MonoIUnknownVTable
+{
+	int (STDCALL *QueryInterface)(MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv);
+	int (STDCALL *AddRef)(MonoIUnknown *pUnk);
+	int (STDCALL *Release)(MonoIUnknown *pUnk);
+};
+
+struct _MonoIUnknown
+{
+	MonoIUnknownVTable const * const vtable;
+};
+
 typedef struct {
 	MonoMarshalByRefObject object;
-	gpointer iunknown;
+	MonoIUnknown *iunknown;
 	GHashTable* itf_hash;
 	MonoObject *synchronization_context;
 } MonoComObject;
@@ -389,6 +427,8 @@ typedef enum {
 	MONO_THREAD_FLAG_APPDOMAIN_ABORT = 4, // Current requested abort originates from appdomain unload
 } MonoThreadFlags;
 
+struct _MonoThreadInfo;
+
 struct _MonoInternalThread {
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
@@ -403,7 +443,7 @@ struct _MonoInternalThread {
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
 	gsize debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 	gpointer *static_data;
-	void *thread_info; /*This is MonoThreadInfo*, but to simplify dependencies, let's make it a void* here. */
+	struct _MonoThreadInfo *thread_info;
 	MonoAppContext *current_appcontext;
 	MonoThread *root_domain_thread;
 	MonoObject *_serialized_principal;
@@ -698,6 +738,15 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 gboolean
 mono_delegate_ctor	    (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer addr, MonoError *error);
 
+MonoMethod *
+mono_get_delegate_invoke_checked (MonoClass *klass, MonoError *error);
+
+MonoMethod *
+mono_get_delegate_begin_invoke_checked (MonoClass *klass, MonoError *error);
+
+MonoMethod *
+mono_get_delegate_end_invoke_checked (MonoClass *klass, MonoError *error);
+
 void
 mono_runtime_free_method    (MonoDomain *domain, MonoMethod *method);
 
@@ -804,6 +853,8 @@ struct _MonoDelegate {
 	 */
 	guint8 **method_code;
 	gpointer interp_method;
+	/* Interp method that is executed when invoking the delegate */
+	gpointer interp_invoke_impl;
 	MonoReflectionMethod *method_info;
 	MonoReflectionMethod *original_method_info;
 	MonoObject *data;
@@ -1584,6 +1635,9 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 MonoArray*
 mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *error);
 
+MonoArrayHandle
+mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error);
+
 MonoArray*
 ves_icall_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 
@@ -1796,13 +1850,10 @@ MonoObjectHandle
 mono_static_field_get_value_handle (MonoDomain *domain, MonoClassField *field, MonoError *error);
 
 gboolean
-mono_property_set_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
+mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void **params, MonoError *error);
 
 MonoObject*
 mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
-
-MonoString*
-mono_object_to_string_checked (MonoObject *obj, MonoError *error);
 
 MonoString*
 mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error);
@@ -1890,11 +1941,14 @@ mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 l
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
 
-MonoString *
-mono_string_from_utf16_checked (mono_unichar2 *data, MonoError *error);
+MonoStringHandle
+mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MonoString *
-mono_string_from_utf32_checked (mono_unichar4 *data, MonoError *error);
+mono_string_from_utf16_checked (const mono_unichar2 *data, MonoError *error);
+
+MonoString *
+mono_string_from_utf32_checked (const mono_unichar4 *data, MonoError *error);
 
 char*
 mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error);
@@ -1907,6 +1961,13 @@ mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
 
 MonoObject*
 mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
+
+// The exc parameter is deliberately missing and so far this has proven to reduce code duplication.
+// In particular, if an exception is returned from underlying otherwise succeeded call,
+// is set into the MonoError with mono_error_set_exception_instance.
+// The result is that caller need only check MonoError.
+MonoObjectHandle
+mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
 
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);

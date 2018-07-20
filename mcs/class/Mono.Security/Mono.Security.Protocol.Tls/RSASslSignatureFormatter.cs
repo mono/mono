@@ -80,7 +80,7 @@ namespace Mono.Security.Protocol.Tls
 			switch (strName)
 			{
 				case "MD5SHA1":
-					this.hash = new Mono.Security.Cryptography.MD5SHA1();
+					this.hash = new MD5SHA1();
 					break;
 
 				default:

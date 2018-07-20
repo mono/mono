@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
@@ -95,11 +96,11 @@
     <Compile Include="System.EnterpriseServices\ApplicationQueuingAttribute.cs" />
     <Compile Include="System.EnterpriseServices\AuthenticationOption.cs" />
     <Compile Include="System.EnterpriseServices\AutoCompleteAttribute.cs" />
-    <Compile Include="System.EnterpriseServices\BindingOption.cs" />
     <Compile Include="System.EnterpriseServices\BOID.cs" />
     <Compile Include="System.EnterpriseServices\BYOT.cs" />
-    <Compile Include="System.EnterpriseServices\ComponentAccessControlAttribute.cs" />
+    <Compile Include="System.EnterpriseServices\BindingOption.cs" />
     <Compile Include="System.EnterpriseServices\COMTIIntrinsicsAttribute.cs" />
+    <Compile Include="System.EnterpriseServices\ComponentAccessControlAttribute.cs" />
     <Compile Include="System.EnterpriseServices\ConstructionEnabledAttribute.cs" />
     <Compile Include="System.EnterpriseServices\ContextUtil.cs" />
     <Compile Include="System.EnterpriseServices\DescriptionAttribute.cs" />
@@ -109,10 +110,6 @@
     <Compile Include="System.EnterpriseServices\IAsyncErrorNotify.cs" />
     <Compile Include="System.EnterpriseServices\IConfigurationAttribute.cs" />
     <Compile Include="System.EnterpriseServices\IISIntrinsicsAttribute.cs" />
-    <Compile Include="System.EnterpriseServices\ImpersonationLevelOption.cs" />
-    <Compile Include="System.EnterpriseServices\InheritanceOption.cs" />
-    <Compile Include="System.EnterpriseServices\InstallationFlags.cs" />
-    <Compile Include="System.EnterpriseServices\InterfaceQueuingAttribute.cs" />
     <Compile Include="System.EnterpriseServices\IPlaybackControl.cs" />
     <Compile Include="System.EnterpriseServices\IProcessInitControl.cs" />
     <Compile Include="System.EnterpriseServices\IProcessInitializer.cs" />
@@ -126,6 +123,10 @@
     <Compile Include="System.EnterpriseServices\ISharedProperty.cs" />
     <Compile Include="System.EnterpriseServices\ISharedPropertyGroup.cs" />
     <Compile Include="System.EnterpriseServices\ITransaction.cs" />
+    <Compile Include="System.EnterpriseServices\ImpersonationLevelOption.cs" />
+    <Compile Include="System.EnterpriseServices\InheritanceOption.cs" />
+    <Compile Include="System.EnterpriseServices\InstallationFlags.cs" />
+    <Compile Include="System.EnterpriseServices\InterfaceQueuingAttribute.cs" />
     <Compile Include="System.EnterpriseServices\JustInTimeActivationAttribute.cs" />
     <Compile Include="System.EnterpriseServices\LoadBalancingSupportedAttribute.cs" />
     <Compile Include="System.EnterpriseServices\MustRunInClientContextAttribute.cs" />
@@ -146,9 +147,9 @@
     <Compile Include="System.EnterpriseServices\SecurityIdentity.cs" />
     <Compile Include="System.EnterpriseServices\SecurityRoleAttribute.cs" />
     <Compile Include="System.EnterpriseServices\ServiceConfig.cs" />
+    <Compile Include="System.EnterpriseServices\ServiceDomain.cs" />
     <Compile Include="System.EnterpriseServices\ServicedComponent.cs" />
     <Compile Include="System.EnterpriseServices\ServicedComponentException.cs" />
-    <Compile Include="System.EnterpriseServices\ServiceDomain.cs" />
     <Compile Include="System.EnterpriseServices\SharedProperty.cs" />
     <Compile Include="System.EnterpriseServices\SharedPropertyGroup.cs" />
     <Compile Include="System.EnterpriseServices\SharedPropertyGroupManager.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="System.EnterpriseServices\TransactionVote.cs" />
     <Compile Include="System.EnterpriseServices\XACTTRANSINFO.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Transactions/System.Transactions.csproj" />

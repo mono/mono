@@ -4328,7 +4328,7 @@ get_async_method_builder (DbgEngineStackFrame *frame)
 	gpointer builder;
 	guint8 *this_addr;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	this_addr = get_this_addr (frame);
@@ -4368,7 +4368,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 	if (!builder)
 		return 0;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
@@ -4392,7 +4392,7 @@ get_this_async_id (DbgEngineStackFrame *frame)
 static gboolean
 set_set_notification_for_wait_completion_flag (DbgEngineStackFrame *frame)
 {
-	MonoClassField *builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
+	MonoClassField *builder_field = mono_class_get_field_from_name_full (frame->method->klass, "<>t__builder", NULL);
 	g_assert (builder_field);
 	gpointer builder = get_async_method_builder (frame);
 	g_assert (builder);
@@ -5890,7 +5890,7 @@ clear_event_requests_for_assembly (MonoAssembly *assembly)
 static gboolean
 type_comes_from_assembly (gpointer klass, gpointer also_klass, gpointer assembly)
 {
-	return mono_type_in_image (mono_class_get_type ((MonoClass*)klass), mono_assembly_get_image_internal ((MonoAssembly*)assembly));
+	return mono_type_in_image (m_class_get_byval_arg ((MonoClass*)klass), mono_assembly_get_image_internal ((MonoAssembly*)assembly));
 }
 
 /*
@@ -6538,8 +6538,11 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 #ifdef TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
 		env_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "Environment");
-		if (env_class)
-			exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
+		if (env_class) {
+			ERROR_DECL (error);
+			exit_method = mono_class_get_method_from_name_checked (env_class, "Exit", 1, 0, error);
+			mono_error_assert_ok (error);
+		}
 #endif
 
 		mono_loader_lock ();
@@ -9649,6 +9652,12 @@ mono_debugger_agent_init (void)
 	cbs.debug_log_is_enabled = debugger_agent_debug_log_is_enabled;
 
 	mini_install_dbg_callbacks (&cbs);
+}
+
+void
+mono_debugger_agent_parse_options (char *options)
+{
+	sdb_options = options;
 }
 
 #endif /* DISABLE_SDB */

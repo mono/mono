@@ -46,11 +46,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
-    <Compile Include="..\..\..\external\linker\analyzer\*.cs" />
-    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\*.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\ConsoleDependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\DependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\SpaceAnalyzer.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\Main.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/System/System.csproj" />

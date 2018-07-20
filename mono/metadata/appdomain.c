@@ -197,7 +197,7 @@ create_domain_objects (MonoDomain *domain)
 	 */
 	string_vt = mono_class_vtable_checked (domain, mono_defaults.string_class, error);
 	mono_error_assert_ok (error);
-	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
+	string_empty_fld = mono_class_get_field_from_name_full (mono_defaults.string_class, "Empty", NULL);
 	g_assert (string_empty_fld);
 	MonoString *empty_str = mono_string_new_checked (domain, "", error);
 	mono_error_assert_ok (error);
@@ -356,7 +356,7 @@ mono_get_corlib_version (void)
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "Environment");
 	mono_class_init (klass);
-	field = mono_class_get_field_from_name (klass, "mono_corlib_version");
+	field = mono_class_get_field_from_name_full (klass, "mono_corlib_version", NULL);
 	if (!field)
 		goto exit;
 
@@ -395,7 +395,7 @@ mono_check_corlib_version_internal (void)
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 	guint32 native_offset = (guint32) MONO_STRUCT_OFFSET (MonoInternalThread, last);
-	guint32 managed_offset = mono_field_get_offset (mono_class_get_field_from_name (mono_defaults.internal_thread_class, "last"));
+	guint32 managed_offset = mono_field_get_offset (mono_class_get_field_from_name_full (mono_defaults.internal_thread_class, "last", NULL));
 	if (native_offset != managed_offset)
 		return g_strdup_printf ("expected InternalThread.last field offset %u, found %u. See InternalThread.last comment", native_offset, managed_offset);
 
@@ -494,9 +494,12 @@ MonoDomain *
 mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoDomain *domain;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoDomain *domain = mono_domain_create_appdomain_checked (friendly_name, configuration_file, error);
+	domain = mono_domain_create_appdomain_checked (friendly_name, configuration_file, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_VAL (domain);
 }
 
@@ -719,7 +722,7 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 	MonoObject *o;
 
 	if (field == NULL) {
-		field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "TypeResolve");
+		field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "TypeResolve", NULL);
 		g_assert (field);
 	}
 
@@ -1357,7 +1360,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	mono_domain_assemblies_unlock (domain);
 
 	if (assembly_load_field == NULL) {
-		assembly_load_field = mono_class_get_field_from_name (klass, "AssemblyLoad");
+		assembly_load_field = mono_class_get_field_from_name_full (klass, "AssemblyLoad", NULL);
 		g_assert (assembly_load_field);
 	}
 
@@ -1799,7 +1802,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	guint16 *u16_ini;
 	gboolean result;
 	guint32 n;
-	HANDLE *handle;
+	HANDLE handle;
 	gchar *full_path;
 
 	dir_name = g_path_get_dirname (shadow);
@@ -1815,14 +1818,15 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	if (!u16_ini) {
 		return FALSE;
 	}
-	handle = (void **)mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal);
+	handle = mono_w32file_create (u16_ini, GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE, CREATE_NEW, FileAttributes_Normal);
 	g_free (u16_ini);
 	if (handle == INVALID_HANDLE_VALUE) {
 		return FALSE;
 	}
 
 	full_path = mono_path_resolve_symlinks (filename);
-	result = mono_w32file_write (handle, full_path, strlen (full_path), &n);
+	gint32 win32error = 0;
+	result = mono_w32file_write (handle, full_path, strlen (full_path), &n, &win32error);
 	g_free (full_path);
 	mono_w32file_close (handle);
 	return result;
@@ -2032,8 +2036,11 @@ MonoDomain *
 mono_domain_from_appdomain (MonoAppDomain *appdomain_raw)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoDomain *result;
+	MONO_ENTER_GC_UNSAFE;
 	MONO_HANDLE_DCL (MonoAppDomain, appdomain);
-	MonoDomain *result = mono_domain_from_appdomain_handle (appdomain);
+	result = mono_domain_from_appdomain_handle (appdomain);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
@@ -2827,8 +2834,10 @@ failure:
 void
 mono_domain_unload (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	MonoObject *exc = NULL;
 	mono_domain_try_unload (domain, &exc);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 static MonoThreadInfoWaitRet

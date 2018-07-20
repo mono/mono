@@ -24,8 +24,6 @@ win32_sources = \
 
 platform_sources = $(win32_sources)
 
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la
-
 # Use -m here. This will use / as directory separator (C:/WINNT).
 # The files that use MONO_ASSEMBLIES and/or MONO_CFG_DIR replace the
 # / by \ if running under WIN32.
@@ -63,6 +61,8 @@ unix_sources = \
 
 platform_sources = $(unix_sources)
 endif
+
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 if HOST_ANDROID
 platform_sources += ../../support/libm/complex.c
@@ -181,7 +181,9 @@ libmono_system_native_la_SOURCES = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_random.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_random.h
+	../../external/corefx/src/Native/Unix/System.Native/pal_random.h \
+	pal-icalls.h \
+	pal-icalls.c
 
 libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition
 

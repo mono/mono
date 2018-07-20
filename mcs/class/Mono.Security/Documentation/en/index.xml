@@ -104,19 +104,6 @@
       <Type Name="Type2Message" Kind="Class" />
       <Type Name="Type3Message" Kind="Class" />
     </Namespace>
-    <Namespace Name="Mono.Security.Protocol.Tls">
-      <Type Name="CertificateSelectionCallback" Kind="Delegate" />
-      <Type Name="CertificateValidationCallback" Kind="Delegate" />
-      <Type Name="CipherAlgorithmType" Kind="Enumeration" />
-      <Type Name="ExchangeAlgorithmType" Kind="Enumeration" />
-      <Type Name="HashAlgorithmType" Kind="Enumeration" />
-      <Type Name="PrivateKeySelectionCallback" Kind="Delegate" />
-      <Type Name="SecurityCompressionType" Kind="Enumeration" />
-      <Type Name="SecurityProtocolType" Kind="Enumeration" />
-      <Type Name="SslClientStream" Kind="Class" />
-      <Type Name="SslServerStream" Kind="Class" />
-      <Type Name="SslStreamBase" Kind="Class" />
-    </Namespace>
     <Namespace Name="Mono.Security.X509">
       <Type Name="DeriveBytes+Purpose" Kind="Enumeration" />
       <Type Name="PKCS12" Kind="Class" />

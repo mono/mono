@@ -26,6 +26,7 @@
 #if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.Threading;
+using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -90,11 +91,10 @@ namespace Mono.Btls
 		{
 			if (!ok) {
 				if (callerName != null)
-					throw new MonoBtlsException ("{0}.{1} failed.", GetType ().Name, callerName);
+					throw new CryptographicException ($"`{GetType ().Name}.{callerName}` failed.");
 				else
-					throw new MonoBtlsException ();
+					throw new CryptographicException ();
 			}
-
 		}
 
 		protected void CheckError (int ret, [CallerMemberName] string callerName = null)
@@ -110,10 +110,10 @@ namespace Mono.Btls
 
 			string message;
 			if (callerName != null)
-				message = string.Format ("Caught unhandled exception in {0}.{1}.", GetType ().Name, callerName);
+				message = $"Caught unhandled exception in `{GetType ().Name}.{callerName}`.";
 			else
-				message = string.Format ("Caught unhandled exception.");
-			throw new MonoBtlsException (message, error);
+				message = "Caught unhandled exception.";
+			throw new CryptographicException (message, error);
 		}
 
 		[DllImport (BTLS_DYLIB)]

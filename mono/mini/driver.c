@@ -75,6 +75,7 @@ static FILE *mini_stats_fd;
 
 static void mini_usage (void);
 static void mono_runtime_set_execution_mode (MonoEEMode mode);
+static int mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 
 #ifdef HOST_WIN32
 /* Need this to determine whether to detach console */
@@ -314,9 +315,9 @@ opt_sets [] = {
        MONO_OPT_FCMOV,
        MONO_OPT_ALIAS_ANALYSIS,
 #ifdef MONO_ARCH_SIMD_INTRINSICS
-       MONO_OPT_SIMD,
+       MONO_OPT_SIMD | MONO_OPT_INTRINS,
        MONO_OPT_SSE2,
-       MONO_OPT_SIMD | MONO_OPT_SSE2,
+       MONO_OPT_SIMD | MONO_OPT_SSE2 | MONO_OPT_INTRINS,
 #endif
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_ALIAS_ANALYSIS,
@@ -627,11 +628,16 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
 					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
 					mono_error_cleanup (error);
-					MonoMethod *getter = mono_class_get_method_from_name (klass, "get_Category", -1);
+					error_init (error);
+					MonoMethod *getter = mono_class_get_method_from_name_checked (klass, "get_Category", -1, 0, error);
+					mono_error_cleanup (error);
+					error_init (error);
 					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
 					mono_error_cleanup (error);
+					error_init (error);
 					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
 					mono_error_cleanup (error);
+					error_init (error);
 					if (!strcmp (utf8_str, "!INTERPRETER")) {
 						g_print ("skip %s...\n", method->name);
 						filter = FALSE;
@@ -1174,6 +1180,17 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 int 
 mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
 {
+	int rv;
+	MONO_ENTER_GC_UNSAFE;
+	rv = mono_jit_exec_internal (domain, assembly, argc, argv);
+	MONO_EXIT_GC_UNSAFE;
+	return rv;
+}
+
+int
+mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	ERROR_DECL (error);
 	MonoImage *image = mono_assembly_get_image_internal (assembly);
 	MonoMethod *method;
@@ -1503,50 +1520,67 @@ mini_debug_usage (void)
 #define MONO_ARCHITECTURE MONO_ARCH_ARCHITECTURE
 #endif
 
-static const char info[] =
-#ifdef HAVE_KW_THREAD
-	"\tTLS:           __thread\n"
+static char *
+mono_get_version_info (void) 
+{
+	GString *output;
+	output = g_string_new ("");
+
+#ifdef MONO_KEYWORD_THREAD
+	g_string_append_printf (output, "\tTLS:           __thread\n");
 #else
-	"\tTLS:           normal\n"
-#endif /* HAVE_KW_THREAD */
+	g_string_append_printf (output, "\tTLS:           \n");
+#endif /* MONO_KEYWORD_THREAD */
+
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-    "\tSIGSEGV:       altstack\n"
+	g_string_append_printf (output, "\tSIGSEGV:       altstack\n");
 #else
-    "\tSIGSEGV:       normal\n"
+	g_string_append_printf (output, "\tSIGSEGV:       normal\n");
 #endif
+
 #ifdef HAVE_EPOLL
-    "\tNotifications: epoll\n"
+	g_string_append_printf (output, "\tNotifications: epoll\n");
 #elif defined(HAVE_KQUEUE)
-    "\tNotification:  kqueue\n"
+	g_string_append_printf (output, "\tNotification:  kqueue\n");
 #else
-    "\tNotification:  Thread + polling\n"
+	g_string_append_printf (output, "\tNotification:  Thread + polling\n");
 #endif
-        "\tArchitecture:  " MONO_ARCHITECTURE "\n"
-	"\tDisabled:      " DISABLED_FEATURES "\n"
-	"\tMisc:          "
+
+	g_string_append_printf (output, "\tArchitecture:  %s\n", MONO_ARCHITECTURE);
+	g_string_append_printf (output, "\tDisabled:      %s\n", DISABLED_FEATURES);
+
+	g_string_append_printf (output, "\tMisc:          ");
 #ifdef MONO_SMALL_CONFIG
-	"smallconfig "
+	g_string_append_printf (output, "smallconfig ");
 #endif
+
 #ifdef MONO_BIG_ARRAYS
-	"bigarrays "
+	g_string_append_printf (output, "bigarrays ");
 #endif
+
 #if !defined(DISABLE_SDB)
-	"softdebug "
+	g_string_append_printf (output, "softdebug ");
 #endif
-		"\n"
+	g_string_append_printf (output, "\n");
+
 #ifndef DISABLE_INTERPRETER
-	"\tInterpreter:   yes\n"
+	g_string_append_printf (output, "\tInterpreter:   yes\n");
 #else
-	"\tInterpreter:   no\n"
+	g_string_append_printf (output, "\tInterpreter:   no\n");
 #endif
+
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
-	"\tLLVM:          yes(" LLVM_VERSION ")\n"
+	g_string_append_printf (output, "\tLLVM:          yes(%d)\n", LLVM_API_VERSION);
 #else
-	"\tLLVM:          supported, not enabled.\n"
+	g_string_append_printf (output, "\tLLVM:          supported, not enabled.\n");
 #endif
 #endif
-	"";
+
+	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name ());
+
+	return g_string_free (output, FALSE);
+}
 
 #ifndef MONO_ARCH_AOT_SUPPORTED
 #define error_if_aot_unsupported() do {fprintf (stderr, "AOT compilation is not supported on this platform.\n"); exit (1);} while (0)
@@ -1867,7 +1901,10 @@ mono_main (int argc, char* argv[])
 
 			g_print ("Mono JIT compiler version %s\nCopyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
 			g_free (build);
+			char *info = mono_get_version_info ();
 			g_print (info);
+			g_free (info);
+
 			gc_descr = mono_gc_get_description ();
 			g_print ("\tGC:            %s\n", gc_descr);
 			g_free (gc_descr);
@@ -2564,9 +2601,11 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_thread_manage ();
 
 	mini_cleanup (domain);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 void

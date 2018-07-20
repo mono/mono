@@ -1341,7 +1341,6 @@ typedef struct {
 	guint            has_got_slots : 1;
 	guint            uses_rgctx_reg : 1;
 	guint            uses_vtable_reg : 1;
-	guint            uses_simd_intrinsics : 1;
 	guint            keep_cil_nops : 1;
 	guint            gen_seq_points : 1;
 	/* Generate seq points for use by the debugger */
@@ -1365,10 +1364,11 @@ typedef struct {
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
 	guint            domainvar_inited : 1;
+	guint8           uses_simd_intrinsics;
 	int              r4_stack_type;
 	gpointer         debug_info;
 	guint32          lmf_offset;
-    guint16          *intvars;
+	guint16          *intvars;
 	MonoProfilerCoverageInfo *coverage_info;
 	GHashTable       *token_info_hash;
 	MonoCompileArch  arch;
@@ -1537,6 +1537,12 @@ typedef enum {
 	MONO_CFG_NEEDS_DECOMPOSE = 1 << 8,
 	MONO_CFG_HAS_TYPE_CHECK = 1 << 9
 } MonoCompileFlags;
+
+typedef enum {
+	MONO_CFG_USES_SIMD_INTRINSICS = 1 << 0,
+	MONO_CFG_USES_SIMD_INTRINSICS_SIMPLIFY_INDIRECTION = 1 << 1,
+	MONO_CFG_USES_SIMD_INTRINSICS_DECOMPOSE_VTYPE = 1 << 2
+} MonoSimdIntrinsicsFlags;
 
 typedef struct {
 	gint32 methods_compiled;
@@ -2463,6 +2469,17 @@ MONO_API gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code
 MonoCallSpec *mono_trace_set_options           (const char *options);
 gboolean       mono_trace_eval                  (MonoMethod *method);
 
+gboolean
+mono_tailcall_print_enabled (void);
+
+void
+mono_tailcall_print (const char *format, ...);
+
+gboolean
+mono_is_supported_tailcall_helper (gboolean value, const char *svalue);
+
+#define IS_SUPPORTED_TAILCALL(x) (mono_is_supported_tailcall_helper((x), #x))
+
 extern void
 mono_perform_abc_removal (MonoCompile *cfg);
 extern void
@@ -2674,11 +2691,16 @@ enum {
 };
 
 const char *mono_arch_xregname (int reg);
+guint32     mono_arch_cpu_enumerate_simd_versions (void);
+
+#ifdef MONO_ARCH_SIMD_INTRINSICS
 void        mono_simd_simplify_indirection (MonoCompile *cfg);
+void        mono_simd_decompose_intrinsic (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins);
+void        mono_simd_decompose_intrinsics (MonoCompile *cfg);
 MonoInst*   mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*   mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr);
-guint32     mono_arch_cpu_enumerate_simd_versions (void);
 void        mono_simd_intrinsics_init (void);
+#endif
 
 gboolean    mono_class_is_magic_int (MonoClass *klass);
 gboolean    mono_class_is_magic_float (MonoClass *klass);

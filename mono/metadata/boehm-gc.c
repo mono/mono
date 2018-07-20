@@ -1611,7 +1611,7 @@ test_toggleref_callback (MonoObject *obj)
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
 	if (!mono_toggleref_test_field) {
-		mono_toggleref_test_field = mono_class_get_field_from_name (mono_object_get_class (obj), "__test");
+		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_get_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
 	}
 
@@ -2040,6 +2040,12 @@ void
 mono_gc_register_obj_with_weak_fields (void *obj)
 {
 	g_error ("Weak fields not supported by boehm gc");
+}
+
+gboolean
+mono_gc_ephemeron_array_add (MonoObject *obj)
+{
+	return TRUE;
 }
 
 #else

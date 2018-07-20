@@ -29,6 +29,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 	// is similar to the one provided by CAPI.
 
 	[TestFixture]
+	// We are throwing `PlatformNotSupportedException`.
+	// See https://github.com/mono/mono/pull/9472#issuecomment-404006558 for details.
+	[Category ("NotWorking")]
 	public class X509CAPI {
 
 		// copied from X509Certificate for test uses only

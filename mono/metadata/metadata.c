@@ -59,6 +59,9 @@ static void free_inflated_method (MonoMethodInflated *method);
 static void free_inflated_signature (MonoInflatedMethodSignature *sig);
 static void mono_metadata_field_info_full (MonoImage *meta, guint32 index, guint32 *offset, guint32 *rva, MonoMarshalSpec **marshal_spec, gboolean alloc_from_image);
 
+static MonoType* mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter);
+
+
 /*
  * This enumeration is used to describe the data types in the metadata
  * tables
@@ -6257,6 +6260,9 @@ mono_metadata_parse_marshal_spec_full (MonoImage *image, MonoImage *parent_image
 void 
 mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
 {
+	if (!spec)
+		return;
+
 	if (spec->native == MONO_NATIVE_CUSTOM) {
 		g_free (spec->data.custom_data.custom_name);
 		g_free (spec->data.custom_data.cookie);
@@ -6850,10 +6856,14 @@ mono_get_shared_generic_inst (MonoGenericContainer *container)
  * \returns TRUE if \p type represents a type passed by reference,
  * FALSE otherwise.
  */
-gboolean
+mono_bool
 mono_type_is_byref (MonoType *type)
 {
-	return type->byref;
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
+	result = type->byref;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -7006,7 +7016,11 @@ mono_type_is_generic_parameter (MonoType *type)
 MonoType*
 mono_signature_get_return_type (MonoMethodSignature *sig)
 {
-	return sig->ret;
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = sig->ret;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -7022,6 +7036,16 @@ mono_signature_get_return_type (MonoMethodSignature *sig)
  */
 MonoType*
 mono_signature_get_params (MonoMethodSignature *sig, gpointer *iter)
+{
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_signature_get_params_internal (sig, iter);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoType*
+mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter)
 {
 	MonoType** type;
 	if (!iter)

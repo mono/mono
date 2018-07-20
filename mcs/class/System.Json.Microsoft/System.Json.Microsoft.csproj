@@ -44,8 +44,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\RS.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
@@ -53,6 +53,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Json\Extensions\JsonValueExtensions.cs" />
     <Compile Include="System.Json\GlobalSuppressions.cs" />
+    <Compile Include="System.Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System.Json\JsonArray.cs" />
     <Compile Include="System.Json\JsonObject.cs" />
     <Compile Include="System.Json\JsonPrimitive.cs" />
@@ -62,11 +63,11 @@
     <Compile Include="System.Json\JsonValueChangeEventArgs.cs" />
     <Compile Include="System.Json\JsonValueDynamicMetaObject.cs" />
     <Compile Include="System.Json\JsonValueLinqExtensions.cs" />
-    <Compile Include="System.Json\JXmlToJsonValueConverter.cs" />
     <Compile Include="System.Json\NGenWrapper.cs" />
     <Compile Include="System.Json\Properties\AssemblyInfo.cs" />
     <Compile Include="System.Json\Properties\Resources.Designer.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

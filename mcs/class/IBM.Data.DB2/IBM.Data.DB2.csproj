@@ -44,11 +44,11 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="IBM.Data.DB2\DB2ClientUtils.cs" />
     <Compile Include="IBM.Data.DB2\DB2CLIWrapper.cs" />
+    <Compile Include="IBM.Data.DB2\DB2ClientUtils.cs" />
     <Compile Include="IBM.Data.DB2\DB2Command.cs" />
     <Compile Include="IBM.Data.DB2\DB2CommandBuilder.cs" />
     <Compile Include="IBM.Data.DB2\DB2Connection.cs" />
@@ -72,6 +72,7 @@
     <Compile Include="IBM.Data.DB2\DB2Transaction.cs" />
     <Compile Include="IBM.Data.DB2\DB2Type.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

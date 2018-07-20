@@ -43,12 +43,11 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\misc\HResults.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Common\CommandTrees\AbstractExpressions.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Common\CommandTrees\Aggregates.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Common\CommandTrees\BasicCommandTreeVisitor.cs" />
@@ -228,10 +227,10 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\Function.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\FunctionCommandText.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\FunctionImportElement.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\IntegerFacetDescriptionElement.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\IRelationship.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\IRelationshipEnd.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\ISchemaElementLookUpTable.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\IntegerFacetDescriptionElement.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\ItemType.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\KeyProperty.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\EntityModel\SchemaObjectModel\ModelFunction.cs" />
@@ -285,18 +284,19 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\IExtendedDataRecord.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\InternalMappingException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\InvalidCommandTreeException.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\MappingException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\BaseMetadataMappingVisitor.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\DefaultObjectMappingItemCollection.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\EntityViewContainer.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\EntityViewGenerationAttribute.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\FunctionImportMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\FunctionImportMapping.ReturnTypeRenameMapping.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\FunctionImportMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\FunctionImportMappingComposable.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\FunctionImportMappingNonComposable.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Mapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\MappingItemCollection.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\MetadataMappingHasherVisitor.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\MetadataMappingHasherVisitor.HashSourceBuilder.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\MetadataMappingHasherVisitor.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ObjectAssociationEndMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ObjectComplexPropertyMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ObjectMemberMapping.cs" />
@@ -315,8 +315,8 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageEntityTypeMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingErrorCode.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingFragment.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingItemCollection.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingItemCollection.ViewDictionary.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingItemCollection.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMappingItemLoader.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageModificationFunctionMapping.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\StorageMslConstructs.cs" />
@@ -334,12 +334,12 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\FunctionUpdateCommand.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Graph.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\KeyManager.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.Evaluator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.ExtentPlaceholderCreator.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.JoinPropagator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.JoinPropagator.JoinPredicateVisitor.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.JoinPropagator.SubstitutingCloneVisitor.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.JoinPropagator.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\Propagator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\PropagatorFlags.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\PropagatorResult.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\Update\Internal\RecordConverter.cs" />
@@ -430,12 +430,12 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\Validation\ViewCellSlot.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\Validation\ViewKeyConstraint.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\Validator.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewgenContext.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewGenerator.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewgenGatekeeper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewGenResults.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewGenerator.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewgenContext.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewGeneration\ViewgenGatekeeper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Mapping\ViewValidator.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\MappingException.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\MetadataException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\AspProxy.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\CacheForPrimitiveTypes.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\ClrPerspective.cs" />
@@ -443,6 +443,13 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\CustomAssemblyResolver.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\DataSpace.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\DefaultAssemblyResolver.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmError.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemCollection.OcAssemblyCache.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemCollection.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemError.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmSchemaError.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmSchemaErrorSeverity.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmValidator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\AssociationEndMember.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\AssociationSet.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\AssociationSetEnd.cs" />
@@ -493,8 +500,8 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\Provider\EdmProviderManifestFunctionBuilder.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\Provider\EdmProviderManifestSpatialFunctions.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\ReadOnlyMetadataCollection.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\ReferentialConstraint.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\RefType.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\ReferentialConstraint.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\RelationshipEndMember.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\RelationshipMultiplicity.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\RelationshipSet.cs" />
@@ -506,13 +513,6 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\StructuralType.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\TypeUsage.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Edm\util.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmError.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemCollection.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemCollection.OcAssemblyCache.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmItemError.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmSchemaError.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmSchemaErrorSeverity.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\EdmValidator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Helper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\MappingMetadataHelper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\MetadataArtifactAssemblyResolver.cs" />
@@ -545,13 +545,12 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\ObjectLayer\ObjectItemNoOpAssemblyLoader.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\ParameterTypeSemantics.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\Perspective.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\StoreItemCollection.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\StoreItemCollection.Loader.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\StoreItemCollection.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\TargetPerspective.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\TypeHelpers.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\TypeSemantics.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Metadata\XmlConstants.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\MetadataException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\ObjectNotFoundException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\AdditionalEntityFunctions.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\CompiledQuery.cs" />
@@ -604,6 +603,9 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\EntityEntry.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\EntityFunctions.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\FieldDescriptor.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectSet.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectView.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectViewData.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\BaseEntityWrapper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\ComplexTypeMaterializer.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\EntityProxyFactory.cs" />
@@ -630,9 +632,6 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\PocoPropertyAccessorStrategy.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\SnapshotChangeTrackingStrategy.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\Internal\TransactionManager.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectSet.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectView.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\IObjectViewData.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\MergeOption.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\NextResultGenerator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Objects\ObjectContext.cs" />
@@ -694,12 +693,12 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\InternalTrees\Vars.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\InternalTrees\Visitors.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\AggregatePushdown.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\CTreeGenerator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\CodeGen.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\ColumnMapProcessor.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\ColumnMapTranslator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\CommandPlan.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\ConstraintManager.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\CTreeGenerator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\ITreeGenerator.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\JoinElimination.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\JoinGraph.cs" />
@@ -709,8 +708,8 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\Normalizer.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\PlanCompiler.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\PlanCompilerUtil.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\Predicate.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\PreProcessor.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\Predicate.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\ProjectionPruner.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\PropertyPushdownHelper.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\Query\PlanCompiler\PropertyRef.cs" />
@@ -758,12 +757,13 @@
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlProviderServices.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlProviderUtilities.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlSpatialDataReader.cs" />
-    <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlSpatialServices.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlSpatialServices.Generated.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlSpatialServices.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlTypesAssembly.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\SqlClient\SqlVersion.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\System\Data\UpdateException.cs" />
     <Compile Include="..\referencesource\System.Data.Entity\Util\AppSettings.cs" />
+    <Compile Include="..\referencesource\System.Data.Entity\misc\HResults.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="EntityRes.cs" />
     <Compile Include="EntityResCategoryAttribute.cs" />
@@ -772,6 +772,7 @@
     <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="ReferenceSources\Strings.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

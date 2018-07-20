@@ -1,0 +1,10 @@
+App,mscorlib.dll,System.dll,System.Core.dll,System.Xml.dll,System.ComponentModel.Composition.dll,System.ComponentModel.DataAnnotations.dll,System.Data.Services.Client.dll,System.Data.dll,System.IO.Compression.FileSystem.dll,System.IO.Compression.dll,System.IdentityModel.dll,System.Json.dll,System.Net.Http.WinHttpHandler.dll,System.Net.Http.dll,System.Net.dll,System.Numerics.Vectors.dll,System.Numerics.dll,System.Reflection.Context.dll,System.Runtime.CompilerServices.Unsafe.dll,System.Runtime.Serialization.dll,System.Security.dll,System.ServiceModel.Internals.dll,System.ServiceModel.Web.dll,System.ServiceModel.dll,System.Transactions.dll,System.Web.Services.dll,System.Windows.dll,System.Xml.Linq.dll,System.Xml.Serialization.dll
+System/test-security.exe,1863680,50688,26112,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+link-all/link-all.exe,2188288,794112,356352,1407488,111616,0,0,1141248,0,0,0,0,0,0,0,0,34816,0,0,272896,0,56320,0,0,14848,0,0,0,0
+link-sdk/link-sdk.exe,2155520,847872,335360,1054720,0,0,0,685056,0,0,0,19968,0,74752,0,0,34816,0,0,5632,0,0,0,18944,14336,0,0,32256,0
+mscorlib/test-array.exe,1778688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-reflection.exe,1792000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-remoting.exe,1778688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-string-01.exe,1778688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-string-02.exe,1778688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-string-03.exe,1781248,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

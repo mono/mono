@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\AppSettings.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

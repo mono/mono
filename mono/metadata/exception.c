@@ -315,9 +315,12 @@ mono_exception_from_name_msg (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg)
 {
 	HANDLE_FUNCTION_ENTER ();
+	MonoExceptionHandle ex;
+	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
-	MonoExceptionHandle ex = mono_exception_new_by_name_msg (image, name_space, name, msg, error);
+	ex = mono_exception_new_by_name_msg (image, name_space, name, msg, error);
 	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
 	HANDLE_FUNCTION_RETURN_OBJ (ex);
 }
 
@@ -467,7 +470,11 @@ mono_get_exception_null_reference (void)
 MonoException *
 mono_get_exception_execution_engine (const char *msg)
 {
-	return mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MonoException *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -1075,7 +1082,8 @@ mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, M
 	mono_error_assert_ok (error);
 	g_assert (!MONO_HANDLE_IS_NULL (o));
 
-	method = mono_class_get_method_from_name (klass, ".ctor", 1);
+	method = mono_class_get_method_from_name_checked (klass, ".ctor", 1, 0, error);
+	mono_error_assert_ok (error);
 	g_assert (method);
 
 	gpointer args [ ] = { MONO_HANDLE_RAW (wrapped_exception) };
@@ -1092,6 +1100,7 @@ exit:
 static gboolean
 append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
 {
+	MONO_ENTER_GC_UNSAFE;
 	MonoDomain *domain = mono_domain_get ();
 	GString *text = (GString*)user_data;
 
@@ -1102,7 +1111,7 @@ append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset
 	} else {
 		g_string_append_printf (text, "<unknown native frame 0x%x>\n", ip);
 	}
-
+	MONO_EXIT_GC_UNSAFE;
 	return FALSE;
 }
 
@@ -1212,6 +1221,9 @@ mono_error_raise_exception_deprecated (MonoError *target_error)
 gboolean
 mono_error_set_pending_exception (MonoError *error)
 {
+	if (is_ok (error))
+		return FALSE;
+
 	HANDLE_FUNCTION_ENTER ();
 
 	MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
