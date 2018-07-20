@@ -12,8 +12,8 @@
 	{
 		.entrypoint
 		call void class ExceptionFilterTest::Test ()
-		ret
-	}
+		call void class ExceptionFilterTest::NoTailcall ()
+		ret }
 
 	.method public static int32 Filter ([mscorlib]System.Exception exc) cil managed noinlining
 	{
@@ -46,4 +46,10 @@
 	end:
 		ret
 	}
+
+	.method static void NoTailcall ()
+	{
+		ret
+	}
+
 }

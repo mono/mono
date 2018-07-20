@@ -1496,12 +1496,15 @@ public class Tests : TestsBase, ITest2
 
 		ig.Emit (OpCodes.Ldstr, "FOO");
 		ig.Emit (OpCodes.Call, typeof (Tests).GetMethod ("dyn_call"));
+		ig.Emit (OpCodes.Call, typeof (Tests).GetMethod ("NoTailcall"));
 		ig.Emit (OpCodes.Ret);
 
 		var del = (Action<int>)m.CreateDelegate (typeof (Action<int>));
 
 		del (0);
 	}
+
+	public static void NoTailcall () { }
 
 	public static void dyn_call (string s) {
 	}
@@ -1522,6 +1525,7 @@ public class Tests : TestsBase, ITest2
 		ILGenerator ig = mb.GetILGenerator ();
 		ig.Emit (OpCodes.Ldstr, "FOO");
 		ig.Emit (OpCodes.Call, typeof (Tests).GetMethod ("ref_emit_call"));
+		ig.Emit (OpCodes.Call, typeof (Tests).GetMethod ("NoTailcall"));
 		ig.Emit (OpCodes.Ret);
 
 		Type t = tb.CreateType ();

@@ -3748,6 +3748,7 @@ public class DebuggerTests
 		// FIXME: This is racy
 		vm.Resume ();
 
+		// FIXME This test does not allow for tailcall optimization in Sleep.
 		Thread.Sleep (100);
 
 		vm.Suspend ();
@@ -4252,6 +4253,8 @@ public class DebuggerTests
 		vm.Suspend ();
 		Assert.AreEqual (ThreadState.WaitSleepJoin, thread.ThreadState, "#6");
 
+		// FIXME This test is deeply tied to BCL internals.
+		// FIXME This test does not allow for tailcall optimizations therein.
 		frames = thread.GetFrames ();
 		Assert.AreEqual (8, frames.Length, "#7");
 		Assert.AreEqual ("Wait_internal", frames [0].Method.Name, "#8.0");
