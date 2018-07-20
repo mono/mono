@@ -23,14 +23,10 @@ check-local:
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
-BUILT_SOURCES =
-
 ARRAY_COOP_CS=\
 	array-coop-bigvt.cs     \
 	array-coop-int.cs       \
 	array-coop-smallvt.cs
-
-BUILT_SOURCES += $(ARRAY_COOP_CS)
 
 array-coop-bigvt.cs: array-coop-bigvt.sh array-coop-1.cs array-coop-2.cs
 	 . $(srcdir)/array-coop-bigvt.sh $(srcdir) > $@
@@ -356,6 +352,7 @@ TESTS_CS_SRC=		\
 	reflection-const-field.cs \
 	many-locals.cs		\
 	string-compare.cs	\
+	tailcall-interface-noaddr.cs \
 	test-prime.cs		\
 	test-tls.cs		\
 	params.cs		\
@@ -718,14 +715,17 @@ endif
 if CROSS_COMPILING # FIXME build vs. host vs. target
 TAILCALL_INTERFACE_CONSERVESTACK_IL=
 TAILCALL_FSHARP_DEEPTAIL_IL=
+TAILCALL_FSHARP_DEEPNOTAIL_IL=
 else
 if HOST_WASM # FIXME build problem
 TAILCALL_INTERFACE_CONSERVESTACK_IL=
 TAILCALL_FSHARP_DEEPTAIL_IL=
+TAILCALL_FSHARP_DEEPNOTAIL_IL=
 else
 if HOST_WIN32 # FIXME build problem
 TAILCALL_INTERFACE_CONSERVESTACK_IL=
 TAILCALL_FSHARP_DEEPTAIL_IL=
+TAILCALL_FSHARP_DEEPNOTAIL_IL=
 else
 # These tests are produced by splitting up tailcall-interface-conservestack.il.
 TAILCALL_INTERFACE_CONSERVESTACK_IL=\
@@ -848,12 +848,83 @@ TAILCALL_FSHARP_DEEPTAIL_IL=\
 	tailcall/fsharp-deeptail/simpleTail1.il \
 	tailcall/fsharp-deeptail/simpleTail2.il
 
+# These tests are produced by splitting up tailcall/fsharp-nodeeptail.il.
+# i.e. tailcall/fsharp-deeptail.il but w/ tail. prefixes removed, i.e. to test "autotail".
+TAILCALL_FSHARP_DEEPNOTAIL_IL=\
+	tailcall/fsharp-deepnotail/Seq.filter-length1.il \
+	tailcall/fsharp-deepnotail/Seq.filter-length2.il \
+	tailcall/fsharp-deepnotail/Seq.filter-length3.il \
+	tailcall/fsharp-deepnotail/StaticTailCallLoop_DateTime_.il \
+	tailcall/fsharp-deepnotail/StaticTailCallLoop_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.il \
+	tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.il \
+	tailcall/fsharp-deepnotail/TailCallLoop_DateTime_.il \
+	tailcall/fsharp-deepnotail/TailCallLoop_int_.il \
+	tailcall/fsharp-deepnotail/mutualTail1IsEven.il \
+	tailcall/fsharp-deepnotail/mutualTail1IsOdd.il \
+	tailcall/fsharp-deepnotail/simpleTail1.il \
+	tailcall/fsharp-deepnotail/simpleTail2.il
+
 $(TAILCALL_FSHARP_DEEPTAIL_IL): tailcall/fsharp-deeptail.stamp
+$(TAILCALL_FSHARP_DEEPNOTAIL_IL): tailcall/fsharp-deepnotail.stamp
 
 $(TAILCALL_INTERFACE_CONSERVESTACK_IL): tailcall/interface-conservestack.stamp
 
 tailcall/fsharp-deeptail.stamp: tailcall/split-fsharp$(EXEEXT) tailcall/fsharp-deeptail.il
 	./tailcall/split-fsharp$(EXEEXT) < $(srcdir)/tailcall/fsharp-deeptail.il
+	touch -f $@
+
+tailcall/fsharp-deepnotail.stamp: tailcall/split-fsharp$(EXEEXT) tailcall/fsharp-deepnotail.il
+	./tailcall/split-fsharp$(EXEEXT) fsharp-deepnotail < $(srcdir)/tailcall/fsharp-deepnotail.il
 	touch -f $@
 
 tailcall/interface-conservestack.stamp: split-tailcall-interface-conservestack$(EXEEXT) tailcall-interface-conservestack.il
@@ -870,16 +941,21 @@ endif # HOST_WIN32
 endif # HOST_WASM
 endif # CROSS_COMPILING
 
-BUILT_SOURCES=$(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
+BUILT_SOURCES =
+BUILT_SOURCES += $(ARRAY_COOP_CS)
+BUILT_SOURCES += $(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
+BUILT_SOURCES += $(TAILCALL_FSHARP_DEEPNOTAIL_IL)
 
 TESTS_IL_SRC=			\
 	tailcall/2.il	     \
 	tailcall/3.il	     \
 	tailcall/4.il	     \
 	tailcall/fsharp-deeptail.il	     \
+	tailcall/fsharp-deepnotail.il	     \
 	tailcall/fsharp-shallowtail.il	 \
 	tailcall/fsharp-shallownotail.il \
 	$(TAILCALL_FSHARP_DEEPTAIL_IL) \
+	$(TAILCALL_FSHARP_DEEPNOTAIL_IL) \
 	gptail1.il		\
 	itail1.il		\
 	itaili1.il		\
@@ -1066,12 +1142,78 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
+
 endif
+
+PLATFORM_DISABLED_TESTS += \
+tailcall-interface-noaddr.exe \
+tailcall/fsharp-deepnotail.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length1.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length2.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length3.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsEven.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe \
+tailcall/fsharp-deepnotail/simpleTail1.exe \
+tailcall/fsharp-deepnotail/simpleTail2.exe
 
 # test_virt.exe fails because callee takes more parameters than caller, 1 vs. 0, and
 # x86 passes no parameters in registers, so it is a stack imbalance.
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe
-
 endif
 
 if POWERPC
@@ -1105,9 +1247,13 @@ PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe
 PLATFORM_DISABLED_TESTS += tailcall/2.exe
 PLATFORM_DISABLED_TESTS += tailcall/3.exe
 PLATFORM_DISABLED_TESTS += tailcall/4.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
 
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
+
+# fsharp-deeptail
 # FIXME These presumably take an extra parameter though this should be confirmed.
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
@@ -1125,8 +1271,8 @@ PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndM
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
 
+# fsharp-deeptail
 # Interface calls cannot be tailcalls on ARM due to extra_arg. Bitcode could easily work however.
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
@@ -1144,7 +1290,47 @@ PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndM
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
 PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
 
+# fsharp-deepnotail
+# FIXME These presumably take an extra parameter though this should be confirmed.
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
+
+# fsharp-deepnotail
 # Interface calls cannot be tailcalls on ARM due to extra_arg. Bitcode could easily work however.
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
+
+# Interface calls cannot be tailcalls on ARM due to extra_arg. Bitcode could easily work however.
+PLATFORM_DISABLED_TESTS += tailcall-interface-noaddr.exe
 PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/1.exe
 PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/10.exe
@@ -1198,10 +1384,145 @@ PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/6.exe
 PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
 PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
 PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
+
+PLATFORM_DISABLED_TESTS += \
+tailcall-interface-noaddr.exe \
+tailcall/fsharp-deepnotail.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length1.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length2.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length3.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsEven.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe \
+tailcall/fsharp-deepnotail/simpleTail1.exe \
+tailcall/fsharp-deepnotail/simpleTail2.exe
+
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
+
+PLATFORM_DISABLED_TESTS += \
+tailcall-interface-noaddr.exe \
+tailcall/fsharp-deepnotail.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length1.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length2.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length3.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsEven.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe \
+tailcall/fsharp-deepnotail/simpleTail1.exe \
+tailcall/fsharp-deepnotail/simpleTail2.exe
+
 endif
 
 if MIPS
@@ -1418,6 +1739,7 @@ PROFILE_DISABLED_TESTS += \
 if MONO_ARCH_GSHAREDVT_SUPPORTED
 PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/26.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/31.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/33.exe
@@ -1463,13 +1785,98 @@ PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
 
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
+
 endif # MONO_ARCH_GSHAREDVT_SUPPORTED
+
+# Aggressive autotail disabled to start on AOT.
+PROFILE_DISABLED_TESTS += tailcall-interface-noaddr.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/mutualTail1IsEven.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe
+
 endif # FULL_AOT_TESTS
 
 if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
+
+# Aggressive autotail disabled to start on AOT.
+PROFILE_DISABLED_TESTS += tailcall-interface-noaddr.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/mutualTail1IsEven.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe
+
 endif
 
 AOT_DISABLED_TESTS= \
@@ -1583,6 +1990,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	taili1.exe \
 	vtail1.exe \
 	tailcall-generic-cast-conservestack-il.exe \
+	tailcall-interface-noaddr.exe \
 	tailcall-interface-conservestack.exe \
 	tailcall-mrgctx.exe \
 	tailcall-rgctxa.exe \
@@ -1591,6 +1999,7 @@ INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
 	tailcall-virt.exe \
 	tailcall-return-valuetype.exe \
 	tailcall/fsharp-deeptail.exe \
+	tailcall/fsharp-deepnotail.exe \
 	tailcall/2.exe \
 	tailcall/3.exe \
 	tailcall/4.exe \
@@ -1660,6 +2069,72 @@ INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/mutualTail1IsEven.exe
 INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/mutualTail1IsOdd.exe
 INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/simpleTail1.exe
 INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/simpleTail2.exe
+
+INTERP_DISABLED_TESTS += \
+tailcall-interface-noaddr.exe \
+tailcall/fsharp-deepnotail.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length1.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length2.exe \
+tailcall/fsharp-deepnotail/Seq.filter-length3.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/StaticTailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe \
+tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_DateTime_.exe \
+tailcall/fsharp-deepnotail/TailCallLoop_int_.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsEven.exe \
+tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe \
+tailcall/fsharp-deepnotail/simpleTail1.exe \
+tailcall/fsharp-deepnotail/simpleTail2.exe
 
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/1.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/10.exe
@@ -1828,7 +2303,9 @@ EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 	array-coop-1.cs array-coop-2.cs \
 	array-coop-bigvt.cs array-coop-int.cs array-coop-smallvt.cs \
 	array-coop-bigvt.sh array-coop-smallvt.sh array-coop-int.sh \
-	tailcall-interface-conservestack.il tailcall/fsharp-deeptail.il \
+	tailcall-interface-conservestack.il \
+	tailcall/fsharp-deeptail.il \
+	tailcall/fsharp-deepnotail.il \
 	$(TEST_TAILCALL_CS_SRC) \
 	$(TEST_TAILCALL_IL_SRC)
 
@@ -1860,6 +2337,16 @@ endif
 %.exe: %.cs $(TEST_DRIVER_DEPEND)
 	$(MKDIR_P) $(dir $@)
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
+
+# This must be optimized currently, for call/ret pairs.
+tailcall-interface-noaddr.exe: tailcall-interface-noaddr.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -optimize -out:$@ $<
+
+# This must be optimized currently, for call/ret pairs.
+tailcall-virt-noaddr.exe: tailcall-virt-noaddr.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -optimize -out:$@ $<
 
 # N.B. test-runner.exe references the TOOLS_RUNTIME versions of the framework assemblies
 test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)

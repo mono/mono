@@ -46,7 +46,7 @@ CreateDir (const char *a)
 #endif
 }
 
-int main ()
+int main (int argc, char** argv)
 {
 	typedef set<string> names_t; // consider map<string, vector<string>> tests;
 	names_t names;
@@ -64,8 +64,10 @@ int main ()
 			break;
 	}
 
+	string name = argv[1] ? argv[1] : "fsharp-deeptail";
+
 	CreateDir ("tailcall");
-	CreateDir ("tailcall/fsharp-deeptail");
+	CreateDir (("tailcall/" + name).c_str());
 
 	const string marker_ldstr = "ldstr \"";	// start of each test, and contains name
 	const string marker_ldc_i4_0 = "ldc.i4.0";	// start of suffix
@@ -151,7 +153,7 @@ int main ()
 		if (t->name.length() == 0)
 			continue;
 		//printf("%s\n", t->name.c_str());
-		FILE* output = fopen(("tailcall/fsharp-deeptail/" + t->name + ".il").c_str(), "w");
+		FILE* output = fopen(("tailcall/" + name + "/" + t->name + ".il").c_str(), "w");
 		for (strings_t::const_iterator a = prefix.begin(); a != prefix.end(); ++a)
 			fprintf(output, "%s\n", a->c_str());
 		fputs("\n", output);
