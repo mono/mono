@@ -6187,9 +6187,6 @@ is_safe_auto_tailcall (MonoCompile *cfg, MonoMethod *method, int *state)
 //   Does function take address of anything.
 //   Does function contain any try/catch.
 {
-	// enabled for amd64 to start
-	// FIXME disabled for arm, arm64, x86 initially
-	// FIXME disabled for sparc, mips, ppc, s390x due to lack of testing
 	if (!cfg->backend->tailcall_auto_aggressive)
 		return FALSE;
 
