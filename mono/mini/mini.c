@@ -3016,6 +3016,7 @@ init_backend (MonoBackend *backend)
 // Does the ABI have a volatile non-parameter register, so tailcall
 // can pass context to generics or interfaces?
 	backend->have_volatile_non_param_register = MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER;
+	backend->tailcall_auto_aggressive = MONO_ARCH_TAILCALL_AUTO_AGGRESIVE;
 #ifdef MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE
 	backend->have_op_tailcall_membase = 1;
 #endif

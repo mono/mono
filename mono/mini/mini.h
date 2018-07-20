@@ -1119,6 +1119,7 @@ typedef struct {
 	gboolean         have_op_tailcall_membase : 1;
 	gboolean         have_op_tailcall_reg : 1;
 	gboolean	 have_volatile_non_param_register : 1;
+	gboolean	 tailcall_auto_aggressive : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;
 	guint            ilp32 : 1;

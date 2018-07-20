@@ -264,6 +264,7 @@ typedef struct MonoCompileArch {
 // Does the ABI have a volatile non-parameter register, so tailcall
 // can pass context to generics or interfaces?
 #define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
+#define MONO_ARCH_TAILCALL_AUTO_AGGRESIVE 0 // FIXME?
 
 #if defined(_AIX)
 /*
