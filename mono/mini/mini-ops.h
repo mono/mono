@@ -116,10 +116,11 @@ MINI_OP(OP_STOREI8_MEMBASE_REG, "storei8_membase_reg", IREG, LREG, NONE)
 MINI_OP(OP_STORER4_MEMBASE_REG, "storer4_membase_reg", IREG, FREG, NONE)
 MINI_OP(OP_STORER8_MEMBASE_REG, "storer8_membase_reg", IREG, FREG, NONE)
 
-#if defined(TARGET_X86) || defined(TARGET_AMD64)
 /* All the store opcodes have to be here MONO_IS_STORE_MEMBASE () depends on this */
 MINI_OP(OP_STOREX_MEMBASE_REG, "storex_membase_reg", IREG, XREG, NONE)
 MINI_OP(OP_STOREX_ALIGNED_MEMBASE_REG,     "storex_aligned_membase_reg", IREG, XREG, NONE)
+
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 MINI_OP(OP_STOREX_NTA_MEMBASE_REG,     "storex_nta_membase_reg", IREG, XREG, NONE)
 MINI_OP(OP_STOREX_HIGH_MEMBASE_REG, "storex_high_membase_reg", IREG, XREG, NONE)
 MINI_OP(OP_STOREX_LOW_MEMBASE_REG, "storex_low_membase_reg", IREG, XREG, NONE)

@@ -5545,20 +5545,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			emit_store (ctx, bb, &builder, size, convert (ctx, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), t), convert (ctx, addr, LLVMPointerType (t, 0)), base, is_volatile);
 			break;
 		}
-		case OP_STOREX_HIGH_MEMBASE_REG:
-		case OP_STOREX_LOW_MEMBASE_REG: {
-			LLVMValueRef addr;
-			int index;
-
-			LLVMTypeRef cast_type = type_to_simd_type (MONO_TYPE_I8);
-			LLVMValueRef v = convert (ctx, values [ins->sreg1], cast_type);
-			index = ins->opcode == OP_STOREX_HIGH_MEMBASE_REG ? 1 : 0;
-			v = LLVMBuildExtractElement (builder, v, LLVMConstInt (LLVMInt32Type (), index, FALSE), "");
-			g_assert (ins->inst_offset == 0);
-			addr = convert (ctx, values [ins->inst_destbasereg], LLVMPointerType (LLVMInt64Type (), 0));
-			emit_store (ctx, bb, &builder, 8, v, addr, addr, FALSE);
-			break;
-		}
 		case OP_CHECK_THIS:
 			emit_load_general (ctx, bb, &builder, sizeof (gpointer), convert (ctx, lhs, LLVMPointerType (IntPtrType (), 0)), lhs, "", TRUE, LLVM_BARRIER_NONE);
 			break;
@@ -6236,6 +6222,20 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			 * SIMD
 			 */
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
+		case OP_STOREX_HIGH_MEMBASE_REG:
+		case OP_STOREX_LOW_MEMBASE_REG: {
+			LLVMValueRef addr;
+			int index;
+
+			LLVMTypeRef cast_type = type_to_simd_type (MONO_TYPE_I8);
+			LLVMValueRef v = convert (ctx, values [ins->sreg1], cast_type);
+			index = ins->opcode == OP_STOREX_HIGH_MEMBASE_REG ? 1 : 0;
+			v = LLVMBuildExtractElement (builder, v, LLVMConstInt (LLVMInt32Type (), index, FALSE), "");
+			g_assert (ins->inst_offset == 0);
+			addr = convert (ctx, values [ins->inst_destbasereg], LLVMPointerType (LLVMInt64Type (), 0));
+			emit_store (ctx, bb, &builder, 8, v, addr, addr, FALSE);
+			break;
+		}
 		case OP_XZERO: {
 			values [ins->dreg] = LLVMConstNull (type_to_llvm_type (ctx, m_class_get_byval_arg (ins->klass)));
 			break;
@@ -8614,9 +8614,7 @@ typedef enum {
 	INTRINS_SSE_PAVGB,
 	INTRINS_SSE_PAUSE,
 	INTRINS_SSE_DPPS,
-<<<<<<< HEAD
 	INTRINS_SSE_ROUNDPD,
-=======
 	INTRINS_SSE_PMADDWD,
 	INTRINS_SSE_MINSS,
 	INTRINS_SSE_MAXSS,
@@ -8633,7 +8631,6 @@ typedef enum {
 	INTRINS_SSE_UCOMISS_GT,
 	INTRINS_SSE_UCOMISS_GE,
 	INTRINS_SSE_MOVMSK_PS,
->>>>>>> [jit] Add beginnings of LLVM support to System.Runtime.Intrinsics.X86.
 #endif
 	INTRINS_NUM
 } IntrinsicId;
@@ -8723,9 +8720,7 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_PAVGB, "llvm.x86.sse2.pavg.b"},
 	{INTRINS_SSE_PAUSE, "llvm.x86.sse2.pause"},
 	{INTRINS_SSE_DPPS, "llvm.x86.sse41.dpps"},
-<<<<<<< HEAD
 	{INTRINS_SSE_ROUNDPD, "llvm.x86.sse41.round.pd"}
-=======
 	{INTRINS_SSE_PMADDWD, "llvm.x86.sse2.pmadd.wd"},
 	{INTRINS_SSE_MINSS, "llvm.x86.sse.min.ss"},
 	{INTRINS_SSE_MAXSS, "llvm.x86.sse.max.ss"},
@@ -8742,7 +8737,6 @@ static IntrinsicDesc intrinsics[] = {
 	{INTRINS_SSE_UCOMISS_GT, "llvm.x86.sse.ucomigt.ss"},
 	{INTRINS_SSE_UCOMISS_GE, "llvm.x86.sse.ucomige.ss"},
 	{INTRINS_SSE_MOVMSK_PS, "llvm.x86.sse.movmsk.ps"},
->>>>>>> [jit] Add beginnings of LLVM support to System.Runtime.Intrinsics.X86.
 #endif
 };
 
@@ -9025,22 +9019,18 @@ add_intrinsic (LLVMModuleRef module, int id)
 #endif
 		AddFunc (module, name, ret_type, arg_types, 3);
 		break;
-<<<<<<< HEAD
 	case INTRINS_SSE_ROUNDPD:
 		ret_type = type_to_simd_type (MONO_TYPE_R8);
 		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
 		arg_types [1] = LLVMInt32Type ();
 		AddFunc (module, name, ret_type, arg_types, 2);
 		break;
-#endif /* AMD64 || X86 */
-=======
-#endif
 	case INTRINS_SSE_MOVMSK_PS:
 		ret_type = LLVMInt32Type ();
 		arg_types [0] = type_to_simd_type (MONO_TYPE_R4);
 		AddFunc (module, name, ret_type, arg_types, 1);
 		break;
->>>>>>> [jit] Add beginnings of LLVM support to System.Runtime.Intrinsics.X86.
+#endif /* TARGET_AMD64 || TARGET_X86 */
 	default:
 		g_assert_not_reached ();
 		break;
