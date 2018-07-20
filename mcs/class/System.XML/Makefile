@@ -7,6 +7,8 @@ LIBRARY = System.Xml.dll
 TXT_RESOURCE_STRINGS = \
 	../referencesource/System.Xml/System.Xml.txt \
 	../referencesource/System.Data.SqlXml/System.Xml.Utils.txt
+RESX_RESOURCE_STRING = \
+	../../../external/corefx/src/System.Private.Xml/src/Resources/Strings.resx
 
 LIB_MCS_FLAGS = -nowarn:219,414,649,1717 -unsafe -d:ASYNC
 
@@ -16,6 +18,7 @@ endif
 
 TEST_LIB_REFS = System.Data System.Core
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Drawing Facades/System.Threading.Tasks System.Runtime.Serialization Facades/System.Text.Encoding.CodePages
 
 LIBRARY_WARN_AS_ERROR = yes
 
