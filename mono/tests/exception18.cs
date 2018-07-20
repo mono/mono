@@ -67,16 +67,20 @@ class C
 		}
 	}
 
+	static void NoTailcall () { }
+
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private void M1a ()
 	{
 		M2a ();
+		NoTailcall ();
 	}
 
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private void M1b ()
 	{
 		M2b ();
+		NoTailcall ();
 	}
 
 	[MethodImpl(MethodImplOptions.NoInlining)]
