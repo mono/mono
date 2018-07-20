@@ -5872,6 +5872,13 @@ mono_arch_get_patch_offset (guint8 *code)
 		/* mov <REG>, imm */
 		return 1;
 	else {
+		guchar bytes [6] = { code [0] };
+		int i = 0;
+		guint8 *p = code;
+		while (i < 6 && ((gsize)p & 0xfff) != 0) // Don't cross a page.
+			bytes [i++] = *p++;
+		g_error ("not reached %s %p %02X %02X %02X %02X %02X %02X\n", __func__, code,
+			code [0], code [1], code [2], code [3], code [4], code [5]);
 		g_assert_not_reached ();
 		return -1;
 	}
