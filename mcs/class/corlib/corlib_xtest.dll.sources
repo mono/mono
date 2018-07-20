@@ -243,3 +243,32 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
 
 #../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
+
+# System.Globalization
+../../../external/corefx/src/System.Globalization/tests/Invariant/InvariantMode.cs
+../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/CultureInfo/*.cs:CultureInfoCtor.cs
+../../../external/corefx/src/System.Globalization/tests/CultureNotFoundException/*.cs
+#../../../external/corefx/src/System.Globalization/tests/DateTimeFormatInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/DateTimeStyles/*.cs
+#../../../external/corefx/src/System.Globalization/tests/NumberFormatInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/NumberStyles/*.cs
+../../../external/corefx/src/System.Globalization/tests/RegionInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/SortVersion/*.cs
+../../../external/corefx/src/System.Globalization/tests/StringInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/TextElementEnumerator/*.cs
+../../../external/corefx/src/System.Globalization/tests/TextInfo/*.cs
+../../../external/corefx/src/System.Globalization/tests/UnicodeCategory/*.cs
+
+# System.Globalization.Calendars
+../../../external/corefx/src/System.Globalization.Calendars/tests/GregorianCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/JapaneseCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/KoreanCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/Misc/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/PersianCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/TaiwanCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/ThaiBuddhistCalendar/*.cs
+../../../external/corefx/src/System.Globalization.Calendars/tests/*.cs
+
+# System.ValueTuple
+../../../external/corefx/src/System.ValueTuple/tests/*.cs
