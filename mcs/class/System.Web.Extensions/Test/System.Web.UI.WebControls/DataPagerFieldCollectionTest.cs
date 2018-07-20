@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 
@@ -42,6 +43,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		EventRecorder recorder;
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void NoTailcall () { }
 
 		void RecordEvent (string suffix)

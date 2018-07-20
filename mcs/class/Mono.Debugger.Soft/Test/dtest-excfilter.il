@@ -47,7 +47,7 @@
 		ret
 	}
 
-	.method static void NoTailcall ()
+	.method static void NoTailcall () noinlining
 	{
 		ret
 	}

@@ -1504,6 +1504,7 @@ public class Tests : TestsBase, ITest2
 		del (0);
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void NoTailcall () { }
 
 	public static void dyn_call (string s) {

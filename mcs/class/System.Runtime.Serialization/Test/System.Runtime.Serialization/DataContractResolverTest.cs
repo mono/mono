@@ -44,6 +44,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using NUnit.Framework;
+using System.Runtime.CompilerServices;
 
 namespace MonoTests.System.Runtime.Serialization
 {
@@ -75,6 +76,7 @@ namespace MonoTests.System.Runtime.Serialization
 
 	public class MyResolver : DataContractResolver
 	{
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void NoTailcall () { }
 
 		public override bool TryResolveType (Type type, Type declaredType, DataContractResolver knownTypeResolver, out XmlDictionaryString typeName, out XmlDictionaryString typeNamespace)

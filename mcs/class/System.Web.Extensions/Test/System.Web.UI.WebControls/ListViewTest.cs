@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
@@ -51,6 +52,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			get { return base.ViewState; }
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void NoTailcall () { }
 
 		void RecordEvent (string suffix)

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using NUnit.Framework;
 using System.Runtime.ExceptionServices;
+using System.Runtime.CompilerServices;
 
 namespace MonoTests.System.Diagnostics
 {
@@ -264,6 +265,7 @@ namespace MonoTests.System.Diagnostics
 		protected StackFrame frame1;
 		protected StackFrame frame2;
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void NoTailcall () { }
 
 		[SetUp]

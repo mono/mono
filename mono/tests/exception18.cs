@@ -67,6 +67,7 @@ class C
 		}
 	}
 
+	[MethodImpl(MethodImplOptions.NoInlining)]
 	static void NoTailcall () { }
 
 	[MethodImpl(MethodImplOptions.NoInlining)]
