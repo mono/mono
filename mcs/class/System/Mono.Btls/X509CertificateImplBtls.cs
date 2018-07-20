@@ -437,11 +437,7 @@ namespace Mono.Btls
 		{
 			if (password == null || password.IsInvalid)
 				return ExportPkcs12 ((string)null);
-#if PLATFORM_WINDOWS
-			var passwordString = Marshal.PtrToStringUni (password.DangerousGetHandle ());
-#else
-			var passwordString = Marshal.PtrToStringAnsi (password.DangerousGetHandle ());
-#endif
+			var passwordString = password.Mono_DangerousGetString ();
 			return ExportPkcs12 (passwordString);
 		}
 

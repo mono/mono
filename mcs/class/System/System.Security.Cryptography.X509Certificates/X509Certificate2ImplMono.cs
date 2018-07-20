@@ -412,11 +412,7 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 			if (password == null || password.IsInvalid)
 				return ImportPkcs12 (rawData, (string)null);
-#if PLATFORM_WINDOWS
-			var passwordString = Marshal.PtrToStringUni (password.DangerousGetHandle ());
-#else
-			var passwordString = Marshal.PtrToStringAnsi (password.DangerousGetHandle ());
-#endif
+			var passwordString = password.Mono_DangerousGetString ();
 			return ImportPkcs12 (rawData, passwordString);
 		}
 
@@ -517,11 +513,7 @@ namespace System.Security.Cryptography.X509Certificates
 		{
 			if (password == null || password.IsInvalid)
 				return ExportPkcs12 ((string)null);
-#if PLATFORM_WINDOWS
-			var passwordString = Marshal.PtrToStringUni (password.DangerousGetHandle ());
-#else
-			var passwordString = Marshal.PtrToStringAnsi (password.DangerousGetHandle ());
-#endif
+			var passwordString = password.Mono_DangerousGetString ();
 			return ExportPkcs12 (passwordString);
 		}
 
