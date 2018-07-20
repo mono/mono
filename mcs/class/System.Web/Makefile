@@ -2,6 +2,10 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
+# FIXME This tests for precise stack traces, which tailcall optimization breaks.
+# The exact tailcall has not been determined.
+TEST_RUNTIME_FLAGS += --optimize=-tailc
+
 LIBRARY = System.Web.dll
 
 RESOURCE_FILES_1= \
