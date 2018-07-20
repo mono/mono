@@ -36,7 +36,7 @@ using nuint = System.UInt32;
 
 namespace System.Runtime
 {
-	static class RuntimeImports
+	static partial class RuntimeImports
 	{
 		internal static unsafe void RhZeroMemory (ref byte b, nuint byteLength)
 		{

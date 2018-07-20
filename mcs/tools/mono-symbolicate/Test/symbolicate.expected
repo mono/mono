@@ -151,7 +151,7 @@ Stacktrace:
   at StackTraceDumper+<>c.<Main>b__0_15 () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:56
   at StackTraceDumper.Catch (System.Action action) in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:78
 
-System.AggregateException: One or more errors occurred. ---> System.ApplicationException: Error in the application.
+System.AggregateException: One or more errors occurred. (Error in the application.) ---> System.ApplicationException: Error in the application.
   at StackTraceDumper.TestAsync () in mcs/tools/mono-symbolicate/Test/StackTraceDumper.cs:138
    --- End of inner exception stack trace ---
   at System.Threading.Tasks.Task.ThrowIfExceptional (System.Boolean includeTaskCanceledExceptions) in external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/Task.cs:2051
