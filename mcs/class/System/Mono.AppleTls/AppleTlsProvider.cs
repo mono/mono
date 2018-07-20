@@ -1,5 +1,4 @@
-﻿#if SECURITY_DEP && MONO_FEATURE_APPLETLS
-//
+﻿//
 // AppleTlsProvider.cs
 //
 // Author:
@@ -84,4 +83,3 @@ namespace Mono.AppleTls
 		}
 	}
 }
-#endif

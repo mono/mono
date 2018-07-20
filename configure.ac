@@ -4751,7 +4751,7 @@ fi
 AM_CONDITIONAL(DISABLE_ICALL_TABLES, test x$icall_tables = xno)
 
 if test "x$with_tls" = "x__thread"; then
-	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
+	AC_DEFINE(MONO_KEYWORD_THREAD, __thread, [Have __thread keyword])
 	# Pass the information to libgc
 	CPPFLAGS="$CPPFLAGS -DUSE_COMPILER_TLS"
 	AC_MSG_CHECKING(if the tls_model attribute is supported)
@@ -5464,6 +5464,9 @@ if test x"$GCC" = xyes; then
 	])
 fi
 
+# Update all submodules recursively to ensure everything is checked out
+$srcdir/scripts/update_submodules.sh
+
 AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
@@ -5543,9 +5546,6 @@ runtime/Makefile
 msvc/Makefile
 po/Makefile
 ])
-
-# Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules.sh
 
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
