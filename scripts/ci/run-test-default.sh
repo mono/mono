@@ -19,6 +19,7 @@ ${TESTCMD} --label=System-xunit --timeout=5m make -w -C mcs/class/System run-xun
 ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
+${TESTCMD} --label=System.XML-xunit --timeout=5m make -w -C mcs/class/System.XML run-xunit-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 ${TESTCMD} --label=System.Security-xunit --timeout=5m make -w -C mcs/class/System.Security run-xunit-test
@@ -142,5 +143,13 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
     fi
 else ${TESTCMD} --label=csprojdiff --skip
+fi
+if [[ $CI_TAGS == *'bclsizediff'* ]]; then
+    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+    if ${TESTCMD} --label=bclsizediff --timeout=5m --fatal make -w -C mcs/tools/linker bcl-size-diff
+    then report_github_status "success" "BCL Linked Size Diff" "No BCL size changes found." || true
+    else report_github_status "error" "BCL Linked Size Diff" "The BCL size changed." "$BUILD_URL/BCL_20Size_20Diff/" || true
+    fi
+else ${TESTCMD} --label=bclsizediff --skip
 fi
 rm -fr /tmp/jenkins-temp-aspnet*

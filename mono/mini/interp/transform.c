@@ -851,12 +851,8 @@ interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *ta
 	ADD_CODE (td, get_data_item_index (td, target_method));
 	PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 
-	ADD_CODE (td, MINT_LDFTN);
+	ADD_CODE (td, MINT_ICALL_PP_V);
 	ADD_CODE (td, get_data_item_index (td, (gpointer)info->func));
-	PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
-
-	ADD_CODE (td, MINT_CALLI_NAT);
-	ADD_CODE (td, get_data_item_index (td, info->sig));
 }
 
 static MonoMethodHeader*
@@ -870,6 +866,201 @@ interp_method_get_header (MonoMethod* method, MonoError *error)
 		return NULL;
 	else
 		return mono_method_get_header_internal (method, error);
+}
+
+/* Return TRUE if call transformation is finished */
+static gboolean
+interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMethodSignature *csignature, gboolean readonly, int *op)
+{
+	const char *tm = target_method->name;
+	int i;
+	int type_index = mono_class_get_magic_index (target_method->klass);
+	gboolean in_corlib = m_class_get_image (target_method->klass) == mono_defaults.corlib;
+	const char *klass_name_space = m_class_get_name_space (target_method->klass);
+	const char *klass_name = m_class_get_name (target_method->klass);
+
+	if (target_method->klass == mono_defaults.string_class) {
+		if (tm [0] == 'g') {
+			if (strcmp (tm, "get_Chars") == 0)
+				*op = MINT_GETCHR;
+			else if (strcmp (tm, "get_Length") == 0)
+				*op = MINT_STRLEN;
+		}
+	} else if (type_index >= 0) {
+		MonoClass *magic_class = target_method->klass;
+
+		const int mt = mint_type (m_class_get_byval_arg (magic_class));
+		if (!strcmp (".ctor", tm)) {
+			MonoType *arg = csignature->params [0];
+			/* depending on SIZEOF_VOID_P and the type of the value passed to the .ctor we either have to CONV it, or do nothing */
+			int arg_size = type_size (arg);
+
+			if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
+				switch (type_index) {
+				case 0: case 1:
+					ADD_CODE (td, MINT_CONV_I4_I8);
+					break;
+				case 2:
+					// ADD_CODE (td, MINT_CONV_R8_R4);
+					break;
+				}
+			}
+
+			if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
+				switch (type_index) {
+				case 0: case 1:
+					ADD_CODE (td, MINT_CONV_I8_I4);
+					break;
+				case 2:
+					ADD_CODE (td, MINT_CONV_R4_R8);
+					break;
+				}
+			}
+
+			switch (type_index) {
+			case 0: case 1:
+#if SIZEOF_VOID_P == 4
+				ADD_CODE (td, MINT_STIND_I4);
+#else
+				ADD_CODE (td, MINT_STIND_I8);
+#endif
+				break;
+			case 2:
+#if SIZEOF_VOID_P == 4
+				ADD_CODE (td, MINT_STIND_R4);
+#else
+				ADD_CODE (td, MINT_STIND_R8);
+#endif
+				break;
+			}
+
+			td->sp -= 2;
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp ("op_Implicit", tm ) || !strcmp ("op_Explicit", tm)) {
+			int arg_size = type_size (csignature->params [0]);
+			if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
+				switch (type_index) {
+				case 0: case 1:
+					ADD_CODE (td, MINT_CONV_I4_I8);
+					break;
+				case 2:
+					// ADD_CODE (td, MINT_CONV_R4_R8);
+					break;
+				}
+			}
+
+			if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
+				switch (type_index) {
+				case 0: case 1:
+					ADD_CODE (td, MINT_CONV_I8_I4);
+					break;
+				case 2:
+					ADD_CODE (td, MINT_CONV_R4_R8);
+					break;
+				}
+			}
+
+			SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp ("op_Increment", tm)) {
+			g_assert (type_index != 2); // no nfloat
+#if SIZEOF_VOID_P == 8
+			ADD_CODE (td, MINT_ADD1_I8);
+#else
+			ADD_CODE (td, MINT_ADD1_I4);
+#endif
+			SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp ("op_Decrement", tm)) {
+			g_assert (type_index != 2); // no nfloat
+#if SIZEOF_VOID_P == 8
+			ADD_CODE (td, MINT_SUB1_I8);
+#else
+			ADD_CODE (td, MINT_SUB1_I4);
+#endif
+			SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (".cctor", tm)) {
+			/* white list */
+			return FALSE;
+		} else if (!strcmp ("Parse", tm)) {
+			/* white list */
+			return FALSE;
+		}
+
+		for (i = 0; i < sizeof (int_unnop) / sizeof  (MagicIntrinsic); ++i) {
+			if (!strcmp (int_unnop [i].op_name, tm)) {
+				ADD_CODE (td, int_unnop [i].insn [type_index]);
+				SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+				td->ip += 5;
+				return TRUE;
+			}
+		}
+
+		for (i = 0; i < sizeof (int_binop) / sizeof  (MagicIntrinsic); ++i) {
+			if (!strcmp (int_binop [i].op_name, tm)) {
+				ADD_CODE (td, int_binop [i].insn [type_index]);
+				td->sp -= 1;
+				SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+				td->ip += 5;
+				return TRUE;
+			}
+		}
+
+		for (i = 0; i < sizeof (int_cmpop) / sizeof  (MagicIntrinsic); ++i) {
+			if (!strcmp (int_cmpop [i].op_name, tm)) {
+				MonoClass *k = mono_defaults.boolean_class;
+				ADD_CODE (td, int_cmpop [i].insn [type_index]);
+				td->sp -= 1;
+				SET_TYPE (td->sp - 1, stack_type [mint_type (m_class_get_byval_arg (k))], k);
+				td->ip += 5;
+				return TRUE;
+			}
+		}
+
+		g_error ("TODO: interp_transform_call %s:%s", m_class_get_name (target_method->klass), tm);
+	} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
+		if (!strcmp (tm, "get_Rank")) {
+			*op = MINT_ARRAY_RANK;
+		} else if (!strcmp (tm, "get_Length")) {
+			*op = MINT_LDLEN;
+		} else if (!strcmp (tm, "Address")) {
+			*op = readonly ? MINT_LDELEMA : MINT_LDELEMA_TC;
+		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad") || !strcmp (tm, "Set") || !strcmp (tm, "Get")) {
+			*op = MINT_CALLRUN;
+		} else if (!strcmp (tm, "UnsafeStore")) {
+			g_error ("TODO ArrayClass::UnsafeStore");
+		}
+	} else if (in_corlib &&
+			!strcmp (klass_name_space, "System.Diagnostics") &&
+			!strcmp (klass_name, "Debugger")) {
+		if (!strcmp (tm, "Break") && csignature->param_count == 0) {
+			if (mini_should_insert_breakpoint (td->method))
+				*op = MINT_BREAK;
+		}
+	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "ByReference`1")) {
+		*op = MINT_INTRINS_BYREFERENCE_GET_VALUE;
+	}
+	return FALSE;
+}
+
+static MonoMethod*
+interp_transform_internal_calls (MonoMethod *method, MonoMethod *target_method, MonoMethodSignature *csignature, gboolean is_virtual)
+{
+	if (method->wrapper_type == MONO_WRAPPER_NONE && target_method != NULL) {
+		if (target_method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
+			target_method = mono_marshal_get_native_wrapper (target_method, FALSE, FALSE);
+		if (!is_virtual && target_method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
+			target_method = mono_marshal_get_synchronized_wrapper (target_method);
+
+		if (target_method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL && !is_virtual && !mono_class_is_marshalbyref (target_method->klass) && m_class_get_rank (target_method->klass) == 0)
+			target_method = mono_marshal_get_native_wrapper (target_method, TRUE, FALSE);
+	}
+	return target_method;
 }
 
 static void
@@ -943,177 +1134,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	}
 
 	/* Intrinsics */
-	if (target_method) {
-		const char *tm = target_method->name;
-		int type_index = mono_class_get_magic_index (target_method->klass);
-		gboolean in_corlib = m_class_get_image (target_method->klass) == mono_defaults.corlib;
-		const char *klass_name_space = m_class_get_name_space (target_method->klass);
-		const char *klass_name = m_class_get_name (target_method->klass);
-
-		if (target_method->klass == mono_defaults.string_class) {
-			if (tm [0] == 'g') {
-				if (strcmp (tm, "get_Chars") == 0)
-					op = MINT_GETCHR;
-				else if (strcmp (tm, "get_Length") == 0)
-					op = MINT_STRLEN;
-			}
-		} else if (type_index >= 0) {
-			MonoClass *magic_class = target_method->klass;
-
-			const int mt = mint_type (m_class_get_byval_arg (magic_class));
-			if (!strcmp (".ctor", tm)) {
-				MonoType *arg = csignature->params [0];
-				/* depending on SIZEOF_VOID_P and the type of the value passed to the .ctor we either have to CONV it, or do nothing */
-				int arg_size = type_size (arg);
-
-				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
-					switch (type_index) {
-					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
-						break;
-					case 2:
-						// ADD_CODE (td, MINT_CONV_R8_R4);
-						break;
-					}
-				}
-
-				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
-					switch (type_index) {
-					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
-						break;
-					case 2:
-						ADD_CODE (td, MINT_CONV_R4_R8);
-						break;
-					}
-				}
-
-				switch (type_index) {
-				case 0: case 1:
-#if SIZEOF_VOID_P == 4
-					ADD_CODE (td, MINT_STIND_I4);
-#else
-					ADD_CODE (td, MINT_STIND_I8);
-#endif
-					break;
-				case 2:
-#if SIZEOF_VOID_P == 4
-					ADD_CODE (td, MINT_STIND_R4);
-#else
-					ADD_CODE (td, MINT_STIND_R8);
-#endif
-					break;
-				}
-
-				td->sp -= 2;
-				td->ip += 5;
-				return;
-			} else if (!strcmp ("op_Implicit", tm ) || !strcmp ("op_Explicit", tm)) {
-				int arg_size = type_size (csignature->params [0]);
-				if (arg_size > SIZEOF_VOID_P) { // 8 -> 4
-					switch (type_index) {
-					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I4_I8);
-						break;
-					case 2:
-						// ADD_CODE (td, MINT_CONV_R4_R8);
-						break;
-					}
-				}
-
-				if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
-					switch (type_index) {
-					case 0: case 1:
-						ADD_CODE (td, MINT_CONV_I8_I4);
-						break;
-					case 2:
-						ADD_CODE (td, MINT_CONV_R4_R8);
-						break;
-					}
-				}
-
-				SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
-				td->ip += 5;
-				return;
-			} else if (!strcmp ("op_Increment", tm)) {
-				g_assert (type_index != 2); // no nfloat
-#if SIZEOF_VOID_P == 8
-				ADD_CODE (td, MINT_ADD1_I8);
-#else
-				ADD_CODE (td, MINT_ADD1_I4);
-#endif
-				SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
-				td->ip += 5;
-				return;
-			} else if (!strcmp ("op_Decrement", tm)) {
-				g_assert (type_index != 2); // no nfloat
-#if SIZEOF_VOID_P == 8
-				ADD_CODE (td, MINT_SUB1_I8);
-#else
-				ADD_CODE (td, MINT_SUB1_I4);
-#endif
-				SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
-				td->ip += 5;
-				return;
-			} else if (!strcmp (".cctor", tm)) {
-				/* white list */
-				goto no_intrinsic;
-			} else if (!strcmp ("Parse", tm)) {
-				/* white list */
-				goto no_intrinsic;
-			}
-
-			for (i = 0; i < sizeof (int_unnop) / sizeof  (MagicIntrinsic); ++i) {
-				if (!strcmp (int_unnop [i].op_name, tm)) {
-					ADD_CODE (td, int_unnop [i].insn [type_index]);
-					SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
-					td->ip += 5;
-					return;
-				}
-			}
-
-			for (i = 0; i < sizeof (int_binop) / sizeof  (MagicIntrinsic); ++i) {
-				if (!strcmp (int_binop [i].op_name, tm)) {
-					ADD_CODE (td, int_binop [i].insn [type_index]);
-					td->sp -= 1;
-					SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
-					td->ip += 5;
-					return;
-				}
-			}
-
-			for (i = 0; i < sizeof (int_cmpop) / sizeof  (MagicIntrinsic); ++i) {
-				if (!strcmp (int_cmpop [i].op_name, tm)) {
-					MonoClass *k = mono_defaults.boolean_class;
-					ADD_CODE (td, int_cmpop [i].insn [type_index]);
-					td->sp -= 1;
-					SET_TYPE (td->sp - 1, stack_type [mint_type (m_class_get_byval_arg (k))], k);
-					td->ip += 5;
-					return;
-				}
-			}
-
-			g_error ("TODO: interp_transform_call %s:%s", m_class_get_name (target_method->klass), tm);
-		} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
-			if (!strcmp (tm, "get_Rank")) {
-				op = MINT_ARRAY_RANK;
-			} else if (!strcmp (tm, "get_Length")) {
-				op = MINT_LDLEN;
-			} else if (!strcmp (tm, "Address")) {
-				op = readonly ? MINT_LDELEMA : MINT_LDELEMA_TC;
-			}
-		} else if (in_corlib &&
-				   !strcmp (klass_name_space, "System.Diagnostics") &&
-				   !strcmp (klass_name, "Debugger")) {
-			if (!strcmp (tm, "Break") && csignature->param_count == 0) {
-				if (mini_should_insert_breakpoint (method))
-					op = MINT_BREAK;
-			}
-		} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "ByReference`1")) {
-			op = MINT_INTRINS_BYREFERENCE_GET_VALUE;
-		}
-	}
-no_intrinsic:
+	if (target_method && interp_handle_intrinsics (td, target_method, csignature, readonly, &op))
+		return;
 
 	if (constrained_class) {
 		if (m_class_is_enumtype (constrained_class) && !strcmp (target_method->name, "GetHashCode")) {
@@ -1257,12 +1279,8 @@ no_intrinsic:
 			}
 		}
 	}
-	if (method->wrapper_type == MONO_WRAPPER_NONE && target_method != NULL) {
-		if (target_method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-			target_method = mono_marshal_get_native_wrapper (target_method, FALSE, FALSE);
-		if (!is_virtual && target_method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
-			target_method = mono_marshal_get_synchronized_wrapper (target_method);
-	}
+
+	target_method = interp_transform_internal_calls (method, target_method, csignature, is_virtual);
 
 	if (csignature->call_convention == MONO_CALL_VARARG) {
 		csignature = mono_method_get_signature_checked (target_method, image, token, generic_context, error);
@@ -1340,6 +1358,11 @@ no_intrinsic:
 		if (op == MINT_LDELEMA || op == MINT_LDELEMA_TC) {
 			ADD_CODE (td, get_data_item_index (td, target_method->klass));
 			ADD_CODE (td, 1 + m_class_get_rank (target_method->klass));
+		}
+
+		if (op == MINT_CALLRUN) {
+			ADD_CODE (td, get_data_item_index (td, target_method));
+			ADD_CODE (td, get_data_item_index (td, mono_method_signature (target_method)));
 		}
 	} else if (!calli && !is_virtual && jit_call_supported (target_method, csignature)) {
 		ADD_CODE(td, MINT_JIT_CALL);
@@ -4772,10 +4795,8 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 					nm = mono_marshal_get_delegate_end_invoke (method);
 				}
 			}
-			if (nm == NULL) {
-				imethod->code = g_malloc(sizeof(short));
-				imethod->code[0] = MINT_CALLRUN;
-			}
+			if (nm == NULL)
+				g_assert_not_reached ();
 		}
 		if (nm == NULL) {
 			imethod->stack_size = sizeof (stackval); /* for tracing */
@@ -4789,22 +4810,6 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 		header = interp_method_get_header (nm, error);
 		mono_os_mutex_unlock (&calc_section);
 		return_if_nok (error);
-	} else if (method->klass == mono_defaults.array_class) {
-		if (!strcmp (method->name, "UnsafeMov") || !strcmp (method->name, "UnsafeLoad")) {
-			mono_os_mutex_lock (&calc_section);
-			if (!imethod->transformed) {
-				imethod->code = g_malloc (sizeof (short));
-				imethod->code[0] = MINT_CALLRUN;
-				imethod->stack_size = sizeof (stackval); /* for tracing */
-				imethod->alloca_size = imethod->stack_size;
-				imethod->transformed = TRUE;
-			}
-			mono_os_mutex_unlock (&calc_section);
-			MONO_PROFILER_RAISE (jit_done, (method, NULL));
-			return;
-		} else if (!strcmp (method->name, "UnsafeStore")) {
-			g_error ("TODO ArrayClass::UnsafeStore");
-		}
 	}
 
 	if (!header) {

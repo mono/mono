@@ -864,7 +864,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	g_assert (thread != NULL);
 	SET_CURRENT_OBJECT (thread);
 
-	info = (MonoThreadInfo*) thread->thread_info;
+	info = thread->thread_info;
 	g_assert (info);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
@@ -5442,8 +5442,12 @@ mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread)
 mono_bool
 mono_thread_is_foreign (MonoThread *thread)
 {
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
 	MonoThreadInfo *info = (MonoThreadInfo *)thread->internal_thread->thread_info;
-	return info->runtime_thread == FALSE;
+	result = (info->runtime_thread == FALSE);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 #ifndef HOST_WIN32
@@ -5586,10 +5590,10 @@ threads_add_unique_joinable_thread_nolock (gpointer tid)
 }
 
 void
-mono_threads_add_joinable_runtime_thread (gpointer thread_info)
+mono_threads_add_joinable_runtime_thread (MonoThreadInfo *thread_info)
 {
 	g_assert (thread_info);
-	MonoThreadInfo *mono_thread_info = (MonoThreadInfo*)thread_info;
+	MonoThreadInfo *mono_thread_info = thread_info;
 
 	if (mono_thread_info->runtime_thread) {
 		gpointer tid = (gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (mono_thread_info_get_tid (mono_thread_info)));
@@ -5768,7 +5772,7 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 			*cookie = mono_threads_enter_gc_unsafe_region_cookie ();
 		} else {
 			/* thread state (BLOCKING|RUNNING) -> RUNNING */
-			*cookie = mono_threads_enter_gc_unsafe_region_internal (stackdata);
+			*cookie = mono_threads_enter_gc_unsafe_region_unbalanced_internal (stackdata);
 		}
 	}
 
@@ -5810,7 +5814,7 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
-		mono_threads_exit_gc_unsafe_region_internal (cookie, stackdata);
+		mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
 	}
 
 	if (orig != domain) {
@@ -5869,7 +5873,7 @@ mono_thread_internal_describe (MonoInternalThread *internal, GString *text)
 
 	if (internal->thread_info) {
 		g_string_append (text, ", state : ");
-		mono_thread_info_describe_interrupt_token ((MonoThreadInfo*) internal->thread_info, text);
+		mono_thread_info_describe_interrupt_token (internal->thread_info, text);
 	}
 
 	if (internal->owned_mutexes) {
@@ -6014,7 +6018,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 				continue;
 
 			// Request every other thread dumps themselves before us
-			MonoThreadInfo *info = (MonoThreadInfo*) thread_array [i]->thread_info;
+			MonoThreadInfo *info = thread_array [i]->thread_info;
 
 			mono_memory_barrier ();
 			size_t old_num_summarized = num_threads_summarized;

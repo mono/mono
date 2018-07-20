@@ -8200,23 +8200,6 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 }
 
 /**
- * mono_object_to_string_checked:
- * \param obj The object
- * \param error Set on error.
- * \returns the result of calling \c ToString() on an object. If the
- * method cannot be invoked or if it raises an exception, sets \p error
- * and returns NULL.
- */
-MonoString *
-mono_object_to_string_checked (MonoObject *obj, MonoError *error)
-{
-	error_init (error);
-	void *target;
-	MonoMethod *method = prepare_to_string_method (obj, &target);
-	return (MonoString*) mono_runtime_invoke_checked (method, target, NULL, error);
-}
-
-/**
  * mono_object_try_to_string:
  * \param obj The object
  * \param exc Any exception thrown by \c ToString(). Must not be NULL.
@@ -8686,7 +8669,7 @@ mono_load_remote_field_new_checked (MonoObject *this_obj, MonoClass *klass, Mono
 		}
 	}
 	
-	/* MonoType *type = mono_class_get_type (klass); */
+	/* MonoType *type = m_class_get_byval_arg (klass); */
 
 	gpointer args[2];
 	args [0] = &klass;

@@ -1557,7 +1557,7 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 ICALL_EXPORT MonoType*
 ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
 {
-	return mono_class_get_type (klass);
+	return m_class_get_byval_arg (klass);
 }
 
 ICALL_EXPORT void
@@ -7974,7 +7974,7 @@ ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_Wind
 ICALL_EXPORT void
 ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, const char *message)
 {
-	g_log (appname, (GLogLevelFlags)level, message);
+	g_log (appname, (GLogLevelFlags)level, "%s", message);
 }
 
 static MonoIcallTableCallbacks icall_table;
@@ -8453,4 +8453,28 @@ MonoJitICallInfo *
 mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 {
 	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
+}
+
+ICALL_EXPORT int
+ves_icall_System_GC_GetCollectionCount (int generation, MonoError *error)
+{
+	return mono_gc_collection_count (generation);
+}
+
+ICALL_EXPORT int
+ves_icall_System_GC_GetGeneration (MonoObjectHandle object, MonoError *error)
+{
+	return mono_gc_get_generation (MONO_HANDLE_RAW (object));
+}
+
+ICALL_EXPORT int
+ves_icall_System_GC_GetMaxGeneration (MonoError *error)
+{
+	return mono_gc_max_generation ();
+}
+
+ICALL_EXPORT void
+ves_icall_System_GC_RecordPressure (gint64 value, MonoError *error)
+{
+	mono_gc_add_memory_pressure (value);
 }

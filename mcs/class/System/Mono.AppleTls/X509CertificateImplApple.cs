@@ -1,11 +1,22 @@
 #if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+
+#if MONO_SECURITY_ALIAS
+using MX = MonoSecurity::Mono.Security.X509;
+#else
+using MX = Mono.Security.X509;
+#endif
+
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using XamMac.CoreFoundation;
-using MX = Mono.Security.X509;
 
-namespace System.Security.Cryptography.X509Certificates
+namespace Mono.AppleTls
 {
 	class X509CertificateImplApple : X509CertificateImpl
 	{
@@ -94,7 +105,7 @@ namespace System.Security.Cryptography.X509Certificates
 			if (fallback != null)
 				return;
 			var mxCert = new MX.X509Certificate (GetRawCertData ());
-			fallback = new X509CertificateImplMono (mxCert);
+			fallback = new X509Certificate2ImplMono (mxCert);
 		}
 
 		public X509CertificateImpl FallbackImpl {

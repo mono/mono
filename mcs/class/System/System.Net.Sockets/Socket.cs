@@ -1172,6 +1172,10 @@ namespace System.Net.Sockets
 			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
+
+				if (dep.AddressFamily == AddressFamily.Unspecified)
+					return true;
+
 				int last_valid = 0;
 				for (int i = 0; i < addresses.Length; ++i) {
 					if (addresses [i].AddressFamily != dep.AddressFamily)

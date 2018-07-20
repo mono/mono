@@ -77,7 +77,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return IntPtr.Zero;
 		}
 
-		X509Certificate2ImplMono (MX.X509Certificate cert)
+		public X509Certificate2ImplMono (MX.X509Certificate cert)
 		{
 			this._cert = cert;
 		}
