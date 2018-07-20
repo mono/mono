@@ -166,6 +166,7 @@ return_stack_ptr (gpointer *i)
 static void
 copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 {
+#if defined (HOST_WATCHOS) || defined (HOST_TVOS)
 	MonoThreadUnwindState *state;
 	int stackdata_size;
 	gpointer dummy;
@@ -192,6 +193,7 @@ copy_stack_data (MonoThreadInfo *info, MonoStackData *stackdata_begin)
 	memcpy (state->gc_stackdata, stackdata_end, stackdata_size);
 
 	state->gc_stackdata_size = stackdata_size;
+#endif
 }
 
 static gpointer
