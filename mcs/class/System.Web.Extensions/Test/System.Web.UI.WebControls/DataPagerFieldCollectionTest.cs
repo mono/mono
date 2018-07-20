@@ -42,12 +42,15 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		EventRecorder recorder;
 
+		static void NoTailcall () { }
+
 		void RecordEvent (string suffix)
 		{
 			if (recorder == null)
 				return;
 
 			recorder.Record (suffix);
+			NoTailcall ();
 		}
 
 		public DataPagerFieldCollectionPoker ()
@@ -79,6 +82,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DoOnValidate (object value)
 		{
 			OnValidate (value);
+			NoTailcall ();
 		}
 
 		public void CatchFieldsChangedEvent ()
@@ -91,6 +95,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnValidate (o);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 
 		protected override void OnClearComplete ()
@@ -98,6 +103,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnClearComplete ();
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 
 		protected override void OnInsertComplete (int index, object value)
@@ -105,6 +111,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnInsertComplete (index, value);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 
 		protected override void OnRemoveComplete (int index, object value)
@@ -112,12 +119,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnRemoveComplete (index, value);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 
 		void OnFieldsChanged (object sender, EventArgs args)
 		{
 			RecordEvent ("Enter");
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	}
 	
