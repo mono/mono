@@ -75,6 +75,8 @@ namespace MonoTests.System.Runtime.Serialization
 
 	public class MyResolver : DataContractResolver
 	{
+		static void NoTailcall () { }
+
 		public override bool TryResolveType (Type type, Type declaredType, DataContractResolver knownTypeResolver, out XmlDictionaryString typeName, out XmlDictionaryString typeNamespace)
 		{
 			//Console.WriteLine ("TryResolveType: {0} {1}", type, declaredType);
@@ -96,7 +98,9 @@ namespace MonoTests.System.Runtime.Serialization
 		public override Type ResolveName (string typeName, string typeNamespace, Type declaredType, DataContractResolver knownTypeResolver)
 		{
 			//Console.WriteLine ("ResolveName: {0} {1} {2}", typeName, typeNamespace, declaredType);
-			return knownTypeResolver.ResolveName (typeName, typeNamespace, declaredType, null) ?? RecoveringResolveName (typeName, typeNamespace);
+			var a = knownTypeResolver.ResolveName (typeName, typeNamespace, declaredType, null) ?? RecoveringResolveName (typeName, typeNamespace);
+			NoTailcall ();
+			return a;
 		}
 		
 		Type RecoveringResolveName (string typeName, string typeNamespace)
