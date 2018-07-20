@@ -51,7 +51,7 @@ namespace System.Runtime.InteropServices
 		}
 
 		public static void RegisterObjectCreationCallback (ObjectCreationDelegate callback) {
-			int i = 1;
+			int i = 0;
 			StackTrace trace = new StackTrace (false);
 			while (i < trace.FrameCount) {
 				StackFrame frame = trace.GetFrame (i);
