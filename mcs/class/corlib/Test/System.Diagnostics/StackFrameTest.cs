@@ -264,11 +264,14 @@ namespace MonoTests.System.Diagnostics
 		protected StackFrame frame1;
 		protected StackFrame frame2;
 
+		static void NoTailcall () { }
+
 		[SetUp]
 		public void SetUp ()
 		{
 			// In order to get better test cases with stack traces
 			NestedSetUp ();
+			NoTailcall ();
 		}
 
 		private void NestedSetUp ()
@@ -321,7 +324,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (271,
+			Assert.AreEqual (273,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}
