@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 #if !__MonoCS__
 using System.Diagnostics;
-using System.Diagnostics.Private;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
