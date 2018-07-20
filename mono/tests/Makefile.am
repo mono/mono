@@ -1789,33 +1789,6 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
 
-# FIXME
-PROFILE_DISABLED_TESTS += \
-tailcall-interface-noaddr.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClass_DateTime_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClass_int_.exe \
-tailcall/fsharp-deepnotail/TailCallLoopGenericClass_string_.exe \
-tailcall/fsharp-deepnotail/mutualTail1IsEven.exe \
-tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe
-
 if MONO_ARCH_GSHAREDVT_SUPPORTED
 PROFILE_DISABLED_TESTS += tailcall/tailcall-interface-noaddr.exe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deepnotail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe

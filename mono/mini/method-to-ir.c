@@ -6190,11 +6190,6 @@ is_safe_auto_tailcall (MonoCompile *cfg, MonoMethod *method, int *state)
 	if (!cfg->backend->tailcall_auto_aggressive)
 		return FALSE;
 
-	if (cfg->compile_aot 		// FIXME additional failures?
-		|| cfg->llvm_only 	// FIXME untested
-		|| COMPILE_LLVM (cfg))  // FIXME untested
-		return FALSE;
-
 	int const state_value = *state;
 	if (state_value)
 		return state_value == 1;
