@@ -8033,6 +8033,29 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 #endif
 }
 
+static gboolean
+has_struct_constraint (MonoMethod *method)
+{
+	if (method->is_generic) {
+		MonoGenericContainer *container = mono_method_get_generic_container (method);
+
+		for (int i = 0; i < container->type_argc; ++i) {
+			MonoGenericParamInfo *info = mono_generic_container_get_param_info (container, i);
+
+			if (!info->constraints)
+				return FALSE;
+			MonoClass **constraints = info->constraints;
+			while (*constraints) {
+				MonoClass *c = *constraints;
+				if (c->image == mono_defaults.corlib && !strcmp (m_class_get_name_space (c), "System") && !strcmp (m_class_get_name (c), "ValueType"))
+					return TRUE;
+				constraints ++;
+			}
+		}
+	}
+	return FALSE;
+}
+
 /*
  * compile_method:
  *
@@ -8084,6 +8107,14 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		return;
 
 	mono_atomic_inc_i32 (&acfg->stats.mcount);
+
+	if (method->is_inflated) {
+		/* Avoid compiling gshared instantiations which violate struct contains */
+		ERROR_DECL (error);
+		if (has_struct_constraint (mono_method_get_declaring_generic_method (method)) &&
+			(method == mini_get_shared_method_full (method, SHARE_MODE_NONE, error)))
+			return;
+	}
 
 #if 0
 	if (method->is_generic || mono_class_is_gtd (method->klass)) {
