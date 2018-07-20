@@ -3077,7 +3077,7 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
 {
 	MonoBasicBlock **targets;
 	MonoBasicBlock *tblock, *end_bb;
-	MonoInst *ins;
+	MonoInst *ins, *switch_arg;
 	int opcode, n;
 
 	switch (intrins->name) {
@@ -3092,8 +3092,13 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
 
 		if (intrins->name == SN_AlignRight)
 			n = 32;
+		else if (intrins->name == SN_Shuffle && etype->type == MONO_TYPE_R8)
+			n = 4;
 		else
 			n = 256;
+		/* This is the last arg for all the current opcodes */
+		switch_arg = args [fsig->param_count - 1];
+
 		targets = (MonoBasicBlock **)mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * n);
 		for (int i = 0; i < n; ++i) {
 			NEW_BBLOCK (cfg, tblock);
@@ -3102,7 +3107,7 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
 		}
 		NEW_BBLOCK (cfg, end_bb);
 
-		mini_emit_switch (cfg, args [2]->dreg, targets, targets [0], n);
+		mini_emit_switch (cfg, switch_arg->dreg, targets, targets [0], n);
 
 		int dreg = alloc_xreg (cfg);
 		for (int i = 0; i < n; ++i) {
