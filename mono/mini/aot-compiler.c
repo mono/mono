@@ -218,6 +218,7 @@ typedef struct MonoAotOptions {
 	gboolean print_skipped_methods;
 	gboolean stats;
 	gboolean verbose;
+	gboolean deterministic;
 	char *tool_prefix;
 	char *ld_flags;
 	char *mtriple;
@@ -7590,6 +7591,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->verbose = TRUE;
 		} else if (str_begins_with (arg, "llvmopts=")){
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
+		} else if (!strcmp (arg, "deterministic")) {
+			opts->deterministic = TRUE;
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -12662,7 +12665,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 	aot_printf (acfg, "Mono Ahead of Time compiler - compiling assembly %s\n", image->name);
 
-	generate_aotid ((guint8*) &acfg->image->aotid);
+	if (!acfg->aot_opts.deterministic)
+		generate_aotid ((guint8*) &acfg->image->aotid);
 
 	char *aotid = mono_guid_to_string (acfg->image->aotid);
 	aot_printf (acfg, "AOTID %s\n", aotid);
