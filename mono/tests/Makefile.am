@@ -1125,16 +1125,6 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 endif
 
-if AMD64
-# #651684
-PLATFORM_DISABLED_TESTS += finally_guard.exe
-
-if HOST_WIN32
-PLATFORM_DISABLED_TESTS += w32message.exe
-endif
-
-endif
-
 AUTO_TAILCALL_TESTS = \
 tailcall-interface-noaddr.exe \
 tailcall/fsharp-deepnotail.exe \
@@ -1201,6 +1191,17 @@ tailcall/fsharp-deepnotail/mutualTail1IsOdd.exe \
 tailcall/fsharp-deepnotail/simpleTail1.exe \
 tailcall/fsharp-deepnotail/simpleTail2.exe
 
+if AMD64
+# #651684
+PLATFORM_DISABLED_TESTS += finally_guard.exe
+
+if HOST_WIN32
+PLATFORM_DISABLED_TESTS += w32message.exe
+endif
+
+PLATFORM_DISABLED_TESTS += $(AUTO_TAILCALL_TESTS)
+endif
+
 if X86
 
 if HOST_WIN32
@@ -1208,13 +1209,11 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
-
 endif
 
 # test_virt.exe fails because callee takes more parameters than caller, 1 vs. 0, and
 # x86 passes no parameters in registers, so it is a stack imbalance.
 PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe
-
 PLATFORM_DISABLED_TESTS += $(AUTO_TAILCALL_TESTS)
 endif
 
