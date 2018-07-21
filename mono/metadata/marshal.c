@@ -57,9 +57,9 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
-
 #include <string.h>
 #include <errno.h>
+#include "icall-decl.h"
 
 /* #define DEBUG_RUNTIME_CODE */
 
@@ -5186,7 +5186,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gconstpoin
 int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle ref_type, MonoStringHandle field_name, MonoError *error)
 {
-	error_init (error);
 	if (MONO_HANDLE_IS_NULL (ref_type)) {
 		mono_error_set_argument_null (error, "type", "");
 		return 0;
@@ -5250,9 +5249,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunic
 	if (!s)
 		return NULL;
 
-	gunichar2 *res = g_new (gunichar2, length + 1);
-	memcpy (res, s, length * sizeof (*res));
-	res [length] = 0;
+	gsize const len = ((gsize)length + 1) * 2;
+	gunichar2 *res = (gunichar2*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
+	if (res) {
+		memcpy (res, s, length * sizeof (*res));
+		res [length] = 0;
+	}
 	return res;
 }
 #endif /* !HOST_WIN32 */
@@ -5323,7 +5325,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 }
 
 #ifndef HOST_WIN32
-static inline void *
+static void *
 mono_marshal_alloc_hglobal (size_t size)
 {
 	return g_try_malloc (size);
@@ -5348,7 +5350,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5372,38 +5374,25 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, g
 }
 
 #ifndef HOST_WIN32
-static inline void
-mono_marshal_free_hglobal (gpointer ptr)
+void
+ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 {
 	g_free (ptr);
 }
 #endif
 
-void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
-{
-	mono_marshal_free_hglobal (ptr);
-}
-
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoError *error)
 {
-	void *res = mono_marshal_alloc_co_task_mem (size);
-
-	if (!res)
-		mono_error_set_out_of_memory (error, "");
-
-	return res;
+	return ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (size, error);
 }
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size, MonoError *error)
 {
 	void *res = mono_marshal_alloc_co_task_mem (size);
-
 	if (!res)
 		mono_error_set_out_of_memory (error, "");
-
 	return res;
 }
 
@@ -5414,7 +5403,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5425,11 +5414,8 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size, MonoError *error)
 {
 	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
-
-	if (!res) {
+	if (!res)
 		mono_error_set_out_of_memory (error, "");
-		return NULL;
-	}
 	return res;
 }
 

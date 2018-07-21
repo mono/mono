@@ -26,7 +26,7 @@ mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 }
 
 void
-mono_marshal_free_hglobal (gpointer ptr)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (gpointer ptr)
 {
 	HeapFree (GetProcessHeap (), 0, ptr);
 	return;

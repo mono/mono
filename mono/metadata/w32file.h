@@ -492,12 +492,6 @@ gint32
 mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf);
 
 gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes);
-
-guint32
-mono_w32file_get_drive_type (const gunichar2 *root_path_name);
-
-gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize);
 
 #endif /* _MONO_METADATA_W32FILE_H_ */

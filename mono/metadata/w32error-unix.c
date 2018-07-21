@@ -21,6 +21,7 @@ error_key_init (void)
 guint32
 mono_w32error_get_last (void)
 {
+	// FIXME use __thread or remove entirely
 	mono_lazy_initialize (&error_key_once, error_key_init);
 	return GPOINTER_TO_UINT (pthread_getspecific (error_key));
 }
@@ -28,6 +29,7 @@ mono_w32error_get_last (void)
 void
 mono_w32error_set_last (guint32 error)
 {
+	// FIXME use __thread or remove entirely
 	gint ret;
 	mono_lazy_initialize (&error_key_once, error_key_init);
 	ret = pthread_setspecific (error_key, GUINT_TO_POINTER (error));

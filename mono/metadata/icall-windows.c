@@ -67,8 +67,8 @@ mono_icall_get_machine_name (MonoError *error)
 }
 #endif
 
-int
-mono_icall_get_platform (void)
+ICALL_EXPORT int
+ves_icall_System_Environment_get_Platform (MonoError *error)
 {
 	/* Win32NT */
 	return 2;
@@ -81,36 +81,25 @@ mono_icall_get_new_line (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), "\r\n", error);
 }
 
-MonoBoolean
-mono_icall_is_64bit_os (void)
+ICALL_EXPORT MonoBoolean
+ves_icall_System_Environment_GetIs64BitOperatingSystem (void)
 {
 #if SIZEOF_VOID_P == 8
 	return TRUE;
 #else
 	gboolean isWow64Process = FALSE;
-	if (IsWow64Process (GetCurrentProcess (), &isWow64Process)) {
-		return (MonoBoolean)isWow64Process;
-	}
-	return FALSE;
+	return IsWow64Process (GetCurrentProcess (), &isWow64Process) && isWow64Process;
 #endif
 }
 
-MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error)
+ICALL_EXPORT MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
 {
-	MonoArray *names;
-	MonoDomain *domain;
-	MonoString *str;
-	WCHAR* env_strings;
-	WCHAR* env_string;
-	WCHAR* equal_str;
-	int n = 0;
-
-	error_init (error);
-	env_strings = GetEnvironmentStrings();
+	gsize n = 0;
+	WCHAR *env_strings = GetEnvironmentStringsW ();
 
 	if (env_strings) {
-		env_string = env_strings;
+		WCHAR const *env_string = env_strings;
 		while (*env_string != '\0') {
 		/* weird case that MS seems to skip */
 			if (*env_string != '=')
@@ -121,22 +110,20 @@ mono_icall_get_environment_variable_names (MonoError *error)
 		}
 	}
 
-	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	MonoDomain *domain = mono_domain_get ();
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	if (env_strings) {
 		n = 0;
-		env_string = env_strings;
+		WCHAR const *env_string = env_strings;
 		while (*env_string != '\0') {
 			/* weird case that MS seems to skip */
 			if (*env_string != '=') {
-				equal_str = wcschr(env_string, '=');
-				g_assert(equal_str);
-				str = mono_string_new_utf16_checked (domain, env_string, (gint32)(equal_str - env_string), error);
+				WCHAR const * const equal_str = wcschr (env_string, '=');
+				g_assert (equal_str);
+				mono_new_string_utf16_to_array (names, n, domain, env_string, (gsize)(equal_str - env_string), error);
 				goto_if_nok (error, cleanup);
-
-				mono_array_setref_internal (names, n, str);
 				n++;
 			}
 			while (*env_string != '\0')
@@ -150,31 +137,24 @@ cleanup:
 	if (env_strings)
 		FreeEnvironmentStrings (env_strings);
 	if (!is_ok (error))
-		return NULL;
+		return NULL_HANDLE_ARRAY;
 	return names;
 }
 
-void
-mono_icall_set_environment_variable (MonoString *name, MonoString *value)
+ICALL_EXPORT void
+ves_icall_System_Environment_InternalSetEnvironmentVariable (const gunichar2 *utf16_name, gint32 name_length,
+		const gunichar2 *utf16_value, gint32 value_length, MonoError *error)
 {
-	gunichar2 *utf16_name, *utf16_value;
+	if (!utf16_value || !value_length || !utf16_value [0])
+		utf16_value = NULL;
 
-	utf16_name = name ? mono_string_chars_internal (name) : NULL;
-	if ((value == NULL) || (mono_string_length_internal (value) == 0) || (mono_string_chars_internal (value)[0] == 0)) {
-		SetEnvironmentVariable (utf16_name, NULL);
-		return;
-	}
-
-	utf16_value = mono_string_chars_internal (value);
-
-	SetEnvironmentVariable (utf16_name, utf16_value);
+	SetEnvironmentVariableW (utf16_name, utf16_value);
 }
 
 #if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
-MonoStringHandle
-mono_icall_get_windows_folder_path (int folder, MonoError *error)
+ICALL_EXPORT MonoStringHandle
+ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 {
-	error_init (error);
 	#ifndef CSIDL_FLAG_CREATE
 		#define CSIDL_FLAG_CREATE	0x8000
 	#endif
@@ -195,20 +175,20 @@ mono_icall_get_windows_folder_path (int folder, MonoError *error)
 ICALL_EXPORT void
 ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
-	SendMessageTimeout (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
+	SendMessageTimeoutW (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
 }
 #endif
 
 #if HAVE_API_SUPPORT_WIN32_WAIT_FOR_INPUT_IDLE
-gint32
-mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
+ICALL_EXPORT gint32
+ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
 {
 	return WaitForInputIdle (handle, milliseconds);
 }
 #endif
 
-void
-mono_icall_write_windows_debug_string (const gunichar2 *message)
+ICALL_EXPORT void
+ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message)
 {
 	OutputDebugString (message);
 }

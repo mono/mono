@@ -28,7 +28,7 @@ mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 }
 
 void
-mono_marshal_free_hglobal (gpointer ptr)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (gpointer ptr)
 {
 	GlobalFree (ptr);
 }
@@ -73,21 +73,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 		memcpy (ret, tres, len);
 	g_free (tres);
 	return ret;
-}
-
-gunichar2*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
-{
-	if (!s)
-		return NULL;
-
-	gsize const len = ((gsize)length + 1) * 2;
-	gunichar2 *res = (gunichar2*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
-	if (res) {
-		memcpy (res, s, length * 2);
-		res [length] = 0;
-	}
-	return res;
 }
 
 gpointer

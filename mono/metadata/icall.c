@@ -5705,6 +5705,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 
 		MONO_HANDLE_ASSIGN (exc, mono_get_exception_reflection_type_load_checked (res, exl, error));
 		return_val_if_nok (error, NULL_HANDLE_ARRAY);
+
 		mono_error_set_exception_handle (error, exc);
 		return NULL_HANDLE_ARRAY;
 	}
@@ -6727,10 +6728,9 @@ ves_icall_System_Environment_get_UserName (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static MonoStringHandle
-mono_icall_get_machine_name (MonoError *error)
+MonoStringHandle
+ves_icall_System_Environment_get_MachineName (MonoError *error)
 {
-	error_init (error);
 #if !defined(DISABLE_SOCKETS)
 	MonoStringHandle result;
 	char *buf;
@@ -6763,16 +6763,9 @@ mono_icall_get_machine_name (MonoError *error)
 }
 #endif /* !HOST_WIN32 */
 
-MonoStringHandle
-ves_icall_System_Environment_get_MachineName (MonoError *error)
-{
-	error_init (error);
-	return mono_icall_get_machine_name (error);
-}
-
 #ifndef HOST_WIN32
-static inline int
-mono_icall_get_platform (void)
+int
+ves_icall_System_Environment_get_Platform (MonoError *error)
 {
 #if defined(__MACH__)
 	/* OSX */
@@ -6791,30 +6784,15 @@ mono_icall_get_platform (void)
 }
 #endif /* !HOST_WIN32 */
 
-int
-ves_icall_System_Environment_get_Platform (void)
-{
-	return mono_icall_get_platform ();
-}
-
 #ifndef HOST_WIN32
-static inline MonoStringHandle
+MonoStringHandle
 mono_icall_get_new_line (MonoError *error)
 {
-	error_init (error);
 	return mono_string_new_handle (mono_domain_get (), "\n", error);
 }
-#endif /* !HOST_WIN32 */
 
-MonoStringHandle
-ves_icall_System_Environment_get_NewLine (MonoError *error)
-{
-	return mono_icall_get_new_line (error);
-}
-
-#ifndef HOST_WIN32
-static inline MonoBoolean
-mono_icall_is_64bit_os (void)
+ICALL_EXPORT MonoBoolean
+ves_icall_System_Environment_GetIs64BitOperatingSystem (MonoError *error)
 {
 #if SIZEOF_VOID_P == 8
 	return TRUE;
@@ -6830,12 +6808,6 @@ mono_icall_is_64bit_os (void)
 #endif
 }
 #endif /* !HOST_WIN32 */
-
-MonoBoolean
-ves_icall_System_Environment_GetIs64BitOperatingSystem (void)
-{
-	return mono_icall_is_64bit_os ();
-}
 
 MonoStringHandle
 ves_icall_System_Environment_GetEnvironmentVariable_native (const gchar *utf8_name, MonoError *error)
@@ -6892,34 +6864,40 @@ ves_icall_System_Environment_GetCommandLineArgs (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error)
-{
-	MonoArray *names;
-	MonoDomain *domain;
-	MonoString *str;
-	gchar **e, **parts;
-	int n;
 
-	error_init (error);
-	n = 0;
+static void
+mono_new_string_utf8_to_array (MonoArrayHandle array, gsize index,
+	MonoDomain *domain, const char *s, gsize length, MonoError *error)
+{
+	// Handle creation outside of loop.
+	HANDLE_FUNCTION_ENTER ();
+	MonoStringHandle t = mono_string_new_utf8_len_handle (domain, s, length, error);
+	MONO_HANDLE_ARRAY_SETREF (array, index, t);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
+{
+	char **e;
+	gsize n = 0;
+
 	for (e = environ; *e != 0; ++ e)
 		++ n;
 
-	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	MonoDomain *domain = mono_domain_get ();
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	n = 0;
 	for (e = environ; *e != 0; ++ e) {
-		parts = g_strsplit (*e, "=", 2);
+		char **parts = g_strsplit (*e, "=", 2);
 		if (*parts != 0) {
-			str = mono_string_new_checked (domain, *parts, error);
+			mono_new_string_utf8_to_array (names, n, domain, *parts, strlen (*parts), error);
 			if (!is_ok (error)) {
 				g_strfreev (parts);
-				return NULL;
+				return NULL_HANDLE_ARRAY;
 			}
-			mono_array_setref_internal (names, n, str);
 		}
 
 		g_strfreev (parts);
@@ -6931,50 +6909,31 @@ mono_icall_get_environment_variable_names (MonoError *error)
 }
 #endif /* !HOST_WIN32 */
 
-MonoArray *
-ves_icall_System_Environment_GetEnvironmentVariableNames (void)
-{
-	ERROR_DECL (error);
-	MonoArray *result = mono_icall_get_environment_variable_names (error);
-	mono_error_set_pending_exception (error);
-	return result;
-}
-
 #ifndef HOST_WIN32
-static void
-mono_icall_set_environment_variable (MonoString *name, MonoString *value)
+void
+ves_icall_System_Environment_InternalSetEnvironmentVariable (const gunichar2 *name, gint32 name_length,
+		const gunichar2 *value, gint32 value_length, MonoError *error)
 {
-	gchar *utf8_name, *utf8_value;
-	ERROR_DECL (error);
+	char *utf8_name = NULL;
+	char *utf8_value = NULL;
 
-	utf8_name = mono_string_to_utf8_checked_internal (name, error);	/* FIXME: this should be ascii */
-	if (mono_error_set_pending_exception (error))
-		return;
+	utf8_name = mono_utf16_to_utf8 (name, name_length, error); // FIXME: this should be ascii
+	goto_if_nok (error, exit);
 
-	if ((value == NULL) || (mono_string_length_internal (value) == 0) || (mono_string_chars_internal (value)[0] == 0)) {
+	if (!value || !value_length || !value [0]) {
 		g_unsetenv (utf8_name);
-		g_free (utf8_name);
-		return;
+		goto exit;
 	}
 
-	utf8_value = mono_string_to_utf8_checked_internal (value, error);
-	if (!is_ok (error)) {
-		g_free (utf8_name);
-		mono_error_set_pending_exception (error);
-		return;
-	}
+	utf8_value = mono_utf16_to_utf8 (value, value_length, error);
+	goto_if_nok (error, exit);
+
 	g_setenv (utf8_name, utf8_value, TRUE);
-
+exit:
 	g_free (utf8_name);
 	g_free (utf8_value);
 }
 #endif /* !HOST_WIN32 */
-
-void
-ves_icall_System_Environment_InternalSetEnvironmentVariable (MonoString *name, MonoString *value)
-{
-	mono_icall_set_environment_variable (name, value);
-}
 
 void
 ves_icall_System_Environment_Exit (int result)
@@ -7000,10 +6959,9 @@ ves_icall_System_Environment_GetGacPath (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static inline MonoStringHandle
-mono_icall_get_windows_folder_path (int folder, MonoError *error)
+ICALL_EXPORT MonoStringHandle
+ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 {
-	error_init (error);
 	g_warning ("ves_icall_System_Environment_GetWindowsFolderPath should only be called on Windows!");
 	return mono_string_new_handle (mono_domain_get (), "", error);
 }
@@ -7015,17 +6973,15 @@ ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 	return mono_icall_get_windows_folder_path (folder, error);
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static MonoArray *
-mono_icall_get_logical_drives (void)
+#if HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS || !defined (HOST_WIN32)
+
+MonoArrayHandle
+ves_icall_System_Environment_GetLogicalDrives (MonoError *error)
 {
-	ERROR_DECL (error);
 	gunichar2 buf [256], *ptr, *dname;
 	gunichar2 *u16;
 	guint initial_size = 127, size = 128;
 	gint ndrives;
-	MonoArray *result;
-	MonoString *drivestr;
 	MonoDomain *domain = mono_domain_get ();
 	gint len;
 
@@ -7052,20 +7008,17 @@ mono_icall_get_logical_drives (void)
 	} while (*dname);
 
 	dname = ptr;
-	result = mono_array_new_checked (domain, mono_defaults.string_class, ndrives, error);
-	if (mono_error_set_pending_exception (error))
-		goto leave;
+	MonoArrayHandle result = mono_array_new_handle (domain, mono_defaults.string_class, ndrives, error);
+	goto_if_nok (error, leave);
 
 	ndrives = 0;
 	do {
 		len = 0;
 		u16 = dname;
 		while (*u16) { u16++; len ++; }
-		drivestr = mono_string_new_utf16_checked (domain, dname, len, error);
-		if (mono_error_set_pending_exception (error))
-			goto leave;
 
-		mono_array_setref_internal (result, ndrives++, drivestr);
+		mono_new_string_utf16_to_array (result, ndrives++, domain, dname, len, error);
+		goto_if_nok (error, leave);
 		while (*dname++);
 	} while (*dname);
 
@@ -7075,25 +7028,19 @@ leave:
 
 	return result;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-MonoArray *
-ves_icall_System_Environment_GetLogicalDrives (void)
-{
-	return mono_icall_get_logical_drives ();
-}
+#endif // HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS || !defined (HOST_WIN32)
 
-MonoString *
-ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString *path)
+MonoStringHandle
+ves_icall_System_IO_DriveInfo_GetDriveFormat (const gunichar2 *path, int path_length, MonoError *error)
 {
-	ERROR_DECL (error);
 	gunichar2 volume_name [MAX_PATH + 1];
+
+	// FIXME check if path contains nuls
 	
-	if (mono_w32file_get_volume_information (mono_string_chars_internal (path), NULL, 0, NULL, NULL, NULL, volume_name, MAX_PATH + 1) == FALSE)
-		return NULL;
-	MonoString *result = mono_string_from_utf16_checked (volume_name, error);
-	mono_error_set_pending_exception (error);
-	return result;
+	if (mono_w32file_get_file_system_type (path, volume_name, MAX_PATH + 1) == FALSE)
+		return NULL_HANDLE_STRING;
+	return mono_string_new_utf16_handle (mono_domain_get (), volume_name, g_utf16_len (volume_name), error);
 }
 
 MonoStringHandle
@@ -7192,7 +7139,7 @@ ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
 }
 
-#endif
+#endif /* !HOST_WIN32 */
 
 gint32
 ves_icall_System_Environment_get_TickCount (void)
@@ -7330,7 +7277,6 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 }
 
 #ifndef PLATFORM_NO_DRIVEINFO
-MonoBoolean
 ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString *path_name, guint64 *free_bytes_avail,
 						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
 						gint32 *error)
@@ -7464,7 +7410,6 @@ ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_con
 	return get_bundled_machine_config (error);
 }
 
-
 MonoStringHandle
 ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 {
@@ -7526,18 +7471,13 @@ ves_icall_System_Diagnostics_Debugger_Log (int level, MonoStringHandle category,
 }
 
 #ifndef HOST_WIN32
-static inline void
-mono_icall_write_windows_debug_string (const gunichar2 *message)
+void
+ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message, MonoError *error)
 {
 	g_warning ("WriteWindowsDebugString called and HOST_WIN32 not defined!\n");
 }
 #endif /* !HOST_WIN32 */
 
-void
-ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message, MonoError *error)
-{
-	mono_icall_write_windows_debug_string (message);
-}
 
 /* Only used for value types */
 MonoObjectHandle
@@ -7781,21 +7721,20 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitecture (MonoError *error)
 {
-	error_init (error);
 	return mono_string_new_handle (mono_domain_get (), mono_config_get_cpu (), error);
 }
 
 int
-ves_icall_Interop_Sys_DoubleToString(double value, char *format, char *buffer, int bufferLength)
+ves_icall_Interop_Sys_DoubleToString(double value, const char *format, char *buffer, int bufferLength)
 {
-	return snprintf(buffer, bufferLength, format, value);
+	return snprintf (buffer, bufferLength, format, value);
 }
 
 void
-ves_icall_System_Runtime_RuntimeImports_ecvt_s(char *buffer, size_t sizeInBytes, double value, int count, int* dec, int* sign)
+ves_icall_System_Runtime_RuntimeImports_ecvt_s (char *buffer, size_t sizeInBytes, double value, int count, int* dec, int* sign)
 {
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
-	_ecvt_s(buffer, sizeInBytes, value, count, dec, sign);
+	_ecvt_s (buffer, sizeInBytes, value, count, dec, sign);
 #endif
 }
 
@@ -8050,18 +7989,12 @@ ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static inline gint32
-mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
+gint32
+ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
 {
 	return WAIT_TIMEOUT;
 }
 #endif /* !HOST_WIN32 */
-
-gint32
-ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
-{
-	return mono_icall_wait_for_input_idle (handle, milliseconds);
-}
 
 gint32
 ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (MonoError *error)
@@ -8493,7 +8426,7 @@ mono_lookup_icall_symbol (MonoMethod *m)
 }
 
 static MonoType*
-type_from_typename (char *type_name)
+type_from_typename (const char *type_name)
 {
 	MonoClass *klass = NULL;	/* assignment to shut GCC warning up */
 

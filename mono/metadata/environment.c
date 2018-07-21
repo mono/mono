@@ -26,7 +26,7 @@
 #include <sys/utsname.h>
 #endif
 
-static gint32 exitcode=0;
+static gint32 exitcode;
 
 /**
  * mono_environment_exitcode_get:
@@ -34,7 +34,7 @@ static gint32 exitcode=0;
 gint32
 mono_environment_exitcode_get (void)
 {
-	return(exitcode);
+	return exitcode;
 }
 
 /**
@@ -43,14 +43,13 @@ mono_environment_exitcode_get (void)
 void
 mono_environment_exitcode_set (gint32 value)
 {
-	exitcode=value;
+	exitcode = value;
 }
 
 /* note: we better manipulate the string in managed code (easier and safer) */
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 {
-	error_init (error);
 #ifdef HOST_WIN32
 	OSVERSIONINFOEX verinfo;
 
@@ -73,7 +72,7 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 	 * and .version is for things like kernel variants.
 	 */
 	struct utsname name;
-	char version [sizeof(name)];
+	char version [sizeof (name)];
 
 	if (uname (&name) >= 0) {
 		sprintf (version, "%s.%s", name.version, name.release);

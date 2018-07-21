@@ -12,6 +12,7 @@
 #include <windows.h>
 #include "mono/metadata/w32file-win32-internals.h"
 #include "mono/metadata/w32subset.h"
+#include "icall-decl.h"
 
 void
 mono_w32file_init (void)
@@ -347,16 +348,25 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 	return res;
 }
 
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
+#ifndef PLATFORM_NO_DRIVEINFO
+
+ICALL_EXPORT MonoBoolean
+ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, int path_name_length, guint64 *free_bytes_avail,
+						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
+						gint32 *win32error)
 {
 	gboolean result;
 	ULARGE_INTEGER wapi_free_bytes_avail;
 	ULARGE_INTEGER wapi_total_number_of_bytes;
 	ULARGE_INTEGER wapi_total_number_of_free_bytes;
 
+	*win32error = ERROR_SUCCESS;
+	// FIXME check for embedded nuls in native or managed
+
 	MONO_ENTER_GC_SAFE;
 	result = GetDiskFreeSpaceEx (path_name, &wapi_free_bytes_avail, &wapi_total_number_of_bytes, &wapi_total_number_of_free_bytes);
+	if (!result)
+		*win32error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	if (result) {
 		if (free_bytes_avail)
@@ -370,12 +380,14 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	return result;
 }
 
+#endif
+
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
-	res = GetVolumeInformation (path, volumename, volumesize, (PDWORD)outserial, (PDWORD)maxcomp, (PDWORD)fsflags, fsbuffer, fsbuffersize);
+	res = GetVolumeInformation (path, NULL, 0, NULL, NULL, NULL, fsbuffer, fsbuffersize);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
@@ -537,9 +549,10 @@ GetDriveTypeW (
 	PCWSTR RootPathName
 	);
 
-guint32
-mono_w32file_get_drive_type (const gunichar2 *root_path_name)
+ICALL_EXPORT guint32
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, int root_path_name_length)
 {
+	// FIXME check for embedded nuls in native or managed
 	guint32 res;
 	MONO_ENTER_GC_SAFE;
 	res = GetDriveType (root_path_name);

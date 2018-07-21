@@ -6500,6 +6500,19 @@ mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
 }
 
+void
+mono_new_string_utf16_to_array (MonoArrayHandle array, gsize index,
+	MonoDomain *domain, const guint16 *s, gsize length, MonoError *error)
+{
+	// Handle creation outside of loop.
+	HANDLE_FUNCTION_ENTER ();
+	MonoStringHandle t = mono_string_new_utf16_handle (domain, s, length, error);
+	goto_if_nok (error, exit);
+	MONO_HANDLE_ARRAY_SETREF (array, index, t);
+exit:
+	HANDLE_FUNCTION_RETURN ();
+}
+
 /**
  * mono_string_new_utf32_checked:
  * \param text a pointer to an utf32 string
