@@ -429,12 +429,20 @@ typedef enum {
 
 struct _MonoThreadInfo;
 
+typedef union _MonoInternalThreadLockFlags {
+	gpointer i;
+	struct {
+		gboolean free : 1;
+		gsize count : (sizeof (gpointer) * 8) - 1;
+	};
+} MonoInternalThreadLockFlags;
+
 struct _MonoInternalThread {
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
 	MonoThreadHandle *handle;
 	gpointer native_handle;
-	gpointer unused3;
+	MonoInternalThreadLockFlags lock_flags;
 	gunichar2  *name;
 	guint32	    name_len;
 	guint32	    state;

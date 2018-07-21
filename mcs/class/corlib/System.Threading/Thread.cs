@@ -51,7 +51,7 @@ namespace System.Threading {
 		// stores a thread handle
 		IntPtr handle;
 		IntPtr native_handle; // used only on Win32
-		IntPtr unused3;
+		IntPtr lock_flags;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
 		private int name_len; 
