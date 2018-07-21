@@ -81,9 +81,32 @@ enum {
 static MonoCoopMutex marshal_mutex;
 static gboolean marshal_mutex_initialized;
 
-static MonoNativeTlsKey last_error_tls_id;
+#define MONO_TLS_DATA \
+	MONO_TLS (int, last_error) \
+	MONO_TLS (GSList*, load_type_info) \
 
-static MonoNativeTlsKey load_type_info_tls_id;
+/*
+mono_tls_get_last_error ()
+mono_tls_set_last_error ()
+mono_tls_get_load_type_info ()
+mono_tls_set_load_type_info ()
+*/
+// Type must be pointer sized or smaller.
+#ifdef MONO_KEYWORD_THREAD
+#define MONO_TLS(type, name) \
+static MONO_KEYWORD_THREAD type mono_tls_ ## name; \
+static type mono_tls_get_ ## name (void) { return mono_tls_ ## name; } \
+static void mono_tls_set_ ## name (type a) { mono_tls_ ## name = a; }
+#else
+#define MONO_TLS(type, name) \
+static MonoNativeTlsKey mono_tls_ ## name ## _id; \
+static type mono_tls_get_ ## name (void) { return (type)(gsize)mono_native_tls_get_value (mono_tls_ ## name ## _id); } \
+static void mono_tls_set_ ## name (type a) { mono_native_tls_set_value (mono_tls_ ## name ## _id, (gpointer)(gsize)a); }
+#endif
+
+// Generate the data and get, set functions
+MONO_TLS_DATA
+#undef MONO_TLS
 
 static gboolean use_aot_wrappers;
 
@@ -151,8 +174,11 @@ mono_signature_no_pinvoke (MonoMethod *method)
 void
 mono_marshal_init_tls (void)
 {
-	mono_native_tls_alloc (&last_error_tls_id, NULL);
-	mono_native_tls_alloc (&load_type_info_tls_id, NULL);
+#ifndef MONO_KEYWORD_THREAD
+#define MONO_TLS(type, name) mono_native_tls_alloc (&mono_tls_ ## name ## _id, NULL);
+MONO_TLS_DATA
+#undef MONO_TLS
+#endif
 }
 
 MonoObject*
@@ -288,9 +314,11 @@ void
 mono_marshal_cleanup (void)
 {
 	mono_cominterop_cleanup ();
-
-	mono_native_tls_free (load_type_info_tls_id);
-	mono_native_tls_free (last_error_tls_id);
+#ifndef MONO_KEYWORD_THREAD
+#define MONO_TLS(type, name) mono_native_tls_free (&mono_tls_ ## name ## _id);
+MONO_TLS_DATA
+#undef MONO_TLS
+#endif
 	mono_coop_mutex_destroy (&marshal_mutex);
 	marshal_mutex_initialized = FALSE;
 }
@@ -4941,9 +4969,9 @@ mono_marshal_set_last_error (void)
 	 * wrapper transitions the runtime back to running mode. */
 #ifdef WIN32
 	MONO_REQ_GC_SAFE_MODE;
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (GetLastError ()));
+	mono_tls_set_last_error (GetLastError ());
 #else
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (errno));
+	mono_tls_set_last_error (errno);
 #endif
 }
 
@@ -4954,7 +4982,7 @@ mono_marshal_set_last_error_windows (int error)
 	/* This icall is called just after a P/Invoke call before the P/Invoke
 	 * wrapper transitions the runtime back to running mode. */
 	MONO_REQ_GC_SAFE_MODE;
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (error));
+	mono_tls_set_last_error (error);
 #endif
 }
 
@@ -5065,7 +5093,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const guint
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 {
-	return GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id));
+	return mono_tls_get_last_error ();
 }
 
 guint32 
@@ -5438,8 +5466,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateIn
 static gboolean
 mono_marshal_is_loading_type_info (MonoClass *klass)
 {
-	GSList *loads_list = (GSList *)mono_native_tls_get_value (load_type_info_tls_id);
-
+	GSList *loads_list = mono_tls_get_load_type_info ();
 	return g_slist_find (loads_list, klass) != NULL;
 }
 
@@ -5481,9 +5508,9 @@ mono_marshal_load_type_info (MonoClass* klass)
 	 * under initialization in a TLS list.
 	 */
 	g_assert (!mono_marshal_is_loading_type_info (klass));
-	loads_list = (GSList *)mono_native_tls_get_value (load_type_info_tls_id);
+	loads_list = mono_tls_get_load_type_info ();
 	loads_list = g_slist_prepend (loads_list, klass);
-	mono_native_tls_set_value (load_type_info_tls_id, loads_list);
+	mono_tls_set_load_type_info (loads_list);
 	
 	iter = NULL;
 	while ((field = mono_class_get_fields (klass, &iter))) {
@@ -5591,9 +5618,9 @@ mono_marshal_load_type_info (MonoClass* klass)
 		mono_marshal_load_type_info (m_class_get_element_class (klass));
 	}
 
-	loads_list = (GSList *)mono_native_tls_get_value (load_type_info_tls_id);
+	loads_list = mono_tls_get_load_type_info ();
 	loads_list = g_slist_remove (loads_list, klass);
-	mono_native_tls_set_value (load_type_info_tls_id, loads_list);
+	mono_tls_set_load_type_info (loads_list);
 
 	mono_marshal_lock ();
 	MonoMarshalType *info2 = mono_class_get_marshal_info (klass);
