@@ -973,8 +973,6 @@ get_simd_ctor_spill_area (MonoCompile *cfg, MonoClass *avector_klass)
 	if (!cfg->simd_ctor_var) {
 		cfg->simd_ctor_var = mono_compile_create_var (cfg, m_class_get_byval_arg (avector_klass), OP_LOCAL);
 		cfg->simd_ctor_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
-	} else {
-		g_assert (cfg->simd_ctor_var->klass == avector_klass);
 	}
 	return cfg->simd_ctor_var;
 }
@@ -3157,7 +3155,7 @@ emit_intrins_general (MonoCompile *cfg, const SimdIntrinsic *intrins, MonoMethod
  * mono_emit_sys_runtime_sse_intrinsics:
  *
  * Return NULL if the intrinsic is not supported/implemented.
- * Also return NULL if the CMETHOD is not an intrinsics.
+ * Also return NULL if the CMETHOD is not an intrinsic.
  * Also return NULL if the intrinsic doesn't support non-immediate arguments. In that case,
  * the caller should emit a call to CMETHOD, and when CMETHOD is compiled, a fully-expanded
  * version of the intrinsic will be emitted which supports non-immediate arguments.
@@ -3170,6 +3168,9 @@ mono_emit_sys_runtime_sse_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 	int dreg, opcode;
 	MonoClass *rklass = NULL;
 	MonoType *etype = NULL;
+
+	if (cfg->gsharedvt)
+		return NULL;
 
 	check_ordering (x86_sse_intrinsics, sizeof (x86_sse_intrinsics) / sizeof (SimdIntrinsic));
 	intrins = (const SimdIntrinsic*)mono_binary_search (cmethod->name, x86_sse_intrinsics, sizeof (x86_sse_intrinsics) / sizeof (SimdIntrinsic), sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);

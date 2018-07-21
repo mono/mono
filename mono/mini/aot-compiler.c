@@ -8056,6 +8056,41 @@ has_struct_constraint (MonoMethod *method)
 	return FALSE;
 }
 
+static gboolean
+matches_constraints (MonoMethod *method)
+{
+	MonoMethod *declaring = mono_method_get_declaring_generic_method (method);
+	MonoGenericContext *context = mono_method_get_context (method);
+
+	// FIXME: Check class constraints too
+	if (declaring->is_generic) {
+		MonoGenericContainer *container = mono_method_get_generic_container (declaring);
+
+		for (int i = 0; i < container->type_argc; ++i) {
+			MonoGenericParamInfo *info = mono_generic_container_get_param_info (container, i);
+
+			gboolean has_struct_constraint = FALSE;
+			MonoClass **constraints = info->constraints;
+			if (constraints) {
+				while (*constraints) {
+					MonoClass *c = *constraints;
+					if (c->image == mono_defaults.corlib && !strcmp (m_class_get_name_space (c), "System") && !strcmp (m_class_get_name (c), "ValueType")) {
+						has_struct_constraint = TRUE;
+						break;
+					}
+					constraints ++;
+				}
+			}
+			if (has_struct_constraint) {
+				MonoType *t = mini_get_underlying_type (context->method_inst->type_argv [i]);
+				if (t->type == MONO_TYPE_OBJECT)
+					return FALSE;
+			}
+		}
+	}
+	return TRUE;
+}
+
 /*
  * compile_method:
  *
@@ -8108,13 +8143,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	mono_atomic_inc_i32 (&acfg->stats.mcount);
 
-	if (method->is_inflated) {
-		/* Avoid compiling gshared instantiations which violate struct contains */
-		ERROR_DECL (error);
-		if (has_struct_constraint (mono_method_get_declaring_generic_method (method)) &&
-			(method == mini_get_shared_method_full (method, SHARE_MODE_NONE, error)))
-			return;
-	}
+	/* Avoid compiling gshared instantiations which violate struct contains */
+	if (method->is_inflated && !matches_constraints (method))
+		return;
 
 #if 0
 	if (method->is_generic || mono_class_is_gtd (method->klass)) {
