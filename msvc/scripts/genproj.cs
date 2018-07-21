@@ -883,7 +883,7 @@ public class MsbuildGenerator {
 			}
 		).ToList ();
 
-		if (commonFiles.Any (f => f.EndsWith("Consts.cs", StringComparison.Ordinal))) {
+		if (commonFiles.Any (f => f.EndsWith("build\\common\\Consts.cs"))) {
 			var genconstsRelativePath = "$(SolutionDir)\\msvc\\scripts\\genconsts.csproj";
 			result.Append ($"  <ItemGroup>{NewLine}");
 			result.Append ($"    <ProjectReference Include=\"{genconstsRelativePath}\">{NewLine}");
