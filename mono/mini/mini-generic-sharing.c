@@ -17,6 +17,7 @@
 #include <mono/metadata/method-builder-ilgen.h>
 #include <mono/metadata/method-builder-ilgen-internals.h>
 #include <mono/metadata/reflection-internals.h>
+#include <mono/metadata/abi-details.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/unlocked.h>
@@ -2041,7 +2042,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 
 		/* The value is offset by 1 */
 		if (m_class_is_valuetype (field->parent) && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
-			return GUINT_TO_POINTER (field->offset - sizeof (MonoObject) + 1);
+			return GUINT_TO_POINTER (field->offset - MONO_ABI_SIZEOF (MonoObject) + 1);
 		else
 			return GUINT_TO_POINTER (field->offset + 1);
 	}

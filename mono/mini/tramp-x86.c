@@ -49,7 +49,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 	unwind_ops = mono_arch_get_cie_program ();
 
-	x86_alu_membase_imm (code, X86_ADD, X86_ESP, this_pos, sizeof (MonoObject));
+	x86_alu_membase_imm (code, X86_ADD, X86_ESP, this_pos, MONO_ABI_SIZEOF (MonoObject));
 	x86_jump_code (code, addr);
 	g_assert ((code - start) < size);
 

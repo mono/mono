@@ -9,6 +9,7 @@
 #ifndef DISABLE_JIT
 
 #include <mono/metadata/gc-internals.h>
+#include <mono/metadata/abi-details.h>
 #include <mono/utils/mono-memory-model.h>
 
 #include "mini.h"
@@ -246,7 +247,7 @@ create_write_barrier_bitmap (MonoCompile *cfg, MonoClass *klass, unsigned *wb_bi
 
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
-		foffset = m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject): field->offset;
+		foffset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject): field->offset;
 		if (mini_type_is_reference (mono_field_get_type (field))) {
 			g_assert ((foffset % SIZEOF_VOID_P) == 0);
 			*wb_bitmap |= 1 << ((offset + foffset) / SIZEOF_VOID_P);

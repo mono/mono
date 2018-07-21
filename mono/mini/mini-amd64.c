@@ -406,14 +406,14 @@ collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, g
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (MONO_TYPE_ISSTRUCT (field->type)) {
-				collect_field_info_nested (mono_class_from_mono_type (field->type), fields_array, field->offset - sizeof (MonoObject), pinvoke, unicode);
+				collect_field_info_nested (mono_class_from_mono_type (field->type), fields_array, field->offset - MONO_ABI_SIZEOF (MonoObject), pinvoke, unicode);
 			} else {
 				int align;
 				StructFieldInfo f;
 
 				f.type = field->type;
 				f.size = mono_type_size (field->type, &align);
-				f.offset = field->offset - sizeof (MonoObject) + offset;
+				f.offset = field->offset - MONO_ABI_SIZEOF (MonoObject) + offset;
 
 				g_array_append_val (fields_array, f);
 			}

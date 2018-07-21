@@ -23,6 +23,7 @@
 
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/debug-internals.h>
+#include <mono/metadata/abi-details.h>
 
 #ifndef HOST_WIN32
 #include <mono/utils/freebsd-elf32.h>
@@ -1082,7 +1083,7 @@ emit_class_dwarf_info (MonoDwarfWriter *w, MonoClass *klass, gboolean vtype)
 				p = buf;
 				*p ++= DW_OP_plus_uconst;
 				if (m_class_is_valuetype (klass) && vtype)
-					encode_uleb128 (field->offset - sizeof (MonoObject), p, &p);
+					encode_uleb128 (field->offset - MONO_ABI_SIZEOF (MonoObject), p, &p);
 				else
 					encode_uleb128 (field->offset, p, &p);
 

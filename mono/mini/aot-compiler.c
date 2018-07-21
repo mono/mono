@@ -1404,7 +1404,7 @@ static void
 arm64_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *method, const char *call_target)
 {
 	emit_unset_mode (acfg);
-	fprintf (acfg->fp, "add x0, x0, %d\n", (int)(sizeof (MonoObject)));
+	fprintf (acfg->fp, "add x0, x0, %d\n", (int)(MONO_ABI_SIZEOF (MonoObject)));
 	fprintf (acfg->fp, "b %s\n", call_target);
 }
 
@@ -2161,7 +2161,7 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 
 	this_reg = mono_arch_get_this_arg_reg (NULL);
 	code = buf;
-	amd64_alu_reg_imm (code, X86_ADD, this_reg, sizeof (MonoObject));
+	amd64_alu_reg_imm (code, X86_ADD, this_reg, MONO_ABI_SIZEOF (MonoObject));
 
 	emit_bytes (acfg, buf, code - buf);
 	/* jump <method> */
@@ -2179,7 +2179,7 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 
 	code = buf;
 
-	x86_alu_membase_imm (code, X86_ADD, X86_ESP, this_pos, sizeof (MonoObject));
+	x86_alu_membase_imm (code, X86_ADD, X86_ESP, this_pos, MONO_ABI_SIZEOF (MonoObject));
 
 	emit_bytes (acfg, buf, code - buf);
 
@@ -2191,7 +2191,7 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 	guint8 *code;
 
 	if (acfg->thumb_mixed && cfg->compile_llvm) {
-		fprintf (acfg->fp, "add r0, r0, #%d\n", (int)sizeof (MonoObject));
+		fprintf (acfg->fp, "add r0, r0, #%d\n", (int)MONO_ABI_SIZEOF (MonoObject));
 		fprintf (acfg->fp, "b %s\n", call_target);
 		fprintf (acfg->fp, ".arm\n");
 		fprintf (acfg->fp, ".align 2\n");
@@ -2200,7 +2200,7 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 
 	code = buf;
 
-	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
 
 	emit_bytes (acfg, buf, code - buf);
 	/* jump to method */
@@ -2213,7 +2213,7 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 #elif defined(TARGET_POWERPC)
 	int this_pos = 3;
 
-	fprintf (acfg->fp, "\n\taddi %d, %d, %d\n", this_pos, this_pos, (int)sizeof (MonoObject));
+	fprintf (acfg->fp, "\n\taddi %d, %d, %d\n", this_pos, this_pos, (int)MONO_ABI_SIZEOF (MonoObject));
 	fprintf (acfg->fp, "\n\tb %s\n", call_target);
 #else
 	g_assert_not_reached ();

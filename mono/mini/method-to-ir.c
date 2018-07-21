@@ -3704,7 +3704,7 @@ handle_unbox (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, int context_use
 		mini_reset_cast_details (cfg);
 	}
 
-	NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_MP), obj_reg, sizeof (MonoObject));
+	NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_MP), obj_reg, MONO_ABI_SIZEOF (MonoObject));
 	MONO_ADD_INS (cfg->cbb, add);
 	add->type = STACK_MP;
 	add->klass = klass;
@@ -3746,7 +3746,7 @@ handle_unbox_gsharedvt (MonoCompile *cfg, MonoClass *klass, MonoInst *obj)
 
 	/* Non-ref case */
 	/* UNBOX */
-	NEW_BIALU_IMM (cfg, addr, OP_ADD_IMM, addr_reg, obj->dreg, sizeof (MonoObject));
+	NEW_BIALU_IMM (cfg, addr, OP_ADD_IMM, addr_reg, obj->dreg, MONO_ABI_SIZEOF (MonoObject));
 	MONO_ADD_INS (cfg->cbb, addr);
 
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
@@ -3837,7 +3837,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		if (managed_alloc && !(cfg->opt & MONO_OPT_SHARED)) {
 			if (known_instance_size) {
 				int size = mono_class_instance_size (klass);
-				if (size < sizeof (MonoObject))
+				if (size < MONO_ABI_SIZEOF (MonoObject))
 					g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
 
 				EMIT_NEW_ICONST (cfg, iargs [1], size);
@@ -3870,7 +3870,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 
 		if (managed_alloc) {
 			int size = mono_class_instance_size (klass);
-			if (size < sizeof (MonoObject))
+			if (size < MONO_ABI_SIZEOF (MonoObject))
 				g_error ("Invalid size %d for class %s", size, mono_type_get_full_name (klass));
 
 			EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
@@ -3948,7 +3948,7 @@ mini_emit_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_us
 		alloc = handle_alloc (cfg, klass, TRUE, context_used);
 		if (!alloc)
 			return NULL;
-		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), alloc->dreg, sizeof (MonoObject), val->dreg);
+		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), alloc->dreg, MONO_ABI_SIZEOF (MonoObject), val->dreg);
 		ins->opcode = OP_STOREV_MEMBASE;
 
 		EMIT_NEW_UNALU (cfg, res, OP_MOVE, dreg, alloc->dreg);
@@ -4005,7 +4005,7 @@ mini_emit_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_us
 	if (!alloc)
 		return NULL;
 
-	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), alloc->dreg, sizeof (MonoObject), val->dreg);
+	EMIT_NEW_STORE_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (klass), alloc->dreg, MONO_ABI_SIZEOF (MonoObject), val->dreg);
 	return alloc;
 }
 
@@ -4344,7 +4344,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 			MonoInst *add;
 
 			/* Unbox */
-			NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_MP), ins->dreg, sizeof (MonoObject));
+			NEW_BIALU_IMM (cfg, add, OP_ADD_IMM, alloc_dreg (cfg, STACK_MP), ins->dreg, MONO_ABI_SIZEOF (MonoObject));
 			MONO_ADD_INS (cfg->cbb, add);
 			/* Load value */
 			NEW_LOAD_MEMBASE_TYPE (cfg, ins, fsig->ret, add->dreg, 0);
@@ -9787,7 +9787,7 @@ calli_end:
 
 			/* INSTANCE CASE */
 
-			foffset = m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject): field->offset;
+			foffset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject): field->offset;
 			if (il_op == MONO_CEE_STFLD) {
 				sp [1] = convert_value (cfg, field->type, sp [1]);
 				if (target_type_is_incompatible (cfg, field->type, sp [1]))
@@ -9802,7 +9802,7 @@ calli_end:
 					iargs [0] = sp [0];
 					EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 					EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
-					EMIT_NEW_ICONST (cfg, iargs [3], m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject) : 
+					EMIT_NEW_ICONST (cfg, iargs [3], m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : 
 						    field->offset);
 					iargs [4] = sp [1];
 
@@ -9879,7 +9879,7 @@ calli_end:
 				iargs [0] = sp [0];
 				EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 				EMIT_NEW_FIELDCONST (cfg, iargs [2], field);
-				EMIT_NEW_ICONST (cfg, iargs [3], m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject) : field->offset);
+				EMIT_NEW_ICONST (cfg, iargs [3], m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 				if (cfg->opt & MONO_OPT_INLINE || cfg->compile_aot) {
 					costs = inline_method (cfg, wrapper, mono_method_signature (wrapper), 
 										   iargs, ip, cfg->real_offset, TRUE);

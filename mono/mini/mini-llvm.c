@@ -2908,7 +2908,7 @@ emit_unbox_tramp (EmitContext *ctx, const char *method_name, LLVMTypeRef method_
 			LLVMTypeRef arg_type = LLVMTypeOf (args [i]);
 
 			args [i] = LLVMBuildPtrToInt (builder, args [i], IntPtrType (), "");
-			args [i] = LLVMBuildAdd (builder, args [i], LLVMConstInt (IntPtrType (), sizeof (MonoObject), FALSE), "");
+			args [i] = LLVMBuildAdd (builder, args [i], LLVMConstInt (IntPtrType (), MONO_ABI_SIZEOF (MonoObject), FALSE), "");
 			args [i] = LLVMBuildIntToPtr (builder, args [i], arg_type, "");
 		}
 	}

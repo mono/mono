@@ -48,6 +48,7 @@
 #include "mono/metadata/handle.h"
 #include "mono/metadata/object-internals.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/abi-details.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -5526,7 +5527,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 		info->fields [j].field = field;
 
-		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == sizeof (MonoObject)) &&
+		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == MONO_ABI_SIZEOF (MonoObject)) &&
 			(strcmp (mono_field_get_name (field), "$PRIVATE$") == 0)) {
 			/* This field is a hack inserted by MCS to empty structures */
 			continue;
@@ -5548,7 +5549,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 			size = mono_marshal_type_size (field->type, info->fields [j].mspec, 
 						       &align, TRUE, m_class_is_unicode (klass));
 			min_align = MAX (align, min_align);
-			info->fields [j].offset = field->offset - sizeof (MonoObject);
+			info->fields [j].offset = field->offset - MONO_ABI_SIZEOF (MonoObject);
 			info->native_size = MAX (info->native_size, info->fields [j].offset + size);
 			break;
 		}	

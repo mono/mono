@@ -533,7 +533,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	unwind_ops = mono_arch_get_cie_program ();
 
 	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 4);
-	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
 	code = emit_bx (code, ARMREG_IP);
 	*(guint32*)code = (guint32)addr;
 	code += 4;

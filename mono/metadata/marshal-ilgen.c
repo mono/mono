@@ -126,7 +126,7 @@ offset_of_first_nonstatic_field (MonoClass *klass)
 	MonoClassField *klass_fields = m_class_get_fields (klass);
 	for (i = 0; i < fcount; i++) {
 		if (!(klass_fields[i].type->attrs & FIELD_ATTRIBUTE_STATIC) && !mono_field_is_deleted (&klass_fields[i]))
-			return klass_fields[i].offset - sizeof (MonoObject);
+			return klass_fields[i].offset - MONO_ABI_SIZEOF (MonoObject);
 	}
 
 	return 0;
@@ -480,7 +480,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		/* dst = pointer to newly created object data */
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icon (mb, sizeof (MonoObject));
+		mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_stloc (mb, 1); 
 
@@ -836,7 +836,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		/* src = pointer to object data */
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);		
-		mono_mb_emit_icon (mb, sizeof (MonoObject));
+		mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_stloc (mb, 0); 
 
@@ -4026,7 +4026,7 @@ emit_unbox_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method)
 	MonoMethodSignature *sig = mono_method_signature (method);
 
 	mono_mb_emit_ldarg (mb, 0); 
-	mono_mb_emit_icon (mb, sizeof (MonoObject));
+	mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
 	mono_mb_emit_byte (mb, CEE_ADD);
 	for (int i = 0; i < sig->param_count; ++i)
 		mono_mb_emit_ldarg (mb, i + 1);
@@ -5279,7 +5279,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_stloc (mb, conv_arg);
 
 			mono_mb_patch_branch (mb, pos);
@@ -5322,7 +5322,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			/* set the src_ptr */
 			mono_mb_emit_ldloc (mb, 0);
-			mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_stloc (mb, 0);
 
 			/* set dst_ptr */
@@ -5417,7 +5417,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		if (t->byref || (t->attrs & PARAM_ATTRIBUTE_OUT)) {
 			mono_mb_emit_ldloc (mb, 1);
-			mono_mb_emit_icon (mb, sizeof (MonoObject));
+			mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_byte (mb, CEE_ADD);
 			mono_mb_emit_stloc (mb, 1);
 			
@@ -5503,7 +5503,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			/* set dst  */
 	
 			mono_mb_emit_ldloc (mb, 3);
-			mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_stloc (mb, 1);
 								
 			/* emit conversion code */
@@ -5589,7 +5589,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_op (mb, CEE_MONO_NEWOBJ, klass);	
 		mono_mb_emit_stloc (mb, conv_arg);
 		mono_mb_emit_ldloc (mb, conv_arg);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_stloc (mb, 1); 
 
 		/* emit valuetype conversion code */
@@ -5623,7 +5623,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			
 			/* Set src */
 			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_stloc (mb, 0);
 
 			/* Allocate and set dest */
@@ -5650,7 +5650,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			/* Set src */
 			mono_mb_emit_ldloc (mb, conv_arg);
-			mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_stloc (mb, 0);
 
 			/* Set dest */
@@ -5687,7 +5687,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		/* Set src */
 		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_stloc (mb, 0);
 
 		/* Allocate and set dest */
@@ -6082,7 +6082,7 @@ emit_struct_to_ptr_ilgen (MonoMethodBuilder *mb, MonoClass *klass)
 	if (m_class_is_blittable (klass)) {
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
 		mono_mb_emit_byte (mb, CEE_LDARG_0);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_icon (mb, mono_class_value_size (klass, NULL));
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
@@ -6099,7 +6099,7 @@ emit_struct_to_ptr_ilgen (MonoMethodBuilder *mb, MonoClass *klass)
 
 		/* initialize src_ptr to point to the start of object data */
 		mono_mb_emit_byte (mb, CEE_LDARG_0);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_stloc (mb, 0);
 
 		/* initialize dst_ptr */
@@ -6118,7 +6118,7 @@ emit_ptr_to_struct_ilgen (MonoMethodBuilder *mb, MonoClass *klass)
 	MonoType *int_type = mono_get_int_type ();
 	if (m_class_is_blittable (klass)) {
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_byte (mb, CEE_LDARG_0);
 		mono_mb_emit_icon (mb, mono_class_value_size (klass, NULL));
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
@@ -6136,7 +6136,7 @@ emit_ptr_to_struct_ilgen (MonoMethodBuilder *mb, MonoClass *klass)
 
 		/* initialize dst_ptr */
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
-		mono_mb_emit_ldflda (mb, sizeof (MonoObject));
+		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_stloc (mb, 1);
 
 		emit_struct_conv (mb, klass, TRUE);
