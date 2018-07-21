@@ -1581,28 +1581,6 @@ corefx/BinaryEnums.cs
 
 coreclr/SorterArray.cs
 coreclr/MemberInfo.cs
-coreclr/System.Runtime.Intrinsics/Vector128.cs
-coreclr/System.Runtime.Intrinsics/Vector128DebugView.cs
-coreclr/System.Runtime.Intrinsics/Vector256.cs
-coreclr/System.Runtime.Intrinsics/Vector256DebugView.cs
-coreclr/System.Runtime.Intrinsics/Vector64.cs
-coreclr/System.Runtime.Intrinsics/Vector64DebugView.cs
-coreclr/System.Runtime.Intrinsics.X86/Aes.cs
-coreclr/System.Runtime.Intrinsics.X86/Avx.cs
-coreclr/System.Runtime.Intrinsics.X86/Avx2.cs
-coreclr/System.Runtime.Intrinsics.X86/Bmi1.cs
-coreclr/System.Runtime.Intrinsics.X86/Bmi2.cs
-coreclr/System.Runtime.Intrinsics.X86/Enums.cs
-coreclr/System.Runtime.Intrinsics.X86/Fma.cs
-coreclr/System.Runtime.Intrinsics.X86/Lzcnt.cs
-coreclr/System.Runtime.Intrinsics.X86/Pclmulqdq.cs
-coreclr/System.Runtime.Intrinsics.X86/Popcnt.cs
-coreclr/System.Runtime.Intrinsics.X86/Sse.cs
-coreclr/System.Runtime.Intrinsics.X86/Sse2.cs
-coreclr/System.Runtime.Intrinsics.X86/Sse3.cs
-coreclr/System.Runtime.Intrinsics.X86/Sse41.cs
-coreclr/System.Runtime.Intrinsics.X86/Sse42.cs
-coreclr/System.Runtime.Intrinsics.X86/Ssse3.cs
 
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
