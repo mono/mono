@@ -145,12 +145,4 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     fi
 else ${TESTCMD} --label=csprojdiff --skip
 fi
-if [[ $CI_TAGS == *'bclsizediff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    if ${TESTCMD} --label=bclsizediff --timeout=5m --fatal make -w -C mcs/tools/linker bcl-size-diff
-    then report_github_status "success" "BCL Linked Size Diff" "No BCL size changes found." || true
-    else report_github_status "error" "BCL Linked Size Diff" "The BCL size changed." "$BUILD_URL/BCL_20Size_20Diff/" || true
-    fi
-else ${TESTCMD} --label=bclsizediff --skip
-fi
 rm -fr /tmp/jenkins-temp-aspnet*

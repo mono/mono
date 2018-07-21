@@ -196,7 +196,7 @@
             oldTotalSize += oldAssemblySize;
             newTotalSize += newAssemblySize;
 
-            row.append($("<td>").attr("data-order", newAssemblySize).attr("data-oldsize", oldAssemblySize).attr("data-newsize", newAssemblySize).text(roundPretty(newAssemblySize / 1024) + " kB").append(getDiffIndicator(diff)));
+            row.append($("<td>").attr("data-order", newAssemblySize).attr("data-oldsize", oldAssemblySize).attr("data-newsize", newAssemblySize).attr("data-significant", Math.abs(diff) > 1024 ? true : false).text(roundPretty(newAssemblySize / 1024) + " kB").append(getDiffIndicator(diff)));
           });
 
           var totalDiff = newTotalSize - oldTotalSize;
