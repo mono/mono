@@ -1758,7 +1758,7 @@ interp_entry (InterpEntryData *data)
 }
 
 static MONO_NEVER_INLINE stackval *
-do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
+do_icall (ThreadContext *context, MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr)
 {
 	MonoLMFExt ext;
 	interp_push_lmf (&ext, context->current_frame);
@@ -1849,6 +1849,10 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 	default:
 		g_assert_not_reached ();
 	}
+
+	/* convert the native representation to the stackval representation */
+	if (sig)
+		stackval_from_data (sig->ret, &sp [-1], (char*) &sp [-1].data.p, sig->pinvoke);
 
 	interp_pop_lmf (&ext);
 	return sp;
@@ -2847,12 +2851,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		}
 		MINT_IN_CASE(MINT_CALLI_NAT_FAST) {
 			gpointer target_ip = sp [-1].data.p;
-			int opcode = *(guint16 *)(ip + 1);
+			MonoMethodSignature *csignature = rtm->data_items [* (guint16 *)(ip + 1)];
+			int opcode = *(guint16 *)(ip + 2);
 
 			sp--;
 			frame->ip = ip;
 
-			sp = do_icall (context, opcode, sp, target_ip);
+			sp = do_icall (context, csignature, opcode, sp, target_ip);
 			EXCEPTION_CHECKPOINT;
 			if (context->has_resume_state) {
 				if (frame == context->handler_frame)
@@ -2860,7 +2865,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				else
 					goto exit_frame;
 			}
-			ip += 2;
+			ip += 3;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALLI_NAT) {
@@ -4889,7 +4894,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				 * dummy frame that is stored in the lmf and serves as the transition frame
 				 */
 				context->current_frame = &child_frame;
-				do_icall (context, MINT_ICALL_V_P, &tmp_sp, mono_thread_get_undeniable_exception);
+				do_icall (context, NULL, MINT_ICALL_V_P, &tmp_sp, mono_thread_get_undeniable_exception);
 				context->current_frame = frame;
 
 				MonoException *abort_exc = (MonoException*)tmp_sp.data.p;
@@ -4920,7 +4925,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_V)
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
-			sp = do_icall (context, *ip, sp, rtm->data_items [*(guint16 *)(ip + 1)]);
+			sp = do_icall (context, NULL, *ip, sp, rtm->data_items [*(guint16 *)(ip + 1)]);
 			EXCEPTION_CHECKPOINT;
 			if (context->has_resume_state) {
 				if (frame == context->handler_frame)

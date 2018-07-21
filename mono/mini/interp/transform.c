@@ -1082,7 +1082,6 @@ interp_type_as_ptr (MonoType *tp)
 		return TRUE;
 	if ((tp)->type == MONO_TYPE_VALUETYPE && m_class_is_enumtype (tp->data.klass))
 		return TRUE;
-
 	return FALSE;
 }
 
@@ -1504,10 +1503,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			ADD_CODE(td, is_void ? MINT_VCALL : MINT_CALL);
 
 		if (calli) {
+			ADD_CODE(td, get_data_item_index (td, (void *)csignature));
 			if (op != -1)
 				ADD_CODE (td, op);
-			else
-				ADD_CODE(td, get_data_item_index (td, (void *)csignature));
 		} else {
 			ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_imethod (domain, target_method, error)));
 			return_if_nok (error);
