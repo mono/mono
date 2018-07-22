@@ -7,7 +7,7 @@ LIBRARY_WARN_AS_ERROR = yes
 KEYFILE = $(LIBRARY_SNK)
 
 LIB_REFS =
-LIB_MCS_FLAGS = /publicsign /nowarn:0618
+LIB_MCS_FLAGS = /publicsign /nowarn:0618 /unsafe
 
 XTEST_LIB_REFS =
 

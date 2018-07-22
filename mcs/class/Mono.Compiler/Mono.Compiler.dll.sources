@@ -4,9 +4,10 @@ Assembly/AssemblyInfo.cs
 Mono.Compiler/CompilationFlags.cs
 Mono.Compiler/CompilationResult.cs
 Mono.Compiler/CompilerInformation.cs
+Mono.Compiler/CompilerToRuntime.cs
 Mono.Compiler/ICompiler.cs
 Mono.Compiler/ICompilerInformation.cs
 Mono.Compiler/IDynamicInformation.cs
 Mono.Compiler/IStaticInformation.cs
 Mono.Compiler/MethodInfo.cs
-Mono.Compiler.Aot/AotRuntime.cs
+Mono.Compiler/NativeCodeHandle.cs
