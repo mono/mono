@@ -119,10 +119,8 @@ public class MainClass
 			UseShellExecute = false,
 			RedirectStandardOutput = true,
 		};
-		psi.EnvironmentVariables.Add ("MONO_ENV_OPTIONS", "--compile-all");
-
-		var envMethodSpec = string.Format("'{0}'", methodSpec);
-		psi.EnvironmentVariables.Add ("MONO_VERBOSE_METHOD", envMethodSpec);
+		psi.EnvironmentVariables["MONO_ENV_OPTIONS"] = "--compile-all";
+		psi.EnvironmentVariables["MONO_VERBOSE_METHOD"] = methodSpec;
 
 		return Process.Start (psi);
 	}
