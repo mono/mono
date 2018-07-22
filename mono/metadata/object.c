@@ -801,12 +801,14 @@ compute_class_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int
 	MonoClassField *field;
 	MonoClass *p;
 	guint32 pos;
-	int max_size;
+	int max_size, wordsize;
+
+	wordsize = TARGET_SIZEOF_VOID_P;
 
 	if (static_fields)
-		max_size = mono_class_data_size (klass) / sizeof (gpointer);
+		max_size = mono_class_data_size (klass) / wordsize;
 	else
-		max_size = m_class_get_instance_size (klass) / sizeof (gpointer);
+		max_size = m_class_get_instance_size (klass) / wordsize;
 	if (max_size > size) {
 		g_assert (offset <= 0);
 		bitmap = (gsize *)g_malloc0 ((max_size + BITMAP_EL_SIZE - 1) / BITMAP_EL_SIZE * sizeof (gsize));
@@ -842,7 +844,7 @@ compute_class_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int
 				/* special static */
 				continue;
 
-			pos = field->offset / sizeof (gpointer);
+			pos = field->offset / TARGET_SIZEOF_VOID_P;
 			pos += offset;
 
 			type = mono_type_get_underlying_type (field->type);
@@ -857,7 +859,7 @@ compute_class_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int
 			case MONO_TYPE_CLASS:
 			case MONO_TYPE_OBJECT:
 			case MONO_TYPE_ARRAY:
-				g_assert ((field->offset % sizeof(gpointer)) == 0);
+				g_assert ((field->offset % wordsize) == 0);
 
 				g_assert (pos < size || pos <= max_size);
 				bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
@@ -865,7 +867,7 @@ compute_class_bitmap (MonoClass *klass, gsize *bitmap, int size, int offset, int
 				break;
 			case MONO_TYPE_GENERICINST:
 				if (!mono_type_generic_inst_is_valuetype (type)) {
-					g_assert ((field->offset % sizeof(gpointer)) == 0);
+					g_assert ((field->offset % wordsize) == 0);
 
 					bitmap [pos / BITMAP_EL_SIZE] |= ((gsize)1) << (pos % BITMAP_EL_SIZE);
 					*max_set = MAX (*max_set, pos);
@@ -929,9 +931,11 @@ compute_class_non_ref_bitmap (MonoClass *klass, gsize *bitmap, int size, int off
 	MonoClassField *field;
 	MonoClass *p;
 	guint32 pos, pos2;
-	int max_size;
+	int max_size, wordsize;
 
-	max_size = class->instance_size / sizeof (gpointer);
+	wordsize = TARGET_SIZEOF_VOID_P;
+
+	max_size = class->instance_size / wordsize;
 	if (max_size >= size)
 		bitmap = g_malloc0 (sizeof (gsize) * ((max_size) + 1));
 
@@ -946,7 +950,7 @@ compute_class_non_ref_bitmap (MonoClass *klass, gsize *bitmap, int size, int off
 			if (field->type->byref)
 				break;
 
-			pos = field->offset / sizeof (gpointer);
+			pos = field->offset / wordsize;
 			pos += offset;
 
 			type = mono_type_get_underlying_type (field->type);
@@ -960,8 +964,8 @@ compute_class_non_ref_bitmap (MonoClass *klass, gsize *bitmap, int size, int off
 			case MONO_TYPE_I8:
 			case MONO_TYPE_U8:
 			case MONO_TYPE_R8:
-				if ((((field->offset + 7) / sizeof (gpointer)) + offset) != pos) {
-					pos2 = ((field->offset + 7) / sizeof (gpointer)) + offset;
+				if ((((field->offset + 7) / wordsize) + offset) != pos) {
+					pos2 = ((field->offset + 7) / wordsize) + offset;
 					bitmap [pos2 / BITMAP_EL_SIZE] |= ((gsize)1) << (pos2 % BITMAP_EL_SIZE);
 				}
 				/* fall through */
@@ -974,16 +978,16 @@ compute_class_non_ref_bitmap (MonoClass *klass, gsize *bitmap, int size, int off
 			case MONO_TYPE_I4:
 			case MONO_TYPE_U4:
 			case MONO_TYPE_R4:
-				if ((((field->offset + 3) / sizeof (gpointer)) + offset) != pos) {
-					pos2 = ((field->offset + 3) / sizeof (gpointer)) + offset;
+				if ((((field->offset + 3) / wordsize) + offset) != pos) {
+					pos2 = ((field->offset + 3) / wordsize) + offset;
 					bitmap [pos2 / BITMAP_EL_SIZE] |= ((gsize)1) << (pos2 % BITMAP_EL_SIZE);
 				}
 				/* fall through */
 			case MONO_TYPE_CHAR:
 			case MONO_TYPE_I2:
 			case MONO_TYPE_U2:
-				if ((((field->offset + 1) / sizeof (gpointer)) + offset) != pos) {
-					pos2 = ((field->offset + 1) / sizeof (gpointer)) + offset;
+				if ((((field->offset + 1) / wordsize) + offset) != pos) {
+					pos2 = ((field->offset + 1) / wordsize) + offset;
 					bitmap [pos2 / BITMAP_EL_SIZE] |= ((gsize)1) << (pos2 % BITMAP_EL_SIZE);
 				}
 				/* fall through */
