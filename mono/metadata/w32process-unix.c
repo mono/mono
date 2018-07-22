@@ -2111,18 +2111,21 @@ free_strings:
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 // ProcessStartInfo
-	MonoString *startInfo_filename,
-	MonoString *startInfo_arguments,
-	MonoString *startInfo_working_directory,
-	MonoString *startInfo_verb,
+	gunichar2 *startInfo_filename,
+	gunichar2 *startInfo_arguments,
+	int startInfo_arguments_length,
+	gunichar2 *startInfo_working_directory,
+	int startInfo_working_directory_length,
+	gunichar2 *startInfo_verb,
+	int startInfo_verb_length,
 	guint32 startInfo_window_style,
 	MonoBoolean startInfo_error_dialog,
 	gpointer startInfo_error_dialog_parent_handle,
 	MonoBoolean startInfo_use_shell_execute,
-	MonoString *startInfo_username,
-	MonoString *startInfo_domain,
+	gunichar2 *startInfo_username,
+	gunichar2 *startInfo_domain,
 	MonoObject *startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
-	MonoString *startInfo_password_in_clear_text,
+	gunichar2 *startInfo_password_in_clear_text,
 	MonoBoolean startInfo_load_user_profile,
 	MonoBoolean startInfo_redirect_standard_input,
 	MonoBoolean startInfo_redirect_standard_output,
@@ -2145,8 +2148,11 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 	MonoW32ProcessStartInfo startInfo = {
 		startInfo_filename,
 		startInfo_arguments,
+		startInfo_arguments_length,
 		startInfo_working_directory,
+		startInfo_working_directory_length,
 		startInfo_verb,
+		startInfo_verb_length,
 		startInfo_window_style,
 		startInfo_error_dialog,
 		startInfo_error_dialog_parent_handle,
@@ -2178,11 +2184,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 	MonoW32ProcessStartInfo *proc_start_info = &startInfo;
 	MonoW32ProcessInfo *process_info = &procInfo;
 
-	const gunichar2 *lpFile;
-	const gunichar2 *lpParameters;
-	const gunichar2 *lpDirectory;
-	gunichar2 *args;
-	gboolean ret;
+	gboolean ret = FALSE;
 	gboolean handler_needswait = FALSE;
 
 	if (!proc_start_info->filename) {
@@ -2191,17 +2193,16 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 		goto done;
 	}
 
-	lpFile = proc_start_info->filename ? mono_string_chars (proc_start_info->filename) : NULL;
-	lpParameters = proc_start_info->arguments ? mono_string_chars (proc_start_info->arguments) : NULL;
-	lpDirectory = proc_start_info->working_directory && mono_string_length (proc_start_info->working_directory) != 0 ?
-		mono_string_chars (proc_start_info->working_directory) : NULL;
+	const gunichar2 *lpFile = proc_start_info->filename;
+	const gunichar2 *lpParameters = proc_start_info->arguments;
+	const gunichar2 *lpDirectory = proc_start_info->working_directory_length ? proc_start_info->working_directory : NULL;
 
 	/* Put both executable and parameters into the second argument
 	 * to process_create (), so it searches $PATH.  The conversion
 	 * into and back out of utf8 is because there is no
 	 * g_strdup_printf () equivalent for gunichar2 :-(
 	 */
-	args = utf16_concat (utf16_quote, lpFile, utf16_quote, lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
+	gunichar2 *args = utf16_concat (utf16_quote, lpFile, utf16_quote, lpParameters == NULL ? NULL : utf16_space, lpParameters, NULL);
 	if (args == NULL) {
 		mono_w32error_set_last (ERROR_INVALID_DATA);
 		ret = FALSE;
@@ -2352,7 +2353,7 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2
 
 	*shell_path = NULL;
 
-	if (process_get_complete_path (mono_string_chars (proc_start_info->filename), &complete_path)) {
+	if (process_get_complete_path (proc_start_info->filename, &complete_path)) {
 		*shell_path = g_utf8_to_utf16 (complete_path, -1, NULL, NULL, NULL);
 		g_free (complete_path);
 	}
@@ -2366,18 +2367,21 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	gpointer stdout_handle,
 	gpointer stderr_handle,
 // ProcessStartInfo
-	MonoString *startInfo_filename,
-	MonoString *startInfo_arguments,
-	MonoString *startInfo_working_directory,
-	MonoString *startInfo_verb,
+	gunichar2 *startInfo_filename,
+	gunichar2 *startInfo_arguments,
+	int startInfo_arguments_length,
+	gunichar2 *startInfo_working_directory,
+	int startInfo_working_directory_length,
+	gunichar2 *startInfo_verb,
+	int startInfo_verb_length,
 	guint32 startInfo_window_style,
 	MonoBoolean startInfo_error_dialog,
 	gpointer startInfo_error_dialog_parent_handle,
 	MonoBoolean startInfo_use_shell_execute,
-	MonoString *startInfo_username,
-	MonoString *startInfo_domain,
+	gunichar2 *startInfo_username,
+	gunichar2 *startInfo_domain,
 	MonoObject *startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
-	MonoString *startInfo_password_in_clear_text,
+	gunichar2 *startInfo_password_in_clear_text,
 	MonoBoolean startInfo_load_user_profile,
 	MonoBoolean startInfo_redirect_standard_input,
 	MonoBoolean startInfo_redirect_standard_output,
@@ -2400,8 +2404,11 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	MonoW32ProcessStartInfo startInfo = {
 		startInfo_filename,
 		startInfo_arguments,
+		startInfo_arguments_length,
 		startInfo_working_directory,
+		startInfo_working_directory_length,
 		startInfo_verb,
+		startInfo_verb_length,
 		startInfo_window_style,
 		startInfo_error_dialog,
 		startInfo_error_dialog_parent_handle,
@@ -2434,10 +2441,8 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	MonoW32ProcessInfo *process_info = &procInfo;
 
 	gboolean ret;
-	gunichar2 *dir;
 	StartupHandles startup_handles;
 	gunichar2 *shell_path = NULL;
-	gunichar2 *args = NULL;
 
 	memset (&startup_handles, 0, sizeof (startup_handles));
 	startup_handles.input = stdin_handle;
@@ -2449,12 +2454,10 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 		return FALSE;
 	}
 
-	args = proc_start_info->arguments && mono_string_length (proc_start_info->arguments) > 0 ?
-			mono_string_chars (proc_start_info->arguments): NULL;
+	gunichar2 *args = (proc_start_info->arguments_length > 0) ? proc_start_info->arguments: NULL;
 
 	/* The default dir name is "".  Turn that into NULL to mean "current directory" */
-	dir = proc_start_info->working_directory && mono_string_length (proc_start_info->working_directory) > 0 ?
-			mono_string_chars (proc_start_info->working_directory) : NULL;
+	gunichar2 *dir = (proc_start_info->working_directory_length > 0) ? proc_start_info->working_directory : NULL;
 
 	ret = process_create (shell_path, args, dir, &startup_handles, process_info);
 

@@ -74,18 +74,21 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 // ProcessStartInfo
-	MonoString *startInfo_filename,
-	MonoString *startInfo_arguments,
-	MonoString *startInfo_working_directory,
-	MonoString *startInfo_verb,
+	gunichar2 *startInfo_filename,
+	gunichar2 *startInfo_arguments,
+	int startInfo_arguments_length,
+	gunichar2 *startInfo_working_directory,
+	int startInfo_working_directory_length,
+	gunichar2 *startInfo_verb,
+	int startInfo_verb_length,
 	guint32 startInfo_window_style,
 	MonoBoolean startInfo_error_dialog,
 	gpointer startInfo_error_dialog_parent_handle,
 	MonoBoolean startInfo_use_shell_execute,
-	MonoString *startInfo_username,
-	MonoString *startInfo_domain,
-	MonoObject *startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
-	MonoString *startInfo_password_in_clear_text,
+	gunichar2 *startInfo_username,
+	gunichar2 *startInfo_domain,
+	MonoObject *startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
+	gunichar2 *startInfo_password_in_clear_text,
 	MonoBoolean startInfo_load_user_profile,
 	MonoBoolean startInfo_redirect_standard_input,
 	MonoBoolean startInfo_redirect_standard_output,
@@ -97,26 +100,29 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 	MonoObject *startInfo_envVars,
 // ProcessInfo
 	gpointer *procInfo_process_handle,
-	guint32 *procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+	guint32 *procInfo_pid, // Contains mono_w32error_get_last () on failure
 	MonoArray **procInfo_env_variables,
 	MonoString **procInfo_username,
 	MonoString **procInfo_domain,
-	gpointer *procInfo_password, /* BSTR from SecureString in 2.0 profile */
+	gpointer *procInfo_password, // BSTR from SecureString in 2.0 profile
 	MonoBoolean *procInfo_load_user_profile
 	)
 {
 	MonoW32ProcessStartInfo startInfo = {
 		startInfo_filename,
 		startInfo_arguments,
+		startInfo_arguments_length,
 		startInfo_working_directory,
+		startInfo_working_directory_length,
 		startInfo_verb,
+		startInfo_verb_length,
 		startInfo_window_style,
 		startInfo_error_dialog,
 		startInfo_error_dialog_parent_handle,
 		startInfo_use_shell_execute,
 		startInfo_username,
 		startInfo_domain,
-		startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
+		startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
 		startInfo_password_in_clear_text,
 		startInfo_load_user_profile,
 		startInfo_redirect_standard_input,
@@ -130,11 +136,11 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 	};
 	MonoW32ProcessInfo procInfo = {
 		*procInfo_process_handle,
-		*procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+		*procInfo_pid, // Contains mono_w32error_get_last () on failure
 		*procInfo_env_variables,
 		*procInfo_username,
 		*procInfo_domain,
-		*procInfo_password, /* BSTR from SecureString in 2.0 profile */
+		*procInfo_password, // BSTR from SecureString in 2.0 profile
 		*procInfo_load_user_profile
 	};
 
@@ -149,29 +155,22 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
 	shellex.nShow = (gulong)proc_start_info->window_style;
 	shellex.nShow = (gulong)((shellex.nShow == 0) ? 1 : (shellex.nShow == 1 ? 0 : shellex.nShow));
 
-	if (proc_start_info->filename != NULL) {
-		shellex.lpFile = mono_string_chars (proc_start_info->filename);
-	}
+	if (proc_start_info->filename)
+		shellex.lpFile = proc_start_info->filename;
 
-	if (proc_start_info->arguments != NULL) {
-		shellex.lpParameters = mono_string_chars (proc_start_info->arguments);
-	}
+	if (proc_start_info->arguments)
+		shellex.lpParameters = proc_start_info->arguments;
 
-	if (proc_start_info->verb != NULL &&
-	    mono_string_length (proc_start_info->verb) != 0) {
-		shellex.lpVerb = mono_string_chars (proc_start_info->verb);
-	}
+	if (proc_start_info->verb_length)
+		shellex.lpVerb = proc_start_info->verb;
 
-	if (proc_start_info->working_directory != NULL &&
-	    mono_string_length (proc_start_info->working_directory) != 0) {
-		shellex.lpDirectory = mono_string_chars (proc_start_info->working_directory);
-	}
+	if (proc_start_info->working_directory_length)
+		shellex.lpDirectory = proc_start_info->working_directory;
 
-	if (proc_start_info->error_dialog) {	
+	if (proc_start_info->error_dialog)
 		shellex.hwnd = proc_start_info->error_dialog_parent_handle;
-	} else {
+	else
 		shellex.fMask = (gulong)(shellex.fMask | SEE_MASK_FLAG_NO_UI);
-	}
 
 	ret = ShellExecuteEx (&shellex);
 	if (ret == FALSE) {
@@ -218,8 +217,8 @@ mono_process_create_process (MonoW32ProcessInfo *mono_process_info, MonoString *
 	if (mono_process_info->username) {
 		guint32 logon_flags = mono_process_info->load_user_profile ? LOGON_WITH_PROFILE : 0;
 
-		result = CreateProcessWithLogonW (mono_string_chars (mono_process_info->username),
-						  mono_process_info->domain ? mono_string_chars (mono_process_info->domain) : NULL,
+		result = CreateProcessWithLogonW (mono_process_info->username,
+						  mono_process_info->domain.
 						  (const gunichar2 *)mono_process_info->password,
 						  logon_flags,
 						  NULL,
@@ -317,7 +316,7 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, MonoStrin
 
 	*cmd = proc_start_info->arguments;
 
-	if (process_complete_path (mono_string_chars (proc_start_info->filename), &spath)) {
+	if (process_complete_path (proc_start_info->filename, &spath)) {
 		/* Seems like our CreateProcess does not work as the windows one.
 		 * This hack is needed to deal with paths containing spaces */
 		if (*cmd) {
@@ -347,18 +346,21 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	HANDLE stdout_handle,
 	HANDLE stderr_handle,
 // ProcessStartInfo
-	MonoString *startInfo_filename,
-	MonoString *startInfo_arguments,
-	MonoString *startInfo_working_directory,
-	MonoString *startInfo_verb,
+	gunichar2 *startInfo_filename,
+	gunichar2 *startInfo_arguments,
+	int startInfo_arguments_length,
+	gunichar2 *startInfo_working_directory,
+	int startInfo_working_directory_length,
+	gunichar2 *startInfo_verb,
+	int startInfo_verb_length,
 	guint32 startInfo_window_style,
 	MonoBoolean startInfo_error_dialog,
 	gpointer startInfo_error_dialog_parent_handle,
 	MonoBoolean startInfo_use_shell_execute,
-	MonoString *startInfo_username,
-	MonoString *startInfo_domain,
-	MonoObject *startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
-	MonoString *startInfo_password_in_clear_text,
+	gunichar2 *startInfo_username,
+	gunichar2 *startInfo_domain,
+	MonoObject *startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
+	gunichar2 *startInfo_password_in_clear_text,
 	MonoBoolean startInfo_load_user_profile,
 	MonoBoolean startInfo_redirect_standard_input,
 	MonoBoolean startInfo_redirect_standard_output,
@@ -370,26 +372,29 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	MonoObject *startInfo_envVars,
 // ProcessInfo
 	gpointer *procInfo_process_handle,
-	guint32 *procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+	guint32 *procInfo_pid, // Contains mono_w32error_get_last () on failure
 	MonoArray **procInfo_env_variables,
 	MonoString **procInfo_username,
 	MonoString **procInfo_domain,
-	gpointer *procInfo_password, /* BSTR from SecureString in 2.0 profile */
+	gpointer *procInfo_password, // BSTR from SecureString in 2.0 profile
 	MonoBoolean *procInfo_load_user_profile
 	)
 {
 	MonoW32ProcessStartInfo startInfo = {
 		startInfo_filename,
 		startInfo_arguments,
+		startInfo_arguments_length,
 		startInfo_working_directory,
+		startInfo_working_directory_length,
 		startInfo_verb,
+		startInfo_verb_length,
 		startInfo_window_style,
 		startInfo_error_dialog,
 		startInfo_error_dialog_parent_handle,
 		startInfo_use_shell_execute,
 		startInfo_username,
 		startInfo_domain,
-		startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
+		startInfo_password, // SecureString in 2.0 profile, dummy in 1.x
 		startInfo_password_in_clear_text,
 		startInfo_load_user_profile,
 		startInfo_redirect_standard_input,
@@ -403,11 +408,11 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	};
 	MonoW32ProcessInfo procInfo = {
 		*procInfo_process_handle,
-		*procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+		*procInfo_pid, // Contains mono_w32error_get_last () on failure
 		*procInfo_env_variables,
 		*procInfo_username,
 		*procInfo_domain,
-		*procInfo_password, /* BSTR from SecureString in 2.0 profile */
+		*procInfo_password, // BSTR from SecureString in 2.0 profile
 		*procInfo_load_user_profile
 	};
 
@@ -465,10 +470,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (
 	/* The default dir name is "".  Turn that into NULL to mean
 	 * "current directory"
 	 */
-	if (proc_start_info->working_directory == NULL || mono_string_length (proc_start_info->working_directory) == 0)
-		dir = NULL;
-	else
-		dir = mono_string_chars (proc_start_info->working_directory);
+	dir = proc_start_info->working_directory_length ? proc_start_info->working_directory : NULL;
 
 	ret = mono_process_create_process (process_info, cmd, creation_flags, env_vars, dir, &startinfo, &procinfo);
 

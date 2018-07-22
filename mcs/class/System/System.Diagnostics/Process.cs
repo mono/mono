@@ -562,20 +562,23 @@ namespace System.Diagnostics
 
 #if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool ShellExecuteEx_internal (
+		private unsafe extern static bool ShellExecuteEx_internal (
 			// ProcessStartInfo
-			string startInfo_fileName,
-			string startInfo_arguments,
-			string startInfo_directory,
-			string startInfo_verb,
+			char *startInfo_fileName,
+			char *startInfo_arguments,
+			int startInfo_arguments_length,
+			char *startInfo_directory,
+			int startInfo_directory_length,
+			char *startInfo_verb,
+			int startInfo_verb_length,
 			ProcessWindowStyle startInfo_windowStyle,
 			bool startInfo_errorDialog,
 			IntPtr startInfo_errorDialogParentHandle,
 			bool startInfo_useShellExecute,
-			string startInfo_userName,
-			string startInfo_domain,
+			char *startInfo_userName,
+			char *startInfo_domain,
 			SecureString startInfo_password,
-			string startInfo_passwordInClearText,
+			char *startInfo_passwordInClearText,
 			bool startInfo_loadUserProfile,
 			bool startInfo_redirectStandardInput,
 			bool startInfo_redirectStandardOutput,
@@ -595,23 +598,35 @@ namespace System.Diagnostics
 			ref bool procInfo_LoadUserProfile
 			);
 
-		private static bool ShellExecuteEx (
+		private unsafe static bool ShellExecuteEx (
 			ProcessStartInfo startInfo,
 			ref ProcInfo procInfo)
 		{
+			fixed (char *startInfo_fileName = startInfo.fileName)
+			fixed (char *startInfo_arguments = startInfo.arguments)
+			fixed (char *startInfo_directory = startInfo.directory)
+			fixed (char *startInfo_verb = startInfo.verb)
+			fixed (char *startInfo_userName = startInfo.userName)
+			fixed (char *startInfo_domain = startInfo.domain)
+			fixed (char *startInfo_passwordInClearText = startInfo.passwordInClearText)
+
+			// FIXME Prune this.
 			return ShellExecuteEx_internal (
-				startInfo.fileName,
-				startInfo.arguments,
-				startInfo.directory,
-				startInfo.verb,
+				startInfo_fileName,
+				startInfo_arguments,
+				(startInfo.arguments != null) ? startInfo.arguments.Length : 0,
+				startInfo_directory,
+				(startInfo.directory != null) ? startInfo.directory.Length : 0,
+				startInfo_verb,
+				(startInfo.verb != null) ? startInfo.verb.Length : 0,
 				startInfo.windowStyle,
 				startInfo.errorDialog,
 				startInfo.errorDialogParentHandle,
 				startInfo.useShellExecute,
-				startInfo.userName,
-				startInfo.domain,
+				startInfo_userName,
+				startInfo_domain,
 				startInfo.password,
-				startInfo.passwordInClearText,
+				startInfo_passwordInClearText,
 				startInfo.loadUserProfile,
 				startInfo.redirectStandardInput,
 				startInfo.redirectStandardOutput,
@@ -631,23 +646,26 @@ namespace System.Diagnostics
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool CreateProcess_internal(
+		private unsafe extern static bool CreateProcess_internal(
 			IntPtr stdin,
 			IntPtr stdout,
 			IntPtr stderr,
 			// ProcessStartInfo
-			string startInfo_fileName,
-			string startInfo_arguments,
-			string startInfo_directory,
-			string startInfo_verb,
+			char *startInfo_fileName,
+			char *startInfo_arguments,
+			int startInfo_arguments_length,
+			char *startInfo_directory,
+			int startInfo_directory_length,
+			char *startInfo_verb,
+			int startInfo_verb_length,
 			ProcessWindowStyle startInfo_windowStyle,
 			bool startInfo_errorDialog,
 			IntPtr startInfo_errorDialogParentHandle,
 			bool startInfo_useShellExecute,
-			string startInfo_userName,
-			string startInfo_domain,
+			char *startInfo_userName,
+			char *startInfo_domain,
 			SecureString startInfo_password,
-			string startInfo_passwordInClearText,
+			char *startInfo_passwordInClearText,
 			bool startInfo_loadUserProfile,
 			bool startInfo_redirectStandardInput,
 			bool startInfo_redirectStandardOutput,
@@ -667,7 +685,7 @@ namespace System.Diagnostics
 			ref bool procInfo_LoadUserProfile
 			);
 
-		private static bool CreateProcess(
+		private unsafe static bool CreateProcess(
 			IntPtr stdin,
 			IntPtr stdout,
 			IntPtr stderr,
@@ -675,22 +693,34 @@ namespace System.Diagnostics
 			ref ProcInfo procInfo
 			)
 		{
+			fixed (char *startInfo_fileName = startInfo.fileName)
+			fixed (char *startInfo_arguments = startInfo.arguments)
+			fixed (char *startInfo_directory = startInfo.directory)
+			fixed (char *startInfo_verb = startInfo.verb)
+			fixed (char *startInfo_userName = startInfo.userName)
+			fixed (char *startInfo_domain = startInfo.domain)
+			fixed (char *startInfo_passwordInClearText = startInfo.passwordInClearText)
+
+			// FIXME Prune this.
 			return CreateProcess_internal(
 				stdin,
 				stdout,
 				stderr,
-				startInfo.fileName,
-				startInfo.arguments,
-				startInfo.directory,
-				startInfo.verb,
+				startInfo_fileName,
+				startInfo_arguments,
+				(startInfo.arguments != null) ? startInfo.arguments.Length : 0,
+				startInfo_directory,
+				(startInfo.directory != null) ? startInfo.directory.Length : 0,
+				startInfo_verb,
+				(startInfo.verb != null) ? startInfo.verb.Length : 0,
 				startInfo.windowStyle,
 				startInfo.errorDialog,
 				startInfo.errorDialogParentHandle,
 				startInfo.useShellExecute,
-				startInfo.userName,
-				startInfo.domain,
+				startInfo_userName,
+				startInfo_domain,
 				startInfo.password,
-				startInfo.passwordInClearText,
+				startInfo_passwordInClearText,
 				startInfo.loadUserProfile,
 				startInfo.redirectStandardInput,
 				startInfo.redirectStandardOutput,
