@@ -120,7 +120,9 @@ public class MainClass
 			RedirectStandardOutput = true,
 		};
 		psi.EnvironmentVariables.Add ("MONO_ENV_OPTIONS", "--compile-all");
-		psi.EnvironmentVariables.Add ("MONO_VERBOSE_METHOD", methodSpec);
+
+		var envMethodSpec = string.Format("'{0}'", methodSpec);
+		psi.EnvironmentVariables.Add ("MONO_VERBOSE_METHOD", envMethodSpec);
 
 		return Process.Start (psi);
 	}
