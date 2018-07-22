@@ -562,10 +562,152 @@ namespace System.Diagnostics
 
 #if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo, ref ProcInfo procInfo);
+		private extern static bool ShellExecuteEx_internal (
+			// ProcessStartInfo
+			string startInfo_fileName,
+			string startInfo_arguments,
+			string startInfo_directory,
+			string startInfo_verb,
+			ProcessWindowStyle startInfo_windowStyle,
+			bool startInfo_errorDialog,
+			IntPtr startInfo_errorDialogParentHandle,
+			bool startInfo_useShellExecute,
+			string startInfo_userName,
+			string startInfo_domain,
+			SecureString startInfo_password,
+			string startInfo_passwordInClearText,
+			bool startInfo_loadUserProfile,
+			bool startInfo_redirectStandardInput,
+			bool startInfo_redirectStandardOutput,
+			bool startInfo_redirectStandardError,
+			Encoding startInfo_standardOutputEncoding,
+			Encoding startInfo_standardErrorEncoding,
+			bool startInfo_createNoWindow,
+			WeakReference startInfo_weakParentProcess,
+			object/*StringDictionary*/ startInfo_environmentVariables,
+			// ProcInfo
+			ref IntPtr procInfo_process_handle,
+			ref int procInfo_pid,
+			ref string[] procInfo_envVariables,
+			ref string procInfo_UserName,
+			ref string procInfo_Domain,
+			ref IntPtr procInfo_Password,
+			ref bool procInfo_LoadUserProfile
+			);
+
+		private static bool ShellExecuteEx (
+			ProcessStartInfo startInfo,
+			ref ProcInfo procInfo)
+		{
+			return ShellExecuteEx_internal (
+				startInfo.fileName,
+				startInfo.arguments,
+				startInfo.directory,
+				startInfo.verb,
+				startInfo.windowStyle,
+				startInfo.errorDialog,
+				startInfo.errorDialogParentHandle,
+				startInfo.useShellExecute,
+				startInfo.userName,
+				startInfo.domain,
+				startInfo.password,
+				startInfo.passwordInClearText,
+				startInfo.loadUserProfile,
+				startInfo.redirectStandardInput,
+				startInfo.redirectStandardOutput,
+				startInfo.redirectStandardError,
+				startInfo.standardOutputEncoding,
+				startInfo.standardErrorEncoding,
+				startInfo.createNoWindow,
+				startInfo.weakParentProcess,
+				startInfo.environmentVariables,
+				ref procInfo.process_handle,
+				ref procInfo.pid,
+				ref procInfo.envVariables,
+				ref procInfo.UserName,
+				ref procInfo.Domain,
+				ref procInfo.Password,
+				ref procInfo.LoadUserProfile);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo, IntPtr stdin, IntPtr stdout, IntPtr stderr, ref ProcInfo procInfo);
+		private extern static bool CreateProcess_internal(
+			IntPtr stdin,
+			IntPtr stdout,
+			IntPtr stderr,
+			// ProcessStartInfo
+			string startInfo_fileName,
+			string startInfo_arguments,
+			string startInfo_directory,
+			string startInfo_verb,
+			ProcessWindowStyle startInfo_windowStyle,
+			bool startInfo_errorDialog,
+			IntPtr startInfo_errorDialogParentHandle,
+			bool startInfo_useShellExecute,
+			string startInfo_userName,
+			string startInfo_domain,
+			SecureString startInfo_password,
+			string startInfo_passwordInClearText,
+			bool startInfo_loadUserProfile,
+			bool startInfo_redirectStandardInput,
+			bool startInfo_redirectStandardOutput,
+			bool startInfo_redirectStandardError,
+			Encoding startInfo_standardOutputEncoding,
+			Encoding startInfo_standardErrorEncoding,
+			bool startInfo_createNoWindow,
+			WeakReference startInfo_weakParentProcess,
+			object/*StringDictionary*/ startInfo_environmentVariables,
+			// ProcInfo
+			ref IntPtr procInfo_process_handle,
+			ref int procInfo_pid,
+			ref string[] procInfo_envVariables,
+			ref string procInfo_UserName,
+			ref string procInfo_Domain,
+			ref IntPtr procInfo_Password,
+			ref bool procInfo_LoadUserProfile
+			);
+
+		private static bool CreateProcess(
+			IntPtr stdin,
+			IntPtr stdout,
+			IntPtr stderr,
+			ProcessStartInfo startInfo,
+			ref ProcInfo procInfo
+			)
+		{
+			return CreateProcess_internal(
+				stdin,
+				stdout,
+				stderr,
+				startInfo.fileName,
+				startInfo.arguments,
+				startInfo.directory,
+				startInfo.verb,
+				startInfo.windowStyle,
+				startInfo.errorDialog,
+				startInfo.errorDialogParentHandle,
+				startInfo.useShellExecute,
+				startInfo.userName,
+				startInfo.domain,
+				startInfo.password,
+				startInfo.passwordInClearText,
+				startInfo.loadUserProfile,
+				startInfo.redirectStandardInput,
+				startInfo.redirectStandardOutput,
+				startInfo.redirectStandardError,
+				startInfo.standardOutputEncoding,
+				startInfo.standardErrorEncoding,
+				startInfo.createNoWindow,
+				startInfo.weakParentProcess,
+				startInfo.environmentVariables,
+				ref procInfo.process_handle,
+				ref procInfo.pid,
+				ref procInfo.envVariables,
+				ref procInfo.UserName,
+				ref procInfo.Domain,
+				ref procInfo.Password,
+				ref procInfo.LoadUserProfile);
+		}
 
 		bool StartWithShellExecuteEx (ProcessStartInfo startInfo)
 		{
@@ -593,7 +735,7 @@ namespace System.Diagnostics
 
 			FillUserInfo (startInfo, ref procInfo);
 			try {
-				ret = ShellExecuteEx_internal (startInfo, ref procInfo);
+				ret = ShellExecuteEx (startInfo, ref procInfo);
 			} finally {
 				if (procInfo.Password != IntPtr.Zero)
 					Marshal.ZeroFreeBSTR (procInfo.Password);
@@ -746,7 +888,7 @@ namespace System.Diagnostics
 				// stdin_write, stdout_read, stderr_read to child process and
 				// close them there (fork makes exact copy of parent's descriptors)
 				//
-				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref procInfo)) {
+				if (!CreateProcess (stdin_read, stdout_write, stderr_write, startInfo, ref procInfo)) {
 					throw new Win32Exception (-procInfo.pid, "ApplicationName='" + startInfo.FileName + "', CommandLine='" + startInfo.Arguments +
 						"', CurrentDirectory='" + startInfo.WorkingDirectory + "', Native error= " + Win32Exception.GetErrorMessage (-procInfo.pid));
 				}

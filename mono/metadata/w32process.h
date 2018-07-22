@@ -31,7 +31,8 @@ typedef enum {
 	MONO_W32PROCESS_PRIORITY_CLASS_ABOVE_NORMAL = 0x8000,
 } MonoW32ProcessPriorityClass;
 
-typedef struct 
+// Output of CreateProcess and ShellExecute,
+typedef struct _MonoW32ProcessInfo
 {
 	gpointer process_handle;
 	guint32 pid; /* Contains mono_w32error_get_last () on failure */
@@ -42,9 +43,9 @@ typedef struct
 	MonoBoolean load_user_profile;
 } MonoW32ProcessInfo;
 
-typedef struct
+// Input to CreateProcess and ShellExecute.
+typedef struct _MonoW32ProcessStartInfo
 {
-	MonoObject object;
 	MonoString *filename;
 	MonoString *arguments;
 	MonoString *working_directory;
@@ -100,11 +101,75 @@ void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_handle);
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (
+// ProcessStartInfo
+	MonoString *startInfo_filename,
+	MonoString *startInfo_arguments,
+	MonoString *startInfo_working_directory,
+	MonoString *startInfo_verb,
+	guint32 startInfo_window_style,
+	MonoBoolean startInfo_error_dialog,
+	gpointer startInfo_error_dialog_parent_handle,
+	MonoBoolean startInfo_use_shell_execute,
+	MonoString *startInfo_username,
+	MonoString *startInfo_domain,
+	MonoObject *startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
+	MonoString *startInfo_password_in_clear_text,
+	MonoBoolean startInfo_load_user_profile,
+	MonoBoolean startInfo_redirect_standard_input,
+	MonoBoolean startInfo_redirect_standard_output,
+	MonoBoolean startInfo_redirect_standard_error,
+	MonoObject *startInfo_encoding_stdout,
+	MonoObject *startInfo_encoding_stderr,
+	MonoBoolean startInfo_create_no_window,
+	MonoObject *startInfo_weak_parent_process,
+	MonoObject *startInfo_envVars,
+// ProcessInfo
+	gpointer *procInfo_process_handle,
+	guint32 *procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+	MonoArray **procInfo_env_variables,
+	MonoString **procInfo_username,
+	MonoString **procInfo_domain,
+	gpointer *procInfo_password, /* BSTR from SecureString in 2.0 profile */
+	MonoBoolean *procInfo_load_user_profile
+	);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info, gpointer stdin_handle,
-	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle);
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (
+	gpointer stdin_handle,
+	gpointer stdout_handle,
+	gpointer stderr_handle,
+// ProcessStartInfo
+	MonoString *startInfo_filename,
+	MonoString *startInfo_arguments,
+	MonoString *startInfo_working_directory,
+	MonoString *startInfo_verb,
+	guint32 startInfo_window_style,
+	MonoBoolean startInfo_error_dialog,
+	gpointer startInfo_error_dialog_parent_handle,
+	MonoBoolean startInfo_use_shell_execute,
+	MonoString *startInfo_username,
+	MonoString *startInfo_domain,
+	MonoObject *startInfo_password, /* SecureString in 2.0 profile, dummy in 1.x */
+	MonoString *startInfo_password_in_clear_text,
+	MonoBoolean startInfo_load_user_profile,
+	MonoBoolean startInfo_redirect_standard_input,
+	MonoBoolean startInfo_redirect_standard_output,
+	MonoBoolean startInfo_redirect_standard_error,
+	MonoObject *startInfo_encoding_stdout,
+	MonoObject *startInfo_encoding_stderr,
+	MonoBoolean startInfo_create_no_window,
+	MonoObject *startInfo_weak_parent_process,
+	MonoObject *startInfo_envVars,
+// ProcessInfo
+	gpointer *procInfo_process_handle,
+	guint32 *procInfo_pid, /* Contains mono_w32error_get_last () on failure */
+	MonoArray **procInfo_env_variables,
+	MonoString **procInfo_username,
+	MonoString **procInfo_domain,
+	gpointer *procInfo_password, /* BSTR from SecureString in 2.0 profile */
+	MonoBoolean *procInfo_load_user_profile
+	);
 
 MonoString*
 ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);

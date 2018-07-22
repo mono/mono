@@ -249,7 +249,7 @@ ICALL(PROCESS_5H, "GetProcessData", ves_icall_System_Diagnostics_Process_GetProc
 ICALL(PROCESS_6, "GetProcess_internal(int)", ves_icall_System_Diagnostics_Process_GetProcess_internal)
 ICALL(PROCESS_7, "GetProcesses_internal()", ves_icall_System_Diagnostics_Process_GetProcesses_internal)
 ICALL(PROCESS_10, "ProcessName_internal(intptr)", ves_icall_System_Diagnostics_Process_ProcessName_internal)
-ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal)
+ICALL(PROCESS_13, "ShellExecuteEx_internal", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal)
 
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
 ICALL(STOPWATCH_1, "GetTimestamp", mono_100ns_ticks)

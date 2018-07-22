@@ -39,31 +39,31 @@ namespace System.Diagnostics {
     HostProtection(SharedState=true, SelfAffectingProcessMgmt=true)
     ]
     public sealed partial class ProcessStartInfo {
-        string fileName;
-        string arguments;
-        string directory;
-        string verb;
-        ProcessWindowStyle windowStyle;
-        bool errorDialog;
-        IntPtr errorDialogParentHandle;
+        internal string fileName;
+        internal string arguments;
+        internal string directory;
+        internal string verb;
+        internal ProcessWindowStyle windowStyle;
+        internal bool errorDialog;
+        internal IntPtr errorDialogParentHandle;
 #if FEATURE_PAL && !MONO
         bool useShellExecute = false;
 #else // FEATURE_PAL && !MONO
-        bool useShellExecute = true;
-        string userName;
-        string domain;
-        SecureString password;
-        string passwordInClearText;
-        bool loadUserProfile;
+        internal bool useShellExecute = true;
+        internal string userName;
+        internal string domain;
+        internal SecureString password;
+        internal string passwordInClearText;
+        internal bool loadUserProfile;
 #endif // FEATURE_PAL && !MONO
-        bool redirectStandardInput = false;
-        bool redirectStandardOutput = false;       
-        bool redirectStandardError = false;
-        Encoding standardOutputEncoding;
-        Encoding standardErrorEncoding; 
+        internal bool redirectStandardInput = false;
+        internal bool redirectStandardOutput = false;
+        internal bool redirectStandardError = false;
+        internal Encoding standardOutputEncoding;
+        internal Encoding standardErrorEncoding;
         
-        bool createNoWindow = false;
-        WeakReference weakParentProcess;
+        internal bool createNoWindow = false;
+        internal WeakReference weakParentProcess;
         internal StringDictionary environmentVariables;
 
         /// <devdoc>
