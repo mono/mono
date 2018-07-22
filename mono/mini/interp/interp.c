@@ -1549,7 +1549,7 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 #define CHECK_MUL_OVERFLOW(a,b) \
 	((gint32)(a) == 0) || ((gint32)(b) == 0) ? 0 : \
 	(((gint32)(a) > 0) && ((gint32)(b) == -1)) ? FALSE : \
-	(((gint32)(a) < 0) && ((gint32)(b) == -1)) ? (a == - MYGINT32_MAX) : \
+	(((gint32)(a) < 0) && ((gint32)(b) == -1)) ? (a == MYGINT32_MIN) : \
 	(((gint32)(a) > 0) && ((gint32)(b) > 0)) ? (gint32)(a) > ((MYGINT32_MAX) / (gint32)(b)) : \
 	(((gint32)(a) > 0) && ((gint32)(b) < 0)) ? (gint32)(a) > ((MYGINT32_MIN) / (gint32)(b)) : \
 	(((gint32)(a) < 0) && ((gint32)(b) > 0)) ? (gint32)(a) < ((MYGINT32_MIN) / (gint32)(b)) : \
@@ -1562,7 +1562,7 @@ get_trace_ips (MonoDomain *domain, InterpFrame *top)
 #define CHECK_MUL_OVERFLOW64(a,b) \
 	((gint64)(a) == 0) || ((gint64)(b) == 0) ? 0 : \
 	(((gint64)(a) > 0) && ((gint64)(b) == -1)) ? FALSE : \
-	(((gint64)(a) < 0) && ((gint64)(b) == -1)) ? (a == - MYGINT64_MAX) : \
+	(((gint64)(a) < 0) && ((gint64)(b) == -1)) ? (a == MYGINT64_MIN) : \
 	(((gint64)(a) > 0) && ((gint64)(b) > 0)) ? (gint64)(a) > ((MYGINT64_MAX) / (gint64)(b)) : \
 	(((gint64)(a) > 0) && ((gint64)(b) < 0)) ? (gint64)(a) > ((MYGINT64_MIN) / (gint64)(b)) : \
 	(((gint64)(a) < 0) && ((gint64)(b) > 0)) ? (gint64)(a) < ((MYGINT64_MIN) / (gint64)(b)) : \
