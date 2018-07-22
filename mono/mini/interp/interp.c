@@ -4346,9 +4346,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CONV_OVF_I4_UN_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > MYGUINT32_MAX)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > MYGINT32_MAX)
 				THROW_EX (mono_get_exception_overflow (), ip);
-			sp [-1].data.i = (guint32)sp [-1].data.f;
+			sp [-1].data.i = (gint32)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U8_I4)
@@ -4368,10 +4368,15 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U8_R8)
-		MINT_IN_CASE(MINT_CONV_OVF_I8_UN_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > MYGINT64_MAX)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT64)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			sp [-1].data.l = (guint64)sp [-1].data.f;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_OVF_I8_UN_R8)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT64)
+				THROW_EX (mono_get_exception_overflow (), ip);
+			sp [-1].data.l = (gint64)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I8_R8)
@@ -4381,9 +4386,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I4_UN_I8)
-			if ((mono_u)sp [-1].data.l > MYGUINT32_MAX)
+			if ((guint64)sp [-1].data.l > MYGINT32_MAX)
 				THROW_EX (mono_get_exception_overflow (), ip);
-			sp [-1].data.i = (mono_u)sp [-1].data.l;
+			sp [-1].data.i = (gint32)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BOX) {
