@@ -9,6 +9,7 @@ ${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j4 tes
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j4 tests
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
+if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=corlib-xunit --timeout=10m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
@@ -19,6 +20,7 @@ ${TESTCMD} --label=System-xunit --timeout=5m make -w -C mcs/class/System run-xun
 ${TESTCMD} --label=System --timeout=10m bash -c "export MONO_TLS_PROVIDER=legacy && make -w -C mcs/class/System run-test"
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=System-btls --timeout=10m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/System run-test"; fi
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
+${TESTCMD} --label=System.XML-xunit --timeout=5m make -w -C mcs/class/System.XML run-xunit-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
 ${TESTCMD} --label=System.Security --timeout=5m make -w -C mcs/class/System.Security run-test
 ${TESTCMD} --label=System.Security-xunit --timeout=5m make -w -C mcs/class/System.Security run-xunit-test
@@ -142,13 +144,5 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
     fi
 else ${TESTCMD} --label=csprojdiff --skip
-fi
-if [[ $CI_TAGS == *'bclsizediff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    if ${TESTCMD} --label=bclsizediff --timeout=5m --fatal make -w -C mcs/tools/linker bcl-size-diff
-    then report_github_status "success" "BCL Linked Size Diff" "No BCL size changes found." || true
-    else report_github_status "error" "BCL Linked Size Diff" "The BCL size changed." "$BUILD_URL/BCL_20Size_20Diff/" || true
-    fi
-else ${TESTCMD} --label=bclsizediff --skip
 fi
 rm -fr /tmp/jenkins-temp-aspnet*

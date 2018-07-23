@@ -3443,14 +3443,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_DIV_I4)
 			if (sp [-1].data.i == 0)
 				THROW_EX (mono_get_exception_divide_by_zero (), ip);
-			if (sp [-1].data.i == (-1))
+			if (sp [-1].data.i == (-1) && sp [-2].data.i == G_MININT32)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(i, /);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_DIV_I8)
 			if (sp [-1].data.l == 0)
 				THROW_EX (mono_get_exception_divide_by_zero (), ip);
-			if (sp [-1].data.l == (-1))
+			if (sp [-1].data.l == (-1) && sp [-2].data.l == G_MININT64)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(l, /);
 			MINT_IN_BREAK;
@@ -3475,14 +3475,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_REM_I4)
 			if (sp [-1].data.i == 0)
 				THROW_EX (mono_get_exception_divide_by_zero (), ip);
-			if (sp [-1].data.i == (-1))
+			if (sp [-1].data.i == (-1) && sp [-2].data.i == G_MININT32)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(i, %);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_REM_I8)
 			if (sp [-1].data.l == 0)
 				THROW_EX (mono_get_exception_divide_by_zero (), ip);
-			if (sp [-1].data.l == (-1))
+			if (sp [-1].data.l == (-1) && sp [-2].data.l == G_MININT64)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(l, %);
 			MINT_IN_BREAK;
@@ -3921,9 +3921,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_INTRINS_BYREFERENCE_CTOR) {
 			MonoClass *newobj_class;
 			MonoMethodSignature *csig;
-			stackval valuetype_this;
 			guint32 token;
-			stackval retval;
 
 			frame->ip = ip;
 			token = * (guint16 *)(ip + 1);
@@ -4370,6 +4368,15 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.nati = mono_array_length_fast ((MonoArray *)o);
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDLEN_SPAN) {
+			o = sp [-1].data.p;
+			gsize offset_length = (gsize) *(gint16 *) (ip + 1);
+			if (!o)
+				THROW_EX (mono_get_exception_null_reference (), ip);
+			sp [-1].data.nati = *(gint32 *) ((guint8 *) o + offset_length);
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_GETCHR) {
 			MonoString *s;
 			s = sp [-2].data.p;
@@ -4381,6 +4388,27 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			--sp;
 			sp [-1].data.i = mono_string_chars(s)[i32];
 			++ip;
+			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_GETITEM_SPAN) {
+			guint8 *span = (guint8 *) sp [-2].data.p;
+			int index = sp [-1].data.i;
+			gsize element_size = (gsize) *(gint16 *) (ip + 1);
+			gsize offset_length = (gsize) *(gint16 *) (ip + 2);
+			gsize offset_pointer = (gsize) *(gint16 *) (ip + 3);
+			sp--;
+
+			if (!span)
+				THROW_EX (mono_get_exception_null_reference (), ip);
+
+			gint32 length = *(gint32 *) (span + offset_length);
+			if (index < 0 || index > length)
+				THROW_EX (mono_get_exception_index_out_of_range (), ip);
+
+			gpointer pointer = *(gpointer *)(span + offset_pointer);
+			sp [-1].data.p = (guint8 *) pointer + index * element_size;
+
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_STRLEN)

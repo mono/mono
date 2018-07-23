@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=24
+MONO_CORLIB_COUNTER=25
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -144,8 +144,8 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
-		# Windows Vista or later is required
-		CPPFLAGS="$CPPFLAGS -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
+		# Windows 7 or later is required
+		CPPFLAGS="$CPPFLAGS -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
 		LDFLAGS="$LDFLAGS -lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
@@ -5464,6 +5464,9 @@ if test x"$GCC" = xyes; then
 	])
 fi
 
+# Update all submodules recursively to ensure everything is checked out
+$srcdir/scripts/update_submodules.sh
+
 AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
@@ -5543,9 +5546,6 @@ runtime/Makefile
 msvc/Makefile
 po/Makefile
 ])
-
-# Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules.sh
 
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
