@@ -250,7 +250,8 @@ public class ParseResult {
 
     public IEnumerable<MatchEntry> EnumerateMatches (
         SourcesFile sourcesFile,
-        IEnumerable<ParseEntry> entries
+        IEnumerable<ParseEntry> entries,
+        bool forExclusionsList
     ) {
         var patternChars = new [] { '*', '?' };
 
@@ -272,8 +273,12 @@ public class ParseResult {
                     Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
                 }
 
-                Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
-                ErrorCount += 1;
+                if (forExclusionsList) {
+                    Console.Error.WriteLine ($"(ignored) Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
+                } else {
+                    Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
+                    ErrorCount += 1;
+                }
                 continue;
             }
 
@@ -297,8 +302,13 @@ public class ParseResult {
                         isFirstError = false;
                         Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
                     }
-                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
-                    ErrorCount += 1;
+
+                    if (forExclusionsList) {
+                        Console.Error.WriteLine ($"(ignored) File does not exist: '{absolutePath}'");
+                    } else {
+                        Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
+                        ErrorCount += 1;
+                    }
                 } else {
                     var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
                     yield return new MatchEntry {
@@ -319,7 +329,7 @@ public class ParseResult {
         if (excludedFiles == null)
             excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
-        foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions))
+        foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions, true))
             excludedFiles.Add (m.RelativePath);
 
         foreach (var include in sourcesFile.Includes) {
@@ -328,7 +338,7 @@ public class ParseResult {
         }
 
         // FIXME: This is order-sensitive
-        foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources)) {
+        foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources, false)) {
             if (excludedFiles.Contains (entry.RelativePath)) {
                 if (SourcesParser.TraceLevel >= 3)
                     Console.Error.WriteLine ($"// Excluding {entry.RelativePath}");
