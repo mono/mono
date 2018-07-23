@@ -42,6 +42,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Runtime.Serialization;
+using Microsoft.Win32.SafeHandles;
 using Mono;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -221,14 +222,20 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, password, keyStorageFlags);
-			ImportHandle (impl);
+			Reset ();
+			using (var handle = new SafePasswordHandle (password)) {
+				var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, handle, keyStorageFlags);
+				ImportHandle (impl);
+			}
 		}
 
-		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (rawData, (string) null, keyStorageFlags);
+			Reset ();
+			using (var handle = new SafePasswordHandle (password)) {
+				var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, handle, keyStorageFlags);
+				ImportHandle (impl);
+			}
 		}
 
 		public override void Import (string fileName) 
@@ -248,13 +255,16 @@ namespace System.Security.Cryptography.X509Certificates {
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
 			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, (string)null, keyStorageFlags);
+			Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
 		public override byte[] Export (X509ContentType contentType, string password)
 		{
-			return Impl.Export (contentType, password);
+			X509Helper.ThrowIfContextInvalid (Impl);
+			using (var handle = new SafePasswordHandle (password)) {
+				return Impl.Export (contentType, handle);
+			}
 		}
 
 		public override void Reset () 

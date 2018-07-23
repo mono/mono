@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono
 {
@@ -36,7 +37,7 @@ namespace Mono
 		}
 
 		public override X509Certificate2Impl Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			return ImportFallback (data, password, keyStorageFlags);
 		}

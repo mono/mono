@@ -39,6 +39,7 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono.Btls
 {
@@ -46,10 +47,10 @@ namespace Mono.Btls
 	{
 		public X509PalImplBtls (MonoTlsProvider provider)
 		{
-			Provider = provider;
+			Provider = (MonoBtlsProvider)provider;
 		}
 
-		MonoTlsProvider Provider {
+		MonoBtlsProvider Provider {
 			get;
 		}
 
@@ -59,7 +60,7 @@ namespace Mono.Btls
 		}
 
 		public override X509Certificate2Impl Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags)
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
 			return Provider.GetNativeCertificate (data, password, keyStorageFlags);
 		}
