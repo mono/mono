@@ -33,7 +33,7 @@ namespace MonoTests.Mono.CompilerInterface
 			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
 			
 			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
-			Assert.Equals (addition, 3);
+			Assert.AreEqual (addition, 3);
 		}
 
 		[Test]
@@ -50,8 +50,7 @@ namespace MonoTests.Mono.CompilerInterface
 			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
 
 			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
-			Assert.Equals (addition, 3);
-
+			Assert.AreEqual (addition, 3);
 		}
 
 		[Test]
@@ -96,7 +95,7 @@ namespace MonoTests.Mono.CompilerInterface
 
 			compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);
 
-			Assert.True (*nativeCode.Blob == 0xc3); // 0xc3 is 'RET' in amd64 assembly
+			Assert.AreEqual (*nativeCode.Blob, (byte) 0xc3); // 0xc3 is 'RET' in amd64 assembly
 		}
 	}
 }

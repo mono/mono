@@ -4455,6 +4455,57 @@ mini_init (const char *filename, const char *runtime_version)
 	return domain;
 }
 
+struct _NativeCodeHandle {
+	MonoObject object;
+	gpointer blob;
+	gint64 length;
+};
+typedef struct _NativeCodeHandle NativeCodeHandle;
+
+struct _InstalledRuntimeCode {
+	MonoObject object;
+};
+typedef struct _InstalledRuntimeCode InstalledRuntimeCode;
+
+
+static InstalledRuntimeCode*
+ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHandle *native_code)
+{
+	if (compilation_result != 0) {
+		g_printerr ("mjit_install: failed with %d\n", compilation_result);
+		return NULL;
+	}
+
+	MonoDomain *domain = mono_domain_get ();
+
+	// TODO: should it be a managed object?
+	InstalledRuntimeCode *key = mono_domain_alloc0 (domain, sizeof (InstalledRuntimeCode));
+
+	MonoJitInfo *jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	// g_print ("reserving %d bytes code buffer\n", native_code->length);
+	jinfo->d.installed_runtime_code = key;
+	jinfo->code_start = mono_global_codeman_reserve (native_code->length);
+	jinfo->code_size = native_code->length;
+	// TODO: fill more metadata for MonoJitInfo*
+
+	memcpy (jinfo->code_start, native_code->blob, native_code->length);
+
+	mono_internal_hash_table_insert (&domain->mjit_code_hash, key, jinfo);
+
+	return key;
+}
+
+static int
+ves_icall_mjit_execute_installed_method_2 (InstalledRuntimeCode *irc, int arg0, int arg1)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoJitInfo *jinfo = mono_internal_hash_table_lookup (&domain->mjit_code_hash, irc);
+
+	int (*f) (int, int) = jinfo->code_start;
+
+	return f (arg0, arg1);
+}
+
 static void
 register_icalls (void)
 {
@@ -4466,6 +4517,9 @@ register_icalls (void)
 				mono_runtime_install_handlers);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
 				mono_runtime_cleanup_handlers);
+
+	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_install_compilation_result", ves_icall_mjit_install_compilation_result);
+	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_execute_installed_method_2", ves_icall_mjit_execute_installed_method_2);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
