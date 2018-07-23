@@ -9,6 +9,8 @@ KEYFILE = $(LIBRARY_SNK)
 LIB_REFS =
 LIB_MCS_FLAGS = /publicsign /nowarn:0618 /unsafe
 
+LIB_MCS_FLAGS += /d:MONO_DATACONVERTER_STATIC_METHODS
+
 XTEST_LIB_REFS =
 
 TEST_MCS_FLAGS += -debug -unsafe

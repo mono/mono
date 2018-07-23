@@ -27,3 +27,14 @@ LLVMSharp/LLVMValueRef.cs
 LLVMSharp/Module.cs
 LLVMSharp/Overloads.cs
 LLVMSharp/PassManager.cs
+
+SimpleJit.CIL/Image.cs
+SimpleJit.CIL/Opcode.cs
+SimpleJit.CIL/OpcodesTableGenerated.cs
+
+SimpleJit.Metadata/MethodBody.cs
+
+SimpleJit.Extensions/StreamExtensions.cs
+
+# FIXME: hack to get an internal class needed by SimpleJit.CIL/Opcode.cs
+../corlib/Mono/DataConverter.cs
