@@ -8,12 +8,12 @@ namespace MonoTests.Mono.CompilerInterface
 	[TestFixture]
 	public class ICompilerTests
 	{
-		CompilerToRuntime c2r = null;
+		IRuntimeInformation runtimeInfo = null;
 		ICompiler compiler = null;
 
 		[TestFixtureSetUp]
 		public void Init () {
-			c2r = new CompilerToRuntime ();
+			runtimeInfo = new RuntimeInformation ();
 			compiler = new ManagedJIT ();
 		}
 
@@ -25,35 +25,38 @@ namespace MonoTests.Mono.CompilerInterface
 		[Test]
 		[Ignore("Not ready yet")]
 		public void TestAddMethod () {
-			ICompilerInformation cinfo = null;
 			MethodInfo methodInfo = null; // TODO: get EmptyMethod somehow?
 			NativeCodeHandle nativeCode;
 
-			CompilationResult result = compiler.CompileMethod (cinfo, methodInfo, CompilationFlags.None, out nativeCode);
-			bool installation = c2r.InstallCompilationResult (result, nativeCode);
-			Assert.True (installation);
+			CompilationResult result = compiler.CompileMethod (runtimeInfo, methodInfo, CompilationFlags.None, out nativeCode);
+			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
 			
-			int addition = (int) c2r.ExecuteInstalledMethod (nativeCode, 1, 2);
+			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
 			Assert.Equals (addition, 3);
 		}
 
 		[Test]
 		public unsafe void TestInstallCompilationResultAndExecute () {
 			CompilationResult result = CompilationResult.Ok;
-			NativeCodeHandle nativeCode = new NativeCodeHandle (null, 0); // TODO: point to memory buffer that contains `add args; ret` in AMD64 assembly
+			byte[] amd64addblob = { 0x48, 0x8d, 0x04, 0x37, /* lea rax, [rdi + rsi * 1] */
+									0xc3};                  /* ret */
 
-			bool installation = c2r.InstallCompilationResult (result, nativeCode);
-			Assert.True (installation);
+			NativeCodeHandle nativeCode = null;
+			fixed (byte *b = amd64addblob) {
+				nativeCode = new NativeCodeHandle (b, amd64addblob.Length);
+			}
 
-			int addition = (int) c2r.ExecuteInstalledMethod (nativeCode, 1, 2);
+			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+
+			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
 			Assert.Equals (addition, 3);
 
 		}
 
 		[Test]
 		public void TestRetrieveBytecodes () {
-			ClassInfo ci = c2r.GetClassInfoFor ("ICompilerTests");
-			MethodInfo mi = c2r.GetMethodInfoFor (ci, "AddMethod");
+			ClassInfo ci = runtimeInfo.GetClassInfoFor ("ICompilerTests");
+			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "AddMethod");
 
 			Assert.True (mi.Stream.Length > 2); // TODO: better verification.
 		}
@@ -64,7 +67,7 @@ namespace MonoTests.Mono.CompilerInterface
 			MethodInfo mi = new MethodInfo (null, "simpleRet", input);
 			NativeCodeHandle nativeCode;
 
-			compiler.CompileMethod (null, mi, CompilationFlags.None, out nativeCode);
+			compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);
 
 			Assert.True (*nativeCode.Blob == 0xc3); // 0xc3 is 'RET' in amd64 assembly
 		}

@@ -11,7 +11,7 @@ namespace Mono.Compiler
 			LLVMBuilderRef builder = LLVM.CreateBuilder();
 		}
 
-		public CompilationResult CompileMethod (ICompilerInformation compilerInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode) {
+		public CompilationResult CompileMethod (IRuntimeInformation runtimeInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode) {
 			// do LLVM stuff
 			throw new Exception ("not implemented yet");
 		}
