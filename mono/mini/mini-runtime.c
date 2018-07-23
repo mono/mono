@@ -2444,6 +2444,98 @@ lookup_start:
 }
 
 gpointer
+mono_mjit_compile_method (MonoMethod *method, MonoError *error)
+{
+	static MonoClass *MiniCompiler_klass = NULL, *MethodInfo_klass = NULL;
+	static MonoMethod *MiniCompiler_CompileMethod_method = NULL, *MethodInfo_ctor_method = NULL;
+	MonoDomain *domain;
+	MonoObject *compiler, *method_info, *ret;
+	gpointer params[4];
+	struct { gpointer code; gint64 codeLength; } native_code;
+
+	if (!MethodInfo_klass) {
+		MethodInfo_klass = mono_class_from_name_checked (mono_defaults.compiler, "Mono.Compiler", "MethodInfo", error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MethodInfo_klass);
+	}
+
+	if (!MethodInfo_ctor_method) {
+		MethodInfo_ctor_method = mono_class_get_method_from_name_checked (MethodInfo_klass, ".ctor", 1, 0, error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MethodInfo_ctor_method);
+	}
+
+	if (!MiniCompiler_klass) {
+		MiniCompiler_klass = mono_class_from_name_checked (mono_defaults.compiler, "Mono.Compiler", "MiniCompiler", error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MiniCompiler_klass);
+	}
+
+	if (!MiniCompiler_CompileMethod_method) {
+		MiniCompiler_CompileMethod_method = mono_class_get_method_from_name_checked (MiniCompiler_klass, "CompileMethod", 4, 0, error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MiniCompiler_CompileMethod_method);
+	}
+
+	domain = mono_domain_get ();
+
+	/* Create methodInfo parameter */
+	method_info = mono_object_new_checked(domain, MethodInfo_klass, error);
+	return_val_if_nok (error, NULL);
+
+	/* Invoke methodInfo..ctor */
+	params [0] = method;
+	mono_runtime_invoke_checked (MethodInfo_ctor_method, method_info, params, error);
+	return_val_if_nok (error, NULL);
+
+	/* Create compiler object */
+	compiler = mono_object_new_checked (domain, MiniCompiler_klass, error);
+	return_val_if_nok (error, NULL);
+
+	/* Invoke compiler.CompileMethod */
+	params[0] = NULL;
+	params[1] = method_info;
+	params[2] = NULL;
+	params[3] = &native_code;
+	ret = mono_runtime_invoke_checked (MiniCompiler_CompileMethod_method, compiler, params, error);
+	return_val_if_nok (error, NULL);
+
+	if (*(gint16*)mono_object_unbox (ret) != 0 /* CompilationResult.Ok */) {
+		/* set error */
+		return NULL;
+	}
+
+	return native_code.code;
+}
+
+gpointer
+ves_icall_Mono_Compiler_MiniCompiler_CompileMethod(MonoMethod *method, gint64 *code_length, MonoError *error)
+{
+	MonoDomain *domain;
+	MonoJitInfo *jit_info;
+	gpointer res;
+
+	*code_length = 0;
+
+	res = mono_jit_compile_method(method, error);
+	if (!res)
+		return NULL;
+
+	domain = mono_domain_get ();
+	g_assert (domain);
+
+	jit_info = mono_jit_info_table_find(domain, res);
+	g_assert (jit_info);
+
+	*code_length = (gint64) mono_jit_info_get_code_size(jit_info);
+	return res;
+}
+
+gpointer
 mono_jit_compile_method (MonoMethod *method, MonoError *error)
 {
 	gpointer code;
@@ -2790,7 +2882,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				invoke = mono_marshal_get_runtime_invoke_for_sig (wrapper_sig);
 				g_free (wrapper_sig);
 
-				info->compiled_method = mono_jit_compile_method (wrapper, error);
+				info->compiled_method = mono_compile_method_checked (wrapper, error);
 				if (!mono_error_ok (error)) {
 					g_free (info);
 					return NULL;
@@ -2806,7 +2898,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				g_free (wrapper_sig);
 			}
 		}
-		info->runtime_invoke = mono_jit_compile_method (invoke, error);
+		info->runtime_invoke = mono_compile_method_checked (invoke, error);
 		if (!mono_error_ok (error)) {
 			g_free (info);
 			return NULL;
@@ -4239,7 +4331,7 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 #define JIT_TRAMPOLINES_WORK
 #ifdef JIT_TRAMPOLINES_WORK
-	callbacks.compile_method = mono_jit_compile_method;
+	callbacks.compile_method = mono_mjit_compile_method;
 	callbacks.create_jump_trampoline = mono_create_jump_trampoline;
 	callbacks.create_jit_trampoline = mono_create_jit_trampoline;
 	callbacks.create_delegate_trampoline = mono_create_delegate_trampoline;
@@ -4781,6 +4873,8 @@ register_icalls (void)
 	register_icall_no_wrapper (mono_tls_set_lmf_addr, "mono_tls_set_lmf_addr", "void ptr");
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, "mono_interp_entry_from_trampoline", "void ptr ptr");
+
+	register_icall_with_wrapper(ves_icall_Mono_Compiler_MiniCompiler_CompileMethod, "Mono.Compiler.MiniCompiler.CompileMethod", "int16 obj obj int32 ptr");
 
 #ifdef MONO_ARCH_HAS_REGISTER_ICALL
 	mono_arch_register_icall ();

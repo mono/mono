@@ -38,3 +38,5 @@ SimpleJit.Extensions/StreamExtensions.cs
 
 # FIXME: hack to get an internal class needed by SimpleJit.CIL/Opcode.cs
 ../corlib/Mono/DataConverter.cs
+
+Mini/MiniCompiler.cs

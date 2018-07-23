@@ -1,11 +1,21 @@
-﻿namespace Mono.Compiler {
-	public unsafe class NativeCodeHandle {
-		public byte *Blob { get; }
-		private long length;
+﻿
+using System.Runtime.InteropServices;
 
-		public unsafe NativeCodeHandle (byte *codeBlob, long codeLength) {
-			this.Blob = codeBlob;
-			this.length = codeLength;
+namespace Mono.Compiler
+{
+	[StructLayout(LayoutKind.Sequential)]
+	public unsafe struct NativeCodeHandle
+	{
+		byte* blob;
+		long length;
+
+		public byte* Blob {
+			get { return blob; }
+		}
+
+		internal NativeCodeHandle (byte *codeBlob, long codeLength) {
+			blob = codeBlob;
+			length = codeLength;
 		}
 	}
 }

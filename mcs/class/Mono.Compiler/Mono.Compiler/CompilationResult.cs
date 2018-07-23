@@ -1,5 +1,5 @@
 namespace Mono.Compiler {
-	public enum CompilationResult {
+	public enum CompilationResult : short {
 		
 		Ok,
 		BadCode,
