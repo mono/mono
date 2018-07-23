@@ -5837,9 +5837,19 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	int size;
+
+	size = m_class_get_instance_size (vtable->klass);
+
+#if MONO_CROSS_COMPILE
+	/* In cross compile mode, we should only allocate thread objects */
+	/* The instance size refers to the target arch, this should be safe enough */
+	size *= 2;
+#endif
+
 	MonoObject *o;
 
-	o = mono_gc_alloc_mature (vtable, m_class_get_instance_size (vtable->klass));
+	o = mono_gc_alloc_mature (vtable, size);
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
