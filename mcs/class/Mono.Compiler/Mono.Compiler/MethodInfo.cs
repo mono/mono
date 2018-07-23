@@ -1,4 +1,4 @@
-using System.Reflection.Emit;
+using SimpleJit.Metadata;
 
 namespace Mono.Compiler
 {
@@ -6,12 +6,14 @@ namespace Mono.Compiler
 	{
 		public ClassInfo ClassInfo { get; }
 		public string Name { get; }
-		public OpCode [] Stream { get; }
+		public MethodBody Body { get; }
 
-		public MethodInfo (ClassInfo ci, string name, OpCode [] stream) {
+		public MethodInfo (ClassInfo ci, string name, MethodBody body) {
 			ClassInfo = ci;
 			Name = name;
-			Stream = stream;
+			Body = body;
 		}
+
+
 	}
 }

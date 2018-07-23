@@ -55,16 +55,17 @@ namespace MonoTests.Mono.CompilerInterface
 
 		[Test]
 		public void TestRetrieveBytecodes () {
-			ClassInfo ci = runtimeInfo.GetClassInfoFor ("ICompilerTests");
+			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
 			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "AddMethod");
 
-			Assert.True (mi.Stream.Length > 2); // TODO: better verification.
+			Assert.True (mi.Body.Body.Length > 2); // TODO: better verification.
 		}
 
 		[Test]
 		public unsafe void TestSimpleRet () {
-			OpCode[] input = { OpCodes.Ret };
-			MethodInfo mi = new MethodInfo (null, "simpleRet", input);
+			byte[] input = { 0x2a /* OpCodes.Ret*/ };
+			var body = new SimpleJit.Metadata.MethodBody (input);
+			MethodInfo mi = new MethodInfo (null, "simpleRet", body);
 			NativeCodeHandle nativeCode;
 
 			compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);

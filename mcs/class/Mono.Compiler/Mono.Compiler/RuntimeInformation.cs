@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Mono.Compiler {
 	public class RuntimeInformation : IRuntimeInformation {
@@ -11,12 +12,15 @@ namespace Mono.Compiler {
 			throw new Exception ("icall into runtime");
 		}
 
-		public ClassInfo GetClassInfoFor (string className) {
-			throw new Exception ("not implemented yet");
+		public ClassInfo GetClassInfoFor (string className)
+		{
+			var t = Type.GetType (className, true); /* FIXME: get assembly first, then type */
+			return ClassInfo.FromType (t);
 		}
 
 		public MethodInfo GetMethodInfoFor (ClassInfo classInfo, string methodName) {
-			throw new Exception ("not implemented yet");
+			/* FIXME: methodName doesn't uniquely determine a method */
+			return classInfo.GetMethodInfoFor (methodName);
 		}
 	}
 }

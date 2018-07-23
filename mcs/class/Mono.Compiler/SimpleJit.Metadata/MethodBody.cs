@@ -151,6 +151,12 @@ public class MethodBody {
 		}
 	}
 
+	public MethodBody (byte[] body)
+	{
+		// FIXME: locals, maxStack, labels
+		this.body = body;
+	}
+
 	public override string ToString () {
 		return $"method-body maxStack {maxStack} bodySize {body.Length} localsTok 0x{localsToken:X}";
 	}
