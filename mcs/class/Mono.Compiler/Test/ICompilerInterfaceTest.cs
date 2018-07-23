@@ -1,7 +1,8 @@
 using System;
-using System.Reflection.Emit;
 using NUnit.Framework;
 using Mono.Compiler;
+
+using SimpleJit.CIL;
 
 namespace MonoTests.Mono.CompilerInterface
 {
@@ -14,7 +15,7 @@ namespace MonoTests.Mono.CompilerInterface
 		[TestFixtureSetUp]
 		public void Init () {
 			runtimeInfo = new RuntimeInformation ();
-			compiler = new ManagedJIT ();
+			//compiler = new ManagedJIT ();
 		}
 
 		
@@ -58,7 +59,32 @@ namespace MonoTests.Mono.CompilerInterface
 			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
 			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "AddMethod");
 
-			Assert.True (mi.Body.Body.Length > 2); // TODO: better verification.
+			Assert.AreEqual (4, mi.Body.Body.Length);
+
+			var it = mi.Body.GetIterator ();
+
+			var move1 = it.MoveNext ();
+			Assert.IsTrue (move1);
+			Assert.AreEqual (Opcode.Ldarg1, it.Opcode, "instr 1");
+			Assert.IsTrue (it.HasNext);
+
+			var move2 = it.MoveNext ();
+			Assert.IsTrue (move2);
+			Assert.AreEqual (Opcode.Ldarg2, it.Opcode, "instr 2");
+			Assert.IsTrue (it.HasNext);
+
+			var move3 = it.MoveNext ();
+			Assert.IsTrue (move3);
+			Assert.AreEqual (Opcode.Add, it.Opcode, "instr 3");
+			Assert.IsTrue (it.HasNext);
+
+			var move4 = it.MoveNext ();
+			Assert.IsTrue (move4);
+			Assert.AreEqual (Opcode.Ret, it.Opcode, "instr 4");
+			Assert.IsFalse (it.HasNext);
+
+			var move5 = it.MoveNext ();
+			Assert.IsFalse (move5);
 		}
 
 		[Test]
