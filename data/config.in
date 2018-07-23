@@ -41,4 +41,6 @@
 	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
 	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
 	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
+	<!-- FIXME: configure magic so LLVM dylib is not hardcoded -->
+	<dllmap dll="libLLVM" target="/usr/local/opt/llvm/lib/libLLVM.dylib" os="!windows"/>
 </configuration>

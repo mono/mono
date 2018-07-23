@@ -15,7 +15,7 @@ namespace MonoTests.Mono.CompilerInterface
 		[TestFixtureSetUp]
 		public void Init () {
 			runtimeInfo = new RuntimeInformation ();
-			//compiler = new ManagedJIT ();
+			compiler = new ManagedJIT ();
 		}
 
 		
