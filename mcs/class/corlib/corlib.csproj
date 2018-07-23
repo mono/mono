@@ -2009,6 +2009,7 @@
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2028,6 +2029,7 @@
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2047,6 +2049,7 @@
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2066,6 +2069,7 @@
     <Compile Include="System\Guid.MonoTouch.cs" />
     <Compile Include="System\NotSupportedException.iOS.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2089,6 +2093,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2112,6 +2117,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2135,6 +2141,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2174,6 +2181,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Windows.cs" />
     <Compile Include="corert\RuntimeImports.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
@@ -2195,6 +2203,7 @@
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2217,6 +2226,7 @@
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2239,6 +2249,7 @@
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>
@@ -2278,6 +2289,7 @@
     <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Windows.cs" />
     <Compile Include="corert\RuntimeImports.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
@@ -2292,6 +2304,7 @@
     <Compile Include="CommonCrypto\RNGCryptoServiceProvider.cryptor.cs" />
     <Compile Include="CommonCrypto\RijndaelManaged.cs" />
     <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
+    <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
     <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
     <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
   </ItemGroup>

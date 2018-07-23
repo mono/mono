@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using Microsoft.Win32.SafeHandles;
 namespace System.Security.Cryptography.X509Certificates
 {
 	internal abstract class X509CertificateImpl : IDisposable
@@ -96,7 +97,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract byte[] GetSerialNumber ();
 
-		public abstract byte[] Export (X509ContentType contentType, byte[] password);
+		public abstract byte[] Export (X509ContentType contentType, SafePasswordHandle password);
 
 		public abstract string ToString (bool full);
 

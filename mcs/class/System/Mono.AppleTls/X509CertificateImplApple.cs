@@ -14,6 +14,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 using XamMac.CoreFoundation;
 
 namespace Mono.AppleTls
@@ -155,7 +156,7 @@ namespace Mono.AppleTls
 			return FallbackImpl.GetSerialNumber ();
 		}
 
-		public override byte[] Export (X509ContentType contentType, byte[] password)
+		public override byte[] Export (X509ContentType contentType, SafePasswordHandle password)
 		{
 			ThrowIfContextInvalid ();
 
