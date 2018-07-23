@@ -72,8 +72,11 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info)
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+	MonoCreateProcessGcHandles gchandles;
+	MonoW32ProcessStartInfo *proc_start_info = mono_createprocess_pin (&gchandles, proc_start_info_handle, process_info);
+
 	SHELLEXECUTEINFO shellex = {0};
 	gboolean ret;
 
@@ -117,6 +120,8 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		process_info->pid = 0;
 #endif
 	}
+
+	mono_createprocess_unpin (&gchandles);
 
 	return ret;
 }
@@ -267,9 +272,12 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, MonoStrin
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info, HANDLE stdin_handle,
-							     HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info)
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle,
+	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+	MonoCreateProcessGcHandles gchandles;
+	MonoW32ProcessStartInfo *proc_start_info = mono_createprocess_pin (&gchandles, proc_start_info_handle, process_info);
+
 	gboolean ret;
 	gunichar2 *dir;
 	STARTUPINFO startinfo={0};
@@ -286,7 +294,8 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	
 	if (process_get_shell_arguments (proc_start_info, &cmd) == FALSE) {
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
-		return FALSE;
+		ret = FALSE;
+		goto exit;
 	}
 
 	if (process_info->env_variables) {
@@ -339,7 +348,9 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	} else {
 		process_info->pid = -GetLastError ();
 	}
-	
+
+exit:
+	mono_createprocess_unpin (&gchandles);
 	return ret;
 }
 

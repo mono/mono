@@ -19,6 +19,7 @@
 #endif
 
 #include <mono/metadata/object.h>
+#include "object-internals.h"
 
 G_BEGIN_DECLS
 
@@ -52,21 +53,54 @@ typedef struct
 	guint32 window_style;
 	MonoBoolean error_dialog;
 	gpointer error_dialog_parent_handle;
-	MonoBoolean use_shell_execute;
-	MonoString *username;
-	MonoString *domain;
-	MonoObject *password; /* SecureString in 2.0 profile, dummy in 1.x */
-	MonoString *password_in_clear_text;
-	MonoBoolean load_user_profile;
-	MonoBoolean redirect_standard_input;
-	MonoBoolean redirect_standard_output;
-	MonoBoolean redirect_standard_error;
-	MonoObject *encoding_stdout;
-	MonoObject *encoding_stderr;
-	MonoBoolean create_no_window;
-	MonoObject *weak_parent_process;
-	MonoObject *envVars;
+	MonoBoolean unused_use_shell_execute;
+	// Pressing these unused fields into use requires additional coop work.
+	gpointer /* MonoString* */unused_username;
+	gpointer /* MonoString* */unused_domain;
+	gpointer /* MonoObject* */unused_password; /* SecureString in 2.0 profile, dummy in 1.x */
+	gpointer /* MonoString* */unused_password_in_clear_text;
+	MonoBoolean unused_load_user_profile;
+	MonoBoolean unused_redirect_standard_input;
+	MonoBoolean unused_redirect_standard_output;
+	MonoBoolean unused_redirect_standard_error;
+	gpointer /* MonoObject* */unused_encoding_stdout;
+	gpointer /* MonoObject* */unused_encoding_stderr;
+	MonoBoolean unused_create_no_window;
+	gpointer /* MonoObject* */unused_weak_parent_process;
+	gpointer /* MonoObject* */unused_envVars;
 } MonoW32ProcessStartInfo;
+
+TYPED_HANDLE_DECL (MonoW32ProcessStartInfo);
+
+typedef uint32_t gchandle_t; // FIXME use this more, make it typesafe.
+
+typedef struct _MonoCreateProcessStaticGcHandles {
+	// MonoW32ProcessStartInfo
+	gchandle_t proc_start_info;
+	gchandle_t filename;
+	gchandle_t arguments;
+	gchandle_t working_directory;
+	gchandle_t verb;
+	// MonoW32ProcessInfo
+	gchandle_t env_variables;
+	gchandle_t username;
+	gchandle_t domain;
+} MonoCreateProcessStaticGcHandles;
+
+typedef struct _MonoCreateProcessGcHandles {
+	MonoCreateProcessStaticGcHandles static_gchandles;
+	gchandle_t *dynamic_gchandles; // i.e. env_variables
+	gsize dynamic_gchandles_count;
+} MonoCreateProcessGcHandles;
+
+MonoW32ProcessStartInfo*
+mono_createprocess_pin (
+	MonoCreateProcessGcHandles *create_process_gchandles,
+	MonoW32ProcessStartInfoHandle proc_start_info_handle,
+	MonoW32ProcessInfo *process_info);
+
+void
+mono_createprocess_unpin (MonoCreateProcessGcHandles *create_process_gchandles);
 
 void
 mono_w32process_init (void);
@@ -100,11 +134,11 @@ void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_handle);
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, MonoW32ProcessInfo *process_info, MonoError *error);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info, gpointer stdin_handle,
-	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle);
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, gpointer stdin_handle,
+	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle, MonoError *error);
 
 MonoString*
 ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);
