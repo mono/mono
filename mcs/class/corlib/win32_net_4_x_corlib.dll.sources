@@ -33,3 +33,5 @@ corert/RuntimeImports.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs
+corefx/Mono.SafePasswordHandle.Windows.cs
+
