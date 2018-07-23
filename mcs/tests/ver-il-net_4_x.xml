@@ -73699,7 +73699,7 @@
         <size>32</size>
       </method>
       <method name="Int32 Test()" attrs="134">
-        <size>10</size>
+        <size>2</size>
       </method>
       <method name="System.Object Foo()" attrs="129">
         <size>10</size>
@@ -73708,16 +73708,16 @@
         <size>23</size>
       </method>
       <method name="Void Test3(Int32 ByRef)" attrs="145">
-        <size>3</size>
+        <size>2</size>
       </method>
       <method name="Int32 get_Item(Int32)" attrs="2177">
-        <size>10</size>
+        <size>2</size>
       </method>
       <method name="Void add_Event(System.Action)" attrs="2182">
-        <size>3</size>
+        <size>2</size>
       </method>
       <method name="Void remove_Event(System.Action)" attrs="2182">
-        <size>3</size>
+        <size>2</size>
       </method>
       <method name="Void TestExpr_1(Boolean)" attrs="129">
         <size>21</size>
@@ -73744,7 +73744,7 @@
         <size>7</size>
       </method>
       <method name="Int32 TestExpr_6(Int32 ByRef)" attrs="145">
-        <size>10</size>
+        <size>2</size>
       </method>
       <method name="Int32 TestExpr_7(Int32 ByRef)" attrs="129">
         <size>15</size>

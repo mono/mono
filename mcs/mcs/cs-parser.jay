@@ -1586,7 +1586,7 @@ constructor_body
 	 expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -1607,7 +1607,7 @@ expression_block
 	 lambda_arrow_expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -8028,6 +8028,14 @@ static bool IsUnaryOperator (Operator.OpType op)
 		return true;
 	}
 	return false;
+}
+
+static Statement CreateExpressionBodiedStatement (Expression expr)
+{
+	if (expr is ThrowExpression te)
+		return new StatementExpression (te);
+
+	return new ContextualReturn (expr);
 }
 
 void syntax_error (Location l, string msg)

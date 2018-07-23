@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -76,11 +77,13 @@ namespace Mono.Btls
 				return (X509CertificateImplBtls)impl.Clone ();
 
 			var password = Guid.NewGuid ().ToString ();
-			var buffer = certificate.Export (X509ContentType.Pfx, password);
+			using (var handle = new SafePasswordHandle (password)) {
+				var buffer = certificate.Export (X509ContentType.Pfx, password);
 
-			impl = new X509CertificateImplBtls ();
-			impl.Import (buffer, password, X509KeyStorageFlags.DefaultKeySet);
-			return impl;
+				impl = new X509CertificateImplBtls ();
+				impl.Import (buffer, handle, X509KeyStorageFlags.DefaultKeySet);
+				return impl;
+			}
 		}
 
 		new public MonoBtlsProvider Provider {

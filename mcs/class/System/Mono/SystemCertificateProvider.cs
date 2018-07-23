@@ -40,6 +40,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono
 {
@@ -118,14 +119,14 @@ namespace Mono
 		}
 
 		X509CertificateImpl ISystemCertificateProvider.Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags,
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags,
 			CertificateImportFlags importFlags)
 		{
 			return Import (data, password, keyStorageFlags, importFlags);
 		}
 
 		public X509Certificate2Impl Import (
-			byte[] data, string password, X509KeyStorageFlags keyStorageFlags,
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags,
 			CertificateImportFlags importFlags = CertificateImportFlags.None)
 		{
 			if (data == null || data.Length == 0)
