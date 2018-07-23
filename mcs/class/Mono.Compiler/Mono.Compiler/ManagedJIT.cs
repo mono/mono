@@ -1,4 +1,5 @@
 using System;
+using LLVMSharp;
 
 namespace Mono.Compiler
 {
@@ -7,6 +8,7 @@ namespace Mono.Compiler
 
 		public ManagedJIT () {
 			// do some LLVMSharp init
+			LLVMBuilderRef builder = LLVM.CreateBuilder();
 		}
 
 		public CompilationResult CompileMethod (ICompilerInformation compilerInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode) {
