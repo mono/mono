@@ -47,6 +47,7 @@
 #include <utime.h>
 #endif
 
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/w32process.h>
 #include <mono/metadata/w32process-internals.h>
 #include <mono/metadata/w32process-unix-internals.h>
@@ -54,7 +55,6 @@
 #include <mono/metadata/class.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/object.h>
-#include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/exception.h>
@@ -2081,20 +2081,13 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	}
 
 free_strings:
-	if (cmd)
-		g_free (cmd);
-	if (full_prog)
-		g_free (full_prog);
-	if (prog)
-		g_free (prog);
-	if (args)
-		g_free (args);
-	if (dir)
-		g_free (dir);
-	if (env_strings)
-		g_strfreev (env_strings);
-	if (argv)
-		g_strfreev (argv);
+	g_free (cmd);
+	g_free (full_prog);
+	g_free (prog);
+	g_free (args);
+	g_free (dir);
+	g_strfreev (env_strings);
+	g_strfreev (argv);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: returning handle %p for pid %d", __func__, handle, pid);
 
@@ -2109,8 +2102,11 @@ free_strings:
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info)
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+	MonoCreateProcessGcHandles gchandles;
+	MonoW32ProcessStartInfo *proc_start_info = mono_createprocess_pin (&gchandles, proc_start_info_handle, process_info);
+
 	const gunichar2 *lpFile;
 	const gunichar2 *lpParameters;
 	const gunichar2 *lpDirectory;
@@ -2233,6 +2229,8 @@ done:
 #endif
 	}
 
+	mono_createprocess_unpin (&gchandles);
+
 	return ret;
 }
 
@@ -2286,9 +2284,12 @@ process_get_shell_arguments (MonoW32ProcessStartInfo *proc_start_info, gunichar2
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfo *proc_start_info,
-	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info)
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle,
+	HANDLE stdin_handle, HANDLE stdout_handle, HANDLE stderr_handle, MonoW32ProcessInfo *process_info, MonoError *error)
 {
+	MonoCreateProcessGcHandles gchandles;
+	MonoW32ProcessStartInfo *proc_start_info = mono_createprocess_pin (&gchandles, proc_start_info_handle, process_info);
+
 	gboolean ret;
 	gunichar2 *dir;
 	StartupHandles startup_handles;
@@ -2302,7 +2303,8 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 
 	if (!process_get_shell_arguments (proc_start_info, &shell_path)) {
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
-		return FALSE;
+		ret = FALSE;
+		goto exit;
 	}
 
 	args = proc_start_info->arguments && mono_string_length (proc_start_info->arguments) > 0 ?
@@ -2314,12 +2316,13 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 
 	ret = process_create (shell_path, args, dir, &startup_handles, process_info);
 
-	if (shell_path != NULL)
-		g_free (shell_path);
+	g_free (shell_path);
 
 	if (!ret)
 		process_info->pid = -mono_w32error_get_last ();
 
+exit:
+	mono_createprocess_unpin (&gchandles);
 	return ret;
 }
 

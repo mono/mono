@@ -672,3 +672,63 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 		*error = perror;
 	return res;
 }
+
+MonoW32ProcessStartInfo*
+mono_createprocess_pin (
+	MonoCreateProcessGcHandles *create_process_gchandles,
+	MonoW32ProcessStartInfoHandle proc_start_info_handle,
+	MonoW32ProcessInfo *process_info)
+{
+	// Make CreateProcess and ShellExecute inefficiently coop-safe w/o invasive change.
+
+	memset (create_process_gchandles, 0, sizeof (*create_process_gchandles));
+
+	gchandle_t root = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, proc_start_info_handle), TRUE);
+	MonoW32ProcessStartInfo *proc_start_info = MONO_HANDLE_RAW (proc_start_info_handle);
+
+	// mono_array_handle_pin_with_size
+	// mono_string_handle_pin_chars
+	// implementation indicate that pinning an object
+	// is equivalent to pinning underlying array elements or string characters
+
+	gchandle_t gchandles [ ] = {
+		root,
+		mono_gchandle_new ((MonoObject*)proc_start_info->filename, TRUE),
+		mono_gchandle_new ((MonoObject*)proc_start_info->arguments, TRUE),
+		mono_gchandle_new ((MonoObject*)proc_start_info->working_directory, TRUE),
+		mono_gchandle_new ((MonoObject*)proc_start_info->verb, TRUE),
+		mono_gchandle_new ((MonoObject*)process_info->env_variables, TRUE),
+		mono_gchandle_new ((MonoObject*)process_info->username, TRUE),
+		mono_gchandle_new ((MonoObject*)process_info->domain, TRUE)
+	};
+
+	g_assert (sizeof (gchandles) == sizeof (create_process_gchandles->static_gchandles));
+	memcpy (&create_process_gchandles->static_gchandles, gchandles, sizeof (gchandles));
+
+	if (process_info->env_variables) {
+		gsize count = mono_array_length (process_info->env_variables);
+		create_process_gchandles->dynamic_gchandles = g_new0 (gchandle_t, count);
+		create_process_gchandles->dynamic_gchandles_count = count;
+		for (gsize i = 0; i < count; ++i)
+			create_process_gchandles->dynamic_gchandles [i] = mono_gchandle_new ((MonoObject*)mono_array_get (process_info->env_variables, MonoString*, i), TRUE);
+	}
+
+	return proc_start_info;
+}
+
+static void
+mono_createprocess_unpin_array (gchandle_t *gchandles, gsize count)
+{
+	for (gsize i = 0; i < count; ++i) {
+		mono_gchandle_free (gchandles [i]);
+		gchandles [i] = 0;
+	}
+}
+
+void
+mono_createprocess_unpin (MonoCreateProcessGcHandles *create_process_gchandles)
+{
+	mono_createprocess_unpin_array ((gchandle_t*)&create_process_gchandles->static_gchandles, sizeof (create_process_gchandles->static_gchandles) / sizeof (gchandle_t));
+	mono_createprocess_unpin_array (create_process_gchandles->dynamic_gchandles, create_process_gchandles->dynamic_gchandles_count);
+	memset (create_process_gchandles, 0, sizeof (*create_process_gchandles));
+}
