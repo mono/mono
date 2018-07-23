@@ -198,6 +198,7 @@ libmono_system_native_la_SOURCES += $(system_native_android_sources)
 else
 if ENABLE_MONOTOUCH
 libmono_system_native_la_SOURCES += $(system_native_ios_sources)
+libmono_system_native_la_LDFLAGS = $(libmonoldflags)
 else
 libmono_system_native_la_SOURCES += $(system_native_full_sources)
 endif
@@ -207,7 +208,6 @@ endif
 endif
 
 libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition
-libmono_system_native_la_LDFLAGS = $(libmonoldflags)
 
 CLEANFILES = mono-bundle.stamp
 
