@@ -480,7 +480,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 {
 	ERROR_DECL (error);
 	static MonoDomain *domain = NULL;
-	MonoAssembly *corlib_assembly = NULL, *compiler_assembly = NULL;
+	MonoAssembly *ass = NULL;
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
 	const MonoRuntimeInfo* runtimes [G_N_ELEMENTS (supported_runtimes) + 1] = { NULL };
 	int n;
@@ -567,15 +567,15 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	}
 
 	/* The selected runtime will be the first one for which there is a mscrolib.dll */
-	for (n = 0; runtimes [n] != NULL && corlib_assembly == NULL; n++) {
+	for (n = 0; runtimes [n] != NULL && ass == NULL; n++) {
 		current_runtime = runtimes [n];
-		corlib_assembly = mono_assembly_load_corlib (current_runtime, &status);
+		ass = mono_assembly_load_corlib (current_runtime, &status);
 		if (status != MONO_IMAGE_OK && status != MONO_IMAGE_ERROR_ERRNO)
 			break;
 
 	}
 	
-	if ((status != MONO_IMAGE_OK) || (corlib_assembly == NULL)) {
+	if ((status != MONO_IMAGE_OK) || (ass == NULL)) {
 		switch (status){
 		case MONO_IMAGE_ERROR_ERRNO: {
 			char *corlib_file = g_build_filename (mono_assembly_getrootdir (), "mono", current_runtime->framework_version, "mscorlib.dll", NULL);
@@ -599,7 +599,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		
 		exit (1);
 	}
-	mono_defaults.corlib = mono_assembly_get_image_internal (corlib_assembly);
+	mono_defaults.corlib = mono_assembly_get_image_internal (ass);
 
 	mono_defaults.object_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "Object");
@@ -754,7 +754,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.critical_finalizer_object = mono_class_try_load_from_name (mono_defaults.corlib,
 			"System.Runtime.ConstrainedExecution", "CriticalFinalizerObject");
 
-	mono_assembly_load_friends (corlib_assembly);
+	mono_assembly_load_friends (ass);
 
 	mono_defaults.handleref_class = mono_class_try_load_from_name (
 		mono_defaults.corlib, "System.Runtime.InteropServices", "HandleRef");
@@ -785,17 +785,23 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.console_class = mono_class_try_load_from_name (
 		mono_defaults.corlib, "System", "Console");
 
-	compiler_assembly = mono_assembly_load (mono_assembly_name_new ("Mono.Compiler"), NULL, NULL);
-	g_assert (compiler_assembly);
-
-	mono_defaults.compiler = mono_assembly_get_image_internal (compiler_assembly);
-	g_assert (mono_defaults.compiler);
-
 	domain->friendly_name = g_path_get_basename (filename);
 
 	MONO_PROFILER_RAISE (domain_name, (domain, domain->friendly_name));
 
 	return domain;
+}
+
+void
+mono_init_compiler_assembly (void)
+{
+	MonoAssembly *compiler_assembly = NULL;
+
+	compiler_assembly = mono_assembly_load (mono_assembly_name_new ("Mono.Compiler"), NULL, NULL);
+	g_assert (compiler_assembly);
+
+	mono_defaults.compiler = mono_assembly_get_image_internal (compiler_assembly);
+	g_assert (mono_defaults.compiler);
 }
 
 /**
