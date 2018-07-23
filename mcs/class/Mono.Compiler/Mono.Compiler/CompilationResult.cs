@@ -1,8 +1,6 @@
-
-namespace Mono.Compiler
-{
-	public enum CompilationResult
-	{
+namespace Mono.Compiler {
+	public enum CompilationResult {
+		
 		Ok,
 		BadCode,
 		OutOfMemory,

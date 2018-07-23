@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+Mono.Compiler/ClassInfo.cs
 Mono.Compiler/CompilationFlags.cs
 Mono.Compiler/CompilationResult.cs
 Mono.Compiler/CompilerInformation.cs
@@ -9,5 +10,6 @@ Mono.Compiler/ICompiler.cs
 Mono.Compiler/ICompilerInformation.cs
 Mono.Compiler/IDynamicInformation.cs
 Mono.Compiler/IStaticInformation.cs
+Mono.Compiler/ManagedJIT.cs
 Mono.Compiler/MethodInfo.cs
 Mono.Compiler/NativeCodeHandle.cs

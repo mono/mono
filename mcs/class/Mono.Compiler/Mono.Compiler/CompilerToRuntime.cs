@@ -11,5 +11,13 @@ namespace Mono.Compiler {
 		public object ExecuteInstalledMethod (NativeCodeHandle codeHandle, params object[] args) {
 			throw new Exception ("icall into runtime");
 		}
+
+		public ClassInfo GetClassInfoFor (string className) {
+			throw new Exception ("not implemented yet");
+		}
+
+		public MethodInfo GetMethodInfoFor (ClassInfo classInfo, string methodName) {
+			throw new Exception ("not implemented yet");
+		}
 	}
 }

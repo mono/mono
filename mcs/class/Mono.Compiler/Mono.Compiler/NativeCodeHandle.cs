@@ -1,10 +1,10 @@
 ﻿namespace Mono.Compiler {
 	public unsafe class NativeCodeHandle {
-		private byte *blob;
+		public byte *Blob { get; }
 		private long length;
 
 		public unsafe NativeCodeHandle (byte *codeBlob, long codeLength) {
-			this.blob = codeBlob;
+			this.Blob = codeBlob;
 			this.length = codeLength;
 		}
 	}

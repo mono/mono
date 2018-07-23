@@ -11,6 +11,8 @@ LIB_MCS_FLAGS = /publicsign /nowarn:0618 /unsafe
 
 XTEST_LIB_REFS =
 
+TEST_MCS_FLAGS += -debug -unsafe
+
 EXTRA_DISTFILES =
 
 CLEAN_FILES =
