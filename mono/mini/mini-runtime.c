@@ -4582,10 +4582,7 @@ ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHan
 	InstalledRuntimeCode *key = mono_domain_alloc0 (domain, sizeof (InstalledRuntimeCode));
 
 	MonoJitInfo *jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
-	// g_print ("reserving %d bytes code buffer\n", native_code.length);
 	jinfo->d.installed_runtime_code = key;
-	jinfo->code_start = mono_global_codeman_reserve (native_code.length);
-	jinfo->code_size = native_code.length;
 
 	MonoReflectionMethod *method_handle = (MonoReflectionMethod *) mono_runtime_invoke_checked (MethodInfo_get_RuntimeMethodHandle_method, native_code.method_handle, params, error);
 	jinfo->mjit_method = method_handle->method;
@@ -4595,7 +4592,15 @@ ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHan
 
 	// TODO: prepare proper runtime_invoke.
 
-	memcpy (jinfo->code_start, native_code.blob, native_code.length);
+	if (native_code.length == -1) {
+		/* hack for LLVMSharp that does not easily provide the size of a code blob */
+		jinfo->code_start = native_code.blob;
+		jinfo->code_size = -1;
+	} else {
+		jinfo->code_start = mono_global_codeman_reserve (native_code.length);
+		jinfo->code_size = native_code.length;
+		memcpy (jinfo->code_start, native_code.blob, native_code.length);
+	}
 
 	mono_internal_hash_table_insert (&domain->mjit_code_hash, key, jinfo);
 
