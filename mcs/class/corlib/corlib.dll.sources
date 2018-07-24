@@ -1174,6 +1174,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyVersionAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Binder.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/BindingFlags.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CallingConventions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/DefaultMemberAttribute.cs
@@ -1205,7 +1206,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
-../referencesource/mscorlib/system/reflection/binder.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
