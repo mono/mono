@@ -37,7 +37,7 @@ namespace Mono.Compiler
 			var initLocals = srBody.InitLocals;
 			var localsToken = srBody.LocalSignatureMetadataToken;
 			var body = new SimpleJit.Metadata.MethodBody (bodyBytes, maxStack, initLocals, localsToken);
-			return new MethodInfo (this, methodName, body);
+			return new MethodInfo (this, methodName, body, m.MethodHandle);
 		}
 
 	}

@@ -4535,9 +4535,9 @@ mini_init (const char *filename, const char *runtime_version)
 }
 
 struct _NativeCodeHandle {
-	MonoObject object;
 	gpointer blob;
 	gint64 length;
+	MonoObject *method_handle; /* Mono.Compiler.MethodInfo */
 };
 typedef struct _NativeCodeHandle NativeCodeHandle;
 
@@ -4548,11 +4548,32 @@ typedef struct _InstalledRuntimeCode InstalledRuntimeCode;
 
 
 static InstalledRuntimeCode*
-ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHandle *native_code)
+ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHandle native_code)
 {
+	ERROR_DECL (error);
+	gpointer params [0] = {0};
+
 	if (compilation_result != 0) {
 		g_printerr ("mjit_install: failed with %d\n", compilation_result);
 		return NULL;
+	}
+	static MonoClass *MethodInfo_klass = NULL;
+	static MonoMethod *MethodInfo_get_RuntimeMethodHandle_method = NULL;
+
+	g_assertf (mono_defaults.compiler, "Mono.Compiler must be initialized by runtime init");
+
+	if (!MethodInfo_klass) {
+		MethodInfo_klass = mono_class_from_name_checked (mono_defaults.compiler, "Mono.Compiler", "MethodInfo", error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MethodInfo_klass);
+	}
+
+	if (!MethodInfo_get_RuntimeMethodHandle_method) {
+		MethodInfo_get_RuntimeMethodHandle_method = mono_class_get_method_from_name_checked (MethodInfo_klass, "get_RuntimeMethodHandle", 0, 0, error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (MethodInfo_get_RuntimeMethodHandle_method);
 	}
 
 	MonoDomain *domain = mono_domain_get ();
@@ -4561,28 +4582,63 @@ ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHan
 	InstalledRuntimeCode *key = mono_domain_alloc0 (domain, sizeof (InstalledRuntimeCode));
 
 	MonoJitInfo *jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
-	// g_print ("reserving %d bytes code buffer\n", native_code->length);
+	// g_print ("reserving %d bytes code buffer\n", native_code.length);
 	jinfo->d.installed_runtime_code = key;
-	jinfo->code_start = mono_global_codeman_reserve (native_code->length);
-	jinfo->code_size = native_code->length;
+	jinfo->code_start = mono_global_codeman_reserve (native_code.length);
+	jinfo->code_size = native_code.length;
+
+	MonoReflectionMethod *method_handle = (MonoReflectionMethod *) mono_runtime_invoke_checked (MethodInfo_get_RuntimeMethodHandle_method, native_code.method_handle, params, error);
+	jinfo->mjit_method = method_handle->method;
+	return_val_if_nok (error, NULL);
+
 	// TODO: fill more metadata for MonoJitInfo*
 
-	memcpy (jinfo->code_start, native_code->blob, native_code->length);
+	// TODO: prepare proper runtime_invoke.
+
+	memcpy (jinfo->code_start, native_code.blob, native_code.length);
 
 	mono_internal_hash_table_insert (&domain->mjit_code_hash, key, jinfo);
 
 	return key;
 }
 
-static int
-ves_icall_mjit_execute_installed_method_2 (InstalledRuntimeCode *irc, int arg0, int arg1)
+static gpointer
+ves_icall_mjit_execute_installed_method (InstalledRuntimeCode *irc, MonoArray *args)
 {
+	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
+	MonoObject **exc = NULL;
+
 	MonoJitInfo *jinfo = mono_internal_hash_table_lookup (&domain->mjit_code_hash, irc);
+	MonoMethodSignature *sig = mono_method_signature (jinfo->mjit_method);
 
-	int (*f) (int, int) = jinfo->code_start;
+	g_assertf (!sig->hasthis, "mjit: virtual method not supported yet");
 
-	return f (arg0, arg1);
+	MonoMethod *invoke = mono_marshal_get_runtime_invoke_full (jinfo->mjit_method, FALSE, FALSE);
+	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
+	runtime_invoke = mono_jit_compile_method (invoke, error);
+	mono_error_assert_ok (error);
+
+	gpointer compiled_method = jinfo->code_start;
+
+	gpointer *params = NULL;
+	if (args) {
+		params = (void **) alloca (sizeof (gpointer) * mono_array_length (args));
+		gboolean has_byref_nullables = FALSE;
+
+		for (int i = 0; i < mono_array_length (args); i++) {
+			MonoType *t = sig->params [i];
+			params [i] = mono_invoke_array_extract_argument (args, i, t, &has_byref_nullables, error);
+			g_assert (!has_byref_nullables);
+			return_val_if_nok (error, NULL);
+		}
+	}
+
+	MonoObject *result = runtime_invoke (NULL /* this obj */, params, exc, compiled_method);
+
+	g_assertf (exc == NULL, "mjit: execute installed method throw an exception");
+
+	return result;
 }
 
 static void
@@ -4598,7 +4654,7 @@ register_icalls (void)
 				mono_runtime_cleanup_handlers);
 
 	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_install_compilation_result", ves_icall_mjit_install_compilation_result);
-	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_execute_installed_method_2", ves_icall_mjit_execute_installed_method_2);
+	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_execute_installed_method", ves_icall_mjit_execute_installed_method);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",

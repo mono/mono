@@ -1976,6 +1976,9 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
 
+gpointer
+mono_invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error);
+
 MonoObject*
 mono_runtime_invoke_interpreter (MonoMethod *method, void *obj, void **params, MonoError *error);
 

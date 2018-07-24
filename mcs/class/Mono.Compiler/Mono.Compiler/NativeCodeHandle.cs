@@ -1,4 +1,3 @@
-﻿
 using System.Runtime.InteropServices;
 
 namespace Mono.Compiler
@@ -8,14 +7,20 @@ namespace Mono.Compiler
 	{
 		byte* blob;
 		long length;
+		MethodInfo mi;
 
 		public byte* Blob {
 			get { return blob; }
 		}
 
-		internal NativeCodeHandle (byte *codeBlob, long codeLength) {
+		public MethodInfo MethodInfo {
+			get { return mi; }
+		}
+
+		public NativeCodeHandle (byte *codeBlob, long codeLength, MethodInfo methodInfo) {
 			blob = codeBlob;
 			length = codeLength;
+			mi = methodInfo;
 		}
 	}
 }

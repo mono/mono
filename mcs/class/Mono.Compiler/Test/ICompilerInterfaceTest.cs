@@ -18,9 +18,16 @@ namespace MonoTests.Mono.CompilerInterface
 			compiler = new ManagedJIT ();
 		}
 
-		
-		public int AddMethod (int a, int b) {
+		public static void EmptyMethod () {
+			return;
+		}
+
+		public static int AddMethod (int a, int b) {
 			return a + b;
+		}
+
+		public static int AddMethod3 (int a, int b, int c) {
+			return a + b + c;
 		}
 
 		[Test]
@@ -37,20 +44,50 @@ namespace MonoTests.Mono.CompilerInterface
 		}
 
 		[Test]
-		public unsafe void TestInstallCompilationResultAndExecute () {
+		public unsafe void TestInstallCompilationResultAndExecuteAddMethod () {
+			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
+			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "AddMethod");
+
 			CompilationResult result = CompilationResult.Ok;
 			byte[] amd64addblob = { 0x48, 0x8d, 0x04, 0x37, /* lea rax, [rdi + rsi * 1] */
-									0xc3};                  /* ret */
+			                        0xc3};                  /* ret */
 
-			NativeCodeHandle nativeCode = null;
 			fixed (byte *b = amd64addblob) {
-				nativeCode = new NativeCodeHandle (b, amd64addblob.Length);
+				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length, mi);
+
+				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+
+				int sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
+				Assert.AreEqual (3, sum);
+
+				/* test result against host execution engine */
+				sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1337, 666);
+				Assert.AreEqual (AddMethod (1337, 666), sum);
 			}
+		}
 
-			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+		[Test]
+		public unsafe void TestInstallCompilationResultAndExecuteAddMethod3 () {
+			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
+			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "AddMethod3");
 
-			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
-			Assert.AreEqual (addition, 3);
+			CompilationResult result = CompilationResult.Ok;
+			byte[] amd64addblob = { 0x48, 0x01, 0xf7,       /* add rdi, rsi */
+			                        0x48, 0x8d, 0x04, 0x17, /* lea rax, [rdi + rdx * 1] */
+			                        0xc3};                  /* ret */
+
+			fixed (byte *b = amd64addblob) {
+				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length, mi);
+
+				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+
+				int sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2, 3);
+				Assert.AreEqual (6, sum);
+
+				/* test result against host execution engine */
+				sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1337, 666, 0xbeef);
+				Assert.AreEqual (AddMethod3 (1337, 666, 0xbeef), sum);
+			}
 		}
 
 		[Test]
@@ -64,12 +101,12 @@ namespace MonoTests.Mono.CompilerInterface
 
 			var move1 = it.MoveNext ();
 			Assert.IsTrue (move1);
-			Assert.AreEqual (Opcode.Ldarg1, it.Opcode, "instr 1");
+			Assert.AreEqual (Opcode.Ldarg0, it.Opcode, "instr 1");
 			Assert.IsTrue (it.HasNext);
 
 			var move2 = it.MoveNext ();
 			Assert.IsTrue (move2);
-			Assert.AreEqual (Opcode.Ldarg2, it.Opcode, "instr 2");
+			Assert.AreEqual (Opcode.Ldarg1, it.Opcode, "instr 2");
 			Assert.IsTrue (it.HasNext);
 
 			var move3 = it.MoveNext ();
@@ -88,9 +125,11 @@ namespace MonoTests.Mono.CompilerInterface
 
 		[Test]
 		public unsafe void TestSimpleRet () {
+			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
+
 			byte[] input = { 0x2a /* OpCodes.Ret*/ };
 			var body = new SimpleJit.Metadata.MethodBody (input, 0, false, 0);
-			MethodInfo mi = new MethodInfo (null, "simpleRet", body);
+			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "EmptyMethod");
 			NativeCodeHandle nativeCode;
 
 			compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);

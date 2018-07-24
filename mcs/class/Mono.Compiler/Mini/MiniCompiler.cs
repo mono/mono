@@ -14,7 +14,7 @@ namespace Mono.Compiler
 				return CompilationResult.InternalError;
 			}
 
-			nativeCode = new NativeCodeHandle(code, codeLength);
+			nativeCode = new NativeCodeHandle(code, codeLength, methodInfo);
 			return CompilationResult.Ok;
 		}
 

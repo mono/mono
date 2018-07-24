@@ -12,12 +12,10 @@ namespace Mono.Compiler {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int mono_execute_installed_method_2 (InstalledRuntimeCode irc, int arg0, int arg1);
+		extern static object mono_execute_installed_method (InstalledRuntimeCode irc, params object[] args);
 
 		public object ExecuteInstalledMethod (InstalledRuntimeCode irc, params object[] args) {
-			if (args.Length == 2)
-				return mono_execute_installed_method_2 (irc, (int) args [0], (int) args [1]);
-			throw new Exception ("execute installed method: signature not supported yet");
+			return mono_execute_installed_method (irc, args);
 		}
 
 		public ClassInfo GetClassInfoFor (string className)

@@ -5084,7 +5084,7 @@ mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **ex
 
 
 
-/** invoke_array_extract_argument:
+/** mono_invoke_array_extract_argument:
  * @params: array of arguments to the method.
  * @i: the index of the argument to extract.
  * @t: ith type from the method signature.
@@ -5096,8 +5096,8 @@ mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **ex
  *
  * On failure sets @error and returns NULL.
  */
-static gpointer
-invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error)
+gpointer
+mono_invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error)
 {
 	MonoType *t_orig = t;
 	gpointer result = NULL;
@@ -5344,7 +5344,7 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		pa = (void **)alloca (sizeof (gpointer) * mono_array_length (params));
 		for (i = 0; i < mono_array_length (params); i++) {
 			MonoType *t = sig->params [i];
-			pa [i] = invoke_array_extract_argument (params, i, t, &has_byref_nullables, error);
+			pa [i] = mono_invoke_array_extract_argument (params, i, t, &has_byref_nullables, error);
 			return_val_if_nok (error, NULL);
 		}
 	}

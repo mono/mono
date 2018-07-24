@@ -248,6 +248,8 @@ struct _MonoJitInfo {
 	/* Whenever this jit info refers to an interpreter method */
 	gboolean    is_interp:1;
 
+	MonoMethod  *mjit_method; // mjit
+
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
 	
