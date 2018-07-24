@@ -22,5 +22,10 @@ namespace Mono.Compiler
 			length = codeLength;
 			mi = methodInfo;
 		}
+
+		public static NativeCodeHandle Invalid { get {
+				return new NativeCodeHandle (null, 0, null);
+			}
+		}
 	}
 }

@@ -12,6 +12,8 @@ Mono.Compiler/MethodInfo.cs
 Mono.Compiler/NativeCodeHandle.cs
 Mono.Compiler/RuntimeInformation.cs
 
+Mono.Compiler.BigStep/BigStep.cs
+
 LLVMSharp/Conversions.cs
 LLVMSharp/ExecutionEngine.cs
 LLVMSharp/Generated.Custom.cs

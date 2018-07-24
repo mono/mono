@@ -12,8 +12,8 @@ namespace Mono.Compiler
 		}
 
 		public CompilationResult CompileMethod (IRuntimeInformation runtimeInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode) {
-			// do LLVM stuff
-			throw new Exception ("not implemented yet");
+			var bs = new Mono.Compiler.BigStep.BigStep (runtimeInfo, flags);
+			return bs.CompileMethod (methodInfo, out nativeCode);
 		}
 	}
 }
