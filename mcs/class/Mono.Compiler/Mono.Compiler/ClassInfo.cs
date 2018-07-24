@@ -7,14 +7,18 @@ namespace Mono.Compiler
 {
 	public class ClassInfo
 	{
-		internal Type type;
+		internal TypeInfo type;
 
 		public string Name { get => type.FullName; }
 
+		ClassInfo (TypeInfo type)
+		{
+			this.type = type;
+		}
+
 		public static ClassInfo FromType (Type t)
 		{
-			var ci = new ClassInfo ();
-			ci.type = t;
+			var ci = new ClassInfo (t.GetTypeInfo ());
 			return ci;
 		}
 
