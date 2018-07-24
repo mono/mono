@@ -67,62 +67,62 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Certificate2 (byte[] rawData)
+			: base (rawData)
 		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, string password)
+			: base (rawData, password)
 		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password)
+			: base (rawData, password)
 		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (rawData, password, keyStorageFlags)
 		{
-			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+			: base (rawData, password, keyStorageFlags)
 		{
-			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName)
+			: base (fileName)
 		{
-			Import (fileName, String.Empty, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password)
+			: base (fileName, password)
 		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password)
+			: base (fileName, password)
 		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (fileName, password, keyStorageFlags)
 		{
-			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
+			: base (fileName, password, keyStorageFlags)
 		{
-			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
-			: base (SystemDependencyProvider.Instance.CertificateProvider.Import (certificate))
+			: base (certificate)
 		{
 		}
 
@@ -175,8 +175,10 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public AsymmetricAlgorithm PrivateKey {
 			get { return Impl.PrivateKey; }
-			set { Impl.PrivateKey = value; }
-		} 
+			set {
+				throw new PlatformNotSupportedException ();
+			}
+		}
 
 		public PublicKey PublicKey {
 			get { return Impl.PublicKey; }
@@ -216,46 +218,32 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Import (byte[] rawData) 
 		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			base.Import (rawData);
 		}
 
-		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Reset ();
-			using (var handle = new SafePasswordHandle (password)) {
-				var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, handle, keyStorageFlags);
-				ImportHandle (impl);
-			}
+			base.Import (rawData, password, keyStorageFlags);
 		}
 
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Reset ();
-			using (var handle = new SafePasswordHandle (password)) {
-				var impl = SystemDependencyProvider.Instance.CertificateProvider.Import (rawData, handle, keyStorageFlags);
-				ImportHandle (impl);
-			}
+			base.Import (rawData, password, keyStorageFlags);
 		}
 
 		public override void Import (string fileName) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			base.Import (fileName);
 		}
 
-		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, password, keyStorageFlags);
+			base.Import (fileName, password, keyStorageFlags);
 		}
 
-		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, password, keyStorageFlags);
+			base.Import (fileName, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
