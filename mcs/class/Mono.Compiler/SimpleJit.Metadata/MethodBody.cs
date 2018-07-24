@@ -151,10 +151,12 @@ public class MethodBody {
 		}
 	}
 
-	public MethodBody (byte[] body)
+	public MethodBody (byte[] body, int maxStack, bool initLocals, int localsToken)
 	{
-		// FIXME: locals, maxStack, labels
 		this.body = body;
+		this.maxStack = maxStack;
+		this.initLocals = initLocals;
+		this.localsToken = localsToken;
 	}
 
 	public override string ToString () {

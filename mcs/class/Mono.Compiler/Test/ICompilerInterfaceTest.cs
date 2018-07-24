@@ -89,7 +89,7 @@ namespace MonoTests.Mono.CompilerInterface
 		[Test]
 		public unsafe void TestSimpleRet () {
 			byte[] input = { 0x2a /* OpCodes.Ret*/ };
-			var body = new SimpleJit.Metadata.MethodBody (input);
+			var body = new SimpleJit.Metadata.MethodBody (input, 0, false, 0);
 			MethodInfo mi = new MethodInfo (null, "simpleRet", body);
 			NativeCodeHandle nativeCode;
 
