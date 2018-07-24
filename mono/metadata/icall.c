@@ -7649,13 +7649,12 @@ mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 ICALL_EXPORT MonoTypedRef
 mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target, MonoArray *fields)
 {
-	MONO_REQ_GC_UNSAFE_MODE; // because of "p", so not worth converting target and fields
+	guint8 *p = NULL; // Inhibits coop conversion at this time, so not worth converting target and fields.
 
 	MonoTypedRef res;
 	MonoReflectionField *f;
 	MonoClass *klass;
 	MonoType *ftype = NULL;
-	guint8 *p = NULL;
 	int i;
 
 	memset (&res, 0, sizeof (res));
