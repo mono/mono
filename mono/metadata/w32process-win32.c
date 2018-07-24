@@ -75,7 +75,7 @@ MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error)
 {
 	MonoCreateProcessCoop coop;
-	mono_createprocess_coop_init (&coop, proc_start_info_handoe, process_info);
+	mono_createprocess_coop_init (&coop, proc_start_info, process_info);
 
 	SHELLEXECUTEINFO shellex = {0};
 	gboolean ret;
@@ -143,7 +143,7 @@ mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mo
 
 		result = CreateProcessWithLogonW (coop->username,
 						  coop->domain,
-						  coop->password,
+						  mono_process_info->password,
 						  logon_flags,
 						  NULL,
 						  cmd_chars,
@@ -303,11 +303,11 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 
 	if (process_info->env_variables) {
 		MonoArrayHandle array = MONO_HANDLE_NEW (MonoArray, process_info->env_variables);
-		MonoStringHandle var = MONO_NEW_HANDLE (MonoString, NULL);
+		MonoStringHandle var = MONO_HANDLE_NEW (MonoString, NULL);
 		gsize const array_length = mono_array_handle_length (array);
 		gsize len = 1; // nul-terminated
 
-		MonoStringHandle var = MONO_NEW_HANDLE (MonoString, NULL);
+		MonoStringHandle var = MONO_HANDLE_NEW (MonoString, NULL);
 
 		for (gsize i = 0; i < array_length; i++) {
 			MONO_HANDLE_ARRAY_GETREF (var, array, i);

@@ -54,8 +54,24 @@ typedef struct
 	guint32 window_style;
 	MonoBoolean error_dialog;
 	gpointer error_dialog_parent_handle;
-	// There are more fields here, but native does not use them,
-	// and native does not need to know the entire size of this object.
+	MonoBoolean use_shell_execute;
+
+	MonoString *unused_username;
+	MonoString *unused_domain;
+	MonoObject *unused_password; /* SecureString in 2.0 profile, dummy in 1.x */
+	MonoString *unused_password_in_clear_text;
+	MonoBoolean unused_load_user_profile;
+	MonoBoolean unused_redirect_standard_input;
+	MonoBoolean unused_redirect_standard_output;
+	MonoBoolean unused_redirect_standard_error;
+	MonoObject *unused_encoding_stdout;
+	MonoObject *unused_encoding_stderr;
+
+	MonoBoolean create_no_window;
+
+	MonoObject *unused_weak_parent_process;
+	MonoObject *unused_envVars;
+
 } MonoW32ProcessStartInfo;
 
 TYPED_HANDLE_DECL (MonoW32ProcessStartInfo);
