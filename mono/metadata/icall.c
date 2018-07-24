@@ -1135,8 +1135,6 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 ICALL_EXPORT MonoBoolean
 ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoArray **fields)
 {
-	*fields = NULL;
-
 	ERROR_DECL (error);
 	MonoClass *klass;
 	MonoObject **values = NULL;
@@ -1144,6 +1142,8 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	MonoClassField* field;
 	gpointer iter;
 	int count = 0;
+
+	*fields = NULL;
 
 	MONO_CHECK_ARG_NULL (that, FALSE);
 
