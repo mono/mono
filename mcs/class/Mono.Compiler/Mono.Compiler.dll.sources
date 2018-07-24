@@ -4,7 +4,6 @@ Assembly/AssemblyInfo.cs
 Mono.Compiler/ClassInfo.cs
 Mono.Compiler/CompilationFlags.cs
 Mono.Compiler/CompilationResult.cs
-Mono.Compiler/CompilerToRuntime.cs
 Mono.Compiler/ICompiler.cs
 Mono.Compiler/IRuntimeInformation.cs
 Mono.Compiler/InstalledRuntimeCode.cs
@@ -38,3 +37,5 @@ SimpleJit.Extensions/StreamExtensions.cs
 
 # FIXME: hack to get an internal class needed by SimpleJit.CIL/Opcode.cs
 ../corlib/Mono/DataConverter.cs
+
+Mini/MiniCompiler.cs
