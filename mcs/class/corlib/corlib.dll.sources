@@ -1167,6 +1167,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyNameAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyMetadataAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyNameFlags.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Reflection/AssemblyNameProxy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyProductAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblySignatureKeyAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTitleAttribute.cs
@@ -1204,7 +1205,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
-../referencesource/mscorlib/system/reflection/assemblynameproxy.cs
 ../referencesource/mscorlib/system/reflection/binder.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
