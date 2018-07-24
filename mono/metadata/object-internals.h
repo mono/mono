@@ -35,21 +35,6 @@ MONO_BEGIN_DECLS
 	} 								\
 } while (0)
 
-/* Use this as MONO_CHECK_ARG_NULL (arg,expr,) in functions returning void */
-#define MONO_CHECK_ARG(arg, expr, retval)		G_STMT_START{		  \
-		if (G_UNLIKELY (!(expr)))							  \
-       {								  \
-		MonoException *ex;					  \
-		char *msg = g_strdup_printf ("assertion `%s' failed",	  \
-		#expr);							  \
-		if (arg) {} /* check if the name exists */		  \
-		ex = mono_get_exception_argument (#arg, msg);		  \
-		g_free (msg);						  \
-		mono_set_pending_exception (ex);					  \
-		return retval;										  \
-       };				}G_STMT_END
->>>>>>> [Cplusplus] Add extern "C" { } to many headers.
-
 /* Use this as MONO_CHECK_ARG_NULL (arg,) in functions returning void */
 #define MONO_CHECK_ARG_NULL(arg, retval) do { 			\
 	if (G_UNLIKELY (!(arg)))				\
@@ -454,7 +439,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	MonoThreadState state;
+	guint32/*MonoThreadState*/ state; // FIXMEcplusplus
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
@@ -481,7 +466,7 @@ struct _MonoInternalThread {
 	gsize    flags;
 	gpointer thread_pinning_ref;
 	gsize __abort_protected_block_count;
-	MonoThreadPriority priority;
+	gint32/*MonoThreadPriority*/ priority; // FIXMEcplusplus
 	GPtrArray *owned_mutexes;
 	MonoOSEvent *suspended;
 	gint32 self_suspended; // TRUE | FALSE
