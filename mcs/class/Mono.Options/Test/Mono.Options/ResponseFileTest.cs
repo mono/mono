@@ -56,26 +56,27 @@ namespace MonoTests.Mono.Options
 		[Test]
 		public void ResponseFileParser ()
 		{
-            const string text = "--arg1=value1\n\"--arg2=\\\"value2 contains nested quoting\\\"\"\n\"--arg3=value3\"\n";
-            var source = new ResponseFileSource ();
-            var path = Path.GetTempFileName ();
-            IEnumerable<string> replacement;
+			const string text = "--arg1=value1\n\"--arg2=\\\"value2 contains nested quoting\\\"\"\n\"--arg3=value3\" --arg4=value4\n";
+			var source = new ResponseFileSource ();
+			var path = Path.GetTempFileName ();
+			IEnumerable<string> replacement;
 
-            File.WriteAllText (path, text);
+			File.WriteAllText (path, text);
 
-            try {
-                Assert.IsTrue (source.GetArguments ("@" + path, out replacement));
-            } catch {
-                throw;
-            } finally {
-                File.Delete (path);
-            }
+			try {
+				Assert.IsTrue (source.GetArguments ("@" + path, out replacement));
+			} catch {
+				throw;
+			} finally {
+				File.Delete (path);
+			}
 
-            var args = replacement.ToList ();
-            Assert.AreEqual (3, args.Count);
-            Assert.AreEqual ("--arg1=value1", args[0]);
-            Assert.AreEqual ("--arg2=\"value2 contains nested quoting\"", args[1]);
-            Assert.AreEqual ("--arg3=value3", args[2]);
+			var args = replacement.ToList ();
+			Assert.AreEqual (4, args.Count);
+			Assert.AreEqual ("--arg1=value1", args[0]);
+			Assert.AreEqual ("--arg2=\"value2 contains nested quoting\"", args[1]);
+			Assert.AreEqual ("--arg3=value3", args[2]);
+			Assert.AreEqual ("--arg4=value4", args[3]);
 		}
 	}
 }
