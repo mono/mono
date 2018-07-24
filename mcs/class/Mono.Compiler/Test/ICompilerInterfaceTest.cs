@@ -132,9 +132,14 @@ namespace MonoTests.Mono.CompilerInterface
 			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "EmptyMethod");
 			NativeCodeHandle nativeCode;
 
-			compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);
+			var result = compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);
 
-			Assert.AreEqual (*nativeCode.Blob, (byte) 0xc3); // 0xc3 is 'RET' in amd64 assembly
+			// InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+
+			// runtimeInfo.ExecuteInstalledMethod (irc);
+
+			// FIXME: this returns 0x55 which is some kind of PUSH
+			Assert.AreEqual ((byte) 0xc3, *nativeCode.Blob); // 0xc3 is 'RET' in amd64 assembly
 		}
 	}
 }
