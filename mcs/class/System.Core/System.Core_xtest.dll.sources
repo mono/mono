@@ -56,7 +56,7 @@
 ../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
 #../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs
-../../../external/corefx/src/System.Linq.Parallel/tests/*.cs:WithCancellationTests.cs,PlinqModesTests.cs,ExchangeTests.cs,EtwTests.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/*.cs:WithCancellationTests.cs,PlinqModesTests.cs,ExchangeTests.cs,EtwTests.cs,ParallelEnumerableTests.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
