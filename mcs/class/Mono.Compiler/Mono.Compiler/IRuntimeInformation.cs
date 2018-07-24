@@ -1,3 +1,4 @@
+using System;
 
 namespace Mono.Compiler
 {
@@ -10,5 +11,7 @@ namespace Mono.Compiler
 		ClassInfo GetClassInfoFor (string className);
 
 		MethodInfo GetMethodInfoFor (ClassInfo classInfo, string methodName);
+
+		RuntimeTypeHandle VoidType { get; }
 	}
 }

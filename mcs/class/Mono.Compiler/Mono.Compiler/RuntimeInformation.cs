@@ -28,5 +28,8 @@ namespace Mono.Compiler {
 			/* FIXME: methodName doesn't uniquely determine a method */
 			return classInfo.GetMethodInfoFor (methodName);
 		}
+
+		public RuntimeTypeHandle VoidType { get => typeof (void).TypeHandle; }
+
 	}
 }
