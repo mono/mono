@@ -1400,7 +1400,7 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	MonoObjectHandle attr = mono_object_new_handle (domain, mono_defaults.customattribute_data_class, error);
 	goto_if_nok (error, fail);
 
-	MonoReflectionMethod *ctor_obj;
+	MonoReflectionMethodHandle ctor_obj;
 	ctor_obj = mono_method_get_object_handle (domain, cattr->ctor, NULL, error);
 	goto_if_nok (error, fail);
 	MonoReflectionAssemblyHandle assm;
