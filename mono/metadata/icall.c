@@ -7640,18 +7640,17 @@ mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter)
 	return iter->sig->params [i];
 }
 
-ICALL_EXPORT MonoObject*
-mono_TypedReference_ToObject (MonoTypedRef* tref)
+ICALL_EXPORT MonoObjectHandle
+mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 {
-	ICALL_ENTRY ();
-	MonoObjectHandle result = typed_reference_to_object (tref, error);
-	mono_error_set_pending_exception (error);
-	ICALL_RETURN_OBJ (result);
+	return typed_reference_to_object (tref, error);
 }
 
 ICALL_EXPORT MonoTypedRef
 mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target, MonoArray *fields)
 {
+	MONO_REQ_GC_UNSAFE_MODE; // because of "p", so not worth converting target and fields
+
 	MonoTypedRef res;
 	MonoReflectionField *f;
 	MonoClass *klass;
