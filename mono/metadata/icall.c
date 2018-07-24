@@ -1135,6 +1135,8 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 ICALL_EXPORT MonoBoolean
 ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoArray **fields)
 {
+	*fields = NULL;
+
 	ERROR_DECL (error);
 	MonoClass *klass;
 	MonoObject **values = NULL;
@@ -1159,7 +1161,6 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	 * managed side. This way, we can avoid costly reflection operations in 
 	 * managed code.
 	 */
-	*fields = NULL;
 	iter = NULL;
 	while ((field = mono_class_get_fields (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
