@@ -320,9 +320,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.AreEqual ("System.Security.Cryptography.X509Certificates.X509Certificate", x.ToString (false), "ToString(false)");
 			Assert.IsTrue (x.Equals (x), "Equals(X509Certificate)");
 			Assert.IsTrue (x.Equals ((object) x), "Equals(object)");
-			x.Reset ();
-			x.Import (cert1);
-			Assert.AreEqual ("02720006E8", x.GetSerialNumberString (), "GetSerialNumberString");
 		}
 
 		[Test]
@@ -736,15 +733,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		public void Pkcs7_Ctor ()
 		{
 			new X509Certificate (farscape_pkcs7);
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		[Category ("MacNotWorking")] // SecCertificateCreateWithData does different things on 10.11 vs 10.12 with invalid certificates https://bugzilla.xamarin.com/show_bug.cgi?id=53689
-		public void Pkcs7_Import ()
-		{
-			X509Certificate x = new X509Certificate ();
-			x.Import (farscape_pkcs7);
 		}
 	}
 }
