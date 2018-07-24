@@ -483,7 +483,9 @@ namespace System.Globalization {
             return (InternalGetUnicodeCategory(ch)) ;
         }
 
-        internal static UnicodeCategory GetUnicodeCategory(int ch) => GetUnicodeCategory((int)ch);
+#if MONO
+        public static UnicodeCategory GetUnicodeCategory(int ch) => GetUnicodeCategory((int)ch);
+#endif
 
         public static UnicodeCategory GetUnicodeCategory(String s, int index)
         {
