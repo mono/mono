@@ -231,4 +231,3 @@ mono_mb_add_data (MonoMethodBuilder *mb, gpointer data)
 
 	return g_list_length ((GList *)mw->method_data);
 }
-

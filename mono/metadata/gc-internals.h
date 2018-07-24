@@ -169,32 +169,38 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+MonoArray*
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
 
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
 
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+MonoArray*
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
 
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+MonoString*
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 
-void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
 
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 

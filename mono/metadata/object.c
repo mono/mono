@@ -5838,8 +5838,6 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	error_init (error);
-
 	MonoObject *o = (MonoObject*)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
