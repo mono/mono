@@ -31,8 +31,15 @@ mono_basic_block_free (MonoSimpleBasicBlock *bb);
 
 /*This function is here because opcodes.h is a public header*/
 
-#ifndef __MONO_METADATA_OPCODES_H__
-typedef enum _MonoOpcodeEnum MonoOpcodeEnum;
+#ifndef MonoOpcodeEnum
+#define MonoOpcodeEnum MonoOpcodeEnum
+
+typedef enum _MonoOpcodeEnum {
+	MonoOpcodeEnum_Invalid = -1,
+#include "mono/cil/opcode.def"
+	MONO_CEE_LAST
+} MonoOpcodeEnum;
+
 #endif
 
 int
