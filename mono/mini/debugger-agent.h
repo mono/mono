@@ -35,9 +35,6 @@ struct _MonoDebuggerCallbacks {
 typedef struct _DebuggerTlsData DebuggerTlsData;
 
 MONO_API void
-mono_debugger_agent_parse_options (char *options);
-
-MONO_API void
 mono_debugger_agent_init (void);
 
 MONO_API void
