@@ -10,11 +10,11 @@ endif
 
 # The minimal set of csc dependencies
 basic_SUBDIRS := \
-	Mono.Compiler \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
 	corlib \
+	Mono.Compiler \
 	Mono.Security \
 	System \
 	System.XML \
@@ -29,11 +29,11 @@ basic_SUBDIRS := \
 	corlib/il
 
 build_SUBDIRS :=  \
-	Mono.Compiler \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
 	corlib \
+	Mono.Compiler \
 	Mono.Security \
 	System \
 	System.XML \
