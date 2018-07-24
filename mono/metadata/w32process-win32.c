@@ -136,7 +136,7 @@ mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mo
 {
 	gboolean result = FALSE;
 	gchandle_t cmd_gchandle = 0;
-	gunichar2 *cmd_chars = MONO_HANDLE_IS_NULL (cmd) ? NULL : mono_string_handle_pin_chars (cmd, &cmd_gchandle),
+	gunichar2 *cmd_chars = MONO_HANDLE_IS_NULL (cmd) ? NULL : mono_string_handle_pin_chars (cmd, &cmd_gchandle);
 
 	if (coop->username) {
 		guint32 logon_flags = mono_process_info->load_user_profile ? LOGON_WITH_PROFILE : 0;
@@ -242,7 +242,7 @@ process_get_shell_arguments (MonoCreateProcessCoop *proc_start_info, MonoStringH
 	char *new_cmd = NULL;
 	char *cmd_utf8 = NULL;
 
-	*cmd = proc_start_info->coophandle->arguments;
+	*cmd = proc_start_info->coophandle.arguments;
 
 	// FIXME There are excess utf8 <=> gunichar2 conversions here.
 	// We are either returning spath, or spath + " " + cmd.
@@ -295,7 +295,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	if (MONO_HANDLE_GETVAL (proc_start_info, create_no_window))
 		creation_flags |= CREATE_NO_WINDOW;
 	
-	if (process_get_shell_arguments (coop, &cmd, error) == FALSE) {
+	if (process_get_shell_arguments (&coop, &cmd, error) == FALSE) {
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
 		ret = FALSE;
 		goto exit;
@@ -306,8 +306,6 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 		MonoStringHandle var = MONO_HANDLE_NEW (MonoString, NULL);
 		gsize const array_length = mono_array_handle_length (array);
 		gsize len = 1; // nul-terminated
-
-		MonoStringHandle var = MONO_HANDLE_NEW (MonoString, NULL);
 
 		for (gsize i = 0; i < array_length; i++) {
 			MONO_HANDLE_ARRAY_GETREF (var, array, i);
