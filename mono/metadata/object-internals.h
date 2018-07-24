@@ -665,8 +665,9 @@ typedef struct {
 	void     (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
 	gboolean (*debug_log_is_enabled) (void);
 	void     (*init_delegate) (MonoDelegate *del);
-	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
+	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, gboolean force_interpreter, MonoError *error);
 	void*    (*compile_method) (MonoMethod *method, MonoError *error);
+	void*    (*compile_method_with_mini) (MonoMethod *method, MonoError *error);
 	gpointer (*create_jump_trampoline) (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error);
 	gpointer (*create_jit_trampoline) (MonoDomain *domain, MonoMethod *method, MonoError *error);
 	/* used to free a dynamic method */
@@ -1975,6 +1976,12 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
 
+gpointer
+mono_invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error);
+
+MonoObject*
+mono_runtime_invoke_interpreter (MonoMethod *method, void *obj, void **params, MonoError *error);
+
 MonoObject*
 mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			       MonoObject **exc, MonoError *error);
@@ -1985,6 +1992,9 @@ mono_runtime_invoke_array_checked (MonoMethod *method, void *obj, MonoArray *par
 
 void* 
 mono_compile_method_checked (MonoMethod *method, MonoError *error);
+
+gpointer
+ves_icall_Mono_Compiler_MiniCompiler_CompileMethod(MonoMethod *method, gint64 *code_length, MonoError *error);
 
 MonoObject*
 mono_runtime_delegate_try_invoke (MonoObject *delegate, void **params,

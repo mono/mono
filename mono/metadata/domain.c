@@ -429,6 +429,7 @@ mono_domain_create (void)
 	domain->class_vtable_array = g_ptr_array_new ();
 	domain->proxy_vtable_hash = g_hash_table_new ((GHashFunc)mono_ptrarray_hash, (GCompareFunc)mono_ptrarray_equal);
 	mono_jit_code_hash_init (&domain->jit_code_hash);
+	mono_jit_code_hash_init (&domain->mjit_code_hash);
 	domain->ldstr_table = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain String Pool Table");
 	domain->num_jit_info_table_duplicates = 0;
 	domain->jit_info_table = mono_jit_info_table_new (domain);
@@ -789,6 +790,18 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	MONO_PROFILER_RAISE (domain_name, (domain, domain->friendly_name));
 
 	return domain;
+}
+
+void
+mono_init_compiler_assembly (void)
+{
+	MonoAssembly *compiler_assembly = NULL;
+
+	compiler_assembly = mono_assembly_load (mono_assembly_name_new ("Mono.Compiler"), NULL, NULL);
+	g_assert (compiler_assembly);
+
+	mono_defaults.compiler = mono_assembly_get_image_internal (compiler_assembly);
+	g_assert (mono_defaults.compiler);
 }
 
 /**

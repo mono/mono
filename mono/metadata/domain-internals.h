@@ -215,6 +215,7 @@ struct _MonoJitInfo {
 		MonoImage *image;
 		gpointer aot_info;
 		gpointer tramp_info;
+		gpointer installed_runtime_code; // mjit
 	} d;
 	union {
 		struct _MonoJitInfo *next_jit_code_hash;
@@ -246,6 +247,8 @@ struct _MonoJitInfo {
 	gboolean    is_trampoline:1;
 	/* Whenever this jit info refers to an interpreter method */
 	gboolean    is_interp:1;
+
+	MonoMethod  *mjit_method; // mjit
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -359,6 +362,7 @@ struct _MonoDomain {
 	GHashTable         *proxy_vtable_hash;
 	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
+	MonoInternalHashTable mjit_code_hash;
 	mono_mutex_t    jit_code_hash_lock;
 	int		    num_jit_info_table_duplicates;
 	MonoJitInfoTable * 

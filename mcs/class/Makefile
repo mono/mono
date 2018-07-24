@@ -14,6 +14,7 @@ basic_SUBDIRS := \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
 	corlib \
+	Mono.Compiler \
 	Mono.Security \
 	System \
 	System.XML \
@@ -32,6 +33,7 @@ build_SUBDIRS :=  \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
 	corlib \
+	Mono.Compiler \
 	Mono.Security \
 	System \
 	System.XML \
@@ -205,6 +207,7 @@ xammac_4_5_dirs := \
 
 net_4_x_dirs := \
 	corlib				\
+	Mono.Compiler \
 	Mono.Security \
 	System				\
 	System.XML			\

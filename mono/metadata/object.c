@@ -739,6 +739,30 @@ mono_compile_method_checked (MonoMethod *method, MonoError *error)
 }
 
 gpointer
+ves_icall_Mono_Compiler_MiniCompiler_CompileMethod(MonoMethod *method, gint64 *code_length, MonoError *error)
+{
+	MonoDomain *domain;
+	MonoJitInfo *jit_info;
+	gpointer res;
+
+	*code_length = 0;
+
+	g_assert (callbacks.compile_method_with_mini);
+	res = callbacks.compile_method_with_mini(method, error);
+	if (!res)
+		return NULL;
+
+	domain = mono_domain_get ();
+	g_assert (domain);
+
+	jit_info = mono_jit_info_table_find(domain, res);
+	g_assert (jit_info);
+
+	*code_length = (gint64) mono_jit_info_get_code_size(jit_info);
+	return res;
+}
+
+gpointer
 mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error)
 {
 	gpointer res;
@@ -2938,7 +2962,7 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 }
 
 static MonoObject*
-do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
+do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, gboolean force_interpreter, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -2950,7 +2974,7 @@ do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **ex
 	
 	MONO_PROFILER_RAISE (method_begin_invoke, (method));
 
-	result = callbacks.runtime_invoke (method, obj, params, exc, error);
+	result = callbacks.runtime_invoke (method, obj, params, exc, force_interpreter, error);
 
 	MONO_PROFILER_RAISE (method_end_invoke, (method));
 
@@ -3059,7 +3083,7 @@ mono_runtime_try_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	if (mono_runtime_get_no_exec ())
 		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
 
-	return do_runtime_invoke (method, obj, params, exc, error);
+	return do_runtime_invoke (method, obj, params, exc, FALSE, error);
 }
 
 MonoObjectHandle
@@ -3118,13 +3142,24 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 	if (mono_runtime_get_no_exec ())
 		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
 
-	return do_runtime_invoke (method, obj, params, NULL, error);
+	return do_runtime_invoke (method, obj, params, NULL, FALSE, error);
 }
 
 MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
 {
 	return MONO_HANDLE_NEW (MonoObject, mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (obj), params, error));
+}
+
+MonoObject*
+mono_runtime_invoke_interpreter (MonoMethod *method, void *obj, void **params, MonoError* error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	if (mono_runtime_get_no_exec ())
+		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
+
+	return do_runtime_invoke (method, obj, params, NULL, TRUE, error);
 }
 
 /**
@@ -3795,7 +3830,7 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 	MONO_ENTER_GC_UNSAFE;
 
 	ERROR_DECL (error);
-	do_runtime_invoke (prop->set, obj, params, exc, error);
+	do_runtime_invoke (prop->set, obj, params, exc, FALSE, error);
 	if (exc && *exc == NULL && !mono_error_ok (error)) {
 		*exc = (MonoObject*) mono_error_convert_to_exception (error);
 	} else {
@@ -3823,7 +3858,7 @@ mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void *
 	MonoObject *exc;
 
 	error_init (error);
-	do_runtime_invoke (prop->set, MONO_HANDLE_RAW (obj), params, &exc, error);
+	do_runtime_invoke (prop->set, MONO_HANDLE_RAW (obj), params, &exc, FALSE, error);
 	if (exc != NULL && is_ok (error))
 		mono_error_set_exception_instance (error, (MonoException*)exc);
 	return is_ok (error);
@@ -3851,7 +3886,7 @@ mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
-	MonoObject *val = do_runtime_invoke (prop->get, obj, params, exc, error);
+	MonoObject *val = do_runtime_invoke (prop->get, obj, params, exc, FALSE, error);
 	if (exc && *exc == NULL && !mono_error_ok (error)) {
 		*exc = (MonoObject*) mono_error_convert_to_exception (error);
 	} else {
@@ -3882,7 +3917,7 @@ mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, M
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *exc;
-	MonoObject *val = do_runtime_invoke (prop->get, obj, params, &exc, error);
+	MonoObject *val = do_runtime_invoke (prop->get, obj, params, &exc, FALSE, error);
 	if (exc != NULL && !is_ok (error))
 		mono_error_set_exception_instance (error, (MonoException*) exc);
 	if (!is_ok (error))
@@ -5049,7 +5084,7 @@ mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **ex
 
 
 
-/** invoke_array_extract_argument:
+/** mono_invoke_array_extract_argument:
  * @params: array of arguments to the method.
  * @i: the index of the argument to extract.
  * @t: ith type from the method signature.
@@ -5061,8 +5096,8 @@ mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **ex
  *
  * On failure sets @error and returns NULL.
  */
-static gpointer
-invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error)
+gpointer
+mono_invoke_array_extract_argument (MonoArray *params, int i, MonoType *t, gboolean* has_byref_nullables, MonoError *error)
 {
 	MonoType *t_orig = t;
 	gpointer result = NULL;
@@ -5309,7 +5344,7 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		pa = (void **)alloca (sizeof (gpointer) * mono_array_length (params));
 		for (i = 0; i < mono_array_length (params); i++) {
 			MonoType *t = sig->params [i];
-			pa [i] = invoke_array_extract_argument (params, i, t, &has_byref_nullables, error);
+			pa [i] = mono_invoke_array_extract_argument (params, i, t, &has_byref_nullables, error);
 			return_val_if_nok (error, NULL);
 		}
 	}
