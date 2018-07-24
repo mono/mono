@@ -112,7 +112,7 @@ typedef struct _MonoCreateProcessCoop {
 } MonoCreateProcessCoop;
 
 void
-mono_createprocess_coop_init (MonoCreateProcessCoop *coop, MonoW32ProcessStartInfoHandle proc_start_info_handle, MonoW32ProcessInfo *process_info);
+mono_createprocess_coop_init (MonoCreateProcessCoop *coop, MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info);
 
 void
 mono_createprocess_coop_cleanup (MonoCreateProcessCoop *coop);
@@ -149,10 +149,10 @@ void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, MonoW32ProcessInfo *process_info, MonoError *error);
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error);
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info_handle, gpointer stdin_handle,
+ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info, gpointer stdin_handle,
 	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle, MonoError *error);
 
 MonoString*
