@@ -544,7 +544,8 @@ public class SourcesParser {
     ) {
         var include = "#include ";
         if (directive.StartsWith (include)) {
-            var fileName = Path.Combine (includeDirectory, directive.Substring (include.Length));
+            var includeName = directive.Substring (include.Length).Trim ();
+            var fileName = Path.Combine (includeDirectory, includeName);
             if (!File.Exists (fileName)) {
                 Console.Error.WriteLine ($"// Include does not exist: {fileName}");
                 state.Result.ErrorCount++;
