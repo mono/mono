@@ -393,7 +393,6 @@ partial class SR
 	public const string net_nego_channel_binding_not_supported = "No support for channel binding on operating systems other than Windows.";
 	public const string net_ntlm_not_possible_default_cred = "NTLM authentication is not possible with default credentials on this platform.";
 	public const string net_nego_not_supported_empty_target_with_defaultcreds = "Target name should be non empty if default credentials are passed.";
-	public const string Arg_ArgumentOutOfRangeException = "Index was out of bounds:";
 	public const string Arg_ElementsInSourceIsGreaterThanDestination = "Number of elements in source vector is greater than the destination array";
 	public const string Arg_NullArgumentNullRef = "The method was called with a null array argument.";
 	public const string Arg_TypeNotSupported = "Specified type is not supported";

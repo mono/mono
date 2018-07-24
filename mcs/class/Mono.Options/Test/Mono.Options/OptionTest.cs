@@ -91,7 +91,7 @@ namespace MonoTests.Mono.Options
 			Utils.AssertException (null, null,
 					p, v => { new DefaultOption ("a|b=", null, 2); });
 			Utils.AssertException (typeof(ArgumentOutOfRangeException),
-					$"Index was out of bounds:{Environment.NewLine}Parameter name: maxValueCount",
+					$"Specified argument was out of the range of valid values.{Environment.NewLine}Parameter name: maxValueCount",
 					p, v => { new DefaultOption ("a", null, -1); });
 			Utils.AssertException (typeof(ArgumentException),
 					"Cannot provide maxValueCount of 0 for OptionValueType.Required or " +
