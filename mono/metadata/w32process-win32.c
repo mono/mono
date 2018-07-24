@@ -296,6 +296,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 		creation_flags |= CREATE_NO_WINDOW;
 	
 	if (process_get_shell_arguments (&coop, &cmd, error) == FALSE) {
+		// FIXME This should be passed back separately.
 		process_info->pid = -ERROR_FILE_NOT_FOUND;
 		ret = FALSE;
 		goto exit;
@@ -342,6 +343,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 			CloseHandle (procinfo.hThread);
 		process_info->pid = procinfo.dwProcessId;
 	} else {
+		// FIXME This should be passed back separately.
 		process_info->pid = -GetLastError ();
 	}
 
