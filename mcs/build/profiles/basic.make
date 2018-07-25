@@ -30,7 +30,7 @@ ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PR
 STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/tmp/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
 GENSOURCES_CS = $(topdir)/build/gensources.cs
-GENSOURCES_EXE = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gensources.exe
+GENSOURCES_EXE = $(topdir)/class/lib/basic/gensources.exe
 
 DEFAULT_REFERENCES = mscorlib
 
@@ -88,8 +88,7 @@ do-profile-check: $(depsdir)/.stamp
 	    else \
 		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
                 echo "*** Check README for information on how to bootstrap a Mono installation." 1>&2 ; \
-	        exit 1; fi; fi
-	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE) $(GENSOURCES_CS)
+	        exit 1; fi; fi \
 
 ifdef use_monolite
 
@@ -115,9 +114,11 @@ do-profile-check-monolite: $(depsdir)/.stamp
 
 endif
 
-$(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
+$(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
 	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
+	echo building $(GENSOURCES_EXE) from $(GENSOURCES_CS)
+	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE) $(GENSOURCES_CS)
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
