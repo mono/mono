@@ -891,8 +891,8 @@ mono_thread_abort (MonoObject *obj)
 	}
 }
 
-static void*
-setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
+static MonoJitTlsData*
+setup_jit_tls_data (gpointer stack_start, MonoAbortFunction abort_func)
 {
 	MonoJitTlsData *jit_tls;
 	MonoLMF *lmf;
@@ -2113,7 +2113,7 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 				 * sometimes we load methods too eagerly and have to create them even if they
 				 * will never be called.
 				 */
-				return no_gsharedvt_in_wrapper;
+				return (gpointer)no_gsharedvt_in_wrapper;
 			}
 		}
 	}
