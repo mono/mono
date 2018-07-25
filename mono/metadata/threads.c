@@ -1824,12 +1824,12 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
 int/*MonoThreadPriority FIXMEcplusplus*/
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
-	MonoThreadPriority priority;
+	int priority;
 
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
 	LOCK_THREAD (internal);
-	priority = (MonoThreadPriority)internal->priority;
+	priority = internal->priority;
 	UNLOCK_THREAD (internal);
 
 	return priority;
