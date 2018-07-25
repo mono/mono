@@ -63,3 +63,5 @@ monosgen_sources = \
 
 libmonosgen_la_SOURCES = $(monosgen_sources)
 libmonosgen_la_CFLAGS = $(SGEN_DEFINES)
+
+CFLAGS := $(filter-out @CPLUSPLUS_REMOVE_CFLAGS@, @CFLAGS@) @CPLUSPLUS_ADD_CFLAGS@
