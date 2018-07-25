@@ -1,4 +1,6 @@
 Assembly/AssemblyInfo.cs
 
+TypeForwarders.cs
+
 System.Security.Cryptography/ProtectedData.cs
 
