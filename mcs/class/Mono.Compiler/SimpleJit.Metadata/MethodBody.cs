@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using SimpleJit.CIL;
 using Mono;
 
@@ -99,21 +100,25 @@ public class MethodBody {
 	int maxStack;
 	bool initLocals;
 	int localsToken;
+	IList<LocalVariableInfo> localInfo;
 
 	public byte[] Body {
 		get { return body; }
 	}
+#if FIXME_USE_SIMPLEJIT_METADATA
 	// II.25.4.4
 	const int FlagsFormatMask   = 0x03;
 	const int FlagsFatFormat 	= 0x03;
 	const int FlagsTinyFormat   = 0x02;
 	const int FlagsMoreSections = 0x08;
 	const int FlagsInitLocals   = 0x10;
+#endif
 
 	public IlIterator GetIterator () {
 		return new IlIterator (body);
 	}
 
+#if FIXME_USE_SIMPLEJIT_METADATA
 	public MethodBody (Image image, int index) {
 		byte[] data = image.data;
 		if ((data [index] & FlagsFormatMask) == FlagsTinyFormat) {//tiny format
@@ -150,18 +155,23 @@ public class MethodBody {
 			throw new Exception ("Invalid body method body format " + (data [index] & 0x3));
 		}
 	}
+#endif // FIXME_USE_SIMPLEJIT_METADATA
 
-	public MethodBody (byte[] body, int maxStack, bool initLocals, int localsToken)
+	public MethodBody (byte[] body, int maxStack, bool initLocals, int localsToken, IList<LocalVariableInfo> localInfo)
 	{
 		this.body = body;
 		this.maxStack = maxStack;
 		this.initLocals = initLocals;
 		this.localsToken = localsToken;
+		this.localInfo = localInfo;
 	}
 
 	public override string ToString () {
 		return $"method-body maxStack {maxStack} bodySize {body.Length} localsTok 0x{localsToken:X}";
 	}
+
+
+	public IList<LocalVariableInfo> LocalVariables { get => localInfo; }
 }
 
 }

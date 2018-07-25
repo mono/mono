@@ -128,7 +128,7 @@ namespace MonoTests.Mono.CompilerInterface
 			ClassInfo ci = runtimeInfo.GetClassInfoFor (typeof (ICompilerTests).AssemblyQualifiedName);
 
 			byte[] input = { 0x2a /* OpCodes.Ret*/ };
-			var body = new SimpleJit.Metadata.MethodBody (input, 0, false, 0);
+			var body = new SimpleJit.Metadata.MethodBody (input, 0, false, 0, Array.Empty<SimpleJit.Metadata.LocalVariableInfo>());
 			MethodInfo mi = runtimeInfo.GetMethodInfoFor (ci, "EmptyMethod");
 			NativeCodeHandle nativeCode;
 

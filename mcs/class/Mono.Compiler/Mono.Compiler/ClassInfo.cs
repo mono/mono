@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 using SimpleJit.Metadata;
@@ -31,13 +32,26 @@ namespace Mono.Compiler
 
 		MethodInfo GetMethodInfoFor (System.Reflection.MethodInfo m, string methodName)
 		{
+			var parameters = Array.Empty<SimpleJit.Metadata.ParameterInfo> (); /* FIXME fill this in from S.R.MethodInfo */
 			var srBody = m.GetMethodBody ();
 			var bodyBytes = srBody.GetILAsByteArray ();
 			var maxStack = srBody.MaxStackSize;
 			var initLocals = srBody.InitLocals;
 			var localsToken = srBody.LocalSignatureMetadataToken;
-			var body = new SimpleJit.Metadata.MethodBody (bodyBytes, maxStack, initLocals, localsToken);
-			return new MethodInfo (this, methodName, body, m.MethodHandle);
+			var locals = LocalVariableInfo (srBody.LocalVariables);
+			var body = new SimpleJit.Metadata.MethodBody (bodyBytes, maxStack, initLocals, localsToken, locals);
+			return new MethodInfo (this, methodName, body, m.MethodHandle, RuntimeInformation.ClrTypeFromType (m.ReturnType), parameters);
+		}
+
+		IList<SimpleJit.Metadata.LocalVariableInfo> LocalVariableInfo (IList<System.Reflection.LocalVariableInfo> locals)
+		{
+			SimpleJit.Metadata.LocalVariableInfo[] res = new SimpleJit.Metadata.LocalVariableInfo[locals.Count];
+			int i = 0;
+			foreach (var l in locals) {
+				var t = RuntimeInformation.ClrTypeFromType (l.LocalType);
+				res[i++] = new SimpleJit.Metadata.LocalVariableInfo (t, l.LocalIndex);
+			}
+			return res;
 		}
 
 	}

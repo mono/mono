@@ -1,5 +1,7 @@
 using System;
 
+using SimpleJit.Metadata;
+
 namespace Mono.Compiler
 {
 	public interface IRuntimeInformation
@@ -12,6 +14,6 @@ namespace Mono.Compiler
 
 		MethodInfo GetMethodInfoFor (ClassInfo classInfo, string methodName);
 
-		RuntimeTypeHandle VoidType { get; }
+		ClrType VoidType { get; }
 	}
 }

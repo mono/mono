@@ -47,10 +47,10 @@ namespace Mono.Compiler.BigStep
 			public Env (IRuntimeInformation runtimeInfo, MethodInfo methodInfo)
 			{
 				this.RuntimeInfo = runtimeInfo;
+				this.ReturnType = methodInfo.ReturnType;
 			}
 
-			// FIXME: get return type from methodInfo signature
-			public RuntimeTypeHandle ReturnType { get => RuntimeInfo.VoidType; }
+			public ClrType ReturnType { get; }
 		}
 
 		// encapsulate the LLVM module and builder here.
@@ -151,7 +151,7 @@ namespace Mono.Compiler.BigStep
 
 		CompilationResult TranslateRet (Env env, Builder builder)
 		{
-			if (env.ReturnType.Equals (RuntimeInfo.VoidType)) {
+			if (env.ReturnType == RuntimeInfo.VoidType) {
 				builder.EmitRetVoid ();
 				return Ok;
 			} else

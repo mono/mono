@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using SimpleJit.Metadata;
+
 namespace Mono.Compiler {
 	public class RuntimeInformation : IRuntimeInformation {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -29,7 +31,42 @@ namespace Mono.Compiler {
 			return classInfo.GetMethodInfoFor (methodName);
 		}
 
-		public RuntimeTypeHandle VoidType { get => typeof (void).TypeHandle; }
+		/* Primitive types */
+		public ClrType VoidType { get => ClrTypeFromType (typeof (void)); }
 
+		public ClrType BoolType { get => ClrTypeFromType (typeof (bool)); }
+
+		public ClrType CharType { get => ClrTypeFromType (typeof (char)); }
+
+		public ClrType ObjectType { get => ClrTypeFromType (typeof (object)); }
+
+		public ClrType StringType { get => ClrTypeFromType (typeof (string)); }
+
+		public ClrType Int8Type { get => ClrTypeFromType (typeof (System.SByte)); }
+		public ClrType UInt8Type { get => ClrTypeFromType (typeof (System.Byte)); }
+
+		public ClrType Int16Type { get => ClrTypeFromType (typeof (System.Int16)); }
+		public ClrType UInt16Type { get => ClrTypeFromType (typeof (System.UInt16)); }
+
+		public ClrType Int32Type { get => ClrTypeFromType (typeof (System.Int32)); }
+		public ClrType UInt32Type { get => ClrTypeFromType (typeof (System.UInt32)); }
+
+		public ClrType Int64Type { get => ClrTypeFromType (typeof (System.Int16)); }
+		public ClrType UInt64Type { get => ClrTypeFromType (typeof (System.UInt16)); }
+
+		public ClrType NativeIntType { get => ClrTypeFromType (typeof (System.IntPtr)); }
+		public ClrType NativeUnsignedIntType { get => ClrTypeFromType (typeof (System.UIntPtr)); }
+
+		public ClrType Float32Type { get => ClrTypeFromType (typeof (System.Single)); }
+		public ClrType Float64Type { get => ClrTypeFromType (typeof (System.Double)); }
+
+		public ClrType TypedRefType { get => ClrTypeFromType (typeof (System.TypedReference)); }
+
+
+		internal static ClrType ClrTypeFromType (Type t)
+		{
+			return new ClrType (t.TypeHandle);
+		}
+	       
 	}
 }
