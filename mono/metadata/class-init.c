@@ -4137,7 +4137,8 @@ mono_class_init (MonoClass *klass)
 		goto leave;
 	}
 
-	MonoType *klass_byval_arg = m_class_get_byval_arg (klass);
+	MonoType *klass_byval_arg;
+	klass_byval_arg = m_class_get_byval_arg (klass);
 	if (klass_byval_arg->type == MONO_TYPE_ARRAY || klass_byval_arg->type == MONO_TYPE_SZARRAY) {
 		MonoClass *element_class = klass->element_class;
 		if (!element_class->inited) 

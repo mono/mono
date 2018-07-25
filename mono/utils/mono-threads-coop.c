@@ -513,9 +513,10 @@ mono_threads_assert_gc_unsafe_region (void)
  * 0 means unset
  */
 typedef enum {
+	MONO_THREADS_SUSPEND_FULL_UNINITIALIZED = 0,
 	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
-	MONO_THREADS_SUSPEND_FULL_COOP,
-	MONO_THREADS_SUSPEND_HYBRID
+	MONO_THREADS_SUSPEND_FULL_COOP = 2,
+	MONO_THREADS_SUSPEND_HYBRID = 3,
 } MonoThreadsSuspendPolicy;
 
 static MonoThreadsSuspendPolicy
@@ -523,12 +524,10 @@ threads_suspend_policy_default (void)
 {
 #if defined (ENABLE_COOP_SUSPEND)
 	return MONO_THREADS_SUSPEND_FULL_COOP;
-#else
-#if defined (ENABLE_HYBRID_SUSPEND)
+#elif defined (ENABLE_HYBRID_SUSPEND)
 	return MONO_THREADS_SUSPEND_HYBRID;
 #else
 	return 0; /* unset */
-#endif
 #endif
 }
 
@@ -572,6 +571,12 @@ threads_suspend_policy_getenv (void)
 	if (g_hasenv ("MONO_THREADS_SUSPEND")) {
 		gchar *str = g_getenv ("MONO_THREADS_SUSPEND");
 		if (!strcmp (str, "coop"))
+=======
+	static MonoThreadsSuspendPolicy policy;
+	if (G_UNLIKELY (policy == MONO_THREADS_SUSPEND_FULL_UNINITIALIZED)) {
+		if (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND")) {
+			g_assertf (!g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND"), "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
+>>>>>>> More fixes, need splitting up into separate commits later.
 			policy = MONO_THREADS_SUSPEND_FULL_COOP;
 		else if (!strcmp (str, "hybrid"))
 			policy = MONO_THREADS_SUSPEND_HYBRID;

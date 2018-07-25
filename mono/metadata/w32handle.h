@@ -36,7 +36,7 @@ typedef enum {
 	MONO_W32TYPE_COUNT
 } MonoW32Type;
 
-typedef struct {
+typedef struct MonoW32Handle {
 	MonoW32Type type;
 	guint ref;
 	gboolean signalled;

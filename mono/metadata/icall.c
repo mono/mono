@@ -3581,7 +3581,7 @@ read_enum_value (const char *mem, int type)
 }
 
 static void
-write_enum_value (char *mem, int type, guint64 value)
+write_enum_value (void *mem, int type, guint64 value)
 {
 	switch (type) {
 	case MONO_TYPE_U1:
@@ -7699,7 +7699,8 @@ type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoE
 	if (!count)
 		goto fail;
 
-	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
+	MonoArrayHandle res;
+	res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
 	goto_if_nok (error, fail);
 	count = 0;
 	for (i = 0; i < cmods->count; ++i) {
