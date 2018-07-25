@@ -792,18 +792,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	return domain;
 }
 
-void
-mono_init_compiler_assembly (void)
-{
-	MonoAssembly *compiler_assembly = NULL;
-
-	compiler_assembly = mono_assembly_load (mono_assembly_name_new ("Mono.Compiler"), NULL, NULL);
-	g_assert (compiler_assembly);
-
-	mono_defaults.compiler = mono_assembly_get_image_internal (compiler_assembly);
-	g_assert (mono_defaults.compiler);
-}
-
 /**
  * mono_init:
  * 

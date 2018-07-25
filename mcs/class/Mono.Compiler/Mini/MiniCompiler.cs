@@ -8,7 +8,7 @@ namespace Mono.Compiler
 	{
 		public CompilationResult CompileMethod (IRuntimeInformation runtimeInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode)
 		{
-			byte *code = CompileMethod(methodInfo.MethodHandle, out long codeLength);
+			byte *code = CompileMethod(methodInfo.MethodHandle, methodInfo.Flags, out long codeLength);
 			if ((IntPtr) code == IntPtr.Zero) {
 				nativeCode = default(NativeCodeHandle);
 				return CompilationResult.InternalError;
@@ -19,6 +19,6 @@ namespace Mono.Compiler
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		unsafe static extern byte* CompileMethod(IntPtr method, out long codeLength);
+		unsafe static extern byte* CompileMethod(IntPtr method, int flags, out long codeLength);
 	}
 }

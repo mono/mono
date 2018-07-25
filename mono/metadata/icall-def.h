@@ -80,9 +80,6 @@ HANDLES(ICALL(NATIVEMETHODS_9, "SetProcessWorkingSetSize", ves_icall_Microsoft_W
 HANDLES(ICALL(NATIVEMETHODS_10, "TerminateProcess", ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess))
 HANDLES(ICALL(NATIVEMETHODS_11, "WaitForInputIdle", ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle))
 
-ICALL_TYPE(MINICOMPILER, "Mono.Compiler.MiniCompiler", MINICOMPILER_1)
-HANDLES(ICALL(MINICOMPILER_1, "CompileMethod", ves_icall_Mono_Compiler_MiniCompiler_CompileMethod))
-
 #ifndef DISABLE_COM
 ICALL_TYPE(COMPROX, "Mono.Interop.ComInteropProxy", COMPROX_1)
 HANDLES(ICALL(COMPROX_1, "AddProxy", ves_icall_Mono_Interop_ComInteropProxy_AddProxy))

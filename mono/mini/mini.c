@@ -4016,7 +4016,7 @@ mono_update_jit_stats (MonoCompile *cfg)
  *   Main entry point for the JIT.
  */
 gpointer
-mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, int opt, MonoError *error)
+mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error)
 {
 	MonoCompile *cfg;
 	gpointer code = NULL;

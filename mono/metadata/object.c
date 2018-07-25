@@ -739,30 +739,6 @@ mono_compile_method_checked (MonoMethod *method, MonoError *error)
 }
 
 gpointer
-ves_icall_Mono_Compiler_MiniCompiler_CompileMethod(MonoMethod *method, gint64 *code_length, MonoError *error)
-{
-	MonoDomain *domain;
-	MonoJitInfo *jit_info;
-	gpointer res;
-
-	*code_length = 0;
-
-	g_assert (callbacks.compile_method_with_mini);
-	res = callbacks.compile_method_with_mini(method, error);
-	if (!res)
-		return NULL;
-
-	domain = mono_domain_get ();
-	g_assert (domain);
-
-	jit_info = mono_jit_info_table_find(domain, res);
-	g_assert (jit_info);
-
-	*code_length = (gint64) mono_jit_info_get_code_size(jit_info);
-	return res;
-}
-
-gpointer
 mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error)
 {
 	gpointer res;

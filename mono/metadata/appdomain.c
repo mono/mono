@@ -265,9 +265,6 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAtt
 }
 
 void
-mono_init_compiler_assembly (void);
-
-void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
@@ -310,8 +307,6 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_thread_attach (domain);
 
 	mono_type_initialization_init ();
-
-	mono_init_compiler_assembly ();
 
 	if (!mono_runtime_get_no_exec ())
 		create_domain_objects (domain);

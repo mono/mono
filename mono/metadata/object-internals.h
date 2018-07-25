@@ -667,7 +667,6 @@ typedef struct {
 	void     (*init_delegate) (MonoDelegate *del);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, gboolean force_interpreter, MonoError *error);
 	void*    (*compile_method) (MonoMethod *method, MonoError *error);
-	void*    (*compile_method_with_mini) (MonoMethod *method, MonoError *error);
 	gpointer (*create_jump_trampoline) (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error);
 	gpointer (*create_jit_trampoline) (MonoDomain *domain, MonoMethod *method, MonoError *error);
 	/* used to free a dynamic method */
@@ -1992,9 +1991,6 @@ mono_runtime_invoke_array_checked (MonoMethod *method, void *obj, MonoArray *par
 
 void* 
 mono_compile_method_checked (MonoMethod *method, MonoError *error);
-
-gpointer
-ves_icall_Mono_Compiler_MiniCompiler_CompileMethod(MonoMethod *method, gint64 *code_length, MonoError *error);
 
 MonoObject*
 mono_runtime_delegate_try_invoke (MonoObject *delegate, void **params,
