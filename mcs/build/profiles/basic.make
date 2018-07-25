@@ -30,7 +30,8 @@ ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PR
 STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/tmp/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
 GENSOURCES_CS = $(topdir)/build/gensources.cs
-GENSOURCES_EXE = $(topdir)/class/lib/basic/gensources.exe
+GENSOURCES_DIR = $(topdir)/build
+GENSOURCES_EXE = $(GENSOURCES_DIR)/gensources.exe
 
 DEFAULT_REFERENCES = mscorlib
 
