@@ -1025,13 +1025,12 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 
 if test "x$enable_cxx" = "xyes"; then
 
-	# FIXME CoreFX native is not valid C++98.
-	# FIXME People want C++11 anyway.
-	# FIXME Test with Centos6. It requires a different switch and is its own
-	# dialect. We might need to dial CoreFX back to C++98, or at least Centos6 variant,
-	# or have separate ifdef ifdef corefx_cplusplus.
+	# FIXME mono/corefx/native has a lot of invalid C++98 in its headers
+	# dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
+	# mono/corefx is months behind dotnet/corefx
 	#CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
 	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
 	# These give warnings and should be removed. They are C-only.
