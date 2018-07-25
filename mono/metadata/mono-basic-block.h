@@ -31,14 +31,20 @@ mono_basic_block_free (MonoSimpleBasicBlock *bb);
 
 /*This function is here because opcodes.h is a public header*/
 
+// FIXME duplication
 #ifndef MonoOpcodeEnum
 #define MonoOpcodeEnum MonoOpcodeEnum
+
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
+	MONO_ ## a,
 
 typedef enum _MonoOpcodeEnum {
 	MonoOpcodeEnum_Invalid = -1,
 #include "mono/cil/opcode.def"
 	MONO_CEE_LAST
 } MonoOpcodeEnum;
+
+#undef OPDEF
 
 #endif
 
