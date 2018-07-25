@@ -426,14 +426,14 @@ mono_typed_handle_cast_voidptr (TypedHandle<T> handle, void* voidp)
 	typedef TypedHandle<TYPE>	TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
 					TYPED_HANDLE_NAME (TYPE),		\
 					TYPED_OUT_HANDLE_NAME (TYPE);		\
-
+MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
 #else
 
 #define TYPED_HANDLE_DECL(TYPE)							\
 	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
 					 TYPED_HANDLE_NAME (TYPE),		\
 					 TYPED_OUT_HANDLE_NAME (TYPE);		\
-
+MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
 #endif
 
 #else
