@@ -198,13 +198,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Pkcs\SubjectIdentifierType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Pkcs\src\System\Security\Cryptography\Xml\X509IssuerSerial.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.ProtectedData\src\System\Security\Cryptography\DataProtectionScope.cs" />
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
-    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(HostPlatform)' == 'linux' ">
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\AncestralNamespaceContextManager.cs" />

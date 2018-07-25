@@ -1405,6 +1405,7 @@ partial class SR
 	public const string ResetActionRequiresIndexMinus1 = "Reset action must be initialized with index -1.";
 	public const string IndexCannotBeNegative = "Index cannot be negative.";
 	public const string ObservableCollectionReentrancyNotAllowed = "Cannot change ObservableCollection during a CollectionChanged event.";
+	public const string Arg_ArgumentOutOfRangeException = "Specified argument was out of the range of valid values.";
 }
 
 partial class SR
