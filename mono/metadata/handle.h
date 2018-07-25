@@ -48,7 +48,7 @@
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
 #ifdef __cplusplus
 #define MONO_TYPE_SAFE_HANDLES 0 // FIXMEcplusplus
-#eliif defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
+#elif defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
@@ -382,6 +382,21 @@ extern char const * const mono_handle_track_owner;
 
 #if MONO_TYPE_SAFE_HANDLES
 
+#define MONO_TYPE_SAFE_HANDLE_FUNCTIONS(TYPE)			\
+/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
+/* Another way to do this involved casting mono_handle_new function to a different type. */ \
+static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
+{								\
+	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
+	return b;						\
+}								\
+static inline MONO_ALWAYS_INLINE gpointer 			\
+MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
+{								\
+	return a;						\
+}
+
 // FIXMEcplusplus
 // - Have four variations is a bit much.
 //   In short term, consider C++ just a third type-unsafe portable form?
@@ -420,20 +435,6 @@ mono_typed_handle_cast_voidptr (TypedHandle<T> handle, void* voidp)
 					 TYPED_OUT_HANDLE_NAME (TYPE);		\
 
 #endif
-
-/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
-/* Another way to do this involved casting mono_handle_new function to a different type. */ \
-static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
-MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
-{								\
-	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
-	return b;						\
-}								\
-static inline MONO_ALWAYS_INLINE gpointer 			\
-MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
-{								\
-	return a;						\
-}
 
 #else
 
