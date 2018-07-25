@@ -294,7 +294,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\FormatException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\FormattableString.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Gen2GcCallback.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CharUnicodeInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
@@ -671,7 +670,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ByReference.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\CharUnicodeInfoData.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\InsufficientMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingFieldException.cs" />
@@ -791,6 +789,7 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendaralgorithmtype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendardata.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendarweekrule.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturenotfoundexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturetypes.cs" />
