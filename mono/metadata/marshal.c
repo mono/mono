@@ -49,6 +49,7 @@
 #include "mono/metadata/object-internals.h"
 #include "mono/metadata/custom-attrs-internals.h"
 #include "mono/metadata/abi-details.h"
+#include "mono/metadata/custom-attrs-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
