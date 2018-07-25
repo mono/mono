@@ -37,7 +37,7 @@ namespace MonoTests.Mono.CompilerInterface
 			NativeCodeHandle nativeCode;
 
 			CompilationResult result = compiler.CompileMethod (runtimeInfo, methodInfo, CompilationFlags.None, out nativeCode);
-			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, methodInfo, nativeCode);
 			
 			int addition = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
 			Assert.AreEqual (addition, 3);
@@ -53,9 +53,9 @@ namespace MonoTests.Mono.CompilerInterface
 			                        0xc3};                  /* ret */
 
 			fixed (byte *b = amd64addblob) {
-				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length, mi);
+				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length);
 
-				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, mi, nativeCode);
 
 				int sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2);
 				Assert.AreEqual (3, sum);
@@ -77,9 +77,9 @@ namespace MonoTests.Mono.CompilerInterface
 			                        0xc3};                  /* ret */
 
 			fixed (byte *b = amd64addblob) {
-				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length, mi);
+				NativeCodeHandle nativeCode = new NativeCodeHandle (b, amd64addblob.Length);
 
-				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+				InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, mi, nativeCode);
 
 				int sum = (int) runtimeInfo.ExecuteInstalledMethod (irc, 1, 2, 3);
 				Assert.AreEqual (6, sum);
@@ -133,7 +133,7 @@ namespace MonoTests.Mono.CompilerInterface
 			NativeCodeHandle nativeCode;
 
 			var result = compiler.CompileMethod (runtimeInfo, mi, CompilationFlags.None, out nativeCode);
-			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, nativeCode);
+			InstalledRuntimeCode irc = runtimeInfo.InstallCompilationResult (result, mi, nativeCode);
 			runtimeInfo.ExecuteInstalledMethod (irc);
 
 			/* 0xc3 is `RET` in AMD64 assembly */

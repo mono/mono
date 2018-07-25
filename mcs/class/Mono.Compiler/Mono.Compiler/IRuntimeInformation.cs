@@ -4,7 +4,7 @@ namespace Mono.Compiler
 {
 	public interface IRuntimeInformation
 	{
-		InstalledRuntimeCode InstallCompilationResult (CompilationResult compilationResult, NativeCodeHandle codeHandle);
+		InstalledRuntimeCode InstallCompilationResult (CompilationResult compilationResult, MethodInfo methodInfo, NativeCodeHandle codeHandle);
 
 		object ExecuteInstalledMethod (InstalledRuntimeCode irc, params object[] args);
 

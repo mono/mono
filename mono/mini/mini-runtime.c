@@ -4466,7 +4466,6 @@ static MonoMethod *ICompiler_CompileMethod_method;
 
 static MonoClass *MethodInfo_klass;
 static MonoMethod *MethodInfo_ctor_method;
-static MonoMethod *MethodInfo_get_RuntimeMethodHandle_method;
 
 static void
 mjit_initialize (void)
@@ -4494,11 +4493,6 @@ mjit_initialize (void)
 	mono_error_assert_ok (error);
 
 	g_assert (MethodInfo_ctor_method);
-
-	MethodInfo_get_RuntimeMethodHandle_method = mono_class_get_method_from_name_checked (MethodInfo_klass, "get_RuntimeMethodHandle", 0, 0, error);
-	mono_error_assert_ok (error);
-
-	g_assert (MethodInfo_get_RuntimeMethodHandle_method);
 
 	ICompiler_klass = mono_class_from_name_checked (image, "Mono.Compiler", "MiniCompiler", error);
 	mono_error_assert_ok (error);
@@ -4575,7 +4569,6 @@ ves_icall_Mono_Compiler_MiniCompiler_CompileMethod (MonoMethod *method, gint32 o
 struct _NativeCodeHandle {
 	gpointer blob;
 	gint64 length;
-	MonoObject *method_handle; /* Mono.Compiler.MethodInfo */
 };
 typedef struct _NativeCodeHandle NativeCodeHandle;
 
@@ -4585,11 +4578,8 @@ struct _InstalledRuntimeCode {
 typedef struct _InstalledRuntimeCode InstalledRuntimeCode;
 
 static InstalledRuntimeCode*
-ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHandle native_code)
+ves_icall_mjit_install_compilation_result (int compilation_result, MonoMethod *method, NativeCodeHandle native_code)
 {
-	ERROR_DECL (error);
-	gpointer params [0] = {0};
-
 	if (compilation_result != 0) {
 		g_printerr ("mjit_install: failed with %d\n", compilation_result);
 		return NULL;
@@ -4605,13 +4595,9 @@ ves_icall_mjit_install_compilation_result (int compilation_result, NativeCodeHan
 	MonoJitInfo *jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
 	jinfo->d.installed_runtime_code = key;
 
-	MonoReflectionMethod *method_handle = (MonoReflectionMethod *) mono_runtime_invoke_checked (MethodInfo_get_RuntimeMethodHandle_method, native_code.method_handle, params, error);
-	jinfo->mjit_method = method_handle->method;
-	return_val_if_nok (error, NULL);
+	jinfo->mjit_method = method;
 
 	// TODO: fill more metadata for MonoJitInfo*
-
-	// TODO: prepare proper runtime_invoke.
 
 	if (native_code.length == -1) {
 		/* hack for LLVMSharp that does not easily provide the size of a code blob */

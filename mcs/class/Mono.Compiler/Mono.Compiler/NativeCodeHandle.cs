@@ -7,24 +7,18 @@ namespace Mono.Compiler
 	{
 		byte* blob;
 		long length;
-		MethodInfo mi;
 
 		public byte* Blob {
 			get { return blob; }
 		}
 
-		public MethodInfo MethodInfo {
-			get { return mi; }
-		}
-
-		public NativeCodeHandle (byte *codeBlob, long codeLength, MethodInfo methodInfo) {
+		public NativeCodeHandle (byte *codeBlob, long codeLength) {
 			blob = codeBlob;
 			length = codeLength;
-			mi = methodInfo;
 		}
 
 		public static NativeCodeHandle Invalid { get {
-				return new NativeCodeHandle (null, 0, null);
+				return new NativeCodeHandle (null, 0);
 			}
 		}
 	}
