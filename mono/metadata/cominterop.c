@@ -2909,7 +2909,7 @@ mono_free_bstr (/*mono_bstr_const*/gpointer bstr)
 		g_free (((char *)bstr) - 4);
 #ifndef DISABLE_COM
 	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		sys_free_string_ms (bstr);
+		sys_free_string_ms ((mono_bstr_const)bstr);
 	} else {
 		g_assert_not_reached ();
 	}

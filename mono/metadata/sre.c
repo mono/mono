@@ -1502,7 +1502,8 @@ add_custom_modifiers_to_type (MonoType *without_mods, MonoArrayHandle req_array,
 	if (!(num_opt_mods || num_req_mods))
 		return without_mods;
 
-	MonoTypeWithModifiers *result = mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (num_req_mods + num_opt_mods));
+	MonoTypeWithModifiers *result;
+	result = (MonoTypeWithModifiers*)mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (num_req_mods + num_opt_mods));
 	memcpy (result, without_mods, MONO_SIZEOF_TYPE);
 	result->unmodified.has_cmods = 1;
 	MonoCustomModContainer *cmods = mono_type_get_cmods ((MonoType *)result);

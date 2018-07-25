@@ -301,8 +301,10 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 		goto leave;							\
 	}G_STMT_END
 
-	MonoTypeEnum et = m_class_get_byval_arg (ec)->type;
-	MonoTypeEnum vt = m_class_get_byval_arg (vc)->type;
+	MonoTypeEnum et;
+	et = m_class_get_byval_arg (ec)->type;
+	MonoTypeEnum vt;
+	vt = m_class_get_byval_arg (vc)->type;
 	/* Check element (destination) type. */
 	switch (et) {
 	case MONO_TYPE_STRING:

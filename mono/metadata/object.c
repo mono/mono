@@ -2383,7 +2383,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 	/* initialize vtable */
 	mono_class_setup_vtable (klass);
-	MonoMethod **klass_vtable = m_class_get_vtable (klass);
+	MonoMethod **klass_vtable;
+	klass_vtable = m_class_get_vtable (klass);
 	for (i = 0; i < m_class_get_vtable_size (klass); ++i) {
 		MonoMethod *cm;
 		    
@@ -4604,7 +4605,8 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 	MonoDomain *domain = mono_domain_get ();
 	MonoRealProxyHandle real_proxy = MONO_HANDLE_CAST (MonoRealProxy, mono_object_new_handle (domain, mono_defaults.real_proxy_class, error));
 	goto_if_nok (error, return_null);
-	MonoReflectionTypeHandle reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
+	MonoReflectionTypeHandle reflection_type;
+	reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
 	goto_if_nok (error, return_null);
 
 	MONO_HANDLE_SET (real_proxy, class_to_proxy, reflection_type);
@@ -4675,13 +4677,14 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	goto_if_nok (error, return_null);
 	g_assert (method);
 
-	MonoBoolean is_terminating = TRUE;
-	gpointer args [ ] = {
-		MONO_HANDLE_RAW (exc), // FIXMEcoop
-		&is_terminating
-	};
+	MonoBoolean is_terminating;
+	is_terminating = TRUE;
+	gpointer args [2];
+	args [0] = MONO_HANDLE_RAW (exc); // FIXMEcoop
+	args [1] = &is_terminating;
 
-	MonoObjectHandle obj = mono_object_new_handle (mono_domain_get (), klass, error);
+	MonoObjectHandle obj;
+	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
 	mono_runtime_invoke_handle (method, obj, args, error);

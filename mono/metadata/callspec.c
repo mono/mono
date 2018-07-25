@@ -102,7 +102,7 @@ gboolean mono_callspec_eval (MonoMethod *method, const MonoCallSpec *spec)
 			break;
 		case MONO_TRACEOP_ASSEMBLY:
 			if (strcmp (mono_image_get_name (m_class_get_image (method->klass)),
-				    op->data) == 0)
+				    (const char*)op->data) == 0)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_NAMESPACE:
