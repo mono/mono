@@ -3898,14 +3898,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.biggest_method_size)) {
 			mono_atomic_store_i32 (&mono_jit_stats.biggest_method_size, code_size_ratio);
 			char *biggest_method = g_strdup_printf ("%s::%s)", m_class_get_name (method->klass), method->name);
-			biggest_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
+			biggest_method = (char*)mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
 			g_free (biggest_method);
 		}
 		code_size_ratio = (code_size_ratio * 100) / header->code_size;
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.max_code_size_ratio)) {
 			mono_atomic_store_i32 (&mono_jit_stats.max_code_size_ratio, code_size_ratio);
 			char *max_ratio_method = g_strdup_printf ("%s::%s)", m_class_get_name (method->klass), method->name);
-			max_ratio_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
+			max_ratio_method = (char*)mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
 			g_free (max_ratio_method);
 		}
 	}
@@ -4267,7 +4267,7 @@ mini_realloc_code_slow (MonoCompile *cfg, int size)
 	if (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE)) {
 		while (cfg->code_len + size > (cfg->code_size - EXTRA_CODE_SPACE))
 			cfg->code_size = cfg->code_size * 2 + EXTRA_CODE_SPACE;
-		cfg->native_code = g_realloc (cfg->native_code, cfg->code_size);
+		cfg->native_code = (guint8*)g_realloc (cfg->native_code, cfg->code_size);
 		cfg->stat_code_reallocs++;
 	}
 	return cfg->native_code + cfg->code_len;

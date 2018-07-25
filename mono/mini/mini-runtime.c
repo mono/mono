@@ -904,7 +904,7 @@ mono_thread_abort (MonoObject *obj)
 }
 
 static void*
-setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
+setup_jit_tls_data (gpointer stack_start, MonoAbortFunction abort_func)
 {
 	MonoJitTlsData *jit_tls;
 	MonoLMF *lmf;
@@ -915,7 +915,7 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 
 	jit_tls = g_new0 (MonoJitTlsData, 1);
 
-	jit_tls->abort_func = (void (*)(MonoObject *))abort_func;
+	jit_tls->abort_func = abort_func;
 	jit_tls->end_of_stack = stack_start;
 
 	mono_set_jit_tls (jit_tls);
@@ -2125,7 +2125,7 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 				 * sometimes we load methods too eagerly and have to create them even if they
 				 * will never be called.
 				 */
-				return no_gsharedvt_in_wrapper;
+				return (gpointer)no_gsharedvt_in_wrapper;
 			}
 		}
 	}

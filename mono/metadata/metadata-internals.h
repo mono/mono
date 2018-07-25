@@ -215,6 +215,8 @@ typedef struct {
 	gboolean (*load_tables) (MonoImage*);
 } MonoImageLoader;
 
+struct MonoAotModule;
+
 struct _MonoImage {
 	/*
 	 * This count is incremented during these situations:
@@ -320,7 +322,7 @@ struct _MonoImage {
 	MonoImage **files;
 	guint32 file_count;
 
-	gpointer aot_module;
+	struct MonoAotModule *aot_module;
 
 	guint8 aotid[16];
 

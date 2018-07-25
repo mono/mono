@@ -145,18 +145,18 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots, gboolean is_source_argument)
 	switch (ainfo->storage) {
 	case ArgInIReg:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (sreg);
 		break;
 	case ArgValuetypeInReg:
 		nsrc = ainfo->nregs;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		for (i = 0; i < ainfo->nregs; ++i)
 			src [i] = map_reg (ainfo->pair_regs [i]);
 		break;
 	case ArgOnStack:
 		nsrc = ainfo->arg_size / SLOT_BYTE_SIZE;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		// is_source_argument adds 2 because we're skipping over the old BBP and the return address
 		// XXX this is a very fragile setup as changes in alignment for the caller reg array can cause the magic number be 3
 		for (i = 0; i < nsrc; ++i)
@@ -165,17 +165,17 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots, gboolean is_source_argument)
 	case ArgInDoubleSSEReg:
 	case ArgInFloatSSEReg:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_freg (sreg);
 		break;
 	case ArgValuetypeAddrInIReg:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (ainfo->pair_regs [0]);
 		break;
 	case ArgValuetypeAddrOnStack:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		// is_source_argument adds 2 because we're skipping over the old BBP and the return address
 		// XXX this is a very fragile setup as changes in alignment for the caller reg array can cause the magic number be 3
 		src [0] = map_stack_slot (sslot + (is_source_argument ? 2 : 0));
@@ -417,7 +417,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 		add_to_map (map, map_reg (cinfo->ret.reg), map_reg (cinfo->ret.reg));
 	}
 
-	info = mono_domain_alloc0 (mono_domain_get (), sizeof (GSharedVtCallInfo) + (map->len * sizeof (int)));
+	info = (GSharedVtCallInfo*)mono_domain_alloc0 (mono_domain_get (), sizeof (GSharedVtCallInfo) + (map->len * sizeof (int)));
 	info->addr = addr;
 	info->stack_usage = callee_cinfo->stack_usage;
 	info->ret_marshal = GSHAREDVT_RET_NONE;
