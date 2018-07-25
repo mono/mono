@@ -29,6 +29,8 @@ endif
 ILASM = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
 STRING_REPLACER = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/tmp/cil-stringreplacer.exe
 MCS = $(BOOTSTRAP_MCS)
+GENSOURCES_CS = $(topdir)/build/gensources.cs
+GENSOURCES_EXE = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gensources.exe
 
 DEFAULT_REFERENCES = mscorlib
 
@@ -87,7 +89,7 @@ do-profile-check: $(depsdir)/.stamp
 		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
                 echo "*** Check README for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
-
+	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE) $(GENSOURCES_CS)
 
 ifdef use_monolite
 

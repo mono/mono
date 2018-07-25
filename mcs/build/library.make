@@ -302,10 +302,8 @@ endif
 PROFILE_sources = $(wildcard *.sources)
 
 GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
-
-gensources = $(topdir)/build/gensources.exe
-
-include $(topdir)/build/gensources.make
+GENSOURCES_CS = $(topdir)/build/gensources.cs
+GENSOURCES_EXE = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gensources.exe
 
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
@@ -314,9 +312,8 @@ GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MO
 endif
 
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(gensources)
-	echo $(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(GENSOURCES_CS)
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
