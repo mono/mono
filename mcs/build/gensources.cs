@@ -101,9 +101,6 @@ public static class Program {
                 return 1;
             }
 
-            if (SourcesParser.TraceLevel == 0)
-                SourcesParser.TraceLevel = 1;
-
             result = parser.Parse (baseDir ?? directory, sourcesFile, excludesFile);
 
             if (SourcesParser.TraceLevel > 0)

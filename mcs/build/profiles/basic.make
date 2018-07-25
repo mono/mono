@@ -89,7 +89,8 @@ do-profile-check: $(depsdir)/.stamp
 	    else \
 		echo "*** The runtime '$(PROFILE_RUNTIME)' doesn't appear to be usable." 1>&2; \
                 echo "*** Check README for information on how to bootstrap a Mono installation." 1>&2 ; \
-	        exit 1; fi; fi \
+	        exit 1; fi; fi
+
 
 ifdef use_monolite
 
@@ -118,7 +119,6 @@ endif
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
 	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
-	echo building $(GENSOURCES_EXE) from $(GENSOURCES_CS)
 	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE) $(GENSOURCES_CS)
 
 $(PROFILE_OUT): $(PROFILE_EXE)
