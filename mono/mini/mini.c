@@ -4016,7 +4016,7 @@ mono_update_jit_stats (MonoCompile *cfg)
  *   Main entry point for the JIT.
  */
 gpointer
-mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error)
+mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, gint64 *code_length, MonoError *error)
 {
 	MonoCompile *cfg;
 	gpointer code = NULL;
@@ -4027,6 +4027,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gi
 	MonoMethod *prof_method, *shared;
 
 	error_init (error);
+
+	if (code_length)
+		*code_length = 0;
 
 	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0, -1);
@@ -4131,8 +4134,6 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gi
 	 */
 	mono_update_jit_stats (cfg);
 
-	mono_destroy_compile (cfg);
-
 #ifndef DISABLE_JIT
 	/* Update llvm callees */
 	if (domain_jit_info (target_domain)->llvm_jit_callees) {
@@ -4150,11 +4151,16 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gi
 #endif
 	mono_domain_unlock (target_domain);
 
-	if (!mono_error_ok (error))
+	if (!mono_error_ok (error)) {
+		mono_destroy_compile (cfg);
 		return NULL;
+	}
 
 	vtable = mono_class_vtable_checked (target_domain, method->klass, error);
-	return_val_if_nok (error, NULL);
+	if (!mono_error_ok (error)) {
+		mono_destroy_compile (cfg);
+		return NULL;
+	}
 
 	if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		if (mono_marshal_method_from_wrapper (method)) {
@@ -4170,9 +4176,21 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gi
 	if (!(method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE ||
 		  method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK ||
 		  method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE)) {
-		if (!mono_runtime_class_init_full (vtable, error))
+		if (!mono_runtime_class_init_full (vtable, error)) {
+			mono_destroy_compile (cfg);
 			return NULL;
+		}
 	}
+
+	if (!code) {
+		mono_destroy_compile (cfg);
+		return NULL;
+	}
+
+	if (code_length)
+		*code_length = cfg->code_len;
+
+	mono_destroy_compile (cfg);
 	return code;
 }
 

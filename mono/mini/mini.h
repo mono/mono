@@ -2003,7 +2003,7 @@ void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target) MONO_LLVM_INTERNAL;
 void      mono_add_patch_info_rel           (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target, int relocation) MONO_LLVM_INTERNAL;
 void      mono_remove_patch_info            (MonoCompile *cfg, int ip);
-gpointer  mono_jit_compile_method_inner     (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error);
+gpointer  mono_jit_compile_method_inner     (MonoMethod *method, MonoDomain *target_domain, gint32 opt, gint64 *code_length, MonoError *error);
 GList    *mono_varlist_insert_sorted        (MonoCompile *cfg, GList *list, MonoMethodVar *mv, int sort_type);
 GList    *mono_varlist_sort                 (MonoCompile *cfg, GList *list, int sort_type);
 void      mono_analyze_liveness             (MonoCompile *cfg);

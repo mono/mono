@@ -4489,7 +4489,7 @@ mjit_initialize (void)
 
 	g_assert (MethodInfo_klass);
 
-	MethodInfo_ctor_method = mono_class_get_method_from_name_checked (MethodInfo_klass, ".ctor", 2, 0, error);
+	MethodInfo_ctor_method = mono_class_get_method_from_name_checked (MethodInfo_klass, ".ctor", 1, 0, error);
 	mono_error_assert_ok (error);
 
 	g_assert (MethodInfo_ctor_method);
@@ -4507,19 +4507,19 @@ mjit_initialize (void)
 	mono_assembly_name_free (assembly_name);
 }
 
+typedef struct _NativeCodeHandle {
+	gpointer blob;
+	gint64 length;
+} NativeCodeHandle;
+
 static gpointer
 compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error)
 {
 	if (!g_hasenv("MONO_MJIT"))
-		return mono_jit_compile_method_inner (method, target_domain, opt, error);
-
-	// g_printerr("%s: klass = %s%s%s, method = %s\n",
-	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
-	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name);
+		return mono_jit_compile_method_inner (method, target_domain, opt, NULL, error);
 
 	MonoObject *compiler, *method_info, *ret;
-	gint32 flags;
-	struct { gpointer code; gint64 code_length; } native_code;
+	NativeCodeHandle native_code;
 	gpointer params[4];
 
 	mono_lazy_initialize (&mjit_initialized, mjit_initialize);
@@ -4530,7 +4530,6 @@ compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt,
 
 	/* Invoke methodInfo..ctor */
 	params [0] = &method;
-	params [1] = &opt;
 	mono_runtime_invoke_interpreter (MethodInfo_ctor_method, method_info, params, error);
 	return_val_if_nok (error, NULL);
 
@@ -4539,10 +4538,9 @@ compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt,
 	return_val_if_nok (error, NULL);
 
 	/* Invoke compiler.CompileMethod */
-	flags = 0;
 	params[0] = NULL;
 	params[1] = method_info;
-	params[2] = &flags;
+	params[2] = &opt;
 	params[3] = &native_code;
 	ret = mono_runtime_invoke_interpreter (ICompiler_CompileMethod_method, compiler, params, error);
 	return_val_if_nok (error, NULL);
@@ -4552,30 +4550,32 @@ compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt,
 		return NULL;
 	}
 
-	// g_printerr("%s: klass = %s%s%s, method = %s -> native_code.code = %p, native_code.codeLength = %lld\n",
-	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
-	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name,
-	// 			native_code.code, native_code.code_length);
-
-	return native_code.code;
+	return native_code.blob;
 }
 
-static gpointer
-ves_icall_Mono_Compiler_MiniCompiler_CompileMethod (MonoMethod *method, gint32 opt, MonoError *error)
+static MonoBoolean
+ves_icall_Mono_Compiler_MiniCompiler_CompileMethod (MonoMethod *method, gint32 opt, NativeCodeHandle *native_code)
 {
-	return mono_jit_compile_method_inner (method, mono_domain_get (), opt, error);
+	ERROR_DECL(error);
+
+	// g_printerr("%s: method = %s%s%s:%s (%p)\n",
+	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
+	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name, method);
+
+	native_code->blob = mono_jit_compile_method_inner (method, mono_domain_get (), opt, &native_code->length, error);
+	mono_error_set_pending_exception (error);
+
+	// g_printerr("%s: method = %s%s%s:%s (%p) -> native_code.blob = %p, native_code.length = %lld\n",
+	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
+	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name, method,
+	// 			native_code->blob, native_code->length);
+
+	return native_code->blob != NULL;
 }
 
-struct _NativeCodeHandle {
-	gpointer blob;
-	gint64 length;
-};
-typedef struct _NativeCodeHandle NativeCodeHandle;
-
-struct _InstalledRuntimeCode {
-	MonoObject object;
-};
-typedef struct _InstalledRuntimeCode InstalledRuntimeCode;
+typedef struct _InstalledRuntimeCode {
+	MonoJitInfo *jinfo;
+} InstalledRuntimeCode;
 
 static InstalledRuntimeCode*
 ves_icall_mjit_install_compilation_result (int compilation_result, MonoMethod *method, NativeCodeHandle native_code)

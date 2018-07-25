@@ -12,6 +12,10 @@ namespace Mono.Compiler
 			get { return blob; }
 		}
 
+		public long Length {
+			get { return length; }
+		}
+
 		public NativeCodeHandle (byte *codeBlob, long codeLength) {
 			blob = codeBlob;
 			length = codeLength;

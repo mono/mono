@@ -9,24 +9,22 @@ namespace Mono.Compiler
 		public ClassInfo ClassInfo { get; }
 		public string Name { get; }
 		public MethodBody Body { get; }
-		/* TODO: unify with MethodHandle. This is a MonoReflectionMethod in C */
-		public RuntimeMethodHandle RuntimeMethodHandle { get; }
 
-		internal MethodInfo (ClassInfo ci, string name, MethodBody body, RuntimeMethodHandle runtimeMethodHandle) {
+		/* this is a MonoMethod in C */
+		internal RuntimeMethodHandle RuntimeMethodHandle { get; }
+
+		public MethodInfo (ClassInfo ci, string name, MethodBody body, RuntimeMethodHandle runtimeMethodHandle)
+			: this (runtimeMethodHandle)
+		{
 			ClassInfo = ci;
 			Name = name;
 			Body = body;
-			RuntimeMethodHandle = runtimeMethodHandle;
 		}
 
-		/* Used only for MiniCompiler. This should be merged with the above constructor. */
-		/* this is a MonoMethod in C */
-		internal IntPtr MethodHandle { get; }
-		internal int Flags { get; }
-
-		internal MethodInfo (IntPtr runtimeMethodHandle, int flags) {
-			MethodHandle = runtimeMethodHandle;
-			Flags = flags;
+		/* Used by MiniCompiler */
+		public MethodInfo (RuntimeMethodHandle runtimeMethodHandle)
+		{
+			RuntimeMethodHandle = runtimeMethodHandle;
 		}
 	}
 }

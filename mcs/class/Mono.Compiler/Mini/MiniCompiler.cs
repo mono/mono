@@ -4,21 +4,17 @@ using System.Runtime.CompilerServices;
 
 namespace Mono.Compiler
 {
-	internal unsafe class MiniCompiler : ICompiler
+	public unsafe class MiniCompiler : ICompiler
 	{
 		public CompilationResult CompileMethod (IRuntimeInformation runtimeInfo, MethodInfo methodInfo, CompilationFlags flags, out NativeCodeHandle nativeCode)
 		{
-			byte *code = CompileMethod(methodInfo.MethodHandle, methodInfo.Flags, out long codeLength);
-			if ((IntPtr) code == IntPtr.Zero) {
-				nativeCode = default(NativeCodeHandle);
+			if (!CompileMethod(methodInfo.RuntimeMethodHandle, (int) flags, out nativeCode))
 				return CompilationResult.InternalError;
-			}
 
-			nativeCode = new NativeCodeHandle(code, codeLength);
 			return CompilationResult.Ok;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		unsafe static extern byte* CompileMethod(IntPtr method, int flags, out long codeLength);
+		static extern bool CompileMethod(RuntimeMethodHandle runtimeMethodHandle, int flags, out NativeCodeHandle nativeCode);
 	}
 }
