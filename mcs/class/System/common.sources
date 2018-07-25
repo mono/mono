@@ -912,5 +912,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/*.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/Pal/AnyOS/*.cs
 
+../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/System/Security/Cryptography/DataProtectionScope.cs
+
 # System.Security.Cryptography.Xml
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs
