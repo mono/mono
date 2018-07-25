@@ -1016,21 +1016,21 @@ if test x$enable_monotouch = xyes; then
 	AC_DEFINE(ENABLE_MONOTOUCH, 1, [Enable runtime support for Monotouch (Xamarin.iOS and Xamarin.Mac)])
 fi
 
-AC_ARG_ENABLE(cplusplus, [  --enable-cplusplus   compile some code as C++])
+AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 
-if test "x$enable_cplusplus" = "xyes"; then
+if test "x$enable_cxx" = "xyes"; then
 
 	# FIXME Centos6 requires a different flag for prerelease C++11.
-	#CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
+	CXX_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
 
 	# -std=gnu99 -xc++ is not allowed and errors.
-	CPLUSPLUS_REMOVE_CFLAGS=-std=gnu99
+	CXX_REMOVE_CFLAGS=-std=gnu99
 	# These give warnings and should be removed. They are C-only.
 	# i.e. C++ never allows these, they are always errors and their warningness is not controllable.
-	CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
+	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
 	# Likewise with CentOS 6 gcc 4.4.
-	CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Werror-implicit-function-declaration"
+	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Werror-implicit-function-declaration"
 
 	# The C-only-ness of -Wno-format-zero-length varies with gcc version.
 	# It is C-only prior to 4.7. Using it with C++ prior to 4.7
@@ -1046,12 +1046,12 @@ if test "x$enable_cplusplus" = "xyes"; then
 	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
 	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
 				 [ AC_MSG_RESULT(no)
-				   CPLUSPLUS_REMOVE_CFLAGS="$CPLUSPLUS_REMOVE_CFLAGS -Wno-format-zero-length" ])
+				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
 	CXXFLAGS=$ORIG_CXXFLAGS
 	AC_LANG_POP(C++)
 fi
-AC_SUBST(CPLUSPLUS_ADD_CFLAGS)
-AC_SUBST(CPLUSPLUS_REMOVE_CFLAGS)
+AC_SUBST(CXX_ADD_CFLAGS)
+AC_SUBST(CXX_REMOVE_CFLAGS)
 
 #
 # Set the build profiles and options before things which use them
