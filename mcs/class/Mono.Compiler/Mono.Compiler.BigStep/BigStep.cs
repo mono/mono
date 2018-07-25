@@ -91,7 +91,7 @@ namespace Mono.Compiler.BigStep
 				LLVM.InitializeX86TargetInfo ();
 				LLVM.InitializeX86AsmParser ();
 				LLVM.InitializeX86AsmPrinter ();
-				LLVMMCJITCompilerOptions options = new LLVMMCJITCompilerOptions { NoFramePointerElim = 1 };
+				LLVMMCJITCompilerOptions options = new LLVMMCJITCompilerOptions { NoFramePointerElim = 0 };
 				LLVM.InitializeMCJITCompilerOptions(options);
 				if (LLVM.CreateMCJITCompilerForModule(out var engine, Module, options, out var error) != Success)
 				{
