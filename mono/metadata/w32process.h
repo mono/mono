@@ -33,9 +33,11 @@ typedef enum {
 	MONO_W32PROCESS_PRIORITY_CLASS_ABOVE_NORMAL = 0x8000,
 } MonoW32ProcessPriorityClass;
 
+struct MonoW32Handle;
+
 typedef struct 
 {
-	gpointer process_handle;
+	struct MonoW32Handle *process_handle;
 	guint32 pid; /* Contains mono_w32error_get_last () on failure */
 	MonoArray *env_variables;
 	MonoString *username;
