@@ -150,7 +150,7 @@ mono_profiler_load (const char *desc)
 	if (!desc || !strcmp ("default", desc))
 		desc = "log:report";
 
-	if ((col = (const char*)strchr (desc, ':')) != NULL) {
+	if ((col = strchr (desc, ':')) != NULL) {
 		mname = (char *) g_memdup (desc, col - desc + 1);
 		mname [col - desc] = 0;
 	} else {
