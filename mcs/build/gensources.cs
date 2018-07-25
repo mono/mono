@@ -78,11 +78,12 @@ public static class Program {
         var codeBase = new Uri (myAssembly.CodeBase);
         var executablePath = Path.GetFullPath (codeBase.LocalPath);
         var executableDirectory = Path.GetDirectoryName (executablePath);
+        var buildDirectory = Path.GetFullPath (Path.Combine (executableDirectory, "..", "..", "..", "build"));
 
         var outFile = Path.GetFullPath (args[0]);
 
-        var platformsFolder = Path.Combine (executableDirectory, "platforms");
-        var profilesFolder = Path.Combine (executableDirectory, "profiles");
+        var platformsFolder = Path.Combine (buildDirectory, "platforms");
+        var profilesFolder = Path.Combine (buildDirectory, "profiles");
         var parser = new SourcesParser (platformsFolder, profilesFolder);
 
         ParseResult result;

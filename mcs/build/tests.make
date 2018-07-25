@@ -247,9 +247,9 @@ $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(te
 
 test_response_preprocessed = $(test_response)_preprocessed
 
-gensources = $(topdir)/build/gensources.exe
-
-include $(topdir)/build/gensources.make
+GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
+GENSOURCES_CS = $(topdir)/build/gensources.cs
+GENSOURCES_EXE = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gensources.exe
 
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
@@ -263,8 +263,8 @@ endif
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(gensources)
-	$(GENSOURCES_RUNTIME) --debug $(gensources) --basedir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(GENSOURCES_CS)
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --basedir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
