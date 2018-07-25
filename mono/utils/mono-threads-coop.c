@@ -508,14 +508,18 @@ mono_threads_assert_gc_unsafe_region (void)
 	MONO_REQ_GC_UNSAFE_MODE;
 }
 
+/* -1 and 0 also used:
+ * -1 means uninitialized
+ * 0 means unset
+ */
 typedef enum {
-	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 0,
+	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
 	MONO_THREADS_SUSPEND_FULL_COOP,
 	MONO_THREADS_SUSPEND_HYBRID
 } MonoThreadsSuspendPolicy;
 
 static MonoThreadsSuspendPolicy
-mono_threads_suspend_policy (void)
+threads_suspend_policy_default (void)
 {
 #if defined (ENABLE_COOP_SUSPEND)
 	return MONO_THREADS_SUSPEND_FULL_COOP;
@@ -523,19 +527,88 @@ mono_threads_suspend_policy (void)
 #if defined (ENABLE_HYBRID_SUSPEND)
 	return MONO_THREADS_SUSPEND_HYBRID;
 #else
-	static MonoThreadsSuspendPolicy policy = -1;
-	if (G_UNLIKELY (policy == -1)) {
-		if (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND")) {
-			g_assertf (!g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND"), "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
+	return 0; /* unset */
+#endif
+#endif
+}
+
+/* Look up whether an env var is set, warn that it's obsolete and offer a new
+ * alternative
+ */
+static gboolean
+hasenv_obsolete (const char *name, const char* newval)
+{
+	// If they already set MONO_THREADS_SUSPEND to something, maybe they're keeping
+	// the old var set for compatability with old Mono - in that case don't nag.
+	// FIXME: but maybe nag if MONO_THREADS_SUSPEND isn't set to "newval"?
+	static int quiet = -1;
+	if (g_hasenv (name)) {
+		if (G_UNLIKELY (quiet == -1))
+			quiet = g_hasenv ("MONO_THREADS_SUSPEND");
+		if (!quiet)
+			g_warning ("%s environment variable is obsolete.  Use MONO_THREADS_SUSPEND=%s", name, newval);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static MonoThreadsSuspendPolicy
+threads_suspend_policy_getenv_compat (void)
+{
+	MonoThreadsSuspendPolicy policy = 0;
+	if (hasenv_obsolete ("MONO_ENABLE_COOP", "coop") || hasenv_obsolete ("MONO_ENABLE_COOP_SUSPEND", "coop")) {
+		g_assertf (!hasenv_obsolete ("MONO_ENABLE_HYBRID_SUSPEND", "hybrid"),
+			   "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
+		policy = MONO_THREADS_SUSPEND_FULL_COOP;
+	} else if (hasenv_obsolete ("MONO_ENABLE_HYBRID_SUSPEND", "hybrid"))
+		policy = MONO_THREADS_SUSPEND_HYBRID;
+	return policy;
+}
+
+static MonoThreadsSuspendPolicy
+threads_suspend_policy_getenv (void)
+{
+	MonoThreadsSuspendPolicy policy = 0;
+	if (g_hasenv ("MONO_THREADS_SUSPEND")) {
+		gchar *str = g_getenv ("MONO_THREADS_SUSPEND");
+		if (!strcmp (str, "coop"))
 			policy = MONO_THREADS_SUSPEND_FULL_COOP;
-		} else if (g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND"))
+		else if (!strcmp (str, "hybrid"))
 			policy = MONO_THREADS_SUSPEND_HYBRID;
-		else
+		else if (!strcmp (str, "preemptive"))
 			policy = MONO_THREADS_SUSPEND_FULL_PREEMPTIVE;
+		else
+			g_error ("MONO_THREADS_SUSPEND environment variable set to '%s', must be one of coop, hybrid, preemptive.", str);
+		g_free (str);
 	}
 	return policy;
-#endif
-#endif
+}
+
+static MonoThreadsSuspendPolicy
+mono_threads_suspend_policy (void)
+{
+	static MonoThreadsSuspendPolicy policy = -1;
+	if (G_UNLIKELY (policy == -1)) {
+		// thread suspend policy:
+		// if the MONO_THREADS_SUSPEND env is set, use it.
+		// otherwise if there's a compiled-in default, use it.
+		// otherwise if one of the old environment variables is set, use that.
+		// otherwise use full preemptive suspend.
+		MonoThreadsSuspendPolicy env_policy = threads_suspend_policy_getenv ();
+		MonoThreadsSuspendPolicy default_policy = threads_suspend_policy_default ();
+		MonoThreadsSuspendPolicy env_compat_policy = threads_suspend_policy_getenv_compat ();
+		if (env_policy)
+			policy = env_policy;
+		else if (default_policy)
+			policy = default_policy;
+		else if (env_compat_policy)
+			policy = env_compat_policy;
+		else
+			policy = MONO_THREADS_SUSPEND_FULL_PREEMPTIVE;
+		
+		g_assert (policy > 0);
+	}
+	return policy;
 }
 
 const char*
@@ -563,14 +636,25 @@ mono_threads_is_cooperative_suspension_enabled (void)
 gboolean
 mono_threads_is_blocking_transition_enabled (void)
 {
-#if defined(ENABLE_COOP_SUSPEND) || defined(ENABLE_HYBRID_SUSPEND)
-	return TRUE;
-#else
 	static int is_blocking_transition_enabled = -1;
-	if (G_UNLIKELY (is_blocking_transition_enabled == -1))
-		is_blocking_transition_enabled = (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND") || g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND") || g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION")) ? 1 : 0;
+	if (G_UNLIKELY (is_blocking_transition_enabled == -1)) {
+		if (g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION"))
+			is_blocking_transition_enabled = 1;
+		else {
+			switch (mono_threads_suspend_policy ()) {
+			case MONO_THREADS_SUSPEND_FULL_COOP:
+			case MONO_THREADS_SUSPEND_HYBRID:
+				is_blocking_transition_enabled = 1;
+				break;
+			case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
+				is_blocking_transition_enabled = 0;
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+		}
+	}
 	return is_blocking_transition_enabled == 1;
-#endif
 }
 
 gboolean

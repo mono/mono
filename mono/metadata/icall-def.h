@@ -65,7 +65,7 @@
  */
 
 ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
-ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString)
+NOHANDLES(ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString))
 
 ICALL_TYPE(NATIVEMETHODS, "Microsoft.Win32.NativeMethods", NATIVEMETHODS_1)
 HANDLES(ICALL(NATIVEMETHODS_1, "CloseProcess", ves_icall_Microsoft_Win32_NativeMethods_CloseProcess))
@@ -193,23 +193,6 @@ HANDLES(ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup))
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
 ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
 
-#ifndef DISABLE_DECIMAL
-ICALL_TYPE(DECIMAL, "System.Decimal", DECIMAL_1)
-NOHANDLES(ICALL(DECIMAL_1, ".ctor(double)", mono_decimal_init_double))
-NOHANDLES(ICALL(DECIMAL_2, ".ctor(single)", mono_decimal_init_single))
-NOHANDLES(ICALL(DECIMAL_3, "FCallAddSub(System.Decimal&,System.Decimal&,byte)", mono_decimal_addsub))
-NOHANDLES(ICALL(DECIMAL_4, "FCallCompare", mono_decimal_compare))
-NOHANDLES(ICALL(DECIMAL_5, "FCallDivide", mono_decimal_divide))
-NOHANDLES(ICALL(DECIMAL_6, "FCallFloor", mono_decimal_floor))
-NOHANDLES(ICALL(DECIMAL_7, "FCallMultiply", mono_decimal_multiply))
-NOHANDLES(ICALL(DECIMAL_8, "FCallRound", mono_decimal_round))
-NOHANDLES(ICALL(DECIMAL_9, "FCallToInt32", mono_decimal_to_int32))
-NOHANDLES(ICALL(DECIMAL_10, "FCallTruncate", mono_decimal_truncate))
-NOHANDLES(ICALL(DECIMAL_11, "GetHashCode", mono_decimal_get_hash_code))
-NOHANDLES(ICALL(DECIMAL_12, "ToDouble", mono_decimal_to_double))
-NOHANDLES(ICALL(DECIMAL_13, "ToSingle", mono_decimal_to_float))
-#endif
-
 ICALL_TYPE(DELEGATE, "System.Delegate", DELEGATE_1)
 HANDLES(ICALL(DELEGATE_1, "AllocDelegateLike_internal", ves_icall_System_Delegate_AllocDelegateLike_internal))
 HANDLES(ICALL(DELEGATE_2, "CreateDelegate_internal", ves_icall_System_Delegate_CreateDelegate_internal))
@@ -243,13 +226,13 @@ ICALL(PERFCTRCAT_7, "GetInstanceNames", mono_perfcounter_instance_names)
 ICALL(PERFCTRCAT_8, "InstanceExistsInternal", mono_perfcounter_instance_exists)
 
 ICALL_TYPE(PROCESS, "System.Diagnostics.Process", PROCESS_1)
-ICALL(PROCESS_1, "CreateProcess_internal", ves_icall_System_Diagnostics_Process_CreateProcess_internal)
+HANDLES(ICALL(PROCESS_1, "CreateProcess_internal", ves_icall_System_Diagnostics_Process_CreateProcess_internal))
 ICALL(PROCESS_4, "GetModules_internal(intptr)", ves_icall_System_Diagnostics_Process_GetModules_internal)
 ICALL(PROCESS_5H, "GetProcessData", ves_icall_System_Diagnostics_Process_GetProcessData)
 ICALL(PROCESS_6, "GetProcess_internal(int)", ves_icall_System_Diagnostics_Process_GetProcess_internal)
 ICALL(PROCESS_7, "GetProcesses_internal()", ves_icall_System_Diagnostics_Process_GetProcesses_internal)
 ICALL(PROCESS_10, "ProcessName_internal(intptr)", ves_icall_System_Diagnostics_Process_ProcessName_internal)
-ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal)
+HANDLES(ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal))
 
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
 ICALL(STOPWATCH_1, "GetTimestamp", mono_100ns_ticks)
@@ -514,10 +497,6 @@ HANDLES(ICALL(SOCK_21a, "cancel_blocking_socket_operation", ves_icall_cancel_blo
 ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
 ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal)
 #endif /* !DISABLE_SOCKETS */
-
-ICALL_TYPE(NUMBER, "System.Number", NUMBER_1)
-ICALL(NUMBER_1, "NumberBufferToDecimal", mono_decimal_from_number)
-ICALL(NUMBER_2, "NumberBufferToDouble", mono_double_from_number)
 
 ICALL_TYPE(NUMBER_FORMATTER, "System.NumberFormatter", NUMBER_FORMATTER_1)
 ICALL(NUMBER_FORMATTER_1, "GetFormatterTables", ves_icall_System_NumberFormatter_GetFormatterTables)
@@ -950,7 +929,7 @@ ICALL(MONIT_9, "try_enter_with_atomic_var", ves_icall_System_Threading_Monitor_M
 ICALL_TYPE(MUTEX, "System.Threading.Mutex", MUTEX_1)
 HANDLES(ICALL(MUTEX_1, "CreateMutex_internal(bool,string,bool&)", ves_icall_System_Threading_Mutex_CreateMutex_internal))
 HANDLES(ICALL(MUTEX_2, "OpenMutex_internal(string,System.Security.AccessControl.MutexRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Mutex_OpenMutex_internal))
-ICALL(MUTEX_3, "ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex_ReleaseMutex_internal)
+NOHANDLES(ICALL(MUTEX_3, "ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex_ReleaseMutex_internal))
 
 ICALL_TYPE(NATIVEC, "System.Threading.NativeEventCalls", NATIVEC_1)
 ICALL(NATIVEC_1, "CloseEvent_internal", ves_icall_System_Threading_Events_CloseEvent_internal)
