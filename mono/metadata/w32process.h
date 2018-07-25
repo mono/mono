@@ -37,7 +37,7 @@ struct MonoW32Handle;
 
 typedef struct 
 {
-	struct MonoW32Handle *process_handle;
+	gpointer process_handle;
 	guint32 pid; /* Contains mono_w32error_get_last () on failure */
 	MonoArray *env_variables;
 	MonoString *username;

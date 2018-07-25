@@ -142,14 +142,15 @@ load_profiler_from_installation (const char *libname, const char *name, const ch
 void
 mono_profiler_load (const char *desc)
 {
-	char *col, *mname, *libname;
+	const char *col;
+	char *mname, *libname;
 
 	mname = libname = NULL;
 
 	if (!desc || !strcmp ("default", desc))
 		desc = "log:report";
 
-	if ((col = strchr (desc, ':')) != NULL) {
+	if ((col = (const char*)strchr (desc, ':')) != NULL) {
 		mname = (char *) g_memdup (desc, col - desc + 1);
 		mname [col - desc] = 0;
 	} else {
