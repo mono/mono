@@ -247,10 +247,6 @@ $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(te
 
 test_response_preprocessed = $(test_response)_preprocessed
 
-GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
-GENSOURCES_CS = $(topdir)/build/gensources.cs
-GENSOURCES_EXE = $(topdir)/build/gensources.exe
-
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
 else
