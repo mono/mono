@@ -513,10 +513,10 @@ mono_threads_assert_gc_unsafe_region (void)
  * 0 means unset
  */
 typedef enum {
-	MONO_THREADS_SUSPEND_FULL_UNINITIALIZED = 0,
+	MONO_THREADS_SUSPEND_UNINITIALIZED = 0,
 	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
 	MONO_THREADS_SUSPEND_FULL_COOP = 2,
-	MONO_THREADS_SUSPEND_HYBRID = 3,
+	MONO_THREADS_SUSPEND_HYBRID = 3
 } MonoThreadsSuspendPolicy;
 
 static MonoThreadsSuspendPolicy
@@ -524,10 +524,10 @@ threads_suspend_policy_default (void)
 {
 #if defined (ENABLE_COOP_SUSPEND)
 	return MONO_THREADS_SUSPEND_FULL_COOP;
-#elif defined (ENABLE_HYBRID_SUSPEND)
+#eif defined (ENABLE_HYBRID_SUSPEND)
 	return MONO_THREADS_SUSPEND_HYBRID;
 #else
-	return 0; /* unset */
+	return MONO_THREADS_SUSPEND_UNINITIALIZED; /* unset */
 #endif
 }
 
@@ -554,7 +554,7 @@ hasenv_obsolete (const char *name, const char* newval)
 static MonoThreadsSuspendPolicy
 threads_suspend_policy_getenv_compat (void)
 {
-	MonoThreadsSuspendPolicy policy = 0;
+	MonoThreadsSuspendPolicy policy = MONO_THREADS_SUSPEND_UNINITIALIZED;
 	if (hasenv_obsolete ("MONO_ENABLE_COOP", "coop") || hasenv_obsolete ("MONO_ENABLE_COOP_SUSPEND", "coop")) {
 		g_assertf (!hasenv_obsolete ("MONO_ENABLE_HYBRID_SUSPEND", "hybrid"),
 			   "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
@@ -567,16 +567,10 @@ threads_suspend_policy_getenv_compat (void)
 static MonoThreadsSuspendPolicy
 threads_suspend_policy_getenv (void)
 {
-	MonoThreadsSuspendPolicy policy = 0;
+	MonoThreadsSuspendPolicy policy = MONO_THREADS_SUSPEND_UNINITIALIZED;
 	if (g_hasenv ("MONO_THREADS_SUSPEND")) {
 		gchar *str = g_getenv ("MONO_THREADS_SUSPEND");
 		if (!strcmp (str, "coop"))
-=======
-	static MonoThreadsSuspendPolicy policy;
-	if (G_UNLIKELY (policy == MONO_THREADS_SUSPEND_FULL_UNINITIALIZED)) {
-		if (g_hasenv ("MONO_ENABLE_COOP") || g_hasenv ("MONO_ENABLE_COOP_SUSPEND")) {
-			g_assertf (!g_hasenv ("MONO_ENABLE_HYBRID_SUSPEND"), "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
->>>>>>> More fixes, need splitting up into separate commits later.
 			policy = MONO_THREADS_SUSPEND_FULL_COOP;
 		else if (!strcmp (str, "hybrid"))
 			policy = MONO_THREADS_SUSPEND_HYBRID;
@@ -592,8 +586,8 @@ threads_suspend_policy_getenv (void)
 static MonoThreadsSuspendPolicy
 mono_threads_suspend_policy (void)
 {
-	static MonoThreadsSuspendPolicy policy = -1;
-	if (G_UNLIKELY (policy == -1)) {
+	static MonoThreadsSuspendPolicy policy;
+	if (G_UNLIKELY (policy == MONO_THREADS_SUSPEND_UNINITIALIZED)) {
 		// thread suspend policy:
 		// if the MONO_THREADS_SUSPEND env is set, use it.
 		// otherwise if there's a compiled-in default, use it.
@@ -611,7 +605,7 @@ mono_threads_suspend_policy (void)
 		else
 			policy = MONO_THREADS_SUSPEND_FULL_PREEMPTIVE;
 		
-		g_assert (policy > 0);
+		g_assert ((int)policy > 0);
 	}
 	return policy;
 }
