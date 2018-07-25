@@ -32,7 +32,7 @@ namespace Mono.Compiler
 
 		MethodInfo GetMethodInfoFor (System.Reflection.MethodInfo m, string methodName)
 		{
-			var parameters = Array.Empty<SimpleJit.Metadata.ParameterInfo> (); /* FIXME fill this in from S.R.MethodInfo */
+			var parameters = ParametersFromReflection (m.GetParameters ());
 			var srBody = m.GetMethodBody ();
 			var bodyBytes = srBody.GetILAsByteArray ();
 			var maxStack = srBody.MaxStackSize;
@@ -45,11 +45,22 @@ namespace Mono.Compiler
 
 		IList<SimpleJit.Metadata.LocalVariableInfo> LocalVariableInfo (IList<System.Reflection.LocalVariableInfo> locals)
 		{
-			SimpleJit.Metadata.LocalVariableInfo[] res = new SimpleJit.Metadata.LocalVariableInfo[locals.Count];
+			var res = new SimpleJit.Metadata.LocalVariableInfo[locals.Count];
 			int i = 0;
 			foreach (var l in locals) {
 				var t = RuntimeInformation.ClrTypeFromType (l.LocalType);
 				res[i++] = new SimpleJit.Metadata.LocalVariableInfo (t, l.LocalIndex);
+			}
+			return res;
+		}
+
+		IReadOnlyList<SimpleJit.Metadata.ParameterInfo> ParametersFromReflection (System.Reflection.ParameterInfo[] ps)
+		{
+			var res = new SimpleJit.Metadata.ParameterInfo[ps.Length];
+			int i = 0;
+			foreach  (var p in ps) {
+				var t = RuntimeInformation.ClrTypeFromType (p.ParameterType);
+				res[i++] = new SimpleJit.Metadata.ParameterInfo (t, p.Position);
 			}
 			return res;
 		}
