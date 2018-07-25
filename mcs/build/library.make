@@ -301,10 +301,6 @@ endif
 # TODO: depend on all *.sources for now and figure out how to list only needed files later
 PROFILE_sources = $(wildcard *.sources)
 
-GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
-GENSOURCES_CS = $(topdir)/build/gensources.cs
-GENSOURCES_EXE = $(topdir)/build/gensources.exe
-
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
 else
