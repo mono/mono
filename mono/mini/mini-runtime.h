@@ -73,6 +73,8 @@ typedef struct {
 	int first_filter_idx, filter_idx;
 } ResumeState;
 
+typedef void (*MonoAbortFunction)(MonoObject*);
+
 struct MonoJitTlsData {
 	gpointer          end_of_stack;
 	guint32           stack_size;
@@ -85,7 +87,7 @@ struct MonoJitTlsData {
 	guint32          stack_ovf_guard_size;
 	guint            stack_ovf_valloced : 1;
 	guint            stack_ovf_pending : 1;
-	void            (*abort_func) (MonoObject *object);
+	MonoAbortFunction abort_func;
 	/* Used to implement --debug=casts */
 	MonoClass       *class_cast_from, *class_cast_to;
 

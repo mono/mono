@@ -11222,8 +11222,8 @@ compile_methods (MonoAotCompile *acfg)
 		g_free (methods);
 
 		for (i = 0; i < threads->len; ++i) {
-			mono_thread_info_wait_one_handle (g_ptr_array_index (threads, i), MONO_INFINITE_WAIT, FALSE);
-			mono_threads_close_thread_handle (g_ptr_array_index (threads, i));
+			mono_thread_info_wait_one_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i), MONO_INFINITE_WAIT, FALSE);
+			mono_threads_close_thread_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i));
 		}
 	} else {
 		methods_len = 0;
@@ -11597,7 +11597,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 				cdata->name = g_strdup (p + 1);
 
 				if (ginst_id != -1) {
-					cdata->inst = g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
+					cdata->inst = (GInstProfileData*)g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
 					g_assert (cdata->inst);
 				}
 				g_free (class_name);
@@ -11636,7 +11636,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 			mdata->param_count = param_count;
 
 			if (ginst_id != -1) {
-				mdata->inst = g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
+				mdata->inst = (GInstProfileData*)g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
 				g_assert (mdata->inst);
 			}
 			g_hash_table_insert (data->methods, GINT_TO_POINTER (id), mdata);

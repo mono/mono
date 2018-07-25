@@ -255,7 +255,7 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 		bb->needs_decompose |= first_bb->needs_decompose;
 
 		/* Delete the links between the original bb and its successors */
-		tmp_bblocks = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * bb->out_count);
+		tmp_bblocks = (MonoBasicBlock**)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * bb->out_count);
 		memcpy (tmp_bblocks, bb->out_bb, sizeof (MonoBasicBlock*) * bb->out_count);
 		count = bb->out_count;
 		for (i = 0; i < count; ++i)
