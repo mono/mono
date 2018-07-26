@@ -800,7 +800,7 @@ System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
-System.Security.Policy/Publisher.cs
+../../../external/corefx/src/System.Security.Permissions/src/System/Security/Policy/Publisher.cs
 System.Security.Policy/PublisherMembershipCondition.cs
 System.Security.Policy/Site.cs
 System.Security.Policy/SiteMembershipCondition.cs
