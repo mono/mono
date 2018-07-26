@@ -11,7 +11,6 @@ TEST_CASES := \
 	mscorlib/test-exception-01.cs \
 	mscorlib/test-locale-01.cs \
 	mscorlib/test-reflection-01.cs \
-	mscorlib/test-remoting.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
@@ -20,11 +19,13 @@ TEST_CASES := \
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
-	mscorlib/test-crypto-01.cs
+# Requires linker fix
+#	mscorlib/test-crypto-01.cs
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \
+	mscorlib/test-remoting.cs \
 	mscorlib/test-reflection.cs
 endif
 
