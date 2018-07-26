@@ -219,7 +219,7 @@
 ../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/HashCollisionScenarios/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs:Comparers.Generic.cs
 ../../../external/corefx/src/System.Collections/tests/BitArray/*.cs:BitArray_GetSetTests.cs
 ../../../external/corefx/src/System.Collections/tests/*.cs
 
