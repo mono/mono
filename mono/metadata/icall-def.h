@@ -865,9 +865,9 @@ ICALL(SECSTRING_2, "EncryptInternal", ves_icall_System_Security_SecureString_Enc
 #endif /* !DISABLE_POLICY_EVIDENCE */
 
 ICALL_TYPE(SECMAN, "System.Security.SecurityManager", SECMAN_1)
-ICALL(SECMAN_1, "get_RequiresElevatedPermissions", mono_security_core_clr_require_elevated_permissions)
-ICALL(SECMAN_2, "get_SecurityEnabled", ves_icall_System_Security_SecurityManager_get_SecurityEnabled)
-ICALL(SECMAN_3, "set_SecurityEnabled", ves_icall_System_Security_SecurityManager_set_SecurityEnabled)
+NOHANDLES(ICALL(SECMAN_1, "get_RequiresElevatedPermissions", mono_security_core_clr_require_elevated_permissions))
+NOHANDLES(ICALL(SECMAN_2, "get_SecurityEnabled", ves_icall_System_Security_SecurityManager_get_SecurityEnabled))
+NOHANDLES(ICALL(SECMAN_3, "set_SecurityEnabled", ves_icall_System_Security_SecurityManager_set_SecurityEnabled))
 
 ICALL_TYPE(STRING, "System.String", STRING_1)
 ICALL(STRING_1, ".ctor(System.ReadOnlySpan`1<char>)", ves_icall_System_String_ctor_RedirectToCreateString)
