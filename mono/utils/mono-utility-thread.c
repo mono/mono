@@ -76,7 +76,7 @@ utility_thread (void *arg)
 
 	thread->callbacks.cleanup (thread->state_ptr);
 
-	return NULL;
+	return 0;
 }
 
 MonoUtilityThread *
