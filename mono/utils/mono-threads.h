@@ -72,7 +72,7 @@ typedef void* mono_native_thread_return_t;
 
 #endif /* #ifdef HOST_WIN32 */
 
-typedef mono_native_thread_return_t (__stdcall * MonoNativeThreadStart)(void*);
+typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
