@@ -56,12 +56,9 @@ INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
 ILASM = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
-
 GENSOURCES_LIBDIR = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)
 GENSOURCES_CS = $(topdir)/build/gensources.cs
 GENSOURCES_EXE = $(topdir)/build/gensources.exe
-GENSOURCES_FALLBACK_RUNTIME = MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
-GENSOURCES_RUNTIME = $(if $(PROFILE_RUNTIME), $(value PROFILE_RUNTIME), $(if $(TEST_RUNTIME), $(value TEST_RUNTIME), $(value GENSOURCES_FALLBACK_RUNTIME)))
 
 depsdir = $(topdir)/build/deps
 
@@ -80,7 +77,6 @@ export RESGEN
 export GENSOURCES_LIBDIR
 export GENSOURCES_CS
 export GENSOURCES_EXE
-export GENSOURCES_RUNTIME
 
 # Get this so the platform.make platform-check rule doesn't become the
 # default target

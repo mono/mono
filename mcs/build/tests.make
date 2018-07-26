@@ -247,6 +247,16 @@ $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(te
 
 test_response_preprocessed = $(test_response)_preprocessed
 
+ifneq "x" "x$(PROFILE_RUNTIME)"
+GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
+else
+ifneq "x" "x$(TEST_RUNTIME)"
+GENSOURCES_RUNTIME=$(TEST_RUNTIME)
+else
+GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
+endif
+endif
+
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
 $(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(GENSOURCES_CS)
