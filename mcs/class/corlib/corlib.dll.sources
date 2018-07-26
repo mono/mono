@@ -1188,6 +1188,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflect.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflectableType.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberFilter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodImplAttributes.cs
@@ -1210,7 +1211,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
-../referencesource/mscorlib/system/reflection/memberinfo.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodbody.cs
@@ -1818,3 +1818,5 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeHandleCache.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
+
+../../../external/corefx/src/Common/src/System/NotImplemented.cs

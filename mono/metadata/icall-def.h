@@ -583,6 +583,7 @@ HANDLES(ICALL(EVENTI_1, "internal_from_handle_type", ves_icall_System_Reflection
 ICALL_TYPE(FIELDI, "System.Reflection.FieldInfo", FILEDI_1)
 HANDLES(ICALL(FILEDI_1, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers))
 HANDLES(ICALL(FILEDI_2, "get_marshal_info", ves_icall_System_Reflection_FieldInfo_get_marshal_info))
+HANDLES(ICALL(FILEDI_4, "get_metadata_token", ves_icall_reflection_get_token))
 HANDLES(ICALL(FILEDI_3, "internal_from_handle_type", ves_icall_System_Reflection_FieldInfo_internal_from_handle_type))
 
 ICALL_TYPE(MEMBERI, "System.Reflection.MemberInfo", MEMBERI_1)
@@ -636,6 +637,7 @@ HANDLES(ICALL(MMETH_6, "get_IsGenericMethod", ves_icall_MonoMethod_get_IsGeneric
 HANDLES(ICALL(MMETH_7, "get_IsGenericMethodDefinition", ves_icall_MonoMethod_get_IsGenericMethodDefinition))
 HANDLES(ICALL(MMETH_8, "get_base_method", ves_icall_MonoMethod_get_base_method))
 HANDLES(ICALL(MMETH_10, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
+HANDLES(ICALL(MMETH_12, "get_metadata_token", ves_icall_reflection_get_token))
 HANDLES(ICALL(MMETH_9, "get_name", ves_icall_MonoMethod_get_name))
 
 ICALL_TYPE(MMETHI, "System.Reflection.MonoMethodInfo", MMETHI_4)
