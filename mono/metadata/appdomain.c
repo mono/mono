@@ -2739,7 +2739,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gulong __stdcall
+static gulong MONO_STDCALL
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);

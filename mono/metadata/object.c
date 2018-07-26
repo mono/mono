@@ -4842,7 +4842,7 @@ typedef struct MonoMainThunk {
 	gpointer main_data;
 } MonoMainThunk;
 
-static gulong __stdcall
+static gulong MONO_STDCALL
 mono_main_thunk (gpointer void_data)
 /**
  * MonoThreadStart returns 32bit unsigned long on Windows, pointer-sized unsigned long on non-Windows.
@@ -4852,7 +4852,7 @@ mono_main_thunk (gpointer void_data)
  */
 {
 	MonoMainThunk* data = (MonoMainThunk*)void_data;
-	data->main_func(data->main_data);
+	data->main_func (data->main_data);
 	return 0;
 }
 

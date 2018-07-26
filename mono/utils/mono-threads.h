@@ -74,7 +74,7 @@ typedef void* mono_native_thread_return_t;
 
 MONO_BEGIN_DECLS
 
-typedef mono_native_thread_return_t (__stdcall * MonoNativeThreadStart)(void*);
+typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)

@@ -3136,7 +3136,7 @@ add_to_fd_set (fd_set *set, int fd, int *max_fd)
 		*max_fd = fd;
 }
 
-static mono_native_thread_return_t __stdcall
+static mono_native_thread_return_t MONO_STDCALL
 helper_thread (void *arg)
 {
 	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Helper", TRUE);
@@ -3386,7 +3386,7 @@ handle_writer_queue_entry (void)
 	return FALSE;
 }
 
-static mono_native_thread_return_t __stdcall
+static mono_native_thread_return_t MONO_STDCALL
 writer_thread (void *arg)
 {
 	dump_header ();
@@ -3503,7 +3503,7 @@ handle_dumper_queue_entry (void)
 	return FALSE;
 }
 
-static mono_native_thread_return_t __stdcall
+static mono_native_thread_return_t MONO_STDCALL
 dumper_thread (void *arg)
 {
 	MonoProfilerThread *thread = profiler_thread_begin ("Profiler Dumper", TRUE);
