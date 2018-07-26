@@ -996,7 +996,7 @@ NOHANDLES(ICALL(THREAD_48, "VolatileWrite(uint&,uint)", ves_icall_System_Threadi
 NOHANDLES(ICALL(THREAD_49, "VolatileWrite(uint16&,uint16)", ves_icall_System_Threading_Thread_VolatileWrite2))
 NOHANDLES(ICALL(THREAD_50, "VolatileWrite(uintptr&,uintptr)", ves_icall_System_Threading_Thread_VolatileWriteIntPtr))
 NOHANDLES(ICALL(THREAD_51, "VolatileWrite(ulong&,ulong)", ves_icall_System_Threading_Thread_VolatileWrite8))
-HANDLES(ICALL(THREAD_9, "YieldInternal", ves_icall_System_Threading_Thread_Yield))
+NOHANDLES(ICALL(THREAD_9, "YieldInternal", mono_threads_platform_yield))
 HANDLES(ICALL(THREAD_52, "current_lcid()", ves_icall_System_Threading_Thread_current_lcid))
 
 ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_1)
