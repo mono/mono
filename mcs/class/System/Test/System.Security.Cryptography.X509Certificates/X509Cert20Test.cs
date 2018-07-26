@@ -456,7 +456,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 
 #if !MOBILE
 		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
+		[ExpectedException (typeof (NullReferenceException))]
 		public void GetObjectData_Null ()
 		{
 			X509Certificate x = new X509Certificate ();
@@ -465,7 +465,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		}
 
 		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void GetObjectData ()
 		{
 			X509Certificate x = new X509Certificate (cert1);
@@ -473,22 +472,27 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.IsNotNull (s, "ISerializable");
 			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
 			s.GetObjectData (info, new StreamingContext (StreamingContextStates.All));
+			Assert.AreEqual (1, info.MemberCount, "MemberCount");
+			byte[] raw = (byte[]) info.GetValue ("RawData", typeof (byte[]));
 		}
 #endif
 
 		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
+		[ExpectedException (typeof (NullReferenceException))]
 		public void Ctor_Serialization_Null ()
 		{
 			new X509Certificate (null, new StreamingContext (StreamingContextStates.All));
 		}
 
 		[Test]
-		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void Ctor_Serialization ()
 		{
 			SerializationInfo info = new SerializationInfo (typeof (X509Certificate), new FormatterConverter ());
-			new X509Certificate (info, new StreamingContext (StreamingContextStates.All));
+			info.AddValue ("RawData", cert1);
+			X509Certificate x = new X509Certificate (info, new StreamingContext (StreamingContextStates.All));
+			Assert.AreEqual (cert1, x.GetRawCertData (), "GetRawCertData");
+			// decoding is done too
+			Assert.AreEqual ("02720006E8", x.GetSerialNumberString (), "SerialNumber");
 		}
 
 

@@ -201,7 +201,8 @@ namespace System.Security.Cryptography.X509Certificates
 		[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Usage", "CA2229", Justification = "Public API has already shipped.")]
 		public X509Certificate (SerializationInfo info, StreamingContext context) : this ()
 		{
-			throw new PlatformNotSupportedException ();
+			byte[] raw = (byte[]) info.GetValue ("RawData", typeof (byte[]));
+			Import (raw, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public static X509Certificate CreateFromCertFile (string filename)
@@ -216,12 +217,14 @@ namespace System.Security.Cryptography.X509Certificates
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new PlatformNotSupportedException ();
+			if (!X509Helper.IsValid (impl))
+				throw new NullReferenceException ();
+			// will throw a NRE if info is null (just like MS implementation)
+			info.AddValue ("RawData", impl.RawData);
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
-			throw new PlatformNotSupportedException ();
 		}
 
 		public IntPtr Handle {
