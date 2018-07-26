@@ -135,84 +135,32 @@ namespace Mono.Btls
 			return true;
 		}
 
-		protected override byte[] GetCertHash (bool lazy)
-		{
-			return X509.GetCertHash ();
-		}
+		public override byte[] Thumbprint => X509.GetCertHash ();
 
-		public override byte[] GetRawCertData ()
-		{
-			return X509.GetRawData (MonoBtlsX509Format.DER);
-		}
+		public override byte[] RawData => X509.GetRawData (MonoBtlsX509Format.DER);
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			if (legacyV1Mode)
-				return SubjectName.Decode (X500DistinguishedNameFlags.None);
-			return SubjectName.Name;
-		}
+		public override string Subject => SubjectName.Name;
 
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			if (legacyV1Mode)
-				return IssuerName.Decode (X500DistinguishedNameFlags.None);
-			return IssuerName.Name;
-		}
+		public override string Issuer => IssuerName.Name;
 
-		public override DateTime GetValidFrom ()
-		{
-			return X509.GetNotBefore ().ToLocalTime ();
-		}
+		public override string LegacySubject => SubjectName.Decode (X500DistinguishedNameFlags.None);
 
-		public override DateTime GetValidUntil ()
-		{
-			return X509.GetNotAfter ().ToLocalTime ();
-		}
+		public override string LegacyIssuer => IssuerName.Decode (X500DistinguishedNameFlags.None);
 
-		public override byte[] GetPublicKey ()
-		{
-			return X509.GetPublicKeyData ();
-		}
+		public override DateTime NotBefore => X509.GetNotBefore ().ToLocalTime ();
 
-		public override byte[] GetSerialNumber ()
-		{
-			return X509.GetSerialNumber (true);
-		}
+		public override DateTime NotAfter => X509.GetNotAfter ().ToLocalTime ();
 
-		public override string GetKeyAlgorithm ()
-		{
-			return PublicKey.Oid.Value;
-		}
+		public override byte[] PublicKeyValue => X509.GetPublicKeyData ();
 
-		public override byte[] GetKeyAlgorithmParameters ()
-		{
-			return PublicKey.EncodedParameters.RawData;
-		}
+		public override byte[] SerialNumber => X509.GetSerialNumber (true);
+
+		public override string KeyAlgorithm => PublicKey.Oid.Value;
+
+		public override byte[] KeyAlgorithmParameters => PublicKey.EncodedParameters.RawData;
 
 		internal override X509CertificateImplCollection IntermediateCertificates {
 			get { return intermediateCerts; }
-		}
-
-		public override string ToString (bool full)
-		{
-			ThrowIfContextInvalid ();
-
-			if (!full) {
-				var summary = GetSubjectName (false);
-				return string.Format ("[X509Certificate: {0}]", summary);
-			}
-
-			string nl = Environment.NewLine;
-			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
-			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
-
-			sb.Append (nl);
-			return sb.ToString ();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -234,7 +182,7 @@ namespace Mono.Btls
 			if (fallback != null)
 				return;
 			fallback = SystemDependencyProvider.Instance.CertificateProvider.Import (
-				GetRawCertData (), null, X509KeyStorageFlags.DefaultKeySet,
+				RawData, null, X509KeyStorageFlags.DefaultKeySet,
 				CertificateImportFlags.DisableNativeBackend);
 		}
 
@@ -421,7 +369,7 @@ namespace Mono.Btls
 
 			switch (contentType) {
 			case X509ContentType.Cert:
-				return GetRawCertData ();
+				return RawData;
 			case X509ContentType.Pfx: // this includes Pkcs12
 				return ExportPkcs12 (password);
 			case X509ContentType.SerializedCert:
@@ -451,10 +399,10 @@ namespace Mono.Btls
 				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
 				if (password != null)
 					pfx.Password = password;
-				pfx.AddCertificate (new MX.X509Certificate (GetRawCertData ()), attrs);
+				pfx.AddCertificate (new MX.X509Certificate (RawData), attrs);
 				if (IntermediateCertificates != null) {
 					for (int i = 0; i < IntermediateCertificates.Count; i++)
-						pfx.AddCertificate (new MX.X509Certificate (IntermediateCertificates [i].GetRawCertData ()));
+						pfx.AddCertificate (new MX.X509Certificate (IntermediateCertificates [i].RawData));
 				}
 				var privateKey = PrivateKey;
 				if (privateKey != null)

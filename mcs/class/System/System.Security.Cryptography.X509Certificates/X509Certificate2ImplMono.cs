@@ -95,50 +95,37 @@ namespace System.Security.Cryptography.X509Certificates
 			return new X509Certificate2ImplMono (this);
 		}
 
+		MX.X509Certificate Cert {
+			get {
+				ThrowIfContextInvalid ();
+				return _cert;
+			}
+		}
+
+
 		#region Implemented X509CertificateImpl members
 
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.IssuerName;
-			else
-				return MX.X501.ToString (_cert.GetIssuerName (), true, ", ", true);
+		public override string Issuer => MX.X501.ToString (Cert.GetIssuerName (), true, ", ", true);
+
+		public override string Subject => MX.X501.ToString (Cert.GetSubjectName (), true, ", ", true);
+
+		public override string LegacyIssuer => Cert.IssuerName;
+
+		public override string LegacySubject => Cert.SubjectName;
+
+		public override byte[] RawData => Cert.RawData;
+
+		public override byte[] Thumbprint {
+			get {
+				ThrowIfContextInvalid ();
+				SHA1 sha = SHA1.Create ();
+				return sha.ComputeHash (_cert.RawData);
+			}
 		}
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.SubjectName;
-			else
-				return MX.X501.ToString (_cert.GetSubjectName (), true, ", ", true);
-		}
+		public override DateTime NotBefore => Cert.ValidFrom.ToLocalTime ();
 
-		public override byte[] GetRawCertData ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.RawData;
-		}
-
-		protected override byte[] GetCertHash (bool lazy)
-		{
-			ThrowIfContextInvalid ();
-			SHA1 sha = SHA1.Create ();
-			return sha.ComputeHash (_cert.RawData);
-		}
-
-		public override DateTime GetValidFrom ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.ValidFrom;
-		}
-
-		public override DateTime GetValidUntil ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.ValidUntil;
-		}
+		public override DateTime NotAfter => Cert.ValidUntil.ToLocalTime ();
 
 		public override bool Equals (X509CertificateImpl other, out bool result)
 		{
@@ -147,31 +134,22 @@ namespace System.Security.Cryptography.X509Certificates
 			return false;
 		}
 
-		public override string GetKeyAlgorithm ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.KeyAlgorithm;
+		public override string KeyAlgorithm => Cert.KeyAlgorithm;
+
+		public override byte[] KeyAlgorithmParameters => Cert.KeyAlgorithmParameters ?? throw new CryptographicException ();
+
+		public override byte[] PublicKeyValue => Cert.PublicKey;
+
+		public override byte[] SerialNumber {
+			get {
+				ThrowIfContextInvalid ();
+				var serial = Cert.SerialNumber;
+				Array.Reverse (serial);
+				return serial;
+			}
 		}
 
-		public override byte[] GetKeyAlgorithmParameters ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.KeyAlgorithmParameters;
-		}
-
-		public override byte[] GetPublicKey ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.PublicKey;
-		}
-
-		public override byte[] GetSerialNumber ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.SerialNumber;
-		}
-
-		#endregion
+#endregion
 
 		// constructors
 
@@ -479,7 +457,7 @@ namespace System.Security.Cryptography.X509Certificates
 				}
 				catch (Exception e) {
 					try {
-						cert = ImportPkcs12 (rawData, null);
+						cert = ImportPkcs12 (rawData, (string)null);
 					}
 					catch {
 						string msg = Locale.GetText ("Unable to decode certificate.");
@@ -562,71 +540,6 @@ namespace System.Security.Cryptography.X509Certificates
 			if (intermediateCerts != null) {
 				intermediateCerts.Dispose ();
 				intermediateCerts = null;
-			}
-		}
-
-		public override string ToString ()
-		{
-			if (_cert == null)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
-			return ToString (true);
-		}
-
-		public override string ToString (bool verbose)
-		{
-			if (_cert == null)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
-			string nl = Environment.NewLine;
-			StringBuilder sb = new StringBuilder ();
-
-			// the non-verbose X509Certificate2 == verbose X509Certificate
-			if (!verbose) {
-				sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-				sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-				sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
-				sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
-				sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
-				sb.Append (nl);
-				return sb.ToString ();
-			}
-
-			sb.AppendFormat ("[Version]{0}  V{1}{0}{0}", nl, Version);
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-			sb.AppendFormat ("[Serial Number]{0}  {1}{0}{0}", nl, GetSerialNumber ());
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
-			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
-			sb.AppendFormat ("[Signature Algorithm]{0}  {1}({2}){0}{0}", nl, SignatureAlgorithm.FriendlyName, 
-				SignatureAlgorithm.Value);
-
-			AsymmetricAlgorithm key = PublicKey.Key;
-			sb.AppendFormat ("[Public Key]{0}  Algorithm: ", nl);
-			if (key is RSA)
-				sb.Append ("RSA");
-			else if (key is DSA)
-				sb.Append ("DSA");
-			else
-				sb.Append (key.ToString ());
-			sb.AppendFormat ("{0}  Length: {1}{0}  Key Blob: ", nl, key.KeySize);
-			AppendBuffer (sb, PublicKey.EncodedKeyValue.RawData);
-			sb.AppendFormat ("{0}  Parameters: ", nl);
-			AppendBuffer (sb, PublicKey.EncodedParameters.RawData);
-			sb.Append (nl);
-
-			return sb.ToString ();
-		}
-
-		private static void AppendBuffer (StringBuilder sb, byte[] buffer)
-		{
-			if (buffer == null)
-				return;
-			for (int i=0; i < buffer.Length; i++) {
-				sb.Append (buffer [i].ToString ("x2"));
-				if (i < buffer.Length - 1)
-					sb.Append (" ");
 			}
 		}
 
@@ -720,4 +633,3 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
-

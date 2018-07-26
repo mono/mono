@@ -90,8 +90,8 @@ namespace System.Security.Cryptography.X509Certificates
 			if (first.Equals (second, out result))
 				return result;
 
-			var firstRaw = first.GetRawCertData ();
-			var secondRaw = second.GetRawCertData ();
+			var firstRaw = first.RawData;
+			var secondRaw = second.RawData;
 
 			if (firstRaw == null)
 				return secondRaw == null;

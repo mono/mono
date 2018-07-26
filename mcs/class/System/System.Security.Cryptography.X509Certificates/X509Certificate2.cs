@@ -148,11 +148,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public string FriendlyName {
 			get {
-				ThrowIfContextInvalid ();
+				ThrowIfInvalid ();
 				return friendlyName;
 			}
 			set {
-				ThrowIfContextInvalid ();
+				ThrowIfInvalid ();
 				friendlyName = value;
 			}
 		}
@@ -166,11 +166,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public DateTime NotAfter {
-			get { return Impl.GetValidUntil ().ToLocalTime (); }
+			get { return Impl.NotAfter.ToLocalTime (); }
 		}
 
 		public DateTime NotBefore {
-			get { return Impl.GetValidFrom ().ToLocalTime (); }
+			get { return Impl.NotBefore.ToLocalTime (); }
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
