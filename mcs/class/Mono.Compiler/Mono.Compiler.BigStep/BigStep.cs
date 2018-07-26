@@ -42,7 +42,7 @@ namespace Mono.Compiler.BigStep
 		}
 
 		// translation environment for a single function
-		class Env {
+		public class Env {
 			private IRuntimeInformation RuntimeInfo { get; }
 			public Env (IRuntimeInformation runtimeInfo, MethodInfo methodInfo)
 			{

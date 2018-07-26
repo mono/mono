@@ -93,6 +93,18 @@ public struct IlIterator {
 	public Opcode Opcode {
 		get { return current.Opcode; }
 	}
+
+	public ExtendedOpcode ExtOpcode {
+		get { return current.ExtendedOpcode; }
+	}
+
+	public PushBehavior PushBehavior {
+		get { return current.PushBehavior; }
+	}
+
+	public PopBehavior PopBehavior {
+		get { return current.PopBehavior; }
+	}
 }
 
 public class MethodBody {
