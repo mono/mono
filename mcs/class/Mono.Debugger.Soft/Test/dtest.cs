@@ -4396,5 +4396,17 @@ public class DebuggerTests
 		AssertValue (3.0, f);
 
 	}
+
+	[Test]
+    public void InvokeGenericMethod () {
+        Event e = run_until ("bp1");
+        StackFrame frame = e.Thread.GetFrames()[0];
+        TypeMirror t = frame.Method.DeclaringType;
+        MethodMirror m;
+        m = t.GetMethod ("generic_method");
+        AssertThrows<ArgumentException> (delegate {
+        	t.InvokeMethod (e.Thread, m, null);
+        	});      
+    }
 } // class DebuggerTests
 } // namespace
