@@ -586,9 +586,6 @@ HANDLES(ICALL(FILEDI_2, "get_marshal_info", ves_icall_System_Reflection_FieldInf
 HANDLES(ICALL(FILEDI_4, "get_metadata_token", ves_icall_reflection_get_token))
 HANDLES(ICALL(FILEDI_3, "internal_from_handle_type", ves_icall_System_Reflection_FieldInfo_internal_from_handle_type))
 
-ICALL_TYPE(MEMBERI, "System.Reflection.MemberInfo", MEMBERI_1)
-HANDLES(ICALL(MEMBERI_1, "get_MetadataToken", ves_icall_reflection_get_token))
-
 ICALL_TYPE(MBASE, "System.Reflection.MethodBase", MBASE_1)
 HANDLES(ICALL(MBASE_1, "GetCurrentMethod", ves_icall_GetCurrentMethod))
 HANDLES(ICALL(MBASE_2, "GetMethodBodyInternal", ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal))
