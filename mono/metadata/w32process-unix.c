@@ -945,7 +945,7 @@ get_process_foreach_callback (MonoW32Handle *handle_data, gpointer user_data)
 }
 
 HANDLE
-ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
+ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error)
 {
 	GetProcessForeachData foreach_data;
 	gpointer handle;
@@ -2302,33 +2302,41 @@ exit:
 }
 
 /* Returns an array of pids */
-MonoArray *
-ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoArray *procs;
-	gpointer *pidarray;
+	MonoArrayHandle procs = NULL_HANDLE_ARRAY;
+	gpointer *pidarray = NULL;
 	int i, count;
+	guint32 * pprocs = NULL;
+	gchandle_t gchandle = 0;
 
 	pidarray = mono_process_list (&count);
 	if (!pidarray) {
 		mono_error_set_not_supported (error, "This system does not support EnumProcesses");
-		mono_error_set_pending_exception (error);
-		return NULL;
+		goto exit;
 	}
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
-	if (mono_error_set_pending_exception (error)) {
-		g_free (pidarray);
-		return NULL;
+	procs = mono_array_new_handle (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (!mono_error_ok (error)) {
+		procs = NULL_HANDLE_ARRAY;
+		goto exit;
 	}
+
+	pprocs = MONO_ARRAY_HANDLE_PIN (procs, guint32, 0, &gchandle);
+
+	// Memcpy directly native to managed if same size, else loop and
+	// copy one element at a time, truncating.
+
 	if (sizeof (guint32) == sizeof (gpointer)) {
-		memcpy (mono_array_addr (procs, guint32, 0), pidarray, count * sizeof (gint32));
+		memcpy (pprocs, pidarray, count * sizeof (gint32));
 	} else {
 		for (i = 0; i < count; ++i)
-			*(mono_array_addr (procs, guint32, i)) = GPOINTER_TO_UINT (pidarray [i]);
+			pprocs [i] = GPOINTER_TO_UINT (pidarray [i]);
 	}
-	g_free (pidarray);
 
+exit:
+	mono_gchandle_free (gchandle);
+	g_free (pidarray);
 	return procs;
 }
 
@@ -3000,7 +3008,7 @@ find_pe_file_resources (gpointer file_map, guint32 map_size, guint32 res_id, gui
 }
 
 static gpointer
-map_pe_file (gunichar2 *filename, gint32 *map_size, void **handle)
+map_pe_file (const gunichar2 *filename, gint32 *map_size, void **handle)
 {
 	gchar *filename_ext = NULL;
 	gchar *located_filename = NULL;
@@ -3504,26 +3512,25 @@ big_up (gconstpointer datablock, guint32 size)
 #endif
 
 gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
 	gpointer file_map;
 	gpointer versioninfo;
 	void *map_handle;
 	gint32 map_size;
 	gsize datasize;
+	gboolean result = FALSE;
 
 	g_assert (data);
 	*data = NULL;
 
 	file_map = map_pe_file (filename, &map_size, &map_handle);
 	if (!file_map)
-		return FALSE;
+		goto exit;
 
 	versioninfo = find_pe_file_resources (file_map, map_size, RT_VERSION, 0, &datasize);
-	if (!versioninfo) {
-		unmap_pe_file (file_map, map_handle);
-		return FALSE;
-	}
+	if (!versioninfo)
+		goto exit;
 
 	*data = g_malloc0 (datasize);
 
@@ -3534,16 +3541,17 @@ mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
 #if G_BYTE_ORDER == G_BIG_ENDIAN
 	big_up (*data, datasize);
 #endif
-
+	result = TRUE;
+exit:
 	unmap_pe_file (file_map, map_handle);
-
-	return TRUE;
+	return result;
 }
 
 gboolean
 mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subblock, gpointer *buffer, guint32 *len)
 {
-	gchar *subblock_utf8, *lang_utf8 = NULL;
+	char *subblock_utf8 = NULL;
+	char *lang_utf8 = NULL;
 	gboolean ret = FALSE;
 	version_data block;
 	gconstpointer data_ptr;
@@ -3557,9 +3565,8 @@ mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subbl
 	gchar *lowercase_lang;
 
 	subblock_utf8 = g_utf16_to_utf8 (subblock, -1, NULL, NULL, NULL);
-	if (subblock_utf8 == NULL) {
-		return(FALSE);
-	}
+	if (!subblock_utf8)
+		goto done;
 
 	if (!strcmp (subblock_utf8, "\\VarFileInfo\\Translation")) {
 		want_var = TRUE;
@@ -3646,13 +3653,10 @@ mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subbl
 		}
 	}
 
-  done:
-	if (lang_utf8) {
-		g_free (lang_utf8);
-	}
-
+ done:
+	g_free (lang_utf8);
 	g_free (subblock_utf8);
-	return(ret);
+	return ret;
 }
 
 static guint32

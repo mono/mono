@@ -55,7 +55,7 @@ mono_w32process_signal_finished (void)
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 HANDLE
-ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
+ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error)
 {
 	HANDLE handle;
 	
@@ -132,7 +132,7 @@ mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDL
 static gboolean
 mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mono_process_info,
 	MonoStringHandle cmd, guint32 creation_flags, gunichar2 *env_vars, gunichar2 *dir, STARTUPINFO *start_info,
-	PROCESS_INFORMATION *process_info)
+	PROCESS_INFORMATION *process_info, MonoError *error)
 {
 	gboolean result = FALSE;
 	gchandle_t cmd_gchandle = 0;
@@ -332,7 +332,7 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 	if (coop.length.working_directory)
 		dir = coop.working_directory;
 
-	ret = mono_process_create_process (&coop, process_info, cmd, creation_flags, env_vars, dir, &startinfo, &procinfo);
+	ret = mono_process_create_process (&coop, process_info, cmd, creation_flags, env_vars, dir, &startinfo, &procinfo, error);
 
 	g_free (env_vars);
 
@@ -360,23 +360,19 @@ mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-MonoArray *
-ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoArray *procs = NULL;
+	MonoArrayHandle procs = NULL_ARRAY_HANDLE;
 	DWORD needed = 0;
 	DWORD *pids = NULL;
 	int count = 512;
+	gchandle_t gchandle = 0;
 
 	do {
 		pids = g_new0 (DWORD, count);
-		if (!mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed)) {
-			// FIXME GetLastError?
-			mono_error_set_not_supported (error, "This system does not support EnumProcesses");
-			mono_error_set_pending_exception (error);
-			goto exit;
-		}
+		if (!mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed, error))
+			goto exit; // FIXME GetLastError?
 		if (needed < (count * sizeof (guint32)))
 			break;
 		g_free (pids);
@@ -385,14 +381,16 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	} while (TRUE);
 
 	count = needed / sizeof (guint32);
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
-	if (mono_error_set_pending_exception (error)) {
-		procs = NULL;
+
+	procs = mono_array_new_handle (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (!mono_error_ok (error)) {
+		procs = NULL_ARRAY_HANDLE;
 		goto exit;
 	}
 
-	memcpy (mono_array_addr (procs, guint32, 0), pids, needed);
+	memcpy (MONO_ARRAY_HANDLE_PIN (procs, guint32, 0, &gchandle), pids, needed);
 exit:
+	mono_gchandle_free (gchandle);
 	g_free (pids);
 	return procs;
 }

@@ -137,16 +137,17 @@ mono_w32process_get_path (pid_t pid);
 #endif
 
 gpointer
-ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid);
+ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error);
 
-MonoArray*
-ves_icall_System_Diagnostics_Process_GetProcesses_internal (void);
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error);
 
-MonoArray*
-ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, gpointer process);
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, gpointer process, MonoError *error);
 
 void
-ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename);
+ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObjectHandle this_obj,
+	const gunichar2 *filename, int filename_length, MonoError *error);
 
 MonoBoolean
 ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error);
@@ -155,8 +156,8 @@ MonoBoolean
 ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStartInfoHandle proc_start_info, gpointer stdin_handle,
 	gpointer stdout_handle, gpointer stderr_handle, MonoW32ProcessInfo *process_handle, MonoError *error);
 
-MonoString*
-ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process);
+MonoStringHandle
+ves_icall_System_Diagnostics_Process_ProcessName_internal (gpointer process, MonoError *error);
 
 gint64
 ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, gint32 *error);
