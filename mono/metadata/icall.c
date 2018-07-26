@@ -7851,14 +7851,6 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle obj, Mon
 	return mono_reflection_get_custom_attrs_by_type_handle (obj, attr_class, error);
 }
 
-ICALL_EXPORT MonoArrayHandle
-ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal (MonoObjectHandle obj, MonoError *error)
-{
-	error_init (error);
-	return mono_reflection_get_custom_attrs_data_checked (obj, error);
-}
-
-
 ICALL_EXPORT MonoStringHandle
 ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 {

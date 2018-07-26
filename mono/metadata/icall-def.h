@@ -449,7 +449,7 @@ NOHANDLES(ICALL(MATHF_20, "Tan", ves_icall_System_MathF_Tan))
 NOHANDLES(ICALL(MATHF_21, "Tanh", ves_icall_System_MathF_Tanh))
 
 ICALL_TYPE(MCATTR, "System.MonoCustomAttrs", MCATTR_1)
-HANDLES(ICALL(MCATTR_1, "GetCustomAttributesDataInternal", ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal))
+HANDLES(ICALL(MCATTR_1, "GetCustomAttributesDataInternal", mono_reflection_get_custom_attrs_data_checked))
 HANDLES(ICALL(MCATTR_2, "GetCustomAttributesInternal", ves_icall_MonoCustomAttrs_GetCustomAttributesInternal))
 HANDLES(ICALL(MCATTR_3, "IsDefinedInternal", ves_icall_MonoCustomAttrs_IsDefinedInternal))
 
