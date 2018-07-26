@@ -50,7 +50,7 @@ utility_thread_handle_inbox (MonoUtilityThread *thread, gboolean at_shutdown)
 	return TRUE;
 }
 
-static void *
+static mono_native_thread_return_t MONO_STDCALL
 utility_thread (void *arg)
 {
 	MonoUtilityThread *thread = (MonoUtilityThread *) arg;
