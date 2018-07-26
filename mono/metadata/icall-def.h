@@ -1016,7 +1016,7 @@ HANDLES(ICALL(THREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_Thre
 HANDLES(ICALL(THREADP_14, "SetMinThreadsNative", ves_icall_System_Threading_ThreadPool_SetMinThreadsNative))
 
 ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
-ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks)
+NOHANDLES(ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks))
 
 ICALL_TYPE(VOLATILE, "System.Threading.Volatile", VOLATILE_28)
 ICALL(VOLATILE_28, "Read(T&)", ves_icall_System_Threading_Volatile_Read_T)
