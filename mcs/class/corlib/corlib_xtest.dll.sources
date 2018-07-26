@@ -209,7 +209,7 @@
 ../../../external/corefx/src/Common/tests/System/EnumTypes.cs
 ../../../external/corefx/src/Common/tests/System/ObjectCloner.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
-../../../external/corefx/src/System.Collections/tests/Generic/SortedSet/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/SortedSet/*.cs:SortedSet.TreeSubSet.Tests.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Stack/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/SortedList/*.cs
@@ -220,7 +220,7 @@
 ../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/HashCollisionScenarios/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs:EqualityComparer.Tests.cs
 ../../../external/corefx/src/System.Collections/tests/BitArray/*.cs:BitArray_GetSetTests.cs
 ../../../external/corefx/src/System.Collections/tests/*.cs
 

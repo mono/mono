@@ -1,5 +1,4 @@
 Assembly/AssemblyInfo.cs
-../../build/common/SR.cs
 corefx/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
@@ -257,8 +256,6 @@ ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
-ReferenceSources/SR.cs
-ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -782,8 +779,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/codedom/compiler/GeneratedCodeAttribute.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
-
-corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
 

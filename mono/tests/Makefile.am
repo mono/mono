@@ -687,7 +687,8 @@ TESTS_CS_SRC=		\
 	tailcall-interface.cs \
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
-	dynamic-method-churn.cs
+	dynamic-method-churn.cs	\
+	verbose.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1047,6 +1048,9 @@ PLATFORM_DISABLED_TESTS=\
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
+
+# see https://github.com/mono/mono/issues/9739
+PLATFORM_DISABLED_TESTS += verbose.exe
 endif
 
 if AMD64

@@ -294,7 +294,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\FormatException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\FormattableString.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Gen2GcCallback.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CharUnicodeInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.Invariant.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\GlobalizationExtensions.cs" />
@@ -530,6 +529,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\UnhandledExceptionEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ValueTuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Void.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\Internal\Cryptography\Helpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\CompatibleComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
@@ -654,6 +654,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Runtime\InteropServices\RegistrationConnectionType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\IO\FileAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Claims\src\System\Security\Claims\ClaimTypes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\ErrorCode.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Helpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
@@ -671,7 +673,6 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ByReference.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.cs" />
-    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\CharUnicodeInfoData.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\InsufficientMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingFieldException.cs" />
@@ -791,6 +792,7 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendaralgorithmtype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendardata.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendarweekrule.cs" />
+    <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturenotfoundexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\culturetypes.cs" />
@@ -1236,6 +1238,8 @@
     <Compile Include="ReferenceSources\RemotingFieldCachedData.cs" />
     <Compile Include="ReferenceSources\RuntimeHandles.cs" />
     <Compile Include="ReferenceSources\RuntimeType.cs" />
+    <Compile Include="ReferenceSources\SR.cs" />
+    <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SecurityContext.cs" />
     <Compile Include="ReferenceSources\String.cs" />
     <Compile Include="ReferenceSources\TextInfo.cs" />
@@ -1741,7 +1745,6 @@
     <Compile Include="System.Security.AccessControl\SecurityInfos.cs" />
     <Compile Include="System.Security.AccessControl\SystemAcl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate20.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImpl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Helper.cs" />
     <Compile Include="System.Security.Cryptography\CryptoAPITransform.cs" />

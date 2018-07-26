@@ -707,7 +707,6 @@ System.Security.Cryptography/RSAPKCS1SignatureFormatter.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
-System.Security.Cryptography.X509Certificates/X509Certificate20.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImpl.cs
 System.Security.Cryptography.X509Certificates/X509Helper.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
@@ -857,6 +856,8 @@ System.Threading.Tasks/DecoupledTask.cs
 
 CoreFoundation/CFHelpers.cs
 
+ReferenceSources/SR.cs
+ReferenceSources/SR2.cs
 ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
@@ -1076,8 +1077,10 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../referencesource/mscorlib/system/globalization/calendarweekrule.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfoData.cs
+../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
+# TODO: make CoreFX's CharUnicodeInfo BE compatible
+#../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
+#../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfoData.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
 #../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../referencesource/mscorlib/system/globalization/culturenotfoundexception.cs
@@ -1809,6 +1812,10 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
 
+../../../external/corefx/src/Common/src/Internal/Cryptography/Helpers.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Helpers.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/ErrorCode.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
 
