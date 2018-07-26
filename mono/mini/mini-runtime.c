@@ -69,6 +69,7 @@
 #include <mono/utils/mono-proclib.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
+#include <mono/utils/mono-lazy-init.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -2246,6 +2247,9 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 }
 
 static gpointer
+compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error);
+
+static gpointer
 mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_only, MonoError *error)
 {
 	MonoDomain *target_domain, *domain = mono_domain_get ();
@@ -2402,7 +2406,7 @@ lookup_start:
 
 		if (wait_or_register_method_to_compile (method, target_domain))
 			goto lookup_start;
-		code = mono_jit_compile_method_inner (method, target_domain, opt, error);
+		code = compile_method_inner (method, target_domain, opt, error);
 		unregister_method_for_compile (method, target_domain);
 	}
 	if (!mono_error_ok (error))
@@ -2903,7 +2907,7 @@ mono_llvmonly_runtime_invoke (MonoMethod *method, RuntimeInvokeInfo *info, void 
  * all exceptions are caught and propagated through \p error
  */
 static MonoObject*
-mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)
+mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc, gboolean force_interpreter, MonoError *error)
 {
 	MonoMethod *invoke, *callee;
 	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
@@ -2913,7 +2917,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	MonoJitInfo *ji = NULL;
 	gboolean callee_gsharedvt = FALSE;
 
-	if (mono_ee_features.force_use_interpreter)
+	if (force_interpreter || mono_ee_features.force_use_interpreter)
 		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
 
 	error_init (error);
@@ -4183,7 +4187,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_interp_stub_init ();
 #ifndef DISABLE_INTERPRETER
-	if (mono_use_interpreter)
+	if (TRUE /* mono_use_interpreter */)
 		mono_ee_interp_init (mono_interp_opts_string);
 #endif
 
@@ -4455,6 +4459,200 @@ mini_init (const char *filename, const char *runtime_version)
 	return domain;
 }
 
+static mono_lazy_init_t mjit_initialized = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
+
+static MonoClass *ICompiler_klass;
+static MonoMethod *ICompiler_CompileMethod_method;
+
+static MonoClass *MethodInfo_klass;
+static MonoMethod *MethodInfo_ctor_method;
+
+static void
+mjit_initialize (void)
+{
+	ERROR_DECL (error);
+	MonoAssembly *assembly;
+	MonoAssemblyName *assembly_name;
+	MonoImage *image;
+
+	assembly_name = mono_assembly_name_new ("Mono.Compiler");
+	g_assert (assembly_name);
+
+	assembly = mono_assembly_load (assembly_name, NULL, NULL);
+	g_assert (assembly);
+
+	image = mono_assembly_get_image_internal (assembly);
+	g_assert (image);
+
+	MethodInfo_klass = mono_class_from_name_checked (image, "Mono.Compiler", "MethodInfo", error);
+	mono_error_assert_ok (error);
+
+	g_assert (MethodInfo_klass);
+
+	MethodInfo_ctor_method = mono_class_get_method_from_name_checked (MethodInfo_klass, ".ctor", 1, 0, error);
+	mono_error_assert_ok (error);
+
+	g_assert (MethodInfo_ctor_method);
+
+	ICompiler_klass = mono_class_from_name_checked (image, "Mono.Compiler", "MiniCompiler", error);
+	mono_error_assert_ok (error);
+
+	g_assert (ICompiler_klass);
+
+	ICompiler_CompileMethod_method = mono_class_get_method_from_name_checked (ICompiler_klass, "CompileMethod", 4, 0, error);
+	mono_error_assert_ok (error);
+
+	g_assert (ICompiler_CompileMethod_method);
+
+	mono_assembly_name_free (assembly_name);
+}
+
+typedef struct _NativeCodeHandle {
+	gpointer blob;
+	gint64 length;
+} NativeCodeHandle;
+
+static gpointer
+compile_method_inner (MonoMethod *method, MonoDomain *target_domain, gint32 opt, MonoError *error)
+{
+	if (!g_hasenv("MONO_MJIT"))
+		return mono_jit_compile_method_inner (method, target_domain, opt, NULL, error);
+
+	MonoObject *compiler, *method_info, *ret;
+	NativeCodeHandle native_code;
+	gpointer params[4];
+
+	mono_lazy_initialize (&mjit_initialized, mjit_initialize);
+
+	/* Create methodInfo parameter */
+	method_info = mono_object_new_checked(target_domain, MethodInfo_klass, error);
+	return_val_if_nok (error, NULL);
+
+	/* Invoke methodInfo..ctor */
+	params [0] = &method;
+	mono_runtime_invoke_interpreter (MethodInfo_ctor_method, method_info, params, error);
+	return_val_if_nok (error, NULL);
+
+	/* Create compiler object */
+	compiler = mono_object_new_checked (target_domain, ICompiler_klass, error);
+	return_val_if_nok (error, NULL);
+
+	/* Invoke compiler.CompileMethod */
+	params[0] = NULL;
+	params[1] = method_info;
+	params[2] = &opt;
+	params[3] = &native_code;
+	ret = mono_runtime_invoke_interpreter (ICompiler_CompileMethod_method, compiler, params, error);
+	return_val_if_nok (error, NULL);
+
+	if (*(gint16*)mono_object_unbox (ret) != 0 /* CompilationResult.Ok */) {
+		/* set error */
+		return NULL;
+	}
+
+	return native_code.blob;
+}
+
+static MonoBoolean
+ves_icall_Mono_Compiler_MiniCompiler_CompileMethod (MonoMethod *method, gint32 opt, NativeCodeHandle *native_code)
+{
+	ERROR_DECL(error);
+
+	// g_printerr("%s: method = %s%s%s:%s (%p)\n",
+	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
+	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name, method);
+
+	native_code->blob = mono_jit_compile_method_inner (method, mono_domain_get (), opt, &native_code->length, error);
+	mono_error_set_pending_exception (error);
+
+	// g_printerr("%s: method = %s%s%s:%s (%p) -> native_code.blob = %p, native_code.length = %lld\n",
+	// 	__func__, (m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? m_class_get_name_space(method->klass) : "",
+	// 		(m_class_get_name_space(method->klass) && m_class_get_name_space(method->klass)[0] != '\0') ? "." : "", m_class_get_name (method->klass), method->name, method,
+	// 			native_code->blob, native_code->length);
+
+	return native_code->blob != NULL;
+}
+
+typedef struct _InstalledRuntimeCode {
+	MonoJitInfo *jinfo;
+} InstalledRuntimeCode;
+
+static InstalledRuntimeCode*
+ves_icall_mjit_install_compilation_result (int compilation_result, MonoMethod *method, NativeCodeHandle native_code)
+{
+	if (compilation_result != 0) {
+		g_printerr ("mjit_install: failed with %d\n", compilation_result);
+		return NULL;
+	}
+	
+	mono_lazy_initialize (&mjit_initialized, mjit_initialize);
+
+	MonoDomain *domain = mono_domain_get ();
+
+	// TODO: should it be a managed object?
+	InstalledRuntimeCode *key = mono_domain_alloc0 (domain, sizeof (InstalledRuntimeCode));
+
+	MonoJitInfo *jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	jinfo->d.installed_runtime_code = key;
+
+	jinfo->mjit_method = method;
+
+	// TODO: fill more metadata for MonoJitInfo*
+
+	if (native_code.length == -1) {
+		/* hack for LLVMSharp that does not easily provide the size of a code blob */
+		jinfo->code_start = native_code.blob;
+		jinfo->code_size = -1;
+	} else {
+		jinfo->code_start = mono_global_codeman_reserve (native_code.length);
+		jinfo->code_size = native_code.length;
+		memcpy (jinfo->code_start, native_code.blob, native_code.length);
+	}
+
+	mono_internal_hash_table_insert (&domain->mjit_code_hash, key, jinfo);
+
+	return key;
+}
+
+static gpointer
+ves_icall_mjit_execute_installed_method (InstalledRuntimeCode *irc, MonoArray *args)
+{
+	ERROR_DECL (error);
+	MonoDomain *domain = mono_domain_get ();
+	MonoObject **exc = NULL;
+
+	MonoJitInfo *jinfo = mono_internal_hash_table_lookup (&domain->mjit_code_hash, irc);
+	MonoMethodSignature *sig = mono_method_signature (jinfo->mjit_method);
+
+	g_assertf (!sig->hasthis, "mjit: virtual method not supported yet");
+
+	MonoMethod *invoke = mono_marshal_get_runtime_invoke_full (jinfo->mjit_method, FALSE, FALSE);
+	MonoObject *(*runtime_invoke) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
+	runtime_invoke = mono_jit_compile_method (invoke, error);
+	mono_error_assert_ok (error);
+
+	gpointer compiled_method = jinfo->code_start;
+
+	gpointer *params = NULL;
+	if (args) {
+		params = (void **) alloca (sizeof (gpointer) * mono_array_length (args));
+		gboolean has_byref_nullables = FALSE;
+
+		for (int i = 0; i < mono_array_length (args); i++) {
+			MonoType *t = sig->params [i];
+			params [i] = mono_invoke_array_extract_argument (args, i, t, &has_byref_nullables, error);
+			g_assert (!has_byref_nullables);
+			return_val_if_nok (error, NULL);
+		}
+	}
+
+	MonoObject *result = runtime_invoke (NULL /* this obj */, params, exc, compiled_method);
+
+	g_assertf (exc == NULL, "mjit: execute installed method throw an exception");
+
+	return result;
+}
+
 static void
 register_icalls (void)
 {
@@ -4466,6 +4664,11 @@ register_icalls (void)
 				mono_runtime_install_handlers);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
 				mono_runtime_cleanup_handlers);
+
+	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_install_compilation_result", ves_icall_mjit_install_compilation_result);
+	mono_add_internal_call ("Mono.Compiler.RuntimeInformation::mono_execute_installed_method", ves_icall_mjit_execute_installed_method);
+
+	mono_add_internal_call ("Mono.Compiler.MiniCompiler::CompileMethod", ves_icall_Mono_Compiler_MiniCompiler_CompileMethod);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
