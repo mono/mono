@@ -124,7 +124,7 @@ System/MonoType.cs
 System/MonoTouchAOTHelper.cs
 System/MulticastDelegate.cs
 System/NullConsoleDriver.cs
-System/Nullable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Nullable.cs
 System/NumberFormatter.cs
 System/Object.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/OperatingSystem.cs
@@ -152,7 +152,7 @@ System/TimeZoneInfo.WinRT.cs
 System/TypeIdentifier.cs
 System/TypeSpec.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeCode.cs
-System/UIntPtr.cs
+../../../external/corefx/src/Common/src/CoreLib/System/UIntPtr.cs
 System/ValueType.cs
 System/Variant.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Void.cs
@@ -1017,11 +1017,11 @@ corert/Decimal.DecCalc.cs
 ../referencesource/mscorlib/system/resid.cs
 ../referencesource/mscorlib/system/rttype.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SByte.cs
-../referencesource/mscorlib/system/serializableattribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/SerializableAttribute.cs
 ../referencesource/mscorlib/system/sharedstatics.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/StackOverflowException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Single.cs
-../referencesource/mscorlib/system/stringcomparer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/StringComparer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/StringFreezingAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SystemException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeoutException.cs
@@ -1505,7 +1505,8 @@ ReferenceSources/AppContextDefaultValues.cs
 
 ../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binarycommonclasses.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binaryconverter.cs
-../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binaryenums.cs
+corefx/BinaryEnums.cs
+../../../external/corefx/src/System.Runtime.Serialization.Formatters/src/System/Runtime/Serialization/Formatters/Binary/BinaryEnums.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binaryformatter.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binaryformatterwriter.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/binary/binarymethodmessage.cs
@@ -1521,7 +1522,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/soapfault.cs
 ../referencesource/mscorlib/system/runtime/serialization/formatters/soapmessage.cs
 
-../referencesource/mscorlib/system/runtime/versioning/componentguaranteesattribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ComponentGuaranteesAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Runtime/Versioning/ComponentGuaranteesOptions.cs
 ../../../external/corefx/src/System.Resources.Writer/src/System/Runtime/Versioning/MultitargetingHelpers.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/Versioning/NonVersionableAttribute.cs
 ../referencesource/mscorlib/system/runtime/versioning/resourceattributes.cs
