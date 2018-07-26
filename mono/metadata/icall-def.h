@@ -398,7 +398,7 @@ HANDLES(ICALL(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path))
 
 ICALL_TYPE(IOSELECTOR, "System.IOSelector", IOSELECTOR_1)
 ICALL(IOSELECTOR_1, "Add", ves_icall_System_IOSelector_Add)
-ICALL(IOSELECTOR_2, "Remove", ves_icall_System_IOSelector_Remove)
+NOHANDLES(ICALL(IOSELECTOR_2, "Remove", ves_icall_System_IOSelector_Remove))
 
 ICALL_TYPE(MATH, "System.Math", MATH_19)
 NOHANDLES(ICALL(MATH_19, "Abs(double)", ves_icall_System_Math_Abs_double))
