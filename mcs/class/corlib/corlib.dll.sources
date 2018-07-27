@@ -801,7 +801,7 @@ System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
 ../../../external/corefx/src/System.Security.Permissions/src/System/Security/Policy/Publisher.cs
-System.Security.Policy/PublisherMembershipCondition.cs
+../../../external/corefx/src/System.Security.Permissions/src/System/Security/Policy/PublisherMembershipCondition.cs
 System.Security.Policy/Site.cs
 System.Security.Policy/SiteMembershipCondition.cs
 System.Security.Policy/StrongName.cs
