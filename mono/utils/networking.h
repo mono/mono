@@ -109,5 +109,4 @@ int mono_networking_get_ipv6_protocol (void);
 void mono_networking_init (void);
 void mono_networking_shutdown (void);
 
-
 #endif

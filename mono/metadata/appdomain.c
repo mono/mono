@@ -2294,8 +2294,8 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	/* If it's not a strong name, any version that has the right simple
 	 * name is good enough to satisfy the request.  .NET Framework also
 	 * ignores case differences in this case. */
-	const MonoAssemblyNameEqFlags eq_flags = strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
-		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE);
+	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
+		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
@@ -2374,10 +2374,12 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 	goto_if_nok (error, leave);
 
 	MonoImageOpenStatus status;
-
-	MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
-	MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, executing_assembly, &status);
+	MonoMethod *executing_method;
+	executing_method = mono_runtime_get_caller_no_system_or_reflection ();
+	MonoAssembly *executing_assembly;
+	executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+	MonoAssembly *ass;
+	ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, executing_assembly, &status);
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
 			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
@@ -2494,8 +2496,10 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	MonoAssemblyContextKind asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
-	const char *basedir = NULL;
+	MonoAssemblyContextKind asmctx;
+	asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
+	const char *basedir;
+	basedir = NULL;
 	if (!refOnly) {
 		/* Determine if the current assembly is in LoadFrom context.
 		 * If it is, we must include the executing assembly's basedir
@@ -2816,7 +2820,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);
