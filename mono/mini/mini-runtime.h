@@ -420,11 +420,13 @@ MONO_API int       mono_parse_default_optimizations  (const char* p);
 gboolean          mono_running_on_valgrind (void);
 
 MonoLMF * mono_get_lmf                      (void);
-MonoLMF** mono_get_lmf_addr                 (void);
+MonoLMF **mono_tls_get_lmf_addr (void);
+#define mono_get_lmf_addr mono_tls_get_lmf_addr
 void      mono_set_lmf                      (MonoLMF *lmf);
 void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 MonoJitTlsData* mono_get_jit_tls            (void);
+#define mono_get_jit_tls mono_tls_get_jit_tls
 MONO_API MonoDomain* mono_jit_thread_attach (MonoDomain *domain);
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
