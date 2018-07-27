@@ -155,8 +155,6 @@ enum {
 	ASYNC_SUSPEND_STATE_INDEX = 1,
 };
 
-typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
-
 /*
  * These flags control how the rest of the runtime will see and interact with
  * a thread.
@@ -178,6 +176,10 @@ typedef enum {
 	 */
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
 } MonoThreadInfoFlags;
+
+struct HandleStack;
+struct MonoJitTlsData;
+typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
 typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
@@ -246,12 +248,12 @@ typedef struct _MonoThreadInfo {
 	/* Set when the thread is started, or in _wapi_thread_duplicate () */
 	MonoThreadHandle *handle;
 
-	void *jit_data;
+	struct MonoJitTlsData *jit_data;
 
 	MonoThreadInfoInterruptToken *interrupt_token;
 
 	/* HandleStack for coop handles */
-	gpointer handle_stack;
+	struct HandleStack *handle_stack;
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
