@@ -755,22 +755,10 @@ mono_get_lmf (void)
 	return NULL;
 }
 
-MonoLMF **
-mono_get_lmf_addr (void)
-{
-	return (MonoLMF **)mono_tls_get_lmf_addr ();
-}
-
 void
 mono_set_lmf (MonoLMF *lmf)
 {
 	(*mono_get_lmf_addr ()) = lmf;
-}
-
-MonoJitTlsData*
-mono_get_jit_tls (void)
-{
-	return (MonoJitTlsData *)mono_tls_get_jit_tls ();
 }
 
 static void
@@ -909,7 +897,7 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 	MonoJitTlsData *jit_tls;
 	MonoLMF *lmf;
 
-	jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	jit_tls = mono_tls_get_jit_tls ();
 	if (jit_tls)
 		return jit_tls;
 
@@ -953,7 +941,7 @@ static void
 mono_thread_start_cb (intptr_t tid, gpointer stack_start, gpointer func)
 {
 	MonoThreadInfo *thread;
-	void *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort);
+	MonoJitTlsData *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort);
 	thread = mono_thread_info_current_unchecked ();
 	if (thread)
 		thread->jit_data = jit_tls;
@@ -976,7 +964,7 @@ static void
 mono_thread_attach_cb (intptr_t tid, gpointer stack_start)
 {
 	MonoThreadInfo *thread;
-	void *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort_dummy);
+	MonoJitTlsData *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort_dummy);
 	thread = mono_thread_info_current_unchecked ();
 	if (thread)
 		thread->jit_data = jit_tls;
@@ -1979,7 +1967,7 @@ unref_jit_entry (JitCompilationEntry *entry)
 static gboolean
 wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	JitCompilationEntry *entry;
 
 	static gboolean inited;
@@ -2058,7 +2046,7 @@ wait_or_register_method_to_compile (MonoMethod *method, MonoDomain *domain)
 static void
 unregister_method_for_compile (MonoMethod *method, MonoDomain *target_domain)
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 
 	lock_compilation_data ();
 
@@ -3371,7 +3359,7 @@ is_addr_implicit_null_check (void *addr)
 MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 {
 	MonoJitInfo *ji;
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	gpointer fault_addr = NULL;
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
