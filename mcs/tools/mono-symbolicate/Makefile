@@ -18,7 +18,7 @@ else
 LIB_REF_PATH = $(LIB_PATH)
 endif
 
-MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
+MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline,-tailc
 
 MSYM_DIR = $(OUT_DIR)/msymdir
 TEST_CS = Test/StackTraceDumper.cs

@@ -63,7 +63,8 @@ namespace MonoTests.Mono.Profiler.Log {
 				proc.StartInfo = new ProcessStartInfo {
 					UseShellExecute = false,
 					FileName = _currentProcess.MainModule.FileName,
-					Arguments = $"--debug --profile=log:nodefaults,output=\"{_output}\",{Options} {_testAssemblyPath} {Name}",
+					// FIXME profiler test is broken by tailcall optimization
+					Arguments = $"--optimize=-tailc --debug --profile=log:nodefaults,output=\"{_output}\",{Options} {_testAssemblyPath} {Name}",
 				};
 
 				proc.Start ();

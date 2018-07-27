@@ -12,6 +12,7 @@
 	{
 		.entrypoint
 		call void class Tests::Test ()
+		call void class Tests::NoTailcall ()
 		ret
 	}
 
@@ -46,4 +47,10 @@
 	end:
 		ret
 	}
+
+	.method static void NoTailcall () noinlining
+	{
+		ret
+	}
+
 }
