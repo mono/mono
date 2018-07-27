@@ -139,6 +139,10 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 	mono_register_jit_icall (func, name, sig, TRUE);
 }
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, no_wrapper) (register_icall ((gpointer)(func), (name), (sigstr), (no_wrapper)))
+#define register_icall_no_wrapper(func, name, sigstr) (register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
+
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
 {

@@ -100,6 +100,9 @@ mono_string_to_bstr_handle (MonoStringHandle s)
 	return res;
 }
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, save) (register_icall ((gpointer)(func), (name), (sigstr), (save)))
+
 gpointer
 mono_string_to_bstr (MonoString* s_raw)
 {

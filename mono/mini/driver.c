@@ -407,7 +407,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #else
 					func = (TestMethod)(gpointer)cfg->native_code;
 #endif
-				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), func);
+				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
 				result = func ();
 				if (result != expected) {
 					failed++;
@@ -905,9 +905,10 @@ free_jit_info_data (ThreadData *td, JitInfoData *free)
 #define MODE_ALLOC	1
 #define MODE_FREE	2
 
-static void
-test_thread_func (ThreadData *td)
+static gulong __stdcall
+test_thread_func (gpointer void_arg)
 {
+	ThreadData* td = (ThreadData*)void_arg;
 	int mode = MODE_ALLOC;
 	int i = 0;
 	gulong lookup_successes = 0, lookup_failures = 0;
@@ -1007,6 +1008,7 @@ test_thread_func (ThreadData *td)
 		else if (td->num_datas > 2000)
 			mode = MODE_FREE;
 	}
+	return 0;
 }
 
 /*
@@ -1143,12 +1145,14 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		exit (1);
 }
 
-static void
-compile_all_methods_thread_main (CompileAllThreadArgs *args)
+static gulong __stdcall
+compile_all_methods_thread_main (gpointer void_args)
 {
+	CompileAllThreadArgs *args = (CompileAllThreadArgs*)void_args;
 	guint32 i;
 	for (i = 0; i < args->recompilation_times; ++i)
 		compile_all_methods_thread_main_inner (args);
+	return 0;
 }
 
 static void
@@ -1248,7 +1252,7 @@ typedef struct
 	char *aot_options;
 } MainThreadArgs;
 
-static void main_thread_handler (gpointer user_data)
+static gulong main_thread_handler (gpointer user_data)
 {
 	MainThreadArgs *main_args = (MainThreadArgs *)user_data;
 	MonoAssembly *assembly;
@@ -1304,6 +1308,7 @@ static void main_thread_handler (gpointer user_data)
 
 		mono_jit_exec (main_args->domain, assembly, main_args->argc, main_args->argv);
 	}
+	return 0;
 }
 
 static int
