@@ -6018,7 +6018,9 @@ ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32
 	}
 
 	if (image_is_dynamic (image)) {
-		ERROR_DECL (ignore_inner_error); // FIXME?
+		ERROR_DECL (ignore_inner_error);
+		// FIXME ignoring error
+		// FIXME Push MONO_HANDLE_NEW to lower layers.
 		MonoStringHandle result = MONO_HANDLE_NEW (MonoString, mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, ignore_inner_error));
 		mono_error_cleanup (ignore_inner_error);
 		return result;
@@ -6030,8 +6032,7 @@ ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32
 	}
 
 	/* FIXME: What to do if the index points into the middle of a string ? */
-
-	return MONO_HANDLE_NEW (MonoString, mono_ldstr_checked (mono_domain_get (), image, index, error));
+	return mono_ldstr_handle (mono_domain_get (), image, index, error);
 }
 
 static MonoClassField*
