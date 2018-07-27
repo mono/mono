@@ -24,6 +24,15 @@
 
 #define __USE_ISOC99
 
+#ifdef __cplusplus // Remove C++ runtime dependency.
+// First run through __config to get an initial _NOEXCEPT.
+#include <stddef.h>
+// Then replace it with empty.
+#undef _NOEXCEPT
+#define _NOEXCEPT
+#endif // __cplusplus
+// Then get the declarations from math.h we use that would have _NOEXCEPT.
+
 #include <math.h>
 #include <mono/metadata/sysmath.h>
 

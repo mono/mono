@@ -1,3 +1,6 @@
+// FIXME due to link -xc++, monodis
+// cannot be built as all C++
+G_BEGIN_DECLS
 
 /*
  * These return allocated strings
@@ -85,3 +88,5 @@ void init_key_table (void);
 
 extern gboolean show_method_tokens;
 extern gboolean show_tokens;
+
+G_END_DECLS

@@ -2495,8 +2495,10 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	MonoAssemblyContextKind asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
-	const char *basedir = NULL;
+	MonoAssemblyContextKind asmctx;
+	asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
+	const char *basedir;
+	basedir = NULL;
 	if (!refOnly) {
 		/* Determine if the current assembly is in LoadFrom context.
 		 * If it is, we must include the executing assembly's basedir
@@ -2817,7 +2819,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);

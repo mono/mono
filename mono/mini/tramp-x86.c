@@ -45,7 +45,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	MonoDomain *domain = mono_domain_get ();
 	GSList *unwind_ops;
 
-	start = code = mono_domain_code_reserve (domain, size);
+	start = code = (guint8*)mono_domain_code_reserve (domain, size);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
@@ -71,7 +71,7 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 
 	buf_len = 10;
 
-	start = code = mono_domain_code_reserve (domain, buf_len);
+	start = code = (guint8*)mono_domain_code_reserve (domain, buf_len);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
@@ -150,7 +150,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	int i, offset, frame_size, regarray_offset, lmf_offset, caller_ip_offset, arg_offset;
 	int cfa_offset; /* cfa = cfa_reg + cfa_offset */
 
-	code = buf = mono_global_codeman_reserve (256);
+	code = buf = (guint8*)mono_global_codeman_reserve (256);
 
 	/* Note that there is a single argument to the trampoline
 	 * and it is stored at: esp + pushed_args * sizeof (gpointer)
@@ -399,7 +399,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	code = buf = mono_domain_code_reserve_align (domain, TRAMPOLINE_SIZE, 4);
+	code = buf = (guint8*)mono_domain_code_reserve_align (domain, TRAMPOLINE_SIZE, 4);
 
 	x86_push_imm (buf, arg1);
 	x86_jump_code (buf, tramp);
@@ -443,9 +443,9 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	tramp_size = (aot ? 64 : 36) + 6 * depth;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (tramp_size);
 
-	rgctx_null_jumps = g_malloc (sizeof (guint8*) * (depth + 2));
+	rgctx_null_jumps = g_new (guint8*, depth + 2);
 
 	/* load vtable/mrgctx ptr */
 	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
@@ -493,7 +493,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, g_strdup_printf ("specific_trampoline_lazy_fetch_%u", slot));
 		x86_jump_reg (code, X86_EAX);
 	} else {
-		tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
+		tramp = (guint8*)mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
 
 		/* jump to the actual trampoline */
 		x86_jump_code (code, tramp);
@@ -531,7 +531,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 
 	tramp_size = 64;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (tramp_size);
 
 	// FIXME: Currently, we always go to the slow path.
 	
@@ -556,7 +556,7 @@ void
 mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 {
 	/* FIXME: This is not thread safe */
-	guint8 *code = ji->code_start;
+	guint8 *code = (guint8*)ji->code_start;
 
 	x86_push_imm (code, func_arg);
 	x86_call_code (code, (guint8*)func);
@@ -596,7 +596,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 
 	buf_len = 10;
 
-	start = code = mono_domain_code_reserve (domain, buf_len);
+	start = code = (guint8*)mono_domain_code_reserve (domain, buf_len);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
@@ -628,7 +628,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (tramp_size);
 
 	framesize = 0;
 
