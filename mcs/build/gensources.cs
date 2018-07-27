@@ -9,11 +9,19 @@ public static class Program {
     public static int Main (string[] _args) {
         var args = new List<string> (_args);
         bool useStdout = false, showHelp = false, strictMode = false;
+        string baseDir = null;
 
         for (int i = 0; i < args.Count; i++) {
             var arg = args[i];
             if (!arg.StartsWith ("-"))
                 continue;
+
+            string argValue = null;
+            var offset = arg.IndexOf(':');
+            if (offset >= 0) {
+                argValue = arg.Substring (offset + 1);
+                arg = arg.Substring (0, offset);
+            }
 
             switch (arg) {
                 case "-?":
@@ -22,17 +30,10 @@ public static class Program {
                     showHelp = true;
                     break;
                 case "--trace":
-                case "--trace1":
-                    SourcesParser.TraceLevel = 1;
-                    break;
-                case "--trace2":
-                    SourcesParser.TraceLevel = 2;
-                    break;
-                case "--trace3":
-                    SourcesParser.TraceLevel = 3;
-                    break;
-                case "--trace4":
-                    SourcesParser.TraceLevel = 4;
+                    if (argValue != null)
+                        SourcesParser.TraceLevel = int.Parse(argValue);
+                    else
+                        SourcesParser.TraceLevel = 1;
                     break;
                 case "--stdout":
                     useStdout = true;
@@ -40,30 +41,36 @@ public static class Program {
                 case "--strict":
                     strictMode = true;
                     break;
-                default:
-                    Console.Error.WriteLine ("Unrecognized switch " + arg);
+                case "--basedir":
+                    baseDir = argValue;
                     break;
+                default:
+                    Console.Error.WriteLine ($"// Unrecognized switch {arg}. Aborting.");
+                    return 1;
             }
 
             args.RemoveAt (i);
             i--;            
         }
 
-        if (args.Count != 4)
+        if ((args.Count < 3) || (args.Count > 4))
             showHelp = true;
 
         if (showHelp) {
             Console.Error.WriteLine ("Usage: mcs/build/gensources.exe [options] (outputFileName|--stdout) libraryDirectoryAndName platformName profileName");
+            Console.Error.WriteLine ("or     mcs/build/gensources.exe [options] (outputFileName|--stdout) (--baseDir:<dir>) sourcesFile exclusionsFile");
             Console.Error.WriteLine ("You can specify * for platformName and profileName to read all sources files");
             Console.Error.WriteLine ("Available options:");
             Console.Error.WriteLine ("--help -h -?");
             Console.Error.WriteLine ("  Show command line info");
-            Console.Error.WriteLine ("--trace1 --trace2 --trace3 --trace4");
-            Console.Error.WriteLine ("  Enable diagnostic output");
+            Console.Error.WriteLine ("--trace:n");
+            Console.Error.WriteLine ("  Enable diagnostic output, at tracing level n (1-4)");
             Console.Error.WriteLine ("--stdout");
             Console.Error.WriteLine ("  Writes results to standard output (omit outputFileName if you use this)");
             Console.Error.WriteLine ("--strict");
             Console.Error.WriteLine ("  Produces an error exit code if files or directories are invalid/missing");
+            Console.Error.WriteLine ("--basedir:<dir>");
+            Console.Error.WriteLine ("  Sets the base directory when reading a single sources/exclusions pair (default is the directory containing the sources file)");
             return 1;
         }
 
@@ -73,20 +80,75 @@ public static class Program {
         var executableDirectory = Path.GetDirectoryName (executablePath);
 
         var outFile = Path.GetFullPath (args[0]);
-        var libraryFullName = Path.GetFullPath (args[1]);
-        var platformName = args[2].Trim ();
-        var profileName = args[3].Trim ();
+
         var platformsFolder = Path.Combine (executableDirectory, "platforms");
         var profilesFolder = Path.Combine (executableDirectory, "profiles");
-
-        var libraryDirectory = Path.GetDirectoryName (libraryFullName);
-        var libraryName = Path.GetFileName (libraryFullName);
+        if (!Directory.Exists (platformsFolder) || !Directory.Exists (profilesFolder)) {
+            Console.Error.WriteLine ($"// Platforms and/or profiles folders are missing: '{platformsFolder}' '{profilesFolder}'. Aborting.");
+            return 1;
+        }
 
         var parser = new SourcesParser (platformsFolder, profilesFolder);
-        var result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
 
-        if (SourcesParser.TraceLevel > 0)
-            Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        ParseResult result;
+
+        if (args.Count == 3) {
+            var sourcesFile = Path.GetFullPath (args[1]);
+            var excludesFile = Path.GetFullPath (args[2]);
+            var directory = Path.GetDirectoryName (sourcesFile);
+            if ((Path.GetDirectoryName (excludesFile) != directory) && (baseDir == null)) {
+                Console.Error.WriteLine ("// Sources and exclusions files are in different directories. Aborting.");
+                return 1;
+            }
+
+            result = parser.Parse (baseDir ?? directory, sourcesFile, excludesFile);
+
+            if (SourcesParser.TraceLevel > 0)
+                Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
+        } else if (args.Count == 4) {
+            if (baseDir != null)
+                Console.Error.WriteLine ($"// WARNING: baseDir has no effect in this mode");
+
+            var libraryFullName = Path.GetFullPath (args[1]);
+            var platformName = args[2].Trim ();
+            var profileName = args[3].Trim ();
+            var libraryDirectory = Path.GetDirectoryName (libraryFullName);
+            var libraryName = Path.GetFileName (libraryFullName);
+            result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
+
+            if (SourcesParser.TraceLevel > 0)
+                Console.Error.WriteLine ($"// Writing sources for platform {platformName} and profile {profileName}, relative to {libraryDirectory}, to {outFile}.");
+        } else {
+            throw new Exception ();
+        }
+
+        var fileNames = result.GetMatches ()
+            .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
+            .Select (e => e.RelativePath)
+            .Distinct ()
+            .ToList ();
+
+        var unexpectedEmptyResult = (fileNames.Count == 0);
+
+        // HACK: We have sources files that are literally empty, so as long as *some* sources files were
+        //  parsed during this invocation and they are all empty, producing no matching file names is not
+        //  an error.
+        if ((result.SourcesFiles.Count > 0) && result.SourcesFiles.Values.All(sf => sf.Sources.Count == 0))
+            unexpectedEmptyResult = false;
+
+        if ((result.ErrorCount > 0) || unexpectedEmptyResult) {
+            Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {fileNames.Count} filename(s)");
+            Console.Error.WriteLine ($"// Invoked with '{Environment.CommandLine}'");
+            Console.Error.WriteLine ($"// Working directory was '{Environment.CurrentDirectory}'");
+
+            if (strictMode) {
+                // HACK: Make ignores non-zero exit codes so we need to delete the sources file ???
+                if (!useStdout && File.Exists (outFile))
+                    File.Delete (outFile);
+
+                return result.ErrorCount + 1;
+            }
+        }
 
         TextWriter output;
         if (useStdout)
@@ -95,19 +157,11 @@ public static class Program {
             output = new StreamWriter (outFile);
 
         using (output) {
-            var fileNames = result.GetMatches ()
-                .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
-                .Select (e => e.RelativePath)
-                .Distinct();
-
             foreach (var fileName in fileNames)
                 output.WriteLine (fileName);
         }
 
-        if (strictMode)
-            return result.ErrorCount;
-        else
-            return 0;
+        return 0;
     }
 }
 
@@ -147,7 +201,7 @@ public class TargetParseResult {
 }
 
 public class ParseResult {
-    public readonly string LibraryDirectory, LibraryName;
+    public readonly string LibraryDirectory;
 
     public readonly Dictionary<(string hostPlatform, string profile), TargetParseResult> TargetDictionary = new Dictionary<(string hostPlatform, string profile), TargetParseResult> ();
 
@@ -157,9 +211,8 @@ public class ParseResult {
     // FIXME: This is a bad spot for this value but enumerators don't have outparam support
     public int ErrorCount = 0;
 
-    public ParseResult (string libraryDirectory, string libraryName) {
-        LibraryDirectory = libraryDirectory;
-        LibraryName = libraryName;
+    public ParseResult (string libraryDirectory) {
+        LibraryDirectory = Path.GetFullPath (libraryDirectory);
     }
 
     public IEnumerable<TargetParseResult> Targets {
@@ -168,36 +221,46 @@ public class ParseResult {
         }
     }
 
-    private static string GetRelativePath (string fullPath, string relativeToDirectory) {
+    private string GetRelativePath (string fullPath, string relativeToDirectory) {
         fullPath = fullPath.Replace ("\\", "/");
         relativeToDirectory = relativeToDirectory.Replace ("\\", "/");
 
         if (!relativeToDirectory.EndsWith ("/"))
             relativeToDirectory += "/";
-        var dirUri = new Uri (relativeToDirectory);
-        var pathUri = new Uri (fullPath);
 
-        var relativePath = Uri.UnescapeDataString (
-            dirUri.MakeRelativeUri (pathUri).OriginalString
-        ).Replace ("/", SourcesParser.DirectorySeparator)
-         .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
+        try {
+            var dirUri = new Uri (relativeToDirectory);
+            var pathUri = new Uri (fullPath);
+
+            var relativePath = Uri.UnescapeDataString (
+                dirUri.MakeRelativeUri (pathUri).OriginalString
+            ).Replace ("/", SourcesParser.DirectorySeparator)
+             .Replace (SourcesParser.DirectorySeparator + SourcesParser.DirectorySeparator, SourcesParser.DirectorySeparator);
+
+            return relativePath;
+        } catch (Exception) {
+            Console.Error.WriteLine ($"// Parse error when treating '{fullPath}' as a URI relative to directory '{relativeToDirectory}'");
+            ErrorCount += 1;
+            return fullPath;
+        }
 
         /*
         if (SourcesParser.TraceLevel >= 4)
             Console.Error.WriteLine ($"// {fullPath} -> {relativePath}");
         */
-
-        return relativePath;
     }
 
     public IEnumerable<MatchEntry> EnumerateMatches (
         SourcesFile sourcesFile,
-        IEnumerable<ParseEntry> entries
+        IEnumerable<ParseEntry> entries,
+        bool forExclusionsList
     ) {
         var patternChars = new [] { '*', '?' };
 
+        var isFirstError = true;
+
         foreach (var entry in entries) {
-            var absolutePath = Path.Combine (entry.Directory, entry.Pattern);
+            var absolutePath = Path.GetFullPath (Path.Combine (entry.Directory, entry.Pattern));
             var absoluteDirectory = Path.GetDirectoryName (absolutePath);
             var absolutePattern = Path.GetFileName (absolutePath);
 
@@ -207,8 +270,17 @@ public class ParseResult {
             }            
 
             if (!Directory.Exists (absoluteDirectory)) {
-                Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
-                ErrorCount += 1;
+                if (isFirstError) {
+                    isFirstError = false;
+                    Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
+                }
+
+                if (forExclusionsList) {
+                    Console.Error.WriteLine ($"(ignored) Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
+                } else {
+                    Console.Error.WriteLine ($"Directory does not exist: '{Path.GetFullPath (absoluteDirectory)}'");
+                    ErrorCount += 1;
+                }
                 continue;
             }
 
@@ -228,8 +300,17 @@ public class ParseResult {
                 }
             } else {
                 if (!File.Exists (absolutePath)) {
-                    Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
-                    ErrorCount += 1;
+                    if (isFirstError) {
+                        isFirstError = false;
+                        Console.Error.WriteLine ($"// Error(s) in file {sourcesFile.FileName}:");
+                    }
+
+                    if (forExclusionsList) {
+                        Console.Error.WriteLine ($"(ignored) File does not exist: '{absolutePath}'");
+                    } else {
+                        Console.Error.WriteLine ($"File does not exist: '{absolutePath}'");
+                        ErrorCount += 1;
+                    }
                 } else {
                     var relativePath = GetRelativePath (absolutePath, LibraryDirectory);
                     yield return new MatchEntry {
@@ -250,7 +331,7 @@ public class ParseResult {
         if (excludedFiles == null)
             excludedFiles = new HashSet<string> (StringComparer.Ordinal);
 
-        foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions))
+        foreach (var m in EnumerateMatches (sourcesFile, sourcesFile.Exclusions, true))
             excludedFiles.Add (m.RelativePath);
 
         foreach (var include in sourcesFile.Includes) {
@@ -259,7 +340,7 @@ public class ParseResult {
         }
 
         // FIXME: This is order-sensitive
-        foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources)) {
+        foreach (var entry in EnumerateMatches (sourcesFile, sourcesFile.Sources, false)) {
             if (excludedFiles.Contains (entry.RelativePath)) {
                 if (SourcesParser.TraceLevel >= 3)
                     Console.Error.WriteLine ($"// Excluding {entry.RelativePath}");
@@ -328,9 +409,24 @@ public class SourcesParser {
             .ToArray ();
     }
 
+    public ParseResult Parse (string libraryDirectory, string sourcesFileName, string exclusionsFileName) {
+        var state = new State {
+            Result = new ParseResult (libraryDirectory)
+        };
+
+        var tpr = new TargetParseResult {
+            Key = (hostPlatform: null, profile: null)
+        };
+
+        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null, overrideDirectory: libraryDirectory);
+
+        PrintSummary (state, sourcesFileName);
+        return state.Result;
+    }
+
     public ParseResult Parse (string libraryDirectory, string libraryName, string hostPlatform, string profile) {
         var state = new State {
-            Result = new ParseResult (libraryDirectory, libraryName),
+            Result = new ParseResult (libraryDirectory),
             ProfileName = profile,
             HostPlatform = hostPlatform
         };
@@ -387,7 +483,7 @@ public class SourcesParser {
 
     public ParseResult Parse (string libraryDirectory, string libraryName) {
         var state = new State {
-            Result = new ParseResult (libraryDirectory, libraryName)
+            Result = new ParseResult (libraryDirectory)
         };
 
         string originalTestPath = Path.Combine (libraryDirectory, libraryName);
@@ -443,17 +539,29 @@ public class SourcesParser {
             Console.Error.WriteLine ($"// Parsed {state.SourcesFilesParsed} sources file(s) and {state.ExclusionsFilesParsed} exclusions file(s) from path '{testPath}'.");
     }
 
-    private void HandleMetaDirective (State state, SourcesFile file, string directory, bool asExclusionsList, string directive) {
+    private void HandleMetaDirective (
+        State state, SourcesFile file, 
+        string pathDirectory, string includeDirectory,
+        bool asExclusionsList, string directive
+    ) {
         var include = "#include ";
         if (directive.StartsWith (include)) {
-            var fileName = Path.Combine (directory, directive.Substring (include.Length));
-            var newFile = ParseSingleFile (state, fileName, asExclusionsList);
-            if (newFile == null) {
-                Console.Error.WriteLine($"// Include not found: {fileName}");
+            var includeName = directive.Substring (include.Length).Trim ();
+            var fileName = Path.Combine (includeDirectory, includeName);
+            if (!File.Exists (fileName)) {
+                Console.Error.WriteLine ($"// Include does not exist: {fileName}");
                 state.Result.ErrorCount++;
-            } else {
-                file.Includes.Add (newFile);
+                return;
             }
+
+            var newFile = ParseSingleFile (state, fileName, asExclusionsList, overrideDirectory: pathDirectory);
+            if (newFile == null) {
+                Console.Error.WriteLine ($"// Failed to parse included file: {fileName}");
+                state.Result.ErrorCount++;
+                return;
+            }
+
+            file.Includes.Add (newFile);
         }
     }
 
@@ -476,6 +584,14 @@ public class SourcesParser {
         var sourcesFileName = prefix + ".sources";
         var exclusionsFileName = prefix + ".exclude.sources";
 
+        return ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, fallbackTarget);
+    }
+
+    private TargetParseResult ParseIntoTarget (
+        State state, TargetParseResult tpr, 
+        string sourcesFileName, string exclusionsFileName,
+        TargetParseResult fallbackTarget, string overrideDirectory = null
+    ) {
         if (!File.Exists (sourcesFileName)) {
             if (fallbackTarget != null) {
                 if (TraceLevel >= 2)
@@ -486,22 +602,22 @@ public class SourcesParser {
                 state.Result.TargetDictionary.Add (tpr.Key, tpr);
                 return tpr;
             } else {
-                if (TraceLevel >= 2)
+                if (TraceLevel >= 1)
                     Console.Error.WriteLine($"// Not found: {sourcesFileName}");
                 return null;
             }
         }
 
-        tpr.Sources = ParseSingleFile (state, sourcesFileName, false);
+        tpr.Sources = ParseSingleFile (state, sourcesFileName, false, overrideDirectory: overrideDirectory);
 
         if (File.Exists (exclusionsFileName))
-            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true);
+            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true, overrideDirectory: overrideDirectory);
 
         state.Result.TargetDictionary.Add (tpr.Key, tpr);
         return tpr;
     }
 
-    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
+    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList, string overrideDirectory = null) {
         var fileTable = asExclusionsList ? state.Result.ExclusionFiles : state.Result.SourcesFiles;
 
         var nullStr = "<none>";
@@ -518,7 +634,8 @@ public class SourcesParser {
 
         ParseDepth += 1;
 
-        var directory = Path.GetDirectoryName (fileName);
+        var includeDirectory = Path.GetDirectoryName (fileName);
+        var pathDirectory = overrideDirectory ?? includeDirectory;
         var result = new SourcesFile (fileName, asExclusionsList);
         fileTable.Add (fileName, result);
 
@@ -531,7 +648,7 @@ public class SourcesParser {
             string line;
             while ((line = sr.ReadLine ()) != null) {
                 if (line.StartsWith ("#")) {
-                    HandleMetaDirective (state, result, directory, asExclusionsList, line);
+                    HandleMetaDirective (state, result, pathDirectory, includeDirectory, asExclusionsList, line);
                     continue;
                 }
 
@@ -554,7 +671,7 @@ public class SourcesParser {
 
                     foreach (var pattern in explicitExclusions) {
                         result.Exclusions.Add (new ParseEntry {
-                            Directory = directory,
+                            Directory = pathDirectory,
                             Pattern = Path.Combine (mainPatternDirectory, pattern)
                         });
                     }
@@ -562,7 +679,7 @@ public class SourcesParser {
 
                 (asExclusionsList ? result.Exclusions : result.Sources)
                     .Add (new ParseEntry {
-                        Directory = directory,
+                        Directory = pathDirectory,
                         Pattern = parts[0]
                     });
             }
