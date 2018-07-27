@@ -274,7 +274,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
 		goto doclose;
 	directory_size = sigstart-directory_location;
-	directory = g_malloc (directory_size);
+	directory = (char*)g_malloc (directory_size);
 	if (directory == NULL)
 		goto doclose;
 	if (read (fd, directory, directory_size) == -1)
