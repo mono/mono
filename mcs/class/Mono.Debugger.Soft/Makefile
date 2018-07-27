@@ -1,6 +1,14 @@
 thisdir = class/Mono.Debugger.Soft
 include ../../build/rules.make
 
+# FIXME Turn off tailcall optimizations for debugger tests.
+# Most of the tailcalls can be manually eliminated, however
+# there are two tests that check for a precise stack within the BCL,
+# and either we'd have to remove those tailcalls, or turn off tailcall like here,
+# or maybe split up the debugger tests into tailcall and non-tailcall versions,
+# where non-tailcall is quite small.
+TEST_RUNTIME_FLAGS += --optimize=-tailc
+
 LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
 

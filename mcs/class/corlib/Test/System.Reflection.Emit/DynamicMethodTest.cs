@@ -475,6 +475,9 @@ namespace MonoTests.System.Reflection.Emit
 	        DynamicMethod dm = new DynamicMethod("Foo", typeof(object), null);
 	        ILGenerator ilgen = dm.GetILGenerator();
 	        ilgen.Emit(OpCodes.Call, typeof(MethodBase).GetMethod("GetCurrentMethod"));
+		// Call twice and pop to avoid tailcall optimization.
+	        ilgen.Emit(OpCodes.Call, typeof(MethodBase).GetMethod("GetCurrentMethod"));
+	        ilgen.Emit(OpCodes.Pop);
 	        ilgen.Emit(OpCodes.Ret);
 	        RetObj del = (RetObj)dm.CreateDelegate(typeof(RetObj));
 		    MethodInfo res = (MethodInfo)del();

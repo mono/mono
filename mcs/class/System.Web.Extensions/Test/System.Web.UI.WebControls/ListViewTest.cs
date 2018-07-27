@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
@@ -50,13 +51,17 @@ namespace MonoTests.System.Web.UI.WebControls
 		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
-		
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static void NoTailcall () { }
+
 		void RecordEvent (string suffix)
 		{
 			if (recorder == null)
 				return;
 
 			recorder.Record (suffix);
+			NoTailcall ();
 		}
 
 		public ListViewPoker ()
@@ -86,6 +91,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemCanceling (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemCommand (ListViewCommandEventArgs e)
@@ -93,6 +99,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemCommand (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemCreated (ListViewItemEventArgs e)
@@ -100,6 +107,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemCreated (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemDataBound (ListViewItemEventArgs e)
@@ -107,6 +115,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemDataBound (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemDeleted (ListViewDeletedEventArgs e)
@@ -114,6 +123,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemDeleted (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemDeleting (ListViewDeleteEventArgs e)
@@ -121,6 +131,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemDeleting (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemEditing (ListViewEditEventArgs e)
@@ -128,6 +139,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemEditing (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemInserted (ListViewInsertedEventArgs e)
@@ -135,6 +147,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemInserted (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemInserting (ListViewInsertEventArgs e)
@@ -142,6 +155,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemInserting (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemUpdated (ListViewUpdatedEventArgs e)
@@ -149,6 +163,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemUpdated (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnItemUpdating (ListViewUpdateEventArgs e)
@@ -156,6 +171,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnItemUpdating (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnLayoutCreated (EventArgs e)
@@ -163,6 +179,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnLayoutCreated (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnPagePropertiesChanged (EventArgs e)
@@ -170,13 +187,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnPagePropertiesChanged (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
-	
+
 		protected override void OnPagePropertiesChanging (PagePropertiesChangingEventArgs e)
 		{
 			RecordEvent ("Enter");
 			base.OnPagePropertiesChanging (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -184,6 +203,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnSelectedIndexChanged (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnSelectedIndexChanging (ListViewSelectEventArgs e)
@@ -191,6 +211,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnSelectedIndexChanging (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnSorted (EventArgs e)
@@ -198,6 +219,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnSorted (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnSorting (ListViewSortEventArgs e)
@@ -205,6 +227,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnSorting (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 	
 		protected override void OnTotalRowCountAvailable (PageEventArgs e)
@@ -212,6 +235,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			RecordEvent ("Enter");
 			base.OnTotalRowCountAvailable (e);
 			RecordEvent ("Leave");
+			NoTailcall ();
 		}
 
 		public void DoSetPageProperties (int startRowIndex, int maximumRows, bool databind)
