@@ -20,6 +20,8 @@
 #define MONO_SOLIB_EXT ".so"
 #endif
 
+MONO_BEGIN_DECLS
+
 typedef struct {
 	void *handle;
 	int main_module;
@@ -49,5 +51,6 @@ char* mono_dl_current_error_string (void);
 int mono_dl_get_executable_path (char *buf, int buflen);
 const char* mono_dl_get_system_dir (void);
 
-#endif /* __MONO_UTILS_DL_H__ */
+MONO_END_DECLS
 
+#endif /* __MONO_UTILS_DL_H__ */

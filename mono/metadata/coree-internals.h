@@ -12,6 +12,8 @@
 #ifdef HOST_WIN32
 #include <windows.h>
 
+MONO_BEGIN_DECLS
+
 BOOL STDMETHODCALLTYPE
 _CorDllMain (HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved);
 
@@ -39,6 +41,9 @@ HMODULE WINAPI
 MonoLoadImage (LPCWSTR FileName);
 
 void mono_coree_set_act_ctx (const char *file_name);
+
+MONO_END_DECLS
+
 #endif /* HOST_WIN32 */
 
 #endif /* __MONO_COREE_INTERNALS_H__ */

@@ -19,6 +19,8 @@
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
 
+MONO_BEGIN_DECLS
+
 void
 ves_icall_System_String_ctor_RedirectToCreateString (void);
 
@@ -33,5 +35,7 @@ ves_icall_System_String_InternalIsInterned (MonoString *str);
 
 int
 ves_icall_System_String_GetLOSLimit (void);
+
+MONO_END_DECLS
 
 #endif /* _MONO_CLI_STRING_ICALLS_H_ */

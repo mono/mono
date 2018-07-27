@@ -11,6 +11,8 @@
 #include <glib.h>
 #include <mono/utils/mono-compiler.h>
 
+G_BEGIN_DECLS
+
 /* never remove or reorder these enums values: they are used in corlib/System */
 
 typedef enum {
@@ -28,5 +30,6 @@ typedef enum {
 gpointer *mono_networkinterface_list (int *size);
 gint64    mono_network_get_data (char* name, MonoNetworkData data, MonoNetworkError *error);
 
-#endif /* __MONO_NETWORK_INTERFACES_H__ */
+G_END_DECLS
 
+#endif /* __MONO_NETWORK_INTERFACES_H__ */

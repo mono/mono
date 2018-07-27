@@ -8,6 +8,11 @@
 
 #include "config.h"
 
+MONO_BEGIN_DECLS
+
 MONO_API void
 mono_sgen_mono_ilgen_init (void);
+
+MONO_END_DECLS
+
 #endif

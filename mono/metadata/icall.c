@@ -107,6 +107,8 @@
 #include <sys/utsname.h>
 #endif
 
+G_BEGIN_DECLS // lack of prototypes
+
 /* icalls are defined ICALL_EXPORT so they are not static */
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
@@ -8475,3 +8477,5 @@ ves_icall_System_GC_RecordPressure (gint64 value, MonoError *error)
 {
 	mono_gc_add_memory_pressure (value);
 }
+
+G_END_DECLS // lack of prototypes

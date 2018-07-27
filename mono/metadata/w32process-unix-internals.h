@@ -24,6 +24,8 @@
 #define USE_DEFAULT_BACKEND
 #endif
 
+MONO_BEGIN_DECLS
+
 typedef struct {
 	gpointer address_start;
 	gpointer address_end;
@@ -58,5 +60,7 @@ mono_w32process_module_equals (gconstpointer a, gconstpointer b)
 	MonoW32ProcessModule *compare = (MonoW32ProcessModule *)b;
 	return (want->device == compare->device && want->inode == compare->inode) ? 0 : 1;
 }
+
+MONO_END_DECLS
 
 #endif /* _MONO_METADATA_W32PROCESS_UNIX_INTERNALS_H_ */
