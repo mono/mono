@@ -89,9 +89,11 @@
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
+
 G_BEGIN_DECLS
 gchar ***_NSGetEnviron(void);
 G_END_DECLS
+
 #define environ (*_NSGetEnviron())
 #else
 static char *mono_environ[1] = { NULL };
@@ -2293,19 +2295,12 @@ ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoW32ProcessStart
 		goto exit;
 	}
 
-<<<<<<< HEAD
 	gunichar2 *args;
 	args = coop.length.arguments ? coop.arguments : NULL;
 
 	/* The default dir name is "".  Turn that into NULL to mean "current directory" */
 	gunichar2 *dir;
 	dir = coop.length.working_directory ? coop.working_directory : NULL;
-=======
-	gunichar2 *args; args = coop.length.arguments ? coop.arguments : NULL;
-
-	/* The default dir name is "".  Turn that into NULL to mean "current directory" */
-	gunichar2 *dir; dir = coop.length.working_directory ? coop.working_directory : NULL;
->>>>>>> [Cplusplus] C++ does not allow goto around initialization.
 
 	ret = process_create (shell_path, args, dir, &startup_handles, process_info);
 

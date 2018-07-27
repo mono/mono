@@ -1,5 +1,17 @@
 #ifndef __GLIB_H
 #define __GLIB_H
+
+// Ask stdint.h for the full C99 features even for C++98 CentOS 6 g++ 4.4.
+#if defined(__cplusplus) && !defined(__STDC_LIMIT_MACROS)
+#   define __STDC_LIMIT_MACROS
+#endif
+#if defined(__cplusplus) && !defined(__STDC_CONSTANT_MACROS)
+#   define __STDC_CONSTANT_MACROS
+#endif
+#if defined(__cplusplus) && !defined(__STDC_FORMAT_MACROS)
+#   define __STDC_FORMAT_MACROS
+#endif
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,12 +58,14 @@
 
 #define __EGLIB_X11 1
 
+// FIXMEcxx in future G_BEGIN_DECLS should always be empty, and/or remove all uses,
+// and extern "C" added to MONO_API instead.
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 G_BEGIN_DECLS
@@ -160,7 +174,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
-#define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
+#define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
 #define g_alloca(size)		alloca (size)
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);

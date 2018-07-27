@@ -166,7 +166,7 @@ get_work (int worker_index, int *work_context, int *do_idle, SgenThreadPoolJob *
 	}
 }
 
-static mono_native_thread_return_t
+static mono_native_thread_return_t MONO_STDCALL
 thread_func (void *data)
 {
 	int worker_index = (int)(gsize)data;
@@ -237,7 +237,7 @@ thread_func (void *data)
 		}
 	}
 
-	return (mono_native_thread_return_t)0;
+	return 0;
 }
 
 int
