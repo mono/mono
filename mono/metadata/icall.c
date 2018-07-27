@@ -103,14 +103,10 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
-#endif
-
-/* icalls are defined ICALL_EXPORT so they are not static */
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #endif
 
 //#define MONO_DEBUG_ICALLARRAY
@@ -143,9 +139,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
+ICALL_EXPORT
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
@@ -275,7 +271,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	ec = m_class_get_element_class (ac);
 
 	esize = mono_array_element_size (ac);
-	ea = mono_array_handle_pin_with_size (arr, esize, pos, &arr_gchandle);
+	ea = (gpointer*)mono_array_handle_pin_with_size (arr, esize, pos, &arr_gchandle);
 
 	if (mono_class_is_nullable (ec)) {
 		mono_nullable_init_from_handle ((guint8*)ea, value, ec);
@@ -305,8 +301,10 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 		goto leave;							\
 	}G_STMT_END
 
-	MonoTypeEnum et = m_class_get_byval_arg (ec)->type;
-	MonoTypeEnum vt = m_class_get_byval_arg (vc)->type;
+	MonoTypeEnum et;
+	et = m_class_get_byval_arg (ec)->type;
+	MonoTypeEnum vt;
+	vt = m_class_get_byval_arg (vc)->type;
 	/* Check element (destination) type. */
 	switch (et) {
 	case MONO_TYPE_STRING:
@@ -355,7 +353,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	}
 
 	if (castOk) {
-		va = mono_object_handle_pin_unbox (value, &value_gchandle);
+		va = (gpointer*)mono_object_handle_pin_unbox (value, &value_gchandle);
 		if (m_class_has_references (ec))
 			mono_value_copy (ea, va, ec);
 		else
@@ -368,7 +366,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 	if (!m_class_is_valuetype (vc))
 		INVALID_CAST;
 
-	va = mono_object_handle_pin_unbox (value, &value_gchandle);
+	va = (gpointer*)mono_object_handle_pin_unbox (value, &value_gchandle);
 
 	vsize = mono_class_value_size (vc, NULL);
 
@@ -2072,7 +2070,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 		case MONO_TYPE_PTR:
 			isref = FALSE;
 			if (!MONO_HANDLE_IS_NULL (value))
-				v = mono_object_handle_pin_unbox (value, &value_gchandle);
+				v = (char*)mono_object_handle_pin_unbox (value, &value_gchandle);
 			break;
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_OBJECT:
@@ -2098,7 +2096,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 				return_if_nok (error);
 
 				uint32_t nullable_gchandle = 0;
-				guint8 *nval = mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
+				guint8 *nval = (guint8*)mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
 				mono_nullable_init_from_handle (nval, value, nklass);
 
 				isref = FALSE;
@@ -2108,7 +2106,7 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionFieldHandle field, MonoObjec
 			else {
 				isref = !m_class_is_valuetype (gclass->container_class);
 				if (!isref && !MONO_HANDLE_IS_NULL (value)) {
-					v = mono_object_handle_pin_unbox (value, &value_gchandle);
+					v = (char*)mono_object_handle_pin_unbox (value, &value_gchandle);
 				};
 			}
 			break;
@@ -3603,7 +3601,7 @@ read_enum_value (const char *mem, int type)
 }
 
 static void
-write_enum_value (char *mem, int type, guint64 value)
+write_enum_value (void *mem, int type, guint64 value)
 {
 	switch (type) {
 	case MONO_TYPE_U1:
@@ -6545,12 +6543,12 @@ ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObjectHandle this_obj, Mon
 		return NULL_HANDLE;
 	MONO_HANDLE_SETVAL (tp, custom_type_info, MonoBoolean, !MONO_HANDLE_IS_NULL (remoting_obj));
 
-	MonoRemoteClass *remote_class = mono_remote_class (domain, class_name, klass, error);
+	MonoRemoteClass *remote_class = (MonoRemoteClass*)mono_remote_class (domain, class_name, klass, error);
 	if (!is_ok (error))
 		return NULL_HANDLE;
 	MONO_HANDLE_SETVAL (tp, remote_class, MonoRemoteClass*, remote_class);
 
-	MONO_HANDLE_SETVAL (res, vtable, MonoVTable*, mono_remote_class_vtable (domain, remote_class, rp, error));
+	MONO_HANDLE_SETVAL (res, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, remote_class, rp, error));
 	if (!is_ok (error))
 		return NULL_HANDLE;
 	return res;
@@ -6593,8 +6591,8 @@ mono_icall_get_machine_name (MonoError *error)
 	if (n == -1)
 #endif
 	n = 512;
-	buf = g_malloc (n+1);
-	
+	buf = (char*)g_malloc (n + 1);
+
 	if (gethostname (buf, n) == 0){
 		buf [n] = 0;
 		result = mono_string_new_handle (mono_domain_get (), buf, error);
@@ -6712,9 +6710,11 @@ ves_icall_System_Environment_GetEnvironmentVariable_native (const gchar *utf8_na
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
+
 G_BEGIN_DECLS
 gchar ***_NSGetEnviron(void);
 G_END_DECLS
+
 #define environ (*_NSGetEnviron())
 #else
 static char *mono_environ[1] = { NULL };
@@ -7729,7 +7729,8 @@ type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoE
 	if (!count)
 		goto fail;
 
-	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
+	MonoArrayHandle res;
+	res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
 	goto_if_nok (error, fail);
 	count = 0;
 	for (i = 0; i < cmods->count; ++i) {
@@ -8234,9 +8235,9 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 		/* Fail only when the result is actually used */
 		/* mono_marshal_get_native_wrapper () depends on this */
 		if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-			return ves_icall_System_String_ctor_RedirectToCreateString;
+			return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
 		else
-			return no_icall_table;
+			return (gpointer)no_icall_table;
 	} else {
 		res = icall_table.lookup (classname, sigstart - mlen, sigstart, uses_handles);
 		g_free (classname);

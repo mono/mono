@@ -804,7 +804,7 @@ finalize_domain_objects (void)
 	DomainFinalizationReq *req = NULL;
 	MonoDomain *domain;
 
-	if (UnlockedReadPointer ((gpointer)&domains_to_finalize)) {
+	if (UnlockedReadPointer ((gpointer volatile*)&domains_to_finalize)) {
 		mono_finalizer_lock ();
 		if (domains_to_finalize) {
 			req = (DomainFinalizationReq *)domains_to_finalize->data;
@@ -891,7 +891,7 @@ mono_runtime_do_background_work (void)
 	hazard_free_queue_pump ();
 }
 
-static gsize WINAPI
+static gulong WINAPI
 finalizer_thread (gpointer unused)
 {
 	ERROR_DECL (error);

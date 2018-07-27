@@ -68,18 +68,18 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots)
 	switch (ainfo->storage) {
 	case RegTypeGeneral:
 		nsrc = 1;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (sreg);
 		break;
 	case RegTypeIRegPair:
 		nsrc = 2;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (sreg);
 		src [1] = map_reg (sreg + 1);
 		break;
 	case RegTypeStructByVal:
 		nsrc = ainfo->struct_size / 4;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		g_assert (ainfo->size <= nsrc);
 		for (i = 0; i < ainfo->size; ++i)
 			src [i] = map_reg (sreg + i);
@@ -88,13 +88,13 @@ get_arg_slots (ArgInfo *ainfo, int **out_slots)
 		break;
 	case RegTypeBase:
 		nsrc = ainfo->size / 4;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		for (i = 0; i < nsrc; ++i)
 			src [i] = map_stack_slot (sslot + i);
 		break;
 	case RegTypeBaseGen:
 		nsrc = 2;
-		src = g_malloc (nsrc * sizeof (int));
+		src = (int*)g_malloc (nsrc * sizeof (int));
 		src [0] = map_reg (ARMREG_R3);
 		src [1] = map_stack_slot (sslot);
 		break;

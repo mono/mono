@@ -162,7 +162,7 @@ get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len
 															  &typed_args, &named_args, &num_named_args, &arginfo, error);
 		if (!is_ok (error))
 			return FALSE;
-		*out_etype = typed_args [0];
+		*out_etype = (MonoType*)typed_args [0];
 		*out_len = *(gint32*)typed_args [1];
 		g_free (typed_args);
 		g_free (named_args);
@@ -560,6 +560,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 static gpointer
 conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 {
+#define return return (gpointer)
 	int dummy;
 	if (!ind_store_type)
 		ind_store_type = &dummy;
@@ -642,6 +643,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 	}
 
 	return NULL;
+#undef return
 }
 
 static void
@@ -1183,13 +1185,13 @@ emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb)
 	if (strstr (mb->name, "mono_thread_interruption_checkpoint"))
 		return;
 	
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_interruption_checkpoint);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_interruption_checkpoint);
 }
 
 static void
 emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 {
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_force_interruption_checkpoint_noraise);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_force_interruption_checkpoint_noraise);
 }
 
 void
