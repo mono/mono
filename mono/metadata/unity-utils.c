@@ -31,7 +31,7 @@
 #include <mono/utils/mono-string.h>
 
 #if HAVE_BDWGC_GC
-#include <external/bdwgc/include/gc.h>
+#include <mono/utils/gc_wrapper.h>
 #endif
 
 #include <glib.h>
