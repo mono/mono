@@ -144,10 +144,6 @@ namespace System.IO {
 					ok = FAMWatcher.GetInstance (out watcher, true);
 					watcher_handle = this;
 					break;
-				case 5: // inotify
-					ok = InotifyWatcher.GetInstance (out watcher, true);
-					watcher_handle = this;
-					break;
 				case 6: // CoreFX
 					ok = CoreFXFileSystemWatcherProxy.GetInstance (out watcher);
 					watcher_handle = (watcher as CoreFXFileSystemWatcherProxy).NewWatcher (this);
