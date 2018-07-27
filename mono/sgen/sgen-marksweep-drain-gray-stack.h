@@ -53,7 +53,8 @@ COPY_OR_MARK_FUNCTION_NAME (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
 		gboolean first;
 		first = TRUE;
 		GCObject *forwarded, *old_obj;
-		mword vtable_word = *(mword*)obj;
+		mword vtable_word;
+		vtable_word = *(mword*)obj;
 
 		HEAVY_STAT (++stat_optimized_copy_nursery);
 

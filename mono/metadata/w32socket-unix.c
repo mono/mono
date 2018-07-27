@@ -438,7 +438,7 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 }
 
 int
-mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_send (SOCKET sock, void *buf, int len, int flags, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -487,7 +487,7 @@ mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocki
 }
 
 int
-mono_w32socket_sendto (SOCKET sock, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
+mono_w32socket_sendto (SOCKET sock, const void *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -632,7 +632,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 		MONO_EXIT_GC_SAFE;
 	} while (ret != -1 && errno == EINTR && !mono_thread_info_is_interrupt_state (info));
 #else
-	buffer = g_malloc (SF_BUFFER_SIZE);
+	buffer = (gchar*)g_malloc (SF_BUFFER_SIZE);
 
 	do {
 		do {

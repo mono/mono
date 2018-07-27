@@ -2866,7 +2866,7 @@ sgen_wbroot_scan_card_table (void** start_root, mword size,  ScanCopyContext ctx
 	mword card_count = sgen_card_table_number_of_cards_in_range ((mword)start_root, size);
 	guint8 *card_data_end = card_data + card_count;
 	mword extra_idx = 0;
-	char *obj_start = sgen_card_table_align_pointer (start_root);
+	char *obj_start = (char*)sgen_card_table_align_pointer (start_root);
 	char *obj_end = (char*)start_root + size;
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 *overflow_scan_end = NULL;

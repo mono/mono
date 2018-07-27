@@ -4136,7 +4136,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 #ifndef DISABLE_JIT
 	/* Update llvm callees */
 	if (domain_jit_info (target_domain)->llvm_jit_callees) {
-		GSList *callees = g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
+		GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
 		GSList *l;
 
 		for (l = callees; l; l = l->next) {
