@@ -32,18 +32,28 @@ MONO_VERSION_MAJOR=`echo $VERSION | cut -d . -f 1`
 MONO_VERSION_MINOR=`echo $VERSION | cut -d . -f 2`
 MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 
-# This is the version number of the corlib-runtime interface. When
+#
+# This is the version of the corlib-runtime interface. When
 # making changes to this interface (by changing the layout
 # of classes the runtime knows about, changing icall signature or
-# semantics etc), increment this variable.
+# semantics etc), change this variable.
 #
-# This can be reset to 0 when Mono's version number is bumped
-# since it's part of the corlib version (the prefix '1' in the full
-# version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=26
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
+# This must be unique relative to corlib interface/semantics.
+#
+# Use uuidgen or make up a really reliably unique string, such as a git hash
+# or github PR number. Do not use anything personally identifiable or not particularly unique --
+# names, birthdays, branch names -- or use funny characters that
+# will not interoperate with C, C++, sh, make, etc. -- spaces, percents, stars, dollars, parens, etc.
+#
+MONO_CORLIB_UUID=07F6F369B78D4D709FE90C0EA002A970
+MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%s" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_UUID`
 
-AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
+#
+# There are two forms here:
+# Substitution of @MONO_CORLIB_VERSION@ and a #define in config.h
+# Some forms at some point want quotes (C and C#) and some forms do not (make get-monolite-latest).
+#
+AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,"$MONO_CORLIB_VERSION",[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
 
 case $host_os in
