@@ -883,9 +883,13 @@ public class MsbuildGenerator {
 			}
 		).ToList ();
 
+
+		result.Append ($"  <ItemGroup>{NewLine}");
+		foreach (var file in commonFiles.OrderBy (f => f, StringComparer.Ordinal))
+			result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
+
 		if (commonFiles.Any (f => f.EndsWith("build\\common\\Consts.cs"))) {
 			var genconstsRelativePath = "$(SolutionDir)\\msvc\\scripts\\genconsts.csproj";
-			result.Append ($"  <ItemGroup>{NewLine}");
 			result.Append ($"    <ProjectReference Include=\"{genconstsRelativePath}\">{NewLine}");
 			result.Append ($"      <Name>genconsts</Name>");
 			result.Append ($"      <Project>{SlnGenerator.genconsts_csproj_guid}</Project>");
@@ -893,12 +897,8 @@ public class MsbuildGenerator {
 			result.Append ($"      <CopyToOutputDirectory>Never</CopyToOutputDirectory>");
 			result.Append ($"      <Private>False</Private>");
 			result.Append ($"    </ProjectReference>{NewLine}");			
-			result.Append ($"  </ItemGroup>{NewLine}");
   		}
-
-		result.Append ($"  <ItemGroup>{NewLine}");
-		foreach (var file in commonFiles.OrderBy (f => f, StringComparer.Ordinal))
-			result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
+  		
 		result.Append ($"  </ItemGroup>{NewLine}");
 
 		foreach (var set in targetFileSets) {
