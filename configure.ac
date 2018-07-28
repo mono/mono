@@ -40,18 +40,16 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 #
 # This must be unique relative to corlib interface/semantics.
 #
-# Use uuidgen or make up a really reliably unique string, such as a git hash
-# or github PR number. Do not use anything personally identifiable or not particularly unique --
-# names, birthdays, branch names -- or use funny characters that
-# will not interoperate with C, C++, sh, make, etc. -- spaces, percents, stars, dollars, parens, etc.
+# Generate it with uuidgen. e.g. scripts/update-corlib-version configure.ac
 #
-MONO_CORLIB_UUID=07F6F369B78D4D709FE90C0EA002A970
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%s" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_UUID`
+# There is no ordering of corlib versions, no old or new,
+# the runtime expects an exact match.
+#
+MONO_CORLIB_VERSION=FB6CF730-018C-413C-A606-A142027C3B74
 
 #
-# There are two forms here:
-# Substitution of @MONO_CORLIB_VERSION@ and a #define in config.h
-# Some forms at some point want quotes (C and C#) and some forms do not (make get-monolite-latest).
+# Put a quoted #define in config.h.
+# Substitute @MONO_CORLIB_VERSION@ unquoted.
 #
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,"$MONO_CORLIB_VERSION",[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)

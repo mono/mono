@@ -392,7 +392,10 @@ mono_check_corlib_version (void)
 		goto exit;
 	}
 	if (strcmp (version, MONO_CORLIB_VERSION) != 0) {
-		result = g_strdup_printf ("expected corlib version %s, found %s.", MONO_CORLIB_VERSION, version);
+		result = g_strdup_printf ("The runtime did not find the mscorlib.dll it expected. "
+					  "Expected interface version %s but found %s. Check that "
+					  "your runtime and class libraries are matching.",
+					  MONO_CORLIB_VERSION, version);
 		goto exit;
 	}
 
