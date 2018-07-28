@@ -412,7 +412,7 @@ System.Runtime.InteropServices/UCOMIStream.cs
 System.Runtime.InteropServices/UCOMITypeComp.cs
 System.Runtime.InteropServices/UCOMITypeLib.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CustomQueryInterfaceMode.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComEventsHelper.cs
+System.Runtime.InteropServices/ComEventsHelper.cs
 
 System.Runtime.InteropServices.WindowsRuntime/DesignerNamespaceResolveEventArgs.cs
 System.Runtime.InteropServices.WindowsRuntime/NamespaceResolveEventArgs.cs
@@ -1264,7 +1264,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ComMemberType.cs
 ../referencesource/mscorlib/system/runtime/interopservices/criticalhandle.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/CurrencyWrapper.cs
-../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/DispatchWrapper.cs
+../referencesource/mscorlib/system/runtime/interopservices/dispatchwrapper.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/ErrorWrapper.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/ExternalException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/HandleRef.cs
@@ -1278,7 +1278,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/LayoutKind.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MarshalDirectiveException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/objectcreationdelegate.cs
-../../../external/corefx/src/System.Runtime.InteropServices/src/System/Runtime/InteropServices/RuntimeEnvironment.cs
+../referencesource/mscorlib/system/runtime/interopservices/runtimeenvironment.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/SafeArrayRankMismatchException.cs
 ../../../external/corert/src/System.Private.Interop/src/System/Runtime/InteropServices/SafeArrayTypeMismatchException.cs
 ../referencesource/mscorlib/system/runtime/interopservices/safehandle.cs
