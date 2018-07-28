@@ -117,7 +117,6 @@ do-profile-check-monolite: $(depsdir)/.stamp
 endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
-	echo "Starting profile check and gensources build"
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
 	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@.tmp $<
 	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE).tmp $(GENSOURCES_CS)
@@ -125,7 +124,6 @@ $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
 	mv $(GENSOURCES_EXE).tmp $(GENSOURCES_EXE)
 	- rm $@
 	mv $@.tmp $@
-	echo "Profile check and gensources build done"
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
