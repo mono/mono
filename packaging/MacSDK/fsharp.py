@@ -2,13 +2,16 @@ class FsharpPackage(GitHubTarballPackage):
     def __init__(self):
         GitHubTarballPackage.__init__(self,
             'fsharp', 'fsharp',
-            '4.1.33',
-            '561af8ba705fdbd84274702bc8073b9a94ba0a7d',
+            '4.1.34',
+            '662492595a63dffff8fac84939614743fd6d34f9',
             configure='./configure --prefix="%{package_prefix}"',
             override_properties={ 'make': 'make' })
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
-        self.sources.extend(['patches/fsharp-portable-pdb.patch', 'patches/fsharp-string-switchName.patch', 'patches/fsharp-path-overloads.patch'])
+        self.sources.extend(['patches/fsharp-portable-pdb.patch',
+                             'patches/fsharp-string-switchName.patch',
+                             'patches/fsharp-path-overloads.patch',
+                             'patches/fsharp-debug-pinvoke-fix.patch'])
 
     def prep(self):
         Package.prep(self)
