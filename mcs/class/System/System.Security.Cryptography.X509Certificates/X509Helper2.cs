@@ -126,7 +126,7 @@ namespace System.Security.Cryptography.X509Certificates
 			if (btlsImpl != null)
 				return btlsImpl.X509.Copy ();
 			else
-				return MonoBtlsX509.LoadFromData (impl.GetRawCertData (), MonoBtlsX509Format.DER);
+				return MonoBtlsX509.LoadFromData (impl.RawData, MonoBtlsX509Format.DER);
 		}
 #endif
 	}

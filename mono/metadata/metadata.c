@@ -510,7 +510,7 @@ static const struct msgstr_t {
 #undef TABLEDEF
 };
 static const gint16 tableidx [] = {
-#define TABLEDEF(a,b) [a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define TABLEDEF(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 };
@@ -1245,8 +1245,8 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
 {
 	guint32 bitfield = t->size_bitfield;
 	int i;
-	register const char *data; 
-	register int n;
+	const char *data;
+	int n;
 	
 	g_assert (idx < t->rows);
 	g_assert (col < mono_metadata_table_count (bitfield));

@@ -659,6 +659,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ContentType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509KeyStorageFlags.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Security\Policy\Publisher.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Permissions\src\System\Security\Policy\PublisherMembershipCondition.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Box.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\Parallel.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Parallel\src\System\Threading\Tasks\ParallelETWProvider.cs" />
@@ -1745,7 +1747,6 @@
     <Compile Include="System.Security.AccessControl\SecurityInfos.cs" />
     <Compile Include="System.Security.AccessControl\SystemAcl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate.cs" />
-    <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate20.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImpl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Helper.cs" />
     <Compile Include="System.Security.Cryptography\CryptoAPITransform.cs" />
@@ -1853,8 +1854,6 @@
     <Compile Include="System.Security.Policy\PolicyLevel.cs" />
     <Compile Include="System.Security.Policy\PolicyStatement.cs" />
     <Compile Include="System.Security.Policy\PolicyStatementAttribute.cs" />
-    <Compile Include="System.Security.Policy\Publisher.cs" />
-    <Compile Include="System.Security.Policy\PublisherMembershipCondition.cs" />
     <Compile Include="System.Security.Policy\Site.cs" />
     <Compile Include="System.Security.Policy\SiteMembershipCondition.cs" />
     <Compile Include="System.Security.Policy\StrongName.cs" />
