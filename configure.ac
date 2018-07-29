@@ -1022,7 +1022,6 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 # -fno-exceptions reduces/removes C++ runtime dependency on some platforms (Linux).
 # FIXME -fno-exceptions should be redundant with some undetermined source code changes.
 # i.e. most functions do not reference C++ runtime. Fix any that do.
-<<<<<<< HEAD
 
 if test "x$enable_cxx" = "xyes"; then
 
@@ -1032,10 +1031,6 @@ if test "x$enable_cxx" = "xyes"; then
 	#CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
 	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
 
-=======
-if test "x$enable_cplusplus" = "xyes"; then
-	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
->>>>>>> Compile NetFX/Native as C, move C++ back to C++98.
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
 	# These give warnings and should be removed. They are C-only.
@@ -1057,7 +1052,6 @@ if test "x$enable_cplusplus" = "xyes"; then
 	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
 	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
 				 [ AC_MSG_RESULT(no)
-				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
 				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
 	CXXFLAGS=$ORIG_CXXFLAGS
 	AC_LANG_POP(C++)
