@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 
-using GuiCompare;
-
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace CorCompare {
+#endif
 
-	static class TypeHelper {
+	class TypeHelper {
 
-		public static AssemblyResolver Resolver = new AssemblyResolver ();
+		public AssemblyResolver Resolver = new AssemblyResolver ();
 
-		internal static bool IsPublic (TypeReference typeref)
+		internal bool IsPublic (TypeReference typeref)
 		{
 			if (typeref == null)
 				throw new ArgumentNullException ("typeref");
@@ -23,12 +25,12 @@ namespace CorCompare {
 			return td.IsPublic;
 		}
 
-		internal static bool IsDelegate (TypeReference typeref)
+		internal bool IsDelegate (TypeReference typeref)
 		{
 			return IsDerivedFrom (typeref, "System.MulticastDelegate");
 		}
 
-		internal static bool IsDerivedFrom (TypeReference type, string derivedFrom)
+		internal bool IsDerivedFrom (TypeReference type, string derivedFrom)
 		{
 			bool first = true;
 			foreach (var def in WalkHierarchy (type)) {
@@ -44,13 +46,13 @@ namespace CorCompare {
 			return false;
 		}
 
-		internal static IEnumerable<TypeDefinition> WalkHierarchy (TypeReference type)
+		internal IEnumerable<TypeDefinition> WalkHierarchy (TypeReference type)
 		{
 			for (var def = type.Resolve (); def != null; def = GetBaseType (def))
 				yield return def;
 		}
 
-		internal static IEnumerable<TypeReference> GetInterfaces (TypeReference type)
+		internal IEnumerable<TypeReference> GetInterfaces (TypeReference type)
 		{
 			var ifaces = new Dictionary<string, TypeReference> ();
 
@@ -61,7 +63,7 @@ namespace CorCompare {
 			return ifaces.Values;
 		}
 
-		internal static TypeDefinition GetBaseType (TypeDefinition child)
+		internal TypeDefinition GetBaseType (TypeDefinition child)
 		{
 			if (child.BaseType == null)
 				return null;
@@ -69,27 +71,27 @@ namespace CorCompare {
 			return child.BaseType.Resolve ();
 		}
 
-		internal static bool IsPublic (CustomAttribute att)
+		internal bool IsPublic (CustomAttribute att)
 		{
 			return IsPublic (att.AttributeType);
 		}
 
-		internal static string GetFullName (CustomAttribute att)
+		internal string GetFullName (CustomAttribute att)
 		{
 			return att.AttributeType.FullName;
 		}
 
-		internal static TypeDefinition GetTypeDefinition (CustomAttribute att)
+		internal TypeDefinition GetTypeDefinition (CustomAttribute att)
 		{
 			return att.AttributeType.Resolve ();
 		}
 
-		static bool IsOverride (MethodDefinition method)
+		bool IsOverride (MethodDefinition method)
 		{
 			return method.IsVirtual && !method.IsNewSlot;
 		}
 
-		public static MethodDefinition GetBaseMethodInTypeHierarchy (MethodDefinition method)
+		public MethodDefinition GetBaseMethodInTypeHierarchy (MethodDefinition method)
 		{
 			if (!IsOverride (method))
 				return method;
@@ -106,7 +108,7 @@ namespace CorCompare {
 			return method;
 		}
 
-		static MethodDefinition TryMatchMethod (TypeDefinition type, MethodDefinition method)
+		MethodDefinition TryMatchMethod (TypeDefinition type, MethodDefinition method)
 		{
 			if (!type.HasMethods)
 				return null;
@@ -118,7 +120,7 @@ namespace CorCompare {
 			return null;
 		}
 
-		static bool MethodMatch (MethodDefinition candidate, MethodDefinition method)
+		bool MethodMatch (MethodDefinition candidate, MethodDefinition method)
 		{
 			if (!candidate.IsVirtual)
 				return false;
@@ -139,7 +141,7 @@ namespace CorCompare {
 			return true;
 		}
 
-		public static bool TypeMatch (IModifierType a, IModifierType b)
+		public bool TypeMatch (IModifierType a, IModifierType b)
 		{
 			if (!TypeMatch (a.ModifierType, b.ModifierType))
 				return false;
@@ -147,7 +149,7 @@ namespace CorCompare {
 			return TypeMatch (a.ElementType, b.ElementType);
 		}
 
-		public static bool TypeMatch (TypeSpecification a, TypeSpecification b)
+		public bool TypeMatch (TypeSpecification a, TypeSpecification b)
 		{
 			if (a is GenericInstanceType)
 				return TypeMatch ((GenericInstanceType) a, (GenericInstanceType) b);
@@ -158,7 +160,7 @@ namespace CorCompare {
 			return TypeMatch (a.ElementType, b.ElementType);
 		}
 
-		public static bool TypeMatch (GenericInstanceType a, GenericInstanceType b)
+		public bool TypeMatch (GenericInstanceType a, GenericInstanceType b)
 		{
 			if (!TypeMatch (a.ElementType, b.ElementType))
 				return false;
@@ -176,7 +178,7 @@ namespace CorCompare {
 			return true;
 		}
 
-		public static bool TypeMatch (TypeReference a, TypeReference b)
+		public bool TypeMatch (TypeReference a, TypeReference b)
 		{
 			if (a is GenericParameter)
 				return true;

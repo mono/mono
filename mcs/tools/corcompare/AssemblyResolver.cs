@@ -32,9 +32,13 @@ using System.IO;
 
 using Mono.Cecil;
 
-namespace GuiCompare {
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
+namespace CorCompare {
+#endif
 
-	public class AssemblyResolver : DefaultAssemblyResolver {
+	class AssemblyResolver : DefaultAssemblyResolver {
 
 		public AssemblyDefinition ResolveFile (string file)
 		{
