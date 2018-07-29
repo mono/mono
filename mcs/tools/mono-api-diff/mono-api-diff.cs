@@ -71,6 +71,13 @@ namespace Mono.AssemblyCompare
 	{
 		public static void Generate (string firstInfo, string secondInfo, TextWriter outStream)
 		{
+			if (firstInfo == null)
+				throw new ArgumentNullException (nameof (firstInfo));
+			if (secondInfo == null)
+				throw new ArgumentNullException (nameof (secondInfo));
+			if (outStream == null)
+				throw new ArgumentNullException (nameof (outStream));
+
 			XMLAssembly ms = CreateXMLAssembly (firstInfo);
 			XMLAssembly mono = CreateXMLAssembly (secondInfo);
 			XmlDocument doc = ms.CompareAndGetDocument (mono);
