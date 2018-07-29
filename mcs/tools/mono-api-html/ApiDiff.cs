@@ -47,7 +47,7 @@ namespace Xamarin.ApiDiff {
 	public
 #endif
 	class State {
-		public TextWriter Output { get; set; } = Console.Out;
+		public TextWriter Output { get; set; }
 		public Formatter Formatter { get; set; }
 		public string Assembly { get; set; }
 		public string Namespace { get; set; }
@@ -68,9 +68,11 @@ namespace Xamarin.ApiDiff {
 
 		public void LogDebugMessage (string value)
 		{
+#if !EXCLUDE_DRIVER
 			if (Verbosity == 0)
 				return;
 			Console.WriteLine (value);
+#endif
 		}
 	}
 

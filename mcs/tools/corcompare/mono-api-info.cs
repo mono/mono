@@ -252,7 +252,9 @@ namespace CorCompare {
 		{
 			AssemblyDefinition ass = LoadAssembly (name);
 			if (ass == null) {
+#if !EXCLUDE_DRIVER
 				Console.Error.WriteLine ("Cannot load assembly file " + name);
+#endif
 				return false;
 			}
 
@@ -285,7 +287,9 @@ namespace CorCompare {
 
 				return state.TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
 			} catch (Exception e) {
+#if !EXCLUDE_DRIVER
 				Console.WriteLine (e);
+#endif
 				return null;
 			}
 		}

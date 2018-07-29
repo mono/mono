@@ -95,12 +95,16 @@ namespace Mono.AssemblyCompare
 
 			XmlNode node = doc.SelectSingleNode ("/assemblies/assembly");
 			XMLAssembly result = new XMLAssembly ();
+#if !EXCLUDE_DRIVER
 			try {
+#endif
 				result.LoadData (node);
+#if !EXCLUDE_DRIVER
 			} catch (Exception e) {
 				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", file, e.Message, e);
 				Environment.Exit (1);
 			}
+#endif
 
 			return result;
 		}
@@ -470,7 +474,9 @@ namespace Mono.AssemblyCompare
 			}
 
 			if (atts == null || atts.Name != "namespaces") {
+#if !EXCLUDE_DRIVER
 				Console.Error.WriteLine ("Warning: no namespaces found!");
+#endif
 				return;
 			}
 
@@ -603,7 +609,9 @@ namespace Mono.AssemblyCompare
 			name = node.Attributes  ["name"].Value;
 			XmlNode classes = node.FirstChild;
 			if (classes == null) {
+#if !EXCLUDE_DRIVER
 				Console.Error.WriteLine ("Warning: no classes for {0}", node.Attributes  ["name"]);
+#endif
 				return;
 			}
 
@@ -800,7 +808,9 @@ namespace Mono.AssemblyCompare
 				return;
 
 			if (child.Name != "classes") {
+#if !EXCLUDE_DRIVER
 				Console.WriteLine ("name: {0} type: {1} {2}", name, type, child.NodeType);
+#endif
 				throw new FormatException ("Expecting <classes>. Got <" + child.Name + ">");
 			}
 
