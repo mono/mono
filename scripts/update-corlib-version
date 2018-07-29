@@ -11,7 +11,7 @@ my $contents = join("", <$file>);
 my $uuid = `uuidgen` || die("unable to run uuidgen");
 chomp($uuid);
 
-$contents =~ s/MONO_CORLIB_UUID=([\S]+)/MONO_CORLIB_UUID=$uuid/;
+$contents =~ s/MONO_CORLIB_VERSION=([\S]+)/MONO_CORLIB_VERSION=$uuid/;
 
 open($file, ">", $path) || die("unable to open $path");
 
