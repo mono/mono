@@ -66,6 +66,15 @@
 #define G_END_DECLS
 #endif
 
+// These macros are duplicated in mono-compiler.h, mono-publib.h, glib.h for maximum reach and consistency.
+#ifdef  __cplusplus
+#define MONO_BEGIN_DECLS  extern "C" {
+#define MONO_END_DECLS    }
+#else
+#define MONO_BEGIN_DECLS /* nothing */
+#define MONO_END_DECLS   /* nothing */
+#endif
+
 G_BEGIN_DECLS
 
 /*

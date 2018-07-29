@@ -13,9 +13,7 @@
 
 #include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+MONO_BEGIN_DECLS
 
 /*
 These functions must be used when it's possible that either destination is not
@@ -26,8 +24,6 @@ void mono_gc_bzero_aligned (void *dest, size_t size);
 void mono_gc_memmove_atomic (void *dest, const void *src, size_t size);
 void mono_gc_memmove_aligned (void *dest, const void *src, size_t size);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+MONO_END_DECLS
 
 #endif
