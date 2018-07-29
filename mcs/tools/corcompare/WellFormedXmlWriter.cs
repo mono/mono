@@ -16,6 +16,7 @@ namespace Mono.ApiTools {
 #else
 namespace CorCompare {
 #endif
+
 	class WellFormedXmlWriter : DefaultXmlWriter
 	{
 		public static bool IsInvalid (int ch)
