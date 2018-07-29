@@ -20,10 +20,13 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-using Mono.Options;
-
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools
+#else
 namespace Mono.AssemblyCompare
+#endif
 {
+#if !EXCLUDE_DRIVER
 	class Driver
 	{
 		static int Main (string [] args)
@@ -32,14 +35,14 @@ namespace Mono.AssemblyCompare
 			string output = null;
 			List<string> extra = null;
 
-			var options = new OptionSet {
+			var options = new Mono.Options.OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
 				{ "o|out|output=", "XML diff file output (omit for stdout)", v => output = v },
 			};
 
 			try {
 				extra = options.Parse (args);
-			} catch (OptionException e) {
+			} catch (Mono.Options.OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
 				showHelp = true;
 			}
@@ -53,20 +56,29 @@ namespace Mono.AssemblyCompare
 				return 1;
 			}
 
-			XMLAssembly ms = CreateXMLAssembly (extra [0]);
-			XMLAssembly mono = CreateXMLAssembly (extra [1]);
-			XmlDocument doc = ms.CompareAndGetDocument (mono);
-
 			StreamWriter outputStream = null;
 			if (!string.IsNullOrEmpty (output))
 				outputStream = new StreamWriter (output);
 
-			using (XmlTextWriter writer = new XmlTextWriter (outputStream ?? Console.Out)) {
+			ApiDiff.Generate(extra[0], extra[1], outputStream ?? Console.Out);
+
+			return 0;
+		}
+	}
+#endif
+
+	public static class ApiDiff
+	{
+		public static void Generate (string firstInfo, string secondInfo, TextWriter outStream)
+		{
+			XMLAssembly ms = CreateXMLAssembly (firstInfo);
+			XMLAssembly mono = CreateXMLAssembly (secondInfo);
+			XmlDocument doc = ms.CompareAndGetDocument (mono);
+
+			using (XmlTextWriter writer = new XmlTextWriter (outStream)) {
 				writer.Formatting = Formatting.Indented;
 				doc.WriteTo (writer);
 			}
-
-			return 0;
 		}
 
 		static XMLAssembly CreateXMLAssembly (string file)
