@@ -897,7 +897,7 @@ typedef struct ucontext MonoContext;
 
 #endif
 
-G_BEGIN_DECLS
+MONO_BEGIN_DECLS
 
 /*
  * The naming is misleading, the SIGCTX argument should be the platform's context
@@ -913,6 +913,6 @@ void mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx);
  */
 void mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx);
 
-G_END_DECLS
+MONO_END_DECLS
 
 #endif /* __MONO_MONO_CONTEXT_H__ */

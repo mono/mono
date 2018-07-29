@@ -5,6 +5,15 @@
 #ifndef __UTILS_MONO_COMPILER_H__
 #define __UTILS_MONO_COMPILER_H__
 
+// These macros are duplicated in mono-compiler.h, mono-publib.h, glib.h for maximum reach and consistency.
+#ifdef  __cplusplus
+#define MONO_BEGIN_DECLS  extern "C" {
+#define MONO_END_DECLS    }
+#else
+#define MONO_BEGIN_DECLS /* nothing */
+#define MONO_END_DECLS   /* nothing */
+#endif
+
 /*
  * This file includes macros used in the runtime to encapsulate different
  * compiler behaviours.
@@ -174,9 +183,7 @@ typedef int32_t __mono_off32_t;
 
 #if !defined(mmap)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+MONO_BEGIN_DECLS
 
 /* Unified headers before API 21 do not declare mmap when LARGE_FILES are used (via -D_FILE_OFFSET_BITS=64)
  * which is always the case when Mono build targets Android. The problem here is that the unified headers
@@ -186,9 +193,7 @@ extern "C" {
  */
 void* mmap (void*, size_t, int, int, int, __mono_off32_t);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+MONO_END_DECLS
 
 #endif /* !mmap */
 
@@ -198,16 +203,12 @@ void* mmap (void*, size_t, int, int, int, __mono_off32_t);
 
 #if !defined(sendfile)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+MONO_BEGIN_DECLS
 
 /* The same thing as with mmap happens with sendfile */
 ssize_t sendfile (int out_fd, int in_fd, __mono_off32_t* offset, size_t count);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+MONO_END_DECLS
 
 #endif /* !sendfile */
 

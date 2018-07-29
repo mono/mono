@@ -8,7 +8,7 @@
 #include <config.h>
 #include <glib.h>
 
-G_BEGIN_DECLS
+MONO_BEGIN_DECLS
 
 const char*
 mono_config_get_assemblies_dir (void);
@@ -22,6 +22,6 @@ mono_config_get_bin_dir (void);
 const char*
 mono_config_get_reloc_lib_dir (void);
 
-G_END_DECLS
+MONO_END_DECLS
 
 #endif

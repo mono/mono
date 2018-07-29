@@ -9,9 +9,7 @@
 
 #include "mono/utils/mono-compiler.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+MONO_BEGIN_DECLS
 
 typedef int (* BinarySearchComparer) (const void *key, const void *member);
 
@@ -23,8 +21,6 @@ mono_binary_search (
 	size_t member_size,
 	BinarySearchComparer comparer);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+MONO_END_DECLS
 
 #endif
