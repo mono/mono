@@ -11,10 +11,10 @@
 #include <glib.h>
 #include <stdlib.h>
 
-G_BEGIN_DECLS
+MONO_BEGIN_DECLS
 
 gboolean mono_gc_parse_environment_string_extract_number (const char *str, size_t *out);
 
-G_END_DECLS
+MONO_END_DECLS
 
 #endif

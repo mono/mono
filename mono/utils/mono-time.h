@@ -12,7 +12,7 @@
 #include <sys/time.h>
 #endif
 
-G_BEGIN_DECLS
+MONO_BEGIN_DECLS
 
 /* Returns the number of milliseconds from boot time: this should be monotonic
  *
@@ -62,6 +62,6 @@ mono_stopwatch_elapsed_ms (MonoStopwatch *w)
 	return (mono_stopwatch_elapsed (w) + 500) / 1000;
 }
 
-G_END_DECLS
+MONO_END_DECLS
 
 #endif /* __UTILS_MONO_TIME_H__ */
