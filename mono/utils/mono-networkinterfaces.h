@@ -29,4 +29,3 @@ gpointer *mono_networkinterface_list (int *size);
 gint64    mono_network_get_data (char* name, MonoNetworkData data, MonoNetworkError *error);
 
 #endif /* __MONO_NETWORK_INTERFACES_H__ */
-

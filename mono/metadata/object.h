@@ -325,8 +325,7 @@ mono_unhandled_exception    (MonoObject *exc);
 MONO_API void
 mono_print_unhandled_exception (MonoObject *exc);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API void* 
+MONO_API MONO_RT_EXTERNAL_ONLY void* 
 mono_compile_method	   (MonoMethod *method);
 
 /* accessors for fields and properties */
@@ -401,4 +400,3 @@ MONO_API void mono_gc_wbarrier_object_copy   (MonoObject* obj, MonoObject *src);
 MONO_END_DECLS
 
 #endif
-

@@ -11,12 +11,13 @@
  * directives where needed.
  */
 
+// These macros are duplicated in mono-compiler.h, mono-publib.h, glib.h for maximum reach and consistency.
 #ifdef  __cplusplus
 #define MONO_BEGIN_DECLS  extern "C" {
 #define MONO_END_DECLS    }
 #else
-#define MONO_BEGIN_DECLS
-#define MONO_END_DECLS
+#define MONO_BEGIN_DECLS /* nothing */
+#define MONO_END_DECLS   /* nothing */
 #endif
 
 MONO_BEGIN_DECLS
