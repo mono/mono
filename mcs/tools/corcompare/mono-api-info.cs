@@ -66,9 +66,9 @@ namespace CorCompare {
 					v => config.FullAPISet = v != null },
 			};
 
-			config.Assemblies = options.Parse (args);
+			var asms = options.Parse (args);
 
-			if (showHelp || config.Assemblies.Count == 0) {
+			if (showHelp || asms.Count == 0) {
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
 				return showHelp? 0 :1;
@@ -79,7 +79,7 @@ namespace CorCompare {
 				outputStream = new StreamWriter (output);
 			try {
 				TextWriter outStream = outputStream ?? Console.Out;
-				ApiInfo.Generate (config, outStream);
+				ApiInfo.Generate (asms, outStream, config);
 			} finally {
 				if (outputStream != null)
 					outputStream.Dispose ();
@@ -101,8 +101,6 @@ namespace CorCompare {
 
 		public List<string> ResolveFiles { get; set; } = new List<string>();
 
-		public List<string> Assemblies { get; set; } = new List<string>();
-
 		internal TypeHelper TypeHelper = null;
 
 		internal void ResolveTypes ()
@@ -122,14 +120,15 @@ namespace CorCompare {
 
 	public static class ApiInfo
 	{
-		public static void Generate(ApiInfoConfig config, TextWriter outStream)
+		public static void Generate(IEnumerable<string> assemblies, TextWriter outStream, ApiInfoConfig config = null)
 		{
+			if (assemblies == null)
+				throw new ArgumentNullException (nameof (assemblies));
 			if (outStream == null)
 				throw new ArgumentNullException (nameof (outStream));
+
 			if (config == null)
-				throw new ArgumentNullException (nameof (config));
-			if (config.Assemblies == null || config.Assemblies.Count == 0)
-				throw new ArgumentException ("At least one assembly must be provided.");
+				config = new ApiInfoConfig ();
 
 			config.ResolveTypes ();
 
@@ -138,7 +137,7 @@ namespace CorCompare {
 			config.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
 
 			var acoll = new AssemblyCollection (config);
-			foreach (string arg in config.Assemblies) {
+			foreach (string arg in assemblies) {
 				acoll.Add (arg);
 
 				if (arg.Contains ("v3.0")) {
