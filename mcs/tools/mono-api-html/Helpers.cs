@@ -31,9 +31,16 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public static class Helper {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	static class Helper {
 		public static bool IsTrue (this XElement self, string name)
 		{
 			return (self.GetAttribute (name) == "true");
@@ -92,7 +99,7 @@ namespace Xamarin.ApiDiff {
 		}
 
 		// make it beautiful (.NET -> C#)
-		public static string GetTypeName (this XElement self, string name)
+		public static string GetTypeName (this XElement self, string name, State state)
 		{
 			string type = self.GetAttribute (name);
 			if (type == null)
@@ -121,7 +128,7 @@ namespace Xamarin.ApiDiff {
 			if (is_pointer)
 				sb.Remove (sb.Length - 1, 1);
 
-			type = GetTypeName (sb.Replace ('+', '.').ToString ());
+			type = GetTypeName (sb.Replace ('+', '.').ToString (), state);
 			sb.Length = 0;
 			if (is_ref)
 				sb.Append (self.GetAttribute ("direction")).Append (' ');
@@ -137,13 +144,13 @@ namespace Xamarin.ApiDiff {
 			return sb.ToString ();
 		}
 
-		static string GetTypeName (string type)
+		static string GetTypeName (string type, State state)
 		{
 			int pos = type.IndexOf ('`');
 			if (pos >= 0) {
 				int end = type.LastIndexOf (']');
 				string subtype = type.Substring (pos + 3, end - pos - 3);
-				return type.Substring (0, pos) + Formatter.Current.LesserThan + GetTypeName (subtype) + Formatter.Current.GreaterThan;
+				return type.Substring (0, pos) + state.Formatter.LesserThan + GetTypeName (subtype, state) + state.Formatter.GreaterThan;
 			}
 
 			switch (type) {
@@ -186,8 +193,8 @@ namespace Xamarin.ApiDiff {
 			case "System.IntPtr":
 				return "IntPtr";
 			default:
-				if (type.StartsWith (State.Namespace, StringComparison.Ordinal))
-					type = type.Substring (State.Namespace.Length + 1);
+				if (type.StartsWith (state.Namespace, StringComparison.Ordinal))
+					type = type.Substring (state.Namespace.Length + 1);
 				return type;
 			}
 		}

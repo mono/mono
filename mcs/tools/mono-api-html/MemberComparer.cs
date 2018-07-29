@@ -31,12 +31,24 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public abstract class MemberComparer : Comparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	abstract class MemberComparer : Comparer {
 
 		// true if this is the first element being added or removed in the group being rendered
 		protected bool first;
+
+		public MemberComparer (State state)
+			: base (state)
+		{
+		}
 
 		public abstract string GroupName { get; }
 		public abstract string ElementName { get; }
@@ -230,7 +242,7 @@ namespace Xamarin.ApiDiff {
 		string RenderGenericParameter (XElement gp)
 		{
 			var sb = new StringBuilder ();
-			sb.Append (gp.GetTypeName ("name"));
+			sb.Append (gp.GetTypeName ("name", State));
 
 			var constraints = gp.DescendantList ("generic-parameter-constraints", "generic-parameter-constraint");
 			if (constraints != null && constraints.Count > 0) {
@@ -238,7 +250,7 @@ namespace Xamarin.ApiDiff {
 				for (int i = 0; i < constraints.Count; i++) {
 					if (i > 0)
 						sb.Append (", ");
-					sb.Append (constraints [i].GetTypeName ("name"));
+					sb.Append (constraints [i].GetTypeName ("name", State));
 				}
 			}
 			return sb.ToString ();
@@ -319,12 +331,12 @@ namespace Xamarin.ApiDiff {
 					mods_src = mods_src + " ";
 
 				if (i >= srcCount) {
-					change.AppendAdded (mods_tgt + tgt [i].GetTypeName ("type") + " " + tgt [i].GetAttribute ("name"), true);
+					change.AppendAdded (mods_tgt + tgt [i].GetTypeName ("type", State) + " " + tgt [i].GetAttribute ("name"), true);
 				} else if (i >= tgtCount) {
-					change.AppendRemoved (mods_src + src [i].GetTypeName ("type") + " " + src [i].GetAttribute ("name"), true);
+					change.AppendRemoved (mods_src + src [i].GetTypeName ("type", State) + " " + src [i].GetAttribute ("name"), true);
 				} else {
-					var paramSourceType = src [i].GetTypeName ("type");
-					var paramTargetType = tgt [i].GetTypeName ("type");
+					var paramSourceType = src [i].GetTypeName ("type", State);
+					var paramTargetType = tgt [i].GetTypeName ("type", State);
 
 					var paramSourceName = src [i].GetAttribute ("name");
 					var paramTargetName = tgt [i].GetAttribute ("name");
@@ -564,7 +576,7 @@ namespace Xamarin.ApiDiff {
 			if (srcObsolete == null) {
 				if (tgtObsolete == null)
 					return; // neither is obsolete
-				var change = new ApiChange (GetDescription (source));
+				var change = new ApiChange (GetDescription (source), State);
 				change.Header = "Obsoleted " + GroupName;
 				Formatter.RenderObsoleteMessage (change.Member, this, GetDescription (target), tgtObsolete);
 				change.AnyChange = true;

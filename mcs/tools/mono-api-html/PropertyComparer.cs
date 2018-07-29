@@ -30,9 +30,21 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class PropertyComparer : MemberComparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class PropertyComparer : MemberComparer {
+
+		public PropertyComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "properties"; }
@@ -92,8 +104,8 @@ namespace Xamarin.ApiDiff {
 
 		void RenderPropertyType (XElement source, XElement target, ApiChange change)
 		{
-			var srcType = source.GetTypeName ("ptype");
-			var tgtType = target.GetTypeName ("ptype");
+			var srcType = source.GetTypeName ("ptype", State);
+			var tgtType = target.GetTypeName ("ptype", State);
 
 			if (srcType == tgtType) {
 				change.Append (tgtType);
@@ -146,8 +158,8 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 
-				var srcType = source.GetTypeName ("type");
-				var tgtType = target.GetTypeName ("type");
+				var srcType = source.GetTypeName ("type", State);
+				var tgtType = target.GetTypeName ("type", State);
 				if (srcType == tgtType) {
 					change.Append (tgtType);
 				} else {
@@ -185,7 +197,7 @@ namespace Xamarin.ApiDiff {
 				isIndexer = srcIndexers != null && srcIndexers.Count > 0;
 			}
 
-			var change = new ApiChange (GetDescription (source));
+			var change = new ApiChange (GetDescription (source), State);
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (GetMethodAttributes (srcGetter, srcSetter), GetMethodAttributes (tgtGetter, tgtSetter), change);
 			RenderPropertyType (source, target, change);
@@ -224,7 +236,7 @@ namespace Xamarin.ApiDiff {
 		public override string GetDescription (XElement e)
 		{
 			string name = e.Attribute ("name").Value;
-			string ptype = e.GetTypeName ("ptype");
+			string ptype = e.GetTypeName ("ptype", State);
 
 			bool virt = false;
 			bool over = false;

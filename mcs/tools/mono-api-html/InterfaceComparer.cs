@@ -27,9 +27,21 @@
 using System;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class InterfaceComparer : MemberComparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class InterfaceComparer : MemberComparer {
+
+		public InterfaceComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "interfaces"; }
@@ -41,7 +53,7 @@ namespace Xamarin.ApiDiff {
 
 		public override string GetDescription (XElement e)
 		{
-			return e.GetTypeName ("name");
+			return e.GetTypeName ("name", State);
 		}
 	}
 }

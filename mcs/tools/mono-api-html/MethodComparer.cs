@@ -29,9 +29,21 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class MethodComparer : ConstructorComparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class MethodComparer : ConstructorComparer {
+
+		public MethodComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "methods"; }

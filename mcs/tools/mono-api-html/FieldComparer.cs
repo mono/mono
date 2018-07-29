@@ -31,9 +31,21 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class FieldComparer : MemberComparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class FieldComparer : MemberComparer {
+
+		public FieldComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "fields"; }
@@ -97,7 +109,7 @@ namespace Xamarin.ApiDiff {
 			var name = source.GetAttribute ("name");
 			var srcValue = source.GetAttribute ("value");
 			var tgtValue = target.GetAttribute ("value");
-			var change = new ApiChange (GetDescription (source));
+			var change = new ApiChange (GetDescription (source), State);
 			change.Header = "Modified " + GroupName;
 
 			if (State.BaseType == "System.Enum") {
@@ -110,8 +122,8 @@ namespace Xamarin.ApiDiff {
 			} else {
 				RenderFieldAttributes (source.GetFieldAttributes (), target.GetFieldAttributes (), change);
 
-				var srcType = source.GetTypeName ("fieldtype");
-				var tgtType = target.GetTypeName ("fieldtype");
+				var srcType = source.GetTypeName ("fieldtype", State);
+				var tgtType = target.GetTypeName ("fieldtype", State);
 
 				if (srcType != tgtType) {
 					change.AppendModified (srcType, tgtType, true);
@@ -172,7 +184,7 @@ namespace Xamarin.ApiDiff {
 						sb.Append ("const ");
 				}
 
-				string ftype = e.GetTypeName ("fieldtype");
+				string ftype = e.GetTypeName ("fieldtype", State);
 				sb.Append (ftype).Append (' ');
 				sb.Append (name);
 				if (ftype == "string" && e.Attribute ("value") != null) {

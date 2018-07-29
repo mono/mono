@@ -4,9 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff
-{
-	public class ApiChange
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
+namespace Xamarin.ApiDiff {
+#endif
+
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class ApiChange
 	{
 		public string Header;
 		public StringBuilder Member = new StringBuilder ();
@@ -14,10 +21,12 @@ namespace Xamarin.ApiDiff
 		public bool AnyChange;
 		public bool HasIgnoredChanges;
 		public string SourceDescription;
+		public State State;
 
-		public ApiChange (string sourceDescription)
+		public ApiChange (string sourceDescription, State state)
 		{
 			SourceDescription = sourceDescription;
+			State = state;
 		}
 
 		public ApiChange Append (string text)
@@ -28,7 +37,7 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendAdded (string text, bool breaking = false)
 		{
-			Formatter.Current.DiffAddition (Member, text, breaking);
+			State.Formatter.DiffAddition (Member, text, breaking);
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
@@ -36,7 +45,7 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendRemoved (string text, bool breaking = true)
 		{
-			Formatter.Current.DiffRemoval (Member, text, breaking);
+			State.Formatter.DiffRemoval (Member, text, breaking);
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
@@ -44,14 +53,25 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendModified (string old, string @new, bool breaking = true)
 		{
-			Formatter.Current.DiffModification (Member, old, @new, breaking);
+			State.Formatter.DiffModification (Member, old, @new, breaking);
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
 		}
 	}
 
-	public class ApiChanges : Dictionary<string, List<ApiChange>> {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class ApiChanges : Dictionary<string, List<ApiChange>> {
+
+		public State State;
+
+		public ApiChanges (State state)
+		{
+			State = state;
+		}
+
 		public void Add (XElement source, XElement target, ApiChange change)
 		{
 			if (!change.AnyChange) {

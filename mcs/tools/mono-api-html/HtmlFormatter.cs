@@ -32,9 +32,21 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class HtmlFormatter : Formatter {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class HtmlFormatter : Formatter {
+
+		public HtmlFormatter (State state)
+			: base (state)
+		{
+		}
 
 		public override string LesserThan => "&lt;";
 		public override string GreaterThan => "&gt;";

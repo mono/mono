@@ -28,19 +28,27 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
+#if USE_MONO_API_TOOLS_NAMESPACE
+namespace Mono.ApiTools {
+#else
 namespace Xamarin.ApiDiff {
+#endif
 
-	public class AssemblyComparer : Comparer {
+#if !USE_INTERNAL_VISIBILITY
+	public
+#endif
+	class AssemblyComparer : Comparer {
 
 		XDocument source;
 		XDocument target;
 		NamespaceComparer comparer;
 
-		public AssemblyComparer (string sourceFile, string targetFile)
+		public AssemblyComparer (string sourceFile, string targetFile, State state)
+			: base (state)
 		{
 			source = XDocument.Load (sourceFile);
 			target = XDocument.Load (targetFile);
-			comparer =  new NamespaceComparer ();
+			comparer =  new NamespaceComparer (state);
 		}
 
 		public string SourceAssembly { get; private set; }
