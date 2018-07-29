@@ -40,12 +40,14 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 #
 # This must be unique relative to corlib interface/semantics.
 #
-# Generate it with uuidgen. e.g. scripts/update-corlib-version configure.ac
+# Generate it with uuidgen.
+# i.e. ./update-corlib-version configure.ac
+# or   cc scripts/update-corlib-version.c && ./a.out configure.ac
 #
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=FB6CF730-018C-413C-A606-A142027C3B74
+MONO_CORLIB_VERSION=25E9DC7B9AB3499F8370C690ECC968F4
 
 #
 # Put a quoted #define in config.h.
