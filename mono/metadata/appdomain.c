@@ -90,6 +90,9 @@ static gboolean process_guid_set = FALSE;
 
 static gboolean no_exec = FALSE;
 
+static const char *
+mono_check_corlib_version_internal (void);
+
 static MonoAssembly *
 mono_domain_assembly_preload (MonoAssemblyName *aname,
 			      gchar **assemblies_path,
@@ -384,8 +387,17 @@ exit:
 const char*
 mono_check_corlib_version (void)
 {
-	char *result = NULL;
+	const char* res;
 	MONO_ENTER_GC_UNSAFE;
+	res = mono_check_corlib_version_internal ();
+	MONO_EXIT_GC_UNSAFE;
+	return res;
+}
+
+static const char *
+mono_check_corlib_version_internal (void)
+{
+	char *result = NULL;
 	char *version = mono_get_corlib_version ();
 	if (!version) {
 		result = g_strdup_printf ("expected corlib string (%s) but not found or not string", MONO_CORLIB_VERSION);
@@ -408,7 +420,6 @@ mono_check_corlib_version (void)
 		result = g_strdup_printf ("expected InternalThread.last field offset %u, found %u. See InternalThread.last comment", native_offset, managed_offset);
 exit:
 	g_free (version);
-	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
 
