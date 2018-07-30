@@ -11,6 +11,8 @@
 #include <mono/utils/mono-publib.h>
 #include "mono-os-mutex.h"
 
+G_BEGIN_DECLS
+
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 #endif
@@ -53,5 +55,7 @@ mono_os_event_wait_one (MonoOSEvent *event, guint32 timeout, gboolean alertable)
 
 MONO_API MonoOSEventWaitRet
 mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waitall, guint32 timeout, gboolean alertable);
+
+G_END_DECLS
 
 #endif /* _MONO_UTILS_OS_EVENT_H_ */

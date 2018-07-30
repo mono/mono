@@ -46,7 +46,9 @@
 // NOTE: Running this code depends on the ABI to pass a struct
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
-#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
+#ifdef __cplusplus
+#define MONO_TYPE_SAFE_HANDLES 0 // FIXMEcplusplus
+#elif defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
@@ -112,7 +114,7 @@ struct _HandleChunk {
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
 };
 
-typedef struct {
+typedef struct HandleStack {
 	HandleChunk *top; //alloc from here
 	HandleChunk *bottom; //scan from here
 #ifdef MONO_HANDLE_TRACK_SP
@@ -177,7 +179,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 #ifdef MONO_HANDLE_TRACK_SP
 	gpointer sptop = &stackmark;
 #endif
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	stackmark->size = handles->top->size;
 	stackmark->chunk = handles->top;
 	stackmark->interior_size = handles->interior->size;
@@ -190,7 +192,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 static inline void
 mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	HandleChunk *old_top = stackmark->chunk;
 	old_top->size = stackmark->size;
 	mono_memory_write_barrier ();
@@ -245,7 +247,7 @@ Icall macros
 	do {							\
 		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return __result;				\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __result); \
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -326,7 +328,7 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 		CLEAR_ICALL_COMMON	\
 		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return __ret;	\
+		return mono_typed_handle_cast_voidptr ((HANDLE), __ret); \
 	} while (0); } while (0)
 
 /*
@@ -344,7 +346,9 @@ Handle macros/functions
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
-#define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
+// Functions can provide a local with this name to override the default.
+extern char const * const mono_handle_track_owner;
+#define HANDLE_OWNER (mono_handle_track_owner ? mono_handle_track_owner : (__FILE__ ":" STRINGIFY (__LINE__)))
 #endif
 
 
@@ -377,10 +381,8 @@ Handle macros/functions
  */
 
 #if MONO_TYPE_SAFE_HANDLES
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					 TYPED_HANDLE_NAME (TYPE),		\
-					 TYPED_OUT_HANDLE_NAME (TYPE);		\
+
+#define MONO_TYPE_SAFE_HANDLE_FUNCTIONS(TYPE)			\
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
@@ -395,11 +397,87 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 	return a;						\
 }
 
+// FIXMEcplusplus
+// - Have four variations is a bit much.
+//   In short term, consider C++ just a third type-unsafe portable form?
+// - In time, this is an area ripe for rewrite with C++, however
+//   ABI compatibility with managed encourages the same two underlying
+//   representations. But at least not a third or fourth variation.
+#ifdef __cplusplus
+extern "C++"
+{
+template <typename T>
+struct TypedHandle
+{
+	T** __raw;
+};
+
+template <typename T>
+inline T*
+mono_typed_handle_cast_voidptr (TypedHandle<T> handle, void* voidp)
+// Convert void* to the type T associated with handle.
+{
+	return (T*)voidp;
+}
+
+} // extern "C++"
+
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef TypedHandle<TYPE>	TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
+					TYPED_HANDLE_NAME (TYPE),		\
+					TYPED_OUT_HANDLE_NAME (TYPE);		\
+MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
 #else
+
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
+					 TYPED_HANDLE_NAME (TYPE),		\
+					 TYPED_OUT_HANDLE_NAME (TYPE);		\
+MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
+#endif
+
+#else
+
+#ifdef __cplusplus
+extern "C++"
+{
+
+template <typename T>
+struct TypedHandle
+{
+	T* __raw;
+};
+
+template <typename T>
+inline T*
+mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
+// Convert void* to the type T associated with handle.
+{
+	return (T*)voidp;
+}
+
+} // extern "C++"
+
+#define TYPED_HANDLE_DECL(TYPE)							      \
+	typedef TypedHandle<TYPE>		   TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+
+#else
+
 #define TYPED_HANDLE_DECL(TYPE)						\
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+
+#endif
+
+#endif
+
+#ifndef __cplusplus
+// Convert void* to the type associated with handle.
+// C allows this in context, C++ does not.
+#define mono_typed_handle_cast_voidptr(handle, voidp) (voidp)
 #endif
 
 /*
@@ -730,7 +808,8 @@ mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArr
 gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
 
-#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out))
+#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) \
+	((type*)mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out)))
 
 gunichar2 *
 mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);

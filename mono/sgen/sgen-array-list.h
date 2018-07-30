@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 #define SGEN_ARRAY_LIST_BUCKETS (32)
 #define SGEN_ARRAY_LIST_MIN_BUCKET_BITS (5)
 #define SGEN_ARRAY_LIST_MIN_BUCKET_SIZE (1 << SGEN_ARRAY_LIST_MIN_BUCKET_BITS)
@@ -136,5 +138,7 @@ guint32 sgen_array_list_find (SgenArrayList *array, gpointer ptr);
 gboolean sgen_array_list_default_cas_setter (volatile gpointer *slot, gpointer ptr, int data);
 gboolean sgen_array_list_default_is_slot_set (volatile gpointer *slot);
 void sgen_array_list_remove_nulls (SgenArrayList *array);
+
+G_END_DECLS
 
 #endif

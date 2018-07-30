@@ -8,23 +8,14 @@
  * (C) 2014 Xamarin Inc
  */
 
+#ifdef __MACH__
+
 #include "config.h"
-
-#if defined(__MACH__)
-
 #include <stdio.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
 #include <mono/utils/mono-compiler.h>
-
-/*
- * We cannot include mono-threads.h as this includes io-layer internal types
- * which conflicts with objc.
- * Hence the hack here.
-*/
-void mono_threads_init_dead_letter (void);
-void mono_threads_install_dead_letter (void);
-void mono_thread_info_detach (void);
+#include <mono/utils/mono-threads-mach-helper.h>
 
 static Class nsobject, nsthread, mono_dead_letter_class;
 static SEL dealloc, release, currentThread, threadDictionary, init, alloc, objectForKey, setObjectForKey;
@@ -57,7 +48,11 @@ mono_dead_letter_dealloc (id self, SEL _cmd)
 {
 	struct objc_super super;
 	super.receiver = self;
+#if !defined(__cplusplus) && !__OBJC2__
 	super.class = nsobject;
+#else
+	super.super_class = nsobject;
+#endif
 	objc_msgSendSuper (&super, dealloc);
 
 	mono_thread_info_detach ();
@@ -128,4 +123,5 @@ mono_threads_init_dead_letter (void)
 	objc_msgSend (mono_dead_letter_key, retain);
 	objc_msgSend (pool, release);
 }
-#endif
+
+#endif // __MACH__

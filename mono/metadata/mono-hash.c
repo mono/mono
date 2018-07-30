@@ -278,7 +278,7 @@ mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpoi
 
 	g_return_val_if_fail (hash != NULL, FALSE);
 
-	slot = mono_g_hash_table_find_slot (hash, key);
+	slot = mono_g_hash_table_find_slot (hash, (MonoObject*)key);
 
 	if (hash->keys [slot]) {
 		if (orig_key)
@@ -332,7 +332,7 @@ mono_g_hash_table_remove (MonoGHashTable *hash, gconstpointer key)
 	int slot, last_clear_slot;
 
 	g_return_val_if_fail (hash != NULL, FALSE);
-	slot = mono_g_hash_table_find_slot (hash, key);
+	slot = mono_g_hash_table_find_slot (hash, (MonoObject*)key);
 
 	if (!hash->keys [slot])
 		return FALSE;
@@ -440,7 +440,7 @@ mono_g_hash_table_insert_replace (MonoGHashTable *hash, gpointer key, gpointer v
 	if (hash->in_use > (hash->table_size * HASH_TABLE_MAX_LOAD_FACTOR))
 		rehash (hash);
 
-	slot = mono_g_hash_table_find_slot (hash, key);
+	slot = mono_g_hash_table_find_slot (hash, (MonoObject*)key);
 
 	if (hash->keys [slot]) {
 		if (replace) {

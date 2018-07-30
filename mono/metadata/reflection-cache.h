@@ -13,6 +13,8 @@
 #include <mono/metadata/mempool.h>
 #include <mono/utils/mono-error-internals.h>
 
+G_BEGIN_DECLS
+
 /*
  * We need to return always the same object for MethodInfo, FieldInfo etc..
  * but we need to consider the reflected type.
@@ -131,5 +133,7 @@ check_or_construct_handle (MonoDomain *domain, MonoClass *klass, gpointer item, 
 #define CHECK_OR_CONSTRUCT_HANDLE(t,p,k,construct,ud) \
 	(MONO_HANDLE_CAST (t, check_or_construct_handle ( \
 		domain, (k), (p), (ud), error, (ReflectionCacheConstructFunc_handle) (construct))))
+
+G_END_DECLS
 
 #endif /*__MONO_METADATA_REFLECTION_CACHE_H__*/

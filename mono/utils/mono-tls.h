@@ -58,6 +58,8 @@ typedef enum {
 #define MonoNativeTlsKey pthread_key_t
 #define mono_native_tls_get_value pthread_getspecific
 
+G_BEGIN_DECLS
+
 static inline int
 mono_native_tls_alloc (MonoNativeTlsKey *key, void *destructor)
 {
@@ -76,7 +78,11 @@ mono_native_tls_set_value (MonoNativeTlsKey key, gpointer value)
 	return !pthread_setspecific (key, value);
 }
 
+G_END_DECLS
+
 #endif /* HOST_WIN32 */
+
+G_BEGIN_DECLS
 
 void mono_tls_init_gc_keys (void);
 void mono_tls_init_runtime_keys (void);
@@ -85,16 +91,18 @@ gint32 mono_tls_get_tls_offset (MonoTlsKey key);
 gpointer mono_tls_get_tls_getter (MonoTlsKey key, gboolean name);
 gpointer mono_tls_get_tls_setter (MonoTlsKey key, gboolean name);
 
-gpointer mono_tls_get_thread (void);
-gpointer mono_tls_get_jit_tls (void);
-gpointer mono_tls_get_domain (void);
-gpointer mono_tls_get_sgen_thread_info (void);
-gpointer mono_tls_get_lmf_addr (void);
+struct _MonoInternalThread *mono_tls_get_thread (void);
+struct  MonoJitTlsData     *mono_tls_get_jit_tls (void);
+struct _MonoDomain         *mono_tls_get_domain (void);
+struct _SgenThreadInfo     *mono_tls_get_sgen_thread_info (void);
+struct  MonoLMF           **mono_tls_get_lmf_addr (void);
 
 void mono_tls_set_thread (gpointer value);
 void mono_tls_set_jit_tls (gpointer value);
 void mono_tls_set_domain (gpointer value);
 void mono_tls_set_sgen_thread_info (gpointer value);
 void mono_tls_set_lmf_addr (gpointer value);
+
+G_END_DECLS
 
 #endif /* __MONO_TLS_H__ */

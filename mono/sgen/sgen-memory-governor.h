@@ -8,6 +8,8 @@
 #ifndef __MONO_SGEN_MEMORY_GOVERNOR_H__
 #define __MONO_SGEN_MEMORY_GOVERNOR_H__
 
+G_BEGIN_DECLS
+
 /* Heap limits */
 void sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, double min_allowance_ratio, double save_target);
 void sgen_memgov_release_space (mword size, int space);
@@ -62,5 +64,6 @@ void sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags, MonoMem
 /* Error handling */
 void sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_description);
 
-#endif
+G_END_DECLS
 
+#endif

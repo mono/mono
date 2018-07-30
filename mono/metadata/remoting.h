@@ -14,6 +14,8 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
 
+G_BEGIN_DECLS
+
 void mono_remoting_init (void);
 
 #ifndef DISABLE_REMOTING
@@ -43,5 +45,7 @@ MonoMethod *
 mono_marshal_get_proxy_cancast (MonoClass *klass);
 
 #endif
+
+G_END_DECLS
 
 #endif

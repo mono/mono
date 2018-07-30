@@ -23,6 +23,12 @@
 
 #include <glib.h>
 #include <config.h>
+
+// This matches exactly windows.h LPTHREAD_START_ROUTINE.
+//typedef unsigned long (__stdcall * MonoThreadStart)(void*);
+
+typedef unsigned long mono_thread_start_return_t;
+
 #ifdef HOST_WIN32
 
 #include <windows.h>
@@ -30,13 +36,11 @@
 typedef DWORD MonoNativeThreadId;
 typedef HANDLE MonoNativeThreadHandle; /* unused */
 
+// On Windows, DWORD is unsigned long and always 32 bits.
 typedef DWORD mono_native_thread_return_t;
-typedef DWORD mono_thread_start_return_t;
 
 #define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (tid)
 #define MONO_UINT_TO_NATIVE_THREAD_ID(tid) ((MonoNativeThreadId)(tid))
-
-typedef LPTHREAD_START_ROUTINE MonoThreadStart;
 
 #else
 
@@ -58,18 +62,19 @@ typedef pid_t MonoNativeThreadHandle;
 typedef pthread_t MonoNativeThreadId;
 
 typedef void* mono_native_thread_return_t;
-typedef gsize mono_thread_start_return_t;
 
-#define MONO_NATIVE_THREAD_ID_TO_UINT(tid) (gsize)(tid)
-#define MONO_UINT_TO_NATIVE_THREAD_ID(tid) (MonoNativeThreadId)(gsize)(tid)
-
-typedef gsize (*MonoThreadStart)(gpointer);
+#define MONO_NATIVE_THREAD_ID_TO_UINT(tid) ((gsize)(tid))
+#define MONO_UINT_TO_NATIVE_THREAD_ID(tid) ((MonoNativeThreadId)(gsize)(tid))
 
 #if !defined(__HAIKU__)
 #define MONO_THREADS_PLATFORM_HAS_ATTR_SETSCHED
 #endif /* !defined(__HAIKU__) */
 
 #endif /* #ifdef HOST_WIN32 */
+
+G_BEGIN_DECLS
+
+typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
@@ -153,8 +158,6 @@ enum {
 	ASYNC_SUSPEND_STATE_INDEX = 1,
 };
 
-typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
-
 /*
  * These flags control how the rest of the runtime will see and interact with
  * a thread.
@@ -176,6 +179,10 @@ typedef enum {
 	 */
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
 } MonoThreadInfoFlags;
+
+struct HandleStack;
+struct MonoJitTlsData;
+typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
 typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
@@ -244,12 +251,12 @@ typedef struct _MonoThreadInfo {
 	/* Set when the thread is started, or in _wapi_thread_duplicate () */
 	MonoThreadHandle *handle;
 
-	void *jit_data;
+	struct MonoJitTlsData *jit_data;
 
 	MonoThreadInfoInterruptToken *interrupt_token;
 
 	/* HandleStack for coop handles */
-	gpointer handle_stack;
+	struct HandleStack *handle_stack;
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
@@ -592,7 +599,7 @@ MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
+mono_native_thread_create (MonoNativeThreadId *tid, MonoNativeThreadStart func, gpointer arg);
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
@@ -718,5 +725,7 @@ void mono_threads_join_unlock (void);
 typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
+
+G_END_DECLS
 
 #endif /* __MONO_THREADS_H__ */

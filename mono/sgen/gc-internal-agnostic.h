@@ -18,9 +18,12 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/parse.h"
 #include "mono/utils/memfuncs.h"
+#include "mono/metadata/mono-gc.h"
 #ifdef HAVE_SGEN_GC
 #include "mono/sgen/sgen-conf.h"
 #endif
+
+G_BEGIN_DECLS
 
 /* h indicates whether to hide or just tag.
  * (-!!h ^ p) is used instead of (h ? ~p : p) to avoid multiple mentions of p.
@@ -45,16 +48,16 @@
 #define MONO_GC_HANDLE_IS_OBJECT_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == (MONO_GC_HANDLE_OCCUPIED_MASK | MONO_GC_HANDLE_VALID_MASK))
 #define MONO_GC_HANDLE_IS_METADATA_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == MONO_GC_HANDLE_OCCUPIED_MASK)
 
-/* These should match System.Runtime.InteropServices.GCHandleType */
-typedef enum {
-	HANDLE_TYPE_MIN = 0,
-	HANDLE_WEAK = HANDLE_TYPE_MIN,
-	HANDLE_WEAK_TRACK,
-	HANDLE_NORMAL,
-	HANDLE_PINNED,
-	HANDLE_WEAK_FIELDS,
-	HANDLE_TYPE_MAX
-} GCHandleType;
+// Shorter local names for GC handle type and its values.
+// See mono-gc.h.
+#define HANDLE_TYPE_MIN    MONO_GC_HANDLE_TYPE_MIN                // 0
+#define HANDLE_WEAK        MONO_GC_HANDLE_WEAK                    // 0
+#define HANDLE_WEAK_TRACK  MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION // 1
+#define HANDLE_NORMAL      MONO_GC_HANDLE_NORMAL                  // 2
+#define HANDLE_PINNED      MONO_GC_HANDLE_PINNED                  // 3
+#define HANDLE_WEAK_FIELDS MONO_GC_HANDLE_WEAK_FIELDS             // 4
+#define HANDLE_TYPE_MAX    MONO_GC_HANDLE_TYPE_MAX                // 5
+typedef /*enum*/ MonoGCHandleType GCHandleType;
 
 #define GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
 
@@ -119,5 +122,7 @@ FILE *mono_gc_get_logfile (void);
 void mono_gc_params_set (const char* options);
 /* equivalent to options set via MONO_GC_DEBUG */
 void mono_gc_debug_set (const char* options);
+
+G_END_DECLS
 
 #endif

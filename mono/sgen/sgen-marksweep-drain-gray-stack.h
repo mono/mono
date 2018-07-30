@@ -7,6 +7,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+G_BEGIN_DECLS
+
 /*
  * COPY_OR_MARK_FUNCTION_NAME must be defined to be the function name of the copy/mark
  * function.
@@ -48,9 +50,11 @@ COPY_OR_MARK_FUNCTION_NAME (GCObject **ptr, GCObject *obj, SgenGrayQueue *queue)
 	if (sgen_ptr_in_nursery (obj)) {
 #if !defined(COPY_OR_MARK_CONCURRENT) && !defined(COPY_OR_MARK_CONCURRENT_WITH_EVACUATION)
 		int word, bit;
-		gboolean first = TRUE;
+		gboolean first;
+		first = TRUE;
 		GCObject *forwarded, *old_obj;
-		mword vtable_word = *(mword*)obj;
+		mword vtable_word;
+		vtable_word = *(mword*)obj;
 
 		HEAVY_STAT (++stat_optimized_copy_nursery);
 
@@ -356,3 +360,5 @@ DRAIN_GRAY_STACK_FUNCTION_NAME (SgenGrayQueue *queue)
 #undef SCAN_VTYPE_FUNCTION_NAME
 #undef SCAN_PTR_FIELD_FUNCTION_NAME
 #undef DRAIN_GRAY_STACK_FUNCTION_NAME
+
+G_END_DECLS

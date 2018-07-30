@@ -1255,7 +1255,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1264,13 +1264,13 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 
 	/* Create the signature for the wrapper */
 	// FIXME:
-	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 1) * sizeof (MonoType*)));
+	csig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 1) * sizeof (MonoType*)));
 	memcpy (csig, sig, mono_metadata_signature_size (sig));
 	csig->param_count ++;
 	csig->params [sig->param_count] = mono_get_int_type ();
 
 	/* Create the signature for the gsharedvt callconv */
-	gsharedvt_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+	gsharedvt_sig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 	memcpy (gsharedvt_sig, sig, mono_metadata_signature_size (sig));
 	pindex = 0;
 	/* The return value is returned using an explicit vret argument */
@@ -1328,7 +1328,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached)
 		res = cached;
 	else
@@ -1359,7 +1359,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1368,7 +1368,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 
 	/* Create the signature for the wrapper */
 	// FIXME:
-	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+	csig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 	memcpy (csig, sig, mono_metadata_signature_size (sig));
 	pindex = 0;
 	/* The return value is returned using an explicit vret argument */
@@ -1392,7 +1392,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	csig->param_count = pindex;
 
 	/* Create the signature for the normal callconv */
-	normal_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+	normal_sig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 	memcpy (normal_sig, sig, mono_metadata_signature_size (sig));
 	normal_sig->param_count ++;
 	normal_sig->params [sig->param_count] = mono_get_int_type ();
@@ -1451,7 +1451,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached)
 		res = cached;
 	else
@@ -1496,7 +1496,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)signature_equal_pinvoke, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1516,7 +1516,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	return_native_struct = sig->ret->type == MONO_TYPE_VALUETYPE && sig->pinvoke;
 
 	/* Create the signature for the wrapper */
-	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (sig->param_count * sizeof (MonoType*)));
+	csig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (sig->param_count * sizeof (MonoType*)));
 	memcpy (csig, sig, mono_metadata_signature_size (sig));
 
 	for (i = 0; i < sig->param_count; i++) {
@@ -1531,7 +1531,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		 * The called function has the following signature:
 		 * interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer rmethod)
 		 */
-		entry_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (4 * sizeof (MonoType*)));
+		entry_sig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + (4 * sizeof (MonoType*)));
 		entry_sig->ret = mono_get_void_type ();
 		entry_sig->param_count = 4;
 		entry_sig->params [0] = int_type;
@@ -1545,7 +1545,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		 * The called function has the following signature:
 		 * void entry(<optional this ptr>, <optional return ptr>, <arguments>, <extra arg>)
 		 */
-		entry_sig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		entry_sig = (MonoMethodSignature*)g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 		memcpy (entry_sig, sig, mono_metadata_signature_size (sig));
 		pindex = 0;
 		/* The return value is returned using an explicit vret argument */
@@ -1662,7 +1662,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached) {
 		mono_free_method (res);
 		res = cached;
@@ -1723,7 +1723,7 @@ mini_get_interp_lmf_wrapper (void)
 	if (wrapper)
 		return wrapper;
 
-	wrapper = mini_create_interp_lmf_wrapper (mono_interp_entry_from_trampoline);
+	wrapper = (MonoMethod*)mini_create_interp_lmf_wrapper ((gpointer)mono_interp_entry_from_trampoline);
 
 	return wrapper;
 }
@@ -1731,7 +1731,7 @@ mini_get_interp_lmf_wrapper (void)
 MonoMethodSignature*
 mini_get_gsharedvt_out_sig_wrapper_signature (gboolean has_this, gboolean has_ret, int param_count)
 {
-	MonoMethodSignature *sig = g_malloc0 (sizeof (MonoMethodSignature) + (32 * sizeof (MonoType*)));
+	MonoMethodSignature *sig = (MonoMethodSignature*)g_malloc0 (sizeof (MonoMethodSignature) + (32 * sizeof (MonoType*)));
 	int i, pindex;
 	MonoType *int_type = mono_get_int_type ();
 
@@ -2674,7 +2674,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 		if (slot < first_slot + size - 1) {
 			rgctx_index = slot - first_slot + 1 + offset;
-			info = rgctx [rgctx_index];
+			info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
 			if (info) {
 				mono_domain_unlock (domain);
 				return info;
@@ -2695,7 +2695,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	oti = class_get_rgctx_template_oti (get_shared_class (klass),
 										method_inst ? method_inst->type_argc : 0, slot, TRUE, TRUE, &do_free);
 	/* This might take the loader lock */
-	info = instantiate_info (domain, &oti, &context, klass, error);
+	info = (MonoRuntimeGenericContext*)instantiate_info (domain, &oti, &context, klass, error);
 	return_val_if_nok (error, NULL);
 	g_assert (info);
 
@@ -2710,7 +2710,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
 	if (rgctx [rgctx_index])
-		info = rgctx [rgctx_index];
+		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
 	else
 		rgctx [rgctx_index] = info;
 
@@ -2818,7 +2818,7 @@ mini_method_get_mrgctx (MonoVTable *class_vtable, MonoMethod *method)
 
 		if (!domain_info->mrgctx_hash)
 			domain_info->mrgctx_hash = g_hash_table_new (NULL, NULL);
-		mrgctx = g_hash_table_lookup (domain_info->mrgctx_hash, method);
+		mrgctx = (MonoMethodRuntimeGenericContext*)g_hash_table_lookup (domain_info->mrgctx_hash, method);
 	} else {
 		g_assert (!method_inst->is_open);
 

@@ -18,6 +18,8 @@
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/metadata/mempool-internals.h>
 
+G_BEGIN_DECLS
+
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
  * unloaded, and assemblies loaded by the appdomain are not unloaded either. This
@@ -618,5 +620,7 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
+
+G_END_DECLS
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */
