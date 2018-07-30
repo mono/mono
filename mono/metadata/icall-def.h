@@ -611,6 +611,9 @@ HANDLES(ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_
 ICALL(MCMETH_2, "InternalInvoke", ves_icall_InternalInvoke)
 HANDLES(ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
 
+ICALL_TYPE(MEV, "System.Reflection.MonoEvent", MEV_1)
+HANDLES(ICALL(MEV_1, "get_metadata_token", ves_icall_reflection_get_token))
+
 ICALL_TYPE(MEVIN, "System.Reflection.MonoEventInfo", MEVIN_1)
 HANDLES(ICALL(MEVIN_1, "get_event_info", ves_icall_MonoEventInfo_get_event_info))
 
@@ -642,6 +645,9 @@ ICALL(MMETHI_4, "get_method_attributes", ves_icall_get_method_attributes)
 HANDLES(ICALL(MMETHI_1, "get_method_info", ves_icall_get_method_info))
 HANDLES(ICALL(MMETHI_2, "get_parameter_info", ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info))
 HANDLES(ICALL(MMETHI_3, "get_retval_marshal", ves_icall_System_MonoMethodInfo_get_retval_marshal))
+
+ICALL_TYPE(MPROP, "System.Reflection.MonoProperty", MPROP_1)
+HANDLES(ICALL(MPROP_1, "get_metadata_token", ves_icall_reflection_get_token))
 
 ICALL_TYPE(MPROPI, "System.Reflection.MonoPropertyInfo", MPROPI_1)
 HANDLES(ICALL(MPROPI_1, "GetTypeModifiers", ves_icall_MonoPropertyInfo_GetTypeModifiers))
@@ -807,6 +813,7 @@ HANDLES(ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringTyp
 HANDLES(ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name))
 HANDLES(ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace))
 HANDLES(ICALL(RT_25, "get_core_clr_security_level", ves_icall_RuntimeType_get_core_clr_security_level))
+HANDLES(ICALL(RT_32, "get_metadata_token", ves_icall_reflection_get_token))
 HANDLES(ICALL(RT_26, "make_array_type", ves_icall_RuntimeType_make_array_type))
 HANDLES(ICALL(RT_27, "make_byref_type", ves_icall_RuntimeType_make_byref_type))
 

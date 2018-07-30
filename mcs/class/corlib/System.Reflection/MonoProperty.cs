@@ -462,5 +462,14 @@ namespace System.Reflection {
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoProperty monoProperty);
 	}
 }
