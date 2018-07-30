@@ -3123,7 +3123,7 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	if (mono_runtime_get_no_exec ())
-		g_warning ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
+		g_error ("Invoking method '%s' when running in no-exec mode.\n", mono_method_full_name (method, TRUE));
 
 	return do_runtime_invoke (method, obj, params, NULL, error);
 }
