@@ -124,12 +124,10 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void MetadataToken_DefinedInMonoEvent ()
+		public void MetadataToken ()
 		{
 			EventInfo ev = typeof (TestClass).GetEvent ("pub");
-			PropertyInfo MetadataTokenProperty = ev.GetType ().GetProperty ("MetadataToken");
-			Assert.AreEqual ("MonoEvent", MetadataTokenProperty.DeclaringType.Name);
-			Assert.AreNotEqual (0, ev.MetadataToken);
+			Assert.IsTrue ((int)ev.MetadataToken > 0);
 		}
 
 #pragma warning disable 67

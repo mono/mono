@@ -562,12 +562,10 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void MetadataToken_DefinedInMonoProperty ()
+		public void MetadataToken ()
 		{
 			PropertyInfo property = typeof (Base).GetProperty ("P");
-			PropertyInfo MetadataTokenProperty = property.GetType ().GetProperty ("MetadataToken");
-			Assert.AreEqual ("MonoProperty", MetadataTokenProperty.DeclaringType.Name);
-			Assert.AreNotEqual (0, property.MetadataToken);
+			Assert.IsTrue ((int)property.MetadataToken > 0);
 		}
 	}
 }

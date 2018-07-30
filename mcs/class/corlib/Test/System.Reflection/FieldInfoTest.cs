@@ -225,13 +225,11 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void MetadataToken_DefinedInMonoField ()
+		public void MetadataToken ()
 		{
 			Type type = typeof (FieldInfoTest);
 			FieldInfo field = type.GetField ("i");
-			PropertyInfo MetadataTokenProperty = field.GetType ().GetProperty ("MetadataToken");
-			Assert.AreEqual ("MonoField", MetadataTokenProperty.DeclaringType.Name);
-			Assert.AreNotEqual (0, field.MetadataToken);
+			Assert.IsTrue ((int)field.MetadataToken > 0);
 		}
 
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle)
