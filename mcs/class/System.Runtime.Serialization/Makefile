@@ -36,8 +36,6 @@ TEST_LIB_REFS = System.ServiceModel System.Web.Services
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
 	Test/Resources/Schemas/*.xsd \
-	Test/System.Runtime.Serialization/one.xml \
-	ReferenceSource.common.sources \
-	ReferenceSource.desktop.sources
+	Test/System.Runtime.Serialization/one.xml
 
 include ../../build/library.make
