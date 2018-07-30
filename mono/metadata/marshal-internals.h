@@ -10,7 +10,7 @@
 #include <glib.h>
 #include <mono/metadata/object-internals.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 MonoObjectHandle
 mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error);
@@ -47,6 +47,6 @@ typedef enum {
 	TYPECHECK_CACHE_ARG_POS = 2
 } MarshalTypeCheckPositions;
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_MARSHAL_INTERNALS_H__ */

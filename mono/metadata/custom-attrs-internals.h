@@ -9,7 +9,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/reflection.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 MonoCustomAttrInfo*
 mono_custom_attrs_from_builders (MonoImage *alloc_img, MonoImage *image, MonoArray *cattrs);
@@ -29,6 +29,7 @@ void
 mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMethod *method, const guchar *data, guint32 len,
 													  gpointer **typed_args, gpointer **named_args, int *num_named_args,
 													  CattrNamedArg **named_arg_info, MonoError *error);
-MONO_END_DECLS
+
+G_END_DECLS
 
 #endif  /* __MONO_METADATA_REFLECTION_CUSTOM_ATTRS_INTERNALS_H__ */

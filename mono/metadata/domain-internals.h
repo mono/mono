@@ -18,7 +18,7 @@
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/metadata/mempool-internals.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -621,6 +621,6 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

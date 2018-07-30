@@ -12,7 +12,7 @@
 #include "object-internals.h"
 #include "w32handle-namespace.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 void
 mono_w32mutex_init (void);
@@ -36,6 +36,6 @@ void
 mono_w32mutex_abandon (MonoInternalThread *internal);
 #endif
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32MUTEX_H_ */

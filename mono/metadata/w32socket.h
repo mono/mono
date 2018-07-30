@@ -16,7 +16,7 @@
 
 #include <mono/metadata/object-internals.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #ifndef HOST_WIN32
 #define INVALID_SOCKET ((SOCKET)(guint32)(~0))
@@ -301,6 +301,6 @@ mono_network_init(void);
 void
 mono_network_cleanup(void);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32SOCKET_H_ */

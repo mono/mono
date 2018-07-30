@@ -36,7 +36,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/bsearch.h>
 
-MONO_BEGIN_DECLS // lack of prototypes
+G_BEGIN_DECLS // lack of prototypes
 
 /*
  * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
@@ -446,7 +446,7 @@ lookup_icall_symbol (gpointer func)
 #endif
 }
 
-MONO_END_DECLS // lack of prototypes
+G_END_DECLS // lack of prototypes
 
 void
 mono_icall_table_init (void)

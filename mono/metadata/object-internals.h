@@ -21,7 +21,7 @@
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
@@ -2085,6 +2085,6 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 MonoStringHandle
 mono_string_empty_handle (MonoDomain *domain);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

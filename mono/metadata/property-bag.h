@@ -12,6 +12,7 @@
 
 #include <mono/utils/mono-compiler.h>
 
+// Neither MONO_BEGIN_DECLS nor G_BEGIN_DECLS is available here. Fallback to what works.
 #ifdef __cplusplus
 extern "C" {
 #endif

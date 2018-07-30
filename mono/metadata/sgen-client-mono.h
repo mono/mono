@@ -14,7 +14,7 @@
 #include "utils/mono-mmap.h"
 #include "metadata/object-internals.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 typedef MonoObject GCObject;
 typedef MonoVTable* GCVTable;
@@ -729,6 +729,6 @@ gboolean sgen_has_managed_allocator (void);
 void sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type);
 void sgen_null_links_for_domain (MonoDomain *domain);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

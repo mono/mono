@@ -18,7 +18,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #define mono_domain_finalizers_lock(domain) mono_os_mutex_lock (&(domain)->finalizable_objects_hash_lock);
 #define mono_domain_finalizers_unlock(domain) mono_os_mutex_unlock (&(domain)->finalizable_objects_hash_lock);
@@ -426,6 +426,6 @@ extern gboolean mono_do_not_finalize;
 /* List of names of classes not to finalize. */
 extern gchar **mono_do_not_finalize_class_names;
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
