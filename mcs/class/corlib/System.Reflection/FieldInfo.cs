@@ -263,9 +263,6 @@ namespace System.Reflection {
 			return attrsData;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (FieldInfo fieldInfo);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern Type[] GetTypeModifiers (bool optional);
 
@@ -281,12 +278,6 @@ namespace System.Reflection {
 			if (types == null)
 				return Type.EmptyTypes;
 			return types;
-		}
-
-		public override int MetadataToken {
-			get {
-				return get_metadata_token (this);
-			}
 		}
 
 		public virtual object GetRawConstantValue ()

@@ -318,5 +318,14 @@ namespace System.Reflection {
 			get { return get_core_clr_security_level () == 1; }
 		}
 #endif
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoField monoField);
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
 	}
 }
