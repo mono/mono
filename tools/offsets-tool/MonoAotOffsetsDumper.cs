@@ -893,6 +893,8 @@ namespace CppSharp
             if (name.StartsWith ("_", StringComparison.Ordinal))
                 name = name.Substring (1);
 
+            writer.WriteLine ("DECL_SIZE2({0},{1})", name, @class.Layout.Size);
+
             foreach (var field in @class.Fields)
             {
                 if (field.IsBitField) continue;
