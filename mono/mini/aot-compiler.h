@@ -24,7 +24,3 @@ int      mono_aot_get_method_index          (MonoMethod *method) MONO_LLVM_INTER
 MonoJumpInfo* mono_aot_patch_info_dup       (MonoJumpInfo* ji) MONO_LLVM_INTERNAL;
 
 #endif
-
-
-
-

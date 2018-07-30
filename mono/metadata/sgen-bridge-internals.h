@@ -74,5 +74,4 @@ void sgen_bridge_set_dump_prefix (const char *prefix);
 void sgen_init_bridge (void);
 
 #endif
-
 #endif

@@ -1024,4 +1024,3 @@ MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
-

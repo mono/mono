@@ -52,4 +52,3 @@ void
 mono_dynimage_alloc_table (MonoDynamicTable *table, guint nrows);
 
 #endif  /* __MONO_METADATA_DYNAMIC_IMAGE_INTERNALS_H__ */
-

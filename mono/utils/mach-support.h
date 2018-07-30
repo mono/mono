@@ -5,8 +5,8 @@
 #ifndef __MONO_MACH_SUPPORT_H__
 #define __MONO_MACH_SUPPORT_H__
 
-#include "config.h"
 #if defined(__MACH__)
+#include "config.h"
 #include <glib.h>
 #include <pthread.h>
 #include "mono/utils/mono-compiler.h"

@@ -34,4 +34,3 @@ typedef int    (*MonoCodeManagerFunc)      (void *data, int csize, int size, voi
 void            mono_code_manager_foreach  (MonoCodeManager *cman, MonoCodeManagerFunc func, void *user_data);
 
 #endif /* __MONO_CODEMAN_H__ */
-

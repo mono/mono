@@ -26,7 +26,7 @@ struct sigcontext {
 	guint64 edx;
 	guint64 ebp;
 	guint64 esp;
-    guint64 esi;
+	guint64 esi;
 	guint64 edi;
 	guint64 eip;
 };
@@ -639,4 +639,3 @@ mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 
 #endif /* __MONO_MINI_AMD64_H__ */  
-

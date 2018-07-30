@@ -150,7 +150,7 @@ typedef int MonoThreadCreateFlags;
 typedef enum MonoThreadCreateFlags MonoThreadCreateFlags;
 #endif
 
-//FIXMEcplusplus
+//FIXMEcxx
 //GENERATE_BIT_ENUM_OPERATORS (MonoThreadCreateFlags, int)
 
 MonoInternalThread*
@@ -638,6 +638,6 @@ typedef struct {
 
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes);
-#endif
 
+#endif // TARGET_OSX
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -43,5 +43,4 @@ MonoMethod *
 mono_marshal_get_proxy_cancast (MonoClass *klass);
 
 #endif
-
 #endif

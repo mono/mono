@@ -12,11 +12,10 @@
 #ifndef __MONO_COREE_H__
 #define __MONO_COREE_H__
 
-#include <config.h>
-#include <glib.h>
-
 #ifdef HOST_WIN32
 
+#include <config.h>
+#include <glib.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/w32api.h>
 #include "image.h"
@@ -49,5 +48,4 @@ void mono_fixup_exe_image (MonoImage* image);
 MonoImage* mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean has_entry_point, MonoImageOpenStatus* status);
 
 #endif /* HOST_WIN32 */
-
 #endif /* __MONO_COREE_H__ */

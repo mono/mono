@@ -72,6 +72,11 @@ typedef void* mono_native_thread_return_t;
 
 #endif /* #ifdef HOST_WIN32 */
 
+<<<<<<< HEAD
+=======
+G_BEGIN_DECLS
+
+>>>>>>> 7891722a25d... [cxx] 1. Favor G_BEGIN_DECLS / G_END_DECLS in non-public headers (and .c files), which is the overwhelmingly common case.
 typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT

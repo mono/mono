@@ -14,9 +14,7 @@
 #include "config.h"
 #include "image-writer.h"
 #include "mini.h"
-
 #include <mono/metadata/debug-internals.h>
-
 #include <glib.h>
 
 typedef struct _MonoDwarfWriter MonoDwarfWriter;

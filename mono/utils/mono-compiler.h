@@ -5,15 +5,6 @@
 #ifndef __UTILS_MONO_COMPILER_H__
 #define __UTILS_MONO_COMPILER_H__
 
-// These macros are duplicated in mono-compiler.h, mono-publib.h, glib.h for maximum reach and consistency.
-#ifdef  __cplusplus
-#define MONO_BEGIN_DECLS  extern "C" {
-#define MONO_END_DECLS    }
-#else
-#define MONO_BEGIN_DECLS /* nothing */
-#define MONO_END_DECLS   /* nothing */
-#endif
-
 /*
  * This file includes macros used in the runtime to encapsulate different
  * compiler behaviours.

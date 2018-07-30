@@ -6,10 +6,10 @@
 #ifndef __MONO_METADATA_MONO_SECURITY_WINDOWS_INTERNALS_H__
 #define __MONO_METADATA_MONO_SECURITY_WINDOWS_INTERNALS_H__
 
+#ifdef HOST_WIN32
+
 #include <config.h>
 #include <glib.h>
-
-#ifdef HOST_WIN32
 #include "mono/metadata/security.h"
 #include "mono/metadata/object.h"
 #include "mono/metadata/object-internals.h"
@@ -32,5 +32,4 @@ gboolean
 mono_security_win_protect_user (const gunichar2 *path, MonoError *error);
 
 #endif /* HOST_WIN32 */
-
 #endif /* __MONO_METADATA_MONO_SECURITY_WINDOWS_INTERNALS_H__ */

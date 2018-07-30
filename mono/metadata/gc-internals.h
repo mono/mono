@@ -454,4 +454,3 @@ extern gboolean mono_do_not_finalize;
 extern gchar **mono_do_not_finalize_class_names;
 
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
-

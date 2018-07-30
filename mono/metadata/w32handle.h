@@ -198,5 +198,4 @@ mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 }
 #endif
 
-
 #endif /* _MONO_METADATA_W32HANDLE_H_ */

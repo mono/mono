@@ -6,7 +6,6 @@
 #define __MONO_BSEARCH_H__
 
 #include <stdlib.h>
-
 #include "mono/utils/mono-compiler.h"
 
 typedef int (* BinarySearchComparer) (const void *key, const void *member);

@@ -54,4 +54,3 @@ typedef gboolean (*PerfCounterEnumCallback) (char *category_name, char *name, un
 MONO_API void mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer user_data);
 
 #endif /* __MONO_PERFCOUNTERS_H__ */
-

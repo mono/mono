@@ -28,4 +28,3 @@ void
 mono_dynstream_data_align (MonoDynamicStream *stream);
 
 #endif  /* __MONO_METADATA_DYNAMIC_STREAM_INTERNALS_H__ */
-
