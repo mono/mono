@@ -123,6 +123,15 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (type.Module, ev.Module);
 		}
 
+		[Test]
+		public void MetadataToken_DefinedInMonoEvent ()
+		{
+			EventInfo ev = typeof (TestClass).GetEvent ("pub");
+			PropertyInfo MetadataTokenProperty = ev.GetType ().GetProperty ("MetadataToken");
+			Assert.AreEqual ("MonoEvent", MetadataTokenProperty.DeclaringType.Name);
+			Assert.AreNotEqual (0, ev.MetadataToken);
+		}
+
 #pragma warning disable 67
 		public class PrivateEvent
 		{

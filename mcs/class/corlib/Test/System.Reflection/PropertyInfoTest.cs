@@ -560,5 +560,14 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("param", defaultParam.Name, "#1");
 			Assert.AreEqual ("test", defaultParam.DefaultValue, "#2");
 		}
+
+		[Test]
+		public void MetadataToken_DefinedInMonoProperty ()
+		{
+			PropertyInfo property = typeof (Base).GetProperty ("P");
+			PropertyInfo MetadataTokenProperty = property.GetType ().GetProperty ("MetadataToken");
+			Assert.AreEqual ("MonoProperty", MetadataTokenProperty.DeclaringType.Name);
+			Assert.AreNotEqual (0, property.MetadataToken);
+		}
 	}
 }
