@@ -12,7 +12,7 @@
 #include "object-internals.h"
 #include "w32handle-namespace.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 void
 mono_w32event_init (void);
@@ -49,6 +49,6 @@ typedef struct MonoW32HandleNamedEvent MonoW32HandleNamedEvent;
 MonoW32HandleNamespace*
 mono_w32event_get_namespace (MonoW32HandleNamedEvent *event);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32EVENT_H_ */

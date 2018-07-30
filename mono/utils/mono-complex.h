@@ -35,7 +35,7 @@
 
 #endif // MONO_COMPLEX_CPLUSPLUS
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #if defined (_MSC_VER) && !defined (__cplusplus)
 
@@ -122,6 +122,6 @@ double_complex mono_double_complex_sub(double_complex left, double_complex right
 	return left - right;
 }
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

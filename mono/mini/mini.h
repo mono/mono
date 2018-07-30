@@ -2693,7 +2693,7 @@ enum {
 	SIMD_PREFETCH_MODE_2,
 };
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 const char *mono_arch_xregname (int reg);
 guint32     mono_arch_cpu_enumerate_simd_versions (void);
@@ -2715,6 +2715,6 @@ MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 MonoMethod*
 mini_method_to_shared (MonoMethod *method); // null if not shared
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_MINI_H__ */

@@ -16,7 +16,7 @@
 #include <config.h>
 #include <glib.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 gdouble
 ves_icall_System_Math_Floor (gdouble x);
@@ -150,6 +150,6 @@ ves_icall_System_MathF_FMod (float x, float y);
 float
 ves_icall_System_MathF_ModF (float x, float *d);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

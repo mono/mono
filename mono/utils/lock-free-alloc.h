@@ -31,7 +31,7 @@
 #include <mono/utils/lock-free-queue.h>
 #include <mono/utils/mono-mmap.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 typedef struct {
 	MonoLockFreeQueue partial;
@@ -59,6 +59,6 @@ MONO_API void mono_lock_free_free (gpointer ptr, size_t block_size);
 
 MONO_API gboolean mono_lock_free_allocator_check_consistency (MonoLockFreeAllocator *heap);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

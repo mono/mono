@@ -38,9 +38,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include "mono/sgen/gc-internal-agnostic.h"
 #include "mono/sgen/sgen-thread-pool.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.
@@ -1176,9 +1174,7 @@ sgen_dummy_use (gpointer v)
 #endif
 }
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+G_END_DECLS
 
 #endif /* HAVE_SGEN_GC */
 

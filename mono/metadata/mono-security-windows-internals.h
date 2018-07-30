@@ -16,7 +16,7 @@
 #include "mono/metadata/metadata.h"
 #include "mono/metadata/metadata-internals.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 gint32
 mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname);
@@ -33,7 +33,7 @@ mono_security_win_protect_machine (const gunichar2 *path, MonoError *error);
 gboolean
 mono_security_win_protect_user (const gunichar2 *path, MonoError *error);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* HOST_WIN32 */
 

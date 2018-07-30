@@ -14,7 +14,7 @@
 
 #include <mono/metadata/mono-gc.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 /* do not change the values of this enum */
 typedef enum {
 	MONO_HASH_KEY_GC = 1,
@@ -39,5 +39,5 @@ MONO_API void     mono_g_hash_table_insert          (MonoGHashTable *h, gpointer
 MONO_API void     mono_g_hash_table_replace         (MonoGHashTable *h, gpointer k, gpointer v);
 MONO_API void     mono_g_hash_table_print_stats     (MonoGHashTable *table);
 
-MONO_END_DECLS
+G_END_DECLS
 #endif /* __MONO_G_HASH_H__ */

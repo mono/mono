@@ -72,7 +72,7 @@ typedef void* mono_native_thread_return_t;
 
 #endif /* #ifdef HOST_WIN32 */
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
@@ -726,6 +726,6 @@ typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_THREADS_H__ */
