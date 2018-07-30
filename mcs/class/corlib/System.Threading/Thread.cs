@@ -72,6 +72,7 @@ namespace System.Threading {
 		private IntPtr appdomain_refs;
 		private int interruption_requested;
 		private IntPtr synch_cs;
+		private long lock_flags; // Used for unmanaged locking attributes
 		internal bool threadpool_thread;
 		private bool thread_interrupt_requested;
 		/* These are used from managed code */
@@ -89,7 +90,6 @@ namespace System.Threading {
 		private IntPtr owned_mutex;
 		private IntPtr suspended_event;
 		private int self_suspended;
-		private long lock_flags; // Used for unmanaged locking attributes
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.

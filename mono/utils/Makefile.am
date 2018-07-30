@@ -79,6 +79,8 @@ monoutils_sources = \
 	mono-merp.h	\
 	mono-state.h	\
 	mono-state.c	\
+	mono-safe-handle.h	\
+	mono-safe-handle.c	\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
 	mono-io-portability.c 	\

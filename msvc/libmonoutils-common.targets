@@ -83,6 +83,8 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-property-hash.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-value-hash.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-value-hash.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-safe-handle.h" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-safe-handle.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\freebsd-elf_common.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\freebsd-elf32.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\freebsd-elf64.h" />

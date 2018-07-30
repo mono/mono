@@ -56,6 +56,7 @@
 #include <mono/utils/mono-os-wait.h>
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-state.h>
+#include <mono/utils/mono-safe-handle.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -95,9 +96,9 @@ extern int tkill (pid_t tid, int signal);
 
 #define SPIN_UNLOCK(i) i = 0
 
-#define TRY_LOCK_THREAD(thread) (try_lock_thread(thread))
-#define ASSERT_LOCK_THREAD(thread) (assert_lock_thread(thread))
-#define UNLOCK_THREAD(thread) (unlock_thread(thread))
+#define TRY_LOCK_THREAD(thread) (mono_safe_handle_try_lock (&thread->synch_handle))
+#define ASSERT_LOCK_THREAD(thread) (mono_safe_handle_lock (&thread->synch_handle))
+#define UNLOCK_THREAD(thread) (mono_safe_handle_unlock (&thread->synch_handle))
 
 typedef union {
 	gint32 ival;
@@ -454,197 +455,16 @@ thread_get_tid (MonoInternalThread *thread)
 	return MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
 
-// Our problem with locking is complex.
-// We have managed threads. These managed threads have pointers
-// to managed objects of type mono_defaults.internal_thread_class. Our references below are
-// to these managed types. 
-//
-// We have a lot of racing requests to lock this thread. Crucially though, we need to be able
-// to free this lock while any of these other threads are waiting. 
-//
-// We have had a policy previously of re-initializing the mutex. This leads to a classic
-// partition usually seen in networks. The threads before the split will use one lock to
-// synchronize access to data, threads after will use another lock, and both will concurrently
-// dirty the same memory.
-//
-// Instead we needed to transition a thread from an initialized to a non-initializable state. Furthermore
-// we needed to ensure that locking attempts in progress finish before we free the lock. We do that by tracking
-// the number of waiters.
-//
-// Locker:
-// - inc num waiters
-// - get lock
-// - check if freeing / we are allowed to use lock
-// - if freeing, dec num waiters to "give it back"
-// - else lock it
-// - on unlock, dec num waiters. Someone else tried to shutdown, we will finish it.
-//
-// Freer:
-// - set finalized state
-// - check if any waiters
-// - if not, free. If so, let waiters finish.
-//
-// Note that the ordering of fetching the waiters and the freeing lock must be
-// inverted between the two to prevent state going wrong between the read and the validity check.
-//
-
-#define INTERNAL_THREAD_TOMBSTONE (GINT_TO_POINTER (-1))
-
-static void 
-ensure_synch_cs_set (MonoInternalThread *thread)
-{
-	MonoCoopMutex *synch_cs;
-
-	if (thread->synch_cs != NULL) {
-		return;
-	}
-
-	synch_cs = g_new0 (MonoCoopMutex, 1);
-	mono_coop_mutex_init_recursive (synch_cs);
-
-	gpointer ret = mono_atomic_cas_ptr ((gpointer *)&thread->synch_cs, synch_cs, NULL);
-
-	if (ret != NULL) {
-		/* Another thread must have installed this CS */
-		/* Or the finalizer had to have run */
-		mono_coop_mutex_destroy (synch_cs);
-		g_free (synch_cs);
-	}
-}
-
-static void
-internal_thread_free (MonoInternalThread *thread)
-{
-	MonoCoopMutex *synch_cs = thread->synch_cs;
-	thread->synch_cs = INTERNAL_THREAD_TOMBSTONE;
-	mono_memory_barrier ();
-
-	mono_coop_mutex_destroy (synch_cs);
-	g_free (synch_cs);
-}
-
-static void
-change_wait_queue (MonoInternalThread *thread, int diff)
-{
-	g_assert (diff == 1 || diff == -1);
-
-	mono_memory_barrier ();
-	MonoInternalThreadLockFlags flags;
-	flags.mem_start = mono_atomic_load_i64 (&thread->lock_flags.mem_start);
-
-	while (TRUE) {
-		MonoInternalThreadLockFlags old_flags = flags;
-		flags.waiters += diff;
-		MonoInternalThreadLockFlags seen_old_flags;
-		seen_old_flags.mem_start = mono_atomic_cas_i64 (&thread->lock_flags.mem_start, flags.mem_start, old_flags.mem_start);
-
-		// flags was set.
-		if (seen_old_flags.mem_start == old_flags.mem_start)
-			break;
-		else
-			flags.mem_start = seen_old_flags.mem_start;
-	}
-
-	if (!thread->synch_cs)
-		ensure_synch_cs_set (thread);
-}
-
-static void
-decrement_wait_queue (MonoInternalThread *thread)
-{
-	change_wait_queue (thread, -1);
-}
-
-static void
-increment_wait_queue (MonoInternalThread *thread)
-{
-	change_wait_queue (thread, 1);
-}
-
-static MonoCoopMutex *
-get_lock (MonoInternalThread *thread, gboolean assert_fine)
-{
-	increment_wait_queue (thread);
-
-	MonoCoopMutex *ptr = (MonoCoopMutex *) mono_atomic_load_ptr ((volatile gpointer *) &thread->synch_cs);
-
-	gboolean fine = ptr && (ptr != INTERNAL_THREAD_TOMBSTONE);
-	if (assert_fine && !fine)
-		g_error ("Attempted to lock a freed thread without fallback");
-
-	if (ptr == INTERNAL_THREAD_TOMBSTONE)
-		return NULL;
-	else
-		return ptr;
-}
-
-static gboolean
-try_lock_thread (MonoInternalThread *thread)
-{
-	MonoCoopMutex *lock = get_lock (thread, FALSE);
-	if (lock)
-		mono_coop_mutex_lock (lock);
-
-	return lock != NULL;
-}
-
-static void
-assert_lock_thread (MonoInternalThread *thread)
-{
-	mono_coop_mutex_lock (get_lock (thread, TRUE));
-}
-
-static void
-unlock_thread (MonoInternalThread *thread)
-{
-	MonoCoopMutex *lock = (MonoCoopMutex *) mono_atomic_load_ptr ((volatile gpointer *) &thread->synch_cs);
-	mono_coop_mutex_unlock (lock);
-
-	// Now the lock can be freed
-	decrement_wait_queue (thread);
-
-	mono_memory_barrier ();
-	MonoInternalThreadLockFlags flags;
-	flags.mem_start = mono_atomic_load_i64 (&thread->lock_flags.mem_start);
-
-	if (flags.waiters == 0 && flags.freeing)
-		internal_thread_free (thread);
-}
-
-static void
-cleanup_thread_lock (MonoInternalThread *thread)
-{
-	// already disposed
-	if (!try_lock_thread (thread))
-		return;
-
-	mono_memory_barrier ();
-	MonoInternalThreadLockFlags flags;
-	flags.mem_start = mono_atomic_load_i64 (&thread->lock_flags.mem_start);
-
-	while (!flags.freeing) {
-		MonoInternalThreadLockFlags old_flags = flags;
-		flags.freeing = TRUE;
-		flags.mem_start = mono_atomic_cas_i64 (&thread->lock_flags.mem_start, flags.mem_start, old_flags.mem_start);
-	}
-
-	// If we started cleanup without any writers, finish the freeing
-	// ourselves. Else the thread who unlocks the thread after the last pending 
-	// wait is finished will do the freeing.
-	unlock_thread (thread);
-}
-
-
 static void
 lock_thread_handle (MonoInternalThreadHandle thread)
 {
-	assert_lock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_safe_handle_lock (&mono_internal_thread_handle_ptr (thread)->synch_handle);
 }
 
 static void
 unlock_thread_handle (MonoInternalThreadHandle thread)
 {
-	unlock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_safe_handle_unlock (&mono_internal_thread_handle_ptr (thread)->synch_handle);
 }
 
 static inline gboolean
@@ -786,9 +606,6 @@ create_internal_thread_object (void)
 	thread = (MonoInternalThread*) mono_object_new_mature (vt, error);
 	/* only possible failure mode is OOM, from which we don't exect to recover */
 	mono_error_assert_ok (error);
-
-	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
-	mono_coop_mutex_init_recursive (thread->synch_cs);
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
@@ -1755,8 +1572,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	CloseHandle (this_obj->native_handle);
 #endif
 
-	if (this_obj->synch_cs)
-		cleanup_thread_lock (this_obj);
+	mono_safe_handle_free (&this_obj->synch_handle);
 
 	if (this_obj->name) {
 		void *name = this_obj->name;
