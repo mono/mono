@@ -56,12 +56,18 @@ namespace Mono.AssemblyCompare
 				return 1;
 			}
 
-			StreamWriter outputStream = null;
-			if (!string.IsNullOrEmpty (output))
-				outputStream = new StreamWriter (output);
+			TextWriter outputStream = null;
+			try {
+				if (!string.IsNullOrEmpty (output))
+					outputStream = new StreamWriter (output);
 
-			ApiDiff.Generate(extra[0], extra[1], outputStream ?? Console.Out);
-
+				ApiDiff.Generate(extra[0], extra[1], outputStream ?? Console.Out);
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				return 1;
+			} finally {
+				outputStream?.Dispose ();
+			}
 			return 0;
 		}
 	}
@@ -75,12 +81,36 @@ namespace Mono.AssemblyCompare
 				throw new ArgumentNullException (nameof (firstInfo));
 			if (secondInfo == null)
 				throw new ArgumentNullException (nameof (secondInfo));
-			if (outStream == null)
-				throw new ArgumentNullException (nameof (outStream));
 
 			XMLAssembly ms = CreateXMLAssembly (firstInfo);
 			XMLAssembly mono = CreateXMLAssembly (secondInfo);
-			XmlDocument doc = ms.CompareAndGetDocument (mono);
+
+			Generate (ms, mono, outStream);
+		}
+
+		public static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream)
+		{
+			if (firstInfo == null)
+				throw new ArgumentNullException (nameof (firstInfo));
+			if (secondInfo == null)
+				throw new ArgumentNullException (nameof (secondInfo));
+
+			XMLAssembly ms = CreateXMLAssembly (firstInfo);
+			XMLAssembly mono = CreateXMLAssembly (secondInfo);
+
+			Generate (ms, mono, outStream);
+		}
+
+		static void Generate (XMLAssembly first, XMLAssembly second, TextWriter outStream)
+		{
+			if (first == null)
+				throw new ArgumentNullException (nameof (first));
+			if (second == null)
+				throw new ArgumentNullException (nameof (second));
+			if (outStream == null)
+				throw new ArgumentNullException (nameof (outStream));
+
+			XmlDocument doc = first.CompareAndGetDocument (second);
 
 			using (XmlTextWriter writer = new XmlTextWriter (outStream)) {
 				writer.Formatting = Formatting.Indented;
@@ -90,8 +120,15 @@ namespace Mono.AssemblyCompare
 
 		static XMLAssembly CreateXMLAssembly (string file)
 		{
+			using (var stream = File.OpenRead(file)) {
+				return CreateXMLAssembly (stream);
+			}
+		}
+
+		static XMLAssembly CreateXMLAssembly (Stream stream)
+		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load (File.OpenRead (file));
+			doc.Load (stream);
 
 			XmlNode node = doc.SelectSingleNode ("/assemblies/assembly");
 			XMLAssembly result = new XMLAssembly ();
@@ -101,7 +138,7 @@ namespace Mono.AssemblyCompare
 				result.LoadData (node);
 #if !EXCLUDE_DRIVER
 			} catch (Exception e) {
-				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", file, e.Message, e);
+				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", (stream as FileStream)?.Name ?? "<stream>", e.Message, e);
 				Environment.Exit (1);
 			}
 #endif

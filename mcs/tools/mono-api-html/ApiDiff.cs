@@ -158,18 +158,17 @@ namespace Xamarin.ApiDiff {
 			if (extra.Count == 3 && diff == null)
 				diff = extra [2];
 
+			TextWriter outputStream = null;
 			try {
-				if (diff != null) {
-					using (var file = new StreamWriter (diff)) {
-						ApiDiffFormatted.Generate (input, output, file, config);
-					}
-				} else {
-					ApiDiffFormatted.Generate (input, output, Console.Out, config);
-				}
-			}
-			catch (Exception e) {
+				if (!string.IsNullOrEmpty (diff))
+					outputStream = new StreamWriter (diff);
+
+				ApiDiffFormatted.Generate (input, output, outputStream ?? Console.Out, config);
+			} catch (Exception e) {
 				Console.WriteLine (e);
 				return 1;
+			} finally {
+				outputStream?.Dispose ();
 			}
 			return 0;
 		}
@@ -198,7 +197,53 @@ namespace Xamarin.ApiDiff {
 
 	public static class ApiDiffFormatted {
 
+		public static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream, ApiDiffFormattedConfig config = null)
+		{
+			var state = CreateState (config);
+			Generate (firstInfo, secondInfo, outStream, state);
+		}
+
 		public static void Generate (string firstInfo, string secondInfo, TextWriter outStream, ApiDiffFormattedConfig config = null)
+		{
+			var state = CreateState (config);
+			Generate (firstInfo, secondInfo, outStream, state);
+		}
+
+		internal static void Generate (string firstInfo, string secondInfo, TextWriter outStream, State state)
+		{
+			var ac = new AssemblyComparer (firstInfo, secondInfo, state);
+			Generate (ac, outStream, state);
+		}
+
+		internal static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream, State state)
+		{
+			var ac = new AssemblyComparer (firstInfo, secondInfo, state);
+			Generate (ac, outStream, state);
+		}
+
+		static void Generate (AssemblyComparer ac, TextWriter outStream, State state)
+		{
+			var diffHtml = String.Empty;
+			using (var writer = new StringWriter ()) {
+				state.Output = writer;
+				ac.Compare ();
+				diffHtml = state.Output.ToString ();
+			}
+
+			if (diffHtml.Length > 0) {
+				var title = $"{ac.SourceAssembly}.dll";
+				if (ac.SourceAssembly != ac.TargetAssembly)
+					title += $" vs {ac.TargetAssembly}.dll";
+
+				state.Formatter.BeginDocument (outStream, $"API diff: {title}");
+				state.Formatter.BeginAssembly (outStream);
+				outStream.Write (diffHtml);
+				state.Formatter.EndAssembly (outStream);
+				state.Formatter.EndDocument (outStream);
+			}
+		}
+
+		static State CreateState (ApiDiffFormattedConfig config)
 		{
 			if (config == null)
 				config = new ApiDiffFormattedConfig ();
@@ -231,11 +276,6 @@ namespace Xamarin.ApiDiff {
 					throw new ArgumentException("Invlid formatter specified.");
 			}
 
-			Generate (firstInfo, secondInfo, outStream, state);
-		}
-
-		internal static void Generate (string firstInfo, string secondInfo, TextWriter outStream, State state)
-		{
 			// unless specified default to HTML
 			if (state.Formatter == null)
 				state.Formatter = new HtmlFormatter (state);
@@ -247,26 +287,7 @@ namespace Xamarin.ApiDiff {
 				state.IgnoreAdded.Add (new Regex (".*"));
 			}
 
-			var ac = new AssemblyComparer (firstInfo, secondInfo, state);
-
-			var diffHtml = String.Empty;
-			using (var writer = new StringWriter ()) {
-				state.Output = writer;
-				ac.Compare ();
-				diffHtml = state.Output.ToString ();
-			}
-
-			if (diffHtml.Length > 0) {
-				var title = $"{ac.SourceAssembly}.dll";
-				if (ac.SourceAssembly != ac.TargetAssembly)
-					title += $" vs {ac.TargetAssembly}.dll";
-
-				state.Formatter.BeginDocument (outStream, $"API diff: {title}");
-				state.Formatter.BeginAssembly (outStream);
-				outStream.Write (diffHtml);
-				state.Formatter.EndAssembly (outStream);
-				state.Formatter.EndDocument (outStream);
-			}
+			return state;
 		}
 	}
 }

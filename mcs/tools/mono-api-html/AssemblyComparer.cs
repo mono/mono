@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Linq;
 
 #if USE_MONO_API_TOOLS_NAMESPACE
@@ -44,10 +45,20 @@ namespace Xamarin.ApiDiff {
 		NamespaceComparer comparer;
 
 		public AssemblyComparer (string sourceFile, string targetFile, State state)
+			: this (XDocument.Load(sourceFile), XDocument.Load(targetFile), state)
+		{
+		}
+
+		public AssemblyComparer (Stream sourceFile, Stream targetFile, State state)
+			: this (XDocument.Load(sourceFile), XDocument.Load(targetFile), state)
+		{
+		}
+
+		public AssemblyComparer (XDocument sourceFile, XDocument targetFile, State state)
 			: base (state)
 		{
-			source = XDocument.Load (sourceFile);
-			target = XDocument.Load (targetFile);
+			source = sourceFile;
+			target = targetFile;
 			comparer =  new NamespaceComparer (state);
 		}
 

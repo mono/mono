@@ -71,18 +71,20 @@ namespace CorCompare {
 			if (showHelp || asms.Count == 0) {
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
-				return showHelp? 0 :1;
+				return showHelp ? 0 : 1;
 			}
 
-			StreamWriter outputStream = null;
-			if (!string.IsNullOrEmpty (output))
-				outputStream = new StreamWriter (output);
+			TextWriter outputStream = null;
 			try {
-				TextWriter outStream = outputStream ?? Console.Out;
-				ApiInfo.Generate (asms, outStream, config);
+				if (!string.IsNullOrEmpty (output))
+					outputStream = new StreamWriter (output);
+
+				ApiInfo.Generate (asms, null, outputStream ?? Console.Out, config);
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				return 1;
 			} finally {
-				if (outputStream != null)
-					outputStream.Dispose ();
+				outputStream?.Dispose ();
 			}
 			return 0;
 		}
@@ -133,10 +135,34 @@ namespace CorCompare {
 
 	public static class ApiInfo
 	{
-		public static void Generate (IEnumerable<string> assemblies, TextWriter outStream, ApiInfoConfig config = null)
+		public static void Generate (string assemblyPath, TextWriter outStream, ApiInfoConfig config = null)
 		{
-			if (assemblies == null)
-				throw new ArgumentNullException (nameof (assemblies));
+			if (assemblyPath == null)
+				throw new ArgumentNullException (nameof (assemblyPath));
+
+			Generate (new [] { assemblyPath }, null, outStream, config);
+		}
+
+		public static void Generate (Stream assemblyStream, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			if (assemblyStream == null)
+				throw new ArgumentNullException (nameof (assemblyStream));
+
+			Generate (null, new [] { assemblyStream }, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<string> assemblyPaths, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			Generate (assemblyPaths, null, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<Stream> assemblyStreams, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			Generate (null, assemblyStreams, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<string> assemblyPaths, IEnumerable<Stream> assemblyStreams, TextWriter outStream, ApiInfoConfig config = null)
+		{
 			if (outStream == null)
 				throw new ArgumentNullException (nameof (outStream));
 
@@ -151,13 +177,11 @@ namespace CorCompare {
 			state.ResolveFiles.AddRange (config.ResolveFiles);
 			state.SearchDirectories.AddRange (config.SearchDirectories);
 
-			Generate (assemblies, outStream, state);
+			Generate (assemblyPaths, assemblyStreams, outStream, state);
 		}
 
-		internal static void Generate (IEnumerable<string> assemblies, TextWriter outStream, State state = null)
+		internal static void Generate (IEnumerable<string> assemblyFiles, IEnumerable<Stream> assemblyStreams, TextWriter outStream, State state = null)
 		{
-			if (assemblies == null)
-				throw new ArgumentNullException (nameof (assemblies));
 			if (outStream == null)
 				throw new ArgumentNullException (nameof (outStream));
 
@@ -171,35 +195,44 @@ namespace CorCompare {
 			state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
 
 			var acoll = new AssemblyCollection (state);
-			foreach (string arg in assemblies) {
-				acoll.Add (arg);
+			if (assemblyFiles != null) {
+				foreach (string arg in assemblyFiles) {
+					acoll.Add (arg);
 
-				if (arg.Contains ("v3.0")) {
-					state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-				} else if (arg.Contains ("v3.5")) {
-					state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-					state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
-				} else if (arg.Contains ("v4.0")) {
-					if (arg.Contains ("Silverlight")) {
-						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
+					if (arg.Contains ("v3.0")) {
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+					} else if (arg.Contains ("v3.5")) {
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
+					} else if (arg.Contains ("v4.0")) {
+						if (arg.Contains ("Silverlight")) {
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
+						} else {
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
+						}
 					} else {
-						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
-						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
 					}
-				} else {
-					state.TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
+				}
+			}
+			if (assemblyStreams != null) {
+				foreach (var arg in assemblyStreams) {
+					acoll.Add (arg);
 				}
 			}
 
-			var settings = new XmlWriterSettings ();
-			settings.Indent = true;
-			var textWriter = XmlWriter.Create (outStream, settings);
-			var writer = new WellFormedXmlWriter (textWriter);
-			writer.WriteStartDocument ();
-			acoll.Writer = writer;
-			acoll.DoOutput ();
-			writer.WriteEndDocument ();
-			writer.Flush ();
+			var settings = new XmlWriterSettings {
+				Indent = true,
+			};
+			using (var textWriter = XmlWriter.Create (outStream, settings)) {
+				var writer = new WellFormedXmlWriter (textWriter);
+				writer.WriteStartDocument ();
+				acoll.Writer = writer;
+				acoll.DoOutput ();
+				writer.WriteEndDocument ();
+				writer.Flush ();
+			}
 		}
 	}
 
@@ -262,6 +295,20 @@ namespace CorCompare {
 			return true;
 		}
 
+		public bool Add (Stream stream)
+		{
+			AssemblyDefinition ass = LoadAssembly (stream);
+			if (ass == null) {
+#if !EXCLUDE_DRIVER
+				Console.Error.WriteLine ("Cannot load assembly stream.");
+#endif
+				return false;
+			}
+
+			assemblies.Add (ass);
+			return true;
+		}
+
 		public void DoOutput ()
 		{
 			if (writer == null)
@@ -281,17 +328,33 @@ namespace CorCompare {
 
 		AssemblyDefinition LoadAssembly (string assembly)
 		{
+#if !EXCLUDE_DRIVER
 			try {
+#endif
 				if (File.Exists (assembly))
 					return state.TypeHelper.Resolver.ResolveFile (assembly);
 
 				return state.TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
-			} catch (Exception e) {
 #if !EXCLUDE_DRIVER
+			} catch (Exception e) {
 				Console.WriteLine (e);
-#endif
 				return null;
 			}
+#endif
+		}
+
+		AssemblyDefinition LoadAssembly (Stream assembly)
+		{
+#if !EXCLUDE_DRIVER
+			try {
+#endif
+				return state.TypeHelper.Resolver.ResolveStream (assembly);
+#if !EXCLUDE_DRIVER
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				return null;
+			}
+#endif
 		}
 	}
 
