@@ -6,7 +6,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-compiler.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 struct _MonoDebugMethodInfo {
 	MonoMethod *method;
@@ -89,6 +89,6 @@ mono_debug_image_has_debug_info (MonoImage *image);
 MonoDebugSourceLocation *
 mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, MonoDomain *domain);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __DEBUG_INTERNALS_H__ */

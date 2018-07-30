@@ -12,9 +12,7 @@
 
 #include "mono/sgen/sgen-pointer-queue.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+G_BEGIN_DECLS
 
 enum {
 	PIN_TYPE_STACK,
@@ -62,8 +60,6 @@ gboolean sgen_cement_lookup_or_register (GCObject *obj);
 void sgen_pin_cemented_objects (void);
 void sgen_cement_clear_below_threshold (void);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
+G_END_DECLS
 
 #endif

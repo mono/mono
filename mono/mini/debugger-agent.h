@@ -8,7 +8,7 @@
 #include "mini.h"
 #include <mono/utils/mono-stack-unwinding.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #define MONO_DBG_CALLBACKS_VERSION (2)
 // 2. debug_log parameters changed from MonoString* to MonoStringHandle
@@ -46,6 +46,6 @@ mono_debugger_agent_stub_init (void);
 MONO_API gboolean
 mono_debugger_agent_transport_handshake (void);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

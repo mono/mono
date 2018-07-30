@@ -9,7 +9,7 @@
 
 #include "mini.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 void* mono_ldftn (MonoMethod *method);
 
@@ -233,6 +233,6 @@ void mono_throw_method_access (MonoMethod *caller, MonoMethod *callee);
 
 void mono_dummy_jit_icall (void);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_JIT_ICALLS_H__ */

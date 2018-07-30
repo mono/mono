@@ -9,7 +9,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 static inline MonoType*
 mono_get_void_type (void)
@@ -119,6 +119,6 @@ mono_class_has_static_metadata (MonoClass *klass)
 	return m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass);
 }
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif

@@ -14,7 +14,7 @@
 
 #include "mono/utils/mono-coop-mutex.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE (gpointer)-1
@@ -200,6 +200,6 @@ mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 }
 #endif
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32HANDLE_H_ */

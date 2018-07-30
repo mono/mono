@@ -12,7 +12,7 @@
 #ifdef HOST_WIN32
 #include <windows.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 BOOL STDMETHODCALLTYPE
 _CorDllMain (HINSTANCE hInst, DWORD dwReason, LPVOID lpReserved);
@@ -42,7 +42,7 @@ MonoLoadImage (LPCWSTR FileName);
 
 void mono_coree_set_act_ctx (const char *file_name);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* HOST_WIN32 */
 

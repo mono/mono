@@ -19,7 +19,7 @@
 #include <mono/utils/mono-error.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 struct _MonoType {
 	union {
@@ -1025,6 +1025,6 @@ mono_type_in_image (MonoType *type, MonoImage *image);
 MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */

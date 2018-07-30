@@ -9,7 +9,10 @@
 
 #include "mono/utils/mono-compiler.h"
 
-MONO_BEGIN_DECLS
+// Neither MONO_BEGIN_DECLS nor G_BEGIN_DECLS is available here. Fallback to what works.
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef int (* BinarySearchComparer) (const void *key, const void *member);
 
@@ -21,6 +24,8 @@ mono_binary_search (
 	size_t member_size,
 	BinarySearchComparer comparer);
 
-MONO_END_DECLS
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

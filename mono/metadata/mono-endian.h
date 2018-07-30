@@ -7,7 +7,7 @@
 
 #include <glib.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 typedef union {
 	guint32 ival;
@@ -96,6 +96,6 @@ guint64 mono_read64 (const unsigned char *x);
 		*(dest) = mf.fval;	\
 	} while (0)
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* _MONO_METADATA_ENDIAN_H_ */

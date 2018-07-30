@@ -7,10 +7,10 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 MONO_API gchar * mono_escape_uri_string (const gchar *string);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_URI_H */

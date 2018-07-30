@@ -12,7 +12,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 /* never remove or reorder these enums values: they are used in corlib/System */
 
@@ -80,6 +80,6 @@ gint32    mono_cpu_usage (MonoCpuUsageState *prev);
 
 int       mono_atexit (void (*func)(void));
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_PROC_LIB_H__ */

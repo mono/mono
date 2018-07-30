@@ -58,21 +58,14 @@
 
 #define __EGLIB_X11 1
 
+// FIXMEcxx in future G_BEGIN_DECLS should always be empty, and/or remove all uses,
+// and extern "C" added to MONO_API instead.
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
-#endif
-
-// These macros are duplicated in mono-compiler.h, mono-publib.h, glib.h for maximum reach and consistency.
-#ifdef  __cplusplus
-#define MONO_BEGIN_DECLS  extern "C" {
-#define MONO_END_DECLS    }
-#else
-#define MONO_BEGIN_DECLS /* nothing */
-#define MONO_END_DECLS   /* nothing */
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 G_BEGIN_DECLS

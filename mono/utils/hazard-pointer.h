@@ -13,7 +13,7 @@
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-publib.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 #define HAZARD_POINTER_COUNT 3
 
@@ -59,6 +59,6 @@ void mono_hazard_pointer_install_free_queue_size_callback (MonoHazardFreeQueueSi
 void mono_thread_smr_init (void);
 void mono_thread_smr_cleanup (void);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /*__MONO_HAZARD_POINTER_H__*/

@@ -11,6 +11,7 @@
 
 #include <mono/metadata/object.h>
 
+// G_BEGIN_DECLS is not always available here. Fallback to what works.
 MONO_BEGIN_DECLS
 
 typedef struct _MonoMList MonoMList;

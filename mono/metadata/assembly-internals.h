@@ -11,7 +11,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 
-MONO_BEGIN_DECLS
+G_BEGIN_DECLS
 
 /* Flag bits for mono_assembly_names_equal_flags (). */
 typedef enum {
@@ -84,6 +84,6 @@ mono_assembly_get_name_internal (MonoAssembly *assembly);
 MONO_PROFILER_API MonoImage*
 mono_assembly_get_image_internal (MonoAssembly *assembly);
 
-MONO_END_DECLS
+G_END_DECLS
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */
