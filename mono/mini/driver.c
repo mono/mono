@@ -2256,7 +2256,7 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+#if TARGET_SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
        fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif

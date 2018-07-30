@@ -6079,10 +6079,10 @@ mono_arch_get_delegate_invoke_impls (void)
 	}
 
 	for (i = 0; i <= MAX_VIRTUAL_DELEGATE_OFFSET; ++i) {
-		get_delegate_virtual_invoke_impl (&info, TRUE, - i * SIZEOF_VOID_P);
+		get_delegate_virtual_invoke_impl (&info, TRUE, - i * TARGET_SIZEOF_VOID_P);
 		res = g_slist_prepend (res, info);
 
-		get_delegate_virtual_invoke_impl (&info, FALSE, i * SIZEOF_VOID_P);
+		get_delegate_virtual_invoke_impl (&info, FALSE, i * TARGET_SIZEOF_VOID_P);
 		res = g_slist_prepend (res, info);
 	}
 

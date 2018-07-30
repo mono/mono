@@ -1017,7 +1017,7 @@ emit_class_dwarf_info (MonoDwarfWriter *w, MonoClass *klass, gboolean vtype)
 				break;
 			case MONO_TYPE_I:
 			case MONO_TYPE_U:
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 				emit_sleb128 (w, read64 (p));
 #else
 				emit_sleb128 (w, read32 (p));
