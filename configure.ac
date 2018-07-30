@@ -1030,8 +1030,8 @@ if test "x" = "x"; then
 	# FIXME mono/corefx/native has a lot of invalid C++98 in its headers
 	# dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
 	# mono/corefx is months behind dotnet/corefx
-	#CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CPLUSPLUS_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
+	CXX_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
 
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
