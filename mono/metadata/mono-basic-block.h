@@ -10,7 +10,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoSimpleBasicBlock MonoSimpleBasicBlock;
 
@@ -54,7 +54,7 @@ mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, 
 int
 mono_opcode_size (const unsigned char *ip, const unsigned char *end);
 
-G_END_DECLS
+
 
 #endif  /* __MONO_METADATA_BASIC_BLOCK_H__ */
 

@@ -79,7 +79,9 @@ mono_native_tls_set_value (MonoNativeTlsKey key, gpointer value)
 #endif /* HOST_WIN32 */
 
 void mono_tls_init_gc_keys (void);
+G_BEGIN_DECLS // FIXMEcxx for monodis
 void mono_tls_init_runtime_keys (void);
+G_END_DECLS
 void mono_tls_free_keys (void);
 gint32 mono_tls_get_tls_offset (MonoTlsKey key);
 gpointer mono_tls_get_tls_getter (MonoTlsKey key, gboolean name);

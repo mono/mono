@@ -160,6 +160,7 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
+MONO_API // FIXMEcxx?
 MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
 
@@ -439,11 +440,15 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
 
+G_BEGIN_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
+
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
 
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
+
+G_END_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean mono_log_finalizers;

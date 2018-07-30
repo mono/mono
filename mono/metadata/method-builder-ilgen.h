@@ -14,7 +14,7 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/method-builder.h>
 
-G_BEGIN_DECLS
+
 
 MONO_API void
 mono_method_builder_ilgen_init (void);
@@ -128,6 +128,6 @@ mono_mb_set_clauses (MonoMethodBuilder *mb, int num_clauses, MonoExceptionClause
 void
 mono_mb_set_param_names (MonoMethodBuilder *mb, const char **param_names);
 
-G_END_DECLS
+
 
 #endif

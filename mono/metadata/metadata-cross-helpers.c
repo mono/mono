@@ -57,10 +57,6 @@ dump_os (void)
 	return 1;
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // FIXME This belongs in a header.
 void
 mono_dump_metadata_offsets (void);
@@ -159,7 +155,3 @@ mono_metadata_cross_helpers_run (void)
 	g_assert (!is_broken);
 #endif
 }
-
-#ifdef __cplusplus
-} // extern "C"
-#endif

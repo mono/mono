@@ -14,7 +14,7 @@
 #include <glib.h>
 #include <mono/utils/mono-coop-mutex.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct {
 	long counter; // The number of messages allocated thus far, acts like a global, monotonic clock
@@ -65,6 +65,6 @@ mono_flight_recorder_iter_destroy (MonoFlightRecorderIter *iter);
 gboolean
 mono_flight_recorder_iter_next (MonoFlightRecorderIter *iter, MonoFlightRecorderHeader *header, gpointer *payload);
 
-G_END_DECLS
+
 
 #endif

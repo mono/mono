@@ -37,13 +37,47 @@
 #include <mono/utils/bsearch.h>
 #include <mono/metadata/icalls.h>
 
-G_BEGIN_DECLS // lack of prototypes
+// Get some icall declarations.
+#include "appdomain-icalls.h"
+#include "console-io.h"
+#include "environment.h"
+// FIXMEcxx
+//#include "environment-internal.h"
+MonoStringHandle
+ves_icall_System_Environment_GetOSVersionString (MonoError *error);
+#include "file-mmap.h"
+#include "filewatcher.h"
+#include "gc-internals.h"
+#include "locales.h"
+#include "monitor.h"
+#include "mono-perfcounters.h"
+#include "mono-route.h"
+#include "object-internals.h"
+#include "object-internals.h"
+#include "rand.h"
+#include "security.h"
+#include "security-core-clr.h"
+#include "security-manager.h"
+#include "string-icalls.h"
+#include "sysmath.h"
+#include "threadpool.h"
+#include "threadpool-io.h"
+#include "threads-types.h"
+#include "utils/mono-digest.h"
+#include "utils/mono-proclib.h"
+#include "utils/mono-time.h"
+#include "w32event.h"
+#include "w32file.h"
+#include "w32mutex.h"
+#include "w32process.h"
+#include "w32semaphore.h"
+#include "w32socket.h"
 
 /*
  * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
  * them, just don't include any mono headers and emit dummy prototypes.
  */
-// Generate prototypes
+// Generate incorrect prototypes
 #define ICALL_TYPE(id,name,first)
 #define ICALL(id,name,func) ICALL_EXPORT void func (void);
 #define HANDLES(inner) inner
@@ -447,7 +481,7 @@ lookup_icall_symbol (gpointer func)
 #endif
 }
 
-G_END_DECLS // lack of prototypes
+ // lack of prototypes
 
 void
 mono_icall_table_init (void)

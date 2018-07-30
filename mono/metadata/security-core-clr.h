@@ -63,7 +63,6 @@ extern gboolean mono_security_core_clr_is_platform_image (MonoImage *image);
 extern gboolean mono_security_core_clr_determine_platform_image (MonoImage *image);
 
 MONO_API gboolean mono_security_core_clr_require_elevated_permissions (void);
-
 MONO_API void mono_security_core_clr_set_options (MonoSecurityCoreCLROptions options);
 MONO_API MonoSecurityCoreCLROptions mono_security_core_clr_get_options (void);
 

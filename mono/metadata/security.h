@@ -20,7 +20,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/icalls.h>
 
-G_BEGIN_DECLS
+
 
 /* System.Environment */
 ICALL_EXPORT
@@ -108,6 +108,6 @@ ves_icall_System_Security_SecureString_EncryptInternal (MonoArray *data, MonoObj
 void
 mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gboolean encrypt, MonoError *error);
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_SECURITY_H_ */

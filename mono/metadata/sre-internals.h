@@ -154,4 +154,3 @@ guint32
 mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, gboolean create_typespec);
 
 #endif  /* __MONO_METADATA_SRE_INTERNALS_H__ */
-

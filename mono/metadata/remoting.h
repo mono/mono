@@ -9,14 +9,14 @@
 #ifndef __MONO_REMOTING_H__
 #define __MONO_REMOTING_H__
 
+void mono_remoting_init (void);
+
+#ifndef DISABLE_REMOTING
+
 #include "config.h"
 #include <mono/metadata/class.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
-
-void mono_remoting_init (void);
-
-#ifndef DISABLE_REMOTING
 
 MonoMethod *
 mono_marshal_get_remoting_invoke (MonoMethod *method, MonoError *error);

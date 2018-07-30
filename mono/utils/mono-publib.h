@@ -59,12 +59,39 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
+<<<<<<< HEAD
 #ifdef __cplusplus
 #define MONO_EXTERN_C extern "C"
 #else
 #define MONO_EXTERN_C /* nothing */
 #endif
 
+=======
+// MONO_API_DATA is MONO_API but without extern "C", so that
+// you don't get "extern extern". This must be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS
+// whereas that is optional for functions.
+// "extern" is redundant on functions but meaningful on data.
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API_DATA extern MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API_DATA extern MONO_API_IMPORT
+#else
+	#define MONO_API_DATA extern
+#endif
+
+#ifdef __cplusplus
+
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API extern "C" MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API extern "C" MONO_API_IMPORT
+#else
+	#define MONO_API extern "C"
+#endif
+
+#else
+
+>>>>>>> [cxx] Alternate approach to extern "C", now that most of the tree is C++ (in branch cplusplus.2).
 #if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_EXTERN_C MONO_API_EXPORT
 #elif defined(MONO_DLL_IMPORT)
@@ -81,6 +108,8 @@ typedef unsigned __int64	uint64_t;
 #define MONO_API_DATA MONO_API
 #else
 #define MONO_API_DATA extern MONO_API
+#endif
+
 #endif
 
 typedef int32_t		mono_bool;
