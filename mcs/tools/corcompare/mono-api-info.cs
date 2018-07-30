@@ -31,14 +31,10 @@ namespace Mono.ApiTools {
 		{
 			bool showHelp = false;
 			string output = null;
+			List<string> asms = null;
 			ApiInfoConfig config = new ApiInfoConfig ();
 
 			var options = new Mono.Options.OptionSet {
-				"usage: mono-api-info [OPTIONS+] ASSEMBLY+",
-				"",
-				"Expose IL structure of CLR assemblies as XML.",
-				"",
-				"Available Options:",
 				{ "abi",
 					"Generate ABI, not API; contains only classes with instance fields which are not [NonSerialized].",
 					v => config.AbiMode = v != null },
@@ -51,7 +47,7 @@ namespace Mono.ApiTools {
 				{ "r=",
 					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
 					v => config.ResolveFiles.Add (v) },
-				{ "o=",
+				{ "o|out|output=",
 					"The output file. If not specified the output will be written to stdout.",
 					v => output = v },
 				{ "h|?|help",
@@ -62,9 +58,20 @@ namespace Mono.ApiTools {
 					v => config.FullApiSet = v != null },
 			};
 
-			var asms = options.Parse (args);
+			try {
+				asms = options.Parse (args);
+			} catch (Mono.Options.OptionException e) {
+				Console.WriteLine ("Option error: {0}", e.Message);
+				asms = null;
+			}
 
-			if (showHelp || asms.Count == 0) {
+			if (showHelp || asms == null || asms.Count == 0) {
+				Console.WriteLine ("usage: mono-api-info [OPTIONS+] ASSEMBLY+");
+				Console.WriteLine ();
+				Console.WriteLine ("Expose IL structure of CLR assemblies as XML.");
+				Console.WriteLine ();
+				Console.WriteLine ("Available Options:");
+				Console.WriteLine ();
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
 				return showHelp ? 0 : 1;
@@ -77,7 +84,7 @@ namespace Mono.ApiTools {
 
 				ApiInfo.Generate (asms, null, outputStream ?? Console.Out, config);
 			} catch (Exception e) {
-				Console.WriteLine (e);
+				Console.Error.WriteLine (e);
 				return 1;
 			} finally {
 				outputStream?.Dispose ();
@@ -280,13 +287,6 @@ namespace Mono.ApiTools {
 		public bool Add (string name)
 		{
 			AssemblyDefinition ass = LoadAssembly (name);
-			if (ass == null) {
-#if !EXCLUDE_DRIVER
-				Console.Error.WriteLine ("Cannot load assembly file " + name);
-#endif
-				return false;
-			}
-
 			assemblies.Add (ass);
 			return true;
 		}
@@ -294,13 +294,6 @@ namespace Mono.ApiTools {
 		public bool Add (Stream stream)
 		{
 			AssemblyDefinition ass = LoadAssembly (stream);
-			if (ass == null) {
-#if !EXCLUDE_DRIVER
-				Console.Error.WriteLine ("Cannot load assembly stream.");
-#endif
-				return false;
-			}
-
 			assemblies.Add (ass);
 			return true;
 		}
@@ -324,33 +317,15 @@ namespace Mono.ApiTools {
 
 		AssemblyDefinition LoadAssembly (string assembly)
 		{
-#if !EXCLUDE_DRIVER
-			try {
-#endif
-				if (File.Exists (assembly))
-					return state.TypeHelper.Resolver.ResolveFile (assembly);
+			if (File.Exists (assembly))
+				return state.TypeHelper.Resolver.ResolveFile (assembly);
 
-				return state.TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
-#if !EXCLUDE_DRIVER
-			} catch (Exception e) {
-				Console.WriteLine (e);
-				return null;
-			}
-#endif
+			return state.TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
 		}
 
 		AssemblyDefinition LoadAssembly (Stream assembly)
 		{
-#if !EXCLUDE_DRIVER
-			try {
-#endif
-				return state.TypeHelper.Resolver.ResolveStream (assembly);
-#if !EXCLUDE_DRIVER
-			} catch (Exception e) {
-				Console.WriteLine (e);
-				return null;
-			}
-#endif
+			return state.TypeHelper.Resolver.ResolveStream (assembly);
 		}
 	}
 

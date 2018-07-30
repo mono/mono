@@ -121,7 +121,7 @@ namespace Mono.ApiTools {
 				extra = options.Parse (args);
 			} catch (Mono.Options.OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
-				showHelp = true;
+				extra = null;
 			}
 
 			if (showHelp || extra == null || extra.Count < 2 || extra.Count > 3) {
@@ -143,7 +143,7 @@ namespace Mono.ApiTools {
 				Console.WriteLine ("  The regular expressions will match any member description ending with");
 				Console.WriteLine ("  'INSCopying' or 'INSCoding'.");
 				Console.WriteLine ();
-				return 1;
+				return showHelp ? 0 : 1;
 			}
 
 			var input = extra [0];

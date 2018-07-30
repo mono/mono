@@ -66,16 +66,14 @@ namespace Mono.ApiTools {
 		{
 			if (!change.AnyChange) {
 				// This is most likely because the rendering doesn't take into account something that's different (solution: fix rendering).
-#if !EXCLUDE_DRIVER
 				if (!change.HasIgnoredChanges) {
 					var isField = source.Name.LocalName == "field";
 					if (isField) {
-						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetFieldAttributes (), target.GetFieldAttributes ());
+						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetFieldAttributes ()} dst: {target.GetFieldAttributes ()}) :\n{source}\n{target}\n\n");
 					} else {
-						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetMethodAttributes (), target.GetMethodAttributes ());
+						State.LogDebugMessage ($"Comparison resulting in no changes (src: {source.GetMethodAttributes ()} dst: {target.GetMethodAttributes ()}) :\n{source}\n{target}\n\n");
 					}
 				}
-#endif
 				return;
 			}
 

@@ -32,7 +32,7 @@ namespace Mono.ApiTools
 			List<string> extra = null;
 
 			var options = new Mono.Options.OptionSet {
-				{ "h|help", "Show this help", v => showHelp = true },
+				{ "h|?|help", "Show this help", v => showHelp = true },
 				{ "o|out|output=", "XML diff file output (omit for stdout)", v => output = v },
 			};
 
@@ -40,7 +40,7 @@ namespace Mono.ApiTools
 				extra = options.Parse (args);
 			} catch (Mono.Options.OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
-				showHelp = true;
+				extra = null;
 			}
 
 			if (showHelp || extra == null || extra.Count != 2) {
@@ -49,7 +49,7 @@ namespace Mono.ApiTools
 				Console.WriteLine ("Available options:");
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
-				return 1;
+				return showHelp ? 0 : 1;
 			}
 
 			TextWriter outputStream = null;
@@ -128,16 +128,7 @@ namespace Mono.ApiTools
 
 			XmlNode node = doc.SelectSingleNode ("/assemblies/assembly");
 			XMLAssembly result = new XMLAssembly ();
-#if !EXCLUDE_DRIVER
-			try {
-#endif
-				result.LoadData (node);
-#if !EXCLUDE_DRIVER
-			} catch (Exception e) {
-				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", (stream as FileStream)?.Name ?? "<stream>", e.Message, e);
-				Environment.Exit (1);
-			}
-#endif
+			result.LoadData (node);
 
 			return result;
 		}
@@ -508,7 +499,7 @@ namespace Mono.ApiTools
 
 			if (atts == null || atts.Name != "namespaces") {
 #if !EXCLUDE_DRIVER
-				Console.Error.WriteLine ("Warning: no namespaces found!");
+				Console.Error.WriteLine (@"Warning: no namespaces found for {name}");
 #endif
 				return;
 			}
@@ -643,13 +634,13 @@ namespace Mono.ApiTools
 			XmlNode classes = node.FirstChild;
 			if (classes == null) {
 #if !EXCLUDE_DRIVER
-				Console.Error.WriteLine ("Warning: no classes for {0}", node.Attributes  ["name"]);
+				Console.Error.WriteLine ($"Warning: no classes for {name}");
 #endif
 				return;
 			}
 
 			if (classes.Name != "classes")
-				throw new FormatException ("Expecting <classes>. Got <" + classes.Name + ">");
+				throw new FormatException ($"Expecting <classes>. Got <{classes.Name}> (namespace {name}).");
 
 			types = (XMLClass []) LoadRecursive (classes.ChildNodes, typeof (XMLClass));
 		}
@@ -779,7 +770,6 @@ namespace Mono.ApiTools
 
 			XmlNode child = node.FirstChild;
 			if (child == null) {
-				// Console.Error.WriteLine ("Empty class {0} {1}", name, type);
 				return;
 			}
 
@@ -841,10 +831,7 @@ namespace Mono.ApiTools
 				return;
 
 			if (child.Name != "classes") {
-#if !EXCLUDE_DRIVER
-				Console.WriteLine ("name: {0} type: {1} {2}", name, type, child.NodeType);
-#endif
-				throw new FormatException ("Expecting <classes>. Got <" + child.Name + ">");
+				throw new FormatException ($"Expecting <classes>. Got <{child.Name}> ({type} {name}).");
 			}
 
 			nested = (XMLClass []) LoadRecursive (child.ChildNodes, typeof (XMLClass));
