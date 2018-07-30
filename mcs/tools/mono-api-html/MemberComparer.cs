@@ -260,7 +260,7 @@ namespace Mono.ApiTools {
 				return;
 
 			change.Append (Formatter.LesserThan);
-			for (int i = 0; i < Math.Max (srcCount, tgtCount); i++) {
+			for (int i = 0; i < System.Math.Max (srcCount, tgtCount); i++) {
 				if (i > 0)
 					change.Append (", ");
 				if (i >= srcCount) {
@@ -310,7 +310,7 @@ namespace Mono.ApiTools {
 			var tgtCount = tgt == null ? 0 : tgt.Count;
 
 			change.Append (" (");
-			for (int i = 0; i < Math.Max (srcCount, tgtCount); i++) {
+			for (int i = 0; i < System.Math.Max (srcCount, tgtCount); i++) {
 				if (i > 0)
 					change.Append (", ");
 

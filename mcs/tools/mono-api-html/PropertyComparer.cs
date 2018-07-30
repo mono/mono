@@ -88,7 +88,7 @@ namespace Mono.ApiTools {
 			var s = sAttr & MethodAttributes.MemberAccessMask;
 			// Visibility is ordered numerically (higher value = more visible).
 			// We want the most visible.
-			var visibility = (MethodAttributes) Math.Max ((int) g, (int) s);
+			var visibility = (MethodAttributes) System.Math.Max ((int) g, (int) s);
 			// Do a bitwise or with the rest of the flags
 			var g_no_visibility = gAttr & ~MethodAttributes.MemberAccessMask;
 			var s_no_visibility = sAttr & ~MethodAttributes.MemberAccessMask;
