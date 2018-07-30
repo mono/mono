@@ -37,15 +37,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class State {
 		public TextWriter Output { get; set; }
 		public Formatter Formatter { get; set; }

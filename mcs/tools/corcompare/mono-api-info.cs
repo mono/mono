@@ -22,11 +22,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.IO;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace CorCompare {
-#endif
 
 #if !EXCLUDE_DRIVER
 	class Driver

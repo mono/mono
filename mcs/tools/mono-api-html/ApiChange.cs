@@ -4,15 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class ApiChange
 	{
 		public string Header;
@@ -60,9 +53,6 @@ namespace Xamarin.ApiDiff {
 		}
 	}
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class ApiChanges : Dictionary<string, List<ApiChange>> {
 
 		public State State;

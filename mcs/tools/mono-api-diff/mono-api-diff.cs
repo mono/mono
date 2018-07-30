@@ -20,11 +20,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools
-#else
-namespace Mono.AssemblyCompare
-#endif
 {
 #if !EXCLUDE_DRIVER
 	class Driver

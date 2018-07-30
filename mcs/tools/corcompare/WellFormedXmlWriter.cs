@@ -11,11 +11,7 @@ using System.Globalization;
 using System.Collections;
 using System.Xml;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace CorCompare {
-#endif
 
 	class WellFormedXmlWriter : DefaultXmlWriter
 	{

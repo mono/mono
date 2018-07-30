@@ -29,15 +29,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class AssemblyComparer : Comparer {
 
 		XDocument source;

@@ -30,16 +30,9 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
 	// MethodComparer inherits from this one
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class ConstructorComparer : MemberComparer {
 
 		public ConstructorComparer (State state)

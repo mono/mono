@@ -30,15 +30,8 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	class NamespaceComparer : Comparer {
 
 		ClassComparer comparer;

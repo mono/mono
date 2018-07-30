@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace CorCompare {
-#endif
 
 	class TypeHelper {
 

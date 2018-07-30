@@ -31,15 +31,8 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-#if USE_MONO_API_TOOLS_NAMESPACE
 namespace Mono.ApiTools {
-#else
-namespace Xamarin.ApiDiff {
-#endif
 
-#if !USE_INTERNAL_VISIBILITY
-	public
-#endif
 	abstract class MemberComparer : Comparer {
 
 		// true if this is the first element being added or removed in the group being rendered
