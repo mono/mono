@@ -3949,7 +3949,7 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY: 
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R8:

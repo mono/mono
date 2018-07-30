@@ -3565,7 +3565,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 				 * see bug #77788
 				 */
 				if (type_has_references (klass, ftype))
-					align = MAX (align, sizeof (gpointer));
+					align = MAX (align, TARGET_SIZEOF_VOID_P);
 
 				min_align = MAX (align, min_align);
 				field_offsets [i] = real_size;
@@ -3622,7 +3622,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
 			if (type_has_references (klass, ftype)) {
-				if (field_offsets [i] % sizeof (gpointer)) {
+				if (field_offsets [i] % TARGET_SIZEOF_VOID_P) {
 					mono_class_set_type_load_failure (klass, "Reference typed field '%s' has explicit offset that is not pointer-size aligned.", field->name);
 				}
 			}
@@ -3634,7 +3634,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		}
 
 		if (klass->has_references) {
-			ref_bitmap = g_new0 (guint8, real_size / sizeof (gpointer));
+			ref_bitmap = g_new0 (guint8, real_size / TARGET_SIZEOF_VOID_P);
 
 			/* Check for overlapping reference and non-reference fields */
 			for (i = 0; i < top; i++) {
@@ -3648,7 +3648,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 					continue;
 				ftype = mono_type_get_underlying_type (field->type);
 				if (MONO_TYPE_IS_REFERENCE (ftype))
-					ref_bitmap [field_offsets [i] / sizeof (gpointer)] = 1;
+					ref_bitmap [field_offsets [i] / TARGET_SIZEOF_VOID_P] = 1;
 			}
 			for (i = 0; i < top; i++) {
 				field = &klass->fields [i];
@@ -3660,7 +3660,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 
 				// FIXME: Too much code does this
 #if 0
-				if (!MONO_TYPE_IS_REFERENCE (field->type) && ref_bitmap [field_offsets [i] / sizeof (gpointer)]) {
+				if (!MONO_TYPE_IS_REFERENCE (field->type) && ref_bitmap [field_offsets [i] / TARGET_SIZEOF_VOID_P]) {
 					mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field_offsets [i]);
 				}
 #endif
