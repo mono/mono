@@ -5,7 +5,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-G_BEGIN_DECLS
+
 
  // Growable array implementation used by sgen-new-bridge and sgen-tarjan-bridge.
 
@@ -348,4 +348,4 @@ dyn_array_ptr_set_all (DynPtrArray *dst, DynPtrArray *src)
 	dst->array.size = src->array.size;
 }
 
-G_END_DECLS
+

@@ -9,7 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-G_BEGIN_DECLS
+
 
 extern guint64 stat_scan_object_called_nursery;
 
@@ -154,4 +154,4 @@ SERIAL_DRAIN_GRAY_STACK (SgenGrayQueue *queue)
 		(ops)->drain_gray_stack = SERIAL_DRAIN_GRAY_STACK;	\
 	} while (0)
 
-G_END_DECLS
+

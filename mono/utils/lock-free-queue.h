@@ -32,7 +32,7 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
-G_BEGIN_DECLS
+
 
 //#define QUEUE_DEBUG	1
 
@@ -68,6 +68,6 @@ MONO_API void mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQu
 
 MONO_API MonoLockFreeQueueNode* mono_lock_free_queue_dequeue (MonoLockFreeQueue *q);
 
-G_END_DECLS
+
 
 #endif

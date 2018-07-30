@@ -9,7 +9,7 @@
 #ifndef __MONO_SGENQSORT_H__
 #define __MONO_SGENQSORT_H__
 
-G_BEGIN_DECLS
+
 
 /* Copied from non-inline implementation in sgen-qsort.c */
 #define DEF_QSORT_INLINE(name, type, compare) \
@@ -76,6 +76,6 @@ qsort_##name (type array[], size_t count) \
 	qsort_rec_##name (array, 0, (ssize_t)count - 1, &pivot_tmp, &swap_tmp); \
 }
 
-G_END_DECLS
+
 
 #endif

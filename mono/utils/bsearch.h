@@ -9,7 +9,9 @@
 
 #include "mono/utils/mono-compiler.h"
 
+// FIXMEcxx
 // Neither MONO_BEGIN_DECLS nor G_BEGIN_DECLS is available here. Fallback to what works.
+// This is needed for monodis.
 #ifdef __cplusplus
 extern "C" {
 #endif

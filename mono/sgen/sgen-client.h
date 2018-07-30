@@ -9,7 +9,7 @@
 
 #include "mono/sgen/sgen-pointer-queue.h"
 
-G_BEGIN_DECLS
+
 
 /*
  * Init whatever needs initing.  This is called relatively early in SGen initialization.
@@ -322,4 +322,4 @@ int mono_thread_info_get_small_id (void);
 
 #endif
 
-G_END_DECLS
+

@@ -22,7 +22,7 @@
 #include <windows.h>
 #endif
 
-G_BEGIN_DECLS
+
 
 /*
 The current Nexus 7 arm-v7a fails with:
@@ -500,6 +500,6 @@ mono_atomic_store_bool (volatile gboolean *dest, gboolean val)
 	mono_atomic_store_i32 ((volatile gint32 *)dest, (gint32)val);
 }
 
-G_END_DECLS
+
 
 #endif /* _WAPI_ATOMIC_H_ */

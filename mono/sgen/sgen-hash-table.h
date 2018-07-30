@@ -11,7 +11,7 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 /* hash tables */
 
@@ -78,7 +78,7 @@ void sgen_init_hash_table (void);
 		}							\
 	} while (0)
 
-G_END_DECLS
+
 
 #endif
 

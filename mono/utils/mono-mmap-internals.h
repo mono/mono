@@ -12,7 +12,7 @@
 
 #include "mono-compiler.h"
 
-G_BEGIN_DECLS
+
 
 void *
 mono_malloc_shared_area (int pid);
@@ -32,6 +32,6 @@ mono_valloc_set_limit (size_t size);
 int
 mono_pages_not_faulted (void *addr, size_t length);
 
-G_END_DECLS
+
 
 #endif /* __MONO_UTILS_MMAP_INTERNAL_H__ */

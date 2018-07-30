@@ -8,7 +8,7 @@
 
 #include <mono/metadata/image.h>
 
-G_BEGIN_DECLS
+
 
 MonoImage *
 mono_find_image_owner (void *ptr);
@@ -25,6 +25,6 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 gboolean
 mono_is_problematic_image (MonoImage *image);
 
-G_END_DECLS
+
 
 #endif /* __MONO_METADATA_IMAGE_INTERNALS_H__ */

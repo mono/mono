@@ -8,7 +8,7 @@
 
 #include <mono/metadata/object-internals.h>
 
-G_BEGIN_DECLS
+
 
 /* Keep in sync with System.Reflection.Emit.AssemblyBuilderAccess */
 enum MonoAssemblyBuilderAccess {
@@ -155,6 +155,6 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 guint32
 mono_image_get_methodref_token (MonoDynamicImage *assembly, MonoMethod *method, gboolean create_typespec);
 
-G_END_DECLS
+
 
 #endif  /* __MONO_METADATA_SRE_INTERNALS_H__ */

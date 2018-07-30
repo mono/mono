@@ -13,7 +13,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 
-G_BEGIN_DECLS
+
 
 gboolean
 mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoError *error);
@@ -117,6 +117,6 @@ mono_method_body_get_object_handle (MonoDomain *domain, MonoMethod *method, Mono
 MonoClass *
 mono_class_from_mono_type_handle (MonoReflectionTypeHandle h);
 
-G_END_DECLS
+
 
 #endif /* __MONO_METADATA_REFLECTION_INTERNALS_H__ */

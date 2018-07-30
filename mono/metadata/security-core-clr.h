@@ -15,7 +15,7 @@
 #include <mono/metadata/reflection.h>
 #include <mono/utils/mono-compiler.h>
 
-G_BEGIN_DECLS
+
 
 typedef enum {
 	/* We compare these values as integers, so the order must not
@@ -64,11 +64,11 @@ extern MonoSecurityCoreCLRLevel mono_security_core_clr_method_level (MonoMethod 
 extern gboolean mono_security_core_clr_is_platform_image (MonoImage *image);
 extern gboolean mono_security_core_clr_determine_platform_image (MonoImage *image);
 
-extern MONO_API gboolean mono_security_core_clr_require_elevated_permissions (void);
+MONO_API gboolean mono_security_core_clr_require_elevated_permissions (void);
 
-extern MONO_API void mono_security_core_clr_set_options (MonoSecurityCoreCLROptions options);
-extern MONO_API MonoSecurityCoreCLROptions mono_security_core_clr_get_options (void);
+MONO_API void mono_security_core_clr_set_options (MonoSecurityCoreCLROptions options);
+MONO_API MonoSecurityCoreCLROptions mono_security_core_clr_get_options (void);
 
-G_END_DECLS
+
 
 #endif	/* _MONO_METADATA_SECURITY_CORE_CLR_H_ */

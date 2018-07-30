@@ -10,7 +10,7 @@
 
 #include <mono/metadata/object-internals.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoIOSelectorJob MonoIOSelectorJob;
 
@@ -27,6 +27,6 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain);
 void
 mono_threadpool_io_cleanup (void);
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_THREADPOOL_IO_H_ */

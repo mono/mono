@@ -20,7 +20,7 @@
 
 #include <mono/utils/mono-compiler.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoImageWriter MonoImageWriter;
 
@@ -118,6 +118,6 @@ FILE * mono_img_writer_get_fp (MonoImageWriter *acfg);
 
 const char *mono_img_writer_get_temp_label_prefix (MonoImageWriter *acfg);
 
-G_END_DECLS
+
 
 #endif

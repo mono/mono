@@ -38,8 +38,6 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include "mono/sgen/gc-internal-agnostic.h"
 #include "mono/sgen/sgen-thread-pool.h"
 
-G_BEGIN_DECLS
-
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.
  * Clearing at TLAB creation is much faster, but more complex and it might expose hard
@@ -1174,7 +1172,7 @@ sgen_dummy_use (gpointer v)
 #endif
 }
 
-G_END_DECLS
+
 
 #endif /* HAVE_SGEN_GC */
 

@@ -19,7 +19,7 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoDwarfWriter MonoDwarfWriter;
 
@@ -42,6 +42,6 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 char *
 mono_dwarf_escape_path (const char *name);
 
-G_END_DECLS
+
 
 #endif

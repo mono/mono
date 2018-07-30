@@ -14,7 +14,7 @@
 
  #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 #define JSON_INDENT_VALUE 2
 
@@ -36,6 +36,6 @@ void mono_json_writer_object_begin(JsonWriter* writer);
 void mono_json_writer_object_end(JsonWriter* writer);
 void mono_json_writer_object_key(JsonWriter* writer, const gchar* format, ...);
 
-G_END_DECLS
+
 
 #endif

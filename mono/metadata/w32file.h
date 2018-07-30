@@ -20,7 +20,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-compiler.h>
 
-G_BEGIN_DECLS
+
 
 /* This is a copy of System.IO.FileAccess */
 typedef enum {
@@ -478,6 +478,6 @@ mono_w32file_get_drive_type (const gunichar2 *root_path_name);
 gboolean
 mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_W32FILE_H_ */

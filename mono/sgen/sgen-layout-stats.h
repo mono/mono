@@ -7,7 +7,7 @@
 #ifndef __MONO_SGEN_LAYOUT_STATS_H__
 #define __MONO_SGEN_LAYOUT_STATS_H__
 
-G_BEGIN_DECLS
+
 
 #ifdef SGEN_OBJECT_LAYOUT_STATISTICS
 
@@ -50,6 +50,6 @@ void sgen_object_layout_dump (FILE *out);
 
 #endif
 
-G_END_DECLS
+
 
 #endif

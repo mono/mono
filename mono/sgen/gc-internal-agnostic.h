@@ -23,7 +23,7 @@
 #include "mono/sgen/sgen-conf.h"
 #endif
 
-G_BEGIN_DECLS
+
 
 /* h indicates whether to hide or just tag.
  * (-!!h ^ p) is used instead of (h ? ~p : p) to avoid multiple mentions of p.
@@ -123,6 +123,6 @@ void mono_gc_params_set (const char* options);
 /* equivalent to options set via MONO_GC_DEBUG */
 void mono_gc_debug_set (const char* options);
 
-G_END_DECLS
+
 
 #endif

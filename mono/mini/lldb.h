@@ -8,7 +8,7 @@
 #include "config.h"
 #include "mini.h"
 
-G_BEGIN_DECLS
+
 
 void mono_lldb_init (const char *options);
 
@@ -20,6 +20,6 @@ void mono_lldb_remove_method (MonoDomain *domain, MonoMethod *method, MonoJitDyn
 
 void mono_lldb_save_specific_trampoline_info (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, gpointer code, guint32 code_len);
 
-G_END_DECLS
+
 
 #endif

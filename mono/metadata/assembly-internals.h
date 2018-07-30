@@ -11,7 +11,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 
-G_BEGIN_DECLS
+
 
 /* Flag bits for mono_assembly_names_equal_flags (). */
 typedef enum {
@@ -51,6 +51,7 @@ MonoAssembly* mono_assembly_load_with_partial_name_internal (const char *name, M
 /* If predicate returns true assembly should be loaded, if false ignore it. */
 typedef gboolean (*MonoAssemblyCandidatePredicate)(MonoAssembly *, gpointer);
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MonoAssembly*          mono_assembly_open_predicate (const char *filename,
 						     MonoAssemblyContextKind asmctx,
 						     MonoAssemblyCandidatePredicate pred,
@@ -62,7 +63,7 @@ MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, cons
 							  MonoAssemblyCandidatePredicate pred,
 							  gpointer user_data,
 							  MonoImageOpenStatus *status);
-
+G_END_DECLS // FIXMEcxx for monodis
 
 /* MonoAssemblyCandidatePredicate that compares the assembly name (name, version,
  * culture, public key token) of the candidate with the wanted name, if the
@@ -84,6 +85,6 @@ mono_assembly_get_name_internal (MonoAssembly *assembly);
 MONO_PROFILER_API MonoImage*
 mono_assembly_get_image_internal (MonoAssembly *assembly);
 
-G_END_DECLS
+
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

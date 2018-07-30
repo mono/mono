@@ -13,7 +13,7 @@
 
 #include "mini.h"
 
-G_BEGIN_DECLS
+
 
 static inline guint32
 alloc_ireg (MonoCompile *cfg)
@@ -997,6 +997,6 @@ static int ccount = 0;
 		MONO_EMIT_BOUNDS_CHECK_OFFSET ((cfg), (array_reg), MONO_STRUCT_OFFSET (array_type, array_length_field), (index_reg)); \
     } while (0)
 
-G_END_DECLS
+
 
 #endif

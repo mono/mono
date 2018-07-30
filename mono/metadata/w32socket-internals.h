@@ -19,7 +19,7 @@
 
 #include <mono/utils/w32api.h>
 
-G_BEGIN_DECLS
+
 
 #ifndef HAVE_SOCKLEN_T
 #define socklen_t int
@@ -148,6 +148,6 @@ mono_w32socket_convert_error (gint error);
 gboolean
 mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle);
 
-G_END_DECLS
+
 
 #endif // __MONO_METADATA_W32SOCKET_INTERNALS_H__

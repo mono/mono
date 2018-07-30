@@ -59,12 +59,38 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
+// MONO_API_DATA is MONO_API but without extern "C", so that
+// you don't get "extern extern". This must be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS
+// whereas that is optional for functions.
+// "extern" is redundant on functions but meaningful on data.
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API_DATA extern MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API_DATA extern MONO_API_IMPORT
+#else
+	#define MONO_API_DATA extern
+#endif
+
+#ifdef __cplusplus
+
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API extern "C" MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API extern "C" MONO_API_IMPORT
+#else
+	#define MONO_API extern "C"
+#endif
+
+#else
+
 #if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_API_EXPORT
 #elif defined(MONO_DLL_IMPORT)
 	#define MONO_API MONO_API_IMPORT
 #else
 	#define MONO_API
+#endif
+
 #endif
 
 typedef int32_t		mono_bool;

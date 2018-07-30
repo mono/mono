@@ -9,7 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-G_BEGIN_DECLS
+
 
 /*
  * Defines
@@ -145,4 +145,4 @@ copy_object_no_checks_par (GCObject *obj, SgenGrayQueue *queue)
 #undef collector_pin_object
 #undef COPY_OR_MARK_PARALLEL
 
-G_END_DECLS
+

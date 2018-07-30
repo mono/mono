@@ -24,7 +24,7 @@
 #include "reflection.h"
 #include "tabledefs.h"
 
-G_BEGIN_DECLS
+
 
 /* Definitions */
 
@@ -71,6 +71,6 @@ void ves_icall_System_Security_SecurityManager_set_SecurityEnabled (MonoBoolean 
 #define mono_security_core_clr_enabled() (FALSE)
 #endif
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_SECURITY_MANAGER_H_ */

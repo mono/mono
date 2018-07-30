@@ -19,7 +19,7 @@
 
 #define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.1"
 
-G_BEGIN_DECLS
+
 
 void
 mono_summarize_native_state_begin (void);
@@ -30,7 +30,7 @@ mono_summarize_native_state_end (void);
 void
 mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx);
 
-G_END_DECLS
+
 #endif // TARGET_OSX
 
 #endif // MONO_UTILS_NATIVE_STATE

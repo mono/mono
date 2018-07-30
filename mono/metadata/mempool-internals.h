@@ -10,7 +10,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/metadata/mempool.h"
 
-G_BEGIN_DECLS
+
 
 static inline GList*
 g_list_prepend_mempool (MonoMemPool *mp, GList *list, gpointer data)
@@ -86,6 +86,6 @@ mono_mempool_strdup_printf (MonoMemPool *pool, const char *format, ...) MONO_ATT
 long
 mono_mempool_get_bytes_allocated (void);
 
-G_END_DECLS
+
 
 #endif

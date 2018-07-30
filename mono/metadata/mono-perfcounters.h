@@ -9,7 +9,7 @@
 #include <mono/metadata/object.h>
 #include <mono/utils/mono-compiler.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoCounterSample MonoCounterSample;
 
@@ -34,6 +34,6 @@ MonoArray*  mono_perfcounter_instance_names  (MonoString *category);
 typedef gboolean (*PerfCounterEnumCallback) (char *category_name, char *name, unsigned char type, gint64 value, gpointer user_data);
 MONO_API void mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer user_data);
 
-G_END_DECLS
+
 
 #endif /* __MONO_PERFCOUNTERS_H__ */

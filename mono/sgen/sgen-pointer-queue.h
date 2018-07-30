@@ -12,7 +12,7 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct {
 	void **data;
@@ -35,6 +35,6 @@ gboolean sgen_pointer_queue_is_empty (SgenPointerQueue *queue);
 void sgen_pointer_queue_free (SgenPointerQueue *queue);
 gboolean sgen_pointer_queue_will_grow (SgenPointerQueue *queue);
 
-G_END_DECLS
+
 
 #endif

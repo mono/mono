@@ -16,7 +16,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
-G_BEGIN_DECLS
+
 
 typedef enum {
 	MONO_CHECK_MODE_NONE = 0,
@@ -227,6 +227,6 @@ G_GNUC_NORETURN MONO_ATTR_FORMAT_PRINTF(1,2) void mono_fatal_with_history(const 
 
 #endif /* defined(ENABLE_CHECKED_BUILD_THREAD) */
 
-G_END_DECLS
+
 
 #endif /* __CHECKED_BUILD_H__ */

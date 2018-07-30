@@ -9,7 +9,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/metadata-internals.h>
 
-G_BEGIN_DECLS
+
 
 void
 mono_dynstream_init (MonoDynamicStream *stream);
@@ -29,6 +29,6 @@ mono_dynstream_add_zero (MonoDynamicStream *stream, guint32 len);
 void
 mono_dynstream_data_align (MonoDynamicStream *stream);
 
-G_END_DECLS
+
 
 #endif  /* __MONO_METADATA_DYNAMIC_STREAM_INTERNALS_H__ */

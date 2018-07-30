@@ -15,7 +15,7 @@
 #include <glib.h>
 #include <mono/metadata/threads-types.h>
 
-G_BEGIN_DECLS
+
 
 #ifdef TARGET_OSX
 
@@ -54,6 +54,6 @@ mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *du
 
 #endif // TARGET_OSX
 
-G_END_DECLS
+
 
 #endif // MONO_UTILS_MERP

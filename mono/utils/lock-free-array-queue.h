@@ -13,7 +13,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-mmap.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoLockFreeArrayChunk MonoLockFreeArrayChunk;
 
@@ -43,6 +43,6 @@ gboolean mono_lock_free_array_queue_pop (MonoLockFreeArrayQueue *q, gpointer ent
 
 void mono_lock_free_array_queue_cleanup (MonoLockFreeArrayQueue *q);
 
-G_END_DECLS
+
 
 #endif

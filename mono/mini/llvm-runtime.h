@@ -13,12 +13,12 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 void
 mono_llvm_cpp_throw_exception (void);
 
-G_END_DECLS
+
 
 #endif /* __MONO_LLVM_RUNTIME_H__ */
  

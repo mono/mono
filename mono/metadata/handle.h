@@ -54,7 +54,7 @@
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
-G_BEGIN_DECLS
+
 
 /*
 Handle stack.
@@ -851,6 +851,6 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
 
-G_END_DECLS
+
 
 #endif /* __MONO_HANDLE_H__ */

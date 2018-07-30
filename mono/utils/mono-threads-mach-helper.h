@@ -17,17 +17,15 @@
 
 #ifdef __MACH__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
-void mono_thread_info_detach (void);
 
+// This is MONO_API elsewhere so at least extern "C".
+// MONO_BEGIN_DECLS and G_BEGIN_DECLS are not available here.
 #ifdef __cplusplus
-} // extern "C"
+extern "C"
 #endif
+void mono_thread_info_detach (void);
 
 #endif // __MACH__
 #endif // __MONO_THREADS_MACH_HELPER_H__

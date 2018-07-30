@@ -16,7 +16,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-coop-mutex.h>
 
-G_BEGIN_DECLS
+
 
 #define OWNER_MASK		0x0000ffff
 #define ENTRY_COUNT_MASK	0xffff0000
@@ -148,6 +148,6 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject
 void
 ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject *obj);
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_MONITOR_H_ */

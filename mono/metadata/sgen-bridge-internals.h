@@ -19,7 +19,7 @@
 #include "mono/sgen/sgen-gc.h"
 #include "mono/metadata/sgen-bridge.h"
 
-G_BEGIN_DECLS
+
 
 extern volatile gboolean mono_bridge_processing_in_progress;
 extern MonoGCBridgeCallbacks mono_bridge_callbacks;
@@ -75,7 +75,7 @@ void sgen_set_bridge_implementation (const char *name);
 void sgen_bridge_set_dump_prefix (const char *prefix);
 void sgen_init_bridge (void);
 
-G_END_DECLS
+
 
 #endif
 

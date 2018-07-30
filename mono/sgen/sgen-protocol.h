@@ -14,7 +14,7 @@
 
 #include "sgen-gc.h"
 
-G_BEGIN_DECLS
+
 
 #define PROTOCOL_HEADER_CHECK 0xde7ec7ab1ec0de
 /*
@@ -246,6 +246,6 @@ gboolean sgen_binary_protocol_flush_buffers (gboolean force);
 #undef TYPE_POINTER
 #undef TYPE_BOOL
 
-G_END_DECLS
+
 
 #endif // __MONO_SGENPROTOCOL_H__

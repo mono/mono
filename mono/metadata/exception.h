@@ -11,7 +11,7 @@
 
 MONO_BEGIN_DECLS
 
-extern MONO_API MonoException *
+MONO_API MonoException *
 mono_exception_from_name               (MonoImage *image, 
 					const char* name_space, 
 					const char *name);
@@ -33,7 +33,7 @@ MONO_API MonoException *
 mono_exception_from_token_two_strings (MonoImage *image, uint32_t token,
 						   MonoString *a1, MonoString *a2);
 
-extern MONO_API MonoException *
+MONO_API MonoException *
 mono_exception_from_name_domain        (MonoDomain *domain, MonoImage *image, 
 					const char* name_space, 
 					const char *name);

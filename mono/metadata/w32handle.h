@@ -14,7 +14,7 @@
 
 #include "mono/utils/mono-coop-mutex.h"
 
-G_BEGIN_DECLS
+
 
 #ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE (gpointer)-1
@@ -121,8 +121,10 @@ typedef enum {
 	MONO_W32HANDLE_CAP_SPECIAL_WAIT = 0x08,
 } MonoW32HandleCapability;
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 void
 mono_w32handle_init (void);
+G_END_DECLS
 
 void
 mono_w32handle_cleanup (void);
@@ -200,6 +202,6 @@ mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 }
 #endif
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_W32HANDLE_H_ */

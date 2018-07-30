@@ -11,7 +11,7 @@
 #include <mono/metadata/handle.h>
 #include <mono/utils/mono-error.h>
 
-G_BEGIN_DECLS
+
 
 MonoExceptionHandle
 mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExceptionHandle inner, MonoError *error);
@@ -86,6 +86,6 @@ mono_get_exception_out_of_memory_handle (void);
 MonoExceptionHandle
 mono_exception_new_argument_null (const char *arg, MonoError *error);
 
-G_END_DECLS
+
 
 #endif

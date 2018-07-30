@@ -10,7 +10,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/class-internals.h>
 
-G_BEGIN_DECLS
+
 
 void
 mono_classes_init (void);
@@ -87,6 +87,6 @@ mono_class_setup_runtime_info (MonoClass *klass, MonoDomain *domain, MonoVTable 
 MonoClass *
 mono_class_create_array_fill_type (void);
 
-G_END_DECLS
+
 
 #endif

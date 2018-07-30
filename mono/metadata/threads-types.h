@@ -22,7 +22,7 @@
 #include "mono/utils/mono-threads.h"
 #include "mono/metadata/class-internals.h"
 
-G_BEGIN_DECLS
+
 
 /* This is a copy of System.Threading.ThreadState */
 enum
@@ -476,6 +476,6 @@ gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes);
 #endif
 
-G_END_DECLS
+
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

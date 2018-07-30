@@ -21,7 +21,7 @@
 #include <mono/utils/w32api.h>
 #include "image.h"
 
-G_BEGIN_DECLS
+
 
 #define STATUS_SUCCESS 0x00000000L
 #define STATUS_INVALID_IMAGE_FORMAT 0xC000007BL
@@ -50,7 +50,7 @@ void mono_fixup_exe_image (MonoImage* image);
 /* Declared in image.c. */
 MonoImage* mono_image_open_from_module_handle (HMODULE module_handle, char* fname, gboolean has_entry_point, MonoImageOpenStatus* status);
 
-G_END_DECLS
+
 
 #endif /* HOST_WIN32 */
 

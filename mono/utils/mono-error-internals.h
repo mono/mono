@@ -8,7 +8,7 @@
 #include <mono/metadata/object-forward.h>
 #include "mono/utils/mono-compiler.h"
 
-G_BEGIN_DECLS
+
 
 /*Keep in sync with MonoError*/
 typedef struct {
@@ -273,6 +273,6 @@ mono_error_set_specific (MonoError *error, int error_code, const char *missing_m
 void
 mono_error_set_first_argument (MonoError *oerror, const char *first_argument);
 
-G_END_DECLS
+
 
 #endif

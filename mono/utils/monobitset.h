@@ -8,7 +8,7 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
-G_BEGIN_DECLS
+
 
 #define MONO_BITSET_BITS_PER_CHUNK (8 * sizeof (gsize))
 
@@ -123,6 +123,6 @@ MONO_API void        mono_bitset_foreach      (MonoBitSet *set, MonoBitSetFunc f
 
 MONO_API void        mono_bitset_intersection_2 (MonoBitSet *dest, const MonoBitSet *src1, const MonoBitSet *src2);
 
-G_END_DECLS
+
 
 #endif /* __MONO_BITSET_H__ */
