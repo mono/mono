@@ -582,7 +582,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 #if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
 	struct stat statbuf;
 #else
-	gchar *buffer;
+	gpointer buffer;
 #endif
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
@@ -1143,7 +1143,7 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gchar *buffer;
+	gpointer buffer;
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
