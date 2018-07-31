@@ -2392,7 +2392,24 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	ass = mono_assembly_load_full_nosearch (&aname, NULL, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, &status);
+	MonoAssemblyContextKind asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
+	const char *basedir = NULL;
+	if (!refOnly) {
+		/* Determine if the current assembly is in LoadFrom context.
+		 * If it is, we must include the executing assembly's basedir
+		 * when probing for the given assembly name, and also load the
+		 * requested assembly in LoadFrom context.
+		 */
+		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
+		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+		if (executing_assembly && mono_asmctx_get_kind (&executing_assembly->context) == MONO_ASMCTX_LOADFROM) {
+			asmctx = MONO_ASMCTX_LOADFROM;
+			basedir = executing_assembly->basedir;
+		}
+	}
+
+
+	ass = mono_assembly_load_full_nosearch (&aname, basedir, asmctx, &status);
 	mono_assembly_name_free (&aname);
 
 	if (!ass) {
