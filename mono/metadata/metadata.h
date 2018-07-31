@@ -399,8 +399,7 @@ MONO_API int            mono_metadata_parse_custom_mod  (MonoImage      *m,
 						MonoCustomMod   *dest,
 						const char      *ptr,
 						const char     **rptr);
-MONO_API MONO_RT_EXTERNAL_ONLY
-MonoArrayType *mono_metadata_parse_array       (MonoImage      *m,
+MONO_API MONO_RT_EXTERNAL_ONLY MonoArrayType *mono_metadata_parse_array       (MonoImage      *m,
 						const char      *ptr,
 						const char     **rptr);
 MONO_API void           mono_metadata_free_array        (MonoArrayType     *array);
@@ -510,7 +509,6 @@ MONO_API void    mono_metadata_decode_table_row (MonoImage *image, int table,
 MONO_API uint32_t      mono_metadata_decode_table_row_col (MonoImage *image, int table,
 					   int            idx, 
 					   unsigned int          col);
-
 MONO_END_DECLS
 
 #endif /* __MONO_METADATA_H__ */

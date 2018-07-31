@@ -46,7 +46,7 @@ mono_runtime_init          (MonoDomain *domain, MonoThreadStartCB start_cb,
 MONO_API void
 mono_runtime_cleanup       (MonoDomain *domain);
 
-MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_install_runtime_cleanup (MonoDomainFunc func);
 
 MONO_API void
@@ -127,7 +127,7 @@ mono_context_init 				   (MonoDomain *domain);
 MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_context_set				   (MonoAppContext *new_context);
 
-MONO_API MonoAppContext * 
+MONO_API MonoAppContext *
 mono_context_get				   (void);
 
 MONO_API int32_t

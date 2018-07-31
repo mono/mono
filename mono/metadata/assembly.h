@@ -23,11 +23,6 @@ MONO_API MonoAssembly* mono_assembly_load       (MonoAssemblyName *aname,
                                        	const char       *basedir, 
 				     	MonoImageOpenStatus *status);
 MONO_API MONO_RT_EXTERNAL_ONLY
-MonoAssembly* mono_assembly_load_full (MonoAssemblyName *aname,
-                                       	const char       *basedir, 
-				     	MonoImageOpenStatus *status,
-					mono_bool refonly);
-MONO_API MONO_RT_EXTERNAL_ONLY
 MonoAssembly* mono_assembly_load_from  (MonoImage *image, const char *fname,
 					MonoImageOpenStatus *status);
 MONO_API MONO_RT_EXTERNAL_ONLY
@@ -124,4 +119,3 @@ MONO_API void          mono_set_assemblies_path (const char* path);
 MONO_END_DECLS
 
 #endif
-
