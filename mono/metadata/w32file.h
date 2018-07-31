@@ -251,8 +251,7 @@ ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const
 
 #if defined (TARGET_IOS) || defined (TARGET_ANDROID)
 
-MONO_RT_EXTERNAL_ONLY
-extern gint64
+MONO_API MONO_RT_EXTERNAL_ONLY gint64
 mono_filesize_from_path (MonoString *path);
 
 extern gint64

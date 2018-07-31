@@ -31,12 +31,12 @@ MONO_API MonoThread *mono_thread_current (void);
 MONO_API void        mono_thread_set_main (MonoThread *thread);
 MONO_API MonoThread *mono_thread_get_main (void);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void mono_thread_stop (MonoThread *thread);
+MONO_API MONO_RT_EXTERNAL_ONLY void mono_thread_stop (MonoThread *thread);
 
 MONO_API void mono_thread_new_init (intptr_t tid, void* stack_start,
 				  MonoThreadStart func);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_thread_create (MonoDomain *domain, MonoThreadStart func, void* arg);
 
 MONO_API MonoThread *mono_thread_attach (MonoDomain *domain);
