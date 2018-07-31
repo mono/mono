@@ -40,15 +40,19 @@ MSBUILD_ROSLYN_DIR = $(DESTDIR)$(mono_libdir)/mono/msbuild/15.0/bin/Roslyn
 
 install-local: install-prototypes
 	$(MKINSTALLDIRS) $(TARGET_DIR)
+ifndef MCS_MODE
 	$(INSTALL_LIB) $(ROSLYN_FILES_FOR_MONO) $(TARGET_DIR)
 	$(MKINSTALLDIRS) $(MSBUILD_ROSLYN_DIR)
 	$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
 
 	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_FOR_MONO); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$(basename $$asm) . ; done)
+endif
 
 install-prototypes:
 	$(MKINSTALLDIRS) $(TARGET_DIR)/dim
+ifndef MCS_MODE
 	$(INSTALL_LIB) $(ROSLYN_DIM_FILES) $(TARGET_DIR)/dim
+endif
 
 run-test-local: test-csi
 

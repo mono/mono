@@ -79,9 +79,6 @@ CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image) 
 clean-local:
 	-rm -f $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES) $(LOG_FILE)
 
-# AOT build profile to speed up build
-ifeq ($(PROFILE),build)
-
 IMAGES = $(mscorlib_aot_image)
 
 ifdef MCS_MODE
@@ -90,14 +87,17 @@ else
 IMAGES += $(CSC_IMAGES)
 endif
 
+
+
+# AOT build profile to speed up build
+ifeq ($(PROFILE),build)
+
 all-local: $(IMAGES)
 install-local:
 
 endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
-
-IMAGES = $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES)
 
 all-local: $(IMAGES)
 install-local:
