@@ -59,12 +59,37 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
+// 1.cpp:4:12: warning: duplicate 'extern' declaration specifier
+//      [-Wduplicate-decl-specifier]
+// extern "C" extern int c;
+//
+// Therefore, remove extern on functions as always meaningless/redundant,
+// and provide MONO_API_DATA for data, that always has one and only one extern.
+
+#ifdef __cplusplus
+
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API extern "C" MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API extern "C" MONO_API_IMPORT
+#else
+	#define MONO_API extern "C"
+#endif
+
+#define MONO_API_DATA MONO_API
+
+#else
+
 #if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_API_EXPORT
 #elif defined(MONO_DLL_IMPORT)
 	#define MONO_API MONO_API_IMPORT
 #else
 	#define MONO_API
+#endif
+
+#define MONO_API_DATA extern MONO_API
+
 #endif
 
 typedef int32_t		mono_bool;

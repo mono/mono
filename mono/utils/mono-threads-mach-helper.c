@@ -24,6 +24,12 @@
 */
 void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
+
+// mono_thread_info_detach is MONO_API elsewhere, so needs to at least be extern "C" here.
+// G_BEGIN_DECLS and MONO_BEGIN_DECLS are not available here.
+#ifdef __cplusplus
+extern  "C"
+#endif
 void mono_thread_info_detach (void);
 
 static Class nsobject, nsthread, mono_dead_letter_class;
