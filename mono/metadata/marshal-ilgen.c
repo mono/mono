@@ -725,7 +725,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		if (m_class_is_valuetype (eklass))
 			esize = mono_class_native_size (eklass, NULL);
 		else
-			esize = sizeof (gpointer);
+			esize = TARGET_SIZEOF_VOID_P;
 
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
@@ -1216,7 +1216,7 @@ mono_mb_emit_save_args (MonoMethodBuilder *mb, MonoMethodSignature *sig, gboolea
 	tmp_var = mono_mb_add_local (mb, int_type);
 
 	/* alloate space on stack to store an array of pointers to the arguments */
-	mono_mb_emit_icon (mb, sizeof (gpointer) * (sig->param_count + 1));
+	mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P * (sig->param_count + 1));
 	mono_mb_emit_byte (mb, CEE_PREFIX1);
 	mono_mb_emit_byte (mb, CEE_LOCALLOC);
 	mono_mb_emit_stloc (mb, params_var);
@@ -1231,7 +1231,7 @@ mono_mb_emit_save_args (MonoMethodBuilder *mb, MonoMethodSignature *sig, gboolea
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 		/* tmp = tmp + sizeof (gpointer) */
 		if (sig->param_count)
-			mono_mb_emit_add_to_local (mb, tmp_var, sizeof (gpointer));
+			mono_mb_emit_add_to_local (mb, tmp_var, TARGET_SIZEOF_VOID_P);
 
 	}
 
@@ -1241,7 +1241,7 @@ mono_mb_emit_save_args (MonoMethodBuilder *mb, MonoMethodSignature *sig, gboolea
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 		/* tmp = tmp + sizeof (gpointer) */
 		if (i < (sig->param_count - 1))
-			mono_mb_emit_add_to_local (mb, tmp_var, sizeof (gpointer));
+			mono_mb_emit_add_to_local (mb, tmp_var, TARGET_SIZEOF_VOID_P);
 	}
 
 	return params_var;
@@ -1361,7 +1361,7 @@ emit_invoke_call (MonoMethodBuilder *mb, MonoMethod *method,
 
 		mono_mb_emit_ldarg (mb, 1);
 		if (i) {
-			mono_mb_emit_icon (mb, sizeof (gpointer) * i);
+			mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P * i);
 			mono_mb_emit_byte (mb, CEE_ADD);
 		}
 
@@ -1503,7 +1503,7 @@ handle_enum:
 		 */
 		if (t->byref && t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
 			mono_mb_emit_ldarg (mb, 1);			
-			mono_mb_emit_icon (mb, sizeof (gpointer) * i);
+			mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P * i);
 			mono_mb_emit_byte (mb, CEE_ADD);
 
 			mono_mb_emit_ldloc (mb, tmp_nullable_locals [i]);
@@ -2192,7 +2192,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			label1 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 			if (is_string)
-				esize = sizeof (gpointer);
+				esize = TARGET_SIZEOF_VOID_P;
 			else if (eklass == mono_defaults.char_class) /*can't call mono_marshal_type_size since it causes all sorts of asserts*/
 				esize = mono_pinvoke_is_unicode (m->piinfo) ? 2 : 1;
 			else
@@ -2308,7 +2308,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			int index_var, src_ptr, loc, esize;
 
 			if ((eklass == mono_defaults.stringbuilder_class) || (eklass == mono_defaults.string_class))
-				esize = sizeof (gpointer);
+				esize = TARGET_SIZEOF_VOID_P;
 			else if (eklass == mono_defaults.char_class)
 				esize = mono_pinvoke_is_unicode (m->piinfo) ? 2 : 1;
 			else
@@ -2492,7 +2492,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_marshal_load_type_info (eklass);
 
 		if (is_string)
-			esize = sizeof (gpointer);
+			esize = TARGET_SIZEOF_VOID_P;
 		else
 			esize = mono_class_native_size (eklass, NULL);
 		src_ptr = mono_mb_add_local (mb, int_type);
@@ -2654,7 +2654,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_marshal_load_type_info (eklass);
 
 		if (is_string)
-			esize = sizeof (gpointer);
+			esize = TARGET_SIZEOF_VOID_P;
 		else
 			esize = mono_class_native_size (eklass, NULL);
 
@@ -2747,7 +2747,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		}
 
 		if (is_string)
-			esize = sizeof (gpointer);
+			esize = TARGET_SIZEOF_VOID_P;
 		else if (eklass == mono_defaults.char_class)
 			esize = mono_pinvoke_is_unicode (m->piinfo) ? 2 : 1;
 		else
@@ -3273,7 +3273,7 @@ emit_virtual_stelemref_ilgen (MonoMethodBuilder *mb, const char **param_names, M
 		mono_mb_emit_byte (mb, CEE_LDIND_U2);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, CEE_SUB);
-		mono_mb_emit_icon (mb, sizeof (void*));
+		mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P);
 		mono_mb_emit_byte (mb, CEE_MUL);
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
@@ -3344,7 +3344,7 @@ emit_virtual_stelemref_ilgen (MonoMethodBuilder *mb, const char **param_names, M
 		mono_mb_emit_byte (mb, CEE_LDIND_U2);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, CEE_SUB);
-		mono_mb_emit_icon (mb, sizeof (void*));
+		mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P);
 		mono_mb_emit_byte (mb, CEE_MUL);
 		mono_mb_emit_byte (mb, CEE_ADD);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
@@ -3560,7 +3560,7 @@ emit_stelemref_ilgen (MonoMethodBuilder *mb)
 	mono_mb_emit_byte (mb, CEE_LDIND_U2);
 	mono_mb_emit_icon (mb, 1);
 	mono_mb_emit_byte (mb, CEE_SUB);
-	mono_mb_emit_icon (mb, sizeof (void*));
+	mono_mb_emit_icon (mb, TARGET_SIZEOF_VOID_P);
 	mono_mb_emit_byte (mb, CEE_MUL);
 	mono_mb_emit_byte (mb, CEE_ADD);
 	mono_mb_emit_byte (mb, CEE_LDIND_I);

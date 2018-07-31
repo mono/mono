@@ -5558,7 +5558,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	}
 
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_PTR)
-		info->native_size = sizeof (gpointer);
+		info->native_size = TARGET_SIZEOF_VOID_P;
 
 	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		info->native_size = MAX (native_size, info->native_size);
@@ -5654,8 +5654,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		align = &tmp;
 
 	if (t->byref) {
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	}
 
 	switch (t->type){
@@ -5678,8 +5678,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_ARRAY:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_R4:
 		*align = 4;
 		return 4;
@@ -5692,8 +5692,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		return 8;
 	case MONO_TYPE_GENERICINST:
 		if (!mono_type_generic_inst_is_valuetype (t)) {
-			*align = sizeof (gpointer);
-			return sizeof (gpointer);
+			*align = TARGET_SIZEOF_VOID_P;
+			return TARGET_SIZEOF_VOID_P;
 		} 
 		/* Fall through */
 	case MONO_TYPE_TYPEDBYREF:
@@ -5777,7 +5777,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 	case MONO_NATIVE_FUNC:
 	case MONO_NATIVE_LPSTRUCT:
 		*align = MONO_ABI_ALIGNOF (gpointer);
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_NATIVE_STRUCT: 
 		klass = mono_class_from_mono_type (type);
 		if (klass == mono_defaults.object_class &&
@@ -5809,8 +5809,8 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		return mspec->data.array_data.num_elem * esize;
 	}
 	case MONO_NATIVE_CUSTOM:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 		break;
 	case MONO_NATIVE_CURRENCY:
 	case MONO_NATIVE_VBBYREFSTR:
