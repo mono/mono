@@ -722,7 +722,7 @@
 		</type>
 
 		<!-- domain.c: mono_defaults.mono_method_message_class -->
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields" feature="remoting" >
+		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
 			<!-- object.c: mono_message_init -->
 			<method name="InitMessage" />
 		</type>
