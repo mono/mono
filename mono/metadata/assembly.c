@@ -1468,17 +1468,17 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	aname = mono_assembly_apply_binding (aname, &maped_name_pp);
 
 	reference = mono_assembly_loaded_full (aname, FALSE);
-	/* Still try to load from MONO_PATH or the GAC.  This is consistent
-	 * with what .NET Framework (4.7) actually does, rather than what the
-	 * documentation implies: If `LoadFile` is used to load an assembly
-	 * into "no context"/individual assembly context, the runtime will
-	 * still load assemblies from the GAC (e.g. `System.Runtime` will be
-	 * loaded if it wasn't already).
+	/* Still try to load from application base directory, MONO_PATH or the
+	 * GAC.  This is consistent with what .NET Framework (4.7) actually
+	 * does, rather than what the documentation implies: If `LoadFile` is
+	 * used to load an assembly into "no context"/individual assembly
+	 * context, the runtime will still load assemblies from the GAC or the
+	 * application base directory (e.g. `System.Runtime` will be loaded if
+	 * it wasn't already).
+	 * Moreover, those referenced assemblies are loaded in the default context.
 	 */
 	if (!reference)
-		reference = mono_assembly_load_full_nodomain (aname, MONO_ASMCTX_DEFAULT, status);
-	if (!reference)
-		reference = mono_assembly_invoke_search_hook_internal (aname, requesting, FALSE, TRUE);
+		reference = mono_assembly_load_full_internal (aname, requesting, NULL, MONO_ASMCTX_DEFAULT, status);
 	if (!reference)
 		reference = (MonoAssembly*)REFERENCE_MISSING;
 	return reference;
