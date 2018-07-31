@@ -7,6 +7,13 @@ namespace Mono.ApiTools {
 
 	class TypeHelper {
 
+		public TypeHelper (bool ignoreResolutionErrors)
+		{
+			IgnoreResolutionErrors = ignoreResolutionErrors;
+		}
+
+		public bool IgnoreResolutionErrors { get; }
+
 		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
 
 		internal bool IsPublic (TypeReference typeref)
@@ -14,11 +21,15 @@ namespace Mono.ApiTools {
 			if (typeref == null)
 				throw new ArgumentNullException ("typeref");
 
-			TypeDefinition td = typeref.Resolve ();
-			if (td == null)
-				return false;
+			try {
+				var td = typeref.Resolve ();
+				if (td == null)
+					return false;
 
-			return td.IsPublic;
+				return td.IsPublic;
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return true;
+			}
 		}
 
 		internal bool IsDelegate (TypeReference typeref)
@@ -64,7 +75,23 @@ namespace Mono.ApiTools {
 			if (child.BaseType == null)
 				return null;
 
-			return child.BaseType.Resolve ();
+			try {
+				return child.BaseType.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
+		}
+
+		internal MethodDefinition GetMethod (MethodReference method)
+		{
+			if (method == null)
+				throw new ArgumentNullException (nameof (method));
+
+			try {
+				return method.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
 		}
 
 		internal bool IsPublic (CustomAttribute att)

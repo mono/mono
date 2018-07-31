@@ -102,6 +102,8 @@ namespace Mono.ApiTools {
 
 		public bool FullApiSet { get; set; } = false;
 
+		public bool IgnoreResolutionErrors { get; set; } = false;
+
 		public List<string> SearchDirectories { get; } = new List<string> ();
 
 		public List<string> ResolveFiles { get; } = new List<string> ();
@@ -112,7 +114,7 @@ namespace Mono.ApiTools {
 
 		public void ResolveTypes ()
 		{
-			TypeHelper = new TypeHelper ();
+			TypeHelper = new TypeHelper (IgnoreResolutionErrors);
 
 			if (SearchDirectories != null) {
 				foreach (var v in SearchDirectories)
@@ -136,6 +138,8 @@ namespace Mono.ApiTools {
 		public bool FollowForwarders { get; set; } = false;
 
 		public bool FullApiSet { get; set; } = false;
+
+		public bool IgnoreResolutionErrors { get; set; } = false;
 
 		public List<string> SearchDirectories { get; set; } = new List<string> ();
 
@@ -184,6 +188,7 @@ namespace Mono.ApiTools {
 				AbiMode = config.AbiMode,
 				FollowForwarders = config.FollowForwarders,
 				FullApiSet = config.FullApiSet,
+				IgnoreResolutionErrors = config.IgnoreResolutionErrors,
 			};
 			state.SearchDirectories.AddRange (config.SearchDirectories);
 			state.ResolveFiles.AddRange (config.ResolveFiles);
@@ -1390,13 +1395,13 @@ namespace Mono.ApiTools {
 			writer.WriteEndElement (); // attributes
 		}
 
-		static Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
+		Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
 		{
 			Dictionary<string, object> mapping = null;
 
 			PopulateMapping (ref mapping, attribute);
 
-			var constructor = attribute.Constructor.Resolve ();
+			var constructor = state.TypeHelper.GetMethod (attribute.Constructor);
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
