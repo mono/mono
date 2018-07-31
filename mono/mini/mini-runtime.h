@@ -340,19 +340,11 @@ extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;
 extern MonoAotMode mono_aot_mode;
-<<<<<<< HEAD
 MONO_API_DATA const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
 MONO_API_DATA gboolean mono_use_llvm;
 MONO_API_DATA gboolean mono_use_interpreter;
-=======
-MONO_API const char *mono_build_date;
-extern gboolean mono_do_signal_chaining;
-extern gboolean mono_do_crash_chaining;
-MONO_API gboolean mono_use_llvm;
-MONO_API gboolean mono_use_interpreter;
->>>>>>> [cxx] Alternate approach to extern "C", now that most of the tree is C++ (in branch cplusplus.2).
 extern const char* mono_interp_opts_string;
 extern gboolean mono_do_single_method_regression;
 extern guint32 mono_single_method_regression_opt;

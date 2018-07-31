@@ -19,8 +19,6 @@
 #define MONO_END_DECLS   /* nothing */
 #endif
 
-MONO_BEGIN_DECLS
-
 /* VS 2010 and later have stdint.h */
 #if defined(_MSC_VER)
 
@@ -59,18 +57,18 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
-<<<<<<< HEAD
 #ifdef __cplusplus
 #define MONO_EXTERN_C extern "C"
 #else
 #define MONO_EXTERN_C /* nothing */
 #endif
 
-=======
-// MONO_API_DATA is MONO_API but without extern "C", so that
-// you don't get "extern extern". This must be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS
-// whereas that is optional for functions.
-// "extern" is redundant on functions but meaningful on data.
+// 1.cpp:4:12: warning: duplicate 'extern' declaration specifier
+//      [-Wduplicate-decl-specifier]
+// extern "C" extern int c;
+//
+// Therefore, remove extern on functions as always meaningless/redundant,
+// and provide MONO_API_DATA for data, that always has one and only one extern.
 #if defined(MONO_DLL_EXPORT)
 	#define MONO_API_DATA extern MONO_API_EXPORT
 #elif defined(MONO_DLL_IMPORT)
@@ -79,19 +77,6 @@ typedef unsigned __int64	uint64_t;
 	#define MONO_API_DATA extern
 #endif
 
-#ifdef __cplusplus
-
-#if defined(MONO_DLL_EXPORT)
-	#define MONO_API extern "C" MONO_API_EXPORT
-#elif defined(MONO_DLL_IMPORT)
-	#define MONO_API extern "C" MONO_API_IMPORT
-#else
-	#define MONO_API extern "C"
-#endif
-
-#else
-
->>>>>>> [cxx] Alternate approach to extern "C", now that most of the tree is C++ (in branch cplusplus.2).
 #if defined(MONO_DLL_EXPORT)
 	#define MONO_API MONO_EXTERN_C MONO_API_EXPORT
 #elif defined(MONO_DLL_IMPORT)
@@ -109,6 +94,8 @@ typedef unsigned __int64	uint64_t;
 #else
 #define MONO_API_DATA extern MONO_API
 #endif
+
+#define MONO_API_DATA extern MONO_API
 
 #endif
 
@@ -132,9 +119,12 @@ typedef struct {
 	void *(*calloc)      (size_t count, size_t size);
 } MonoAllocatorVTable;
 
+MONO_BEGIN_DECLS
+
 MONO_API mono_bool
 mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 
+MONO_END_DECLS
 
 #define MONO_CONST_RETURN const
 
@@ -221,7 +211,5 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 // This matches exactly windows.h LPTHREAD_START_ROUTINE.
 // Unsigned long is always 32bits on Windows, and pointer-sized otherwise.
 typedef unsigned long (MONO_STDCALL * MonoThreadStart)(void*);
-
-MONO_END_DECLS
 
 #endif /* __MONO_PUBLIB_H__ */
