@@ -211,7 +211,6 @@ mini_llvm_ins_info[] = {
 
 #if TARGET_SIZEOF_VOID_P == 4
 #define GET_LONG_IMM(ins) ((ins)->inst_l)
-#define GET_LONG_IMM(ins) (((guint64)(ins)->inst_ms_word << 32) | (guint64)(guint32)(ins)->inst_ls_word)
 #else
 #define GET_LONG_IMM(ins) ((ins)->inst_imm)
 #endif
