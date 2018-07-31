@@ -389,10 +389,10 @@ MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
-static inline MONO_ALWAYS_INLINE gpointer 			\
+static inline MONO_ALWAYS_INLINE MonoObject* 			\
 MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
-	return a;						\
+	return (MonoObject*)a;					\
 }
 
 #else
