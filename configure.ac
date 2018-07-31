@@ -5955,6 +5955,7 @@ mono/btls/Makefile
 mono/native/Makefile
 mono/utils/Makefile
 mono/utils/jemalloc/Makefile
+mono/tests/microbenchmarks/Makefile
 mono/metadata/Makefile
 mono/dis/Makefile
 mono/cil/Makefile
