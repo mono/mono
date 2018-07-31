@@ -41,7 +41,8 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This must be unique relative to corlib interface/semantics.
 #
 # Generate it with uuidgen. For example:
-# perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
+# Unix:    perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
+# Windows: for /f %a in ('uuidgen') do perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=%a/" configure.ac
 #
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
