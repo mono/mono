@@ -554,7 +554,6 @@ threads_suspend_policy_getenv_compat (void)
 }
 
 static int
-threads_suspend_policy_getenv (void)
 {
 	int policy = 0;
 	if (g_hasenv ("MONO_THREADS_SUSPEND")) {
