@@ -175,9 +175,9 @@ namespace Mono.ApiTools {
 
 	public class ApiDiffFormattedConfig {
 		public ApiDiffFormatter Formatter { get; set; }
-		public List<Regex> IgnoreAdded { get; } = new List<Regex> ();
-		public List<Regex> IgnoreNew { get; } = new List<Regex> ();
-		public List<Regex> IgnoreRemoved { get; } = new List<Regex> ();
+		public List<Regex> IgnoreAdded { get; set; } = new List<Regex> ();
+		public List<Regex> IgnoreNew { get; set; } = new List<Regex> ();
+		public List<Regex> IgnoreRemoved { get; set; } = new List<Regex> ();
 		public bool IgnoreParameterNameChanges { get; set; }
 		public bool IgnoreVirtualChanges { get; set; }
 		public bool IgnoreAddedPropertySetters { get; set; }
