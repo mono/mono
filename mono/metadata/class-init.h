@@ -66,8 +66,10 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 void
 mono_class_setup_interface_offsets (MonoClass *klass);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_class_setup_vtable (MonoClass *klass);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
