@@ -61,27 +61,55 @@ namespace System.Drawing {
 		}
 
 		internal static CocoaContext GetCGContextForNSView (IntPtr handle) {
-			IntPtr graphicsContext = objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext"));
+			if (handle == IntPtr.Zero) {
+				return null;
+			}
+
+			IntPtr focusView = objc_msgSend (objc_getClass ("NSView"), sel_registerName ("focusView"));
+			IntPtr focusHandle = IntPtr.Zero;
+			if (focusView != handle) {
+				if (!bool_objc_msgSend (handle, sel_registerName ("lockFocusIfCanDraw")))
+					return null;
+
+				focusHandle = handle;
+			}
+
+			IntPtr windowHandle = objc_msgSend (handle, sel_registerName ("window"));
+			IntPtr graphicsContext = objc_msgSend (windowHandle, sel_registerName ("graphicsContext"));
 			IntPtr ctx = objc_msgSend (graphicsContext, sel_registerName ("graphicsPort"));
-			Rect bounds = new Rect ();
+			bool isFlipped = bool_objc_msgSend (handle, sel_registerName ("isFlipped"));
+			Size size;
 
 			CGContextSaveGState (ctx);
 
-			objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
-
-			var isFlipped = bool_objc_msgSend (handle, sel_registerName ("isFlipped"));
-			if (isFlipped) {
-				CGContextTranslateCTM (ctx, bounds.origin.x, bounds.size.height);
-				CGContextScaleCTM (ctx,1.0f,-1.0f);
+			if (IntPtr.Size == 4) {
+				CGRect32 bounds = new CGRect32 ();
+				objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
+				if (isFlipped) {
+					CGContextTranslateCTM32 (ctx, bounds.origin.x, bounds.size.height);
+					CGContextScaleCTM32 (ctx, 1.0f, -1.0f);
+				}
+				size = new Size ((int) bounds.size.width, (int) bounds.size.height);
+			} else {
+				CGRect64 bounds = new CGRect64 ();
+				objc_msgSend_stret (ref bounds, handle, sel_registerName ("bounds"));
+				if (isFlipped) {
+					CGContextTranslateCTM64 (ctx, bounds.origin.x, bounds.size.height);
+					CGContextScaleCTM64 (ctx, 1.0f, -1.0f);
+				}
+				size = new Size ((int) bounds.size.width, (int) bounds.size.height);
 			}
 
-			return new CocoaContext (ctx, (int) bounds.size.width, (int) bounds.size.height);
+			return new CocoaContext (focusHandle, ctx, size.Width, size.Height);
 		}
 
 		internal static CarbonContext GetCGContextForView (IntPtr handle) {
 			IntPtr context = IntPtr.Zero;
 			IntPtr port = IntPtr.Zero;
 			IntPtr window = IntPtr.Zero;
+
+			if (IntPtr.Size == 8)
+				throw new NotSupportedException ();
 
 			window = GetControlOwner (handle);
 
@@ -90,13 +118,13 @@ namespace System.Drawing {
 				port = GetQDGlobalsThePort ();
 				CreateCGContextForPort (port, ref context);
 
-				Rect desktop_bounds = CGDisplayBounds (CGMainDisplayID ());
+				CGRect32 desktop_bounds = CGDisplayBounds32 (CGMainDisplayID ());
 
 				return new CarbonContext (port, context, (int)desktop_bounds.size.width, (int)desktop_bounds.size.height);
 			}
 
 			QDRect window_bounds = new QDRect ();
-			Rect view_bounds = new Rect ();
+			CGRect32 view_bounds = new CGRect32 ();
 
 			port = GetWindowPort (window);
 			
@@ -111,10 +139,10 @@ namespace System.Drawing {
 			if (view_bounds.size.height < 0) view_bounds.size.height = 0;
 			if (view_bounds.size.width < 0) view_bounds.size.width = 0;
 
-			CGContextTranslateCTM (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
+			CGContextTranslateCTM32 (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
 
 			// Create the original rect path and clip to it
-			Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
+			CGRect32 rc_clip = new CGRect32 (0, 0, view_bounds.size.width, view_bounds.size.height);
 
 			CGContextSaveGState (context);
 
@@ -123,10 +151,10 @@ namespace System.Drawing {
 				int length = clip_rectangles.Length;
 				
 				CGContextBeginPath (context);
-				CGContextAddRect (context, rc_clip);
+				CGContextAddRect32 (context, rc_clip);
 
 				for (int i = 0; i < length; i++) {
-					CGContextAddRect (context, new Rect (clip_rectangles [i].X, view_bounds.size.height - clip_rectangles [i].Y - clip_rectangles [i].Height, clip_rectangles [i].Width, clip_rectangles [i].Height));
+					CGContextAddRect32 (context, new CGRect32 (clip_rectangles [i].X, view_bounds.size.height - clip_rectangles [i].Y - clip_rectangles [i].Height, clip_rectangles [i].Width, clip_rectangles [i].Height));
 				}
 				CGContextClosePath (context);
 				CGContextEOClip (context);
@@ -143,7 +171,7 @@ namespace System.Drawing {
 #endif
 			} else {
 				CGContextBeginPath (context);
-				CGContextAddRect (context, rc_clip);
+				CGContextAddRect32 (context, rc_clip);
 				CGContextClosePath (context);
 				CGContextClip (context);
 			}
@@ -195,22 +223,26 @@ namespace System.Drawing {
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector);        
 		[DllImport("libobjc.dylib")]
-		public static extern void objc_msgSend_stret(ref Rect arect, IntPtr basePtr, IntPtr selector);        
+		public static extern void objc_msgSend_stret(ref CGRect32 arect, IntPtr basePtr, IntPtr selector);        
+		[DllImport("libobjc.dylib")]
+		public static extern void objc_msgSend_stret(ref CGRect64 arect, IntPtr basePtr, IntPtr selector);        
 		[DllImport ("libobjc.dylib", EntryPoint = "objc_msgSend")]
 		public static extern bool bool_objc_msgSend (IntPtr handle, IntPtr selector);
+		[DllImport ("libobjc.dylib", EntryPoint = "objc_msgSend")]
+		public static extern bool bool_objc_msgSend_IntPtr (IntPtr handle, IntPtr selector, IntPtr argument);
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr sel_registerName(string selectorName);         
 		#endregion
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr CGMainDisplayID ();
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern Rect CGDisplayBounds (IntPtr display);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGDisplayBounds")]
+		internal static extern CGRect32 CGDisplayBounds32 (IntPtr display);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetBounds (IntPtr vHnd, ref Rect r);
+		internal static extern int HIViewGetBounds (IntPtr vHnd, ref CGRect32 r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewConvertRect (ref Rect r, IntPtr a, IntPtr b);
+		internal static extern int HIViewConvertRect (ref CGRect32 r, IntPtr a, IntPtr b);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlOwner (IntPtr aView);
@@ -229,28 +261,22 @@ namespace System.Drawing {
 		internal static extern void QDBeginCGContext (IntPtr port, ref IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void QDEndCGContext (IntPtr port, ref IntPtr context);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextClipToRect (IntPtr context, Rect clip);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextClipToRects (IntPtr context, Rect [] clip_rects, int count);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextTranslateCTM (IntPtr context, float tx, float ty);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextScaleCTM (IntPtr context, float x, float y);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGContextTranslateCTM")]
+		internal static extern void CGContextTranslateCTM32 (IntPtr context, float tx, float ty);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGContextScaleCTM")]
+		internal static extern void CGContextScaleCTM32 (IntPtr context, float x, float y);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGContextTranslateCTM")]
+		internal static extern void CGContextTranslateCTM64 (IntPtr context, double tx, double ty);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGContextScaleCTM")]
+		internal static extern void CGContextScaleCTM64 (IntPtr context, double x, double y);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextFlush (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextSynchronize (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr CGPathCreateMutable ();
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGPathAddRects (IntPtr path, IntPtr _void, Rect [] rects, int count);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGPathAddRect (IntPtr path, IntPtr _void, Rect rect);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextAddRects (IntPtr context, Rect [] rects, int count);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextAddRect (IntPtr context, Rect rect);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon", EntryPoint = "CGContextAddRect")]
+		internal static extern void CGContextAddRect32 (IntPtr context, CGRect32 rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextBeginPath (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -272,30 +298,52 @@ namespace System.Drawing {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextSetRGBFillColor (IntPtr context, float red, float green, float blue, float alpha);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextFillRect (IntPtr context, Rect rect);
+		internal static extern void CGContextFillRect (IntPtr context, CGRect32 rect);
 #endif
 	}
 
-	internal struct CGSize {
+	internal struct CGSize32 {
 		public float width;
 		public float height;
 	}
 
-	internal struct CGPoint {
+	internal struct CGPoint32 {
 		public float x;
 		public float y;
 	}
 
-	internal struct Rect {
-		public Rect (float x, float y, float width, float height) {
+	internal struct CGRect32 {
+		public CGRect32 (float x, float y, float width, float height) {
 			this.origin.x = x;
 			this.origin.y = y;
 			this.size.width = width;
 			this.size.height = height;
 		}
 
-		public CGPoint origin;
-		public CGSize size;
+		public CGPoint32 origin;
+		public CGSize32 size;
+	}
+
+	internal struct CGSize64 {
+		public double width;
+		public double height;
+	}
+
+	internal struct CGPoint64 {
+		public double x;
+		public double y;
+	}
+
+	internal struct CGRect64 {
+		public CGRect64 (double x, double y, double width, double height) {
+			this.origin.x = x;
+			this.origin.y = y;
+			this.size.width = width;
+			this.size.height = height;
+		}
+
+		public CGPoint64 origin;
+		public CGSize64 size;
 	}
 
 	internal struct QDRect
@@ -332,14 +380,16 @@ namespace System.Drawing {
 		}
 	}
 
-	internal struct CocoaContext : IMacContext
+	internal class CocoaContext : IMacContext
 	{
+		public IntPtr focusHandle;
 		public IntPtr ctx;
 		public int width;
 		public int height;
 
-		public CocoaContext (IntPtr ctx, int width, int height)
+		public CocoaContext (IntPtr focusHandle, IntPtr ctx, int width, int height)
 		{
+			this.focusHandle = focusHandle;
 			this.ctx = ctx;
 			this.width = width;
 			this.height = height;
@@ -352,7 +402,13 @@ namespace System.Drawing {
 
 		public void Release ()
 		{
-			MacSupport.CGContextRestoreGState(ctx);
+			if (IntPtr.Zero != focusHandle)
+				MacSupport.CGContextFlush (ctx);
+
+			MacSupport.CGContextRestoreGState (ctx);
+
+			if (IntPtr.Zero != focusHandle)
+				MacSupport.objc_msgSend (focusHandle, MacSupport.sel_registerName ("unlockFocus"));
 		}
 	}
 
