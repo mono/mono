@@ -41,7 +41,7 @@ Mono_Posix_Stdlib_SetLastError (int error_number)
  * we assume that the XPG version is present.
  */
 
-#ifdef _GNU_SOURCE
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
 #define mph_min(x,y) ((x) <= (y) ? (x) : (y))
 
 /* If you pass an invalid errno value to glibc 2.3.2's strerror_r, you get
