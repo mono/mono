@@ -560,7 +560,8 @@ mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_f
 	}
 	MONO_HANDLE_SET (setup, configuration_file, config_file);
 
-	MonoAppDomainHandle ad = mono_domain_create_appdomain_internal (friendly_name, setup, error);
+	MonoAppDomainHandle ad;
+	ad = mono_domain_create_appdomain_internal (friendly_name, setup, error);
 	goto_if_nok (error, leave);
 
 	result = mono_domain_from_appdomain_handle (ad);
@@ -600,7 +601,8 @@ mono_domain_set_config_checked (MonoDomain *domain, const char *base_dir, const 
 	MonoStringHandle base_dir_str = mono_string_new_handle (domain, base_dir, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SET (setup, application_base, base_dir_str);
-	MonoStringHandle config_file_name_str = mono_string_new_handle (domain, config_file_name, error);
+	MonoStringHandle config_file_name_str;
+	config_file_name_str = mono_string_new_handle (domain, config_file_name, error);
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SET (setup, configuration_file, config_file_name_str);
 leave:
