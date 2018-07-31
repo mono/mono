@@ -7,7 +7,7 @@ namespace Mono.ApiTools {
 
 	class TypeHelper {
 
-		public AssemblyResolver Resolver = new AssemblyResolver ();
+		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
 
 		internal bool IsPublic (TypeReference typeref)
 		{

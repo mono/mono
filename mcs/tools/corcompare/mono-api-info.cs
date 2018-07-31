@@ -106,6 +106,8 @@ namespace Mono.ApiTools {
 
 		public List<string> ResolveFiles { get; } = new List<string> ();
 
+		public List<Stream> ResolveStreams { get; } = new List<Stream> ();
+
 		public TypeHelper TypeHelper { get; private set; }
 
 		public void ResolveTypes ()
@@ -120,6 +122,10 @@ namespace Mono.ApiTools {
 				foreach (var v in ResolveFiles)
 					TypeHelper.Resolver.ResolveFile (v);
 			}
+			if (ResolveStreams != null) {
+				foreach (var v in ResolveStreams)
+					TypeHelper.Resolver.ResolveStream (v);
+			}
 		}
 	}
 
@@ -131,9 +137,11 @@ namespace Mono.ApiTools {
 
 		public bool FullApiSet { get; set; } = false;
 
-		public List<string> SearchDirectories { get; } = new List<string> ();
+		public List<string> SearchDirectories { get; set; } = new List<string> ();
 
-		public List<string> ResolveFiles { get; } = new List<string> ();
+		public List<string> ResolveFiles { get; set; } = new List<string> ();
+
+		public List<Stream> ResolveStreams { get; set; } = new List<Stream> ();
 	}
 
 	public static class ApiInfo
@@ -177,8 +185,9 @@ namespace Mono.ApiTools {
 				FollowForwarders = config.FollowForwarders,
 				FullApiSet = config.FullApiSet,
 			};
-			state.ResolveFiles.AddRange (config.ResolveFiles);
 			state.SearchDirectories.AddRange (config.SearchDirectories);
+			state.ResolveFiles.AddRange (config.ResolveFiles);
+			state.ResolveStreams.AddRange (config.ResolveStreams);
 
 			Generate (assemblyPaths, assemblyStreams, outStream, state);
 		}
