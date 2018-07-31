@@ -1226,7 +1226,10 @@ namespace System
                if (BitConverter.IsLittleEndian)
                    ulomidLE = value;
                else
-                   umid = (uint)(value >> 32); ulo = (uint)value;
+               {
+                   umid = (uint)(value >> 32);
+                   ulo = (uint)value;
+               }
             }
         }
 
