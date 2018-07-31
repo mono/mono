@@ -102,10 +102,14 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
-#include "icalls.h"
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
+#endif
+
+/* icalls are defined ICALL_EXPORT so they are not static */
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #endif
 
 //#define MONO_DEBUG_ICALLARRAY
@@ -2275,6 +2279,16 @@ ves_icall_MonoField_ResolveType (MonoReflectionFieldHandle ref_field, MonoError 
 	}
 	return mono_type_get_object_handle (domain, type, error);
 }
+
+/* From MonoProperty.cs */
+typedef enum {
+	PInfo_Attributes = 1,
+	PInfo_GetMethod  = 1 << 1,
+	PInfo_SetMethod  = 1 << 2,
+	PInfo_ReflectedType = 1 << 3,
+	PInfo_DeclaringType = 1 << 4,
+	PInfo_Name = 1 << 5
+} PInfo;
 
 ICALL_EXPORT void
 ves_icall_MonoPropertyInfo_get_property_info (MonoReflectionPropertyHandle property, MonoPropertyInfo *info, PInfo req_info, MonoError *error)
@@ -6521,7 +6535,7 @@ ves_icall_System_Environment_get_UserName (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-MonoStringHandle
+static MonoStringHandle
 mono_icall_get_machine_name (MonoError *error)
 {
 	error_init (error);

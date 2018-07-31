@@ -43,7 +43,7 @@ typedef struct _MonoDynamicMethod MonoDynamicMethod;
 #else
 #define ICALL_DECL_EXPORT
 /* Can't be static as icall.c defines icalls referenced by icall-tables.c */
-#define ICALL_EXPORT
+#define ICALL_EXPORT MONO_EXTERN_C
 #endif
 
 typedef enum {
