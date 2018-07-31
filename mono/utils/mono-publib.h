@@ -59,17 +59,12 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
-// MONO_API_DATA is MONO_API but without extern "C", so that
-// you don't get "extern extern". This must be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS
-// whereas that is optional for functions.
-// "extern" is redundant on functions but meaningful on data.
-#if defined(MONO_DLL_EXPORT)
-	#define MONO_API_DATA extern MONO_API_EXPORT
-#elif defined(MONO_DLL_IMPORT)
-	#define MONO_API_DATA extern MONO_API_IMPORT
-#else
-	#define MONO_API_DATA extern
-#endif
+// 1.cpp:4:12: warning: duplicate 'extern' declaration specifier
+//      [-Wduplicate-decl-specifier]
+// extern "C" extern int c;
+//
+// Therefore, remove extern on functions as always meaningless/redundant,
+// and provide MONO_API_DATA for data, that always has one and only one extern.
 
 #ifdef __cplusplus
 
@@ -81,6 +76,8 @@ typedef unsigned __int64	uint64_t;
 	#define MONO_API extern "C"
 #endif
 
+#define MONO_API_DATA MONO_API
+
 #else
 
 #if defined(MONO_DLL_EXPORT)
@@ -90,6 +87,8 @@ typedef unsigned __int64	uint64_t;
 #else
 	#define MONO_API
 #endif
+
+#define MONO_API_DATA extern MONO_API
 
 #endif
 
