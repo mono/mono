@@ -108,8 +108,6 @@
 #include <sys/utsname.h>
 #endif
 
- // lack of prototypes
-
 /* icalls are defined ICALL_EXPORT so they are not static */
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wmissing-prototypes"
@@ -2286,6 +2284,16 @@ ves_icall_MonoField_ResolveType (MonoReflectionFieldHandle ref_field, MonoError 
 	}
 	return mono_type_get_object_handle (domain, type, error);
 }
+
+/* From MonoProperty.cs */
+typedef enum {
+	PInfo_Attributes = 1,
+	PInfo_GetMethod  = 1 << 1,
+	PInfo_SetMethod  = 1 << 2,
+	PInfo_ReflectedType = 1 << 3,
+	PInfo_DeclaringType = 1 << 4,
+	PInfo_Name = 1 << 5
+} PInfo;
 
 ICALL_EXPORT void
 ves_icall_MonoPropertyInfo_get_property_info (MonoReflectionPropertyHandle property, MonoPropertyInfo *info, PInfo req_info, MonoError *error)
