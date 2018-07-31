@@ -10262,8 +10262,16 @@ static void GetExecutionContextAndHeaderInfo(MonoMethod* method, uint32_t* execu
 		if (il2cpp_mono_methods_match(il2cpp_get_seq_point_method(seqPoint), method))
 		{
             Il2CppMethodExecutionContextInfoIndex *index = &g_il2cpp_metadata->methodExecutionContextInfoIndexes[seqPoint->methodIndex];
-            *executionContextInfoCount = index->count;
-            *executionContextInfo = &g_il2cpp_metadata->methodExecutionContextInfos[index->tableIndex][index->startIndex];
+            if (index->count != -1)
+            {
+                *executionContextInfoCount = index->count;
+                *executionContextInfo = &g_il2cpp_metadata->methodExecutionContextInfos[index->tableIndex][index->startIndex];
+            }
+            else
+            {
+                *executionContextInfoCount = 0;
+                *executionContextInfo = NULL;
+            }
             *headerInfo = &g_il2cpp_metadata->methodHeaderInfos[seqPoint->methodIndex];
             *scopes = &g_il2cpp_metadata->methodScopes[(*headerInfo)->startScope];
 			return;
@@ -10528,7 +10536,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		g_free (locals_map);
 #else
 		uint32_t executionInfoCount, localVariableCount = 0, i;
-		const Il2CppMethodExecutionContextInfo* executionContextInfo;
+		const Il2CppMethodExecutionContextInfo* executionContextInfo = NULL;
 		const Il2CppMethodHeaderInfo* headerInfo;
         const Il2CppMethodScope* scopes;
 
