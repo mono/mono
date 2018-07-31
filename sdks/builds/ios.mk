@@ -119,6 +119,8 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--without-sigaltstack \
+	--disable-cooperative-suspend \
+	--disable-hybird-suspend \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
@@ -249,6 +251,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
+	--disable-cooperative-suspend \
+	--disable-hybrid-suspend \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
