@@ -994,6 +994,8 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	int num_params, i;
 
 	if (!registered) {
+// Cast the first parameter to gpointer; macros do not recurse.
+#define mono_register_jit_icall(func, name, sig, no_wrapper) (mono_register_jit_icall ((gpointer)(func), (name), (sig), (no_wrapper)))
 		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
