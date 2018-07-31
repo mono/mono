@@ -1029,6 +1029,10 @@ typedef struct {
 	gpointer infos [MONO_ZERO_LEN_ARRAY];
 } MonoMethodRuntimeGenericContext;
 
+#ifndef MONO_SIZEOF_MonoMethodRuntimeGenericContext
+/* Can't define this in object-offsets.h */
+#define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
+#endif
 #define MONO_SIZEOF_METHOD_RUNTIME_GENERIC_CONTEXT (MONO_ABI_SIZEOF (MonoMethodRuntimeGenericContext) - MONO_ZERO_LEN_ARRAY * TARGET_SIZEOF_VOID_P)
 
 #define MONO_RGCTX_SLOT_MAKE_RGCTX(i)	(i)
