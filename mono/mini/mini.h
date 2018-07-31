@@ -29,6 +29,7 @@
 #include "mono/metadata/object-internals.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/abi-details.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-machine.h>
 #include <mono/utils/mono-stack-unwinding.h>
@@ -1029,7 +1030,7 @@ typedef struct {
 	gpointer infos [MONO_ZERO_LEN_ARRAY];
 } MonoMethodRuntimeGenericContext;
 
-#ifndef MONO_SIZEOF_MonoMethodRuntimeGenericContext
+#ifndef MONO_CROSS_COMPILE
 /* Can't define this in object-offsets.h */
 #define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
 #endif
