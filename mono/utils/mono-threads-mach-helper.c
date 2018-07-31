@@ -8,10 +8,9 @@
  * (C) 2014 Xamarin Inc
  */
 
-#include "config.h"
-
 #if defined(__MACH__)
-
+#include "config.h"
+#include <glib.h>
 #include <stdio.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
@@ -26,11 +25,9 @@ void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
 
 // mono_thread_info_detach is MONO_API elsewhere, so needs to at least be extern "C" here.
-// G_BEGIN_DECLS and MONO_BEGIN_DECLS are not available here.
-#ifdef __cplusplus
-extern  "C"
-#endif
+G_BEGIN_DECLS
 void mono_thread_info_detach (void);
+G_END_DECLS
 
 static Class nsobject, nsthread, mono_dead_letter_class;
 static SEL dealloc, release, currentThread, threadDictionary, init, alloc, objectForKey, setObjectForKey;
