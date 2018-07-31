@@ -36,13 +36,17 @@ bin_SCRIPTS = \
 	mono-test-install	\
 	peverify		\
 	mcs			\
-	csc			\
-	csc-dim		\
-	vbc			\
-	csi			\
 	mono-package-runtime	\
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
+
+ifndef MCS_MODE
+bin_SCRIPTS += \
+	csc			\
+	csc-dim		\
+	vbc			\
+	csi
+endif
 
 if INSTALL_4_x
 bin_SCRIPTS += $(scripts_4_0)
