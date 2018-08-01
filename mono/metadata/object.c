@@ -4669,11 +4669,6 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	if (0) { // This is at the top instead of the bottom to avoid goto around initialization.
-return_null:
-		return MONO_HANDLE_NEW (MonoObject, NULL);
-	}
-
 	MonoClass * const klass = mono_class_get_unhandled_exception_event_args_class ();
 	mono_class_init (klass);
 
@@ -4682,18 +4677,22 @@ return_null:
 	goto_if_nok (error, return_null);
 	g_assert (method);
 
-	MonoBoolean is_terminating = TRUE;
-	gpointer args [ ] = {
-		MONO_HANDLE_RAW (exc), // FIXMEcoop
-		&is_terminating
-	};
+	MonoBoolean is_terminating;
+	is_terminating = TRUE;
+	gpointer args [2];
+	args [0] = MONO_HANDLE_RAW (exc); // FIXMEcoop
+	args [1] = &is_terminating;
 
-	MonoObjectHandle obj = mono_object_new_handle (mono_domain_get (), klass, error);
+	MonoObjectHandle obj;
+	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
 	mono_runtime_invoke_handle (method, obj, args, error);
 	goto_if_nok (error, return_null);
 	return obj;
+
+return_null:
+	return MONO_HANDLE_NEW (MonoObject, NULL);
 }
 
 /* Used in mono_unhandled_exception */
