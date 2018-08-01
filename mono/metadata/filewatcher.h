@@ -19,19 +19,24 @@
 #include <unistd.h>
 #endif
 
-
-
+ICALL_EXPORT
 gint ves_icall_System_IO_FSW_SupportsFSW (void);
 
+ICALL_EXPORT
 gboolean ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
 							MonoString **filename,
 							gint *code,
 							gint *reqnum);
-
+ICALL_EXPORT
 int ves_icall_System_IO_InotifyWatcher_GetInotifyInstance (void);
+
+ICALL_EXPORT
 int ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *directory, gint32 mask);
+
+ICALL_EXPORT
 int ves_icall_System_IO_InotifyWatcher_RemoveWatch (int fd, gint32 watch_descriptor);
 
+ICALL_EXPORT
 int ves_icall_System_IO_KqueueMonitor_kevent_notimeout (int *kq, gpointer changelist, int nchanges, gpointer eventlist, int nevents);
 
 #ifdef HOST_IOS // This will obsoleted by System.Native as soon as it's ported to iOS
@@ -39,7 +44,4 @@ MONO_API char* SystemNative_RealPath(const char* path);
 MONO_API void SystemNative_Sync (void);
 #endif
 
-
-
 #endif
-

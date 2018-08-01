@@ -24,8 +24,6 @@
 #include "reflection.h"
 #include "tabledefs.h"
 
-
-
 /* Definitions */
 
 #define MONO_ECMA_KEY_LENGTH			16
@@ -62,7 +60,10 @@ void mono_security_set_mode (MonoSecurityMode mode);
 MonoSecurityMode mono_security_get_mode (void);
 
 /* internal calls */
+ICALL_EXPORT
 MonoBoolean ves_icall_System_Security_SecurityManager_get_SecurityEnabled (void);
+
+ICALL_EXPORT
 void ves_icall_System_Security_SecurityManager_set_SecurityEnabled (MonoBoolean value);
 
 #ifndef DISABLE_SECURITY
@@ -70,7 +71,5 @@ void ves_icall_System_Security_SecurityManager_set_SecurityEnabled (MonoBoolean 
 #else
 #define mono_security_core_clr_enabled() (FALSE)
 #endif
-
-
 
 #endif /* _MONO_METADATA_SECURITY_MANAGER_H_ */

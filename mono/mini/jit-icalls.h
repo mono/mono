@@ -9,8 +9,6 @@
 
 #include "mini.h"
 
-
-
 void* mono_ldftn (MonoMethod *method);
 
 void* mono_ldvirtfn (MonoObject *obj, MonoMethod *method);
@@ -103,6 +101,7 @@ double mono_lconv_to_r8_un (guint64 a);
 
 gpointer mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointer *this_arg);
 
+ICALL_EXPORT
 MonoString*
 ves_icall_mono_ldstr (MonoDomain *domain, MonoImage *image, guint32 idx);
 
@@ -188,15 +187,18 @@ mono_object_isinst_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cach
 MonoObject*
 mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache);
 
+ICALL_EXPORT
 void
 ves_icall_runtime_class_init (MonoVTable *vtable);
 
 void
 mono_generic_class_init (MonoVTable *vtable);
 
+ICALL_EXPORT
 void
 ves_icall_mono_delegate_ctor (MonoObject *this_obj, MonoObject *target, gpointer addr);
 
+ICALL_EXPORT
 void
 ves_icall_mono_delegate_ctor_interp (MonoObject *this_obj, MonoObject *target, gpointer addr);
 
