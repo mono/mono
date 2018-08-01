@@ -15,6 +15,7 @@
 #include <objc/runtime.h>
 #include <objc/message.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-publib.h>
 
 /*
  * We cannot include mono-threads.h as this includes io-layer internal types
@@ -23,11 +24,8 @@
 */
 void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
-
-// mono_thread_info_detach is MONO_API elsewhere, so needs to at least be extern "C" here.
-G_BEGIN_DECLS
-void mono_thread_info_detach (void);
-G_END_DECLS
+MONO_API void
+mono_thread_info_detach (void);
 
 static Class nsobject, nsthread, mono_dead_letter_class;
 static SEL dealloc, release, currentThread, threadDictionary, init, alloc, objectForKey, setObjectForKey;
