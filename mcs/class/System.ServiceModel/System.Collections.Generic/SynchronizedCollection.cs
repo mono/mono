@@ -105,7 +105,9 @@ namespace System.Collections.Generic
 
 		public void Add (T item)
 		{
-			InsertItem (list.Count, item);
+			lock (root) {
+				InsertItem (list.Count, item);
+			}
 		}
 
 		public void Clear ()
