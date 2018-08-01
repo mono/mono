@@ -188,27 +188,10 @@ MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInterna
 ICALL_EXPORT
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
 
-<<<<<<< HEAD
-ICALL_EXPORT
-int ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error);
-
 ICALL_EXPORT
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
 
 ICALL_EXPORT
-=======
-int/*MonoThreadPriority FIXMEcplusplus*/
-ves_icall_System_Threading_Thread_GetPriority  (MonoThreadObjectHandle this_obj, MonoError *error);
-
-void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int/*MonoThreadPriority FIXMEcplusplus*/ priority, MonoError *error);
-
-MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
-
->>>>>>> [cxx] Enums are not ints and are dealt with either by casting or providing operator overloads.
 void ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this_obj, MonoObject *culture);
 
 ICALL_EXPORT
@@ -331,6 +314,7 @@ void
 ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ICALL_EXPORT
 void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
 
@@ -340,15 +324,18 @@ void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread
 ICALL_EXPORT
 guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
 =======
+=======
+ICALL_EXPORT
+>>>>>>> [cxx] Add many missing ICALL_EXPORT.
 void
 ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error);
 
-//FIXMEcplusplus
-//MonoThreadState
-guint32
+ICALL_EXPORT
+guint32 //FIXMEcxx MonoThreadState
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
 >>>>>>> [cxx] Enums are not ints and are dealt with either by casting or providing operator overloads.
 
