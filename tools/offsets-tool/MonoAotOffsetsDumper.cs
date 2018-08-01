@@ -76,7 +76,7 @@ namespace CppSharp
             {
                 return Targets.Where ((t) => t.Platform == TargetPlatform.iOS ||
                     t.Platform == TargetPlatform.WatchOS ||
-									  t.Platform == TargetPlatform.OSX);
+                                      t.Platform == TargetPlatform.OSX);
             }
         }
 
@@ -174,23 +174,23 @@ namespace CppSharp
 
         public static void SetupOtherTargets()
         {
-			if (Abis.Count != 1) {
-				Console.WriteLine ("Exactly --abi= argument is required.");
-				Environment.Exit (1);
-			}
-			string abi = Abis [0];
-			if (abi == "i386-apple-darwin11.2.0") {
-				Targets.Add(new Target {
-						Platform = TargetPlatform.OSX,
-						Triple = "i386-apple-darwin11.2.0",
-						Build = "",
-						Defines = { "TARGET_X86" },
-				});
-			} else {
-				Console.WriteLine ($"Unsupported abi: {abi}.");
-				Environment.Exit (1);
-			}
-		}
+            if (Abis.Count != 1) {
+                Console.WriteLine ("Exactly --abi= argument is required.");
+                Environment.Exit (1);
+            }
+            string abi = Abis [0];
+            if (abi == "i386-apple-darwin11.2.0") {
+                Targets.Add(new Target {
+                        Platform = TargetPlatform.OSX,
+                        Triple = "i386-apple-darwin11.2.0",
+                        Build = "",
+                        Defines = { "TARGET_X86" },
+                });
+            } else {
+                Console.WriteLine ($"Unsupported abi: {abi}.");
+                Environment.Exit (1);
+            }
+        }
 
         static bool GetParentSubDirectoryPath(string parent, out string subdir)
         {
@@ -233,8 +233,8 @@ namespace CppSharp
             if (Directory.Exists(MaccoreDir) || GenIOS)
                 SetupiOSTargets();
 
-			if (Targets.Count == 0)
-				SetupOtherTargets ();
+            if (Targets.Count == 0)
+                SetupOtherTargets ();
 
             foreach (var target in Targets)
              {
@@ -378,13 +378,13 @@ namespace CppSharp
                 }
                 break;
             }
-			case TargetPlatform.OSX:
+            case TargetPlatform.OSX:
                 if (MonoDir == "") {
                     Console.Error.WriteLine ("The --mono= option is required when targeting osx.");
                     Environment.Exit (1);
                 }
-				targetBuild = ".";
-				break;
+                targetBuild = ".";
+                break;
             default:
                 throw new ArgumentOutOfRangeException ();
             }
@@ -704,18 +704,18 @@ namespace CppSharp
 
         static void Dump(ASTContext ctx, ParserTargetInfo targetInfo, Target target)
         {
-			string targetFile;
+            string targetFile;
 
-			if (!string.IsNullOrEmpty (OutputFile)) {
-				targetFile = OutputFile;
-			} else {
-				targetFile = target.Triple;
+            if (!string.IsNullOrEmpty (OutputFile)) {
+                targetFile = OutputFile;
+            } else {
+                targetFile = target.Triple;
 
-				if (!string.IsNullOrEmpty (OutputDir))
-					targetFile = Path.Combine (OutputDir, targetFile);
+                if (!string.IsNullOrEmpty (OutputDir))
+                    targetFile = Path.Combine (OutputDir, targetFile);
 
-				targetFile += ".h";
-			}
+                targetFile += ".h";
+            }
 
             using (var writer = new StreamWriter(targetFile))
             //using (var writer = Console.Out)
