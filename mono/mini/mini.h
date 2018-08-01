@@ -177,6 +177,13 @@ typedef struct {
  */
 typedef MonoStackFrameInfo StackFrameInfo;
 
+#ifndef MONO_CROSS_COMPILE
+/* Can't define these in object-offsets.h */
+#define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
+#define MONO_SIZEOF_MonoLMF sizeof (MonoLMF)
+#define MONO_SIZEOF_MonoTypedRef sizeof (MonoTypedRef)
+#endif
+
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
 	for (b = 0; b < n; b++)\
@@ -1030,10 +1037,6 @@ typedef struct {
 	gpointer infos [MONO_ZERO_LEN_ARRAY];
 } MonoMethodRuntimeGenericContext;
 
-#ifndef MONO_CROSS_COMPILE
-/* Can't define this in object-offsets.h */
-#define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
-#endif
 #define MONO_SIZEOF_METHOD_RUNTIME_GENERIC_CONTEXT (MONO_ABI_SIZEOF (MonoMethodRuntimeGenericContext) - MONO_ZERO_LEN_ARRAY * TARGET_SIZEOF_VOID_P)
 
 #define MONO_RGCTX_SLOT_MAKE_RGCTX(i)	(i)
