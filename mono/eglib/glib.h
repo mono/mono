@@ -1159,6 +1159,20 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
+
+#ifdef ENABLE_ICALL_EXPORT
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#define ICALL_DECL_EXPORT MONO_API
+#define ICALL_EXPORT MONO_API
+#else
+#define ICALL_DECL_EXPORT
+/* Can't be static as icall.c defines icalls referenced by icall-tables.c */
+#ifdef __cplusplus
+#define ICALL_EXPORT extern "C"
+#else
+#define ICALL_EXPORT /* nothing */
+#endif
+#endif
  
 G_END_DECLS
 
