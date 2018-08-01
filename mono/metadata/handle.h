@@ -54,7 +54,6 @@
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
-G_BEGIN_DECLS
 
 /*
 Handle stack.
@@ -245,9 +244,9 @@ Icall macros
 // Return a raw pointer from coop handle.
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
-		void* __result = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return mono_typed_handle_cast_voidptr ((HANDLE), __result); \
+		return __result;				\
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -326,9 +325,9 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 	do {	\
 		CLEAR_STACK_WATERMARK	\
 		CLEAR_ICALL_COMMON	\
-		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return mono_typed_handle_cast_voidptr ((HANDLE), __ret); \
+		return __ret;	\
 	} while (0); } while (0)
 
 /*
@@ -378,9 +377,18 @@ Handle macros/functions
  * #endif
  */
 
-#if MONO_TYPE_SAFE_HANDLES
+// NOTE: C++11 language dependency. A C++98 solution is available but was rejected.
+#ifdef __cplusplus
+#define MONO_HANDLE_AUTO auto
+#else
+#define MONO_HANDLE_AUTO gpointer
+#endif
 
-#define MONO_TYPE_SAFE_HANDLE_FUNCTIONS(TYPE)			\
+#if MONO_TYPE_SAFE_HANDLES
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
+					 TYPED_HANDLE_NAME (TYPE),		\
+					 TYPED_OUT_HANDLE_NAME (TYPE);		\
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
@@ -389,74 +397,11 @@ MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
-static inline MONO_ALWAYS_INLINE gpointer 			\
+static inline MONO_ALWAYS_INLINE MonoObject* 			\
 MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
-	return a;						\
+	return (MonoObject*)a;					\
 }
-
-// FIXMEcxx
-// Have four variations is a bit much.
-// In short term, consider C++ just a third type-unsafe portable form.
-#ifdef __cplusplus
-extern "C++"
-{
-template <typename T>
-struct TypedHandle
-{
-	T** __raw;
-};
-
-template <typename T>
-inline T*
-mono_typed_handle_cast_voidptr (TypedHandle<T> handle, void* voidp)
-// Convert void* to the type T associated with handle.
-{
-	return (T*)voidp;
-}
-
-} // extern "C++"
-
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef TypedHandle<TYPE>	TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					TYPED_HANDLE_NAME (TYPE),		\
-					TYPED_OUT_HANDLE_NAME (TYPE);		\
-MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
-#else
-
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					 TYPED_HANDLE_NAME (TYPE),		\
-					 TYPED_OUT_HANDLE_NAME (TYPE);		\
-MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
-#endif
-
-#else
-
-#ifdef __cplusplus
-extern "C++"
-{
-
-template <typename T>
-struct TypedHandle
-{
-	T* __raw;
-};
-
-template <typename T>
-inline T*
-mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
-// Convert void* to the type T associated with handle.
-{
-	return (T*)voidp;
-}
-
-} // extern "C++"
-
-#define TYPED_HANDLE_DECL(TYPE)							      \
-	typedef TypedHandle<TYPE>		   TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
 
 #else
 
@@ -464,15 +409,6 @@ mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
-
-#endif
-
-#endif
-
-#ifndef __cplusplus
-// Convert void* to the type associated with handle.
-// C allows this in context, C++ does not.
-#define mono_typed_handle_cast_voidptr(handle, voidp) (voidp)
 #endif
 
 /*
