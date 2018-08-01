@@ -449,7 +449,7 @@ gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
 {
 	guint8 *code, *buf, *tramp;
-	gpointer *constants;
+	guint32 *constants;
 	guint32 short_branch = FALSE;
 	guint32 size = SPEC_TRAMP_SIZE;
 
@@ -483,18 +483,18 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	/* We save all the registers, except PC and SP */
 	ARM_PUSH (code, 0x5fff);
 	if (short_branch) {
-		constants = (gpointer*)code;
-		constants [0] = GUINT_TO_POINTER (short_branch | (1 << 24));
-		constants [1] = arg1;
+		constants = (guint32*)code;
+		constants [0] = short_branch | (1 << 24);
+		constants [1] = GPOINTER_TO_UINT (arg1);
 		code += 8;
 	} else {
 		ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 8); /* temp reg */
 		ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 		code = emit_bx (code, ARMREG_R1);
 
-		constants = (gpointer*)code;
-		constants [0] = arg1;
-		constants [1] = tramp;
+		constants = (guint32*)code;
+		constants [0] = GPOINTER_TO_UINT (arg1);
+		constants [1] = GPOINTER_TO_UINT (tramp);
 		code += 8;
 	}
 
