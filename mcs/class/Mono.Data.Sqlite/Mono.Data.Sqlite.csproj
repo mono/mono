@@ -131,6 +131,13 @@
     <Compile Include="Mono.Data.Sqlite_2.0\SR.Designer.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\SqliteDataSourceEnumerator.cs" />
     <Compile Include="Mono.Data.Sqlite_2.0\UnsafeNativeMethods.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->

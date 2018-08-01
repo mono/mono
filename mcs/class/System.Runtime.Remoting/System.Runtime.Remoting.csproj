@@ -112,6 +112,13 @@
     <Compile Include="System.Runtime.Remoting.MetadataServices\ServiceType.cs" />
     <Compile Include="System.Runtime.Remoting.Services\RemotingClientProxy.cs" />
     <Compile Include="System.Runtime.Remoting.Services\RemotingService.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
