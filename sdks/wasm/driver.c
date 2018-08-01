@@ -88,6 +88,10 @@ typedef struct _MonoAssemblyName MonoAssemblyName;
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
 
+// Blazor specific custom routines - see dotnet_support.js for backing code
+extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
+extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
+
 void mono_jit_set_aot_mode (MonoAotMode mode);
 MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
 MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
@@ -206,6 +210,11 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
+
+	// Blazor specific custom routines - see dotnet_support.js for backing code		
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
+
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
