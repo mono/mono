@@ -47,7 +47,7 @@
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
 #ifdef __cplusplus
-#define MONO_TYPE_SAFE_HANDLES 0 // FIXMEcplusplus
+#define MONO_TYPE_SAFE_HANDLES 0 // FIXMEcxx
 #elif defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
@@ -245,9 +245,9 @@ Icall macros
 // Return a raw pointer from coop handle.
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
-		void* __result = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return mono_typed_handle_cast_voidptr ((HANDLE), __result); \
+		return __result; \
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -326,9 +326,9 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 	do {	\
 		CLEAR_STACK_WATERMARK	\
 		CLEAR_ICALL_COMMON	\
-		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return mono_typed_handle_cast_voidptr ((HANDLE), __ret); \
+		return __ret; \
 	} while (0); } while (0)
 
 /*
@@ -380,9 +380,19 @@ extern char const * const mono_handle_track_owner;
  * #endif
  */
 
+// NOTE: C++11 language dependency. A C++98 solution is available too.
+#ifdef __cplusplus
+#define MONO_HANDLE_AUTO auto
+#else
+#define MONO_HANDLE_AUTO gpointer
+#endif
+
 #if MONO_TYPE_SAFE_HANDLES
 
-#define MONO_TYPE_SAFE_HANDLE_FUNCTIONS(TYPE)			\
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
+					 TYPED_HANDLE_NAME (TYPE),		\
+					 TYPED_OUT_HANDLE_NAME (TYPE);		\
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
@@ -391,77 +401,11 @@ MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
-static inline MONO_ALWAYS_INLINE gpointer 			\
+static inline MONO_ALWAYS_INLINE MonoObject* 			\
 MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
-	return a;						\
+	return (MonoObject*)a;					\
 }
-
-// FIXMEcplusplus
-// - Have four variations is a bit much.
-//   In short term, consider C++ just a third type-unsafe portable form?
-// - In time, this is an area ripe for rewrite with C++, however
-//   ABI compatibility with managed encourages the same two underlying
-//   representations. But at least not a third or fourth variation.
-#ifdef __cplusplus
-extern "C++"
-{
-template <typename T>
-struct TypedHandle
-{
-	T** __raw;
-};
-
-template <typename T>
-inline T*
-mono_typed_handle_cast_voidptr (TypedHandle<T> handle, void* voidp)
-// Convert void* to the type T associated with handle.
-{
-	return (T*)voidp;
-}
-
-} // extern "C++"
-
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef TypedHandle<TYPE>	TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					TYPED_HANDLE_NAME (TYPE),		\
-					TYPED_OUT_HANDLE_NAME (TYPE);		\
-MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
-#else
-
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					 TYPED_HANDLE_NAME (TYPE),		\
-					 TYPED_OUT_HANDLE_NAME (TYPE);		\
-MONO_TYPE_SAFE_HANDLE_FUNCTIONS (TYPE)
-#endif
-
-#else
-
-#ifdef __cplusplus
-extern "C++"
-{
-
-template <typename T>
-struct TypedHandle
-{
-	T* __raw;
-};
-
-template <typename T>
-inline T*
-mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
-// Convert void* to the type T associated with handle.
-{
-	return (T*)voidp;
-}
-
-} // extern "C++"
-
-#define TYPED_HANDLE_DECL(TYPE)							      \
-	typedef TypedHandle<TYPE>		   TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
 
 #else
 
@@ -470,14 +414,6 @@ mono_typed_handle_cast_voidptr (TypedHandle<T>* handle, void* voidp)
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
 
-#endif
-
-#endif
-
-#ifndef __cplusplus
-// Convert void* to the type associated with handle.
-// C allows this in context, C++ does not.
-#define mono_typed_handle_cast_voidptr(handle, voidp) (voidp)
 #endif
 
 /*
