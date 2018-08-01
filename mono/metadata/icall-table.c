@@ -42,7 +42,7 @@
  */
 // Generate prototypes
 #define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) extern void func (void);
+#define ICALL(id,name,func) ICALL_EXPORT void func (void);
 #define HANDLES(inner) inner
 #define NOHANDLES(inner) inner
 #include "metadata/icall-def.h"
