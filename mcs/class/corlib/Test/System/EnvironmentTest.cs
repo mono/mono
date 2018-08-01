@@ -233,10 +233,10 @@ namespace MonoTests.System
 		}
 
 		[Test] // github issue #9839
-		public void MachineNameIsNotFullyQualifiedDomainName()
+		public void MachineNameIsNotFullyQualifiedDomainName ()
 		{
 			Assert.IsNotNull (Environment.MachineName);
-			Assert.AreEqual(Environment.MachineName.IndexOf("."), -1);
+			Assert.AreEqual (-1, Environment.MachineName.IndexOf("."));
 		}
 #endif
 	}
