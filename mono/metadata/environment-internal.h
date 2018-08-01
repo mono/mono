@@ -15,6 +15,7 @@
 #ifndef _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 #define _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 
+ICALL_EXPORT
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error);
 

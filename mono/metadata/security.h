@@ -22,6 +22,7 @@
 G_BEGIN_DECLS
 
 /* System.Environment */
+ICALL_EXPORT
 MonoStringHandle
 ves_icall_System_Environment_get_UserName (MonoError *error);
 
