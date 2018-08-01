@@ -208,6 +208,15 @@
                                                                                                                                              !8)
     IL_005e:  pop
 ldc.i4 100
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_005f:  ret
   } 
 

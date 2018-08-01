@@ -173,6 +173,7 @@ emit_nursery_check_ilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 static void
 emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
 {
+#ifdef MANAGED_ALLOCATION
 	int p_var, size_var, real_size_var, thread_var G_GNUC_UNUSED;
 	int tlab_next_addr_var, new_next_var;
 	guint32 fastpath_branch, max_size_branch, no_oom_branch;
@@ -225,6 +226,7 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_stloc (mb, size_var);
 	} else if (atype == ATYPE_VECTOR) {
+		ERROR_DECL (error);
 		MonoExceptionClause *clause;
 		int pos, pos_leave, pos_error;
 		MonoClass *oom_exc_class;
@@ -285,7 +287,8 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 
 		oom_exc_class = mono_class_load_from_name (mono_defaults.corlib,
 				"System", "OutOfMemoryException");
-		ctor = mono_class_get_method_from_name (oom_exc_class, ".ctor", 0);
+		ctor = mono_class_get_method_from_name_checked (oom_exc_class, ".ctor", 0, 0, error);
+		mono_error_assert_ok (error);
 		g_assert (ctor);
 
 		mono_mb_emit_byte (mb, CEE_POP);
@@ -533,6 +536,9 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 
 	mono_mb_emit_byte (mb, CEE_RET);
 	mb->init_locals = FALSE;
+#else
+	g_assert_not_reached ();
+#endif /* MANAGED_ALLOCATION */
 }
 
 void

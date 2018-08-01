@@ -50,7 +50,7 @@ __$(1)_CONFIGURE_ENVIRONMENT = \
 
 .stamp-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-$(1)-toolchain
 	mkdir -p $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)
-	cd $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) && $(if $$(_$(1)_PATH),PATH="$$$$PATH:$$(_$(1)_PATH)") $$(TOP)/configure $$(_$(1)_AC_VARS) $$(__$(1)_CONFIGURE_ENVIRONMENT) $$(_$(1)_CONFIGURE_FLAGS)
+	$(if $$(_$(1)_PATH),PATH="$$$$PATH:$$(_$(1)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $(abspath $(TOP)/configure) $$(_$(1)_AC_VARS) $$(__$(1)_CONFIGURE_ENVIRONMENT) $$(_$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
 .PHONY: .stamp-$(1)-configure

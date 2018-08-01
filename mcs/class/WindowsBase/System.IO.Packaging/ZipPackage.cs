@@ -226,8 +226,9 @@ namespace System.IO.Packaging {
 				var extension = Path.GetExtension (part.Uri.OriginalString);
 				if (extension.Length > 0)
 					extension = extension.Substring (1);
-				
-				if (!mimes.TryGetValue (extension, out existingMimeType)) {
+
+				if (!mimes.TryGetValue (extension, out existingMimeType) && extension.Length != 0) {
+					// we should only get here when we have an extension (non-empty string)
 					node = doc.CreateNode (XmlNodeType.Element, "Default", ContentNamespace);
 					
 					XmlAttribute ext = doc.CreateAttribute ("Extension");

@@ -478,6 +478,9 @@ in your program, or Mono's class libraries attempts to generate code
 dynamically.  You should test your software upfront and make sure that
 you do not use any dynamic features.
 .TP
+\fB--full-aot-interp\fR
+Same as --full-aot with fallback to the interpreter.
+.TP
 \fB--gc=boehm\fR, \fB--gc=sgen\fR
 Selects the Garbage Collector engine for Mono to use, Boehm or SGen.
 Currently this merely ensures that you are running either the
@@ -588,6 +591,11 @@ Controls whether the runtime should attempt to inline (the default),
 or not inline methods invocations
 .ne
 .RE
+\fB--response=FILE\fR
+Provides a response file, this instructs the Mono command to read
+other command line options from the specified file, as if the
+options had been specified on the command line.   Useful when you have
+very long command lines.
 .TP
 \fB--runtime=VERSION\fR
 Mono supports different runtime versions. The version used depends on the program
@@ -1170,19 +1178,33 @@ If set, tells mono to attempt using native asynchronous I/O services. If not
 set, a default select/poll implementation is used. Currently epoll and kqueue
 are supported.
 .TP
+\fBMONO_THREADS_SUSPEND\fR
+Selects a mechanism that Mono will use to suspend threads.  May be set to
+"preemptive", "coop", or "hybrid".  Threads may need to be suspended by the
+debugger, or using some .NET threading APIs, and most commonly when the SGen
+garbage collector needs to stop all threads during a critical phase of garbage
+collection.  Preemptive mode is the mode that Mono has used historically, going
+back to the Boehm days, where the garbage collector would run at any point and
+suspend execution of all threads as required to perform a garbage collection.
+The cooperative mode on the other hand requires the cooperation of all threads
+to stop at a safe point.  This makes for an easier to debug garbage collector.
+As of Mono 4.3.0 it is a work in progress, and while it works, it has not been
+used extensively.  This option enables the feature and allows us to find spots
+that need to be tuned for this mode of operation.  Hybrid mode is a combination
+of the two that retains better compatability with scenarios where Mono is
+embedded in another application: threads that are running managed code or code
+that comprises the Mono runtime will be cooperatively suspended, while threads
+running embedder code will be preemptively suspended.
+
+Alternatively, coop and hybrid mode can be enabled at compile time by using the
+--enable-cooperative-suspend or --enable-hybrid-suspend flags, respectively,
+when calling configure.  The \fBMONO_THREADS_SUSPEND\fR environment variable
+takes priority over the compiled default.
+.TP
 \fBMONO_ENABLE_COOP_SUSPEND\fR
-This makes the Mono runtime and the SGen garbage collector run in cooperative
-mode as opposed to run on preemptive mode.   Preemptive mode is the mode
-that Mono has used historically, going back to the Boehm days, where the
-garbage collector would run at any point and suspend execution of all 
-threads as required to perform a garbage collection.  The cooperative mode
-on the other hand requires the cooperation of all threads to stop at a 
-safe point.   This makes for an easier to debug garbage collector.   As
-of Mono 4.3.0 it is a work in progress, and while it works, it has not
-been used extensively.   This option enabled the feature and allows us to
-find spots that need to be tuned for this mode of operation.   Alternatively,
-this mode can be enabled at compile time by using the --enable-cooperative-suspend
-flag when calling configure.
+This environment variable is obsolete, but retained for backward compatibility.
+Use \fBMONO_THREADS_SUSPEND\fR set to "coop" instead.  Note that if configure flags
+were provided to enable cooperative or hybrid suspend, this variable is ignored.
 .TP
 \fBMONO_ENV_OPTIONS\fR
 This environment variable allows you to pass command line arguments to
@@ -1658,8 +1680,8 @@ Currently, the following options are supported:
 Enables small structs alignment to 4/8 bytes.
 .TP
 \fBarm-use-fallback-tls\fR
-When this option is set on ARM, a fallback TLS will be used instead
-of the default fast TLS.
+When this option is set on ARM, a fallback thread local store will be used instead
+of the default fast thread local storage primitives.
 .TP
 \fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
@@ -1788,6 +1810,12 @@ This option will suspend the program when an exception occurs.
 .TP
 \fBsuspend-on-unhandled\fR
 This option will suspend the program when an unhandled exception occurs.
+.TP
+\fBthread-dump-dir=DIR\fR
+Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBverbose-gdb\fR
+Make gdb output on native crashes more verbose.
 .ne
 .RE
 .TP
@@ -1869,7 +1897,7 @@ for example, to see managed frame names on gdb backtraces.
 \fBMONO_VERBOSE_METHOD\fR
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
-method.   This can be a comma-separated list of method names to
+method.   This can be a semicolon-separated list of method names to
 match.  If the name is simple, this applies to any method with that
 name, otherwise you can use a mono method description (see the section
 METHOD DESCRIPTIONS).

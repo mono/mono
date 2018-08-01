@@ -26,25 +26,47 @@ ifeq ($(PROFILE),build)
 CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/csc.$(LIBRARY).aotprofile
 endif
 
+RESX_EXTRA_ARGUMENTS = \
+	--in=ReferenceSources/SR.cs \
+	--in=ReferenceSources/SR2.cs
+
 RESX_RESOURCE_STRING = \
-	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections.NonGeneric/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.FileSystem.Watcher/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.Extensions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Text.RegularExpressions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
+	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx
+	
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-ifneq ($(PROFILE),basic)
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 include il/il.make
 
+RESOURCE_STRINGS_FILES = --mscorlib-debug
+
+ifneq ($(PROFILE),basic)
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE)
 endif
 
@@ -100,7 +122,7 @@ ifdef MONO_FEATURE_APPLE_X509
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
 endif
 
-COREFX_FLAGS := -d:FEATURE_PORTABLE_SPAN
+COREFX_FLAGS := -d:BIT64
 
 WARNING_ABOUT_DISABLED_WARNING=1635
 LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3002,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) $(COREFX_FLAGS)
@@ -108,7 +130,7 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Runtime.CompilerServices.Unsafe
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
 XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 
 ifndef AOT_FRIENDLY_PROFILE

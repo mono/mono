@@ -1965,7 +1965,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [1];
@@ -2391,7 +2391,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual (string.Empty, ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];
@@ -2539,7 +2539,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];
@@ -2699,7 +2699,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];

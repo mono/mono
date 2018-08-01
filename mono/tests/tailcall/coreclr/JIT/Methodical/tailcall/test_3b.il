@@ -61,7 +61,7 @@
 
       IL_0015:  ldstr      "passed"
       IL_001a:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_001f:  ldc.i4.s   100
+      IL_001f:  ldc.i4.s   0
       IL_0021:  stloc.0
       IL_0022:  br.s       IL_0024
 

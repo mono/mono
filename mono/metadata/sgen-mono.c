@@ -348,7 +348,7 @@ get_array_fill_vtable (void)
 
 		vtable->klass = klass;
 		bmap = 0;
-		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 1);
+		vtable->gc_descr = mono_gc_make_descr_for_array (TRUE, &bmap, 0, 8);
 		vtable->rank = 1;
 
 		array_fill_vtable = vtable;
@@ -371,7 +371,9 @@ sgen_client_array_fill_range (char *start, size_t size)
 	/* Mark this as not a real object */
 	o->obj.synchronisation = (MonoThreadsSync *)GINT_TO_POINTER (-1);
 	o->bounds = NULL;
-	o->max_length = (mono_array_size_t)(size - MONO_SIZEOF_MONO_ARRAY);
+	/* We use array of int64 */
+	g_assert ((size - MONO_SIZEOF_MONO_ARRAY) % 8 == 0);
+	o->max_length = (mono_array_size_t)((size - MONO_SIZEOF_MONO_ARRAY) / 8);
 
 	return TRUE;
 }
@@ -964,12 +966,12 @@ mono_gc_free_fixed (void* addr)
  * Managed allocator
  */
 
-#ifdef MANAGED_ALLOCATION
 static MonoMethod* alloc_method_cache [ATYPE_NUM];
 static MonoMethod* slowpath_alloc_method_cache [ATYPE_NUM];
 static MonoMethod* profiler_alloc_method_cache [ATYPE_NUM];
 static gboolean use_managed_allocator = TRUE;
 
+#ifdef MANAGED_ALLOCATION
 /* FIXME: Do this in the JIT, where specialized allocation sequences can be created
  * for each class. This is currently not easy to do, as it is hard to generate basic 
  * blocks + branches, but it is easy with the linear IL codebase.
@@ -1622,11 +1624,11 @@ report_handle_stack_root (gpointer *ptr, gpointer user_data)
 static void
 report_handle_stack_roots (GCRootReport *report, SgenThreadInfo *info, gboolean precise)
 {
-	ReportHandleStackRoot ud = {
-		.precise = precise,
-		.report = report,
-		.info = info,
-	};
+	ReportHandleStackRoot ud;
+	memset (&ud, 0, sizeof (ud));
+	ud.precise = precise;
+	ud.report = report;
+	ud.info = info;
 
 	mono_handle_stack_scan ((HandleStack *) info->client_info.info.handle_stack, report_handle_stack_root, &ud, ud.precise, FALSE);
 }
@@ -2246,9 +2248,10 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			if (precise)
 				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise, TRUE);
 			else {
-				PinHandleStackInteriorPtrData ud = { .start_nursery = start_nursery,
-								     .end_nursery = end_nursery,
-				};
+				PinHandleStackInteriorPtrData ud;
+				memset (&ud, 0, sizeof (ud));
+				ud.start_nursery = (void**)start_nursery;
+				ud.end_nursery = (void**)end_nursery;
 				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
 			}
 		}
@@ -2420,7 +2423,9 @@ mono_gc_precise_stack_mark_enabled (void)
 void
 mono_gc_collect (int generation)
 {
+	MONO_ENTER_GC_UNSAFE;
 	sgen_gc_collect (generation);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 int

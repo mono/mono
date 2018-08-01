@@ -554,7 +554,8 @@ namespace Mono.CSharp
 						if (prop != null) {
 							AttributeEncoder encoder = new AttributeEncoder ();
 							encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
-							SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+							SetCustomAttribute (pa.Constructor, encoder.ToArray (out var references));
+							module.AddAssemblyReferences (references);
 						}
 					}
 				}

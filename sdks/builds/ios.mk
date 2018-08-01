@@ -60,6 +60,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes \
 	$$(ios-$(1)_AC_VARS)
@@ -112,6 +113,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-icall-export \
 	--enable-maintainer-mode \
 	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
+	--enable-monotouch \
 	--with-lazy-gc-thread-creation=yes \
 	--with-monotouch \
 	--with-tls=pthread \
@@ -204,6 +206,7 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_uscore=yes \
 	$(ios-$(1)_AC_VARS)
 
@@ -243,6 +246,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
+	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
@@ -297,29 +301,6 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-ifndef IGNORE_PACKAGE_LLVM
-
-# Download a prebuilt llvm
-.stamp-ios-llvm-$(LLVM_HASH):
-	./download-llvm.sh $(LLVM_HASH)
-	touch $@
-
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
-
-clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
-
-else
-
-build-ios-llvm: package-llvm-llvm64 package-llvm-llvm32
-	ln -sf ../out/llvm-llvm32 ../out/ios-llvm32
-	ln -sf ../out/llvm-llvm64 ../out/ios-llvm64
-
-clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
-	$(RM) -rf ../out/{ios-llvm32,ios-llvm64}
-
-endif
-
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
@@ -342,6 +323,7 @@ _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
+	ac_cv_func_shm_open_working_with_mmap=no \
 	$$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \
@@ -384,7 +366,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),package-llvm-$(3),download-llvm-$(3))
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \

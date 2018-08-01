@@ -121,6 +121,7 @@ get_job_for_event (MonoMList **list, gint32 event)
 		MonoIOSelectorJob *job = (MonoIOSelectorJob*) mono_mlist_get_data (current);
 		if (job->operation == event) {
 			*list = mono_mlist_remove_item (*list, current);
+			mono_mlist_set_data (current, NULL);
 			return job;
 		}
 	}
@@ -402,6 +403,7 @@ selector_thread (gpointer data)
 
 					for (; list; list = mono_mlist_remove_item (list, list)) {
 						mono_threadpool_enqueue_work_item (mono_object_domain (mono_mlist_get_data (list)), mono_mlist_get_data (list), error);
+						mono_mlist_set_data (list, NULL);
 						mono_error_assert_ok (error);
 					}
 
@@ -417,7 +419,10 @@ selector_thread (gpointer data)
 				domain = update->data.remove_domain.domain;
 				g_assert (domain);
 
-				FilterSockaresForDomainData user_data = { .domain = domain, .states = states };
+				FilterSockaresForDomainData user_data;
+				memset (&user_data, 0, sizeof (user_data));
+				user_data.domain = domain;
+				user_data.states = states;
 				mono_g_hash_table_foreach (states, filter_jobs_for_domain, &user_data);
 
 				for (j = i + 1; j < threadpool_io->updates_size; ++j) {

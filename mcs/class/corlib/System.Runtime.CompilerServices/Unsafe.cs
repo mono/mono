@@ -68,7 +68,12 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 		
-		public static ref TTo As<TFrom, TTo>(ref TFrom source)
+		public static ref TTo As<TFrom, TTo> (ref TFrom source)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public unsafe static void* AsPointer<T> (ref T value)
 		{
 			throw new NotImplementedException ();
 		}

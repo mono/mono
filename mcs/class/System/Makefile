@@ -14,6 +14,10 @@ RESOURCE_FILES = \
 	resources/Question.wav
 endif
 
+RESX_EXTRA_ARGUMENTS = \
+	--in=ReferenceSources/SR.cs \
+	--in=ReferenceSources/SR2.cs
+
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
@@ -21,7 +25,12 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Text.RegularExpressions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.FileSystem.Watcher/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -102,7 +111,7 @@ endif
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
 
-API_BIN_REFS := System.Net.Http System.Xml
+API_BIN_REFS := System.Net.Http System.Xml System.Core
 
 ifndef MOBILE_PROFILE
 API_BIN_REFS += System.Configuration
@@ -110,9 +119,6 @@ LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
 EXTRA_DISTFILES = \
-	common.sources					\
-	common_networking.sources		\
-	corefx.unix.sources				\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\

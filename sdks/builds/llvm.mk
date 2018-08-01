@@ -1,11 +1,17 @@
-
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
-$(TOP)/sdks/builds/toolchains/llvm:
-	git clone -b master https://github.com/mono/llvm.git $@
-	cd $@ && git checkout $(LLVM_HASH)
+$(dir $(LLVM_SRC)):
+	mkdir -p $@
 
-$(LLVM_SRC)/configure: | $(LLVM_SRC)
+.stamp-llvm-download: | setup-llvm-llvm32 setup-llvm-llvm64
+	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm
+	$(RM) -r $(TOP)/sdks/out/ios-llvm32 $(TOP)/sdks/out/ios-llvm64
+	mv $(TOP)/llvm/usr32 $(TOP)/sdks/out/ios-llvm32
+	mv $(TOP)/llvm/usr64 $(TOP)/sdks/out/ios-llvm64
+	touch $@
+
+$(dir $(LLVM_SRC)):
+	mkdir -p $@
 
 ##
 # Parameters
@@ -13,45 +19,41 @@ $(LLVM_SRC)/configure: | $(LLVM_SRC)
 #  $(2): arch
 define LLVMTemplate
 
-_llvm_$(1)_CXXFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9 -stdlib=libc++)
+_llvm-$(1)_CMAKE_ARGS = \
+	$$(llvm-$(1)_CMAKE_ARGS)
 
-_llvm_$(1)_LDFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
-
-_llvm_$(1)_CONFIGURE_ENVIRONMENT= \
-	CXXFLAGS="$$(_llvm_$(1)_CXXFLAGS)" \
-	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
-
-_llvm_$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-$$(if $$(filter $$(UNAME),Darwin),apple-darwin10,$$(if $$(filter $$(UNAME),Linux),linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))) \
-	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
-	--enable-assertions=no \
-	--enable-optimized \
-	--enable-targets="arm,aarch64,x86" \
-	$$(if $$(filter $$(UNAME),Darwin),--enable-libcpp)
-
-.stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
+.stamp-llvm-$(1)-toolchain:
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure
-	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
+.stamp-llvm-$(1)-configure: | $$(dir $(LLVM_SRC))
 	touch $$@
+
+.PHONY: build-custom-llvm-$(1)
+build-custom-llvm-$(1):
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+package-llvm-$(1): | $$(dir $(LLVM_SRC))
+	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
+		LLVM_PATH="$(LLVM_SRC)" \
+		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
+		LLVM_PREFIX="$$(TOP)/sdks/out/ios-$(1)" \
+		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
+
+.PHONY: download-llvm-$(1)
+download-llvm-$(1): .stamp-llvm-download
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
-	rm -rf .stamp-llvm-$(1)-toolchain .stamp-llvm-$(1)-configure $$(TOP)/sdks/builds/llvm-$(1) $$(TOP)/sdks/builds/llvm-$(1).config.cache $$(TOP)/sdks/out/llvm-$(1)
+	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
+		LLVM_PATH="$(LLVM_SRC)" \
+		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
+		LLVM_PREFIX="$$(TOP)/sdks/out/ios-$(1)"
 
 TARGETS += llvm-$(1)
 
 endef
 
+llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMTemplate,llvm32,i386))
 $(eval $(call LLVMTemplate,llvm64,x86_64))
 
@@ -59,71 +61,51 @@ $(eval $(call LLVMTemplate,llvm64,x86_64))
 # Parameters
 #  $(1): target
 #  $(2): arch
-#
-# Flags
-#  llvm_$(1)_CONFIGURE_ENVIRONMENT
 define LLVMMxeTemplate
 
-_llvm_$(1)_PATH=$$(MXE_PREFIX)/bin
+_llvm-$(1)_CMAKE=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-cmake
 
-_llvm_$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
-_llvm_$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
-_llvm_$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
-_llvm_$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
-_llvm_$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
-_llvm_$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
-_llvm_$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
-_llvm_$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
-_llvm_$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
+# -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
+# -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
+# -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+_llvm-$(1)_CMAKE_ARGS = \
+	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DLLVM_ENABLE_THREADS=Off \
+	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
+	$$(llvm-$(1)_CMAKE_ARGS)
 
-_llvm_$(1)_CXXFLAGS=
-
-_llvm_$(1)_LDFLAGS=
-
-_llvm_$(1)_CONFIGURE_ENVIRONMENT = \
-	AR="$$(_llvm_$(1)_AR)" \
-	AS="$$(_llvm_$(1)_AS)" \
-	CC="$$(_llvm_$(1)_CC)" \
-	CXX="$$(_llvm_$(1)_CXX)" \
-	DLLTOOL="$$(_llvm_$(1)_DLLTOOL)" \
-	LD="$$(_llvm_$(1)_LD)" \
-	OBJDUMP="$$(_llvm_$(1)_OBJDUMP)" \
-	RANLIB="$$(_llvm_$(1)_RANLIB)" \
-	STRIP="$$(_llvm_$(1)_STRIP)" \
-	CXXFLAGS="$$(_llvm_$(1)_CXXFLAGS)" \
-	LDFLAGS="$$(_llvm_$(1)_LDFLAGS)"
-
-_llvm_$(1)_CONFIGURE_FLAGS = \
-	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
-	--cache-file=$$(TOP)/sdks/builds/llvm-$(1).config.cache \
-	--prefix=$$(TOP)/sdks/out/llvm-$(1) \
-	--enable-assertions=no \
-	--enable-optimized \
-	--enable-targets="arm,aarch64,x86" \
-	--disable-pthreads \
-	--disable-zlib
-
-.stamp-llvm-$(1)-toolchain: | $$(LLVM_SRC)
+.stamp-llvm-$(1)-toolchain:
 	touch $$@
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
-	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm_$(1)_PATH)" $$< $$(_llvm_$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm_$(1)_CONFIGURE_FLAGS)
+.stamp-llvm-$(1)-configure:
 	touch $$@
+
+.PHONY: build-custom-llvm-$(1)
+build-custom-llvm-$(1):
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1):
-	$$(MAKE) -C $$(TOP)/sdks/builds/llvm-$(1) install
+package-llvm-$(1): | $$(dir $(LLVM_SRC))
+	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
+		CMAKE=$$(_llvm-$(1)_CMAKE) \
+		LLVM_PATH="$(LLVM_SRC)" \
+		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
+		LLVM_PREFIX="$$(TOP)/sdks/out/ios-$(1)" \
+		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1):
-	rm -rf .stamp-llvm-$(1)-toolchain .stamp-llvm-$(1)-configure $$(TOP)/sdks/builds/llvm-$(1) $$(TOP)/sdks/builds/llvm-$(1).config.cache $$(TOP)/sdks/out/llvm-$(1)
+	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
+		CMAKE=$$(_llvm-$(1)_CMAKE) \
+		LLVM_PATH="$(LLVM_SRC)" \
+		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
+		LLVM_PREFIX="$$(TOP)/sdks/out/ios-$(1)"
 
 TARGETS += llvm-$(1)
 
 endef
 
 ifneq ($(MXE_PREFIX),)
+llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
 endif

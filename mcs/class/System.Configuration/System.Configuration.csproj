@@ -28,11 +28,11 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5-$(HostPlatform)</IntermediateOutputPath>
+    <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
@@ -48,6 +48,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="System.Configuration\CommaDelimitedStringCollectionConverter.cs" />
     <Compile Include="System.Configuration\ConfigHelper.cs" />
     <Compile Include="System.Configuration\ConfigInfo.cs" />
+    <Compile Include="System.Configuration\ConfigXmlTextReader.cs" />
     <Compile Include="System.Configuration\Configuration.cs" />
     <Compile Include="System.Configuration\ConfigurationAllowDefinition.cs" />
     <Compile Include="System.Configuration\ConfigurationAllowExeDefinition.cs" />
@@ -111,7 +113,6 @@
     <Compile Include="System.Configuration\ConfigurationUserLevel.cs" />
     <Compile Include="System.Configuration\ConfigurationValidatorAttribute.cs" />
     <Compile Include="System.Configuration\ConfigurationValidatorBase.cs" />
-    <Compile Include="System.Configuration\ConfigXmlTextReader.cs" />
     <Compile Include="System.Configuration\ConnectionStringSettings.cs" />
     <Compile Include="System.Configuration\ConnectionStringSettingsCollection.cs" />
     <Compile Include="System.Configuration\ConnectionStringsSection.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="System.Configuration\ValidatorCallback.cs" />
     <Compile Include="System.Configuration\WhiteSpaceTrimStringConverter.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Security/System.Security.csproj" />

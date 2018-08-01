@@ -59,18 +59,17 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 }
 #endif
 
-#ifndef MONO_ARCH_HAVE_OP_TAILCALL
-gboolean
-mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
-{
-	return mono_metadata_signature_equal (caller_sig, callee_sig) && !MONO_TYPE_ISSTRUCT (callee_sig->ret);
-}
-#endif
-
 #ifndef MONO_ARCH_INTERPRETER_SUPPORTED
 
 gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 {
 	g_assert_not_reached ();
 	return NULL;

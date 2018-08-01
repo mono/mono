@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Xamarin. All rights reserved.
 //
 
-#include <btls-x509.h>
+#include "btls-x509.h"
 #include <openssl/x509v3.h>
 #include <openssl/pkcs12.h>
 
@@ -116,22 +116,21 @@ mono_btls_x509_get_not_after (X509 *x509)
 MONO_API int
 mono_btls_x509_get_public_key (X509 *x509, BIO *bio)
 {
-	EVP_PKEY *pkey;
-	uint8_t *data = NULL;
-	int ret;
+	ASN1_BIT_STRING *pkey;
+	const unsigned char *data;
+	int ret, data_length;
 
-	pkey = X509_get_pubkey (x509);
-	if (!pkey)
+	if (!x509 || !x509->cert_info || !x509->cert_info->key)
 		return -1;
 
-	ret = i2d_PublicKey (pkey, &data);
+	pkey = x509->cert_info->key->public_key;
+	if (!pkey || !pkey->data)
+		return -1;
 
-	if (ret > 0 && data) {
-		ret = BIO_write (bio, data, ret);
-		OPENSSL_free (data);
-	}
+	ret = BIO_write (bio, pkey->data, pkey->length);
+	if (ret != pkey->length)
+		return -1;
 
-	EVP_PKEY_free (pkey);
 	return ret;
 }
 
@@ -163,9 +162,7 @@ mono_btls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_s
 		return 0;
 	}
 
-	for (idx = 0; idx < len; idx++) {
-		buffer [idx] = *(--p);
-	}
+	memcpy (buffer, temp, len);
 	buffer [len] = 0;
 
 	OPENSSL_free (temp);

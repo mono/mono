@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<linker>
+	<assembly fullname="link-all">
+		<!-- TODO: these can be removed once PreserveAttribute works -->
+		<type fullname="LinkAll.Attributes.AttributeTest" />
+		<type fullname="LinkAll.Attributes.PreserveTest" />
+		<type fullname="LinkAll.Attributes.TypeWithMembers" />
+		<type fullname="LinkAll.Attributes.TypeWithoutMembers" preserve="none" />
+		<type fullname="LinkAll.Calendars.CalendarTest" />
+		<type fullname="LinkAll.InternalCalls.InternalsTest" />
+		<type fullname="LinkAll.Interfaces.InterfaceTest" />
+		<type fullname="LinkAll.Layout.ClassLayoutTest" />
+		<type fullname="LinkAll.Layout.StructLayoutTest" />
+		<type fullname="LinkAll.LinkAllRegressionTest" />
+		<type fullname="LinkAll.LinkAllRegressionTest/TestEnumTypeConverter" />
+		<type fullname="LinkAll.Linq.LinqExpressionTest" />
+		<type fullname="LinkAll.Mef.MEFTests" />
+		<type fullname="LinkAll.Mef.Storage" />
+		<type fullname="LinkAll.Serialization.DataContract.DataContractTest" />
+		<type fullname="LinkAll.Serialization.DataContract.DataContractTest+SomeTypes" />
+		<type fullname="LinkAll.Serialization.SerializationAttributeTests" />
+		<type fullname="LinkAll.Serialization.Xml.XmlSerializationTest" />
+		<type fullname="Linker.Sealer.Base" />
+		<type fullname="Linker.Sealer.Sealable" />
+		<type fullname="Linker.Sealer.SealerTest" />
+		<type fullname="Linker.Sealer.Subclass" />
+		<type fullname="Linker.Sealer.Unsealable" />
+	</assembly>
+	<assembly fullname="mscorlib">
+		<type fullname="System.Reflection.ObfuscationAttribute" preserve="none" />
+	</assembly>
+	<assembly fullname="System.Configuration">
+		<type fullname="System.Configuration.ExeConfigurationHost" preserve="methods" />
+	</assembly>
+	<assembly fullname="System">
+		<type fullname="System.Net.Configuration.DefaultProxySection" preserve="methods" />
+		<type fullname="System.Net.Configuration.NetSectionGroup" preserve="methods" />
+		<type fullname="System.Net.Configuration.SettingsSection" preserve="methods" />
+		<type fullname="System.Net.Configuration.WebRequestModulesSection" preserve="methods" />
+		<type fullname="System.Net.HttpRequestCreator" preserve="methods" />
+		<type fullname="System.Net.FileWebRequestCreator" preserve="methods" />
+		<type fullname="System.Net.FtpWebRequestCreator" preserve="methods" />
+		<type fullname="System.ComponentModel.BooleanConverter" preserve="methods" />
+		<type fullname="System.ComponentModel.CollectionConverter" preserve="methods" />
+		<type fullname="System.ComponentModel.EnumConverter" preserve="methods" />
+		<type fullname="System.ComponentModel.StringConverter" preserve="methods" />
+		<type fullname="System.ComponentModel.TimeSpanConverter" preserve="methods" />
+		<type fullname="System.ComponentModel.Int32Converter" preserve="methods" />
+		<type fullname="System.Net.Configuration.BypassElementCollection" preserve="methods" />
+		<type fullname="System.Net.Configuration.HttpWebRequestElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.Ipv6Element" preserve="methods" />
+		<type fullname="System.Net.Configuration.PerformanceCountersElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.ProxyElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.ServicePointManagerElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.SocketElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.WebProxyScriptElement" preserve="methods" />
+		<type fullname="System.Net.Configuration.WebRequestModuleElementCollection" preserve="methods" />
+		<type fullname="System.Net.Configuration.WebRequestModuleElement" preserve="methods" />
+		<type fullname="System.UriTypeConverter" preserve="methods" />
+		<type fullname="System.Net.Configuration.ConnectionManagementSection" preserve="methods" />
+		<type fullname="System.Net.Configuration.ConnectionManagementElementCollection" preserve="methods" />
+	</assembly>
+	<assembly fullname="System.Runtime.Serialization">
+		<type fullname="System.Runtime.Serialization.Configuration.SerializationSectionGroup" preserve="methods"/>
+		<type fullname="System.Runtime.Serialization.Configuration.DataContractSerializerSection" preserve="methods" />
+		<type fullname="System.Runtime.Serialization.Configuration.DeclaredTypeElementCollection" preserve="methods" />
+	</assembly>
+</linker>

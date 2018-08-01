@@ -26,6 +26,9 @@ namespace MonoTests.System.Threading {
         }
 
         [Test]
+#if MONODROID
+        [Ignore("https://github.com/mono/mono/issues/8349")]
+#endif
         public void WaitHandle_WaitOne_SynchronizationContext ()
         {
             var e = new ManualResetEvent(false);

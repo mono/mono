@@ -64,6 +64,18 @@ namespace System.Reflection {
 			this.lazyData.data_length = data_length;
 		}
 
+		internal CustomAttributeData (ConstructorInfo ctorInfo)
+			: this (ctorInfo, Array.Empty<CustomAttributeTypedArgument> (), Array.Empty<CustomAttributeNamedArgument> ())
+		{
+		}
+
+		internal CustomAttributeData (ConstructorInfo ctorInfo, IList<CustomAttributeTypedArgument> ctorArgs, IList<CustomAttributeNamedArgument> namedArgs)
+		{
+			this.ctorInfo = ctorInfo;
+			this.ctorArgs = ctorArgs;
+			this.namedArgs = namedArgs;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void ResolveArgumentsInternal (ConstructorInfo ctor, Assembly assembly, IntPtr data, uint data_length, out object[] ctorArgs, out object[] namedArgs); 
 

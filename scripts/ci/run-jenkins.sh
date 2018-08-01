@@ -35,13 +35,14 @@ if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
     export MONO_FLAKY_TEST_RETRIES=5
 fi
 
-if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
-if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
+if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
+if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 
-if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-cooperative-suspend";
+if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
 elif [[ ${CI_TAGS} == *'hybrid-suspend'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-hybrid-suspend";
+elif [[ ${CI_TAGS} == *'preemptive-suspend'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend";
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-checked-build=gc,thread"; fi
@@ -53,6 +54,7 @@ if [[ ${CI_TAGS} == *'disable-mcs-build'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CON
 if   [[ ${CI_TAGS} == *'fullaot_llvm'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaot_llvm ";
 elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];     then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=hybridaot_llvm";
 elif [[ ${CI_TAGS} == *'aot_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=aot_llvm ";
+elif [[ ${CI_TAGS} == *'jit_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes"; export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS --llvm";
 elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=fullaot";
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
@@ -76,6 +78,14 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+if [[ ${CI_TAGS} == *'cxx'* ]]; then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+fi
+
+if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+fi
+
 if [[ ${CI_TAGS} == *'win-'* ]];
 then
 	mkdir -p ~/.config/.mono/
@@ -87,8 +97,11 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-sim64 package-ios-target64
-	   ${TESTCMD} --label=cross --timeout=60m --fatal make -j4 -C sdks/builds package-ios-cross64 package-ios-cross32
+
+	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
+	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -100,21 +113,28 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
+	   ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+	   fi
 	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
 
 if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
-        echo "ANDROID_TOOLCHAIN_DIR=$HOME/android-toolchain" > sdks/Make.config
-        echo "ANDROID_TOOLCHAIN_CACHE_DIR=$HOME/android-archives" >> sdks/Make.config
-        echo "MXE_PREFIX_DIR=$HOME/android-toolchain" >> sdks/Make.config
-        echo "IGNORE_PROVISION_ANDROID=1" >> sdks/Make.config
+        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
-        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 --trace --keep-going -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-llvm-{llvm32,llvm64}
+        if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
+            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
+        fi
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-llvm-{llvm32,llvm64}
         exit 0
 fi
 
@@ -125,11 +145,18 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
-	   ${TESTCMD} --label=mini-test --timeout=60m make -C sdks/wasm run-all-mini
+	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
+	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
+	   ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
+	   ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
 	   #The following tests are not passing yet, so enabling them would make us perma-red
 	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
 	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-	   ${TESTCMD} --label=mini-system-core --timeout=60m make -C sdks/wasm run-system-all-core
+	   # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
+	   ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
+	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
+	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
+	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
 fi
@@ -137,6 +164,7 @@ fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
+	echo ./autogen.sh $EXTRA_CONF_FLAGS
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
 fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
@@ -164,6 +192,20 @@ if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
 make_continue=
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then make_continue=-k; fi
+
+
+# FIXME For now C++ means just build mono (metadata, mini, sgen, utils) and ignore errors to get more.
+# Once this succeeds, we can let it proceed more normally through tests.
+if [[ ${CI_TAGS} == *'cxx'* ]];
+   then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
+        exit 0
+fi
+if [[ ${CI_TAGS} == *'cplusplus'* ]];
+   then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
+        exit 0
+fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then

@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <openssl/ssl.h>
-#include <btls-util.h>
+#include "btls-util.h"
 
 typedef struct MonoBtlsBio MonoBtlsBio;
 typedef struct MonoBtlsX509Chain MonoBtlsX509Chain;
@@ -30,7 +30,7 @@ typedef struct MonoBtlsSsl MonoBtlsSsl;
 typedef struct MonoBtlsSslCtx MonoBtlsSslCtx;
 
 typedef int (* MonoBtlsVerifyFunc) (void *instance, int preverify_ok, X509_STORE_CTX *ctx);
-typedef int (* MonoBtlsSelectFunc) (void *instance);
+typedef int (* MonoBtlsSelectFunc) (void *instance, int countIssuers, const int *sizes, void **issuerData);
 
 MonoBtlsSslCtx *
 mono_btls_ssl_ctx_new (void);
@@ -80,5 +80,8 @@ mono_btls_ssl_ctx_set_ciphers (MonoBtlsSslCtx *ctx, int count, const uint16_t *d
 
 int
 mono_btls_ssl_ctx_set_verify_param (MonoBtlsSslCtx *ctx, const MonoBtlsX509VerifyParam *param);
+
+int
+mono_btls_ssl_ctx_set_client_ca_list (MonoBtlsSslCtx *ctx, int count, int *sizes, const void **data);
 
 #endif /* __btls_ssl_ctx__btls_ssl_ctx__ */

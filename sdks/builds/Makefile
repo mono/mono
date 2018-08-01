@@ -8,6 +8,7 @@ CONFIGURATION?=release
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
 CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
+NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
 ifneq ($(UNAME),Darwin)

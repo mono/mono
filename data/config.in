@@ -11,6 +11,7 @@
 	<dllmap dll="oci" target="libclntsh@libsuffix@" os="!windows"/>
 	<dllmap dll="db2cli" target="libdb2_36@libsuffix@" os="!windows"/>
 	<dllmap dll="MonoPosixHelper" target="$mono_libdir/libMonoPosixHelper@libsuffix@" os="!windows" />
+	<dllmap dll="System.Native" target="$mono_libdir/libmono-system-native@libsuffix@" os="!windows" />
 	<dllmap dll="libmono-btls-shared" target="$mono_libdir/libmono-btls-shared@libsuffix@" os="!windows" />
 	<dllmap dll="i:msvcrt" target="@LIBC@" os="!windows"/>
 	<dllmap dll="i:msvcrt.dll" target="@LIBC@" os="!windows"/>
@@ -40,5 +41,4 @@
 	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
 	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
 	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
-	<dllmap dll="System.Native" target="__Internal"/>
 </configuration>

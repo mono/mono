@@ -228,7 +228,7 @@
       }  // end handler
       IL_0051:  ldstr      "Passed"
       IL_0056:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_005b:  ldc.i4    0x64
+      IL_005b:  ldc.i4    0
       IL_005c:  stloc.0
       IL_005d:  br.s       IL_005f
 

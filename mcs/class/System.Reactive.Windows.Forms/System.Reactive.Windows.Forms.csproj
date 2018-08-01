@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;SIGNED;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;SIGNED;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,14 +44,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Reactive\Concurrency\ControlScheduler.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Reactive\Linq\ControlObservable.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -1295,7 +1295,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestToInt32() {
 			long tryMax = long.MaxValue;
 			long tryMin = long.MinValue;
@@ -1474,7 +1473,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestToInt64() {
 			decimal longMax = long.MaxValue;
 			longMax += 1000000;
@@ -1869,7 +1867,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestToSingle() {
 			int iTest = 1;
 			try {

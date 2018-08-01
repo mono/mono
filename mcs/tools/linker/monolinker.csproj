@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,8 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\AddBypassNGenStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BlacklistStep.cs" />
@@ -78,10 +78,12 @@
     <Compile Include="..\..\..\external\linker\linker\Linker\MethodReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Tracer.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\TypeNameParser.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypePreserve.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypeReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\XApiReader.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

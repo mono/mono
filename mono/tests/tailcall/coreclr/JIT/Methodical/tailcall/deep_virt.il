@@ -1177,6 +1177,15 @@
 
       IL_0047:  ldloc.0
       IL_0048:  ldfld      int32 JitTest.TestClass::m_fld
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
       IL_004d:  ret
     } // end of method TestClass::Main
 

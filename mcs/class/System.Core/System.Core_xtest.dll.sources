@@ -56,7 +56,7 @@
 ../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
 #../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs
-../../../external/corefx/src/System.Linq.Parallel/tests/*.cs:WithCancellationTests.cs,PlinqModesTests.cs,ExchangeTests.cs,EtwTests.cs
+../../../external/corefx/src/System.Linq.Parallel/tests/*.cs:WithCancellationTests.cs,PlinqModesTests.cs,ExchangeTests.cs,EtwTests.cs,ParallelEnumerableTests.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
@@ -67,3 +67,24 @@
 ../../../external/corefx/src/System.Collections.Immutable/src/System/Collections/Immutable/*.cs
 ../../../external/corefx/src/System.Collections.Immutable/src/Validation/*.cs
 corefx/SR.tests.cs
+
+# System.IO.Pipes
+#../../../external/corefx/src/System.IO.Pipes/tests/Interop.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.cs
+../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.Read.cs
+../../../external/corefx/src/System.IO.Pipes/tests/PipeTest.Write.cs
+../../../external/corefx/src/System.IO.Pipes/tests/PipeTestBase.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.CreateClient.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.CreateServer.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Read.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Specific.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTest.Write.cs
+../../../external/corefx/src/System.IO.Pipes/tests/AnonymousPipeTests/AnonymousPipeTestBase.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.CreateClient.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Read.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Specific.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Write.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Simple.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs
+../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTestBase.cs
+

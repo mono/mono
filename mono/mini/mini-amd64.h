@@ -63,6 +63,17 @@ typedef struct {
 
 #define MONO_UNWIND_INFO_RT_FUNC_SIZE 128
 
+typedef BOOLEAN (WINAPI* RtlInstallFunctionTableCallbackPtr)(
+	DWORD64 TableIdentifier,
+	DWORD64 BaseAddress,
+	DWORD Length,
+	PGET_RUNTIME_FUNCTION_CALLBACK Callback,
+	PVOID Context,
+	PCWSTR OutOfProcessCallbackDll);
+
+typedef BOOLEAN (WINAPI* RtlDeleteFunctionTablePtr)(
+	PRUNTIME_FUNCTION FunctionTable);
+
 // On Win8/Win2012Server and later we can use dynamic growable function tables
 // instead of RtlInstallFunctionTableCallback. This gives us the benefit to
 // include all needed unwind upon registration.
@@ -203,7 +214,7 @@ typedef struct MonoCompileArch {
 	gint32 async_point_count;
 	gpointer vret_addr_loc;
 #ifdef HOST_WIN32
-	gpointer unwindinfo;
+	struct _UNWIND_INFO* unwindinfo;
 #endif
 	gpointer seq_point_info_var;
 	gpointer ss_trigger_page_var;
@@ -214,13 +225,13 @@ typedef struct MonoCompileArch {
 
 #ifdef TARGET_WIN32
 
-static AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
+static const AMD64_Reg_No param_regs [] = { AMD64_RCX, AMD64_RDX, AMD64_R8, AMD64_R9 };
 
-static AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
+static const AMD64_XMM_Reg_No float_param_regs [] = { AMD64_XMM0, AMD64_XMM1, AMD64_XMM2, AMD64_XMM3 };
 
-static AMD64_Reg_No return_regs [] = { AMD64_RAX };
+static const AMD64_Reg_No return_regs [] = { AMD64_RAX };
 
-static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
+static const AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
 
 #define PARAM_REGS G_N_ELEMENTS(param_regs)
 #define FLOAT_PARAM_REGS G_N_ELEMENTS(float_param_regs)
@@ -235,6 +246,10 @@ static AMD64_XMM_Reg_No float_return_regs [] = { AMD64_XMM0 };
 
 static const AMD64_Reg_No param_regs [] = {AMD64_RDI, AMD64_RSI, AMD64_RDX,
 					   AMD64_RCX, AMD64_R8,  AMD64_R9};
+
+static const AMD64_XMM_Reg_No float_param_regs[] = {AMD64_XMM0, AMD64_XMM1, AMD64_XMM2,
+						     AMD64_XMM3, AMD64_XMM4, AMD64_XMM5,
+						     AMD64_XMM6, AMD64_XMM7};
 
 static const AMD64_Reg_No return_regs [] = {AMD64_RAX, AMD64_RDX};
 #endif
@@ -442,8 +457,8 @@ typedef struct {
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK 1
-#define MONO_ARCH_HAVE_OP_TAILCALL 1
 #define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_REG 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
@@ -451,6 +466,7 @@ typedef struct {
 #define MONO_ARCH_FLOAT32_SUPPORTED 1
 
 #define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
+#define MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
@@ -510,7 +526,6 @@ mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
 
 #if defined(TARGET_WIN32) && !defined(DISABLE_JIT)
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #define MONO_ARCH_HAVE_UNWIND_TABLE 1
 #define MONO_ARCH_HAVE_CODE_CHUNK_TRACKING 1
 
@@ -584,7 +599,7 @@ guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg);
 
 void
-mono_arch_unwindinfo_install_method_unwind_info (gpointer *monoui, gpointer code, guint code_size);
+mono_arch_unwindinfo_install_method_unwind_info (PUNWIND_INFO *monoui, gpointer code, guint code_size);
 
 void
 mono_arch_unwindinfo_install_tramp_unwind_info (GSList *unwind_ops, gpointer code, guint code_size);
@@ -595,7 +610,6 @@ mono_arch_code_chunk_new (void *chunk, int size);
 void
 mono_arch_code_chunk_destroy (void *chunk);
 
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 #endif /* defined(TARGET_WIN32) && !defined(DISABLE_JIT) */
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE

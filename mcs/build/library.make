@@ -136,6 +136,7 @@ csproj-library:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
@@ -224,7 +225,7 @@ test-local run-test-local run-test-ondotnet-local:
 ccomma = ,
 define RESOURCE_template
 $(1).resources: $(2)
-	$(RESGEN) "$$<" "$$@"
+	$$(RESGEN) "$$<" "$$@"
 
 GEN_RESOURCE_DEPS += $(1).resources
 GEN_RESOURCE_FLAGS += -resource:$(1).resources
@@ -236,11 +237,12 @@ ifdef RESOURCE_DEFS
 $(foreach pair,$(RESOURCE_DEFS), $(eval $(call RESOURCE_template,$(word 1, $(subst $(ccomma), ,$(pair))), $(word 2, $(subst $(ccomma), ,$(pair))))))
 endif
 
-DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
+DISTFILES = $(wildcard *.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
 
 ASSEMBLY      = $(LIBRARY)
 ASSEMBLY_EXT  = .dll
 the_assembly  = $(the_lib)
+
 include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
@@ -251,6 +253,7 @@ csproj-test:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \
@@ -295,14 +298,18 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+# TODO: depend on all *.sources for now and figure out how to list only needed files later
+PROFILE_sources = $(wildcard *.sources)
 
-# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
-# We don't include it in the dependencies since it isn't always created
+ifneq "x" "x$(PROFILE_RUNTIME)"
+GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
+else
+GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
+endif
+
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(depsdir)/.stamp
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(GENSOURCES_CS)
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
@@ -390,9 +397,9 @@ gen-deps:
 
 update-corefx-sr-generic:
 ifneq ($(RESX_STRINGS),)
-	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_STRINGS) >$(SR_OUTPUT)
+	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resx2sr.exe $(RESX_EXTRA_ARGUMENTS) $(RESX_STRINGS) >$(SR_OUTPUT)
 endif
 
 update-corefx-sr: $(RESX_RESOURCE_STRING) $(XTEST_RESX_RESOURCE_STRING)
-	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" update-corefx-sr-generic \
+	make SR_OUTPUT=corefx/SR.cs RESX_STRINGS="$(RESX_RESOURCE_STRING)" RESX_EXTRA_ARGUMENTS="$(RESX_EXTRA_ARGUMENTS)" update-corefx-sr-generic \
 	&& make SR_OUTPUT=corefx/SR.tests.cs RESX_STRINGS=$(XTEST_RESX_RESOURCE_STRING) update-corefx-sr-generic

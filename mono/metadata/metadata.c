@@ -59,6 +59,9 @@ static void free_inflated_method (MonoMethodInflated *method);
 static void free_inflated_signature (MonoInflatedMethodSignature *sig);
 static void mono_metadata_field_info_full (MonoImage *meta, guint32 index, guint32 *offset, guint32 *rva, MonoMarshalSpec **marshal_spec, gboolean alloc_from_image);
 
+static MonoType* mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter);
+
+
 /*
  * This enumeration is used to describe the data types in the metadata
  * tables
@@ -507,7 +510,7 @@ static const struct msgstr_t {
 #undef TABLEDEF
 };
 static const gint16 tableidx [] = {
-#define TABLEDEF(a,b) [a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define TABLEDEF(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 };
@@ -1048,6 +1051,24 @@ mono_metadata_string_heap (MonoImage *meta, guint32 index)
 }
 
 /**
+ * mono_metadata_string_heap_checked:
+ * \param meta metadata context
+ * \param index index into the string heap.
+ * \param error set on error
+ * \returns an in-memory pointer to the \p index in the string heap.
+ * On failure returns NULL and sets \p error.
+ */
+const char *
+mono_metadata_string_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
+{
+	if (G_UNLIKELY (!(index < meta->heap_strings.size))) {
+		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "string heap index %ud out bounds %u", index, meta->heap_strings.size);
+		return NULL;
+	}
+	return meta->heap_strings.data + index;
+}
+
+/**
  * mono_metadata_user_string:
  * \param meta metadata context
  * \param index index into the user string heap.
@@ -1072,6 +1093,24 @@ mono_metadata_blob_heap (MonoImage *meta, guint32 index)
 {
 	g_assert (index < meta->heap_blob.size);
 	g_return_val_if_fail (index < meta->heap_blob.size, "");/*FIXME shouldn't we return NULL and check for index == 0?*/
+	return meta->heap_blob.data + index;
+}
+
+/**
+ * mono_metadata_blob_heap_checked:
+ * \param meta metadata context
+ * \param index index into the blob.
+ * \param error set on error
+ * \returns an in-memory pointer to the \p index in the Blob heap.  On failure sets \p error and returns NULL;
+ *
+ */
+const char *
+mono_metadata_blob_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
+{
+	if (G_UNLIKELY (!(index < meta->heap_blob.size))) {
+		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "blob heap index %u out of bounds %u", index, meta->heap_blob.size);
+		return NULL;
+	}
 	return meta->heap_blob.data + index;
 }
 
@@ -1140,6 +1179,59 @@ mono_metadata_decode_row (const MonoTableInfo *t, int idx, guint32 *res, int res
 }
 
 /**
+ * mono_metadata_decode_row_checked:
+ * \param image the \c MonoImage the table belongs to
+ * \param t table to extract information from.
+ * \param idx index in the table.
+ * \param res array of \p res_size cols to store the results in
+ * \param error set on bounds error
+ *
+ *
+ * This decompresses the metadata element \p idx in the table \p t
+ * into the \c guint32 \p res array that has \p res_size elements.
+ *
+ * \returns TRUE if the read succeeded. Otherwise sets \p error and returns FALSE.
+ */
+gboolean
+mono_metadata_decode_row_checked (const MonoImage *image, const MonoTableInfo *t, int idx, guint32 *res, int res_size, MonoError *error)
+{
+	guint32 bitfield = t->size_bitfield;
+	int i, count = mono_metadata_table_count (bitfield);
+
+	const char *image_name = image && image->name ? image->name : "unknown image";
+
+	if (G_UNLIKELY (! (idx < t->rows && idx >= 0))) {
+		mono_error_set_bad_image_by_name (error, image_name, "row index %d out of bounds: %d rows", idx, t->rows);
+		return FALSE;
+	}
+	const char *data = t->base + idx * t->row_size;
+
+	if (G_UNLIKELY (res_size != count)) {
+		mono_error_set_bad_image_by_name (error, image_name, "res_size %d != count %d", res_size, count);
+		return FALSE;
+	}
+
+	for (i = 0; i < count; i++) {
+		int n = mono_metadata_table_size (bitfield, i);
+
+		switch (n) {
+		case 1:
+			res [i] = *data; break;
+		case 2:
+			res [i] = read16 (data); break;
+		case 4:
+			res [i] = read32 (data); break;
+		default:
+			mono_error_set_bad_image_by_name (error, image_name, "unexpected table [%d] size %d", i, n);
+			return FALSE;
+		}
+		data += n;
+	}
+
+	return TRUE;
+}
+
+/**
  * mono_metadata_decode_row_col:
  * \param t table to extract information from.
  * \param idx index for row in table.
@@ -1153,8 +1245,8 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
 {
 	guint32 bitfield = t->size_bitfield;
 	int i;
-	register const char *data; 
-	register int n;
+	const char *data;
+	int n;
 	
 	g_assert (idx < t->rows);
 	g_assert (col < mono_metadata_table_count (bitfield));
@@ -4002,6 +4094,7 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
 	const char *ptr;
 	unsigned char flags, format;
 	guint16 fat_flags;
+	ERROR_DECL (error);
 
 	/*Only the GMD has a pointer to the metadata.*/
 	while (method->is_inflated)
@@ -4035,8 +4128,10 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
 	rva = mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_RVA);
 
 	/*We must run the verifier since we'll be decoding it.*/
-	if (!mono_verifier_verify_method_header (img, rva, NULL))
+	if (!mono_verifier_verify_method_header (img, rva, error)) {
+		mono_error_cleanup (error);
 		return FALSE;
+	}
 
 	ptr = mono_image_rva_map (img, rva);
 	if (!ptr)
@@ -4154,10 +4249,8 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		}
 		mono_metadata_decode_row (t, idx, cols, 1);
 
-		if (!mono_verifier_verify_standalone_signature (m, cols [MONO_STAND_ALONE_SIGNATURE], NULL)) {
-			mono_error_set_bad_image (error, m, "Method header locals signature 0x%8x verification failed", idx);
+		if (!mono_verifier_verify_standalone_signature (m, cols [MONO_STAND_ALONE_SIGNATURE], error))
 			goto fail;
-		}
 	}
 	if (fat_flags & METHOD_HEADER_MORE_SECTS) {
 		clauses = parse_section_data (m, &num_clauses, (const unsigned char*)ptr, error);
@@ -4236,7 +4329,7 @@ mono_metadata_free_mh (MonoMethodHeader *mh)
 	 * or a SRE-generated method, so the lifetime in that case is
 	 * dictated by the method's own lifetime
 	 */
-	if (mh->is_transient) {
+	if (mh && mh->is_transient) {
 		for (i = 0; i < mh->num_locals; ++i)
 			mono_metadata_free_type (mh->locals [i]);
 		g_free (mh);
@@ -6031,10 +6124,8 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 	mono_metadata_decode_row (t, idx-1, cols, MONO_TYPESPEC_SIZE);
 	ptr = mono_metadata_blob_heap (image, cols [MONO_TYPESPEC_SIGNATURE]);
 
-	if (!mono_verifier_verify_typespec_signature (image, cols [MONO_TYPESPEC_SIGNATURE], type_spec, NULL)) {
-		mono_error_set_bad_image (error, image, "Could not verify type spec %08x.", type_spec);
+	if (!mono_verifier_verify_typespec_signature (image, cols [MONO_TYPESPEC_SIGNATURE], type_spec, error))
 		return NULL;
-	}
 
 	mono_metadata_decode_value (ptr, &ptr);
 
@@ -6169,6 +6260,9 @@ mono_metadata_parse_marshal_spec_full (MonoImage *image, MonoImage *parent_image
 void 
 mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
 {
+	if (!spec)
+		return;
+
 	if (spec->native == MONO_NATIVE_CUSTOM) {
 		g_free (spec->data.custom_data.custom_name);
 		g_free (spec->data.custom_data.cookie);
@@ -6323,6 +6417,7 @@ handle_enum:
 		if (mspec) {
 			switch (mspec->native) {
 			case MONO_NATIVE_STRUCT:
+				*conv = MONO_MARSHAL_CONV_OBJECT_STRUCT;
 				return MONO_NATIVE_STRUCT;
 			case MONO_NATIVE_CUSTOM:
 				return MONO_NATIVE_CUSTOM;
@@ -6761,10 +6856,14 @@ mono_get_shared_generic_inst (MonoGenericContainer *container)
  * \returns TRUE if \p type represents a type passed by reference,
  * FALSE otherwise.
  */
-gboolean
+mono_bool
 mono_type_is_byref (MonoType *type)
 {
-	return type->byref;
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
+	result = type->byref;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -6917,7 +7016,11 @@ mono_type_is_generic_parameter (MonoType *type)
 MonoType*
 mono_signature_get_return_type (MonoMethodSignature *sig)
 {
-	return sig->ret;
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = sig->ret;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -6933,6 +7036,16 @@ mono_signature_get_return_type (MonoMethodSignature *sig)
  */
 MonoType*
 mono_signature_get_params (MonoMethodSignature *sig, gpointer *iter)
+{
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_signature_get_params_internal (sig, iter);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoType*
+mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter)
 {
 	MonoType** type;
 	if (!iter)

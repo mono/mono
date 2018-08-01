@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;NET_3_5;NET_3_0</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;NET_3_5;NET_3_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -71,8 +71,8 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5-$(HostPlatform)</IntermediateOutputPath>
+    <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;NET_3_5;NET_3_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
@@ -103,6 +103,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Assembly\TypeForwarders.cs" />
@@ -129,6 +130,46 @@
     <Compile Include="System.ServiceModel\WebHttpSecurity.cs" />
     <Compile Include="System.ServiceModel\WebHttpSecurityMode.cs" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <Compile Include="System.ServiceModel.Activation\WebScriptServiceHostFactory.cs" />
     <Compile Include="System.ServiceModel.Activation\WebServiceHostFactory.cs" />
@@ -151,134 +192,6 @@
     <Compile Include="System.ServiceModel.Web\OutgoingWebResponseContext.cs" />
     <Compile Include="System.ServiceModel.Web\WebServiceHost.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Atom10FeedFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Atom10FeedFormatter_1.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Atom10ItemFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Atom10ItemFormatter_1.cs" />
-    <Compile Include="System.ServiceModel.Syndication\AtomPub10CategoriesDocumentFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\AtomPub10ServiceDocumentFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\AtomPub10ServiceDocumentFormatter_1.cs" />
-    <Compile Include="System.ServiceModel.Syndication\CategoriesDocument.cs" />
-    <Compile Include="System.ServiceModel.Syndication\CategoriesDocumentFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\InlineCategoriesDocument.cs" />
-    <Compile Include="System.ServiceModel.Syndication\ISyndicationElement.cs" />
-    <Compile Include="System.ServiceModel.Syndication\ReferencedCategoriesDocument.cs" />
-    <Compile Include="System.ServiceModel.Syndication\ResourceCollectionInfo.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Rss20FeedFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Rss20FeedFormatter_1.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Rss20ItemFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Rss20ItemFormatter_1.cs" />
-    <Compile Include="System.ServiceModel.Syndication\ServiceDocument.cs" />
-    <Compile Include="System.ServiceModel.Syndication\ServiceDocumentFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationCategory.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationContent.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationElementExtension.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationElementExtensionCollection.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationExtensions.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationFeed.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationFeedFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationItem.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationItemFormatter.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationLink.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationPerson.cs" />
-    <Compile Include="System.ServiceModel.Syndication\SyndicationVersions.cs" />
-    <Compile Include="System.ServiceModel.Syndication\TextSyndicationContent.cs" />
-    <Compile Include="System.ServiceModel.Syndication\TextSyndicationContentKind.cs" />
-    <Compile Include="System.ServiceModel.Syndication\UrlSyndicationContent.cs" />
-    <Compile Include="System.ServiceModel.Syndication\Workspace.cs" />
-    <Compile Include="System.ServiceModel.Syndication\XmlSyndicationContent.cs" />
-    <Compile Include="System.ServiceModel.Web\IncomingWebRequestContext.cs" />
-    <Compile Include="System.ServiceModel.Web\OutgoingWebResponseContext.cs" />
-    <Compile Include="System\UriTemplate.cs" />
-    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
-    <Compile Include="System\UriTemplateMatch.cs" />
-    <Compile Include="System\UriTemplateMatchException.cs" />
-    <Compile Include="System\UriTemplateTable.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -300,6 +213,26 @@
     <Compile Include="System\UriTemplateTable.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />

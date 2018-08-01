@@ -13,6 +13,7 @@
 
 #include <config.h>
 #include <glib.h>
+#include <mono/metadata/threads-types.h>
 
 #ifdef TARGET_OSX
 
@@ -28,7 +29,7 @@ void mono_merp_disable (void);
  * See MERP documentation for information on the bundle ID, signature, and version fields
  */
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath);
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath);
 
 /**
  * Whether the MERP-based handler is registered
@@ -45,7 +46,8 @@ gboolean mono_merp_enabled (void);
  * crash dump (leaving the caller to call exit), or terminates the runtime
  * when the registered telemetry application does not respond.
  */
-void mono_merp_invoke (pid_t crashed_pid, intptr_t thread_pointer, const char *signal);
+void
+mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *dump_file, MonoStackHash *hashes, char *version);
 
 
 #endif // TARGET_OSX

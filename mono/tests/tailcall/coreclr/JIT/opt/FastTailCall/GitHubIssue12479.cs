@@ -83,7 +83,7 @@ public class GitHubIssue12479
 
         if (a == 1)
         {
-            return 100;
+            return 0;
         }
 
         else

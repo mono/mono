@@ -542,7 +542,7 @@ namespace Mono.CSharp
 				}
 			);
 
-			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out _));
 #endif
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
@@ -559,7 +559,8 @@ namespace Mono.CSharp
 			encoder.Encode (buffer_size);
 			encoder.EncodeEmptyNamedArguments ();
 
-			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			Module.AddAssemblyReferences (references);
 		}
 	}
 

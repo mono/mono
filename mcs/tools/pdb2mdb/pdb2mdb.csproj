@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,8 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="BitAccess.cs" />
     <Compile Include="BitSet.cs" />
     <Compile Include="CvInfo.cs" />
@@ -52,8 +52,8 @@
     <Compile Include="DbiModuleInfo.cs" />
     <Compile Include="DbiSecCon.cs" />
     <Compile Include="Driver.cs" />
-    <Compile Include="Interfaces.cs" />
     <Compile Include="IntHashTable.cs" />
+    <Compile Include="Interfaces.cs" />
     <Compile Include="MsfDirectory.cs" />
     <Compile Include="PdbConstant.cs" />
     <Compile Include="PdbDebugException.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="PdbWriter.cs" />
     <Compile Include="SourceLocationProvider.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

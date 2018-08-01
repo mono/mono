@@ -2,9 +2,9 @@
 include runtime.mk
 
 ANDROID_URI?=https://dl.google.com/android/repository/
-ANDROID_TOOLCHAIN_PREFIX?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_DIR?=$(TOP)/sdks/builds/toolchains/android
-ANDROID_TOOLCHAIN_CACHE_DIR?=$(TOP)/sdks/builds/toolchains/android
+ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
+ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
+ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
 
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
@@ -51,15 +51,17 @@ AndroidSDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),$(2),sdk,
 
 ifeq ($(UNAME),Darwin)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-darwin,platform-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-darwin-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
+$(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-darwin-x86_64,cmake/3.6.4111459))
 else
 ifeq ($(UNAME),Linux)
 $(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r27.0.1-linux,platform-tools))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,platform-tools))
 $(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-linux-4333796,tools))
 $(eval $(call AndroidSDKProvisioningTemplate,emulator-linux-4266726,emulator))
+$(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-linux-x86_64,cmake/3.6.4111459))
 else
 $(error "Unknown UNAME=$(UNAME)")
 endif
@@ -77,9 +79,9 @@ $(eval $(call AndroidSDKProvisioningTemplate,android-22_r02,platforms/android-22
 $(eval $(call AndroidSDKProvisioningTemplate,platform-23_r03,platforms/android-23))
 $(eval $(call AndroidSDKProvisioningTemplate,platform-24_r02,platforms/android-24))
 $(eval $(call AndroidSDKProvisioningTemplate,platform-25_r03,platforms/android-25))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-26_r01,platforms/android-26))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-27_r01,platforms/android-27))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-P_r01,platforms/android-P))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-26_r02,platforms/android-26))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-27_r03,platforms/android-27))
+$(eval $(call AndroidSDKProvisioningTemplate,platform-28_r04,platforms/android-28))
 $(eval $(call AndroidSDKProvisioningTemplate,docs-24_r01,docs))
 $(eval $(call AndroidSDKProvisioningTemplate,android_m2repository_r16,extras/android/m2repository))
 $(eval $(call AndroidSDKProvisioningTemplate,x86-21_r05,system-images/android-21/default/x86,sys-img/android/))
@@ -116,7 +118,8 @@ _android-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-strip
 _android-$(1)_AC_VARS= \
 	mono_cv_uscore=yes \
 	ac_cv_func_sched_getaffinity=no \
-	ac_cv_func_sched_setaffinity=no
+	ac_cv_func_sched_setaffinity=no \
+	ac_cv_func_shm_open_working_with_mmap=no
 
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
@@ -153,6 +156,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
 	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter \
+	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-sigaltstack=yes \
 	--with-tls=pthread \
@@ -221,6 +225,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
+	--enable-monodroid \
 	--with-mcs-docs=no \
 	--with-monodroid \
 	--with-profile4_x=no \
@@ -275,6 +280,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-mcs-build \
 	--disable-nls \
 	--enable-maintainer-mode \
+	--enable-monodroid \
 	--with-monodroid
 
 .stamp-android-$(1)-toolchain:

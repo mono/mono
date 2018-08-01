@@ -24,6 +24,34 @@
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/class-internals.h>
 
+// Type-safe handles are a struct with a pointer to pointer.
+// The only operations allowed on them are the functions/macros in this file, and assignment
+// from same handle type to same handle type.
+//
+// Type-unsafe handles are a pointer to a struct with a pointer.
+// Besides the type-safe operations, these can also be:
+//  1. compared to NULL, instead of only MONO_HANDLE_IS_NULL
+//  2. assigned from NULL, instead of only a handle
+//  3. MONO_HANDLE_NEW (T) from anything, instead of only a T*
+//  4. MONO_HANDLE_CAST from anything, instead of only another handle type
+//  5. assigned from any void*, at least in C
+//  6. Cast from any handle type to any handle type, without using MONO_HANDLE_CAST.
+//  7. Cast from any handle type to any pointer type and vice versa, such as incorrect unboxing.
+//  8. mono_object_class (handle), instead of mono_handle_class
+//
+// None of those operations were likely intended.
+//
+// FIXME Do this only on checked builds? Or certain architectures?
+// There is not runtime cost.
+// NOTE: Running this code depends on the ABI to pass a struct
+// with a pointer the same as a pointer. This is tied in with
+// marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
+#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
+#define MONO_TYPE_SAFE_HANDLES 1
+#else
+#define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
+#endif
+
 G_BEGIN_DECLS
 
 /*
@@ -125,12 +153,10 @@ typedef void (*GcScanFunc) (gpointer*, gpointer);
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 MonoRawHandle mono_handle_new (MonoObject *object);
-MonoRawHandle mono_handle_new_full (gpointer rawptr, gboolean interior);
-MonoRawHandle mono_handle_new_interior (gpointer rawptr);
+gpointer mono_handle_new_interior (gpointer rawptr);
 #else
 MonoRawHandle mono_handle_new (MonoObject *object, const char* owner);
-MonoRawHandle mono_handle_new_full (gpointer rawptr, gboolean interior, const char *owner);
-MonoRawHandle mono_handle_new_interior (gpointer rawptr, const char *owner);
+gpointer mono_handle_new_interior (gpointer rawptr, const char *owner);
 #endif
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check);
@@ -149,7 +175,7 @@ static inline void
 mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
 #ifdef MONO_HANDLE_TRACK_SP
-	gpointer sptop = (gpointer)(intptr_t)&stackmark;
+	gpointer sptop = &stackmark;
 #endif
 	HandleStack *handles = (HandleStack *)info->handle_stack;
 	stackmark->size = handles->top->size;
@@ -200,7 +226,6 @@ Icall macros
 	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
 	(RESULT) = mono_stack_mark_pop_value (__info, &__mark, (HANDLE));
 
-
 #define HANDLE_FUNCTION_ENTER() do {				\
 	MonoThreadInfo *__info = mono_thread_info_current ();	\
 	SETUP_ICALL_FRAME					\
@@ -223,6 +248,18 @@ Icall macros
 		return __result;				\
 	} while (0); } while (0);
 
+#if MONO_TYPE_SAFE_HANDLES
+
+// Return a coop handle from coop handle.
+#define HANDLE_FUNCTION_RETURN_REF(TYPE, HANDLE)			\
+	do {								\
+		MonoObjectHandle __result;				\
+		CLEAR_ICALL_FRAME_VALUE (__result.__raw, (HANDLE).__raw); \
+		return MONO_HANDLE_CAST (TYPE, __result);		\
+	} while (0); } while (0);
+
+#else
+
 // Return a coop handle from coop handle.
 #define HANDLE_FUNCTION_RETURN_REF(TYPE, HANDLE)			\
 	do {								\
@@ -230,6 +267,8 @@ Icall macros
 		CLEAR_ICALL_FRAME_VALUE (__result, ((MonoRawHandle) (HANDLE))); \
 		return MONO_HANDLE_CAST (TYPE, __result);		\
 	} while (0); } while (0);
+
+#endif
 
 #ifdef MONO_NEEDS_STACK_WATERMARK
 
@@ -298,10 +337,14 @@ Handle macros/functions
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
 #define TYPED_OUT_HANDLE_NAME(TYPE) TYPE ## HandleOut
 
+// internal helpers:
+#define MONO_HANDLE_CAST_FOR(type) mono_handle_cast_##type
+#define MONO_HANDLE_TYPECHECK_FOR(type) mono_handle_typecheck_##type
+
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
-#define HANDLE_OWNER_STRINGIFY(file,lineno) (const char*) (file ":" STRINGIFY(lineno))
+#define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
 #endif
 
 
@@ -311,26 +354,58 @@ Handle macros/functions
  *
  * For example, TYPED_HANDLE_DECL(MonoObject) (see below) expands to:
  *
+ * #if MONO_TYPE_SAFE_HANDLES
+ *
+ * typedef struct {
+ *   MonoObject **__raw;
+ * } MonoObjectHandlePayload,
+ *   MonoObjectHandle,
+ *   MonoObjectHandleOut;
+ *
+ * Internal helper functions are also generated.
+ *
+ * #else
+ *
  * typedef struct {
  *   MonoObject *__raw;
  * } MonoObjectHandlePayload;
  *
  * typedef MonoObjectHandlePayload* MonoObjectHandle;
  * typedef MonoObjectHandlePayload* MonoObjectHandleOut;
+ *
+ * #endif
  */
+
+#if MONO_TYPE_SAFE_HANDLES
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
+					 TYPED_HANDLE_NAME (TYPE),		\
+					 TYPED_OUT_HANDLE_NAME (TYPE);		\
+/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
+/* Another way to do this involved casting mono_handle_new function to a different type. */ \
+static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
+{								\
+	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
+	return b;						\
+}								\
+static inline MONO_ALWAYS_INLINE gpointer 			\
+MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
+{								\
+	return a;						\
+}
+
+#else
 #define TYPED_HANDLE_DECL(TYPE)						\
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+#endif
+
 /*
  * TYPED_VALUE_HANDLE_DECL(SomeType):
  *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
- * For example TYPED_HANDLE_DECL(MonoMethodInfo) expands to:
- *
- * typedef struct {
- *   MonoMethodInfo *__raw;
- * } MonoMethodInfoHandlePayload;
- * typedef MonoMethodInfoHandlePayload* MonoMethodInfoHandle;
+ * It is currently identical to TYPED_HANDLE_DECL (valuetypes vs. referencetypes).
  */
 #define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
 
@@ -338,23 +413,51 @@ Handle macros/functions
 #define MONO_HANDLE_PAYLOAD_OFFSET_(PayloadType) MONO_STRUCT_OFFSET(PayloadType, __raw)
 #define MONO_HANDLE_PAYLOAD_OFFSET(TYPE) MONO_HANDLE_PAYLOAD_OFFSET_(TYPED_HANDLE_PAYLOAD_NAME (TYPE))
 
-#define MONO_HANDLE_INIT ((void*) mono_null_value_handle)
-#define NULL_HANDLE mono_null_value_handle
-
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
-#define MONO_HANDLE_RAW(HANDLE) ((HANDLE)->__raw)
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
+
+// With Visual C++ compiling as C, the type of a ternary expression
+// yielding two unrelated non-void pointers is the type of the first, plus a warning.
+// This can be used to simulate gcc typeof extension.
+// Otherwise we are forced to evaluate twice, or use C++.
+#ifdef _MSC_VER
+typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type unrelated to anything else
+#define MONO_TYPEOF_CAST(typeexpr, expr) __pragma(warning(suppress:4133))(0 ? (typeexpr) : (MonoTypeofCastHelper)(expr))
+#else
+#define MONO_TYPEOF_CAST(typeexpr, expr) ((typeof (typeexpr))(expr))
+#endif
+
+#if MONO_TYPE_SAFE_HANDLES
+
+#ifndef MONO_HANDLE_TRACK_OWNER
+
+#define MONO_HANDLE_NEW(type, object) \
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object))))
+
+#else
+
+#define MONO_HANDLE_NEW(type, object) \
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object), HANDLE_OWNER)))
+
+#endif
+
+#define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
+#define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST (*(handle).__raw, mono_handle_raw ((handle).__raw)))
+#define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
+
+#else // MONO_TYPE_SAFE_HANDLES
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 #define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE)) )
 #else
-#define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER_STRINGIFY(__FILE__, __LINE__)))
+#define MONO_HANDLE_NEW(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( mono_handle_new ((MonoObject*)(VALUE), HANDLE_OWNER))
 #endif
-
 #define MONO_HANDLE_CAST(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( VALUE )
 
-#define MONO_HANDLE_IS_NULL(HANDLE) (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW(HANDLE) == NULL))
+#define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST ((handle)->__raw, mono_handle_raw (handle)))
+#define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null (handle))
 
+#endif // MONO_TYPE_SAFE_HANDLES
 
 /*
 WARNING WARNING WARNING
@@ -379,17 +482,32 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		} while (0);						\
 	} while (0)
 
+#if MONO_TYPE_SAFE_HANDLES
+
+/* N.B. RESULT is evaluated before HANDLE */
+#define MONO_HANDLE_GET(RESULT, HANDLE, FIELD) do {			\
+		MonoObjectHandle __dest = MONO_HANDLE_CAST (MonoObject, RESULT);	\
+		MONO_HANDLE_SUPPRESS (*(gpointer*)__dest.__raw = (gpointer)MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD); \
+	} while (0)
+
+#else
+
 /* N.B. RESULT is evaluated before HANDLE */
 #define MONO_HANDLE_GET(RESULT, HANDLE, FIELD) do {			\
 		MonoObjectHandle __dest = MONO_HANDLE_CAST(MonoObject, RESULT);	\
 		MONO_HANDLE_SUPPRESS (*(gpointer*)&__dest->__raw = (gpointer)MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD); \
 	} while (0)
 
+#endif
+
+// Get ((type)handle)->field as a handle.
 #define MONO_HANDLE_NEW_GET(TYPE,HANDLE,FIELD) (MONO_HANDLE_NEW(TYPE,MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)))
 
+// Get handle->field, where field is not a pointer (an integer or non-managed pointer).
 #define MONO_HANDLE_GETVAL(HANDLE, FIELD) MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)
 
-/* VS doesn't support typeof :( :( :( */
+// This would be easier to write with the gcc extension typeof,
+// but it is not widely enough implemented (i.e. Microsoft C).
 #define MONO_HANDLE_SETVAL(HANDLE, FIELD, TYPE, VALUE) do {	\
 		TYPE __val = (VALUE);	\
 		MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD = __val); \
@@ -467,25 +585,81 @@ TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoException);
 TYPED_HANDLE_DECL (MonoAppContext);
 
+#if MONO_TYPE_SAFE_HANDLES
+
+// Structs cannot be cast to structs.
+// Therefore, cast the function pointer to change its return type.
+// As well, a function is needed because an anonymous struct cannot be initialized in C.
+static inline MonoObjectHandle
+mono_handle_cast (gpointer a)
+{
+	return *(MonoObjectHandle*)&a;
+}
+
+#endif
+
+static inline MONO_ALWAYS_INLINE gboolean
+mono_handle_is_null (MonoRawHandle raw_handle)
+{
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+#if MONO_TYPE_SAFE_HANDLES
+	MonoObjectHandle *handle = (MonoObjectHandle*)&raw_handle;
+	return !handle->__raw || !*handle->__raw;
+#else
+	MonoObjectHandle handle = (MonoObjectHandle)raw_handle;
+	return !handle || !handle->__raw;
+#endif
+}
+
+static inline MONO_ALWAYS_INLINE gpointer
+mono_handle_raw (MonoRawHandle raw_handle)
+{
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+#if MONO_TYPE_SAFE_HANDLES
+	MonoObjectHandle *handle = (MonoObjectHandle*)&raw_handle;
+	return handle->__raw ? *handle->__raw : NULL;
+#else
+	MonoObjectHandle handle = (MonoObjectHandle)raw_handle;
+	return handle ? handle->__raw : NULL;
+#endif
+}
+
 /* Unfortunately MonoThreadHandle is already a typedef used for something unrelated.  So
  * the coop handle for MonoThread* is MonoThreadObjectHandle.
  */
 typedef MonoThread MonoThreadObject;
 TYPED_HANDLE_DECL (MonoThreadObject);
 
-#define NULL_HANDLE_STRING MONO_HANDLE_CAST(MonoString, NULL_HANDLE)
-
 /*
 This is the constant for a handle that points nowhere.
-Init values to it.
+Constant handles may be initialized to it, but non-constant
+handles must be NEW'ed. Uses of these are suspicious and should
+be reviewed and probably changed FIXME.
 */
 extern const MonoObjectHandle mono_null_value_handle;
+#define NULL_HANDLE mono_null_value_handle
+#define NULL_HANDLE_STRING (MONO_HANDLE_CAST (MonoString, NULL_HANDLE))
+#define NULL_HANDLE_ARRAY  (MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
+
+#if MONO_TYPE_SAFE_HANDLES
 
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)(src ? MONO_HANDLE_RAW (src) : NULL));
+	g_assert (dest.__raw);
+	MONO_HANDLE_SUPPRESS (*dest.__raw = src.__raw ? *src.__raw : NULL);
 }
+
+#else
+
+static inline void
+mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
+{
+	g_assert (dest);
+	MONO_HANDLE_SUPPRESS (dest->__raw = (MonoObject *)(src ? MONO_HANDLE_RAW (src) : NULL));
+}
+
+#endif
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
 static inline gpointer
@@ -500,13 +674,18 @@ MonoArrayHandle mono_array_new_handle (MonoDomain *domain, MonoClass *eclass, ui
 MonoArrayHandle
 mono_array_new_full_handle (MonoDomain *domain, MonoClass *array_class, uintptr_t *lengths, intptr_t *lower_bounds, MonoError *error);
 
-
-uintptr_t mono_array_handle_length (MonoArrayHandle arr);
+uintptr_t
+mono_array_handle_length (MonoArrayHandle arr);
 
 static inline void
 mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintptr_t index)
 {
-	MONO_HANDLE_SUPPRESS (dest->__raw = (gpointer)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
+#if MONO_TYPE_SAFE_HANDLES
+	MONO_HANDLE_SUPPRESS (g_assert (dest.__raw));
+	MONO_HANDLE_SUPPRESS (*dest.__raw = (MonoObject*)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
+#else
+	MONO_HANDLE_SUPPRESS (dest->__raw = (MonoObject *)mono_array_get(MONO_HANDLE_RAW (array), gpointer, index));
+#endif
 }
 
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
@@ -518,6 +697,28 @@ mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned);
 
 MonoObjectHandle
 mono_gchandle_get_target_handle (uint32_t gchandle);
+
+static inline gboolean
+mono_gchandle_target_equal (uint32_t gchandle, MonoObjectHandle equal)
+{
+	// This function serves to reduce coop handle creation.
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+	return mono_gchandle_get_target (gchandle) == MONO_HANDLE_RAW (equal);
+}
+
+static inline void
+mono_gchandle_target_is_null_or_equal (uint32_t gchandle, MonoObjectHandle equal, gboolean *is_null,
+	gboolean *is_equal)
+{
+	// This function serves to reduce coop handle creation.
+	MONO_HANDLE_SUPPRESS_SCOPE (1);
+	MonoObject *target = mono_gchandle_get_target (gchandle);
+	*is_null = target == NULL;
+	*is_equal = target == MONO_HANDLE_RAW (equal);
+}
+
+void
+mono_gchandle_set_target_handle (guint32 gchandle, MonoObjectHandle obj);
 
 void
 mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArrayHandle src, uintptr_t src_idx, uintptr_t len);
@@ -552,6 +753,24 @@ mono_context_get_handle (void);
 
 void
 mono_context_set_handle (MonoAppContextHandle new_context);
+
+static inline guint32
+mono_gchandle_new_weakref_from_handle (MonoObjectHandle handle)
+{
+	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), FALSE);
+}
+
+static inline int
+mono_handle_hash (MonoObjectHandle object)
+{
+	return mono_object_hash (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (object)));
+}
+
+static inline guint32
+mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handle)
+{
+	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
+}
 
 G_END_DECLS
 

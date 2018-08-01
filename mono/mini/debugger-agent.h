@@ -8,7 +8,8 @@
 #include "mini.h"
 #include <mono/utils/mono-stack-unwinding.h>
 
-#define MONO_DBG_CALLBACKS_VERSION 0x1
+#define MONO_DBG_CALLBACKS_VERSION (2)
+// 2. debug_log parameters changed from MonoString* to MonoStringHandle
 
 struct _MonoDebuggerCallbacks {
 	int version;
@@ -25,12 +26,17 @@ struct _MonoDebuggerCallbacks {
 	void (*begin_exception_filter) (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx);
 	void (*end_exception_filter) (MonoException *exc, MonoContext *ctx, MonoContext *orig_ctx);
 	void (*user_break) (void);
-	void (*debug_log) (int level, MonoString *category, MonoString *message);
+	void (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
 	gboolean (*debug_log_is_enabled) (void);
 };
 
+typedef struct _DebuggerTlsData DebuggerTlsData;
+
 MONO_API void
 mono_debugger_agent_init (void);
+
+MONO_API void
+mono_debugger_agent_parse_options (char *options);
 
 void
 mono_debugger_agent_stub_init (void);

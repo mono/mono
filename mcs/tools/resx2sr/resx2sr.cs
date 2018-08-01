@@ -31,6 +31,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Resources;
 using System.ComponentModel.Design;
+using System.Text.RegularExpressions;
 using Mono.Options;
 
 public class Program
@@ -41,13 +42,21 @@ public class Program
 		public string OutputFile { get; set; }
 	}
 
+	internal static List<string> InputFiles;
+	internal static Dictionary<string, object> ExistingKeys;
+
 	public static int Main (string[] args)
 	{
 		var options = new CmdOptions ();
 
+		InputFiles = new List<string> ();
+		ExistingKeys = new Dictionary<string, object> ();
+
 		var p = new OptionSet () {
 			{ "o|out=", "Specifies output file name",
 				v => options.OutputFile = v },
+			{ "i|in=", "Specifies input file name",
+				v => InputFiles.Add (v) },
 			{ "h|help",  "Display available options", 
 				v => options.ShowHelp = v != null },
 		};
@@ -70,6 +79,9 @@ public class Program
 			ShowHelp (p);
 			return 2;
 		}
+
+		if (!LoadInputFiles ())
+			return 4;
 
 		var resxStrings = new List<Tuple<string, string, string>> ();
 		if (!LoadStrings (resxStrings, extra))
@@ -150,7 +162,38 @@ public class Program
 			while (dict.MoveNext ()) {
 				var node = (ResXDataNode)dict.Value;
 
+				if (ExistingKeys.ContainsKey (node.Name))
+					continue;
+				ExistingKeys.Add (node.Name, null);
+
 				resourcesStrings.Add (Tuple.Create (node.Name, (string) node.GetValue ((ITypeResolutionService)null), node.Comment));				
+			}
+		}
+
+		return true;
+	}
+
+	static bool LoadInputFiles ()
+	{
+		var reg = new Regex (@"\s*public const string (\w+)\s+=\s+");
+		var keys = new Dictionary<string, string> ();
+		foreach (var fileName in InputFiles) {
+			if (!File.Exists (fileName)) {
+				Console.Error.WriteLine ($"Error reading input file '{fileName}'");
+				return false;
+			}
+
+			using (var reader = new StreamReader (fileName)) {
+				string line;
+				while ((line = reader.ReadLine ()) != null) {
+					var match = reg.Match (line);
+					if (!match.Success)
+						continue;
+
+					var key = match.Groups[1].Value;
+					if (!ExistingKeys.ContainsKey (key))
+						ExistingKeys.Add (key, null);
+				}
 			}
 		}
 

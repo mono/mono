@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.15.0],
+AC_INIT(mono, [5.17.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -32,18 +32,27 @@ MONO_VERSION_MAJOR=`echo $VERSION | cut -d . -f 1`
 MONO_VERSION_MINOR=`echo $VERSION | cut -d . -f 2`
 MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 
-# This is the version number of the corlib-runtime interface. When
+#
+# This is the version of the corlib-runtime interface. When
 # making changes to this interface (by changing the layout
 # of classes the runtime knows about, changing icall signature or
-# semantics etc), increment this variable.
+# semantics etc), change this variable.
 #
-# This can be reset to 0 when Mono's version number is bumped
-# since it's part of the corlib version (the prefix '1' in the full
-# version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=3
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
+# This must be unique relative to corlib interface/semantics.
+#
+# Generate it with uuidgen. For example:
+# perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
+#
+# There is no ordering of corlib versions, no old or new,
+# the runtime expects an exact match.
+#
+MONO_CORLIB_VERSION=40525B4A-F860-49BF-936E-6B29CBBF357C
 
-AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
+#
+# Put a quoted #define in config.h.
+# Substitute @MONO_CORLIB_VERSION@ unquoted.
+#
+AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,"$MONO_CORLIB_VERSION",[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
 
 case $host_os in
@@ -116,6 +125,7 @@ platform_android=no
 platform_tizen=no
 platform_ios=no
 host_darwin=no
+host_linux=no
 
 
 if test "x$enable_wasm" = "xyes"; then
@@ -143,9 +153,9 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
-		# Windows Vista or later is required
-		CPPFLAGS="$CPPFLAGS -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
-		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		# Windows 7 or later is required
+		CPPFLAGS="$CPPFLAGS -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
+		LDFLAGS="$LDFLAGS -lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
@@ -258,6 +268,7 @@ case "$host" in
 		mono_cv_clang=no
 		;;
 	*-*-linux*)
+		host_linux=yes
 		CPPFLAGS="$CPPFLAGS -DGC_LINUX_THREADS -D_GNU_SOURCE -D_REENTRANT -DUSE_MMAP"
 		if test "x$disable_munmap" != "xyes"; then
 			CPPFLAGS="$CPPFLAGS -DUSE_MUNMAP"
@@ -340,8 +351,8 @@ case "$host" in
 		case "$host" in
 			dnl Snow Leopard and newer config.guess reports as this
 			i*86-*-darwin*)
-				BROKEN_DARWIN_FLAGS="-arch i386 -D_XOPEN_SOURCE"
-				BROKEN_DARWIN_CPPFLAGS="-D_XOPEN_SOURCE"
+				BROKEN_DARWIN_FLAGS="-arch i386"
+				BROKEN_DARWIN_CPPFLAGS=""
 				CPPFLAGS="$CPPFLAGS $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS="$CFLAGS $BROKEN_DARWIN_FLAGS"
 				CXXFLAGS="$CXXFLAGS $BROKEN_DARWIN_FLAGS"
@@ -519,7 +530,7 @@ AC_SUBST(export_ldflags)
 AC_PROG_LD
 AC_PROG_LD_GNU
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h)
+AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h copyfile.h)
 AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
 AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
                   [], [], [#include <stddef.h>
@@ -689,7 +700,8 @@ AC_ARG_ENABLE(visibility-hidden,
 
 WARN=''
 if test x"$GCC" = xyes; then
-        WARN='-Wall -Wunused -Wmissing-prototypes -Wmissing-declarations -Wstrict-prototypes  -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes -Wno-format-zero-length'
+		WARN='-Wall -Wunused -Wmissing-declarations -Wpointer-arith -Wno-cast-qual -Wwrite-strings -Wno-switch -Wno-switch-enum -Wno-unused-value -Wno-attributes'
+		CFLAGS="$CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wno-format-zero-length"
 
 		# We require C99 with some GNU extensions, e.g. `linux` macro
 		CFLAGS="$CFLAGS -std=gnu99"
@@ -736,9 +748,9 @@ else
 		;;
 	esac
 fi
-CFLAGS="$CFLAGS -g $WARN"
+CFLAGS="$WARN $CFLAGS -g"
 CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
-CPPFLAGS="$CPPFLAGS -g $WARN"
+CPPFLAGS="$WARN $CPPFLAGS -g"
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -976,6 +988,80 @@ AC_SUBST(JEMALLOC_LDFLAGS)
 AC_SUBST(JEMALLOC_AUTOCONF_FLAGS)
 fi
 
+# Terminology:
+# Crash privacy - Attempts to not send identifying information in the crash dump / to protect the obscurity of the program control flow
+# MERP - The MS telemetry profile. Not for general use.
+# Structured crashes - crashes at runtime that trigger a stack walk by mono that happens cooperatively
+
+# Structured crashes are not merp crashes. Structured crashes are json dumps made by mono during crashes. Merp upload is going to use the dumping code is a very specific way, and is enabled at runtime with an icall.
+
+#--with-crash_privacy=yes --with-structured_crashes=no means we don't wanna dump in non-merp-enabled builds, and we want to not send symbol strings. This is going to be the default pair of settings for VS4Mac.
+#--with-crash_privacy=yes --with-structured_crashes=yes means you want to see crashes on your console, and you want to not see unmanaged symbol names. This is an option for proprietary apps that have manual bugs filed.
+#--with-crash_privacy=no --with-structured_crashes=no means you want to see no crash dumps on failure and you don't care about privacy. This is how you'd set a "don't want it, don't care" configuration.
+#--with-crash_privacy=no --with-structured_crashes=yes means you want full crashes and you want to see them in the terminal, not on telemetry. This is going to be how we build for CI.
+
+AC_ARG_WITH(crash-privacy,       [  --with-crash_privacy=yes,no         If you want your crashes to not include names of symbols present in the binary. ], [], [with_crash_privacy=no])
+AC_ARG_WITH(structured-crashes,  [  --with-structured_crashes=yes,no    If you want your unmanaged crashes to result in a small crash dump file. ],        [], [with_structured_crashes=yes])
+
+if test "x$with_crash_privacy" = "xno"; then
+AC_DEFINE(MONO_PRIVATE_CRASHES,1,[Do not include names of unmanaged functions in the crash dump])
+fi
+
+if test "x$with_structured_crashes" = "xno"; then
+AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files during unmanaged crashes])
+fi
+
+AC_ARG_ENABLE(monodroid, [ --enable-monodroid Enable runtime support for Monodroid (Xamarin.Android)], enable_monodroid=$enableval, enable_monodroid=no)
+AM_CONDITIONAL(ENABLE_MONODROID, test x$enable_monodroid = xyes)
+
+AC_ARG_ENABLE(monotouch, [ --enable-monotouch Enable runtime support for Monotouch (Xamarin.iOS and Xamarin.Mac)], enable_monotouch=$enableval, enable_monotouch=no)
+AM_CONDITIONAL(ENABLE_MONOTOUCH, test x$enable_monotouch = xyes)
+
+if test x$enable_monodroid = xyes; then
+	AC_DEFINE(ENABLE_MONODROID, 1, [Enable runtime support for Monodroid (Xamarin.Android)])
+fi
+
+if test x$enable_monotouch = xyes; then
+	AC_DEFINE(ENABLE_MONOTOUCH, 1, [Enable runtime support for Monotouch (Xamarin.iOS and Xamarin.Mac)])
+fi
+
+AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
+
+if test "x$enable_cxx" = "xyes"; then
+
+	# FIXME Centos6 requires a different flag for prerelease C++11.
+	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
+	CXX_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+
+	# -std=gnu99 -xc++ is not allowed and errors.
+	CXX_REMOVE_CFLAGS=-std=gnu99
+	# These give warnings and should be removed. They are C-only.
+	# i.e. C++ never allows these, they are always errors and their warningness is not controllable.
+	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
+	# Likewise with CentOS 6 gcc 4.4.
+	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Werror-implicit-function-declaration"
+
+	# The C-only-ness of -Wno-format-zero-length varies with gcc version.
+	# It is C-only prior to 4.7. Using it with C++ prior to 4.7
+	# generates a warning every time we run gcc which is very unsightly.
+	# The warning is for e.g. sprintf(foo, "") which can just be
+	# foo[0] = 0 but Mono's use is more elaborate, not as easy to "fix",
+	# and completely legal and valid.
+	# We have to switch to C++ and not just use -xc++ because of -std=gnu99 (error when combined with -xc++).
+	# Alternatively, just run $CXX -xc++ -c /dev/null.
+	AC_LANG_PUSH(C++)
+	ORIG_CXXFLAGS=$CXXFLAGS
+	CXXFLAGS="$CXXFLAGS -Werror -Wno-format-zero-length -xc++ "
+	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
+	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
+				 [ AC_MSG_RESULT(no)
+				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
+	CXXFLAGS=$ORIG_CXXFLAGS
+	AC_LANG_POP(C++)
+fi
+AC_SUBST(CXX_ADD_CFLAGS)
+AC_SUBST(CXX_REMOVE_CFLAGS)
+
 #
 # Set the build profiles and options before things which use them
 #
@@ -1064,6 +1150,7 @@ with_wasm_default=no
 
 with_bitcode_default=no
 enable_cooperative_suspend_default=no
+enable_hybrid_suspend_default=no
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
 
@@ -1712,9 +1799,22 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING(for CLOCK_REALTIME)
+	AC_TRY_COMPILE([#include <time.h>], [
+		const int foo = CLOCK_REALTIME;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_CLOCK_REALTIME, 1, [CLOCK_REALTIME])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 	AC_CHECK_FUNC(mach_absolute_time, [AC_DEFINE(HAVE_MACH_ABSOLUTE_TIME, 1, [mach_absolute_time])])
 	AC_CHECK_FUNC(gethrtime, [AC_DEFINE(HAVE_GETHRTIME, 1, [gethrtime])])
 	AC_CHECK_FUNC(read_real_time, [AC_DEFINE(HAVE_READ_REAL_TIME, 1, [read_real_time])])
+	AC_CHECK_FUNC(mach_timebase_info, [AC_DEFINE(HAVE_MACH_TIMEBASE_INFO, 1, [mach_timebase_info])])
+	AC_CHECK_FUNC(futimes,            [AC_DEFINE(HAVE_FUTIMES, 1, [futimes])])
+	AC_CHECK_FUNC(futimens,           [AC_DEFINE(HAVE_FUTIMENS, 1, [futimens])])
 
 	dnl hires monotonic clock support
 	AC_SEARCH_LIBS(clock_gettime, rt)
@@ -1789,6 +1889,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(sysconf)
 	AC_CHECK_FUNCS(getrlimit)
 	AC_CHECK_FUNCS(prctl)
+	AC_CHECK_FUNCS(arc4random)
 
 	AC_CHECK_FUNCS(sched_getaffinity)
 	AC_CHECK_FUNCS(sched_setaffinity)
@@ -2731,7 +2832,6 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(statvfs)
 	AC_CHECK_FUNCS(fstatvfs)
 	AC_CHECK_FUNCS(stime)
-	AC_CHECK_FUNCS(strerror_r)
 	AC_CHECK_FUNCS(ttyname_r)
 	AC_CHECK_FUNCS(psignal)
 	AC_CHECK_FUNCS(getlogin_r)
@@ -2857,6 +2957,459 @@ if test x$host_win32 = xno; then
 		AC_CHECK_HEADERS(sys/random.h)
 		AC_CHECK_FUNCS(getrandom getentropy)
 	fi
+
+	dnl *********************************
+	dnl *** Checks for System.Native  ***
+	dnl *********************************
+
+	AC_MSG_CHECKING(for linux/in.h)
+	AC_TRY_COMPILE([
+		#include <sys/socket.h>
+		#include <linux/in.h>
+	], [
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_LINUX_IN_H, 1, [linux/in.h])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for struct in_pktinfo)
+	AC_TRY_COMPILE([
+		#ifdef HAVE_LINUX_IN_H
+		#include <sys/socket.h>
+		#include <linux/in.h>
+		#else
+		#include <netinet/in.h>
+		#endif
+	], [
+		struct in_pktinfo pktinfo;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IN_PKTINFO, 1, [struct in_pktinfo])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for struct ip_mreqn)
+	AC_TRY_COMPILE([
+		#if HAVE_LINUX_IN_H
+		#include <sys/socket.h>
+		#include <linux/in.h>
+		#else
+		#include <netinet/in.h>
+		#endif
+	], [
+		struct ip_mreqn mreqn;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_IP_MREQN, 1, struct ip_mreqn)
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	if test x$host_darwin = xno; then
+		AC_MSG_CHECKING(for struct flock64)
+		AC_TRY_COMPILE([
+			#include <fcntl.h>
+		], [
+			struct flock64;
+		],[
+			AC_MSG_RESULT(yes)
+			AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)
+		], [
+			AC_MSG_RESULT(no)
+		])
+	fi
+
+	AC_CHECK_FUNC(lseek64,           [AC_DEFINE(HAVE_LSEEK64, 1, [lseek64])])
+	AC_CHECK_FUNC(mmap64,            [AC_DEFINE(HAVE_MMAP64, 1, [mmap64])])
+	AC_CHECK_FUNC(ftruncate64,       [AC_DEFINE(HAVE_FTRUNCATE64, 1, [ftruncate64])])
+	AC_CHECK_FUNC(posix_fadvise64,   [AC_DEFINE(HAVE_POSIX_FADVISE64, 1, [posix_fadvise64])])
+	AC_CHECK_FUNC(stat64,            [AC_DEFINE(HAVE_STAT64, 1, [stat64])])
+	AC_CHECK_DECL(pipe2,             [AC_DEFINE(HAVE_PIPE2, 1, [pipe2])])
+	AC_CHECK_FUNC(getmntinfo,        [AC_DEFINE(HAVE_GETMNTINFO, 1, [getmntinfo])], [], [[#include <unistd.h>]])
+	AC_CHECK_FUNC(strcpy_s,          [AC_DEFINE(HAVE_STRCPY_S, 1, [strcpy_s])])
+	AC_CHECK_FUNC(strlcpy,           [AC_DEFINE(HAVE_STRLCPY, 1, [strlcpy])])
+	AC_CHECK_FUNC(posix_fadvise,     [AC_DEFINE(HAVE_POSIX_FADVISE, 1, [posix_fadvise])])
+	AC_CHECK_FUNC(ioctl,             [AC_DEFINE(HAVE_IOCTL, 1, [ioctl])])
+	AC_CHECK_FUNC(sched_getaffinity, [AC_DEFINE(HAVE_SCHED_GETAFFINITY, 1, [sched_getaffinity])])
+	AC_CHECK_FUNC(sched_setaffinity, [AC_DEFINE(HAVE_SCHED_SETAFFINITY, 1, [sched_setaffinity])])
+	AC_CHECK_DECL(TIOCGWINSZ,        [AC_DEFINE(HAVE_TIOCGWINSZ, 1, [TIOCGWINSZ])], [], [[#include <sys/ioctl.h>]])
+	AC_CHECK_FUNC(tcgetattr,         [AC_DEFINE(HAVE_TCGETATTR, 1, [tcgetattr])])
+	AC_CHECK_FUNC(tcsetattr,         [AC_DEFINE(HAVE_TCSETATTR, 1, [tcsetattr])])
+	AC_CHECK_FUNC(arc4random,        [AC_DEFINE(HAVE_ARC4RANDOM, 1, [arc4random])])
+	AC_CHECK_DECL(ECHO,              [AC_DEFINE(HAVE_ECHO, 1, [ECHO])], [], [[#include <termios.h>]])
+	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
+	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
+
+	AC_CHECK_DECL(O_CLOEXEC,         [AC_DEFINE(HAVE_O_CLOEXEC, 1, [O_CLOEXEC])], [], [[#include <fcntl.h>]])
+	AC_CHECK_DECL(F_DUPFD_CLOEXEC,   [AC_DEFINE(HAVE_F_DUPFD_CLOEXEC, 1, [F_DUPFD_CLOEXEC])], [], [[#include <fcntl.h>]])
+
+	AC_CHECK_MEMBER(struct stat.st_birthtimespec, [AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtime])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct stat.st_atimespec,     [AC_DEFINE(HAVE_STAT_TIMESPEC, 1, [struct stat.st_atimespec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct stat.st_atim,          [AC_DEFINE(HAVE_STAT_TIM, 1, [struct stat.st_atim])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct stat.st_atimensec,     [AC_DEFINE(HAVE_STAT_NSEC, 1, [struct stat.st_atimensec])], [], [[#include <sys/types.h>], [#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct dirent.d_namlen,       [AC_DEFINE(HAVE_DIRENT_NAME_LEN, 1, [struct dirent.d_namlen])], [], [[#include <dirent.h>]])
+	AC_CHECK_MEMBER(struct statfs.f_fstypename,   [AC_DEFINE(HAVE_STATFS_FSTYPENAME, 1, [struct statfs.f_fstypename])], [], [[#include <sys/mount.h>]])
+	AC_CHECK_MEMBER(struct statvfs.f_fstypename,  [AC_DEFINE(HAVE_STATVFS_FSTYPENAME, 1, [struct statvfs.f_fstypename])], [], [[#include <sys/mount.h>]])
+
+	AC_MSG_CHECKING(for struct statfs)
+	AC_TRY_COMPILE([
+		#if defined(HAVE_STATFS_FSTYPENAME) || defined(HAVE_STATVFS_FSTYPENAME)
+		#include <sys/mount.h>
+		#else
+		#include <sys/statfs.h>
+		#endif
+	], [
+		struct statfs;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_STATFS, 1, [struct statfs])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	if test "x$ac_cv_func_strerror_r_char_p" = "xyes" ; then
+		AC_DEFINE(HAVE_GNU_STRERROR_R, 1, [char* strerror(int errnum, char *buf, size_t buflen)])
+	fi
+
+	AC_MSG_CHECKING(for readdir_r)
+	AC_TRY_COMPILE([
+		#include <dirent.h>
+	], [
+		DIR* dir;
+		struct dirent* entry;
+		struct dirent* result;
+		readdir_r(dir, entry, &result);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_READDIR_R, 1, [readdir_r])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for kevent with void *data)
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <sys/event.h>
+	], [
+		struct kevent event;
+		void* data;
+		EV_SET(&event, 0, EVFILT_READ, 0, 0, 0, data);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(KEVENT_HAS_VOID_UDATA, 1, [kevent with void *data])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_MEMBER(struct fd_set.fds_bits,   [AC_DEFINE(HAVE_FDS_BITS, 1, [struct fd_set.fds_bits])], [], [[#include <sys/select.h>]])
+	AC_CHECK_MEMBER(struct fd_set.__fds_bits, [AC_DEFINE(HAVE_PRIVATE_FDS_BITS, 1, [struct fd_set.__fds_bits])], [], [[#include <sys/select.h>]])
+
+	AC_MSG_CHECKING(for sendfile with 4 arguments)
+	AC_TRY_COMPILE([
+		#include <sys/sendfile.h>
+	], [
+		int result = sendfile(0, 0, 0, 0);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SENDFILE_4, 1, [sendfile with 4 arguments])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for sendfile with 6 arguments)
+	AC_TRY_LINK([
+		#include <stdlib.h>
+		#include <sys/types.h>
+		#include <sys/socket.h>
+		#include <sys/uio.h>
+	], [
+		int result = sendfile(0, 0, 0, NULL, NULL, 0);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SENDFILE_6, 1, [sendfile with 6 arguments])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_FUNC(fcopyfile,     [AC_DEFINE(HAVE_FCOPYFILE, 1, [fcopyfile])])
+	AC_CHECK_FUNC(epoll_create1, [AC_DEFINE(HAVE_EPOLL, 1, [epoll_create1])])
+	AC_CHECK_FUNC(accept4,       [AC_DEFINE(HAVE_ACCEPT4, 1, [accept4])])
+	AC_CHECK_FUNC(kqueue,        [AC_DEFINE(HAVE_KQUEUE, 1, [kqueue])])
+
+	ORIG_CFLAGS="$CFLAGS"
+	CFLAGS="-Werror -Wsign-conversion"
+
+	AC_MSG_CHECKING(for getnameinfo with signed flags)
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <netdb.h>
+	], [
+		const struct sockaddr *addr;
+		socklen_t addrlen;
+		char *host;
+		socklen_t hostlen;
+		char *serv;
+		socklen_t servlen;
+		int flags;
+		int result = getnameinfo(addr, addrlen, host, hostlen, serv, servlen, flags);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETNAMEINFO_SIGNED_FLAGS, 1, [getnameinfo with signed flags])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	CFLAGS="$ORIG_CFLAGS"
+
+	if test "x$host_linux" = "xyes"; then
+		AC_DEFINE(HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO, 1, [HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO])
+	else
+		AC_DEFINE(HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO, 0, [HAVE_SUPPORT_FOR_DUAL_MODE_IPV4_PACKET_INFO])
+	fi
+
+	ORIG_CFLAGS="$CFLAGS"
+	CFLAGS="-Werror -Wsign-conversion"
+
+	AC_MSG_CHECKING(for bind with unsigned addrlen)
+	AC_TRY_COMPILE([
+		#include <sys/socket.h>
+	], [
+		int fd;
+		struct sockaddr* addr;
+		socklen_t addrLen;
+		bind(fd, addr, addrLen);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(BIND_ADDRLEN_UNSIGNED, 1, [bind with unsigned addrlen])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for struct ipv6_mreq with unsigned ipv6mr_interface)
+	AC_TRY_COMPILE([
+		#include <netinet/in.h>
+		#include <netinet/tcp.h>
+	], [
+		struct ipv6_mreq opt;
+		unsigned int index = 0;
+		opt.ipv6mr_interface = index;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(IPV6MR_INTERFACE_UNSIGNED, 1, [struct ipv6_mreq with unsigned ipv6mr_interface])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for inotify_rm_watch with unsigned wd)
+	AC_TRY_COMPILE([
+		#include <sys/inotify.h>
+	], [
+		intptr_t fd;
+		uint32_t wd;
+		int result = inotify_rm_watch(fd, wd);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(INOTIFY_RM_WATCH_WD_UNSIGNED, 1, [inotify_rm_watch with unsigned wd])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	CFLAGS="$ORIG_CFLAGS"
+
+	AC_MSG_CHECKING(for shm_open that works well enough with mmap)
+	if test "x$ac_cv_func_shm_open" = "xno" -o "x$ac_cv_func_shm_open_working_with_mmap" = "xno" ; then
+		AC_MSG_RESULT(no)
+	else
+		AC_TRY_RUN([
+			#include <sys/mman.h>
+			#include <fcntl.h>
+			#include <unistd.h>
+
+			int main ()
+			{
+				int fd = shm_open("/mono_configure_shm_open", O_CREAT | O_RDWR, 0777);
+				if (fd == -1)
+					return -1;
+
+				shm_unlink("/mono_configure_shm_open");
+
+				// NOTE: PROT_EXEC and MAP_PRIVATE don't work well with shm_open
+				//       on at least the current version of Mac OS X
+
+				if (mmap(NULL, 1, PROT_EXEC, MAP_PRIVATE, fd, 0) == MAP_FAILED)
+					return -1;
+
+				return 0;
+			}
+		],[
+			AC_MSG_RESULT(yes)
+			AC_DEFINE(HAVE_SHM_OPEN_THAT_WORKS_WELL_ENOUGH_WITH_MMAP, 1, [shm_open that works well enough with mmap])
+		], [
+			AC_MSG_RESULT(no)
+		])
+	fi
+
+	AC_MSG_CHECKING(for getpriority with int who)
+	AC_TRY_COMPILE([
+		#include <sys/resource.h>
+	], [
+		int which;
+		int who;
+		int result = getpriority(which, who);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(PRIORITY_REQUIRES_INT_WHO, 1, [getpriority with int who])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for kevent with int parameters)
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <sys/event.h>
+	], [
+		int kg;
+		const struct kevent* chagelist;
+		int nchanges;
+		struct kevent* eventlist;
+		int nevents;
+		const struct timespec* timeout;
+		int result = kevent(kg, chagelist, nchanges, eventlist, nevents, timeout);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(KEVENT_REQUIRES_INT_PARAMS, 1, [kevent with int parameters])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	ORIG_CFLAGS="$CFLAGS"
+	CFLAGS="-Werror -Wimplicit-function-declaration"
+
+	AC_MSG_CHECKING(for mkstemps)
+	AC_TRY_COMPILE([
+		#include <stdlib.h>
+		#include <unistd.h>
+		#include <string.h>
+	], [
+		char *template;
+		int suffixlen;
+		int result = mkstemps(template, suffixlen);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_MKSTEMPS, 1, [mkstemps])
+		have_mkstemps=yes
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	CFLAGS="$ORIG_CFLAGS"
+
+	if test "x$have_mkstemps" != "xyes" -a "x$ac_cv_func_mkstemp" != "xyes"; then
+		AC_MSG_ERROR([Cannot find mkstemps or mkstemp on this platform])
+	fi
+
+	AC_MSG_CHECKING(for tcp/var.h)
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <sys/socketvar.h>
+		#include <netinet/ip.h>
+		#include <netinet/tcp.h>
+		#include <netinet/tcp_var.h>
+	], [
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCP_VAR_H, 1, [tcp/var.h])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_HEADERS([sys/cdefs.h])
+
+	AC_MSG_CHECKING(for TCPSTATE enum in netinet/tcp.h)
+	AC_TRY_COMPILE([
+		#ifdef HAVE_SYS_CDEFS_H
+		#include <sys/cdefs.h>
+		#endif
+		#include <netinet/tcp.h>
+	], [
+		int result = TCP_ESTABLISHED;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_TCP_H_TCPSTATE_ENUM, 1, [TCPSTATE enum in netinet/tcp.h])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_DECL(TCPS_ESTABLISHED, [AC_DEFINE(HAVE_TCP_FSM_H, 1, [HAVE_TCP_FSM_H])], [], [[#include <netinet/tcp_fsm.h>]])
+
+	AC_MSG_CHECKING(for struct rt_msghdr)
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <net/route.h>
+	], [
+		struct rt_msghdr;
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_RT_MSGHDR, 1, [struct rt_msghdr])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_HEADERS([sys/sysctl.h])
+	AC_CHECK_HEADERS([linux/rtnetlink.h])
+
+	AC_CHECK_FUNC(getpeereid,    [AC_DEFINE(HAVE_GETPEEREID, 1, [getpeereid])])
+	AC_CHECK_FUNC(getdomainname, [AC_DEFINE(HAVE_GETDOMAINNAME, 1, [getdomainname])])
+	AC_CHECK_FUNC(uname,         [AC_DEFINE(HAVE_UNAME, 1, [uname])])
+
+	ORIG_CFLAGS="$CFLAGS"
+	CFLAGS="-Werror -Weverything"
+
+	AC_MSG_CHECKING(for getdomainname with size_t namelen)
+	AC_TRY_COMPILE([
+		#include <unistd.h>
+	], [
+		size_t namelen = 20;
+		char name[20];
+		int result = getdomainname(name, namelen);
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETDOMAINNAME_SIZET, 1, [getdomainname with size_t namelen])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	CFLAGS="$ORIG_CFLAGS"
+
+	AC_CHECK_FUNC(inotify_init, [AC_DEFINE(HAVE_INOTIFY_INIT, 1, [inotify_init])])
+	AC_CHECK_FUNC(inotify_add_watch, [AC_DEFINE(HAVE_INOTIFY_ADD_WATCH, 1, [inotify_add_watch])])
+	AC_CHECK_FUNC(inotify_rm_watch, [AC_DEFINE(HAVE_INOTIFY_RM_WATCH, 1, [inotify_rm_watch])])
+
+	if test "x$ac_cv_func_inotify_init" = "xyes" -a "x$ac_cv_func_inotify_add_watch" = "xyes" -a "x$ac_cv_func_inotify_rm_watch" = "xyes"; then
+		AC_DEFINE(HAVE_INOTIFY, 1, [HAVE_INOTIFY])
+	elif test "x$host_linux" = "xyes"; then
+		AC_MSG_ERROR([Cannot find inotify functions on a Linux platform.])
+	fi
+
+	AC_CHECK_HEADERS([crt_externs.h])
+
+	AC_MSG_CHECKING(for _NSGetEnviron)
+	AC_TRY_COMPILE([
+		#include <crt_externs.h>
+	], [
+		char **result = *(_NSGetEnviron());
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_NSGETENVIRON, 1, [_NSGetEnviron])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AC_CHECK_DECL(IN_EXCL_UNLINK, [AC_DEFINE(HAVE_IN_EXCL_UNLINK, 1, [IN_EXCL_UNLINK])], [], [[#include <sys/inotify.h>]])
+
 else
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
@@ -3222,6 +3775,7 @@ AC_ARG_ENABLE(llvm,[  --enable-llvm	Enable the LLVM back-end], enable_llvm=$enab
 AC_ARG_ENABLE(loadedllvm,[  --enable-loadedllvm	Load the LLVM back-end dynamically], enable_llvm=$enableval && enable_loadedllvm=$enableval, enable_loadedllvm=no)
 AC_ARG_ENABLE(llvm-version-check,[  --enable-llvm-version-check Check that the LLVM matches the version expected by mono], enable_llvm_version_check=$enableval, enable_llvm_version_check=no)
 AC_ARG_ENABLE(llvm-runtime,[  --enable-llvm-runtime	Enable runtime support for llvmonly code], enable_llvm_runtime=$enableval, enable_llvm_runtime=no)
+AC_ARG_ENABLE(llvm-asserts,[  --enable-llvm-asserts Enable llvm asserts (option to LLVM in CMake)], enable_llvm_asserts=$enableval, enable_llvm_asserts=no)
 
 AC_ARG_WITH(llvm, [  --with-llvm=<llvm prefix>    Enable the LLVM back-end], enable_llvm=yes,)
 
@@ -3229,132 +3783,62 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+internal_llvm="no"
 if test "x$enable_llvm" = "xyes"; then
-   if test "x$with_llvm" != "x"; then
-   	  LLVM_CONFIG=$with_llvm/bin/llvm-config
-   	  if test x$host_win32 = xyes; then
-   	  	LLVM_CONFIG=$LLVM_CONFIG.exe
-   	  fi
-	  if test ! -x $LLVM_CONFIG; then
-	  	 AC_MSG_ERROR([LLVM executable $LLVM_CONFIG not found.])
-      fi
-   else
-      AC_PATH_PROG(LLVM_CONFIG, llvm-config, no)
-      if test "x$LLVM_CONFIG" = "xno"; then
-   	     AC_MSG_ERROR([llvm-config not found.])
-      fi
-   fi
+	if test "x$with_llvm" != "x"; then
+		EXTERNAL_LLVM_CONFIG=$with_llvm/bin/llvm-config
+		if test ! -x $EXTERNAL_LLVM_CONFIG; then
+			AC_MSG_ERROR([LLVM executable $EXTERNAL_LLVM_CONFIG not found.])
+		fi
+	else
+		AC_PATH_PROG(EXTERNAL_LLVM_CONFIG, llvm-config, no)
+		if test "x$EXTERNAL_LLVM_CONFIG" = "xno"; then
+			internal_llvm=yes
+		else
+			with_llvm=`$EXTERNAL_LLVM_CONFIG --prefix`
+		fi
+	fi
+          
+	if test "x$host_win32" != "xyes"; then
+		LLVM_CODEGEN_LIBS="x86codegen"
+		case "$target" in
+		arm*)
+			LLVM_CODEGEN_LIBS="armcodegen"
+			;;
+		aarch64*)
+			LLVM_CODEGEN_LIBS="aarch64codegen"
+			;;
+		powerpc*)
+			LLVM_CODEGEN_LIBS="powerpccodegen"
+			;;
+		esac
+		if test "x$host" != "x$target"; then
+			# No need for jit libs
+			LLVM_CODEGEN_LIBS=
+		fi
 
-   llvm_codegen="x86codegen"
-   LLVM_ARCH_LIBS="-lLLVMX86Disassembler -lLLVMX86CodeGen -lLLVMX86AsmParser -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils"
-   case "$target" in
-   arm*)
-		llvm_codegen="armcodegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
-		;;
-   aarch64*)
-		llvm_codegen="aarch64codegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
-		;;
-   powerpc*)
-		llvm_codegen="powerpccodegen"
-		LLVM_ARCH_LIBS="-lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter"
-		;;
-   esac
+		AC_SUBST(LLVM_CODEGEN_LIBS)
+		AC_SUBST(EXTERNAL_LLVM_CONFIG)
+	else # is win32
+		AC_MSG_ERROR([LLVM for Windows only supported using Visual Studio build mono runtime, see http://www.mono-project.com/docs/advanced/mono-llvm/ for more details.])
+	fi # win32
+	
+	AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+fi # ENABLE_LLVM
 
-   if test "x$host_win32" = "xno"; then
+# AC_DEFINE necessary for correct restore behavior on Linux
+AM_CONDITIONAL(INTERNAL_LLVM, [test "x$internal_llvm" != "xno"])
+if test "x$internal_llvm" != "xno"; then
+   AC_DEFINE(INTERNAL_LLVM, 1, [LLVM used is being build during mono build])
+fi
 
-   # Should be something like '2.6' or '2.7svn'
-   llvm_version=`$LLVM_CONFIG --version`
-   llvm_api_version=`$LLVM_CONFIG --mono-api-version 2>/dev/null`
-   AC_MSG_CHECKING(LLVM version)
-   AC_MSG_RESULT($llvm_version $llvm_api_version)
-   if echo $llvm_version | grep -q 'mono'; then
-	  if test "x$enable_llvm_version_check" = "xyes"; then
-	  	 if test "$llvm_version" != "$expected_llvm_version"; then
-		 	AC_MSG_ERROR([Expected llvm version $expected_llvm_version, but llvm-config --version returned $llvm_version"])
-	  	 fi
-	  fi
-   else
-	  AC_MSG_ERROR([Compiling with stock LLVM is not supported, please use the Mono LLVM repo at https://github.com/mono/llvm, with the GIT branch which matches this version of mono, i.e. 'mono-2-10' for Mono 2.10.])
-   fi
-
-   # The output of --cflags seems to include optimizations flags too
-   if test $llvm_api_version -gt 100; then
-   	  # The --cflags argument includes all kinds of warnings -pendantic etc.
-	  LLVM_CFLAGS="-I$with_llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-	  LLVM_CXXFLAGS="-I$with_llvm/include -std=c++11 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-   else
-	  LLVM_CFLAGS=`$LLVM_CONFIG --cflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
-      LLVM_CXXFLAGS=`$LLVM_CONFIG --cxxflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
-   fi
-   # LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
-   # from LLVM classes.
-   LLVM_CXXFLAGS="$LLVM_CXXFLAGS -fno-rtti -fexceptions"
-   LLVM_LDFLAGS=`$LLVM_CONFIG --ldflags`
-   # This might include empty lines
-   LLVM_SYSTEM_LIBS=`$LLVM_CONFIG --system-libs 2>/dev/null | grep -- -`
-   llvm_jit_supported=yes
-   llvm_jit_libs="jit mcjit $llvm_codegen"
-   if test "x$host" != "x$target"; then
-      # No need for jit libs
-	  llvm_jit_supported=no
-      llvm_jit_libs=""
-   elif test $llvm_api_version -gt 100; then
-      llvm_jit_libs="orcjit $llvm_codegen"
-   fi
-   LLVM_LIBS=`$LLVM_CONFIG --libs analysis core bitwriter $llvm_jit_libs`
-   if test "x$LLVM_LIBS" = "x"; then
-   	  echo "$LLVM_CONFIG --libs failed."
-	  exit 1
-   fi
-   LLVM_LIBS="$LLVM_LIBS $LLVM_LDFLAGS $LLVM_SYSTEM_LIBS"
-   # The c++ standard library used by llvm doesn't show up in $LLVM_SYSTEM_LIBS so add it manually
-   if echo $LLVM_CXXFLAGS | grep -q -- '-stdlib=libc++'; then
-      LLVM_LIBS="$LLVM_LIBS -lc++"
-   else
-      LLVM_LIBS="$LLVM_LIBS -lstdc++"
-   fi
-
-   expected_llvm_version="3.4svn-mono-mono/e656cac"
-
-   else
-       LLVM_CFLAGS="-I$with_llvm/include -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-       LLVM_CXXFLAGS="$LLVM_CFLAGS -std=gnu++11 -fvisibility-inlines-hidden -fno-rtti -Woverloaded-virtual -Wcast-qual"
-       LLVM_LDFLAGS="-L$with_llvm/lib"
-       LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm"
-       LLVM_LIBS="-lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter \
-         -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMSelectionDAG -lLLVMAsmPrinter \
-         -lLLVMMCDisassembler -lLLVMJIT -lLLVMAnalysis -lLLVMTarget \
-         -lLLVMIRReader -lLLVMAsmParser -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation \
-         -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
-         -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld \
-         -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
-         -lLLVMSupport -lstdc++"
-       LLVM_LIBS="$LLVM_LIBS $LLVM_ARCH_LIBS $LLVM_SYSTEM_LIBS"
-
-       llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
-       llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
-   fi  
-
-   if test "x$llvm_api_version" = "x"; then
-	  LLVM_CFLAGS="$LLVM_CFLAGS -DLLVM_API_VERSION=0"
-	  LLVM_CXXFLAGS="$LLVM_CXXFLAGS -DLLVM_API_VERSION=0"
-   else
-	  LLVM_CFLAGS="$LLVM_CFLAGS -DLLVM_API_VERSION=$llvm_api_version"
-	  LLVM_CXXFLAGS="$LLVM_CXXFLAGS -DLLVM_API_VERSION=$llvm_api_version"
-   fi   
-
-   AC_DEFINE_UNQUOTED(LLVM_VERSION, "$llvm_version", [Full version of LLVM libraries])
-
-   AC_SUBST(LLVM_CFLAGS)
-   AC_SUBST(LLVM_CXXFLAGS)
-   AC_SUBST(LLVM_LIBS)
-   AC_SUBST(LLVM_LDFLAGS)
-   AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+AM_CONDITIONAL(INTERNAL_LLVM_ASSERTS, [test "x$enable_llvm_asserts" != "xno"])
+if test "x$internal_llvm_asserts" != "xno"; then
+   AC_DEFINE(INTERNAL_LLVM_ASSERTS, 1, [Build LLVM with assertions])
 fi
 
 AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes])
+
 if test "x$enable_loadedllvm" = "xyes"; then
    AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
 fi
@@ -3528,7 +4012,9 @@ case "$host" in
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
-			CFLAGS="$CFLAGS -mminimal-toc"
+			if ! (echo $CC | grep -q -- 'clang'); then
+				CFLAGS="$CFLAGS -mminimal-toc"
+			fi
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
@@ -3824,6 +4310,14 @@ esac
 #WASM hack
 fi
 
+MONO_ARCH_GSHAREDVT_SUPPORTED=0
+case "$HOST" in
+X86 | AMD64 | ARM | ARM64)
+	MONO_ARCH_GSHAREDVT_SUPPORTED=1 # keep in sync with mini-{x86,amd64,arm,arm64}.h
+	;;
+esac
+
+AM_CONDITIONAL(MONO_ARCH_GSHAREDVT_SUPPORTED, test $MONO_ARCH_GSHAREDVT_SUPPORTED = 1)
 
 dnl *************
 dnl *** VTUNE ***
@@ -4089,7 +4583,7 @@ AC_SUBST(PIDTYPE)
 AC_DEFINE(HAVE_CLASSIC_WINAPI_SUPPORT, 1, [Use classic Windows API support])
 AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 
-AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf strerror_r)
+AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf)
 AC_CHECK_FUNCS(getrlimit)
 AC_CHECK_FUNCS(fork execv execve)
 
@@ -4142,61 +4636,98 @@ if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
 fi
 
-AC_MSG_CHECKING(for varargs macros)
-AC_TRY_COMPILE([],[
-int foo (int i, int j);
-#define bar(...) foo (1, __VA_ARGS__)
-void main () {
-	 bar (2);
-}
-],have_iso_varargs=yes,have_iso_varargs=no)
-AC_MSG_RESULT($have_iso_varargs)
-G_HAVE_ISO_VARARGS=0
-if test "x$have_iso_varargs" = "xyes"; then
-   G_HAVE_ISO_VARARGS=1
-fi
-AC_SUBST(G_HAVE_ISO_VARARGS)
-
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h localcharset.h sys/types.h sys/resource.h)
 AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+=" -liconv -lcharset"])])
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 
-if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_int; then
-   GPOINTER_TO_INT="((gint) (ptr))"
-   GPOINTER_TO_UINT="((guint) (ptr))"
-   GINT_TO_POINTER="((gpointer) (v))"
-   GUINT_TO_POINTER="((gpointer) (v))"
-   GSIZE="int"
-   GSIZE_FORMAT='"u"'
-elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long; then
-   GPOINTER_TO_INT="((gint)(long) (ptr))"
-   GPOINTER_TO_UINT="((guint)(long) (ptr))"
-   GINT_TO_POINTER="((gpointer)(glong) (v))"
-   GUINT_TO_POINTER="((gpointer)(gulong) (v))"
-   GSIZE="long"
-   GSIZE_FORMAT='"lu"'
-elif test $ac_cv_sizeof_void_p = $ac_cv_sizeof_long_long; then
-   GPOINTER_TO_INT="((gint)(long long) (ptr))"
-   GPOINTER_TO_UINT="((guint)(unsigned long long) (ptr))"
-   GINT_TO_POINTER="((gpointer)(long long) (v))"
-   GUINT_TO_POINTER="((gpointer)(unsigned long long) (v))"
-   GSIZE="long long"
-   GSIZE_FORMAT='"I64u"'
+# Get the exact type of size_t, not just its size.
+# This is so we can find an exact printf format among u, lu, llu, I64u.
+# To avoid warnings about slight mismatches.
+# C99 runtime "zu" dependency is being avoided here.
+#
+# We have to compile as C++ because C is too lenient
+# and lets the wrong thing compile, with warnings.
+#
+# Note: "zu" or ifdef <something> have the advantage
+# of producing installable "biarch" headers. i.e. one Mac header
+# for Mac/x86 and Mac/amd64.
+
+AC_LANG_PUSH(C++)
+
+# Check long before int because it is the overwhelming Unix answer,
+# across 32bit and 64bit systems -- fewer compiler invocations in autoconf.
+#
+# long ahead of int also tends to produce biarch-compatible headers except Windows.
+#
+AC_MSG_CHECKING(if size_t is unsigned long)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+	#include <stddef.h>
+	unsigned long *a = (size_t*)0;
+])], [
+	AC_MSG_RESULT(yes)
+	AC_SUBST(GSIZE_FORMAT, '"%lu"')
+], [
+	AC_MSG_RESULT(no)
+	AC_MSG_CHECKING(if size_t is unsigned int)
+	AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+		#include <stddef.h>
+		unsigned *a = (size_t*)0;
+	])], [
+		AC_MSG_RESULT(yes)
+		AC_SUBST(GSIZE_FORMAT, '"%u"')
+	], [
+# At this point the majority of systems have their answer,
+# and we descend into non-standard or new-standard territory.
+#
+# Check __int64 first because I64 on some systems predates ll, enabling
+# new compiler/old runtime interop, and the types always have the same size.
+		AC_MSG_RESULT(no)
+		AC_MSG_CHECKING(if size_t is unsigned __int64)
+		AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+			#include <stddef.h>
+			unsigned __int64 *a = (size_t*)0;
+		])], [
+			AC_MSG_RESULT(yes)
+			AC_SUBST(GSIZE_FORMAT, '"%I64u"')
+		], [
+			AC_MSG_RESULT(no)
+			AC_MSG_CHECKING(if size_t is unsigned long long)
+			AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+				#include <stddef.h>
+				unsigned long long *a = (size_t*)0;
+			])], [
+				AC_MSG_RESULT(yes)
+				AC_SUBST(GSIZE_FORMAT, '"%llu"')
+			], [
+				AC_MSG_RESULT(no)
+				AC_MSG_ERROR(Unable to determine size_t among unsigned long, int, __int64, long long)
+			] )
+		] )
+	] )
+] )
+
+AC_LANG_POP
+
+# If size_t/ptrdiff_t is correct, use it. Otherwise C99 [u]intptr_t.
+# This provides for an exact match with functions that
+# take size_t like malloc and pthread_attr_getstacksize, avoiding warnings.
+# uintptr_t is not necessarily the same.
+#
+# ptrdiff_t is preferred over ssize_t as it is C89 vs. new Posix.
+# ssize_t looks nicer but ptrdiff_t is wrapped up as gssize anyway.
+
+if test $ac_cv_sizeof_void_p = $ac_cv_sizeof_size_t; then
+   GSIZE="size_t"
+   GSSIZE="ptrdiff_t"
 else
-   AC_MSG_ERROR([unsupported pointer size])
+   GSIZE="uintptr_t"
+   GSSIZE="intptr_t"
 fi
 
-AC_SUBST(GPOINTER_TO_INT)
-AC_SUBST(GPOINTER_TO_UINT)
-AC_SUBST(GINT_TO_POINTER)
-AC_SUBST(GUINT_TO_POINTER)
 AC_SUBST(GSIZE)
+AC_SUBST(GSSIZE)
 AC_SUBST(GSIZE_FORMAT)
-AC_SUBST(G_GUINT64_FORMAT)
-AC_SUBST(G_GINT64_FORMAT)
-AC_SUBST(G_GUINT32_FORMAT)
-AC_SUBST(G_GINT32_FORMAT)
 
 #
 # END OF EGLIB CHECKS
@@ -4266,7 +4797,7 @@ fi
 AM_CONDITIONAL(DISABLE_ICALL_TABLES, test x$icall_tables = xno)
 
 if test "x$with_tls" = "x__thread"; then
-	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
+	AC_DEFINE(MONO_KEYWORD_THREAD, __thread, [Have __thread keyword])
 	# Pass the information to libgc
 	CPPFLAGS="$CPPFLAGS -DUSE_COMPILER_TLS"
 	AC_MSG_CHECKING(if the tls_model attribute is supported)
@@ -4516,7 +5047,7 @@ AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no   
 AC_ARG_WITH(cooperative_gc,        [  --with-cooperative-gc=yes|no        Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [AC_MSG_WARN([--with-cooperative-gc is deprecated, use --enable-cooperative-suspend instead])], [with_cooperative_gc=default])
 AC_ARG_ENABLE(cooperative_suspend, [  --enable-cooperative-suspend      Enable cooperative stop-the-world garbage collection (sgen only) (defaults to no)], [], [enable_cooperative_suspend=default])
 
-if test x$enable_cooperative_suspend = xdefault -a test x$with_cooperative_gc != xdefault; then
+if test x$enable_cooperative_suspend = xdefault -a x$with_cooperative_gc != xdefault; then
 	enable_cooperative_suspend=$with_cooperative_gc
 fi
 
@@ -4530,7 +5061,11 @@ fi
 
 AM_CONDITIONAL([ENABLE_COOP_SUSPEND], [test x$enable_cooperative_suspend != xno])
 
-AC_ARG_ENABLE(hybrid_suspend, [ --enable-hybrid-suspend     Enable hybrid stop-the-world garbage collection (sgen only) - cooperative suspend for threads running managed and runtime code, and preemptive suspend for threads running native and P/Invoke code (defaults to no)], [], [enable_hybrid_suspend=no])
+AC_ARG_ENABLE(hybrid_suspend, [ --enable-hybrid-suspend     Enable hybrid stop-the-world garbage collection (sgen only) - cooperative suspend for threads running managed and runtime code, and preemptive suspend for threads running native and P/Invoke code (defaults to no)], [], [enable_hybrid_suspend=default])
+
+if test x$enable_hybrid_suspend = xdefault; then
+   enable_hybrid_suspend=$enable_hybrid_suspend_default
+fi
 
 if test x$enable_hybrid_suspend != xno -a x$enable_cooperative_suspend != xno ; then
 	AC_MSG_ERROR([Hybrid suspend and Cooperative suspend cannot be both enabled.])
@@ -4642,6 +5177,7 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	arm)
 		btls_arch=arm
+		btls_cflags="-DOPENSSL_NO_ASM=1"
 		;;
 	armsoft)
 		btls_arch=arm
@@ -4649,6 +5185,7 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	aarch64)
 		btls_arch=aarch64
+		btls_cflags="-march=armv8-a+crypto"
 		;;
 	s390x)
 		btls_arch=s390x
@@ -4767,7 +5304,7 @@ AC_SUBST(mono_build_root)
 mono_runtime=mono/mini/mono
 AC_SUBST(mono_runtime)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -4955,6 +5492,27 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 
+# Anything involving -Werror must be done late because autoconf depends on compiling with warnings to be success.
+if test x"$GCC" = xyes; then
+
+	# incompatible-pointer-types requires gcc circa 5.x
+
+	ORIG_CFLAGS=$CFLAGS
+	CFLAGS="$CFLAGS -Wincompatible-pointer-types -Werror"
+	AC_MSG_CHECKING(for -Wincompatible-pointer-types option to gcc)
+	AC_TRY_COMPILE([],[
+	], [
+		AC_MSG_RESULT(yes)
+		CFLAGS="$ORIG_CFLAGS -Werror=incompatible-pointer-types"
+	], [
+		AC_MSG_RESULT(no)
+		CFLAGS=$ORIG_CFLAGS
+	])
+fi
+
+# Update all submodules recursively to ensure everything is checked out
+$srcdir/scripts/update_submodules.sh
+
 AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
@@ -4962,6 +5520,7 @@ acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
+mk/Makefile
 mono/Makefile
 mono/btls/Makefile
 mono/utils/Makefile
@@ -5034,9 +5593,6 @@ msvc/Makefile
 po/Makefile
 ])
 
-# Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules.sh
-
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
    sed -e "s/\/cyg\//\/\//" libtool > libtool.new; mv libtool.new libtool; chmod 755 libtool
@@ -5098,17 +5654,21 @@ fi
     echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> $mcs_topdir/build/config.make
 
     if test x$host_darwin = xyes; then
-      echo "BUILD_PLATFORM = darwin" >> $mcs_topdir/build/config.make
-      echo "HOST_PLATFORM ?= darwin" >> $mcs_topdir/build/config.make
+      echo "BUILD_PLATFORM = macos" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= macos" >> $mcs_topdir/build/config.make
       echo "XTEST_PLATFORM ?= osx" >> $mcs_topdir/build/config.make
     elif test x$host_win32 = xyes; then
       echo "BUILD_PLATFORM = win32" >> $mcs_topdir/build/config.make
       echo "HOST_PLATFORM ?= win32" >> $mcs_topdir/build/config.make
       echo "XTEST_PLATFORM ?= windows" >> $mcs_topdir/build/config.make
-    else
+    elif test x$host_linux = xyes; then
       echo "BUILD_PLATFORM = linux" >> $mcs_topdir/build/config.make
       echo "HOST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
       echo "XTEST_PLATFORM ?= linux" >> $mcs_topdir/build/config.make
+    else
+      echo "BUILD_PLATFORM = unix" >> $mcs_topdir/build/config.make
+      echo "HOST_PLATFORM ?= unix" >> $mcs_topdir/build/config.make
+      echo "XTEST_PLATFORM ?= unix" >> $mcs_topdir/build/config.make
     fi
 
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then
@@ -5172,6 +5732,17 @@ if test x$enable_btls = xyes; then
 	fi
 fi
 
+thread_suspend_msg=
+if test x$buildsgen = xyes; then
+	if test x$enable_cooperative_suspend = xyes; then
+		thread_suspend_msg="Suspend:       Cooperative"
+	elif test x$enable_hybrid_suspend = xyes; then
+		thread_suspend_msg="Suspend:       Hybrid"
+	else
+		thread_suspend_msg="Suspend:       Preemptive"
+	fi
+fi
+	
 echo "
         mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
@@ -5180,12 +5751,13 @@ echo "
 	Host:	       $host
 	Target:	       $target
 	GC:	       $gc_msg 
+	$thread_suspend_msg
 	TLS:           $with_tls
 	SIGALTSTACK:   $with_sigaltstack
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
+	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts)
 	Spectre:       $spectre_mitigation_status
 
    Libraries:

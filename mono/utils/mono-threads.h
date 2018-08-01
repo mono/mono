@@ -14,6 +14,8 @@
 #include <mono/utils/mono-os-semaphore.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-linked-list-set.h>
+#include <mono/utils/lock-free-alloc.h>
+#include <mono/utils/lock-free-queue.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
@@ -175,7 +177,7 @@ typedef enum {
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
 } MonoThreadInfoFlags;
 
-typedef struct {
+typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
 	MonoNativeThreadHandle native_handle; /* Valid on mach, android and Windows */
@@ -265,6 +267,12 @@ typedef struct {
 	gint32 thread_wait_info;
 #endif
 
+	/*
+	 * This is where we store tools tls data so it follows our lifecycle and doesn't depends on posix tls cleanup ordering
+	 *
+	 * TODO support multiple values by multiple tools
+	 */
+	void *tools_data;
 } MonoThreadInfo;
 
 typedef struct {
@@ -357,12 +365,19 @@ mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
 	((MonoThreadInfo*) info)->node.key = (uintptr_t) MONO_NATIVE_THREAD_ID_TO_UINT (tid);
 }
 
+
 /*
  * @thread_info_size is sizeof (GcThreadInfo), a struct the GC defines to make it possible to have
  * a single block with info from both camps. 
  */
 void
 mono_thread_info_init (size_t thread_info_size);
+
+/*
+ * Wait for the above mono_thread_info_init to be called
+ */
+void
+mono_thread_info_wait_inited (void);
 
 void
 mono_thread_info_callbacks_init (MonoThreadInfoCallbacks *callbacks);
@@ -379,7 +394,7 @@ mono_threads_get_runtime_callbacks (void);
 MONO_API int
 mono_thread_info_register_small_id (void);
 
-THREAD_INFO_TYPE *
+MONO_API THREAD_INFO_TYPE *
 mono_thread_info_attach (void);
 
 MONO_API void
@@ -399,6 +414,13 @@ mono_thread_info_is_exiting (void);
 
 THREAD_INFO_TYPE *
 mono_thread_info_current (void);
+
+MONO_API gboolean
+mono_thread_info_set_tools_data (void *data);
+
+MONO_API void*
+mono_thread_info_get_tools_data (void);
+
 
 THREAD_INFO_TYPE*
 mono_thread_info_current_unchecked (void);
@@ -457,10 +479,10 @@ mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value
 void
 mono_thread_info_exit (gsize exit_code);
 
-void
+MONO_PAL_API void
 mono_thread_info_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted);
 
-void
+MONO_PAL_API void
 mono_thread_info_uninstall_interrupt (gboolean *interrupted);
 
 MonoThreadInfoInterruptToken*
@@ -626,8 +648,7 @@ typedef enum {
 
 typedef enum {
 	DoneBlockingOk, //exited blocking fine
-	DoneBlockingWait, //thread should end suspended
-	DoneBlockingNotifyAndWait, // thread was preemptively suspended while in blocking, notify suspend initiator and wait for resume
+	DoneBlockingWait, //thread should end suspended and wait for resume
 } MonoDoneBlockingResult;
 
 
@@ -636,7 +657,6 @@ typedef enum {
 	AbortBlockingIgnoreAndPoll, //Ignore and poll
 	AbortBlockingOk, //Abort worked
 	AbortBlockingWait, //Abort worked, but should wait for resume
-	AbortBlockingNotifyAndWait, // thread was preemptively suspended while in blocking, notify suspend initiator and wait for resume
 } MonoAbortBlockingResult;
 
 
@@ -648,7 +668,7 @@ MonoResumeResult mono_threads_transition_request_resume (THREAD_INFO_TYPE* info)
 gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
 MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
-MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info);
+MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char* func);
 
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
 

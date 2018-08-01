@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
 if SUPPORT_SGEN
@@ -61,3 +63,5 @@ monosgen_sources = \
 
 libmonosgen_la_SOURCES = $(monosgen_sources)
 libmonosgen_la_CFLAGS = $(SGEN_DEFINES)
+
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@

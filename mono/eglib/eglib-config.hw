@@ -9,6 +9,7 @@
 #ifdef _MSC_VER
 
 #include <io.h>
+#include <stddef.h>
 
 #define G_GNUC_PRETTY_FUNCTION   __FUNCTION__
 #define G_GNUC_UNUSED            
@@ -17,22 +18,26 @@
 #define G_BREAKPOINT()           __debugbreak()
 #define MAXPATHLEN 242
 
-typedef uintptr_t gsize;
-typedef intptr_t gssize;
+typedef size_t gsize;
+typedef ptrdiff_t gssize;
 typedef int pid_t;
 
 #define G_DIR_SEPARATOR          '\\'
 #define G_DIR_SEPARATOR_S        "\\"
 #define G_SEARCHPATH_SEPARATOR_S ";"
 #define G_SEARCHPATH_SEPARATOR   ';'
-#define G_GSIZE_FORMAT   "d"
-#define GPOINTER_TO_INT(ptr)   ((gint)(intptr_t) (ptr))
-#define GPOINTER_TO_UINT(ptr)  ((guint)(intptr_t) (ptr))
-#define GINT_TO_POINTER(v)     ((gpointer)(intptr_t) (v))
-#define GUINT_TO_POINTER(v)    ((gpointer)(intptr_t) (v))
 
-#define STDOUT_FILENO (int)(intptr_t)stdout
-#define STDERR_FILENO (int)(intptr_t)stderr
+#ifdef _WIN64
+// Correct for Win32 and Win64 since circa 2000.
+#define G_GSIZE_FORMAT   "Iu"
+#else
+// Correct for Win32 since circa 1992.
+#define G_GSIZE_FORMAT   "u"
+#endif
+
+// https://msdn.microsoft.com/en-us/library/40bbyw78.aspx
+#define STDOUT_FILENO (1)
+#define STDERR_FILENO (2)
 
 /* FIXME: what should this be ?*/
 #define X_OK 4 /* This is really read */

@@ -133,7 +133,7 @@ public class Test
 
     public static int Main()
     {
-        const int Pass = 100;
+        const int Pass = 0;
         const int Fail = -1;
 
         Struct1 str1 = new Struct1(true);

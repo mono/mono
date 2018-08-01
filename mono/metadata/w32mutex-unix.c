@@ -213,7 +213,7 @@ static gsize namedmutex_typesize (void)
 void
 mono_w32mutex_init (void)
 {
-	static MonoW32HandleOps mutex_ops = {
+	static const MonoW32HandleOps mutex_ops = {
 		NULL,			/* close */
 		mutex_handle_signal,	/* signal */
 		mutex_handle_own,	/* own */
@@ -225,7 +225,7 @@ mono_w32mutex_init (void)
 		mutex_typesize,	/* typesize */
 	};
 
-	static MonoW32HandleOps namedmutex_ops = {
+	static const MonoW32HandleOps namedmutex_ops = {
 		NULL,			/* close */
 		mutex_handle_signal,	/* signal */
 		mutex_handle_own,	/* own */
@@ -339,7 +339,6 @@ ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoSt
 {
 	gpointer mutex;
 
-	error_init (error);
 	*created = TRUE;
 
 	/* Need to blow away any old errors here, because code tests
@@ -427,7 +426,6 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 gpointer
 ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoStringHandle name, gint32 rights G_GNUC_UNUSED, gint32 *err, MonoError *error)
 {
-	error_init (error);
 	gchar *utf8_name = mono_string_handle_to_utf8 (name, error);
 	return_val_if_nok (error, NULL);
 	gpointer handle = mono_w32mutex_open (utf8_name, rights, err);

@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,9 +41,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="mconfig.cs" />
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="Mono.MonoConfig\Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.MonoConfig\ConfigBlockBlock.cs" />
     <Compile Include="Mono.MonoConfig\ConfigBlockNodeHandler.cs" />
@@ -63,7 +62,9 @@
     <Compile Include="Mono.MonoConfig\IFeatureGenerator.cs" />
     <Compile Include="Mono.MonoConfig\IStorageConsumer.cs" />
     <Compile Include="Mono.MonoConfig\Section.cs" />
+    <Compile Include="mconfig.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

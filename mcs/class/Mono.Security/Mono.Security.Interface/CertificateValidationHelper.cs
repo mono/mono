@@ -30,7 +30,6 @@ using System.Net;
 using System.Net.Security;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 using MX = Mono.Security.X509;
 using Mono.Net.Security;
 
@@ -136,20 +135,6 @@ namespace Mono.Security.Interface
 
 		public static bool SupportsTrustAnchors {
 			get { return supportsTrustAnchors; }
-		}
-
-		/*
-		 * Internal API, intended to be used by MonoTlsProvider implementations.
-		 */
-		internal static ICertificateValidator2 GetInternalValidator (MonoTlsSettings settings, MonoTlsProvider provider)
-		{
-			return (ICertificateValidator2)NoReflectionHelper.GetInternalValidator (provider, settings);
-		}
-
-		[Obsolete ("Use GetInternalValidator")]
-		internal static ICertificateValidator2 GetDefaultValidator (MonoTlsSettings settings, MonoTlsProvider provider)
-		{
-			return GetInternalValidator (settings, provider);
 		}
 
 		/*

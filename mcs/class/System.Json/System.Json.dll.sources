@@ -1,8 +1,5 @@
 ../../build/common/Consts.cs
+../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
-System.Json/JsonArray.cs
-System.Json/JsonObject.cs
-System.Json/JsonPrimitive.cs
-System.Json/JsonType.cs
-System.Json/JsonValue.cs
-System.Json/JavaScriptReader.cs
+corefx/SR.cs
+../../../external/corefx/src/System.Json/src/System/Json/*.cs

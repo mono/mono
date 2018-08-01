@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
@@ -46,11 +46,15 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
   <ItemGroup>
-    <Compile Include="..\..\..\external\linker\analyzer\*.cs" />
-    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\*.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\ConsoleDependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\DependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\SpaceAnalyzer.cs" />
+    <Compile Include="..\..\..\external\linker\analyzer\Main.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/System/System.csproj" />

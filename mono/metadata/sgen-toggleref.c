@@ -203,11 +203,12 @@ test_toggleref_callback (MonoObject *obj)
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
 	if (!mono_toggleref_test_field) {
-		mono_toggleref_test_field = mono_class_get_field_from_name (mono_object_get_class (obj), "__test");
+		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_get_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
 	}
 
-	mono_field_get_value (obj, mono_toggleref_test_field, &status);
+	/* In coop mode, important to not call a helper that will pin obj! */
+	mono_field_get_value_internal (obj, mono_toggleref_test_field, &status);
 	printf ("toggleref-cb obj %d\n", status);
 	return status;
 }

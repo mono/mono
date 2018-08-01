@@ -304,6 +304,15 @@
     IL_017f:  call       void [mscorlib]System.Console::WriteLine(string)
     //.line 106,106 : 4,18 ''
     IL_0184:  ldloc.0
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_0185:  ret
 
     //.line 109,109 : 3,44 ''
@@ -314,6 +323,15 @@
                                                                   object)
     //.line 110,110 : 3,17 ''
     IL_0196:  ldloc.0
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit2
+	pop
+	ldc.i4 0
+exit2:
+
     IL_0197:  ret
   } // end of method RetBufferBug::Main
 

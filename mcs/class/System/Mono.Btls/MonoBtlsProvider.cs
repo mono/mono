@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
+using Microsoft.Win32.SafeHandles;
 
 #if MONO_SECURITY_ALIAS
 using MonoSecurity::Mono.Security.Interface;
@@ -105,9 +106,8 @@ namespace Mono.Btls
 		internal override X509Certificate2Impl GetNativeCertificate (
 			byte[] data, string password, X509KeyStorageFlags flags)
 		{
-			var impl = new X509CertificateImplBtls (false);
-			impl.Import (data, password, flags);
-			return impl;
+			using (var handle = new SafePasswordHandle (password))
+				return GetNativeCertificate (data, handle, flags);
 		}
 
 		internal override X509Certificate2Impl GetNativeCertificate (
@@ -119,6 +119,14 @@ namespace Mono.Btls
 
 			var data = certificate.GetRawCertData ();
 			return new X509CertificateImplBtls (data, MonoBtlsX509Format.DER, false);
+		}
+
+		internal X509Certificate2Impl GetNativeCertificate (
+			byte[] data, SafePasswordHandle password, X509KeyStorageFlags flags)
+		{
+			var impl = new X509CertificateImplBtls (false);
+			impl.Import (data, password, flags);
+			return impl;
 		}
 
 		internal static MonoBtlsX509VerifyParam GetVerifyParam (MonoTlsSettings settings, string targetHost, bool serverMode)
@@ -336,8 +344,9 @@ namespace Mono.Btls
 
 		public static X509Certificate2 CreateCertificate2 (byte[] data, string password, bool disallowFallback = false)
 		{
-			using (var impl = new X509CertificateImplBtls (disallowFallback)) {
-				impl.Import (data, password, X509KeyStorageFlags.DefaultKeySet);
+			using (var impl = new X509CertificateImplBtls (disallowFallback))
+			using (var handle = new SafePasswordHandle (password)) {
+				impl.Import (data, handle, X509KeyStorageFlags.DefaultKeySet);
 				return new X509Certificate2 (impl);
 			}
 		}

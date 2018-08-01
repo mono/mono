@@ -1192,6 +1192,9 @@ mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoTyp
 MonoVTable*
 mono_class_vtable_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+void
+mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboolean *result, MonoError *error);
+
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate);
 
@@ -1205,6 +1208,9 @@ gboolean mono_is_corlib_image (MonoImage *image);
 
 MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error);
+
+MonoClassField*
+mono_class_get_fields_internal (MonoClass* klass, gpointer *iter);
 
 MonoClassField*
 mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter);
@@ -1425,6 +1431,9 @@ mono_class_compute_gc_descriptor (MonoClass *klass);
 void
 mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 #endif
+
+gboolean
+mono_class_init_checked (MonoClass *klass, MonoError *error);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

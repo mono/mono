@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 if HOST_WIN32
 win32_sources = \
 	console-win32.c \
@@ -17,11 +19,10 @@ win32_sources = \
 	w32process-win32.c \
 	w32process-win32-internals.h \
 	w32socket-win32.c \
-	w32error-win32.c
+	w32error-win32.c \
+	w32subset.h
 
 platform_sources = $(win32_sources)
-
-glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 # Use -m here. This will use / as directory separator (C:/WINNT).
 # The files that use MONO_ASSEMBLIES and/or MONO_CFG_DIR replace the
@@ -60,6 +61,8 @@ unix_sources = \
 
 platform_sources = $(unix_sources)
 endif
+
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 if HOST_ANDROID
 platform_sources += ../../support/libm/complex.c
@@ -121,7 +124,8 @@ libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" 
 if DISABLE_ICALL_TABLES
 libmono_icall_table_la_SOURCES = \
 	icall-table.c
-libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_icall_table_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
 libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
@@ -140,12 +144,51 @@ libmono_ilgen_la_SOURCES = \
 	marshal-ilgen.h	\
 	sgen-mono-ilgen.c \
 	sgen-mono-ilgen.h
-libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_ilgen_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
 libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
 endif
 endif
+
+if !HOST_WIN32
+if !HOST_WASM
+if !ENABLE_MONODROID
+if !ENABLE_MONOTOUCH
+lib_LTLIBRARIES += libmono-system-native.la
+endif
+endif
+endif
+endif
+
+libmono_system_native_la_SOURCES = \
+	pal_config.h \
+	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
+	../../external/corefx/src/Native/Unix/Common/pal_safecrt.h \
+	../../external/corefx/src/Native/Unix/Common/pal_types.h \
+	../../external/corefx/src/Native/Unix/Common/pal_utilities.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_errno.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_errno.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_random.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_random.h \
+	pal-icalls.h \
+	pal-icalls.c
+
+# Add back CXX_REMOVE_CFLAGS to keep this as C until/unless https://github.com/dotnet/corefx/pull/31342.
+libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition @CXX_REMOVE_CFLAGS@
 
 CLEANFILES = mono-bundle.stamp
 
@@ -204,8 +247,6 @@ common_sources = \
 	debug-mono-symfile.c	\
 	debug-mono-ppdb.h	\
 	debug-mono-ppdb.c	\
-	decimal-ms.c		\
-	decimal-ms.h		\
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
@@ -265,8 +306,7 @@ common_sources = \
 	monitor.h		\
 	normalization-tables.h	\
 	number-formatter.h	\
-	number-ms.c		\
-	number-ms.h		\
+	number-ms.h             \
 	object.c	\
 	object-forward.h	\
 	object-internals.h	\
@@ -367,12 +407,18 @@ sgen_sources = \
 	sgen-mono.h		\
 	sgen-client-mono.h
 
+# Per-library to workaround CoreFX/native until/unless https://github.com/dotnet/corefx/pull/31342.
+#CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
-libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) @CXX_ADD_CFLAGS@
 libmonoruntime_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(sgen_sources)
-libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES)
+# Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
+libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata

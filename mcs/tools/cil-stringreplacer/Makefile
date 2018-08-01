@@ -5,7 +5,8 @@ include ../../build/rules.make
 PROGRAM = cil-stringreplacer.exe
 NO_INSTALL = yes
 
-ifeq ($(PROFILE),basic)
+API = $(filter basic build, $(PROFILE))
+ifdef API
 # It can be run using system .net during boostrap
 TARGET_NET_REFERENCE = v4.6
 # Trick to make it work during boostrap where it has to run with system

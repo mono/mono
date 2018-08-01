@@ -454,6 +454,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			new X509Certificate ().GetSerialNumberString ();
 		}
 
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void GetObjectData_Null ()
@@ -474,6 +475,7 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.AreEqual (1, info.MemberCount, "MemberCount");
 			byte[] raw = (byte[]) info.GetValue ("RawData", typeof (byte[]));
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]

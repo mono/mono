@@ -31,6 +31,7 @@
 #include <mono/metadata/attrdefs.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/monobitset.h>
+#include <mono/utils/mono-error-internals.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -354,20 +355,6 @@ init_verifier_stats (void)
 
 
 //////////////////////////////////////////////////////////////////
-
-
-/*Token validation macros and functions */
-#define IS_MEMBER_REF(token) (mono_metadata_token_table (token) == MONO_TABLE_MEMBERREF)
-#define IS_METHOD_DEF(token) (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
-#define IS_METHOD_SPEC(token) (mono_metadata_token_table (token) == MONO_TABLE_METHODSPEC)
-#define IS_FIELD_DEF(token) (mono_metadata_token_table (token) == MONO_TABLE_FIELD)
-
-#define IS_TYPE_REF(token) (mono_metadata_token_table (token) == MONO_TABLE_TYPEREF)
-#define IS_TYPE_DEF(token) (mono_metadata_token_table (token) == MONO_TABLE_TYPEDEF)
-#define IS_TYPE_SPEC(token) (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC)
-#define IS_METHOD_DEF_OR_REF_OR_SPEC(token) (IS_METHOD_DEF (token) || IS_MEMBER_REF (token) || IS_METHOD_SPEC (token))
-#define IS_TYPE_DEF_OR_REF_OR_SPEC(token) (IS_TYPE_DEF (token) || IS_TYPE_REF (token) || IS_TYPE_SPEC (token))
-#define IS_FIELD_DEF_OR_REF(token) (IS_FIELD_DEF (token) || IS_MEMBER_REF (token))
 
 /*
  * Verify if @token refers to a valid row on int's table.
@@ -3754,7 +3741,7 @@ do_load_token (VerifyContext *ctx, int token)
 	} else {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid ldtoken type %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 	}
-	stack_push_val (ctx, TYPE_COMPLEX, mono_class_get_type (handle_class));
+	stack_push_val (ctx, TYPE_COMPLEX, m_class_get_byval_arg (handle_class));
 }
 
 static void
@@ -4145,7 +4132,7 @@ do_newarr (VerifyContext *ctx, int token)
 	if (stack_slot_get_type (value) != TYPE_I4 && stack_slot_get_type (value) != TYPE_NATIVE_INT)
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Array size type on stack (%s) is not a verifiable type at 0x%04x", stack_slot_get_name (value), ctx->ip_offset));
 
-	set_stack_value (ctx, stack_push (ctx), mono_class_get_type (mono_class_create_array (mono_class_from_mono_type (type), 1)), FALSE);
+	set_stack_value (ctx, stack_push (ctx), m_class_get_byval_arg (mono_class_create_array (mono_class_from_mono_type (type), 1)), FALSE);
 }
 
 /*FIXME handle arrays that are not 0-indexed*/
@@ -4539,17 +4526,16 @@ do_localloc (VerifyContext *ctx)
 static void
 do_ldstr (VerifyContext *ctx, guint32 token)
 {
-	GSList *error = NULL;
+	ERROR_DECL (error);
 	if (ctx->method->wrapper_type == MONO_WRAPPER_NONE && !image_is_dynamic (ctx->image)) {
 		if (mono_metadata_token_code (token) != MONO_TOKEN_STRING) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string token %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return;
 		}
 
-		if (!mono_verifier_verify_string_signature (ctx->image, mono_metadata_token_index (token), &error)) {
-			if (error)
-				ctx->list = g_slist_concat (ctx->list, error);
-			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string index %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		if (!mono_verifier_verify_string_signature (ctx->image, mono_metadata_token_index (token), error)) {
+			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string index %x at 0x%04x due to: %", token, ctx->ip_offset, mono_error_get_message (error)), MONO_EXCEPTION_BAD_IMAGE);
+			mono_error_cleanup (error);
 			return;
 		}
 	}
@@ -5144,7 +5130,7 @@ mono_method_verify (MonoMethod *method, int level)
 		ip_offset = (guint) (ip - code_start);
 		{
 			const unsigned char *ip_copy = ip;
-			int op;
+			MonoOpcodeEnum op;
 
 			if (ip_offset > bb->end) {
 				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Branch or EH block at [0x%04x] targets middle instruction at 0x%04x", bb->end, ip_offset));
@@ -6221,9 +6207,9 @@ verify_class_for_overlapping_reference_fields (MonoClass *klass)
 
 
 	/*We must check for stuff overlapping reference fields.
-	  The outer loop uses mono_class_get_fields to ensure that MonoClass:fields get inited.
+	  The outer loop uses mono_class_get_fields_internal to ensure that MonoClass:fields get inited.
 	*/
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		int fieldEnd = get_field_end (field);
 		gboolean is_valuetype = !MONO_TYPE_IS_REFERENCE (field->type);
 		++i;
@@ -6275,7 +6261,7 @@ verify_class_fields (MonoClass *klass)
 	if (mono_class_is_gtd (klass))
 		context = &mono_class_get_generic_container (klass)->context;
 
-	while ((field = mono_class_get_fields (klass, &iter)) != NULL) {
+	while ((field = mono_class_get_fields_internal (klass, &iter)) != NULL) {
 		if (!mono_type_is_valid_type_in_context (field->type, context)) {
 			g_hash_table_destroy (unique_fields);
 			return FALSE;
@@ -6320,7 +6306,7 @@ verify_valuetype_layout_with_target (MonoClass *klass, MonoClass *target_class)
 	if ((type >= MONO_TYPE_BOOLEAN && type <= MONO_TYPE_R8) || (type >= MONO_TYPE_I && type <= MONO_TYPE_U))
 		return TRUE;
 
-	while ((field = mono_class_get_fields (klass, &iter)) != NULL) {
+	while ((field = mono_class_get_fields_internal (klass, &iter)) != NULL) {
 		if (!field->type)
 			return FALSE;
 

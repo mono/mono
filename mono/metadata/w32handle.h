@@ -56,7 +56,7 @@ typedef enum {
 
 typedef struct 
 {
-	void (*close)(gpointer handle, gpointer data);
+	void (*close)(gpointer data);
 
 	/* mono_w32handle_signal_and_wait */
 	void (*signal)(MonoW32Handle *handle_data);
@@ -92,7 +92,7 @@ typedef struct
 	void (*details)(MonoW32Handle *handle_data);
 
 	/* Called to get the name of the handle type */
-	const gchar* (*typename) (void);
+	const char* (*type_name) (void);
 
 	/* Called to get the size of the handle type */
 	gsize (*typesize) (void);
@@ -112,7 +112,7 @@ void
 mono_w32handle_cleanup (void);
 
 void
-mono_w32handle_register_ops (MonoW32Type type, MonoW32HandleOps *ops);
+mono_w32handle_register_ops (MonoW32Type type, const MonoW32HandleOps *ops);
 
 gpointer
 mono_w32handle_new (MonoW32Type type, gpointer handle_specific);

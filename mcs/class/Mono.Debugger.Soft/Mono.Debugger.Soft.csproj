@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,11 +44,11 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Debugger.Soft\AbsentInformationException.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainCreateEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainMirror.cs" />
@@ -79,11 +79,11 @@
     <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
     <Compile Include="Mono.Debugger.Soft\ILInterpreter.cs" />
     <Compile Include="Mono.Debugger.Soft\IMirror.cs" />
+    <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
     <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\InvalidStackFrameException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvocationException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
-    <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalScope.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalVariable.cs" />
     <Compile Include="Mono.Debugger.Soft\Location.cs" />
@@ -115,15 +115,16 @@
     <Compile Include="Mono.Debugger.Soft\TypeMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\UserBreakEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\UserLogEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDeathEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\Value.cs" />
     <Compile Include="Mono.Debugger.Soft\VirtualMachine.cs" />
     <Compile Include="Mono.Debugger.Soft\VirtualMachineManager.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDeathEvent.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
   </ItemGroup>
+  <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

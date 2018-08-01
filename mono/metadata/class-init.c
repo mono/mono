@@ -2078,8 +2078,8 @@ foreach_override (gpointer key, gpointer value, gpointer user_data) {
 	MonoClass *override_class = mono_method_get_class (override);
 	
 	printf ("  Method '%s.%s:%s' has override '%s.%s:%s'\n",
-			mono_class_get_namespace (method_class), mono_class_get_name (method_class), mono_method_get_name (method),
-			mono_class_get_namespace (override_class), mono_class_get_name (override_class), mono_method_get_name (override));
+			m_class_get_name_space (method_class), m_class_get_name (method_class), mono_method_get_name (method),
+			m_class_get_name_space (override_class), m_class_get_name (override_class), mono_method_get_name (override));
 }
 static void
 print_overrides (GHashTable *override_map, const char *message) {
@@ -3810,7 +3810,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			gpointer iter = NULL;
 			guint32 first_field_idx = mono_class_get_first_field_idx (p);
 
-			while ((field = mono_class_get_fields (p, &iter))) {
+			while ((field = mono_class_get_fields_internal (p, &iter))) {
 				guint32 field_idx = first_field_idx + (field - p->fields);
 				if (MONO_TYPE_IS_REFERENCE (field->type) && mono_assembly_is_weak_field (p->image, field_idx + 1)) {
 					has_weak_fields = TRUE;
@@ -4342,6 +4342,19 @@ leave_no_init_pending:
 	mono_loader_unlock ();
 
 	return !mono_class_has_failure (klass);
+}
+
+gboolean
+mono_class_init_checked (MonoClass *klass, MonoError *error)
+{
+	error_init (error);
+
+	gboolean const success = mono_class_init (klass);
+
+	if (!success)
+		mono_error_set_for_class_failure (error, klass);
+
+	return success;
 }
 
 #ifndef DISABLE_COM
@@ -5387,10 +5400,10 @@ mono_class_create_array_fill_type (void)
 	static gboolean inited = FALSE;
 
 	if (!inited) {
-		klass.element_class = mono_defaults.byte_class;
+		klass.element_class = mono_defaults.int64_class;
 		klass.rank = 1;
 		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
-		klass.sizes.element_size = 1;
+		klass.sizes.element_size = 8;
 		klass.size_inited = 1;
 		klass.name = "array_filler_type";
 
@@ -5450,4 +5463,3 @@ mono_classes_cleanup (void)
 	global_interface_bitset = NULL;
 	mono_os_mutex_destroy (&classes_mutex);
 }
-

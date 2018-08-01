@@ -51,7 +51,6 @@ namespace MonoCasTests.System {
 		// when reflection is used (i.e. it gets testable).
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		[ReflectionPermission (SecurityAction.Deny, MemberAccess = true)]
 		[ExpectedException (typeof (SecurityException))]
 		public void MakeTypedReference ()

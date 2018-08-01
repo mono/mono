@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 SUBDIRS = gc-descriptors . testing_gac
 
 check-local:
@@ -21,31 +23,45 @@ check-local:
 	$(MAKE) runtest-gac-loading || ok=false; \
 	$$ok
 
+BUILT_SOURCES =
+
+ARRAY_COOP_CS=\
+	array-coop-bigvt.cs     \
+	array-coop-int.cs       \
+	array-coop-smallvt.cs
+
+BUILT_SOURCES += $(ARRAY_COOP_CS)
+
+array-coop-bigvt.cs: array-coop-bigvt.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-bigvt.sh $(srcdir) > $@
+
+array-coop-smallvt.cs: array-coop-smallvt.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-smallvt.sh $(srcdir) > $@
+
+array-coop-int.cs: array-coop-int.sh array-coop-1.cs array-coop-2.cs
+	 . $(srcdir)/array-coop-int.sh $(srcdir) > $@
+
 # These are not actually tests, but they are source files part of another test.
 TAILCALL_DISABLED_TESTS_COMPILE = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyTransparentLibraryWithPrefix.exe \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.exe
 
+# FIXME valuetype parameter.
+TAILCALL_DISABLED_TESTS_COMPILE += \
+	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe
+
 # FIXME Some of these sound like negative tests -- "badtailcall". Verify and automate.
+# FIXME investigate and explain every test failure.
 TAILCALL_DISABLED_TESTS_RUN = \
-	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
 	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.exe \
 	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.exe \
 	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.exe \
 	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.exe \
 	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
-	tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe \
-	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe \
 	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
-	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
@@ -55,7 +71,6 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_implicit.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/smallFrame.exe \
@@ -64,6 +79,22 @@ TAILCALL_DISABLED_TESTS_RUN = \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe \
 	$(TAILCALL_DISABLED_TESTS_COMPILE)
 
+# FIXME investigate and explain every test failure.
+TAILCALL_DISABLED_TESTS_RUN += \
+	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
+	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe
+
+if X86
+TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe
+endif
+
 if FULL_AOT_TESTS
 
 # FullAOT Assertion at method-to-ir.c:9203, condition `*ip == CEE_RET' not met
@@ -71,71 +102,33 @@ if FULL_AOT_TESTS
 TAILCALL_DISABLED_TESTS_COMPILE += \
 	tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe
 
+# return type mismatch (float32 vs. float64)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe
+#
+# return type mismatch (int32 vs. enum)
+# 	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe
+#
+# FIXME depends on msvcrt.dll, and calli
+#	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe
+#
+# FIXME reference parameter; requires range check to allow
+#	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe
+
 # Tests that fail assert about tailcall.
 TAILCALL_DISABLED_TESTS_RUN += \
-	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.exe \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.exe \
 	tailcall/coreclr/JIT/Directed/pinvoke/tail.exe \
-	tailcall/coreclr/JIT/Directed/zeroinit/tail.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_call.exe \
 	tailcall/coreclr/JIT/Methodical/Invoke/fptr/recurse_tail_calli.exe \
-	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/Desktop/thread-race.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_nested.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/pointer.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/reference_i.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall/test_mutual_rec.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_switch.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateTail.exe \
 	tailcall/coreclr/JIT/Methodical/tailcall_v4/tailcall_AV.exe \
 	tailcall/coreclr/JIT/Regression/VS-ia64-JIT/V1.2-M02/b102844/tailcallcalli.exe
-
-# Tests fail no assert, print that they pass, but exit with non-zero.
-# These are effectively passing, but need change to indicate so.
-# Leaving us with no FullAOT tests.
-TAILCALL_DISABLED_TESTS_RUN += \
-	tailcall/coreclr/JIT/CodeGenBringUpTests/RecursiveTailCall.exe \
-	tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.exe \
-	tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.exe \
-	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.exe \
-	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.exe \
-	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i2_bool.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_i1.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i4_u.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_i_u2.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_gc.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_inst.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_value.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/deep_virt.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall_v4/delegateParamCallTarget.exe \
-	tailcall/coreclr/JIT/opt/ETW/TailCallCases.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallCandidates.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.exe \
-	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.exe \
-	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.exe
 
 # This test is also slow, though its sleep can be dialed down.
 #TAILCALL_DISABLED_TESTS_RUN += tailcall/coreclr/JIT/Methodical/tailcall_v4/hijacking.exe
@@ -265,9 +258,17 @@ TESTS_CS_SRC=		\
 	generic-unloading-sub.2.cs	\
 	create-instance.cs	\
 	bug-2907.cs		\
+	$(ARRAY_COOP_CS)	\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
+	assembly-load-bytes.cs	\
+	assembly-loadfile.cs	\
+	assembly-loadfrom.cs	\
+	assembly-load-bytes-bindingredirect.cs	\
+	assembly-loadfile-bindingredirect.cs	\
+	assembly-loadfrom-bindingredirect.cs	\
+	assembly-loadfrom-simplename.cs	\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -306,6 +307,7 @@ TESTS_CS_SRC=		\
 	exception17.cs		\
 	exception18.cs		\
 	exception19.cs		\
+	exception20.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -663,6 +665,7 @@ TESTS_CS_SRC=		\
 	generic-unloading.2.cs	\
 	namedmutex-destroy-race.cs	\
 	thread6.cs	\
+	thread7.cs	\
 	appdomain-threadpool-unload.cs	\
 	process-unref-race.cs	\
 	bug-46661.cs	\
@@ -683,7 +686,9 @@ TESTS_CS_SRC=		\
 	tailcall-generic-cast-cs.cs \
 	tailcall-interface.cs \
 	bug-60843.cs	\
-	nested_type_visibility.cs
+	nested_type_visibility.cs	\
+	dynamic-method-churn.cs	\
+	verbose.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -706,10 +711,176 @@ TESTS_CS_SRC += bug-60862.cs
 endif
 endif
 
+#maybe this test works on linux, not sure
+if HOST_DARWIN
+TESTS_CS_SRC += bug-8417.cs
+endif
+
+if CROSS_COMPILING # FIXME build vs. host vs. target
+TAILCALL_INTERFACE_CONSERVESTACK_IL=
+TAILCALL_FSHARP_DEEPTAIL_IL=
+else
+if HOST_WASM # FIXME build problem
+TAILCALL_INTERFACE_CONSERVESTACK_IL=
+TAILCALL_FSHARP_DEEPTAIL_IL=
+else
+if HOST_WIN32 # FIXME build problem
+TAILCALL_INTERFACE_CONSERVESTACK_IL=
+TAILCALL_FSHARP_DEEPTAIL_IL=
+else
+# These tests are produced by splitting up tailcall-interface-conservestack.il.
+TAILCALL_INTERFACE_CONSERVESTACK_IL=\
+	tailcall/interface-conservestack/1.il \
+	tailcall/interface-conservestack/10.il \
+	tailcall/interface-conservestack/11.il \
+	tailcall/interface-conservestack/12.il \
+	tailcall/interface-conservestack/13.il \
+	tailcall/interface-conservestack/14.il \
+	tailcall/interface-conservestack/15.il \
+	tailcall/interface-conservestack/16.il \
+	tailcall/interface-conservestack/17.il \
+	tailcall/interface-conservestack/18.il \
+	tailcall/interface-conservestack/19.il \
+	tailcall/interface-conservestack/2.il \
+	tailcall/interface-conservestack/20.il \
+	tailcall/interface-conservestack/21.il \
+	tailcall/interface-conservestack/22.il \
+	tailcall/interface-conservestack/23.il \
+	tailcall/interface-conservestack/24.il \
+	tailcall/interface-conservestack/25.il \
+	tailcall/interface-conservestack/26.il \
+	tailcall/interface-conservestack/27.il \
+	tailcall/interface-conservestack/28.il \
+	tailcall/interface-conservestack/29.il \
+	tailcall/interface-conservestack/3.il \
+	tailcall/interface-conservestack/30.il \
+	tailcall/interface-conservestack/31.il \
+	tailcall/interface-conservestack/32.il \
+	tailcall/interface-conservestack/33.il \
+	tailcall/interface-conservestack/34.il \
+	tailcall/interface-conservestack/35.il \
+	tailcall/interface-conservestack/36.il \
+	tailcall/interface-conservestack/37.il \
+	tailcall/interface-conservestack/38.il \
+	tailcall/interface-conservestack/39.il \
+	tailcall/interface-conservestack/4.il \
+	tailcall/interface-conservestack/40.il \
+	tailcall/interface-conservestack/41.il \
+	tailcall/interface-conservestack/42.il \
+	tailcall/interface-conservestack/43.il \
+	tailcall/interface-conservestack/44.il \
+	tailcall/interface-conservestack/45.il \
+	tailcall/interface-conservestack/46.il \
+	tailcall/interface-conservestack/47.il \
+	tailcall/interface-conservestack/48.il \
+	tailcall/interface-conservestack/49.il \
+	tailcall/interface-conservestack/5.il \
+	tailcall/interface-conservestack/50.il \
+	tailcall/interface-conservestack/51.il \
+	tailcall/interface-conservestack/52.il \
+	tailcall/interface-conservestack/53.il \
+	tailcall/interface-conservestack/6.il \
+	tailcall/interface-conservestack/7.il \
+	tailcall/interface-conservestack/8.il \
+	tailcall/interface-conservestack/9.il
+
+# These tests are produced by splitting up tailcall/fsharp-deeptail.il.
+TAILCALL_FSHARP_DEEPTAIL_IL=\
+	tailcall/fsharp-deeptail/Seq.filter-length1.il \
+	tailcall/fsharp-deeptail/Seq.filter-length2.il \
+	tailcall/fsharp-deeptail/Seq.filter-length3.il \
+	tailcall/fsharp-deeptail/StaticTailCallLoop_DateTime_.il \
+	tailcall/fsharp-deeptail/StaticTailCallLoop_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClass_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClass_int_.il \
+	tailcall/fsharp-deeptail/TailCallLoopGenericClass_string_.il \
+	tailcall/fsharp-deeptail/TailCallLoop_DateTime_.il \
+	tailcall/fsharp-deeptail/TailCallLoop_int_.il \
+	tailcall/fsharp-deeptail/mutualTail1IsEven.il \
+	tailcall/fsharp-deeptail/mutualTail1IsOdd.il \
+	tailcall/fsharp-deeptail/simpleTail1.il \
+	tailcall/fsharp-deeptail/simpleTail2.il
+
+$(TAILCALL_FSHARP_DEEPTAIL_IL): tailcall/fsharp-deeptail.stamp
+
+$(TAILCALL_INTERFACE_CONSERVESTACK_IL): tailcall/interface-conservestack.stamp
+
+tailcall/fsharp-deeptail.stamp: tailcall/split-fsharp$(EXEEXT) tailcall/fsharp-deeptail.il
+	./tailcall/split-fsharp$(EXEEXT) < $(srcdir)/tailcall/fsharp-deeptail.il
+	touch -f $@
+
+tailcall/interface-conservestack.stamp: split-tailcall-interface-conservestack$(EXEEXT) tailcall-interface-conservestack.il
+	./split-tailcall-interface-conservestack$(EXEEXT) < $(srcdir)/tailcall-interface-conservestack.il
+	touch -f $@
+
+noinst_PROGRAMS = tailcall/split-fsharp split-tailcall-interface-conservestack
+
+tailcall_split_fsharp_SOURCES=tailcall/split-fsharp.cpp
+
+split_tailcall_interface_conservestack_SOURCES=split-tailcall-interface-conservestack.cpp
+
+endif # HOST_WIN32
+endif # HOST_WASM
+endif # CROSS_COMPILING
+
+BUILT_SOURCES=$(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
+
 TESTS_IL_SRC=			\
+	tailcall/2.il	     \
+	tailcall/3.il	     \
+	tailcall/4.il	     \
 	tailcall/fsharp-deeptail.il	     \
 	tailcall/fsharp-shallowtail.il	 \
 	tailcall/fsharp-shallownotail.il \
+	$(TAILCALL_FSHARP_DEEPTAIL_IL) \
 	gptail1.il		\
 	itail1.il		\
 	itaili1.il		\
@@ -724,8 +895,9 @@ TESTS_IL_SRC=			\
 	tailcall-virt.il 	\
 	tailcall-rgctxa.il 	\
 	tailcall-rgctxb.il 	\
+	tailcall-rgctxb-static.il \
 	tailcall-mrgctx.il 	\
-	tailcall-interface-conservestack.il \
+	$(TAILCALL_INTERFACE_CONSERVESTACK_IL) \
 	tailcall-interface-justrun.il \
 	field-access.il		\
 	method-access.il	\
@@ -804,7 +976,14 @@ TESTS_IL_SRC=			\
 	dim-valuetypes.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
+	tailcall-member-function-in-valuetype.il \
+	tailcall-return-valuetype.il \
+	tailcall-valuetype-parameter.il \
+	ldfldvt.il \
 	newobj-abstract.il
+
+# This test crashes the runtime, even with recent fixes.
+#	incorrect-ldvirtftn-read-behind-for-dup.il
 
 TESTS_GSHARED_SRC = \
 	generics-sharing.2.cs	\
@@ -863,30 +1042,20 @@ TESTS_GSHARED_SRC = \
 	generic-type-builder.2.cs
 
 PLATFORM_DISABLED_TESTS=\
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
+
+# see https://github.com/mono/mono/issues/9739
+PLATFORM_DISABLED_TESTS += verbose.exe
 endif
 
 if AMD64
 # #651684
 PLATFORM_DISABLED_TESTS += finally_guard.exe
-
-if HOST_LINUX
-
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
-
-endif
 
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += w32message.exe
@@ -896,16 +1065,6 @@ endif
 
 if X86
 
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
-
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
@@ -913,20 +1072,15 @@ PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_b
 	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+# test_virt.exe fails because callee takes more parameters than caller, 1 vs. 0, and
+# x86 passes no parameters in registers, so it is a stack imbalance.
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Methodical/tailcall/test_virt.exe
 
 endif
 
 if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS += finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
-PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
-PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
-PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if POWERPC64
@@ -936,68 +1090,127 @@ PLATFORM_DISABLED_TESTS += monitor.exe threadpool-exceptions5.exe appdomain-unlo
 	pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe abort-cctor.exe load-exceptions.exe \
 	sgen-domain-unload-2.exe sgen-weakref-stress.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw.exe \
 	sgen-new-threads-dont-join-stw-2.exe sgen-new-threads-collect.exe sgen-bridge.exe
-PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
-PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
-PLATFORM_DISABLED_TESTS += ivtail1.exe
 PLATFORM_DISABLED_TESTS += appdomain-threadpool-unload.exe
 PLATFORM_DISABLED_TESTS += bug-60848.exe
-
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_3b.exe
 endif
 
 if ARM
 PLATFORM_DISABLED_TESTS += filter-stack.exe weak-fields.exe
-PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
-PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+
+# Most ARM problems are due to extra_arg and cannot be easily fixed, except for easy
+# bitcode-specific fix which has been declined. A few are uncertain and should be investigated,
+# but still probably extra_arg.
 PLATFORM_DISABLED_TESTS += ivtail1.exe
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe
+PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
+PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe
+PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe
+PLATFORM_DISABLED_TESTS += tailcall-virt.exe
+PLATFORM_DISABLED_TESTS += tailcall/coreclr/JIT/Directed/tailcall/tailcall.exe
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
+
+# FIXME These presumably take an extra parameter though this should be confirmed.
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
+
+# Interface calls cannot be tailcalls on ARM due to extra_arg. Bitcode could easily work however.
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
+PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
+
+# Interface calls cannot be tailcalls on ARM due to extra_arg. Bitcode could easily work however.
+PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/1.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/10.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/11.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/12.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/13.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/14.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/15.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/16.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/17.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/18.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/19.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/2.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/20.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/21.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/22.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/23.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/24.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/25.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/26.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/27.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/28.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/29.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/3.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/30.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/31.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/32.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/33.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/34.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/35.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/36.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/37.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/38.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/39.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/4.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/40.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/41.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/42.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/43.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/44.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/45.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/46.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/47.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/48.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/49.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/5.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/50.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/51.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/52.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/6.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
+PLATFORM_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 endif
 
 if ARM64
 PLATFORM_DISABLED_TESTS += weak-fields.exe
-PLATFORM_DISABLED_TESTS += \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/gcval_sideeffect.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/recurse_ep_void.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2a.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2b.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_2c.exe \
-	tailcall/coreclr/JIT/Methodical/tailcall/test_void.exe
 endif
 
 if MIPS
 # monitor.exe is racy
 PLATFORM_DISABLED_TESTS += filter-stack.exe monitor.exe
-PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
-PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
-PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 if S390X
@@ -1009,16 +1222,11 @@ PLATFORM_DISABLED_TESTS += \
 	sgen-bridge.exe \
 	sgen-bridge-major-fragmentation.exe \
 	sgen-bridge-xref.exe
-PLATFORM_DISABLED_TESTS += tailcall-generic-cast-conservestack-il.exe
-PLATFORM_DISABLED_TESTS += tailcall-mrgctx.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-rgctxa.exe # MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
-PLATFORM_DISABLED_TESTS += tailcall-virt.exe
-PLATFORM_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
-PLATFORM_DISABLED_TESTS += tailcall-interface-conservestack.exe
-PLATFORM_DISABLED_TESTS += ivtail1.exe
 endif
 
 PROFILE_DISABLED_TESTS= \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
+	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
 if FULL_AOT_TESTS
@@ -1139,7 +1347,8 @@ PROFILE_DISABLED_TESTS += \
 	constant-division.exe	\
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
-	assemblyresolve_event5.exe
+	assemblyresolve_event5.exe	\
+	dynamic-method-churn.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
@@ -1158,6 +1367,18 @@ PROFILE_DISABLED_TESTS += \
 # and the runtime errors out with "File does not contain a valid CIL image."
 PROFILE_DISABLED_TESTS += \
 	reference-loader.exe
+
+# Tests which have no way of finding AOT images because they use Assembly.Load(byte[])
+PROFILE_DISABLED_TESTS += \
+	assembly-load-bytes.exe \
+	assembly-load-bytes-bindingredirect.exe
+
+# Tests which depend on a case-insensitive filesystem when using AOT
+if HOST_DARWIN
+else
+PROFILE_DISABLED_TESTS += \
+	assembly-loadfrom-simplename.exe
+endif
 
 # constraints-load.il: 
 # Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to 
@@ -1185,25 +1406,78 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
 
-PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+# Some, probably all, of these tests use gsharedvt.
+# gsharedvt is very much at odds with tailcall, and they fail as a result.
+# RegularAOT and HybridAOT should be ok.
+#
+# The tests might be tweakable but then they will less resemble real world code.
+#
+# FullAOT should probably be changed to intersect tailcall signatures called
+# and all generic signatures provided, and compile more functions.
+# As well, gsharedvt can probably be a tailcall sometimes, like if parameters
+# fit in registers and there is no out conversion. Maybe it already does that.
+#
+# gsharedvt should be viable when only wrapping "in" but not "out",
+# as long as "in" does not expand parameter stack size, which it should never do.
+if MONO_ARCH_GSHAREDVT_SUPPORTED
 PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/26.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/31.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/33.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/34.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/35.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/36.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/37.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/41.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/43.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/44.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/45.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/46.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/47.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/51.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
+PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
 
-endif
+endif # MONO_ARCH_GSHAREDVT_SUPPORTED
+endif # FULL_AOT_TESTS
 
 if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += \
 	bug-80307.exe \
 	namedmutex-destroy-race.exe
-
-PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 endif
 
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
-
-# tailcall/fsharp AOT hangs
-# tailcall/fsharp FullAOT stack overflow in CI but not locally.
-AOT_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1216,10 +1490,7 @@ CI_DISABLED_TESTS = \
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe \
-	monitor-abort.exe \
-	monitor-wait-abort.exe \
-	process-stress-3.exe
+	appdomain-threadpool-unload.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1230,7 +1501,7 @@ LLVM_DISABLED_TESTS = \
 LLVM_DISABLED_TESTS += \
 	weak-fields.exe
 
-LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
+LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 
 # The two finalizer tests only work under sgen
 # gc-altstack.exe fails under boehm because it has no support for altstack
@@ -1243,7 +1514,34 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS))
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 # threads-init.exe: runs out of system threads
 # dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
-# tailcall-rgctxb.exe seems like it would but it does not, needs debugging
+#
+# tailcall-rgctxb.exe
+# tailcall-member-function-in-valuetype.exe
+#	Any time we have a byref/out parameter, be it
+#	an integer, or valuetype-this, we pessimistically
+#	will never tailcall.
+#
+#	These two cases have valuetype-this.
+#	tailcall-rgctxb.exe strives for additional coverage
+#	related to generic context, but both tests suffer from
+#	the same problem.
+#
+#	I suggest we insert range checks.
+#	If all parameters are outside the frame,
+#	do a tailcall. If any are not, regular call.
+#
+#	It'll be a little bigger and have a slowdown,
+#	and a speedup (stack locality speeds things up),
+#	and enable code that does not work otherwise.
+#
+#	Again, tailcall is not just an optimization.
+#	It lets code process large data within small stack.
+#	If it was just an optimization, desktop CLR would not
+#	go so far out of their way to implement it.
+#
+# Some of the tailcall tests pass native pointers to locals.
+#   Mono does not yet allow that.
+#   tailcall "i" is either calli, or integer instead of pointer, and the latter sidesteps the matter.
 KNOWN_FAILING_TESTS = \
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
@@ -1262,6 +1560,7 @@ KNOWN_FAILING_TESTS = \
 	tail1.exe \
 	taili1.exe \
 	vtail1.exe \
+	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
 DISABLED_TESTS = \
@@ -1274,18 +1573,152 @@ DISABLED_TESTS = \
 	$(if $(LLVM),$(LLVM_DISABLED_TESTS))
 
 # Interpreter does not currently implement tailcall.
-# Disable all tailcall tests that are not otherwise disabled.
+# Disable all tailcall tests.
 INTERP_DISABLED_TESTS = $(DISABLED_TESTS) \
+	gptail1.exe \
 	itail1.exe \
-	sitail1.exe \
+	itaili1.exe \
 	ivtail1.exe \
+	sitail1.exe \
+	sirtail1.exe \
+	srtail1.exe \
+	stail1.exe \
+	tail1.exe \
+	taili1.exe \
+	vtail1.exe \
+	tailcall-generic-cast-conservestack-il.exe \
 	tailcall-interface-conservestack.exe \
 	tailcall-mrgctx.exe \
-	tailcall-virt.exe   \
 	tailcall-rgctxa.exe \
-	tailcall-generic-cast-conservestack-il.exe \
+	tailcall-rgctxb.exe \
+	tailcall-rgctxb-static.exe \
+	tailcall-virt.exe \
+	tailcall-return-valuetype.exe \
 	tailcall/fsharp-deeptail.exe \
+	tailcall/2.exe \
+	tailcall/3.exe \
+	tailcall/4.exe \
+	tailcall/8273.exe \
+	$(TAILCALL_DISABLED_TESTS_RUN) \
 	bug-60843.exe
+# FIXME
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/Seq.filter-length1.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/Seq.filter-length2.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/Seq.filter-length3.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/StaticTailCallLoop_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/StaticTailCallLoop_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DateTime_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_DatstringeTime_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_byte_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_int_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractClass_string_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DateTime_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_DatstringeTime_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_byte_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_string_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_DateTime_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_byte_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_int_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_byte_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethod_string_.Method1_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClass_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClass_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClass_string_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoop_DateTime_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoop_int_.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/mutualTail1IsEven.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/mutualTail1IsOdd.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/simpleTail1.exe
+INTERP_DISABLED_TESTS += tailcall/fsharp-deeptail/simpleTail2.exe
+
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/1.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/10.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/11.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/12.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/13.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/14.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/15.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/16.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/17.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/18.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/19.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/2.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/20.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/21.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/22.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/23.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/24.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/25.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/26.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/27.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/28.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/29.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/3.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/30.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/31.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/32.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/33.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/34.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/35.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/36.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/37.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/38.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/39.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/4.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/40.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/41.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/42.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/43.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/44.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/45.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/46.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/47.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/48.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/49.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/5.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/50.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/51.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/52.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/53.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/6.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
+INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
+
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1328,7 +1761,6 @@ INTERP_DISABLED_TESTS += \
 	handleref.exe \
 	monitor-abort.exe \
 	nullable_boxing.2.exe \
-	pinvoke.exe \
 	pinvoke2.exe \
 	pinvoke3.exe \
 	remoting2.exe \
@@ -1365,7 +1797,6 @@ INTERP_DISABLED_TESTS += \
 	cominterop.exe \
 	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
-	pinvoke.exe \
 	pinvoke3.exe
 endif
 
@@ -1398,6 +1829,10 @@ endif
 
 EXTRA_DIST=test-driver test-runner.cs $(TESTS_CS_SRC) $(TESTS_IL_SRC) \
 	$(TESTS_BENCH_SRC) $(TESTS_STRESS_SRC) stress-runner.pl \
+	array-coop-1.cs array-coop-2.cs \
+	array-coop-bigvt.cs array-coop-int.cs array-coop-smallvt.cs \
+	array-coop-bigvt.sh array-coop-smallvt.sh array-coop-int.sh \
+	tailcall-interface-conservestack.il tailcall/fsharp-deeptail.il \
 	$(TEST_TAILCALL_CS_SRC) \
 	$(TEST_TAILCALL_IL_SRC)
 
@@ -1407,6 +1842,7 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 		tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyVerifiableLibraryWithPrefix.il
 
 %.exe: %.il
+	$(MKDIR_P) $(dir $@)
 	$(ILASM) -out:$@ $^
 
 if !FULL_AOT_TESTS
@@ -1426,6 +1862,7 @@ endif
 endif
 
 %.exe: %.cs $(TEST_DRIVER_DEPEND)
+	$(MKDIR_P) $(dir $@)
 	$(MCS) -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 # N.B. test-runner.exe references the TOOLS_RUNTIME versions of the framework assemblies
@@ -1433,8 +1870,10 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:System.dll -r:System.Xml.dll -r:System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
 %.dll: %.cs
+	$(MKDIR_P) $(dir $@)
 	$(MCS) -r:$(CLASS)/System.dll -target:library -out:$@ $<
 %.dll: %.il
+	$(MKDIR_P) $(dir $@)
 	$(ILASM) /dll /output:$@ $<
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
@@ -1706,8 +2145,7 @@ TEST_TAILCALL_CS_SRC=\
 	tailcall/coreclr/JIT/opt/FastTailCall/FastTailCallInlining.cs \
 	tailcall/coreclr/JIT/opt/FastTailCall/GitHubIssue12479.cs \
 	tailcall/coreclr/JIT/opt/FastTailCall/StackFixup.cs \
-	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs \
-	tailcall/coreclr/JIT/opt/Loops/SearchLoopTail.cs
+	tailcall/coreclr/JIT/opt/FastTailCall/StructPassingSimple.cs
 
 # At these locations we have .cs and .il.
 # The .il is clearly derived from the .cs, such as by running
@@ -1731,13 +2169,11 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/Directed/coverage/importer/badtailcall.il \
 	tailcall/coreclr/JIT/Directed/coverage/importer/Desktop/badtailcall.il \
 	tailcall/coreclr/JIT/Directed/IL/mutualrecur-tailcall/MutualRecur-TailCall.il \
-	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/PInvokeTail.il \
 	tailcall/coreclr/JIT/Directed/IL/PInvokeTail/tailwinapi.il \
 	tailcall/coreclr/JIT/Directed/IL/Tailcall/JitTailcall1.il \
 	tailcall/coreclr/JIT/Directed/IL/Tailcall/Jittailcall2.il \
 	tailcall/coreclr/JIT/Directed/pinvoke/tail.il \
 	tailcall/coreclr/JIT/Directed/tailcall/tailcall.il \
-	tailcall/coreclr/JIT/Directed/zeroinit/tail.il \
 	tailcall/coreclr/JIT/IL_Conformance/Old/Base/tailcall.il \
 	tailcall/coreclr/JIT/Methodical/Boxing/boxunbox/tailcall.il \
 	tailcall/coreclr/JIT/Methodical/Boxing/misc/tailjump.il \
@@ -1746,10 +2182,7 @@ TEST_TAILCALL_IL_SRC=\
 	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfault_tail.il \
 	tailcall/coreclr/JIT/Methodical/Invoke/SEH/catchfinally_tail.il \
 	tailcall/coreclr/JIT/Methodical/nonvirtualcall/tailcall.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_enum.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_obj.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r4_r8_inl.il \
-	tailcall/coreclr/JIT/Methodical/tailcall/compat_r8_r4_inl.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/compat_v.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array.il \
 	tailcall/coreclr/JIT/Methodical/tailcall/deep_array_nz.il \
@@ -2279,6 +2712,67 @@ MidAssembly.dll: appdomain-marshalbyref-assemblyload-MidAssembly.cs LeafAssembly
 appdomain-marshalbyref-assemblyload.exe: appdomain-marshalbyref-assemblyload.cs MidAssembly.dll LeafAssembly.dll appdomain-marshalbyref-assemblyload2/LeafAssembly.dll
 	$(MCS) -out:$@ $< -r:MidAssembly.dll -r:LeafAssembly.dll
 
+assembly-load-dir1/Lib.dll: assembly-load-dir1/Lib.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+assembly-load-dir2/Lib.dll: assembly-load-dir2/Lib.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+
+assembly-load-dir1/LibStrongName.dll: assembly-load-dir1/LibStrongName.cs testing_gac/testkey.snk
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $< -keyfile:$(dir $<)../testing_gac/testkey.snk
+
+assembly-load-dir2/LibStrongName.dll: assembly-load-dir2/LibStrongName.cs testing_gac/testkey.snk
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $< -keyfile:$(dir $<)../testing_gac/testkey.snk
+
+EXTRA_DIST += assembly-load-dir1/Lib.cs assembly-load-dir2/Lib.cs \
+	assembly-load-dir1/LibStrongName.cs assembly-load-dir2/LibStrongName.cs
+
+assembly-load-bytes.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfrom.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfile.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/Lib.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/Lib.dll$(PLATFORM_AOT_SUFFIX)
+assembly-loadfile.exe: assembly-load-dir1/Lib.dll assembly-load-dir2/Lib.dll
+
+assembly-loadfrom-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfrom-bindingredirect.exe.config
+assembly-loadfrom-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfrom-bindingredirect.exe.config
+
+assembly-loadfile-bindingredirect.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir1/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-load-dir2/LibStrongName.dll$(PLATFORM_AOT_SUFFIX) assembly-loadfile-bindingredirect.exe.config
+assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-loadfile-bindingredirect.exe.config
+
+assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+
+
+assembly-load-dir1/LibSimpleName.dll: assembly-load-dir1/LibSimpleName.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+
+# NOTE: unlike assembly-load-dir1/LibSimpleName.dll, the output name here is in all lower case!
+assembly-load-dir2/libsimplename.dll: assembly-load-dir2/LibSimpleName.cs
+	$(MKDIR_P) $(dir $@)
+	$(MCS) -target:library -out:$@ $<
+
+assembly-dep-simplename.dll: assembly-dep-simplename.cs assembly-load-dir1/LibSimpleName.dll
+	$(MCS) -target:library -out:$@ $< -r:assembly-load-dir1/LibSimpleName.dll
+
+# NOTE: while we compile assembly-dep-simplename.dll using assembly-load-dir1, we AOT it using assembly-load-dir2
+#  (So that the AOT image has the right GUID of the referenced assembly baked in)
+assembly-dep-simplename.dll$(PLATFORM_AOT_SUFFIX): assembly-dep-simplename.dll assembly-load-dir2/libsimplename.dll$(PLATFORM_AOT_SUFFIX)
+	MONO_PATH=$(CLASS):assembly-load-dir2 $(top_builddir)/runtime/mono-wrapper $(TEST_AOT_BUILD_FLAGS) --aot-path=assembly-load-dir2 assembly-dep-simplename.dll
+
+EXTRA_DIST += assembly-load-dir1/LibSimpleName.cs assembly-load-dir2/LibSimpleName.cs \
+	assembly-dep-simplename.cs
+
+assembly-loadfrom-simplename.exe: assembly-dep-simplename.dll assembly-load-dir2/libsimplename.dll
+
+assembly-loadfrom-simplename.exe$(PLATFORM_AOT_SUFFIX): assembly-load-dir2/libsimplename.dll$(PLATFORM_AOT_SUFFIX) assembly-dep-simplename.dll$(PLATFORM_AOT_SUFFIX)
+
 gshared:
 	$(MAKE) test-generic-sharing
 
@@ -2526,3 +3020,4 @@ weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 
 CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
 CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
+CLEANFILES += $(BUILT_SOURCES)

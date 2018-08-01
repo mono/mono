@@ -86,7 +86,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void GetProperties_Value_Null ()
 		{
 			converter.GetProperties (null, null, null);

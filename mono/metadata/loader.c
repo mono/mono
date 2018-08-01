@@ -78,6 +78,10 @@ static MonoNativeTlsKey loader_lock_nest_id;
 static void dllmap_cleanup (void);
 static void cached_module_cleanup(void);
 
+static void dllmap_insert_global (const char *dll, const char *func, const char *tdll, const char *tfunc);
+static void dllmap_insert_image (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfun);
+
+
 /* Class lazy loading functions */
 GENERATE_GET_CLASS_WITH_CACHE (appdomain_unloaded_exception, "System", "AppDomainUnloadedException")
 
@@ -199,10 +203,8 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 
 	fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
 
-	if (!mono_verifier_verify_memberref_field_signature (image, cols [MONO_MEMBERREF_SIGNATURE], NULL)) {
-		mono_error_set_bad_image (error, image, "Bad field '%u' signature 0x%08x", class_index, token);
+	if (!mono_verifier_verify_memberref_field_signature (image, cols [MONO_MEMBERREF_SIGNATURE], error))
 		return NULL;
-	}
 
 	switch (class_index) {
 	case MONO_MEMBERREF_PARENT_TYPEDEF:
@@ -416,8 +418,10 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 	FIXME we should better report this error to the caller
 	 */
 	if (!m_class_get_methods (klass) || mono_class_has_failure (klass)) {
-		mono_error_set_type_load_class (error, klass, "Could not find method due to a type load error"); //FIXME get the error from the class 
-
+		ERROR_DECL (cause_error);
+		mono_error_set_for_class_failure (cause_error, klass);
+		mono_error_set_type_load_class (error, klass, "Could not find method '%s' due to a type load error: %s", name, mono_error_get_message (cause_error));
+		mono_error_cleanup (cause_error);
 		return NULL;
 	}
 	int mcount = mono_class_get_method_count (klass);
@@ -701,14 +705,8 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 
 		sig = (MonoMethodSignature *)find_cached_memberref_sig (image, sig_idx);
 		if (!sig) {
-			if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-				guint32 klass = cols [MONO_MEMBERREF_CLASS] & MONO_MEMBERREF_PARENT_MASK;
-				const char *fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
-
-				//FIXME include the verification error
-				mono_error_set_bad_image (error, image, "Bad method signature class token 0x%08x field name %s token 0x%08x", klass, fname, token);
+			if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, error))
 				return NULL;
-			}
 
 			ptr = mono_metadata_blob_heap (image, sig_idx);
 			mono_metadata_decode_blob_size (ptr, &ptr);
@@ -848,10 +846,8 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 
 	sig_idx = cols [MONO_MEMBERREF_SIGNATURE];
 
-	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, NULL)) {
-		mono_error_set_method_missing (error, klass, mname, NULL, "Verifier rejected method signature");
+	if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, error))
 		goto fail;
-	}
 
 	ptr = mono_metadata_blob_heap (image, sig_idx);
 	mono_metadata_decode_blob_size (ptr, &ptr);
@@ -919,10 +915,8 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	token = cols [MONO_METHODSPEC_METHOD];
 	nindex = token >> MONO_METHODDEFORREF_BITS;
 
-	if (!mono_verifier_verify_methodspec_signature (image, cols [MONO_METHODSPEC_SIGNATURE], NULL)) {
-		mono_error_set_bad_image (error, image, "Bad method signals signature 0x%08x", idx);
+	if (!mono_verifier_verify_methodspec_signature (image, cols [MONO_METHODSPEC_SIGNATURE], error))
 		return NULL;
-	}
 
 	ptr = mono_metadata_blob_heap (image, cols [MONO_METHODSPEC_SIGNATURE]);
 
@@ -1061,11 +1055,22 @@ mono_dllmap_lookup (MonoImage *assembly, const char *dll, const char* func, cons
 void
 mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc)
 {
+	if (!assembly)
+		dllmap_insert_global (dll, func, tdll, tfunc);
+	else {
+		MONO_ENTER_GC_UNSAFE;
+		dllmap_insert_image (assembly, dll, func, tdll, tfunc);
+		MONO_EXIT_GC_UNSAFE;
+	}
+}
+
+void
+dllmap_insert_global (const char *dll, const char *func, const char *tdll, const char *tfunc)
+{
 	MonoDllMap *entry;
 
-	mono_loader_init ();
+		mono_loader_init ();
 
-	if (!assembly) {
 		entry = (MonoDllMap *)g_malloc0 (sizeof (MonoDllMap));
 		entry->dll = dll? g_strdup (dll): NULL;
 		entry->target = tdll? g_strdup (tdll): NULL;
@@ -1076,7 +1081,16 @@ mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, cons
 		entry->next = global_dll_map;
 		global_dll_map = entry;
 		global_loader_data_unlock ();
-	} else {
+}
+
+void
+dllmap_insert_image (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc)
+{
+	MonoDllMap *entry;
+	g_assert (assembly != NULL);
+
+		mono_loader_init ();
+
 		entry = (MonoDllMap *)mono_image_alloc0 (assembly, sizeof (MonoDllMap));
 		entry->dll = dll? mono_image_strdup (assembly, dll): NULL;
 		entry->target = tdll? mono_image_strdup (assembly, tdll): NULL;
@@ -1087,7 +1101,6 @@ mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, cons
 		entry->next = assembly->dll_map;
 		assembly->dll_map = entry;
 		mono_image_unlock (assembly);
-	}
 }
 
 static void
@@ -1846,7 +1859,10 @@ get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constra
 		return NULL;
 	}
 
-	MonoGenericContext inflated_method_ctx = { .class_inst = NULL, .method_inst = NULL };
+	MonoGenericContext inflated_method_ctx;
+	memset (&inflated_method_ctx, 0, sizeof (inflated_method_ctx));
+	inflated_method_ctx.class_inst = NULL;
+	inflated_method_ctx.method_inst = NULL;
 	gboolean inflated_generic_method = FALSE;
 	if (method->is_inflated) {
 		MonoGenericContext *method_ctx = mono_method_get_context (method);
@@ -2587,7 +2603,7 @@ mono_method_signature (MonoMethod *m)
 {
 	ERROR_DECL (error);
 	MonoMethodSignature *sig;
-
+	MONO_ENTER_GC_UNSAFE;
 	sig = mono_method_signature_checked (m, error);
 	if (!sig) {
 		char *type_name = mono_type_get_full_name (m->klass);
@@ -2595,7 +2611,7 @@ mono_method_signature (MonoMethod *m)
 		g_free (type_name);
 		mono_error_cleanup (error);
 	}
-
+	MONO_EXIT_GC_UNSAFE;
 	return sig;
 }
 
@@ -2687,10 +2703,8 @@ mono_method_get_header_internal (MonoMethod *method, MonoError *error)
 	idx = mono_metadata_token_index (method->token);
 	rva = mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_RVA);
 
-	if (!mono_verifier_verify_method_header (img, rva, NULL)) {
-		mono_error_set_bad_image (error, img, "Invalid method header, failed verification");
+	if (!mono_verifier_verify_method_header (img, rva, error))
 		return NULL;
-	}
 
 	loc = mono_image_rva_map (img, rva);
 	if (!loc) {

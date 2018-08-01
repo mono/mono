@@ -5,8 +5,8 @@
 
 #define sfail(k,p) if (s->str [p] != k) { g_string_free (s,TRUE); return FAILED("Got %s, Failed at %d, expected '%c'", s->str, p, k);}
 
-RESULT
-test_append_speed()
+static RESULT
+test_append_speed (void)
 {
 	GString *s = g_string_new("");
 	gint i;
@@ -25,8 +25,8 @@ test_append_speed()
 	return OK;
 }
 
-RESULT
-test_append_c_speed()
+static RESULT
+test_append_c_speed (void)
 {
 	GString *s = g_string_new("");
 	gint i;
@@ -45,27 +45,27 @@ test_append_c_speed()
 	return OK;
 }
 
-RESULT
-test_gstring ()
+static RESULT
+test_gstring (void)
 {
 	GString *s = g_string_new_len ("My stuff", 2);
 	char *ret;
 	int i;
 
 	if (strcmp (s->str, "My") != 0)
-		return "Expected only 'My' on the string";
+		return (char*)"Expected only 'My' on the string";
 	g_string_free (s, TRUE);
 
 	s = g_string_new_len ("My\0\0Rest", 6);
 	if (s->str [2] != 0)
-		return "Null was not copied";
+		return (char*)"Null was not copied";
 	if (strcmp (s->str+4, "Re") != 0){
-		return "Did not find the 'Re' part";
+		return (char*)"Did not find the 'Re' part";
 	}
 
 	g_string_append (s, "lalalalalalalalalalalalalalalalalalalalalalal");
 	if (s->str [2] != 0)
-		return "Null as not copied";
+		return (char*)"Null as not copied";
 	if (strncmp (s->str+4, "Relala", 6) != 0){
 		return FAILED("Did not copy correctly, got: %s", s->str+4);
 	}
@@ -108,8 +108,8 @@ test_gstring ()
 	return OK;
 }
 
-RESULT
-test_sized ()
+static RESULT
+test_sized (void)
 {
 	GString *s = g_string_sized_new (20);
 
@@ -123,8 +123,8 @@ test_sized ()
 	return NULL;
 }
 
-RESULT
-test_truncate ()
+static RESULT
+test_truncate (void)
 {
 	GString *s = g_string_new ("0123456789");
 	g_string_truncate (s, 3);
@@ -149,40 +149,8 @@ test_truncate ()
 	return NULL;
 }
 
-RESULT
-test_prepend ()
-{
-	GString *s = g_string_new ("dingus");
-	g_string_prepend (s, "one");
-
-	if (strcmp (s->str, "onedingus") != 0)
-		return FAILED ("Failed, expected onedingus, got [%s]", s->str);
-
-	g_string_free (s, TRUE);
-
-	/* This is to force the code that where stuff does not fit in the allocated block */
-	s = g_string_sized_new (1);
-	g_string_prepend (s, "one");
-	if (strcmp (s->str, "one") != 0)
-		return FAILED ("Got erroneous result, expected [one] got [%s]", s->str);
-	g_string_free (s, TRUE);
-
-	/* This is to force the path where things fit */
-	s = g_string_new ("123123123123123123123123");
-	g_string_truncate (s, 1);
-	if (strcmp (s->str, "1") != 0)
-		return FAILED ("Expected [1] string, got [%s]", s->str);
-
-	g_string_prepend (s, "pre");
-	if (strcmp (s->str, "pre1") != 0)
-		return FAILED ("Expected [pre1], got [%s]", s->str);
-	g_string_free (s, TRUE);
-	
-	return NULL;
-}
-
-RESULT
-test_appendlen ()
+static RESULT
+test_appendlen (void)
 {
 	GString *s = g_string_new ("");
 
@@ -201,8 +169,8 @@ test_appendlen ()
 	return NULL;
 }
 
-RESULT
-test_macros ()
+static RESULT
+test_macros (void)
 {
 	char *s = g_strdup (G_STRLOC);
 	char *p = strchr (s + 2, ':');
@@ -228,7 +196,6 @@ static Test string_tests [] = {
 	{"ctor+append", test_gstring },
 	{"ctor+sized", test_sized },
 	{"truncate", test_truncate },
-	{"prepend", test_prepend },
 	{"append_len", test_appendlen },
 	{"macros", test_macros },
 	{NULL, NULL}

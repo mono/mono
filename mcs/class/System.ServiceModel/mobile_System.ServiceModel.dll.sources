@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 Mono.CodeGeneration/CodeAdd.cs
 Mono.CodeGeneration/CodeAnd.cs

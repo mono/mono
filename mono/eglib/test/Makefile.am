@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 EXTRA_DIST = UTF-8.txt UTF-16BE.txt UTF-16LE.txt UTF-32BE.txt UTF-32LE.txt
 
 SOURCES = \
@@ -27,18 +29,22 @@ SOURCES = \
 	utf8.c		\
 	endian.c	\
 	module.c	\
-	memory.c	\
-	assertf.c
+	memory.c
 
 test_eglib_SOURCES = $(SOURCES)
 
-test_eglib_CFLAGS = -Wall -DEGLIB_TESTS=1 -D_FORTIFY_SOURCE=2 -I$(srcdir)/.. -I.. -DDRIVER_NAME=\"EGlib\"
+CFLAGS += -Wall -DEGLIB_TESTS=1 -D_FORTIFY_SOURCE=2 -I$(srcdir)/.. -I.. -DDRIVER_NAME=\"EGlib\"
 test_eglib_LDADD = ../libeglib.la $(LTLIBICONV)
+assertf_LDADD = ../libeglib.la $(LTLIBICONV)
+
+# Something amiss with subdirs ordering?
+../libeglib.la: ../goutput.c # etc
+	make  -C .. $(@F)
 
 run-eglib: all
 	srcdir=`readlink -f $(srcdir)` ./test-eglib
 
-noinst_PROGRAMS = test-eglib
+noinst_PROGRAMS = test-eglib assertf
 
 run-both: run-eglib
 

@@ -253,7 +253,10 @@ namespace System.Web.UI.HtmlControls
 					
 					if (cookieless) {
 						Uri current_uri = new Uri ("http://host" + current_path);
-						Uri fp_uri = new Uri ("http://host" + file_path);
+						//Determine if the file_path is rooted (ie starts with a '/')
+						//and inject a '/' into the Uri string accordingly.
+						string separator = file_path[0] == '/' ? "" : "/";
+						Uri fp_uri = new Uri ("http://host" + separator + file_path);
 						action = fp_uri.MakeRelative (current_uri);
 					} else
 						action = current_path;

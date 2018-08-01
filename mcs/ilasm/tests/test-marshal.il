@@ -33,5 +33,10 @@
 	IL_0000:  ret 
     }
 
+    .method public static hidebysig pinvokeimpl ("foo" as "foo" winapi )
+           default void foo (string marshal (vbbyrefstr) s)  cil managed preservesig 
+    {
+    } // end of method C::foo
+
   }
 

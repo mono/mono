@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 AM_CPPFLAGS = \
 	-DSUPPRESSION_DIR=\""$(datadir)/mono-$(API_VER)/mono/profiler"\" \
 	-I$(top_srcdir) \
@@ -83,7 +85,16 @@ else
 if HOST_TIZEN
 libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
+# BITCODE => -no-undefined
+if HOST_DARWIN
+if BITCODE
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
+else
 libmono_dep =
+endif
+else
+libmono_dep =
+endif
 endif
 endif
 endif

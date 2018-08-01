@@ -9,12 +9,12 @@ KEYFILE = $(LIBRARY_SNK)
 LIB_REFS = System System.Core
 LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618
 
-XTEST_LIB_REFS = System System.Core
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 
 xunit-test-local: log-profiler-test.exe
 
 log-profiler-test.exe: Test/log-profiler-test.cs
-	$(CSCOMPILE) $(PLATFORM_DEBUG_FLAGS) /unsafe /warnaserror /r:$(build_libdir)/mscorlib.dll /r:$(build_lib) /out:$@ $<
+	$(CSCOMPILE) $(PLATFORM_DEBUG_FLAGS) /unsafe $(if $(MCS_MODE),,/warnaserror) /r:$(build_libdir)/mscorlib.dll /r:$(build_lib) /out:$@ $<
 
 EXTRA_DISTFILES = \
 	Test/log-profiler-test.cs

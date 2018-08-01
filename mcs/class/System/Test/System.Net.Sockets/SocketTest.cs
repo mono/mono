@@ -254,12 +254,11 @@ namespace MonoTests.System.Net.Sockets
 		{
 			Socket srv = CreateServer (NetworkHelpers.FindFreePort ());
 			ClientSocket clnt = new ClientSocket (srv.LocalEndPoint);
-			Thread th = new Thread (new ThreadStart (clnt.ConnectSleepClose));
 			Socket acc = null;
 			try {
-				th.Start ();
-				acc = srv.Accept ();
+				clnt.Connect ();
 				clnt.Write ();
+				acc = srv.Accept ();
 				ArrayList list = new ArrayList ();
 				ArrayList empty = new ArrayList ();
 				list.Add (acc);
@@ -279,6 +278,7 @@ namespace MonoTests.System.Net.Sockets
 				if (acc != null)
 					acc.Close ();
 				srv.Close ();
+				clnt.Close ();
 			}
 		}
 
@@ -300,10 +300,13 @@ namespace MonoTests.System.Net.Sockets
 				sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			}
 
-			public void ConnectSleepClose ()
+			public void Connect ()
 			{
 				sock.Connect (ep);
-				Thread.Sleep (2000);
+			}
+
+			public void Close ()
+			{
 				sock.Close ();
 			}
 

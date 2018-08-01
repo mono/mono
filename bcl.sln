@@ -4,7 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 MinimumVisualStudioVersion = 15.0.0.0
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay", "mcs/jay/jay.vcxproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "genconsts", "msvc/scripts/genconsts.csproj", "{702AE2C0-71DD-4112-9A06-E4FABCA59986}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "mcs/class/corlib/corlib.csproj", "{4627BDAB-CA24-40D0-A627-01692BA51B44}"
+	ProjectSection(ProjectDependencies) = postProject
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986} = {702AE2C0-71DD-4112-9A06-E4FABCA59986}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security", "mcs/class/Mono.Security/Mono.Security.csproj", "{117140AC-A163-4B86-9E69-A46EA268A9DB}"
 EndProject
@@ -630,6 +635,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp", "mcs/tools/csharp/
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-info", "mcs/tools/corcompare/mono-api-info.csproj", "{804E854F-E8F5-4E2B-807A-4FAF4BE99C03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-diff", "mcs/tools/mono-api-diff/mono-api-diff.csproj", "{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-html", "mcs/tools/mono-api-html/mono-api-html.csproj", "{D25986E2-7A41-4966-A26D-5614BAC7B8A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "compiler-tester", "mcs/tools/compiler-tester/compiler-tester.csproj", "{988B01B8-F772-4E69-AC95-03A357CF2C3B}"
@@ -726,25 +733,85 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|net_4_x.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|net_4_x.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|net_4_x.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|net_4_x.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monodroid.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monodroid.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monodroid.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monodroid.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_tv.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_tv.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_tv.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_tv.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_watch.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_watch.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_watch.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_watch.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|orbis.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|orbis.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|orbis.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|orbis.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|unreal.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|unreal.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|unreal.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|unreal.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|wasm.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|wasm.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|wasm.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|wasm.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|winaot.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|winaot.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|winaot.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|winaot.Build.0 = Release|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|xammac.ActiveCfg = Debug|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|xammac.Build.0 = Debug|Win32
 		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|xammac.ActiveCfg = Release|Win32
+		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|xammac.Build.0 = Release|Win32
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|net_4_x.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|net_4_x.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|net_4_x.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|net_4_x.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monodroid.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monodroid.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monodroid.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monodroid.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch_tv.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch_tv.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch_tv.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch_tv.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch_watch.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|monotouch_watch.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch_watch.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|monotouch_watch.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|orbis.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|orbis.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|orbis.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|orbis.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|unreal.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|unreal.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|unreal.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|unreal.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|wasm.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|wasm.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|wasm.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|wasm.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|winaot.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|winaot.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|winaot.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|winaot.Build.0 = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|xammac.ActiveCfg = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|xammac.Build.0 = Debug|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.ActiveCfg = Release|x86
+		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.Build.0 = Release|x86
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Release|net_4_x.ActiveCfg = Release|net_4_x
@@ -10541,6 +10608,28 @@ Global
 		{804E854F-E8F5-4E2B-807A-4FAF4BE99C03}.Release|winaot.ActiveCfg = Release|net_4_x
 		{804E854F-E8F5-4E2B-807A-4FAF4BE99C03}.Debug|xammac.ActiveCfg = Debug|net_4_x
 		{804E854F-E8F5-4E2B-807A-4FAF4BE99C03}.Release|xammac.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|net_4_x.Build.0 = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|net_4_x.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|net_4_x.Build.0 = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|monodroid.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|monodroid.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|monotouch.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|monotouch.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|monotouch_tv.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|monotouch_tv.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|monotouch_watch.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|monotouch_watch.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|orbis.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|orbis.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|unreal.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|unreal.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|wasm.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|wasm.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|winaot.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|winaot.ActiveCfg = Release|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|xammac.ActiveCfg = Debug|net_4_x
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|xammac.ActiveCfg = Release|net_4_x
 		{D25986E2-7A41-4966-A26D-5614BAC7B8A7}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{D25986E2-7A41-4966-A26D-5614BAC7B8A7}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{D25986E2-7A41-4966-A26D-5614BAC7B8A7}.Release|net_4_x.ActiveCfg = Release|net_4_x

@@ -104,3 +104,9 @@ System/RemoteExecutorTests.cs
 # System.Text.RegularExpressions
 ../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:Regex.Serialization.cs,MatchCollectionTests.cs,MatchCollectionTests2.cs
+
+# System.Security.Cryptography
+#../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedData.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedDataCollectionTests.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/Oid.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/OidCollectionTests.cs

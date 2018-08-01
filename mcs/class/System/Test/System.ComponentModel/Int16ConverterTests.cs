@@ -172,7 +172,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -187,7 +187,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -205,7 +205,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -224,7 +224,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -242,7 +242,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -261,7 +261,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -279,7 +279,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -298,7 +298,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#4");
 			}
@@ -327,7 +327,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#4");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#6");
 			}
@@ -356,7 +356,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#4");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#6");
 			}
@@ -371,7 +371,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -386,7 +386,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -404,7 +404,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -423,7 +423,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -441,7 +441,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -460,7 +460,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -478,7 +478,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -497,7 +497,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
 			}
@@ -523,7 +523,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#4");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#4");
 				Assert.IsNotNull (ex.InnerException, "#5");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#6");
 			}
@@ -546,7 +546,7 @@ namespace MonoTests.System.ComponentModel
 			} catch (AssertionException) {
 				throw;
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#3");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
 				Assert.IsNotNull (ex.InnerException, "#4");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#5");
 			}

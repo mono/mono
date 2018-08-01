@@ -33,7 +33,7 @@ struct _MonoW32HandleSlot {
 };
 
 static MonoW32HandleCapability handle_caps [MONO_W32TYPE_COUNT];
-static MonoW32HandleOps *handle_ops [MONO_W32TYPE_COUNT];
+static MonoW32HandleOps const *handle_ops [MONO_W32TYPE_COUNT];
 
 static MonoW32HandleSlot *handles_slots_first;
 static MonoW32HandleSlot *handles_slots_last;
@@ -399,18 +399,18 @@ done:
 static gboolean
 mono_w32handle_ref_core (MonoW32Handle *handle_data)
 {
-	guint old, new;
+	guint old, new_;
 
 	do {
 		old = handle_data->ref;
 		if (old == 0)
 			return FALSE;
 
-		new = old + 1;
-	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new, (gint32)old) != (gint32)old);
+		new_ = old + 1;
+	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new_, (gint32)old) != (gint32)old);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: ref %s handle %p, ref: %d -> %d",
-		__func__, mono_w32handle_ops_typename (handle_data->type), handle_data, old, new);
+		__func__, mono_w32handle_ops_typename (handle_data->type), handle_data, old, new_);
 
 	return TRUE;
 }
@@ -419,7 +419,7 @@ static gboolean
 mono_w32handle_unref_core (MonoW32Handle *handle_data)
 {
 	MonoW32Type type;
-	guint old, new;
+	guint old, new_;
 
 	type = handle_data->type;
 
@@ -428,19 +428,20 @@ mono_w32handle_unref_core (MonoW32Handle *handle_data)
 		if (!(old >= 1))
 			g_error ("%s: handle %p has ref %d, it should be >= 1", __func__, handle_data, old);
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new, (gint32)old) != (gint32)old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 ((gint32*) &handle_data->ref, (gint32)new_, (gint32)old) != (gint32)old);
 
 	/* handle_data might contain invalid data from now on, if
 	 * another thread is unref'ing this handle at the same time */
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: unref %s handle %p, ref: %d -> %d destroy: %s",
-		__func__, mono_w32handle_ops_typename (type), handle_data, old, new, new == 0 ? "true" : "false");
+		__func__, mono_w32handle_ops_typename (type), handle_data, old, new_, new_ == 0 ? "true" : "false");
 
-	return new == 0;
+	return new_ == 0;
 }
 
-static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpointer);
+static void
+mono_w32handle_ops_close (MonoW32Type type, gpointer handle_specific);
 
 static void
 w32handle_destroy (MonoW32Handle *handle_data)
@@ -453,7 +454,6 @@ w32handle_destroy (MonoW32Handle *handle_data)
 	 */
 	MonoW32Type type;
 	gpointer handle_specific;
-	void (*close_func)(gpointer, gpointer);
 
 	g_assert (!handle_data->in_use);
 
@@ -471,10 +471,7 @@ w32handle_destroy (MonoW32Handle *handle_data)
 
 	mono_coop_mutex_unlock (&scan_mutex);
 
-	close_func = _wapi_handle_ops_get_close_func (type);
-	if (close_func != NULL) {
-		close_func (handle_data, handle_specific);
-	}
+	mono_w32handle_ops_close (type, handle_specific);
 
 	memset (handle_specific, 0, mono_w32handle_ops_typesize (type));
 
@@ -493,7 +490,7 @@ mono_w32handle_unref (MonoW32Handle *handle_data)
 }
 
 void
-mono_w32handle_register_ops (MonoW32Type type, MonoW32HandleOps *ops)
+mono_w32handle_register_ops (MonoW32Type type, const MonoW32HandleOps *ops)
 {
 	handle_ops [type] = ops;
 }
@@ -513,14 +510,12 @@ mono_w32handle_test_capabilities (MonoW32Handle *handle_data, MonoW32HandleCapab
 	return (handle_caps [handle_data->type] & caps) != 0;
 }
 
-static void (*_wapi_handle_ops_get_close_func (MonoW32Type type))(gpointer, gpointer)
+static void
+mono_w32handle_ops_close (MonoW32Type type, gpointer data)
 {
-	if (handle_ops[type] != NULL &&
-	    handle_ops[type]->close != NULL) {
-		return (handle_ops[type]->close);
-	}
-
-	return (NULL);
+	const MonoW32HandleOps *ops = handle_ops [type];
+	if (ops && ops->close)
+		ops->close (data);
 }
 
 static void
@@ -534,8 +529,8 @@ static const gchar*
 mono_w32handle_ops_typename (MonoW32Type type)
 {
 	g_assert (handle_ops [type]);
-	g_assert (handle_ops [type]->typename);
-	return handle_ops [type]->typename ();
+	g_assert (handle_ops [type]->type_name);
+	return handle_ops [type]->type_name ();
 }
 
 static gsize

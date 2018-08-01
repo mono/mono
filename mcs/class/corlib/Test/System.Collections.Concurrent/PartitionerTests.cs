@@ -37,7 +37,6 @@ namespace MonoTests.System.Collections.Concurrent
 	public class PartitionerTests
 	{
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PartitionerCreateIntegerWithExplicitRange ()
 		{
 			OrderablePartitioner<Tuple<int, int>> partitioner = Partitioner.Create (1, 20, 5);
@@ -59,7 +58,6 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PartitionerCreateLongWithExplicitRange ()
 		{
 			OrderablePartitioner<Tuple<long, long>> partitioner = Partitioner.Create ((long)1, (long)20, (long)5);

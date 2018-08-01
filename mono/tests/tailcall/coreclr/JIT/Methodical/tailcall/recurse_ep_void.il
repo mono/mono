@@ -27,7 +27,7 @@
 
       IL_0014:  ldstr      "PASSED: 10! == 3628800"
       IL_0019:  call       void [mscorlib]System.Console::WriteLine(class System.String)
-      IL_001e:  ldc.i4     0x64
+      IL_001e:  ldc.i4     0
       IL_0023:  br.s       IL_0043
 
       IL_0025:  ldstr      "FAILED: 10! != "

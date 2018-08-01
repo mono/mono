@@ -67,7 +67,8 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 	MonoMethod *res;
 
 	if (obj == NULL) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
@@ -111,7 +112,8 @@ mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val)
 {
 	ERROR_DECL (error);
 	if (!array) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return;
 	}
 	if (val && !mono_object_isinst_checked (val, m_class_get_element_class (mono_object_class (array)), error)) {
@@ -156,7 +158,11 @@ mono_llmult_ovf_un (guint64 a, guint64 b)
 	return res;
 
  raise_exception:
-	mono_set_pending_exception (mono_get_exception_overflow ());
+	{
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
+	}
 	return 0;
 }
 
@@ -265,7 +271,11 @@ mono_llmult_ovf (gint64 a, gint64 b)
 		return res;
 
  raise_exception:
-	mono_set_pending_exception (mono_get_exception_overflow ());
+	{
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
+	}
 	return 0;
 }
 
@@ -274,11 +284,15 @@ mono_lldiv (gint64 a, gint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	else if (b == -1 && a == (-9223372036854775807LL - 1LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -290,11 +304,15 @@ mono_llrem (gint64 a, gint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	else if (b == -1 && a == (-9223372036854775807LL - 1LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -306,7 +324,9 @@ mono_lldiv_un (guint64 a, guint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -318,7 +338,9 @@ mono_llrem_un (guint64 a, guint64 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -332,9 +354,7 @@ mono_llrem_un (guint64 a, guint64 b)
 guint64 
 mono_lshl (guint64 a, gint32 shamt)
 {
-	guint64 res;
-
-	res = a << (shamt & 0x7f);
+	const guint64 res = a << (shamt & 0x7f);
 
 	/*printf ("TESTL %lld << %d = %lld\n", a, shamt, res);*/
 
@@ -344,9 +364,7 @@ mono_lshl (guint64 a, gint32 shamt)
 guint64 
 mono_lshr_un (guint64 a, gint32 shamt)
 {
-	guint64 res;
-
-	res = a >> (shamt & 0x7f);
+	const guint64 res = a >> (shamt & 0x7f);
 
 	/*printf ("TESTR %lld >> %d = %lld\n", a, shamt, res);*/
 
@@ -356,9 +374,7 @@ mono_lshr_un (guint64 a, gint32 shamt)
 gint64 
 mono_lshr (gint64 a, gint32 shamt)
 {
-	gint64 res;
-
-	res = a >> (shamt & 0x7f);
+	const gint64 res = a >> (shamt & 0x7f);
 
 	/*printf ("TESTR %lld >> %d = %lld\n", a, shamt, res);*/
 
@@ -374,11 +390,15 @@ mono_idiv (gint32 a, gint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	else if (b == -1 && a == (0x80000000)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -390,7 +410,9 @@ mono_idiv_un (guint32 a, guint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -402,11 +424,15 @@ mono_irem (gint32 a, gint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	else if (b == -1 && a == (0x80000000)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -418,7 +444,9 @@ mono_irem_un (guint32 a, guint32 b)
 {
 #ifdef MONO_ARCH_NEED_DIV_CHECK
 	if (!b) {
-		mono_set_pending_exception (mono_get_exception_divide_by_zero ());
+		ERROR_DECL (error);
+		mono_error_set_divide_by_zero (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -438,12 +466,12 @@ mono_imul (gint32 a, gint32 b)
 gint32
 mono_imul_ovf (gint32 a, gint32 b)
 {
-	gint64 res;
-
-	res = (gint64)a * (gint64)b;
+	const gint64 res = (gint64)a * (gint64)b;
 
 	if ((res > 0x7fffffffL) || (res < -2147483648LL)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 
@@ -453,12 +481,12 @@ mono_imul_ovf (gint32 a, gint32 b)
 gint32
 mono_imul_ovf_un (guint32 a, guint32 b)
 {
-	guint64 res;
-
-	res = (guint64)a * (guint64)b;
+	const guint64 res = (guint64)a * (guint64)b;
 
 	if (res >> 32) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 
@@ -984,12 +1012,12 @@ extern long double aintl (long double);
 gint64
 mono_fconv_ovf_i8 (double v)
 {
-	gint64 res;
-
-	res = (gint64)v;
+	const gint64 res = (gint64)v;
 
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	return res;
@@ -1011,14 +1039,18 @@ mono_fconv_ovf_u8 (double v)
  */
 #if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
 	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	res = (guint64)v;
 #else
 	res = (guint64)v;
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 #endif
@@ -1036,12 +1068,12 @@ mono_rconv_i8 (float v)
 gint64
 mono_rconv_ovf_i8 (float v)
 {
-	gint64 res;
-
-	res = (gint64)v;
+	const gint64 res = (gint64)v;
 
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	return res;
@@ -1054,7 +1086,9 @@ mono_rconv_ovf_u8 (float v)
 
 	res = (guint64)v;
 	if (isnan(v) || trunc (v) != res) {
-		mono_set_pending_exception (mono_get_exception_overflow ());
+		ERROR_DECL (error);
+		mono_error_set_overflow (error);
+		mono_error_set_pending_exception (error);
 		return 0;
 	}
 	return res;
@@ -1103,7 +1137,8 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 	UnlockedIncrement (&mono_jit_stats.generic_virtual_invocations);
 
 	if (obj == NULL) {
-		mono_set_pending_exception (mono_get_exception_null_reference ());
+		mono_error_set_null_reference (error);
+		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 	vmethod = mono_object_get_virtual_method (obj, method);
@@ -1187,23 +1222,28 @@ mono_create_corlib_exception_0 (guint32 token)
 }
 
 MonoException *
-mono_create_corlib_exception_1 (guint32 token, MonoString *arg)
+mono_create_corlib_exception_1 (guint32 token, MonoString *arg_raw)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoException *ret = mono_exception_from_token_two_strings_checked (
-		mono_defaults.corlib, token, arg, NULL, error);
+	MONO_HANDLE_DCL (MonoString, arg);
+	MonoExceptionHandle ret = mono_exception_from_token_two_strings_checked (
+		mono_defaults.corlib, token, arg, NULL_HANDLE_STRING, error);
 	mono_error_set_pending_exception (error);
-	return ret;
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 MonoException *
-mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg2)
+mono_create_corlib_exception_2 (guint32 token, MonoString *arg1_raw, MonoString *arg2_raw)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoException *ret = mono_exception_from_token_two_strings_checked (
+	MONO_HANDLE_DCL (MonoString, arg1);
+	MONO_HANDLE_DCL (MonoString, arg2);
+	MonoExceptionHandle ret = mono_exception_from_token_two_strings_checked (
 		mono_defaults.corlib, token, arg1, arg2, error);
 	mono_error_set_pending_exception (error);
-	return ret;
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 MonoObject*
@@ -1475,6 +1515,19 @@ ves_icall_mono_delegate_ctor (MonoObject *this_obj_raw, MonoObject *target_raw, 
 	MONO_HANDLE_DCL (MonoObject, this_obj);
 	MONO_HANDLE_DCL (MonoObject, target);
 	mono_delegate_ctor (this_obj, target, addr, error);
+	mono_error_set_pending_exception (error);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+void
+ves_icall_mono_delegate_ctor_interp (MonoObject *this_obj_raw, MonoObject *target_raw, gpointer addr)
+{
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoObject, this_obj);
+	MONO_HANDLE_DCL (MonoObject, target);
+
+	mini_get_interp_callbacks ()->delegate_ctor (this_obj, target, addr, error);
 	mono_error_set_pending_exception (error);
 	HANDLE_FUNCTION_RETURN ();
 }
@@ -1917,7 +1970,6 @@ mono_throw_method_access (MonoMethod *caller, MonoMethod *callee)
 	char *callee_name = mono_method_get_reflection_name (callee);
 	ERROR_DECL (error);
 
-	error_init (error);
 	mono_error_set_generic_error (error, "System", "MethodAccessException", "Method `%s' is inaccessible from method `%s'", callee_name, caller_name);
 	mono_error_set_pending_exception (error);
 	g_free (callee_name);

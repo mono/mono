@@ -47,15 +47,6 @@ namespace Mono.Net.Security
 	//
 	internal static class NoReflectionHelper
 	{
-		internal static object GetInternalValidator (object provider, object settings)
-		{
-			#if SECURITY_DEP
-			return ChainValidationHelper.GetInternalValidator ((MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
-			#else
-			throw new NotSupportedException ();
-			#endif
-		}
-
 		internal static object GetDefaultValidator (object settings)
 		{
 			#if SECURITY_DEP

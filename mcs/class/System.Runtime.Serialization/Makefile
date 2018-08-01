@@ -13,6 +13,8 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Drawing Facades/System.Threading.Tasks
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration SMDiagnostics
 LIB_MCS_FLAGS += /d:NET_3_0
@@ -34,8 +36,6 @@ TEST_LIB_REFS = System.ServiceModel System.Web.Services
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
 	Test/Resources/Schemas/*.xsd \
-	Test/System.Runtime.Serialization/one.xml \
-	ReferenceSource.common.sources \
-	ReferenceSource.desktop.sources
+	Test/System.Runtime.Serialization/one.xml
 
 include ../../build/library.make

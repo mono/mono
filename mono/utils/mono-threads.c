@@ -65,8 +65,8 @@ static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
 static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, thread_exited_key;
-#ifdef HAVE_KW_THREAD
-static __thread gint32 tls_small_id = -1;
+#ifdef MONO_KEYWORD_THREAD
+static MONO_KEYWORD_THREAD gint32 tls_small_id = -1;
 #else
 static MonoNativeTlsKey small_id_key;
 #endif
@@ -102,6 +102,8 @@ void
 mono_threads_notify_initiator_of_suspend (MonoThreadInfo* info)
 {
 	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-SUSPEND] %p\n", mono_thread_info_get_tid (info));
+	// check that the thread is really in a valid suspended state.
+	g_assert (mono_thread_info_get_suspend_state (info) != NULL);
 	mono_atomic_inc_i32 (&suspend_posts);
 	mono_os_sem_post (&suspend_semaphore);
 }
@@ -141,7 +143,9 @@ begin_preemptive_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 static BeginSuspendResult
 begin_suspend_for_running_thread (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
-	if (mono_threads_is_cooperative_suspension_enabled ())
+	/* If we're using full cooperative suspend or hybrid suspend,
+	 * cooperatively suspend RUNNING threads */
+	if (mono_threads_are_safepoints_enabled ())
 		return begin_cooperative_suspend (info);
 	else
 		return begin_preemptive_suspend (info, interrupt_kernel);
@@ -402,7 +406,7 @@ mono_thread_info_register_small_id (void)
 		return small_id;
 
 	small_id = mono_thread_small_id_alloc ();
-#ifdef HAVE_KW_THREAD
+#ifdef MONO_KEYWORD_THREAD
 	tls_small_id = small_id;
 #else
 	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (small_id + 1));
@@ -517,7 +521,7 @@ unregister_thread (void *arg)
 	 * TLS destruction order is not reliable so small_id might be cleaned up
 	 * before us.
 	 */
-#ifndef HAVE_KW_THREAD
+#ifndef MONO_KEYWORD_THREAD
 	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (info->small_id + 1));
 #endif
 
@@ -636,7 +640,7 @@ mono_thread_info_current (void)
 int
 mono_thread_info_get_small_id (void)
 {
-#ifdef HAVE_KW_THREAD
+#ifdef MONO_KEYWORD_THREAD
 	return tls_small_id;
 #else
 	gpointer val = mono_native_tls_get_value (small_id_key);
@@ -787,6 +791,85 @@ mono_thread_info_set_flags (MonoThreadInfoFlags flags)
 		threads_callbacks.thread_flags_changed (old, flags);
 }
 
+struct GSList {
+  gpointer data;
+  GSList *next;
+};
+
+#define MONO_END_INIT_CB GINT_TO_POINTER(-1)
+static GSList *init_callbacks;
+
+void
+mono_thread_info_wait_inited (void)
+{
+	MonoSemType cb;
+	mono_os_sem_init (&cb, 0);
+	gpointer old = init_callbacks;
+
+	GSList wait_request;
+	wait_request.data = &cb;
+	wait_request.next = old;
+
+	while (mono_threads_inited != TRUE) {
+		gpointer old_read = mono_atomic_cas_ptr ((gpointer *) &init_callbacks, &wait_request, old);
+
+		// Queued up waiter, need to be unstuck
+		if (old_read == old) {
+			break;
+		} else if (old_read == GINT_TO_POINTER (MONO_END_INIT_CB)) {
+			// Is inited
+			return; 
+		} else {
+			// We raced with another writer
+			wait_request.next = (GSList *) old_read;
+			old = old_read;
+		}
+	}
+
+	while (mono_threads_inited != TRUE) {
+		gboolean timedout = mono_os_sem_timedwait (&cb, 1000, MONO_SEM_FLAGS_NONE) == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT;
+		if (!timedout)
+			break;
+	}
+
+	g_assert (mono_threads_inited);
+	return;
+}
+
+static void
+mono_thread_info_set_inited (void)
+{
+	mono_threads_inited = TRUE;
+	mono_memory_barrier ();
+
+	GSList *old = init_callbacks;
+
+	while (TRUE) {
+		gpointer old_read = mono_atomic_cas_ptr ((gpointer *) &init_callbacks, MONO_END_INIT_CB, (gpointer) old);
+		if (old == old_read)
+			break;
+		else
+			old = old_read;
+	}
+	if (old == MONO_END_INIT_CB) {
+		// Try not to use g_error / g_warning because this machinery used by logging
+		// Don't want to loop back into it.
+		fprintf (stderr, "Global threads inited twice");
+		exit (1);
+		return;
+	}
+
+	while (old != NULL) {
+		GSList *curr = (GSList *) old;
+		GSList *next = old->next;
+
+		mono_os_sem_post (curr->data);
+		old = next;
+	}
+
+	return;
+}
+
 void
 mono_thread_info_init (size_t info_size)
 {
@@ -803,7 +886,7 @@ mono_thread_info_init (size_t info_size)
 
 	g_assert (res);
 
-#ifndef HAVE_KW_THREAD
+#ifndef MONO_KEYWORD_THREAD
 	res = mono_native_tls_alloc (&small_id_key, NULL);
 #endif
 	g_assert (res);
@@ -829,7 +912,7 @@ mono_thread_info_init (size_t info_size)
 	mono_threads_coop_init ();
 	mono_threads_platform_init ();
 
-	mono_threads_inited = TRUE;
+	mono_thread_info_set_inited ();
 
 	g_assert (sizeof (MonoNativeThreadId) <= sizeof (uintptr_t));
 }
@@ -1704,7 +1787,7 @@ mono_thread_info_self_interrupt (void)
 /* Clear the interrupted flag of the current thread, set with
  * mono_thread_info_self_interrupt, so it can wait again */
 void
-mono_thread_info_clear_self_interrupt ()
+mono_thread_info_clear_self_interrupt (void)
 {
 	MonoThreadInfo *info;
 	MonoThreadInfoInterruptToken *previous_token;
@@ -1810,3 +1893,25 @@ mono_threads_join_unlock (void)
 	mono_os_mutex_unlock (&join_mutex);
 #endif
 }
+
+
+gboolean
+mono_thread_info_set_tools_data (void *data)
+{
+	MonoThreadInfo *info = mono_thread_info_current_unchecked ();
+	if (!info)
+		return FALSE;
+	if (info->tools_data)
+		return FALSE;
+	info->tools_data = data;
+	return TRUE;
+}
+
+void*
+mono_thread_info_get_tools_data (void)
+{
+	MonoThreadInfo *info = mono_thread_info_current_unchecked ();
+
+	return info ? info->tools_data : NULL;
+}
+

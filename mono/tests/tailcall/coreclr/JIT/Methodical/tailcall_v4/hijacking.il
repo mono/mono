@@ -336,6 +336,15 @@
     IL_011f:  ldstr      "PASS"
     IL_0124:  call       void [mscorlib]System.Console::WriteLine(string)
     IL_0129:  ldc.i4.s   100
+
+// convert success:100 to success:0
+	dup
+	ldc.i4 100
+	bne.un exit
+	pop
+	ldc.i4 0
+exit:
+
     IL_012b:  ret
   } // end of method Repro::Main
 

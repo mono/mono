@@ -110,92 +110,176 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+		unsafe internal static void copy_to_unmanaged (Array source, int startIndex,
+		       IntPtr destination, int length)
+		{
+			copy_to_unmanaged_fixed (source, startIndex, destination, length, null);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void copy_to_unmanaged (Array source, int startIndex,
-							       IntPtr destination, int length);
+		unsafe private extern static void copy_to_unmanaged_fixed (Array source, int startIndex,
+		       IntPtr destination, int length, void* fixed_source_element);
+
+		static private bool skip_fixed (System.Array array, int startIndex)
+		{
+			// In particular, we see length == 0 && startIndex == array.Length, and fixed fails.
+			return startIndex < 0 || startIndex >= array.Length;
+		}
+
+		unsafe internal static void copy_to_unmanaged (byte[] source, int startIndex, IntPtr destination, int length)
+		{
+			// This function is inconsistent with its surroundings.
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, null);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		unsafe internal static void copy_to_unmanaged (char[] source, int startIndex,
+		       IntPtr destination, int length)
+		{
+			// This function is inconsistent with its surroundings.
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, null);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (char[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (short[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (int[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (long[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (float[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (double[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		public unsafe static void Copy (IntPtr[] source, int startIndex, IntPtr destination, int length)
+		{
+			if (skip_fixed (source, startIndex))
+				copy_to_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_source = &source [startIndex])
+				copy_to_unmanaged_fixed (source, startIndex, destination, length, fixed_source);
+		}
+
+		unsafe internal static void copy_from_unmanaged (IntPtr source, int startIndex, Array destination, int length)
+		{
+			copy_from_unmanaged_fixed (source, startIndex, destination, length, null);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void copy_from_unmanaged (IntPtr source, int startIndex,
-								 Array destination, int length);
+		unsafe private extern static void copy_from_unmanaged_fixed (IntPtr source, int startIndex,
+			Array destination, int length, void* fixed_destination_element);
 
-		public static void Copy (byte[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, byte[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (char[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, char[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (short[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, short[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (int[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, int[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (long[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, long[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (float[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, float[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (double[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, double[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
-		public static void Copy (IntPtr[] source, int startIndex, IntPtr destination, int length)
+		public unsafe static void Copy (IntPtr source, IntPtr[] destination, int startIndex, int length)
 		{
-			copy_to_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, byte[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, char[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, short[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, int[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, long[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, float[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, double[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
-		}
-
-		public static void Copy (IntPtr source, IntPtr[] destination, int startIndex, int length)
-		{
-			copy_from_unmanaged (source, startIndex, destination, length);
+			if (skip_fixed (destination, startIndex))
+				copy_from_unmanaged (source, startIndex, destination, length);
+			else fixed (void* fixed_destination = &destination [startIndex])
+				copy_from_unmanaged_fixed (source, startIndex, destination, length, fixed_destination);
 		}
 
 		public static IntPtr CreateAggregatedObject (IntPtr pOuter,
@@ -1070,8 +1154,13 @@ namespace System.Runtime.InteropServices
 			return (size + 3) & (~((uint)3));
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToBSTR (string s);
+		public unsafe static IntPtr StringToBSTR (string s)
+		{
+			if (s == null)
+				return IntPtr.Zero;
+			fixed (char* fixed_s = s)
+				return BufferToBSTR (fixed_s, s.Length);
+		}
 
 		public static IntPtr StringToCoTaskMemAnsi (string s)
 		{
@@ -1098,7 +1187,13 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToHGlobalAnsi (string s);
+		unsafe extern static IntPtr StringToHGlobalAnsi (char* s, int length);
+
+		public unsafe static IntPtr StringToHGlobalAnsi (string s)
+		{
+			fixed (char* fixed_s = s)
+				return StringToHGlobalAnsi (fixed_s, (s != null) ? s.Length : 0);
+		}
 
 		unsafe public static IntPtr StringToAllocatedMemoryUTF8(String s)
 		{
@@ -1134,9 +1229,15 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToHGlobalUni (string s);
+		unsafe extern static IntPtr StringToHGlobalUni (char* s, int length);
 
-		public static IntPtr SecureStringToBSTR (SecureString s)
+		public unsafe static IntPtr StringToHGlobalUni (string s)
+		{
+			fixed (char* fixed_s = s)
+				return StringToHGlobalUni (fixed_s, (s != null) ? s.Length : 0);
+		}
+
+		public unsafe static IntPtr SecureStringToBSTR (SecureString s)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
@@ -1153,8 +1254,9 @@ namespace System.Runtime.InteropServices
 					buffer[i + 1] = b;
 				}
 			}
-			return BufferToBSTR (buffer, len);
-        }
+			fixed (byte* fixed_buffer = buffer)
+				return BufferToBSTR ((char*)fixed_buffer, len);
+		}
 
 		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
 		{
@@ -1243,7 +1345,7 @@ namespace System.Runtime.InteropServices
 
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static IntPtr BufferToBSTR (Array ptr, int slen);
+		extern unsafe static IntPtr BufferToBSTR (char* ptr, int slen);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);

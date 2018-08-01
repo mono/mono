@@ -27,12 +27,17 @@ xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttri
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 XTEST_REMOTE_EXECUTOR = $(topdir)/class/lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
 xunit_src += $(topdir)/../mcs/class/test-helpers/AdminHelper.cs \
-$(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs \
-$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.cs \
 $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
+
+ifeq ($(PROFILE),monodroid)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
+$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+endif
 endif
 
 xunit_class_deps := 
@@ -212,8 +217,8 @@ endif
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
-	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_assemblies))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$$ok
 
 ## Instructs compiler to compile to target .net execution, it can be usefull in rare cases when runtime detection is not possible
@@ -242,10 +247,20 @@ $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(te
 
 test_response_preprocessed = $(test_response)_preprocessed
 
+ifneq "x" "x$(PROFILE_RUNTIME)"
+GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
+else
+ifneq "x" "x$(TEST_RUNTIME)"
+GENSOURCES_RUNTIME=$(TEST_RUNTIME)
+else
+GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
+endif
+endif
+
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes))
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(GENSOURCES_CS)
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --basedir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
@@ -267,7 +282,8 @@ ifdef HAVE_CS_XTESTS
 
 XTEST_HARNESS_PATH := $(topdir)/../external/xunit-binaries
 XTEST_HARNESS = $(XTEST_HARNESS_PATH)/xunit.console.exe
-XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit TestResult-$(PROFILE)-xunit.xml
+XTEST_RESULT_FILE := TestResult-$(PROFILE)-xunit.xml
+XTEST_HARNESS_FLAGS := -noappdomain -noshadow -parallel none -nunit $(XTEST_RESULT_FILE)
 XTEST_TRAIT := -notrait category=failing -notrait category=nonmonotests -notrait Benchmark=true -notrait category=outerloop
 # The logic is double inverted so this actually excludes tests not intented for current platform
 # best to search for `property name="category"` in the xml output to see what's going on
@@ -297,6 +313,7 @@ run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
 	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
+	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
 	@rm -f xunit.execution.desktop.dll
 
@@ -311,8 +328,8 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(xtest_sourcefile)' '$(xtest_sourcefile_excludes)'
+$(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes)) $(GENSOURCES_CS)
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...

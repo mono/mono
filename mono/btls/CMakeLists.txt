@@ -28,7 +28,14 @@ if (NOT "${BTLS_ARCH}" STREQUAL "")
 	set (CMAKE_SYSTEM_PROCESSOR "${BTLS_ARCH}")
 endif ()
 
-set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -fPIC -ggdb -fvisibility=hidden")
+if (NOT MSVC)
+	if(${CMAKE_SYSTEM_NAME} MATCHES "AIX" OR ${CMAKE_SYSTEM_NAME} MATCHES "OS400")
+		# GCC+XCOFF doesn't support -fvisibility=hidden, and we would prefer XCOFF debugging info.
+		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -fPIC -gxcoff")
+	else()
+		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -fPIC -ggdb -fvisibility=hidden")
+	endif()
+endif ()
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS} ${BTLS_CFLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${C_CXX_FLAGS} ${BTLS_CFLAGS}")
