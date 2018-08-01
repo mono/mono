@@ -155,8 +155,8 @@ mono_class_is_enum          (MonoClass *klass);
 MONO_API MonoType*
 mono_class_enum_basetype    (MonoClass *klass);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API MonoClass*
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoClass*
 mono_class_get_parent        (MonoClass *klass);
 
 MONO_API MonoClass*
@@ -168,12 +168,12 @@ mono_class_get_rank          (MonoClass *klass);
 MONO_API uint32_t
 mono_class_get_flags         (MonoClass *klass);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API const char*
+MONO_API MONO_RT_EXTERNAL_ONLY
+const char*
 mono_class_get_name          (MonoClass *klass);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API const char*
+MONO_API MONO_RT_EXTERNAL_ONLY
+const char*
 mono_class_get_namespace     (MonoClass *klass);
 
 MONO_API MonoType*
@@ -197,8 +197,8 @@ mono_class_num_properties    (MonoClass *klass);
 MONO_API int
 mono_class_num_events        (MonoClass *klass);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API MonoClassField*
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoClassField*
 mono_class_get_fields        (MonoClass* klass, void **iter);
 
 MONO_API MonoMethod*
@@ -216,8 +216,8 @@ mono_class_get_interfaces    (MonoClass* klass, void **iter);
 MONO_API MonoClass*
 mono_class_get_nested_types  (MonoClass* klass, void **iter);
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API mono_bool
+MONO_API MONO_RT_EXTERNAL_ONLY
+mono_bool
 mono_class_is_delegate       (MonoClass* klass);
 
 MONO_API mono_bool
