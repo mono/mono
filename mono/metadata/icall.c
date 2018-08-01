@@ -6773,8 +6773,8 @@ mono_icall_get_machine_name (MonoError *error)
 		buf [n] = 0;
 		// try truncating the string at the first dot
 		for (i = 0; i < n; i++) {
-			if (buf[i] == '.') {
-				buf[i] = '\0';
+			if (buf [i] == '.') {
+				buf [i] = 0;
 				break;
 			}
 		}
