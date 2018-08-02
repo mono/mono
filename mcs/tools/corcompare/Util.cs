@@ -16,6 +16,19 @@ namespace Mono.ApiTools {
 
 		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
 
+		internal bool TryResolve (CustomAttribute attribute)
+		{
+			if (attribute == null)
+				throw new ArgumentNullException (nameof (attribute));
+
+			try {
+				var has = attribute.HasProperties;
+				return true;
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return false;
+			}
+		}
+
 		internal bool IsPublic (TypeReference typeref)
 		{
 			if (typeref == null)
@@ -77,18 +90,6 @@ namespace Mono.ApiTools {
 
 			try {
 				return child.BaseType.Resolve ();
-			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
-				return null;
-			}
-		}
-
-		internal MethodDefinition GetMethod (MethodReference method)
-		{
-			if (method == null)
-				throw new ArgumentNullException (nameof (method));
-
-			try {
-				return method.Resolve ();
 			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
 				return null;
 			}

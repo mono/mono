@@ -1399,9 +1399,12 @@ namespace Mono.ApiTools {
 		{
 			Dictionary<string, object> mapping = null;
 
+			if (!state.TypeHelper.TryResolve (attribute))
+				return mapping;
+
 			PopulateMapping (ref mapping, attribute);
 
-			var constructor = state.TypeHelper.GetMethod (attribute.Constructor);
+			var constructor = attribute.Constructor.Resolve ();
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
