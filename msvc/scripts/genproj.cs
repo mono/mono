@@ -812,7 +812,7 @@ public class MsbuildGenerator {
 		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
-		SourcesParser.TraceLevel = 1;
+		SourcesParser.TraceLevel = 0;
 		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
 	}
 
@@ -847,7 +847,12 @@ public class MsbuildGenerator {
 		return src;
 	}
 
+	private bool IsValidProfile (string output_name, string profile) {
+		return SlnGenerator.profiles.Contains (profile);
+	}
+
 	private StringBuilder GenerateSourceItemGroups (
+		string output_name, 
 		string profile,
 		string sources_file_name,
 		string groupConditional
@@ -863,7 +868,7 @@ public class MsbuildGenerator {
 			return result;
 
 		var targetFileSets = (from target in parseResult.Targets
-			where (target.Key.profile == null) || SlnGenerator.profiles.Contains (target.Key.profile)
+			where (target.Key.profile == null) || IsValidProfile (output_name, target.Key.profile)
 			let matches = parseResult.GetMatches (target)
 				.Select (m => FixupSourceName (m.RelativePath))
 				.OrderBy (s => s, StringComparer.Ordinal)
@@ -1012,7 +1017,7 @@ public class MsbuildGenerator {
 		var sources = 
 			updatingExistingProject 
 				? new StringBuilder ()
-				: GenerateSourceItemGroups (profile, sources_file_name, groupConditional);
+				: GenerateSourceItemGroups (output_name, profile, sources_file_name, groupConditional);
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
