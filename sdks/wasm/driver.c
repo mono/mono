@@ -130,7 +130,7 @@ MonoClass* mono_get_object_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
-
+char * mono_type_get_full_name (MonoClass *klass);
 
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
@@ -316,8 +316,25 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			return MARSHAL_TYPE_VT;
 		if (mono_class_is_delegate (klass))
 			return MARSHAL_TYPE_DELEGATE;
-		if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
-			return MARSHAL_TYPE_TASK;
+
+		// In some instances the names space is being returned as null.
+		// So what we will do is use full_name and use a startswith string compare
+		if (!mono_class_get_namespace (klass))
+		{
+			static const char *GENERIC_TASK = "System.Threading.Tasks.Task`1";
+			static const char *JUST_A_TASK = "System.Threading.Tasks.Task";
+			// First generic
+			if (strncmp(mono_type_get_full_name (klass), GENERIC_TASK, strlen(GENERIC_TASK)) == 0)
+				return MARSHAL_TYPE_TASK;
+			// Then normal task
+			if (strcmp(mono_type_get_full_name (klass), JUST_A_TASK) == 0)
+				return MARSHAL_TYPE_TASK;
+		}
+		else
+		{
+			if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+				return MARSHAL_TYPE_TASK;
+		}
 		return MARSHAL_TYPE_OBJECT;
 	}
 }

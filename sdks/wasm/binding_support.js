@@ -125,6 +125,10 @@ var BindingSupportLib = {
 				};
 			}
 			case 6: {// Task
+
+				if (typeof Promise === "undefined" || typeof Promise.resolve === "undefined")
+					throw new Error ("Promises are not supported thus C# Tasks can not work in this context.");
+
 				var obj = this.extract_js_obj (mono_obj);
 				var cont_obj = null;
 				var promise = new Promise (function (resolve, reject) {
@@ -150,7 +154,7 @@ var BindingSupportLib = {
 		},
 
 		create_task_completion_source: function () {
-			return this.call_method (this.create_tcs, null, "", []);
+			return this.call_method (this.create_tcs, null, "i", [ -1 ]);
 		},
 
 		set_task_result: function (tcs, result) {
@@ -216,7 +220,7 @@ var BindingSupportLib = {
 		},
 
 		try_extract_mono_obj:function (js_obj) {
-			if (js_obj == null || js_obj == undefined || !js_obj.__mono_gchandle__)
+			if (js_obj === null || typeof js_obj === "undefined" || typeof js_obj.__mono_gchandle__ === "undefined")
 				return 0;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},

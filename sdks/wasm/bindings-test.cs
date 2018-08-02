@@ -100,6 +100,21 @@ public class TestClass {
 		return task;
 	}
 
+	public static TaskCompletionSource<object> tcs3;
+	public static Task task3;
+	public static object MkTaskNull () {
+		tcs3 = new TaskCompletionSource<object> ();
+		task3 = tcs3.Task;
+		return task3;
+	}
+
+	public static Task<object> taskString;
+	public static object MkTaskString () {
+		tcs3 = new TaskCompletionSource<object> ();
+		taskString = tcs3.Task;
+		return taskString;
+	}
+
 	public static Task<object> the_promise;
 	public static void InvokePromise (object obj) {
 		the_promise = (Task<object>)obj;
@@ -248,14 +263,14 @@ public class BindingTests {
 		Runtime.InvokeJS (@"
 			var tsk = call_test_method (""MkTask"", """", [ ]);
 			tsk.then (function (value) {
-				print ('PassTaskToJS cont with value ' + value);
+				Module.print ('PassTaskToJS cont with value ' + value);
 			});
 		");
 		Assert.AreEqual (0, TestClass.int_val);
 		TestClass.tcs.SetResult (99);
 		//FIXME our test harness doesn't suppport async tests.
 		// So manually verify it for now by checking stdout for `PassTaskToJS cont with value 99`
-		// Assert.AreEqual (99, TestClass.int_val);
+		//Assert.AreEqual (99, TestClass.int_val);
 	}
 
 
@@ -266,7 +281,7 @@ public class BindingTests {
 			var tsk = call_test_method (""MkTask"", """", [ ]);
 			tsk.then (function (value) {},
 			function (reason) {
-				print ('PassTaskToJS2 cont failed due to ' + reason);
+				Module.print ('PassTaskToJS2 cont failed due to ' + reason);
 			});
 		");
 		Assert.AreEqual (0, TestClass.int_val);
@@ -276,6 +291,65 @@ public class BindingTests {
 		// Assert.AreEqual (99, TestClass.int_val);
 	}
 
+	[Test]
+	public static void PassTaskToJS3 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskNull"", """", [ ]);
+			tsk.then( () => {
+  				Module.print('PassTaskToJS3 cont without value '); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS3 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetResult (null);
+	}
+
+	[Test]
+	public static void PassTaskToJS4 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskNull"", """", [ ]);
+			tsk.then( value => {
+  				Module.print(value); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS4 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetException (new Exception ("it failed"));
+	}	
+	
+	[Test]
+	public static void PassTaskToJS5 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskString"", """", [ ]);
+			tsk.then( success => {
+  				Module.print('PassTaskToJS5 cont with value ' + success); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS5 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetResult ("Success");
+	}
+
+	[Test]
+	public static void PassTaskToJS6 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskString"", """", [ ]);
+			tsk.then( success => {
+  				Module.print('PassTaskToJS6 cont with value ' + success); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS6 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetException (new Exception ("it failed"));
+	}	
 
 	[Test]
 	public static void PassPromiseToCS () {
