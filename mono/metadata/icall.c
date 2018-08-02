@@ -1083,7 +1083,7 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 	 * This way, we can avoid costly reflection operations in managed code.
 	 */
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted (field))
@@ -1159,7 +1159,7 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	 * managed code.
 	 */
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted (field))
@@ -1933,12 +1933,12 @@ leave:
 }
 
 ICALL_EXPORT gint32
-ves_icall_MonoField_GetFieldOffset (MonoReflectionField *field)
+ves_icall_MonoField_GetFieldOffset (MonoReflectionFieldHandle field, MonoError *error)
 {
-	MonoClass *parent = field->field->parent;
-	mono_class_setup_fields (parent);
+	MonoClassField *class_field = MONO_HANDLE_GETVAL (field, field);
+	mono_class_setup_fields (class_field->parent);
 
-	return field->field->offset - sizeof (MonoObject);
+	return class_field->offset - sizeof (MonoObject);
 }
 
 ICALL_EXPORT MonoReflectionTypeHandle
@@ -3842,7 +3842,7 @@ ves_icall_System_Enum_GetEnumValuesAndNames (MonoReflectionTypeHandle type, Mono
 	return_val_if_nok (error, FALSE);
 
 	iter = NULL;
-	while ((field = mono_class_get_fields (enumc, &iter))) {
+	while ((field = mono_class_get_fields_internal (enumc, &iter))) {
 		get_enum_field(domain, names, values, base_type, field, &j, &previous_value, &sorted, error);
 		if (!is_ok (error))
 			break;
@@ -4577,11 +4577,11 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHand
 	if (!type) {
 		if (throwOnError) {
 			ERROR_DECL_VALUE (inner_error);
-			char *typename = mono_string_handle_to_utf8 (name, &inner_error);
+			char *type_name = mono_string_handle_to_utf8 (name, &inner_error);
 			mono_error_assert_ok (&inner_error);
 			MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
 			char *assmname = mono_stringify_assembly_name (&assembly->aname);
-			mono_error_set_type_load_name (error, typename, assmname, "%s", "");
+			mono_error_set_type_load_name (error, type_name, assmname, "%s", "");
 			goto fail;
 		}
 

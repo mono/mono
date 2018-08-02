@@ -607,6 +607,13 @@
     <Compile Include="ReferenceSources\Res.cs" />
     <Compile Include="ReferenceSources\ThisAssembly.cs" />
     <Compile Include="corefx\SR.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />

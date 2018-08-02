@@ -113,6 +113,13 @@
     <Compile Include="Mono.Unix\UnixStream.cs" />
     <Compile Include="Mono.Unix\UnixSymbolicLinkInfo.cs" />
     <Compile Include="Mono.Unix\UnixUserInfo.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="Mono.Unix.Android\AndroidUtils.cs" />

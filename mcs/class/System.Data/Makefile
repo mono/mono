@@ -54,8 +54,6 @@ EXTRA_DISTFILES = \
 	Test/test-config-file			\
 	Test/System.Data/binserialize/*.bin	\
 	Test/ProviderTests/sql/*.sql	\
-	SqliteTest.db	\
-	corefx.common.sources	\
-	corefx.unix.sources
+	SqliteTest.db
 
 include ../../build/library.make

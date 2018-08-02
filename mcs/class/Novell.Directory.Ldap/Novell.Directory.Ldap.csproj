@@ -261,6 +261,13 @@
     <Compile Include="Novell.Directory.Ldap\MessageAgent.cs" />
     <Compile Include="Novell.Directory.Ldap\MessageVector.cs" />
     <Compile Include="Novell.Directory.Ldap\SupportClass.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->
