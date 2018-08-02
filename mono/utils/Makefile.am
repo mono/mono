@@ -69,6 +69,7 @@ monoutils_sources = \
 	mono-dl-wasm.c	\
 	mono-dl.h		\
 	mono-dl-windows-internals.h	\
+	mono-icall.h		\
 	mono-log-windows.c	\
 	mono-log-common.c	\
 	mono-log-posix.c	\
