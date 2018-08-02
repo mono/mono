@@ -48,6 +48,7 @@ MonoAssembly*          mono_assembly_open_predicate (const char *filename,
 						     MonoAssemblyContextKind asmctx,
 						     MonoAssemblyCandidatePredicate pred,
 						     gpointer user_data,
+						     MonoAssembly *requesting_assembly,
 						     MonoImageOpenStatus *status);
 
 MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
