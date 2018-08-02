@@ -5965,7 +5965,11 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		this_buf = (guint8 *)g_alloca (mono_class_instance_size (m->klass));
 	else
 		this_buf = (guint8 *)g_alloca (sizeof (MonoObject*));
-	if (m_class_is_valuetype (m->klass) && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
+
+	if (m->is_generic) {
+		DEBUG_PRINTF (1, "[%p] Error: Attempting to invoke uninflated generic method %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (m, TRUE));
+		return ERR_INVALID_ARGUMENT;
+	} else if (m_class_is_valuetype (m->klass) && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		/* Should be null */
 		int type = decode_byte (p, &p, end);
 		if (type != VALUE_TYPE_ID_NULL) {
@@ -8928,7 +8932,12 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			ERROR_DECL (error);
 			s = mono_string_to_utf8_checked (str, error);
-			mono_error_assert_ok (error);
+			if (!mono_error_ok (error)) {
+				if (s)
+					g_free (s);
+
+				return ERR_INVALID_ARGUMENT;
+			}
 			buffer_add_string (buf, s);
 			g_free (s);
 		}

@@ -280,6 +280,13 @@
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ReflectionType.cs" />
     <Compile Include="src\ComponentModel\System\ComponentModel\Composition\ReflectionModel\ReflectionWritableMember.cs" />
     <Compile Include="src\ComponentModel\System\LazyOfTTMetadata.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->

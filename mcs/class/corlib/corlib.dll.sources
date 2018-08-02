@@ -1165,6 +1165,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyDescriptionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFileVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFlagsAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Reflection/AssemblyNameProxy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyInformationalVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyFileAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyNameAttribute.cs
