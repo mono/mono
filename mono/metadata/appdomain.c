@@ -105,6 +105,9 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 static void
 mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data);
 
+static gboolean
+mono_domain_asmctx_from_path (const char *fname, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
+
 static void
 add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *hash);
 
@@ -288,6 +291,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_install_assembly_postload_search_hook ((MonoAssemblySearchFunc)mono_domain_assembly_postload_search, GUINT_TO_POINTER (FALSE));
 	mono_install_assembly_postload_refonly_search_hook ((MonoAssemblySearchFunc)mono_domain_assembly_postload_search, GUINT_TO_POINTER (TRUE));
 	mono_install_assembly_load_hook (mono_domain_fire_assembly_load, NULL);
+	mono_install_assembly_asmctx_from_path_hook (mono_domain_asmctx_from_path, NULL);
 
 	mono_thread_init (start_cb, attach_cb);
 
@@ -1415,6 +1419,21 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	mono_error_cleanup (error);
 leave:
 	HANDLE_FUNCTION_RETURN ();
+}
+
+static gboolean
+mono_domain_asmctx_from_path (const char *fname, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx)
+{
+	MonoDomain *domain = mono_domain_get ();
+	char **search_path = NULL;
+
+        for (search_path = domain->search_path; search_path && *search_path; search_path++) {
+		if (mono_path_filename_in_basedir (fname, *search_path)) {
+			*out_asmctx = MONO_ASMCTX_DEFAULT;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 /*
