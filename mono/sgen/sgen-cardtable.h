@@ -46,7 +46,7 @@ void sgen_card_table_init (SgenRememberedSet *remset);
 #define CARD_MASK ((1 << CARD_COUNT_BITS) - 1)
 
 /* This needs to use the target configuration when cross compiling */
-#if TARGET_SIZEOF_VOID_P * 8 > CARD_TABLE_BITS
+#if SIZEOF_VOID_P * 8 > CARD_TABLE_BITS
 #define SGEN_HAVE_OVERLAPPING_CARDS	1
 #endif
 
