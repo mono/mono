@@ -1029,26 +1029,22 @@ dump_native_stacktrace (const char *signal, void *ctx)
 
 #if defined(TARGET_OSX)
 		MonoStackHash hashes;
-#endif
 		gchar *output = NULL;
-		MonoContext mctx;
 		if (ctx) {
 			gboolean leave = FALSE;
 			gboolean dump_for_merp = FALSE;
-#if defined(TARGET_OSX)
 			dump_for_merp = mono_merp_enabled ();
-#endif
 
 			if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
 				leave = TRUE;
-#elif defined(TARGET_OSX)
-				mini_register_sigterm_handler ();
 #endif
+				mini_register_sigterm_handler ();
 			}
 
-#ifdef TARGET_OSX
 			if (!leave) {
+				MonoContext mctx;
+
 				mono_sigctx_to_monoctx (ctx, &mctx);
 				// Do before forking
 				if (!mono_threads_summarize (&mctx, &output, &hashes))
@@ -1059,8 +1055,8 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			// So we dump to disk
 			if (!leave && !dump_for_merp)
 				mono_crash_dump (output);
-#endif
 		}
+#endif
 
 		/*
 		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
