@@ -1917,6 +1917,78 @@ free_assembly_preload_hooks (void)
 	}
 }
 
+typedef struct AssemblyAsmCtxFromPathHook AssemblyAsmCtxFromPathHook;
+struct AssemblyAsmCtxFromPathHook {
+	AssemblyAsmCtxFromPathHook *next;
+	MonoAssemblyAsmCtxFromPathFunc func;
+	gpointer user_data;
+};
+
+static AssemblyAsmCtxFromPathHook *assembly_asmctx_from_path_hook = NULL;
+
+/**
+ * mono_install_assembly_asmctx_from_path_hook:
+ *
+ * \param func Hook function
+ * \param user_data User data
+ *
+ * Installs a hook function \p func that when called with an absolute path name
+ * returns \c TRUE and writes to \c out_asmctx if an assembly that name would
+ * be found by that asmctx.  The hooks are called in the order from most
+ * recently added to oldest.
+ *
+ */
+void
+mono_install_assembly_asmctx_from_path_hook (MonoAssemblyAsmCtxFromPathFunc func, gpointer user_data)
+{
+	g_return_if_fail (func != NULL);
+
+	AssemblyAsmCtxFromPathHook *hook = g_new0 (AssemblyAsmCtxFromPathHook, 1);
+	hook->func = func;
+	hook->user_data = user_data;
+	hook->next = assembly_asmctx_from_path_hook;
+	assembly_asmctx_from_path_hook = hook;
+}
+
+/**
+ * mono_assembly_invoke_asmctx_from_path_hook:
+ *
+ * \param absfname absolute path name
+ * \param requesting_assembly the \c MonoAssembly that requested the load, may be \c NULL
+ * \param out_asmctx assembly context kind, written on output
+ *
+ * Invokes hooks to find the assembly context that would have searched for the
+ * given assembly name.  Writes to \p out_asmctx the assembly context kind from
+ * the first hook to return \c TRUE.  \returns \c TRUE if any hook wrote to \p
+ * out_asmctx, or \c FALSE otherwise.
+ */
+static gboolean
+assembly_invoke_asmctx_from_path_hook (const char *absfname, MonoAssembly *requesting_assembly, MonoAssemblyContextKind *out_asmctx)
+{
+	g_assert (absfname);
+	g_assert (out_asmctx);
+	AssemblyAsmCtxFromPathHook *hook;
+
+	for (hook = assembly_asmctx_from_path_hook; hook; hook = hook->next) {
+		*out_asmctx = MONO_ASMCTX_INDIVIDUAL;
+		if (hook->func (absfname, requesting_assembly, hook->user_data, out_asmctx))
+			return TRUE;
+	}
+	return FALSE;
+}
+
+
+static void
+free_assembly_asmctx_from_path_hooks (void)
+{
+	AssemblyAsmCtxFromPathHook *hook, *next;
+
+	for (hook = assembly_asmctx_from_path_hook; hook; hook = next) {
+		next = hook->next;
+		g_free (hook);
+	}
+}
+
 static gchar *
 absolute_dir (const gchar *filename)
 {
@@ -4356,6 +4428,7 @@ mono_assemblies_cleanup (void)
 	}
 	g_slist_free (loaded_assembly_bindings);
 
+	free_assembly_asmctx_from_path_hooks ();
 	free_assembly_load_hooks ();
 	free_assembly_search_hooks ();
 	free_assembly_preload_hooks ();
