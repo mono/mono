@@ -42,7 +42,7 @@ namespace Mono.ApiTools {
 				if (td == null)
 					return false;
 
-				return td.IsPublic;
+				return td.IsPublic || (td.IsNestedPublic && IsPublic (td.DeclaringType));
 			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
 				return true;
 			}
