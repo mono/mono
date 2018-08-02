@@ -7,10 +7,10 @@
 
 #include <mono/utils/mono-compiler.h>
 #include <glib.h>
-
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+#include <mono/utils/mono-publib.h>
 
 /* Returns the number of milliseconds from boot time: this should be monotonic
  *
