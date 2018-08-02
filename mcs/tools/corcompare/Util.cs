@@ -7,18 +7,45 @@ namespace Mono.ApiTools {
 
 	class TypeHelper {
 
+		public TypeHelper (bool ignoreResolutionErrors, bool ignoreInheritedInterfaces)
+		{
+			IgnoreResolutionErrors = ignoreResolutionErrors;
+			IgnoreInheritedInterfaces = ignoreInheritedInterfaces;
+		}
+
+		public bool IgnoreResolutionErrors { get; }
+
+		public bool IgnoreInheritedInterfaces { get; }
+
 		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
+
+		internal bool TryResolve (CustomAttribute attribute)
+		{
+			if (attribute == null)
+				throw new ArgumentNullException (nameof (attribute));
+
+			try {
+				var has = attribute.HasProperties;
+				return true;
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return false;
+			}
+		}
 
 		internal bool IsPublic (TypeReference typeref)
 		{
 			if (typeref == null)
 				throw new ArgumentNullException ("typeref");
 
-			TypeDefinition td = typeref.Resolve ();
-			if (td == null)
-				return false;
+			try {
+				var td = typeref.Resolve ();
+				if (td == null)
+					return false;
 
-			return td.IsPublic;
+				return td.IsPublic || (td.IsNestedPublic && IsPublic (td.DeclaringType));
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return true;
+			}
 		}
 
 		internal bool IsDelegate (TypeReference typeref)
@@ -52,9 +79,12 @@ namespace Mono.ApiTools {
 		{
 			var ifaces = new Dictionary<string, TypeReference> ();
 
-			foreach (var def in WalkHierarchy (type))
+			foreach (var def in WalkHierarchy (type)) {
 				foreach (var iface in def.Interfaces)
 					ifaces [iface.InterfaceType.FullName] = iface.InterfaceType;
+				if (IgnoreInheritedInterfaces)
+					break;
+			}
 
 			return ifaces.Values;
 		}
@@ -64,7 +94,23 @@ namespace Mono.ApiTools {
 			if (child.BaseType == null)
 				return null;
 
-			return child.BaseType.Resolve ();
+			try {
+				return child.BaseType.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
+		}
+
+		internal MethodDefinition GetMethod (MethodReference method)
+		{
+			if (method == null)
+				throw new ArgumentNullException (nameof (method));
+
+			try {
+				return method.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
 		}
 
 		internal bool IsPublic (CustomAttribute att)

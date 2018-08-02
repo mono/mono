@@ -102,6 +102,10 @@ namespace Mono.ApiTools {
 
 		public bool FullApiSet { get; set; } = false;
 
+		public bool IgnoreResolutionErrors { get; set; } = false;
+
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
+
 		public List<string> SearchDirectories { get; } = new List<string> ();
 
 		public List<string> ResolveFiles { get; } = new List<string> ();
@@ -112,7 +116,7 @@ namespace Mono.ApiTools {
 
 		public void ResolveTypes ()
 		{
-			TypeHelper = new TypeHelper ();
+			TypeHelper = new TypeHelper (IgnoreResolutionErrors, IgnoreInheritedInterfaces);
 
 			if (SearchDirectories != null) {
 				foreach (var v in SearchDirectories)
@@ -136,6 +140,10 @@ namespace Mono.ApiTools {
 		public bool FollowForwarders { get; set; } = false;
 
 		public bool FullApiSet { get; set; } = false;
+
+		public bool IgnoreResolutionErrors { get; set; } = false;
+
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
 
 		public List<string> SearchDirectories { get; set; } = new List<string> ();
 
@@ -184,6 +192,8 @@ namespace Mono.ApiTools {
 				AbiMode = config.AbiMode,
 				FollowForwarders = config.FollowForwarders,
 				FullApiSet = config.FullApiSet,
+				IgnoreResolutionErrors = config.IgnoreResolutionErrors,
+				IgnoreInheritedInterfaces = config.IgnoreInheritedInterfaces,
 			};
 			state.SearchDirectories.AddRange (config.SearchDirectories);
 			state.ResolveFiles.AddRange (config.ResolveFiles);
@@ -829,7 +839,7 @@ namespace Mono.ApiTools {
 		}
 
 
-		internal static PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
+		internal PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
 			var list = new List<PropertyDefinition> ();
 
 			var t = type;
@@ -862,7 +872,7 @@ namespace Mono.ApiTools {
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
@@ -909,7 +919,7 @@ namespace Mono.ApiTools {
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
@@ -1390,13 +1400,16 @@ namespace Mono.ApiTools {
 			writer.WriteEndElement (); // attributes
 		}
 
-		static Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
+		Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
 		{
 			Dictionary<string, object> mapping = null;
 
+			if (!state.TypeHelper.TryResolve (attribute))
+				return mapping;
+
 			PopulateMapping (ref mapping, attribute);
 
-			var constructor = attribute.Constructor.Resolve ();
+			var constructor = state.TypeHelper.GetMethod (attribute.Constructor);
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
