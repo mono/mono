@@ -8,6 +8,8 @@
 #include <mono/metadata/metadata.h>
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /*
  * 25.2.1: Method header type values
  */
@@ -331,5 +333,7 @@ typedef struct {
 } MonoCLIImageInfo;
 
 MONO_API guint32       mono_cli_rva_image_map (MonoImage *image, guint32 rva);
+
+G_END_DECLS
 
 #endif /* __MONO_CIL_COFF_H__ */

@@ -19,6 +19,8 @@
 #include <mono/utils/mono-error.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
+G_BEGIN_DECLS
+
 struct _MonoType {
 	union {
 		MonoClass *klass; /* for VALUETYPE and CLASS */
@@ -1016,5 +1018,6 @@ mono_type_in_image (MonoType *type, MonoImage *image);
 MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
 
-#endif /* __MONO_METADATA_INTERNALS_H__ */
+G_END_DECLS
 
+#endif /* __MONO_METADATA_INTERNALS_H__ */

@@ -23,6 +23,8 @@
 #include <sys/poll.h>
 #endif
 
+MONO_BEGIN_DECLS
+
 #define MONO_POLLIN		POLLIN
 #define MONO_POLLPRI		POLLPRI
 #define MONO_POLLOUT		POLLOUT
@@ -54,5 +56,6 @@ typedef struct {
 
 MONO_API int mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout);
 
-#endif /* MONO_POLL_H */
+MONO_END_DECLS
 
+#endif /* MONO_POLL_H */

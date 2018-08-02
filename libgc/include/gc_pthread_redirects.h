@@ -15,6 +15,11 @@
 /* facility in thr_keycreate.  Alternatively, keep a redundant pointer	*/
 /* to thread specific data on the thread stack.			        */
 # include <thread.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
   int GC_thr_create(void *stack_base, size_t stack_size,
                     void *(*start_routine)(void *), void *arg, long flags,
                     thread_t *new_thread);
@@ -26,11 +31,22 @@
 # define thr_join GC_thr_join
 # define thr_suspend GC_thr_suspend
 # define thr_continue GC_thr_continue
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #endif /* GC_SOLARIS_THREADS */
 
 #if defined(GC_SOLARIS_PTHREADS)
+
 # include <pthread.h>
 # include <signal.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
   extern int GC_pthread_create(pthread_t *new_thread,
     			         const pthread_attr_t *attr,
           			 void * (*thread_execp)(void *), void *arg);
@@ -39,6 +55,11 @@
 # define pthread_join GC_pthread_join
 # define pthread_create GC_pthread_create
 # define pthread_detach GC_pthread_detach
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #endif
 
 #if defined(GC_SOLARIS_PTHREADS) || defined(GC_SOLARIS_THREADS)
@@ -50,6 +71,10 @@
 /* We treat these similarly. */
 # include <pthread.h>
 # include <signal.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
   int GC_pthread_create(pthread_t *new_thread,
                         const pthread_attr_t *attr,
@@ -85,6 +110,10 @@
 # endif
 # define pthread_sigmask GC_pthread_sigmask
 # define dlopen GC_dlopen
+#endif
+
+#ifdef __cplusplus
+} // extern "C"
 #endif
 
 #endif /* GC_xxxxx_THREADS */

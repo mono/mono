@@ -13,6 +13,8 @@
 
 #include <stdlib.h>
 
+G_BEGIN_DECLS
+
 /*
 These functions must be used when it's possible that either destination is not
 word aligned or size is not a multiple of word size.
@@ -21,5 +23,7 @@ void mono_gc_bzero_atomic (void *dest, size_t size);
 void mono_gc_bzero_aligned (void *dest, size_t size);
 void mono_gc_memmove_atomic (void *dest, const void *src, size_t size);
 void mono_gc_memmove_aligned (void *dest, const void *src, size_t size);
+
+G_END_DECLS
 
 #endif

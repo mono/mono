@@ -15,6 +15,8 @@
 #include "mini.h"
 #include "ee.h"
 
+MONO_BEGIN_DECLS
+
 /* Per-domain information maintained by the JIT */
 typedef struct
 {
@@ -566,6 +568,8 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #ifdef TARGET_OSX
 void mini_register_sigterm_handler (void);
 #endif
+
+MONO_END_DECLS
 
 #endif /* __MONO_MINI_RUNTIME_H__ */
 

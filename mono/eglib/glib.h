@@ -46,12 +46,14 @@
 
 #define __EGLIB_X11 1
 
+// FIXMEcxx in future G_BEGIN_DECLS should always be empty, and/or remove all uses,
+// and extern "C" added to MONO_API instead.
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 G_BEGIN_DECLS

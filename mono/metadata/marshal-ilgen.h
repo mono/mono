@@ -6,7 +6,11 @@
 #ifndef __MONO_MARSHAL_ILGEN_H__
 #define __MONO_MARSHAL_ILGEN_H__
 
+G_BEGIN_DECLS
+
 MONO_API void
 mono_marshal_ilgen_init (void);
+
+G_END_DECLS
 
 #endif

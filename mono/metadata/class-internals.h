@@ -15,6 +15,8 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
+G_BEGIN_DECLS
+
 #define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
 #define MONO_CLASS_HAS_STATIC_METADATA(klass) (m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass))
@@ -1434,6 +1436,8 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
+
+G_END_DECLS
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

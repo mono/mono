@@ -303,6 +303,9 @@ libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
+# These are public headers.
+# They may not use G_BEGIN_DECLS, guint, glib.h, etc.
+# debug-mono-symfile.h is an exception. It is only semi-public.
 libmonoutilsinclude_HEADERS = 	\
 	mono-logger.h		\
 	mono-error.h		\

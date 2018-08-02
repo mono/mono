@@ -9,6 +9,8 @@
 #include <mono/utils/mono-compiler.h>
 #include "config.h"
 
+G_BEGIN_DECLS
+
 enum {
         PORTABILITY_NONE        = 0x00,
         PORTABILITY_UNKNOWN     = 0x01,
@@ -41,5 +43,7 @@ extern int mono_io_portability_helpers;
 #define IS_PORTABILITY_SET (mono_io_portability_helpers > 0)
 
 #endif
+
+G_END_DECLS
 
 #endif

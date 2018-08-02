@@ -12,6 +12,8 @@
 #include "object-internals.h"
 #include "w32handle-namespace.h"
 
+G_BEGIN_DECLS
+
 void
 mono_w32mutex_init (void);
 
@@ -33,5 +35,7 @@ mono_w32mutex_get_namespace (MonoW32HandleNamedMutex *mutex);
 void
 mono_w32mutex_abandon (MonoInternalThread *internal);
 #endif
+
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32MUTEX_H_ */

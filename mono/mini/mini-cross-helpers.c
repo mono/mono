@@ -14,12 +14,15 @@
 #include "tasklets.h"
 #include <mono/metadata/abi-details.h>
 
+G_BEGIN_DECLS // FIXME This belongs in a header.
+
 void
 mono_dump_metadata_offsets (void);
 
 void
 mono_metadata_cross_helpers_run (void);
 
+G_END_DECLS // FIXME This belongs in a header.
 
 static void
 mono_dump_jit_offsets (void)

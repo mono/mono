@@ -15,6 +15,8 @@
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
+G_BEGIN_DECLS
+
 /* Constants used to encode different types of methods in AOT */
 enum {
 	MONO_AOT_METHODREF_MIN = 240,
@@ -263,5 +265,7 @@ typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, 
 /* Not yet used */
 typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, gpointer user_data, void *handle);
 MONO_API void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, gpointer user_data);
+
+G_END_DECLS
 
 #endif /* __MONO_AOT_RUNTIME_H__ */
