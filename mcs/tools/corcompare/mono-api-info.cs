@@ -104,6 +104,8 @@ namespace Mono.ApiTools {
 
 		public bool IgnoreResolutionErrors { get; set; } = false;
 
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
+
 		public List<string> SearchDirectories { get; } = new List<string> ();
 
 		public List<string> ResolveFiles { get; } = new List<string> ();
@@ -114,7 +116,7 @@ namespace Mono.ApiTools {
 
 		public void ResolveTypes ()
 		{
-			TypeHelper = new TypeHelper (IgnoreResolutionErrors);
+			TypeHelper = new TypeHelper (IgnoreResolutionErrors, IgnoreInheritedInterfaces);
 
 			if (SearchDirectories != null) {
 				foreach (var v in SearchDirectories)
@@ -140,6 +142,8 @@ namespace Mono.ApiTools {
 		public bool FullApiSet { get; set; } = false;
 
 		public bool IgnoreResolutionErrors { get; set; } = false;
+
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
 
 		public List<string> SearchDirectories { get; set; } = new List<string> ();
 
@@ -189,6 +193,7 @@ namespace Mono.ApiTools {
 				FollowForwarders = config.FollowForwarders,
 				FullApiSet = config.FullApiSet,
 				IgnoreResolutionErrors = config.IgnoreResolutionErrors,
+				IgnoreInheritedInterfaces = config.IgnoreInheritedInterfaces,
 			};
 			state.SearchDirectories.AddRange (config.SearchDirectories);
 			state.ResolveFiles.AddRange (config.ResolveFiles);

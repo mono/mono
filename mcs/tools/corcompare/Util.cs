@@ -7,12 +7,15 @@ namespace Mono.ApiTools {
 
 	class TypeHelper {
 
-		public TypeHelper (bool ignoreResolutionErrors)
+		public TypeHelper (bool ignoreResolutionErrors, bool ignoreInheritedInterfaces)
 		{
 			IgnoreResolutionErrors = ignoreResolutionErrors;
+			IgnoreInheritedInterfaces = ignoreInheritedInterfaces;
 		}
 
 		public bool IgnoreResolutionErrors { get; }
+
+		public bool IgnoreInheritedInterfaces { get; }
 
 		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
 
@@ -76,9 +79,12 @@ namespace Mono.ApiTools {
 		{
 			var ifaces = new Dictionary<string, TypeReference> ();
 
-			foreach (var def in WalkHierarchy (type))
+			foreach (var def in WalkHierarchy (type)) {
 				foreach (var iface in def.Interfaces)
 					ifaces [iface.InterfaceType.FullName] = iface.InterfaceType;
+				if (IgnoreInheritedInterfaces)
+					break;
+			}
 
 			return ifaces.Values;
 		}
