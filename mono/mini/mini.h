@@ -182,6 +182,8 @@ typedef MonoStackFrameInfo StackFrameInfo;
 #define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
 #define MONO_SIZEOF_MonoLMF sizeof (MonoLMF)
 #define MONO_SIZEOF_MonoTypedRef sizeof (MonoTypedRef)
+#define MONO_SIZEOF_CallContext sizeof (CallContext)
+#define MONO_SIZEOF_MonoContext sizeof (MonoContext)
 #endif
 
 #if 0
