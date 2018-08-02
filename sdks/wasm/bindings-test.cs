@@ -122,6 +122,13 @@ public class TestClass {
 			Console.WriteLine ("Promise result is {0}", t.Result);
 		}, null, TaskContinuationOptions.ExecuteSynchronously); //must be sync cuz the mainloop pump is gone
 	}
+
+	public static List<JSObject> js_objs_to_dispose = new List<JSObject>();
+	public static void DisposeObject(JSObject obj)
+	{
+		js_objs_to_dispose.Add(obj);
+		obj.Dispose();
+	}	
 }
 
 [TestFixture]
@@ -398,4 +405,24 @@ public class BindingTests {
 
 		Assert.AreNotEqual (0, TestClass.int_val);
 	}
+
+	[Test]
+	public static void DisposeObject () {
+		Runtime.InvokeJS (@"
+			var obj1 = {
+			};
+			var obj2 = {
+			};
+			var obj3 = {
+			};
+			call_test_method (""DisposeObject"", ""o"", [ obj3 ]);
+			call_test_method (""DisposeObject"", ""o"", [ obj2 ]);
+			call_test_method (""DisposeObject"", ""o"", [ obj1 ]);
+		");
+
+		Assert.AreEqual (TestClass.js_objs_to_dispose [0].JSHandle, -1);
+		Assert.AreEqual (TestClass.js_objs_to_dispose [1].JSHandle, -1);		
+		Assert.AreEqual (TestClass.js_objs_to_dispose [2].JSHandle, -1);		
+	}
+
 }
