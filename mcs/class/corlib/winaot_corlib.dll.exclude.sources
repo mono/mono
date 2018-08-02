@@ -8,3 +8,6 @@ corefx/Interop.GetRandomBytes.Mono.cs
 corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
 corefx/Interop.Libraries.Kernel32.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.FileSystem.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.FileSystem.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.FileSystem.cs
