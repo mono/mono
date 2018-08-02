@@ -368,6 +368,9 @@ framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *ca
 static const char *
 mono_asmctx_get_name (const MonoAssemblyContext *asmctx);
 
+static gboolean
+assembly_loadfrom_asmctx_from_path (const char *filename, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
+
 static gchar*
 encode_public_tok (const guchar *token, gint32 len)
 {
@@ -997,6 +1000,8 @@ mono_assemblies_init (void)
 		g_hash_table_insert (assembly_remapping_table, (void*)framework_assemblies [i].assembly_name, (void*)&framework_assemblies [i]);
 
 #endif
+	mono_install_assembly_asmctx_from_path_hook (assembly_loadfrom_asmctx_from_path, NULL);
+
 }
 
 static void
@@ -2133,6 +2138,16 @@ mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, Mon
 	return mono_assembly_open_predicate (filename, asmctx, NULL, NULL, NULL, status);
 }
 
+static gboolean
+assembly_loadfrom_asmctx_from_path (const char *filename, MonoAssembly *requesting_assembly,
+				    gpointer user_data, MonoAssemblyContextKind *out_asmctx) {
+	if (requesting_assembly && mono_asmctx_get_kind (&requesting_assembly->context) == MONO_ASMCTX_LOADFROM) {
+		if (mono_path_filename_in_basedir (filename, requesting_assembly->basedir)) {
+			*out_asmctx = MONO_ASMCTX_LOADFROM;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 MonoAssembly *
@@ -2198,6 +2213,21 @@ mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmc
 			*status = MONO_IMAGE_IMAGE_INVALID;
 			g_free (fname);
 			return NULL;
+		}
+
+		if (asmctx != MONO_ASMCTX_REFONLY) {
+			MonoAssemblyContextKind out_asmctx;
+			/* If the path belongs to the appdomain base dir or the
+			 * base dir of the requesting assembly, load the
+			 * assembly in the corresponding asmctx.
+			 */
+			if (assembly_invoke_asmctx_from_path_hook (fname, requesting_assembly, &out_asmctx))
+				asmctx = out_asmctx;
+		}
+	} else {
+		if (asmctx != MONO_ASMCTX_REFONLY) {
+			/* GAC assemblies always in default context or refonly context. */
+			asmctx = MONO_ASMCTX_DEFAULT;
 		}
 	}
 	if (new_fname && new_fname != fname) {
