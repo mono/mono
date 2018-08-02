@@ -264,7 +264,6 @@ common_sources = \
 	icall-internals.h \
 	icall-def.h		\
 	icall-table.h	\
-	icalls.h \
 	image.c			\
 	image-internals.h	\
 	jit-info.c		\
