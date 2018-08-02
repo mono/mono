@@ -8479,21 +8479,3 @@ ves_icall_System_GC_RecordPressure (gint64 value, MonoError *error)
 {
 	mono_gc_add_memory_pressure (value);
 }
-
-ICALL_EXPORT gint64
-ves_icall_System_Threading_Timer_GetTimeMonotonic (void)
-{
-	return mono_100ns_ticks ();
-}
-
-ICALL_EXPORT gint64
-ves_icall_System_Diagnostics_Stopwatch_GetTimestamp (void)
-{
-	return mono_100ns_ticks ();
-}
-
-ICALL_EXPORT gint64
-ves_icall_System_DateTime_GetSystemTimeAsFileTime (void)
-{
-	return mono_100ns_datetime ();
-}
