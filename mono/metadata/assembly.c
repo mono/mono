@@ -726,7 +726,7 @@ load_in_path (const char *basename, const char** search_path, MonoImageOpenStatu
 
 	for (i = 0; search_path [i]; ++i) {
 		fullpath = g_build_filename (search_path [i], basename, NULL);
-		result = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, status);
+		result = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL, status);
 		g_free (fullpath);
 		if (result)
 			return result;
@@ -2065,13 +2065,16 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 MonoAssembly *
 mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, MonoAssemblyContextKind asmctx)
 {
-	return mono_assembly_open_predicate (filename, asmctx, NULL, NULL, status);
+	return mono_assembly_open_predicate (filename, asmctx, NULL, NULL, NULL, status);
+}
+
 }
 
 MonoAssembly *
 mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmctx,
 			      MonoAssemblyCandidatePredicate predicate,
 			      gpointer user_data,
+			      MonoAssembly *requesting_assembly,
 			      MonoImageOpenStatus *status)
 {
 	MonoImage *image;
@@ -2534,7 +2537,7 @@ mono_assembly_open (const char *filename, MonoImageOpenStatus *status)
 {
 	MonoAssembly *res;
 	MONO_ENTER_GC_UNSAFE;
-	res = mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	res = mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, status);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
@@ -3321,7 +3324,7 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 	if (fullpath == NULL)
 		return NULL;
 	else {
-		MonoAssembly *res = mono_assembly_open_predicate (fullpath, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+		MonoAssembly *res = mono_assembly_open_predicate (fullpath, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, status);
 		g_free (fullpath);
 		return res;
 	}
@@ -3870,7 +3873,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 		paths = extra_gac_paths;
 		while (!result && *paths) {
 			fullpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", subpath, NULL);
-			result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, status);
+			result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, NULL, status);
 			g_free (fullpath);
 			paths++;
 		}
@@ -3884,7 +3887,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 
 	fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (),
 			"mono", "gac", subpath, NULL);
-	result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, status);
+	result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, NULL, status);
 	g_free (fullpath);
 
 	if (result)
@@ -4121,7 +4124,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 		if (basedir) {
 			fullpath = g_build_filename (basedir, filename, NULL);
-			result = mono_assembly_open_predicate (fullpath, asmctx, predicate, predicate_ud, status);
+			result = mono_assembly_open_predicate (fullpath, asmctx, predicate, predicate_ud, NULL, status);
 			g_free (fullpath);
 			if (result) {
 				result->in_gac = FALSE;

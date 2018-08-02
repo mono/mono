@@ -2115,7 +2115,7 @@ try_load_from (MonoAssembly **assembly,
 		found = g_file_test (fullpath, G_FILE_TEST_IS_REGULAR);
 	
 	if (found)
-		*assembly = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);
@@ -2302,7 +2302,14 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_LOADFROM, NULL, NULL, &status);
+	MonoAssembly *requesting_assembly = NULL;
+	if (!refOnly) {
+		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
+		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+		requesting_assembly = executing_assembly;
+	}
+
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_LOADFROM, NULL, NULL, requesting_assembly, &status);
 	
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
@@ -2334,7 +2341,10 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 	goto_if_nok (error, leave);
 
 	MonoImageOpenStatus status;
-	MonoAssembly *ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, &status);
+
+	MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
+	MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+	MonoAssembly *ass = mono_assembly_open_predicate (filename, MONO_ASMCTX_INDIVIDUAL, NULL, NULL, executing_assembly, &status);
 	if (!ass) {
 		if (status == MONO_IMAGE_IMAGE_INVALID)
 			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
