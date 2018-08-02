@@ -17,6 +17,7 @@
 
 #include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-icall.h>
 
 ICALL_EXPORT
 void

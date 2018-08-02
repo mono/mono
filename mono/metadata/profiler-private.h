@@ -12,6 +12,7 @@
 #include <mono/utils/mono-context.h>
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-os-semaphore.h>
+#include <mono/utils/mono-icall.h>
 
 struct _MonoProfilerDesc {
 	MonoProfilerHandle next;

@@ -18,6 +18,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-publib.h>
+#include <mono/utils/mono-icall.h>
 
 G_BEGIN_DECLS
 

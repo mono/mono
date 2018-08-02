@@ -20,6 +20,7 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
+#include <mono/utils/mono-icall.h>
 
 #include <glib.h>
 #include <config.h>

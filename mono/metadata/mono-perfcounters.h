@@ -8,6 +8,7 @@
 #include <glib.h>
 #include <mono/metadata/object.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-icall.h>
 
 typedef struct _MonoCounterSample MonoCounterSample;
 

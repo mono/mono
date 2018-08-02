@@ -20,6 +20,7 @@
 #include <mono/metadata/method-builder.h>
 #include <mono/metadata/remoting.h>
 #include <mono/utils/mono-error.h>
+#include <mono/utils/mono-icall.h>
 
 typedef gunichar2 *mono_bstr;
 typedef const gunichar2 *mono_bstr_const;

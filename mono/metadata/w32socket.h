@@ -13,8 +13,8 @@
 
 #include <config.h>
 #include <glib.h>
-
 #include <mono/metadata/object-internals.h>
+#include <mono/utils/mono-icall.h>
 
 #ifndef HOST_WIN32
 #define INVALID_SOCKET ((SOCKET)(guint32)(~0))

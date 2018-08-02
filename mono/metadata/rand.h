@@ -17,6 +17,7 @@
 #include <glib.h>
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
+#include <mono/utils/mono-icall.h>
 
 ICALL_EXPORT
 MonoBoolean

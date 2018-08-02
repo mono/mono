@@ -21,6 +21,7 @@
 #include "mono/utils/mono-membar.h"
 #include "mono/utils/mono-threads.h"
 #include "mono/metadata/class-internals.h"
+#include <mono/utils/mono-icall.h>
 
 /* This is a copy of System.Threading.ThreadState */
 typedef enum {

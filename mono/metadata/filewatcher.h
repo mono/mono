@@ -14,6 +14,7 @@
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
 #include <glib.h>
+#include <mono/utils/mono-icall.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

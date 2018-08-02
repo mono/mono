@@ -7,9 +7,9 @@
 
 #include <config.h>
 #include <glib.h>
-
 #include "object.h"
 #include "w32handle-namespace.h"
+#include <mono/utils/mono-icall.h>
 
 void
 mono_w32semaphore_init (void);

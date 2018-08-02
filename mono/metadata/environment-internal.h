@@ -15,6 +15,8 @@
 #ifndef _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 #define _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 
+#include <mono/utils/mono-icall.h>
+
 ICALL_EXPORT
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error);

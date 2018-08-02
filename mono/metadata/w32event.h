@@ -11,6 +11,7 @@
 #include "object.h"
 #include "object-internals.h"
 #include "w32handle-namespace.h"
+#include <mono/utils/mono-icall.h>
 
 void
 mono_w32event_init (void);

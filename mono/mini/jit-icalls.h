@@ -6,8 +6,8 @@
 #define __MONO_JIT_ICALLS_H__
 
 #include <math.h>
-
 #include "mini.h"
+#include <mono/utils/mono-icall.h>
 
 void* mono_ldftn (MonoMethod *method);
 

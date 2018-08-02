@@ -23,7 +23,7 @@
 #include "image.h"
 #include "reflection.h"
 #include "tabledefs.h"
-
+#include <mono/utils/mono-icall.h>
 
 /* Definitions */
 

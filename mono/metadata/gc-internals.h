@@ -17,6 +17,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
+#include <mono/utils/mono-icall.h>
 
 #define mono_domain_finalizers_lock(domain) mono_os_mutex_lock (&(domain)->finalizable_objects_hash_lock);
 #define mono_domain_finalizers_unlock(domain) mono_os_mutex_unlock (&(domain)->finalizable_objects_hash_lock);

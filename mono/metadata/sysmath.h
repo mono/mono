@@ -15,7 +15,7 @@
 
 #include <config.h>
 #include <glib.h>
-#include <mono/utils/mono-publib.h>
+#include <mono/utils/mono-icall.h>
 
 ICALL_EXPORT
 gdouble
