@@ -146,17 +146,26 @@ namespace System.Globalization
 			}
 		}
 
+		private static string current_culture_name;
+
 		internal static CultureInfo ConstructCurrentCulture ()
 		{
 			if (default_current_culture != null)
 				return default_current_culture;
 
-			var locale_name = get_current_locale_name ();
+			string locale_name;
+			if (current_culture_name != null)
+				locale_name = current_culture_name;
+			else
+				locale_name = get_current_locale_name ();
+
 			CultureInfo ci = null;
 
 			if (locale_name != null) {
 				try {
 					ci = CreateSpecificCulture (locale_name);
+					if (current_culture_name == null)
+						current_culture_name = locale_name;
 				} catch {
 				}
 			}
