@@ -1,0 +1,3 @@
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.FileSystem.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.FileSystem.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.FileSystem.cs

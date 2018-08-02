@@ -1,5 +1,4 @@
 #include corlib.dll.sources
-#include unix_registry.sources
 CommonCrypto/CommonCrypto.cs
 CommonCrypto/CryptorTransform.cs
 CommonCrypto/FastCryptorTransform.cs
