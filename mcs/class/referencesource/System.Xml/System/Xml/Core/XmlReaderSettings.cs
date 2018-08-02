@@ -730,7 +730,7 @@ namespace System.Xml {
             }
 
             bool enableSettings = false; // default value
-#if !MOBILE
+#if !MONO
             if (!ReadSettingsFromRegistry(Registry.LocalMachine, ref enableSettings))
             {
                 // still ok if this call return false too as we'll use the default value which is false

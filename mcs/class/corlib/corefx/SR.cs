@@ -1486,4 +1486,23 @@ partial class SR
 	public const string net_uri_BadUnicodeHostForIdn = "An invalid Unicode character by IDN standards was specified in the host.";
 	public const string Argument_ExtraNotValid = "Extra portion of URI not valid.";
 	public const string Argument_InvalidUriSubcomponent = "The subcomponent, {0}, of this uri is not valid.";
+	public const string AccessControl_InvalidHandle = "The supplied handle is invalid. This can happen when trying to set an ACL on an anonymous kernel object.";
+	public const string Arg_RegSubKeyAbsent = "Cannot delete a subkey tree because the subkey does not exist.";
+	public const string Arg_RegKeyDelHive = "Cannot delete a registry hive's subtree.";
+	public const string Arg_RegKeyNoRemoteConnect = "No remote connection to '{0}' while trying to read the registry.";
+	public const string Arg_RegKeyOutOfRange = "Registry HKEY was out of the legal range.";
+	public const string Arg_RegKeyStrLenBug = "Registry key names should not be greater than 255 characters.";
+	public const string Arg_RegBadKeyKind = "The specified RegistryValueKind is an invalid value.";
+	public const string Arg_RegSetMismatchedKind = "The type of the value object did not match the specified RegistryValueKind or the object could not be properly converted.";
+	public const string Arg_RegSetBadArrType = "RegistryKey.SetValue does not support arrays of type '{0}'. Only Byte[] and String[] are supported.";
+	public const string Arg_RegSetStrArrNull = "RegistryKey.SetValue does not allow a String[] that contains a null String reference.";
+	public const string Arg_RegInvalidKeyName = "Registry key name must start with a valid base key name.";
+	public const string Arg_DllInitFailure = "One machine may not have remote administration enabled, or both machines may not be running the remote registry service.";
+	public const string Argument_InvalidRegistryOptionsCheck = "The specified RegistryOptions value is invalid.";
+	public const string Argument_InvalidRegistryViewCheck = "The specified RegistryView value is invalid.";
+	public const string Argument_InvalidRegistryKeyPermissionCheck = "The specified RegistryKeyPermissionCheck value is invalid.";
+	public const string InvalidOperation_RegRemoveSubKey = "Registry key has subkeys and recursive removes are not supported by this method.";
+	public const string ObjectDisposed_RegKeyClosed = "Cannot access a closed registry key.";
+	public const string PlatformNotSupported_Registry = "Registry is not supported on this platform.";
+	public const string UnauthorizedAccess_RegistryNoWrite = "Cannot write to the registry key.";
 }

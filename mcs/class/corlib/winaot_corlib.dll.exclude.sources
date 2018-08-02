@@ -7,4 +7,4 @@ corert/ThreadPoolBoundHandle.platformnotsupported.cs
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
-
+corefx/Interop.Libraries.Kernel32.cs
