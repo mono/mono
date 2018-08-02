@@ -384,6 +384,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\AssemblyTitleAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\AssemblyTrademarkAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\AssemblyVersionAttribute.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Binder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\BindingFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\CallingConventions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\CustomAttributeFormatException.cs" />
@@ -402,6 +403,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscateAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterAttributes.cs" />
@@ -649,6 +651,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\OperatingSystem.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Reflection\AssemblyNameProxy.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\Architecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices.RuntimeInformation\src\System\Runtime\InteropServices\RuntimeInformation\OSPlatform.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.InteropServices\src\System\Runtime\InteropServices\RegistrationConnectionType.cs" />
@@ -866,8 +869,6 @@
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\RuntimeReflectionExtensions.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\assemblynameproxy.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\binder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\manifestresourceinfo.cs" />
@@ -877,7 +878,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbody.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\missing.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\pointer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\typedelegator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\typeinfo.cs" />
