@@ -194,7 +194,7 @@ public class SlnGenerator {
 			// Manually insert configurations for the special projects that always build
 			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32", true);
 			WriteProjectConfigurationPlatforms (sln, genconsts_csproj_guid, "x86", true);
-			WriteProjectConfigurationPlatforms (sln, cilstringreplacer_csproj_guid, "Any CPU", true);
+			WriteProjectConfigurationPlatforms (sln, cilstringreplacer_csproj_guid, "AnyCPU", true);
 
 			foreach (var proj in libraries) {
 				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", false);
