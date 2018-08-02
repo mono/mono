@@ -183,6 +183,13 @@
     <Compile Include="EventLogEntryType.cs" />
     <Compile Include="InternalSR.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />

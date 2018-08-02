@@ -333,14 +333,9 @@ namespace System
                 throw new SerializationException(SR.Overflow_Decimal);
         }
 
-        // Constructs a Decimal from its constituent parts.
-        private Decimal(ulong ulomidLE, uint hi, uint flags)
-#if __MonoCS__
-        : this()
-#endif
+        private Decimal(ref Decimal d, uint flags)
         {
-            this.ulomidLE = ulomidLE;
-            this.uhi = hi;
+            this = d;
             this.uflags = flags;
         }
 
@@ -350,7 +345,7 @@ namespace System
         //
         internal static Decimal Abs(ref Decimal d)
         {
-            return new Decimal(d.ulomidLE, d.uhi, d.uflags & ~SignMask);
+            return new Decimal(ref d, d.uflags & ~SignMask);
         }
 
 
@@ -665,7 +660,7 @@ namespace System
         //
         public static Decimal Negate(Decimal d)
         {
-            return new Decimal(d.ulomidLE, d.uhi, d.uflags ^ SignMask);
+            return new Decimal(ref d, d.uflags ^ SignMask);
         }
 
         // Rounds a Decimal value to a given number of decimal places. The value
@@ -1219,13 +1214,23 @@ namespace System
 
         private ulong Low64
         {
-#if BIGENDIAN && !MONO
-            get { return ((ulong)umid << 32) | ulo; }
-            set { umid = (uint)(value >> 32); ulo = (uint)value; }
-#else
-            get => ulomidLE;
-            set => ulomidLE = value;
-#endif
+            get
+            {
+                if (BitConverter.IsLittleEndian)
+                    return ulomidLE;
+                else
+                    return ((ulong)umid << 32) | ulo;
+            }
+            set
+            {
+               if (BitConverter.IsLittleEndian)
+                   ulomidLE = value;
+               else
+               {
+                   umid = (uint)(value >> 32);
+                   ulo = (uint)value;
+               }
+            }
         }
 
         #region APIs need by number formatting.
@@ -3725,13 +3730,23 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return ulo64LE;
+                        else
+                            return ((ulong)U1 << 32) | U0;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            ulo64LE = value;
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 /// <summary>
@@ -3739,13 +3754,23 @@ done:
                 /// </summary>
                 public ulong High64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U2 << 32) | U1;
-                    set { U2 = (uint)(value >> 32); U1 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return uhigh64LE;
+                        else
+                            return ((ulong)U2 << 32) | U1;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                           uhigh64LE = value;
+                        else
+                        {
+                            U2 = (uint)(value >> 32);
+                            U1 = (uint)value;
+                        }
+                    }
                 }
             }
 
@@ -3768,24 +3793,44 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return ulo64LE;
+                        else
+                            return ((ulong)U1 << 32) | U0;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            ulo64LE = value;
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong High64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U3 << 32) | U2;
-                    set { U3 = (uint)(value >> 32); U2 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return uhigh64LE;
+                        else
+                            return ((ulong)U3 << 32) | U2;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            uhigh64LE = value;
+                        else
+                        {
+                            U3 = (uint)(value >> 32);
+                            U2 = (uint)value;
+                        }
+                    }
                 }
             }
 
@@ -3814,35 +3859,65 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return ulo64LE;
+                        else
+                            return ((ulong)U1 << 32) | U0;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            ulo64LE = value;
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong Mid64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U3 << 32) | U2;
-                    set { U3 = (uint)(value >> 32); U2 = (uint)value; }
-#else
-                    get => umid64LE;
-                    set => umid64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return umid64LE;
+                        else
+                            return ((ulong)U3 << 32) | U2;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            umid64LE = value;
+                        else
+                        {
+                            U3 = (uint)(value >> 32);
+                            U2 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong High64
                 {
-#if BIGENDIAN && !MONO
-                    get => ((ulong)U5 << 32) | U4;
-                    set { U5 = (uint)(value >> 32); U4 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            return uhigh64LE;
+                        else
+                            return ((ulong)U5 << 32) | U4;
+                    }
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                            uhigh64LE = value;
+                        else
+                        {
+                            U5 = (uint)(value >> 32);
+                            U4 = (uint)value;
+                        }
+                    }
                 }
 
                 public int Length => 6;

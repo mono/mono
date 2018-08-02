@@ -180,9 +180,9 @@ namespace Mono.AppleTls
 
 				return true;
 			} finally {
-				if (firstDataPtr != null)
+				if (firstDataPtr != IntPtr.Zero)
 					CFObject.CFRelease (firstDataPtr);
-				if (secondDataPtr != null)
+				if (secondDataPtr != IntPtr.Zero)
 					CFObject.CFRelease (secondDataPtr);
 			}
 		}

@@ -1710,6 +1710,10 @@ namespace System.Drawing
 			IntPtr graphics;
 
 			if (GDIPlus.UseCocoaDrawable) {
+				if (hwnd == IntPtr.Zero) {
+					throw new NotSupportedException ("Opening display graphics is not supported");
+				}
+
 				CocoaContext context = MacSupport.GetCGContextForNSView (hwnd);
 				GDIPlus.GdipCreateFromContext_macosx (context.ctx, context.width, context.height, out graphics);
 

@@ -1165,6 +1165,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyDescriptionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFileVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFlagsAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Reflection/AssemblyNameProxy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyInformationalVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyFileAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyNameAttribute.cs
@@ -1176,6 +1177,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyVersionAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Binder.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/BindingFlags.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CallingConventions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/DefaultMemberAttribute.cs
@@ -1192,6 +1194,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodImplAttributes.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Missing.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ObfuscateAssemblyAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ObfuscationAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterAttributes.cs
@@ -1207,8 +1210,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
-../referencesource/mscorlib/system/reflection/assemblynameproxy.cs
-../referencesource/mscorlib/system/reflection/binder.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
@@ -1217,7 +1218,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodbody.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/missing.cs
 ../referencesource/mscorlib/system/reflection/pointer.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs

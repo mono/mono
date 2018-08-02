@@ -42,7 +42,6 @@ xmlfiles_files = \
 EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
-	common.sources	\
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
 	Test/XmlFiles/496192.xml	\

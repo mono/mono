@@ -7,9 +7,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "genconsts", "msvc/scripts/genconsts.csproj", "{702AE2C0-71DD-4112-9A06-E4FABCA59986}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "mcs/class/corlib/corlib.csproj", "{4627BDAB-CA24-40D0-A627-01692BA51B44}"
-	ProjectSection(ProjectDependencies) = postProject
-		{702AE2C0-71DD-4112-9A06-E4FABCA59986} = {702AE2C0-71DD-4112-9A06-E4FABCA59986}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security", "mcs/class/Mono.Security/Mono.Security.csproj", "{117140AC-A163-4B86-9E69-A46EA268A9DB}"
 EndProject

@@ -48,11 +48,11 @@ namespace System {
 	public static partial class Environment {
 
 		/*
-		 * This is the version number of the corlib-runtime interface.
+		 * This is the version of the corlib-runtime interface.
 		 * It is defined in configure.ac.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = Consts.MonoCorlibVersion;
+		private const string mono_corlib_version = Consts.MonoCorlibVersion;
 #pragma warning restore 169
 
 		[ComVisible (true)]

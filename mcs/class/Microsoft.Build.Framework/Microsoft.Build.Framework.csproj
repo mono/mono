@@ -107,6 +107,13 @@
     <Compile Include="Microsoft.Build.Framework\TaskPropertyInfo.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventHandler.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup></ItemGroup>
   <!-- @ALL_SOURCES@ -->

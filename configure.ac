@@ -32,18 +32,27 @@ MONO_VERSION_MAJOR=`echo $VERSION | cut -d . -f 1`
 MONO_VERSION_MINOR=`echo $VERSION | cut -d . -f 2`
 MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 
-# This is the version number of the corlib-runtime interface. When
+#
+# This is the version of the corlib-runtime interface. When
 # making changes to this interface (by changing the layout
 # of classes the runtime knows about, changing icall signature or
-# semantics etc), increment this variable.
+# semantics etc), change this variable.
 #
-# This can be reset to 0 when Mono's version number is bumped
-# since it's part of the corlib version (the prefix '1' in the full
-# version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=26
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
+# This must be unique relative to corlib interface/semantics.
+#
+# Generate it with uuidgen. For example:
+# perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
+#
+# There is no ordering of corlib versions, no old or new,
+# the runtime expects an exact match.
+#
+MONO_CORLIB_VERSION=40525B4A-F860-49BF-936E-6B29CBBF357C
 
-AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
+#
+# Put a quoted #define in config.h.
+# Substitute @MONO_CORLIB_VERSION@ unquoted.
+#
+AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,"$MONO_CORLIB_VERSION",[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)
 
 case $host_os in
@@ -4090,15 +4099,14 @@ if test "x$host" != "x$target"; then
    enable_mcs_build=no
    enable_support_build=no
    BTLS_SUPPORTED=no
+   # Can't use tls, since it depends on the runtime detection of tls offsets
+   # in mono-compiler.h
+   with_tls=pthread
+   target_mach=no
    case "$target" in
    arm*-darwin*)
 		TARGET=ARM;
-		arch_target=arm;
-		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
 		case "$target" in
 		armv7k-*)
 			arm_fpu=VFP_HARD
@@ -4128,99 +4136,30 @@ if test "x$host" != "x$target"; then
 		;;
    arm*-linux-*)
 		TARGET=ARM;
-		arch_target=arm;
-		AC_DEFINE(TARGET_ARM, 1, [...])
-		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
-		target_mach=no
-		case "$target" in
-		armv7l-unknown-linux-gnueabi*)
-			# TEGRA
-			CPPFLAGS="$CPPFLAGS"
-			;;
-   		armv5-*-linux-androideabi*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			CPPFLAGS="$CPPFLAGS"
-			;;
-   		*-linux-androideabi*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			CPPFLAGS="$CPPFLAGS"
-			;;
-		esac
 		;;
    arm*-netbsd*-eabi*)
 		TARGET=ARM;
-		arch_target=arm;
-		AC_DEFINE(TARGET_ARM, 1, [...])
-		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
-		target_mach=no
 		;;
    i686*-linux-*)
 		TARGET=X86;
-		arch_target=x86;
-		AC_DEFINE(TARGET_X86, 1, [...])
-		CPPFLAGS="$CPPFLAGS"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h		
-		with_tls=pthread
-		target_mach=no
-
-		case "$target" in
-		*-linux-android*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			;;
-		esac
+		;;
+   i*86-apple-*)
+		TARGET=X86;
 		;;
    x86_64*-linux-*)
 		TARGET=AMD64;
-		arch_target=amd64;
-		AC_DEFINE(TARGET_AMD64, 1, [...])
-		CPPFLAGS="$CPPFLAGS"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
-		target_mach=no
-
-		case "$target" in
-		*-linux-android*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			;;
-		esac
 		;;
    x86_64-ps4-freebsd)
 		TARGET=AMD64;
-		arch_target=amd64;
-		AC_DEFINE(TARGET_AMD64, 1, [...])
 		AC_DEFINE(TARGET_PS4, 1, [...])
 		AC_DEFINE(DISABLE_HW_TRAPS, 1, [...])
 		CPPFLAGS="$CPPFLAGS"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
-		target_mach=no
 		target_win32=no
 		;;
    aarch64*-linux-*)
 		TARGET=ARM64;
-		arch_target=arm64;
-		AC_DEFINE(TARGET_ARM64, 1, [...])
-		CPPFLAGS="$CPPFLAGS"
-		# Can't use tls, since it depends on the runtime detection of tls offsets
-		# in mono-compiler.h
-		with_tls=pthread
-		target_mach=no
-		case "$target" in
-		*-linux-android*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			;;
-		esac
 		;;
 	aarch64-*)
 		TARGET=ARM64
@@ -4228,20 +4167,36 @@ if test "x$host" != "x$target"; then
 	*)
 		AC_MSG_ERROR([Cross compiling is not supported for target $target])
 	esac
+
+	case "$target" in
+	*-darwin*)
+		target_mach=yes
+		;;
+	*-linux-android*)
+		AC_DEFINE(TARGET_ANDROID, 1, [...])
+		;;
+	esac
 fi
 
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
+	arch_target=x86
+	target_sizeof_void_p=4
 	;;
 AMD64)
 	AC_DEFINE(TARGET_AMD64, 1, [...])
+	arch_target=amd64
 	;;
 ARM)
 	AC_DEFINE(TARGET_ARM, 1, [...])
+	arch_target=arm
+	ACCESS_UNALIGNED="no"
+	target_sizeof_void_p=4
 	;;
 ARM64)
 	AC_DEFINE(TARGET_ARM64, 1, [...])
+	arch_target=arm64
 	;;
 POWERPC)
 	AC_DEFINE(TARGET_POWERPC, 1, [...])
@@ -4394,14 +4349,6 @@ fi
 
 AM_CONDITIONAL(TARGET_OSX, test x$target_osx = xyes)
 
-if test "x$sizeof_register" = "x4"; then
-   AC_DEFINE(SIZEOF_REGISTER,4,[size of machine integer registers])
-elif test "x$sizeof_register" = "x8"; then
-   AC_DEFINE(SIZEOF_REGISTER,8,[size of machine integer registers])
-else
-   AC_DEFINE(SIZEOF_REGISTER,SIZEOF_VOID_P,[size of machine integer registers])
-fi
-
 AC_SUBST(SIZEOF_VOID_P,[$ac_cv_sizeof_void_p])
 
 if test "x$target_byte_order" = "xG_BIG_ENDIAN"; then
@@ -4410,6 +4357,21 @@ elif test "x$target_byte_order" = "xG_LITTLE_ENDIAN"; then
    AC_DEFINE(TARGET_BYTE_ORDER,G_LITTLE_ENDIAN,[byte order of target])
 else
    AC_DEFINE(TARGET_BYTE_ORDER,G_BYTE_ORDER,[byte order of target])
+fi
+
+if test "x$target_sizeof_void_p" != "x"; then
+   AC_DEFINE_UNQUOTED(TARGET_SIZEOF_VOID_P,${target_sizeof_void_p},[wordsize of target])
+   # This is true for all the current cross-compiling targets
+   AC_DEFINE(SIZEOF_REGISTER,TARGET_SIZEOF_VOID_P,[size of target machine integer registers])
+else
+   AC_DEFINE(TARGET_SIZEOF_VOID_P,SIZEOF_VOID_P,[wordsize of target])
+   if test "x$sizeof_register" = "x4"; then
+      AC_DEFINE(SIZEOF_REGISTER,4,[size of target machine integer registers])
+   elif test "x$sizeof_register" = "x8"; then
+      AC_DEFINE(SIZEOF_REGISTER,8,[size of target machine integer registers])
+   else
+      AC_DEFINE(SIZEOF_REGISTER,SIZEOF_VOID_P,[size of target machine integer registers])
+   fi
 fi
 
 if test "x$have_visibility_hidden" = "xyes"; then

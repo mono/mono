@@ -110,6 +110,13 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.IdentityModel.Selectors\X509CertificateValidator.cs" />
     <Compile Include="System.ServiceModel.Security\X509CertificateValidationMode.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
