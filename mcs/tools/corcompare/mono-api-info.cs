@@ -1409,7 +1409,7 @@ namespace Mono.ApiTools {
 
 			PopulateMapping (ref mapping, attribute);
 
-			var constructor = attribute.Constructor.Resolve ();
+			var constructor = state.TypeHelper.GetMethod (attribute.Constructor);
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 

@@ -101,6 +101,18 @@ namespace Mono.ApiTools {
 			}
 		}
 
+		internal MethodDefinition GetMethod (MethodReference method)
+		{
+			if (method == null)
+				throw new ArgumentNullException (nameof (method));
+
+			try {
+				return method.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
+		}
+
 		internal bool IsPublic (CustomAttribute att)
 		{
 			return IsPublic (att.AttributeType);
