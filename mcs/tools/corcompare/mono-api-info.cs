@@ -839,7 +839,7 @@ namespace Mono.ApiTools {
 		}
 
 
-		internal static PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
+		internal PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
 			var list = new List<PropertyDefinition> ();
 
 			var t = type;
@@ -872,7 +872,7 @@ namespace Mono.ApiTools {
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
@@ -919,7 +919,7 @@ namespace Mono.ApiTools {
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
