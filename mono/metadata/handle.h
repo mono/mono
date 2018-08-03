@@ -54,6 +54,7 @@
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
+G_BEGIN_DECLS
 
 /*
 Handle stack.
