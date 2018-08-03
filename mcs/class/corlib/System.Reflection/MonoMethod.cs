@@ -829,5 +829,14 @@ namespace System.Reflection {
 		public override bool IsSecuritySafeCritical {
 			get { return get_core_clr_security_level () == 1; }
 		}
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoCMethod method);		
 	}
 }

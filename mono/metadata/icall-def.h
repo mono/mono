@@ -610,6 +610,7 @@ ICALL_TYPE(MCMETH, "System.Reflection.MonoCMethod", MCMETH_1)
 HANDLES(ICALL(MCMETH_1, "GetGenericMethodDefinition_impl", ves_icall_MonoMethod_GetGenericMethodDefinition))
 ICALL(MCMETH_2, "InternalInvoke", ves_icall_InternalInvoke)
 HANDLES(ICALL(MCMETH_3, "get_core_clr_security_level", ves_icall_MonoMethod_get_core_clr_security_level))
+HANDLES(ICALL(MCMETH_4, "get_metadata_token", ves_icall_reflection_get_token))
 
 ICALL_TYPE(MEV, "System.Reflection.MonoEvent", MEV_1)
 HANDLES(ICALL(MEV_1, "get_metadata_token", ves_icall_reflection_get_token))
