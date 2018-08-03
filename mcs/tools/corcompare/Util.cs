@@ -3,32 +3,57 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 
-using GuiCompare;
+namespace Mono.ApiTools {
 
-namespace CorCompare {
+	class TypeHelper {
 
-	static class TypeHelper {
+		public TypeHelper (bool ignoreResolutionErrors, bool ignoreInheritedInterfaces)
+		{
+			IgnoreResolutionErrors = ignoreResolutionErrors;
+			IgnoreInheritedInterfaces = ignoreInheritedInterfaces;
+		}
 
-		public static AssemblyResolver Resolver = new AssemblyResolver ();
+		public bool IgnoreResolutionErrors { get; }
 
-		internal static bool IsPublic (TypeReference typeref)
+		public bool IgnoreInheritedInterfaces { get; }
+
+		public AssemblyResolver Resolver { get; } = new AssemblyResolver();
+
+		internal bool TryResolve (CustomAttribute attribute)
+		{
+			if (attribute == null)
+				throw new ArgumentNullException (nameof (attribute));
+
+			try {
+				var has = attribute.HasProperties;
+				return true;
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return false;
+			}
+		}
+
+		internal bool IsPublic (TypeReference typeref)
 		{
 			if (typeref == null)
 				throw new ArgumentNullException ("typeref");
 
-			TypeDefinition td = typeref.Resolve ();
-			if (td == null)
-				return false;
+			try {
+				var td = typeref.Resolve ();
+				if (td == null)
+					return false;
 
-			return td.IsPublic;
+				return td.IsPublic || (td.IsNestedPublic && IsPublic (td.DeclaringType));
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return true;
+			}
 		}
 
-		internal static bool IsDelegate (TypeReference typeref)
+		internal bool IsDelegate (TypeReference typeref)
 		{
 			return IsDerivedFrom (typeref, "System.MulticastDelegate");
 		}
 
-		internal static bool IsDerivedFrom (TypeReference type, string derivedFrom)
+		internal bool IsDerivedFrom (TypeReference type, string derivedFrom)
 		{
 			bool first = true;
 			foreach (var def in WalkHierarchy (type)) {
@@ -44,52 +69,71 @@ namespace CorCompare {
 			return false;
 		}
 
-		internal static IEnumerable<TypeDefinition> WalkHierarchy (TypeReference type)
+		internal IEnumerable<TypeDefinition> WalkHierarchy (TypeReference type)
 		{
 			for (var def = type.Resolve (); def != null; def = GetBaseType (def))
 				yield return def;
 		}
 
-		internal static IEnumerable<TypeReference> GetInterfaces (TypeReference type)
+		internal IEnumerable<TypeReference> GetInterfaces (TypeReference type)
 		{
 			var ifaces = new Dictionary<string, TypeReference> ();
 
-			foreach (var def in WalkHierarchy (type))
+			foreach (var def in WalkHierarchy (type)) {
 				foreach (var iface in def.Interfaces)
 					ifaces [iface.InterfaceType.FullName] = iface.InterfaceType;
+				if (IgnoreInheritedInterfaces)
+					break;
+			}
 
 			return ifaces.Values;
 		}
 
-		internal static TypeDefinition GetBaseType (TypeDefinition child)
+		internal TypeDefinition GetBaseType (TypeDefinition child)
 		{
 			if (child.BaseType == null)
 				return null;
 
-			return child.BaseType.Resolve ();
+			try {
+				return child.BaseType.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
 		}
 
-		internal static bool IsPublic (CustomAttribute att)
+		internal MethodDefinition GetMethod (MethodReference method)
+		{
+			if (method == null)
+				throw new ArgumentNullException (nameof (method));
+
+			try {
+				return method.Resolve ();
+			} catch (AssemblyResolutionException) when (IgnoreResolutionErrors) {
+				return null;
+			}
+		}
+
+		internal bool IsPublic (CustomAttribute att)
 		{
 			return IsPublic (att.AttributeType);
 		}
 
-		internal static string GetFullName (CustomAttribute att)
+		internal string GetFullName (CustomAttribute att)
 		{
 			return att.AttributeType.FullName;
 		}
 
-		internal static TypeDefinition GetTypeDefinition (CustomAttribute att)
+		internal TypeDefinition GetTypeDefinition (CustomAttribute att)
 		{
 			return att.AttributeType.Resolve ();
 		}
 
-		static bool IsOverride (MethodDefinition method)
+		bool IsOverride (MethodDefinition method)
 		{
 			return method.IsVirtual && !method.IsNewSlot;
 		}
 
-		public static MethodDefinition GetBaseMethodInTypeHierarchy (MethodDefinition method)
+		public MethodDefinition GetBaseMethodInTypeHierarchy (MethodDefinition method)
 		{
 			if (!IsOverride (method))
 				return method;
@@ -106,7 +150,7 @@ namespace CorCompare {
 			return method;
 		}
 
-		static MethodDefinition TryMatchMethod (TypeDefinition type, MethodDefinition method)
+		MethodDefinition TryMatchMethod (TypeDefinition type, MethodDefinition method)
 		{
 			if (!type.HasMethods)
 				return null;
@@ -118,7 +162,7 @@ namespace CorCompare {
 			return null;
 		}
 
-		static bool MethodMatch (MethodDefinition candidate, MethodDefinition method)
+		bool MethodMatch (MethodDefinition candidate, MethodDefinition method)
 		{
 			if (!candidate.IsVirtual)
 				return false;
@@ -139,7 +183,7 @@ namespace CorCompare {
 			return true;
 		}
 
-		public static bool TypeMatch (IModifierType a, IModifierType b)
+		public bool TypeMatch (IModifierType a, IModifierType b)
 		{
 			if (!TypeMatch (a.ModifierType, b.ModifierType))
 				return false;
@@ -147,7 +191,7 @@ namespace CorCompare {
 			return TypeMatch (a.ElementType, b.ElementType);
 		}
 
-		public static bool TypeMatch (TypeSpecification a, TypeSpecification b)
+		public bool TypeMatch (TypeSpecification a, TypeSpecification b)
 		{
 			if (a is GenericInstanceType)
 				return TypeMatch ((GenericInstanceType) a, (GenericInstanceType) b);
@@ -158,7 +202,7 @@ namespace CorCompare {
 			return TypeMatch (a.ElementType, b.ElementType);
 		}
 
-		public static bool TypeMatch (GenericInstanceType a, GenericInstanceType b)
+		public bool TypeMatch (GenericInstanceType a, GenericInstanceType b)
 		{
 			if (!TypeMatch (a.ElementType, b.ElementType))
 				return false;
@@ -176,7 +220,7 @@ namespace CorCompare {
 			return true;
 		}
 
-		public static bool TypeMatch (TypeReference a, TypeReference b)
+		public bool TypeMatch (TypeReference a, TypeReference b)
 		{
 			if (a is GenericParameter)
 				return true;

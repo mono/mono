@@ -29,9 +29,14 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class MethodComparer : ConstructorComparer {
+	class MethodComparer : ConstructorComparer {
+
+		public MethodComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "methods"; }
