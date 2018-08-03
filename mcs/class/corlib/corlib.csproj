@@ -390,6 +390,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\CustomAttributeFormatException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\DefaultMemberAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\EventAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ExceptionHandlingClauseOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\GenericParameterAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ICustomAttributeProvider.cs" />
@@ -876,7 +877,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\methodbody.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\pointer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\typedelegator.cs" />
