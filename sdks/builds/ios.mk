@@ -370,8 +370,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
-		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
-			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
+		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx \
+			mono --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
