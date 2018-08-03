@@ -10,7 +10,6 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#include <mono/metadata/icalls.h>
 
 /* Returns the number of milliseconds from boot time: this should be monotonic
  *
@@ -21,11 +20,9 @@ gint64 mono_msec_boottime (void);
 gint64 mono_msec_ticks (void);
 
 /* Returns the number of 100ns ticks from unspecified time: this should be monotonic */
-ICALL_EXPORT
 gint64 mono_100ns_ticks (void);
 
 /* Returns the number of 100ns ticks since 1/1/1601, UTC timezone */
-ICALL_EXPORT
 gint64 mono_100ns_datetime (void);
 
 #ifndef HOST_WIN32

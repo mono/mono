@@ -20,7 +20,6 @@
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
-#include <mono/metadata/icalls.h>
 
 #include <glib.h>
 #include <config.h>
@@ -507,9 +506,8 @@ mono_thread_info_describe_interrupt_token (THREAD_INFO_TYPE *info, GString *text
 gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
-ICALL_EXPORT
 int
-ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error);
+mono_thread_info_get_system_max_stack_size (void);
 
 MonoThreadHandle*
 mono_threads_open_thread_handle (MonoThreadHandle *handle);
@@ -581,7 +579,6 @@ mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_d
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
 void mono_threads_platform_init (void);
 gboolean mono_threads_platform_in_critical_region (MonoNativeThreadId tid);
-ICALL_EXPORT
 gboolean mono_threads_platform_yield (void);
 void mono_threads_platform_exit (gsize exit_code);
 
