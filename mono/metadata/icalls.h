@@ -2,8 +2,8 @@
  * \file
  */
 
-#ifndef __UTILS_MONO_ICALL_H__
-#define __UTILS_MONO_ICALL_H__
+#ifndef __MONO_METADATA_ICALLS_H__
+#define __MONO_METADATA_ICALLS_H__
 
 #include <mono/utils/mono-publib.h>
 
@@ -17,4 +17,4 @@
 #define ICALL_EXPORT MONO_EXTERN_C
 #endif
 
-#endif // __UTILS_MONO_ICALL_H__
+#endif // __MONO_METADATA_ICALLS_H__
