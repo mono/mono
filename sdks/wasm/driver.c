@@ -121,7 +121,6 @@ MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, 
 MonoAssemblyName* mono_assembly_name_new (const char *name);
 void mono_assembly_name_free (MonoAssemblyName *aname);
 const char* mono_image_get_name (MonoImage *image);
-const char* mono_class_get_name (MonoClass *klass);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
@@ -132,9 +131,6 @@ MonoClass* mono_get_object_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
-char * mono_type_get_full_name (MonoClass *klass);
-MonoClass *mono_class_from_mono_type (MonoType *type);
-MonoClass *mono_class_get_parent (MonoClass *klass);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
