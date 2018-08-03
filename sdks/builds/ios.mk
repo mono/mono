@@ -370,8 +370,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
-		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
-			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
+		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_64 \
+			mono --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
@@ -385,3 +385,6 @@ ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative
 $(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
 $(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
+
+ios-cross32-64_CFLAGS=-O0
+$(eval $(call iOSCrossTemplate,cross32-64,arm,llvm64,arm-darwin,arm-apple-darwin10))
