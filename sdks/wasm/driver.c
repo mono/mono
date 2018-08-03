@@ -284,15 +284,11 @@ mono_wasm_string_from_js (const char *str)
 static int
 class_is_task (MonoClass *klass)
 {
-	static const char *GENERIC_TASK = "System.Threading.Tasks.Task`1";
-	static const char *JUST_A_TASK = "System.Threading.Tasks.Task";
-
-	const char *FULL_NAME = mono_type_get_full_name (klass);
-	// First generic
-	if (strncmp(FULL_NAME, GENERIC_TASK, strlen(GENERIC_TASK)) == 0)
+	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && 
+		(!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
 		return 1;
-	// Then normal task
-	return !strcmp(FULL_NAME, JUST_A_TASK);
+
+	return 0;
 }
 
 #define MARSHAL_TYPE_INT 1
