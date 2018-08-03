@@ -261,6 +261,7 @@ common_sources = \
 	filewatcher.h		\
 	gc-internals.h		\
 	icall.c			\
+	icalls.h		\
 	icall-internals.h \
 	icall-def.h		\
 	icall-table.h	\
