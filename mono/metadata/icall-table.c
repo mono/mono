@@ -35,6 +35,7 @@
 #include <mono/metadata/icall-table.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/bsearch.h>
+#include <mono/utils/mono-icall.h>
 
 /*
  * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
