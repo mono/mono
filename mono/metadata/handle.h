@@ -405,7 +405,6 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 }
 
 #else
-
 #define TYPED_HANDLE_DECL(TYPE)						\
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
