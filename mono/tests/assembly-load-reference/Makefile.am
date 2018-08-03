@@ -2,7 +2,17 @@ include $(top_srcdir)/mk/common.mk
 
 ### buildtree stuff
 
+RUNTIME_ARGS=--config tests-config --optimize=all --debug
+TEST_RUNTIME_ARGS ?= $(RUNTIME_ARGS)
+TEST_AOT_BUILD_FLAGS ?= $(AOT_BUILD_FLAGS)
+TEST_AOT_RUN_FLAGS ?= $(AOT_RUN_FLAGS)
+
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+
+with_mono_path = MONO_PATH=$(CLASS)
+
+RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
+TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper --aot-path=$(mcs_topdir)/class/lib/build
 
 if FULL_AOT_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY,FULL_AOT_DESKTOP 
@@ -20,27 +30,28 @@ else
 PLATFORM_PATH_SEPARATOR=:
 endif
 
-RUNTIME= $(top_builddir)/runtime/mono-wrapper
-TEST_RUNTIME = MONO_PATH=$(CLASS) $(RUNTIME)
-TOOLS_RUNTIME= MONO_PATH=$(mcs_topdir)/class/lib/build $(RUNTIME)
-
-TEST_RUNNER = ../test-runner.exe --runtime $(RUNTIME) --runtime-args "--assembly-loader=strict"
+TEST_RUNNER = ../test-runner.exe
 
 if HOST_WIN32
-TEST_RUNNER_ARGS=--runtime $(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),mono)
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)/runtime/mono-wrapper)"
 else
-TEST_RUNNER_ARGS=--runtime $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),mono)
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)"
 endif
 
-TEST_RUNNER_ARGS += $(if $(V), --verbose,)
+TEST_RUNNER += $(if $(V), --verbose,)
 
 if FULL_AOT_TESTS
-TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
+TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
 endif
 
 if HYBRID_AOT_TESTS
-TEST_RUNNER += --runtime-args "$(AOT_RUN_FLAGS)"
+TEST_RUNNER += --runtime-args "$(TEST_AOT_RUN_FLAGS)"
 endif
+
+TEST_RUNNER += --runtime-args "$(TEST_RUNTIME_FLAGS)"
+
+TEST_RUNNER += --mono-path "$(CLASS)"
+
 
 ### tools
 
@@ -67,6 +78,8 @@ TESTS_CS = \
 
 TESTS_EXE = $(TESTS_CS:.cs=.exe)
 
+TESTS_EXE_AOT = $(TESTS_EXE:.exe=.exe$(PLATFORM_AOT_SUFFIX))
+
 REFERENCED_ASMS = \
 	samedir/Mid.dll \
 	samedir/Dep.dll \
@@ -74,6 +87,31 @@ REFERENCED_ASMS = \
 	separatedir/middle/Dep.dll \
 	mainanddep/middle/Mid.dll \
 	mainanddep/Dep.dll
+
+REFERENCED_ASMS_AOT = $(REFERENCED_ASMS:.dll=.dll$(PLATFORM_AOT_SUFFIX))
+
+if FULL_AOT_TESTS
+TESTS_EXE_DEPEND=$(TESTS_EXE_AOT)
+REFERENCED_ASMS_DEPEND=$(REFERENCED_ASMS_AOT)
+else
+if HYBRID_AOT_TESTS
+TESTS_EXE_DEPEND=$(TESTS_EXE_AOT)
+REFERENCED_ASMS_DEPEND=$(REFERENCED_ASMS_AOT)
+else
+TESTS_EXE_DEPEND=$(TESTS_EXE)
+REFERENCED_ASMS_DEPEND=$(REFERENCED_ASMS)
+endif
+endif
+
+DISABLED_TESTS=
+
+# these don't work with full AOT
+if FULL_AOT_TESTS
+DISABLED_TESTS+= \
+	mainanddep/LoadFromMain.exe \
+	mainanddep/LoadFileMain.exe \
+	separatedir/LoadFileMain.exe
+endif
 
 runtest:
 	true
@@ -114,5 +152,14 @@ src/Mid.dll: src/Mid.cs src/Dep.dll
 %/LoadFileMain.exe: %/LoadFileMain.cs
 	$(MCS) -out:$@ $< -target:exe
 
-run-assembly-load-reference-tests: $(TESTS_EXE) $(REFERENCED_ASMS)
-	$(TOOLS_RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ $(TESTS_EXE)
+%/LoadFromMain.exe$(PLATFORM_AOT_SUFFIX): %/LoadFromMain.exe
+	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
+
+%/LoadFileMain.exe$(PLATFORM_AOT_SUFFIX): %/LoadFileMain.exe
+	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
+
+%.dll$(PLATFORM_AOT_SUFFIX): %.dll
+	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
+
+run-assembly-load-reference-tests: $(TESTS_EXE_DEPEND) $(REFERENCED_ASMS_DEPEND) 
+	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" $(TESTS_EXE)
