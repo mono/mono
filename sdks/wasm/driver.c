@@ -87,6 +87,8 @@ typedef struct _MonoAssemblyName MonoAssemblyName;
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
+extern MonoObject* mono_wasm_get_object_property (int js_handle, MonoString *method, int *is_exception);
+extern MonoObject* mono_wasm_set_object_property (int js_handle, MonoString *method, MonoObject *value, int createIfNotExist, int hasOwnProperty, int *is_exception);
 
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
@@ -131,7 +133,8 @@ int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
 char * mono_type_get_full_name (MonoClass *klass);
-
+MonoClass *mono_class_from_mono_type (MonoType *type);
+MonoClass *mono_class_get_parent (MonoClass *klass);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -210,6 +213,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
+	mono_add_internal_call ("WebAssembly.Runtime::GetObjectProperty", mono_wasm_get_object_property);
+	mono_add_internal_call ("WebAssembly.Runtime::SetObjectProperty", mono_wasm_set_object_property);
 
 	// Blazor specific custom routines - see dotnet_support.js for backing code		
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
@@ -276,6 +281,20 @@ mono_wasm_string_from_js (const char *str)
 }
 
 
+static int
+class_is_task (MonoClass *klass)
+{
+	static const char *GENERIC_TASK = "System.Threading.Tasks.Task`1";
+	static const char *JUST_A_TASK = "System.Threading.Tasks.Task";
+
+	const char *FULL_NAME = mono_type_get_full_name (klass);
+	// First generic
+	if (strncmp(FULL_NAME, GENERIC_TASK, strlen(GENERIC_TASK)) == 0)
+		return 1;
+	// Then normal task
+	return !strcmp(FULL_NAME, JUST_A_TASK);
+}
+
 #define MARSHAL_TYPE_INT 1
 #define MARSHAL_TYPE_FP 2
 #define MARSHAL_TYPE_STRING 3
@@ -316,25 +335,9 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			return MARSHAL_TYPE_VT;
 		if (mono_class_is_delegate (klass))
 			return MARSHAL_TYPE_DELEGATE;
+		if (class_is_task(klass))
+			return MARSHAL_TYPE_TASK;
 
-		// In some instances the names space is being returned as null.
-		// So what we will do is use full_name and use a startswith string compare
-		if (!mono_class_get_namespace (klass))
-		{
-			static const char *GENERIC_TASK = "System.Threading.Tasks.Task`1";
-			static const char *JUST_A_TASK = "System.Threading.Tasks.Task";
-			// First generic
-			if (strncmp(mono_type_get_full_name (klass), GENERIC_TASK, strlen(GENERIC_TASK)) == 0)
-				return MARSHAL_TYPE_TASK;
-			// Then normal task
-			if (strcmp(mono_type_get_full_name (klass), JUST_A_TASK) == 0)
-				return MARSHAL_TYPE_TASK;
-		}
-		else
-		{
-			if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
-				return MARSHAL_TYPE_TASK;
-		}
 		return MARSHAL_TYPE_OBJECT;
 	}
 }

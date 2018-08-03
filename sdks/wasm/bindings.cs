@@ -23,6 +23,10 @@ namespace WebAssembly {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object[] _params, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object GetObjectProperty(int js_obj_handle, string propertyName, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object SetObjectProperty(int js_obj_handle, string propertyName, object value, bool createIfNotExists, bool hasOwnProperty, out int exceptional_result);
 
 		public static string InvokeJS (string str)
 		{
@@ -162,6 +166,7 @@ namespace WebAssembly {
 				case TypeCode.UInt16:
 				case TypeCode.Int32:
 				case TypeCode.UInt32:
+				case TypeCode.Boolean:
 					res += "i";
 					break;
 				case TypeCode.Int64:
@@ -247,6 +252,31 @@ namespace WebAssembly {
 				throw new JSException ((string)res);
 			return res;
 		}
+
+
+        public object GetObjectProperty(string expr)
+        {
+
+            int exception = 0;
+            var propertyValue = Runtime.GetObjectProperty(JSHandle, expr, out exception);
+
+            if (exception != 0)
+                throw new JSException((string)propertyValue);
+
+            return propertyValue;
+
+        }
+
+        public void SetObjectProperty(string expr, object value, bool createIfNotExists = true, bool hasOwnProperty = false)
+        {
+
+            int exception = 0;
+            var setPropResult = Runtime.SetObjectProperty(JSHandle, expr, value, createIfNotExists, hasOwnProperty, out exception);
+            if (exception != 0)
+                throw new JSException($"Error setting {expr} on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
+
+        }
+
 
 		public override string ToString () {
 			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})";

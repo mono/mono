@@ -129,6 +129,24 @@ public class TestClass {
 		js_objs_to_dispose.Add(obj);
 		obj.Dispose();
 	}	
+
+	public static object[] js_props;
+	public static void RetrieveObjectProperties (JSObject obj) {
+		js_props = new object[4];
+		js_props [0] = obj.GetObjectProperty ("myInt");
+		js_props [1] = obj.GetObjectProperty ("myDouble");
+		js_props [2] = obj.GetObjectProperty ("myString");
+		js_props [3] = obj.GetObjectProperty ("myBoolean");
+	}	
+
+	public static void PopulateObjectProperties (JSObject obj, bool createIfNotExist) {
+		js_props = new object[4];
+		obj.SetObjectProperty ("myInt", 100, createIfNotExist);
+		obj.SetObjectProperty ("myDouble", 4.5, createIfNotExist);
+		obj.SetObjectProperty ("myString", "qwerty", createIfNotExist);
+		obj.SetObjectProperty ("myBoolean", true, createIfNotExist);
+	}	
+
 }
 
 [TestFixture]
@@ -420,9 +438,68 @@ public class BindingTests {
 			call_test_method (""DisposeObject"", ""o"", [ obj1 ]);
 		");
 
-		Assert.AreEqual (TestClass.js_objs_to_dispose [0].JSHandle, -1);
-		Assert.AreEqual (TestClass.js_objs_to_dispose [1].JSHandle, -1);		
-		Assert.AreEqual (TestClass.js_objs_to_dispose [2].JSHandle, -1);		
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [0].JSHandle);
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [1].JSHandle);		
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [2].JSHandle);		
 	}
+
+	[Test]
+	public static void GetObjectProperties () {
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 100, myDouble: 4.5, myString: ""qwerty"", myBoolean: true};
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectProperties () {
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200, myDouble: 0, myString: ""foo"", myBoolean: false};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, false ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectPropertiesIfNotExistsFalse () {
+		// This test will not create the properties if they do not already exist
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, false ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (null, TestClass.js_props [1]);
+		Assert.AreEqual (null, TestClass.js_props [2]);
+		Assert.AreEqual (null, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectPropertiesIfNotExistsTrue () {
+		// This test will set the value of the property if it exists and will create and 
+		// set the value if it does not exists
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, true ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
 
 }

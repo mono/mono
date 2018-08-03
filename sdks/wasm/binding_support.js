@@ -507,6 +507,82 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string (res);
 		}
 	},
+	mono_wasm_get_object_property: function(js_handle, property_name, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var obj = BINDING.mono_wasm_require_handle (js_handle);
+		if (!obj) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		var js_name = BINDING.conv_string (property_name);
+		if (!js_name) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid property name object '" + js_name + "'");
+		}
+
+		var res;
+		try {
+			var m = obj [js_name];
+			if (m === Object(m) && obj.__is_mono_proxied__)
+				m.__is_mono_proxied__ = true;
+				
+			return BINDING.js_to_mono_obj (m);
+		} catch (e) {
+			var res = e.toString ();
+			setValue (is_exception, 1, "i32");
+			if (res === null || typeof res === "undefined")
+				res = "unknown exception";
+			return BINDING.js_string_to_mono_string (res);
+		}
+	},
+    mono_wasm_set_object_property: function (js_handle, property_name, value, createIfNotExist, hasOwnProperty, is_exception) {
+
+		BINDING.bindings_lazy_init ();
+
+		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
+		if (!requireObject) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+		}
+
+		var property = BINDING.conv_string (property_name);
+		if (!property) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Invalid property name object '" + property_name + "'");
+		}
+
+        var result = false;
+
+		var js_value = BINDING.unbox_mono_obj(value);
+
+        if (createIfNotExist) {
+            requireObject[property] = js_value;
+            result = true;
+        }
+        else {
+			result = false;
+			if (!createIfNotExist)
+			{
+				if (!requireObject.hasOwnProperty(property))
+					return false;
+			}
+            if (hasOwnProperty === true) {
+                if (requireObject.hasOwnProperty(property)) {
+                    requireObject[property] = js_value;
+                    result = true;
+                }
+            }
+            else {
+                requireObject[property] = js_value;
+                result = true;
+            }
+        
+        }
+        return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
+    },
+
 };
 
 autoAddDeps(BindingSupportLib, '$BINDING')
