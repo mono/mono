@@ -17,7 +17,7 @@
 
 #include <mono/metadata/object.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 G_BEGIN_DECLS
 

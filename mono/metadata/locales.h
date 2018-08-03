@@ -14,7 +14,7 @@
 #include <glib.h>
 
 #include <mono/metadata/object-internals.h>
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 /* This is a copy of System.Globalization.CompareOptions */
 typedef enum {

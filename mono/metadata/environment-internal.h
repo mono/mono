@@ -15,7 +15,7 @@
 #ifndef _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 #define _MONO_METADATA_ENVIRONMENT_INTERNAL_H_
 
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 ICALL_EXPORT
 MonoStringHandle

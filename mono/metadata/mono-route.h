@@ -18,7 +18,7 @@
 #endif
 
 #include <mono/metadata/object-internals.h>
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 in_addr_t gateway_from_rtm (struct rt_msghdr *rtm);
 

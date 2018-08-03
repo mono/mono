@@ -10,7 +10,7 @@
 
 #include <mono/metadata/exception.h>
 #include <mono/metadata/object-internals.h>
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 typedef struct _MonoNativeOverlapped MonoNativeOverlapped;
 

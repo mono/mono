@@ -39,7 +39,7 @@
 #include <mono/utils/mono-jemalloc.h>
 #include <mono/utils/mono-conc-hashtable.h>
 #include <mono/utils/mono-signal-handler.h>
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 #include "mini-arch.h"
 #include "regalloc.h"

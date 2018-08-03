@@ -7,7 +7,7 @@
 
 #include <math.h>
 #include "mini.h"
-#include <mono/utils/mono-icall.h>
+#include <mono/metadata/icalls.h>
 
 void* mono_ldftn (MonoMethod *method);
 
