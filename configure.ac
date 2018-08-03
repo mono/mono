@@ -46,7 +46,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=40525B4A-F860-49BF-936E-6B29CBBF357C
+MONO_CORLIB_VERSION=4BC0CA5D-9D59-4334-8DE4-72075EBB919E
 
 #
 # Put a quoted #define in config.h.

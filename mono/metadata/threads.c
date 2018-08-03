@@ -56,6 +56,7 @@
 #include <mono/utils/mono-os-wait.h>
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-state.h>
+#include <mono/utils/mono-safe-handle.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -95,8 +96,9 @@ extern int tkill (pid_t tid, int signal);
 
 #define SPIN_UNLOCK(i) i = 0
 
-#define LOCK_THREAD(thread) lock_thread((thread))
-#define UNLOCK_THREAD(thread) unlock_thread((thread))
+#define TRY_LOCK_THREAD(thread) (mono_safe_handle_try_lock (&thread->synch_handle))
+#define ASSERT_LOCK_THREAD(thread) (mono_safe_handle_lock (&thread->synch_handle))
+#define UNLOCK_THREAD(thread) (mono_safe_handle_unlock (&thread->synch_handle))
 
 typedef union {
 	gint32 ival;
@@ -453,52 +455,16 @@ thread_get_tid (MonoInternalThread *thread)
 	return MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
 
-static void ensure_synch_cs_set (MonoInternalThread *thread)
-{
-	MonoCoopMutex *synch_cs;
-
-	if (thread->synch_cs != NULL) {
-		return;
-	}
-
-	synch_cs = g_new0 (MonoCoopMutex, 1);
-	mono_coop_mutex_init_recursive (synch_cs);
-
-	if (mono_atomic_cas_ptr ((gpointer *)&thread->synch_cs,
-					       synch_cs, NULL) != NULL) {
-		/* Another thread must have installed this CS */
-		mono_coop_mutex_destroy (synch_cs);
-		g_free (synch_cs);
-	}
-}
-
-static inline void
-lock_thread (MonoInternalThread *thread)
-{
-	if (!thread->synch_cs)
-		ensure_synch_cs_set (thread);
-
-	g_assert (thread->synch_cs);
-
-	mono_coop_mutex_lock (thread->synch_cs);
-}
-
-static inline void
-unlock_thread (MonoInternalThread *thread)
-{
-	mono_coop_mutex_unlock (thread->synch_cs);
-}
-
 static void
 lock_thread_handle (MonoInternalThreadHandle thread)
 {
-	lock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_safe_handle_lock (&mono_internal_thread_handle_ptr (thread)->synch_handle);
 }
 
 static void
 unlock_thread_handle (MonoInternalThreadHandle thread)
 {
-	unlock_thread (mono_internal_thread_handle_ptr (thread));
+	mono_safe_handle_unlock (&mono_internal_thread_handle_ptr (thread)->synch_handle);
 }
 
 static inline gboolean
@@ -640,9 +606,6 @@ create_internal_thread_object (void)
 	thread = (MonoInternalThread*) mono_object_new_mature (vt, error);
 	/* only possible failure mode is OOM, from which we don't exect to recover */
 	mono_error_assert_ok (error);
-
-	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
-	mono_coop_mutex_init_recursive (thread->synch_cs);
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
@@ -907,14 +870,11 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	 * This can happen only during shutdown.
 	 * The shutting_down flag is not always set, so we can't assert on it.
 	 */
-	if (thread->synch_cs)
-		LOCK_THREAD (thread);
-
-	thread->state |= ThreadState_Stopped;
-	thread->state &= ~ThreadState_Background;
-
-	if (thread->synch_cs)
+	if (TRY_LOCK_THREAD (thread)) {
+		thread->state |= ThreadState_Stopped;
+		thread->state &= ~ThreadState_Background;
 		UNLOCK_THREAD (thread);
+	}
 
 	/*
 	An interruption request has leaked to cleanup. Adjust the global counter.
@@ -1360,7 +1320,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
 
 	thread = create_thread_object (domain, internal);
 
-	LOCK_THREAD (internal);
+	ASSERT_LOCK_THREAD (internal);
 
 	res = create_thread (thread, internal, NULL, (MonoThreadStart) func, arg, flags, error);
 
@@ -1565,7 +1525,7 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
 		g_assert (internal);
 	}
 
-	LOCK_THREAD (internal);
+	ASSERT_LOCK_THREAD (internal);
 
 	if ((internal->state & ThreadState_Unstarted) == 0) {
 		UNLOCK_THREAD (internal);
@@ -1617,12 +1577,7 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	CloseHandle (this_obj->native_handle);
 #endif
 
-	if (this_obj->synch_cs) {
-		MonoCoopMutex *synch_cs = this_obj->synch_cs;
-		this_obj->synch_cs = NULL;
-		mono_coop_mutex_destroy (synch_cs);
-		g_free (synch_cs);
-	}
+	mono_safe_handle_free (&this_obj->synch_handle);
 
 	if (this_obj->name) {
 		void *name = this_obj->name;
@@ -1687,9 +1642,9 @@ mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
 {
 	gunichar2 *res;
 
-	LOCK_THREAD (this_obj);
+	gboolean locked = TRY_LOCK_THREAD (this_obj);
 	
-	if (!this_obj->name) {
+	if (!locked || !this_obj->name) {
 		*name_len = 0;
 		res = NULL;
 	} else {
@@ -1697,8 +1652,9 @@ mono_thread_get_name (MonoInternalThread *this_obj, guint32 *name_len)
 		res = g_new (gunichar2, this_obj->name_len);
 		memcpy (res, this_obj->name, sizeof (gunichar2) * this_obj->name_len);
 	}
+	if (locked)
+		UNLOCK_THREAD (this_obj);
 	
-	UNLOCK_THREAD (this_obj);
 
 	return res;
 }
@@ -1719,11 +1675,11 @@ mono_thread_get_name_utf8 (MonoThread *thread)
 	if (internal == NULL)
 		return NULL;
 
-	LOCK_THREAD (internal);
-
-	char *tname = g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
-
-	UNLOCK_THREAD (internal);
+	char *tname = NULL;
+	if (TRY_LOCK_THREAD (internal)) {
+		g_utf16_to_utf8 (internal->name, internal->name_len, NULL, NULL, NULL);
+		UNLOCK_THREAD (internal);
+	}
 
 	return tname;
 }
@@ -1756,13 +1712,12 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle thr
 
 	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 
-	LOCK_THREAD (this_obj);
-	
-	if (this_obj->name)
-		MONO_HANDLE_ASSIGN (str, mono_string_new_utf16_handle (mono_domain_get (), this_obj->name, this_obj->name_len, error));
+	if (TRY_LOCK_THREAD (this_obj)) {
+		if (this_obj->name)
+			MONO_HANDLE_ASSIGN (str, mono_string_new_utf16_handle (mono_domain_get (), this_obj->name, this_obj->name_len, error));
+		UNLOCK_THREAD (this_obj);
+	}
 
-	UNLOCK_THREAD (this_obj);
-	
 	return str;
 }
 
@@ -1770,10 +1725,13 @@ void
 mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean permanent, gboolean reset, MonoError *error)
 {
 	MonoNativeThreadId tid = 0;
-
-	LOCK_THREAD (this_obj);
-
 	error_init (error);
+
+	gboolean locked = TRY_LOCK_THREAD (this_obj);
+	if (!locked) {
+		mono_error_set_invalid_operation (error, "%s", "Thread.Name cannot be set after thread finalizer run.");
+		return;
+	}
 
 	if (reset) {
 		this_obj->flags &= ~MONO_THREAD_FLAG_NAME_SET;
@@ -1833,7 +1791,12 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
 
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
-	LOCK_THREAD (internal);
+	gboolean locked = TRY_LOCK_THREAD (internal);
+	if (!locked) {
+		mono_error_set_invalid_operation (error, "%s", "Thread priority cannot be read after thread finalizer run.");
+		return 0;
+	}
+
 	priority = internal->priority;
 	UNLOCK_THREAD (internal);
 
@@ -1852,7 +1815,12 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, 
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
-	LOCK_THREAD (internal);
+	gboolean locked = TRY_LOCK_THREAD (internal);
+	if (!locked) {
+		mono_error_set_invalid_operation (error, "%s", "Thread priority cannot be set after thread finalizer run.");
+		return;
+	}
+
 	internal->priority = priority;
 	if (internal->thread_info != NULL)
 		mono_thread_internal_set_priority (internal, priority);
@@ -2016,7 +1984,11 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 	MonoInternalThread *cur_thread = mono_thread_internal_current ();
 	gboolean ret = FALSE;
 
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked) {
+		THREAD_DEBUG (g_message ("%s: join failed because thread finalized", __func__));
+		return FALSE;
+	}
 	
 	if ((thread->state & ThreadState_Unstarted) != 0) {
 		UNLOCK_THREAD (thread);
@@ -2423,7 +2395,7 @@ ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_hand
 
 	guint32 state;
 
-	LOCK_THREAD (this_obj);
+	ASSERT_LOCK_THREAD (this_obj);
 	
 	state = this_obj->state;
 
@@ -2439,7 +2411,9 @@ ves_icall_System_Threading_Thread_Interrupt_internal (MonoThreadObjectHandle thr
 	MonoInternalThread * const thread = thread_handle_to_internal_ptr (thread_handle);
 	MonoInternalThread * const current = mono_thread_internal_current ();
 
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked)
+		return;
 
 	thread->thread_interrupt_requested = TRUE;
 	gboolean const throw_ = current != thread && (thread->state & ThreadState_WaitSleepJoin);
@@ -2461,7 +2435,9 @@ mono_thread_current_check_pending_interrupt (void)
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	gboolean throw_ = FALSE;
 
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked)
+		return FALSE;
 	
 	if (thread->thread_interrupt_requested) {
 		throw_ = TRUE;
@@ -2485,7 +2461,7 @@ request_thread_abort (MonoInternalThread *thread, MonoObjectHandle *state, gbool
 // When raw pointers is gone, it need not be a pointer,
 // though this would still work efficiently.
 {
-	LOCK_THREAD (thread);
+	ASSERT_LOCK_THREAD (thread);
 	
 	if (thread->state & (ThreadState_AbortRequested | ThreadState_Stopped))
 	{
@@ -2564,7 +2540,12 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	gboolean was_aborting, is_domain_abort;
 
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked) {
+		mono_error_set_exception_thread_state (error, "Unable to reset abort because thread finalizer run");
+		return;
+	}
+
 	was_aborting = thread->state & ThreadState_AbortRequested;
 	is_domain_abort = thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT;
 
@@ -2591,7 +2572,9 @@ ves_icall_System_Threading_Thread_ResetAbort (MonoThreadObjectHandle this_obj, M
 void
 mono_thread_internal_reset_abort (MonoInternalThread *thread)
 {
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked)
+		g_error ("Unable to reset abort because thread finalizer run");
 
 	thread->state &= ~ThreadState_AbortRequested;
 
@@ -2638,7 +2621,9 @@ ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThreadObjectHandle
 static gboolean
 mono_thread_suspend (MonoInternalThread *thread)
 {
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked)
+		return FALSE;
 
 	if (thread->state & (ThreadState_Unstarted | ThreadState_Aborted | ThreadState_Stopped))
 	{
@@ -2711,7 +2696,7 @@ mono_thread_resume (MonoInternalThread *thread)
 		if (!mono_thread_info_resume (thread_get_tid (thread)))
 			return FALSE;
 
-		LOCK_THREAD (thread);
+		ASSERT_LOCK_THREAD (thread);
 	}
 
 	thread->state &= ~ThreadState_Suspended;
@@ -2729,10 +2714,11 @@ ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, 
 	if (!internal_thread) {
 		exception = TRUE;
 	} else {
-		LOCK_THREAD (internal_thread);
-		if (!mono_thread_resume (internal_thread))
+		gboolean locked = TRY_LOCK_THREAD (internal_thread);
+		if (!locked || !mono_thread_resume (internal_thread))
 			exception = TRUE;
-		UNLOCK_THREAD (internal_thread);
+		if (locked)
+			UNLOCK_THREAD (internal_thread);
 	}
 
 	if (exception)
@@ -3472,7 +3458,7 @@ mono_threads_set_shutting_down (void)
 
 		/* Make sure we're properly suspended/stopped */
 
-		LOCK_THREAD (current_thread);
+		ASSERT_LOCK_THREAD (current_thread);
 
 		if (current_thread->state & (ThreadState_SuspendRequested | ThreadState_AbortRequested)) {
 			UNLOCK_THREAD (current_thread);
@@ -3667,7 +3653,12 @@ void mono_thread_suspend_all_other_threads (void)
 				continue;
 			}
 
-			LOCK_THREAD (thread);
+			gboolean locked = TRY_LOCK_THREAD (thread);
+			if (!locked) {
+				mono_threads_close_thread_handle (wait->handles [i]);
+				wait->threads [i] = NULL;
+				continue;
+			}
 
 			if (thread->state & (ThreadState_Suspended | ThreadState_Stopped)) {
 				UNLOCK_THREAD (thread);
@@ -4909,7 +4900,7 @@ mono_thread_resume_interruption (gboolean exec)
 	if (thread == NULL)
 		return;
 
-	LOCK_THREAD (thread);
+	ASSERT_LOCK_THREAD (thread);
 	still_aborting = (thread->state & (ThreadState_AbortRequested)) != 0;
 	UNLOCK_THREAD (thread);
 
@@ -5126,7 +5117,7 @@ mono_thread_notify_change_state (MonoThreadState old_state, MonoThreadState new_
 void
 mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState clear, MonoThreadState set)
 {
-	LOCK_THREAD (thread);
+	ASSERT_LOCK_THREAD (thread);
 
 	MonoThreadState const old_state = thread->state;
 	MonoThreadState const new_state = (old_state & ~clear) | set;
@@ -5151,7 +5142,7 @@ mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state)
 gboolean
 mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test, MonoThreadState set)
 {
-	LOCK_THREAD (thread);
+	ASSERT_LOCK_THREAD (thread);
 	
 	MonoThreadState const old_state = thread->state;
 
@@ -5179,7 +5170,9 @@ mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 gboolean
 mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test)
 {
-	LOCK_THREAD (thread);
+	gboolean locked = TRY_LOCK_THREAD (thread);
+	if (!locked)
+		return FALSE;
 
 	gboolean const ret = ((thread->state & test) != 0);
 	

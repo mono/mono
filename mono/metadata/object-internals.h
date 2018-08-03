@@ -21,6 +21,7 @@
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
+#include "mono/utils/mono-safe-handle.h"
 
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
@@ -452,7 +453,9 @@ struct _MonoInternalThread {
 	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
 	gint32 __interruption_requested;
-	MonoCoopMutex *synch_cs;
+	MonoSafeHandleNative synch_handle;
+	//MonoCoopMutex *synch_cs;
+	//MonoSafeHandleNativeState lock_flags;
 	MonoBoolean threadpool_thread;
 	MonoBoolean thread_interrupt_requested;
 	int stack_size;
