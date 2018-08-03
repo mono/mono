@@ -2832,4 +2832,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">move $(TargetPath) $(TargetPath).tmp
+$(ProjectDir)\..\..\build\cil-stringreplacer.exe --mscorlib-debug $(TargetPath).tmp
+move $(TargetPath).tmp $(TargetPath)</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">move $(TargetPath) $(TargetPath).tmp
+$(ProjectDir)\..\..\build\cil-stringreplacer.exe --mscorlib-debug $(TargetPath).tmp
+move $(TargetPath).tmp $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
