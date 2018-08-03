@@ -20,8 +20,8 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ifndef NO_TEST
 
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.execution.desktop xunit.abstractions xunit.assert Xunit.NetCore.Extensions
-xunit_deps := System.Runtime
+xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
+xunit_deps := netstandard System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
@@ -308,9 +308,9 @@ check: run-xunit-test-local
 xunit-test-local: $(xunit_test_lib)
 run-xunit-test-local: run-xunit-test-lib
 
-# cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
+# cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
+	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.dotnet.dll xunit.execution.dotnet.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
