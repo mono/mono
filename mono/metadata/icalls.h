@@ -8,7 +8,6 @@
 #include <mono/utils/mono-publib.h>
 
 #ifdef ENABLE_ICALL_EXPORT
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #define ICALL_DECL_EXPORT MONO_API
 #define ICALL_EXPORT MONO_API
 #else
