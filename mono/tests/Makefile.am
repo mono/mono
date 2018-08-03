@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = gc-descriptors . testing_gac
+SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
 
 check-local:
 	ok=:; \
@@ -21,6 +21,7 @@ check-local:
 	$(MAKE) test-internalsvisibleto || ok=false; \
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
+	$(MAKE) runtest-assembly-load-reference || ok=false; \
 	$$ok
 
 # These are not actually tests, but they are source files part of another test.
@@ -1532,7 +1533,7 @@ test-env-options:
 compile-tests:
 	$(MAKE) -j4 compile-tests-parallel
 
-compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -2497,6 +2498,13 @@ runtest-gac-loading: test-runner.exe
 
 compile-gac-loading:
 	$(MAKE) -C testing_gac compile-tests
+
+runtest-assembly-load-reference: test-runner.exe
+	$(MAKE) -C assembly-load-reference runtest
+
+compile-assembly-load-reference:
+	$(MAKE) -C assembly-load-reference compile-tests
+
 
 TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-1.cs	\
