@@ -152,7 +152,7 @@ System/TimeZoneInfo.WinRT.cs
 System/TypeIdentifier.cs
 System/TypeSpec.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeCode.cs
-../../../external/corefx/src/Common/src/CoreLib/System/UIntPtr.cs
+System/UIntPtr.cs
 System/ValueType.cs
 System/Variant.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Void.cs
