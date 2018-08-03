@@ -9,6 +9,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+
+
 #undef SERIAL_COPY_OBJECT
 #undef SERIAL_COPY_OBJECT_FROM_OBJ
 
@@ -259,3 +261,5 @@ SERIAL_COPY_OBJECT_FROM_OBJ (GCObject **obj_slot, SgenGrayQueue *queue)
 	}
 #endif
 }
+
+

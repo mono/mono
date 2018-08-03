@@ -16,6 +16,8 @@
 #include "mono/utils/mono-hwcap-vars.h"
 #undef MONO_HWCAP_VAR
 
+
+
 /* Call this function to perform hardware feature detection. Until
  * this function has been called, all feature variables will be
  * FALSE as a default.
@@ -51,5 +53,7 @@ void mono_hwcap_print (void);
  * the hardware or operating system are lying, work around that in
  * a different place, as with the rule above.
  */
+
+
 
 #endif /* __MONO_UTILS_HWCAP_H__ */

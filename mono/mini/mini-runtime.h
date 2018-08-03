@@ -15,6 +15,8 @@
 #include "mini.h"
 #include "ee.h"
 
+
+
 /* Per-domain information maintained by the JIT */
 typedef struct
 {
@@ -73,6 +75,8 @@ typedef struct {
 	int first_filter_idx, filter_idx;
 } ResumeState;
 
+typedef void (*MonoAbortFunction)(MonoObject*);
+
 struct MonoJitTlsData {
 	gpointer          end_of_stack;
 	guint32           stack_size;
@@ -85,7 +89,7 @@ struct MonoJitTlsData {
 	guint32          stack_ovf_guard_size;
 	guint            stack_ovf_valloced : 1;
 	guint            stack_ovf_pending : 1;
-	void            (*abort_func) (MonoObject *object);
+	MonoAbortFunction abort_func;
 	/* Used to implement --debug=casts */
 	MonoClass       *class_cast_from, *class_cast_to;
 
@@ -338,11 +342,11 @@ extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;
 extern MonoAotMode mono_aot_mode;
-extern MONO_API const char *mono_build_date;
+MONO_API_DATA const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
-extern MONO_API gboolean mono_use_llvm;
-extern MONO_API gboolean mono_use_interpreter;
+MONO_API_DATA gboolean mono_use_llvm;
+MONO_API_DATA gboolean mono_use_interpreter;
 extern const char* mono_interp_opts_string;
 extern gboolean mono_do_single_method_regression;
 extern guint32 mono_single_method_regression_opt;
@@ -420,11 +424,13 @@ MONO_API int       mono_parse_default_optimizations  (const char* p);
 gboolean          mono_running_on_valgrind (void);
 
 MonoLMF * mono_get_lmf                      (void);
-MonoLMF** mono_get_lmf_addr                 (void);
+MonoLMF **mono_tls_get_lmf_addr (void);
+#define mono_get_lmf_addr mono_tls_get_lmf_addr
 void      mono_set_lmf                      (MonoLMF *lmf);
 void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 MonoJitTlsData* mono_get_jit_tls            (void);
+#define mono_get_jit_tls mono_tls_get_jit_tls
 MONO_API MonoDomain* mono_jit_thread_attach (MonoDomain *domain);
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
@@ -567,5 +573,6 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 void mini_register_sigterm_handler (void);
 #endif
 
-#endif /* __MONO_MINI_RUNTIME_H__ */
 
+
+#endif /* __MONO_MINI_RUNTIME_H__ */

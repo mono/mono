@@ -147,7 +147,7 @@ g_log (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, .
 
 static char *failure_assertion = NULL;
 
-const char *
+char *
 g_get_assertion_message (void)
 {
 	return failure_assertion;

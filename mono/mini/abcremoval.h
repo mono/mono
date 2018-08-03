@@ -16,6 +16,7 @@
 #include "mini.h"
 
 
+
 /**
  * All handled value types (expressions) in variable definitions and branch
  * contitions:
@@ -347,6 +348,7 @@ typedef struct MonoAdditionalVariableRelationsForBB {
 	MonoAdditionalVariableRelation relation1;
 	MonoAdditionalVariableRelation relation2;
 } MonoAdditionalVariableRelationsForBB;
+
 
 
 #endif /* __MONO_ABCREMOVAL_H__ */

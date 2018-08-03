@@ -9,6 +9,8 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/tabledefs.h>
 
+
+
 static inline MonoType*
 mono_get_void_type (void)
 {
@@ -32,7 +34,6 @@ mono_get_object_type (void)
 {
 	return m_class_get_byval_arg (mono_defaults.object_class);
 }
-
 
 static inline gboolean
 mono_class_is_def (MonoClass *klass)
@@ -117,5 +118,7 @@ mono_class_has_static_metadata (MonoClass *klass)
 {
 	return m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass);
 }
+
+
 
 #endif

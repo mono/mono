@@ -8,6 +8,8 @@
 #include <glib.h>
 #include <mono/metadata/object.h>
 
+
+
 #define NUM_DAYS 7
 #define NUM_MONTHS 13
 #define GROUP_SIZE 2
@@ -133,5 +135,6 @@ typedef struct {
 	const gint16 region_entry_index;
 } RegionInfoNameEntry;
 
-#endif
 
+
+#endif

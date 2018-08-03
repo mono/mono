@@ -13,7 +13,7 @@
 
 #include "mini.h"
 
-G_BEGIN_DECLS
+
 
 static inline guint32
 alloc_ireg (MonoCompile *cfg)
@@ -233,8 +233,8 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define NEW_PATCH_INFO(cfg,dest,el1,el2) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_PATCH_INFO); \
-		(dest)->inst_left = (gpointer)(el1);	\
-		(dest)->inst_right = (gpointer)(el2);	\
+		(dest)->inst_left = (MonoInst*)(el1);	\
+		(dest)->inst_right = (MonoInst*)(el2);	\
 	} while (0)
 
 #define NEW_AOTCONST_GOT_VAR(cfg,dest,patch_type,cons) do {			\
@@ -247,7 +247,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 			(dest)->inst_p1 = group;			\
 		} else {						\
 			(dest)->inst_p0 = (cons);			\
-			(dest)->inst_i1 = (gpointer)(patch_type);	\
+			(dest)->inst_i1 = (MonoInst*)(patch_type);	\
 		}							\
 		(dest)->type = STACK_PTR;				\
 		(dest)->dreg = alloc_dreg ((cfg), STACK_PTR);	\
@@ -324,7 +324,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 			NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_METHOD_RGCTX, (method)); \
 		} else {														\
 			MonoMethodRuntimeGenericContext *mrgctx;					\
-			mrgctx = mini_method_get_rgctx ((method));					\
+			mrgctx = (MonoMethodRuntimeGenericContext*)mini_method_get_rgctx ((method));					\
 			NEW_PCONST ((cfg), (dest), (mrgctx));						\
 		}																\
 	} while (0)
@@ -997,6 +997,6 @@ static int ccount = 0;
 		MONO_EMIT_BOUNDS_CHECK_OFFSET ((cfg), (array_reg), MONO_STRUCT_OFFSET (array_type, array_length_field), (index_reg)); \
     } while (0)
 
-G_END_DECLS
+
 
 #endif

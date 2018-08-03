@@ -13,6 +13,11 @@
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-os-semaphore.h>
 
+
+
+// FIXMEcplusplus
+//GENERATE_BIT_ENUM_OPERATORS (MonoProfilerCallInstrumentationFlags, int)
+
 struct _MonoProfilerDesc {
 	MonoProfilerHandle next;
 	MonoProfiler *prof;
@@ -185,5 +190,7 @@ mono_profiler_clauses_enabled (void)
 		if (MONO_PROFILER_ENABLED (name)) \
 			mono_profiler_raise_ ## name args; \
 	} while (0)
+
+
 
 #endif // __MONO_PROFILER_PRIVATE_H__

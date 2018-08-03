@@ -897,6 +897,8 @@ typedef struct ucontext MonoContext;
 
 #endif
 
+
+
 /*
  * The naming is misleading, the SIGCTX argument should be the platform's context
  * structure (ucontext_c on posix, CONTEXT on windows).
@@ -910,5 +912,7 @@ void mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx);
  * also in MonoContext.
  */
 void mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx);
+
+
 
 #endif /* __MONO_MONO_CONTEXT_H__ */

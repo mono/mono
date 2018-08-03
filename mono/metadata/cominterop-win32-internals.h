@@ -15,6 +15,8 @@
 // cases even inline.
 #if defined(HOST_WIN32) && !G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
 
+
+
 guint32
 mono_marshal_win_safearray_get_dim (gpointer safearray);
 
@@ -35,6 +37,8 @@ mono_marshal_win_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsaboun
 
 int
 mono_marshal_win_safearray_set_value (gpointer safearray, gpointer indices, gpointer value);
+
+
 
 #endif /* HOST_WIN32 && !G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 

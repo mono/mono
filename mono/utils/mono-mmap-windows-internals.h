@@ -14,6 +14,7 @@
 
 int
 mono_mmap_win_prot_from_flags (int flags);
+
 #endif /* HOST_WIN32 */
 #endif /* __MONO_UTILS_MMAP_WINDOWS_H__ */
 

@@ -15,6 +15,8 @@
 #include "mono/utils/mono-error.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 
+
+
 #define MONO_CLASS_IS_ARRAY(c) (m_class_get_rank (c))
 
 #define MONO_CLASS_HAS_STATIC_METADATA(klass) (m_class_get_type_token (klass) && !m_class_get_image (klass)->dynamic && !mono_class_is_ginst (klass))
@@ -35,16 +37,6 @@ typedef struct _MonoDynamicMethod MonoDynamicMethod;
  * This prop applies to class, method, property, event, assembly and image.
  */
 #define MONO_PROP_DYNAMIC_CATTR 0x1000
-
-#ifdef ENABLE_ICALL_EXPORT
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
-#define ICALL_DECL_EXPORT MONO_API
-#define ICALL_EXPORT MONO_API
-#else
-#define ICALL_DECL_EXPORT
-/* Can't be static as icall.c defines icalls referenced by icall-tables.c */
-#define ICALL_EXPORT
-#endif
 
 typedef enum {
 #define WRAPPER(e,n) MONO_WRAPPER_ ## e,
@@ -1015,8 +1007,10 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_loader_init           (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_loader_cleanup        (void);
@@ -1042,8 +1036,10 @@ mono_loader_unlock_if_inited (void);
 void
 mono_reflection_init       (void);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_icall_init            (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_icall_cleanup         (void);
@@ -1263,11 +1259,13 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_error_set_for_class_failure (MonoError *orerror, const MonoClass *klass);
 
 gboolean
 mono_class_has_failure (const MonoClass *klass);
+G_END_DECLS // FIXMEcxx for pedump
 
 /* Kind specific accessors */
 MonoGenericClass*
@@ -1434,6 +1432,8 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
+
+
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

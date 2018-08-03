@@ -281,7 +281,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall ((gpointer)ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -2376,7 +2376,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 	/* initialize vtable */
 	mono_class_setup_vtable (klass);
-	MonoMethod **klass_vtable = m_class_get_vtable (klass);
+	MonoMethod **klass_vtable;
+	klass_vtable = m_class_get_vtable (klass);
 	for (i = 0; i < m_class_get_vtable_size (klass); ++i) {
 		MonoMethod *cm;
 		    
@@ -2815,7 +2816,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -4586,7 +4587,8 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 	MonoDomain *domain = mono_domain_get ();
 	MonoRealProxyHandle real_proxy = MONO_HANDLE_CAST (MonoRealProxy, mono_object_new_handle (domain, mono_defaults.real_proxy_class, error));
 	goto_if_nok (error, return_null);
-	MonoReflectionTypeHandle reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
+	MonoReflectionTypeHandle reflection_type;
+	reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
 	goto_if_nok (error, return_null);
 
 	MONO_HANDLE_SET (real_proxy, class_to_proxy, reflection_type);
@@ -4657,13 +4659,14 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	goto_if_nok (error, return_null);
 	g_assert (method);
 
-	MonoBoolean is_terminating = TRUE;
-	gpointer args [ ] = {
-		MONO_HANDLE_RAW (exc), // FIXMEcoop
-		&is_terminating
-	};
+	MonoBoolean is_terminating;
+	is_terminating = TRUE;
+	gpointer args [2];
+	args [0] = MONO_HANDLE_RAW (exc); // FIXMEcoop
+	args [1] = &is_terminating;
 
-	MonoObjectHandle obj = mono_object_new_handle (mono_domain_get (), klass, error);
+	MonoObjectHandle obj;
+	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
 	mono_runtime_invoke_handle (method, obj, args, error);
@@ -4834,6 +4837,25 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	}
 }
 
+typedef struct MonoMainThunk {
+	MonoMainThreadFunc main_func;
+	gpointer main_data;
+} MonoMainThunk;
+
+static gulong MONO_STDCALL
+mono_main_thunk (gpointer void_data)
+/**
+ * MonoThreadStart returns 32bit unsigned long on Windows, pointer-sized unsigned long on non-Windows.
+ * MonoMainThreadFunc returns void.
+ * This thunk adapts them, without a function pointer cast.
+ * Function pointer casts are to be avoided more than data casts.
+ */
+{
+	MonoMainThunk* data = (MonoMainThunk*)void_data;
+	data->main_func (data->main_data);
+	return 0;
+}
+
 /**
  * mono_runtime_exec_managed_code:
  * \param domain Application domain
@@ -4855,7 +4877,10 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+
+	MonoMainThunk thunk = { main_func, main_args };
+
+	mono_thread_create_checked (domain, mono_main_thunk, &thunk, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -5798,11 +5823,7 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	MonoObject *o;
-
-	error_init (error);
-
-	o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = (MonoObject*)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
 
@@ -5819,9 +5840,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
-
-	o = mono_gc_alloc_mature (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = (MonoObject*)mono_gc_alloc_mature (vtable, m_class_get_instance_size (vtable->klass));
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
@@ -6012,7 +6031,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array_handle, Mo
 		goto_if_nok (error, leave);
 	}
 
-	uint32_t dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
+	uint32_t dst_handle;
+	dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
 	array_full_copy_unchecked_size (MONO_HANDLE_RAW (array_handle), MONO_HANDLE_RAW (o), klass, size);
 	mono_gchandle_free (dst_handle);
 
@@ -7078,7 +7098,8 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 	if (MONO_HANDLE_IS_NULL (obj))
 		goto leave;
 
-	MonoVTable *vt = MONO_HANDLE_GETVAL (obj, vtable);
+	MonoVTable *vt;
+	vt = MONO_HANDLE_GETVAL (obj, vtable);
 	
 	if (mono_class_is_interface (klass)) {
 		if (MONO_VTABLE_IMPLEMENTS_INTERFACE (vt, m_class_get_interface_id (klass))) {

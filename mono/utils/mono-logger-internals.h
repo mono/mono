@@ -9,7 +9,7 @@
 #include <mono/utils/mono-compiler.h>
 #include "mono-logger.h"
 
-G_BEGIN_DECLS
+
 
 typedef enum {
 	MONO_TRACE_ASSEMBLY           = 1 << 0,
@@ -32,8 +32,12 @@ typedef enum {
 	MONO_TRACE_PROFILER           = 1 << 17,
 } MonoTraceMask;
 
-MONO_API extern GLogLevelFlags mono_internal_current_level;
-MONO_API extern MonoTraceMask mono_internal_current_mask;
+MONO_BEGIN_DECLS
+
+MONO_API_DATA GLogLevelFlags mono_internal_current_level;
+MONO_API_DATA MonoTraceMask mono_internal_current_mask;
+
+MONO_END_DECLS
 
 MONO_API void
 mono_trace_init (void);
@@ -161,6 +165,6 @@ void mono_log_write_recorder (const char *log_domain, GLogLevelFlags level, mono
 void mono_log_close_recorder (void);
 void mono_log_dump_recorder (void);
 
-G_END_DECLS
+
 
 #endif /* __MONO_LOGGER_INTERNAL_H__ */

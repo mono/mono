@@ -32,6 +32,8 @@
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
 
+
+
 //#define QUEUE_DEBUG	1
 
 typedef struct _MonoLockFreeQueueNode MonoLockFreeQueueNode;
@@ -65,5 +67,7 @@ MONO_API void mono_lock_free_queue_node_unpoison (MonoLockFreeQueueNode *node);
 MONO_API void mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node);
 
 MONO_API MonoLockFreeQueueNode* mono_lock_free_queue_dequeue (MonoLockFreeQueue *q);
+
+
 
 #endif

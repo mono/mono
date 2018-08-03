@@ -15,6 +15,8 @@
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
+
+
 /* Constants used to encode different types of methods in AOT */
 enum {
 	MONO_AOT_METHODREF_MIN = 240,
@@ -138,7 +140,7 @@ typedef struct MonoAotFileInfo
 	 * The runtime version string for AOT images generated using 'bind-to-runtime-version',
 	 * NULL otherwise.
 	 */
-	gpointer runtime_version;
+	char *runtime_version;
 	/* Blocks of various kinds of trampolines */
 	gpointer specific_trampolines;
 	gpointer static_rgctx_trampolines;
@@ -244,6 +246,9 @@ void     mono_aot_set_make_unreadable       (gboolean unreadable);
 gboolean mono_aot_is_pagefault              (void *ptr);
 void     mono_aot_handle_pagefault          (void *ptr);
 void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
+#ifdef __cplusplus
+#define mono_aot_register_jit_icall(name, addr) (mono_aot_register_jit_icall ((name), (gpointer)(addr)))
+#endif
 guint32  mono_aot_find_method_index         (MonoMethod *method);
 void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
 void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
@@ -263,5 +268,7 @@ typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, 
 /* Not yet used */
 typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, gpointer user_data, void *handle);
 MONO_API void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, gpointer user_data);
+
+
 
 #endif /* __MONO_AOT_RUNTIME_H__ */

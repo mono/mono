@@ -47,7 +47,7 @@ static DWORD get_socket_timeout (SOCKET sock, int optname)
 {
 	DWORD timeout = 0;
 	int optlen = sizeof (DWORD);
-	if (getsockopt (sock, SOL_SOCKET, optname, (char *)&timeout, &optlen) == SOCKET_ERROR) {
+	if (getsockopt (sock, SOL_SOCKET, optname, &timeout, &optlen) == SOCKET_ERROR) {
 		WSASetLastError (0);
 		return WSA_INFINITE;
 	}
@@ -66,7 +66,7 @@ static DWORD get_socket_timeout (SOCKET sock, int optname)
 */
 static gboolean alertable_socket_wait (SOCKET sock, int event_bit)
 {
-	static char *EVENT_NAMES[] = { "FD_READ", "FD_WRITE", NULL /*FD_OOB*/, "FD_ACCEPT", "FD_CONNECT", "FD_CLOSE" };
+	static char const * const EVENT_NAMES[] = { "FD_READ", "FD_WRITE", NULL /*FD_OOB*/, "FD_ACCEPT", "FD_CONNECT", "FD_CLOSE" };
 	gboolean success = FALSE;
 	int error = -1;
 	DWORD timeout = WSA_INFINITE;
@@ -154,7 +154,7 @@ int mono_w32socket_connect (SOCKET s, const struct sockaddr *name, int namelen, 
 	return ret;
 }
 
-int mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean blocking)
+int mono_w32socket_recv (SOCKET s, void *buf, int len, int flags, gboolean blocking)
 {
 	MonoInternalThread *curthread = mono_thread_internal_current ();
 	int ret = SOCKET_ERROR;
@@ -164,7 +164,7 @@ int mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean block
 	return ret;
 }
 
-int mono_w32socket_recvfrom (SOCKET s, char *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
+int mono_w32socket_recvfrom (SOCKET s, void *buf, int len, int flags, struct sockaddr *from, socklen_t *fromlen, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
@@ -182,7 +182,7 @@ int mono_w32socket_recvbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCou
 	return ret;
 }
 
-int mono_w32socket_send (SOCKET s, char *buf, int len, int flags, gboolean blocking)
+int mono_w32socket_send (SOCKET s, void *buf, int len, int flags, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
@@ -191,7 +191,7 @@ int mono_w32socket_send (SOCKET s, char *buf, int len, int flags, gboolean block
 	return ret;
 }
 
-int mono_w32socket_sendto (SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
+int mono_w32socket_sendto (SOCKET s, const void *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking)
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;

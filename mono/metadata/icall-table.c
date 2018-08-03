@@ -42,7 +42,7 @@
  */
 // Generate prototypes
 #define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) extern void func (void);
+#define ICALL(id,name,func) ICALL_EXPORT void func (void);
 #define HANDLES(inner) inner
 #define NOHANDLES(inner) inner
 #include "metadata/icall-def.h"
@@ -210,7 +210,7 @@ static const char* const icall_names [] = {
 
 static const gconstpointer icall_functions [] = {
 #define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) func,
+#define ICALL(id,name,func) ((gpointer)(func)),
 #define HANDLES(inner) inner
 #define NOHANDLES(inner) inner
 #include "metadata/icall-def.h"
@@ -255,7 +255,7 @@ static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char* method_name = (const char*)&icall_names_str + (*(guint16*)elem);
-	return strcmp (key, method_name);
+	return strcmp ((const char*)key, method_name);
 }
 
 static gsize
@@ -289,7 +289,7 @@ static int
 compare_class_imap (const void *key, const void *elem)
 {
 	const char* class_name = (const char*)&icall_type_names_str + (*(guint16*)elem);
-	return strcmp (key, class_name);
+	return strcmp ((const char*)key, class_name);
 }
 
 static const IcallTypeDesc*
@@ -307,7 +307,7 @@ static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char** method_name = (const char**)elem;
-	return strcmp (key, *method_name);
+	return strcmp ((const char*)key, *method_name);
 }
 
 static gsize
@@ -443,6 +443,8 @@ lookup_icall_symbol (gpointer func)
 	return NULL;
 #endif
 }
+
+ // lack of prototypes
 
 void
 mono_icall_table_init (void)

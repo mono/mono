@@ -437,7 +437,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	guint32	    state;
+	guint32/*MonoThreadState*/ state; // FIXMEcplusplus
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
@@ -464,7 +464,7 @@ struct _MonoInternalThread {
 	gsize    flags;
 	gpointer thread_pinning_ref;
 	gsize __abort_protected_block_count;
-	gint32 priority;
+	gint32/*MonoThreadPriority*/ priority; // FIXMEcplusplus
 	GPtrArray *owned_mutexes;
 	MonoOSEvent *suspended;
 	gint32 self_suspended; // TRUE | FALSE
@@ -707,7 +707,7 @@ MONO_COLD void mono_set_pending_exception (MonoException *exc);
 MonoAsyncResult *
 mono_async_result_new	    (MonoDomain *domain, gpointer handle, 
 			     MonoObject *state, gpointer data, MonoObject *object_data, MonoError *error);
-
+ICALL_EXPORT
 MonoObject *
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
 
@@ -1557,6 +1557,7 @@ void        mono_reflection_get_dynamic_overrides (MonoClass *klass, MonoMethod 
 
 void mono_reflection_destroy_dynamic_method (MonoReflectionDynamicMethod *mb);
 
+ICALL_EXPORT
 void
 ves_icall_SymbolType_create_unmanaged_type (MonoReflectionType *type);
 
@@ -1574,12 +1575,15 @@ mono_reflection_bind_generic_parameters (MonoReflectionTypeHandle type, int type
 void
 mono_reflection_generic_class_initialize (MonoReflectionGenericClass *type, MonoArray *fields);
 
+ICALL_EXPORT
 MonoReflectionEvent *
 ves_icall_TypeBuilder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb);
 
+ICALL_EXPORT
 MonoArrayHandle
 ves_icall_SignatureHelper_get_signature_local (MonoReflectionSigHelperHandle sig, MonoError *error);
 
+ICALL_EXPORT
 MonoArrayHandle
 ves_icall_SignatureHelper_get_signature_field (MonoReflectionSigHelperHandle sig, MonoError *error);
 
@@ -1592,6 +1596,7 @@ mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, gboolean 
 gboolean
 mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoReflectionMethod *method, MonoReflectionAssembly *assembly, gpointer data, guint32 data_length, MonoArray **ctor_args, MonoArray ** named_args);
 
@@ -1638,9 +1643,11 @@ mono_array_new_specific_checked (MonoVTable *vtable, uintptr_t n, MonoError *err
 MonoArrayHandle
 mono_array_new_specific_handle (MonoVTable *vtable, uintptr_t n, MonoError *error);
 
+ICALL_EXPORT
 MonoArray*
 ves_icall_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 
+ICALL_EXPORT
 MonoArray*
 ves_icall_array_new_specific (MonoVTable *vtable, uintptr_t n);
 
@@ -1818,9 +1825,11 @@ mono_object_new_pinned_handle (MonoDomain *domain, MonoClass *klass, MonoError *
 MonoObject *
 mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error);
 
+ICALL_EXPORT
 MonoObject *
 ves_icall_object_new (MonoDomain *domain, MonoClass *klass);
 	
+ICALL_EXPORT
 MonoObject *
 ves_icall_object_new_specific (MonoVTable *vtable);
 
@@ -1870,6 +1879,7 @@ mono_string_intern_checked (MonoString *str, MonoError *error);
 char *
 mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc);
 
+ICALL_EXPORT
 MonoStringHandle
 ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *erro);
 
@@ -2014,56 +2024,70 @@ mono_runtime_exec_main_checked (MonoMethod *method, MonoArray *args, MonoError *
 int
 mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc);
 
+ICALL_EXPORT
 MonoReflectionMethodHandle
 ves_icall_MonoMethod_MakeGenericMethod_impl (MonoReflectionMethodHandle rmethod, MonoArrayHandle types, MonoError *error);
 
+ICALL_EXPORT
 gint32
 ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, gboolean create_open_instance, MonoError *error);
 
+ICALL_EXPORT
 gint32
 ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
 					MonoReflectionMethodHandle method,
 					MonoArrayHandle opt_param_types,
 					MonoError *error);
-
+ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, gpointer file);
 
+ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb);
 
+ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, guint32 token, MonoError *error);
 
+ICALL_EXPORT
 MonoObjectHandle
 ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilderHandle mb, guint32 token, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb);
 
+ICALL_EXPORT
 void
 ves_icall_AssemblyBuilder_UpdateNativeCustomAttributes (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error);
 
+ICALL_EXPORT
 MonoArray*
 ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues);
 
+ICALL_EXPORT
 void
 ves_icall_DynamicMethod_create_dynamic_method (MonoReflectionDynamicMethodHandle mb, MonoError *error);
 
+ICALL_EXPORT
 MonoReflectionTypeHandle
 ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_EnumBuilder_setup_enum_type (MonoReflectionTypeHandle enumtype,
 				       MonoReflectionTypeHandle t,
 				       MonoError *error);
-
+ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_basic_init (MonoReflectionModuleBuilderHandle moduleb, MonoError *error);
 
+ICALL_EXPORT
 guint32
 ves_icall_ModuleBuilder_getUSIndex (MonoReflectionModuleBuilderHandle module, MonoStringHandle str, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle moduleb, MonoReflectionTypeHandle type, MonoError *error);
 
@@ -2082,5 +2106,7 @@ mono_class_get_virtual_method (MonoClass *klass, MonoMethod *method, gboolean is
 
 MonoStringHandle
 mono_string_empty_handle (MonoDomain *domain);
+
+
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

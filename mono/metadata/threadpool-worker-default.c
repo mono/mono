@@ -35,6 +35,11 @@
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
 
+#ifdef MONO_COMPLEX_CPLUSPLUS
+#define cabs std::abs
+#define creal std::real
+#endif // cplusplus
+
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
 
@@ -453,7 +458,7 @@ worker_try_unpark (void)
 	return res;
 }
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 worker_thread (gpointer unused)
 {
 	MonoInternalThread *thread;
@@ -666,7 +671,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 
 static void hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTransition transition);
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 monitor_thread (gpointer unused)
 {
 	MonoInternalThread *internal;

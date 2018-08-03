@@ -6,6 +6,8 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-compiler.h>
 
+
+
 struct _MonoDebugMethodInfo {
 	MonoMethod *method;
 	MonoDebugHandle *handle;
@@ -86,5 +88,7 @@ mono_debug_image_has_debug_info (MonoImage *image);
 
 MonoDebugSourceLocation *
 mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, MonoDomain *domain);
+
+
 
 #endif /* __DEBUG_INTERNALS_H__ */

@@ -61,39 +61,51 @@ void   mono_object_register_finalizer               (MonoObject  *obj);
 void
 mono_object_register_finalizer_handle (MonoObjectHandle obj);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_InternalCollect (int generation, MonoError *error);
 
+ICALL_EXPORT
 gint64
 ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_KeepAlive (MonoObjectHandle obj, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_ReRegisterForFinalize (MonoObjectHandle obj, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_SuppressFinalize (MonoObjectHandle obj, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_WaitForPendingFinalizers (MonoError *error);
 
+ICALL_EXPORT
 MonoObjectHandle
 ves_icall_System_GCHandle_GetTarget (guint32 handle, MonoError *error);
 
+ICALL_EXPORT
 guint32
 ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, guint32 handle, gint32 type, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GCHandle_FreeHandle (guint32 handle, MonoError *error);
 
+ICALL_EXPORT
 gpointer
 ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle, MonoError *error);
 
+ICALL_EXPORT
 void
 ves_icall_System_GC_register_ephemeron_array (MonoObjectHandle array, MonoError *error);
 
+ICALL_EXPORT
 MonoObjectHandle
 ves_icall_System_GC_get_ephemeron_tombstone (MonoError *error);
 
@@ -123,6 +135,7 @@ void mono_gchandle_set_target (guint32 gchandle, MonoObject *obj);
 /*Ephemeron functionality. Sgen only*/
 gboolean    mono_gc_ephemeron_array_add (MonoObject *obj);
 
+ICALL_EXPORT
 MonoBoolean
 ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle, MonoError *error);
 
@@ -146,7 +159,8 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+MONO_API // FIXMEcxx?
+MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -155,38 +169,47 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+MonoArray*
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
 
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
 
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+MonoArray*
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
 
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+MonoString*
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 
-void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+MonoObject*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
 
-void mono_gc_register_obj_with_weak_fields (void *obj);
+void
+mono_gc_register_obj_with_weak_fields (MonoObject *obj);
+
 void
 mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
 
@@ -249,11 +272,16 @@ MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
 /* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
-void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
-void* mono_gc_get_range_copy_func (void);
+void mono_gc_wbarrier_range_copy (gpointer dest, gconstpointer src, int size);
+
+typedef void (*MonoRangeCopyFunction)(gpointer, gconstpointer, int size);
+
+MonoRangeCopyFunction
+mono_gc_get_range_copy_func (void);
 
 
 /* helper for the managed alloc support */
+ICALL_EXPORT
 MonoString *
 ves_icall_string_alloc (int length);
 
@@ -411,11 +439,15 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
 
+G_BEGIN_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
+
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
 
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
+
+G_END_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean mono_log_finalizers;
@@ -426,4 +458,3 @@ extern gboolean mono_do_not_finalize;
 extern gchar **mono_do_not_finalize_class_names;
 
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
-

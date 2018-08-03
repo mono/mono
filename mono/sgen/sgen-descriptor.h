@@ -15,6 +15,8 @@
 
 #include <mono/sgen/sgen-conf.h>
 
+
+
 /*
  * ######################################################################
  * ########  GC descriptors
@@ -317,6 +319,7 @@ sgen_gc_descr_has_references (SgenDescriptor desc)
 			}	\
 		}	\
 	} while (0)
+
 
 
 #endif

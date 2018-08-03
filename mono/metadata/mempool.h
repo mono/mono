@@ -7,6 +7,7 @@
 
 #include <mono/utils/mono-publib.h>
 
+//  is not always available here. Fallback to what works.
 MONO_BEGIN_DECLS
 
 typedef struct _MonoMemPool MonoMemPool;

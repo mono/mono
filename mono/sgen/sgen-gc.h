@@ -394,7 +394,7 @@ enum {
 
 extern SgenHashTable sgen_roots_hash [ROOT_TYPE_NUM];
 
-int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg)
+int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
 	MONO_PERMIT (need (sgen_lock_gc));
 void sgen_deregister_root (char* addr)
 	MONO_PERMIT (need (sgen_lock_gc));
@@ -702,7 +702,7 @@ typedef struct _SgenRememberedSet {
 	void (*wbarrier_object_copy) (GCObject* obj, GCObject *src);
 	void (*wbarrier_generic_nostore) (gpointer ptr);
 	void (*record_pointer) (gpointer ptr);
-	void (*wbarrier_range_copy) (gpointer dest, gpointer src, int count);
+	void (*wbarrier_range_copy) (gpointer dest, gconstpointer src, int count);
 
 	void (*start_scan_remsets) (void);
 
@@ -723,7 +723,7 @@ void mono_gc_wbarrier_generic_nostore (gpointer ptr);
 void mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value);
 void mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value);
 
-void sgen_wbarrier_range_copy (gpointer _dest, gpointer _src, int size);
+void sgen_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size);
 
 static inline SgenDescriptor
 sgen_obj_get_descriptor (GCObject *obj)
@@ -1171,6 +1171,8 @@ sgen_dummy_use (gpointer v)
 #error "Implement sgen_dummy_use for your compiler"
 #endif
 }
+
+
 
 #endif /* HAVE_SGEN_GC */
 

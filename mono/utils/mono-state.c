@@ -431,7 +431,7 @@ mono_native_state_add_prologue (JsonWriter *writer)
 
 	mono_native_state_add_memory (writer);
 
-	const char *assertion_msg = g_get_assertion_message ();
+	char *assertion_msg = g_get_assertion_message ();
 	if (assertion_msg != NULL) {
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "assertion_message");
