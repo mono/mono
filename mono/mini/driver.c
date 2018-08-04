@@ -2236,7 +2236,7 @@ mono_main (int argc, char* argv[])
  * mono_w32process_get_path -> mono_w32process_get_name, and the name is not
  * necessarily a path instead of just the program name
  */
-#if defined (_AIX) || defined (__FreeBSD__)
+#if defined (_AIX)
 	/*
 	 * mono_w32process_get_path on these can only return a name, not a path;
 	 * which may not be good for us if the mono command name isn't on $PATH,
