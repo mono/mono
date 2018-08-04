@@ -43,7 +43,17 @@
  *   
  */  
 # ifdef THREADS
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
    void GC_noop1 GC_PROTO((word));
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #  ifdef PCR_OBSOLETE	/* Faster, but broken with multiple lwp's	*/
 #    include  "th/PCR_Th.h"
 #    include  "th/PCR_ThCrSec.h"
