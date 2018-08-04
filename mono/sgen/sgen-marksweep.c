@@ -708,7 +708,7 @@ alloc_obj (GCVTable vtable, size_t size, gboolean pinned, gboolean has_reference
 	/* FIXME: assumes object layout */
 	*(GCVTable*)obj = vtable;
 
-	sgen_total_allocated_major += block_obj_sizes [size_index]; 
+	sgen_total_allocated_major += block_obj_sizes [size_index];
 
 	return (GCObject *)obj;
 }
@@ -2609,7 +2609,8 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 					goto next_object;
 			}
 
-			GCObject *object = (GCObject*)obj;
+			GCObject *object;
+			object = (GCObject*)obj;
 
 			if (small_objects) {
 				HEAVY_STAT (++scanned_objects);

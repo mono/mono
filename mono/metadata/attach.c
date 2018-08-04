@@ -103,7 +103,7 @@ static gboolean needs_to_start, started;
 
 static void transport_connect (void);
 
-static gsize WINAPI receiver_thread (void *arg);
+static mono_thread_start_return_t MONO_STDCALL receiver_thread (void *arg);
 
 static void transport_start_receive (void);
 
@@ -498,7 +498,7 @@ transport_start_receive (void)
 	g_assert (receiver_thread_handle);
 }
 
-static gsize WINAPI
+static mono_thread_start_return_t MONO_STDCALL
 receiver_thread (void *arg)
 {
 	ERROR_DECL (error);

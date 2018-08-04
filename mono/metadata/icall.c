@@ -103,14 +103,10 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
-#endif
-
-/* icalls are defined ICALL_EXPORT so they are not static */
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
 #endif
 
 //#define MONO_DEBUG_ICALLARRAY
@@ -143,9 +139,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
+ICALL_EXPORT
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
@@ -6714,9 +6710,11 @@ ves_icall_System_Environment_GetEnvironmentVariable_native (const gchar *utf8_na
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
+
 G_BEGIN_DECLS
 gchar ***_NSGetEnviron(void);
 G_END_DECLS
+
 #define environ (*_NSGetEnviron())
 #else
 static char *mono_environ[1] = { NULL };

@@ -615,7 +615,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
-	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	cfg->cbb = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 	first_bb = cfg->cbb;
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -1560,7 +1560,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						MONO_INST_NEW (cfg, iargs [2], OP_MOVE);
 						iargs [2]->dreg = ins->sreg1;
 
-						dest = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
+						dest = mono_emit_jit_icall (cfg, (gpointer)ves_icall_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
 						MonoClass *array_class = mono_class_create_array (ins->inst_newa_class, 1);
@@ -1577,7 +1577,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						if (managed_alloc)
 							dest = mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 						else
-							dest = mono_emit_jit_icall (cfg, ves_icall_array_new_specific, iargs);
+							dest = mono_emit_jit_icall (cfg,  (gpointer)ves_icall_array_new_specific, iargs);
 						dest->dreg = ins->dreg;
 					}
 					break;
@@ -1637,7 +1637,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
-	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	cfg->cbb = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 	first_bb = cfg->cbb;
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -1817,7 +1817,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					MONO_ADD_INS (cfg->cbb, cmp);
 					
 					MONO_INST_NEW (cfg, br, OP_IBNE_UN);
-					br->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * 2);
+					br->inst_many_bb = (MonoBasicBlock**)mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * 2);
 					br->inst_true_bb = ins->next->inst_true_bb;
 					br->inst_false_bb = ins->next->inst_false_bb;
 					MONO_ADD_INS (cfg->cbb, br);
@@ -1969,7 +1969,7 @@ mono_local_emulate_ops (MonoCompile *cfg)
 				}
 
 				/* We emit the call on a separate dummy basic block */
-				cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+				cfg->cbb = (MonoBasicBlock*)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 				first_bb = cfg->cbb;
 
 				call = mono_emit_jit_icall_by_info (cfg, bb->real_offset, info, args);

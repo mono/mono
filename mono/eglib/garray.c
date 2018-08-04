@@ -52,7 +52,7 @@ ensure_capacity (GArrayPriv *priv, guint capacity)
 	
 	new_capacity = (capacity + 63) & ~63;
 	
-	priv->array.data = g_realloc (priv->array.data, element_length (priv, new_capacity));
+	priv->array.data = (char*)g_realloc (priv->array.data, element_length (priv, new_capacity));
 	
 	if (priv->clear_) {
 		memset (element_offset (priv, priv->capacity),

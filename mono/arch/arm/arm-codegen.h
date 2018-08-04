@@ -21,7 +21,28 @@ typedef unsigned int armword_t;
 	void __inline _arm_emit(arminstr_t** p, arminstr_t i) {**p = i; (*p)++;}
 #	define ARM_EMIT(p, i) _arm_emit((arminstr_t**)&p, (arminstr_t)(i))
 #else
-#	define ARM_EMIT(p, i) do { arminstr_t *__ainstrp = (void*)(p); *__ainstrp = (arminstr_t)(i); (p) = (void*)(__ainstrp+1);} while (0)
+// p varies in type between guint8* and arminstr_t*.
+//
+// The challenge here is to increment it past one arminstr_t.
+//
+// In portable C and C++ (or ifdef __cplusplus).
+//
+// Without taking its address, which would impede optimization.
+//
+// For example, this works except for the address-taken.
+// 	define ARM_EMIT(p, i) do { *(arminstr_t*)(p) = (arminstr_t)(i); *(void**)&(p) = (arminstr_t*)(p) + 1; } while (0)
+//
+// This works but is not valid C+, unless p is void*.
+//	define ARM_EMIT(p, i) do { arminstr_t *__ainstrp = (void*)(p); *__ainstrp = (arminstr_t)(i); (p) = (void*)(__ainstrp+1);} while (0)
+//
+// Solution is to depend on *p being of limited type/size -- not void* and evenly divisible into arminstr.
+// void* probably does work with gcc/clang but is non-standard and non-msvc.
+//
+// FIXME MONO_STATIC_ASSERT.
+#	define ARM_EMIT(p, i) do { g_assert ((sizeof (arminstr_t) % sizeof (*(p))) == 0); \
+			           g_assert (sizeof (arminstr_t) >= sizeof (*(p))); \
+			           *(arminstr_t*)(p) = (arminstr_t)(i); \
+				   (p) += sizeof (arminstr_t) / sizeof (*(p)); } while (0)
 #endif
 
 #if defined(_MSC_VER) && !defined(ARM_NOIASM)

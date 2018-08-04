@@ -46,13 +46,15 @@
 // NOTE: Running this code depends on the ABI to pass a struct
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
-#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
+#ifdef __cplusplus
+#define MONO_TYPE_SAFE_HANDLES 0 // FIXMEcxx
+#elif defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
 #else
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
-G_BEGIN_DECLS
+
 
 /*
 Handle stack.
@@ -112,7 +114,7 @@ struct _HandleChunk {
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
 };
 
-typedef struct {
+typedef struct HandleStack {
 	HandleChunk *top; //alloc from here
 	HandleChunk *bottom; //scan from here
 #ifdef MONO_HANDLE_TRACK_SP
@@ -161,8 +163,10 @@ gpointer mono_handle_new_interior (gpointer rawptr, const char *owner);
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check);
 gboolean mono_handle_stack_is_empty (HandleStack *stack);
+G_BEGIN_DECLS // FIXMEcxx this is for tests compiled as C
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
+G_END_DECLS   // FIXMEcxx this is for tests compiled as C
 MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
 void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
@@ -177,7 +181,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 #ifdef MONO_HANDLE_TRACK_SP
 	gpointer sptop = &stackmark;
 #endif
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	stackmark->size = handles->top->size;
 	stackmark->chunk = handles->top;
 	stackmark->interior_size = handles->interior->size;
@@ -190,7 +194,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 static inline void
 mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	HandleChunk *old_top = stackmark->chunk;
 	old_top->size = stackmark->size;
 	mono_memory_write_barrier ();
@@ -243,9 +247,9 @@ Icall macros
 // Return a raw pointer from coop handle.
 #define HANDLE_FUNCTION_RETURN_OBJ(HANDLE)			\
 	do {							\
-		void* __result = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return __result;				\
+		return __result; \
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -324,9 +328,9 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 	do {	\
 		CLEAR_STACK_WATERMARK	\
 		CLEAR_ICALL_COMMON	\
-		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
+		MONO_HANDLE_AUTO __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return __ret;	\
+		return __ret; \
 	} while (0); } while (0)
 
 /*
@@ -344,7 +348,9 @@ Handle macros/functions
 #ifdef MONO_HANDLE_TRACK_OWNER
 #define STRINGIFY_(x) #x
 #define STRINGIFY(x) STRINGIFY_(x)
-#define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
+// Functions can provide a local with this name to override the default.
+extern char const * const mono_handle_track_owner;
+#define HANDLE_OWNER (mono_handle_track_owner ? mono_handle_track_owner : (__FILE__ ":" STRINGIFY (__LINE__)))
 #endif
 
 
@@ -376,7 +382,15 @@ Handle macros/functions
  * #endif
  */
 
+// NOTE: C++11 language dependency. A C++98 solution is available too.
+#ifdef __cplusplus
+#define MONO_HANDLE_AUTO auto
+#else
+#define MONO_HANDLE_AUTO gpointer
+#endif
+
 #if MONO_TYPE_SAFE_HANDLES
+
 #define TYPED_HANDLE_DECL(TYPE)							\
 	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
 					 TYPED_HANDLE_NAME (TYPE),		\
@@ -396,10 +410,12 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 }
 
 #else
+
 #define TYPED_HANDLE_DECL(TYPE)						\
 	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
 	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE)
+
 #endif
 
 /*
@@ -772,6 +788,6 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
 
-G_END_DECLS
+
 
 #endif /* __MONO_HANDLE_H__ */

@@ -84,7 +84,7 @@ g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GEr
 		return FALSE;
 	}
 
-	str = g_malloc (st.st_size + 1);
+	str = (char*)g_malloc (st.st_size + 1);
 	offset = 0;
 	do {
 		nread = read (fd, str + offset, st.st_size - offset);
@@ -159,7 +159,7 @@ g_get_current_dir (void)
 	gboolean fail;
 	
 	do {
-		buffer = g_realloc (buffer, s);
+		buffer = (char*)g_realloc (buffer, s);
 		r = getcwd (buffer, s);
 		fail = (r == NULL && errno == ERANGE);
 		if (fail) {

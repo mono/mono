@@ -60,4 +60,3 @@ mono_stopwatch_elapsed_ms (MonoStopwatch *w)
 }
 
 #endif /* __UTILS_MONO_TIME_H__ */
-
