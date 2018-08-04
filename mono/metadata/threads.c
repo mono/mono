@@ -1826,7 +1826,8 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
  * Gets the priority of the given thread.
  * @return: The priority of the given thread.
  */
-int/*MonoThreadPriority FIXMEcplusplus*/
+ICALL_EXPORT
+int/*MonoThreadPriority FIXMEcxx*/
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
 	int priority;
@@ -1847,8 +1848,9 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  *
  * Sets the priority of the given thread.
  */
+ICALL_EXPORT
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int/*MonoThreadPriority FIXMEcplusplus*/ priority, MonoError *error)
+ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int/*MonoThreadPriority FIXMEcxx*/ priority, MonoError *error)
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -2402,14 +2404,14 @@ ves_icall_System_Threading_Thread_MemoryBarrier (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error)
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), state);
 }
 
 void
-ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error)
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), state);

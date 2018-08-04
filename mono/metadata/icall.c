@@ -139,9 +139,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
+ICALL_EXPORT
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")

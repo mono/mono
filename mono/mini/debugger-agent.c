@@ -5336,7 +5336,7 @@ decode_vtype (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 			continue;
 		if (mono_field_is_deleted (f))
 			continue;
-		err = decode_value (f->type, domain, mono_vtype_get_field_addr (addr, f), buf, &buf, limit);
+		err = decode_value (f->type, domain, (guint8*)mono_vtype_get_field_addr (addr, f), buf, &buf, limit);
 		if (err != ERR_NONE)
 			return err;
 		nfields --;

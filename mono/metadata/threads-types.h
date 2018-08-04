@@ -313,31 +313,17 @@ ICALL_EXPORT
 void
 ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ICALL_EXPORT
-void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
-
-ICALL_EXPORT
-void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error);
-
-ICALL_EXPORT
-guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
-=======
-=======
-ICALL_EXPORT
->>>>>>> [cxx] Add many missing ICALL_EXPORT.
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error);
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error);
 
 ICALL_EXPORT
 void
-ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcplusplus*/ state, MonoError *error);
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error);
 
 ICALL_EXPORT
 guint32 //FIXMEcxx MonoThreadState
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
->>>>>>> [cxx] Enums are not ints and are dealt with either by casting or providing operator overloads.
 
 ICALL_EXPORT
 gint8 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr);
