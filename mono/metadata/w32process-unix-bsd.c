@@ -99,17 +99,18 @@ mono_w32process_get_path (pid_t pid)
 #else
 	gsize path_len = PATH_MAX + 1;
 	gchar path [PATH_MAX + 1];
-	gint mib [3];
+	gint mib [4];
+	mib [0] = CTL_KERN;
 #if defined (__NetBSD__)
-	mib [0] = KERN_PROC_ARGS;
-	mib [1] = -1
-	mib [2] = KERN_PROC_PATHNAME;
+	mib [1] = KERN_PROC_ARGS;
+	mib [2] = pid;
+	mib [3] = KERN_PROC_PATHNAME;
 #else // FreeBSD
-	mib [0] = KERN_PROC;
-	mib [1] = KERN_PROC_PATHNAME;
-	mib [2] = -1;
+	mib [1] = KERN_PROC;
+	mib [2] = KERN_PROC_PATHNAME;
+	mib [3] = pid;
 #endif
-	if (sysctl (mib, 3, path, &path_len, NULL, 0) < 0) {
+	if (sysctl (mib, 4, path, &path_len, NULL, 0) < 0) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: sysctl() failed: %d", __func__, errno);
 		return NULL;
 	} else {
