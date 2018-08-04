@@ -1811,7 +1811,6 @@ mono_enable_interp (const char *opts)
 #ifndef MONO_ARCH_INTERPRETER_SUPPORTED
 	g_error ("--interpreter not supported on this architecture.\n");
 #endif
-	mono_interp_threads_suspend_check ();
 
 }
 
@@ -2667,6 +2666,9 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 	default:
 		g_error ("Unknown execution-mode %d", mode);
 	}
+	
+	if (mono_use_interpreter)
+		mono_interp_threads_suspend_check ();
 }
 
 /**
