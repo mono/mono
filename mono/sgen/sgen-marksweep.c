@@ -2504,7 +2504,7 @@ scan_card_table_for_block (MSBlockInfo *block, CardTableScanType scan_type, Scan
 	 * size is no longer required to be a multiple of the system page size.
 	 */
 #ifndef SGEN_HAVE_OVERLAPPING_CARDS
-	guint8 *cards_copy = alloca (sizeof (guint8) * CARDS_PER_BLOCK);
+	guint8 *cards_copy = (guint8 *)alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 #endif
 	guint8 *cards_preclean = (guint8*)alloca (sizeof (guint8) * CARDS_PER_BLOCK);
 	gboolean small_objects;
