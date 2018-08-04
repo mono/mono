@@ -19,6 +19,8 @@
 #define MONO_END_DECLS   /* nothing */
 #endif
 
+MONO_BEGIN_DECLS
+
 /* VS 2010 and later have stdint.h */
 #if defined(_MSC_VER)
 
@@ -101,12 +103,8 @@ typedef struct {
 	void *(*calloc)      (size_t count, size_t size);
 } MonoAllocatorVTable;
 
-MONO_BEGIN_DECLS
-
 MONO_API mono_bool
 mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
-
-MONO_END_DECLS
 
 #define MONO_CONST_RETURN const
 
@@ -193,5 +191,7 @@ MONO_END_DECLS
 // This matches exactly windows.h LPTHREAD_START_ROUTINE.
 // Unsigned long is always 32bits on Windows, and pointer-sized otherwise.
 typedef unsigned long (MONO_STDCALL * MonoThreadStart)(void*);
+
+MONO_END_DECLS
 
 #endif /* __MONO_PUBLIB_H__ */
