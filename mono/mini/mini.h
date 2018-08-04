@@ -2719,11 +2719,6 @@ enum {
 	SIMD_PREFETCH_MODE_2,
 };
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> f5bbb7830b8... [cxx] Alternate approach to extern "C", now that most of the tree is C++ (in branch cplusplus.2).
 const char *mono_arch_xregname (int reg);
 guint32     mono_arch_cpu_enumerate_simd_versions (void);
 

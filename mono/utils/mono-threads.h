@@ -72,14 +72,6 @@ typedef void* mono_native_thread_return_t;
 
 #endif /* #ifdef HOST_WIN32 */
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-G_BEGIN_DECLS
-
->>>>>>> 7891722a25d... [cxx] 1. Favor G_BEGIN_DECLS / G_END_DECLS in non-public headers (and .c files), which is the overwhelmingly common case.
-=======
->>>>>>> f5bbb7830b8... [cxx] Alternate approach to extern "C", now that most of the tree is C++ (in branch cplusplus.2).
 typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
