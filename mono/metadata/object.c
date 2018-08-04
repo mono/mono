@@ -3502,7 +3502,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 	MonoObject *o;
 	MonoClass *klass;
 	MonoVTable *vtable = NULL;
-	gchar *v;
+	gpointer v;
 	gboolean is_static = FALSE;
 	gboolean is_ref = FALSE;
 	gboolean is_literal = FALSE;
@@ -3584,7 +3584,6 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 		static MonoMethod *m;
 		gpointer args [2];
 		gpointer *ptr;
-		gpointer v;
 
 		if (!m) {
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
@@ -3623,7 +3622,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 
 	o = mono_object_new_checked (domain, klass, error);
 	return_val_if_nok (error, NULL);
-	v = (gpointer)mono_object_get_data (o);
+	v = mono_object_get_data (o);
 
 	if (is_literal) {
 		get_default_field_value (domain, field, v, error);
@@ -6795,7 +6794,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
@@ -6860,7 +6859,7 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		mono_gc_wbarrier_value_copy (data, value, 1, klass);
