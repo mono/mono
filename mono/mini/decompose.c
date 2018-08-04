@@ -615,7 +615,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
-	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	cfg->cbb = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 	first_bb = cfg->cbb;
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -1637,7 +1637,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 	 * Create a dummy bblock and emit code into it so we can use the normal 
 	 * code generation macros.
 	 */
-	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	cfg->cbb = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 	first_bb = cfg->cbb;
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
