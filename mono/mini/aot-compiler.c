@@ -2424,7 +2424,7 @@ arch_emit_imt_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
 	guint8 *buf, *code;
 	guint8 *labels [16];
 
-	code = buf = g_malloc (256);
+	code = buf = (guint8*)g_malloc (256);
 
 	/* Allocate a temporary stack slot */
 	x86_push_reg (code, X86_EAX);
