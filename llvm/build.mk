@@ -18,6 +18,7 @@ SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
 
 $(eval $(call ValidateVersionTemplate,llvm,LLVM))
+$(eval $(call ValidateVersionTemplate,llvm36,LLVM36))
 
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
@@ -69,6 +70,10 @@ install-llvm: build-llvm | $(LLVM_PREFIX)
 .PHONY: download-llvm
 download-llvm:
 	wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf -
+
+.PHONY: download-llvm36
+download-llvm36:
+	wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm/llvm-osx64-$(NEEDED_LLVM36_VERSION).tar.gz | tar xzf -
 
 .PHONY: clean-llvm
 clean-llvm:
