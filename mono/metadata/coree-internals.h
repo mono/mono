@@ -6,10 +6,10 @@
 #ifndef __MONO_COREE_INTERNALS_H__
 #define __MONO_COREE_INTERNALS_H__
 
-#ifdef HOST_WIN32
-
 #include <config.h>
 #include <glib.h>
+
+#ifdef HOST_WIN32
 #include <windows.h>
 
 BOOL STDMETHODCALLTYPE
@@ -39,6 +39,7 @@ HMODULE WINAPI
 MonoLoadImage (LPCWSTR FileName);
 
 void mono_coree_set_act_ctx (const char *file_name);
-
 #endif /* HOST_WIN32 */
+
 #endif /* __MONO_COREE_INTERNALS_H__ */
+
