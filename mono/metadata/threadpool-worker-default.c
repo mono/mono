@@ -453,7 +453,7 @@ worker_try_unpark (void)
 	return res;
 }
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 worker_thread (gpointer unused)
 {
 	MonoInternalThread *thread;
@@ -666,7 +666,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 
 static void hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTransition transition);
 
-static gsize WINAPI
+static gulong MONO_STDCALL
 monitor_thread (gpointer unused)
 {
 	MonoInternalThread *internal;

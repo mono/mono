@@ -14,6 +14,8 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/method-builder.h>
 
+
+
 MONO_API void
 mono_method_builder_ilgen_init (void);
 
@@ -49,6 +51,10 @@ mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethod
 
 void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func);
+
+#ifdef __cplusplus
+#define mono_mb_emit_icall(mb, function) mono_mb_emit_icall ((mb), (gpointer)(function))
+#endif
 
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);
@@ -121,5 +127,7 @@ mono_mb_set_clauses (MonoMethodBuilder *mb, int num_clauses, MonoExceptionClause
 
 void
 mono_mb_set_param_names (MonoMethodBuilder *mb, const char **param_names);
+
+
 
 #endif

@@ -10,7 +10,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 
-G_BEGIN_DECLS
+
 
 typedef struct _MonoSimpleBasicBlock MonoSimpleBasicBlock;
 
@@ -31,8 +31,21 @@ mono_basic_block_free (MonoSimpleBasicBlock *bb);
 
 /*This function is here because opcodes.h is a public header*/
 
-#ifndef __MONO_METADATA_OPCODES_H__
-typedef enum _MonoOpcodeEnum MonoOpcodeEnum;
+// FIXME duplication
+#ifndef MonoOpcodeEnum
+#define MonoOpcodeEnum MonoOpcodeEnum
+
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
+	MONO_ ## a,
+
+typedef enum MonoOpcodeEnum {
+	MonoOpcodeEnum_Invalid = -1,
+#include "mono/cil/opcode.def"
+	MONO_CEE_LAST
+} MonoOpcodeEnum;
+
+#undef OPDEF
+
 #endif
 
 int
@@ -41,7 +54,7 @@ mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, 
 int
 mono_opcode_size (const unsigned char *ip, const unsigned char *end);
 
-G_END_DECLS
+
 
 #endif  /* __MONO_METADATA_BASIC_BLOCK_H__ */
 

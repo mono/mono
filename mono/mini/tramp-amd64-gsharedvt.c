@@ -81,7 +81,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL: {
 			int slot_count = (src >> SLOT_COUNT_SHIFT) & SLOT_COUNT_MASK;
 			int j;
-			gpointer *addr = caller [source_reg];
+			gpointer *addr = (gpointer*)caller [source_reg];
 
 			for (j = 0; j < slot_count; ++j)
 				callee [dest_reg + j] = addr [j];
@@ -89,21 +89,21 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
-			guint8 *addr = caller [source_reg];
+			guint8 *addr = (guint8*)caller [source_reg];
 
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u1) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
-			guint16 *addr = caller [source_reg];
+			guint16 *addr = (guint16*)caller [source_reg];
 
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u2) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U4: {
-			guint32 *addr = caller [source_reg];
+			guint32 *addr = (guint32*)caller [source_reg];
 
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u4) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
@@ -117,7 +117,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 
 	//Can't handle for now
 	if (info->vcall_offset != -1){
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		DEBUG_AMD64_GSHAREDVT_PRINT ("target is a vcall at offset %d\n", info->vcall_offset / 8);
 		if (G_UNLIKELY (!this_obj))
@@ -153,7 +153,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 
 	buf_len = 32;
 
-	start = code = mono_domain_code_reserve (domain, buf_len);
+	start = code = (guint8*)mono_domain_code_reserve (domain, buf_len);
 
 	amd64_mov_reg_imm (code, AMD64_RAX, arg);
 	amd64_jump_code (code, addr);
@@ -182,7 +182,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int reg_area_size;
 
 	buf_len = 2048;
-	buf = code = mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
+	buf = code = (guint8*)mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/*
 	 * We are being called by an gsharedvt arg trampoline, the info argument is in AMD64_RAX.

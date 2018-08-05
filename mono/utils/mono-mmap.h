@@ -62,7 +62,7 @@ MONO_API void* mono_file_map   (size_t length, int flags, int fd, guint64 offset
 // Last two parameters are optional.
 // This is mono_file_map but with optionally returning an error message.
 // See https://github.com/mono/mono/issues/8225.
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || defined (__cplusplus) // FIXMEcxx is this needed?
 MONO_API
 #endif
 void*
@@ -94,4 +94,3 @@ typedef void  (*mono_file_map_release_fn) (void *addr);
 MONO_API void mono_file_map_set_allocator (mono_file_map_alloc_fn alloc, mono_file_map_release_fn release);
 
 #endif /* __MONO_UTILS_MMAP_H__ */
-
