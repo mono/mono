@@ -6,6 +6,7 @@
 #define _MONO_METADATA_EXCEPTION_INTERNALS_H_
 
 #include <glib.h>
+
 #include <mono/metadata/object.h>
 #include <mono/metadata/handle.h>
 #include <mono/utils/mono-error.h>
