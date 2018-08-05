@@ -15,7 +15,7 @@
 
 #include <mono/utils/mono-publib.h>
 
-
+MONO_BEGIN_DECLS
 
 /* GC toggle ref support */
 
@@ -28,6 +28,6 @@ typedef enum {
 MONO_API void mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (MonoObject *obj));
 MONO_API void mono_gc_toggleref_add (MonoObject *object, mono_bool strong_ref);
 
-
+MONO_END_DECLS
 
 #endif
