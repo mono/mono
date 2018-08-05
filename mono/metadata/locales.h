@@ -12,6 +12,7 @@
 #define _MONO_METADATA_LOCALES_H_
 
 #include <glib.h>
+
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/icalls.h>
 
