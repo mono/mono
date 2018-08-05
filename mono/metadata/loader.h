@@ -105,3 +105,4 @@ mono_method_get_header_checked (MonoMethod *method, MonoError *error);
 MONO_END_DECLS
 
 #endif
+
