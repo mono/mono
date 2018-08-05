@@ -30,7 +30,7 @@ typedef struct {
 	MonoTraceOperation *ops;
 } MonoCallSpec;
 
-
+G_BEGIN_DECLS
 
 MONO_PROFILER_API gboolean mono_callspec_parse		(const char *options,
 							 MonoCallSpec *spec,
@@ -42,6 +42,6 @@ MONO_PROFILER_API gboolean mono_callspec_eval		(MonoMethod *method,
 							 const MonoCallSpec *spec);
 void			   mono_callspec_set_assembly	(MonoAssembly *assembly);
 
-
+G_END_DECLS
 
 #endif /* __MONO_CALLSPEC_H__ */
