@@ -19,7 +19,7 @@
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/reflection.h>
 
-
+G_BEGIN_DECLS
 
 typedef struct _MonoMethodBuilder MonoMethodBuilder;
 
@@ -50,7 +50,7 @@ mono_mb_add_data (MonoMethodBuilder *mb, gpointer data);
 void
 mono_install_method_builder_callbacks (MonoMethodBuilderCallbacks *cb);
 
-
+G_END_DECLS
 
 #endif /* __MONO_METHOD_BUILDER_H__ */
 
