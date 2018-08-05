@@ -5,10 +5,10 @@
 #ifndef _MONO_METADATA_W32PROCESS_INTERNALS_H_
 #define _MONO_METADATA_W32PROCESS_INTERNALS_H_
 
-#ifndef HOST_WIN32
-
 #include <config.h>
 #include <glib.h>
+
+#ifndef HOST_WIN32
 
 typedef struct {
 	guint32 dwSignature; /* Should contain 0xFEEF04BD on le machines */
@@ -64,4 +64,5 @@ guint32
 mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len);
 
 #endif /* HOST_WIN32 */
+
 #endif /* _MONO_METADATA_W32PROCESS_INTERNALS_H_ */
