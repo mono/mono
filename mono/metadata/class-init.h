@@ -10,7 +10,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/class-internals.h>
 
-
+MONO_BEGIN_DECLS
 
 void
 mono_classes_init (void);
@@ -66,10 +66,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 void
 mono_class_setup_interface_offsets (MonoClass *klass);
 
-G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_class_setup_vtable (MonoClass *klass);
-G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_class_setup_parent    (MonoClass *klass, MonoClass *parent);
@@ -89,6 +87,6 @@ mono_class_setup_runtime_info (MonoClass *klass, MonoDomain *domain, MonoVTable 
 MonoClass *
 mono_class_create_array_fill_type (void);
 
-
+MONO_END_DECLS
 
 #endif
