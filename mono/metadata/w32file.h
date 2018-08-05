@@ -21,6 +21,8 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/icalls.h>
 
+G_BEGIN_DECLS
+
 /* This is a copy of System.IO.FileAccess */
 typedef enum {
 	FileAccess_Read=0x01,
@@ -276,7 +278,7 @@ ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const
 MONO_API MONO_RT_EXTERNAL_ONLY gint64
 mono_filesize_from_path (MonoString *path);
 
-gint64
+extern gint64
 mono_filesize_from_fd (int fd);
 
 #endif
@@ -500,6 +502,6 @@ mono_w32file_get_drive_type (const gunichar2 *root_path_name);
 gboolean
 mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
 
-
+G_END_DECLS
 
 #endif /* _MONO_METADATA_W32FILE_H_ */
