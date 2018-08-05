@@ -15,6 +15,7 @@
 #ifdef HAVE_SGEN_GC
 
 #include "mono/utils/mono-compiler.h"
+
 #include "mono/sgen/sgen-gc.h"
 #include "mono/metadata/sgen-bridge.h"
 
@@ -73,4 +74,5 @@ void sgen_bridge_set_dump_prefix (const char *prefix);
 void sgen_init_bridge (void);
 
 #endif
+
 #endif
