@@ -27,7 +27,6 @@ namespace CppSharp
 
         static string MonodroidDir = @"";
         static string AndroidNdkPath = @"";
-        static string MaccoreDir = @"";
         static string TargetDir = @"";
         static bool GenIOS;
 
@@ -224,13 +223,7 @@ namespace CppSharp
             if (Directory.Exists (MonodroidDir))
                 SetupAndroidTargets();
 
-            string maccoreDir;
-            if (!Directory.Exists (MaccoreDir) &&
-                GetParentSubDirectoryPath ("maccore", out maccoreDir)) {
-                MaccoreDir = Path.Combine (maccoreDir);
-            }
-
-            if (Directory.Exists(MaccoreDir) || GenIOS)
+            if (GenIOS)
                 SetupiOSTargets();
 
             if (Targets.Count == 0)
@@ -298,7 +291,6 @@ namespace CppSharp
                 { "abi=", "ABI triple to generate", v => Abis.Add(v) },
                 { "o|out=", "output directory", v => OutputDir = v },
                 { "outfile=", "output directory", v => OutputFile = v },
-                { "maccore=", "include directory", v => MaccoreDir = v },
                 { "monodroid=", "top monodroid directory", v => MonodroidDir = v },
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
                 { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
@@ -368,14 +360,11 @@ namespace CppSharp
                 break;
             case TargetPlatform.WatchOS:
             case TargetPlatform.iOS: {
-                if (!string.IsNullOrEmpty (TargetDir)) {
-                    targetBuild = TargetDir;
-                } else {
-                    string targetPath = Path.Combine (MaccoreDir, "builds");
-                    if (!Directory.Exists (MonoDir))
-                        MonoDir = Path.GetFullPath (Path.Combine (targetPath, "../../mono"));
-                    targetBuild = Path.Combine(targetPath, target.Build);
-                }
+                if (string.IsNullOrEmpty (TargetDir)) {
+                    Console.Error.WriteLine ("The --targetdir= option is required when targeting ios.");
+					Environment.Exit (1);
+				}
+				targetBuild = TargetDir;
                 break;
             }
             case TargetPlatform.OSX:
