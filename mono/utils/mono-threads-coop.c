@@ -604,8 +604,15 @@ mono_threads_suspend_policy (void)
 void
 mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy)
 {
-	g_assert (new_policy);
-	threads_suspend_policy = new_policy;
+	switch (new_policy) {
+	case MONO_THREADS_SUSPEND_FULL_COOP:
+	case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
+	case MONO_THREADS_SUSPEND_HYBRID:
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	threads_suspend_policy = (char)new_policy;
 	g_warning ("Overriding suspend policy.  Using %s suspend.", mono_threads_suspend_policy_name ());
 }
 
