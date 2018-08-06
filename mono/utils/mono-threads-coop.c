@@ -603,9 +603,8 @@ mono_threads_suspend_validate_policy (MonoThreadsSuspendPolicy policy)
 	case MONO_THREADS_SUSPEND_HYBRID:
 		return policy;
 	default:
-		break;
+		g_error ("Invalid suspend policy %d.", (int)policy);
 	}
-	g_error ("Invalid suspend policy %d.", (int)policy);
 }
 
 /**
