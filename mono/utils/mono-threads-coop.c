@@ -515,7 +515,7 @@ threads_suspend_policy_default (void)
 	return MONO_THREADS_SUSPEND_FULL_COOP;
 #elif defined (ENABLE_HYBRID_SUSPEND)
 	return MONO_THREADS_SUSPEND_HYBRID;
-#elif
+#else
 	return 0; /* unset */
 #endif
 }
