@@ -1,3 +1,4 @@
+// -*- indent-tabs-mode:nil -*-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -362,9 +363,9 @@ namespace CppSharp
             case TargetPlatform.iOS: {
                 if (string.IsNullOrEmpty (TargetDir)) {
                     Console.Error.WriteLine ("The --targetdir= option is required when targeting ios.");
-					Environment.Exit (1);
-				}
-				targetBuild = TargetDir;
+                    Environment.Exit (1);
+                }
+                targetBuild = TargetDir;
                 break;
             }
             case TargetPlatform.OSX:
