@@ -50,7 +50,7 @@ package-llvm-$(1): | $$(dir $(3))
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/ios-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)" \
-		LLVM_VERSION="$(5)"
+		LLVM_RELEASE="$(5)"
 
 .PHONY: download-llvm-$(1)
 download-llvm-$(1): $(4)
