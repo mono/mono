@@ -904,19 +904,19 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	thread->current_appcontext = NULL;
 
 	/*
-	 * thread->synch_cs can be NULL if this was called after
-	 * ves_icall_System_Threading_InternalThread_Thread_free_internal.
-	 * This can happen only during shutdown.
-	 * The shutting_down flag is not always set, so we can't assert on it.
+	 * This should be alive until after the reference queue runs the
+	 * post-free cleanup function
 	 */
-	if (thread->synch_cs)
-		LOCK_THREAD (thread);
+	while (TRUE) {
+		guint32 old_state = thread->state;
 
-	thread->state |= ThreadState_Stopped;
-	thread->state &= ~ThreadState_Background;
+		guint32 new_state = old_state;
+		new_state |= ThreadState_Stopped;
+		new_state &= ~ThreadState_Background;
 
-	if (thread->synch_cs)
-		UNLOCK_THREAD (thread);
+		if (mono_atomic_cas_i32 ((gint32 *)&thread->state, new_state, old_state) == old_state)
+			break;
+	}
 
 	/*
 	An interruption request has leaked to cleanup. Adjust the global counter.
@@ -1612,12 +1612,9 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	CloseHandle (this_obj->native_handle);
 #endif
 
-	if (this_obj->synch_cs) {
-		MonoCoopMutex *synch_cs = this_obj->synch_cs;
-		this_obj->synch_cs = NULL;
-		mono_coop_mutex_destroy (synch_cs);
-		g_free (synch_cs);
-	}
+	// Taken care of by reference queue, but we should
+	// zero it out
+	this_obj->synch_cs = NULL;
 
 	if (this_obj->name) {
 		void *name = this_obj->name;
