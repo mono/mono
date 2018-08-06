@@ -46,9 +46,20 @@ System/test-%.cs:
 
 run-tests: $(TEST_CASES:.cs=.exe)
 
+LINKER_PROFILE_OPTIONS :=
+
+# Should be in sync with runtime sdk flags
+ifeq ($(PROFILE),monotouch)
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com
+endif
+
+ifeq ($(PROFILE),wasm)
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature sre
+endif
+
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH) $(LINKER_PROFILE_OPTIONS)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 
 .NOTPARALLEL:
@@ -88,12 +99,14 @@ bcl-size-diff:
 	$(Q) $(MAKE) bcl-size-current PROFILE=net_4_x   || true
 	$(Q) $(MAKE) bcl-size-current PROFILE=monotouch || true
 	$(Q) $(MAKE) bcl-size-current PROFILE=monodroid || true
+	$(Q) $(MAKE) bcl-size-current PROFILE=wasm || true
 	@echo "Checking size differences..."
 	@mkdir -p sizediff
 	$(Q) git diff HEAD "*.csv" > temp.patch
 	$(Q) git show HEAD:./net_4_x-linked-size.csv > net_4_x-linked-size.old.csv
 	$(Q) git show HEAD:./monotouch-linked-size.csv > monotouch-linked-size.old.csv
 	$(Q) git show HEAD:./monodroid-linked-size.csv > monodroid-linked-size.old.csv
+	$(Q) git show HEAD:./wasm-linked-size.csv > wasm-linked-size.old.csv
 	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "/@olddata-net_4_x@/r net_4_x-linked-size.old.csv" -e "/@olddata-net_4_x@/d" -e "/@olddata-monotouch@/r monotouch-linked-size.old.csv" -e "/@olddata-monotouch@/d" -e "/@olddata-monodroid@/r monodroid-linked-size.old.csv" -e "/@olddata-monodroid@/d" -e "/@newdata-net_4_x@/r net_4_x-linked-size.csv" -e "/@newdata-net_4_x@/d" -e "/@newdata-monotouch@/r monotouch-linked-size.csv" -e "/@newdata-monotouch@/d" -e "/@newdata-monodroid@/r monodroid-linked-size.csv" -e "/@newdata-monodroid@/d" linked-size-diff.html.in > sizediff/index.html
 	$(Q) if [ -s temp.patch ]; then echo "Error: Found BCL Linked Size differences, see mcs/tools/linker/sizediff/index.html."; rm -f temp.patch *.old.csv; exit 1; else echo "No differences found."; rm -f temp.patch *.old.csv; fi
 
