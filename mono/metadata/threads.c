@@ -148,6 +148,9 @@ static GHashTable *contexts = NULL;
 /* Cleanup queue for contexts. */
 static MonoReferenceQueue *context_queue;
 
+/* Cleanup queue for threads. */
+static MonoReferenceQueue *thread_queue;
+
 /*
  * Threads which are starting up and they are not in the 'threads' hash yet.
  * When mono_thread_attach_internal is called for a thread, it will be removed from this hash table.
@@ -453,7 +456,17 @@ thread_get_tid (MonoInternalThread *thread)
 	return MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
 }
 
-static void ensure_synch_cs_set (MonoInternalThread *thread)
+static void
+free_synch_cs (void *user_data)
+{
+	MonoCoopMutex *synch_cs = user_data;
+	g_assert (synch_cs);
+	mono_coop_mutex_destroy (synch_cs);
+	g_free (synch_cs);
+}
+
+static void
+ensure_synch_cs_set (MonoInternalThread *thread)
 {
 	MonoCoopMutex *synch_cs;
 
@@ -469,6 +482,10 @@ static void ensure_synch_cs_set (MonoInternalThread *thread)
 		/* Another thread must have installed this CS */
 		mono_coop_mutex_destroy (synch_cs);
 		g_free (synch_cs);
+	} else {
+		// If we were the ones to initialize with this synch_cs variable, we
+		// should associate this one with our cleanup
+		mono_gc_reference_queue_add (thread_queue, &thread->obj, synch_cs);
 	}
 }
 
@@ -632,8 +649,7 @@ create_internal_thread_object (void)
 	/* only possible failure mode is OOM, from which we don't exect to recover */
 	mono_error_assert_ok (error);
 
-	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
-	mono_coop_mutex_init_recursive (thread->synch_cs);
+	ensure_synch_cs_set (thread);
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
@@ -3159,6 +3175,8 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 
 	mono_thread_start_cb = start_cb;
 	mono_thread_attach_cb = attach_cb;
+
+	thread_queue = mono_gc_reference_queue_new (free_synch_cs);
 }
 
 static gpointer
