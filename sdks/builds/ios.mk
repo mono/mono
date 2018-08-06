@@ -308,10 +308,14 @@ ifndef IGNORE_PACKAGE_LLVM
 	./download-llvm.sh $(LLVM_HASH) $(LLVM_JENKINS_LANE)
 	touch $@
 
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH)
+.stamp-ios-llvm-$(LLVM36_HASH):
+	./download-llvm36.sh $(LLVM36_HASH) $(LLVM36_JENKINS_LANE)
+	touch $@
+
+build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH) .stamp-ios-llvm-$(LLVM36_HASH)
 
 clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 .stamp-ios-llvm-$(LLVM_HASH)
+	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 ../out/ios-llvm36-32 .stamp-ios-llvm-$(LLVM_HASH) .stamp-ios-llvm-$(LLVM36_HASH)
 
 else
 
@@ -405,6 +409,6 @@ endef
 
 ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
 ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
-$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
