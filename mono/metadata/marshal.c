@@ -48,6 +48,8 @@
 #include "mono/metadata/handle.h"
 #include "mono/metadata/object-internals.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/abi-details.h"
+#include "mono/metadata/custom-attrs-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -2186,7 +2188,7 @@ emit_delegate_invoke_internal_noilgen (MonoMethodBuilder *mb, MonoMethodSignatur
 MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method)
 {
-	MonoMethodSignature *sig, *static_sig, *invoke_sig;
+	MonoMethodSignature *sig, *invoke_sig;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	GHashTable *cache;
@@ -2262,7 +2264,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 			return res;
 		cache_key = method->klass;
 	} else if (static_method_with_first_arg_bound) {
-		cache = get_cache (&get_method_image (method)->delegate_bound_static_invoke_cache,
+		cache = get_cache (&get_method_image (target_method)->delegate_bound_static_invoke_cache,
 						   (GHashFunc)mono_signature_hash, 
 						   (GCompareFunc)mono_metadata_signature_equal);
 		/*
@@ -2300,10 +2302,10 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		cache_key = sig;
 	}
 
-	static_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
-	static_sig->hasthis = 0;
-	if (!static_method_with_first_arg_bound)
-		invoke_sig = static_sig;
+	if (!static_method_with_first_arg_bound) {
+		invoke_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
+		invoke_sig->hasthis = 0;
+	}
 
 	if (static_method_with_first_arg_bound)
 		name = mono_signature_to_name (invoke_sig, "invoke_bound");
@@ -5526,7 +5528,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 		info->fields [j].field = field;
 
-		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == sizeof (MonoObject)) &&
+		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == MONO_ABI_SIZEOF (MonoObject)) &&
 			(strcmp (mono_field_get_name (field), "$PRIVATE$") == 0)) {
 			/* This field is a hack inserted by MCS to empty structures */
 			continue;
@@ -5548,7 +5550,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 			size = mono_marshal_type_size (field->type, info->fields [j].mspec, 
 						       &align, TRUE, m_class_is_unicode (klass));
 			min_align = MAX (align, min_align);
-			info->fields [j].offset = field->offset - sizeof (MonoObject);
+			info->fields [j].offset = field->offset - MONO_ABI_SIZEOF (MonoObject);
 			info->native_size = MAX (info->native_size, info->fields [j].offset + size);
 			break;
 		}	
@@ -5556,7 +5558,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	}
 
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_PTR)
-		info->native_size = sizeof (gpointer);
+		info->native_size = TARGET_SIZEOF_VOID_P;
 
 	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		info->native_size = MAX (native_size, info->native_size);
@@ -5652,8 +5654,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		align = &tmp;
 
 	if (t->byref) {
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	}
 
 	switch (t->type){
@@ -5676,8 +5678,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_ARRAY:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_R4:
 		*align = 4;
 		return 4;
@@ -5690,8 +5692,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		return 8;
 	case MONO_TYPE_GENERICINST:
 		if (!mono_type_generic_inst_is_valuetype (t)) {
-			*align = sizeof (gpointer);
-			return sizeof (gpointer);
+			*align = TARGET_SIZEOF_VOID_P;
+			return TARGET_SIZEOF_VOID_P;
 		} 
 		/* Fall through */
 	case MONO_TYPE_TYPEDBYREF:
@@ -5775,7 +5777,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 	case MONO_NATIVE_FUNC:
 	case MONO_NATIVE_LPSTRUCT:
 		*align = MONO_ABI_ALIGNOF (gpointer);
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_NATIVE_STRUCT: 
 		klass = mono_class_from_mono_type (type);
 		if (klass == mono_defaults.object_class &&
@@ -5807,8 +5809,8 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		return mspec->data.array_data.num_elem * esize;
 	}
 	case MONO_NATIVE_CUSTOM:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 		break;
 	case MONO_NATIVE_CURRENCY:
 	case MONO_NATIVE_VBBYREFSTR:

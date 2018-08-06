@@ -8,20 +8,28 @@ LIB_REFS = System System.Core System.Xml Mono.Cecil
 
 TEST_CASES := \
 	mscorlib/test-array.cs \
-	mscorlib/test-remoting.cs \
+	mscorlib/test-exception-01.cs \
+	mscorlib/test-locale-01.cs \
+	mscorlib/test-reflection-01.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
+	mscorlib/test-task-01.cs \
 	System/test-security.cs
+
+ifdef MOBILE_PROFILE
+TEST_CASES += \
+# Requires linker fix
+#	mscorlib/test-crypto-01.cs
+endif
 
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \
+	mscorlib/test-remoting.cs \
 	mscorlib/test-reflection.cs
 endif
 
-SIZE_TEST_CASES := \
-	link-all/link-all.cs \
-	link-sdk/link-sdk.cs
+SIZE_TEST_CASES :=
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
@@ -36,15 +44,6 @@ mscorlib/test-%.cs:
 System/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
-link-all/link-all.cs: $(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll
-	$(TESTS_COMPILER) -resource:Tests/LinkerDescriptor/link-all.xml -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/I18N.MidEast.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/I18N.Other.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ComponentModel.Composition.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll $(wildcard Tests/link-all/*.cs) /out:Tests/$(@:.cs=.exe)
-
-link-sdk/link-sdk.cs: $(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll
-	$(TESTS_COMPILER) -resource:Tests/LinkerDescriptor/link-sdk.xml -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.Linq.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ComponentModel.Composition.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ServiceModel.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ServiceModel.Web.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Json.dll  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/Mono.Data.Sqlite.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll $(wildcard Tests/link-sdk/*.cs) /out:Tests/$(@:.cs=.exe)
-
-$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll:
-	$(MAKE) -C $(topdir)/tools/nunit-lite
-
 run-tests: $(TEST_CASES:.cs=.exe)
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
@@ -54,7 +53,7 @@ TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-a
 
 .NOTPARALLEL:
 
-System/test-%.exe mscorlib/test-%.exe link-all/link-%.exe link-sdk/link-%.exe:
+System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@

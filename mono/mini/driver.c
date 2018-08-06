@@ -76,6 +76,7 @@ static FILE *mini_stats_fd;
 static void mini_usage (void);
 static void mono_runtime_set_execution_mode (MonoEEMode mode);
 static int mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
+static void mono_interp_threads_suspend_check (void);
 
 #ifdef HOST_WIN32
 /* Need this to determine whether to detach console */
@@ -162,8 +163,10 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 
 	/* call out to cpu detection code here that sets the defaults ... */
 	if (cpu_opts) {
+#ifndef MONO_CROSS_COMPILE
 		opt |= mono_arch_cpu_optimizations (&exclude);
 		opt &= ~exclude;
+#endif
 	}
 	if (!p)
 		return opt;
@@ -1808,6 +1811,7 @@ mono_enable_interp (const char *opts)
 #ifndef MONO_ARCH_INTERPRETER_SUPPORTED
 	g_error ("--interpreter not supported on this architecture.\n");
 #endif
+
 }
 
 /**
@@ -2254,10 +2258,7 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if SIZEOF_VOID_P == 8 && (defined(TARGET_ARM) || defined(TARGET_X86))
-       fprintf (stderr, "Can't cross-compile on 64-bit platforms to 32-bit architecture.\n");
-       exit (1);
-#elif SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+#if TARGET_SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
        fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif
@@ -2665,6 +2666,9 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 	default:
 		g_error ("Unknown execution-mode %d", mode);
 	}
+	
+	if (mono_use_interpreter)
+		mono_interp_threads_suspend_check ();
 }
 
 /**
@@ -2703,6 +2707,16 @@ mono_jit_set_trace_options (const char* options)
 		return FALSE;
 	mono_jit_trace_calls = trace_opt;
 	return TRUE;
+}
+
+static void
+mono_interp_threads_suspend_check (void)
+{
+	// FIXME: Add safepoint support and GC thread state transitions to the interpreter
+	if (mono_threads_are_safepoints_enabled ()) {
+		g_warning ("Interpreter does not support safepoints. Cannot use %s suspend with the interpreter.", mono_threads_suspend_policy_name ());
+		mono_threads_suspend_override_policy (MONO_THREADS_SUSPEND_FULL_PREEMPTIVE);
+	}
 }
 
 /**

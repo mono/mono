@@ -20,10 +20,9 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-using Mono.Options;
-
-namespace Mono.AssemblyCompare
+namespace Mono.ApiTools
 {
+#if !EXCLUDE_DRIVER
 	class Driver
 	{
 		static int Main (string [] args)
@@ -32,16 +31,16 @@ namespace Mono.AssemblyCompare
 			string output = null;
 			List<string> extra = null;
 
-			var options = new OptionSet {
-				{ "h|help", "Show this help", v => showHelp = true },
+			var options = new Mono.Options.OptionSet {
+				{ "h|?|help", "Show this help", v => showHelp = true },
 				{ "o|out|output=", "XML diff file output (omit for stdout)", v => output = v },
 			};
 
 			try {
 				extra = options.Parse (args);
-			} catch (OptionException e) {
+			} catch (Mono.Options.OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
-				showHelp = true;
+				extra = null;
 			}
 
 			if (showHelp || extra == null || extra.Count != 2) {
@@ -50,38 +49,86 @@ namespace Mono.AssemblyCompare
 				Console.WriteLine ("Available options:");
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
-				return 1;
+				return showHelp ? 0 : 1;
 			}
 
-			XMLAssembly ms = CreateXMLAssembly (extra [0]);
-			XMLAssembly mono = CreateXMLAssembly (extra [1]);
-			XmlDocument doc = ms.CompareAndGetDocument (mono);
+			TextWriter outputStream = null;
+			try {
+				if (!string.IsNullOrEmpty (output))
+					outputStream = new StreamWriter (output);
 
-			StreamWriter outputStream = null;
-			if (!string.IsNullOrEmpty (output))
-				outputStream = new StreamWriter (output);
+				ApiDiff.Generate(extra[0], extra[1], outputStream ?? Console.Out);
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				return 1;
+			} finally {
+				outputStream?.Dispose ();
+			}
+			return 0;
+		}
+	}
+#endif
 
-			using (XmlTextWriter writer = new XmlTextWriter (outputStream ?? Console.Out)) {
+	public static class ApiDiff
+	{
+		public static void Generate (string firstInfo, string secondInfo, TextWriter outStream)
+		{
+			if (firstInfo == null)
+				throw new ArgumentNullException (nameof (firstInfo));
+			if (secondInfo == null)
+				throw new ArgumentNullException (nameof (secondInfo));
+
+			XMLAssembly ms = CreateXMLAssembly (firstInfo);
+			XMLAssembly mono = CreateXMLAssembly (secondInfo);
+
+			Generate (ms, mono, outStream);
+		}
+
+		public static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream)
+		{
+			if (firstInfo == null)
+				throw new ArgumentNullException (nameof (firstInfo));
+			if (secondInfo == null)
+				throw new ArgumentNullException (nameof (secondInfo));
+
+			XMLAssembly ms = CreateXMLAssembly (firstInfo);
+			XMLAssembly mono = CreateXMLAssembly (secondInfo);
+
+			Generate (ms, mono, outStream);
+		}
+
+		static void Generate (XMLAssembly first, XMLAssembly second, TextWriter outStream)
+		{
+			if (first == null)
+				throw new ArgumentNullException (nameof (first));
+			if (second == null)
+				throw new ArgumentNullException (nameof (second));
+			if (outStream == null)
+				throw new ArgumentNullException (nameof (outStream));
+
+			XmlDocument doc = first.CompareAndGetDocument (second);
+
+			using (XmlTextWriter writer = new XmlTextWriter (outStream)) {
 				writer.Formatting = Formatting.Indented;
 				doc.WriteTo (writer);
 			}
-
-			return 0;
 		}
 
 		static XMLAssembly CreateXMLAssembly (string file)
 		{
+			using (var stream = File.OpenRead(file)) {
+				return CreateXMLAssembly (stream);
+			}
+		}
+
+		static XMLAssembly CreateXMLAssembly (Stream stream)
+		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load (File.OpenRead (file));
+			doc.Load (stream);
 
 			XmlNode node = doc.SelectSingleNode ("/assemblies/assembly");
 			XMLAssembly result = new XMLAssembly ();
-			try {
-				result.LoadData (node);
-			} catch (Exception e) {
-				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", file, e.Message, e);
-				Environment.Exit (1);
-			}
+			result.LoadData (node);
 
 			return result;
 		}
@@ -451,7 +498,9 @@ namespace Mono.AssemblyCompare
 			}
 
 			if (atts == null || atts.Name != "namespaces") {
-				Console.Error.WriteLine ("Warning: no namespaces found!");
+#if !EXCLUDE_DRIVER
+				Console.Error.WriteLine (@"Warning: no namespaces found for {name}");
+#endif
 				return;
 			}
 
@@ -584,12 +633,14 @@ namespace Mono.AssemblyCompare
 			name = node.Attributes  ["name"].Value;
 			XmlNode classes = node.FirstChild;
 			if (classes == null) {
-				Console.Error.WriteLine ("Warning: no classes for {0}", node.Attributes  ["name"]);
+#if !EXCLUDE_DRIVER
+				Console.Error.WriteLine ($"Warning: no classes for {name}");
+#endif
 				return;
 			}
 
 			if (classes.Name != "classes")
-				throw new FormatException ("Expecting <classes>. Got <" + classes.Name + ">");
+				throw new FormatException ($"Expecting <classes>. Got <{classes.Name}> (namespace {name}).");
 
 			types = (XMLClass []) LoadRecursive (classes.ChildNodes, typeof (XMLClass));
 		}
@@ -719,7 +770,6 @@ namespace Mono.AssemblyCompare
 
 			XmlNode child = node.FirstChild;
 			if (child == null) {
-				// Console.Error.WriteLine ("Empty class {0} {1}", name, type);
 				return;
 			}
 
@@ -781,8 +831,7 @@ namespace Mono.AssemblyCompare
 				return;
 
 			if (child.Name != "classes") {
-				Console.WriteLine ("name: {0} type: {1} {2}", name, type, child.NodeType);
-				throw new FormatException ("Expecting <classes>. Got <" + child.Name + ">");
+				throw new FormatException ($"Expecting <classes>. Got <{child.Name}> ({type} {name}).");
 			}
 
 			nested = (XMLClass []) LoadRecursive (child.ChildNodes, typeof (XMLClass));

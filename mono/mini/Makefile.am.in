@@ -696,6 +696,9 @@ libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
+# These are public headers.
+# They should not use glib.h, G_BEGIN_DECLS, guint, etc.
+# They should be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS.
 libmonoinclude_HEADERS = jit.h
 
 CSFLAGS = -unsafe -nowarn:0219,0169,0414,0649,0618
@@ -826,8 +829,9 @@ gsharedvtcheck:
 hybridcheck:
 	$(MAKE) fullaotcheck HYBRID=1
 
+# FIXME: force preemptive suspend while interpreter doesn't support coop/hybird suspend
 fullaotmixedcheck:
-	$(MAKE) fullaotcheck MIXED=1
+	$(MAKE) fullaotcheck MIXED=1 MONO_THREADS_SUSPEND=preemptive
 
 fullaot_regtests = $(regtests)
 fullaot_testing_deps = generics-variant-types.dll TestDriver.dll MemoryIntrinsics.dll

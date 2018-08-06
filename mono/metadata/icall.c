@@ -87,6 +87,7 @@
 #include <mono/metadata/w32mutex.h>
 #include <mono/metadata/w32semaphore.h>
 #include <mono/metadata/w32event.h>
+#include <mono/metadata/abi-details.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
@@ -367,7 +368,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 
 	va = mono_object_handle_pin_unbox (value, &value_gchandle);
 
-	vsize = mono_class_instance_size (vc) - sizeof (MonoObject);
+	vsize = mono_class_value_size (vc, NULL);
 
 	if (et == MONO_TYPE_VALUETYPE && m_class_is_enumtype (m_class_get_byval_arg (ec)->data.klass))
 		et = mono_class_enum_basetype (m_class_get_byval_arg (ec)->data.klass)->type;
@@ -1150,7 +1151,7 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	klass = mono_object_class (this_obj);
 
 	if (m_class_is_enumtype (klass) && mono_class_enum_basetype (klass) && mono_class_enum_basetype (klass)->type == MONO_TYPE_I4)
-		return (*(gint32*)((guint8*)this_obj + sizeof (MonoObject)) == *(gint32*)((guint8*)that + sizeof (MonoObject)));
+		return *(gint32*)mono_object_get_data (this_obj) == *(gint32*)mono_object_get_data (that);
 
 	/*
 	 * Do the comparison for fields of primitive type and return a result if
@@ -1938,7 +1939,7 @@ ves_icall_MonoField_GetFieldOffset (MonoReflectionFieldHandle field, MonoError *
 	MonoClassField *class_field = MONO_HANDLE_GETVAL (field, field);
 	mono_class_setup_fields (class_field->parent);
 
-	return class_field->offset - sizeof (MonoObject);
+	return class_field->offset - MONO_ABI_SIZEOF (MonoObject);
 }
 
 ICALL_EXPORT MonoReflectionTypeHandle
@@ -6667,15 +6668,19 @@ ves_icall_System_Environment_GetEnvironmentVariable_native (const gchar *utf8_na
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
+G_BEGIN_DECLS
 gchar ***_NSGetEnviron(void);
+G_END_DECLS
 #define environ (*_NSGetEnviron())
 #else
 static char *mono_environ[1] = { NULL };
 #define environ mono_environ
 #endif /* defined (TARGET_OSX) */
 #else
+G_BEGIN_DECLS
 extern
 char **environ;
+G_END_DECLS
 #endif
 #endif
 #endif
@@ -8474,4 +8479,34 @@ ICALL_EXPORT void
 ves_icall_System_GC_RecordPressure (gint64 value, MonoError *error)
 {
 	mono_gc_add_memory_pressure (value);
+}
+
+ICALL_EXPORT gint64
+ves_icall_System_Diagnostics_Stopwatch_GetTimestamp (void)
+{
+	return mono_100ns_ticks ();
+}
+
+ICALL_EXPORT gint64
+ves_icall_System_Threading_Timer_GetTimeMonotonic (void)
+{
+	return mono_100ns_ticks ();
+}
+
+ICALL_EXPORT gint64
+ves_icall_System_DateTime_GetSystemTimeAsFileTime (void)
+{
+	return mono_100ns_datetime ();
+}
+
+ICALL_EXPORT int
+ves_icall_System_Threading_Thread_SystemMaxStackSize (void)
+{
+	return mono_thread_info_get_system_max_stack_size ();
+}
+
+ICALL_EXPORT void
+ves_icall_System_Threading_Thread_YieldInternal (void)
+{
+	mono_threads_platform_yield ();
 }
