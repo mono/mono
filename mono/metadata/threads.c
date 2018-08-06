@@ -3054,8 +3054,6 @@ thread_detach (MonoThreadInfo *info)
 	internal = (MonoInternalThread*) mono_gchandle_get_target (gchandle);
 	g_assert (internal);
 
-	mono_gchandle_free (gchandle);
-
 	mono_thread_detach_internal (internal);
 }
 
