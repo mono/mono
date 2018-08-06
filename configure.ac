@@ -2974,6 +2974,17 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	AC_MSG_CHECKING(for GSS/GSS.h)
+	AC_TRY_COMPILE([
+		#include <GSS/GSS.h>
+	], [
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([
 		#ifdef HAVE_LINUX_IN_H
