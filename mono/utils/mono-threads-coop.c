@@ -597,7 +597,7 @@ mono_threads_suspend_policy (void)
 		else
 			policy = MONO_THREADS_SUSPEND_FULL_PREEMPTIVE;
 		
-		g_assert (policy > 0);
+		g_assert ((int)policy > 0);
 		threads_suspend_policy = policy;
 	}
 	return policy;
