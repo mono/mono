@@ -516,9 +516,8 @@ threads_suspend_policy_default (void)
 #else
 #if defined (ENABLE_HYBRID_SUSPEND)
 	return MONO_THREADS_SUSPEND_HYBRID;
-#else
-	return 0; /* unset */
-#endif
+#elif
+	return (MonoThreadsSuspendPolicy)0; /* unset */
 #endif
 }
 
@@ -545,7 +544,7 @@ hasenv_obsolete (const char *name, const char* newval)
 static MonoThreadsSuspendPolicy
 threads_suspend_policy_getenv_compat (void)
 {
-	MonoThreadsSuspendPolicy policy = 0;
+	MonoThreadsSuspendPolicy policy = (MonoThreadsSuspendPolicy)0;
 	if (hasenv_obsolete ("MONO_ENABLE_COOP", "coop") || hasenv_obsolete ("MONO_ENABLE_COOP_SUSPEND", "coop")) {
 		g_assertf (!hasenv_obsolete ("MONO_ENABLE_HYBRID_SUSPEND", "hybrid"),
 			   "Environment variables set to enable both hybrid and cooperative suspend simultaneously");
@@ -558,7 +557,7 @@ threads_suspend_policy_getenv_compat (void)
 static MonoThreadsSuspendPolicy
 threads_suspend_policy_getenv (void)
 {
-	MonoThreadsSuspendPolicy policy = 0;
+	MonoThreadsSuspendPolicy policy = (MonoThreadsSuspendPolicy)0;
 	if (g_hasenv ("MONO_THREADS_SUSPEND")) {
 		gchar *str = g_getenv ("MONO_THREADS_SUSPEND");
 		if (!strcmp (str, "coop"))
@@ -574,13 +573,13 @@ threads_suspend_policy_getenv (void)
 	return policy;
 }
 
-static MonoThreadsSuspendPolicy threads_suspend_policy = -1;
+static MonoThreadsSuspendPolicy threads_suspend_policy = (MonoThreadsSuspendPolicy)-1;
 
 static MonoThreadsSuspendPolicy
 mono_threads_suspend_policy (void)
 {
 	MonoThreadsSuspendPolicy policy = threads_suspend_policy;
-	if (G_UNLIKELY (policy == -1)) {
+	if (G_UNLIKELY (policy == (MonoThreadsSuspendPolicy)-1)) {
 		// thread suspend policy:
 		// if the MONO_THREADS_SUSPEND env is set, use it.
 		// otherwise if there's a compiled-in default, use it.
