@@ -66,6 +66,7 @@ class MonoMasterPackage(Package):
         Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit build pass
             self.local_configure_flags.extend (['--build=x86_64-apple-darwin11.2.0', '--disable-boehm'])
+            self.local_configure_flags.extend (['--enable-hybrid-suspend'])
 
         if arch == 'darwin-32':  # 32-bit build pass
             self.local_configure_flags.extend (['--build=i386-apple-darwin11.2.0'])
