@@ -594,6 +594,20 @@ mono_threads_suspend_policy (void)
 	return (MonoThreadsSuspendPolicy)policy;
 }
 
+static MonoThreadsSuspendPolicy
+mono_threads_suspend_validate_policy (MonoThreadsSuspendPolicy policy)
+{
+	switch (policy) {
+	case MONO_THREADS_SUSPEND_FULL_COOP:
+	case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
+	case MONO_THREADS_SUSPEND_HYBRID:
+		return policy;
+	default:
+		break;
+	}
+	g_error ("Invalid suspend policy %d.", (int)policy);
+}
+
 /**
  * mono_threads_suspend_override_policy:
  *
@@ -604,15 +618,7 @@ mono_threads_suspend_policy (void)
 void
 mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy)
 {
-	switch (new_policy) {
-	case MONO_THREADS_SUSPEND_FULL_COOP:
-	case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
-	case MONO_THREADS_SUSPEND_HYBRID:
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-	threads_suspend_policy = (char)new_policy;
+	threads_suspend_policy = (char)mono_threads_suspend_validate_policy (new_policy);
 	g_warning ("Overriding suspend policy.  Using %s suspend.", mono_threads_suspend_policy_name ());
 }
 
