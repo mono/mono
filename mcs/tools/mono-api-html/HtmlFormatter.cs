@@ -303,7 +303,7 @@ namespace Mono.ApiTools {
 		public override void Diff (TextWriter output, ApiChange apichange)
 		{
 			output.Write ("<div {0}>", apichange.Breaking ? "data-is-breaking" : "data-is-non-breaking");
-			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
+			foreach (var line in apichange.Member.ToString ().Split (new[] { "\r\n", "\n" }, 0))) {
 				output.Write ('\t');
 				output.WriteLine (line);
 			}
