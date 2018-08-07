@@ -87,6 +87,8 @@ typedef struct _MonoAssemblyName MonoAssemblyName;
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
+extern MonoObject* mono_wasm_get_object_property (int js_handle, MonoString *method, int *is_exception);
+extern MonoObject* mono_wasm_set_object_property (int js_handle, MonoString *method, MonoObject *value, int createIfNotExist, int hasOwnProperty, int *is_exception);
 
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
@@ -119,7 +121,6 @@ MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, 
 MonoAssemblyName* mono_assembly_name_new (const char *name);
 void mono_assembly_name_free (MonoAssemblyName *aname);
 const char* mono_image_get_name (MonoImage *image);
-const char* mono_class_get_name (MonoClass *klass);
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
@@ -130,8 +131,6 @@ MonoClass* mono_get_object_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
-
-
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -210,6 +209,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
+	mono_add_internal_call ("WebAssembly.Runtime::GetObjectProperty", mono_wasm_get_object_property);
+	mono_add_internal_call ("WebAssembly.Runtime::SetObjectProperty", mono_wasm_set_object_property);
 
 	// Blazor specific custom routines - see dotnet_support.js for backing code		
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
@@ -276,6 +277,16 @@ mono_wasm_string_from_js (const char *str)
 }
 
 
+static int
+class_is_task (MonoClass *klass)
+{
+	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && 
+		(!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+		return 1;
+
+	return 0;
+}
+
 #define MARSHAL_TYPE_INT 1
 #define MARSHAL_TYPE_FP 2
 #define MARSHAL_TYPE_STRING 3
@@ -316,8 +327,9 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			return MARSHAL_TYPE_VT;
 		if (mono_class_is_delegate (klass))
 			return MARSHAL_TYPE_DELEGATE;
-		if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+		if (class_is_task(klass))
 			return MARSHAL_TYPE_TASK;
+
 		return MARSHAL_TYPE_OBJECT;
 	}
 }

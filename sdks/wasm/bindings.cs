@@ -23,6 +23,10 @@ namespace WebAssembly {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object InvokeJSWithArgs (int js_obj_handle, string method, object[] _params, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object GetObjectProperty(int js_obj_handle, string propertyName, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object SetObjectProperty(int js_obj_handle, string propertyName, object value, bool createIfNotExists, bool hasOwnProperty, out int exceptional_result);
 
 		public static string InvokeJS (string str)
 		{
@@ -45,6 +49,36 @@ namespace WebAssembly {
 
 			return (int)(IntPtr)obj.Handle;
 		}
+
+        static int UnBindJSObject(int js_id)
+        {
+            if (bound_objects.ContainsKey(js_id))
+            {
+                var obj = bound_objects[js_id];
+                bound_objects.Remove(js_id);
+                return (int)(IntPtr)obj.Handle;
+            }
+
+            return 0;
+
+        }
+
+        static int UnBindJSObjectAndFree(int js_id)
+        {
+            if (bound_objects.ContainsKey(js_id))
+            {
+                var obj = bound_objects[js_id];
+                bound_objects.Remove(js_id);
+                var gCHandle = obj.Handle;
+                gCHandle.Free();
+                obj.JSHandle = -1;
+                return (int)(IntPtr)gCHandle;
+            }
+
+            return 0;
+
+        }
+
 
 		static object CreateTaskSource (int js_id) {
 			return new TaskCompletionSource<object> ();
@@ -132,6 +166,7 @@ namespace WebAssembly {
 				case TypeCode.UInt16:
 				case TypeCode.Int32:
 				case TypeCode.UInt32:
+				case TypeCode.Boolean:
 					res += "i";
 					break;
 				case TypeCode.Int64:
@@ -191,10 +226,13 @@ namespace WebAssembly {
 		public JSException (string msg) : base (msg) {}
 	}
 
-	public class JSObject {
+	public class JSObject : IDisposable {
 		internal int JSHandle;
 		internal GCHandle Handle;
 		internal object RawObject;
+
+        // Flag: Has Dispose already been called?
+        bool disposed = false;
 
 		internal JSObject (int js_handle) {
 			this.JSHandle = js_handle;
@@ -215,8 +253,68 @@ namespace WebAssembly {
 			return res;
 		}
 
+
+        public object GetObjectProperty(string expr)
+        {
+
+            int exception = 0;
+            var propertyValue = Runtime.GetObjectProperty(JSHandle, expr, out exception);
+
+            if (exception != 0)
+                throw new JSException((string)propertyValue);
+
+            return propertyValue;
+
+        }
+
+        public void SetObjectProperty(string expr, object value, bool createIfNotExists = true, bool hasOwnProperty = false)
+        {
+
+            int exception = 0;
+            var setPropResult = Runtime.SetObjectProperty(JSHandle, expr, value, createIfNotExists, hasOwnProperty, out exception);
+            if (exception != 0)
+                throw new JSException($"Error setting {expr} on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
+
+        }
+
+
 		public override string ToString () {
 			return $"(js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})";
 		}
+
+
+        protected void FreeHandle()
+        {
+
+            Runtime.InvokeJS("BINDING.mono_wasm_free_handle(" + JSHandle + ");");
+        }
+
+		public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+
+                // Free any other managed objects here.
+                //
+            }
+
+            // Free any unmanaged objects here.
+            //
+            FreeHandle();
+
+            disposed = true;
+        }
 	}
 }
