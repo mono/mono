@@ -172,8 +172,6 @@ libmono_system_native_la_SOURCES = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_errno.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
-	pal_gssapi.c \
-	pal_gssapi.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
@@ -188,6 +186,12 @@ libmono_system_native_la_SOURCES = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_random.h \
 	pal-icalls.h \
 	pal-icalls.c
+
+if ENABLE_GSS
+libmono_system_native_la_SOURCES = \
+	pal_gssapi.c \
+	pal_gssapi.h
+endif
 
 # Add back CXX_REMOVE_CFLAGS to keep this as C until/unless https://github.com/dotnet/corefx/pull/31342.
 libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition @CXX_REMOVE_CFLAGS@
