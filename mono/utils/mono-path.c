@@ -272,8 +272,8 @@ mono_path_filename_in_basedir (const char *filename, const char *basedir)
 	size_t filename_length = strlen (filename);
 	size_t basedir_length = strlen (basedir);
 
-	g_assert (mono_path_contains_separator (filename,  filename_length));
-	g_assert (mono_path_contains_separator (basedir, basedir_length));
+	g_assertf (mono_path_contains_separator (filename, filename_length), "%s", filename);
+	g_assertf (mono_path_contains_separator (basedir, basedir_length), "%s", basedir);
 
 	mono_path_remove_trailing_path_separators (filename, &filename_length);
 	mono_path_remove_trailing_path_separators (basedir, &basedir_length);
