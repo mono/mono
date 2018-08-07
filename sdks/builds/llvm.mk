@@ -6,8 +6,9 @@ $(dir $(LLVM_SRC)):
 .stamp-llvm-download: | setup-llvm-llvm32 setup-llvm-llvm64
 	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm
 	$(RM) -r $(TOP)/sdks/out/ios-llvm32 $(TOP)/sdks/out/ios-llvm64
-	mv $(TOP)/llvm/usr32 $(TOP)/sdks/out/ios-llvm32
-	mv $(TOP)/llvm/usr64 $(TOP)/sdks/out/ios-llvm64
+	mv $(TOP)/llvm/llvm-tmp/usr32 $(TOP)/sdks/out/ios-llvm32
+	mv $(TOP)/llvm/llvm-tmp/usr64 $(TOP)/sdks/out/ios-llvm64
+	rm -rf $(TOP)/llvm/llvm-tmp
 	touch $@
 
 LLVM36_SRC?=$(TOP)/sdks/builds/toolchains/llvm36
@@ -18,7 +19,9 @@ $(dir $(LLVM36_SRC)):
 .stamp-llvm36-download:
 	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm36
 	$(RM) -r $(TOP)/sdks/out/ios-llvm36-32
-	mv $(TOP)/llvm/usr32 $(TOP)/sdks/out/ios-llvm36-32
+	mv $(TOP)/llvm/llvm36-tmp/usr32 $(TOP)/sdks/out/ios-llvm36-32
+	cp $(TOP)/llvm/llvm36-tmp/usr64/bin/{llc,opt} $(TOP)/sdks/out/ios-llvm36-32/bin/
+	rm -rf $(TOP)/llvm/llvm36-tmp
 	touch $@
 
 ##
