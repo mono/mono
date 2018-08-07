@@ -814,7 +814,6 @@ HANDLES(ICALL(RT_22, "get_DeclaringType", ves_icall_RuntimeType_get_DeclaringTyp
 HANDLES(ICALL(RT_23, "get_Name", ves_icall_RuntimeType_get_Name))
 HANDLES(ICALL(RT_24, "get_Namespace", ves_icall_RuntimeType_get_Namespace))
 HANDLES(ICALL(RT_25, "get_core_clr_security_level", ves_icall_RuntimeType_get_core_clr_security_level))
-HANDLES(ICALL(RT_32, "get_metadata_token", ves_icall_reflection_get_token))
 HANDLES(ICALL(RT_26, "make_array_type", ves_icall_RuntimeType_make_array_type))
 HANDLES(ICALL(RT_27, "make_byref_type", ves_icall_RuntimeType_make_byref_type))
 
