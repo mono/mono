@@ -14,60 +14,57 @@
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
 
-#define double_complex	mono_double_complex
-#define creal 		mono_double_complex_creal
-#define cimag 		mono_double_complex_cimag
-#define cabs 		mono_double_complex_cabs
-
-typedef struct double_complex {
+typedef struct MonoComplex {
 	double real;
 	double imag;
-} double_complex;
+} MonoComplex;
 
-static inline
-double_complex mono_double_complex_make(gdouble re, gdouble im)
+static inline MonoComplex
+mono_complex_make (double re, double im)
 {
-	double_complex a = { re, im };
+	MonoComplex const a = { re, im };
 	return a;
 }
 
-static inline double creal (double_complex c)
+static inline double
+mono_creal (MonoComplex c)
 {
 	return c.real;
 }
 
-static inline double cimag (double_complex c)
+static inline double
+mono_cimag (MonoComplex c)
 {
 	return c.imag;
 }
 
-static inline
-double_complex mono_double_complex_scalar_div(double_complex c, gdouble s)
+static inline MonoComplex
+mono_complex_scalar_div (MonoComplex c, double s)
 {
-	return mono_double_complex_make(creal(c) / s, cimag(c) / s);
+	return mono_complex_make (mono_creal (c) / s, mono_cimag (c) / s);
+}
+
+static inline MonoComplex
+mono_complex_scalar_mul (MonoComplex c, double s)
+{
+	return mono_complex_make (mono_creal (c) * s, mono_cimag (c) * s);
 }
 
 static inline
-double_complex mono_double_complex_scalar_mul(double_complex c, gdouble s)
+MonoComplex mono_complex_div (MonoComplex left, MonoComplex right)
 {
-	return mono_double_complex_make(creal(c) * s, cimag(c) * s);
+	double denom = mono_creal (right) * mono_creal (right) + mono_cimag (right) * mono_cimag (right);
+
+	return mono_complex_make (
+		(mono_creal (left) * mono_creal (right) + mono_cimag (left) * mono_cimag (right)) / denom,
+		(-mono_creal (left) * mono_cimag (right) + mono_cimag (left) * mono_creal (right)) / denom);
 }
 
 static inline
-double_complex mono_double_complex_div(double_complex left, double_complex right)
+MonoComplex mono_complex_sub (MonoComplex left, MonoComplex right)
 {
-	double denom = creal(right) * creal(right) + cimag(right) * cimag(right);
-
-	return mono_double_complex_make(
-		(creal(left) * creal(right) + cimag(left) * cimag(right)) / denom,
-		(-creal(left) * cimag(right) + cimag(left) * creal(right)) / denom);
-}
-
-static inline
-double_complex mono_double_complex_sub(double_complex left, double_complex right)
-{
-	return mono_double_complex_make(creal(left) - creal(right), cimag(left)
-		- cimag(right));
+	return mono_complex_make (mono_creal (left) - mono_creal (right),
+				  mono_cimag (left) - mono_cimag (right));
 }
 
 #include "../support/libm/complex.c"
