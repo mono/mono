@@ -68,7 +68,7 @@ public static class Program {
             Console.Error.WriteLine ("--stdout");
             Console.Error.WriteLine ("  Writes results to standard output (omit outputFileName if you use this)");
             Console.Error.WriteLine ("--strict");
-            Console.Error.WriteLine ("  Produces an error exit code if files or directories are invalid/missing");
+            Console.Error.WriteLine ("  Produces an error exit code if files or directories are invalid/missing or other warnings occur");
             Console.Error.WriteLine ("--basedir:<dir>");
             Console.Error.WriteLine ("  Sets the base directory when reading a single sources/exclusions pair (default is the directory containing the sources file)");
             return 1;
@@ -449,7 +449,7 @@ public class SourcesParser {
             return state.Result;
         }
 
-        testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+        testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_defaultprofile_{libraryName}");
         ok = TryParseTargetInto (state, testPath);
 
         if (ok) {
@@ -517,17 +517,36 @@ public class SourcesParser {
 
         var platformFallbackTargets = new List<TargetParseResult> ();
 
+        var ambiguousSourcesNames = new List<string> ();
+
         foreach (var hostPlatform in AllHostPlatformNames) {
             state.ProfileName = null;
             state.HostPlatform = hostPlatform;
 
-            var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}");
+            var testPath = Path.Combine (libraryDirectory, $"{hostPlatform}_defaultprofile_{libraryName}");
             var target = ParseTarget (state, testPath, defaultTarget);
             if ((target != null) && target.IsFallback)
                 platformFallbackTargets.Add (target);
+
+            if ((target == null) || target.IsFallback) {
+                var oldTestPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}.sources");
+                if (File.Exists (oldTestPath))
+                    ambiguousSourcesNames.Add (oldTestPath);
+                    
+                oldTestPath = Path.Combine (libraryDirectory, $"{hostPlatform}_{libraryName}.exclude.sources");
+                if (File.Exists (oldTestPath))
+                    ambiguousSourcesNames.Add (oldTestPath);
+            }
         }
 
         StripFallbackTargetsOrDefaultTarget (state, defaultTarget, platformFallbackTargets, AllHostPlatformNames.Length);
+
+        foreach (var path in ambiguousSourcesNames) {
+            if (!state.Result.SourcesFiles.ContainsKey (path) && !state.Result.ExclusionFiles.ContainsKey (path)) {
+                Console.Error.WriteLine ($"// The file '{path}' was found but not used by sources parsing. Did you mean hostPlatform_defaultprofile_{libraryName}?");
+                state.Result.ErrorCount += 1;
+            }
+        }
 
         PrintSummary (state, originalTestPath);
 
