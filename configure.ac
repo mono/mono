@@ -2974,19 +2974,34 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=yes)
+
 	AC_MSG_CHECKING(for GSS/GSS.h)
 	AC_TRY_COMPILE([
 		#include <GSS/GSS.h>
 	], [
 	],[
 		AC_MSG_RESULT(yes)
-		AC_DEFINE(ENABLE_GSS, 1, [GSS/GSS.h])
 		AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
 		AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
 		AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
 	], [
 		AC_MSG_RESULT(no)
 	])
+
+	AC_MSG_CHECKING(for gssapi/gssapi_ext.h)
+	AC_TRY_COMPILE([
+		#include <gssapi/gssapi_ext.h>
+	], [
+	],[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
+		AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	AM_CONDITIONAL(ENABLE_GSS, [test x$enable_gss = xyes])
 
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([

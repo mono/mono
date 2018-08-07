@@ -188,7 +188,7 @@ libmono_system_native_la_SOURCES = \
 	pal-icalls.c
 
 if ENABLE_GSS
-libmono_system_native_la_SOURCES = \
+libmono_system_native_la_SOURCES += \
 	pal_gssapi.c \
 	pal_gssapi.h
 endif
