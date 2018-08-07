@@ -50,11 +50,11 @@
 
 static inline
 double
-mono_cabs (double_complex z)
+cabs(double_complex z)
 {
 #ifdef _MSC_VER // older versions deprecate hypot
-	return _hypot (mono_creal (z), mono_cimag (z));
+	return _hypot (creal (z), cimag (z));
 #else
-	return hypot (mono_creal (z), mono_cimag (z));
+	return hypot(creal(z), cimag(z));
 #endif
 }
