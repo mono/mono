@@ -19,8 +19,7 @@ TEST_CASES := \
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
-# Requires linker fix
-#	mscorlib/test-crypto-01.cs
+	mscorlib/test-crypto-01.cs
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
