@@ -123,7 +123,7 @@ if (!send_message)
 //Ok, this is temporary
 //this is a super big hack (move it to a decently named assembly, at the very least)
 var binding_test_module = assembly_load ("binding_tests");
-Module.mono_bindings_init("binding_tests");
+Module.mono_bindings_init("[binding_tests]WebAssembly.Runtime");
 
 //binding test suite support code
 var binding_test_class = find_class (binding_test_module, "", "TestClass");

@@ -100,6 +100,21 @@ public class TestClass {
 		return task;
 	}
 
+	public static TaskCompletionSource<object> tcs3;
+	public static Task task3;
+	public static object MkTaskNull () {
+		tcs3 = new TaskCompletionSource<object> ();
+		task3 = tcs3.Task;
+		return task3;
+	}
+
+	public static Task<object> taskString;
+	public static object MkTaskString () {
+		tcs3 = new TaskCompletionSource<object> ();
+		taskString = tcs3.Task;
+		return taskString;
+	}
+
 	public static Task<object> the_promise;
 	public static void InvokePromise (object obj) {
 		the_promise = (Task<object>)obj;
@@ -107,6 +122,31 @@ public class TestClass {
 			Console.WriteLine ("Promise result is {0}", t.Result);
 		}, null, TaskContinuationOptions.ExecuteSynchronously); //must be sync cuz the mainloop pump is gone
 	}
+
+	public static List<JSObject> js_objs_to_dispose = new List<JSObject>();
+	public static void DisposeObject(JSObject obj)
+	{
+		js_objs_to_dispose.Add(obj);
+		obj.Dispose();
+	}	
+
+	public static object[] js_props;
+	public static void RetrieveObjectProperties (JSObject obj) {
+		js_props = new object[4];
+		js_props [0] = obj.GetObjectProperty ("myInt");
+		js_props [1] = obj.GetObjectProperty ("myDouble");
+		js_props [2] = obj.GetObjectProperty ("myString");
+		js_props [3] = obj.GetObjectProperty ("myBoolean");
+	}	
+
+	public static void PopulateObjectProperties (JSObject obj, bool createIfNotExist) {
+		js_props = new object[4];
+		obj.SetObjectProperty ("myInt", 100, createIfNotExist);
+		obj.SetObjectProperty ("myDouble", 4.5, createIfNotExist);
+		obj.SetObjectProperty ("myString", "qwerty", createIfNotExist);
+		obj.SetObjectProperty ("myBoolean", true, createIfNotExist);
+	}	
+
 }
 
 [TestFixture]
@@ -248,14 +288,14 @@ public class BindingTests {
 		Runtime.InvokeJS (@"
 			var tsk = call_test_method (""MkTask"", """", [ ]);
 			tsk.then (function (value) {
-				print ('PassTaskToJS cont with value ' + value);
+				Module.print ('PassTaskToJS cont with value ' + value);
 			});
 		");
 		Assert.AreEqual (0, TestClass.int_val);
 		TestClass.tcs.SetResult (99);
 		//FIXME our test harness doesn't suppport async tests.
 		// So manually verify it for now by checking stdout for `PassTaskToJS cont with value 99`
-		// Assert.AreEqual (99, TestClass.int_val);
+		//Assert.AreEqual (99, TestClass.int_val);
 	}
 
 
@@ -266,7 +306,7 @@ public class BindingTests {
 			var tsk = call_test_method (""MkTask"", """", [ ]);
 			tsk.then (function (value) {},
 			function (reason) {
-				print ('PassTaskToJS2 cont failed due to ' + reason);
+				Module.print ('PassTaskToJS2 cont failed due to ' + reason);
 			});
 		");
 		Assert.AreEqual (0, TestClass.int_val);
@@ -276,6 +316,65 @@ public class BindingTests {
 		// Assert.AreEqual (99, TestClass.int_val);
 	}
 
+	[Test]
+	public static void PassTaskToJS3 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskNull"", """", [ ]);
+			tsk.then( () => {
+  				Module.print('PassTaskToJS3 cont without value '); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS3 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetResult (null);
+	}
+
+	[Test]
+	public static void PassTaskToJS4 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskNull"", """", [ ]);
+			tsk.then( value => {
+  				Module.print(value); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS4 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetException (new Exception ("it failed"));
+	}	
+	
+	[Test]
+	public static void PassTaskToJS5 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskString"", """", [ ]);
+			tsk.then( success => {
+  				Module.print('PassTaskToJS5 cont with value ' + success); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS5 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetResult ("Success");
+	}
+
+	[Test]
+	public static void PassTaskToJS6 () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var tsk = call_test_method (""MkTaskString"", """", [ ]);
+			tsk.then( success => {
+  				Module.print('PassTaskToJS6 cont with value ' + success); // Success!
+			}, reason => {
+  				Module.print('PassTaskToJS6 cont failed due to ' + reason); // Error!
+			} );
+		");
+		Assert.AreEqual (0, TestClass.int_val);
+		TestClass.tcs3.SetException (new Exception ("it failed"));
+	}	
 
 	[Test]
 	public static void PassPromiseToCS () {
@@ -324,4 +423,83 @@ public class BindingTests {
 
 		Assert.AreNotEqual (0, TestClass.int_val);
 	}
+
+	[Test]
+	public static void DisposeObject () {
+		Runtime.InvokeJS (@"
+			var obj1 = {
+			};
+			var obj2 = {
+			};
+			var obj3 = {
+			};
+			call_test_method (""DisposeObject"", ""o"", [ obj3 ]);
+			call_test_method (""DisposeObject"", ""o"", [ obj2 ]);
+			call_test_method (""DisposeObject"", ""o"", [ obj1 ]);
+		");
+
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [0].JSHandle);
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [1].JSHandle);		
+		Assert.AreEqual (-1, TestClass.js_objs_to_dispose [2].JSHandle);		
+	}
+
+	[Test]
+	public static void GetObjectProperties () {
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 100, myDouble: 4.5, myString: ""qwerty"", myBoolean: true};
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectProperties () {
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200, myDouble: 0, myString: ""foo"", myBoolean: false};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, false ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectPropertiesIfNotExistsFalse () {
+		// This test will not create the properties if they do not already exist
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, false ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (null, TestClass.js_props [1]);
+		Assert.AreEqual (null, TestClass.js_props [2]);
+		Assert.AreEqual (null, TestClass.js_props [3]);
+	}
+
+	[Test]
+	public static void SetObjectPropertiesIfNotExistsTrue () {
+		// This test will set the value of the property if it exists and will create and 
+		// set the value if it does not exists
+		Runtime.InvokeJS (@"
+			var obj = {myInt: 200};
+			call_test_method (""PopulateObjectProperties"", ""oi"", [ obj, true ]);		
+			call_test_method (""RetrieveObjectProperties"", ""o"", [ obj ]);		
+		");
+
+		Assert.AreEqual (100, TestClass.js_props [0]);
+		Assert.AreEqual (4.5, TestClass.js_props [1]);
+		Assert.AreEqual ("qwerty", TestClass.js_props [2]);
+		Assert.AreEqual (true, TestClass.js_props [3]);
+	}
+
+
 }
