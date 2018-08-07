@@ -3005,6 +3005,7 @@ if test x$host_win32 = xno; then
 	if test "x$enable_gss" = "xyes" ; then
 		AC_DEFINE(ENABLE_GSS,1,[Include PAL_gssapi])
 	fi
+	AM_CONDITIONAL(ENABLE_GSS, test x$enable_gss = xyes)
 
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([
