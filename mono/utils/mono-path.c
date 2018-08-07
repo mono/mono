@@ -177,27 +177,132 @@ mono_path_resolve_symlinks (const char *path)
 #endif
 }
 
+#ifndef HOST_WIN32
+#define HOST_WIN32 0
+#endif
+
+static gboolean
+mono_path_char_is_separator (char ch)
+{
+	return ch == '/' || (HOST_WIN32 && ch == '\\');
+}
+
+static gboolean
+mono_path_contains_separator (const char *path, size_t length)
+{
+	for (size_t i = 0; i < length; ++i) {
+		if (mono_path_char_is_separator (path [i]))
+			return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+mono_path_remove_trailing_path_separators (const char *path,  size_t *length)
+{
+	size_t i = *length;
+	while (i > 0 && mono_path_char_is_separator (path [i - 1]))
+		i -= 1;
+	*length = i;
+}
+
+static gboolean
+mono_path_char_is_lowercase (char ch)
+{
+	return HOST_WIN32 && ch >= 'a' && ch <= 'z';
+}
+
+// Version-specific unichar2 upcase tables are stored per-volume at NTFS format-time.
+// This is just a subset.
+static char
+mono_path_char_upcase (char a)
+{
+	return mono_path_char_is_lowercase (a) ? (char)(a - 'a' + 'A') : a;
+}
+
+static gboolean
+mono_path_char_equal (char a, char b)
+{
+	return a == b
+		|| mono_path_char_upcase (a) == mono_path_char_upcase (b)
+		|| (mono_path_char_is_separator (a) && mono_path_char_is_separator (b));
+}
+
+static gboolean
+mono_path_equal (const char *a, const char *b, size_t length)
+{
+	if (HOST_WIN32) {
+		size_t i = 0;
+		for (i = 0; i < length && mono_path_char_equal (a [i], b [i]); ++i) {
+			// nothing
+		}
+		return i == length;
+	}
+	return memcmp (a, b, length) == 0;
+}
+
+static size_t
+mono_path_path_separator_length (const char *a, size_t length)
+{
+	size_t i = 0;
+	while (i < length && mono_path_char_is_separator (a [i]))
+		++i;
+	return i;
+}
+
 /**
  * mono_path_filename_in_basedir:
  *
  * Return \c TRUE if \p filename is in \p basedir
  *
- * Both paths must be absolute and using \c G_DIR_SEPARATOR for directory separators.
+ * Both paths should be absolute and be mostly normalized.
  * If the file is in a subdirectory of \p basedir, returns \c FALSE.
  * This function doesn't touch a filesystem, it looks solely at path names.
+ *
+ * In fact, filename might not be absolute, in which case, FALSE.
+ * Ditto basedir.
  */
 gboolean
 mono_path_filename_in_basedir (const char *filename, const char *basedir)
 {
-	const char *p = NULL;
-	if ((p = strstr (filename, basedir))) {
-		p += strlen (basedir);
-		if (*p != G_DIR_SEPARATOR)
-			return FALSE;
-		/* if it's in a subdir of the basedir, it doesn't count. */
-		if (strchr (p, G_DIR_SEPARATOR))
-			return FALSE;
-		return TRUE;
-	}
-	return FALSE;
+	g_assert (filename);
+	g_assert (basedir);
+
+	size_t filename_length = strlen (filename);
+	size_t basedir_length = strlen (basedir);
+
+	if (!mono_path_contains_separator (filename, filename_length))
+		return FALSE;
+	if (!mono_path_contains_separator (basedir, basedir_length))
+		return FALSE;
+	//g_assertf (mono_path_contains_separator (filename, filename_length), "filename:%s basedir:%s", filename, basedir);
+	//g_assertf (mono_path_contains_separator (basedir, basedir_length), "filename:%s basedir:%s", filename, basedir);
+
+	mono_path_remove_trailing_path_separators (filename, &filename_length);
+	mono_path_remove_trailing_path_separators (basedir, &basedir_length);
+
+	// basedir_length can be 0 at this point and that is ok.
+
+	if  (!filename_length
+			|| filename_length <= basedir_length
+			|| (basedir_length && !mono_path_equal (filename, basedir, basedir_length)))
+		return FALSE;
+
+	// /foo/1 is in /foo.
+	// /foo//1 is in /foo.
+	// /foo/1/ is in /foo.
+	// /foo//1/ is in /foo.
+	// /foo//1// is in /foo.
+
+	// /foo is not in /foo.
+	// /foo/ is not in /foo.
+	// /foob is not in /foo.
+	// /foo/1/2 is not in /foo.
+
+	const char *after_base = &filename [basedir_length];
+	size_t after_base_length = filename_length - basedir_length;
+	size_t skip_separators = mono_path_path_separator_length (after_base, after_base_length);
+	after_base += skip_separators;
+	after_base_length -= skip_separators;
+	return skip_separators && !mono_path_contains_separator (after_base, after_base_length);
 }
