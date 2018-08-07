@@ -10,7 +10,7 @@ top_srcdir ?= $(abspath $(CURDIR)/..)
 LLVM_PATH ?= $(abspath $(top_srcdir)/external/llvm)
 LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
 LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
-LLVM_VERSION ?= llvm
+LLVM_RELEASE ?= llvm
 
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
@@ -36,7 +36,7 @@ bump-current-llvm: __bump-current-version-llvm
 $(LLVM_BUILD) $(LLVM_PREFIX):
 	mkdir -p $@
 
-$(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_VERSION)
+$(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_RELEASE)
 
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
