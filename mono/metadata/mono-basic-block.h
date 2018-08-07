@@ -28,9 +28,6 @@ mono_basic_block_split (MonoMethod *method, MonoError *error, MonoMethodHeader *
 void
 mono_basic_block_free (MonoSimpleBasicBlock *bb);
 
-
-/*This function is here because opcodes.h is a public header*/
-
 // FIXME duplication
 #ifndef MonoOpcodeEnum
 #define MonoOpcodeEnum MonoOpcodeEnum
@@ -48,6 +45,7 @@ typedef enum MonoOpcodeEnum {
 
 #endif
 
+/*This function is here because opcodes.h is a public header*/
 int
 mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, MonoOpcodeEnum *value);
 
