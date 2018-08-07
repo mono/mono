@@ -2974,7 +2974,7 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
-	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=yes)
+	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=no)
 
 	AC_MSG_CHECKING(for GSS/GSS.h)
 	AC_TRY_COMPILE([
