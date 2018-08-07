@@ -2974,7 +2974,6 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
-	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=no)
 
 	AC_MSG_CHECKING(for GSS/GSS.h)
 	AC_TRY_COMPILE([
@@ -3001,7 +3000,11 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
-	AM_CONDITIONAL(ENABLE_GSS, [test x$enable_gss = xyes])
+	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=no)
+
+	if test "x$enable_gss" = "xyes" ; then
+		AC_DEFINE(ENABLE_GSS,1,[Include PAL_gssapi])
+	fi
 
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([
