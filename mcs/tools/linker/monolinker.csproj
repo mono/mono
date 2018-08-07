@@ -60,6 +60,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\SweepStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\TypeMapStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\PreserveDependencyInjectorStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Annotations.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyAction.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyInfo.cs" />
