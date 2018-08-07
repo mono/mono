@@ -86,7 +86,7 @@ mono_win32_get_handle_stackoverflow (void)
 		return start;
 
 	/* restore_contect (void *sigctx) */
-	start = code = mono_global_codeman_reserve (128);
+	start = code = (guint8*)mono_global_codeman_reserve (128);
 
 	/* load context into ebx */
 	x86_mov_reg_membase (code, X86_EBX, X86_ESP, 4, 4);
@@ -296,7 +296,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	/* restore_contect (MonoContext *ctx) */
 
-	start = code = mono_global_codeman_reserve (128);
+	start = code = (guint8*)mono_global_codeman_reserve (128);
 	
 	/* load ctx */
 	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
@@ -384,7 +384,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	guint kMaxCodeSize = 64;
 
 	/* call_filter (MonoContext *ctx, unsigned long eip) */
-	start = code = mono_global_codeman_reserve (kMaxCodeSize);
+	start = code = (guint8*)mono_global_codeman_reserve (kMaxCodeSize);
 
 	x86_push_reg (code, X86_EBP);
 	x86_mov_reg_reg (code, X86_EBP, X86_ESP);
@@ -545,7 +545,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 	GSList *unwind_ops = NULL;
 	guint kMaxCodeSize = 192;
 
-	start = code = mono_global_codeman_reserve (kMaxCodeSize);
+	start = code = (guint8*)mono_global_codeman_reserve (kMaxCodeSize);
 
 	stack_size = 128;
 
@@ -820,7 +820,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		regs [X86_EDI] = new_ctx->edi;
 		regs [X86_NREG] = new_ctx->eip;
 
-		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
+		mono_unwind_frame (guint8*)unwind_info, unwind_info_len, ji->code_start,
 						   (guint8*)ji->code_start + ji->code_size,
 						   ip, NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
@@ -874,7 +874,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			 * expression points to a stack location which can be used as ESP */
 			new_ctx->esp = (unsigned long)&((*lmf)->eip);
 
-		*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
+		*lmf = (MonoLMF*)(((gsize)(*lmf)->previous_lmf) & ~3);
 
 		return TRUE;
 	}
@@ -915,7 +915,7 @@ handle_signal_exception (gpointer obj)
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
-	mono_handle_exception (&ctx, obj);
+	mono_handle_exception (&ctx, (MonoObject*)obj);
 
 	mono_restore_context (&ctx);
 }
@@ -933,7 +933,7 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 	GSList *unwind_ops = NULL;
 	int stack_size;
 
-	start = code = mono_global_codeman_reserve (128);
+	start = code = (guint8*)mono_global_codeman_reserve (128);
 
 	/* FIXME no unwind before we push ip */
 	/* Caller ip */
@@ -1063,7 +1063,7 @@ static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
 	gpointer *sp;
-	sp = (gpointer)(mctx->esp);
+	sp = (gpointer*)(mctx->esp);
 	sp -= 1;
 	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
@@ -1127,8 +1127,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
  	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (gpointer)(UCONTEXT_REG_ESP (ctx) & ~15);
-	sp = (gpointer)((char*)sp - frame_size);
+	sp = (gpointer*)(UCONTEXT_REG_ESP (ctx) & ~15);
+	sp = (gpointer*)((char*)sp - frame_size);
 	/* the incoming arguments are aligned to 16 bytes boundaries, so the return address IP
 	 * goes at sp [-1]
 	 */
@@ -1152,7 +1152,7 @@ mono_tasklets_arch_restore (void)
 
 	if (saved)
 		return (MonoContinuationRestore)saved;
-	code = start = mono_global_codeman_reserve (48);
+	code = start = (guint8*)mono_global_codeman_reserve (48);
 	/* the signature is: restore (MonoContinuation *cont, int state, MonoLMF **lmf_addr) */
 	/* put cont in edx */
 	x86_mov_reg_membase (code, X86_EDX, X86_ESP, 4, 4);

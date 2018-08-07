@@ -19,7 +19,7 @@
 MONO_BEGIN_DECLS
 
 typedef void (*MonoThreadStartCB) (intptr_t tid, void* stack_start,
-				   void* func);
+				   void * /* MonoThreadStart */ func); // FIXMEcplusplus
 typedef void (*MonoThreadAttachCB) (intptr_t tid, void* stack_start);
 
 typedef struct _MonoAppDomain MonoAppDomain;
@@ -127,7 +127,7 @@ mono_context_init 				   (MonoDomain *domain);
 MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_context_set				   (MonoAppContext *new_context);
 
-MONO_API MonoAppContext * 
+MONO_API MonoAppContext *
 mono_context_get				   (void);
 
 MONO_API int32_t

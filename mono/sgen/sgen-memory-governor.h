@@ -63,4 +63,3 @@ void sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags, MonoMem
 void sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_description);
 
 #endif
-

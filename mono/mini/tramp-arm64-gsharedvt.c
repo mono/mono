@@ -34,7 +34,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	 * Return a trampoline which calls ADDR passing in ARG.
 	 * Pass the argument in ip1, clobbering ip0.
 	 */
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
 
 	code = mono_arm_emit_imm64 (code, ARMREG_IP1, (guint64)arg);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
@@ -84,7 +84,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 			case GSHAREDVT_ARG_BYREF_TO_BYVAL:
 				src_slot = src & 0x3f;
 				dst_slot = dst & 0xffff;
-				src_ptr = caller [src_slot];
+				src_ptr = (guint8*)caller [src_slot];
 				dst_ptr = (guint8*)(callee + dst_slot) + dst_offset;
 				break;
 			case GSHAREDVT_ARG_BYVAL_TO_BYREF_HFAR4:
@@ -156,7 +156,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 			int nslots = (src >> 6) & 0xff;
 			int src_slot = src & 0x3f;
 			int j;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			for (j = 0; j < nslots; ++j)
 				callee [dst + j] = addr [j];
@@ -186,7 +186,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 	}
 
 	if (info->vcall_offset != -1) {
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
@@ -218,7 +218,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int br_ret_index, bcc_ret_index;
 
 	buf_len = 2048;
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
 
 	/*
 	 * We are being called by an gsharedvt arg trampoline, the info argument is in IP1.
