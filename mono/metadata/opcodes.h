@@ -20,10 +20,6 @@ MONO_BEGIN_DECLS
 
 #define MONO_CUSTOM_PREFIX 0xf0
 
-// FIXME duplication
-#ifndef MonoOpcodeEnum
-#define MonoOpcodeEnum MonoOpcodeEnum
-
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	MONO_ ## a,
 
@@ -34,8 +30,6 @@ typedef enum MonoOpcodeEnum {
 } MonoOpcodeEnum;
 
 #undef OPDEF
-
-#endif
 
 enum {
 	MONO_FLOW_NEXT,
