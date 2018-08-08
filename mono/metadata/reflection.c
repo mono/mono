@@ -534,7 +534,10 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_g_hash_table_insert (domain->type_hash, type, res);
 
 	if (type->type == MONO_TYPE_VOID)
+	{
 		domain->typeof_void = (MonoObject*)res;
+		mono_gc_wbarrier_generic_nostore (&domain->typeof_void);
+	}
 
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
