@@ -626,7 +626,7 @@ static void transport_connect (const char *address);
 static gboolean transport_handshake (void);
 static void register_transport (DebuggerTransport *trans);
 
-static gulong WINAPI debugger_thread (void *arg);
+static mono_thread_start_return_t MONO_STDCALL debugger_thread (void *arg);
 
 static void runtime_initialized (MonoProfiler *prof);
 
@@ -9440,7 +9440,7 @@ wait_for_attach (void)
  *   This thread handles communication with the debugger client using a JDWP
  * like protocol.
  */
-static gulong WINAPI
+static mono_thread_start_return_t MONO_STDCALL
 debugger_thread (void *arg)
 {
 	ERROR_DECL (error);

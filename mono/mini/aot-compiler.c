@@ -8269,7 +8269,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	mono_atomic_inc_i32 (&acfg->stats.ccount);
 }
  
-static mono_thread_start_return_t WINAPI
+static mono_thread_start_return_t MONO_STDCALL
 compile_thread_main (gpointer user_data)
 {
 	MonoAotCompile *acfg = ((MonoAotCompile **)user_data) [0];

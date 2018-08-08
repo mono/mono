@@ -184,6 +184,7 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 // and builtin as a macro to gcc targeting Windows.
 // It only has meaning for Windows/x86; it is accepted but ignored
 // on other Windows targets (for source portability with Windows/x86).
+// It is also known as WINAPI, i.e. via windows.h or w32api.h.
 #if defined (_MSC_VER) || defined (__stdcall)
 #define MONO_STDCALL __stdcall
 #else
@@ -193,6 +194,8 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 // This matches exactly windows.h LPTHREAD_START_ROUTINE.
 // Unsigned long is always 32bits on Windows, and pointer-sized otherwise.
 typedef unsigned long (MONO_STDCALL * MonoThreadStart)(void*);
+// This is in mono-publib.h because besides being used by internally to
+// mono, it is also in appdomain.h.
 
 MONO_END_DECLS
 

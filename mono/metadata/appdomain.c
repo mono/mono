@@ -2819,7 +2819,7 @@ deregister_reflection_info_roots (MonoDomain *domain)
 	mono_domain_assemblies_unlock (domain);
 }
 
-static gulong MONO_STDCALL
+static mono_thread_start_return_t MONO_STDCALL
 unload_thread_main (void *arg)
 {
 	ERROR_DECL (error);

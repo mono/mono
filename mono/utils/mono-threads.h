@@ -24,10 +24,9 @@
 #include <glib.h>
 #include <config.h>
 
-// This matches exactly windows.h LPTHREAD_START_ROUTINE.
-//typedef unsigned long (__stdcall * MonoThreadStart)(void*);
-
-typedef unsigned long mono_thread_start_return_t;
+// On Windows gulong is 32bits, on Unix it is pointer-sized.
+typedef gulong mono_thread_start_return_t;
+typedef gulong (MONO_STDCALL *MonoThreadStart)(gpointer);
 
 #ifdef HOST_WIN32
 
@@ -71,8 +70,6 @@ typedef void* mono_native_thread_return_t;
 #endif /* !defined(__HAIKU__) */
 
 #endif /* #ifdef HOST_WIN32 */
-
-typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
@@ -636,6 +633,8 @@ mono_native_thread_id_get (void);
 
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
+
+typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
 
 MONO_API gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, MonoNativeThreadStart func, gpointer arg);

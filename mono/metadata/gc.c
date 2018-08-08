@@ -891,7 +891,7 @@ mono_runtime_do_background_work (void)
 	hazard_free_queue_pump ();
 }
 
-static gulong WINAPI
+static mono_thread_start_return_t MONO_STDCALL
 finalizer_thread (gpointer unused)
 {
 	ERROR_DECL (error);
