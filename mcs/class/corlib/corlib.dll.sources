@@ -1626,6 +1626,12 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ValueListBuilder.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/Sources/IValueTaskSource.cs
+#../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/ValueTask.cs
+#../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
+#../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
+#../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ConfiguredValueTaskAwaitable.cs
+#../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/ValueTaskAwaiter.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
