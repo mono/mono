@@ -244,4 +244,4 @@ gboolean sgen_binary_protocol_flush_buffers (gboolean force);
 #undef TYPE_POINTER
 #undef TYPE_BOOL
 
-#endif
+#endif // __MONO_SGENPROTOCOL_H__

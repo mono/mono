@@ -50,7 +50,7 @@ utility_thread_handle_inbox (MonoUtilityThread *thread, gboolean at_shutdown)
 	return TRUE;
 }
 
-static void *
+static mono_native_thread_return_t MONO_STDCALL
 utility_thread (void *arg)
 {
 	MonoUtilityThread *thread = (MonoUtilityThread *) arg;
@@ -76,13 +76,13 @@ utility_thread (void *arg)
 
 	thread->callbacks.cleanup (thread->state_ptr);
 
-	return NULL;
+	return 0;
 }
 
 MonoUtilityThread *
 mono_utility_thread_launch (size_t payload_size, MonoUtilityThreadCallbacks *callbacks, MonoMemAccountType accountType)
 {
-	MonoUtilityThread *thread = g_malloc0 (sizeof (MonoUtilityThread));
+	MonoUtilityThread *thread = (MonoUtilityThread*)g_malloc0 (sizeof (MonoUtilityThread));
 	size_t entry_size = offsetof (UtilityThreadQueueEntry, payload) + payload_size;
 
 	thread->message_block_size = mono_pagesize ();
@@ -125,7 +125,7 @@ mono_utility_thread_send (MonoUtilityThread *thread, gpointer message)
 		return;
 	}
 
-	UtilityThreadQueueEntry *entry = mono_lock_free_alloc (&thread->message_allocator);
+	UtilityThreadQueueEntry *entry = (UtilityThreadQueueEntry*)mono_lock_free_alloc (&thread->message_allocator);
 	entry->response_sem = NULL;
 	entry->thread = thread;
 	memcpy (entry->payload, message, thread->payload_size);
@@ -151,7 +151,7 @@ mono_utility_thread_send_sync (MonoUtilityThread *thread, gpointer message)
 	MonoSemType sem;
 	mono_os_sem_init (&sem, 0);
 
-	UtilityThreadQueueEntry *entry = mono_lock_free_alloc (&thread->message_allocator);
+	UtilityThreadQueueEntry *entry = (UtilityThreadQueueEntry*)mono_lock_free_alloc (&thread->message_allocator);
 	gboolean done;
 
 	entry->finished = &done;
