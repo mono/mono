@@ -73,3 +73,5 @@ double_complex mono_double_complex_sub(double_complex left, double_complex right
 	return mono_double_complex_make(creal(left) - creal(right), cimag(left)
 		- cimag(right));
 }
+
+#include "../support/libm/complex.c"
