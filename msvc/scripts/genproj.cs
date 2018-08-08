@@ -905,7 +905,7 @@ public class MsbuildGenerator {
 				.OrderBy (s => s, StringComparer.Ordinal)
 				.Distinct ()
 			let fileNames = new HashSet<string> (matches)
-			orderby target.Key.profile, target.Key.hostPlatform
+			orderby target.Key.profile descending, target.Key.hostPlatform descending
 			select (key: target.Key, fileNames: fileNames)).ToList ();
 
 		var commonFiles = targetFileSets.Aggregate (
