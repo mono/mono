@@ -378,10 +378,9 @@ mono_arm_get_exception_trampolines (gboolean aot)
 void
 mono_arch_exceptions_init (void)
 {
-	gpointer tramp;
-	GSList *tramps, *l;
-	
 	if (mono_aot_only) {
+		gpointer tramp;
+
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_trampoline");
 		mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE);
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_abs_trampoline");
@@ -389,6 +388,8 @@ mono_arch_exceptions_init (void)
 		tramp = mono_aot_get_trampoline ("llvm_resume_unwind_trampoline");
 		mono_register_jit_icall (tramp, "llvm_resume_unwind_trampoline", NULL, TRUE);
 	} else {
+		GSList *tramps, *l;
+
 		tramps = mono_arm_get_exception_trampolines (FALSE);
 		for (l = tramps; l; l = l->next) {
 			MonoTrampInfo *info = (MonoTrampInfo*)l->data;
