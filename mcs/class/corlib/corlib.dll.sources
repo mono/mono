@@ -20,7 +20,8 @@ corefx/Interop.Libraries.Kernel32.cs
 corefx/Interop.Libraries.Advapi32.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
 
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.FileSystem.cs
+corefx/RegistryKey.FileSystem.cs
+Microsoft.Win32/UnixRegistryApi.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.FileSystem.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.FileSystem.cs
 

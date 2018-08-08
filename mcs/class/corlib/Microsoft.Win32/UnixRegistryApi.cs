@@ -420,7 +420,7 @@ namespace Microsoft.Win32 {
 					break;
 				case RegistryHive.CurrentConfig:
 				case RegistryHive.ClassesRoot:
-				case RegistryHive.DynData:
+				//TODO: case RegistryHive.DynData:
 				case RegistryHive.LocalMachine:
 				case RegistryHive.PerformanceData:
 				case RegistryHive.Users:
@@ -828,7 +828,7 @@ namespace Microsoft.Win32 {
 		}
 	}
 	
-	internal class UnixRegistryApi : IRegistryApi {
+	internal class UnixRegistryApi {
 
 		static string ToUnix (string keyname)
 		{
