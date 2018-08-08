@@ -419,7 +419,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	buf_size = 64 + 16 * depth;
 	code = buf = (guint8*)mono_global_codeman_reserve (buf_size);
 
-	rgctx_null_jumps = (guint8*)g_malloc0 (depth + 2);
+	rgctx_null_jumps = (guint8*)g_malloc0 (sizeof (guint8*) * (depth + 2));
 	njumps = 0;
 
 	/* The vtable/mrgtx is in R0 */
