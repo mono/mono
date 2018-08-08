@@ -26,7 +26,6 @@
 
 // On Windows gulong is 32bits, on Unix it is pointer-sized.
 typedef gulong mono_thread_start_return_t;
-typedef gulong (MONO_STDCALL *MonoThreadStart)(gpointer);
 
 #ifdef HOST_WIN32
 
