@@ -541,7 +541,10 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_g_hash_table_insert_internal (memory_manager->type_hash, type, res);
 
 	if (type->type == MONO_TYPE_VOID && !type->byref)
+	{
 		domain->typeof_void = (MonoObject*)res;
+		mono_gc_wbarrier_generic_nostore (&domain->typeof_void);
+	}
 
 leave:
 	mono_mem_manager_unlock (memory_manager);

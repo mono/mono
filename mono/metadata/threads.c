@@ -656,6 +656,7 @@ set_current_thread_for_domain (MonoDomain *domain, MonoInternalThread *thread, M
 
 	g_assert (!*current_thread_ptr);
 	*current_thread_ptr = current;
+	mono_gc_wbarrier_generic_nostore (current_thread_ptr);
 #endif
 }
 
@@ -1823,6 +1824,7 @@ mono_thread_construct_internal (MonoThreadObjectHandle this_obj_handle)
 	MonoThreadObject *this_obj = MONO_HANDLE_RAW (this_obj_handle);
 
 	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+	mono_gc_wbarrier_generic_nostore (&this_obj->internal_thread);
 
 	mono_gchandle_free_internal (thread_gchandle);
 }
@@ -2305,6 +2307,7 @@ mono_thread_current (void)
 	if (!*current_thread_ptr) {
 		g_assert (domain != mono_get_root_domain ());
 		*current_thread_ptr = create_thread_object (domain, internal);
+		mono_gc_wbarrier_generic_nostore (current_thread_ptr);
 	}
 	return *current_thread_ptr;
 #endif
@@ -2332,6 +2335,7 @@ mono_thread_current_for_thread (MonoInternalThread *internal)
 	if (!*current_thread_ptr) {
 		g_assert (domain != mono_get_root_domain ());
 		*current_thread_ptr = create_thread_object (domain, internal);
+		mono_gc_wbarrier_generic_nostore (current_thread_ptr);
 	}
 	return *current_thread_ptr;
 #endif
@@ -4925,10 +4929,13 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, void *alloc_
 		if (mono_gc_user_markers_supported ())
 			static_data [i] = g_malloc0 (static_data_size [i]);
 		else
+		{
 			static_data [i] = mono_gc_alloc_fixed (static_data_size [i], MONO_GC_DESCRIPTOR_NULL,
 				threadlocal ? MONO_ROOT_SOURCE_THREAD_STATIC : MONO_ROOT_SOURCE_CONTEXT_STATIC,
 				alloc_key,
 				threadlocal ? "ThreadStatic Fields" : "ContextStatic Fields");
+            mono_gc_wbarrier_generic_nostore (static_data + i);				
+		}
 	}
 }
 
@@ -5008,6 +5015,7 @@ context_adjust_static_data (MonoAppContextHandle ctx_handle)
 	if (context_static_info.offset || context_static_info.idx > 0) {
 		guint32 offset = MAKE_SPECIAL_STATIC_OFFSET (context_static_info.idx, context_static_info.offset, 0);
 		mono_alloc_static_data (&ctx->static_data, offset, ctx, FALSE);
+        mono_gc_wbarrier_generic_nostore (&ctx->static_data);		
 		ctx->data->static_data = ctx->static_data;
 	}
 }
@@ -5037,6 +5045,7 @@ alloc_context_static_data_helper (gpointer key, gpointer value, gpointer user)
 
 	guint32 offset = GPOINTER_TO_UINT (user);
 	mono_alloc_static_data (&ctx->static_data, offset, ctx, FALSE);
+	mono_gc_wbarrier_generic_nostore (&ctx->static_data);	
 	ctx->data->static_data = ctx->static_data;
 }
 

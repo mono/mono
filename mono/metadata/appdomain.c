@@ -254,6 +254,7 @@ create_domain_objects (MonoDomain *domain)
 	mono_error_assert_ok (error);
 	mono_field_static_set_value_internal (string_vt, string_empty_fld, MONO_HANDLE_RAW (empty_str));
 	domain->empty_string = MONO_HANDLE_RAW (empty_str);
+	mono_gc_wbarrier_generic_nostore (&domain->empty_string);
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -261,6 +262,7 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_handle (domain, "Out of memory", error);
 	mono_error_assert_ok (error);
 	domain->out_of_memory_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore (&domain->out_of_memory_ex);
 	mono_error_assert_ok (error);
 
 	/* 
@@ -270,14 +272,17 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_handle (domain, "A null value was found where an object instance was required", error);
 	mono_error_assert_ok (error);
 	domain->null_reference_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore (&domain->null_reference_ex);
 	mono_error_assert_ok (error);
 	arg = mono_string_new_handle (domain, "The requested operation caused a stack overflow.", error);
 	mono_error_assert_ok (error);
 	domain->stack_overflow_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore (&domain->stack_overflow_ex);
 	mono_error_assert_ok (error);
 
 	/*The ephemeron tombstone i*/
 	domain->ephemeron_tombstone = MONO_HANDLE_RAW (mono_object_new_handle (domain, mono_defaults.object_class, error));
+	mono_gc_wbarrier_generic_nostore (&domain->ephemeron_tombstone);
 	mono_error_assert_ok (error);
 
 	if (domain != old_domain) {
@@ -363,7 +368,9 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 #endif
 		domain->domain = MONO_HANDLE_RAW (ad);
 #ifndef ENABLE_NETCORE
+		mono_gc_wbarrier_generic_nostore (&domain->domain);
 		domain->setup = MONO_HANDLE_RAW (setup);
+		mono_gc_wbarrier_generic_nostore (&domain->setup);
 #endif
 	}
 
@@ -798,6 +805,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
+	mono_gc_wbarrier_generic_nostore (&data->domain);	
 	data->friendly_name = g_strdup (friendly_name);
 
 	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
@@ -825,6 +833,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 
 	data->setup = MONO_HANDLE_RAW (copy_app_domain_setup (data, setup, error));
+	mono_gc_wbarrier_generic_nostore (&data->setup);
 	if (!is_ok (error)) {
 		g_free (data->friendly_name);
 		goto leave;
