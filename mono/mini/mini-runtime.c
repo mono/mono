@@ -955,7 +955,7 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 }
 
 static void
-mono_thread_start_cb (intptr_t tid, gpointer stack_start, gpointer/*MonoThreadStart FIXMEcxx*/ func)
+mono_thread_start_cb (intptr_t tid, gpointer stack_start, MonoThreadStart func)
 {
 	MonoThreadInfo *thread;
 	MonoJitTlsData *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort);

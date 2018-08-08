@@ -906,7 +906,7 @@ free_jit_info_data (ThreadData *td, JitInfoData *free)
 #define MODE_ALLOC	1
 #define MODE_FREE	2
 
-static gulong MONO_STDCALL
+static mono_thread_start_return_t MONO_STDCALL
 test_thread_func (gpointer void_arg)
 {
 	ThreadData* td = (ThreadData*)void_arg;
@@ -1146,7 +1146,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 		exit (1);
 }
 
-static gulong MONO_STDCALL
+static mono_thread_start_return_t MONO_STDCALL
 compile_all_methods_thread_main (gpointer void_args)
 {
 	CompileAllThreadArgs *args = (CompileAllThreadArgs*)void_args;

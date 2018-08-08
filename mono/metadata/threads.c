@@ -1061,12 +1061,14 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 		"Handle Stack"));
 }
 
-static gulong WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
+static mono_thread_start_return_t MONO_STDCALL start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
 {
 	ERROR_DECL (error);
 	MonoThreadStart start_func;
 	void *start_func_arg;
 	gsize tid;
+	mono_thread_start_return_t result = 0;
+
 	/* 
 	 * We don't create a local to hold start_info->thread, so hopefully it won't get pinned during a
 	 * GC stack walk.
@@ -1111,7 +1113,7 @@ static gulong WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_
 	 */
 
 	if (mono_thread_start_cb)
-		mono_thread_start_cb (tid, stack_ptr, (gpointer)start_func);
+		mono_thread_start_cb (tid, stack_ptr, start_func);
 
 	/* On 2.0 profile (and higher), set explicitly since state might have been
 	   Unknown */
@@ -1148,7 +1150,7 @@ static gulong WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_
 
 	/* start_func is set only for unmanaged start functions */
 	if (start_func) {
-		start_func (start_func_arg);
+		result = start_func (start_func_arg);
 	} else {
 		void *args [1];
 
@@ -1191,10 +1193,10 @@ static gulong WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_
 
 	mono_thread_detach_internal (internal);
 
-	return 0;
+	return result;
 }
 
-static gulong WINAPI
+static mono_thread_start_return_t MONO_STDCALL
 start_wrapper (gpointer data)
 {
 	StartInfo *start_info;
@@ -1329,9 +1331,8 @@ done:
 void
 mono_thread_new_init (intptr_t tid, gpointer stack_start, MonoThreadStart func)
 {
-	if (mono_thread_start_cb) {
-		mono_thread_start_cb (tid, stack_start, (gpointer)func);
-	}
+	if (mono_thread_start_cb)
+		mono_thread_start_cb (tid, stack_start, func);
 }
 
 /**

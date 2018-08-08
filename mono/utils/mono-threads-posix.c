@@ -40,6 +40,22 @@ extern int tkill (pid_t tid, int signal);
 
 #include <sys/resource.h>
 
+typedef struct MonoPosixThreadStartThunk {
+	MonoThreadStart thread_function;
+	gpointer thread_data;
+} MonoPosixThreadStartThunk;
+
+static mono_native_thread_return_t
+mono_posix_thread_start_thunk (gpointer void_data)
+{
+	// MonoThreadStart and MonoNativeThreadStart do not *quite* match.
+	// First returns gulong, second gpointer. This function adapts
+	// them without casting a function pointer.
+
+	MonoPosixThreadStartThunk *data = (MonoPosixThreadStartThunk*)void_data;
+	return (mono_native_thread_return_t)data->thread_function (data->thread_data);
+}
+
 gboolean
 mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
 {
@@ -79,8 +95,10 @@ mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_d
 		g_error ("%s: pthread_attr_setstacksize failed, error: \"%s\" (%d)", __func__, g_strerror (res), res);
 #endif /* HAVE_PTHREAD_ATTR_SETSTACKSIZE */
 
+	MonoPosixThreadStartThunk thunk_data = { thread_fn, thread_data };
+
 	/* Actually start the thread */
-	res = mono_gc_pthread_create (&thread, &attr, (gpointer (*)(gpointer)) thread_fn, thread_data);
+	res = mono_gc_pthread_create (&thread, &attr, mono_posix_thread_start_thunk, &thunk_data);
 	if (res) {
 		res = pthread_attr_destroy (&attr);
 		if (res != 0)
