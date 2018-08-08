@@ -60,7 +60,7 @@ mono_x86_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 	}
 
 	if (info->vcall_offset != -1) {
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
@@ -89,7 +89,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int info_offset, mrgctx_offset;
 
 	buf_len = 320;
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
 
 	/*
 	 * This trampoline is responsible for marshalling calls between normal code and gsharedvt code. The
