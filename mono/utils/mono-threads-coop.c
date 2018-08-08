@@ -591,6 +591,22 @@ mono_threads_suspend_policy (void)
 		g_assert (policy);
 		threads_suspend_policy = (char)policy;
 	}
+/***************************************************************************************
+****************************************************************************************
+
+ DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+ DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+
+****************************************************************************************
+****************************************************************************************
+
+ DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+ DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+ DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+
+****************************************************************************************
+****************************************************************************************/
+	return MONO_THREADS_SUSPEND_FULL_PREEMPTIVE;
 	return (MonoThreadsSuspendPolicy)policy;
 }
 
