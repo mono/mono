@@ -3025,7 +3025,7 @@ if test x$host_win32 = xno; then
 	if test x$host_darwin = xno; then
 		# We can't match autotools with structs, so try using a member we know will
 		# always be consistent between flock and flock64.
-		AC_CHECK_TYPES([struct flock64], [AC_DEFINE(HAVE_FLOCK64)], , [#include <fcntl.h>])
+		AC_CHECK_TYPES([struct flock64], [AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)], , [#include <fcntl.h>])
 	fi
 
 	AC_CHECK_FUNC(lseek64,           [AC_DEFINE(HAVE_LSEEK64, 1, [lseek64])])
