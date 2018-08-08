@@ -1012,9 +1012,11 @@ if test "x$with_structured_crashes" = "xno"; then
 AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files during unmanaged crashes])
 fi
 
-if test "x$host_win32" = "xyes"; then
-crash_reporting=no
-fi
+case "$host" in
+	*-mingw*|*-*-cygwin*|*-*-aix*|*-*-os400*)
+		crash_reporting=no
+		;;
+esac
 
 if test "x$crash_reporting" != "xyes"; then
 CFLAGS="$CFLAGS -DDISABLE_CRASH_REPORTING=1"
@@ -4018,7 +4020,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc-*-aix* | powerpc-*-os400* )
+        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
