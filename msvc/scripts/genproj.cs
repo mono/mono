@@ -857,12 +857,16 @@ public class MsbuildGenerator {
 		return SlnGenerator.profiles.Contains (profile);
 	}
 
-	private string GenerateSourceItems (IEnumerable<string> fileNames, int indentDepth) {
-		var result = new StringBuilder ();
-		var indent = new string (' ', indentDepth);
-		foreach (var file in fileNames.OrderBy (f => f, StringComparer.Ordinal))
-			result.Append ($"{indent}<Compile Include=\"{file}\" />{NewLine}");		
-		return result.ToString ();
+	private void GenerateSourceItems (XmlWriter writer, IEnumerable<string> fileNames, HashSet<string> commonFiles) {
+		foreach (var file in fileNames.OrderBy (f => f, StringComparer.Ordinal)) {
+			// FIXME: Is this needed?
+			if ((commonFiles != null) && commonFiles.Contains (file))
+				continue;
+
+			writer.WriteStartElement ("Compile");
+			writer.WriteAttributeString ("Include", file);
+			writer.WriteEndElement ();
+		}	
 	}
 
 	private StringBuilder GenerateSourceItemGroups (
@@ -872,6 +876,19 @@ public class MsbuildGenerator {
 		string groupConditional
 	) {
 		var result = new StringBuilder ();
+		var xmlWriterSettings = new XmlWriterSettings () {
+			ConformanceLevel = ConformanceLevel.Fragment,
+			WriteEndDocumentOnClose = true,
+			CheckCharacters = true,
+			Encoding = Encoding.UTF8,
+			Indent = true,
+			IndentChars = "  ",
+			NewLineChars = NewLine,
+			NewLineHandling = NewLineHandling.Replace,
+			NewLineOnAttributes = false,
+			OmitXmlDeclaration = true
+		};
+		var xmlWriter = XmlWriter.Create (result, xmlWriterSettings);
 		var parseResult = ReadSources (sources_file_name);
 
 		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
@@ -900,78 +917,85 @@ public class MsbuildGenerator {
 					files.IntersectWith (targetSet.fileNames);
 				return files;
 			}
-		).ToList ();
+		);
 
-		result.Append ($"  <!-- Common files -->{NewLine}");
-		result.Append ($"  <ItemGroup>{NewLine}");
-		result.Append (GenerateSourceItems (commonFiles, 4));
+		xmlWriter.WriteComment ("Common files");
+		xmlWriter.WriteStartElement ("ItemGroup");
+		GenerateSourceItems (xmlWriter, commonFiles, null);
 
 		if (commonFiles.Any (f => f.EndsWith("build\\common\\Consts.cs"))) {
 			var genconstsRelativePath = "$(SolutionDir)\\msvc\\scripts\\genconsts.csproj";
-			result.Append ($"    {NewLine}");
-			result.Append ($"    <ProjectReference Include=\"{genconstsRelativePath}\">{NewLine}");
-			result.Append ($"      <Name>genconsts</Name>{NewLine}");
-			result.Append ($"      <Project>{SlnGenerator.genconsts_csproj_guid}</Project>{NewLine}");
-			result.Append ($"      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>{NewLine}");
-			result.Append ($"      <CopyToOutputDirectory>Never</CopyToOutputDirectory>{NewLine}");
-			result.Append ($"      <Private>False</Private>{NewLine}");
-			result.Append ($"    </ProjectReference>{NewLine}");			
+			xmlWriter.WriteComment ("Genconsts dependency because this project includes Consts.cs");
+			xmlWriter.WriteStartElement ("ProjectReference");
+			xmlWriter.WriteAttributeString ("Include", genconstsRelativePath);
+			xmlWriter.WriteElementString ("Name", "genconsts");
+			xmlWriter.WriteElementString ("Project", SlnGenerator.genconsts_csproj_guid);
+			xmlWriter.WriteElementString ("ReferenceOutputAssembly", "false");
+			xmlWriter.WriteElementString ("CopyToOutputDirectory", "Never");
+			xmlWriter.WriteElementString ("Private", "false");
+			xmlWriter.WriteEndElement();
   		}
-  		
-		result.Append ($"  </ItemGroup>{NewLine}");
-		result.Append ($"  <!-- End of common files -->{NewLine}");
 
-		result.Append ($"  <!-- Files by profile -->{NewLine}");
-		result.Append ($"  <Choose>{NewLine}");
+  		xmlWriter.WriteEndElement ();
+  		xmlWriter.WriteComment ("End of common files");
 
-		var profileGroups = (from tfs in targetFileSets 
-			group tfs by tfs.key.profile into sets
-			select sets).ToList ();
+  		// FIXME: Is this right if the profile/platform pair are not null,null? It probably is
+  		if (targetFileSets.Count != 1) {
+			var profileGroups = (from tfs in targetFileSets 
+				group tfs by tfs.key.profile into sets
+				select sets).ToList ();
 
-		foreach (var profileGroup in profileGroups) {
-			if (profileGroup.Key == null) {
-				result.Append ($"    <Otherwise>{NewLine}");
-			} else {
-				result.Append ($"    <When Condition=\" '$(Platform)' == '{profileGroup.Key}' \">{NewLine}");
-			}
+			xmlWriter.WriteComment ("Per-profile files");
+			if (profileGroups.Count > 1)
+				xmlWriter.WriteStartElement ("Choose");
 
-			var hostPlatforms = profileGroup.ToList ();
-			if (hostPlatforms.Count == 1) {
-				result.Append ($"      <ItemGroup>{NewLine}");
-				result.Append (GenerateSourceItems (commonFiles, 8));
-				result.Append ($"      </ItemGroup>{NewLine}");
-			} else {
-				result.Append ($"  <!-- Files by host platform -->{NewLine}");
-				result.Append ($"      <Choose>{NewLine}");
-
-				foreach (var set in hostPlatforms) {
-					if (set.key.hostPlatform == null)
-						result.Append ($"        <Otherwise>{NewLine}");
-					else 
-						result.Append ($"        <When Condition=\" '$(HostPlatform)' == '{set.key.hostPlatform}' \">{NewLine}");
-
-					result.Append ($"          <ItemGroup>{NewLine}");
-					result.Append (GenerateSourceItems (set.fileNames, 12));
-					result.Append ($"          </ItemGroup>{NewLine}");
-
-					if (set.key.hostPlatform == null)
-						result.Append ($"        </Otherwise>{NewLine}{NewLine}");
-					else 
-						result.Append ($"        </When>{NewLine}{NewLine}");						
+			foreach (var profileGroup in profileGroups) {
+				if (profileGroups.Count == 1) {
+				} else if (profileGroup.Key == null) {
+					xmlWriter.WriteStartElement ("Otherwise");
+				} else {
+					xmlWriter.WriteStartElement ("When");
+					xmlWriter.WriteAttributeString ("Condition", $"'$(Platform)' == '{profileGroup.Key}'");
 				}
 
-				result.Append ($"      </Choose>{NewLine}");
+				var hostPlatforms = profileGroup.ToList ();
+				if (hostPlatforms.Count == 1) {
+					xmlWriter.WriteStartElement ("ItemGroup");
+					GenerateSourceItems (xmlWriter, hostPlatforms[0].fileNames, commonFiles);
+					xmlWriter.WriteEndElement ();
+				} else {
+					xmlWriter.WriteComment ("Per-host-platform files");
+					xmlWriter.WriteStartElement ("Choose");
+
+					foreach (var set in hostPlatforms) {
+						if (set.key.hostPlatform == null) {
+							xmlWriter.WriteStartElement ("Otherwise");
+						} else {
+							xmlWriter.WriteStartElement ("When");
+							xmlWriter.WriteAttributeString ("Condition", $"'$(HostPlatform)' == '{set.key.hostPlatform}'");
+						}
+
+						xmlWriter.WriteStartElement ("ItemGroup");
+						GenerateSourceItems (xmlWriter, set.fileNames, commonFiles);
+						xmlWriter.WriteEndElement ();
+
+						xmlWriter.WriteEndElement();
+					}
+
+					xmlWriter.WriteEndElement ();
+					xmlWriter.WriteComment ("End of per-host-platform files");
+				}
+
+				if (profileGroups.Count > 1)
+					xmlWriter.WriteEndElement ();
 			}
 
-			if (profileGroup.Key == null) {
-				result.Append ($"    </Otherwise>{NewLine}{NewLine}");
-			} else {
-				result.Append ($"    </When>{NewLine}{NewLine}");
-			}
-		}
+			if (profileGroups.Count > 1)
+				xmlWriter.WriteEndElement ();
+			xmlWriter.WriteComment ("End of per-profile files");
+  		}
 
-		result.Append ($"  </Choose>{NewLine}");
-		result.Append ($"  <!-- End of files by profile -->{NewLine}");
+		xmlWriter.Close ();
 
 		return result;
 	}
