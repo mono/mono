@@ -1191,7 +1191,9 @@ void GC_mark_init()
  * Should only be used if there is no possibility of mark stack
  * overflow.
  */
-void GC_push_all(void* void_bottom, void* void_top)
+void GC_push_all(void_bottom, void_top)
+void* void_bottom;
+void* void_top;
 {
     ptr_t bottom = (ptr_t)void_bottom;
     ptr_t top = (ptr_t)void_top;
