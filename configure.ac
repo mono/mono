@@ -1774,6 +1774,41 @@ if test x$platform_android = xyes; then
 	AC_DEFINE(HAVE_SIGNAL,1)
 fi
 
+dnl ***********************************
+dnl *** Checks for availability of GSS dependencies (krb5, gss.framework, etc)
+dnl ***********************************
+enable_gss=no;
+AC_MSG_CHECKING(for GSS/GSS.h)
+AC_TRY_COMPILE([
+    #include <GSS/GSS.h>
+], [
+],[
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
+    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
+    AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
+    AC_SUBST(ENABLE_GSS)
+    enable_gss=yes
+], [
+    AC_MSG_RESULT(no)
+])
+
+AC_MSG_CHECKING(for gssapi/gssapi_ext.h)
+AC_TRY_COMPILE([
+    #include <gssapi/gssapi_ext.h>
+], [
+],[
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
+    AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
+    AC_SUBST(ENABLE_GSS)
+    enable_gss=yes
+], [
+    AC_MSG_RESULT(no)
+])
+
+AM_CONDITIONAL(ENABLE_GSS, test x$enable_gss = xyes)
+
 if test x$host_win32 = xno; then
 	dnl *************************************
 	dnl *** Checks for time capabilities ***
@@ -2973,39 +3008,6 @@ if test x$host_win32 = xno; then
 	], [
 		AC_MSG_RESULT(no)
 	])
-
-
-	AC_MSG_CHECKING(for GSS/GSS.h)
-	AC_TRY_COMPILE([
-		#include <GSS/GSS.h>
-	], [
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
-		AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
-		AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
-	], [
-		AC_MSG_RESULT(no)
-	])
-
-	AC_MSG_CHECKING(for gssapi/gssapi_ext.h)
-	AC_TRY_COMPILE([
-		#include <gssapi/gssapi_ext.h>
-	], [
-	],[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
-		AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
-	], [
-		AC_MSG_RESULT(no)
-	])
-
-	AC_ARG_ENABLE(gss, [  --enable-gss Include PAL_gssapi into System.Native], enable_gss=$enableval, enable_gss=no)
-
-	if test "x$enable_gss" = "xyes" ; then
-		AC_DEFINE(ENABLE_GSS,1,[Include PAL_gssapi])
-	fi
-	AM_CONDITIONAL(ENABLE_GSS, test x$enable_gss = xyes)
 
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([

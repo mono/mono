@@ -189,8 +189,8 @@ libmono_system_native_la_SOURCES = \
 
 if ENABLE_GSS
 libmono_system_native_la_SOURCES += \
-	pal_gssapi.c \
-	pal_gssapi.h
+	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.c \
+	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.h
 endif
 
 # Add back CXX_REMOVE_CFLAGS to keep this as C until/unless https://github.com/dotnet/corefx/pull/31342.
