@@ -110,7 +110,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	char *tramp_name;
 
 	buf_len = 768;
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
 
 	/*
 	 * We are getting called by a specific trampoline, ip1 contains the trampoline argument.
@@ -336,7 +336,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	 */
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	buf = code = mono_domain_code_reserve (domain, buf_len);
+	buf = code = (guint8*)mono_domain_code_reserve (domain, buf_len);
 
 	code = mono_arm_emit_imm64 (code, ARMREG_IP1, (guint64)arg1);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
@@ -360,7 +360,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint32 size = 32;
 	MonoDomain *domain = mono_domain_get ();
 
-	start = code = mono_domain_code_reserve (domain, size);
+	start = code = (guint8*)mono_domain_code_reserve (domain, size);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	arm_addx_imm (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
 	arm_brx (code, ARMREG_IP0);
@@ -378,7 +378,7 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	guint32 buf_len = 32;
 	MonoDomain *domain = mono_domain_get ();
 
-	start = code = mono_domain_code_reserve (domain, buf_len);
+	start = code = (guint8*)mono_domain_code_reserve (domain, buf_len);
 	code = mono_arm_emit_imm64 (code, MONO_ARCH_RGCTX_REG, (guint64)arg);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	arm_brx (code, ARMREG_IP0);
@@ -417,9 +417,9 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	}
 
 	buf_size = 64 + 16 * depth;
-	code = buf = mono_global_codeman_reserve (buf_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (buf_size);
 
-	rgctx_null_jumps = g_malloc0 (sizeof (guint8*) * (depth + 2));
+	rgctx_null_jumps = (guint8*)g_malloc0 (depth + 2);
 	njumps = 0;
 
 	/* The vtable/mrgtx is in R0 */
@@ -473,7 +473,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	if (aot) {
 		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, g_strdup_printf ("specific_trampoline_lazy_fetch_%u", slot));
 	} else {
-		tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
+		tramp = (guint8*)mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
 	}
 	arm_brx (code, ARMREG_IP0);
@@ -504,7 +504,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 
 	tramp_size = 32;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (tramp_size);
 
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, 0);
 
@@ -543,7 +543,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8*)mono_global_codeman_reserve (tramp_size);
 
 	/* Compute stack frame size and offsets */
 	offset = 0;
@@ -596,7 +596,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 		else
 			code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_breakpoint_from_context");
 	} else {
-		gpointer addr = single_step ? mini_get_dbg_callbacks ()->single_step_from_context : mini_get_dbg_callbacks ()->breakpoint_from_context;
+		void (*addr) (MonoContext *ctx) = single_step ? mini_get_dbg_callbacks ()->single_step_from_context : mini_get_dbg_callbacks ()->breakpoint_from_context;
 
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	}
