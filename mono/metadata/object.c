@@ -4868,8 +4868,9 @@ mono_main_thunk (gpointer void_data)
  * Function pointer casts are to be avoided more than data casts.
  */
 {
-	MonoMainThunk* data = (MonoMainThunk*)void_data;
-	data->main_func (data->main_data);
+	MonoMainThunk data = *(MonoMainThunk*)void_data;
+	g_free (void_data);
+	data.main_func (data.main_data);
 	return 0;
 }
 
@@ -4895,9 +4896,10 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 {
 	ERROR_DECL (error);
 
-	MonoMainThunk thunk = { main_func, main_args };
-
-	mono_thread_create_checked (domain, mono_main_thunk, &thunk, error);
+	MonoMainThunk* thunk_data = g_new0 (MonoMainThunk, 1);
+	thunk_data->main_func = main_func;
+	thunk_data->main_data = main_args;
+	mono_thread_create_checked (domain, mono_main_thunk, thunk_data, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
