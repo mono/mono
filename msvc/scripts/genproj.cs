@@ -857,6 +857,14 @@ public class MsbuildGenerator {
 		return SlnGenerator.profiles.Contains (profile);
 	}
 
+	private string GenerateSourceItems (IEnumerable<string> fileNames, int indentDepth) {
+		var result = new StringBuilder ();
+		var indent = new string (' ', indentDepth);
+		foreach (var file in fileNames.OrderBy (f => f, StringComparer.Ordinal))
+			result.Append ($"{indent}<Compile Include=\"{file}\" />{NewLine}");		
+		return result.ToString ();
+	}
+
 	private StringBuilder GenerateSourceItemGroups (
 		string output_name, 
 		string profile,
@@ -894,42 +902,76 @@ public class MsbuildGenerator {
 			}
 		).ToList ();
 
-
+		result.Append ($"  <!-- Common files -->{NewLine}");
 		result.Append ($"  <ItemGroup>{NewLine}");
-		foreach (var file in commonFiles.OrderBy (f => f, StringComparer.Ordinal))
-			result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
+		result.Append (GenerateSourceItems (commonFiles, 4));
 
 		if (commonFiles.Any (f => f.EndsWith("build\\common\\Consts.cs"))) {
 			var genconstsRelativePath = "$(SolutionDir)\\msvc\\scripts\\genconsts.csproj";
+			result.Append ($"    {NewLine}");
 			result.Append ($"    <ProjectReference Include=\"{genconstsRelativePath}\">{NewLine}");
-			result.Append ($"      <Name>genconsts</Name>");
-			result.Append ($"      <Project>{SlnGenerator.genconsts_csproj_guid}</Project>");
-			result.Append ($"      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>");
-			result.Append ($"      <CopyToOutputDirectory>Never</CopyToOutputDirectory>");
-			result.Append ($"      <Private>False</Private>");
+			result.Append ($"      <Name>genconsts</Name>{NewLine}");
+			result.Append ($"      <Project>{SlnGenerator.genconsts_csproj_guid}</Project>{NewLine}");
+			result.Append ($"      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>{NewLine}");
+			result.Append ($"      <CopyToOutputDirectory>Never</CopyToOutputDirectory>{NewLine}");
+			result.Append ($"      <Private>False</Private>{NewLine}");
 			result.Append ($"    </ProjectReference>{NewLine}");			
   		}
   		
 		result.Append ($"  </ItemGroup>{NewLine}");
+		result.Append ($"  <!-- End of common files -->{NewLine}");
 
-		foreach (var set in targetFileSets) {
-			if ((set.key.hostPlatform == null) && (set.key.profile == null)) {
-				result.Append ($"  <ItemGroup>{NewLine}");
-			} else if (set.key.hostPlatform == null) {
-				result.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{set.key.profile}' \">{NewLine}");
-			} else if (set.key.profile == null) {
-				result.Append ($"  <ItemGroup Condition=\" '$(HostPlatform)' == '{set.key.hostPlatform}' \">{NewLine}");
+		result.Append ($"  <!-- Files by profile -->{NewLine}");
+		result.Append ($"  <Choose>{NewLine}");
+
+		var profileGroups = (from tfs in targetFileSets 
+			group tfs by tfs.key.profile into sets
+			select sets).ToList ();
+
+		foreach (var profileGroup in profileGroups) {
+			if (profileGroup.Key == null) {
+				result.Append ($"    <Otherwise>{NewLine}");
 			} else {
-				result.Append ($"  <ItemGroup Condition=\" '$(Platform)|$(HostPlatform)' == '{set.key.profile}|{set.key.hostPlatform}' \">{NewLine}");
+				result.Append ($"    <When Condition=\" '$(Platform)' == '{profileGroup.Key}' \">{NewLine}");
 			}
 
-			set.fileNames.ExceptWith (commonFiles);
+			var hostPlatforms = profileGroup.ToList ();
+			if (hostPlatforms.Count == 1) {
+				result.Append ($"      <ItemGroup>{NewLine}");
+				result.Append (GenerateSourceItems (commonFiles, 8));
+				result.Append ($"      </ItemGroup>{NewLine}");
+			} else {
+				result.Append ($"  <!-- Files by host platform -->{NewLine}");
+				result.Append ($"      <Choose>{NewLine}");
 
-			foreach (var file in set.fileNames.OrderBy (f => f, StringComparer.Ordinal))
-				result.Append ($"    <Compile Include=\"{file}\" />{NewLine}");
+				foreach (var set in hostPlatforms) {
+					if (set.key.hostPlatform == null)
+						result.Append ($"        <Otherwise>{NewLine}");
+					else 
+						result.Append ($"        <When Condition=\" '$(HostPlatform)' == '{set.key.hostPlatform}' \">{NewLine}");
 
-			result.Append ($"  </ItemGroup>{NewLine}");
+					result.Append ($"          <ItemGroup>{NewLine}");
+					result.Append (GenerateSourceItems (set.fileNames, 12));
+					result.Append ($"          </ItemGroup>{NewLine}");
+
+					if (set.key.hostPlatform == null)
+						result.Append ($"        </Otherwise>{NewLine}{NewLine}");
+					else 
+						result.Append ($"        </When>{NewLine}{NewLine}");						
+				}
+
+				result.Append ($"      </Choose>{NewLine}");
+			}
+
+			if (profileGroup.Key == null) {
+				result.Append ($"    </Otherwise>{NewLine}{NewLine}");
+			} else {
+				result.Append ($"    </When>{NewLine}{NewLine}");
+			}
 		}
+
+		result.Append ($"  </Choose>{NewLine}");
+		result.Append ($"  <!-- End of files by profile -->{NewLine}");
 
 		return result;
 	}
