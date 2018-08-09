@@ -236,5 +236,12 @@ namespace Microsoft.Win32
             throw new NotImplementedException(string.Format(
                 "Registry hive '{0}' is not implemented.", hive.ToString()));
         }
+
+        public override int GetHashCode()
+        {
+            if (_keyName != null)
+                return _keyName.GetHashCode();
+            return base.GetHashCode();
+        }
     }
 }

@@ -92,26 +92,10 @@ namespace Microsoft.Win32 {
 			return sb.ToString ();
 		}
 	}
-
-	class RegistryKeyComparer : IEqualityComparer {
-		public new bool Equals(object x, object y)
-		{
-			return RegistryKey.IsEquals ((RegistryKey) x, (RegistryKey) y);
-			
-		}
-
-		public int GetHashCode(object obj)
-		{
-			var n = ((RegistryKey) obj).Name;
-			if (n == null)
-				return 0;
-			return n.GetHashCode ();
-		}
-	}
 	
 	class KeyHandler
 	{
-		static Hashtable key_to_handler = new Hashtable (new RegistryKeyComparer ());
+		static Hashtable key_to_handler = new Hashtable ();
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		const string VolatileDirectoryName = "volatile-keys";
