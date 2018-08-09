@@ -613,11 +613,8 @@ namespace Microsoft.Win32 {
 			lock (values){
 				switch (valueKind){
 				case RegistryValueKind.String:
-					if (value is string){
-						values [name] = value;
-						return;
-					}
-					break;
+					values [name] = value?.ToString ();
+					return;
 				case RegistryValueKind.ExpandString:
 					if (value is string){
 						values [name] = new ExpandString ((string)value);
@@ -712,6 +709,9 @@ namespace Microsoft.Win32 {
 		public void RemoveValue (string name)
 		{
 			AssertNotMarkedForDeletion ();
+
+			if (name == null)
+				return;
 
 			lock (values)
 				values.Remove (name);
