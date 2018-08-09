@@ -16,9 +16,6 @@
 #endif
 #ifdef HAVE_COPYFILE_H
 #include <copyfile.h>
-#  if !defined(COPYFILE_CLONE)
-#    #define COPYFILE_CLONE (1 << 24)
-#  endif
 #endif
 #if defined(HAVE_SYS_STATFS_H)
 #include <sys/statfs.h>
@@ -2421,7 +2418,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		}
 	}
 
-	ret = _wapi_copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
+	ret = _wapi_copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_ACL | COPYFILE_STAT | COPYFILE_XATTR | COPYFILE_DATA | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
 	g_free (utf8_src);
 	g_free (utf8_dest);
 	if (ret != 0) {
