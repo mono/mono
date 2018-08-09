@@ -120,7 +120,7 @@ namespace Microsoft.Win32
 
         private static RegistryKey OpenBaseKeyCore(RegistryHive hKey, RegistryView view)
         {
-            return new RegistryKey(hKey) { _regView = view };
+            return new RegistryKey(hKey) { _regView = view, _state = StateFlags.SystemKey | StateFlags.WriteAccess };
         }
 
         private static RegistryKey OpenRemoteBaseKeyCore(RegistryHive hKey, string machineName, RegistryView view)
