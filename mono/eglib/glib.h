@@ -1,5 +1,22 @@
 #ifndef __GLIB_H
 #define __GLIB_H
+
+// Ask stdint.h and inttypes.h for the full C99 features for CentOS 6 g++ 4.4, Android, etc.
+// See for example:
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/inttypes.h
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/stdint.h
+#ifdef __cplusplus
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+#endif // __cplusplus
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -50,8 +67,122 @@
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
+#endif
+
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
+	g_cast () = delete;
+	g_cast (const g_cast& y) = delete;
+
+	template <typename TTo> operator TTo* () const { return (TTo*)x; }
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
+#endif
+
+#ifdef __cplusplus
+
+/*
+Provide for math on enums.
+This alleviates a fair number of casts in porting C to C++.
+*/
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	return (Enum)~(int)a;			\
+}						\
+						\
+inline Enum					\
+operator| (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a | (int)b);		\
+}						\
+						\
+inline Enum					\
+operator& (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a & (int)b);		\
+}						\
+						\
+inline Enum&					\
+operator|= (Enum& a, Enum b)			\
+{						\
+	return a = (Enum)((int)a | (int)b);	\
+}						\
+						\
+inline Enum&					\
+operator&= (Enum& a, Enum b)			\
+{						\
+	return a = (Enum)((int)a & (int)b);	\
+}						\
+						\
+inline Enum					\
+operator^ (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a ^ (int)b);		\
+}						\
+						\
+inline Enum					\
+operator- (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a - (int)b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a + (int)b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, int b)			\
+{						\
+	return (Enum)((int)a + b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned b)			\
+{						\
+	return (Enum)((unsigned)a + b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned long b)		\
+{						\
+	return (Enum)((unsigned long)a + b);	\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned long long b)	\
+{						\
+	return (Enum)((unsigned long long)a + b); \
+}						\
+} /* extern "C++" */				\
+
+#else
+
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
+
 #endif
 
 G_BEGIN_DECLS
@@ -83,7 +214,15 @@ typedef float          gfloat;
 typedef double         gdouble;
 typedef int32_t        gboolean;
 
+// C++ wchar_t is a unique type. Use it.
+#if defined (HOST_WIN32) || defined (_WIN32)
+G_END_DECLS
+#include <wchar.h>
+typedef wchar_t gunichar2;
+G_BEGIN_DECLS
+#else
 typedef guint16 gunichar2;
+#endif
 typedef guint32 gunichar;
 
 /*
@@ -161,7 +300,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
-#define g_alloca(size)		alloca (size)
+#define g_alloca(size)		(g_cast (alloca (size)))
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
@@ -518,6 +657,7 @@ void    g_array_set_size          (GArray *array, gint length);
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -549,6 +689,7 @@ gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
@@ -589,6 +730,8 @@ typedef enum {
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
 } GLogLevelFlags;
+
+G_ENUM_FUNCTIONS (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -922,6 +1065,7 @@ typedef enum {
 	G_FILE_TEST_EXISTS = 1 << 4
 } GFileTest;
 
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
@@ -1148,4 +1292,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H

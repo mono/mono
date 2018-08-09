@@ -322,7 +322,8 @@ mono_gc_run_finalize (void *obj, void *data)
 	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
 #ifdef HOST_WASM
-	gpointer params[] = { NULL };
+	gpointer params [1];
+	params [0] = NULL;
 	mono_runtime_try_invoke (finalizer, o, params, &exc, error);
 #else
 	runtime_invoke (o, NULL, &exc, NULL);
@@ -806,7 +807,7 @@ finalize_domain_objects (void)
 	DomainFinalizationReq *req = NULL;
 	MonoDomain *domain;
 
-	if (UnlockedReadPointer ((gpointer)&domains_to_finalize)) {
+	if (UnlockedReadPointer ((gpointer*)&domains_to_finalize)) {
 		mono_finalizer_lock ();
 		if (domains_to_finalize) {
 			req = (DomainFinalizationReq *)domains_to_finalize->data;
@@ -1315,37 +1316,37 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size)
 {
-	return MONO_HANDLE_NEW (MonoObject, mono_gc_alloc_pinned_obj (vtable, size));
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_gc_alloc_pinned_obj (vtable, size));
 }
 
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size)
 {
-	return MONO_HANDLE_NEW (MonoObject, mono_gc_alloc_obj (vtable, size));
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_gc_alloc_obj (vtable, size));
 }
 
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length)
 {
-	return MONO_HANDLE_NEW (MonoArray, mono_gc_alloc_vector (vtable, size, max_length));
+	return MONO_HANDLE_NEW (MonoArray, (MonoArray*)mono_gc_alloc_vector (vtable, size, max_length));
 }
 
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size)
 {
-	return MONO_HANDLE_NEW (MonoArray, mono_gc_alloc_array (vtable, size, max_length, bounds_size));
+	return MONO_HANDLE_NEW (MonoArray, (MonoArray*)mono_gc_alloc_array (vtable, size, max_length, bounds_size));
 }
 
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len)
 {
-	return MONO_HANDLE_NEW (MonoString, mono_gc_alloc_string (vtable, size, len));
+	return MONO_HANDLE_NEW (MonoString, (MonoString*)mono_gc_alloc_string (vtable, size, len));
 }
 
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size)
 {
-	return MONO_HANDLE_NEW (MonoObject, mono_gc_alloc_mature (vtable, size));
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_gc_alloc_mature (vtable, size));
 }
 
 void

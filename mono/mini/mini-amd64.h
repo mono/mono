@@ -209,17 +209,18 @@ typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gint32 sp_fp_offset;
 	guint32 saved_iregs;
-	gboolean omit_fp, omit_fp_computed;
-	gpointer cinfo;
+	gboolean omit_fp;
+	gboolean omit_fp_computed;
+	CallInfo *cinfo;
 	gint32 async_point_count;
-	gpointer vret_addr_loc;
+	MonoInst *vret_addr_loc;
+	MonoInst *seq_point_info_var;
+	MonoInst *ss_tramp_var;
+	MonoInst *bp_tramp_var;
+	MonoInst *lmf_var;
 #ifdef HOST_WIN32
 	struct _UNWIND_INFO* unwindinfo;
 #endif
-	gpointer seq_point_info_var;
-	gpointer ss_tramp_var;
-	gpointer bp_tramp_var;
-	gpointer lmf_var;
 } MonoCompileArch;
 
 #ifdef TARGET_WIN32
@@ -325,7 +326,7 @@ typedef struct {
 	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	guint32 stack_usage;
 	guint32 reg_usage;
@@ -337,7 +338,7 @@ typedef struct {
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
-} CallInfo;
+};
 
 typedef struct {
 	/* General registers */
@@ -637,5 +638,4 @@ mono_arch_unwindinfo_validate_size (GSList *unwind_ops, guint max_size)
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 
-#endif /* __MONO_MINI_AMD64_H__ */  
-
+#endif /* __MONO_MINI_AMD64_H__ */

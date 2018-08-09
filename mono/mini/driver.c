@@ -102,7 +102,7 @@ static const struct msgstr_t {
 #undef OPTFLAG
 };
 static const gint16 opt_names [] = {
-#define OPTFLAG(id,shift,name,desc) [(shift)] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define OPTFLAG(id,shift,name,desc) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "optflags-def.h"
 #undef OPTFLAG
 };
@@ -408,7 +408,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #else
 					func = (TestMethod)(gpointer)cfg->native_code;
 #endif
-				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), func);
+				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
 				result = func ();
 				if (result != expected) {
 					failed++;
@@ -948,7 +948,7 @@ test_thread_func (ThreadData *td)
 				}
 			} else {
 				int pos = random () % MAX_ADDR;
-				char *addr = (char*)(gulong) pos;
+				char *addr = (char*)(uintptr_t)pos;
 				MonoJitInfo *ji;
 
 				ji = mono_jit_info_table_find (domain, addr);
