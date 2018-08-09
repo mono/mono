@@ -45,6 +45,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryType.cs" />
     <Compile Include="..\..\..\external\Newtonsoft.Json\Src\Newtonsoft.Json\Bson\BsonBinaryWriter.cs" />
@@ -283,7 +284,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Net.Http.Formatting\UriExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

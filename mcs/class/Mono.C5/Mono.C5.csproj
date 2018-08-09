@@ -44,6 +44,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="C5\AssemblyInfo.cs" />
     <Compile Include="C5\Attributes.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="C5\trees\RedBlackTreeDictionary.cs" />
     <Compile Include="C5\trees\RedBlackTreeSet.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

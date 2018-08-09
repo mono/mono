@@ -55,6 +55,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -113,26 +114,52 @@
     <Compile Include="Mono.Unix\UnixStream.cs" />
     <Compile Include="Mono.Unix\UnixSymbolicLinkInfo.cs" />
     <Compile Include="Mono.Unix\UnixUserInfo.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Private>False</Private>
+      <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="Mono.Unix.Android\AndroidUtils.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' "></ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' "></ItemGroup>
+  <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="Mono.Unix.Android\AndroidUtils.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

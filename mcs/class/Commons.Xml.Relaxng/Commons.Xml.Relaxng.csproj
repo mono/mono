@@ -47,6 +47,7 @@
     <Compile Include="Commons.Xml.Relaxng.Rnc\RncParser.cs" />
   </ItemGroup>
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -87,15 +88,16 @@
     <Compile Include="Commons.Xml.Relaxng\RelaxngValidatingReader.cs" />
     <Compile Include="Commons.Xml.Relaxng\XsdDatatypeProvider.cs" />
     <Compile Include="Commons.Xml\XmlDefaultReader.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Private>False</Private>
+      <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
