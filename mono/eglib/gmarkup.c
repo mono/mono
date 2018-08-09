@@ -170,7 +170,7 @@ parse_value (const char *p, const char *end, char **value, GError **gerror)
 		return end;
 	l = (int)(p - start);
 	p++;
-	*value = g_malloc (l + 1);
+	*value = (char*)g_malloc (l + 1);
 	if (*value == NULL)
 		return end;
 	strncpy (*value, start, l);
@@ -191,7 +191,7 @@ parse_name (const char *p, const char *end, char **value)
 		return end;
 
 	l = (int)(p - start);
-	*value = g_malloc (l + 1);
+	*value = (char*)g_malloc (l + 1);
 	if (*value == NULL)
 		return end;
 	strncpy (*value, start, l);
@@ -252,8 +252,8 @@ parse_attributes (const char *p, const char *end, char ***names, char ***values,
 			}
 
 			++nnames;
-			*names = g_realloc (*names, sizeof (char **) * (nnames+1));
-			*values = g_realloc (*values, sizeof (char **) * (nnames+1));
+			*names = (char**)g_realloc (*names, sizeof (char **) * (nnames+1));
+			*values = (char**)g_realloc (*values, sizeof (char **) * (nnames+1));
 			(*names) [nnames-1] = name;
 			(*values) [nnames-1] = value;
 			(*names) [nnames] = NULL;
@@ -359,7 +359,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			}
 			l = (int)(element_end - element_start);
-			ename = g_malloc (l + 1);
+			ename = (char*)g_malloc (l + 1);
 			if (ename == NULL)
 				goto fail;
 			strncpy (ename, element_start, l);
@@ -447,7 +447,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			}
 			
-			text = current->data;
+			text = (char*)current->data;
 			if (context->parser.end_element != NULL){
 				context->parser.end_element (context, text, context->user_data, gerror);
 				if (gerror != NULL && *gerror != NULL){
