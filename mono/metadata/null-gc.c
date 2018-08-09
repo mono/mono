@@ -164,7 +164,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	return NULL;
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	return g_malloc0 (size);
@@ -176,7 +176,7 @@ mono_gc_free_fixed (void* addr)
 	g_free (addr);
 }
 
-void *
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = g_calloc (1, size);
@@ -186,7 +186,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj = g_calloc (1, size);
@@ -197,7 +197,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *obj = g_calloc (1, size);
@@ -211,7 +211,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *obj = g_calloc (1, size);
@@ -223,16 +223,16 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	return obj;
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
 void
@@ -411,12 +411,12 @@ mono_gc_is_disabled (void)
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gpointer /* FIXMEcxx gconstpointer*/ _src, int size)
 {
 	g_assert_not_reached ();
 }
 
-void*
+void* // FIXMEcxx MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
 	return &mono_gc_wbarrier_range_copy;

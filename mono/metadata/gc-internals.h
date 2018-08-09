@@ -160,7 +160,9 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+G_BEGIN_DECLS // FIXMEcxx? Probably because MonoGCDescriptor varies.
+void* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+G_END_DECLS // FIXMEcxx?
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -169,38 +171,47 @@ void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
 
-void* mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+void* // FIXMEcxx MonoObject*
+mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_pinned_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
+void* // FIXMEcxx MonoObject*
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size);
 
 MonoObjectHandle
 mono_gc_alloc_handle_obj (MonoVTable *vtable, gsize size);
 
-void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+void* // FIXMEcxx MonoArray*
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
 
 MonoArrayHandle
 mono_gc_alloc_handle_vector (MonoVTable *vtable, gsize size, gsize max_length);
 
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+void* // FIXMEcxx MonoArray*
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 
 MonoArrayHandle
 mono_gc_alloc_handle_array (MonoVTable *vtable, gsize size, gsize max_length, gsize bounds_size);
 
-void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
+void* // FIXMEcxx MonoString*
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 MonoStringHandle
 mono_gc_alloc_handle_string (MonoVTable *vtable, gsize size, gint32 len);
 
-void* mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+void* // FIXMEcxx MonoObject*
+mono_gc_alloc_mature (MonoVTable *vtable, size_t size);
+
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 
 MonoObjectHandle
 mono_gc_alloc_handle_mature (MonoVTable *vtable, gsize size);
 
-void mono_gc_register_obj_with_weak_fields (void *obj);
+void
+mono_gc_register_obj_with_weak_fields (void *obj);
+
 void
 mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
 
@@ -263,8 +274,12 @@ MonoMethod* mono_gc_get_write_barrier (void);
 
 /* Fast valuetype copy */
 /* WARNING: [dest, dest + size] must be within the bounds of a single type, otherwise the GC will lose remset entries */
-void mono_gc_wbarrier_range_copy (gpointer dest, gpointer src, int size);
-void* mono_gc_get_range_copy_func (void);
+void mono_gc_wbarrier_range_copy (gpointer dest, gpointer /* FIXMEcxx gconstpointer*/ src, int size);
+
+// FIXMEcxx typedef void (*MonoRangeCopyFunction)(gpointer, gconstpointer, int size);
+
+void* // FIXMEcxx MonoRangeCopyFunction
+mono_gc_get_range_copy_func (void);
 
 
 /* helper for the managed alloc support */
@@ -426,11 +441,15 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
 
+G_BEGIN_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
+
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
 
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
+
+G_END_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean mono_log_finalizers;
@@ -441,4 +460,3 @@ extern gboolean mono_do_not_finalize;
 extern gchar **mono_do_not_finalize_class_names;
 
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
-

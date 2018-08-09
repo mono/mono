@@ -25,6 +25,8 @@ typedef enum {
 	MONO_CHECK_MODE_UNKNOWN = 0x8
 } MonoCheckMode;
 
+G_ENUM_FUNCTIONS (MonoCheckMode)
+
 mono_bool mono_check_mode_enabled (MonoCheckMode query);
 
 // This is for metadata writes which we have chosen not to check at the current time.
@@ -48,7 +50,11 @@ The JIT will generate code that will land on this function
 
 #define CHECKED_MONO_INIT() do { checked_build_init (); } while (0)
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
+
 void checked_build_init (void);
+
+G_END_DECLS
 
 #else
 
