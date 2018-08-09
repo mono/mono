@@ -2338,7 +2338,7 @@ static void
 interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untyped)
 {
 	InterpFrame frame;
-	ThreadContext *context = mono_native_tls_get_value (thread_context_id);
+	ThreadContext *context = (ThreadContext*)mono_native_tls_get_value (thread_context_id);
 	InterpFrame *old_frame;
 	stackval result;
 	stackval *args;
@@ -2418,7 +2418,7 @@ static gpointer
 interp_create_method_pointer (MonoMethod *method, MonoError *error)
 {
 #ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
-	return interp_no_native_to_managed;
+	return (gpointer)interp_no_native_to_managed;
 #else
 	gpointer addr, entry_func, entry_wrapper;
 	MonoDomain *domain = mono_domain_get ();
@@ -2459,17 +2459,17 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 #else
 	if (!mono_native_to_interp_trampoline) {
 		if (mono_aot_only) {
-			mono_native_to_interp_trampoline = mono_aot_get_trampoline ("native_to_interp_trampoline");
+			mono_native_to_interp_trampoline = (MonoFuncV)mono_aot_get_trampoline ("native_to_interp_trampoline");
 		} else {
 			MonoTrampInfo *info;
-			mono_native_to_interp_trampoline = mono_arch_get_native_to_interp_trampoline (&info);
+			mono_native_to_interp_trampoline = (MonoFuncV)mono_arch_get_native_to_interp_trampoline (&info);
 			mono_tramp_info_register (info, NULL);
 		}
 	}
-	entry_wrapper = mono_native_to_interp_trampoline;
+	entry_wrapper = (gpointer)mono_native_to_interp_trampoline;
 	/* We need the lmf wrapper only when being called from mixed mode */
 	if (sig->pinvoke)
-		entry_func = interp_entry_from_trampoline;
+		entry_func = (gpointer)interp_entry_from_trampoline;
 	else
 		entry_func = mono_jit_compile_method_jit_only (mini_get_interp_lmf_wrapper (), error);
 #endif
@@ -2560,7 +2560,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	GSList *finally_ips = NULL;
 	const unsigned short *endfinally_ip = NULL;
 	const unsigned short *ip = NULL;
-	register stackval *sp;
+	stackval *sp;
 	InterpMethod *rtm = NULL;
 #if DEBUG_INTERP
 	gint tracing = global_tracing;
@@ -3839,7 +3839,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 					if (!mono_error_ok (error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				o = (MonoObject*)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 				if (G_UNLIKELY (!o)) {
 					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 					THROW_EX (mono_error_convert_to_exception (error), ip);

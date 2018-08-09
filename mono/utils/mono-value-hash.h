@@ -15,7 +15,7 @@
 #include <glib.h>
 #include "mono-compiler.h"
 
-G_BEGIN_DECLS
+
 
 /*
  * This is a hash table with the following features/restrictions:
@@ -53,6 +53,6 @@ void
 mono_value_hash_table_insert (MonoValueHashTable *table,
 				 gpointer key, gpointer value);
 
-G_END_DECLS
+
 
 #endif
