@@ -13,3 +13,4 @@ System.Security.Cryptography/RNGCryptoServiceProvider.cs
 ../Mono.Security/Mono.Security.Cryptography/ARC4Managed.cs
 ../Mono.Security/Mono.Security.Cryptography/MD2Managed.cs
 ../Mono.Security/Mono.Security.Cryptography/MD4Managed.cs
+corefx/RegistryKey.FileSystem.cs
