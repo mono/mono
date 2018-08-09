@@ -7546,7 +7546,7 @@ emit_method_inner (EmitContext *ctx)
 		while (g_hash_table_iter_next (&iter, NULL, (void**)&var))
 			callee_vars [i ++] = var;
 
-		cfg->native_code = mono_llvm_compile_method (ctx->module->mono_ee, ctx->lmethod, nvars, callee_vars, callee_addrs, &eh_frame);
+		cfg->native_code = (guint8*)mono_llvm_compile_method (ctx->module->mono_ee, ctx->lmethod, nvars, callee_vars, callee_addrs, &eh_frame);
 
 		decode_llvm_eh_info (ctx, eh_frame);
 
@@ -7843,7 +7843,7 @@ decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
 	int fde_len;
 	MonoLLVMFDEInfo info;
 	MonoJitExceptionInfo *ei;
-	guint8 *p = eh_frame;
+	guint8 *p = (guint8*)eh_frame;
 	int version, fde_count, fde_offset;
 	guint32 ei_len, i, nested_len;
 	gpointer *type_info;
@@ -9239,7 +9239,7 @@ emit_dbg_subprogram (EmitContext *ctx, MonoCompile *cfg, LLVMValueRef method, co
 	filename = g_path_get_basename (source_file);
 
 #if LLVM_API_VERSION > 100
-	return mono_llvm_di_create_function (module->di_builder, module->cu, method, cfg->method->name, name, dir, filename, n_seq_points ? sym_seq_points [0].line : 1);
+	return (LLVMValueRef)mono_llvm_di_create_function (module->di_builder, module->cu, method, cfg->method->name, name, dir, filename, n_seq_points ? sym_seq_points [0].line : 1);
 #endif
 
 	ctx_args [0] = LLVMConstInt (LLVMInt32Type (), 0x29, FALSE);
@@ -9357,7 +9357,7 @@ emit_default_dbg_loc (EmitContext *ctx, LLVMBuilderRef builder)
 #if LLVM_API_VERSION > 100
 	if (ctx->minfo) {
 		LLVMValueRef loc_md;
-		loc_md = mono_llvm_di_create_location (ctx->module->di_builder, ctx->dbg_md, 0, 0);
+		loc_md = (LLVMValueRef)mono_llvm_di_create_location (ctx->module->di_builder, ctx->dbg_md, 0, 0);
 		mono_llvm_di_set_location (builder, loc_md);
 	}
 #else

@@ -257,7 +257,7 @@ typedef struct {
 static int
 find_code_region (void *data, int csize, int size, void *user_data)
 {
-	UserData *ud = user_data;
+	UserData *ud = (UserData*)user_data;
 
 	if ((char*)ud->code >= (char*)data && (char*)ud->code < (char*)data + csize) {
 		ud->region_start = data;
@@ -425,8 +425,8 @@ typedef struct
 static int
 compare_by_addr (const void *arg1, const void *arg2)
 {
-	const FullSeqPoint *sp1 = arg1;
-	const FullSeqPoint *sp2 = arg2;
+	const FullSeqPoint *sp1 = (const FullSeqPoint *)arg1;
+	const FullSeqPoint *sp2 = (const FullSeqPoint *)arg2;
 
 	return sp1->native_offset - sp2->native_offset;
 }

@@ -1036,7 +1036,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 			if (info->info.status == MONO_VERIFY_ERROR) {
 				if (fail_compile) {
 				char *method_name = mono_method_full_name (method, TRUE);
-					cfg->exception_type = info->exception_type;
+					cfg->exception_type = (MonoExceptionType)info->exception_type;
 					cfg->exception_message = g_strdup_printf ("Error verifying %s: %s", method_name, info->info.message);
 					g_free (method_name);
 				}
@@ -1058,7 +1058,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 						mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 						g_free (msg);
 					} else {
-						cfg->exception_type = info->exception_type;
+						cfg->exception_type = (MonoExceptionType)info->exception_type;
 						cfg->exception_message = msg;
 					}
 					g_free (method_name);
@@ -2892,7 +2892,7 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		g_assert (mono_threads_are_safepoints_enabled ());
-		gpointer poll_func = &mono_threads_state_poll;
+		gpointer poll_func = (gpointer)&mono_threads_state_poll;
 
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
 			if (cfg->verbose_level > 1)
@@ -3958,7 +3958,7 @@ mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *st
 }
 
 void
-mono_cfg_set_exception (MonoCompile *cfg, int type)
+mono_cfg_set_exception (MonoCompile *cfg, MonoExceptionType type)
 {
 	cfg->exception_type = type;
 }

@@ -143,11 +143,11 @@ mono_tasklets_init (void)
 {
 	mono_os_mutex_init_recursive (&tasklets_mutex);
 
-	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", continuation_alloc);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::free", continuation_free);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::mark", continuation_mark_frame);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::store", continuation_store);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::restore", continuation_restore);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", (gpointer)continuation_alloc);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::free", (gpointer)continuation_free);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::mark", (gpointer)continuation_mark_frame);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::store", (gpointer)continuation_store);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::restore", (gpointer)continuation_restore);
 }
 
 void
@@ -201,11 +201,11 @@ continuation_restore (MonoContinuation *cont, int state)
 void
 mono_tasklets_init(void)
 {
-	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", continuation_alloc);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::free", continuation_free);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::mark", continuation_mark_frame);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::store", continuation_store);
-	mono_add_internal_call ("Mono.Tasklets.Continuation::restore", continuation_restore);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::alloc", (gpointer)continuation_alloc);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::free", (gpointer)continuation_free);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::mark", (gpointer)continuation_mark_frame);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::store", (gpointer)continuation_store);
+	mono_add_internal_call ("Mono.Tasklets.Continuation::restore", (gpointer)continuation_restore);
 
 }
 #endif

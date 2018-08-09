@@ -301,7 +301,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	mono_thread_info_set_is_async_context (TRUE);
 
-	MONO_PROFILER_RAISE (sample_hit, (mono_arch_ip_from_context (ctx), ctx));
+	MONO_PROFILER_RAISE (sample_hit, ((const mono_byte*)mono_arch_ip_from_context (ctx), ctx));
 
 	mono_thread_info_set_is_async_context (FALSE);
 
@@ -339,6 +339,9 @@ MONO_SIG_HANDLER_FUNC (static, sigusr2_signal_handler)
 
 static void
 add_signal_handler (int signo, gpointer handler, int flags)
+
+#define add_signal_handler(signo, handler, flags) (add_signal_handler ((signo), (gpointer)(handler), (flags)))
+
 {
 	struct sigaction sa;
 	struct sigaction previous_sa;
