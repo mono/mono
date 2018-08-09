@@ -3703,6 +3703,7 @@ namespace System
             return RuntimeTypeHandle.IsInstanceOfType(this, o);
         }
 
+#if !MONO
         [System.Runtime.InteropServices.ComVisible(true)]
         [Pure]
         public override bool IsSubclassOf(Type type) 
@@ -3732,6 +3733,7 @@ namespace System
 
             return false;
         }
+#endif
 
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;
