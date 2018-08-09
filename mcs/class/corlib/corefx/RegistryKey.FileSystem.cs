@@ -198,7 +198,7 @@ namespace Microsoft.Win32
         }
         internal static bool IsEquals(RegistryKey a, RegistryKey b)
         {
-            return a.hive == b.hive && a.Handle == b.Handle && a._keyName == b._keyName && a._remoteKey == b._remoteKey && a.IsWritable() == b.IsWritable();
+            return a.hive == b.hive && a._keyName == b._keyName && a._remoteKey == b._remoteKey && a.IsWritable() == b.IsWritable();
         }
 
         internal bool IsRoot => hive != null;
