@@ -51,7 +51,7 @@ g_module_open (const gchar *file, GModuleFlags flags)
 	GModule *module;
 	void *handle;
 	
-	flags &= G_MODULE_BIND_MASK;
+	flags = (GModuleFlags)(flags & G_MODULE_BIND_MASK); // FIXMEcxx enum operator overloading
 	if ((flags & G_MODULE_BIND_LAZY) != 0)
 		f |= RTLD_LAZY;
 	if ((flags & G_MODULE_BIND_LOCAL) != 0)

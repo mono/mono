@@ -640,7 +640,7 @@ g_convert (const gchar *str, gssize len, const gchar *to_charset, const gchar *f
 	inbuf = (char *) str;
 	
 	outleft = outsize = MAX (inleft, 8);
-	outbuf = result = g_malloc (outsize + 4);
+	outbuf = result = (char*)g_malloc (outsize + 4);
 	
 	do {
 		if (!flush)
@@ -656,7 +656,7 @@ g_convert (const gchar *str, gssize len, const gchar *to_charset, const gchar *f
 				outused = outbuf - result;
 				outsize += grow;
 				outleft += grow;
-				result = g_realloc (result, outsize + 4);
+				result = (char*)g_realloc (result, outsize + 4);
 				outbuf = result + outused;
 				break;
 			case EINVAL:
@@ -819,7 +819,7 @@ g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written)
 	if (items_written)
 		*items_written = n;
 	
-	outptr = outbuf = g_malloc ((n + 1) * sizeof (gunichar));
+	outptr = outbuf = (gunichar*)g_malloc ((n + 1) * sizeof (gunichar));
 	inptr = (char *) str;
 	
 	for (i = 0; i < n; i++) {
@@ -883,7 +883,7 @@ eg_utf8_to_utf16_general (const gchar *str, glong len, glong *items_read, glong 
 	if (items_written)
 		*items_written = outlen;
 	
-	outptr = outbuf = g_malloc ((outlen + 1) * sizeof (gunichar2));
+	outptr = outbuf = (gunichar2*)g_malloc ((outlen + 1) * sizeof (gunichar2));
 	inptr = (char *) str;
 	inleft = len;
 	
@@ -1000,7 +1000,7 @@ g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_wri
 	if (items_read)
 		*items_read = inptr - str;
 	
-	outptr = outbuf = g_malloc (outlen + 4);
+	outptr = outbuf = (gunichar*)g_malloc (outlen + 4);
 	inptr = (char *) str;
 	inleft = len;
 	
@@ -1080,7 +1080,7 @@ g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *item
 	if (items_written)
 		*items_written = outlen;
 	
-	outptr = outbuf = g_malloc (outlen + 1);
+	outptr = outbuf = (char*)g_malloc (outlen + 1);
 	inptr = (char *) str;
 	inleft = len * 2;
 	
@@ -1161,7 +1161,7 @@ g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *item
 	if (items_written)
 		*items_written = outlen / 4;
 	
-	outptr = outbuf = g_malloc (outlen + 4);
+	outptr = outbuf = (gunichar*)g_malloc (outlen + 4);
 	inptr = (char *) str;
 	inleft = len * 2;
 	
@@ -1229,7 +1229,7 @@ g_ucs4_to_utf8 (const gunichar *str, glong len, glong *items_read, glong *items_
 	
 	len = i;
 	
-	outptr = outbuf = g_malloc (outlen + 1);
+	outptr = outbuf = (char*)g_malloc (outlen + 1);
 	for (i = 0; i < len; i++)
 		outptr += g_unichar_to_utf8 (str[i], outptr);
 	*outptr = 0;
@@ -1291,7 +1291,7 @@ g_ucs4_to_utf16 (const gunichar *str, glong len, glong *items_read, glong *items
 	
 	len = i;
 	
-	outptr = outbuf = g_malloc ((outlen + 1) * sizeof (gunichar2));
+	outptr = outbuf = (gunichar2*)g_malloc ((outlen + 1) * sizeof (gunichar2));
 	for (i = 0; i < len; i++)
 		outptr += g_unichar_to_utf16 (str[i], outptr);
 	*outptr = 0;
