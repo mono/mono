@@ -853,6 +853,8 @@ mono_cleanup (void)
 {
 	mono_close_exe_image ();
 
+	mono_thread_info_cleanup ();
+
 	mono_defaults.corlib = NULL;
 
 	mono_config_cleanup ();
