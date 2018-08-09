@@ -14,6 +14,9 @@
 #include <mono/utils/mono-os-semaphore.h>
 #include <mono/metadata/icalls.h>
 
+// FIXMEcxx
+//GENERATE_BIT_ENUM_OPERATORS (MonoProfilerCallInstrumentationFlags, int)
+
 struct _MonoProfilerDesc {
 	MonoProfilerHandle next;
 	MonoProfiler *prof;
