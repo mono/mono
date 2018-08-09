@@ -97,7 +97,7 @@ strrchr_seperator (const gchar* filename)
 #endif
 	char *p;
 
-	p = strrchr (filename, G_DIR_SEPARATOR);
+	p = (char*)strrchr (filename, G_DIR_SEPARATOR);
 #ifdef G_OS_WIN32
 	p2 = strrchr (filename, '/');
 	if (p2 > p)
@@ -120,7 +120,7 @@ g_path_get_dirname (const gchar *filename)
 	if (p == filename)
 		return g_strdup ("/");
 	count = p - filename;
-	r = g_malloc (count + 1);
+	r = (char*)g_malloc (count + 1);
 	strncpy (r, filename, count);
 	r [count] = 0;
 

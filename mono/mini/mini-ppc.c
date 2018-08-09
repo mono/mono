@@ -5966,7 +5966,7 @@ mono_arch_skip_single_step (MonoContext *ctx)
  *   See mini-amd64.c for docs.
  */
 gpointer
-mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
+mono_arch_get_seq_point_info (MonoDomain *domain, gpointer code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;

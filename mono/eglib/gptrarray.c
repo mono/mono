@@ -55,7 +55,7 @@ g_ptr_array_grow(GPtrArrayPriv *array, guint length)
 	}
 
 	array->size = MAX(array->size, 16);
-	array->pdata = g_realloc(array->pdata, array->size * sizeof(gpointer));
+	array->pdata = (gpointer*)g_realloc(array->pdata, array->size * sizeof(gpointer));
 }
 
 GPtrArray *

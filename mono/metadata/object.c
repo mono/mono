@@ -282,7 +282,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall ((gpointer)ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -2823,7 +2823,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -3503,7 +3503,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 	MonoObject *o;
 	MonoClass *klass;
 	MonoVTable *vtable = NULL;
-	gchar *v;
+	gpointer v;
 	gboolean is_static = FALSE;
 	gboolean is_ref = FALSE;
 	gboolean is_literal = FALSE;
@@ -3585,7 +3585,6 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 		static MonoMethod *m;
 		gpointer args [2];
 		gpointer *ptr;
-		gpointer v;
 
 		if (!m) {
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
@@ -3624,7 +3623,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 
 	o = mono_object_new_checked (domain, klass, error);
 	return_val_if_nok (error, NULL);
-	v = (gpointer)mono_object_get_data (o);
+	v = mono_object_get_data (o);
 
 	if (is_literal) {
 		get_default_field_value (domain, field, v, error);
@@ -4855,6 +4854,26 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	}
 }
 
+typedef struct MonoMainThunk {
+	MonoMainThreadFunc main_func;
+	gpointer main_data;
+} MonoMainThunk;
+
+static mono_thread_start_return_t MONO_STDCALL
+mono_main_thunk (gpointer void_data)
+/**
+ * MonoThreadStart returns 32bit unsigned long on Windows, pointer-sized unsigned long on non-Windows.
+ * MonoMainThreadFunc returns void.
+ * This thunk adapts them, without a function pointer cast.
+ * Function pointer casts are to be avoided more than data casts.
+ */
+{
+	MonoMainThunk data = *(MonoMainThunk*)void_data;
+	g_free (void_data);
+	data.main_func (data.main_data);
+	return 0;
+}
+
 /**
  * mono_runtime_exec_managed_code:
  * \param domain Application domain
@@ -4876,7 +4895,11 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+
+	MonoMainThunk* thunk_data = g_new0 (MonoMainThunk, 1);
+	thunk_data->main_func = main_func;
+	thunk_data->main_data = main_args;
+	mono_thread_create_checked (domain, mono_main_thunk, thunk_data, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -5819,11 +5842,7 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	MonoObject *o;
-
-	error_init (error);
-
-	o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = (MonoObject*)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
 
@@ -6799,7 +6818,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
@@ -6864,7 +6883,7 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		mono_gc_wbarrier_value_copy (data, value, 1, klass);
@@ -9000,9 +9019,9 @@ mono_object_get_data (MonoObject *o)
  *   Return the address of the FIELD in the valuetype VTYPE.
  */
 gpointer
-mono_vtype_get_field_addr (guint8 *vtype, MonoClassField *field)
+mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field)
 {
-	return vtype + field->offset - MONO_ABI_SIZEOF (MonoObject);
+	return ((char*)vtype) + field->offset - MONO_ABI_SIZEOF (MonoObject);
 }
 
 

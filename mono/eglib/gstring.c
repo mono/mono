@@ -32,7 +32,7 @@
 #define GROW_IF_NECESSARY(s,l) { \
 	if(s->len + l >= s->allocated_len) { \
 		s->allocated_len = (s->allocated_len + l + 16) * 2; \
-		s->str = g_realloc(s->str, s->allocated_len); \
+		s->str = (char*)g_realloc(s->str, s->allocated_len); \
 	} \
 }
 
@@ -46,7 +46,7 @@ g_string_new_len (const gchar *init, gssize len)
 	else
 		ret->len = len < 0 ? strlen(init) : len;
 	ret->allocated_len = MAX(ret->len + 1, 16);
-	ret->str = g_malloc(ret->allocated_len);
+	ret->str = (char*)g_malloc(ret->allocated_len);
 	if (init)
 		memcpy(ret->str, init, ret->len);
 	ret->str[ret->len] = 0;
@@ -65,7 +65,7 @@ g_string_sized_new (gsize default_size)
 {
 	GString *ret = g_new (GString, 1);
 
-	ret->str = g_malloc (default_size);
+	ret->str = (char*)g_malloc (default_size);
 	ret->str [0] = 0;
 	ret->len = 0;
 	ret->allocated_len = default_size;

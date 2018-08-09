@@ -52,7 +52,7 @@ g_strndup (const gchar *str, gsize n)
 	return strndup (str, n);
 #else
 	if (str) {
-		char *retval = g_malloc(n+1);
+		char *retval = (char*)g_malloc(n+1);
 		if (retval) {
 			strncpy(retval, str, n)[n] = 0;
 		}
@@ -242,9 +242,9 @@ g_strerror (gint errnum)
 				break;
 			}
 			if (buff == tmp_buff)
-				buff = g_malloc (buff_len * 2);
+				buff = (char*)g_malloc (buff_len * 2);
 			else
-				buff = g_realloc (buff, buff_len * 2);
+				buff = (char*)g_realloc (buff, buff_len * 2);
 			buff_len *= 2;
 		 //Spec is not clean on whether size argument includes space for null terminator or not	
 		}
@@ -287,7 +287,7 @@ g_strconcat (const gchar *first, ...)
 	}
 	va_end (args);
 	
-	ret = g_malloc (total + 1);
+	ret = (char*)g_malloc (total + 1);
 	if (ret == NULL)
 		return NULL;
 
@@ -512,7 +512,7 @@ g_strjoin (const gchar *separator, ...)
 	if (slen > 0 && len > 0)
 		len -= slen;
 
-	res = g_malloc (len + 1);
+	res = (char*)g_malloc (len + 1);
 	va_start (args, separator);
 	s = va_arg (args, char *);
 	r = g_stpcpy (res, s);
@@ -549,7 +549,7 @@ g_strjoinv (const gchar *separator, gchar **str_array)
 	if (slen > 0 && len > 0)
 		len -= slen;
 
-	res = g_malloc (len + 1);
+	res = (char*)g_malloc (len + 1);
 	r = g_stpcpy (res, str_array [0]);
 	for (i = 1; str_array [i] != NULL; i++){
 		if (separator != NULL)
@@ -698,7 +698,7 @@ g_filename_to_uri (const gchar *filename, const gchar *hostname, GError **gerror
 		else
 			n++;
 	}
-	ret = g_malloc (n);
+	ret = (char*)g_malloc (n);
 	strcpy (ret, uriPrefix);
 	for (p = filename, rp = ret + strlen (ret); *p; p++){
 #ifdef G_OS_WIN32
@@ -765,7 +765,7 @@ g_filename_from_uri (const gchar *uri, gchar **hostname, GError **gerror)
 	flen++;
 #endif
 
-	result = g_malloc (flen + 1);
+	result = (char*)g_malloc (flen + 1);
 	result [flen] = 0;
 
 #ifndef G_OS_WIN32
@@ -814,7 +814,7 @@ g_ascii_strdown (const gchar *str, gssize len)
 	if (len == -1)
 		len = strlen (str);
 	
-	ret = g_malloc (len + 1);
+	ret = (char*)g_malloc (len + 1);
 	for (i = 0; i < len; i++)
 		ret [i] = (guchar) g_ascii_tolower (str [i]);
 	ret [i] = 0;
@@ -839,7 +839,7 @@ g_ascii_strup (const gchar *str, gssize len)
 	if (len == -1)
 		len = strlen (str);
 	
-	ret = g_malloc (len + 1);
+	ret = (char*)g_malloc (len + 1);
 	for (i = 0; i < len; i++)
 		ret [i] = (guchar) g_ascii_toupper (str [i]);
 	ret [i] = 0;
@@ -1021,7 +1021,7 @@ g_strescape (const gchar *source, const gchar *exceptions)
 		for (ptr = exceptions; *ptr; ptr++)
 			escaped [(int) *ptr] = 0;
 	}
-	result = g_malloc (strlen (source) * 4 + 1); /* Worst case: everything octal. */
+	result = (char*)g_malloc (strlen (source) * 4 + 1); /* Worst case: everything octal. */
 	res_ptr = result;
 	for (ptr = source; *ptr; ptr++) {
 		c = *ptr;
