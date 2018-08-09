@@ -37,6 +37,9 @@ var BindingSupportLib = {
 			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
 			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 
+			// receives a byteoffset into allocated Heap with a size.
+			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
+
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
 			
@@ -185,6 +188,34 @@ var BindingSupportLib = {
 			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
 		},
 
+		// https://github.com/Planeshifter/emscripten-examples/blob/master/01_PassingArrays/sum_post.js
+		js_typedarray_to_heap: function(typedArray){
+			var numBytes = typedArray.length * typedArray.BYTES_PER_ELEMENT;
+			var ptr = Module._malloc(numBytes);
+			var heapBytes = new Uint8Array(Module.HEAPU8.buffer, ptr, numBytes);
+			heapBytes.set(new Uint8Array(typedArray.buffer));
+			return heapBytes;
+		},
+		mono_array_to_js_typedarray: function(mono_array){
+
+			var byteArrayLength = this.mono_array_length(mono_array);
+			
+			// Allocate bytes needed for the array of bytes
+			var bufferSize = byteArrayLength * Uint8Array.BYTES_PER_ELEMENT;
+			var bufferPtr = Module._malloc(bufferSize);
+
+			// blit the mono array to the heap
+			this.mono_array_to_heap(mono_array, bufferPtr);
+
+			// create a new type array from the allocated heap
+			var res = Module.HEAPU8.slice(bufferPtr, bufferPtr+byteArrayLength);
+			// free the allocated memory
+			Module._free(bufferPtr);
+			// return new typed array
+			return res;
+			
+		},
+
 		js_to_mono_obj: function (js_obj) {
 	  		this.bindings_lazy_init ();
 
@@ -214,6 +245,57 @@ var BindingSupportLib = {
 				})
 
 				return this.get_task_and_bind (tcs, js_obj);
+			}
+
+
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
+			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			// and number of elements — that turns the data into an actual typed array.
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
+			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT)) 
+			{
+				var arrayType = 0;	
+				if (js_obj instanceof Int8Array)
+					arrayType = 1;
+				if (js_obj instanceof Uint8Array)
+					arrayType = 2;
+				if (js_obj instanceof Uint8ClampedArray)
+					arrayType = 2;
+				if (js_obj instanceof Int16Array)
+					arrayType = 3;
+				if (js_obj instanceof Uint16Array)
+					arrayType = 4;
+				if (js_obj instanceof Int32Array)
+					arrayType = 5;
+				if (js_obj instanceof Uint32Array)
+					arrayType = 6;
+				if (js_obj instanceof Float32Array)
+					arrayType = 7;
+				if (js_obj instanceof Float64Array)
+					arrayType = 8;
+
+
+				var heapBytes = this.js_typedarray_to_heap(js_obj);
+				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, js_obj.length, js_obj.BYTES_PER_ELEMENT, arrayType);
+				Module._free(heapBytes.byteOffset);
+				return bufferArray;
+			}
+			// The ArrayBuffer object is used to represent a generic, fixed-length raw binary data buffer. 
+			// You cannot directly manipulate the contents of an ArrayBuffer; instead, you create one of the 
+			// typed array objects or a DataView object which represents the buffer in a specific format, and 
+			// use that to read and write the contents of the buffer.
+			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays#ArrayBuffer
+			if (ArrayBuffer.isView(js_obj) || js_obj instanceof ArrayBuffer)
+			{
+				var heapBytes = this.js_typedarray_to_heap(new Uint8Array(js_obj));
+
+				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, heapBytes.length, heapBytes.BYTES_PER_ELEMENT, 2);
+				Module._free(heapBytes.byteOffset);
+				return bufferArray;
 			}
 
 			return this.extract_mono_obj (js_obj);

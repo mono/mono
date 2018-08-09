@@ -131,6 +131,14 @@ MonoClass* mono_get_object_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
+MonoClass* mono_get_byte_class (void);
+MonoClass* mono_get_sbyte_class (void);
+MonoClass* mono_get_int16_class (void);
+MonoClass* mono_get_uint16_class (void);
+MonoClass* mono_get_int32_class (void);
+MonoClass* mono_get_uint32_class (void);
+MonoClass* mono_get_single_class (void);
+MonoClass* mono_get_double_class (void);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -144,6 +152,7 @@ const char* mono_class_get_namespace (MonoClass *klass);
 
 char* mono_array_addr_with_size (MonoArray *array, int size, int idx);
 int mono_array_length (MonoArray *array);
+int mono_array_element_size(MonoClass *klass);
 void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
 
 static char*
@@ -407,4 +416,52 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
 {
 	mono_array_setref (array, idx, obj);
+}
+
+// Int8Array 		| int8_t	| byte or SByte (signed byte)
+// Uint8Array		| uint8_t	| byte or Byte (unsigned byte)
+// Uint8ClampedArray| uint8_t	| byte or Byte (unsigned byte)
+// Int16Array		| int16_t	| short (signed short)
+// Uint16Array		| uint16_t	| ushort (unsigned short)
+// Int32Array		| int32_t	| int (signed integer)
+// Uint32Array		| uint32_t	| uint (unsigned integer)
+// Float32Array		| float		| float
+// Float64Array		| double	| double
+
+#define MARSHAL_ARRAY_BYTE 1
+#define MARSHAL_ARRAY_UBYTE 2
+#define MARSHAL_ARRAY_SHORT 3
+#define MARSHAL_ARRAY_USHORT 4
+#define MARSHAL_ARRAY_INT 5
+#define MARSHAL_ARRAY_UINT 6
+#define MARSHAL_ARRAY_FLOAT 7
+#define MARSHAL_ARRAY_DOUBLE 8
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_typed_array_new (char *arr, int length, int size, int type)
+{
+	MonoClass *typeClass = mono_get_byte_class(); // default is Byte
+	switch (type) {
+	case MARSHAL_ARRAY_BYTE:
+		typeClass = mono_get_sbyte_class();
+	case MARSHAL_ARRAY_SHORT:
+		typeClass = mono_get_int16_class();
+	case MARSHAL_ARRAY_USHORT:
+		typeClass = mono_get_uint16_class();
+	case MARSHAL_ARRAY_INT:
+		typeClass = mono_get_int32_class();
+	case MARSHAL_ARRAY_UINT:
+		typeClass = mono_get_uint32_class();
+	case MARSHAL_ARRAY_FLOAT:
+		typeClass = mono_get_single_class();
+	case MARSHAL_ARRAY_DOUBLE:
+		typeClass = mono_get_double_class();
+	}
+
+	MonoArray *buffer;
+
+	buffer = mono_array_new (root_domain, typeClass, length);
+	memcpy(mono_array_addr_with_size(buffer, sizeof(char), 0), arr, length * size);
+
+	return buffer;
 }
