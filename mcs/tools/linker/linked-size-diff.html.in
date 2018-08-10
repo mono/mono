@@ -38,6 +38,7 @@
     <script type="text/javascript" id="newsource-monodroid">/*<![CDATA[
 @newdata-monodroid@
 ]]>*/
+    </script>
     <script type="text/javascript" id="oldsource-wasm">/*<![CDATA[
 @olddata-wasm@
 ]]>*/
