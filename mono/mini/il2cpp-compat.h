@@ -459,5 +459,8 @@ char* il2cpp_assembly_get_full_name(MonoAssembly *assembly);
 const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint);
 const MonoClass* il2cpp_get_class_from_index(int index);
 const MonoType* il2cpp_get_type_from_index(int index);
+const MonoType* il2cpp_get_type_from_method_context(MonoType* type, const MonoMethod* method);
+const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* context);
+void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes);
 
 #endif // RUNTIME_IL2CPP

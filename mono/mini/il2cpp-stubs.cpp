@@ -1300,25 +1300,8 @@ gboolean il2cpp_mono_methods_match(MonoMethod* left, MonoMethod* right)
 		return TRUE;
 	if (rightMethod == NULL || leftMethod == NULL)
 		return FALSE;
-	if (rightMethod->is_inflated && !rightMethod->is_generic && rightMethod->genericMethod->methodDefinition == leftMethod)
+	if (leftMethod->methodDefinition == rightMethod->methodDefinition)
 		return TRUE;
-	if (leftMethod->is_inflated && !leftMethod->is_generic && leftMethod->genericMethod->methodDefinition == rightMethod)
-		return TRUE;
-    if (leftMethod->is_generic && rightMethod->is_inflated && rightMethod->methodPointer &&
-        leftMethod->klass == rightMethod->klass &&
-        strcmp(leftMethod->name, rightMethod->name) == 0)
-    {
-        if (leftMethod->parameters_count != rightMethod->parameters_count)
-            return FALSE;
-
-        for(int i = 0;i < leftMethod->parameters_count;++i)
-        {
-			if ((leftMethod->parameters[i].parameter_type->type != IL2CPP_TYPE_MVAR) && (leftMethod->parameters[i].parameter_type->type != IL2CPP_TYPE_VAR) && (leftMethod->parameters[i].parameter_type != rightMethod->parameters[i].parameter_type))
-				return FALSE;
-        }
-
-        return TRUE;
-    }
 
 	return FALSE;
 }
@@ -1527,6 +1510,18 @@ const MonoClass* il2cpp_get_class_from_index(int index)
 const MonoType* il2cpp_get_type_from_index(int index)
 {
     return il2cpp::vm::MetadataCache::GetIl2CppTypeFromIndex(index);
+}
+
+const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* context)
+{
+    return il2cpp::metadata::GenericMetadata::InflateIfNeeded(type, context, true);
+}
+
+void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes)
+{
+#if IL2CPP_MONO_DEBUGGER
+    il2cpp::utils::Debugger::GetMethodExecutionContextInfo(method, executionContextInfoCount, executionContextInfo, headerInfo, scopes);
+#endif
 }
 
 }
