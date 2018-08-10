@@ -198,6 +198,7 @@ create_domain_objects (MonoDomain *domain)
 	mono_error_assert_ok (&error);
 	mono_field_static_set_value (string_vt, string_empty_fld, empty_str);
 	domain->empty_string = empty_str;
+	mono_gc_wbarrier_generic_nostore (&domain->empty_string);
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -205,6 +206,7 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_checked (domain, "Out of memory", &error);
 	mono_error_assert_ok (&error);
 	domain->out_of_memory_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL, &error);
+    mono_gc_wbarrier_generic_nostore (&domain->out_of_memory_ex);	
 	mono_error_assert_ok (&error);
 
 	/* 
@@ -214,14 +216,17 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_checked (domain, "A null value was found where an object instance was required", &error);
 	mono_error_assert_ok (&error);
 	domain->null_reference_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL, &error);
+    mono_gc_wbarrier_generic_nostore (&domain->null_reference_ex);    
 	mono_error_assert_ok (&error);
 	arg = mono_string_new_checked (domain, "The requested operation caused a stack overflow.", &error);
 	mono_error_assert_ok (&error);
 	domain->stack_overflow_ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL, &error);
+    mono_gc_wbarrier_generic_nostore (&domain->stack_overflow_ex);    
 	mono_error_assert_ok (&error);
 
 	/*The ephemeron tombstone i*/
 	domain->ephemeron_tombstone = mono_object_new_checked (domain, mono_defaults.object_class, &error);
+    mono_gc_wbarrier_generic_nostore (&domain->ephemeron_tombstone);    
 	mono_error_assert_ok (&error);
 
 	if (domain != old_domain) {
@@ -292,7 +297,9 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 	ad->data = domain;
 	domain->domain = ad;
+    mono_gc_wbarrier_generic_nostore (&domain->domain);	
 	domain->setup = setup;
+    mono_gc_wbarrier_generic_nostore (&domain->setup);	
 
 	mono_thread_attach (domain);
 
