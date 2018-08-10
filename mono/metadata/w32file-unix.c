@@ -2338,28 +2338,25 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 static int
 _wapi_clonefile(const char *from, const char *to, int flags)
 {
-	if (clonefile_ptr != NULL) {
-		gchar *located_from, *located_to;
-		int ret;
+	gchar *located_from, *located_to;
+	int ret;
 
-		located_from = mono_portability_find_file (from, FALSE);
-		located_to = mono_portability_find_file (to, FALSE);
+	g_assert (clonefile_ptr != NULL);
 
-		MONO_ENTER_GC_SAFE;
-		ret = clonefile_ptr (
-			located_from == NULL ? from : located_from,
-			located_to == NULL ? to : located_to,
-			flags);
-		MONO_EXIT_GC_SAFE;
+	located_from = mono_portability_find_file (from, FALSE);
+	located_to = mono_portability_find_file (to, FALSE);
 
-		g_free (located_from);
-		g_free (located_to);
+	MONO_ENTER_GC_SAFE;
+	ret = clonefile_ptr (
+		located_from == NULL ? from : located_from,
+		located_to == NULL ? to : located_to,
+		flags);
+	MONO_EXIT_GC_SAFE;
 
-		return ret;
-	} else {
-		errno = ENOTSUP;
-		return -1;
-	}
+	g_free (located_from);
+	g_free (located_to);
+
+	return ret;
 }
 #endif
 
