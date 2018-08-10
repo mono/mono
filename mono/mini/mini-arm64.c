@@ -713,7 +713,7 @@ emit_call (MonoCompile *cfg, guint8* code, guint32 patch_type, gconstpointer dat
 	code = emit_imm64_template (code, ARMREG_LR);
 	arm_blrx (code, ARMREG_LR);
 	*/
-	mono_add_patch_info_rel (cfg, code - cfg->native_code, patch_type, data, MONO_R_ARM64_BL);
+	mono_add_patch_info_rel (cfg, code - cfg->native_code, (MonoJumpInfoType)patch_type, data, MONO_R_ARM64_BL);
 	arm_bl (code, code);
 	cfg->thunk_area += THUNK_SIZE;
 	return code;
@@ -723,9 +723,9 @@ static guint8*
 emit_aotconst_full (MonoCompile *cfg, MonoJumpInfo **ji, guint8 *code, guint8 *start, int dreg, guint32 patch_type, gconstpointer data)
 {
 	if (cfg)
-		mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
+		mono_add_patch_info (cfg, code - cfg->native_code, (MonoJumpInfoType)patch_type, data);
 	else
-		*ji = mono_patch_info_list_prepend (*ji, code - start, patch_type, data);
+		*ji = mono_patch_info_list_prepend (*ji, code - start, (MonoJumpInfoType)patch_type, data);
 	/* See arch_emit_got_access () in aot-compiler.c */
 	arm_ldrx_lit (code, dreg, 0);
 	arm_nop (code);
@@ -1024,13 +1024,13 @@ mono_arch_flush_register_windows (void)
 MonoMethod*
 mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 {
-	return (gpointer)regs [MONO_ARCH_RGCTX_REG];
+	return (MonoMethod*)regs [MONO_ARCH_RGCTX_REG];
 }
 
 MonoVTable*
 mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
 {
-	return (gpointer)regs [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*)regs [MONO_ARCH_RGCTX_REG];
 }
 
 mgreg_t

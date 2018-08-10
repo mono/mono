@@ -539,7 +539,8 @@ mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpoin
 }
 
 void
-mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func)
+(mono_mb_emit_icall) (MonoMethodBuilder *mb, gpointer func)
+// Parens to not invoke macro.
 {
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_op (mb, CEE_MONO_ICALL, func);
