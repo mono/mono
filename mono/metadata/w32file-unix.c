@@ -14,12 +14,6 @@
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
 #endif
-#ifdef HAVE_COPYFILE_H
-#include <copyfile.h>
-#  if !defined(COPYFILE_CLONE)
-#    define COPYFILE_CLONE (1 << 24)
-#  endif
-#endif
 #if defined(HAVE_SYS_STATFS_H)
 #include <sys/statfs.h>
 #endif
@@ -42,6 +36,9 @@
 #include <sys/time.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
+#endif
+#if __APPLE__
+#include <dlfcn.h>
 #endif
 
 #include "w32file.h"
@@ -111,6 +108,11 @@ static MonoCoopMutex file_share_mutex;
 
 static GHashTable *finds;
 static MonoCoopMutex finds_mutex;
+
+#if __APPLE__
+typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
+static clonefile_fn clonefile_ptr;
+#endif
 
 static void
 time_t_to_filetime (time_t timeval, FILETIME *filetime)
@@ -2331,27 +2333,32 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 	return TRUE ;
 }
 
-#if HAVE_COPYFILE_H
+#if __APPLE__
 static int
-_wapi_copyfile(const char *from, const char *to, copyfile_state_t state, copyfile_flags_t flags)
+_wapi_clonefile(const char *from, const char *to, int flags)
 {
-	gchar *located_from, *located_to;
-	int ret;
+	if (clonefile_ptr != NULL) {
+		gchar *located_from, *located_to;
+		int ret;
 
-	located_from = mono_portability_find_file (from, FALSE);
-	located_to = mono_portability_find_file (to, FALSE);
+		located_from = mono_portability_find_file (from, FALSE);
+		located_to = mono_portability_find_file (to, FALSE);
 
-	MONO_ENTER_GC_SAFE;
-	ret = copyfile (
-		located_from == NULL ? from : located_from,
-		located_to == NULL ? to : located_to,
-		state, flags);
-	MONO_EXIT_GC_SAFE;
+		MONO_ENTER_GC_SAFE;
+		ret = clonefile_ptr (
+			located_from == NULL ? from : located_from,
+			located_to == NULL ? to : located_to,
+			flags);
+		MONO_EXIT_GC_SAFE;
 
-	g_free (located_from);
-	g_free (located_to);
+		g_free (located_from);
+		g_free (located_to);
 
-	return ret;
+		return ret;
+	} else {
+		errno = ENOTSUP;
+		return -1;
+	}
 }
 #endif
 
@@ -2398,39 +2405,6 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		return(FALSE);
 	}
 
-#if HAVE_COPYFILE_H
-	if (!_wapi_stat (utf8_dest, &dest_st)) {
-		/* Before trying to open/create the dest, we need to report a 'file busy'
-		 * error if src and dest are actually the same file. We do the check here to take
-		 * advantage of the IOMAP capability */
-		if (!_wapi_stat (utf8_src, &st) && st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
-			g_free (utf8_src);
-			g_free (utf8_dest);
-
-			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-			return (FALSE);
-		}
-
-		/* Also bail out if the destination is read-only (FIXME: path is not translated by mono_portability_find_file!) */
-		if (!is_file_writable (&dest_st, utf8_dest)) {
-			g_free (utf8_src);
-			g_free (utf8_dest);
-
-			mono_w32error_set_last (ERROR_ACCESS_DENIED);
-			return (FALSE);
-		}
-	}
-
-	ret = _wapi_copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
-	g_free (utf8_src);
-	g_free (utf8_dest);
-	if (ret != 0) {
-		_wapi_set_last_error_from_errno ();
-		return FALSE;
-	}
-
-	return TRUE;
-#else
 	gint src_fd, dest_fd;
 	gint ret_utime;
 	gint syscall_res;
@@ -2460,21 +2434,75 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		return(FALSE);
 	}
 
-	/* Before trying to open/create the dest, we need to report a 'file busy'
-	 * error if src and dest are actually the same file. We do the check here to take
-	 * advantage of the IOMAP capability */
-	if (!_wapi_stat (utf8_dest, &dest_st) && st.st_dev == dest_st.st_dev && 
-			st.st_ino == dest_st.st_ino) {
+	if (!_wapi_stat (utf8_dest, &dest_st)) {
+		/* Before trying to open/create the dest, we need to report a 'file busy'
+		 * error if src and dest are actually the same file. We do the check here to take
+		 * advantage of the IOMAP capability */
+		if (st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
 
-		g_free (utf8_src);
-		g_free (utf8_dest);
-		MONO_ENTER_GC_SAFE;
-		close (src_fd);
-		MONO_EXIT_GC_SAFE;
+			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
+			return (FALSE);
+		}
 
-		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-		return (FALSE);
+		/* Take advantage of the fact that we already know the file exists and bail out
+		 * early */
+		if (fail_if_exists) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			mono_w32error_set_last (ERROR_ALREADY_EXISTS);
+			return (FALSE);
+		}
+
+#if __APPLE__
+		/* If we attempt to use clonefile API we need to unlink the destination file
+		 * first */
+		if (clonefile_ptr != NULL) {
+
+			/* Bail out if the destination is read-only */
+			if (!is_file_writable (&dest_st, utf8_dest)) {
+				g_free (utf8_src);
+				g_free (utf8_dest);
+				MONO_ENTER_GC_SAFE;
+				close (src_fd);
+				MONO_EXIT_GC_SAFE;
+
+				mono_w32error_set_last (ERROR_ACCESS_DENIED);
+				return (FALSE);
+			}
+
+			_wapi_unlink (utf8_dest);
+		}
+#endif
 	}
+
+#if __APPLE__
+	if (clonefile_ptr != NULL) {
+		ret = _wapi_clonefile (utf8_src, utf8_dest, 0);
+		if (ret == 0 || errno != ENOTSUP) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			if (ret == 0) {
+				return (TRUE);
+			} else {
+				_wapi_set_last_error_from_errno ();
+				return (FALSE);
+			}
+		}
+	}
+#endif
 
 	if (fail_if_exists) {
 		dest_fd = _wapi_open (utf8_dest, O_WRONLY | O_CREAT | O_EXCL, st.st_mode);
@@ -2533,7 +2561,6 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	g_free (utf8_dest);
 
 	return ret;
-#endif
 }
 
 static gchar*
@@ -4884,6 +4911,10 @@ mono_w32file_init (void)
 
 	finds = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, finds_remove);
 	mono_coop_mutex_init (&finds_mutex);
+
+#if __APPLE__
+	clonefile_ptr = (clonefile_fn)dlsym (RTLD_DEFAULT, "clonefile");
+#endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
 		lock_while_writing = TRUE;
