@@ -82,6 +82,8 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
+#define mono_emit_jit_icall(a, b, c) (mono_emit_jit_icall ((a), (gconstpointer)(b), (c)))
+
 #define BRANCH_COST 10
 #define CALL_COST 10
 /* Used for the JIT */
@@ -2726,7 +2728,8 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 }
 
 MonoInst*
-mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
+// parens to avoid macro
+(mono_emit_jit_icall) (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
@@ -3829,10 +3832,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		if (cfg->opt & MONO_OPT_SHARED) {
 			EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 			iargs [1] = data;
-			alloc_ftn = ves_icall_object_new;
+			alloc_ftn = (gpointer)ves_icall_object_new;
 		} else {
 			iargs [0] = data;
-			alloc_ftn = ves_icall_object_new_specific;
+			alloc_ftn = (gpointer)ves_icall_object_new_specific;
 		}
 
 		if (managed_alloc && !(cfg->opt & MONO_OPT_SHARED)) {
@@ -3853,12 +3856,12 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 		EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 
-		alloc_ftn = ves_icall_object_new;
+		alloc_ftn = (gpointer)ves_icall_object_new;
 	} else if (cfg->compile_aot && cfg->cbb->out_of_line && m_class_get_type_token (klass) && m_class_get_image (klass) == mono_defaults.corlib && !mono_class_is_ginst (klass)) {
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (m_class_get_type_token (klass)));
-		alloc_ftn = mono_helper_newobj_mscorlib;
+		alloc_ftn = (gpointer)mono_helper_newobj_mscorlib;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, klass, &cfg->error);
 
@@ -3878,7 +3881,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
-		alloc_ftn = ves_icall_object_new_specific;
+		alloc_ftn = (gpointer)ves_icall_object_new_specific;
 		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
@@ -9659,13 +9662,13 @@ calli_end:
 					ins->type = STACK_OBJ;
 					ins->klass = klass;
 					ins->inst_c0 = val->inst_c0;
-					ins->dreg = alloc_dreg (cfg, val->type);
+					ins->dreg = alloc_dreg (cfg, (MonoStackType)val->type);
 				} else {
 					MONO_INST_NEW (cfg, ins, OP_BOX);
 					ins->type = STACK_OBJ;
 					ins->klass = klass;
 					ins->sreg1 = val->dreg;
-					ins->dreg = alloc_dreg (cfg, val->type);
+					ins->dreg = alloc_dreg (cfg, (MonoStackType)val->type);
 				}
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
