@@ -37,7 +37,7 @@
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 #endif
-#if __APPLE__
+#if HOST_DARWIN
 #include <dlfcn.h>
 #endif
 
@@ -109,8 +109,9 @@ static MonoCoopMutex file_share_mutex;
 static GHashTable *finds;
 static MonoCoopMutex finds_mutex;
 
-#if __APPLE__
+#if HOST_DARWIN
 typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
+static void *libc_handle;
 static clonefile_fn clonefile_ptr;
 #endif
 
@@ -2333,7 +2334,7 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 	return TRUE ;
 }
 
-#if __APPLE__
+#if HOST_DARWIN
 static int
 _wapi_clonefile(const char *from, const char *to, int flags)
 {
@@ -2462,7 +2463,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 			return (FALSE);
 		}
 
-#if __APPLE__
+#if HOST_DARWIN
 		/* If we attempt to use clonefile API we need to unlink the destination file
 		 * first */
 		if (clonefile_ptr != NULL) {
@@ -2484,7 +2485,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 #endif
 	}
 
-#if __APPLE__
+#if HOST_DARWIN
 	if (clonefile_ptr != NULL) {
 		ret = _wapi_clonefile (utf8_src, utf8_dest, 0);
 		if (ret == 0 || errno != ENOTSUP) {
@@ -4912,7 +4913,9 @@ mono_w32file_init (void)
 	finds = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, finds_remove);
 	mono_coop_mutex_init (&finds_mutex);
 
-#if __APPLE__
+#if HOST_DARWIN
+	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	g_assert (libc_handle);
 	clonefile_ptr = (clonefile_fn)dlsym (RTLD_DEFAULT, "clonefile");
 #endif
 
@@ -4930,6 +4933,10 @@ mono_w32file_cleanup (void)
 
 	g_hash_table_destroy (finds);
 	mono_coop_mutex_destroy (&finds_mutex);
+
+#if HOST_DARWIN
+	dlclose (libc_handle);
+#endif
 }
 
 gboolean
