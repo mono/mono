@@ -569,6 +569,8 @@ namespace System.Reflection {
 		public override bool IsSecuritySafeCritical {
 			get { return get_core_clr_security_level () == 1; }
 		}
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoMethod> (other);
 	}
 	
 

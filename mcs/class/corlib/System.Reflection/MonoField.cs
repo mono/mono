@@ -319,13 +319,15 @@ namespace System.Reflection {
 		}
 #endif
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoField monoField);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoField> (other);
 
 		public override int MetadataToken {
 			get {
 				return get_metadata_token (this);
 			}
 		}
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoField monoField);
 	}
 }

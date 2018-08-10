@@ -142,5 +142,6 @@ namespace System.Reflection {
 			return !left.Equals (right);
 		}
 
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<ConstructorInfo> (other);
 	}
 }

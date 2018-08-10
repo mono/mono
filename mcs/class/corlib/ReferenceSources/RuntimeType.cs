@@ -810,5 +810,7 @@ namespace System
 				return false;
 			}
 		}
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);		
 	}
 }
