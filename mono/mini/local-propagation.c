@@ -368,12 +368,14 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 		}
 		break;
 	}
+#ifndef __s390__ // s390x microcode takes care of optimizing divide operations
 	case OP_IDIV_UN_IMM:
 	case OP_IDIV_IMM: {
 		if (!COMPILE_LLVM (cfg))
 			allocated_vregs = mono_strength_reduction_division (cfg, ins);
 		break;
 	}
+#endif
 #if SIZEOF_REGISTER == 8
 	case OP_LREM_IMM:
 #endif
