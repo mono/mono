@@ -392,8 +392,11 @@ namespace Mono.Net.Security
 				}
 			}
 
-			if (result.Error != null)
+                       if (result.Error != null) {
+                               readBuffer = null;
+                               writeBuffer = null;
 				result.Error.Throw ();
+                       }
 		}
 
 		protected abstract MobileTlsContext CreateContext (MonoSslAuthenticationOptions options);
