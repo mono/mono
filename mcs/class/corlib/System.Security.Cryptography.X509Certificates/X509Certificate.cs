@@ -38,7 +38,6 @@ using Internal.Cryptography;
 using Microsoft.Win32.SafeHandles;
 
 using Mono.Security;
-using Mono.Security.Authenticode;
 
 namespace System.Security.Cryptography.X509Certificates
 {
