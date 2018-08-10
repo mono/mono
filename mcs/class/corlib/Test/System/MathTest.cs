@@ -856,11 +856,13 @@ namespace MonoTests.System
 		{
 			double a = 1.5D;
 			double b = 2.5D;
+			double c = 0.5000000000000001; // https://github.com/mono/mono/issues/9989
 
 			Assert.AreEqual (2D, Math.Round (a), "#1");
 			Assert.AreEqual (2D, Math.Round (b), "#2");
-			Assert.IsTrue (Double.MaxValue == Math.Round (Double.MaxValue), "#3");
-			Assert.IsTrue (Double.MinValue == Math.Round (Double.MinValue), "#4");
+			Assert.AreEqual (1D, Math.Round (c), "#3");
+			Assert.IsTrue (Double.MaxValue == Math.Round (Double.MaxValue), "#4");
+			Assert.IsTrue (Double.MinValue == Math.Round (Double.MinValue), "#5");
 		}
 
 		[Test]
