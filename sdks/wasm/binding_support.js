@@ -39,6 +39,7 @@ var BindingSupportLib = {
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
+			this.mono_array_to_heap = Module.cwrap ('mono_wasm_array_to_heap', 'void', ['number','number']);
 
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
@@ -171,6 +172,19 @@ var BindingSupportLib = {
 			case 8: // bool
 				return this.mono_unbox_int (mono_obj) != 0;
 
+			case 11: 
+			case 12: 
+			case 13: 
+			case 14: 
+			case 15: 
+			case 16: 
+			case 17: 
+			case 18:
+			{
+				var res =  this.mono_array_to_js_typedarray(type, mono_obj); 
+				return res;
+			}			
+	
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -196,26 +210,87 @@ var BindingSupportLib = {
 			heapBytes.set(new Uint8Array(typedArray.buffer));
 			return heapBytes;
 		},
-		mono_array_to_js_typedarray: function(mono_array){
+		mono_array_to_js_typedarray: function(type, mono_array){
 
-			var byteArrayLength = this.mono_array_length(mono_array);
+			// length of our array
+			var szLength = this.mono_array_length(mono_array);
+				
+			// The element size that will need to be allocated
+			var bytes_per_element = 0;
+
+			switch (type)
+			{
+				case 11: 
+					bytes_per_element = Int8Array.BYTES_PER_ELEMENT; 
+					break;
+				case 12: 
+					bytes_per_element = Uint8Array.BYTES_PER_ELEMENT; 
+					break;
+				case 13: 
+					bytes_per_element = Int16Array.BYTES_PER_ELEMENT; 
+					break;
+				case 14: 
+					bytes_per_element = Uint16Array.BYTES_PER_ELEMENT; 
+					break;
+				case 15: 
+					bytes_per_element = Int32Array.BYTES_PER_ELEMENT; 
+					break;
+				case 16: 
+					bytes_per_element = Uint32Array.BYTES_PER_ELEMENT; 
+					break;
+				case 17: 
+					bytes_per_element = Float32Array.BYTES_PER_ELEMENT; 
+					break;
+				case 18:
+					bytes_per_element = Float64Array.BYTES_PER_ELEMENT;
+					break;
+			}
 			
 			// Allocate bytes needed for the array of bytes
-			var bufferSize = byteArrayLength * Uint8Array.BYTES_PER_ELEMENT;
+			var bufferSize = szLength * bytes_per_element;
 			var bufferPtr = Module._malloc(bufferSize);
 
 			// blit the mono array to the heap
 			this.mono_array_to_heap(mono_array, bufferPtr);
 
-			// create a new type array from the allocated heap
-			var res = Module.HEAPU8.slice(bufferPtr, bufferPtr+byteArrayLength);
+			// result to be returned
+			var res = null;
+
+			// We now need to create a new typed array based off the heap view
+			switch (type)
+			{
+				case 11: 
+					res = Module.HEAP8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 12: 
+					res = Module.HEAPU8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 13: 
+					res = Module.HEAP16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 14: 
+					res = Module.HEAPU16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 15: 
+					res = Module.HEAP32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 16: 
+					res = Module.HEAPU32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 17: 
+					res = Module.HEAPF32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+				case 18:
+					res = Module.HEAPF64.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
+					break;
+			}
+
 			// free the allocated memory
 			Module._free(bufferPtr);
 			// return new typed array
 			return res;
 			
 		},
-
 		js_to_mono_obj: function (js_obj) {
 	  		this.bindings_lazy_init ();
 
@@ -260,24 +335,23 @@ var BindingSupportLib = {
 			{
 				var arrayType = 0;	
 				if (js_obj instanceof Int8Array)
-					arrayType = 1;
+					arrayType = 11;
 				if (js_obj instanceof Uint8Array)
-					arrayType = 2;
+					arrayType = 12;
 				if (js_obj instanceof Uint8ClampedArray)
-					arrayType = 2;
+					arrayType = 12;
 				if (js_obj instanceof Int16Array)
-					arrayType = 3;
+					arrayType = 13;
 				if (js_obj instanceof Uint16Array)
-					arrayType = 4;
+					arrayType = 14;
 				if (js_obj instanceof Int32Array)
-					arrayType = 5;
+					arrayType = 15;
 				if (js_obj instanceof Uint32Array)
-					arrayType = 6;
+					arrayType = 16;
 				if (js_obj instanceof Float32Array)
-					arrayType = 7;
+					arrayType = 17;
 				if (js_obj instanceof Float64Array)
-					arrayType = 8;
-
+					arrayType = 18;
 
 				var heapBytes = this.js_typedarray_to_heap(js_obj);
 				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, js_obj.length, js_obj.BYTES_PER_ELEMENT, arrayType);

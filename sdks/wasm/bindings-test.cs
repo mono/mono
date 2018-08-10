@@ -186,6 +186,90 @@ public class TestClass {
 	        doubleBuffer[i / sizeof(double)] = BitConverter.ToDouble(buffer, i);
 	}	
 
+	public static void SetTypedArraySByte (JSObject obj) {
+		sbyte[] buffer = Enumerable.Repeat((sbyte)0x20, 11).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static sbyte[] taSByte;
+	public static void GetTypedArraySByte (JSObject obj) {
+		taSByte = (sbyte[])obj.GetObjectProperty ("typedArray");
+	}	
+
+	public static void SetTypedArrayByte (JSObject obj) {
+		var dragons = "hic sunt dracones";
+		byte[] buffer = System.Text.Encoding.ASCII.GetBytes(dragons);
+		obj.SetObjectProperty ("dracones", buffer);
+	}	
+
+	public static byte[] taByte;
+	public static void GetTypedArrayByte (JSObject obj) {
+		taByte = (byte[])obj.GetObjectProperty ("dracones");
+	}	
+
+	public static void SetTypedArrayShort (JSObject obj) {
+		short[] buffer = Enumerable.Repeat((short)0x20, 13).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static short[] taShort;
+	public static void GetTypedArrayShort (JSObject obj) {
+		taShort = (short[])obj.GetObjectProperty ("typedArray");
+	}	
+
+	public static void SetTypedArrayUShort (JSObject obj) {
+		ushort[] buffer = Enumerable.Repeat((ushort)0x20, 14).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static ushort[] taUShort;
+	public static void GetTypedArrayUShort (JSObject obj) {
+		taUShort = (ushort[])obj.GetObjectProperty ("typedArray");
+	}	
+
+
+	public static void SetTypedArrayInt (JSObject obj) {
+		int[] buffer = Enumerable.Repeat((int)0x20, 15).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static int[] taInt;
+	public static void GetTypedArrayInt (JSObject obj) {
+		taInt = (int[])obj.GetObjectProperty ("typedArray");
+	}	
+
+	public static void SetTypedArrayUInt (JSObject obj) {
+		uint[] buffer = Enumerable.Repeat((uint)0x20, 16).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static uint[] taUInt;
+	public static void GetTypedArrayUInt (JSObject obj) {
+		taUInt = (uint[])obj.GetObjectProperty ("typedArray");
+	}	
+
+	public static void SetTypedArrayFloat (JSObject obj) {
+		float[] buffer = Enumerable.Repeat(3.14f, 17).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static float[] taFloat;
+	public static void GetTypedArrayFloat (JSObject obj) {
+		taFloat = (float[])obj.GetObjectProperty ("typedArray");
+	}	
+
+
+	public static void SetTypedArrayDouble (JSObject obj) {
+		double[] buffer = Enumerable.Repeat(3.14d, 18).ToArray();
+		obj.SetObjectProperty ("typedArray", buffer);
+	}	
+
+	public static double[] taDouble;
+	public static void GetTypedArrayDouble (JSObject obj) {
+		taDouble = (double[])obj.GetObjectProperty ("typedArray");
+	}	
+
+
 }
 
 [TestFixture]
@@ -728,6 +812,113 @@ public class BindingTests {
 		Assert.AreEqual (2.5f, TestClass.doubleBuffer[1]);
 		Assert.AreEqual (5, TestClass.doubleBuffer[2]);
 		Assert.AreEqual (7.5f, TestClass.doubleBuffer[3]);
+	}
+
+	[Test]
+	public static void MarshalTypedArraySByte () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArraySByte"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArraySByte"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (11, TestClass.taSByte.Length);
+		Assert.AreEqual (32, TestClass.taSByte[0]);
+		Assert.AreEqual (32, TestClass.taSByte[TestClass.taSByte.Length - 1]);
+	}
+
+	[Test]
+	public static void MarshalTypedArrayByte () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayByte"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayByte"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (17, TestClass.taByte.Length);
+		Assert.AreEqual (104, TestClass.taByte[0]);
+		Assert.AreEqual (115, TestClass.taByte[TestClass.taByte.Length - 1]);
+		Assert.AreEqual ("hic sunt dracones", System.Text.Encoding.Default.GetString(TestClass.taByte));
+	}
+
+	[Test]
+	public static void MarshalTypedArrayShort () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayShort"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayShort"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (13, TestClass.taShort.Length);
+		Assert.AreEqual (32, TestClass.taShort[0]);
+		Assert.AreEqual (32, TestClass.taShort[TestClass.taShort.Length - 1]);
+	}
+
+	[Test]
+	public static void MarshalTypedArrayUShort () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayUShort"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayUShort"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (14, TestClass.taUShort.Length);
+		Assert.AreEqual (32, TestClass.taUShort[0]);
+		Assert.AreEqual (32, TestClass.taUShort[TestClass.taUShort.Length - 1]);
+	}
+
+
+	[Test]
+	public static void MarshalTypedArrayInt () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayInt"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayInt"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (15, TestClass.taInt.Length);
+		Assert.AreEqual (32, TestClass.taInt[0]);
+		Assert.AreEqual (32, TestClass.taInt[TestClass.taInt.Length - 1]);
+	}
+
+	[Test]
+	public static void MarshalTypedArrayUInt () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayUInt"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayUInt"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (16, TestClass.taUInt.Length);
+		Assert.AreEqual (32, TestClass.taUInt[0]);
+		Assert.AreEqual (32, TestClass.taUInt[TestClass.taUInt.Length - 1]);
+	}
+
+	[Test]
+	public static void MarshalTypedArrayFloat () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayFloat"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayFloat"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (17, TestClass.taFloat.Length);
+		Assert.AreEqual (3.14f, TestClass.taFloat[0]);
+		Assert.AreEqual (3.14f, TestClass.taFloat[TestClass.taFloat.Length - 1]);
+	}
+
+
+	[Test]
+	public static void MarshalTypedArrayDouble () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayDouble"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayDouble"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (18, TestClass.taDouble.Length);
+		Assert.AreEqual (3.14d, TestClass.taDouble[0]);
+		Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
 	}
 
 }

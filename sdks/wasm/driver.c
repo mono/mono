@@ -139,6 +139,7 @@ MonoClass* mono_get_int32_class (void);
 MonoClass* mono_get_uint32_class (void);
 MonoClass* mono_get_single_class (void);
 MonoClass* mono_get_double_class (void);
+MonoClass* mono_class_get_element_class(MonoClass *klass);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -305,6 +306,16 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_OBJECT 7
 #define MARSHAL_TYPE_BOOL 8
 
+// typed array marshalling
+#define MARSHAL_ARRAY_BYTE 11
+#define MARSHAL_ARRAY_UBYTE 12
+#define MARSHAL_ARRAY_SHORT 13
+#define MARSHAL_ARRAY_USHORT 14
+#define MARSHAL_ARRAY_INT 15
+#define MARSHAL_ARRAY_UINT 16
+#define MARSHAL_ARRAY_FLOAT 17
+#define MARSHAL_ARRAY_DOUBLE 18
+
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_get_obj_type (MonoObject *obj)
 {
@@ -331,6 +342,31 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		return MARSHAL_TYPE_FP;
 	case MONO_TYPE_STRING:
 		return MARSHAL_TYPE_STRING;
+	case MONO_TYPE_SZARRAY:  { // simple zero based one-dim-array
+		MonoClass *eklass = mono_class_get_element_class(klass);
+		MonoType *etype = mono_class_get_type (eklass);
+
+		switch (mono_type_get_type (etype)) {
+			case MONO_TYPE_U1:
+				return MARSHAL_ARRAY_UBYTE;
+			case MONO_TYPE_I1:
+				return MARSHAL_ARRAY_BYTE;
+			case MONO_TYPE_U2:
+				return MARSHAL_ARRAY_USHORT;			
+			case MONO_TYPE_I2:
+				return MARSHAL_ARRAY_SHORT;			
+			case MONO_TYPE_U4:
+				return MARSHAL_ARRAY_UINT;			
+			case MONO_TYPE_I4:
+				return MARSHAL_ARRAY_INT;			
+			case MONO_TYPE_R4:
+				return MARSHAL_ARRAY_FLOAT;
+			case MONO_TYPE_R8:
+				return MARSHAL_ARRAY_DOUBLE;
+			default:
+				return MARSHAL_TYPE_OBJECT;
+		}		
+	}
 	default:
 		if (!mono_type_is_reference (type)) //vt
 			return MARSHAL_TYPE_VT;
@@ -428,15 +464,6 @@ mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
 // Float32Array		| float		| float
 // Float64Array		| double	| double
 
-#define MARSHAL_ARRAY_BYTE 1
-#define MARSHAL_ARRAY_UBYTE 2
-#define MARSHAL_ARRAY_SHORT 3
-#define MARSHAL_ARRAY_USHORT 4
-#define MARSHAL_ARRAY_INT 5
-#define MARSHAL_ARRAY_UINT 6
-#define MARSHAL_ARRAY_FLOAT 7
-#define MARSHAL_ARRAY_DOUBLE 8
-
 EMSCRIPTEN_KEEPALIVE MonoArray*
 mono_wasm_typed_array_new (char *arr, int length, int size, int type)
 {
@@ -444,18 +471,25 @@ mono_wasm_typed_array_new (char *arr, int length, int size, int type)
 	switch (type) {
 	case MARSHAL_ARRAY_BYTE:
 		typeClass = mono_get_sbyte_class();
+		break;
 	case MARSHAL_ARRAY_SHORT:
 		typeClass = mono_get_int16_class();
+		break;
 	case MARSHAL_ARRAY_USHORT:
 		typeClass = mono_get_uint16_class();
+		break;
 	case MARSHAL_ARRAY_INT:
 		typeClass = mono_get_int32_class();
+		break;
 	case MARSHAL_ARRAY_UINT:
 		typeClass = mono_get_uint32_class();
+		break;
 	case MARSHAL_ARRAY_FLOAT:
 		typeClass = mono_get_single_class();
+		break;
 	case MARSHAL_ARRAY_DOUBLE:
 		typeClass = mono_get_double_class();
+		break;
 	}
 
 	MonoArray *buffer;
@@ -465,3 +499,21 @@ mono_wasm_typed_array_new (char *arr, int length, int size, int type)
 
 	return buffer;
 }
+
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_array_to_heap (MonoArray *src, char *dest)
+{
+	int element_size;
+	void *source_addr;
+	int arr_length;
+
+	element_size = mono_array_element_size ( mono_object_get_class((MonoObject*)src));
+	//DBG("mono_wasm_to_heap element size %i  / length %i\n",element_size, mono_array_length(src));
+
+	// get our src address
+	source_addr = mono_array_addr_with_size (src, element_size, 0);
+	// copy the array memory to heap via ptr dest
+	memcpy (dest, source_addr, mono_array_length(src) * element_size);
+}
+
