@@ -105,12 +105,6 @@ need_link_unlink=no
 #Set to extra linker flags to be passed to the runtime binaries (mono /mono-sgen)
 extra_runtime_ldflags=""
 
-
-# Hack for WASM
-# Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
-# work around it by using a feature flag instead
-AC_ARG_ENABLE(wasm,[  --enable-wasm    Hack to set the current runtime to target wasm], enable_wasm=$enableval)
-
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
 
@@ -127,17 +121,14 @@ platform_ios=no
 host_darwin=no
 host_linux=no
 
-
-if test "x$enable_wasm" = "xyes"; then
-CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
-CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
-libdl="-ldl"
-libgc_threads=pthreads
-platform_wasm=yes
-
-else
-
 case "$host" in
+	wasm32*)
+		CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -s WASM=1"
+		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -s WASM=1"
+		libdl="-ldl"
+		libgc_threads=pthreads
+		platform_wasm=yes
+		;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
 		AC_DEFINE(HOST_NO_SYMLINKS,1,[This platform does not support symlinks])
@@ -414,9 +405,6 @@ case "$host" in
 		;;
 esac
 
-# WASM hack
-fi
-
 AC_MSG_RESULT(ok)
 
 if test x$need_link_unlink = xyes; then
@@ -668,15 +656,8 @@ if test x$platform_android = xyes; then
 fi # Android
 
 # not 64 bit clean in cross-compile
-if test "x$enable_wasm" = "xyes"; then
-AC_DEFINE(SIZEOF_VOID_P,4)
-AC_DEFINE(SIZEOF_LONG,4)
-ac_cv_sizeof_void_p="4"
-ac_cv_sizeof_long="4"
-else
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(long)
-fi
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long long)
@@ -3881,19 +3862,16 @@ boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
 
-if test "x$enable_wasm" = "xyes"; then
-TARGET=WASM
-HOST=WASM
-arch_target=wasm
-AC_DEFINE(TARGET_WASM, 1, [Target wasm])
-AC_DEFINE(HOST_WASM, 1, [Host wasm])
-BTLS_SUPPORTED=no
-with_tls=pthread
-target_mach=no
-
-else
-
 case "$host" in
+	wasm32*)
+		TARGET=WASM
+		HOST=WASM
+		arch_target=wasm
+		BTLS_SUPPORTED=no
+		with_tls=pthread
+		target_mach=no
+		ACCESS_UNALIGNED="no"
+		;;
 	mips*)
 		TARGET=MIPS;
 		arch_target=mips;
@@ -4114,6 +4092,9 @@ if test "x$host" != "x$target"; then
    with_tls=pthread
    target_mach=no
    case "$target" in
+   wasm32*)
+		TARGET=WASM;
+   		;;
    arm*-darwin*)
 		TARGET=ARM;
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
@@ -4189,6 +4170,14 @@ if test "x$host" != "x$target"; then
 fi
 
 case "$TARGET" in
+WASM)
+	TARGET=WASM
+	HOST=WASM
+	AC_DEFINE(TARGET_WASM, 1, [...])
+	arch_target=wasm
+	ACCESS_UNALIGNED="no"
+	target_sizeof_void_p=4
+	;;
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
 	arch_target=x86
@@ -4230,6 +4219,9 @@ SPARC64)
 esac
 
 case "$HOST" in
+WASM)
+	AC_DEFINE(HOST_WASM, 1, [...])
+	;;
 X86)
 	AC_DEFINE(HOST_X86, 1, [...])
 	;;
@@ -4263,8 +4255,6 @@ SPARC64)
 	;;
 esac
 
-#WASM hack
-fi
 
 MONO_ARCH_GSHAREDVT_SUPPORTED=0
 case "$HOST" in
