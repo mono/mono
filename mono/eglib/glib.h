@@ -1,16 +1,18 @@
 #ifndef __GLIB_H
 #define __GLIB_H
 
-// Ask stdint.h for the full C99 features even for C++98 CentOS 6 g++ 4.4.
-#if defined(__cplusplus) && !defined(__STDC_LIMIT_MACROS)
-#   define __STDC_LIMIT_MACROS
+// Ask stdint.h for the full C99 features for CentOS 6 g++ 4.4.
+#if defined (__cplusplus) && __cplusplus <= 199711L // It is 1 for g++4.4 -std=c++0x.
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
 #endif
-#if defined(__cplusplus) && !defined(__STDC_CONSTANT_MACROS)
-#   define __STDC_CONSTANT_MACROS
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
 #endif
-#if defined(__cplusplus) && !defined(__STDC_FORMAT_MACROS)
-#   define __STDC_FORMAT_MACROS
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
 #endif
+#endif // __cplusplus
 
 #include <stdarg.h>
 #include <stdlib.h>
