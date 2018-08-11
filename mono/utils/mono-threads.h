@@ -177,6 +177,8 @@ typedef enum {
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
 } MonoThreadInfoFlags;
 
+G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
+
 typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
@@ -703,6 +705,8 @@ typedef enum {
 	MONO_THREAD_INFO_WAIT_RET_TIMEOUT     = -2,
 	MONO_THREAD_INFO_WAIT_RET_FAILED      = -3,
 } MonoThreadInfoWaitRet;
+
+G_ENUM_FUNCTIONS (MonoThreadInfoWaitRet)
 
 MonoThreadInfoWaitRet
 mono_thread_info_wait_one_handle (MonoThreadHandle *handle, guint32 timeout, gboolean alertable);

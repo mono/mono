@@ -2135,6 +2135,9 @@ gpointer*         mini_resolve_imt_method (MonoVTable *vt, gpointer *vtable_slot
 MonoFtnDesc      *mini_create_llvmonly_ftndesc (MonoDomain *domain, gpointer addr, gpointer arg);
 
 void*             mono_global_codeman_reserve (int size);
+
+#define mono_global_codeman_reserve(size) (g_cast (mono_global_codeman_reserve ((size))))
+
 void              mono_global_codeman_foreach (MonoCodeManagerFunc func, void *user_data);
 const char       *mono_regname_full (int reg, int bank);
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_size, guint32 *stack_align);
@@ -2235,7 +2238,9 @@ void      mono_arch_cleanup                     (void);
 void      mono_arch_cpu_init                    (void);
 guint32   mono_arch_cpu_optimizations           (guint32 *exclude_mask);
 void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
+#define mono_arch_instrument_prolog(cfg, func, p, arg) (g_cast (mono_arch_instrument_prolog ((cfg), (gpointer)(func), (p), (arg))))
 void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
+#define mono_arch_instrument_epilog(cfg, func, p, arg) (g_cast (mono_arch_instrument_epilog ((cfg), (gpointer)(func), (p), (arg))))
 const char *mono_arch_regname                   (int reg);
 const char *mono_arch_fregname                  (int reg);
 void      mono_arch_exceptions_init             (void);

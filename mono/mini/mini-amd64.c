@@ -1100,7 +1100,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	ccontext->stack_size = ALIGN_TO (cinfo->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
 	if (ccontext->stack_size)
-		ccontext->stack = malloc (ccontext->stack_size);
+		ccontext->stack = (gpointer*)malloc (ccontext->stack_size);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		if (cinfo->ret.storage == ArgValuetypeAddrInIReg) {
@@ -7562,7 +7562,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 #endif /* DISABLE_JIT */
 
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar *)p;
 	MonoMethodSignature *sig;
@@ -7617,7 +7617,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar *)p;
 	int save_mode = SAVE_NONE;
