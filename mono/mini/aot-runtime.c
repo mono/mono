@@ -1563,7 +1563,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 		// FIXME: This cannot be used for mscorlib during startup, since entry_assembly is not set yet
 		for (l = config->apps; l; l = l->next) {
-			char *n = l->data;
+			char *n = (char*)l->data;
 
 			if ((entry_assembly && !strcmp (entry_assembly->aname.name, n)) || (!entry_assembly && !strcmp (assembly->aname.name, n)))
 				break;
@@ -1574,7 +1574,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	if (!enabled) {
 		for (l = config->assemblies; l; l = l->next) {
-			char *n = l->data;
+			char *n = (char*)l->data;
 
 			if (!strcmp (assembly->aname.name, n))
 				break;
@@ -2101,7 +2101,7 @@ if (container_assm_name && !container_amodule) {
 			GList *l;
 
 			for (l = mono_aot_paths; l; l = l->next) {
-				char *path = l->data;
+				char *path = (char*)l->data;
 
 				char *basename = g_path_get_basename (assembly->image->name);
 				aot_name = g_strdup_printf ("%s/%s%s", path, basename, MONO_SOLIB_EXT);

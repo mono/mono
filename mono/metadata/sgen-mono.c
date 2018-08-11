@@ -2247,7 +2247,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			  beginning of the object.
 			*/
 			if (precise)
-				mono_handle_stack_scan (info->client_info.info.handle_stack, g_cast ((GcScanFunc)ctx.ops->copy_or_mark_object), ctx.queue, precise, TRUE);
+				mono_handle_stack_scan (info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise, TRUE);
 			else {
 				PinHandleStackInteriorPtrData ud;
 				memset (&ud, 0, sizeof (ud));

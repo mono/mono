@@ -378,7 +378,7 @@ try_free_delayed_free_items (guint32 limit)
 
 	if (hazardous) {
 		for (gint i = 0; i < hazardous->len; i++)
-			mono_lock_free_array_queue_push (&delayed_free_queue, &g_array_index_ref (hazardous, DelayedFreeItem, i));
+			mono_lock_free_array_queue_push (&delayed_free_queue, &g_array_index (hazardous, DelayedFreeItem, i));
 
 		g_array_free (hazardous, TRUE);
 	}

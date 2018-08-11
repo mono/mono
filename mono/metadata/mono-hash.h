@@ -29,7 +29,6 @@ typedef struct _MonoGHashTable MonoGHashTable;
 MONO_API MonoGHashTable *mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg);
 MONO_API guint    mono_g_hash_table_size            (MonoGHashTable *hash);
 MONO_API gpointer mono_g_hash_table_lookup          (MonoGHashTable *hash, gconstpointer key);
-#define mono_g_hash_table_lookup(hash, key) (g_cast (mono_g_hash_table_lookup ((hash), (key))))
 MONO_API gboolean mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
 MONO_API void     mono_g_hash_table_foreach         (MonoGHashTable *hash, GHFunc func, gpointer user_data);
 MONO_API gpointer mono_g_hash_table_find            (MonoGHashTable *hash, GHRFunc predicate, gpointer user_data);
