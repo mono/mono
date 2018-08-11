@@ -50,146 +50,34 @@
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 #ifdef __cplusplus
 
-#define g_cast_t monoeg_g_cast_t // in case not inlined (see eglib-remap.h)
-
-// Mostly-internal type to support g_cast(), but also can be used in containers.
-template <typename TFrom> // TFrom is almost always void*
-struct g_cast_t
-{
-private:
-	TFrom x;
-public:
-	explicit g_cast_t (TFrom y) : x(y)
-	{
-	}
-
-	g_cast_t () // Not really intended but has a user.
-	{
-	}
-
-	g_cast_t (const g_cast_t& y) : x(y.x)
-	{
-	}
-
-	template <typename TTo>
-	operator TTo()
-	{
-		return (TTo)x;
-	}
-
-	g_cast_t& operator= (TFrom y)
-	{
-		x = y;
-		return *this;
-	}
-
-	template <typename T>
-	bool operator != (T y) // e.g. compare to NULL
-	{
-		return x != (TFrom)y;
-	}
-
-	template <typename T>
-	bool operator == (T y) // e.g. compare to NULL
-	{
-		return x == (TFrom)y;
-	}
-
-	template <typename T>
-	bool operator < (T y)
-	{
-		return x < (TFrom)y;
-	}
-
-	template <typename T>
-	bool operator <= (T y)
-	{
-		return x <= (TFrom)y;
-	}
-
-	template <typename T>
-	bool operator > (T y)
-	{
-		return x > (TFrom)y;
-	}
-
-	template <typename T>
-	bool operator >= (T y)
-	{
-		return x >= (TFrom)y;
-	}
-};
-
-// Member function compares g_cast_t to other, global compares other to g_cast_t,
-// i.e. which parameter is first vs. second.
-template <typename T1, typename T2>
-inline bool operator == (T1 x, g_cast_t<T2> y) // e.g. compare to NULL
-{
-	return (T2)x == y.x;
-}
-
-template <typename T1, typename T2>
-inline bool operator != (T1 x, g_cast_t<T2> y) // e.g. compare to NULL
-{
-	return (T2)x != y.x;
-}
-
-template <typename T1, typename T2>
-inline bool operator < (T1 x, g_cast_t<T2> y) // e.g. compare to NULL
-{
-	return (T2)x < y.x;
-}
-
-template <typename T1, typename T2>
-inline bool operator <= (T1 x, g_cast_t<T2> y)
-{
-	return (T2)x <= y.x;
-}
-
-template <typename T1, typename T2>
-inline bool operator > (T1 x, g_cast_t<T2> y)
-{
-	return (T2)x > y.x;
-}
-
-template <typename T1, typename T2>
-inline bool operator >= (T1 x, g_cast_t<T2> y)
-{
-	return (T2)x >= y.x;
-}
-
-/*
-Apply g_cast() around expressions that C will convert
-to whatever is on the left of an assignment or return.
-
-The overwhelming most common case is void* to non-void*
-such as from malloc. Most of these can be handled
-in central places, such as:
-
-#define malloc(x) g_cast (malloc (x))
-
-The pattern can also be applied to container of void* such as GSList.
-
-*/
-
-// C++11:
-//define g_cast(x) (g_cast_t<decltype(x)>(x))
-
-// C++98:
 #define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
 
-template <typename TFrom>
-inline g_cast_t<TFrom>
-g_cast (TFrom from)
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+
+struct g_cast
 {
-	return g_cast_t<TFrom> (from);
-}
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	g_cast (g_cast&& y) : x(y.x) { }
+	g_cast () = delete;
+	g_cast (const g_cast& y) = delete;
+
+	template <typename TTo>
+	operator TTo* () const
+	{
+		return (TTo*)x;
+	}
+};
 
 #else
 
@@ -282,17 +170,6 @@ operator+ (Enum a, unsigned long long b)	\
 #else
 
 #define G_ENUM_FUNCTIONS(Enum) /* nothing */
-
-#endif
-
-#ifdef __cplusplus
-
-// Overload strcmp to support common usage.
-inline int
-strcmp (const void *a, const void* b)
-{
-	return strcmp ((const char*)a, (const char*)b);
-}
 
 #endif
 
@@ -571,13 +448,7 @@ typedef void     (*GFreeFunc)      (gpointer       data);
  */
 typedef struct _GSList GSList;
 struct _GSList {
-#ifdef __cplusplus
-	// Allow for conversion of list->data to anything, in context.
-	// This saves adding casts to turn valid C into valid C++.
-	g_cast_t<gpointer> data;
-#else
 	gpointer data;
-#endif
 	GSList *next;
 };
 
@@ -630,13 +501,7 @@ gpointer g_slist_nth_data     (GSList	     *list,
 
 typedef struct _GList GList;
 struct _GList {
-#ifdef __cplusplus
-  // Allow for conversion of list->data to anything, in context.
-  // This saves adding casts to turn valid C into valid C++.
-  g_cast_t<gpointer> data;
-#else
   gpointer data;
-#endif
   GList *next;
   GList *prev;
 };
@@ -771,10 +636,8 @@ void    g_array_set_size          (GArray *array, gint length);
 
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
-
-// FIXME This can probably be g_cast_ref that provides operator&.
-#define g_array_index_ref(a,t,i) (*(t*)(((a)->data) + sizeof(t) * (i))) // for taking address
-#define g_array_index(a,t,i)      (g_cast (g_array_index_ref ((a), t, (i))))
+#define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -805,7 +668,8 @@ void       g_ptr_array_set_size           (GPtrArray *array, gint length);
 gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
-#define    g_ptr_array_index(array,index) (g_cast ((array)->pdata[(index)]))
+#define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
@@ -1418,7 +1282,6 @@ G_END_DECLS
 #undef g_try_malloc
 #undef g_try_realloc
 #undef g_memdup
-#undef g_hash_table_lookup
 #define g_malloc(x) (g_cast (monoeg_malloc (x)))
 #define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
 #define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
@@ -1426,6 +1289,5 @@ G_END_DECLS
 #define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
 #define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
 #define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
-#define g_hash_table_lookup(hash, key) (g_cast (monoeg_g_hash_table_lookup ((hash), (key))))
 
 #endif // __GLIB_H

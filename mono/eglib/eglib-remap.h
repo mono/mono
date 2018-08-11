@@ -5,7 +5,6 @@
 #undef g_try_malloc
 #undef g_try_realloc
 #undef g_memdup
-#undef g_hash_table_lookup
 
 #define g_array_append monoeg_g_array_append
 #define g_array_append_vals monoeg_g_array_append_vals
