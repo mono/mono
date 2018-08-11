@@ -50,8 +50,8 @@
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS  /* nothing */
-#define G_END_DECLS    /* nothing */
+#define G_BEGIN_DECLS
+#define G_END_DECLS
 #endif
 
 #ifdef __cplusplus
@@ -61,7 +61,6 @@
 // g_cast converts void* to T*.
 // e.g. #define malloc(x) (g_cast (malloc (x)))
 // FIXME It used to do more. Rename?
-
 struct g_cast
 {
 private:
@@ -88,10 +87,8 @@ public:
 
 #ifdef __cplusplus
 
-/*
-Provide for math on enums.
-This alleviates a fair number of casts in porting C to C++.
-*/
+// Provide for math on enums.
+// This alleviates a fair number of casts in porting C to C++.
 #define G_ENUM_FUNCTIONS(Enum)			\
 extern "C++" { /* in case within extern "C" */	\
 inline Enum					\
