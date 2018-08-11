@@ -27,10 +27,10 @@ mono_pal_init (void)
 {
 	volatile static gboolean module_initialized = FALSE;
 	if (mono_atomic_cas_i32 (&module_initialized, TRUE, FALSE) == FALSE) {
-		mono_add_internal_call ("Interop/Sys::Read", g_cast (ves_icall_Interop_Sys_Read));
+		mono_add_internal_call ("Interop/Sys::Read", ves_icall_Interop_Sys_Read);
 
 #if defined(__APPLE__)
-		mono_add_internal_call ("Interop/RunLoop::CFRunLoopRun", g_cast (ves_icall_Interop_RunLoop_CFRunLoopRun));
+		mono_add_internal_call ("Interop/RunLoop::CFRunLoopRun", ves_icall_Interop_RunLoop_CFRunLoopRun);
 #endif
 	}
 
@@ -55,7 +55,7 @@ static void
 interrupt_CFRunLoop (gpointer data)
 {
 	g_assert (data);
-	CFRunLoopStop (g_cast (data));
+	CFRunLoopStop (data);
 }
 
 void

@@ -605,7 +605,7 @@ static MonoInst* emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMet
 static int
 simd_intrinsic_compare_by_name (const void *key, const void *value)
 {
-	return strcmp (key, method_name (((SimdIntrinsic *)value)->name));
+	return strcmp ((const char*)key, method_name (((SimdIntrinsic *)value)->name));
 }
 
 typedef enum {

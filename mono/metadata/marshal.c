@@ -522,7 +522,7 @@ mono_ftnptr_to_delegate_handle (MonoClass *klass, gpointer ftn, MonoError *error
 		if (gchandle)
 			MONO_HANDLE_ASSIGN (d, MONO_HANDLE_CAST (MonoDelegate, mono_gchandle_get_target_handle (gchandle)));
 	} else {
-		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, g_hash_table_lookup (delegate_hash_table, ftn)));
+		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, (MonoDelegate*)g_hash_table_lookup (delegate_hash_table, ftn)));
 		mono_marshal_unlock ();
 	}
 	if (MONO_HANDLE_IS_NULL (d)) {

@@ -373,7 +373,7 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 	/* We use the unencoded version of the unwind info to make it easier to decode */
 	nunwind_ops = 0;
 	for (l = unwind_ops; l; l = l->next) {
-		MonoUnwindOp *op = l->data;
+		MonoUnwindOp *op = (MonoUnwindOp*)l->data;
 
 		/* lldb can't handle these */
 		if (op->op == DW_CFA_mono_advance_loc)
@@ -384,7 +384,7 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 	buffer_add_byte (buf, ret_reg);
 	buffer_add_int (buf, nunwind_ops);
 	for (l = unwind_ops; l; l = l->next) {
-		MonoUnwindOp *op = l->data;
+		MonoUnwindOp *op = (MonoUnwindOp*)l->data;
 
 		if (op->op == DW_CFA_mono_advance_loc)
 			break;

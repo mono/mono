@@ -1459,8 +1459,8 @@ static gboolean in_process;
 static void
 collect_assemblies (gpointer data, gpointer user_data)
 {
-	MonoAssembly *ass = g_cast (data);
-	GSList **l = g_cast (user_data);
+	MonoAssembly *ass = (MonoAssembly*)data;
+	GSList **l = (GSList**)user_data;
 
 	*l = g_slist_prepend (*l, ass);
 }
@@ -1493,7 +1493,7 @@ get_aot_config_hash (MonoAssembly *assembly)
 	 * to add it.
 	 */
 	for (l = assembly_list; l; l = l->next) {
-		MonoAssembly *ass = g_cast (l->data);
+		MonoAssembly *ass = (MonoAssembly*)l->data;
 
 		g_string_append (s, "_");
 		g_string_append (s, ass->aname.name);
@@ -1563,7 +1563,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 		// FIXME: This cannot be used for mscorlib during startup, since entry_assembly is not set yet
 		for (l = config->apps; l; l = l->next) {
-			char *n = l->data;
+			char *n = (char*)l->data;
 
 			if ((entry_assembly && !strcmp (entry_assembly->aname.name, n)) || (!entry_assembly && !strcmp (assembly->aname.name, n)))
 				break;
@@ -1574,7 +1574,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	if (!enabled) {
 		for (l = config->assemblies; l; l = l->next) {
-			char *n = l->data;
+			char *n = (char*)l->data;
 
 			if (!strcmp (assembly->aname.name, n))
 				break;
@@ -1753,7 +1753,7 @@ find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *valu
 
 			//printf ("X: %s %s\n", (char*)globals [index * 2], name);
 
-			if (!strcmp (globals [index * 2], symbol)) {
+			if (!strcmp ((const char*)globals [index * 2], symbol)) {
 				global_index = index;
 				break;
 			}
@@ -1831,7 +1831,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 	gboolean full_aot, interp, safepoints;
 	guint32 excluded_cpu_optimizations;
 
-	if (strcmp (assembly->image->guid, info->assembly_guid)) {
+	if (strcmp ((const char*)assembly->image->guid, (const char*)info->assembly_guid)) {
 		msg = g_strdup_printf ("doesn't match assembly");
 		usable = FALSE;
 	}
@@ -2101,7 +2101,7 @@ if (container_assm_name && !container_amodule) {
 			GList *l;
 
 			for (l = mono_aot_paths; l; l = l->next) {
-				char *path = l->data;
+				char *path = (char*)l->data;
 
 				char *basename = g_path_get_basename (assembly->image->name);
 				aot_name = g_strdup_printf ("%s/%s%s", path, basename, MONO_SOLIB_EXT);
@@ -2216,7 +2216,7 @@ if (container_assm_name && !container_amodule) {
 		char *table = NULL;
 
 		if (info->flags & MONO_AOT_FILE_FLAG_SEPARATE_DATA)
-			table = g_cast (amodule->tables [MONO_AOT_TABLE_IMAGE_TABLE]);
+			table = (char*)amodule->tables [MONO_AOT_TABLE_IMAGE_TABLE];
 		else
 			table = (char *)info->image_table;
 		g_assert (table);

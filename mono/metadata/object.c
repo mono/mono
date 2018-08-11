@@ -282,7 +282,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (g_cast (ves_icall_string_alloc), "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -2823,7 +2823,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, g_cast (mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error)));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -4875,7 +4875,7 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, g_cast (main_func), main_args, error);
+	mono_thread_create_checked (domain, (gpointer)main_func, main_args, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -5818,7 +5818,7 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	MonoObject *o = g_cast (mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass)));
+	MonoObject *o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
 

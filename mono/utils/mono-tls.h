@@ -49,14 +49,14 @@ typedef enum {
 #define mono_native_tls_alloc(key,destructor) ((*(key) = TlsAlloc ()) != TLS_OUT_OF_INDEXES && destructor == NULL)
 #define mono_native_tls_free TlsFree
 #define mono_native_tls_set_value TlsSetValue
-#define mono_native_tls_get_value(x) (g_cast (TlsGetValue (x)))
+#define mono_native_tls_get_value(x) (TlsGetValue (x))
 
 #else
 
 #include <pthread.h>
 
 #define MonoNativeTlsKey pthread_key_t
-#define mono_native_tls_get_value(x) (g_cast (pthread_getspecific (x)))
+#define mono_native_tls_get_value(x) (pthread_getspecific (x))
 
 static inline int
 mono_native_tls_alloc (MonoNativeTlsKey *key, void *destructor)

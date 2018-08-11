@@ -495,7 +495,4 @@ mono_atomic_store_bool (volatile gboolean *dest, gboolean val)
 	mono_atomic_store_i32 ((volatile gint32 *)dest, (gint32)val);
 }
 
-#define mono_atomic_cas_ptr(dest, exch, comp) (g_cast (mono_atomic_cas_ptr ((dest), (exch), (comp))))
-#define mono_atomic_xchg_ptr(dest, exch)      (g_cast (mono_atomic_xchg_ptr ((dest), (exch))))
-
 #endif /* _WAPI_ATOMIC_H_ */

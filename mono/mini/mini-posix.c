@@ -144,7 +144,7 @@ get_saved_signal_handler (int signo, gboolean remove)
 {
 	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = (struct sigaction*)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		if (remove && handler)
 			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		return handler;

@@ -78,7 +78,7 @@ recursively_make_pred_seq_points (MonoCompile *cfg, MonoBasicBlock *bb)
 		bb->num_pred_seq_points = predecessors->len;
 
 		for (int newer = 0; newer < bb->num_pred_seq_points; newer++) {
-			bb->pred_seq_points [newer] = g_array_index(predecessors, gpointer, newer);
+			bb->pred_seq_points [newer] = g_array_index(predecessors, MonoInst*, newer);
 		}
 	} 
 

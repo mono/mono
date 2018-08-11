@@ -3898,14 +3898,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.biggest_method_size)) {
 			mono_atomic_store_i32 (&mono_jit_stats.biggest_method_size, code_size_ratio);
 			char *biggest_method = g_strdup_printf ("%s::%s)", m_class_get_name (method->klass), method->name);
-			biggest_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
+			biggest_method = (char*)mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.biggest_method, biggest_method);
 			g_free (biggest_method);
 		}
 		code_size_ratio = (code_size_ratio * 100) / header->code_size;
 		if (code_size_ratio > mono_atomic_load_i32 (&mono_jit_stats.max_code_size_ratio)) {
 			mono_atomic_store_i32 (&mono_jit_stats.max_code_size_ratio, code_size_ratio);
 			char *max_ratio_method = g_strdup_printf ("%s::%s)", m_class_get_name (method->klass), method->name);
-			max_ratio_method = mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
+			max_ratio_method = (char*)mono_atomic_xchg_ptr ((gpointer*)&mono_jit_stats.max_ratio_method, max_ratio_method);
 			g_free (max_ratio_method);
 		}
 	}
@@ -4136,7 +4136,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 #ifndef DISABLE_JIT
 	/* Update llvm callees */
 	if (domain_jit_info (target_domain)->llvm_jit_callees) {
-		GSList *callees = g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
+		GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
 		GSList *l;
 
 		for (l = callees; l; l = l->next) {
