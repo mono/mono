@@ -20,7 +20,7 @@
 #include <unwind.h>
 #endif
 
-G_BEGIN_DECLS
+
 
 /*
  * Keep in sync with the enum in utils/mono-memory-model.h.
@@ -145,6 +145,6 @@ mono_llvm_di_builder_finalize (void *di_builder);
 void
 mono_llvm_di_set_location (LLVMBuilderRef builder, void *loc_md);
 
-G_END_DECLS
+
 
 #endif /* __MONO_MINI_LLVM_CPP_H__ */  

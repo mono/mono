@@ -19,7 +19,7 @@ guint32
 mono_dynstream_insert_mstring (MonoDynamicStream *sh, MonoString *str, MonoError *error);
 
 guint32
-mono_dynstream_add_data (MonoDynamicStream *stream, const char *data, guint32 len);
+mono_dynstream_add_data (MonoDynamicStream *stream, gconstpointer data, guint32 len);
 
 guint32
 mono_dynstream_add_zero (MonoDynamicStream *stream, guint32 len);

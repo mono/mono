@@ -7,15 +7,13 @@
 
 #include <config.h>
 #include <glib.h>
-
 #ifdef HOST_WIN32
 #include <windows.h>
 #endif
-
 #include "mono/utils/mono-coop-mutex.h"
 
 #ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (gpointer)-1
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 #endif
 
 #define MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS 64
@@ -36,7 +34,7 @@ typedef enum {
 	MONO_W32TYPE_COUNT
 } MonoW32Type;
 
-typedef struct {
+typedef struct MonoW32Handle {
 	MonoW32Type type;
 	guint ref;
 	gboolean signalled;
@@ -53,6 +51,20 @@ typedef enum {
 	MONO_W32HANDLE_WAIT_RET_TIMEOUT     = -2,
 	MONO_W32HANDLE_WAIT_RET_FAILED      = -3,
 } MonoW32HandleWaitRet;
+
+#ifdef __cplusplus
+extern "C++" { // for embedding within extern "C"
+
+// FIXME generate from a macro
+inline MonoW32HandleWaitRet
+operator+ (MonoW32HandleWaitRet a, gsize b)
+{
+	return (MonoW32HandleWaitRet)((gsize)a + b);
+}
+
+} // extern C++
+
+#endif
 
 typedef struct 
 {
@@ -105,8 +117,10 @@ typedef enum {
 	MONO_W32HANDLE_CAP_SPECIAL_WAIT = 0x08,
 } MonoW32HandleCapability;
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 void
 mono_w32handle_init (void);
+G_END_DECLS
 
 void
 mono_w32handle_cleanup (void);
@@ -183,6 +197,5 @@ mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 		g_error ("%s: unknown res value %d", __func__, res);
 }
 #endif
-
 
 #endif /* _MONO_METADATA_W32HANDLE_H_ */

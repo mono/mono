@@ -1559,7 +1559,7 @@ mono_thread_info_usleep (guint64 us)
 }
 
 gpointer
-mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
+(mono_thread_info_tls_get) (THREAD_INFO_TYPE *info, MonoTlsKey key)
 {
 	return ((MonoThreadInfo*)info)->tls [key];
 }

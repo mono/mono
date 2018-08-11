@@ -522,7 +522,7 @@ mono_ftnptr_to_delegate_handle (MonoClass *klass, gpointer ftn, MonoError *error
 		if (gchandle)
 			MONO_HANDLE_ASSIGN (d, MONO_HANDLE_CAST (MonoDelegate, mono_gchandle_get_target_handle (gchandle)));
 	} else {
-		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, g_hash_table_lookup (delegate_hash_table, ftn)));
+		MONO_HANDLE_ASSIGN (d, MONO_HANDLE_NEW (MonoDelegate, (MonoDelegate*)g_hash_table_lookup (delegate_hash_table, ftn)));
 		mono_marshal_unlock ();
 	}
 	if (MONO_HANDLE_IS_NULL (d)) {
@@ -6192,9 +6192,14 @@ mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *err
 		mono_error_set_pending_exception (error);
 }
 
+extern char const * const mono_handle_track_owner = NULL;
+
 MonoObjectHandle
 mono_icall_handle_new (gpointer rawobj)
 {
+#ifdef MONO_HANDLE_TRACK_OWNER
+	char const * const mono_handle_track_owner = "<marshal args>";
+#endif
 	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)rawobj);
 }
 
@@ -6202,9 +6207,9 @@ gpointer
 mono_icall_handle_new_interior (gpointer rawobj)
 {
 #ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new_interior (rawobj, "<marshal args>");
+	return mono_handle_new_interior ((MonoObject*)rawobj, "<marshal args>");
 #else
-	return mono_handle_new_interior (rawobj);
+	return mono_handle_new_interior ((MonoObject*)rawobj);
 #endif
 }
 

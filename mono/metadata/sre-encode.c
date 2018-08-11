@@ -519,7 +519,7 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 
 	char blob_size [64];
 	char *b = blob_size;
-	char *box_val;
+	gpointer box_val;
 	char* buf;
 	guint32 idx = 0, len = 0, dummy = 0;
 
@@ -527,7 +527,7 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 	if (!val) {
 		*ret_type = MONO_TYPE_CLASS;
 		len = 4;
-		box_val = (char*)&dummy;
+		box_val = &dummy;
 	} else {
 		box_val = mono_object_get_data (val);
 		*ret_type = m_class_get_byval_arg (val->vtable->klass)->type;
@@ -585,7 +585,7 @@ handle_enum:
 			g_free (swapped);
 		}
 #else
-		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, (char*)mono_string_chars (str), len);
+		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, mono_string_chars (str), len);
 #endif
 
 		g_free (buf);
@@ -873,7 +873,8 @@ encode_sighelper_arg (MonoDynamicImage *assembly, int i, MonoArrayHandle helper_
 
 	encode_custom_modifiers (assembly, modreqs, modopts, buf, error);
 	goto_if_nok (error, leave);
-	MonoReflectionTypeHandle pt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+	MonoReflectionTypeHandle pt;
+	pt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 	MONO_HANDLE_ARRAY_GETREF (pt, helper_arguments, i);
 	encode_reflection_type (assembly, pt, buf, error);
 	goto_if_nok (error, leave);
@@ -925,8 +926,10 @@ mono_dynimage_encode_reflection_sighelper (MonoDynamicImage *assembly, MonoRefle
 	sigbuffer_add_value (&buf, nargs);
 	encode_reflection_type (assembly, MONO_HANDLE_NEW_GET (MonoReflectionType, helper, return_type), &buf, error);
 	goto_if_nok (error, fail);
-	MonoArrayHandle modreqs = MONO_HANDLE_NEW_GET (MonoArray, helper, modreqs);
-	MonoArrayHandle modopts = MONO_HANDLE_NEW_GET (MonoArray, helper, modopts);
+	MonoArrayHandle modreqs;
+	modreqs = MONO_HANDLE_NEW_GET (MonoArray, helper, modreqs);
+	MonoArrayHandle modopts;
+	modopts = MONO_HANDLE_NEW_GET (MonoArray, helper, modopts);
 	for (i = 0; i < nargs; ++i) {
 		if (!encode_sighelper_arg (assembly, i, arguments, modreqs, modopts, &buf, error))
 			goto fail;

@@ -138,7 +138,7 @@ typedef struct MonoAotFileInfo
 	 * The runtime version string for AOT images generated using 'bind-to-runtime-version',
 	 * NULL otherwise.
 	 */
-	gpointer runtime_version;
+	char *runtime_version;
 	/* Blocks of various kinds of trampolines */
 	gpointer specific_trampolines;
 	gpointer static_rgctx_trampolines;
@@ -229,6 +229,7 @@ void     mono_aot_patch_plt_entry           (guint8 *code, guint8 *plt_entry, gp
 gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vtable, int slot, MonoError *error);
 gpointer mono_aot_create_specific_trampoline   (MonoImage *image, gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len);
 gpointer mono_aot_get_trampoline            (const char *name);
+#define mono_aot_get_trampoline(name) (g_cast (mono_aot_get_trampoline ((name))))
 gpointer mono_aot_get_trampoline_full       (const char *name, MonoTrampInfo **out_tinfo);
 gpointer mono_aot_get_unbox_trampoline      (MonoMethod *method);
 gpointer mono_aot_get_lazy_fetch_trampoline (guint32 slot);
@@ -244,6 +245,9 @@ void     mono_aot_set_make_unreadable       (gboolean unreadable);
 gboolean mono_aot_is_pagefault              (void *ptr);
 void     mono_aot_handle_pagefault          (void *ptr);
 void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
+#ifdef __cplusplus
+#define mono_aot_register_jit_icall(name, addr) (mono_aot_register_jit_icall ((name), (gpointer)(addr)))
+#endif
 guint32  mono_aot_find_method_index         (MonoMethod *method);
 void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
 void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
