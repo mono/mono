@@ -9,10 +9,10 @@ btls_dirs = btls
 endif
 
 if CROSS_COMPILING
-SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis profiler
+SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis profiler inc
 else
 if INSTALL_MONOTOUCH
-SUBDIRS = $(btls_dirs) eglib arch utils $(sgen_dirs) metadata mini profiler
+SUBDIRS = $(btls_dirs) eglib arch utils $(sgen_dirs) metadata mini profiler inc
 
 monotouch-do-build:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \

@@ -18,7 +18,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/parse.h"
 #include "mono/utils/memfuncs.h"
-#include "mono/metadata/mono-gc.h"
+#include "mono/inc/mono-gc-handle.h"
 #ifdef HAVE_SGEN_GC
 #include "mono/sgen/sgen-conf.h"
 #endif
@@ -47,7 +47,7 @@
 #define MONO_GC_HANDLE_IS_METADATA_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == MONO_GC_HANDLE_OCCUPIED_MASK)
 
 // Shorter local names for GC handle type and its values.
-// See mono-gc.h.
+// See mono-gc-handle.h. FIXME? Remove these? (Convert users.)
 #define HANDLE_TYPE_MIN    MONO_GC_HANDLE_TYPE_MIN                // 0
 #define HANDLE_WEAK        MONO_GC_HANDLE_WEAK                    // 0
 #define HANDLE_WEAK_TRACK  MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION // 1
