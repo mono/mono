@@ -25,7 +25,6 @@
 #define __USE_ISOC99
 
 #include <math.h>
-#include <mono/metadata/sysmath.h>
 
 #include "number-ms.h"
 #include "utils/mono-compiler.h"
