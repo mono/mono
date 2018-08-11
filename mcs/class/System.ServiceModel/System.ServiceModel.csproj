@@ -108,6 +108,10 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\KeyedByTypeCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedKeyedCollection.cs" />
+    <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\SynchronizedReadOnlyCollection.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.CodeGeneration\CodeAdd.cs" />
     <Compile Include="Mono.CodeGeneration\CodeAnd.cs" />
@@ -157,10 +161,7 @@
     <Compile Include="Mono.CodeGeneration\CodeWhile.cs" />
     <Compile Include="Mono.CodeGeneration\CodeWriter.cs" />
     <Compile Include="Mono.CodeGeneration\Exp.cs" />
-    <Compile Include="System.Collections.Generic\KeyedByTypeCollection.cs" />
-    <Compile Include="System.Collections.Generic\SynchronizedCollection.cs" />
-    <Compile Include="System.Collections.Generic\SynchronizedKeyedCollection.cs" />
-    <Compile Include="System.Collections.Generic\SynchronizedReadOnlyCollection.cs" />
+    <Compile Include="ReferenceSources\SR.cs" />
     <Compile Include="System.ServiceModel.Channels\AddressHeader.cs" />
     <Compile Include="System.ServiceModel.Channels\AddressHeaderCollection.cs" />
     <Compile Include="System.ServiceModel.Channels\AddressingVersion.cs" />
@@ -490,6 +491,7 @@
         <Compile Include="..\System.ServiceModel.Web\System\UriTemplateMatch.cs" />
         <Compile Include="..\System.ServiceModel.Web\System\UriTemplateMatchException.cs" />
         <Compile Include="..\System.ServiceModel.Web\System\UriTemplateTable.cs" />
+        <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Channels\PipeException.cs" />
         <Compile Include="..\referencesource\System.ServiceModel\System\ServiceModel\Description\UseRequestHeadersForMetadataAddressBehavior.cs" />
         <Compile Include="Mono.Security.Protocol.Ntlm\BitConverterLE.cs" />
         <Compile Include="Mono.Security.Protocol.Ntlm\ChallengeResponse.cs" />
@@ -505,7 +507,6 @@
         <Compile Include="Mono.Xml.XPath\DTMXPathDocumentWriter2.cs" />
         <Compile Include="Mono.Xml.XPath\DTMXPathNavigator2.cs" />
         <Compile Include="Mono.Xml.XPath\DTMXPathNode2.cs" />
-        <Compile Include="System.IO\PipeException.cs" />
         <Compile Include="System.ServiceModel.Activation\AspNetIntegrationRequirementsAttribute.cs" />
         <Compile Include="System.ServiceModel.Activation\ServiceHostFactoryBase.cs" />
         <Compile Include="System.ServiceModel.Activation\VirtualPathExtension.cs" />

@@ -39,6 +39,14 @@
 @newdata-monodroid@
 ]]>*/
     </script>
+    <script type="text/javascript" id="oldsource-wasm">/*<![CDATA[
+@olddata-wasm@
+]]>*/
+    </script>
+    <script type="text/javascript" id="newsource-wasm">/*<![CDATA[
+@newdata-wasm@
+]]>*/
+    </script>
 
     <div class="container-fluid">
 
@@ -311,10 +319,12 @@
         var oldsourceNet4xText = extractCDATAFromElement($("#oldsource-net_4_x"));
         var oldsourceMonotouchText = extractCDATAFromElement($("#oldsource-monotouch"));
         var oldsourceMonodroidText = extractCDATAFromElement($("#oldsource-monodroid"));
+        var oldsourceWasmText = extractCDATAFromElement($("#oldsource-wasm"));
 
         var newsourceNet4xText = extractCDATAFromElement($("#newsource-net_4_x"));
         var newsourceMonotouchText = extractCDATAFromElement($("#newsource-monotouch"));
         var newsourceMonodroidText = extractCDATAFromElement($("#newsource-monodroid"));
+        var newsourceWasmText = extractCDATAFromElement($("#newsource-wasm"));
 
         var papaConfig = {
           header: true,
@@ -324,15 +334,18 @@
         var oldsourceNet4xCsv = Papa.parse(oldsourceNet4xText, papaConfig);
         var oldsourceMonotouchCsv = Papa.parse(oldsourceMonotouchText, papaConfig);
         var oldsourceMonodroidCsv = Papa.parse(oldsourceMonodroidText, papaConfig);
+        var oldsourceWasmCsv = Papa.parse(oldsourceWasmText, papaConfig);
 
         var newsourceNet4xCsv = Papa.parse(newsourceNet4xText, papaConfig);
         var newsourceMonotouchCsv = Papa.parse(newsourceMonotouchText, papaConfig);
         var newsourceMonodroidCsv = Papa.parse(newsourceMonodroidText, papaConfig);
+        var newsourceWasmCsv = Papa.parse(newsourceWasmText, papaConfig);
 
         try {
           compareSizes(".NET 4.x", "net4x-results", oldsourceNet4xCsv, newsourceNet4xCsv);
           compareSizes("MonoTouch", "monotouch-results", oldsourceMonotouchCsv, newsourceMonotouchCsv);
           compareSizes("MonoDroid", "monodroid-results", oldsourceMonodroidCsv, newsourceMonodroidCsv);
+          compareSizes("WebAssembly", "wasm-results", oldsourceWasmCsv, newsourceWasmCsv);
         } catch(err) {
           $("#results").text("Error: " + err);
         }
