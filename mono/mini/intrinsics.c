@@ -1161,7 +1161,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		 * all inputs:
 		 * http://everything2.com/?node_id=1051618
 		 */
-		if (!cfg->compile_aot && !COMPILE_LLVM (cfg) && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
+		if (!cfg->compile_aot && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
 			int mode = -1;
 			if (!strcmp (cmethod->name, "Round"))
 				mode = 0;
