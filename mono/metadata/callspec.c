@@ -86,7 +86,7 @@ gboolean mono_callspec_eval (MonoMethod *method, const MonoCallSpec *spec)
 				inc = 1;
 			break;
 		case MONO_TRACEOP_METHOD:
-			mdesc = op->data;
+			mdesc = g_cast (op->data);
 			is_full = mono_method_desc_is_full (mdesc);
 			if (is_full &&
 			    mono_method_desc_full_match (mdesc, method))

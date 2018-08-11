@@ -2408,7 +2408,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			/* Load the array slice into the simd reg */
 			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
 			g_assert (args [0]->opcode == OP_LDADDR);
-			var = args [0]->inst_p0;
+			var = (MonoInst*)args [0]->inst_p0;
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
 			ins->klass = cmethod->klass;
 			return args [0];
@@ -2552,7 +2552,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		/* Load the simd reg into the array slice */
 		ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
 		g_assert (args [0]->opcode == OP_LDADDR);
-		var = args [0]->inst_p0;
+		var = (MonoInst*)args [0]->inst_p0;
 		EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREX_MEMBASE, ldelema_ins->dreg, 0, var->dreg);
 		ins->klass = cmethod->klass;
 		return args [0];

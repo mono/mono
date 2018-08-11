@@ -155,9 +155,9 @@ typedef struct {
 	gboolean need_stack_frame_inited;
 	gboolean need_stack_frame;
 	int sp_fp_offset, param_area_size;
-	gpointer cinfo;
-	gpointer ss_tramp_var;
-	gpointer bp_tramp_var;
+	CallInfo *cinfo;
+	MonoInst *ss_tramp_var;
+	MonoInst *bp_tramp_var;
 } MonoCompileArch;
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->eax = (gsize)exc; } while (0)
@@ -309,7 +309,7 @@ typedef struct {
 	guint8 pass_empty_struct : 1; // Set in scenarios when empty structs needs to be represented as argument.
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	guint32 stack_usage;
 	guint32 reg_usage;
@@ -325,7 +325,7 @@ typedef struct {
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
-} CallInfo;
+};
 
 guint32
 mono_x86_get_this_arg_offset (MonoMethodSignature *sig);

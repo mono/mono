@@ -23,6 +23,8 @@ typedef enum {
 	MONO_OS_EVENT_WAIT_RET_TIMEOUT   = -2,
 } MonoOSEventWaitRet;
 
+G_ENUM_FUNCTIONS (MonoOSEventWaitRet)
+
 typedef struct _MonoOSEvent MonoOSEvent;
 
 typedef void (*MonoOSEventFreeCb) (MonoOSEvent*);

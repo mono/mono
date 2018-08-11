@@ -874,7 +874,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			 * expression points to a stack location which can be used as ESP */
 			new_ctx->esp = (unsigned long)&((*lmf)->eip);
 
-		*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
+		*lmf = (MonoLMF*)(((gsize)(*lmf)->previous_lmf) & ~3);
 
 		return TRUE;
 	}
@@ -915,7 +915,7 @@ handle_signal_exception (gpointer obj)
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
-	mono_handle_exception (&ctx, obj);
+	mono_handle_exception (&ctx, (MonoObject*)obj);
 
 	mono_restore_context (&ctx);
 }
@@ -1063,7 +1063,7 @@ static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
 	gpointer *sp;
-	sp = (gpointer)(mctx->esp);
+	sp = (gpointer*)(mctx->esp);
 	sp -= 1;
 	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
@@ -1079,7 +1079,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 
 	mctx = *ctx;
 
-	mono_handle_exception (&mctx, obj);
+	mono_handle_exception (&mctx, (MonoObject*)obj);
 	if (stack_ovf) {
 		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
 		jit_tls->stack_ovf_pending = 1;
@@ -1103,7 +1103,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	 * we try the lookup again with the return address pushed on the stack
 	 */
 	if (!ji && fault_addr == (gpointer)UCONTEXT_REG_EIP (ctx)) {
-		glong *sp = (gpointer)UCONTEXT_REG_ESP (ctx);
+		glong *sp = (glong*)UCONTEXT_REG_ESP (ctx);
 		ji = mini_jit_info_table_find (mono_domain_get (), (gpointer)sp [0], NULL);
 		if (ji)
 			UCONTEXT_REG_EIP (ctx) = sp [0];
@@ -1127,8 +1127,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
  	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (gpointer)(UCONTEXT_REG_ESP (ctx) & ~15);
-	sp = (gpointer)((char*)sp - frame_size);
+	sp = (gpointer*)(UCONTEXT_REG_ESP (ctx) & ~15);
+	sp = (gpointer*)((char*)sp - frame_size);
 	/* the incoming arguments are aligned to 16 bytes boundaries, so the return address IP
 	 * goes at sp [-1]
 	 */

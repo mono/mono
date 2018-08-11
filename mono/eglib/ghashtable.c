@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <glib.h>
+#include <eglib-remap.h>
 
 typedef struct _Slot Slot;
 

@@ -5,10 +5,10 @@
 #ifndef __MONO_UTILS_DL_WINDOWS_H__
 #define __MONO_UTILS_DL_WINDOWS_H__
 
+#ifdef HOST_WIN32
+
 #include <config.h>
 #include <glib.h>
-
-#ifdef HOST_WIN32
 #include "mono/utils/mono-dl.h"
 
 void*

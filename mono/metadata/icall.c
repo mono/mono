@@ -103,6 +103,7 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
@@ -143,9 +144,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
+ICALL_EXPORT
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
@@ -3181,7 +3182,7 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_
 		 * the dynamic case as well ?
 		 */
 		mono_image_lock ((MonoImage*)image);
-		MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, mono_g_hash_table_lookup (image->generic_def_objects, imethod));
+		MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, (MonoReflectionMethod*)mono_g_hash_table_lookup (image->generic_def_objects, imethod));
 		mono_image_unlock ((MonoImage*)image);
 
 		if (!MONO_HANDLE_IS_NULL (res))
@@ -3918,8 +3919,9 @@ ves_icall_RuntimeType_GetFields_native (MonoReflectionTypeHandle ref_type, char 
 		return g_ptr_array_new ();
 	}
 
-	int (*compare_func) (const char *s1, const char *s2) = NULL;	
-	compare_func = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = strcmp;
+	if ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive))
+		compare_func = mono_utf8_strcasecmp;
 
 	MonoClass *startklass, *klass;
 	klass = startklass = mono_class_from_mono_type (type);
@@ -4004,13 +4006,14 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 	/*FIXME, use MonoBitSet*/
 	guint32 method_slots_default [8];
 	guint32 *method_slots = NULL;
-	int (*compare_func) (const char *s1, const char *s2) = NULL;
+	int (*compare_func) (const char *s1, const char *s2) = strcmp;
 
 	array = g_ptr_array_new ();
 	startklass = klass;
 	error_init (error);
 	
-	compare_func = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	if ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive))
+		compare_func = mono_utf8_strcasecmp;
 
 	/* An optimization for calls made from Delegate:CreateDelegate () */
 	if (m_class_is_delegate (klass) && name && !strcmp (name, "Invoke") && (bflags == (BFLAGS_Public | BFLAGS_Static | BFLAGS_Instance))) {
@@ -4247,7 +4250,9 @@ ves_icall_RuntimeType_GetPropertiesByName_native (MonoReflectionTypeHandle ref_t
 	MonoClass *startklass, *klass;
 	klass = startklass = mono_class_from_mono_type (type);
 
-	int (*compare_func) (const char *s1, const char *s2) = (mlisttype == MLISTTYPE_CaseInsensitive) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = strcmp;
+	if (mlisttype == MLISTTYPE_CaseInsensitive)
+		compare_func = mono_utf8_strcasecmp;
 
 	GPtrArray *res_array = g_ptr_array_sized_new (8); /*This the average for ASP.NET types*/
 
@@ -4349,7 +4354,9 @@ ves_icall_RuntimeType_GetEvents_native (MonoReflectionTypeHandle ref_type, char 
 		return g_ptr_array_new ();
 	}
 
-	int (*compare_func) (const char *s1, const char *s2) = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = strcmp;
+	if ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive))
+		compare_func = mono_utf8_strcasecmp;
 
 	GPtrArray *res_array = g_ptr_array_sized_new (4);
 
@@ -4442,7 +4449,9 @@ ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionTypeHandle ref_type, 
 		return g_ptr_array_new ();
 	}
 
-	int (*compare_func) (const char *s1, const char *s2) = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = strcmp;
+	if ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive))
+		compare_func = mono_utf8_strcasecmp;
 
 	MonoClass *klass = mono_class_from_mono_type (type);
 
@@ -8460,7 +8469,7 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
+(mono_register_jit_icall_full) (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
 	MonoJitICallInfo *info;
 
@@ -8500,7 +8509,7 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+(mono_register_jit_icall) (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 {
 	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
 }
