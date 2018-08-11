@@ -1785,9 +1785,7 @@ AC_TRY_COMPILE([
 ],[
     AC_MSG_RESULT(yes)
     AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
-    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
-    AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
-    AC_SUBST(ENABLE_GSS)
+    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS_SPNEGO_MECHANISM])
     enable_gss=yes
 ], [
     AC_MSG_RESULT(no)
@@ -1799,10 +1797,20 @@ AC_TRY_COMPILE([
 ], [
 ],[
     AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS/GSS.h])
-    AC_DEFINE(HAVE_GSS_KRB5_CRED_NO_CI_FLAGS_X, 1, [GSS/GSS.h])
-    AC_SUBST(ENABLE_GSS)
     enable_gss=yes
+], [
+    AC_MSG_RESULT(no)
+])
+
+AC_MSG_CHECKING(for GSS_SPNEGO_MECHANISM)
+AC_TRY_COMPILE([
+    #include <gssapi/gssapi_ext.h>
+    #include <gssapi/gssapi_krb5.h>
+    gss_OID_set_desc gss_mech_spnego_OID_set_desc = {.count = 1, .elements = GSS_SPNEGO_MECHANISM};
+], [
+],[
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS_SPNEGO_MECHANISM])
 ], [
     AC_MSG_RESULT(no)
 ])
