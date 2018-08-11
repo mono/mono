@@ -1161,6 +1161,24 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		 * all inputs:
 		 * http://everything2.com/?node_id=1051618
 		 */
+		if (!cfg->compile_aot && !COMPILE_LLVM (cfg) && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
+			int mode = -1;
+			if (!strcmp (cmethod->name, "Round"))
+				mode = 0;
+			else if (!strcmp (cmethod->name, "Floor"))
+				mode = 1;
+			else if (!strcmp (cmethod->name, "Ceiling"))
+				mode = 2;
+			if (mode != -1) {
+				int xreg = alloc_xreg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_FCONV_TO_R8_X, xreg, args [0]->dreg);
+				EMIT_NEW_UNALU (cfg, ins, OP_SSE41_ROUNDPD, xreg, xreg);
+				ins->inst_c0 = mode;
+				int dreg = alloc_freg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_EXTRACT_R8, dreg, xreg);
+				return ins;
+			}
+		}
 	} else if (cmethod->klass == mono_defaults.systemtype_class && !strcmp (cmethod->name, "op_Equality")) {
 		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
 		MONO_INST_NEW (cfg, ins, OP_PCEQ);

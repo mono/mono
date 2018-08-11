@@ -6624,6 +6624,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_movsd_reg_reg (code, ins->dreg, ins->sreg1);
 			amd64_sse_pshufd_reg_reg_imm (code, ins->dreg, ins->dreg, 0x44);
 			break;
+		case OP_SSE41_ROUNDPD:
+			amd64_sse_roundpd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
+			break;
 #endif
 		case OP_LIVERANGE_START: {
 			if (cfg->verbose_level > 1)
