@@ -1063,9 +1063,7 @@ HANDLES(ICALL(TYPE_2, "internal_from_name", ves_icall_System_Type_internal_from_
 
 ICALL_TYPE(TYPEDR, "System.TypedReference", TYPEDR_1)
 HANDLES(ICALL(TYPEDR_1, "InternalToObject",	mono_TypedReference_ToObject))
-
-// FIXME Partly converted but completion not currently easy/possible.
-ICALL(TYPEDR_2, "MakeTypedReferenceInternal", mono_TypedReference_MakeTypedReferenceInternal)
+HANDLES(ICALL(TYPEDR_2, "MakeTypedReferenceInternal", mono_TypedReference_MakeTypedReferenceInternal))
 
 ICALL_TYPE(VALUET, "System.ValueType", VALUET_1)
 ICALL(VALUET_1, "InternalEquals", ves_icall_System_ValueType_Equals)

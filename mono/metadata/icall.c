@@ -7647,42 +7647,30 @@ mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 }
 
 ICALL_EXPORT MonoTypedRef
-mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target_raw, MonoArray *fields_raw)
+mono_TypedReference_MakeTypedReferenceInternal (MonoObjectHandle target, MonoArrayHandle fields)
 {
-	guint8 *p = NULL; // FIXME Inhibits full coop conversion at this time
-
-	MONO_HANDLE_DCL (MonoObject, target);
-	MONO_HANDLE_DCL (MonoArray, fields);
-
+	gsize offset = 0;
 	MonoTypedRef res;
 	MonoReflectionFieldHandle f = MONO_HANDLE_NEW (MonoReflectionField, NULL);
-	MonoClass *klass;
-	MonoType *ftype = NULL;
-	int i;
 
 	memset (&res, 0, sizeof (res));
 
 	g_assert (!MONO_HANDLE_IS_NULL (fields));
-	g_assert (mono_array_handle_length (fields) > 0);
+	gsize const array_length = mono_array_handle_length (fields);
+	g_assert (array_length > 0);
 
-	klass = MONO_HANDLE_GETVAL (target, vtable)->klass;
-
-	for (i = 0; i < mono_array_handle_length (fields); ++i) {
+	for (gsize i = 0; i < array_length; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (f, fields, i);
 		g_assert (!MONO_HANDLE_IS_NULL (f));
 
-		if (i == 0)
-			p = (guint8*)MONO_HANDLE_RAW (target) + MONO_HANDLE_GETVAL (f, field)->offset;
-		else
-			p += MONO_HANDLE_GETVAL (f, field)->offset - sizeof (MonoObject);
-		klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (f, field)->type);
-		ftype = MONO_HANDLE_GETVAL (f, field)->type;
+		res.type = MONO_HANDLE_GETVAL (f, field)->type;
+		res.klass = mono_class_from_mono_type (res.type);
+		offset += MONO_HANDLE_GETVAL (f, field)->offset;
+		if (i)
+			offset -= sizeof (MonoObject);
 	}
 
-	res.type = ftype;
-	res.klass = mono_class_from_mono_type (ftype);
-	res.value = p;
-
+	res.value = (guint8*)MONO_HANDLE_RAW (target) + offset;
 	return res;
 }
 
