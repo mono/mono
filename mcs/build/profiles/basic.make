@@ -122,7 +122,7 @@ $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
 	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE).tmp $(GENSOURCES_CS)
 	- rm $(GENSOURCES_EXE)
 	mv $(GENSOURCES_EXE).tmp $(GENSOURCES_EXE)
-	- rm $@
+	- rm -f $@
 	mv $@.tmp $@
 
 $(PROFILE_OUT): $(PROFILE_EXE)

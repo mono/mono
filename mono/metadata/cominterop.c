@@ -100,6 +100,9 @@ mono_string_to_bstr_handle (MonoStringHandle s)
 	return res;
 }
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, save) (register_icall ((gpointer)(func), (name), (sigstr), (save)))
+
 gpointer
 mono_string_to_bstr (MonoString* s_raw)
 {
@@ -2906,7 +2909,7 @@ mono_free_bstr (/*mono_bstr_const*/gpointer bstr)
 		g_free (((char *)bstr) - 4);
 #ifndef DISABLE_COM
 	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
-		sys_free_string_ms (bstr);
+		sys_free_string_ms ((mono_bstr_const)bstr);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -3304,8 +3307,8 @@ mono_marshal_safearray_begin (gpointer safearray, MonoArray **result, gpointer *
 
 			*indices = g_malloc (dim * sizeof(int));
 
-			sizes = (uintptr_t *)alloca (dim * sizeof(uintptr_t));
-			bounds = (intptr_t *)alloca (dim * sizeof(intptr_t));
+			sizes = g_newa (uintptr_t, dim);
+			bounds = g_newa (intptr_t, dim);
 
 			for (i=0; i<dim; ++i) {
 				glong lbound, ubound;
@@ -3513,7 +3516,7 @@ mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointe
 	int const dim = m_class_get_rank (mono_object_class (input));
 
 	*indices = g_malloc (dim * sizeof (int));
-	SAFEARRAYBOUND * const bounds = (SAFEARRAYBOUND *)alloca (dim * sizeof (SAFEARRAYBOUND));
+	SAFEARRAYBOUND * const bounds = g_newa (SAFEARRAYBOUND, dim);
 	(*(int*)empty) = (max_array_length == 0);
 
 	if (dim > 1) {

@@ -44,6 +44,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil.Cil\Code.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil.Cil\CodeReader.cs" />
@@ -173,7 +174,7 @@
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono\Funcs.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\System.Runtime.CompilerServices\ExtensionAttribute.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

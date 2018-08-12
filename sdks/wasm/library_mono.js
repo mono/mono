@@ -72,6 +72,13 @@ var MonoSupportLib = {
 			return this.mono_wasm_set_bp (assembly, method_token, il_offset)
 		},
 
+		mono_wasm_remove_breakpoint: function (breakpoint_id) {
+			if (!this.mono_wasm_del_bp)
+				this.mono_wasm_del_bp = Module.cwrap ('mono_wasm_remove_breakpoint', 'number', ['number']);
+
+			return this.mono_wasm_del_bp (breakpoint_id);
+		},
+
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			Module.FS_createPath ("/", vfs_prefix, true, true);
 

@@ -47,6 +47,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\cecil\Mono.Cecil.Cil\Code.cs" />
     <Compile Include="..\..\..\external\cecil\Mono.Cecil.Cil\CodeReader.cs" />
@@ -226,7 +227,7 @@
     <Compile Include="SymbolManager.cs" />
     <Compile Include="symbolicate.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/System.XML/System.Xml.csproj" />

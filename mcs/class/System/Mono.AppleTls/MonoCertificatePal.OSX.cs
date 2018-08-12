@@ -27,6 +27,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+#if !MONO_FEATURE_BTLS
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Cryptography;
+#else
+using Mono.Security.Cryptography;
+#endif
+#endif
+
 using System;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -38,8 +48,6 @@ using Mono.Net;
 
 #if MONO_FEATURE_BTLS
 using Mono.Btls;
-#else
-using Mono.Security.Cryptography;
 #endif
 
 namespace Mono.AppleTls

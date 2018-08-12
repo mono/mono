@@ -17,7 +17,7 @@
 #ifdef HAVE_COPYFILE_H
 #include <copyfile.h>
 #  if !defined(COPYFILE_CLONE)
-#    #define COPYFILE_CLONE (1 << 24)
+#    define COPYFILE_CLONE (1 << 24)
 #  endif
 #endif
 #if defined(HAVE_SYS_STATFS_H)
@@ -4415,6 +4415,7 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_CDROM, "cddafs" },
 	{ DRIVE_CDROM, "cd9660" },
 	{ DRIVE_RAMDISK, "devfs" },
+	{ DRIVE_RAMDISK, "nullfs" },
 	{ DRIVE_FIXED, "exfat" },
 	{ DRIVE_RAMDISK, "fdesc" },
 	{ DRIVE_REMOTE, "ftp" },
@@ -4512,6 +4513,7 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_RAMDISK, "securityfs" },
 	{ DRIVE_RAMDISK, "procfs"     }, // AIX procfs
 	{ DRIVE_RAMDISK, "namefs"     }, // AIX soft mounts
+	{ DRIVE_RAMDISK, "nullfs"     },
 	{ DRIVE_CDROM,   "iso9660"    },
 	{ DRIVE_CDROM,   "cdrfs"      }, // AIX ISO9660 CDs
 	{ DRIVE_CDROM,   "udfs"       }, // AIX UDF CDs
