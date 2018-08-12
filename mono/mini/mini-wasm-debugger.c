@@ -221,7 +221,7 @@ create_breakpoint_events (GPtrArray *ss_reqs, GPtrArray *bp_reqs, MonoJitInfo *j
 static void
 process_breakpoint_events (void *_evts, MonoMethod *method, MonoContext *ctx, int il_offsets)
 {
-	BpEvents *evts = (BpEvents*e)_evts;
+	BpEvents *evts = (BpEvents*)_evts;
 	if (evts) {
 		if (evts->is_ss)
 			mono_de_cancel_ss ();
@@ -558,7 +558,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	ERROR_DECL (error);
 	MonoMethodHeader *header = NULL;
 
-	FrameDescData *data = ud;
+	FrameDescData *data = (FrameDescData*)ud;
 
 	//skip wrappers
 	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
