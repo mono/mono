@@ -101,8 +101,13 @@ typedef struct jit_descriptor
   jit_code_entry *first_entry;
 } jit_descriptor;
 
+
+G_BEGIN_DECLS
+
 /* GDB puts a breakpoint in this function.  */
 void MONO_NEVER_INLINE __jit_debug_register_code(void);
+
+G_END_DECLS
 
 #if !defined(MONO_LLVM_LOADED) && defined(ENABLE_LLVM) && !defined(MONO_CROSS_COMPILE)
 
