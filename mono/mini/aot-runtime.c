@@ -5537,8 +5537,8 @@ get_new_trampoline_from_page (int tramp_type)
 		page = (TrampolinePage*)addr;
 		page->next = trampoline_pages [tramp_type];
 		trampoline_pages [tramp_type] = page;
-		page->trampolines = (void*)(taddr + amodule->info.tramp_page_code_offsets [tramp_type]);
-		page->trampolines_end = (void*)(taddr + psize - 64);
+		page->trampolines = (guint8*)(taddr + amodule->info.tramp_page_code_offsets [tramp_type]);
+		page->trampolines_end = (guint8*)(taddr + psize - 64);
 		code = page->trampolines;
 		page->trampolines += specific_trampoline_size;
 		mono_aot_page_unlock ();
