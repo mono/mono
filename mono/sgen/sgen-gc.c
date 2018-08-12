@@ -1726,7 +1726,7 @@ collect_nursery (const char *reason, gboolean is_overflow, SgenGrayQueue *unpin_
 	sgen_degraded_mode = 0;
 	objects_pinned = 0;
 
-	SGEN_LOG (1, "Start nursery collection %" G_GINT32_FORMAT " %p-%p, size: %d", mono_atomic_load_i32 (&mono_gc_stats.minor_gc_count), sgen_nursery_section->data, sgen_nursery_section->end_data, (int)(sgen_nursery_section->end_data - sgen_nursery_section->data));
+	SGEN_LOG (1, "Start nursery collection %d %p-%p, size: %d", (int)mono_atomic_load_i32 (&mono_gc_stats.minor_gc_count), sgen_nursery_section->data, sgen_nursery_section->end_data, (int)(sgen_nursery_section->end_data - sgen_nursery_section->data));
 
 	/* world must be stopped already */
 	TV_GETTIME (btv);
@@ -2176,7 +2176,7 @@ major_start_collection (SgenGrayQueue *gc_thread_gray_queue, const char *reason,
 	check_scan_starts ();
 
 	sgen_degraded_mode = 0;
-	SGEN_LOG (1, "Start major collection %" G_GINT32_FORMAT, mono_atomic_load_i32 (&mono_gc_stats.major_gc_count));
+	SGEN_LOG (1, "Start major collection %d", (int)mono_atomic_load_i32 (&mono_gc_stats.major_gc_count));
 	mono_atomic_inc_i32 (&mono_gc_stats.major_gc_count);
 
 	if (sgen_major_collector.start_major_collection)
