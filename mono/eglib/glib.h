@@ -1,8 +1,11 @@
 #ifndef __GLIB_H
 #define __GLIB_H
 
-// Ask stdint.h for the full C99 features for CentOS 6 g++ 4.4.
-#if defined (__cplusplus) && __cplusplus <= 199711L // It is 1 for g++4.4 -std=c++0x.
+// Ask stdint.h and inttypes.h for the full C99 features for CentOS 6 g++ 4.4, Android, etc.
+// See for example:
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/inttypes.h
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/stdint.h
+#ifdef __cplusplus
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS
 #endif
