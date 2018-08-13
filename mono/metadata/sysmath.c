@@ -32,7 +32,7 @@
 gdouble
 ves_icall_System_Math_Floor (gdouble x)
 {
-	return floor (x);
+	return floor(x);
 }
 
 gdouble
@@ -73,21 +73,15 @@ ves_icall_System_Math_Sin (gdouble x)
 }
 
 gdouble 
-ves_icall_System_Math_Cbrt (gdouble x)
-{
-	return cbrt (x);
-}
-
-gdouble 
 ves_icall_System_Math_Cos (gdouble x)
 {
 	return cos (x);
 }
 
 gdouble 
-ves_icall_System_Math_Cosh (gdouble x)
+ves_icall_System_Math_Cbrt (gdouble x)
 {
-	return cosh (x);
+	return cbrt (x);
 }
 
 gdouble 
@@ -97,15 +91,21 @@ ves_icall_System_Math_Tan (gdouble x)
 }
 
 gdouble 
-ves_icall_System_Math_Tanh (gdouble x)
-{
-	return tanh (x);
-}
-
-gdouble 
 ves_icall_System_Math_Sinh (gdouble x)
 {
 	return sinh (x);
+}
+
+gdouble 
+ves_icall_System_Math_Cosh (gdouble x)
+{
+	return cosh (x);
+}
+
+gdouble 
+ves_icall_System_Math_Tanh (gdouble x)
+{
+	return tanh (x);
 }
 
 gdouble 
@@ -139,15 +139,15 @@ ves_icall_System_Math_Atan (gdouble x)
 }
 
 gdouble 
-ves_icall_System_Math_Atanh (gdouble x)
-{
-	return atanh (x);
-}
-
-gdouble 
 ves_icall_System_Math_Atan2 (gdouble y, gdouble x)
 {
 	return atan2 (y, x);
+}
+
+gdouble 
+ves_icall_System_Math_Atanh (gdouble x)
+{
+	return atanh (x);
 }
 
 gdouble 
@@ -197,8 +197,6 @@ ves_icall_System_Math_Ceiling (gdouble v)
 {
 	return ceil (v);
 }
-
-/* ===== MathF ===== */
 
 float
 ves_icall_System_MathF_Acos (float x)
