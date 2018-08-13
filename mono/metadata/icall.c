@@ -103,6 +103,8 @@
 
 #include "decimal-ms.h"
 #include "number-ms.h"
+#include <mono/utils/mono-state.h>
+#include <mono/utils/mono-logger-internals.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
@@ -5712,6 +5714,30 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 }
 
 ICALL_EXPORT void
+ves_icall_Mono_Runtime_ExceptionToState (MonoException *exc, char **payload, intptr_t *portable_hash, intptr_t *unportable_hash, MonoError *error)
+{
+#ifdef TARGET_OSX
+	MonoThreadSummary out;
+	mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+
+	intptr_t out_hash_port = (intptr_t) out.hashes.offset_free_hash;
+	intptr_t out_hash_unport = (intptr_t) out.hashes.offset_free_hash;
+
+	JsonWriter writer;
+	mono_json_writer_init (&writer);
+	mono_native_state_init (&writer);
+	char *output = mono_native_state_free (&writer, FALSE);
+
+	*payload = output;
+	*portable_hash = out_hash_port;
+	*unportable_hash = out_hash_unport;
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
+}
+
+ICALL_EXPORT void
 ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, intptr_t portable_hash, intptr_t unportable_hash, MonoError *error)
 {
 #ifdef TARGET_OSX
@@ -5719,7 +5745,6 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, intptr_t portable_
 		g_error ("Cannot send telemetry without registering parameters first");
 
 	pid_t crashed_pid = getpid ();
-	char *full_version = mono_get_runtime_build_info ();
 
 	MonoStackHash hashes;
 	hashes.offset_free_hash = portable_hash;
@@ -5728,13 +5753,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, intptr_t portable_
 	// Tells mono that we want to send the HANG EXC_TYPE.
 	const char *signal = "SIGTERM";
 
-	mono_merp_invoke (crashed_pid, signal, payload, &hashes, full_version);
-
-	// FIXME: 
-	// This leaves static memory in a bad state. (JsonWriter)
-	// We could fix this by making the helper functions take a pointer
-	// to the writer.
-	exit (1);
+	mono_merp_invoke (crashed_pid, signal, payload, &hashes);
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();

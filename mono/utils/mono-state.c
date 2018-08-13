@@ -10,7 +10,6 @@
  */
 #include <config.h>
 #include <glib.h>
-#include <mono/utils/json.h>
 #include <mono/utils/mono-state.h>
 #include <mono/metadata/object-internals.h>
 
@@ -146,7 +145,6 @@ mono_native_state_add_frames (JsonWriter *writer, int num_frames, MonoFrameSumma
 	mono_json_writer_array_end (writer);
 }
 
-
 static void
 mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx)
 {
@@ -267,10 +265,12 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_object_key(writer, "configuration");
 	mono_json_writer_object_begin(writer);
 
-	char *build = mono_get_runtime_callbacks ()->get_runtime_build_info ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "version");
+
+	char *build = mono_get_runtime_callbacks ()->get_runtime_build_info ();
 	mono_json_writer_printf (writer, "\"%s\",\n", build);
+	g_free (build);
 
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "tlc");
@@ -456,17 +456,43 @@ mono_native_state_add_epilogue (JsonWriter *writer)
 }
 
 void
+mono_native_state_init (JsonWriter *writer)
+{
+	mono_native_state_add_prologue (writer);
+}
+
+char *
+mono_native_state_emit (JsonWriter *writer)
+{
+	mono_native_state_add_epilogue (writer);
+	return writer->text->str;
+}
+
+char *
+mono_native_state_free (JsonWriter *writer, gboolean free_data)
+{
+	mono_native_state_add_epilogue (writer);
+	char *output = NULL;
+
+	// Make this interface work like the g_string free does
+	if (!free_data)
+		g_strdup (writer->text->str);
+
+	mono_json_writer_destroy (writer);
+	return output;
+}
+
+void
 mono_summarize_native_state_begin (void)
 {
 	mono_json_writer_init_static ();
-	mono_native_state_add_prologue (&writer);
+	mono_native_state_init (&writer);
 }
 
 char *
 mono_summarize_native_state_end (void)
 {
-	mono_native_state_add_epilogue (&writer);
-	return writer.text->str;
+	return mono_native_state_emit (&writer);
 }
 
 void

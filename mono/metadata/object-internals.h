@@ -650,6 +650,7 @@ typedef struct {
 	void (*mono_reraise_exception) (MonoException *ex);
 #ifdef TARGET_OSX
 	void (*mono_summarize_stack) (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
 #endif
 } MonoRuntimeExceptionHandlingCallbacks;
 
