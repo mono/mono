@@ -45,6 +45,8 @@
 
 #define set_error(msg, ...) do { if (gerror != NULL) *gerror = g_error_new (GINT_TO_POINTER (1), 1, msg, __VA_ARGS__); } while (0);
 
+#define ParseState MonoGMarkupParseState
+
 typedef enum {
 	START,
 	START_ELEMENT,
