@@ -61,11 +61,13 @@ Go to `http://localhost:8000/sample.html`
 
 # Debugging
 
+The debugger requires dotnet core version 2.1.301 or greater installed.
+
 To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
 - Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
-- Download and run the debugger proxy: https://github.com/kumpera/ws-proxy
+- Run the proxy: `dotnet dbg-proxy/ProxyDriver.dll`
 - Connect to the remote debugged Chrome and pick the page which is running the wasm code
 - Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
 - Refresh the debugged page and you should be set

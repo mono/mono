@@ -78,6 +78,14 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+if [[ ${CI_TAGS} == *'cxx'* ]]; then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+fi
+
+if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
+	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+fi
+
 if [[ ${CI_TAGS} == *'win-'* ]];
 then
 	mkdir -p ~/.config/.mono/
@@ -156,6 +164,7 @@ fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
+	echo ./autogen.sh $EXTRA_CONF_FLAGS
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
 fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
@@ -183,6 +192,20 @@ if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
 make_continue=
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then make_continue=-k; fi
+
+
+# FIXME For now C++ means just build mono (metadata, mini, sgen, utils) and ignore errors to get more.
+# Once this succeeds, we can let it proceed more normally through tests.
+if [[ ${CI_TAGS} == *'cxx'* ]];
+   then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
+        exit 0
+fi
+if [[ ${CI_TAGS} == *'cplusplus'* ]];
+   then
+	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
+        exit 0
+fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then

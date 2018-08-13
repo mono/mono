@@ -35,7 +35,7 @@ using System;
 using System.Security;
 using System.Security.Permissions;
 
-#if !INSIDE_CORLIB
+#if !INSIDE_CORLIB && !INSIDE_SYSTEM
 using System.Net;
 #endif
 
@@ -43,7 +43,7 @@ using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
@@ -203,7 +203,7 @@ namespace Mono.Security.X509 {
 
 			// TODO - we should check for CRITICAL but unknown extensions
 			// X509ChainStatusFlags.InvalidExtension
-#if !INSIDE_CORLIB
+#if !INSIDE_CORLIB && !INSIDE_SYSTEM
 			if (ServicePointManager.CheckCertificateRevocationList) {
 				// TODO - check revocation (CRL, OCSP ...)
 				// X509ChainStatusFlags.RevocationStatusUnknown

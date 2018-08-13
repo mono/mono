@@ -567,6 +567,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_IOR_IMM:
 	case OP_IXOR_IMM:
 	case OP_SUB_IMM:
+	case OP_MUL_IMM:
 	case OP_STORE_MEMBASE_IMM:
 		g_string_append_printf (sbuf, " [%d]", (int)ins->inst_imm);
 		break;
@@ -2720,7 +2721,7 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 
 	klass = mono_class_from_mono_type (t);
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		ftype = mono_field_get_type (field);

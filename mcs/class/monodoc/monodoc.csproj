@@ -50,6 +50,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\ASCIIFoldingFilter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\external\Lucene.Net.Light\src\core\Analysis\Analyzer.cs" />
@@ -525,7 +526,7 @@
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\ZipStorage.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib.csproj" />

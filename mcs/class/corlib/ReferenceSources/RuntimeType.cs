@@ -472,13 +472,13 @@ namespace System
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetMethodsByName_native (IntPtr namePtr, BindingFlags bindingAttr, bool ignoreCase);
+		internal extern IntPtr GetMethodsByName_native (IntPtr namePtr, BindingFlags bindingAttr, MemberListType listType);
 
-		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, RuntimeType reflectedType)
+		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (namePtr.Value, bindingAttr, ignoreCase))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (namePtr.Value, bindingAttr, listType))) {
 				var n = h.Length;
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -490,7 +490,7 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetPropertiesByName_native (IntPtr name, BindingFlags bindingAttr, bool icase);		
+		extern IntPtr GetPropertiesByName_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetConstructors_native (BindingFlags bindingAttr);
@@ -509,11 +509,11 @@ namespace System
 			}
 		}
 
-		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, RuntimeType reflectedType)
+		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (namePtr.Value, bindingAttr, icase))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (namePtr.Value, bindingAttr, listType))) {
 				var n = h.Length;
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
@@ -592,8 +592,10 @@ namespace System
 				{
 					AssemblyName assemblyname = new AssemblyName ();
 					assemblyname.Name = "GetTypeFromCLSIDDummyAssembly";
-					clsid_assemblybuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (
-						assemblyname, AssemblyBuilderAccess.Run);
+					/* Dynamically created assembly is marked internal to corlib to allow
+					  __ComObject access for dynamic types. */
+					clsid_assemblybuilder = new AssemblyBuilder (assemblyname, null,
+						AssemblyBuilderAccess.Run, true);
 				}
 				ModuleBuilder modulebuilder = clsid_assemblybuilder.DefineDynamicModule (
 					clsid.ToString ());
@@ -671,16 +673,16 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetEvents_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetEvents_native (IntPtr name, BindingFlags bindingAttr,  MemberListType listType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
-		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
@@ -691,11 +693,11 @@ namespace System
 			}
 		}
 
-		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {
@@ -710,15 +712,15 @@ namespace System
 		public extern override Type[] GetInterfaces();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
-		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr)
+		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr, MemberListType listType)
 		{
 			string internalName = null;
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
 			using (var namePtr = new Mono.SafeStringMarshal (internalName))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
 				var a = new RuntimeType [n];
 				for (int i = 0; i < n; i++) {

@@ -273,8 +273,6 @@ EXTRA_DISTFILES = \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
 	$(shell find Test/standalone/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
-	System.Web_standalone_test.dll.sources \
-	standalone-runner-support.dll.sources \
 	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 	ASPState.sql
 

@@ -119,13 +119,6 @@ LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
 EXTRA_DISTFILES = \
-	common.sources					\
-	common_networking.sources		\
-	unix_networkinfo.sources		\
-	linux_networkinfo.sources		\
-	macos_networkinfo.sources		\
-	win32_networkinfo.sources		\
-	corefx.unix.sources				\
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\

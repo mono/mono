@@ -18,6 +18,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/metadata/mono-basic-block.h>
+#include <mono/metadata/abi-details.h>
 
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
@@ -3339,7 +3340,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 #ifndef DISABLE_REMOTING
 			if (m_class_get_marshalbyref (klass) || mono_class_is_contextbound (klass) || klass == mono_defaults.marshalbyrefobject_class) {
 				g_assert (!is_static);
-				int offset = m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject) : field->offset;
+				int offset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset;
 
 				ADD_CODE (td, MINT_MONO_LDPTR);
 				ADD_CODE (td, get_data_item_index (td, klass));
@@ -3373,7 +3374,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 						g_assert ((td->sp -1)->type == STACK_TYPE_MP);
 						ADD_CODE (td, MINT_LDFLDA_UNSAFE);
 					}
-					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - sizeof (MonoObject) : field->offset);
+					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 				}
 				td->ip += 5;
 			}
@@ -3406,7 +3407,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					ADD_CODE (td, get_data_item_index (td, field));
 				} else {
 					ADD_CODE (td, MINT_LDFLD_I1 + mt - MINT_TYPE_I1);
-					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - sizeof(MonoObject) : field->offset);
+					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 					if (mt == MINT_TYPE_VT)
 						ADD_CODE (td, get_data_item_index (td, field));
 				}
@@ -3473,7 +3474,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					goto_if_nok (error, exit);
 				} else {
 					ADD_CODE (td, MINT_STFLD_I1 + mt - MINT_TYPE_I1);
-					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - sizeof(MonoObject) : field->offset);
+					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 					if (mt == MINT_TYPE_VT) {
 						ADD_CODE (td, get_data_item_index (td, field));
 
@@ -4028,17 +4029,18 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			break;
 		}
 		case CEE_CONV_OVF_I1:
-		case CEE_CONV_OVF_I1_UN:
+		case CEE_CONV_OVF_I1_UN: {
+			gboolean is_un = *td->ip == CEE_CONV_OVF_I1_UN;
 			CHECK_STACK (td, 1);
 			switch (td->sp [-1].type) {
 			case STACK_TYPE_R8:
-				ADD_CODE(td, MINT_CONV_OVF_I1_R8);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I1_UN_R8 : MINT_CONV_OVF_I1_R8);
 				break;
 			case STACK_TYPE_I4:
-				ADD_CODE(td, MINT_CONV_OVF_I1_I4);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I1_U4 : MINT_CONV_OVF_I1_I4);
 				break;
 			case STACK_TYPE_I8:
-				ADD_CODE(td, MINT_CONV_OVF_I1_I8);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I1_U8 : MINT_CONV_OVF_I1_I8);
 				break;
 			default:
 				g_assert_not_reached ();
@@ -4046,6 +4048,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			++td->ip;
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I4);
 			break;
+		}
 		case CEE_CONV_OVF_U1:
 		case CEE_CONV_OVF_U1_UN:
 			CHECK_STACK (td, 1);
@@ -4066,17 +4069,18 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I4);
 			break;
 		case CEE_CONV_OVF_I2:
-		case CEE_CONV_OVF_I2_UN:
+		case CEE_CONV_OVF_I2_UN: {
+			gboolean is_un = *td->ip == CEE_CONV_OVF_I2_UN;
 			CHECK_STACK (td, 1);
 			switch (td->sp [-1].type) {
 			case STACK_TYPE_R8:
-				ADD_CODE(td, MINT_CONV_OVF_I2_R8);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I2_UN_R8 : MINT_CONV_OVF_I2_R8);
 				break;
 			case STACK_TYPE_I4:
-				ADD_CODE(td, MINT_CONV_OVF_I2_I4);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I2_U4 : MINT_CONV_OVF_I2_I4);
 				break;
 			case STACK_TYPE_I8:
-				ADD_CODE(td, MINT_CONV_OVF_I2_I8);
+				ADD_CODE(td, is_un ? MINT_CONV_OVF_I2_U8 : MINT_CONV_OVF_I2_I8);
 				break;
 			default:
 				g_assert_not_reached ();
@@ -4084,6 +4088,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			++td->ip;
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I4);
 			break;
+		}
 		case CEE_CONV_OVF_U2_UN:
 		case CEE_CONV_OVF_U2:
 			CHECK_STACK (td, 1);

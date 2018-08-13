@@ -4296,7 +4296,7 @@ static MonoMethod*
 get_set_notification_method (MonoClass* async_builder_class)
 {
 	ERROR_DECL (error);
-	GPtrArray* array = mono_class_get_methods_by_name (async_builder_class, "SetNotificationForWaitCompletion", 0x24, FALSE, FALSE, error);
+	GPtrArray* array = mono_class_get_methods_by_name (async_builder_class, "SetNotificationForWaitCompletion", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	if (array->len == 0) {
 		g_ptr_array_free (array, TRUE);
@@ -4311,7 +4311,7 @@ static MonoMethod*
 get_object_id_for_debugger_method (MonoClass* async_builder_class)
 {
 	ERROR_DECL (error);
-	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, FALSE, FALSE, error);
+	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	g_assert (array->len == 1);
 	MonoMethod *method = (MonoMethod *)g_ptr_array_index (array, 0);
@@ -4336,8 +4336,7 @@ get_async_method_builder (DbgEngineStackFrame *frame)
 		return NULL;
 
 	if (m_class_is_valuetype (frame->method->klass)) {
-		guint8 *vtaddr = *(guint8**)this_addr;
-		builder = (char*)vtaddr + builder_field->offset - sizeof (MonoObject);
+		builder = mono_vtype_get_field_addr (*(guint8**)this_addr, builder_field);
 	} else {
 		this_obj = *(MonoObject**)this_addr;
 		builder = (char*)this_obj + builder_field->offset;
@@ -4418,7 +4417,7 @@ get_notify_debugger_of_wait_completion_method (void)
 		return notify_debugger_of_wait_completion_method_cache;
 	ERROR_DECL (error);
 	MonoClass* task_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading.Tasks", "Task");
-	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, FALSE, FALSE, error);
+	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	g_assert (array->len == 1);
 	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
@@ -5239,7 +5238,7 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 
 		nfields = 0;
 		iter = NULL;
-		while ((f = mono_class_get_fields (klass, &iter))) {
+		while ((f = mono_class_get_fields_internal (klass, &iter))) {
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (mono_field_is_deleted (f))
@@ -5249,12 +5248,12 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 		buffer_add_int (buf, nfields);
 
 		iter = NULL;
-		while ((f = mono_class_get_fields (klass, &iter))) {
+		while ((f = mono_class_get_fields_internal (klass, &iter))) {
 			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (mono_field_is_deleted (f))
 				continue;
-			buffer_add_value_full (buf, f->type, (guint8*)addr + f->offset - sizeof (MonoObject), domain, FALSE, parent_vtypes);
+			buffer_add_value_full (buf, f->type, mono_vtype_get_field_addr (addr, f), domain, FALSE, parent_vtypes);
 		}
 
 		if (boxed_vtype) {
@@ -5332,12 +5331,12 @@ decode_vtype (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 	}
 
 	nfields = decode_int (buf, &buf, limit);
-	while ((f = mono_class_get_fields (klass, &iter))) {
+	while ((f = mono_class_get_fields_internal (klass, &iter))) {
 		if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted (f))
 			continue;
-		err = decode_value (f->type, domain, (guint8*)addr + f->offset - sizeof (MonoObject), buf, &buf, limit);
+		err = decode_value (f->type, domain, mono_vtype_get_field_addr (addr, f), buf, &buf, limit);
 		if (err != ERR_NONE)
 			return err;
 		nfields --;
@@ -5965,7 +5964,11 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		this_buf = (guint8 *)g_alloca (mono_class_instance_size (m->klass));
 	else
 		this_buf = (guint8 *)g_alloca (sizeof (MonoObject*));
-	if (m_class_is_valuetype (m->klass) && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
+
+	if (m->is_generic) {
+		DEBUG_PRINTF (1, "[%p] Error: Attempting to invoke uninflated generic method %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (m, TRUE));
+		return ERR_INVALID_ARGUMENT;
+	} else if (m_class_is_valuetype (m->klass) && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		/* Should be null */
 		int type = decode_byte (p, &p, end);
 		if (type != VALUE_TYPE_ID_NULL) {
@@ -7601,7 +7604,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		buffer_add_int (buf, nfields);
 
-		while ((f = mono_class_get_fields (klass, &iter))) {
+		while ((f = mono_class_get_fields_internal (klass, &iter))) {
 			buffer_add_fieldid (buf, domain, f);
 			buffer_add_string (buf, f->name);
 			buffer_add_typeid (buf, domain, mono_class_from_mono_type (f->type));
@@ -7853,11 +7856,12 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	case CMD_TYPE_GET_METHODS_BY_NAME_FLAGS: {
 		char *name = decode_string (p, &p, end);
 		int i, flags = decode_int (p, &p, end);
+		int mlisttype = decode_int (p, &p, end);
 		ERROR_DECL (error);
 		GPtrArray *array;
 
 		error_init (error);
-		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, (flags & BINDING_FLAGS_IGNORE_CASE) != 0, TRUE, error);
+		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, mlisttype, TRUE, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
 			return ERR_LOADER_ERROR;
@@ -8928,7 +8932,12 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			ERROR_DECL (error);
 			s = mono_string_to_utf8_checked (str, error);
-			mono_error_assert_ok (error);
+			if (!mono_error_ok (error)) {
+				if (s)
+					g_free (s);
+
+				return ERR_INVALID_ARGUMENT;
+			}
 			buffer_add_string (buf, s);
 			g_free (s);
 		}

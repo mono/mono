@@ -102,8 +102,9 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
-  <ItemGroup></ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--Common files-->
+  <ItemGroup />
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../corlib/corlib.csproj" />

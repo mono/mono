@@ -370,7 +370,7 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 	}
 	case OP_IDIV_UN_IMM:
 	case OP_IDIV_IMM: {
-		if (!COMPILE_LLVM (cfg))
+		if ((!COMPILE_LLVM (cfg)) && (!cfg->backend->optimized_div))
 			allocated_vregs = mono_strength_reduction_division (cfg, ins);
 		break;
 	}
@@ -383,10 +383,8 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 			ins->opcode = OP_ICONST;
 			MONO_INST_NULLIFY_SREGS (ins);
 			ins->inst_c0 = 0;
-#if __s390__
-		}
-#else
-		} else if ((ins->inst_imm > 0) && (ins->inst_imm < (1LL << 32)) && (power != -1)) {
+		} else if ((ins->inst_imm > 0) && (ins->inst_imm < (1LL << 32)) && 
+			   (power != -1) && (!cfg->backend->optimized_div)) {
 			gboolean is_long = ins->opcode == OP_LREM_IMM;
 			int compensator_reg = alloc_ireg (cfg);
 			int intermediate_reg;
@@ -411,7 +409,6 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 
 			allocated_vregs = TRUE;
 		}
-#endif
 		break;
 	}
 #if SIZEOF_REGISTER == 4
@@ -670,8 +667,7 @@ mono_local_cprop (MonoCompile *cfg)
 					if ((opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
 						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
-							ins->inst_ls_word = def->inst_ls_word;
-							ins->inst_ms_word = def->inst_ms_word;
+							ins->inst_l = def->inst_l;
 						} else {
 							ins->inst_imm = def->inst_c0;
 						}

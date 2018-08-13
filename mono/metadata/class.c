@@ -424,8 +424,8 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 		}
 		const char *klass_name = m_class_get_name (klass);
 		if (format == MONO_TYPE_NAME_FORMAT_IL) {
-			char *s = strchr (klass_name, '`');
-			int len = s ? s - klass_name : strlen (klass_name);
+			const char *s = strchr (klass_name, '`');
+			gssize len = s ? (s - klass_name) : (gssize)strlen (klass_name);
 			g_string_append_len (str, klass_name, len);
 		} else {
 			mono_identifier_escape_type_name_chars (str, klass_name);
@@ -2003,33 +2003,6 @@ mono_class_min_align (MonoClass *klass)
 }
 
 /**
- * mono_class_value_size:
- * \param klass a class 
- *
- * This function is used for value types, and return the
- * space and the alignment to store that kind of value object.
- *
- * \returns the size of a value of kind \p klass
- */
-gint32
-mono_class_value_size (MonoClass *klass, guint32 *align)
-{
-	gint32 size;
-
-	/* fixme: check disable, because we still have external revereces to
-	 * mscorlib and Dummy Objects 
-	 */
-	/*g_assert (klass->valuetype);*/
-
-	size = mono_class_instance_size (klass) - sizeof (MonoObject);
-
-	if (align)
-		*align = m_class_get_min_align (klass);
-
-	return size;
-}
-
-/**
  * mono_class_data_size:
  * \param klass a class 
  * 
@@ -3002,7 +2975,7 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 
 	g_hash_table_insert (visited_images, image, GUINT_TO_POINTER(1));
 
-	if ((nested = strchr (name, '/'))) {
+	if ((nested = (char*)strchr (name, '/'))) {
 		int pos = nested - name;
 		int len = strlen (name);
 		if (len > 1023)
@@ -3976,7 +3949,7 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY: 
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R8:
@@ -3987,7 +3960,7 @@ handle_enum:
 			klass = m_class_get_element_class (klass);
 			goto handle_enum;
 		}
-		return mono_class_instance_size (klass) - sizeof (MonoObject);
+		return mono_class_value_size (klass, NULL);
 	case MONO_TYPE_GENERICINST:
 		type = m_class_get_byval_arg (type->data.generic_class->container_class);
 		goto handle_enum;
@@ -4188,7 +4161,11 @@ mono_class_get_image (MonoClass *klass)
 MonoClass*
 mono_class_get_element_class (MonoClass *klass)
 {
-	return m_class_get_element_class (klass);
+	MonoClass *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_element_class (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4203,7 +4180,11 @@ mono_class_get_element_class (MonoClass *klass)
 gboolean
 mono_class_is_valuetype (MonoClass *klass)
 {
-	return m_class_is_valuetype (klass);
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_valuetype (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4217,7 +4198,11 @@ mono_class_is_valuetype (MonoClass *klass)
 gboolean
 mono_class_is_enum (MonoClass *klass)
 {
-	return m_class_is_enumtype (klass);
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_enumtype (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4251,7 +4236,11 @@ mono_class_enum_basetype (MonoClass *klass)
 MonoClass*
 mono_class_get_parent (MonoClass *klass)
 {
-	return m_class_get_parent (klass);
+	MonoClass *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_parent (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4291,7 +4280,11 @@ mono_class_get_rank (MonoClass *klass)
 const char*
 mono_class_get_name (MonoClass *klass)
 {
-	return m_class_get_name (klass);
+	const char *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_name (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4303,7 +4296,11 @@ mono_class_get_name (MonoClass *klass)
 const char*
 mono_class_get_namespace (MonoClass *klass)
 {
-	return m_class_get_name_space (klass);
+	const char *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_get_name_space (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4416,6 +4413,16 @@ mono_class_num_events (MonoClass *klass)
  */
 MonoClassField*
 mono_class_get_fields (MonoClass* klass, gpointer *iter)
+{
+	MonoClassField *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_fields_internal (klass, iter);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoClassField*
+mono_class_get_fields_internal (MonoClass *klass, gpointer *iter)
 {
 	MonoClassField* field;
 	if (!iter)
@@ -4669,7 +4676,11 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 mono_bool
 mono_class_is_delegate (MonoClass *klass)
 {
-	return m_class_is_delegate (klass);
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
+	result = m_class_is_delegate (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4772,6 +4783,7 @@ mono_field_get_flags (MonoClassField *field)
 guint32
 mono_field_get_offset (MonoClassField *field)
 {
+	mono_class_setup_fields(field->parent);
 	return field->offset;
 }
 
@@ -5671,7 +5683,7 @@ mono_class_is_valid_enum (MonoClass *klass)
 	if (!mono_class_is_auto_layout (klass))
 		return FALSE;
 
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
 			if (found_base_field)
 				return FALSE;

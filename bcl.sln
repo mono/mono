@@ -6,9 +6,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay", "mcs/jay/jay.vcxproj"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "genconsts", "msvc/scripts/genconsts.csproj", "{702AE2C0-71DD-4112-9A06-E4FABCA59986}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cil-stringreplacer", "mcs/tools/cil-stringreplacer/cil-stringreplacer.csproj", "{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "mcs/class/corlib/corlib.csproj", "{4627BDAB-CA24-40D0-A627-01692BA51B44}"
 	ProjectSection(ProjectDependencies) = postProject
-		{702AE2C0-71DD-4112-9A06-E4FABCA59986} = {702AE2C0-71DD-4112-9A06-E4FABCA59986}
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B} = {53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security", "mcs/class/Mono.Security/Mono.Security.csproj", "{117140AC-A163-4B86-9E69-A46EA268A9DB}"
@@ -812,6 +814,46 @@ Global
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|xammac.Build.0 = Debug|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.ActiveCfg = Release|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.Build.0 = Release|x86
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|net_4_x.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|net_4_x.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|net_4_x.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|net_4_x.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monodroid.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monodroid.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monodroid.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monodroid.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_tv.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_tv.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_tv.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_tv.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_watch.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_watch.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_watch.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_watch.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|orbis.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|orbis.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|orbis.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|orbis.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|unreal.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|unreal.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|unreal.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|unreal.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|wasm.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|wasm.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|wasm.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|wasm.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|winaot.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|winaot.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|winaot.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|winaot.Build.0 = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|xammac.ActiveCfg = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|xammac.Build.0 = Debug|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|xammac.ActiveCfg = Release|AnyCPU
+		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|xammac.Build.0 = Release|AnyCPU
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Release|net_4_x.ActiveCfg = Release|net_4_x

@@ -99,6 +99,12 @@ typedef guint32 gunichar;
 #define G_MAXUSHORT          USHRT_MAX
 #define G_MAXINT             INT_MAX
 #define G_MININT             INT_MIN
+#define G_MAXINT8            INT8_MAX
+#define G_MAXUINT8           UINT8_MAX
+#define G_MININT8            INT8_MIN
+#define G_MAXINT16           INT16_MAX
+#define G_MAXUINT16          UINT16_MAX
+#define G_MININT16           INT16_MIN
 #define G_MAXINT32           INT32_MAX
 #define G_MAXUINT32          UINT32_MAX
 #define G_MININT32           INT32_MIN
@@ -154,7 +160,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
-#define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
+#define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
 #define g_alloca(size)		alloca (size)
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);

@@ -46,6 +46,7 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/unlocked.h>
 #include <mono/utils/mono-os-wait.h>
+#include <mono/utils/mono-lazy-init.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -70,6 +71,7 @@ gchar **mono_do_not_finalize_class_names ;
 #define mono_finalizer_unlock() mono_coop_mutex_unlock (&finalizer_mutex)
 static MonoCoopMutex finalizer_mutex;
 static MonoCoopMutex reference_queue_mutex;
+static mono_lazy_init_t reference_queue_mutex_inited = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
 
 static GSList *domains_to_finalize;
 
@@ -93,6 +95,9 @@ static void reference_queue_proccess_all (void);
 static void mono_reference_queue_cleanup (void);
 static void reference_queue_clear_for_domain (MonoDomain *domain);
 static void mono_runtime_do_background_work (void);
+
+static MonoReferenceQueue* mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback);
+static gboolean mono_gc_reference_queue_add_internal (MonoReferenceQueue *queue, MonoObject *obj, void *user_data);
 
 
 static MonoThreadInfoWaitRet
@@ -705,7 +710,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle, MonoError *erro
 			/* FIXME: missing !klass->blittable test, see bug #61134 */
 			if (mono_class_is_auto_layout (klass))
 				return (gpointer)-1;
-			return (char*)obj + sizeof (MonoObject);
+			return mono_object_get_data (obj);
 		}
 	}
 	return NULL;
@@ -955,11 +960,17 @@ mono_gc_init_finalizer_thread (void)
 	mono_error_assert_ok (error);
 }
 
+static void
+reference_queue_mutex_init (void)
+{
+	mono_coop_mutex_init_recursive (&reference_queue_mutex);
+}
+
 void
 mono_gc_init (void)
 {
+	mono_lazy_initialize (&reference_queue_mutex_inited, reference_queue_mutex_init);
 	mono_coop_mutex_init_recursive (&finalizer_mutex);
-	mono_coop_mutex_init_recursive (&reference_queue_mutex);
 
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &mono_gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &mono_gc_stats.major_gc_count);
@@ -986,7 +997,8 @@ mono_gc_init (void)
 	mono_coop_sem_init (&finalizer_sem, 0);
 
 #ifndef LAZY_GC_THREAD_CREATION
-	mono_gc_init_finalizer_thread ();
+	if (!mono_runtime_get_no_exec ())
+		mono_gc_init_finalizer_thread ();
 #endif
 }
 
@@ -1221,9 +1233,20 @@ reference_queue_clear_for_domain (MonoDomain *domain)
 MonoReferenceQueue*
 mono_gc_reference_queue_new (mono_reference_queue_callback callback)
 {
+	MonoReferenceQueue *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_gc_reference_queue_new_internal (callback);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoReferenceQueue*
+mono_gc_reference_queue_new_internal (mono_reference_queue_callback callback)
+{
 	MonoReferenceQueue *res = g_new0 (MonoReferenceQueue, 1);
 	res->callback = callback;
 
+	mono_lazy_initialize (&reference_queue_mutex_inited, reference_queue_mutex_init);
 	mono_coop_mutex_lock (&reference_queue_mutex);
 	res->next = ref_queues;
 	ref_queues = res;
@@ -1246,6 +1269,16 @@ mono_gc_reference_queue_new (mono_reference_queue_callback callback)
  */
 gboolean
 mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data)
+{
+	gboolean result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_gc_reference_queue_add_internal (queue, obj, user_data);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+gboolean
+mono_gc_reference_queue_add_internal (MonoReferenceQueue *queue, MonoObject *obj, void *user_data)
 {
 	RefQueueEntry *entry;
 	if (queue->should_be_deleted)

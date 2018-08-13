@@ -711,7 +711,7 @@ get_socket_assembly (void)
 
 		socket_assembly = mono_image_loaded ("System");
 		if (!socket_assembly) {
-			MonoAssembly *sa = mono_assembly_open_predicate ("System.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+			MonoAssembly *sa = mono_assembly_open_predicate ("System.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 		
 			if (!sa) {
 				g_assert_not_reached ();
@@ -1041,7 +1041,8 @@ ves_icall_System_Net_Sockets_Socket_LocalEndPoint_internal (gsize sock, gint32 a
 		*werror = WSAEAFNOSUPPORT;
 		return NULL_HANDLE;
 	}
-	sa = (salen <= 128) ? (gchar *)alloca (salen) : (gchar *)g_malloc0 (salen);
+	// FIXME zeros only sometimes
+	sa = (salen <= 128) ? g_newa (char, salen) : (char *)g_malloc0 (salen);
 
 	ret = mono_w32socket_getsockname (sock, (struct sockaddr *)sa, &salen);
 	if (ret == SOCKET_ERROR) {
@@ -1074,7 +1075,8 @@ ves_icall_System_Net_Sockets_Socket_RemoteEndPoint_internal (gsize sock, gint32 
 		*werror = WSAEAFNOSUPPORT;
 		return MONO_HANDLE_NEW (MonoObject, NULL);
 	}
-	sa = (salen <= 128) ? (gchar *)alloca (salen) : (gchar *)g_malloc0 (salen);
+	// FIXME zeros only sometimes
+	sa = (salen <= 128) ? g_newa (char, salen) : (char *)g_malloc0 (salen);
 	/* Note: linux returns just 2 for AF_UNIX. Always. */
 
 	ret = mono_w32socket_getpeername (sock, (struct sockaddr *)sa, &salen);
@@ -1848,7 +1850,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 		if (mono_posix_image == NULL) {
 			mono_posix_image = mono_image_loaded ("Mono.Posix");
 			if (!mono_posix_image) {
-				MonoAssembly *sa = mono_assembly_open_predicate ("Mono.Posix.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+				MonoAssembly *sa = mono_assembly_open_predicate ("Mono.Posix.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 				if (!sa) {
 					*werror = WSAENOPROTOOPT;
 					return;
@@ -2385,18 +2387,21 @@ addrinfo_to_IPHostEntry_handles (MonoAddressInfo *info, MonoStringHandleOut h_na
 			goto leave;
 	}
 
-	gint32 count = 0;
+	gint32 count;
+	count = 0;
 	for (ai = info->entries; ai != NULL; ai = ai->next) {
 		if (ai->family != AF_INET && ai->family != AF_INET6)
 			continue;
 		count++;
 	}
 
-	int addr_index = 0;
+	int addr_index;
+	addr_index = 0;
 	MONO_HANDLE_ASSIGN (h_addr_list, mono_array_new_handle (domain, mono_get_string_class (), count, error));
 	goto_if_nok (error, leave);
 
-	gboolean name_assigned = FALSE;
+	gboolean name_assigned;
+	name_assigned = FALSE;
 	for (ai = info->entries; ai != NULL; ai = ai->next) {
 		MonoAddress maddr;
 		char buffer [INET6_ADDRSTRLEN]; /* Max. size for IPv6 */

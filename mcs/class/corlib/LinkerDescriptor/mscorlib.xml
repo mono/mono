@@ -230,7 +230,7 @@
 		</type>
 
 		<!-- reflection.c mono_get_reflection_missing_object -->
-		<type fullname="System.Missing" preserve="fields" />
+		<type fullname="System.Reflection.Missing" preserve="fields" />
 
 		<type fullname="System.MarshalByRefObject" preserve="fields" feature="remoting" />
 
@@ -321,9 +321,6 @@
 			<!-- mono_exception_from_name -->
 			<method signature="System.Void .ctor()" />
 		</type>
-
-		<!-- reflection.c: mono_get_reflection_missing_object -->
-		<type fullname="System.Reflection.Missing" preserve="field" />
 
 		<!-- domain.c: mono_defaults.argumenthandle_class -->		
 		<type fullname="System.RuntimeArgumentHandle" preserve="fields" />
@@ -554,11 +551,6 @@
 		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
 		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoField" preserve="fields" />
-		
-		<!-- reflection.c: mono_method_get_object uses both MonoGeneric[C]Method / will crash for ves_icall_Type_GetConstructors_internal -->
-		<type fullname="System.Reflection.MonoGenericMethod" preserve="fields" />
-		<type fullname="System.Reflection.MonoGenericCMethod" preserve="fields" />
-		
 		<type fullname="System.Reflection.MonoMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoMethodInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoPropertyInfo" preserve="fields" />
@@ -722,7 +714,7 @@
 		</type>
 
 		<!-- domain.c: mono_defaults.mono_method_message_class -->
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields" feature="remoting" >
+		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
 			<!-- object.c: mono_message_init -->
 			<method name="InitMessage" />
 		</type>
@@ -753,9 +745,6 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- domain.c: mono_defaults.runtimesecurityframe_class -->		
-		<type fullname="System.Security.RuntimeSecurityFrame" preserve="fields" />
-		
 		<!-- domain.c: mono_defaults.executioncontext_class -->
 		<type fullname="System.Threading.ExecutionContext">
 			<!-- security-manager.c: mono_get_context_capture_method (can likely be removed) -->

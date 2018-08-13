@@ -103,6 +103,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\AssemblyRef.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
@@ -183,41 +184,74 @@
     <Compile Include="EventLogEntryType.cs" />
     <Compile Include="InternalSR.cs" />
     <Compile Include="ReferenceSources\LocalAppContextSwitches.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
-    <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="MobileStubs.cs" />
-  </ItemGroup>
+  <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup>
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup>
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup>
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup>
+        <Compile Include="MobileStubs.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\SafeEventLogWriteHandle.cs" />
+        <Compile Include="..\referencesource\System.ServiceModel.Internals\System\Runtime\Interop\UnsafeNativeMethods.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

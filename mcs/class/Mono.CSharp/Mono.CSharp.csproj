@@ -159,6 +159,7 @@
     <Compile Include="wasm-parser.cs" />
   </ItemGroup>
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\mcs\anonymous.cs" />
@@ -219,8 +220,16 @@
     <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="aot.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />

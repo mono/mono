@@ -410,8 +410,14 @@ DISTFILES = \
 	doc/TemplateTest.cs	\
 	notes/BitVecto32.txt	\
 	MicrosoftAjaxLibrary/License.htm	\
-	test-helpers/NetworkHelpers.cs	\
-	test-helpers/SocketResponder.cs	\
+	test-helpers/AdminHelper.cs \
+	test-helpers/Configuration.Http.cs \
+	test-helpers/NetworkHelpers.cs \
+	test-helpers/NunitHelpers.cs \
+	test-helpers/PlatformDetection.cs \
+	test-helpers/RemoteExecutorTestBase.Mobile.cs \
+	test-helpers/RemoteExecutorTestBase.Mono.cs \
+	test-helpers/SocketResponder.cs \
 	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)

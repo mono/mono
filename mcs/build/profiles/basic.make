@@ -118,8 +118,12 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs $(GENSOURCES_CS)
 	$(MAKE) $(MAKE_Q) -C $(topdir)/packages
-	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
-	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE) $(GENSOURCES_CS)
+	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@.tmp $<
+	$(BOOTSTRAP_MCS) /noconfig /langversion:latest /r:mscorlib.dll /r:System.dll /r:System.Core.dll /out:$(GENSOURCES_EXE).tmp $(GENSOURCES_CS)
+	- rm $(GENSOURCES_EXE)
+	mv $(GENSOURCES_EXE).tmp $(GENSOURCES_EXE)
+	- rm -f $@
+	mv $@.tmp $@
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1

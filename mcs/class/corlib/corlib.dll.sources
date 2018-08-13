@@ -46,12 +46,9 @@ Mono.Interop/IUnknown.cs
 ../Mono.Security/Mono.Security/ASN1.cs
 ../Mono.Security/Mono.Security/ASN1Convert.cs
 ../Mono.Security/Mono.Security/BitConverterLE.cs
-../Mono.Security/Mono.Security/PKCS7.cs
 ../Mono.Security/Mono.Security/StrongName.cs
 Mono.Security/StrongNameManager.cs
 Mono.Security/Uri.cs
-../Mono.Security/Mono.Security.Authenticode/AuthenticodeBase.cs
-../Mono.Security/Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 ../Mono.Security/Mono.Security.Cryptography/ARC4Managed.cs
 ../Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
 ../Mono.Security/Mono.Security.Cryptography/CryptoTools.cs
@@ -64,26 +61,9 @@ Mono.Security.Cryptography/MACAlgorithm.cs
 ../Mono.Security/Mono.Security.Cryptography/MD4.cs
 ../Mono.Security/Mono.Security.Cryptography/MD4Managed.cs
 ../Mono.Security/Mono.Security.Cryptography/PKCS1.cs
-../Mono.Security/Mono.Security.Cryptography/PKCS8.cs
 ../Mono.Security/Mono.Security.Cryptography/RC4.cs
 ../Mono.Security/Mono.Security.Cryptography/RSAManaged.cs
 ../Mono.Security/Mono.Security.Cryptography/SymmetricTransform.cs
-../Mono.Security/Mono.Security.X509/PKCS12.cs
-../Mono.Security/Mono.Security.X509/X501Name.cs
-../Mono.Security/Mono.Security.X509/X509Certificate.cs
-../Mono.Security/Mono.Security.X509/X509CertificateCollection.cs
-../Mono.Security/Mono.Security.X509/X509Chain.cs
-../Mono.Security/Mono.Security.X509/X509ChainStatusFlags.cs
-../Mono.Security/Mono.Security.X509/X509CRL.cs
-../Mono.Security/Mono.Security.X509/X509Extension.cs
-../Mono.Security/Mono.Security.X509/X509Extensions.cs
-../Mono.Security/Mono.Security.X509/X509Store.cs
-../Mono.Security/Mono.Security.X509/X509Stores.cs
-../Mono.Security/Mono.Security.X509/X509StoreManager.cs
-../Mono.Security/Mono.Security.X509/X520Attributes.cs
-../Mono.Security/Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
-../Mono.Security/Mono.Security.X509.Extensions/KeyUsageExtension.cs
-../Mono.Security/Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
 Mono.Xml/SmallXmlParser.cs
 Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
@@ -851,9 +831,6 @@ System.Threading/TimerCallback.cs
 System.Threading/Volatile.cs
 System.Threading/WaitHandle.cs
 
-System.Threading.Tasks/DecoupledTask.cs
-../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
-
 CoreFoundation/CFHelpers.cs
 
 ReferenceSources/SR.cs
@@ -1165,6 +1142,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyDescriptionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFileVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyFlagsAttribute.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Reflection/AssemblyNameProxy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyInformationalVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyFileAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyNameAttribute.cs
@@ -1176,10 +1154,12 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTrademarkAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyVersionAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Binder.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/BindingFlags.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CallingConventions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/DefaultMemberAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/EventAttributes.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ExceptionHandlingClauseOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/FieldAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/GenericParameterAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ICustomAttributeProvider.cs
@@ -1192,6 +1172,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodImplAttributes.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Missing.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ObfuscateAssemblyAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ObfuscationAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterAttributes.cs
@@ -1207,17 +1188,13 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
-../referencesource/mscorlib/system/reflection/assemblynameproxy.cs
-../referencesource/mscorlib/system/reflection/binder.cs
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
 ../referencesource/mscorlib/system/reflection/memberinfo.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
-../referencesource/mscorlib/system/reflection/methodbody.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/missing.cs
 ../referencesource/mscorlib/system/reflection/pointer.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs

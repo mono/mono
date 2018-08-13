@@ -45,6 +45,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\System.Web\System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
     <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs" />
@@ -188,7 +189,7 @@
     <Compile Include="System.Web.UI\UpdatePanelUpdateMode.cs" />
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

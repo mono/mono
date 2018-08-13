@@ -586,12 +586,12 @@ mono_decompose_op_imm (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
 
 		/* Load the 64bit constant using decomposed ops */
 		MONO_INST_NEW (cfg, temp, OP_ICONST);
-		temp->inst_c0 = ins->inst_ls_word;
+		temp->inst_c0 = ins_get_l_low (ins);
 		temp->dreg = MONO_LVREG_LS (dreg);
 		mono_bblock_insert_before_ins (bb, ins, temp);
 
 		MONO_INST_NEW (cfg, temp, OP_ICONST);
-		temp->inst_c0 = ins->inst_ms_word;
+		temp->inst_c0 = ins_get_l_high (ins);
 		temp->dreg = MONO_LVREG_MS (dreg);
 	} else {
 		dreg = mono_alloc_ireg (cfg);
@@ -1245,7 +1245,7 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
-#if SIZEOF_VOID_P == 4
+#if TARGET_SIZEOF_VOID_P == 4
 		case MONO_TYPE_I4:
 #else
 		case MONO_TYPE_I8:
@@ -1543,7 +1543,7 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
-#if SIZEOF_VOID_P == 4
+#if TARGET_SIZEOF_VOID_P == 4
 		case MONO_TYPE_I4:
 #else
 		case MONO_TYPE_I8:
@@ -3044,6 +3044,9 @@ init_backend (MonoBackend *backend)
 #endif
 #ifdef MONO_ARCH_EXPLICIT_NULL_CHECKS
 	backend->explicit_null_checks = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_OPTIMIZED_DIV
+	backend->optimized_div = 1;
 #endif
 }
 

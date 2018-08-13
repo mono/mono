@@ -47,7 +47,7 @@ namespace Mono.Security.X509.Extensions {
 	 * 	pathLenConstraint       INTEGER (0..MAX) OPTIONAL 
 	 * }
 	 */
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 

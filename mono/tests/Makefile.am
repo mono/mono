@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = gc-descriptors . testing_gac
+SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
 
 check-local:
 	ok=:; \
@@ -21,6 +21,7 @@ check-local:
 	$(MAKE) test-internalsvisibleto || ok=false; \
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
+	$(MAKE) runtest-assembly-load-reference || ok=false; \
 	$$ok
 
 BUILT_SOURCES =
@@ -871,7 +872,7 @@ endif # HOST_WIN32
 endif # HOST_WASM
 endif # CROSS_COMPILING
 
-BUILT_SOURCES=$(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
+BUILT_SOURCES += $(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
 
 TESTS_IL_SRC=			\
 	tailcall/2.il	     \
@@ -1492,6 +1493,12 @@ CI_DISABLED_TESTS = \
 CI_PR_DISABLED_TESTS = \
 	appdomain-threadpool-unload.exe
 
+# FIXME Hybrid Suspend - see https://github.com/mono/mono/issues/9959
+CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
+
+# see https://github.com/mono/mono/issues/10031
+CI_PR_DISABLED_TESTS += unhandled-exception-2.exe
+
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
 	finally_block_ending_in_dead_bb.exe \
@@ -1934,7 +1941,7 @@ test-env-options:
 compile-tests:
 	$(MAKE) -j4 compile-tests-parallel
 
-compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -2899,6 +2906,13 @@ runtest-gac-loading: test-runner.exe
 
 compile-gac-loading:
 	$(MAKE) -C testing_gac compile-tests
+
+runtest-assembly-load-reference: test-runner.exe
+	$(MAKE) -C assembly-load-reference runtest
+
+compile-assembly-load-reference:
+	$(MAKE) -C assembly-load-reference compile-tests
+
 
 TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-1.cs	\

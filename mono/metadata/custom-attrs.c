@@ -466,7 +466,7 @@ handle_enum:
 			obj = mono_object_new_checked (mono_domain_get (), subc, error);
 			g_assert (!m_class_has_references (subc));
 			if (is_ok (error))
-				mono_gc_memmove_atomic ((char*)obj + sizeof (MonoObject), val, mono_class_value_size (subc, NULL));
+				mono_gc_memmove_atomic (mono_object_get_data (obj), val, mono_class_value_size (subc, NULL));
 			g_assert (out_obj);
 			*out_obj = obj;
 		}
@@ -1400,9 +1400,11 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	MonoObjectHandle attr = mono_object_new_handle (domain, mono_defaults.customattribute_data_class, error);
 	goto_if_nok (error, fail);
 
-	MonoReflectionMethodHandle ctor_obj = mono_method_get_object_handle (domain, cattr->ctor, NULL, error);
+	MonoReflectionMethodHandle ctor_obj;
+	ctor_obj = mono_method_get_object_handle (domain, cattr->ctor, NULL, error);
 	goto_if_nok (error, fail);
-	MonoReflectionAssemblyHandle assm = mono_assembly_get_object_handle (domain, image->assembly, error);
+	MonoReflectionAssemblyHandle assm;
+	assm = mono_assembly_get_object_handle (domain, image->assembly, error);
 	goto_if_nok (error, fail);
 	params [0] = MONO_HANDLE_RAW (ctor_obj);
 	params [1] = MONO_HANDLE_RAW (assm);

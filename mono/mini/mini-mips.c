@@ -1534,7 +1534,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 #if _MIPS_SIM == _ABIO32
 	/* Now add space for saving the ra */
-	offset += SIZEOF_VOID_P;
+	offset += TARGET_SIZEOF_VOID_P;
 
 	/* change sign? */
 	offset = (offset + MIPS_STACK_ALIGNMENT - 1) & ~(MIPS_STACK_ALIGNMENT - 1);
@@ -1597,7 +1597,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	}
 #if _MIPS_SIM == _ABIN32
 	/* Now add space for saving the ra */
-	offset += SIZEOF_VOID_P;
+	offset += TARGET_SIZEOF_VOID_P;
 
 	/* change sign? */
 	offset = (offset + MIPS_STACK_ALIGNMENT - 1) & ~(MIPS_STACK_ALIGNMENT - 1);
@@ -1884,7 +1884,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			soffset += SIZEOF_REGISTER;
 		}
 		if (ovf_size != 0) {
-			mini_emit_memcpy (cfg, mips_sp, doffset, src->dreg, soffset, ovf_size * sizeof (gpointer), SIZEOF_VOID_P);
+			mini_emit_memcpy (cfg, mips_sp, doffset, src->dreg, soffset, ovf_size * sizeof (gpointer), TARGET_SIZEOF_VOID_P);
 		}
 	} else if (ainfo->storage == ArgInFReg) {
 		int tmpr = mono_alloc_freg (cfg);
@@ -1912,7 +1912,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			g_assert (ovf_size > 0);
 
 		EMIT_NEW_VARLOADA (cfg, load, vtcopy, vtcopy->inst_vtype);
-		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, SIZEOF_VOID_P);
+		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, TARGET_SIZEOF_VOID_P);
 
 		if (ainfo->offset)
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, mips_at, ainfo->offset, load->dreg);
@@ -2152,9 +2152,9 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 
 	case OP_LADD_IMM:
 		tmp1 = mono_alloc_ireg (cfg);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IADD_IMM, ins->dreg+1, ins->sreg1+1, ins->inst_ls_word);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IADD_IMM, ins->dreg+1, ins->sreg1+1, ins_get_l_low (ins));
 		MONO_EMIT_NEW_BIALU (cfg, OP_MIPS_SLTU, tmp1, ins->dreg+1, ins->sreg1+1);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IADD_IMM, ins->dreg+2, ins->sreg1+2, ins->inst_ms_word);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IADD_IMM, ins->dreg+2, ins->sreg1+2, ins_get_l_high (ins));
 		MONO_EMIT_NEW_BIALU (cfg, OP_IADD, ins->dreg+2, ins->dreg+2, tmp1);
 		NULLIFY_INS(ins);
 		break;
@@ -2170,9 +2170,9 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 
 	case OP_LSUB_IMM:
 		tmp1 = mono_alloc_ireg (cfg);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISUB_IMM, ins->dreg+1, ins->sreg1+1, ins->inst_ls_word);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISUB_IMM, ins->dreg+1, ins->sreg1+1, ins_get_l_low (ins));
 		MONO_EMIT_NEW_BIALU (cfg, OP_MIPS_SLTU, tmp1, ins->sreg1+1, ins->dreg+1);
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISUB_IMM, ins->dreg+2, ins->sreg1+2, ins->inst_ms_word);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISUB_IMM, ins->dreg+2, ins->sreg1+2, ins_get_l_high (ins));
 		MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, ins->dreg+2, ins->dreg+2, tmp1);
 		NULLIFY_INS(ins);
 		break;

@@ -104,6 +104,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -158,39 +159,72 @@
     <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
     <Compile Include="System.Net.Http\StreamContent.cs" />
     <Compile Include="System.Net.Http\StringContent.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="System.Net.Http\HttpClient.android.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
+  <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.mac.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.android.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />

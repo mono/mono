@@ -127,9 +127,7 @@ static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 static void mono_uninstall_current_handler_block_guard (void);
 static gboolean mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 
-#ifdef TARGET_OSX
 static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
-#endif
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -234,10 +232,7 @@ mono_exceptions_init (void)
 
 	cbs.mono_walk_stack_with_ctx = mono_runtime_walk_stack_with_ctx;
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
-
-#ifdef TARGET_OSX
 	cbs.mono_summarize_stack = mono_summarize_stack;
-#endif
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -461,7 +456,7 @@ find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, Mo
 		 * Remove any unused lmf.
 		 * Mask out the lower bits which might be used to hold additional information.
 		 */
-		*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~(SIZEOF_VOID_P -1));
+		*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~(TARGET_SIZEOF_VOID_P -1));
 	}
 
 	/* Convert between the new and the old APIs */
@@ -623,7 +618,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		 * Remove any unused lmf.
 		 * Mask out the lower bits which might be used to hold additional information.
 		 */
-		*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~(SIZEOF_VOID_P -1));
+		*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~(TARGET_SIZEOF_VOID_P -1));
 	}
 
 	if (frame->ji && !frame->ji->is_trampoline && !frame->ji->async)
@@ -1262,7 +1257,15 @@ next:
 	}
 }
 
-#ifdef TARGET_OSX
+#ifdef DISABLE_CRASH_REPORTING
+static void
+mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
+{
+	return;
+}
+
+#else
+
 typedef struct {
 	MonoFrameSummary *frames;
 	int num_frames;
@@ -2249,7 +2252,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			error_init (error);
 			MonoMethod *get_message = system_exception_get_message == NULL ? NULL : mono_object_get_virtual_method (obj, system_exception_get_message);
 			MonoObject *message;
-			const char *type_name = mono_class_get_name (mono_object_class (mono_ex));
+			const char *type_name = m_class_get_name (mono_object_class (mono_ex));
 			char *msg = NULL;
 			if (get_message == NULL) {
 				message = NULL;

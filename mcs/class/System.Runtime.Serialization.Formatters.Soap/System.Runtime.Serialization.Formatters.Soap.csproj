@@ -49,6 +49,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
@@ -58,8 +59,16 @@
     <Compile Include="System.Runtime.Serialization.Formatters.Soap\SoapReader.cs" />
     <Compile Include="System.Runtime.Serialization.Formatters.Soap\SoapTypeMapper.cs" />
     <Compile Include="System.Runtime.Serialization.Formatters.Soap\SoapWriter.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.XML/System.Xml.csproj" />

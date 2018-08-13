@@ -36,16 +36,6 @@ typedef struct _MonoDynamicMethod MonoDynamicMethod;
  */
 #define MONO_PROP_DYNAMIC_CATTR 0x1000
 
-#ifdef ENABLE_ICALL_EXPORT
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
-#define ICALL_DECL_EXPORT MONO_API
-#define ICALL_EXPORT MONO_API
-#else
-#define ICALL_DECL_EXPORT
-/* Can't be static as icall.c defines icalls referenced by icall-tables.c */
-#define ICALL_EXPORT
-#endif
-
 typedef enum {
 #define WRAPPER(e,n) MONO_WRAPPER_ ## e,
 #include "wrapper-types.h"
@@ -1210,6 +1200,9 @@ MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error);
 
 MonoClassField*
+mono_class_get_fields_internal (MonoClass* klass, gpointer *iter);
+
+MonoClassField*
 mono_class_get_fields_lazy (MonoClass* klass, gpointer *iter);
 
 gboolean
@@ -1222,7 +1215,7 @@ void
 mono_unload_interface_id (MonoClass *klass);
 
 GPtrArray*
-mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoError *error);
+mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, guint32 mlisttype, gboolean allow_ctors, MonoError *error);
 
 char*
 mono_class_full_name (MonoClass *klass);

@@ -37,7 +37,7 @@ namespace Mono.Security.X509 {
 
 	[Serializable]
 	[Flags]
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 

@@ -104,6 +104,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\TaskToApm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\DeflateManaged\BlockType.cs" />
@@ -138,8 +139,16 @@
     <Compile Include="corefx\Crc32Helper.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\ZipArchiveEntry.Mono.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

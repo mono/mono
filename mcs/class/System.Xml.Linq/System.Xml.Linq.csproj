@@ -103,6 +103,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Text\StringBuilderCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
@@ -145,7 +146,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

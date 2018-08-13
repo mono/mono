@@ -1124,7 +1124,7 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 
 	klass = mono_class_from_mono_type (t);
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		ftype = mono_field_get_type (field);
@@ -1145,7 +1145,7 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 			prev_ftype = ftype;
 			for (i = 0; i < nested_nfields; ++i) {
 				if (nfields + i < 4)
-					field_offsets [nfields + i] = field->offset - sizeof (MonoObject) + nested_field_offsets [i];
+					field_offsets [nfields + i] = field->offset - MONO_ABI_SIZEOF (MonoObject) + nested_field_offsets [i];
 			}
 			nfields += nested_nfields;
 		} else {
@@ -1155,7 +1155,7 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 				return FALSE;
 			prev_ftype = ftype;
 			if (nfields < 4)
-				field_offsets [nfields] = field->offset - sizeof (MonoObject);
+				field_offsets [nfields] = field->offset - MONO_ABI_SIZEOF (MonoObject);
 			nfields ++;
 		}
 	}
@@ -1468,7 +1468,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size)
-			storage = alloca (temp_size);
+			storage = alloca (temp_size); // FIXME? alloca in a loop
 		else
 			storage = arg_get_storage (ccontext, ainfo);
 
@@ -1530,7 +1530,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size) {
-			storage = alloca (temp_size);
+			storage = alloca (temp_size); // FIXME? alloca in a loop
 			arg_get_val (ccontext, ainfo, storage);
 		} else {
 			storage = arg_get_storage (ccontext, ainfo);

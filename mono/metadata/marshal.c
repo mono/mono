@@ -48,6 +48,8 @@
 #include "mono/metadata/handle.h"
 #include "mono/metadata/object-internals.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/abi-details.h"
+#include "mono/metadata/custom-attrs-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -136,6 +138,10 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 
 	mono_register_jit_icall (func, name, sig, TRUE);
 }
+
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, no_wrapper) (register_icall ((gpointer)(func), (name), (sigstr), (no_wrapper)))
+#define register_icall_no_wrapper(func, name, sigstr) (register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
 
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
@@ -362,7 +368,8 @@ mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
 		goto leave;
 	}
 
-	MonoObjectHandle delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
+	MonoObjectHandle delegate_target;
+	delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
 	if (!MONO_HANDLE_IS_NULL (delegate_target)) {
 		/* Produce a location which can be embedded in JITted code */
 		target_handle = mono_gchandle_new_weakref_from_handle (delegate_target);
@@ -2186,7 +2193,7 @@ emit_delegate_invoke_internal_noilgen (MonoMethodBuilder *mb, MonoMethodSignatur
 MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method)
 {
-	MonoMethodSignature *sig, *static_sig, *invoke_sig;
+	MonoMethodSignature *sig, *invoke_sig;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	GHashTable *cache;
@@ -2262,7 +2269,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 			return res;
 		cache_key = method->klass;
 	} else if (static_method_with_first_arg_bound) {
-		cache = get_cache (&get_method_image (method)->delegate_bound_static_invoke_cache,
+		cache = get_cache (&get_method_image (target_method)->delegate_bound_static_invoke_cache,
 						   (GHashFunc)mono_signature_hash, 
 						   (GCompareFunc)mono_metadata_signature_equal);
 		/*
@@ -2300,10 +2307,10 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		cache_key = sig;
 	}
 
-	static_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
-	static_sig->hasthis = 0;
-	if (!static_method_with_first_arg_bound)
-		invoke_sig = static_sig;
+	if (!static_method_with_first_arg_bound) {
+		invoke_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
+		invoke_sig->hasthis = 0;
+	}
 
 	if (static_method_with_first_arg_bound)
 		name = mono_signature_to_name (invoke_sig, "invoke_bound");
@@ -4525,7 +4532,7 @@ mono_marshal_get_virtual_stelemref_wrappers (int *nwrappers)
 	*nwrappers = STELEMREF_KIND_COUNT;
 	res = (MonoMethod **)g_malloc0 (STELEMREF_KIND_COUNT * sizeof (MonoMethod*));
 	for (i = 0; i < STELEMREF_KIND_COUNT; ++i)
-		res [i] = get_virtual_stelemref_wrapper (i);
+		res [i] = get_virtual_stelemref_wrapper ((MonoStelemrefKind)i);
 	return res;
 }
 
@@ -5181,7 +5188,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 		MonoClassField* field;
 		int i = 0;
 		gpointer iter = NULL;
-		while ((field = mono_class_get_fields (klass, &iter))) {
+		while ((field = mono_class_get_fields_internal (klass, &iter))) {
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (!strcmp (fname, mono_field_get_name (field))) {
@@ -5484,7 +5491,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	mono_native_tls_set_value (load_type_info_tls_id, loads_list);
 	
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted (field))
@@ -5511,7 +5518,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	packing = m_class_get_packing_size (klass) ? m_class_get_packing_size (klass) : 8;
 	iter = NULL;
 	j = 0;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		int size;
 		guint32 align;
 		
@@ -5526,7 +5533,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 
 		info->fields [j].field = field;
 
-		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == sizeof (MonoObject)) &&
+		if ((mono_class_num_fields (klass) == 1) && (m_class_get_instance_size (klass) == MONO_ABI_SIZEOF (MonoObject)) &&
 			(strcmp (mono_field_get_name (field), "$PRIVATE$") == 0)) {
 			/* This field is a hack inserted by MCS to empty structures */
 			continue;
@@ -5548,7 +5555,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 			size = mono_marshal_type_size (field->type, info->fields [j].mspec, 
 						       &align, TRUE, m_class_is_unicode (klass));
 			min_align = MAX (align, min_align);
-			info->fields [j].offset = field->offset - sizeof (MonoObject);
+			info->fields [j].offset = field->offset - MONO_ABI_SIZEOF (MonoObject);
 			info->native_size = MAX (info->native_size, info->fields [j].offset + size);
 			break;
 		}	
@@ -5556,7 +5563,7 @@ mono_marshal_load_type_info (MonoClass* klass)
 	}
 
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_PTR)
-		info->native_size = sizeof (gpointer);
+		info->native_size = TARGET_SIZEOF_VOID_P;
 
 	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		info->native_size = MAX (native_size, info->native_size);
@@ -5652,8 +5659,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		align = &tmp;
 
 	if (t->byref) {
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	}
 
 	switch (t->type){
@@ -5676,8 +5683,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_ARRAY:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_R4:
 		*align = 4;
 		return 4;
@@ -5690,8 +5697,8 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		return 8;
 	case MONO_TYPE_GENERICINST:
 		if (!mono_type_generic_inst_is_valuetype (t)) {
-			*align = sizeof (gpointer);
-			return sizeof (gpointer);
+			*align = TARGET_SIZEOF_VOID_P;
+			return TARGET_SIZEOF_VOID_P;
 		} 
 		/* Fall through */
 	case MONO_TYPE_TYPEDBYREF:
@@ -5726,7 +5733,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			gboolean as_field, gboolean unicode)
 {
 	gint32 padded_size;
-	MonoMarshalNative native_type = mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
+	MonoMarshalNative native_type = (MonoMarshalNative)mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
 	MonoClass *klass;
 
 	switch (native_type) {
@@ -5775,7 +5782,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 	case MONO_NATIVE_FUNC:
 	case MONO_NATIVE_LPSTRUCT:
 		*align = MONO_ABI_ALIGNOF (gpointer);
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_NATIVE_STRUCT: 
 		klass = mono_class_from_mono_type (type);
 		if (klass == mono_defaults.object_class &&
@@ -5807,8 +5814,8 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		return mspec->data.array_data.num_elem * esize;
 	}
 	case MONO_NATIVE_CUSTOM:
-		*align = sizeof (gpointer);
-		return sizeof (gpointer);
+		*align = TARGET_SIZEOF_VOID_P;
+		return TARGET_SIZEOF_VOID_P;
 		break;
 	case MONO_NATIVE_CURRENCY:
 	case MONO_NATIVE_VBBYREFSTR:
