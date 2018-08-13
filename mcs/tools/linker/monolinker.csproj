@@ -52,6 +52,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\LoadReferencesStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\MarkStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\OutputStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\PreserveDependencyLookupStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RegenerateGuidStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RemoveSecurityStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromAssemblyStep.cs" />
