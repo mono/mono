@@ -96,6 +96,7 @@ HANDLES(ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_Dis
 HANDLES(ICALL(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_EnableMicrosoftTelemetry))
 HANDLES(ICALL(RUNTIME_3, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
 HANDLES(ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace))
+HANDLES(ICALL(RUNTIME_13, "SendMicrosoftTelemetry", ves_icall_Mono_Runtime_SendMicrosoftTelemetry))
 
 ICALL_TYPE(RTCLASS, "Mono.RuntimeClassHandle", RTCLASS_1)
 ICALL(RTCLASS_1, "GetTypeFromClass", ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass)
