@@ -242,8 +242,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 #ifdef TARGET_OSX
 	if (mono_merp_enabled ()) {
 		pid_t crashed_pid = getpid ();
-		char *full_version = mono_get_runtime_build_info ();
-		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes, full_version);
+		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes);
 	} else
 #endif
 	{
@@ -1096,9 +1095,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 					exit (1);
 				}
 
-				char *full_version = mono_get_runtime_build_info ();
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes, full_version);
+				mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 				exit (1);
 			}
