@@ -39,6 +39,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace System.Security.Cryptography {
 
@@ -57,6 +58,16 @@ namespace System.Security.Cryptography {
 			return CreateFromName (name, null);
 		}
 
+#if MONOTOUCH || XAMMAC
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.AesManaged", "System.Core")]
+#else
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.AesCryptoServiceProvider", "System.Core")]
+#endif
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509Chain", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension", "System")]
 		public static object CreateFromName (string name, params object[] args)
 		{
 			if (name == null)

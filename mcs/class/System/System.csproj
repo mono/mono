@@ -3411,7 +3411,25 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\KeyUsageExtension.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\SubjectKeyIdentifierExtension.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\PKCS12.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X501Name.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509CRL.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Certificate.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509CertificateCollection.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Chain.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509ChainStatusFlags.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Extension.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Extensions.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Store.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509StoreManager.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X509Stores.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security.X509\X520Attributes.cs" />
+        <Compile Include="..\Mono.Security\Mono.Security\PKCS7.cs" />
         <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
