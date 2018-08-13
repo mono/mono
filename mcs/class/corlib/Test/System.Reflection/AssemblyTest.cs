@@ -1287,6 +1287,20 @@ namespace MonoTests.System.Reflection
 			} catch (NotImplementedException){
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LoadFileRelativeThrows ()
+		{
+			Assembly.LoadFile ("non-existent/relative/path.dll");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void LoadFileAbsoluteNotFoundThrows ()
+		{
+			Assembly.LoadFile ("/non-existent/absolute/path.dll");
+		}
 	}
 
 	public class TestDefinedTypes
