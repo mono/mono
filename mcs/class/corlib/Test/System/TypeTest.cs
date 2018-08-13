@@ -445,6 +445,11 @@ namespace MonoTests.System
 			Assert.IsNull (paramType.BaseType, "#02-b");
 			Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
 			Assert.IsFalse (paramType.IsSubclassOf (paramType), "#04");
+
+			// IsSubclassOf is not reflexive
+			Assert.IsFalse (typeof (string).IsSubclassOf (typeof (string)), "#05");
+			Assert.IsFalse (typeof (int).IsSubclassOf (typeof (int)), "#06");
+			Assert.IsFalse (typeof (object).IsSubclassOf (typeof (object)), "#07");
 		}
 
 		[Test]
