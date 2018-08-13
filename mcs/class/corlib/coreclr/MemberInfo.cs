@@ -1,6 +1,6 @@
 namespace System.Reflection
 {
-    public abstract partial class MemberInfo
+    partial class MemberInfo
     {
         internal virtual bool CacheEquals(object o) { throw new NotImplementedException(); }
 

@@ -1577,7 +1577,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 coreclr/SorterArray.cs
-coreclr/MemberInfo.Internal.cs
+coreclr/MemberInfo.cs
 
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
