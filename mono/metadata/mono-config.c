@@ -189,6 +189,8 @@ typedef struct {
 	void *user_data;
 } ParserUserData;
 
+#define ParseState MonoConfigParseState
+
 typedef struct {
 	MonoParseHandler *current;
 	void *user_data;
