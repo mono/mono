@@ -172,7 +172,7 @@ add_mono_string_to_blob_cached (MonoDynamicImage *assembly, MonoString *str)
 		g_free (swapped);
 	}
 #else
-	idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, (char*)mono_string_chars (str), len);
+	idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, mono_string_chars (str), len);
 #endif
 	return idx;
 }
@@ -559,7 +559,7 @@ mono_image_basic_method (ReflectionMethodBuilder *mb, MonoDynamicImage *assembly
 				}
 				pb->table_idx = table->next_idx++;
 				if (pb->attrs & PARAM_ATTRIBUTE_HAS_DEFAULT) {
-					guint32 field_type = 0;
+					MonoTypeEnum field_type = (MonoTypeEnum)0;
 					mtable = &assembly->tables [MONO_TABLE_CONSTANT];
 					mtable->rows ++;
 					alloc_table (mtable, mtable->rows);
