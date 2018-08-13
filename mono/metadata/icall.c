@@ -1768,6 +1768,22 @@ ves_icall_RuntimeTypeHandle_is_subclass_of (MonoType *childType, MonoType *baseT
 	mono_class_init_checked (baseClass, error);
 	goto_if_nok (error, done);
 
+	if (G_UNLIKELY (childType->byref)) {
+		result = !baseType->byref && baseClass == mono_defaults.object_class;
+		goto done;
+	}
+
+	if (G_UNLIKELY (baseType->byref)) {
+		result = FALSE;
+		goto done;
+	}
+
+	if (childType == baseType) {
+		/* .NET IsSubclassOf is not reflexive */
+		result = FALSE;
+		goto done;
+	}
+
 	if (G_UNLIKELY (is_generic_parameter (childType))) {
 		/* slow path: walk the type hierarchy looking at base types
 		 * until we see baseType.  If the current type is not a gparam,
