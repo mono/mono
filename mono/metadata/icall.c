@@ -5711,6 +5711,36 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 #endif
 }
 
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, intptr_t portable_hash, intptr_t unportable_hash, MonoError *error)
+{
+#ifdef TARGET_OSX
+	if (!mono_merp_enabled ())
+		g_error ("Cannot send telemetry without registering parameters first");
+
+	pid_t crashed_pid = getpid ();
+	char *full_version = mono_get_runtime_build_info ();
+
+	MonoStackHash hashes;
+	hashes.offset_free_hash = portable_hash;
+	hashes.offset_rich_hash = unportable_hash;
+
+	// Tells mono that we want to send the HANG EXC_TYPE.
+	const char *signal = "SIGTERM";
+
+	mono_merp_invoke (crashed_pid, signal, payload, &hashes, full_version);
+
+	// FIXME: 
+	// This leaves static memory in a bad state. (JsonWriter)
+	// We could fix this by making the helper functions take a pointer
+	// to the writer.
+	exit (1);
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
+}
+
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char *name, MonoAssemblyName *aname, MonoBoolean *is_version_defined_arg, MonoBoolean *is_token_defined_arg)
 {
