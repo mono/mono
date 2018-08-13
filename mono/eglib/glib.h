@@ -215,7 +215,7 @@ typedef double         gdouble;
 typedef int32_t        gboolean;
 
 // C++ wchar_t is a unique type. Use it.
-#if defined (HOST_WIN32) && defined (__cplusplus)
+#if defined (HOST_WIN32) || defined (_WIN32)
 G_END_DECLS
 #include <wchar.h>
 typedef wchar_t gunichar2;

@@ -467,7 +467,7 @@ mono_wasm_current_bp_id (void)
 	g_assert (ext->interp_exit);
 	MonoInterpFrameHandle *frame = (MonoInterpFrameHandle*)ext->interp_exit_data;
 	MonoJitInfo *ji = mini_get_interp_callbacks ()->frame_get_jit_info (frame);
-	guint8 *ip = mini_get_interp_callbacks ()->frame_get_ip (frame);
+	guint8 *ip = (guint8*)mini_get_interp_callbacks ()->frame_get_ip (frame);
 
 	g_assert (ji && !ji->is_trampoline);
 	MonoMethod *method = jinfo_get_method (ji);

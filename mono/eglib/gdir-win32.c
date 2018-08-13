@@ -55,10 +55,10 @@ g_dir_open (const gchar *path, guint flags, GError **gerror)
 	dir = g_new0 (GDir, 1);
 	path_utf16 = u8to16 (path);
 	path_utf16_search = g_malloc ((wcslen((wchar_t *) path_utf16) + 3)*sizeof(gunichar2));
-	wcscpy (path_utf16_search, path_utf16);
-	wcscat (path_utf16_search, L"\\*");
+	wcscpy ((wchar_t *)path_utf16_search, (wchar_t *)path_utf16);
+	wcscat ((wchar_t *)path_utf16_search, L"\\*");
 
-	dir->handle = FindFirstFileW (path_utf16_search, &find_data);
+	dir->handle = FindFirstFileW ((wchar_t *)path_utf16_search, &find_data);
 	if (dir->handle == INVALID_HANDLE_VALUE) {
 		if (gerror) {
 			gint err = errno;
