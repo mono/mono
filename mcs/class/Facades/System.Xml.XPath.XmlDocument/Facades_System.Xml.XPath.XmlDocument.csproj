@@ -90,12 +90,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="System.Xml\XmlDocumentXPathExtensions.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />

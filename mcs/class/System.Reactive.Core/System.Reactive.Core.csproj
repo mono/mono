@@ -45,6 +45,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\InternalsVisibleTo.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Core\Strings_Core.Generated.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

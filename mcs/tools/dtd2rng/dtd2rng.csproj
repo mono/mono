@@ -42,10 +42,11 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="dtd2rng.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

@@ -592,8 +592,10 @@ namespace System
 				{
 					AssemblyName assemblyname = new AssemblyName ();
 					assemblyname.Name = "GetTypeFromCLSIDDummyAssembly";
-					clsid_assemblybuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (
-						assemblyname, AssemblyBuilderAccess.Run);
+					/* Dynamically created assembly is marked internal to corlib to allow
+					  __ComObject access for dynamic types. */
+					clsid_assemblybuilder = new AssemblyBuilder (assemblyname, null,
+						AssemblyBuilderAccess.Run, true);
 				}
 				ModuleBuilder modulebuilder = clsid_assemblybuilder.DefineDynamicModule (
 					clsid.ToString ());

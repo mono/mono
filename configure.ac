@@ -374,7 +374,8 @@ case "$host" in
 		esac
 		;;
 	*-*-haiku*)
-		CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_THREAD_SAFE"
+		dnl BSD_SOURCE is for getifaddrs
+		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_REENTRANT -D_THREAD_SAFE"
 		libmono_cflags="-D_REENTRANT -D_THREAD_SAFE"
 		libdl=
 		LIBS="$LIBS -lnetwork -ltextencoding"
@@ -384,6 +385,7 @@ case "$host" in
 		with_tls=pthread
 		libgc_threads=pthreads
 		use_sigposix=yes
+		with_sigaltstack=no
 		;;
 	*-*-aix*|*-*-os400*)
 		dnl Set up a 64-bit build
@@ -1002,6 +1004,7 @@ fi
 
 AC_ARG_WITH(crash-privacy,       [  --with-crash_privacy=yes,no         If you want your crashes to not include names of symbols present in the binary. ], [], [with_crash_privacy=no])
 AC_ARG_WITH(structured-crashes,  [  --with-structured_crashes=yes,no    If you want your unmanaged crashes to result in a small crash dump file. ],        [], [with_structured_crashes=yes])
+AC_ARG_ENABLE(crash-reporting,  [  --disable-crash-reporting            Enable or Disable crash reporting subsystem],        [crash_reporting=$enableval], [crash_reporting=yes])
 
 if test "x$with_crash_privacy" = "xno"; then
 AC_DEFINE(MONO_PRIVATE_CRASHES,1,[Do not include names of unmanaged functions in the crash dump])
@@ -1009,6 +1012,17 @@ fi
 
 if test "x$with_structured_crashes" = "xno"; then
 AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files during unmanaged crashes])
+fi
+
+case "$host" in
+	*-mingw*|*-*-cygwin*|*-*-aix*|*-*-os400*)
+		crash_reporting=no
+		;;
+esac
+
+if test "x$crash_reporting" != "xyes"; then
+CFLAGS="$CFLAGS -DDISABLE_CRASH_REPORTING=1"
+CXXFLAGS="$CXXFLAGS -DDISABLE_CRASH_REPORTING=1"
 fi
 
 AC_ARG_ENABLE(monodroid, [ --enable-monodroid Enable runtime support for Monodroid (Xamarin.Android)], enable_monodroid=$enableval, enable_monodroid=no)
@@ -3009,17 +3023,7 @@ if test x$host_win32 = xno; then
 	])
 
 	if test x$host_darwin = xno; then
-		AC_MSG_CHECKING(for struct flock64)
-		AC_TRY_COMPILE([
-			#include <fcntl.h>
-		], [
-			struct flock64;
-		],[
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)
-		], [
-			AC_MSG_RESULT(no)
-		])
+		AC_CHECK_TYPES([struct flock64], [AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)], , [#include <fcntl.h>])
 	fi
 
 	AC_CHECK_FUNC(lseek64,           [AC_DEFINE(HAVE_LSEEK64, 1, [lseek64])])
@@ -4008,7 +4012,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc-*-aix* | powerpc-*-os400* )
+        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -5764,6 +5768,7 @@ echo "
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
+	crash reporting: $crash_reporting
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

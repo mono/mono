@@ -100,12 +100,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\corefx\src\Microsoft.Win32.Registry.AccessControl\src\Microsoft\Win32\RegistryAclExtensions.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />

@@ -71,6 +71,8 @@ RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE)
 endif
 
+MODULE_DEPS += LinkerDescriptor/mscorlib.xml
+
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
 	resources/collation.core.bin \

@@ -47,6 +47,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\referencesource\SMDiagnostics\System\ServiceModel\Diagnostics\Activity.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\TraceSR.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />

@@ -44,6 +44,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\class\System.Data.Linq\src\DbLinq.ProductInfo.cs" />
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\AbstractParameters.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="..\..\class\System.Data.Linq\src\DbMetal\Utility\VariablesExtension.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
