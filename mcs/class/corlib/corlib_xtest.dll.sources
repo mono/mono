@@ -13,6 +13,8 @@
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/Utilities.cs
 
+../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
+
 #TODO: audit the commented out tests and fix or disable
 
 #../../../external/corefx/src/System.Reflection.Emit/tests/AssemblyBuilderTests.cs

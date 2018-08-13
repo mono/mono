@@ -1213,6 +1213,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
+../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/TypeExtensions.cs
+../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
+
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/manifestresourceinfo.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
