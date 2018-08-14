@@ -200,8 +200,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Usage", "CA2229", Justification = "Public API has already shipped.")]
 		public X509Certificate (SerializationInfo info, StreamingContext context) : this ()
 		{
-			byte[] raw = (byte[]) info.GetValue ("RawData", typeof (byte[]));
-			Import (raw, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			throw new PlatformNotSupportedException ();
 		}
 
 		public static X509Certificate CreateFromCertFile (string filename)
@@ -216,14 +215,12 @@ namespace System.Security.Cryptography.X509Certificates
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (!X509Helper.IsValid (impl))
-				throw new NullReferenceException ();
-			// will throw a NRE if info is null (just like MS implementation)
-			info.AddValue ("RawData", impl.RawData);
+			throw new PlatformNotSupportedException ();
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
+			throw new PlatformNotSupportedException ();
 		}
 
 		public IntPtr Handle {
@@ -546,60 +543,39 @@ namespace System.Security.Cryptography.X509Certificates
 			return sb.ToString ();
 		}
 
-#endregion
-
-#region Mono Implementation
-
-		/*
-		/* CoreFX throws
-		/*     throw new PlatformNotSupportedException(SR.NotSupported_ImmutableX509Certificate);
-		/* everywhere.
-		 */
-
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData)
 		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
 
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Reset ();
-			using (var safePasswordHandle = new SafePasswordHandle (password))
-				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
 
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			using (var safePasswordHandle = new SafePasswordHandle (password))
-				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
 
 		[ComVisible (false)]
 		public virtual void Import (string fileName)
 		{
-			Import (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
 
 		[ComVisible (false)]
 		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			using (var safePasswordHandle = new SafePasswordHandle (password))
-				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
 
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			using (var safePasswordHandle = new SafePasswordHandle (password))
-				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
 		}
-
-#endregion
-
-#region CoreFX Implementation
 
 		internal DateTime GetNotAfter ()
 		{
