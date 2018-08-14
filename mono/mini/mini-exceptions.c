@@ -3163,6 +3163,10 @@ mono_install_handler_block_guard (MonoThreadUnwindState *ctx)
 		return FALSE;
 
 	/* Do an async safe stack walk */
+	// If this assert fails, that means there is recursion and/or
+	// concurrency, such that setting async_context to FALSE is incorrect,
+	// and it should be saved/set/restored or more generally just incremented/decremented.
+	g_assert (!mono_thread_info_is_async_context ());
 	mono_thread_info_set_is_async_context (TRUE);
 	mono_walk_stack_with_state (find_last_handler_block, ctx, MONO_UNWIND_NONE, &data);
 	mono_thread_info_set_is_async_context (FALSE);

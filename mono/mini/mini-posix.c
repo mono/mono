@@ -299,6 +299,10 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
+	// If this assert fails, that means there is recursion and/or
+	// concurrency, such that setting async_context to FALSE is incorrect,
+	// and it should be saved/set/restored or more generally just incremented/decremented.
+	g_assert (!mono_thread_info_is_async_context ());
 	mono_thread_info_set_is_async_context (TRUE);
 
 	MONO_PROFILER_RAISE (sample_hit, (mono_arch_ip_from_context (ctx), ctx));
