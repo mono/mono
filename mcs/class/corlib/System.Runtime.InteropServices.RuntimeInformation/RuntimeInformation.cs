@@ -35,6 +35,9 @@ namespace System.Runtime.InteropServices
 {
 	public static class RuntimeInformation
 	{
+		[DllImport("__Internal", CharSet = CharSet.Auto)]
+		static extern string mono_config_get_cpu ();
+
 		public static string FrameworkDescription {
 			get {
 				return "Mono " + Mono.Runtime.GetDisplayName ();
@@ -75,8 +78,17 @@ namespace System.Runtime.InteropServices
 		{
 			get
 			{
-				// TODO: very barebones implementation, doesn't respect ARM
-				return Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				switch (mono_config_get_cpu ()) {
+				case "arm":
+				case "armv8":
+					return Environment.Is64BitOperatingSystem ? Architecture.Arm64 : Architecture.Arm;
+				case "x86":
+				case "x86-64":
+				// upstream only has these values; try to pretend we're x86 if nothing matches
+				// want more? bug: https://github.com/dotnet/corefx/issues/30706
+				default:
+					return Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
+				}
 			}
 		}
 
@@ -84,8 +96,22 @@ namespace System.Runtime.InteropServices
 		{
 			get
 			{
-				// TODO: very barebones implementation, doesn't respect ARM			
-				return Environment.Is64BitProcess ? Architecture.X64 : Architecture.X86;
+				// we can use the runtime's compiled config options for DllMaps here
+				// process architecure for us is runtime architecture (OS is much harder)
+				// see for values: mono-config.c
+				switch (mono_config_get_cpu ()) {
+				case "x86":
+					return Architecture.X86;
+				case "x86-64":
+					return Architecture.X64;
+				case "arm":
+					return Architecture.Arm;
+				case "armv8":
+					return Architecture.Arm64;
+				// see comment in OSArchiteture default case
+				default:
+					return Environment.Is64BitProcess ? Architecture.X64 : Architecture.X86;
+				}
 			}
 		}
 	}
