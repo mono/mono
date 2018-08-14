@@ -7,6 +7,7 @@
 #define __METADATA_MONO_GC_H__
 
 #include <mono/metadata/object.h>
+#include <mono/inc/mono-gc-handle.h>
 
 MONO_BEGIN_DECLS
 
@@ -98,14 +99,7 @@ typedef enum {
 	MONO_ROOT_SOURCE_EPHEMERON = 15,
 } MonoGCRootSource;
 
-typedef enum {
-	MONO_GC_HANDLE_TYPE_MIN = 0,
-	MONO_GC_HANDLE_WEAK = MONO_GC_HANDLE_TYPE_MIN,
-	MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION,
-	MONO_GC_HANDLE_NORMAL,
-	MONO_GC_HANDLE_PINNED,
-	MONO_GC_HANDLE_TYPE_MAX,
-} MonoGCHandleType;
+// And mono/sgen/gc-internal-agnostic.h aliases them.
 
 MONO_API void   mono_gc_collect         (int generation);
 MONO_API int    mono_gc_max_generation  (void);

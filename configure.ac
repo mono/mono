@@ -5530,6 +5530,7 @@ scripts/mono-find-requires
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
+mono/inc/Makefile
 mono/utils/Makefile
 mono/utils/jemalloc/Makefile
 mono/metadata/Makefile
