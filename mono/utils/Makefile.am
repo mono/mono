@@ -165,6 +165,7 @@ monoutils_sources = \
 	mono-threads-posix-signals.c	\
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
+	mono-threads-mach-helper.h	\
 	mono-threads-windows.c	\
 	mono-threads-linux.c	\
 	mono-threads-freebsd.c	\
@@ -299,7 +300,7 @@ arch_sources += mono-hwcap-cross.c
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
-libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
+libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS) @CXX_ADD_CFLAGS@
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 

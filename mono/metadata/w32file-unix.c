@@ -4402,7 +4402,7 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 typedef struct {
 	guint32 drive_type;
 #if __linux__
-	const long fstypeid;
+	long fstypeid;
 #endif
 	const gchar* fstype;
 } _wapi_drive_type;
@@ -4439,23 +4439,23 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_REMOTE, CODA_SUPER_MAGIC, "coda" },
 	{ DRIVE_RAMDISK, CRAMFS_MAGIC, "cramfs"},
 	{ DRIVE_RAMDISK, CRAMFS_MAGIC_WEND, "cramfs"},
-	{ DRIVE_REMOTE, CIFS_MAGIC_NUMBER, "cifs"},
+	{ DRIVE_REMOTE, (long)CIFS_MAGIC_NUMBER, "cifs"},
 	{ DRIVE_RAMDISK, DEBUGFS_MAGIC, "debugfs"},
 	{ DRIVE_RAMDISK, SYSFS_MAGIC, "sysfs"},
 	{ DRIVE_RAMDISK, SECURITYFS_MAGIC, "securityfs"},
-	{ DRIVE_RAMDISK, SELINUX_MAGIC, "selinuxfs"},
-	{ DRIVE_RAMDISK, RAMFS_MAGIC, "ramfs"},
+	{ DRIVE_RAMDISK, (long)SELINUX_MAGIC, "selinuxfs"},
+	{ DRIVE_RAMDISK, (long)RAMFS_MAGIC, "ramfs"},
 	{ DRIVE_FIXED, SQUASHFS_MAGIC, "squashfs"},
 	{ DRIVE_FIXED, EFS_SUPER_MAGIC, "efs"},
 	{ DRIVE_FIXED, EXT2_SUPER_MAGIC, "ext"},
 	{ DRIVE_FIXED, EXT3_SUPER_MAGIC, "ext"},
 	{ DRIVE_FIXED, EXT4_SUPER_MAGIC, "ext"},
-	{ DRIVE_REMOTE, XENFS_SUPER_MAGIC, "xenfs"},
-	{ DRIVE_FIXED, BTRFS_SUPER_MAGIC, "btrfs"},
+	{ DRIVE_REMOTE, (long)XENFS_SUPER_MAGIC, "xenfs"},
+	{ DRIVE_FIXED, (long)BTRFS_SUPER_MAGIC, "btrfs"},
 	{ DRIVE_FIXED, HFS_SUPER_MAGIC, "hfs"},
 	{ DRIVE_FIXED, HFSPLUS_SUPER_MAGIC, "hfsplus"},
-	{ DRIVE_FIXED, HPFS_SUPER_MAGIC, "hpfs"},
-	{ DRIVE_RAMDISK, HUGETLBFS_MAGIC, "hugetlbfs"},
+	{ DRIVE_FIXED, (long)HPFS_SUPER_MAGIC, "hpfs"},
+	{ DRIVE_RAMDISK, (long)HUGETLBFS_MAGIC, "hugetlbfs"},
 	{ DRIVE_CDROM, ISOFS_SUPER_MAGIC, "iso"},
 	{ DRIVE_FIXED, JFFS2_SUPER_MAGIC, "jffs2"},
 	{ DRIVE_RAMDISK, ANON_INODE_FS_MAGIC, "anon_inode"},
@@ -4495,12 +4495,12 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_RAMDISK, CONFIGFS_MAGIC, "configfs"},
 	{ DRIVE_RAMDISK, ECRYPTFS_SUPER_MAGIC, "eCryptfs"},
 	{ DRIVE_FIXED, EXOFS_SUPER_MAGIC, "exofs"},
-	{ DRIVE_FIXED, VXFS_SUPER_MAGIC, "vxfs"},
-	{ DRIVE_FIXED, VXFS_OLT_MAGIC, "vxfs_olt"},
+	{ DRIVE_FIXED, (long)VXFS_SUPER_MAGIC, "vxfs"},
+	{ DRIVE_FIXED, (long)VXFS_OLT_MAGIC, "vxfs_olt"},
 	{ DRIVE_REMOTE, GFS2_MAGIC, "gfs2"},
-	{ DRIVE_FIXED, LOGFS_MAGIC_U32, "logfs"},
+	{ DRIVE_FIXED, (long)LOGFS_MAGIC_U32, "logfs"},
 	{ DRIVE_FIXED, OCFS2_SUPER_MAGIC, "ocfs2"},
-	{ DRIVE_FIXED, OMFS_MAGIC, "omfs"},
+	{ DRIVE_FIXED, (long)OMFS_MAGIC, "omfs"},
 	{ DRIVE_FIXED, UBIFS_SUPER_MAGIC, "ubifs"},
 	{ DRIVE_UNKNOWN, 0, NULL}
 #else
