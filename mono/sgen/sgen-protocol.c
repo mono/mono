@@ -223,22 +223,20 @@ binary_protocol_flush_buffer (BinaryProtocolBuffer *buffer)
 	size_t written = 0;
 	g_assert (buffer->index > 0);
 
-	while (written < to_write) {
+	while (binary_protocol_file != invalid_file_value && written < to_write) {
 #if defined(HOST_WIN32)
-		int tmp_written;
+		DWORD tmp_written;
 		if (WriteFile (binary_protocol_file, buffer->buffer + written, to_write - written, &tmp_written, NULL))
 			written += tmp_written;
-		else
-			close_binary_protocol_file ();
 #elif defined(HAVE_UNISTD_H)
 		ret = write (binary_protocol_file, buffer->buffer + written, to_write - written);
 		if (ret >= 0)
 			written += ret;
 		else if (errno == EINTR)
 			continue;
+#endif
 		else
 			close_binary_protocol_file ();
-#endif
 	}
 
 	current_file_size += buffer->index;
