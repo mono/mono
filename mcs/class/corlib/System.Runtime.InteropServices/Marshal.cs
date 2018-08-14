@@ -1927,15 +1927,9 @@ namespace System.Runtime.InteropServices
 
 		internal static object[] MarshalerGetInstanceArgs = new object[1];
 
-		internal static ICustomMarshaler GetCustomMarshalerInstance (string cookie) {
-			System.Console.WriteLine ("GetCustomMarshalerInstance {0}", cookie);
-			return null;
-
-			/*
-
-			System.Console.WriteLine ("GetCustomMarshalerInstance {0} {1}", marshalerTypeHandle, cookie);
-
-			var marshalerType = Type.GetTypeFromHandle (marshalerTypeHandle);
+		internal static ICustomMarshaler GetCustomMarshalerInstance (string marshalerTypeName, string cookie) {
+			var callingAssembly = System.Reflection.Assembly.GetCallingAssembly ();
+			var marshalerType = callingAssembly.GetType (marshalerTypeName);
 
 			ICustomMarshaler result;
 			var key = new MarshalerInstanceKey {
@@ -1947,14 +1941,13 @@ namespace System.Runtime.InteropServices
 			if (!MarshalerInstanceCache.TryGetValue (key, out result)) {
 				MarshalerGetInstanceArgs[0] = cookie;
 				result = (ICustomMarshaler) marshalerType.InvokeMember (
-					"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+					"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.InvokeMethod,
 					null, null, MarshalerGetInstanceArgs
 				);
 				MarshalerInstanceCache[key] = result;
 			}
 
 			return result;
-			*/
 		}
 	}
 }

@@ -4179,7 +4179,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 }
 
 static void
-emit_marshal_custom_get_instance (MonoMethodBuilder *mb, const char *cookie)
+emit_marshal_custom_get_instance (MonoMethodBuilder *mb, const char *classname, const char *cookie)
 {
 	static MonoClass *Marshal = NULL;
 	static MonoMethod *get_instance;
@@ -4188,16 +4188,11 @@ emit_marshal_custom_get_instance (MonoMethodBuilder *mb, const char *cookie)
 		Marshal = mono_class_try_get_marshal_class ();
 		g_assert (Marshal);
 
-		get_instance = get_method_nofail (Marshal, "GetCustomMarshalerInstance", 1, 0);
+		get_instance = get_method_nofail (Marshal, "GetCustomMarshalerInstance", 2, 0);
 		g_assert (get_instance);
 	}
 
-	/*
-	int index = mono_mb_add_data (mb, Marshal);
-	mono_mb_emit_byte (mb, CEE_LDTOKEN);
-	mono_mb_emit_i4 (mb, index);
-	*/
-
+	mono_mb_emit_ldstr (mb, g_strdup (classname));
 	mono_mb_emit_ldstr (mb, g_strdup (cookie));
 
 	mono_mb_emit_op (mb, CEE_CALL, get_instance);
@@ -4333,7 +4328,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 				
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
@@ -4363,13 +4358,13 @@ handle_exception:
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
 
-			emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+			emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_native_to_managed);
 			mono_mb_emit_byte (mb, CEE_STIND_REF);
 		} else if (t->attrs & PARAM_ATTRIBUTE_OUT) {
-			emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+			emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_native_to_managed);
@@ -4378,7 +4373,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_POP);
 		}
 
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 
 		mono_mb_emit_ldloc (mb, conv_arg);
 
@@ -4406,7 +4401,7 @@ handle_exception:
 		mono_mb_emit_ldloc (mb, 3);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 		mono_mb_emit_byte (mb, CEE_DUP);
 
 		mono_mb_emit_ldloc (mb, 3);
@@ -4434,7 +4429,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 				
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
@@ -4460,7 +4455,7 @@ handle_exception:
 		mono_mb_emit_ldloc (mb, 3);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 		mono_mb_emit_byte (mb, CEE_DUP);
 
 		mono_mb_emit_ldloc (mb, 3);
@@ -4482,7 +4477,7 @@ handle_exception:
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
 
-			emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+			emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_managed_to_native);
@@ -4490,7 +4485,7 @@ handle_exception:
 		}
 
 		/* Call CleanUpManagedData */
-		emit_marshal_custom_get_instance (mb, spec->data.custom_data.cookie);
+		emit_marshal_custom_get_instance (mb, spec->data.custom_data.custom_name, spec->data.custom_data.cookie);
 				
 		mono_mb_emit_ldloc (mb, conv_arg);
 		mono_mb_emit_op (mb, CEE_CALLVIRT, cleanup_managed);
