@@ -27,6 +27,8 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_setup_single_step (int kind);
 
+G_BEGIN_DECLS
+
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
 extern void mono_wasm_fire_bp (void);
@@ -36,6 +38,8 @@ extern void mono_wasm_add_long_var (gint64);
 extern void mono_wasm_add_float_var (float);
 extern void mono_wasm_add_double_var (double);
 extern void mono_wasm_add_string_var (const char*);
+
+G_END_DECLS
 
 //FIXME move all of those fields to the profiler object
 static gboolean debugger_enabled;
