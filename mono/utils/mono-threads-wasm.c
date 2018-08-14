@@ -14,6 +14,8 @@
 
 #define round_down(addr, val) ((void*)((addr) & ~((val) - 1)))
 
+G_BEGIN_DECLS // FIXMEcxx? wasm
+
 EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_base (void)
@@ -186,5 +188,7 @@ mono_background_exec (void)
 	}
 	g_slist_free (j);
 }
+
+G_END_DECLS
 
 #endif

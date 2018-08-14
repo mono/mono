@@ -12,15 +12,13 @@
 
 #include <emscripten.h>
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 
-G_BEGIN_DECLS
-
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
-
-G_END_DECLS
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -348,3 +346,5 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
+
+G_END_DECLS
