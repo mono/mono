@@ -841,7 +841,7 @@ mono_gc_finalize_notify (void)
 	g_message ( "%s: prodding finalizer", __func__);
 #endif
 
-	if (mono_gc_is_null ())
+	if (mono_gc_is_null () || mono_gc_is_disabled())
 		return;
 
 #ifdef HOST_WASM
