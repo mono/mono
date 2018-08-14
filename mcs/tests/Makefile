@@ -71,10 +71,10 @@ KNOWN_ISSUES = known-issues-$(PROFILE)
 endif
 
 qcheck2:
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:$(KNOWN_ISSUES) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:$(KNOWN_ISSUES) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
 gen-mt-tests:
-	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
+	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
 
 TESTERVERBOSE=$(if $(V),-verbose,)

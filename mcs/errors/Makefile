@@ -34,7 +34,8 @@ TEST_SUPPORT_FILES = \
 	CS8009-lib.dll \
 	CSFriendAssembly-lib.dll \
 	dlls/first/CS1704-lib.dll \
-	dlls/second/CS1704-lib.dll
+	dlls/second/CS1704-lib.dll \
+	dlls/cs1703-2/System.dll
 
 -include $(mcs_topdir)/build/config.make
 
@@ -67,7 +68,7 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
-	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)
+	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)
 
 endif
 
@@ -107,6 +108,10 @@ dlls/second/CS1703-lib.dll: dlls/second/CS1703-lib.cs
 
 dlls/second/CS1705-lib.dll: dlls/second/CS1705-lib.cs
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /publicsign /keyfile:key.snk /out:$@ $<
+
+dlls/cs1703-2/System.dll: $(topdir)/../external/binary-reference-assemblies/v2.0/System.dll
+	mkdir -p $(dir $@)
+	cp $< $@
 
 CS1701-lib.dll : CS1701-lib.cs
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /warn:0 /r:dlls/first/CS1701-lib.dll /out:$@ $<
