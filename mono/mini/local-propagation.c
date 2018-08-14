@@ -672,6 +672,9 @@ mono_local_cprop (MonoCompile *cfg)
 						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
 							ins->inst_ls_word = def->inst_ls_word;
 							ins->inst_ms_word = def->inst_ms_word;
+						} else if (regtype == 'l' && sizeof (gpointer) == 4) {
+							/* This can happen if the def was a result of an iconst+conv.i8, which is transformed into just an iconst */
+							ins->inst_l = def->inst_c0;
 						} else {
 							ins->inst_imm = def->inst_c0;
 						}
