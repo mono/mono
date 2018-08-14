@@ -36,3 +36,4 @@
 /reflection-load-dir
 /assemblyresolve_deps
 /mono_aot_*
+/assembly-load-reference/Makefile
