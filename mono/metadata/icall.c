@@ -7664,7 +7664,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
  * used by System.Runtime.InteropServices.RuntimeInformation.(OS|Process)Architecture;
  * which use them in different ways for filling in an enum
  */
-ICALL_EXPORT char*
+ICALL_EXPORT MonoStringHandle
 ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitecture (MonoError *error)
 {
 	error_init (error);
