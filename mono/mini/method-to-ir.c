@@ -82,6 +82,8 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
+#define mono_emit_jit_icall(a, b, c) (mono_emit_jit_icall ((a), (gconstpointer)(b), (c)))
+
 #define BRANCH_COST 10
 #define CALL_COST 10
 /* Used for the JIT */
@@ -2726,7 +2728,8 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 }
 
 MonoInst*
-mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
+// parens to avoid macro
+(mono_emit_jit_icall) (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
@@ -3829,10 +3832,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		if (cfg->opt & MONO_OPT_SHARED) {
 			EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 			iargs [1] = data;
-			alloc_ftn = ves_icall_object_new;
+			alloc_ftn = (gpointer)ves_icall_object_new;
 		} else {
 			iargs [0] = data;
-			alloc_ftn = ves_icall_object_new_specific;
+			alloc_ftn = (gpointer)ves_icall_object_new_specific;
 		}
 
 		if (managed_alloc && !(cfg->opt & MONO_OPT_SHARED)) {
@@ -3853,12 +3856,12 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 		EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 
-		alloc_ftn = ves_icall_object_new;
+		alloc_ftn = (gpointer)ves_icall_object_new;
 	} else if (cfg->compile_aot && cfg->cbb->out_of_line && m_class_get_type_token (klass) && m_class_get_image (klass) == mono_defaults.corlib && !mono_class_is_ginst (klass)) {
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (m_class_get_type_token (klass)));
-		alloc_ftn = mono_helper_newobj_mscorlib;
+		alloc_ftn = (gpointer)mono_helper_newobj_mscorlib;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, klass, &cfg->error);
 
@@ -3878,7 +3881,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
-		alloc_ftn = ves_icall_object_new_specific;
+		alloc_ftn = (gpointer)ves_icall_object_new_specific;
 		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
@@ -7050,7 +7053,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	ins_flag = 0;
 	start_new_bblock = 0;
-	MonoOpcodeEnum il_op = MonoOpcodeEnum_Invalid;
+	MonoOpcodeEnum il_op; il_op = MonoOpcodeEnum_Invalid;
 
 	for (guchar *next_ip = ip; ip < end; ip = next_ip) {
 		MonoOpcodeEnum previous_il_op = il_op;
@@ -7624,32 +7627,32 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 		case MONO_CEE_CALL:
 		case MONO_CEE_CALLVIRT: {
-			MonoInst *addr = NULL;
-			int array_rank = 0;
-			gboolean virtual_ = il_op == MONO_CEE_CALLVIRT;
-			gboolean pass_imt_from_rgctx = FALSE;
-			MonoInst *imt_arg = NULL;
-			gboolean pass_vtable = FALSE;
-			gboolean pass_mrgctx = FALSE;
-			MonoInst *vtable_arg = NULL;
-			gboolean check_this = FALSE;
-			gboolean delegate_invoke = FALSE;
-			gboolean direct_icall = FALSE;
-			gboolean constrained_partial_call = FALSE;
-			gboolean tailcall_calli = FALSE;
+			MonoInst *addr; addr = NULL;
+			int array_rank; array_rank = 0;
+			gboolean virtual_; virtual_ = il_op == MONO_CEE_CALLVIRT;
+			gboolean pass_imt_from_rgctx; pass_imt_from_rgctx = FALSE;
+			MonoInst *imt_arg; imt_arg = NULL;
+			gboolean pass_vtable; pass_vtable = FALSE;
+			gboolean pass_mrgctx; pass_mrgctx = FALSE;
+			MonoInst *vtable_arg; vtable_arg = NULL;
+			gboolean check_this; check_this = FALSE;
+			gboolean delegate_invoke; delegate_invoke = FALSE;
+			gboolean direct_icall; direct_icall = FALSE;
+			gboolean constrained_partial_call; constrained_partial_call = FALSE;
+			gboolean tailcall_calli; tailcall_calli = FALSE;
 
 			// Variables shared by CEE_CALLI and CEE_CALL/CEE_CALLVIRT.
 			common_call = FALSE;
 
 			// variables to help in assertions
-			gboolean called_is_supported_tailcall = FALSE;
-			MonoMethod *tailcall_method = NULL;
-			MonoMethod *tailcall_cmethod = NULL;
-			MonoMethodSignature *tailcall_fsig = NULL;
-			gboolean tailcall_virtual = FALSE;
-			gboolean tailcall_extra_arg = FALSE;
+			gboolean called_is_supported_tailcall; called_is_supported_tailcall = FALSE;
+			MonoMethod *tailcall_method; tailcall_method = NULL;
+			MonoMethod *tailcall_cmethod; tailcall_cmethod = NULL;
+			MonoMethodSignature *tailcall_fsig; tailcall_fsig = NULL;
+			gboolean tailcall_virtual; tailcall_virtual = FALSE;
+			gboolean tailcall_extra_arg; tailcall_extra_arg = FALSE;
 
-			gboolean const inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
+			gboolean inst_tailcall; inst_tailcall = G_UNLIKELY (debug_tailcall_try_all
 							? (next_ip < end && next_ip [0] == CEE_RET)
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			ins = NULL;
@@ -7657,7 +7660,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			MonoMethod *cil_method = cmethod;
+			MonoMethod *cil_method; cil_method = cmethod;
 				
 			if (constrained_class) {
 				gboolean constrained_is_generic_param =
@@ -8088,8 +8091,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// These temporaries help detangle "pure" computation of
 			// inputs to is_supported_tailcall from side effects, so that
 			// is_supported_tailcall can be computed just once.
-			gboolean virtual_generic = FALSE;
-			gboolean virtual_generic_imt = FALSE;
+			gboolean virtual_generic; virtual_generic = FALSE;
+			gboolean virtual_generic_imt; virtual_generic_imt = FALSE;
 
 			if (virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) &&
 			    !(MONO_METHOD_IS_FINAL (cmethod) &&
@@ -8980,7 +8983,7 @@ calli_end:
 			ins->dreg = alloc_dreg ((cfg), (MonoStackType)(ins)->type);
 
 			/* Use the immediate opcodes if possible */
-			int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+			int imm_opcode; imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
 
 			if ((sp [1]->opcode == OP_ICONST) && mono_arch_is_inst_imm (ins->opcode, imm_opcode, sp [1]->inst_c0)) {
 				if (imm_opcode != -1) {
@@ -9018,7 +9021,7 @@ calli_end:
 			ins->dreg = alloc_dreg ((cfg), (MonoStackType)(ins)->type);
 
 			/* Use the immediate opcodes if possible */
-			int imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
+			int imm_opcode; imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
 
 			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) &&
 			    mono_arch_is_inst_imm (ins->opcode, imm_opcode, sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
@@ -9659,13 +9662,13 @@ calli_end:
 					ins->type = STACK_OBJ;
 					ins->klass = klass;
 					ins->inst_c0 = val->inst_c0;
-					ins->dreg = alloc_dreg (cfg, val->type);
+					ins->dreg = alloc_dreg (cfg, (MonoStackType)val->type);
 				} else {
 					MONO_INST_NEW (cfg, ins, OP_BOX);
 					ins->type = STACK_OBJ;
 					ins->klass = klass;
 					ins->sreg1 = val->dreg;
-					ins->dreg = alloc_dreg (cfg, val->type);
+					ins->dreg = alloc_dreg (cfg, (MonoStackType)val->type);
 				}
 				MONO_ADD_INS (cfg->cbb, ins);
 				*sp++ = ins;
@@ -9770,13 +9773,13 @@ calli_end:
 			if (is_instance && ftype->attrs & FIELD_ATTRIBUTE_STATIC) {
 				switch (il_op) {
 				case MONO_CEE_LDFLD:
-					il_op = CEE_LDSFLD;
+					il_op = MONO_CEE_LDSFLD;
 					break;
 				case MONO_CEE_STFLD:
-					il_op = CEE_STSFLD;
+					il_op = MONO_CEE_STSFLD;
 					break;
 				case MONO_CEE_LDFLDA:
-					il_op = CEE_LDSFLDA;
+					il_op = MONO_CEE_LDSFLDA;
 					break;
 				default:
 					g_assert_not_reached ();
@@ -12753,11 +12756,11 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
-	stacktypes ['i'] = STACK_PTR;
-	stacktypes ['l'] = STACK_I8;
-	stacktypes ['f'] = STACK_R8;
+	stacktypes [(int)'i'] = STACK_PTR;
+	stacktypes [(int)'l'] = STACK_I8;
+	stacktypes [(int)'f'] = STACK_R8;
 #ifdef MONO_ARCH_SIMD_INTRINSICS
-	stacktypes ['x'] = STACK_VTYPE;
+	stacktypes [(int)'x'] = STACK_VTYPE;
 #endif
 
 #if SIZEOF_REGISTER == 4

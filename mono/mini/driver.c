@@ -102,7 +102,7 @@ static const struct msgstr_t {
 #undef OPTFLAG
 };
 static const gint16 opt_names [] = {
-#define OPTFLAG(id,shift,name,desc) [(shift)] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define OPTFLAG(id,shift,name,desc) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "optflags-def.h"
 #undef OPTFLAG
 };
@@ -948,7 +948,7 @@ test_thread_func (ThreadData *td)
 				}
 			} else {
 				int pos = random () % MAX_ADDR;
-				char *addr = (char*)(gulong) pos;
+				char *addr = (char*)(uintptr_t)pos;
 				MonoJitInfo *ji;
 
 				ji = mono_jit_info_table_find (domain, addr);
@@ -2590,11 +2590,13 @@ mono_jit_init (const char *file)
  * \returns the \c MonoDomain representing the domain where the assembly
  * was loaded.
  */
+G_BEGIN_DECLS // FIXMEcxx? for wasm
 MonoDomain * 
 mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
 	return mini_init (domain_name, runtime_version);
 }
+G_END_DECLS // FIXMEcxx? for wasm
 
 /**
  * mono_jit_cleanup:
@@ -2674,6 +2676,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 /**
  * mono_jit_set_aot_mode:
  */
+G_BEGIN_DECLS // FIXMEcxx? for wasm
 void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
@@ -2684,6 +2687,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	mono_runtime_set_execution_mode ((MonoEEMode)mode);
 
 }
+G_END_DECLS
 
 mono_bool
 mono_jit_aot_compiling (void)

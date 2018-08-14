@@ -15,8 +15,12 @@
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 
+G_BEGIN_DECLS
+
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
+
+G_END_DECLS
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -210,7 +214,7 @@ mono_wasm_set_timeout (int timeout, int id)
 void
 mono_arch_register_icall (void)
 {
-	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
+	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", (gconstpointer)mono_wasm_set_timeout);
 }
 
 void
@@ -223,8 +227,10 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 The following functions don't belong here, but are due to laziness.
 */
 gboolean mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
+G_BEGIN_DECLS
 void * getgrnam (const char *name);
 void * getgrgid (gid_t gid);
+G_END_DECLS
 int inotify_init (void);
 int inotify_rm_watch (int fd, int wd);
 int inotify_add_watch (int fd, const char *pathname, uint32_t mask);
@@ -267,15 +273,20 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 	return 0;
 }
 
+#ifdef __cplusplus
+#define MONO_RESTRICT /* nothing */
+#else
+#define MONO_RESTRICT restrict
+#endif
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *MONO_RESTRICT attr, size_t *MONO_RESTRICT stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * restrict set, sigset_t * restrict oset)
+pthread_sigmask (int how, const sigset_t * MONO_RESTRICT set, sigset_t * MONO_RESTRICT oset)
 {
 	return 0;
 }
@@ -294,6 +305,8 @@ getdtablesize (void)
 	return 256; //random constant that is the fd limit
 }
 
+G_BEGIN_DECLS
+
 void *
 getgrnam (const char *name)
 {
@@ -305,6 +318,8 @@ getgrgid (gid_t gid)
 {
 	return NULL;
 }
+
+G_END_DECLS
 
 int
 inotify_init (void)
