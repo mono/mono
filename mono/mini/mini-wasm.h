@@ -52,15 +52,17 @@ typedef struct {
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 
+G_BEGIN_DECLS
+
 void mono_wasm_debugger_init (void);
 
-G_BEGIN_DECLS
 void mono_wasm_enable_debugging (void);
-G_END_DECLS
 void mono_wasm_breakpoint_hit (void);
 void mono_wasm_set_timeout (int timeout, int id);
 
 void mono_wasm_single_step_hit (void);
 void mono_wasm_breakpoint_hit (void);
+
+G_END_DECLS
 
 #endif /* __MONO_MINI_WASM_H__ */  
