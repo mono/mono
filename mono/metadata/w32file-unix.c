@@ -4913,7 +4913,7 @@ mono_w32file_init (void)
 #if HOST_DARWIN
 	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)dlsym (RTLD_DEFAULT, "clonefile");
+	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
