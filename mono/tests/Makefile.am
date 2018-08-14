@@ -2063,7 +2063,7 @@ test-multi-netmodule-4-exe.exe: test-multi-netmodule-4-exe.cs test-multi-netmodu
 	$(Q) $(MCS) -r:test-multi-netmodule-2-dll1.dll -out:$@ $<
 
 test-multi-netmodule: test-multi-netmodule-4-exe.exe
-	$(Q) $(RUNTIME) test-multi-netmodule-4-exe.exe > test-multi-netmodule-4-exe.exe.stdout 2> test-multi-netmodule-4-exe.exe.stderr
+	$(Q) $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" $<
 
 EXTRA_DIST += custom-attr-errors.cs custom-attr-errors-lib.cs
 
@@ -2073,7 +2073,7 @@ custom-attr-errors.exe custom-attr-errors-lib.dll: custom-attr-errors.cs custom-
 	$(Q) $(MCS) /t:library custom-attr-errors-lib.cs
 
 test-cattr-type-load: custom-attr-errors.exe
-	$(Q) $(RUNTIME) custom-attr-errors.exe > custom-attr-errors.exe.stdout 2> custom-attr-errors.exe.stderr
+	$(Q) $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" $<
 
 EXTRA_DIST += reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
 
