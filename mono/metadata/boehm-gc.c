@@ -1404,7 +1404,7 @@ mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
-	return mono_gc_wbarrier_range_copy;
+	return &mono_gc_wbarrier_range_copy;
 }
 
 guint8*
