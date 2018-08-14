@@ -158,8 +158,9 @@ mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
 	return FALSE;
 }
 
-
+G_BEGIN_DECLS
 extern void schedule_background_exec (void);
+G_END_DECLS
 
 static GSList *jobs;
 
