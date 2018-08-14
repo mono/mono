@@ -19,8 +19,6 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/icalls.h>
 
-G_BEGIN_DECLS
-
 void mono_console_init (void);
 void mono_console_handle_async_ops (void);
 
@@ -47,7 +45,5 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoStringHandle keypad, MonoStringHand
 ICALL_EXPORT
 void
 ves_icall_System_ConsoleDriver_Suspend (MonoError* error);
-
-G_END_DECLS
 
 #endif /* _MONO_METADATA_CONSOLEIO_H */

@@ -6913,7 +6913,7 @@ mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
-static gpointer
+static guint8*
 get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 param_count, gboolean aot)
 {
 	guint8 *code, *start;
@@ -7479,7 +7479,7 @@ mono_arch_skip_single_step (MonoContext *ctx)
 /*------------------------------------------------------------------*/
 
 gpointer
-mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
+mono_arch_get_seq_point_info (MonoDomain *domain, gpointer code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;

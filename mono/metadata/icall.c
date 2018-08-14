@@ -103,6 +103,7 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/metadata/environment-internal.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
@@ -143,9 +144,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
+ICALL_EXPORT
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (system_version, "System", "Version")
@@ -3181,7 +3182,7 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_
 		 * the dynamic case as well ?
 		 */
 		mono_image_lock ((MonoImage*)image);
-		MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, mono_g_hash_table_lookup (image->generic_def_objects, imethod));
+		MonoReflectionMethodHandle res = MONO_HANDLE_NEW (MonoReflectionMethod, (MonoReflectionMethod*)mono_g_hash_table_lookup (image->generic_def_objects, imethod));
 		mono_image_unlock ((MonoImage*)image);
 
 		if (!MONO_HANDLE_IS_NULL (res))
@@ -6068,7 +6069,7 @@ ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32
 		ERROR_DECL (ignore_inner_error);
 		// FIXME ignoring error
 		// FIXME Push MONO_HANDLE_NEW to lower layers.
-		MonoStringHandle result = MONO_HANDLE_NEW (MonoString, mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, ignore_inner_error));
+		MonoStringHandle result = MONO_HANDLE_NEW (MonoString, (MonoString*)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, ignore_inner_error));
 		mono_error_cleanup (ignore_inner_error);
 		return result;
 	}
@@ -8460,7 +8461,7 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
+(mono_register_jit_icall_full) (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
 	MonoJitICallInfo *info;
 
@@ -8500,7 +8501,7 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+(mono_register_jit_icall) (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 {
 	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
 }

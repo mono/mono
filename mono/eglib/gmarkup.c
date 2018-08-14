@@ -45,6 +45,8 @@
 
 #define set_error(msg, ...) do { if (gerror != NULL) *gerror = g_error_new (GINT_TO_POINTER (1), 1, msg, __VA_ARGS__); } while (0);
 
+#define ParseState MonoGMarkupParseState
+
 typedef enum {
 	START,
 	START_ELEMENT,
@@ -447,7 +449,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			}
 			
-			text = current->data;
+			text = (char*)current->data;
 			if (context->parser.end_element != NULL){
 				context->parser.end_element (context, text, context->user_data, gerror);
 				if (gerror != NULL && *gerror != NULL){

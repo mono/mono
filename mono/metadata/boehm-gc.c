@@ -85,7 +85,7 @@ typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
 	guint32   size;
-	guint8    type;
+	guint8    type; // FIXMEcxx GCHandleType type : 8;
 	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
@@ -546,7 +546,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }
@@ -699,7 +699,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	return NULL;
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	void *start = GC_MALLOC_UNCOLLECTABLE (size);
@@ -714,7 +714,7 @@ mono_gc_free_fixed (void* addr)
 	GC_FREE (addr);
 }
 
-void *
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
@@ -746,7 +746,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj;
@@ -780,7 +780,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *obj;
@@ -817,7 +817,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return obj;
 }
 
-void *
+void* // FIXMEcxx MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *obj = (MonoString *)GC_MALLOC_ATOMIC (size);
@@ -835,16 +835,16 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	return obj;
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
-void*
+void* // FIXMEcxx MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
 int
@@ -1396,15 +1396,15 @@ mono_gc_is_disabled (void)
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gpointer /* FIXMEcxx gconstpointer*/ _src, int size)
 {
 	g_assert_not_reached ();
 }
 
-void*
+void* // FIXMEcxx MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
-	return &mono_gc_wbarrier_range_copy;
+	return (void*)mono_gc_wbarrier_range_copy;
 }
 
 guint8*
@@ -1516,7 +1516,7 @@ mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_da
 	g_assert (GC_base (obj) == (char*)obj - offset);
 #endif
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, (GC_finalization_proc)user_data, GUINT_TO_POINTER (offset), NULL, NULL);
+	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
 #ifndef HOST_WIN32
@@ -1804,7 +1804,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 #endif
 	unlock_handles (handles);
 	res = MONO_GC_HANDLE (slot, handles->type);
-	MONO_PROFILER_RAISE (gc_handle_created, (res, handles->type, obj));
+	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
 	return res;
 }
 
@@ -2005,7 +2005,7 @@ mono_gchandle_free (guint32 gchandle)
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
-	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, handles->type));
+	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
 }
 
 /**
