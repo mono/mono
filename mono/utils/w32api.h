@@ -7,7 +7,7 @@
 
 #include <glib.h>
 
-G_BEGIN_DECLS
+
 
 #ifndef HOST_WIN32
 
@@ -57,6 +57,6 @@ typedef struct pollfd {
 
 #endif /* HOST_WIN32 */
 
-G_END_DECLS
+
 
 #endif /* __MONO_UTILS_W32API_H__ */

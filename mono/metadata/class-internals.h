@@ -1005,8 +1005,10 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_loader_init           (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_loader_cleanup        (void);
@@ -1032,8 +1034,10 @@ mono_loader_unlock_if_inited (void);
 void
 mono_reflection_init       (void);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_icall_init            (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_icall_cleanup         (void);
@@ -1059,8 +1063,13 @@ mono_create_icall_signature (const char *sigstr);
 MonoJitICallInfo *
 mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean is_save);
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define mono_register_jit_icall(func, name, sig, no_wrapper) (mono_register_jit_icall ((gpointer)(func), (name), (sig), (no_wrapper)))
+
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
+
+#define mono_register_jit_icall_full(func, name, sig, nowrap, csym) (mono_register_jit_icall_full ((gpointer)(func), (name), (sig), (nowrap), (csym)))
 
 void
 mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper);
@@ -1173,6 +1182,8 @@ mono_class_alloc (MonoClass *klass, int size);
 gpointer
 mono_class_alloc0 (MonoClass *klass, int size);
 
+#define mono_class_alloc0(klass, size) (g_cast (mono_class_alloc0 (klass, size)))
+
 void
 mono_class_setup_interfaces (MonoClass *klass, MonoError *error);
 
@@ -1229,8 +1240,10 @@ mono_class_get_checked (MonoImage *image, guint32 type_token, MonoError *error);
 MonoClass *
 mono_class_get_and_inflate_typespec_checked (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error);
 
+G_BEGIN_DECLS // FIXMEcxx for tessts
 MonoClass *
 mono_class_from_name_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
+G_END_DECLS // FIXMEcxx for tessts
 
 MonoClass *
 mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
@@ -1253,11 +1266,13 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_error_set_for_class_failure (MonoError *orerror, const MonoClass *klass);
 
 gboolean
 mono_class_has_failure (const MonoClass *klass);
+G_END_DECLS // FIXMEcxx for pedump
 
 /* Kind specific accessors */
 MonoGenericClass*
