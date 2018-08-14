@@ -15,8 +15,12 @@
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 
+G_BEGIN_DECLS
+
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
+
+G_END_DECLS
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -299,6 +303,8 @@ getdtablesize (void)
 	return 256; //random constant that is the fd limit
 }
 
+G_BEGIN_DECLS
+
 void *
 getgrnam (const char *name)
 {
@@ -310,6 +316,8 @@ getgrgid (gid_t gid)
 {
 	return NULL;
 }
+
+G_END_DECLS
 
 int
 inotify_init (void)
