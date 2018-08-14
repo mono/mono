@@ -30,13 +30,18 @@
 
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices
 {
 	public static class RuntimeInformation
 	{
-		[DllImport("__Internal", CharSet = CharSet.Auto)]
-		static extern string mono_config_get_cpu ();
+		/* gets the runtime's arch from the value it uses for DllMap */
+		static extern string RuntimeArchitecture
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
 
 		public static string FrameworkDescription {
 			get {
@@ -78,7 +83,7 @@ namespace System.Runtime.InteropServices
 		{
 			get
 			{
-				switch (mono_config_get_cpu ()) {
+				switch (RuntimeArchitecture) {
 				case "arm":
 				case "armv8":
 					return Environment.Is64BitOperatingSystem ? Architecture.Arm64 : Architecture.Arm;
@@ -99,7 +104,7 @@ namespace System.Runtime.InteropServices
 				// we can use the runtime's compiled config options for DllMaps here
 				// process architecure for us is runtime architecture (OS is much harder)
 				// see for values: mono-config.c
-				switch (mono_config_get_cpu ()) {
+				switch (RuntimeArchitecture) {
 				case "x86":
 					return Architecture.X86;
 				case "x86-64":
