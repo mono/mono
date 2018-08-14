@@ -1402,6 +1402,7 @@ ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this_obj)
 	internal->state = ThreadState_Unstarted;
 
 	mono_atomic_cas_ptr ((volatile gpointer *)&this_obj->internal_thread, internal, NULL);
+	mono_gc_wbarrier_generic_nostore (&this_obj->internal_thread);
 }
 
 MonoThread *
