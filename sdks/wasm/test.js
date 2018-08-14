@@ -147,7 +147,7 @@ for (var i = 0; i < arguments.length; ++i) {
 
 	if (res == "SUCCESS") {
 		while (mono_send_msg ("pump-test", arguments [i]) != "DONE") {
-			Module.pump_message ();
+			MONO.pump_message ();
 			print ("|");
 		}
 		print ("\nDONE")
