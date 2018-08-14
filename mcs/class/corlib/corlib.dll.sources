@@ -830,9 +830,6 @@ System.Threading/TimerCallback.cs
 System.Threading/Volatile.cs
 System.Threading/WaitHandle.cs
 
-System.Threading.Tasks/DecoupledTask.cs
-../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
-
 CoreFoundation/CFHelpers.cs
 
 ReferenceSources/SR.cs

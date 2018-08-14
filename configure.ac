@@ -109,7 +109,8 @@ extra_runtime_ldflags=""
 # Hack for WASM
 # Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
 # work around it by using a feature flag instead
-AC_ARG_ENABLE(wasm,[  --enable-wasm    Hack to set the current runtime to target wasm], enable_wasm=$enableval)
+AC_ARG_ENABLE(wasm,[  --enable-wasm           Hack to set the runtime host to wasm ], enable_wasm=$enableval)
+AC_ARG_ENABLE(wasm,[  --enable-wasm-aot       Hack to set the runtime target wasm], enable_wasm_aot=$enableval)
 
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
@@ -1904,6 +1905,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(getrlimit)
 	AC_CHECK_FUNCS(prctl)
 	AC_CHECK_FUNCS(arc4random)
+	AC_CHECK_FUNCS(nl_langinfo)
 
 	AC_CHECK_FUNCS(sched_getaffinity)
 	AC_CHECK_FUNCS(sched_setaffinity)
@@ -3885,6 +3887,20 @@ BTLS_SUPPORTED=no
 with_tls=pthread
 target_mach=no
 
+elif test "x$enable_wasm_aot" = "xyes"; then
+cross_compiling=yes
+target=wasm
+AC_DEFINE(MONO_CROSS_COMPILE,1,[The runtime is compiled for cross-compiling mode])
+enable_mcs_build=no
+enable_support_build=no
+BTLS_SUPPORTED=no
+TARGET=WASM
+arch_target=wasm
+AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+BTLS_SUPPORTED=no
+with_tls=pthread
+target_mach=no
+
 else
 
 case "$host" in
@@ -4593,8 +4609,9 @@ if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
 fi
 
-AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h localcharset.h sys/types.h sys/resource.h)
-AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+=" -liconv -lcharset"])])
+AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
+dnl giconv.c will check on HAVE_ICONV_H but we need this for link time
+AC_CHECK_LIB(iconv, iconv_open)
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 

@@ -23,10 +23,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-#if !(MONOTOUCH || MONODROID)
 using System.Reflection;
-#endif
+using System.Runtime.CompilerServices;
 
 namespace Mono
 {
@@ -45,13 +45,9 @@ namespace Mono
 					if (systemDependency != null)
 						return systemDependency;
 
-					// Not using `MOBILE` as a conditional here because we want to use this on full-aot.
-#if !(MONOTOUCH || MONODROID)
-					// On Mobile, we initializes this during system startup.
 					systemDependency = ReflectionLoad ();
-#endif
 					if (systemDependency == null)
-						throw new PlatformNotSupportedException ("Cannot get `ISystemDependencyProvider`.");
+						throw new PlatformNotSupportedException ($"Cannot find '{TypeName}' dependency");
 
 					return systemDependency;
 				}
@@ -67,22 +63,21 @@ namespace Mono
 			}
 		}
 
-#if !(MONOTOUCH || MONODROID)
-		const string TypeName = "Mono.SystemDependencyProvider, " + Consts.AssemblySystem;
+		const string TypeName = "Mono.SystemDependencyProvider, System";
 
+		[PreserveDependency ("get_Instance()", "Mono.SystemDependencyProvider", "System")]
 		static ISystemDependencyProvider ReflectionLoad ()
 		{
 			var type = Type.GetType (TypeName);
 			if (type == null)
 				return null;
 
-			var prop = type.GetProperty ("Instance", BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public);
+			var prop = type.GetProperty ("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
 			if (prop == null)
 				return null;
 
-			return (ISystemDependencyProvider)prop.GetValue (null);
+			return (ISystemDependencyProvider) prop.GetValue (null);
 		}
-#endif
 
 		static object locker = new object ();
 		static ISystemDependencyProvider systemDependency;
