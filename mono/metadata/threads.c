@@ -5274,21 +5274,11 @@ mono_thread_info_get_last_managed (MonoThreadInfo *info)
 	 * any runtime locks while unwinding. In coop case we shouldn't safepoint in regions
 	 * where we hold runtime locks.
 	 */
-	gboolean restore_is_async_context = FALSE;
-	if (!mono_threads_are_safepoints_enabled ()) {
-		restore_is_async_context = TRUE;
-		// If this assert fails, that means there is recursion and/or
-		// concurrency, such that setting async_context to FALSE is incorrect,
-		// and it should be saved/set/restored or more generally just incremented/decremented.
-		g_assert (!mono_thread_info_is_async_context ());
+	if (!mono_threads_are_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (TRUE);
-	}
-
 	mono_get_eh_callbacks ()->mono_walk_stack_with_state (last_managed, mono_thread_info_get_suspend_state (info), MONO_UNWIND_SIGNAL_SAFE, &ji);
-
-	if (restore_is_async_context)
+	if (!mono_threads_are_safepoints_enabled ())
 		mono_thread_info_set_is_async_context (FALSE);
-
 	return ji;
 }
 
