@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-G_BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
 	/* Disables AOT mode */
@@ -518,4 +520,6 @@ mono_wasm_array_to_heap (MonoArray *src, char *dest)
 	memcpy (dest, source_addr, mono_array_length(src) * element_size);
 }
 
-G_END_DECLS
+#ifdef __cplusplus
+} // extern "C"
+#endif
