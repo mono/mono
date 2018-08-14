@@ -820,6 +820,8 @@ namespace System.Reflection {
 		public extern int get_core_clr_security_level ();
 #endif
 
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoCMethod> (other);
+
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
 		}
