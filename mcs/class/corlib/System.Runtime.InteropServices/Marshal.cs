@@ -1897,5 +1897,64 @@ namespace System.Runtime.InteropServices
 			throw new NotSupportedException();
 		}
 #endif
+
+		internal struct MarshalerInstanceKey {
+			public Type Type;
+			public string Cookie;
+
+			public override int GetHashCode () {
+				int result = 0;
+				if (Type != null)
+					result = Type.GetHashCode();
+				if (Cookie != null)
+					result ^= Cookie.GetHashCode();
+				return result;
+			}
+		}
+
+		internal class MarshalerInstanceKeyComparer : IEqualityComparer<MarshalerInstanceKey> {
+			public bool Equals (MarshalerInstanceKey lhs, MarshalerInstanceKey rhs) {
+				return (lhs.Type == rhs.Type) && (lhs.Cookie == rhs.Cookie);
+			}
+
+			public int GetHashCode (MarshalerInstanceKey key) {
+				return key.GetHashCode ();
+			}
+		}
+
+		internal static Dictionary<MarshalerInstanceKey, ICustomMarshaler> MarshalerInstanceCache = 
+			new Dictionary<MarshalerInstanceKey, ICustomMarshaler> (new MarshalerInstanceKeyComparer ());
+
+		internal static object[] MarshalerGetInstanceArgs = new object[1];
+
+		internal static ICustomMarshaler GetCustomMarshalerInstance (string cookie) {
+			System.Console.WriteLine ("GetCustomMarshalerInstance {0}", cookie);
+			return null;
+
+			/*
+
+			System.Console.WriteLine ("GetCustomMarshalerInstance {0} {1}", marshalerTypeHandle, cookie);
+
+			var marshalerType = Type.GetTypeFromHandle (marshalerTypeHandle);
+
+			ICustomMarshaler result;
+			var key = new MarshalerInstanceKey {
+				Type = marshalerType,
+				Cookie = cookie
+			};
+
+			lock (MarshalerInstanceCache)
+			if (!MarshalerInstanceCache.TryGetValue (key, out result)) {
+				MarshalerGetInstanceArgs[0] = cookie;
+				result = (ICustomMarshaler) marshalerType.InvokeMember (
+					"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+					null, null, MarshalerGetInstanceArgs
+				);
+				MarshalerInstanceCache[key] = result;
+			}
+
+			return result;
+			*/
+		}
 	}
 }
