@@ -145,15 +145,11 @@ mono_native_state_add_frames (JsonWriter *writer, int num_frames, MonoFrameSumma
 	mono_json_writer_array_end (writer);
 }
 
-static void
-mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx)
+void
+mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean first_thread)
 {
-	static gboolean not_first_thread;
-
-	if (not_first_thread) {
+	if (!first_thread) {
 		mono_json_writer_printf (writer, ",\n");
-	} else {
-		not_first_thread = TRUE;
 	}
 
 	mono_json_writer_indent (writer);
@@ -181,7 +177,8 @@ mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, Mon
 	mono_json_writer_object_key(writer, "native_thread_id");
 	mono_json_writer_printf (writer, "\"0x%x\",\n", (gpointer) thread->native_thread_id);
 
-	mono_native_state_add_ctx (writer, ctx);
+	if (ctx)
+		mono_native_state_add_ctx (writer, ctx);
 
 	if (thread->num_managed_frames > 0) {
 		mono_native_state_add_frames (writer, thread->num_managed_frames, thread->managed_frames, "managed_frames");
@@ -476,7 +473,7 @@ mono_native_state_free (JsonWriter *writer, gboolean free_data)
 
 	// Make this interface work like the g_string free does
 	if (!free_data)
-		g_strdup (writer->text->str);
+		output = g_strdup (writer->text->str);
 
 	mono_json_writer_destroy (writer);
 	return output;
@@ -498,7 +495,10 @@ mono_summarize_native_state_end (void)
 void
 mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx)
 {
-	mono_native_state_add_thread (&writer, thread, ctx);
+	
+	static gboolean not_first_thread = FALSE;
+	mono_native_state_add_thread (&writer, thread, ctx, !not_first_thread);
+	not_first_thread = TRUE;
 }
 
 #endif // HOST_WIN32
