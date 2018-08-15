@@ -128,14 +128,34 @@ packager.exe: packager.cs Mono.Cecil.dll
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
-	touch $@
-
+	touch $@	
+	
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 .stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
 	mono packager.exe -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	cp test.js test-suite/
 	touch $@
+
+
+MINI_BASIC_TEST_FILES= \
+    basic-calls.cs  \
+    basic-float.cs  \
+    basic-long.cs   \
+    basic-math.cs   \
+    basic.cs        \
+    objects.cs
+
+MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
+
+mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
+
+.stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
+	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
+	touch $@
+
+build-aot-test: .stamp-build-aot-test
 
 build-debug-sample: .stamp-build-debug-sample
 
