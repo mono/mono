@@ -187,9 +187,9 @@ mono_w32handle_convert_wait_ret (guint32 ires, guint32 inumobjects)
 	MonoW32HandleWaitRet const numobjects = (MonoW32HandleWaitRet)inumobjects;
 
 	if (res >= WAIT_OBJECT_0 && res <= WAIT_OBJECT_0 + numobjects - 1)
-		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + (res - WAIT_OBJECT_0);
+		return MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + (res - (MonoW32HandleWaitRet)WAIT_OBJECT_0);
 	else if (res >= WAIT_ABANDONED_0 && res <= WAIT_ABANDONED_0 + numobjects - 1)
-		return MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + (res - WAIT_ABANDONED_0);
+		return MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + (res - (MonoW32HandleWaitRet)WAIT_ABANDONED_0);
 	else if (res == WAIT_IO_COMPLETION)
 		return MONO_W32HANDLE_WAIT_RET_ALERTED;
 	else if (res == WAIT_TIMEOUT)
