@@ -256,7 +256,7 @@ static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char* method_name = (const char*)&icall_names_str + (*(guint16*)elem);
-	return strcmp (key, method_name);
+	return strcmp ((const char*)key, method_name);
 }
 
 static gsize
@@ -290,7 +290,7 @@ static int
 compare_class_imap (const void *key, const void *elem)
 {
 	const char* class_name = (const char*)&icall_type_names_str + (*(guint16*)elem);
-	return strcmp (key, class_name);
+	return strcmp ((const char*)key, class_name);
 }
 
 static const IcallTypeDesc*
