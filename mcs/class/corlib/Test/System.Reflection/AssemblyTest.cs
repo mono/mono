@@ -1292,14 +1292,16 @@ namespace MonoTests.System.Reflection
 		[ExpectedException (typeof (ArgumentException))]
 		public void LoadFileRelativeThrows ()
 		{
-			Assembly.LoadFile ("non-existent/relative/path.dll");
+			Assembly.LoadFile (Path.Combine ("non-existent", "relative", "path.dll"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void LoadFileAbsoluteNotFoundThrows ()
 		{
-			Assembly.LoadFile ("/non-existent/absolute/path.dll");
+			// have to use GetFullPath so we get C:\... on Windows
+			var abspath = Path.GetFullPath (Path.Combine ("non-existent", "absolute", "path.dll"));
+			Assembly.LoadFile (abspath);
 		}
 	}
 
