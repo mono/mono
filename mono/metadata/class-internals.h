@@ -1245,8 +1245,10 @@ mono_class_get_checked (MonoImage *image, guint32 type_token, MonoError *error);
 MonoClass *
 mono_class_get_and_inflate_typespec_checked (MonoImage *image, guint32 type_token, MonoGenericContext *context, MonoError *error);
 
+G_BEGIN_DECLS // FIXMEcxx for tests
 MonoClass *
 mono_class_from_name_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
+G_END_DECLS // FIXMEcxx for tests
 
 MonoClass *
 mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
