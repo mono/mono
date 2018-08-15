@@ -653,6 +653,7 @@ void    g_array_set_size          (GArray *array, gint length);
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -684,6 +685,7 @@ gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
