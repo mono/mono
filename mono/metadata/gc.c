@@ -94,6 +94,12 @@ static MonoCoopCond pending_done_cond;
 static MonoCoopMutex pending_done_mutex;
 #endif
 
+static char* gc_params_options;
+static char* gc_debug_options;
+
+#define MONO_GC_PARAMS_NAME	"MONO_GC_PARAMS"
+#define MONO_GC_DEBUG_NAME	"MONO_GC_DEBUG"
+
 static void object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*));
 
 static void reference_queue_proccess_all (void);
@@ -165,6 +171,48 @@ coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32
 		}
 	}
 	return res;
+}
+
+void
+mono_gc_params_set (const char* options)
+{
+	if (gc_params_options)
+		g_free (gc_params_options);
+
+	gc_params_options = g_strdup (options);
+}
+
+char *
+mono_gc_params_get ()
+{
+	char *env;
+	if ((env = g_getenv (MONO_GC_PARAMS_NAME)) || gc_params_options) {
+		char *params_opts = g_strdup_printf ("%s,%s", gc_params_options ? gc_params_options  : "", env ? env : "");
+		g_free (env);
+		return params_opts;
+	}
+	return NULL;	
+}
+
+void
+mono_gc_debug_set (const char* options)
+{
+	if (gc_debug_options)
+		g_free (gc_debug_options);
+
+	gc_debug_options = g_strdup (options);
+}
+
+char *
+mono_gc_debug_get ()
+{
+	char *env;
+	if ((env = g_getenv (MONO_GC_DEBUG_NAME)) || gc_debug_options) {
+		char *debug_opts = g_strdup_printf ("%s,%s", gc_debug_options ? gc_debug_options  : "", env ? env : "");
+		g_free (env);
+		return debug_opts;
+	}
+	return NULL;
 }
 
 /* 

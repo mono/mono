@@ -116,6 +116,8 @@ void
 mono_gc_base_init (void)
 {
 	char *env;
+	char *params_opts = NULL;
+	char *debug_opts = NULL;
 
 	if (gc_initialized)
 		return;
@@ -134,19 +136,21 @@ mono_gc_base_init (void)
 	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
 	GC_set_no_dls (TRUE);
 #endif
+
+	debug_opts = mono_gc_debug_get();
+	if (debug_opts)
 	{
-		if ((env = g_getenv ("MONO_GC_DEBUG"))) {
-			char **opts = g_strsplit (env, ",", -1);
-			for (char **ptr = opts; ptr && *ptr; ptr ++) {
-				char *opt = *ptr;
-				if (!strcmp (opt, "do-not-finalize")) {
-					mono_do_not_finalize = 1;
-				} else if (!strcmp (opt, "log-finalizers")) {
-					mono_log_finalizers = 1;
-				}
+		char **opts = g_strsplit (debug_opts, ",", -1);
+		for (char **ptr = opts; ptr && *ptr; ptr ++) {
+			char *opt = *ptr;
+			if (!strcmp (opt, "do-not-finalize")) {
+				mono_do_not_finalize = 1;
+			} else if (!strcmp (opt, "log-finalizers")) {
+				mono_log_finalizers = 1;
 			}
-			g_free (env);
 		}
+		g_strfreev (opts);
+		g_free (debug_opts);
 	}
 
 	/* cache value rather than calling during collection since g_hasenv may take locks and can deadlock */
@@ -161,10 +165,12 @@ mono_gc_base_init (void)
 	GC_init_gcj_malloc (5, NULL);
 	GC_allow_register_threads ();
 
-	if ((env = g_getenv ("MONO_GC_PARAMS"))) {
-		char **ptr, **opts = g_strsplit (env, ",", -1);
+	params_opts = mono_gc_params_get();
+	if (params_opts) {
+		char **ptr, **opts = g_strsplit (params_opts, ",", -1);
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
+
 			if (g_str_has_prefix (opt, "max-heap-size=")) {
 				size_t max_heap;
 
@@ -208,8 +214,8 @@ mono_gc_base_init (void)
 				*/
 			}
 		}
-		g_free (env);
 		g_strfreev (opts);
+		g_free (params_opts);
 	}
 
 	mono_thread_callbacks_init ();
@@ -1163,16 +1169,6 @@ FILE *
 mono_gc_get_logfile (void)
 {
 	return NULL;
-}
-
-void
-mono_gc_params_set (const char* options)
-{
-}
-
-void
-mono_gc_debug_set (const char* options)
-{
 }
 
 void
