@@ -470,7 +470,7 @@ emit_float_args (MonoCompile *cfg, MonoCallInst *inst, guint8 *code, int *max_le
 	set_code_cursor (cfg, code);
 
 	for (list = inst->float_args; list; list = list->next) {
-		FloatArgData *fad = list->data;
+		FloatArgData *fad = (FloatArgData*)list->data;
 		MonoInst *var = get_vreg_to_inst (cfg, fad->vreg);
 		gboolean imm = arm_is_fpimm8 (var->inst_offset);
 
