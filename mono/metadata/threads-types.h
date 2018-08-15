@@ -248,13 +248,16 @@ void
 ves_icall_System_Threading_Thread_Resume (MonoThreadObjectHandle thread_handle, MonoError *error);
 
 ICALL_EXPORT
-void ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32 state, MonoError *error);
+void
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle thread, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error);
 
 ICALL_EXPORT
-void ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error);
+void
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error);
 
 ICALL_EXPORT
-guint32 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
+guint32 //FIXMEcxx MonoThreadState
+ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error);
 
 ICALL_EXPORT
 gint8 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr);
@@ -441,7 +444,9 @@ mono_thread_resume_interruption (gboolean exec);
 void mono_threads_perform_thread_dump (void);
 
 gboolean
-mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
+mono_thread_create_checked (MonoDomain *domain, gpointer /* FIXMEcxx MonoThreadStart*/ func, gpointer arg, MonoError *error);
+
+#define mono_thread_create_checked(domain, func, arg, error) (mono_thread_create_checked ((domain), (gpointer)(func), (arg), (error)))
 
 void mono_threads_add_joinable_runtime_thread (MonoThreadInfo *thread_info);
 void mono_threads_add_joinable_thread (gpointer tid);
