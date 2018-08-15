@@ -160,7 +160,9 @@ gboolean mono_gc_user_markers_supported (void);
  * size bytes will be available from the returned address (ie, descr
  * must not be stored in the returned memory)
  */
+G_BEGIN_DECLS // FIXMEcxx? Probably because MonoGCDescriptor varies.
 MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+G_END_DECLS // FIXMEcxx?
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
