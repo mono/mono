@@ -46,7 +46,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=2EB20924-0AB7-455D-BCFB-0E4A886B6EF8
+MONO_CORLIB_VERSION=CF78DF15-EC27-443B-A249-111AB1B7B2C1
 
 #
 # Put a quoted #define in config.h.
@@ -1042,16 +1042,25 @@ fi
 
 AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 
-if test "x$enable_cxx" = "xyes"; then
+# C++11 helps with coop handles but we can do without it.
+# -fno-exceptions reduces/removes C++ runtime dependency on some platforms (Linux).
+# FIXME -fno-exceptions should be redundant with some undetermined source code changes.
+# i.e. most functions do not reference C++ runtime. Fix any that do.
 
-	# FIXME Centos6 requires a different flag for prerelease C++11.
+# DO NOT MERGE
+#if test "x$enable_cxx" = "xyes"; then
+if test "x" = "x"; then
+
+	# FIXME mono/corefx/native has a lot of invalid C++98 in its headers
+	# dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
+	# mono/corefx is months behind dotnet/corefx
 	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CXX_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+	CXX_ADD_CFLAGS=' -xc++ -std=gnu++0x -fno-exceptions -fno-rtti '
+	# "c++0x" instead of C++11, for compat with Centos6/gcc4.4
 
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
 	# These give warnings and should be removed. They are C-only.
-	# i.e. C++ never allows these, they are always errors and their warningness is not controllable.
 	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
 	# Likewise with CentOS 6 gcc 4.4.
 	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Werror-implicit-function-declaration"

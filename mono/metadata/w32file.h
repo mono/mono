@@ -21,7 +21,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/icalls.h>
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // FIXMEcxx wasm
 
 /* This is a copy of System.IO.FileAccess */
 typedef enum {

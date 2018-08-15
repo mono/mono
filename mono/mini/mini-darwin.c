@@ -139,9 +139,9 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	 * can be accessed through MonoThreadInfo.
 	 */
 	/* mono_set_lmf_addr () sets this */
-	addr = mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
+	addr = (gpointer*)mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
 	if (addr)
-		lmf = *addr;
+		lmf = (MonoLMF*)*addr;
 
 
 	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = domain;

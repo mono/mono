@@ -36,8 +36,8 @@ MONO_API MONO_RT_EXTERNAL_ONLY void mono_thread_stop (MonoThread *thread);
 MONO_API void mono_thread_new_init (intptr_t tid, void* stack_start,
 				  void* func);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void
-mono_thread_create (MonoDomain *domain, void* func, void* arg);
+MONO_API MONO_RT_EXTERNAL_ONLY void
+mono_thread_create (MonoDomain *domain, void * /* FIXMEcxx MonoThreadStart */ func, void* arg);
 
 MONO_API MonoThread *mono_thread_attach (MonoDomain *domain);
 MONO_API void mono_thread_detach (MonoThread *thread);
