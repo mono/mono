@@ -95,6 +95,93 @@ public:
 
 #endif
 
+#ifdef __cplusplus
+
+/*
+Provide for math on enums.
+This alleviates a fair number of casts in porting C to C++.
+*/
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	return (Enum)~(int)a;			\
+}						\
+						\
+inline Enum					\
+operator| (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a | (int)b);		\
+}						\
+						\
+inline Enum					\
+operator& (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a & (int)b);		\
+}						\
+						\
+inline Enum&					\
+operator|= (Enum& a, Enum b)			\
+{						\
+	return a = (Enum)((int)a | (int)b);	\
+}						\
+						\
+inline Enum&					\
+operator&= (Enum& a, Enum b)			\
+{						\
+	return a = (Enum)((int)a & (int)b);	\
+}						\
+						\
+inline Enum					\
+operator^ (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a ^ (int)b);		\
+}						\
+						\
+inline Enum					\
+operator- (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a - (int)b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, Enum b)			\
+{						\
+	return (Enum)((int)a + (int)b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, int b)			\
+{						\
+	return (Enum)((int)a + b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned b)			\
+{						\
+	return (Enum)((unsigned)a + b);		\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned long b)		\
+{						\
+	return (Enum)((unsigned long)a + b);	\
+}						\
+						\
+inline Enum					\
+operator+ (Enum a, unsigned long long b)	\
+{						\
+	return (Enum)((unsigned long long)a + b); \
+}						\
+} /* extern "C++" */				\
+
+#else
+
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
+
+#endif
+
 G_BEGIN_DECLS
 
 /*
