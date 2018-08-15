@@ -46,6 +46,7 @@ typedef enum {
 } MonoThreadApartmentState;
 
 typedef enum {
+// These values match Windows, but are offset by 2.
 	MONO_THREAD_PRIORITY_LOWEST       = 0,
 	MONO_THREAD_PRIORITY_BELOW_NORMAL = 1,
 	MONO_THREAD_PRIORITY_NORMAL       = 2,
