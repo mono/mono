@@ -2625,7 +2625,8 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 	g_assert (!mono_class_has_ref_info (klass));
 	mono_class_set_ref_info (klass, MONO_HANDLE_CAST (MonoObject, ref_tb));
 
-	MonoReflectionTypeHandle ref_nesting_type = MONO_HANDLE_NEW_GET (MonoReflectionType, ref_tb, nesting_type);
+	MonoReflectionTypeHandle ref_nesting_type;
+	ref_nesting_type = MONO_HANDLE_NEW_GET (MonoReflectionType, ref_tb, nesting_type);
 	/* Put into cache so mono_class_get_checked () will find it.
 	   Skip nested types as those should not be available on the global scope. */
 	if (MONO_HANDLE_IS_NULL (ref_nesting_type))
