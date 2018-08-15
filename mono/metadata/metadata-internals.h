@@ -215,6 +215,13 @@ typedef struct {
 	gboolean (*load_tables) (MonoImage*);
 } MonoImageLoader;
 
+// warning: redefinition of typedef 'MonoAotModule' is a C11 feature [-Wtypedef-redefinition]
+#ifndef MonoAotModule
+#define MonoAotModule MonoAotModule
+struct MonoAotModule;
+typedef struct MonoAotModule MonoAotModule;
+#endif
+
 struct _MonoImage {
 	/*
 	 * This count is incremented during these situations:
@@ -320,7 +327,7 @@ struct _MonoImage {
 	MonoImage **files;
 	guint32 file_count;
 
-	gpointer aot_module;
+	MonoAotModule *aot_module;
 
 	guint8 aotid[16];
 
