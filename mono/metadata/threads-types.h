@@ -24,7 +24,7 @@
 #include <mono/metadata/icalls.h>
 
 /* This is a copy of System.Threading.ThreadState */
-typedef enum {
+typedef enum MonoThreadState {
 	ThreadState_Running = 0x00000000,
 	ThreadState_SuspendRequested = 0x00000002,
 	ThreadState_Background = 0x00000004,
