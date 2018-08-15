@@ -402,6 +402,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\InterfaceMapping.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\IntrospectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\InvalidFilterCriteriaException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ManifestResourceInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberFilter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
@@ -417,6 +418,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionContext.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetInvocationException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetParameterCountException.cs" />
@@ -853,7 +855,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\manifestresourceinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
