@@ -56,8 +56,10 @@ MONO_CLASS_GETTER(m_class_has_dim_conflicts, gboolean, , MonoClass, has_dim_conf
 MONO_CLASS_GETTER(m_class_get_parent, MonoClass *, , MonoClass, parent)
 MONO_CLASS_GETTER(m_class_get_nested_in, MonoClass *, ,  MonoClass, nested_in)
 MONO_CLASS_GETTER(m_class_get_image, MonoImage *, , MonoClass, image)
+G_BEGIN_DECLS // FIXMEcxx for pedump
 MONO_CLASS_GETTER(m_class_get_name, const char *, , MonoClass, name)
 MONO_CLASS_GETTER(m_class_get_name_space, const char *, , MonoClass, name_space)
+G_END_DECLS
 MONO_CLASS_GETTER(m_class_get_type_token, guint32, , MonoClass, type_token)
 MONO_CLASS_GETTER(m_class_get_vtable_size, int, , MonoClass, vtable_size)
 MONO_CLASS_GETTER(m_class_get_interface_count, guint16, , MonoClass, interface_count)
@@ -72,7 +74,9 @@ MONO_CLASS_GETTER(m_class_get_sizes, union _MonoClassSizes, , MonoClass, sizes)
 MONO_CLASS_GETTER(m_class_get_fields, MonoClassField *, , MonoClass, fields)
 MONO_CLASS_GETTER(m_class_get_methods, MonoMethod **, ,  MonoClass, methods)
 MONO_CLASS_GETTER(m_class_get_this_arg, MonoType*, &, MonoClass, this_arg)
+G_BEGIN_DECLS // FIXMEcxx for pedump
 MONO_CLASS_GETTER(m_class_get_byval_arg, MonoType*, &, MonoClass, _byval_arg)
+G_END_DECLS
 MONO_CLASS_GETTER(m_class_get_gc_descr, MonoGCDescriptor, , MonoClass, gc_descr)
 MONO_CLASS_GETTER(m_class_get_runtime_info, MonoClassRuntimeInfo *, , MonoClass, runtime_info)
 MONO_CLASS_GETTER(m_class_get_vtable, MonoMethod **, , MonoClass, vtable)
