@@ -69,7 +69,7 @@ void
 g_qsort_with_data (gpointer base, size_t nmemb, size_t size, GCompareDataFunc compare, gpointer user_data)
 {
 	QSortStack stack[STACK_SIZE], *sp;
-	register char *i, *k, *mid;
+	char *i, *k, *mid;
 	size_t n, n1, n2;
 	char *lo, *hi;
 	int swaplong;
