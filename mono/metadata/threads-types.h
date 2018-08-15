@@ -86,6 +86,10 @@ G_ENUM_FUNCTIONS (MonoThreadCreateFlags)
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer /* FIXMEcxx MonoThreadStart */ func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
 
+#ifdef __cplusplus
+#define mono_thread_create_internal(domain, func, arg, flags, error) (mono_thread_create_internal ((domain), (gpointer)(func), (arg), (flags), (error)))
+#endif
+
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
 ICALL_EXPORT
