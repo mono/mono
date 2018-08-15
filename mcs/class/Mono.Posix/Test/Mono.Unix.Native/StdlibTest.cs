@@ -33,7 +33,7 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void GetPid ()
 		{
-			var currentPID = Mono.Unix.Native.Syscall.getpid();
+			var currentPID = Syscall.getpid();
 			Assert.AreNotEqual (0, currentPID);
 		}
 
