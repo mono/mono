@@ -10,16 +10,16 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // FIXMEcxx wasm
 
 #ifndef DISABLE_JIT
 
-G_END_DECLS
+G_END_DECLS // FIXMEcxx wasm
 
 // include "ir-emit.h"
 #include "cpu-wasm.h"
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // FIXMEcxx wasm
 
 gboolean
 mono_arch_have_fast_tls (void)
@@ -205,11 +205,11 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 #ifdef HOST_WASM
 
-G_END_DECLS
+G_END_DECLS // FIXMEcxx wasm
 
 #include <emscripten.h>
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // FIXMEcxx wasm
 
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
@@ -521,4 +521,7 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
+
 #endif // HOST_WASM
+
+G_END_DECLS // FIXMEcxx wasm

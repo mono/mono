@@ -4773,6 +4773,8 @@ get_fstypename (gchar *utfpath)
 #endif
 }
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 /* Linux has struct statfs which has a different layout */
 gboolean
 mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
@@ -4801,6 +4803,9 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	g_free (utfpath);
 	return status;
 }
+
+G_END_DECLS
+
 #endif
 
 static gboolean

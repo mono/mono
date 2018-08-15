@@ -107,8 +107,10 @@ typedef enum {
 	MONO_W32HANDLE_CAP_SPECIAL_WAIT = 0x08,
 } MonoW32HandleCapability;
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 void
 mono_w32handle_init (void);
+G_END_DECLS
 
 void
 mono_w32handle_cleanup (void);
