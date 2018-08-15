@@ -1245,6 +1245,7 @@ PROFILE_DISABLED_TESTS += \
 	invalid-token.exe \
 	call_missing_method.exe \
 	call_missing_class.exe \
+	custom-attr-errors.exe \
 	ldfld_missing_field.exe \
 	ldfld_missing_class.exe \
 	vt-sync-method.exe \
@@ -1373,6 +1374,9 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	assembly-load-bytes.exe \
 	assembly-load-bytes-bindingredirect.exe
+
+# Tests which require AOT of a multi-netmodule assemblies
+PROFILE_DISABLED_TESTS += test-multi-netmodule-4-exe.exe
 
 # Tests which depend on a case-insensitive filesystem when using AOT
 if HOST_DARWIN
