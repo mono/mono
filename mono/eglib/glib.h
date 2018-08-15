@@ -61,14 +61,39 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
+#endif
+
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
+	g_cast () = delete;
+	g_cast (const g_cast& y) = delete;
+
+	template <typename TTo> operator TTo* () const { return (TTo*)x; }
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
 #endif
 
 #ifdef __cplusplus
