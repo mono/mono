@@ -84,7 +84,7 @@ typedef enum MonoThreadCreateFlags {
 G_ENUM_FUNCTIONS (MonoThreadCreateFlags)
 
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
+mono_thread_create_internal (MonoDomain *domain, gpointer /* FIXMEcxx MonoThreadStart */ func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
