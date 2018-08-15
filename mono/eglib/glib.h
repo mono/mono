@@ -322,7 +322,9 @@ typedef struct _GMemChunk GMemChunk;
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
+G_BEGIN_DECLS // FIXMEcxxwasm
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
+G_END_DECLS // FIXMEcxxwasm
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);

@@ -27,8 +27,6 @@
 #define MONO_ARCH_LLVM_JIT_SUPPORTED 1
 #endif
 
-G_BEGIN_DECLS
-
 typedef unsigned char * (AllocCodeMemoryCb) (LLVMValueRef function, int size);
 typedef void (FunctionEmittedCb) (LLVMValueRef function, void *start, void *end);
 typedef void (ExceptionTableCb) (void *data);
@@ -50,7 +48,5 @@ mono_llvm_optimize_method (MonoEERef mono_ee, LLVMValueRef method);
 
 void
 mono_llvm_set_unhandled_exception_handler (void);
-
-G_END_DECLS
 
 #endif /* __MONO_LLVM_JIT_H__ */
