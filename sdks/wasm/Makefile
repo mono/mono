@@ -137,7 +137,6 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	cp test.js test-suite/
 	touch $@
 
-
 MINI_BASIC_TEST_FILES= \
     basic-calls.cs  \
     basic-float.cs  \
@@ -154,6 +153,17 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 .stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
 	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
 	touch $@
+
+AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
+aot-sample: .stamp-build-aot-test
+	for f in aot/managed/*.dll; do	\
+		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$$f.bc $$f;	\
+	done	\
+
+link-sample: driver.o library_mono.js binding_support.js dotnet_support.js
+	$(EMCC) -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono-aot.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver.o $(TOP)/sdks/out/wasm-aot-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
+
+
 
 build-aot-test: .stamp-build-aot-test
 
