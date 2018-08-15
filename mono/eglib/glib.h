@@ -1293,4 +1293,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H
