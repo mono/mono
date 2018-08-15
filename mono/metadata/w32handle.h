@@ -54,6 +54,8 @@ typedef enum {
 	MONO_W32HANDLE_WAIT_RET_FAILED      = -3,
 } MonoW32HandleWaitRet;
 
+G_ENUM_FUNCTIONS (MonoW32HandleWaitRet)
+
 typedef struct 
 {
 	void (*close)(gpointer data);
@@ -183,6 +185,5 @@ mono_w32handle_convert_wait_ret (guint32 res, guint32 numobjects)
 		g_error ("%s: unknown res value %d", __func__, res);
 }
 #endif
-
 
 #endif /* _MONO_METADATA_W32HANDLE_H_ */
