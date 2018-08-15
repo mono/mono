@@ -15,6 +15,8 @@
 #include "mini.h"
 #include "ee.h"
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 /* Per-domain information maintained by the JIT */
 typedef struct
 {
@@ -568,6 +570,8 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #endif
 
 void mini_register_sigterm_handler (void);
+
+G_END_DECLS
 
 #endif /* __MONO_MINI_RUNTIME_H__ */
 

@@ -344,6 +344,8 @@ typedef struct MonoBasicBlock MonoBasicBlock;
 typedef struct MonoLMF MonoLMF;
 typedef struct MonoSpillInfo MonoSpillInfo;
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 extern MonoCallSpec *mono_jit_trace_calls;
 extern MonoMethodDesc *mono_inject_async_exc_method;
 extern int mono_inject_async_exc_pos;
@@ -2739,5 +2741,7 @@ MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 
 MonoMethod*
 mini_method_to_shared (MonoMethod *method); // null if not shared
+
+G_END_DECLS
 
 #endif /* __MONO_MINI_H__ */

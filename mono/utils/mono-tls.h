@@ -16,6 +16,8 @@
 #include <config.h>
 #include <glib.h>
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 /* TLS entries used by the runtime */
 typedef enum {
 	/* mono_thread_internal_current () */
@@ -98,5 +100,7 @@ void mono_tls_set_jit_tls (gpointer value);
 void mono_tls_set_domain (gpointer value);
 void mono_tls_set_sgen_thread_info (gpointer value);
 void mono_tls_set_lmf_addr (gpointer value);
+
+G_END_DECLS
 
 #endif /* __MONO_TLS_H__ */

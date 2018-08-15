@@ -101,6 +101,8 @@ typedef struct jit_descriptor
   jit_code_entry *first_entry;
 } jit_descriptor;
 
+G_BEGIN_DECLS
+
 /* GDB puts a breakpoint in this function.  */
 void MONO_NEVER_INLINE __jit_debug_register_code(void);
 
@@ -124,6 +126,8 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void) {
 jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
 
 #endif
+
+G_END_DECLS
 
 static MonoImageWriter *xdebug_w;
 static MonoDwarfWriter *xdebug_writer;
