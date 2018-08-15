@@ -220,7 +220,7 @@ ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObjectHand
 
 ICALL_EXPORT
 gint32
-ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, void *buffer, gint32 count,
 						      gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
 ICALL_EXPORT
 gint32
@@ -228,11 +228,11 @@ ves_icall_System_Net_Sockets_Socket_Receive_array_internal (gsize sock, WSABUF *
 							    gint32 *werror, gboolean blocking, MonoError *error);
 ICALL_EXPORT
 gint32
-ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, void *buffer, gint32 count,
 							  gint32 flags, MonoObjectHandle sockaddr, gint32 *werror, gboolean blocking, MonoError *error);
 ICALL_EXPORT
 gint32
-ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, void *buffer, gint32 count,
 						   gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
 ICALL_EXPORT
 gint32
@@ -240,7 +240,7 @@ ves_icall_System_Net_Sockets_Socket_Send_array_internal (gsize sock, WSABUF *buf
 							 gint32 *werror, gboolean blocking, MonoError *error);
 ICALL_EXPORT
 gint32
-ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, gchar *buffer, gint32 count,
+ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, void *buffer, gint32 count,
 						     gint32 flags, MonoObjectHandle sockaddr, gint32 *werror,
 						     gboolean blocking, MonoError *error);
 ICALL_EXPORT
@@ -303,7 +303,7 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoStringHan
 						       MonoArrayHandle pre_buffer, MonoArrayHandle post_buffer,
 						       gint flags, gint32 *werror, gboolean blocking, MonoError *error);
 
-void
+ICALL_EXPORT void
 ves_icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoError *error);
 
 ICALL_EXPORT

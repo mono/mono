@@ -310,7 +310,6 @@ typedef struct {
 	void (*mb_emit_byte) (MonoMethodBuilder *mb, guint8 op);
 } MonoMarshalCallbacks;
 
-G_BEGIN_DECLS
 
 /*type of the function pointer of methods returned by mono_marshal_get_runtime_invoke*/
 typedef MonoObject *(*RuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
@@ -322,8 +321,10 @@ mono_install_marshal_callbacks (MonoMarshalCallbacks *cb);
 
 /* marshaling helper functions */
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_marshal_init (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_marshal_init_tls (void);
@@ -897,6 +898,5 @@ mono_mb_create_and_cache_full (GHashTable *cache, gpointer key,
 							   MonoMethodBuilder *mb, MonoMethodSignature *sig,
 							   int max_stack, WrapperInfo *info, gboolean *out_found);
 
-G_END_DECLS
 
 #endif /* __MONO_MARSHAL_H__ */

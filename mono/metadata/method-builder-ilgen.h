@@ -50,6 +50,10 @@ mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethod
 void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func);
 
+#ifdef __cplusplus
+#define mono_mb_emit_icall(mb, function) mono_mb_emit_icall ((mb), (gpointer)(function))
+#endif
+
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);
 

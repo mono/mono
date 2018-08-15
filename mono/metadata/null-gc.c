@@ -226,13 +226,13 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
 MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
-	return mono_gc_alloc_obj (vtable, size);
+	return (MonoObject*)mono_gc_alloc_obj (vtable, size);
 }
 
 void

@@ -187,7 +187,7 @@ clear_cached_object (MonoDomain *domain, gpointer o, MonoClass *klass)
 
 		if (mono_conc_g_hash_table_lookup_extended (domain->refobject_hash, &pe, &orig_pe, &orig_value)) {
 			mono_conc_g_hash_table_remove (domain->refobject_hash, &pe);
-			free_reflected_entry (orig_pe);
+			free_reflected_entry ((ReflectedEntry*)orig_pe);
 		}
 	}
 	mono_domain_unlock (domain);
@@ -196,7 +196,7 @@ clear_cached_object (MonoDomain *domain, gpointer o, MonoClass *klass)
 static void
 cleanup_refobject_hash (gpointer key, gpointer value, gpointer user_data)
 {
-	free_reflected_entry (key);
+	free_reflected_entry ((ReflectedEntry*)key);
 }
 
 void
@@ -1057,8 +1057,10 @@ param_objects_construct (MonoDomain *domain, MonoClass *refclass, MonoMethodSign
 	}
 
 	/* Handles missing and dbnull are assigned in add_parameter_object_to_array when needed */
-	MonoObjectHandle missing = MONO_HANDLE_NEW (MonoObject, NULL);
-	MonoObjectHandle dbnull = MONO_HANDLE_NEW (MonoObject, NULL);
+	MonoObjectHandle missing;
+	missing = MONO_HANDLE_NEW (MonoObject, NULL);
+	MonoObjectHandle dbnull;
+	dbnull = MONO_HANDLE_NEW (MonoObject, NULL);
 	for (i = 0; i < sig->param_count; ++i) {
 		if (!add_parameter_object_to_array (domain, method, MONO_HANDLE_CAST(MonoObject, member), i, names[i], sig->params[i], types ? types[i] : 0, blobs ? blobs[i] : NULL, mspecs [i + 1], missing, dbnull, res, error))
 			goto leave;
@@ -1260,7 +1262,8 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	goto_if_nok (error, fail);
 	MONO_HANDLE_SET (ret, il, il_arr);
 	uint32_t il_gchandle;
-	guint8* il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
+	guint8* il_data;
+	il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
 	memcpy (il_data, header->code, header->code_size);
 	mono_gchandle_free (il_gchandle);
 
@@ -1925,7 +1928,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		mono_class_init (parent);
 
 		while ((klass = mono_class_get_nested_types (parent, &iter))) {
-			char *lastp;
+			const char *lastp;
 			char *nested_name, *nested_nspace;
 			gboolean match = TRUE;
 
@@ -2104,7 +2107,8 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 
 	/* Enumerate all modules */
 
-	MonoArrayHandle modules = MONO_HANDLE_NEW (MonoArray, NULL);
+	MonoArrayHandle modules;
+	modules = MONO_HANDLE_NEW (MonoArray, NULL);
 	MONO_HANDLE_GET (modules, abuilder, modules);
 	if (!MONO_HANDLE_IS_NULL (modules)) {
 		int n = mono_array_handle_length (modules);
@@ -2116,7 +2120,8 @@ mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *a
 		}
 	}
 
-	MonoArrayHandle loaded_modules = MONO_HANDLE_NEW (MonoArray, NULL);
+	MonoArrayHandle loaded_modules;
+	loaded_modules = MONO_HANDLE_NEW (MonoArray, NULL);
 	MONO_HANDLE_GET (loaded_modules, abuilder, loaded_modules);
 	if (!type && !MONO_HANDLE_IS_NULL(loaded_modules)) {
 		int n = mono_array_handle_length (loaded_modules);
