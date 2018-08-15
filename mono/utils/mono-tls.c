@@ -158,14 +158,20 @@
 
 #endif
 
-/* Tls variables for each MonoTlsKey */
+#ifdef __cplusplus
+// static and anonymous namespace both fail to link otherwise; Linux/amd64/gcc.
+#define MONO_TLS_STATIC /* nothing */
+#else
+#define MONO_TLS_STATIC static
+#endif
 
-static MONO_KEYWORD_THREAD gpointer mono_tls_thread MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_jit_tls MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_domain MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_lmf MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_lmf_addr MONO_TLS_FAST;
+/* Tls variables for each MonoTlsKey */
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_thread MONO_TLS_FAST;
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_jit_tls MONO_TLS_FAST;
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_domain MONO_TLS_FAST;
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_lmf MONO_TLS_FAST;
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
+MONO_TLS_STATIC MONO_KEYWORD_THREAD gpointer mono_tls_lmf_addr MONO_TLS_FAST;
 
 #else
 
@@ -295,29 +301,34 @@ mono_tls_get_tls_setter (MonoTlsKey key, gboolean name)
 }
 
 /* Getters for each tls key */
-gpointer mono_tls_get_thread (void)
+struct _MonoInternalThread*
+mono_tls_get_thread (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_thread, mono_tls_key_thread);
+	return (struct _MonoInternalThread*)MONO_TLS_GET_VALUE (mono_tls_thread, mono_tls_key_thread);
 }
 
-gpointer mono_tls_get_jit_tls (void)
+struct MonoJitTlsData*
+mono_tls_get_jit_tls (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_jit_tls, mono_tls_key_jit_tls);
+	return (struct MonoJitTlsData*)MONO_TLS_GET_VALUE (mono_tls_jit_tls, mono_tls_key_jit_tls);
 }
 
-gpointer mono_tls_get_domain (void)
+struct _MonoDomain*
+mono_tls_get_domain (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_domain, mono_tls_key_domain);
+	return (struct _MonoDomain*)MONO_TLS_GET_VALUE (mono_tls_domain, mono_tls_key_domain);
 }
 
-gpointer mono_tls_get_sgen_thread_info (void)
+struct _SgenThreadInfo*
+mono_tls_get_sgen_thread_info (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
+	return (struct _SgenThreadInfo*)MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
-gpointer mono_tls_get_lmf_addr (void)
+struct MonoLMF**
+mono_tls_get_lmf_addr (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr);
+	return (struct MonoLMF**)MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr);
 }
 
 /* Setters for each tls key */
