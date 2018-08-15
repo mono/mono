@@ -700,7 +700,7 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 	g_assert (internal->native_handle);
 
 	MONO_ENTER_GC_SAFE;
-	res = SetThreadPriority (internal->native_handle, priority - 2);
+	res = SetThreadPriority (internal->native_handle, (int)priority - 2);
 	last_error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	if (!res)
@@ -1121,7 +1121,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 		return 0;
 	}
 
-	mono_thread_internal_set_priority (internal, internal->priority);
+	mono_thread_internal_set_priority (internal, (MonoThreadPriority)internal->priority);
 
 	tid = internal->tid;
 
@@ -1890,7 +1890,7 @@ ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, 
 	LOCK_THREAD (internal);
 	internal->priority = priority;
 	if (internal->thread_info != NULL)
-		mono_thread_internal_set_priority (internal, priority);
+		mono_thread_internal_set_priority (internal, (MonoThreadPriority)priority);
 	UNLOCK_THREAD (internal);
 }
 
@@ -5168,7 +5168,7 @@ mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState cle
 {
 	LOCK_THREAD (thread);
 
-	MonoThreadState const old_state = thread->state;
+	MonoThreadState const old_state = (MonoThreadState)thread->state;
 	MonoThreadState const new_state = (old_state & ~clear) | set;
 	thread->state = new_state;
 
@@ -5180,7 +5180,7 @@ mono_thread_clear_and_set_state (MonoInternalThread *thread, MonoThreadState cle
 void
 mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	mono_thread_clear_and_set_state (thread, 0, state);
+	mono_thread_clear_and_set_state (thread, (MonoThreadState)0, state);
 }
 
 /**
@@ -5193,7 +5193,7 @@ mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test
 {
 	LOCK_THREAD (thread);
 	
-	MonoThreadState const old_state = thread->state;
+	MonoThreadState const old_state = (MonoThreadState)thread->state;
 
 	if ((old_state & test) != 0) {
 		UNLOCK_THREAD (thread);
@@ -5213,7 +5213,7 @@ mono_thread_test_and_set_state (MonoInternalThread *thread, MonoThreadState test
 void
 mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state)
 {
-	mono_thread_clear_and_set_state (thread, state, 0);
+	mono_thread_clear_and_set_state (thread, state, (MonoThreadState)0);
 }
 
 gboolean
@@ -6175,7 +6175,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 			g_assertf(prev_state == MONO_SUMMARY_EMPTY, "Summary memory was not in a clean state prior to entry", NULL);
 
 			if (summarizing_thread_state != MONO_SUMMARY_EXPECT) {
-				const char *name = thread_summary_state_to_str (summarizing_thread_state);
+				const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
 				g_error ("Status after init wrong: %s\n", name);
 			}
 
@@ -6191,7 +6191,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 
 				usleep (10);
 				mono_memory_barrier ();
-				const char *name = thread_summary_state_to_str (summarizing_thread_state);
+				const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
 				MOSTLY_ASYNC_SAFE_PRINTF("Waiting for signalled thread %zx to collect stacktrace. Status: %s\n. Thread state: 0x%x\n", tid, name, thread->state);
 				count--;
 			}
@@ -6254,7 +6254,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 	if (!not_started) {
 		gint32 restart_state = mono_atomic_cas_i32 (&summarizing_thread_state, MONO_SUMMARY_EXAMINE /* set */, MONO_SUMMARY_EXPECT /* compare */);
 		if (restart_state != MONO_SUMMARY_EXPECT) {
-			const char *name = thread_summary_state_to_str (summarizing_thread_state);
+			const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
 			MOSTLY_ASYNC_SAFE_PRINTF ("Dumping thread could not obtain ownership of dumping memory. Timeout? Enum was %s", name);
 			goto fail;
 		}
