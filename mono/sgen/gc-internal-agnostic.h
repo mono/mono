@@ -117,7 +117,9 @@ FILE *mono_gc_get_logfile (void);
 
 /* equivalent to options set via MONO_GC_PARAMS */
 void mono_gc_params_set (const char* options);
+char* mono_gc_params_get();
 /* equivalent to options set via MONO_GC_DEBUG */
 void mono_gc_debug_set (const char* options);
+char *mono_gc_debug_get();
 
 #endif
