@@ -231,6 +231,9 @@ XXX implement options
 */
 static void*
 open_file_map (const char *c_path, int input_fd, int mode, gint64 *capacity, int access, int options, int *ioerror)
+
+#define open_file_map(path, fd, mode, cap, acc, op, er) g_cast (open_file_map (path, fd, mode, cap, acc, op, er))
+
 {
 	struct stat buf;
 	MmapHandle *handle = NULL;
@@ -301,6 +304,9 @@ done:
 #define MONO_ANON_FILE_TEMPLATE "/mono.anonmap.XXXXXXXXX"
 static void*
 open_memory_map (const char *c_mapName, int mode, gint64 *capacity, int access, int options, int *ioerror)
+
+#define open_memory_map(name, mod, cap, acc, opt, err) (g_cast (open_memory_map (name, mod, cap, acc, opt, err)))
+
 {
 	MmapHandle *handle;
 	if (*capacity <= 0 && mode != FILE_MODE_OPEN) {
