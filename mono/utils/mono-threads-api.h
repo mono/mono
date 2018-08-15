@@ -15,7 +15,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/mono-compiler.h>
 
-MONO_BEGIN_DECLS
+
 
 /*
 >>>> WARNING WARNING WARNING <<<<
@@ -140,6 +140,6 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 		mono_threads_exit_gc_safe_region_unbalanced_internal (__gc_safe_unbalanced_cookie, &__gc_safe_unbalanced_dummy);	\
 	} while (0)
 
-MONO_END_DECLS
+
 
 #endif /* __MONO_LOGGER_H__ */

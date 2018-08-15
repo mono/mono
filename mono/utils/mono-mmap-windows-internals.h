@@ -5,10 +5,9 @@
 #ifndef __MONO_UTILS_MMAP_WINDOWS_H__
 #define __MONO_UTILS_MMAP_WINDOWS_H__
 
+#ifdef HOST_WIN32
 #include <config.h>
 #include <glib.h>
-
-#ifdef HOST_WIN32
 #include "mono/utils/mono-mmap.h"
 #include "mono/utils/mono-mmap-internals.h"
 

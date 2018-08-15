@@ -18,6 +18,7 @@
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/parse.h"
 #include "mono/utils/memfuncs.h"
+#include "mono/metadata/mono-gc.h"
 #ifdef HAVE_SGEN_GC
 #include "mono/sgen/sgen-conf.h"
 #endif
@@ -45,6 +46,21 @@
 #define MONO_GC_HANDLE_IS_OBJECT_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == (MONO_GC_HANDLE_OCCUPIED_MASK | MONO_GC_HANDLE_VALID_MASK))
 #define MONO_GC_HANDLE_IS_METADATA_POINTER(slot) (MONO_GC_HANDLE_TAG (slot) == MONO_GC_HANDLE_OCCUPIED_MASK)
 
+#if 0 // FIXMEcxx // This is messed up. See https://github.com/mono/mono/pull/6700.
+
+// Shorter local names for GC handle type and its values.
+// See mono-gc.h.
+#define HANDLE_TYPE_MIN    MONO_GC_HANDLE_TYPE_MIN                // 0
+#define HANDLE_WEAK        MONO_GC_HANDLE_WEAK                    // 0
+#define HANDLE_WEAK_TRACK  MONO_GC_HANDLE_WEAK_TRACK_RESURRECTION // 1
+#define HANDLE_NORMAL      MONO_GC_HANDLE_NORMAL                  // 2
+#define HANDLE_PINNED      MONO_GC_HANDLE_PINNED                  // 3
+#define HANDLE_WEAK_FIELDS MONO_GC_HANDLE_WEAK_FIELDS             // 4
+#define HANDLE_TYPE_MAX    MONO_GC_HANDLE_TYPE_MAX                // 5
+typedef /*enum*/ MonoGCHandleType GCHandleType;
+
+#else
+
 /* These should match System.Runtime.InteropServices.GCHandleType */
 typedef enum {
 	HANDLE_TYPE_MIN = 0,
@@ -55,6 +71,8 @@ typedef enum {
 	HANDLE_WEAK_FIELDS,
 	HANDLE_TYPE_MAX
 } GCHandleType;
+
+#endif
 
 #define GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
 
@@ -76,7 +94,7 @@ typedef struct {
 extern GCStats mono_gc_stats;
 
 #ifdef HAVE_SGEN_GC
-typedef SgenDescriptor MonoGCDescriptor;
+typedef SgenDescriptor MonoGCDescriptor; // FIXMEcxx probably need no ifdef here
 #define MONO_GC_DESCRIPTOR_NULL	SGEN_DESCRIPTOR_NULL
 #else
 typedef void* MonoGCDescriptor;

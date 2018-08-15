@@ -19,8 +19,6 @@
 
 #define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.1"
 
-MONO_BEGIN_DECLS
-
 void
 mono_summarize_native_state_begin (void);
 
@@ -30,7 +28,5 @@ mono_summarize_native_state_end (void);
 void
 mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx);
 
-MONO_END_DECLS
 #endif // DISABLE_CRASH_REPORTING
-
 #endif // MONO_UTILS_NATIVE_STATE
