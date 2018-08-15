@@ -61,14 +61,39 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
+#endif
+
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
+	g_cast () = delete;
+	g_cast (const g_cast& y) = delete;
+
+	template <typename TTo> operator TTo* () const { return (TTo*)x; }
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
 #endif
 
 G_BEGIN_DECLS
@@ -185,7 +210,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
-#define g_alloca(size)		alloca (size)
+#define g_alloca(size)		(g_cast (alloca (size)))
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
@@ -1172,4 +1197,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H

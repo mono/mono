@@ -1307,7 +1307,7 @@ mono_class_alloc (MonoClass *klass, int size)
 }
 
 gpointer
-mono_class_alloc0 (MonoClass *klass, int size)
+(mono_class_alloc0) (MonoClass *klass, int size)
 {
 	gpointer res;
 
@@ -4170,7 +4170,7 @@ mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *
 }
 
 gpointer
-mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error)
+(mono_lookup_dynamic_token_class) (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error)
 {
 	return mono_reflection_lookup_dynamic_token (image, token, valid_token, handle_class, context, error);
 }
