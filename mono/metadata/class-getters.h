@@ -22,7 +22,9 @@ MONO_CLASS_GETTER(m_class_get_instance_size, int, , MonoClass, instance_size)
 MONO_CLASS_GETTER(m_class_is_inited, gboolean, , MonoClass, inited)
 MONO_CLASS_GETTER(m_class_is_size_inited, gboolean, , MonoClass, size_inited)
 MONO_CLASS_GETTER(m_class_is_valuetype, gboolean, , MonoClass, valuetype)
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MONO_CLASS_GETTER(m_class_is_enumtype, gboolean, , MonoClass, enumtype)
+G_END_DECLS
 MONO_CLASS_GETTER(m_class_is_blittable, gboolean, , MonoClass, blittable)
 MONO_CLASS_GETTER(m_class_is_unicode, gboolean, , MonoClass, unicode)
 MONO_CLASS_GETTER(m_class_was_typebuilder, gboolean, , MonoClass, wastypebuilder)

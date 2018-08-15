@@ -969,8 +969,10 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 MonoMethodSignature*
 mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error);
 	
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MonoMethod *
 mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, MonoGenericContext *context, MonoError *error);
+G_END_DECLS
 
 guint32
 mono_metadata_localscope_from_methoddef (MonoImage *meta, guint32 index);
@@ -984,8 +986,10 @@ mono_method_get_wrapper_cache (MonoMethod *method);
 MonoWrapperCaches*
 mono_method_get_wrapper_cache (MonoMethod *method);
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MonoType*
 mono_metadata_parse_type_checked (MonoImage *m, MonoGenericContainer *container, short opt_attrs, gboolean transient, const char *ptr, const char **rptr, MonoError *error);
+G_END_DECLS
 
 MonoGenericContainer *
 mono_get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar);
