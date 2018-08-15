@@ -62,9 +62,13 @@ s390x_read64(guint64 x)
 
 # if NO_UNALIGNED_ACCESS
 
+G_BEGIN_DECLS // FIXMEcxx monodis
+
 guint16 mono_read16 (const unsigned char *x);
 guint32 mono_read32 (const unsigned char *x);
 guint64 mono_read64 (const unsigned char *x);
+
+G_END_DECLS
 
 #define read16(x) (mono_read16 ((const unsigned char *)(x)))
 #define read32(x) (mono_read32 ((const unsigned char *)(x)))
