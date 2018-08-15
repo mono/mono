@@ -560,6 +560,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 static gpointer
 conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 {
+#define return return (gpointer)
 	int dummy;
 	if (!ind_store_type)
 		ind_store_type = &dummy;
@@ -642,6 +643,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 	}
 
 	return NULL;
+#undef return
 }
 
 static void
