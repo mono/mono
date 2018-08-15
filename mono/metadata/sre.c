@@ -949,7 +949,8 @@ mono_image_get_array_token (MonoDynamicImage *assembly, MonoReflectionArrayMetho
 	} else
 		sig->ret = mono_get_void_type ();
 
-	MonoReflectionTypeHandle parent = MONO_HANDLE_NEW_GET (MonoReflectionType, m, parent);
+	MonoReflectionTypeHandle parent;
+	parent = MONO_HANDLE_NEW_GET (MonoReflectionType, m, parent);
 	MonoType *mtype;
 	mtype = mono_reflection_type_handle_mono_type (parent, error);
 	goto_if_nok (error, fail);
@@ -959,7 +960,8 @@ mono_image_get_array_token (MonoDynamicImage *assembly, MonoReflectionArrayMetho
 		goto_if_nok (error, fail);
 	}
 
-	MonoStringHandle mname = MONO_HANDLE_NEW_GET (MonoString, m, name);
+	MonoStringHandle mname;
+	mname = MONO_HANDLE_NEW_GET (MonoString, m, name);
 	name = mono_string_handle_to_utf8 (mname, error);
 	goto_if_nok (error, fail);
 
@@ -1503,7 +1505,8 @@ add_custom_modifiers_to_type (MonoType *without_mods, MonoArrayHandle req_array,
 	if (!(num_opt_mods || num_req_mods))
 		return without_mods;
 
-	MonoTypeWithModifiers *result = mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (num_req_mods + num_opt_mods));
+	MonoTypeWithModifiers *result;
+	result = mono_image_g_malloc0 (image, mono_sizeof_type_with_mods (num_req_mods + num_opt_mods));
 	memcpy (result, without_mods, MONO_SIZEOF_TYPE);
 	result->unmodified.has_cmods = 1;
 	MonoCustomModContainer *cmods = mono_type_get_cmods ((MonoType *)result);
@@ -1685,7 +1688,8 @@ reflection_instance_handle_mono_type (MonoReflectionGenericClassHandle ref_gclas
 		}
 	}
 	/* Need to resolve the generic_type in order for it to create its generic context. */
-	MonoReflectionTypeHandle ref_gtd = MONO_HANDLE_NEW_GET (MonoReflectionType, ref_gclass, generic_type);
+	MonoReflectionTypeHandle ref_gtd;
+	ref_gtd = MONO_HANDLE_NEW_GET (MonoReflectionType, ref_gclass, generic_type);
 	MonoType *gtd;
 	gtd = mono_reflection_type_handle_mono_type (ref_gtd, error);
 	goto_if_nok (error, leave);
@@ -1743,7 +1747,8 @@ reflection_param_handle_mono_type (MonoReflectionGenericParamHandle ref_gparam, 
 	} else {
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST (MonoReflectionType, ref_tbuilder), error);
 		goto_if_nok (error, leave);
-		MonoClass *owner = mono_class_from_mono_type (type);
+		MonoClass *owner;
+		owner = mono_class_from_mono_type (type);
 		g_assert (mono_class_is_gtd (owner));
 		param->owner = mono_class_get_generic_container (owner);
 	}
@@ -1929,7 +1934,8 @@ method_builder_to_signature (MonoImage *image, MonoReflectionMethodBuilderHandle
 	sig = parameters_to_signature (image, params, required_modifiers, optional_modifiers, error);
 	return_val_if_nok (error, NULL);
 	sig->hasthis = MONO_HANDLE_GETVAL (method, attrs) & METHOD_ATTRIBUTE_STATIC? 0: 1;
-	MonoReflectionTypeHandle rtype = MONO_HANDLE_CAST (MonoReflectionType, MONO_HANDLE_NEW_GET (MonoObject, method, rtype));
+	MonoReflectionTypeHandle rtype;
+	rtype = MONO_HANDLE_CAST (MonoReflectionType, MONO_HANDLE_NEW_GET (MonoObject, method, rtype));
 	if (!MONO_HANDLE_IS_NULL (rtype)) {
 		sig->ret = mono_reflection_type_handle_mono_type (rtype, error);
 		if (!is_ok (error)) {
@@ -1956,7 +1962,8 @@ dynamic_method_to_signature (MonoReflectionDynamicMethodHandle method, MonoError
 		MONO_HANDLE_CAST (MonoArray, NULL_HANDLE), MONO_HANDLE_CAST (MonoArray, NULL_HANDLE), error);
 	goto_if_nok (error, leave);
 	sig->hasthis = MONO_HANDLE_GETVAL (method, attrs) & METHOD_ATTRIBUTE_STATIC? 0: 1;
-	MonoReflectionTypeHandle rtype = MONO_HANDLE_NEW_GET (MonoReflectionType, method, rtype);
+	MonoReflectionTypeHandle rtype;
+	rtype = MONO_HANDLE_NEW_GET (MonoReflectionType, method, rtype);
 	if (!MONO_HANDLE_IS_NULL (rtype)) {
 		sig->ret = mono_reflection_type_handle_mono_type (rtype, error);
 		if (!is_ok (error)) {
