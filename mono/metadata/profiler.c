@@ -142,7 +142,8 @@ load_profiler_from_installation (const char *libname, const char *name, const ch
 void
 mono_profiler_load (const char *desc)
 {
-	char *col, *mname, *libname;
+	const char *col;
+	char *mname, *libname;
 
 	mname = libname = NULL;
 
