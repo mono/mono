@@ -1010,8 +1010,10 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_loader_init           (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_loader_cleanup        (void);
@@ -1037,8 +1039,10 @@ mono_loader_unlock_if_inited (void);
 void
 mono_reflection_init       (void);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_icall_init            (void);
+G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_icall_cleanup         (void);
@@ -1258,11 +1262,13 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_error_set_for_class_failure (MonoError *orerror, const MonoClass *klass);
 
 gboolean
 mono_class_has_failure (const MonoClass *klass);
+G_END_DECLS // FIXMEcxx for pedump
 
 /* Kind specific accessors */
 MonoGenericClass*
