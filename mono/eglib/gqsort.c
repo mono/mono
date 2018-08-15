@@ -45,9 +45,9 @@ typedef struct _QSortStack {
 
 #define SWAPTYPE(TYPE, a, b) {              \
 	gssize __n = size / sizeof (TYPE);  \
-	register TYPE *__a = (TYPE *) (a);  \
-	register TYPE *__b = (TYPE *) (b);  \
-	register TYPE t;                    \
+	TYPE *__a = (TYPE *) (a);           \
+	TYPE *__b = (TYPE *) (b);           \
+	TYPE t;                             \
 	                                    \
 	do {                                \
 		t = *__a;                   \
@@ -69,7 +69,7 @@ void
 g_qsort_with_data (gpointer base, size_t nmemb, size_t size, GCompareDataFunc compare, gpointer user_data)
 {
 	QSortStack stack[STACK_SIZE], *sp;
-	register char *i, *k, *mid;
+	char *i, *k, *mid;
 	size_t n, n1, n2;
 	char *lo, *hi;
 	int swaplong;
