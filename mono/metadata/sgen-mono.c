@@ -2464,7 +2464,7 @@ mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 void
 mono_gc_register_obj_with_weak_fields (void *obj)
 {
-	return sgen_register_obj_with_weak_fields (obj);
+	return sgen_register_obj_with_weak_fields ((MonoObject*)obj);
 }
 
 void*
