@@ -5748,6 +5748,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_h
 	pid_t crashed_pid = getpid ();
 
 	MonoStackHash hashes;
+	memset (&hashes, 0, sizeof (MonoStackHash));
 	hashes.offset_free_hash = portable_hash;
 	hashes.offset_rich_hash = unportable_hash;
 

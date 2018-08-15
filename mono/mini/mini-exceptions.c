@@ -1408,6 +1408,7 @@ static void
 mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
 {
 	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
 	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
 	data.num_frames = 0;
 	data.frames = out->managed_frames;
@@ -1452,6 +1453,7 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 	memset (out, 0, sizeof (MonoThreadSummary));
 
 	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
 	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
 	data.num_frames = 0;
 	data.frames = out->managed_frames;
