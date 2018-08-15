@@ -79,28 +79,10 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 	g_error ("mono_arch_get_allocatable_int_vars");
 }
 
-int
-mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
-{
-	g_error ("mono_arch_get_argument_info");
-}
-
-GSList*
-mono_arch_get_delegate_invoke_impls (void)
-{
-	g_error ("mono_arch_get_delegate_invoke_impls");
-}
-
 GList *
 mono_arch_get_global_int_regs (MonoCompile *cfg)
 {
 	g_error ("mono_arch_get_global_int_regs");
-}
-
-gpointer
-mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
-{
-	g_error ("mono_arch_get_delegate_invoke_impl");
 }
 
 void
@@ -175,13 +157,6 @@ mono_arch_regname (int reg)
 	return "r0";
 }
 
-gpointer
-mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
-{
-	g_error ("mono_arch_get_gsharedvt_call_info");
-	return NULL;
-}
-
 LLVMCallInfo*
 mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 {
@@ -196,6 +171,30 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 }
 #endif
 
+int
+mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
+{
+	g_error ("mono_arch_get_argument_info");
+}
+
+GSList*
+mono_arch_get_delegate_invoke_impls (void)
+{
+	g_error ("mono_arch_get_delegate_invoke_impls");
+}
+
+gpointer
+mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
+{
+	g_error ("mono_arch_get_gsharedvt_call_info");
+	return NULL;
+}
+
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	g_error ("mono_arch_get_delegate_invoke_impl");
+}
 
 #ifdef HOST_WASM
 #include <emscripten.h>
