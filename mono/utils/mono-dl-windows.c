@@ -85,7 +85,7 @@ void
 mono_dl_close_handle (MonoDl *module)
 {
 	if (!module->main_module)
-		FreeLibrary (module->handle);
+		FreeLibrary ((HMODULE)module->handle);
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
