@@ -4891,7 +4891,7 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+	mono_thread_create_checked (domain, (gpointer)main_func, main_args, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
