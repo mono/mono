@@ -211,7 +211,7 @@ static const char* const icall_names [] = {
 
 static const gconstpointer icall_functions [] = {
 #define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) func,
+#define ICALL(id,name,func) ((gpointer)(func)),
 #define HANDLES(inner) inner
 #define NOHANDLES(inner) inner
 #include "metadata/icall-def.h"
