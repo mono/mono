@@ -3895,7 +3895,8 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle ref_
 		if (!ensure_runtime_vtable (klass, error))
 			goto failure;
 
-	MonoArrayHandle nested_types = MONO_HANDLE_NEW_GET (MonoArray, ref_tb, subtypes);
+	MonoArrayHandle nested_types;
+	nested_types = MONO_HANDLE_NEW_GET (MonoArray, ref_tb, subtypes);
 	if (!MONO_HANDLE_IS_NULL (nested_types)) {
 		GList *nested = NULL;
 		int num_nested = mono_array_handle_length (nested_types);
@@ -3927,7 +3928,8 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle ref_
 
 	klass->wastypebuilder = TRUE;
 
-	MonoArrayHandle generic_params = MONO_HANDLE_NEW_GET (MonoArray, ref_tb, generic_params);
+	MonoArrayHandle generic_params;
+	generic_params = MONO_HANDLE_NEW_GET (MonoArray, ref_tb, generic_params);
 	if (!MONO_HANDLE_IS_NULL (generic_params)) {
 		int num_params = mono_array_handle_length (generic_params);
 		MonoReflectionTypeHandle ref_gparam = MONO_HANDLE_NEW (MonoReflectionType, NULL);
@@ -4261,7 +4263,8 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			MonoType *inflated = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (field->parent), context, error);
 			return_val_if_nok (error, NULL);
 
-			MonoClass *klass = mono_class_from_mono_type (inflated);
+			MonoClass *klass;
+			klass = mono_class_from_mono_type (inflated);
 			MonoClassField *inflated_field;
 			gpointer iter = NULL;
 			mono_metadata_free_type (inflated);
