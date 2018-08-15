@@ -215,6 +215,13 @@ typedef struct {
 	gboolean (*load_tables) (MonoImage*);
 } MonoImageLoader;
 
+// warning: redefinition of typedef 'MonoAotModule' is a C11 feature [-Wtypedef-redefinition]
+#ifndef MonoAotModule
+#define MonoAotModule MonoAotModule
+struct MonoAotModule;
+typedef struct MonoAotModule MonoAotModule;
+#endif
+
 struct _MonoImage {
 	/*
 	 * This count is incremented during these situations:
@@ -320,7 +327,7 @@ struct _MonoImage {
 	MonoImage **files;
 	guint32 file_count;
 
-	gpointer aot_module;
+	MonoAotModule *aot_module;
 
 	guint8 aotid[16];
 
@@ -785,7 +792,9 @@ mono_metadata_clean_generic_classes_for_image (MonoImage *image);
 MONO_API void
 mono_metadata_cleanup (void);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 const char *   mono_meta_table_name              (int table);
+G_END_DECLS // FIXMEcxx for pedump
 void           mono_metadata_compute_table_bases (MonoImage *meta);
 
 gboolean
@@ -935,6 +944,7 @@ mono_metadata_signature_size (MonoMethodSignature *sig);
 
 guint mono_metadata_str_hash (gconstpointer v1);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 gboolean mono_image_load_pe_data (MonoImage *image);
 
 gboolean mono_image_load_cli_data (MonoImage *image);
@@ -942,6 +952,7 @@ gboolean mono_image_load_cli_data (MonoImage *image);
 void mono_image_load_names (MonoImage *image);
 
 MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status);
+G_END_DECLS // FIXMEcxx for pedump
 
 MonoImage *mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status);
 
@@ -965,8 +976,10 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 MonoMethodSignature*
 mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context, MonoError *error);
 	
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MonoMethod *
 mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, MonoGenericContext *context, MonoError *error);
+G_END_DECLS
 
 guint32
 mono_metadata_localscope_from_methoddef (MonoImage *meta, guint32 index);
@@ -980,8 +993,10 @@ mono_method_get_wrapper_cache (MonoMethod *method);
 MonoWrapperCaches*
 mono_method_get_wrapper_cache (MonoMethod *method);
 
+G_BEGIN_DECLS // FIXMEcxx for monodis
 MonoType*
 mono_metadata_parse_type_checked (MonoImage *m, MonoGenericContainer *container, short opt_attrs, gboolean transient, const char *ptr, const char **rptr, MonoError *error);
+G_END_DECLS
 
 MonoGenericContainer *
 mono_get_anonymous_container_for_image (MonoImage *image, gboolean is_mvar);

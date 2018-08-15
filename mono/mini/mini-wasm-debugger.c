@@ -13,6 +13,7 @@
 
 #include <emscripten.h>
 
+G_BEGIN_DECLS
 
 static int log_level = 1;
 
@@ -113,7 +114,7 @@ free_frame_state (void)
 	if (frames) {
 		int i;
 		for (i = 0; i < frames->len; ++i)
-			free_frame (g_ptr_array_index (frames, i));
+			free_frame ((DbgEngineStackFrame*)g_ptr_array_index (frames, i));
 		g_ptr_array_set_size (frames, 0);
 	}	
 }
@@ -123,7 +124,7 @@ compute_frames (void) {
 	if (frames) {
 		int i;
 		for (i = 0; i < frames->len; ++i)
-			free_frame (g_ptr_array_index (frames, i));
+			free_frame ((DbgEngineStackFrame*)g_ptr_array_index (frames, i));
 		g_ptr_array_set_size (frames, 0);
 	} else {
 		frames = g_ptr_array_new ();
@@ -221,7 +222,7 @@ create_breakpoint_events (GPtrArray *ss_reqs, GPtrArray *bp_reqs, MonoJitInfo *j
 static void
 process_breakpoint_events (void *_evts, MonoMethod *method, MonoContext *ctx, int il_offsets)
 {
-	BpEvents *evts = _evts;
+	BpEvents *evts = (BpEvents*)_evts;
 	if (evts) {
 		if (evts->is_ss)
 			mono_de_cancel_ss ();
@@ -256,7 +257,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *ss_args)
 		return DBG_NOT_SUSPENDED;
 	}
 
-	DbgEngineStackFrame *frame = g_ptr_array_index (frames, 0);
+	DbgEngineStackFrame *frame = (DbgEngineStackFrame*)g_ptr_array_index (frames, 0);
 	ss_req->start_method = ss_args->method = frame->method;
 	gboolean found_sp = mono_find_prev_seq_point_for_native_offset (frame->domain, frame->method, frame->native_offset, &ss_args->info, &ss_args->sp);
 	if (!found_sp)
@@ -465,9 +466,9 @@ mono_wasm_current_bp_id (void)
 	MonoLMFExt *ext = (MonoLMFExt*)lmf;
 
 	g_assert (ext->interp_exit);
-	MonoInterpFrameHandle *frame = ext->interp_exit_data;
+	MonoInterpFrameHandle *frame = (MonoInterpFrameHandle*)ext->interp_exit_data;
 	MonoJitInfo *ji = mini_get_interp_callbacks ()->frame_get_jit_info (frame);
-	guint8 *ip = mini_get_interp_callbacks ()->frame_get_ip (frame);
+	guint8 *ip = (guint8*)mini_get_interp_callbacks ()->frame_get_ip (frame);
 
 	g_assert (ji && !ji->is_trampoline);
 	MonoMethod *method = jinfo_get_method (ji);
@@ -558,7 +559,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	ERROR_DECL (error);
 	MonoMethodHeader *header = NULL;
 
-	FrameDescData *data = ud;
+	FrameDescData *data = (FrameDescData*)ud;
 
 	//skip wrappers
 	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
@@ -570,7 +571,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 		return FALSE;
 	}
 
-	InterpFrame *frame = info->interp_frame;
+	InterpFrame *frame = (InterpFrame*)info->interp_frame;
 	g_assert (frame);
 	MonoMethod *method = frame->imethod->method;
 	g_assert (method);
@@ -667,3 +668,5 @@ mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)
 {
 	return 1;
 }
+
+G_END_DECLS

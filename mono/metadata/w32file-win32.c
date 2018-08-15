@@ -370,6 +370,8 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	return result;
 }
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 gboolean
 mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
 {
@@ -379,6 +381,8 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
+
+G_END_DECLS
 
 #if HAVE_API_SUPPORT_WIN32_MOVE_FILE
 gboolean

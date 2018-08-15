@@ -12,6 +12,8 @@
 
 #include <emscripten.h>
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 
@@ -210,7 +212,7 @@ mono_wasm_set_timeout (int timeout, int id)
 void
 mono_arch_register_icall (void)
 {
-	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
+	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", (gconstpointer)mono_wasm_set_timeout);
 }
 
 void
@@ -229,7 +231,6 @@ int inotify_init (void);
 int inotify_rm_watch (int fd, int wd);
 int inotify_add_watch (int fd, const char *pathname, uint32_t mask);
 int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
-
 
 //w32file-wasm.c
 gboolean
@@ -267,15 +268,20 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 	return 0;
 }
 
+#ifdef __cplusplus
+#define MONO_RESTRICT /* nothing */
+#else
+#define MONO_RESTRICT restrict
+#endif
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *MONO_RESTRICT attr, size_t *MONO_RESTRICT stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * restrict set, sigset_t * restrict oset)
+pthread_sigmask (int how, const sigset_t * MONO_RESTRICT set, sigset_t * MONO_RESTRICT oset)
 {
 	return 0;
 }
@@ -333,3 +339,5 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
+
+G_END_DECLS
