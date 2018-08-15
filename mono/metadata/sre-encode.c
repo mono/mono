@@ -519,7 +519,7 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 
 	char blob_size [64];
 	char *b = blob_size;
-	char *box_val;
+	gpointer box_val;
 	char* buf;
 	guint32 idx = 0, len = 0, dummy = 0;
 
@@ -527,7 +527,7 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 	if (!val) {
 		*ret_type = MONO_TYPE_CLASS;
 		len = 4;
-		box_val = (char*)&dummy;
+		box_val = &dummy;
 	} else {
 		box_val = mono_object_get_data (val);
 		*ret_type = m_class_get_byval_arg (val->vtable->klass)->type;
@@ -585,7 +585,7 @@ handle_enum:
 			g_free (swapped);
 		}
 #else
-		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, (char*)mono_string_chars (str), len);
+		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, mono_string_chars (str), len);
 #endif
 
 		g_free (buf);
