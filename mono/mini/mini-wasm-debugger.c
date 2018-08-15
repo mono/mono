@@ -11,10 +11,15 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
+G_BEGIN_DECLS
+
 #ifdef HOST_WASM
+
+G_END_DECLS
 
 #include <emscripten.h>
 
+G_BEGIN_DECLS
 
 static int log_level = 1;
 
@@ -670,7 +675,7 @@ mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)
 	return 1;
 }
 
-#else
+#else // HOST_WASM
 
 void
 mono_wasm_single_step_hit (void)
@@ -687,4 +692,6 @@ mono_wasm_debugger_init (void)
 {
 }
 
-#endif
+#endif // HOST_WASM
+
+G_END_DECLS

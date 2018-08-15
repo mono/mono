@@ -14,6 +14,8 @@
 
 #define round_down(addr, val) ((void*)((addr) & ~((val) - 1)))
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_base (void)
@@ -158,8 +160,9 @@ mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
 	return FALSE;
 }
 
-
+G_BEGIN_DECLS
 extern void schedule_background_exec (void);
+G_END_DECLS
 
 static GSList *jobs;
 
@@ -173,6 +176,8 @@ mono_threads_schedule_background_job (background_job_cb cb)
 		jobs = g_slist_prepend (jobs, (gpointer)cb);
 }
 
+G_BEGIN_DECLS
+
 EMSCRIPTEN_KEEPALIVE void
 mono_background_exec (void)
 {
@@ -185,5 +190,9 @@ mono_background_exec (void)
 	}
 	g_slist_free (j);
 }
+
+G_END_DECLS // mono_background_exec
+
+G_END_DECLS
 
 #endif
