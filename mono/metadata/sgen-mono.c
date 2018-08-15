@@ -2058,7 +2058,7 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 	sgen_binary_protocol_thread_unregister ((gpointer)tid);
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)tid);
 
-	HandleStack *handles = (HandleStack*) p->client_info.info.handle_stack;
+	HandleStack *handles = p->client_info.info.handle_stack;
 	p->client_info.info.handle_stack = NULL;
 	mono_handle_stack_free (handles);
 }
@@ -2247,13 +2247,13 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			  beginning of the object.
 			*/
 			if (precise)
-				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise, TRUE);
+				mono_handle_stack_scan (info->client_info.info.handle_stack, (GcScanFunc)ctx.ops->copy_or_mark_object, ctx.queue, precise, TRUE);
 			else {
 				PinHandleStackInteriorPtrData ud;
 				memset (&ud, 0, sizeof (ud));
 				ud.start_nursery = (void**)start_nursery;
 				ud.end_nursery = (void**)end_nursery;
-				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
+				mono_handle_stack_scan (info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
 			}
 		}
 	} FOREACH_THREAD_END
