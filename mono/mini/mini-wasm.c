@@ -224,8 +224,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 /*
 The following functions don't belong here, but are due to laziness.
 */
-G_BEGIN_DECLS
-
 gboolean mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
 void * getgrnam (const char *name);
 void * getgrgid (gid_t gid);
