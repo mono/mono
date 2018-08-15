@@ -134,7 +134,7 @@ backtrace_mutex_unlock (void)
 static CheckState*
 get_state (void)
 {
-	CheckState *state = mono_native_tls_get_value (thread_status);
+	CheckState *state = (CheckState*)mono_native_tls_get_value (thread_status);
 	if (!state) {
 		state = (CheckState*) g_malloc0 (sizeof (CheckState) + sizeof(ThreadTransition) * MAX_TRANSITIONS);
 		mono_native_tls_set_value (thread_status, state);
