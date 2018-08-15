@@ -299,7 +299,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
-#define g_alloca(size)		alloca (size)
+#define g_alloca(size)		(g_cast (alloca (size)))
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
