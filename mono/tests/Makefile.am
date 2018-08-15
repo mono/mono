@@ -1497,7 +1497,7 @@ CI_PR_DISABLED_TESTS = \
 	appdomain-threadpool-unload.exe
 
 # FIXME Hybrid Suspend - see https://github.com/mono/mono/issues/9959
-CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
+# CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
 
 # see https://github.com/mono/mono/issues/10031
 CI_PR_DISABLED_TESTS += unhandled-exception-2.exe unhandled-exception-4.exe
