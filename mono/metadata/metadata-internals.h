@@ -792,7 +792,9 @@ mono_metadata_clean_generic_classes_for_image (MonoImage *image);
 MONO_API void
 mono_metadata_cleanup (void);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 const char *   mono_meta_table_name              (int table);
+G_END_DECLS // FIXMEcxx for pedump
 void           mono_metadata_compute_table_bases (MonoImage *meta);
 
 gboolean
@@ -942,6 +944,7 @@ mono_metadata_signature_size (MonoMethodSignature *sig);
 
 guint mono_metadata_str_hash (gconstpointer v1);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 gboolean mono_image_load_pe_data (MonoImage *image);
 
 gboolean mono_image_load_cli_data (MonoImage *image);
@@ -949,6 +952,7 @@ gboolean mono_image_load_cli_data (MonoImage *image);
 void mono_image_load_names (MonoImage *image);
 
 MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status);
+G_END_DECLS // FIXMEcxx for pedump
 
 MonoImage *mono_image_open_metadata_only (const char *fname, MonoImageOpenStatus *status);
 
