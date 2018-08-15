@@ -1631,7 +1631,7 @@ report_handle_stack_roots (GCRootReport *report, SgenThreadInfo *info, gboolean 
 	ud.report = report;
 	ud.info = info;
 
-	mono_handle_stack_scan ((HandleStack *) info->client_info.info.handle_stack, report_handle_stack_root, &ud, ud.precise, FALSE);
+	mono_handle_stack_scan (info->client_info.info.handle_stack, report_handle_stack_root, &ud, ud.precise, FALSE);
 }
 
 static void
