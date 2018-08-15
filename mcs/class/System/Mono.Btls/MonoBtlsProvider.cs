@@ -33,6 +33,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Security;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 
@@ -213,10 +214,94 @@ namespace Mono.Btls
 			X509Chain chain, MonoBtlsX509StoreCtx storeCtx,
 			bool success, ref MonoSslPolicyErrors errors, ref int status11)
 		{
+			status11 = unchecked((int)0);
 			if (!success) {
 				errors = MonoSslPolicyErrors.RemoteCertificateChainErrors;
-				status11 = unchecked((int)0x800B010B);
+				var error = storeCtx.GetError();
+				if (error != Mono.Btls.MonoBtlsX509Error.OK & 
+				    error != Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID) {
+					chain.Impl.AddStatus(MapVerifyErrorToChainStatus(error));
+					status11 = unchecked((int)0x800B010B);
+				}
 			}
+		}
+
+		internal static X509ChainStatusFlags MapVerifyErrorToChainStatus(MonoBtlsX509Error code)
+		{
+		    switch (code)
+		    {
+			case Mono.Btls.MonoBtlsX509Error.OK :
+			    return X509ChainStatusFlags.NoError;
+
+			case Mono.Btls.MonoBtlsX509Error.CERT_NOT_YET_VALID :
+			case Mono.Btls.MonoBtlsX509Error.CERT_HAS_EXPIRED:
+			case Mono.Btls.MonoBtlsX509Error.ERROR_IN_CERT_NOT_BEFORE_FIELD:
+			case Mono.Btls.MonoBtlsX509Error.ERROR_IN_CERT_NOT_AFTER_FIELD:
+			    return X509ChainStatusFlags.NotTimeValid;
+
+			case Mono.Btls.MonoBtlsX509Error.CERT_REVOKED:
+			    return X509ChainStatusFlags.Revoked;
+
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY:
+			case Mono.Btls.MonoBtlsX509Error.CERT_SIGNATURE_FAILURE:
+			    return X509ChainStatusFlags.NotSignatureValid;
+
+			case Mono.Btls.MonoBtlsX509Error.CERT_UNTRUSTED:
+			case Mono.Btls.MonoBtlsX509Error.DEPTH_ZERO_SELF_SIGNED_CERT:
+			case Mono.Btls.MonoBtlsX509Error.SELF_SIGNED_CERT_IN_CHAIN:
+			    return X509ChainStatusFlags.UntrustedRoot;
+
+			case Mono.Btls.MonoBtlsX509Error.CRL_HAS_EXPIRED:
+			    return X509ChainStatusFlags.OfflineRevocation;
+
+			case Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID:
+			case Mono.Btls.MonoBtlsX509Error.CRL_SIGNATURE_FAILURE:
+			case Mono.Btls.MonoBtlsX509Error.ERROR_IN_CRL_LAST_UPDATE_FIELD:
+			case Mono.Btls.MonoBtlsX509Error.ERROR_IN_CRL_NEXT_UPDATE_FIELD:
+			case Mono.Btls.MonoBtlsX509Error.KEYUSAGE_NO_CRL_SIGN:
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_DECRYPT_CRL_SIGNATURE:
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_GET_CRL:
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_GET_CRL_ISSUER:
+			case Mono.Btls.MonoBtlsX509Error.UNHANDLED_CRITICAL_CRL_EXTENSION:
+			    return X509ChainStatusFlags.RevocationStatusUnknown;
+
+			case Mono.Btls.MonoBtlsX509Error.INVALID_EXTENSION:
+			    return X509ChainStatusFlags.InvalidExtension;
+
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_GET_ISSUER_CERT:
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
+			case Mono.Btls.MonoBtlsX509Error.UNABLE_TO_VERIFY_LEAF_SIGNATURE:
+			    return X509ChainStatusFlags.PartialChain;
+
+			case Mono.Btls.MonoBtlsX509Error.INVALID_PURPOSE:
+			    return X509ChainStatusFlags.NotValidForUsage;
+
+			case Mono.Btls.MonoBtlsX509Error.INVALID_CA:
+			case Mono.Btls.MonoBtlsX509Error.INVALID_NON_CA:
+			case Mono.Btls.MonoBtlsX509Error.PATH_LENGTH_EXCEEDED:
+			case Mono.Btls.MonoBtlsX509Error.KEYUSAGE_NO_CERTSIGN:
+			case Mono.Btls.MonoBtlsX509Error.KEYUSAGE_NO_DIGITAL_SIGNATURE:
+			    return X509ChainStatusFlags.InvalidBasicConstraints;
+
+			case Mono.Btls.MonoBtlsX509Error.INVALID_POLICY_EXTENSION:
+			case Mono.Btls.MonoBtlsX509Error.NO_EXPLICIT_POLICY:
+			    return X509ChainStatusFlags.InvalidPolicyConstraints;
+
+			case Mono.Btls.MonoBtlsX509Error.CERT_REJECTED:
+			    return X509ChainStatusFlags.ExplicitDistrust;
+
+			case Mono.Btls.MonoBtlsX509Error.UNHANDLED_CRITICAL_EXTENSION:
+			    return X509ChainStatusFlags.HasNotSupportedCriticalExtension;
+
+			case Mono.Btls.MonoBtlsX509Error.CERT_CHAIN_TOO_LONG:
+			    throw new CryptographicException();
+
+			case Mono.Btls.MonoBtlsX509Error.OUT_OF_MEM:
+			    throw new OutOfMemoryException();
+
+			default:
+			    throw new CryptographicException("Unrecognized X509VerifyStatusCode:" + code);
+		    }
 		}
 
 		internal static void SetupCertificateStore (MonoBtlsX509Store store, MonoTlsSettings settings, bool server)
