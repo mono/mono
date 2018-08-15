@@ -29,6 +29,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
+#include <eglib-remap.h> // Remove the cast macros and restore the rename macros.
+#undef malloc
+#undef realloc
+#undef free
+#undef calloc
 
 #if defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 
