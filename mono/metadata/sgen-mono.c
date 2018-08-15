@@ -2628,23 +2628,23 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 }
 
 void
-sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
+sgen_client_gchandle_created (int /*FIXMEcxx GCHandleType*/ handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_created, (handle, handle_type, obj));
+	MONO_PROFILER_RAISE (gc_handle_created, (handle, (MonoGCHandleType)handle_type, obj));
 }
 
 void
-sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
+sgen_client_gchandle_destroyed (int /*FIXMEcxx GCHandleType*/ handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, handle_type));
+	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, (MonoGCHandleType)handle_type));
 }
 
 void
