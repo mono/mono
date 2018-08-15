@@ -315,7 +315,7 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
  * the memory area using \c mono_file_unmap().
  */
 void*
-mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
+(mono_file_map) (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
 {
 	void *ptr;
 	int mflags = 0;
