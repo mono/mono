@@ -415,7 +415,7 @@ mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCoverageFilterCallback cb = handle->coverage_filter;
+		MonoProfilerCoverageFilterCallback cb = (MonoProfilerCoverageFilterCallback)handle->coverage_filter;
 
 		if (cb)
 			cover |= cb (handle->prof, method);
