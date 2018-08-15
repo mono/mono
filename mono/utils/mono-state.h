@@ -22,6 +22,10 @@
 
 MONO_BEGIN_DECLS
 
+/*
+ * These use static memory, can only be called once
+ */
+
 void
 mono_summarize_native_state_begin (void);
 
@@ -31,6 +35,10 @@ mono_summarize_native_state_end (void);
 void
 mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx);
 
+/*
+ * These use memory from the caller
+ */
+
 void
 mono_native_state_init (JsonWriter *writer);
 
@@ -39,6 +47,9 @@ mono_native_state_emit (JsonWriter *writer);
 
 char *
 mono_native_state_free (JsonWriter *writer, gboolean free_data);
+
+void
+mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean first_thread);
 
 MONO_END_DECLS
 #endif // TARGET_OSX

@@ -5754,24 +5754,25 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 #endif
 }
 
-ICALL_EXPORT void
-ves_icall_Mono_Runtime_ExceptionToState (MonoException *exc, char **payload, intptr_t *portable_hash, intptr_t *unportable_hash, MonoError *error)
+ICALL_EXPORT MonoStringHandle
+ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out, MonoError *error)
 {
 #ifdef TARGET_OSX
+	// FIXME: Push handles down into mini/mini-exceptions.c
+	MonoException *exc = MONO_HANDLE_RAW (exc_handle);
 	MonoThreadSummary out;
 	mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
 
-	intptr_t out_hash_port = (intptr_t) out.hashes.offset_free_hash;
-	intptr_t out_hash_unport = (intptr_t) out.hashes.offset_free_hash;
+	*portable_hash_out = (guint64) out.hashes.offset_free_hash;
+	*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
 
 	JsonWriter writer;
 	mono_json_writer_init (&writer);
 	mono_native_state_init (&writer);
+	gboolean first_thread_added = TRUE;
+	mono_native_state_add_thread (&writer, &out, NULL, first_thread_added);
 	char *output = mono_native_state_free (&writer, FALSE);
-
-	*payload = output;
-	*portable_hash = out_hash_port;
-	*unportable_hash = out_hash_unport;
+	return mono_string_new_handle (mono_domain_get (), output, error);
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
@@ -5779,7 +5780,7 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoException *exc, char **payload, int
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, intptr_t portable_hash, intptr_t unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
 #ifdef TARGET_OSX
 	if (!mono_merp_enabled ())
