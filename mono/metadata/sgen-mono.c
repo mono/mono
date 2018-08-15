@@ -1584,7 +1584,7 @@ find_pinned_obj (char *addr)
  * We pass @root_report_address so register are properly accounted towards their thread
 */
 static void
-report_conservative_roots (GCRootReport *report, char *root_report_address, void **start, void **end)
+report_conservative_roots (GCRootReport *report, void *root_report_address, void **start, void **end)
 {
 	while (start < end) {
 		mword addr = (mword)*start;
