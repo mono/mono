@@ -25,7 +25,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
 #endif
