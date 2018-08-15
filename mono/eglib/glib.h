@@ -727,6 +727,8 @@ typedef enum {
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
 } GLogLevelFlags;
 
+G_ENUM_FUNCTIONS (GLogLevelFlags)
+
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
 void           g_printerr             (const gchar *format, ...);
@@ -1059,6 +1061,7 @@ typedef enum {
 	G_FILE_TEST_EXISTS = 1 << 4
 } GFileTest;
 
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
