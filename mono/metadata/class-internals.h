@@ -1271,11 +1271,13 @@ mono_class_load_from_name (MonoImage *image, const char* name_space, const char 
 MonoClass*
 mono_class_try_load_from_name (MonoImage *image, const char* name_space, const char *name);
 
+G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_error_set_for_class_failure (MonoError *orerror, const MonoClass *klass);
 
 gboolean
 mono_class_has_failure (const MonoClass *klass);
+G_END_DECLS // FIXMEcxx for pedump
 
 /* Kind specific accessors */
 MonoGenericClass*
