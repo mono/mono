@@ -1185,13 +1185,13 @@ emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb)
 	if (strstr (mb->name, "mono_thread_interruption_checkpoint"))
 		return;
 	
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_interruption_checkpoint);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_interruption_checkpoint);
 }
 
 static void
 emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 {
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_force_interruption_checkpoint_noraise);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_force_interruption_checkpoint_noraise);
 }
 
 void
