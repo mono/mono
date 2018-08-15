@@ -85,7 +85,7 @@ typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
 	guint32   size;
-	guint8    type;
+	guint8    type; // FIXMEcxx GCHandleType type : 8;
 	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
