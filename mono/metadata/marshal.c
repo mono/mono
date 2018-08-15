@@ -6199,14 +6199,15 @@ mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *err
 		mono_error_set_pending_exception (error);
 }
 
-extern char const * const mono_handle_track_owner = NULL;
+// FIXME
+// FIXME extern char const * const mono_handle_track_owner = NULL;
 
 MonoObjectHandle
 mono_icall_handle_new (gpointer rawobj)
 {
-#ifdef MONO_HANDLE_TRACK_OWNER
-	char const * const mono_handle_track_owner = "<marshal args>";
-#endif
+// FIXME #ifdef MONO_HANDLE_TRACK_OWNER
+// FIXME 	char const * const mono_handle_track_owner = "<marshal args>";
+// FIXME #endif
 	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)rawobj);
 }
 
