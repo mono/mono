@@ -1057,8 +1057,10 @@ param_objects_construct (MonoDomain *domain, MonoClass *refclass, MonoMethodSign
 	}
 
 	/* Handles missing and dbnull are assigned in add_parameter_object_to_array when needed */
-	MonoObjectHandle missing = MONO_HANDLE_NEW (MonoObject, NULL);
-	MonoObjectHandle dbnull = MONO_HANDLE_NEW (MonoObject, NULL);
+	MonoObjectHandle missing;
+	missing = MONO_HANDLE_NEW (MonoObject, NULL);
+	MonoObjectHandle dbnull;
+	dbnull = MONO_HANDLE_NEW (MonoObject, NULL);
 	for (i = 0; i < sig->param_count; ++i) {
 		if (!add_parameter_object_to_array (domain, method, MONO_HANDLE_CAST(MonoObject, member), i, names[i], sig->params[i], types ? types[i] : 0, blobs ? blobs[i] : NULL, mspecs [i + 1], missing, dbnull, res, error))
 			goto leave;
@@ -1260,7 +1262,8 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	goto_if_nok (error, fail);
 	MONO_HANDLE_SET (ret, il, il_arr);
 	uint32_t il_gchandle;
-	guint8* il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
+	guint8* il_data;
+	il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
 	memcpy (il_data, header->code, header->code_size);
 	mono_gchandle_free (il_gchandle);
 
