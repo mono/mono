@@ -7421,12 +7421,12 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error)
 	len2 = mono_metadata_decode_blob_size (str, &str);
 	len2 >>= 1;
 
-	o = mono_string_new_utf16_checked (domain, (guint16*)str, len2, error);
+	o = mono_string_new_utf16_checked (domain, (gunichar2*)str, len2, error);
 	return_val_if_nok (error, NULL);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	{
 		int i;
-		guint16 *p2 = (guint16*)mono_string_chars (o);
+		gunichar2 *p2 = (gunichar2*)mono_string_chars (o);
 		for (i = 0; i < len2; ++i) {
 			*p2 = GUINT16_FROM_LE (*p2);
 			++p2;
@@ -7477,7 +7477,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 	len2 = mono_metadata_decode_blob_size (str, &str);
 	len2 >>= 1;
 
-	as = g_utf16_to_utf8 ((guint16*)str, len2, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 ((gunichar2*)str, len2, NULL, &written, &gerror);
 	if (gerror) {
 		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);
