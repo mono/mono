@@ -546,7 +546,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }
