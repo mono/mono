@@ -44,7 +44,7 @@ typedef struct _QSortStack {
 #define QSORT_POP(sp, a, c) ((sp)--, (a) = (sp)->array, (c) = (sp)->count)
 
 #define SWAPTYPE(TYPE, a, b) {              \
-	long __n = size / sizeof (TYPE);    \
+	gssize __n = size / sizeof (TYPE);  \
 	register TYPE *__a = (TYPE *) (a);  \
 	register TYPE *__b = (TYPE *) (b);  \
 	register TYPE t;                    \
