@@ -112,7 +112,7 @@ struct _HandleChunk {
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
 };
 
-typedef struct {
+typedef struct HandleStack {
 	HandleChunk *top; //alloc from here
 	HandleChunk *bottom; //scan from here
 #ifdef MONO_HANDLE_TRACK_SP
