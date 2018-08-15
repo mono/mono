@@ -206,7 +206,7 @@ exit:
 }
 
 void*
-mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
+(mono_file_map) (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
 {
 	return mono_file_map_error (length, flags, fd, offset, ret_handle, NULL, NULL);
 }
