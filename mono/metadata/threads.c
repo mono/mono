@@ -459,7 +459,7 @@ thread_get_tid (MonoInternalThread *thread)
 static void
 free_synch_cs (void *user_data)
 {
-	MonoCoopMutex *synch_cs = user_data;
+	MonoCoopMutex *synch_cs = (MonoCoopMutex*)user_data;
 	g_assert (synch_cs);
 	mono_coop_mutex_destroy (synch_cs);
 	g_free (synch_cs);
@@ -3094,7 +3094,7 @@ ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value)
 static void
 free_context (void *user_data)
 {
-	ContextStaticData *data = user_data;
+	ContextStaticData *data = (ContextStaticData*)user_data;
 
 	mono_threads_lock ();
 
