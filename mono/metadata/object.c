@@ -6405,7 +6405,7 @@ mono_string_empty_handle (MonoDomain *domain)
  * \returns A newly created string object which contains \p text.
  */
 MonoString *
-mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
+mono_string_new_utf16 (MonoDomain *domain, const gunichar2 *text, gint32 len)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6426,7 +6426,7 @@ mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
  * On error, returns NULL and sets \p error.
  */
 MonoString *
-mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error)
+mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6450,7 +6450,7 @@ mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 l
  * On error, returns NULL and sets \p error.
  */
 MonoStringHandle
-mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error)
+mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
 }
@@ -6585,7 +6585,7 @@ mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint len
 
 	GError *eg_error = NULL;
 	MonoStringHandle o = NULL_HANDLE_STRING;
-	guint16 *ut = NULL;
+	gunichar2 *ut = NULL;
 	glong items_written;
 
 	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
@@ -6657,7 +6657,7 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
-	guint16 *ut;
+	gunichar2 *ut;
 	glong items_written;
 	int len;
 
@@ -6721,7 +6721,7 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
-	guint16 *ut = NULL;
+	gunichar2 *ut = NULL;
 	glong items_written;
 
 	ut = eg_wtf8_to_utf16 (text, length, NULL, &items_written, &eg_error);
