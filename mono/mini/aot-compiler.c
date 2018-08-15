@@ -4858,10 +4858,11 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 
 		iter = NULL;
 		while ((method = mono_class_get_methods (array_class, &iter))) {
-			if (strstr (method->name, name_prefix)) {
+			if (!strncmp (method->name, name_prefix, strlen (name_prefix))) {
 				MonoMethod *m = mono_aot_get_array_helper_from_wrapper (method);
 
-				add_extra_method_with_depth (acfg, m, depth);
+				if (m->is_inflated && !mono_method_is_generic_sharable_full (m, FALSE, FALSE, FALSE))
+					add_extra_method_with_depth (acfg, m, depth);
 			}
 		}
 
@@ -8318,29 +8319,6 @@ mono_aot_get_method_name (MonoCompile *cfg)
 		return get_debug_sym (cfg->orig_method, "", llvm_acfg->method_label_hash);
 }
 
-/*
- * mono_aot_is_linkonce_method:
- *
- *   Return whenever METHOD should be emitted with linkonce linkage,
- * eliminating duplicate copies when compiling in static mode.
- */
-gboolean
-mono_aot_is_linkonce_method (MonoMethod *method)
-{
-	return FALSE;
-#if 0
-	WrapperInfo *info;
-
-	// FIXME: Add more cases
-	if (method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		return FALSE;
-	info = mono_marshal_get_wrapper_info (method);
-	if ((info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)))
-		return TRUE;
-	return FALSE;
-#endif
-}
-
 static gboolean
 append_mangled_type (GString *s, MonoType *t)
 {
@@ -11230,7 +11208,7 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [0] = acfg;
 			user_data [1] = frag;
 			
-			thread = mono_thread_create_internal (mono_domain_get (), compile_thread_main, (gpointer) user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
+			thread = mono_thread_create_internal (mono_domain_get (), (gpointer)compile_thread_main, (gpointer) user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
 			mono_error_assert_ok (error);
 
 			thread_handle = mono_threads_open_thread_handle (thread->handle);

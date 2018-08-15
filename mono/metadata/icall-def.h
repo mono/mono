@@ -191,7 +191,7 @@ HANDLES(ICALL(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho))
 HANDLES(ICALL(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup))
 
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
-ICALL(DTIME_1, "GetSystemTimeAsFileTime", mono_100ns_datetime)
+ICALL(DTIME_1, "GetSystemTimeAsFileTime", ves_icall_System_DateTime_GetSystemTimeAsFileTime)
 
 ICALL_TYPE(DELEGATE, "System.Delegate", DELEGATE_1)
 HANDLES(ICALL(DELEGATE_1, "AllocDelegateLike_internal", ves_icall_System_Delegate_AllocDelegateLike_internal))
@@ -235,7 +235,7 @@ ICALL(PROCESS_10, "ProcessName_internal(intptr)", ves_icall_System_Diagnostics_P
 HANDLES(ICALL(PROCESS_13, "ShellExecuteEx_internal(System.Diagnostics.ProcessStartInfo,System.Diagnostics.Process/ProcInfo&)", ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal))
 
 ICALL_TYPE(STOPWATCH, "System.Diagnostics.Stopwatch", STOPWATCH_1)
-ICALL(STOPWATCH_1, "GetTimestamp", mono_100ns_ticks)
+ICALL(STOPWATCH_1, "GetTimestamp", ves_icall_System_Diagnostics_Stopwatch_GetTimestamp)
 
 ICALL_TYPE(ENUM, "System.Enum", ENUM_1)
 HANDLES(ICALL(ENUM_1, "GetEnumValuesAndNames", ves_icall_System_Enum_GetEnumValuesAndNames))
@@ -837,6 +837,7 @@ HANDLES(ICALL(RTH_14, "IsGenericVariable", ves_icall_RuntimeTypeHandle_IsGeneric
 HANDLES(ICALL(RTH_15, "IsInstanceOfType", ves_icall_RuntimeTypeHandle_IsInstanceOfType))
 HANDLES(ICALL(RTH_16, "IsPointer", ves_icall_RuntimeTypeHandle_IsPointer))
 HANDLES(ICALL(RTH_17, "IsPrimitive", ves_icall_RuntimeTypeHandle_IsPrimitive))
+NOHANDLES(ICALL(RTH_17a, "is_subclass_of", ves_icall_RuntimeTypeHandle_is_subclass_of))
 HANDLES(ICALL(RTH_18, "type_is_assignable_from", ves_icall_RuntimeTypeHandle_type_is_assignable_from))
 
 ICALL_TYPE(RNG, "System.Security.Cryptography.RNGCryptoServiceProvider", RNG_1)
@@ -1022,7 +1023,7 @@ HANDLES(ICALL(THREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_Thre
 HANDLES(ICALL(THREADP_14, "SetMinThreadsNative", ves_icall_System_Threading_ThreadPool_SetMinThreadsNative))
 
 ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
-NOHANDLES(ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks))
+NOHANDLES(ICALL(TTIMER_1, "GetTimeMonotonic", ves_icall_System_Threading_Timer_GetTimeMonotonic))
 
 ICALL_TYPE(VOLATILE, "System.Threading.Volatile", VOLATILE_28)
 ICALL(VOLATILE_28, "Read(T&)", ves_icall_System_Threading_Volatile_Read_T)

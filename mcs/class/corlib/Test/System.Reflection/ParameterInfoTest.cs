@@ -484,6 +484,8 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // https://github.com/mono/mono/issues/8312
+		// The linker removes the SkipWhile methods
+		[Category ("MobileNotWorking")]
 		public void ParameterInfoToStringForQueryableSkipWhile ()
 		{
 			var sb = new StringBuilder ();

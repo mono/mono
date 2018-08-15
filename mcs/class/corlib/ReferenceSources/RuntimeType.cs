@@ -800,6 +800,8 @@ namespace System
 			}
 		}
 
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
+
 		public override bool IsSZArray {
 			get {
 				// TODO: intrinsic
@@ -811,8 +813,20 @@ namespace System
 			get {
 				return false;
 			}
-		}
+		}	
 
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);		
+		[System.Runtime.InteropServices.ComVisible(true)]
+		[Pure]
+		public override bool IsSubclassOf(Type type)
+		{
+			if ((object)type == null)
+				throw new ArgumentNullException("type");
+			Contract.EndContractBlock();
+			RuntimeType rtType = type as RuntimeType;
+			if (rtType == null)
+				return false;
+
+			return RuntimeTypeHandle.IsSubclassOf (this, rtType);
+		}
 	}
 }
