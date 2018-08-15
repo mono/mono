@@ -41,7 +41,7 @@
  * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
  * them, just don't include any mono headers and emit dummy prototypes.
  */
-// Generate prototypes
+// Generate incorrect prototypes.
 #define ICALL_TYPE(id,name,first)
 #define ICALL(id,name,func) ICALL_EXPORT void func (void);
 #define HANDLES(inner) inner
