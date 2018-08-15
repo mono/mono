@@ -432,7 +432,7 @@ alloc_from_new_sb (MonoLockFreeAllocator *heap)
 }
 
 gpointer
-mono_lock_free_alloc (MonoLockFreeAllocator *heap)
+(mono_lock_free_alloc) (MonoLockFreeAllocator *heap)
 {
 	gpointer addr;
 
