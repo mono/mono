@@ -713,35 +713,24 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountTyp
 int
 mono_pages_not_faulted (void *addr, size_t size)
 {
+	gint64 count = -1;
 #ifdef HAVE_MINCORE
 	int i;
-	gint64 count;
 	int pagesize = mono_pagesize ();
 	int npages = (size + pagesize - 1) / pagesize;
-	char *faulted = (char *) g_malloc0 (sizeof (char*) * npages);
-
-	/*
-	 * We cast `faulted` to void* because Linux wants an unsigned
-	 * char* while BSD wants a char*.
-	 */
-#ifdef __linux__
-	if (mincore (addr, size, (unsigned char *)faulted) != 0) {
+#if defined (__linux__) || defined (HOST_WASM)
+	typedef unsigned char T;
 #else
-	if (mincore (addr, size, (char *)faulted) != 0) {
+	typedef char T;
 #endif
-		count = -1;
-	} else {
+	T *faulted = g_new0 (T, npages);
+	if (mincore (addr, size, faulted) == 0) {
 		count = 0;
-		for (i = 0; i < npages; ++i) {
-			if (faulted [i] != 0)
-				++count;
-		}
+		for (i = 0; i < npages; ++i)
+			count += (faulted [i] != 0);
 	}
 
 	g_free (faulted);
-
-	return count;
-#else
-	return -1;
 #endif
+	return count;
 }

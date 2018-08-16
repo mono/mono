@@ -177,6 +177,8 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
 
+struct HandleStack;
+struct MonoJitTlsData;
 typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
 typedef struct _MonoThreadInfo {
@@ -246,12 +248,12 @@ typedef struct _MonoThreadInfo {
 	/* Set when the thread is started, or in _wapi_thread_duplicate () */
 	MonoThreadHandle *handle;
 
-	void *jit_data;
+	struct MonoJitTlsData *jit_data;
 
 	MonoThreadInfoInterruptToken *interrupt_token;
 
 	/* HandleStack for coop handles */
-	gpointer handle_stack;
+	struct HandleStack *handle_stack;
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
@@ -595,8 +597,15 @@ mono_native_thread_id_get (void);
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
+//FIXMEcxx typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
+
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
+mono_native_thread_create (MonoNativeThreadId *tid, gpointer /*FIXMEcxx MonoNativeThreadStart*/ func, gpointer arg);
+
+#ifdef __cplusplus
+// Macros do not recurse.
+#define mono_native_thread_create(tid, func, arg) (mono_native_thread_create ((tid), (gpointer)(func), (arg)))
+#endif
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
@@ -738,6 +747,8 @@ typedef enum {
 	MONO_THREAD_INFO_WAIT_RET_TIMEOUT     = -2,
 	MONO_THREAD_INFO_WAIT_RET_FAILED      = -3,
 } MonoThreadInfoWaitRet;
+
+G_ENUM_FUNCTIONS (MonoThreadInfoWaitRet)
 
 MonoThreadInfoWaitRet
 mono_thread_info_wait_one_handle (MonoThreadHandle *handle, guint32 timeout, gboolean alertable);
