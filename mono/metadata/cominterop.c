@@ -3355,7 +3355,7 @@ mono_marshal_safearray_begin (gpointer safearray, MonoArray **result, gpointer *
 /* This is an icall */
 #ifdef HOST_WIN32
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
-static inline int
+static int
 mono_marshal_win_safearray_get_value (gpointer safearray, gpointer indices, gpointer *result)
 {
 	return SafeArrayPtrOfIndex ((SAFEARRAY*)safearray, (LONG*)indices, result);
@@ -3536,7 +3536,7 @@ mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointe
 /* This is an icall */
 #ifdef HOST_WIN32
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
-static inline int
+static int
 mono_marshal_win_safearray_set_value (gpointer safearray, gpointer indices, gpointer value)
 {
 	return SafeArrayPutElement ((SAFEARRAY*)safearray, (LONG*)indices, value);
