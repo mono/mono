@@ -10268,7 +10268,7 @@ emit_globals (MonoAotCompile *acfg)
 		entry = (GlobalsTableEntry *)g_ptr_array_index (table, hash);
 		if (entry == NULL) {
 			new_entry->index = hash;
-			g_ptr_array_index (table, hash) = new_entry;
+			g_ptr_array_index (table, hash) = (GlobalsTableEntry*)new_entry;
 		} else {
 			while (entry->next)
 				entry = entry->next;
@@ -11217,7 +11217,7 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [0] = acfg;
 			user_data [1] = frag;
 			
-			thread = mono_thread_create_internal (mono_domain_get (), (gpointer)compile_thread_main, (gpointer) user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
+			thread = mono_thread_create_internal (mono_domain_get (), (gpointer)compile_thread_main, user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
 			mono_error_assert_ok (error);
 
 			thread_handle = mono_threads_open_thread_handle (thread->handle);
@@ -11226,8 +11226,8 @@ compile_methods (MonoAotCompile *acfg)
 		g_free (methods);
 
 		for (i = 0; i < threads->len; ++i) {
-			mono_thread_info_wait_one_handle (g_ptr_array_index (threads, i), MONO_INFINITE_WAIT, FALSE);
-			mono_threads_close_thread_handle (g_ptr_array_index (threads, i));
+			mono_thread_info_wait_one_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i), MONO_INFINITE_WAIT, FALSE);
+			mono_threads_close_thread_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i));
 		}
 	} else {
 		methods_len = 0;
@@ -11573,7 +11573,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 			for (i = 0; i < len; ++i) {
 				int class_id = profread_int (infile);
 
-				gdata->argv [i] = g_hash_table_lookup (data->classes, GINT_TO_POINTER (class_id));
+				gdata->argv [i] = (ClassProfileData*)g_hash_table_lookup (data->classes, GINT_TO_POINTER (class_id));
 				g_assert (gdata->argv [i]);
 			}
 			g_hash_table_insert (data->ginsts, GINT_TO_POINTER (id), gdata);
@@ -11588,7 +11588,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 				int ginst_id = profread_int (infile);
 				char *class_name = profread_string (infile);
 
-				ImageProfileData *image = g_hash_table_lookup (data->images, GINT_TO_POINTER (image_id));
+				ImageProfileData *image = (ImageProfileData*)g_hash_table_lookup (data->images, GINT_TO_POINTER (image_id));
 				g_assert (image);
 
 				char *p = strrchr (class_name, '.');
@@ -11601,7 +11601,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 				cdata->name = g_strdup (p + 1);
 
 				if (ginst_id != -1) {
-					cdata->inst = g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
+					cdata->inst = (GInstProfileData*)g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
 					g_assert (cdata->inst);
 				}
 				g_free (class_name);
@@ -11629,7 +11629,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 			char *method_name = profread_string (infile);
 			char *sig = profread_string (infile);
 
-			ClassProfileData *klass = g_hash_table_lookup (data->classes, GINT_TO_POINTER (class_id));
+			ClassProfileData *klass = (ClassProfileData*)g_hash_table_lookup (data->classes, GINT_TO_POINTER (class_id));
 			g_assert (klass);
 
 			MethodProfileData *mdata = g_new0 (MethodProfileData, 1);
@@ -11640,7 +11640,7 @@ load_profile_file (MonoAotCompile *acfg, char *filename)
 			mdata->param_count = param_count;
 
 			if (ginst_id != -1) {
-				mdata->inst = g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
+				mdata->inst = (GInstProfileData*)g_hash_table_lookup (data->ginsts, GINT_TO_POINTER (ginst_id));
 				g_assert (mdata->inst);
 			}
 			g_hash_table_insert (data->methods, GINT_TO_POINTER (id), mdata);
@@ -11728,7 +11728,7 @@ resolve_profile_data (MonoAotCompile *acfg, ProfileData *data)
 		ImageProfileData *idata = (ImageProfileData*)value;
 
 		for (i = 0; i < assemblies->len; ++i) {
-			MonoAssembly *ass = g_ptr_array_index (assemblies, i);
+			MonoAssembly *ass = (MonoAssembly*)g_ptr_array_index (assemblies, i);
 
 			if (!strcmp (ass->aname.name, idata->name)) {
 				idata->image = ass->image;
@@ -12377,18 +12377,21 @@ mono_read_method_cache (MonoAotCompile *acfg)
 
 	g_assert (acfg->dedup_cache);
 
-	FILE *cache = fopen (filename, "r");
+	FILE *cache;
+	cache = fopen (filename, "r");
 	if (!cache)
 		goto early_exit;
 
 	// Since we do pointer comparisons, and it can't be allocated at
 	// the address 0x1 due to alignment, we use this as a sentinel
-	gpointer other_acfg_sentinel = GINT_TO_POINTER (0x1);
+	gpointer other_acfg_sentinel;
+	other_acfg_sentinel = GINT_TO_POINTER (0x1);
 
 	if (fseek (cache, 0L, SEEK_END))
 		goto cleanup;
 
-	size_t fileLength = ftell (cache);
+	size_t fileLength;
+	fileLength = ftell (cache);
 	g_assert (fileLength > 0);
 
 	if (fseek (cache, 0L, SEEK_SET))
@@ -12397,8 +12400,10 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	// Avoid thousands of new malloc entries
 	// FIXME: allocate into imageset, so we don't need to free.
 	// put the other mangled names there too.
-	char *bulk = g_malloc0 (fileLength * sizeof (char));
-	size_t offset = 0;
+	char *bulk;
+	bulk = g_malloc0 (fileLength * sizeof (char));
+	size_t offset;
+	offset = 0;
 
 	while (fgets (&bulk [offset], fileLength - offset, cache)) {
 		// strip newline
@@ -12520,7 +12525,7 @@ mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointe
 
 	// FIXME: allow suffixes?
 	if (!astate->inflated_assembly) {
-		char *inflate = strstr (aot_options, "dedup-inflate");
+		const char* inflate = strstr (aot_options, "dedup-inflate");
 		if (!inflate)
 			return 0;
 		else 
