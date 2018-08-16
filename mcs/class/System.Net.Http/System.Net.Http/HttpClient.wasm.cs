@@ -4,7 +4,7 @@ using System.Reflection;
 namespace System.Net.Http {
 	public partial class HttpClient {
 
-        public static Func<HttpMessageHandler> GetHttpMessageHandler;
+        private static Func<HttpMessageHandler> GetHttpMessageHandler;
 
 		public HttpClient ()
 			: this (GetDefaultHandler (), true)
