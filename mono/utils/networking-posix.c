@@ -33,6 +33,8 @@
 #include <mono/utils/networking.h>
 #include <mono/utils/mono-threads-coop.h>
 
+static mono_mutex_t networking_mutex;
+
 static void*
 get_address_from_sockaddr (struct sockaddr *sa)
 {
@@ -132,6 +134,7 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 static int
 fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 {
+	mono_os_mutex_lock (&networking_mutex);
 	if (!*cache) {
 		struct protoent *pent;
 
@@ -139,6 +142,7 @@ fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 		*proto = pent ? pent->p_proto : default_val;
 		*cache = 1;
 	}
+	mono_os_mutex_unlock (&networking_mutex);
 	return *proto;
 }
 
@@ -352,12 +356,12 @@ mono_networking_addr_to_str (MonoAddress *address, char *buffer, socklen_t bufle
 void
 mono_networking_init (void)
 {
-	//nothing really
+	mono_os_mutex_init (&networking_mutex);
 }
 
 void
 mono_networking_shutdown (void)
 {
-	//nothing really
+	mono_os_mutex_destroy (&networking_mutex);
 }
 #endif
