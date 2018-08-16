@@ -38,6 +38,16 @@ $(LLVM_BUILD) $(LLVM_PREFIX):
 
 $(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_RELEASE)
 
+if TARGET_WASM
+
+EXTRA_LLVM_ARGS = -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
+
+else
+
+EXTRA_LLVM_ARGS =
+
+endif
+
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
@@ -49,6 +59,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt |
 		-DLLVM_INCLUDE_EXAMPLES=Off \
 		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
+		$(EXTRA_LLVM_ARGS)	\
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
 		$(LLVM_CMAKE_ARGS) \
 		$(dir $<)
