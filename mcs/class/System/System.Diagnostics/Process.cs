@@ -508,9 +508,12 @@ namespace System.Diagnostics
 			int size = 0;
 
 			for (int i = 0; i < processes.Length; i++) {
+				var process = processes[i];
 				try {
-					if (String.Compare (processName, processes[i].ProcessName, true) == 0)
-						processes [size++] = processes[i];
+					if (String.Compare (processName, process.ProcessName, true) == 0)
+						processes [size++] = process;
+					else
+						process.Dispose();
 				} catch (SystemException) {
 					/* The process might exit between GetProcesses_internal and GetProcessById */
 				}
