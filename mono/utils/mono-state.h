@@ -56,5 +56,4 @@ mono_crash_dump (const char *jsonFile, MonoStackHash *hashes);
 
 MONO_END_DECLS
 #endif // DISABLE_CRASH_REPORTING
-
 #endif // MONO_UTILS_NATIVE_STATE
