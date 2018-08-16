@@ -78,9 +78,9 @@ Beware that the debugger is in active development so bugs and missing features w
 
 AOT experimentation happens with the following steps:
 
-1) go to sdks and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
-2) go to sdks/build and hit `make package`
-3) go ro sdks/wasm and hit `make build`
+1) go to `sdks` and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
+2) go to `sdks/builds` and hit `make package`
+3) go to `sdks/wasm` and hit `make build`
 
 Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results. This is experimental, so expect stuff to not work as intended.
 
