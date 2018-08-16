@@ -159,7 +159,7 @@ int mono_w32socket_recv (SOCKET s, char *buf, int len, int flags, gboolean block
 	MonoInternalThread *curthread = mono_thread_internal_current ();
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recv, s, buf, len, flags);
+	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recv, s, (char*)buf, len, flags);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -168,7 +168,7 @@ int mono_w32socket_recvfrom (SOCKET s, char *buf, int len, int flags, struct soc
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recvfrom, s, buf, len, flags, from, fromlen);
+	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, recvfrom, s, (char*)buf, len, flags, from, fromlen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -177,7 +177,7 @@ int mono_w32socket_recvbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCou
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, WSARecv, s, lpBuffers, dwBufferCount, (PDWORD)lpNumberOfBytesRecvd, (PDWORD)lpFlags, lpOverlapped, lpCompletionRoutine);
+	ALERTABLE_SOCKET_CALL (FD_READ_BIT, blocking, TRUE, ret, WSARecv, s, lpBuffers, dwBufferCount, (PDWORD)lpNumberOfBytesRecvd, (PDWORD)lpFlags, (LPWSAOVERLAPPED)lpOverlapped, (LPWSAOVERLAPPED_COMPLETION_ROUTINE)lpCompletionRoutine);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -186,7 +186,7 @@ int mono_w32socket_send (SOCKET s, void *buf, int len, int flags, gboolean block
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, send, s, buf, len, flags);
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, send, s, (char*)buf, len, flags);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -195,7 +195,7 @@ int mono_w32socket_sendto (SOCKET s, const char *buf, int len, int flags, const 
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, sendto, s, buf, len, flags, to, tolen);
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, sendto, s, (const char*)buf, len, flags, to, tolen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -204,7 +204,7 @@ int mono_w32socket_sendbuffers (SOCKET s, WSABUF *lpBuffers, guint32 dwBufferCou
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, WSASend, s, lpBuffers, dwBufferCount, (PDWORD)lpNumberOfBytesRecvd, lpFlags, lpOverlapped, lpCompletionRoutine);
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, WSASend, s, lpBuffers, dwBufferCount, (PDWORD)lpNumberOfBytesRecvd, lpFlags, (LPWSAOVERLAPPED)lpOverlapped, (LPWSAOVERLAPPED_COMPLETION_ROUTINE)lpCompletionRoutine);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
