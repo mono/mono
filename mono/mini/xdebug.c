@@ -79,7 +79,7 @@ typedef enum
   JIT_UNREGISTER_FN
 } jit_actions_t;
 
-struct jit_code_entry
+typedef struct jit_code_entry
 {
 	struct jit_code_entry *next_entry;
 	struct jit_code_entry *prev_entry;
@@ -89,17 +89,17 @@ struct jit_code_entry
 	 * requirements, so use two 32 bit fields.
 	 */
 	guint32 symfile_size1, symfile_size2;
-};
+} jit_code_entry;
 
-struct jit_descriptor
+typedef struct jit_descriptor
 {
   guint32 version;
   /* This type should be jit_actions_t, but we use guint32
      to be explicit about the bitwidth.  */
   guint32 action_flag;
-  struct jit_code_entry *relevant_entry;
-  struct jit_code_entry *first_entry;
-};
+  jit_code_entry *relevant_entry;
+  jit_code_entry *first_entry;
+} jit_descriptor;
 
 /* GDB puts a breakpoint in this function.  */
 void MONO_NEVER_INLINE __jit_debug_register_code(void);
@@ -108,7 +108,7 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void);
 
 /* LLVM already defines these */
 
-extern struct jit_descriptor __jit_debug_descriptor;
+extern jit_descriptor __jit_debug_descriptor;
 
 #else
 
@@ -121,7 +121,7 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void) {
 
 /* Make sure to specify the version statically, because the
    debugger may check the version before we can set it.  */
-struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
+jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
 
 #endif
 
@@ -202,7 +202,7 @@ xdebug_end_emit (MonoImageWriter *w, MonoDwarfWriter *dw, MonoMethod *method)
 {
 	guint8 *img;
 	guint32 img_size;
-	struct jit_code_entry *entry;
+	jit_code_entry *entry;
 	guint64 *psize;
 
 	il_file_line_index = mono_dwarf_writer_get_il_file_line_index (dw);
@@ -295,7 +295,7 @@ mono_save_xdebug_info (MonoCompile *cfg)
 
 		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());;
 		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, NULL,
-									   cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+									   (guint8*)cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 
 #if 0
@@ -325,7 +325,7 @@ mono_save_xdebug_info (MonoCompile *cfg)
 		mono_loader_lock ();
 		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());
 		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, NULL,
-									   cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+									   (guint8*)cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 		fflush (xdebug_fp);
 		mono_loader_unlock ();
