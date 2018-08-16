@@ -6415,7 +6415,7 @@ mono_string_empty_handle (MonoDomain *domain)
  * \returns A newly created string object which contains \p text.
  */
 MonoString *
-mono_string_new_utf16 (MonoDomain *domain, const gunichar2 *text, gint32 len)
+mono_string_new_utf16 (MonoDomain *domain, const mono_unichar2 *text, gint32 len)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
