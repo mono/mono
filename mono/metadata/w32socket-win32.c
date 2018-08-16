@@ -47,7 +47,7 @@ static DWORD get_socket_timeout (SOCKET sock, int optname)
 {
 	DWORD timeout = 0;
 	int optlen = sizeof (DWORD);
-	if (getsockopt (sock, SOL_SOCKET, optname, &timeout, &optlen) == SOCKET_ERROR) {
+	if (getsockopt (sock, SOL_SOCKET, optname, (char *)&timeout, &optlen) == SOCKET_ERROR) {
 		WSASetLastError (0);
 		return WSA_INFINITE;
 	}
