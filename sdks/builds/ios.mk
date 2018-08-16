@@ -120,7 +120,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--without-ikvm-native \
 	--without-sigaltstack \
 	--disable-cooperative-suspend \
-	--disable-hybird-suspend \
+	--disable-hybrid-suspend \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
