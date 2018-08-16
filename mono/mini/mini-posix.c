@@ -68,6 +68,7 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/os-event.h>
+#include <mono/utils/mono-state.h>
 #include <mono/mini/debugger-state-machine.h>
 
 #include "mini.h"
@@ -958,44 +959,6 @@ print_process_map (void)
 #endif
 }
 
-#ifndef DISABLE_CRASH_REPORTING
-static void
-mono_crash_dump (const char *jsonFile)
-{
-	size_t size = strlen (jsonFile);
-
-	pid_t pid = getpid ();
-	gboolean success = FALSE;
-
-	// Save up to 100 dump files for a pid, in case mono is embedded?
-	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
-
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
-		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
-		}
-
-		/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
-
-		if (success)
-			return;
-	}
-
-	return;
-}
-#endif /* DISABLE_CRASH_REPORTING */
-
 static void
 dump_native_stacktrace (const char *signal, void *ctx)
 {
@@ -1058,7 +1021,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
 			if (!leave && !dump_for_merp)
-				mono_crash_dump (output);
+				mono_crash_dump (output, &hashes);
 		}
 #endif
 
