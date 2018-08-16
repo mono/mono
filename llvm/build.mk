@@ -4,6 +4,9 @@
 # make reset-llvm will checkout a version of llvm which is suitable for this version of mono
 # into $top_srcdir/llvm/llvm.
 #
+# Input variables
+# - LLVM_TARGET: if set to wasm32 will trigger a 32bits build that enable the experimental WebAssembly backend
+#
 
 top_srcdir ?= $(abspath $(CURDIR)/..)
 
@@ -38,15 +41,7 @@ $(LLVM_BUILD) $(LLVM_PREFIX):
 
 $(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_RELEASE)
 
-if TARGET_WASM
-
-EXTRA_LLVM_ARGS = -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly"
-
-else
-
-EXTRA_LLVM_ARGS =
-
-endif
+EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",NADA)
 
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
