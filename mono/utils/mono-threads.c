@@ -1140,6 +1140,13 @@ suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel)
 		if (suspend_result != BeginSuspendOkNoWait)
 			mono_threads_wait_pending_operations ();
 		
+		if (!check_async_suspend (info, suspend_result)) {
+			mono_thread_info_core_resume (info);
+			mono_threads_wait_pending_operations ();
+			mono_hazard_pointer_clear (hp, 1);
+			return NULL;
+		}
+
 		// if we tried to preempt the thread already, do nothing.
 		// otherwise (if it's running in blocking mode) try to abort the syscall.
 		if (interrupt_kernel && !did_interrupt)
