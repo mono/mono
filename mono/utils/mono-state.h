@@ -51,6 +51,9 @@ mono_native_state_free (JsonWriter *writer, gboolean free_data);
 void
 mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean first_thread);
 
+void
+mono_crash_dump (const char *jsonFile, MonoStackHash *hashes);
+
 MONO_END_DECLS
 #endif // TARGET_OSX
 
