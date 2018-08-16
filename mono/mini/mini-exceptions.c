@@ -1266,6 +1266,12 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	return;
+}
+
 #else
 
 typedef struct {
@@ -1422,6 +1428,23 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
 }
 
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	memset (out, 0, sizeof (MonoThreadSummary));
+
+	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
+	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
+	data.num_frames = 0;
+	data.frames = out->managed_frames;
+	data.hashes = &out->hashes;
+
+	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
+	out->num_managed_frames = data.num_frames;
+}
+
+
 static void 
 mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
 {
@@ -1464,22 +1487,6 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 #endif
-
-static void
-mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
-{
-	memset (out, 0, sizeof (MonoThreadSummary));
-
-	MonoSummarizeUserData data;
-	memset (&data, 0, sizeof (MonoSummarizeUserData));
-	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
-	data.num_frames = 0;
-	data.frames = out->managed_frames;
-	data.hashes = &out->hashes;
-
-	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
-	out->num_managed_frames = data.num_frames;
-}
 
 
 MonoBoolean

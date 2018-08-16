@@ -407,6 +407,7 @@ namespace MonoTests.System
 		// telemetry message
 		//
 		[Test]
+		[Category("NotOnWindows")]
 		public void StacktraceToState ()
 		{
 			try {
@@ -420,8 +421,6 @@ namespace MonoTests.System
 				var dump = output.Item1;
 				var portable_hash = output.Item2;
 				var unportable_hash = output.Item3;
-
-				Console.WriteLine ("Hashes {0} {1}", portable_hash, unportable_hash);
 
 				Assert.IsTrue (portable_hash != 0, "#1");
 				Assert.IsTrue (unportable_hash != 0, "#2");
