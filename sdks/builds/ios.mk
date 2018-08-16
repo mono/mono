@@ -370,6 +370,9 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
+.PHONY: clean-ios-llvm-$(3)
+clean-ios-llvm-$(3): clean-llvm-$(3)
+
 .PHONY: build-ios-llvm-$(3)
 build-ios-llvm-$(3): $(if $(IGNORE_PACKAGE_LLVM),download-llvm-$(3),package-llvm-$(3))
 
@@ -388,6 +391,9 @@ build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
 
 .PHONY: build-ios-llvm
 build-ios-llvm: build-ios-llvm-$(3)
+
+.PHONY: clean-ios-llvm
+clean-ios-llvm: clean-ios-llvm-$(3)
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 
