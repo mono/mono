@@ -370,7 +370,10 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),package-llvm-$(3),download-llvm-$(3))
+.PHONY: build-ios-llvm-$(3)
+build-ios-llvm-$(3): $(if $(IGNORE_PACKAGE_LLVM),download-llvm-$(3),package-llvm-$(3))
+
+.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm-$(3)
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
@@ -379,6 +382,12 @@ $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIG
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+
+# Make build-ios-llvm build all of the llvms
+# This is used by the Xamarin.iOS product
+
+.PHONY: build-ios-llvm
+build-ios-llvm: build-ios-llvm-$(3)
 
 $$(eval $$(call RuntimeTemplate,ios-$(1)))
 
