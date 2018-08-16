@@ -3703,7 +3703,7 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 }
 
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	int i;
 	guint32 *code = (guint32*)p;
@@ -3772,7 +3772,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guint32 *code = (guint32*)p;
 	int save_mode = SAVE_NONE;
