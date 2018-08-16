@@ -1403,6 +1403,23 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
 }
 
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	memset (out, 0, sizeof (MonoThreadSummary));
+
+	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
+	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
+	data.num_frames = 0;
+	data.frames = out->managed_frames;
+	data.hashes = &out->hashes;
+
+	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
+	out->num_managed_frames = data.num_frames;
+}
+
+
 static void 
 mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
 {
@@ -1445,22 +1462,6 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 #endif
-
-static void
-mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
-{
-	memset (out, 0, sizeof (MonoThreadSummary));
-
-	MonoSummarizeUserData data;
-	memset (&data, 0, sizeof (MonoSummarizeUserData));
-	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
-	data.num_frames = 0;
-	data.frames = out->managed_frames;
-	data.hashes = &out->hashes;
-
-	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
-	out->num_managed_frames = data.num_frames;
-}
 
 
 MonoBoolean
@@ -2996,42 +2997,6 @@ static void print_process_map (void)
 #endif
 }
 
-static void
-mono_crash_dump (const char *jsonFile) 
-{
-	size_t size = strlen (jsonFile);
-
-	pid_t pid = getpid ();
-	gboolean success = FALSE;
-
-	// Save up to 100 dump files for a pid, in case mono is embedded?
-	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
-
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
-		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
-		}
-
-	/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
-
-		if (success)
-			return;
-	}
-
-	return;
-}
-
 static gboolean handle_crash_loop = FALSE;
 
 /*
@@ -3133,7 +3098,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
 			if (!leave && !dump_for_merp)
-				mono_crash_dump (output);
+				mono_crash_dump (output, &hashes);
 #endif
 		}
 

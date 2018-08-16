@@ -5869,6 +5869,8 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 ICALL_EXPORT MonoStringHandle
 ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out, MonoError *error)
 {
+	MonoStringHandle result;
+
 #ifdef TARGET_OSX
 	// FIXME: Push handles down into mini/mini-exceptions.c
 	MonoException *exc = MONO_HANDLE_RAW (exc_handle);
@@ -5884,11 +5886,15 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 	gboolean first_thread_added = TRUE;
 	mono_native_state_add_thread (&writer, &out, NULL, first_thread_added);
 	char *output = mono_native_state_free (&writer, FALSE);
-	return mono_string_new_handle (mono_domain_get (), output, error);
+	result = mono_string_new_handle (mono_domain_get (), output, error);
+	g_free (output);
 #else
-	// Icall has platform check in managed too.
-	g_assert_not_reached ();
+	*portable_hash_out = 0;
+	*unportable_hash_out = 0;
+	result = mono_string_new_handle (mono_domain_get (), "", error);
 #endif
+
+	return result;
 }
 
 ICALL_EXPORT void

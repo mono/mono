@@ -501,4 +501,41 @@ mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *
 	not_first_thread = TRUE;
 }
 
-#endif // HOST_WIN32
+
+void
+mono_crash_dump (const char *jsonFile, MonoStackHash *hashes)
+{
+	size_t size = strlen (jsonFile);
+
+	pid_t pid = getpid ();
+	gboolean success = FALSE;
+
+	// Save up to 100 dump files for a given stacktrace hash
+	for (int increment = 0; increment < 100; increment++) {
+		FILE* fp;
+		char *name = g_strdup_printf ("mono_crash.%d.%d.json", hashes->offset_free_hash, increment);
+
+		if ((fp = fopen (name, "ab"))) {
+			if (ftell (fp) == 0) {
+				fwrite (jsonFile, size, 1, fp);
+				success = TRUE;
+			}
+		} else {
+			// Couldn't make file and file doesn't exist
+			g_warning ("Didn't have permission to access %s for file dump\n", name);
+		}
+
+		/*cleanup*/
+		if (fp)
+			fclose (fp);
+
+		g_free (name);
+
+		if (success)
+			return;
+	}
+
+	return;
+}
+
+#endif // TARGET_OSX
