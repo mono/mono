@@ -32,5 +32,4 @@ mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *
 
 MONO_END_DECLS
 #endif // DISABLE_CRASH_REPORTING
-
 #endif // MONO_UTILS_NATIVE_STATE
