@@ -44,7 +44,7 @@ namespace System.Net.Http
 		long buffer_size;
 		TimeSpan timeout;
 
-#if !XAMARIN_MODERN
+#if !XAMARIN_MODERN && !WASM
 		public HttpClient ()
 			: this (new HttpClientHandler (), true)
 		{

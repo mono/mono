@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 using NUnit.Framework;
 using WebAssembly;
@@ -269,7 +270,25 @@ public class TestClass {
 		taDouble = (double[])obj.GetObjectProperty ("typedArray");
 	}	
 
+	public static HttpClient client;
+	public static void SetMessageHandler () {
+		
+		HttpClient.GetHttpMessageHandler = () => {
+			return new FakeHttpClientHandler ();
+		};
 
+		client = new HttpClient();
+	}	
+
+}
+
+
+public class FakeHttpClientHandler : HttpClientHandler
+{
+	public FakeHttpClientHandler () : base()
+	{
+		Console.WriteLine("Creating Fake HttpClientHandler.");
+	}
 }
 
 [TestFixture]
@@ -919,6 +938,16 @@ public class BindingTests {
 		Assert.AreEqual (18, TestClass.taDouble.Length);
 		Assert.AreEqual (3.14d, TestClass.taDouble[0]);
 		Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
+	}
+
+
+	[Test]
+	public static void HttpMessageHandler () {
+		Runtime.InvokeJS (@"
+			call_test_method (""SetMessageHandler"", ""o"", [  ]);
+		");
+		Assert.AreNotEqual (null, HttpClient.GetHttpMessageHandler);
+		Assert.AreNotEqual (null, TestClass.client);
 	}
 
 }

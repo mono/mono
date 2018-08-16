@@ -184,6 +184,7 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.wasm.cs" />
         <Compile Include="System.Net.Http\HttpClientHandler.cs" />
       </ItemGroup>
     </When>
