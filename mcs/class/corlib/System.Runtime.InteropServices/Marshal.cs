@@ -1899,13 +1899,13 @@ namespace System.Runtime.InteropServices
 #endif
 
 		internal struct MarshalerInstanceKey {
-			public string TypeName;
+			public Type Type;
 			public string Cookie;
 
 			public override int GetHashCode () {
 				int result = 0;
-				if (TypeName != null)
-					result = TypeName.GetHashCode();
+				if (Type != null)
+					result = Type.GetHashCode();
 				if (Cookie != null)
 					result ^= Cookie.GetHashCode();
 				return result;
@@ -1914,7 +1914,7 @@ namespace System.Runtime.InteropServices
 
 		internal class MarshalerInstanceKeyComparer : IEqualityComparer<MarshalerInstanceKey> {
 			public bool Equals (MarshalerInstanceKey lhs, MarshalerInstanceKey rhs) {
-				return (lhs.TypeName == rhs.TypeName) && (lhs.Cookie == rhs.Cookie);
+				return (lhs.Type == rhs.Type) && (lhs.Cookie == rhs.Cookie);
 			}
 
 			public int GetHashCode (MarshalerInstanceKey key) {
@@ -1925,9 +1925,9 @@ namespace System.Runtime.InteropServices
 		internal static Dictionary<MarshalerInstanceKey, ICustomMarshaler> MarshalerInstanceCache = 
 			new Dictionary<MarshalerInstanceKey, ICustomMarshaler> (new MarshalerInstanceKeyComparer ());
 
-		internal static ICustomMarshaler GetCustomMarshalerInstance (string typeName, string cookie) {
+		internal static ICustomMarshaler GetCustomMarshalerInstance (Type type, string cookie) {
 			var key = new MarshalerInstanceKey {
-				TypeName = typeName,
+				Type = type,
 				Cookie = cookie
 			};
 
@@ -1937,10 +1937,7 @@ namespace System.Runtime.InteropServices
 				gotExistingInstance = MarshalerInstanceCache.TryGetValue (key, out result);
 
 			if (!gotExistingInstance) {
-				var callingAssembly = System.Reflection.Assembly.GetCallingAssembly ();
-				var marshalerType = callingAssembly.GetType (typeName);
-
-				result = (ICustomMarshaler) marshalerType.InvokeMember (
+				result = (ICustomMarshaler) type.InvokeMember (
 					"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.InvokeMethod,
 					null, null, new object[] { cookie }
 				);

@@ -281,6 +281,7 @@ mono_marshal_init (void)
 		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new, "mono_icall_handle_new", "ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new_interior, "mono_icall_handle_new_interior", "ptr ptr", TRUE);
+		register_icall (mono_marshal_get_type_object, "mono_marshal_get_type_object", "object ptr", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -6213,6 +6214,16 @@ mono_icall_handle_new_interior (gpointer rawobj)
 #else
 	return mono_handle_new_interior (rawobj);
 #endif
+}
+
+MonoObject*
+mono_marshal_get_type_object (MonoType *type)
+{
+	ERROR_DECL (error);
+	MonoObject * result;
+	result = (MonoObject*)mono_type_get_object_checked (mono_domain_get (), type, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
 
 void

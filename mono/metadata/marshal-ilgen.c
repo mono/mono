@@ -4192,7 +4192,11 @@ emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *class, MonoM
 		g_assert (get_instance);
 	}
 
-	mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.custom_name));
+	MonoType *thistype = m_class_get_byval_arg (class);
+
+	// HACK: We cannot use ldtoken in this type of wrapper.
+	mono_mb_emit_ptr (mb, thistype);
+	mono_mb_emit_icall (mb, mono_marshal_get_type_object);
 	mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
 
 	mono_mb_emit_op (mb, CEE_CALL, get_instance);
