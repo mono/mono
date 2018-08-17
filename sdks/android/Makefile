@@ -198,8 +198,11 @@ package: app/assets/asm/dtest-app.exe app/assets/asm/dtest-app.pdb
 
 ## LLDB support
 
-lldb-mono-0.1/xa-lldb: xa-lldb
-	wget --no-verbose -O - 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz' | tar xvf -
+lldb-mono-0.1.tar.gz:
+	wget --no-verbose 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz'
+
+lldb-mono-0.1/xa-lldb: xa-lldb lldb-mono-0.1.tar.gz
+	tar xvf lldb-mono-0.1.tar.gz
 	cp xa-lldb lldb-mono-0.1/xa-lldb
 
 ## Run Mono.Debugger.Soft and BCL tests

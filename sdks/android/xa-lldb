@@ -94,6 +94,8 @@ platform connect unix-abstract-connect://[$DEVICE]$LLDB/tmp/$SOCK
 settings set auto-confirm true
 settings set plugin.symbol-file.dwarf.comp-dir-symlink-paths /proc/self/cwd
 process attach -p $PID
+process handle -p true -n false -s false SIGPWR SIGXCPU SIGTTIN SIGSEGV SIGCHLD
+breakpoint set --name mono_handle_native_crash
 p (void)monodroid_clear_lldb_wait()
 $COMMANDS" > $START_FILE
 
