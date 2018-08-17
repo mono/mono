@@ -2,13 +2,11 @@
 include runtime.mk
 
 ANDROID_URI?=https://dl.google.com/android/repository/
-ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
-ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
-ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
-
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
-$(ANDROID_TOOLCHAIN_CACHE_DIR):
+ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
+
+$(ANDROID_TOOLCHAIN_CACHE_DIR) $(ANDROID_TOOLCHAIN_DIR):
 	mkdir -p $@
 
 ##
@@ -22,7 +20,7 @@ define AndroidProvisioningTemplate
 $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
 	wget --no-verbose -O $$@ $(4)$(1).zip
 
-$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
+$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip | $$(ANDROID_TOOLCHAIN_DIR)
 	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
 	./unzip-android-archive.sh "$$<" "$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))"
 	touch $$@
