@@ -2333,7 +2333,8 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *requesting_assembly = NULL;
+	MonoAssembly *requesting_assembly;
+	requesting_assembly = NULL;
 	if (!refOnly) {
 		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
 		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
@@ -2371,6 +2372,11 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 
 	filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
+
+	if (!g_path_is_absolute (filename)) {
+		mono_error_set_argument (error, "assemblyFile", "Absolute path information is required.");
+		goto leave;
+	}
 
 	MonoImageOpenStatus status;
 	MonoMethod *executing_method;
@@ -2494,8 +2500,10 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	MonoAssemblyContextKind asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
-	const char *basedir = NULL;
+	MonoAssemblyContextKind asmctx;
+	asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
+	const char *basedir;
+	basedir = NULL;
 	if (!refOnly) {
 		/* Determine if the current assembly is in LoadFrom context.
 		 * If it is, we must include the executing assembly's basedir
