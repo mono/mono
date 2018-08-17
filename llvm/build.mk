@@ -41,7 +41,7 @@ $(LLVM_BUILD) $(LLVM_PREFIX):
 
 $(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_RELEASE)
 
-EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",NADA)
+EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",)
 
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
