@@ -251,7 +251,6 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	g_error ("mono_arch_emit_inst_for_method");
 	return NULL;
 }
 
