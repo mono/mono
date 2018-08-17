@@ -1573,6 +1573,8 @@ namespace TestRunner {
 				return 1;
 			}
 
+			compiler = Path.GetFullPath (compiler);
+
 			ITester tester;
 			try {
 				Console.WriteLine ("Loading " + compiler + " ...");
