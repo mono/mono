@@ -110,9 +110,7 @@ mono_jvm_get_jnienv (void)
 	if (env)
 		return env;
 
-	mono_thread_attach (mono_domain_get ());
-
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	(*jvm)->AttachCurrentThread(jvm, &env, NULL);
 	if (env)
 		return env;
 
