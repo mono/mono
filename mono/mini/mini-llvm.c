@@ -1019,6 +1019,14 @@ set_call_preserveall_cc (LLVMValueRef func)
 #endif
 }
 
+static void
+set_call_preserveall_cc (LLVMValueRef func)
+{
+#ifndef TARGET_WATCHOS
+	mono_llvm_set_call_preserveall_cc (func);
+#endif
+}
+
 /*
  * get_bb:
  *
