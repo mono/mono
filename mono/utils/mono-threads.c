@@ -176,12 +176,6 @@ begin_suspend_for_blocking_thread (MonoThreadInfo *info, gboolean interrupt_kern
 static gboolean
 check_async_suspend (MonoThreadInfo *info, BeginSuspendResult result)
 {
-	if (mono_threads_is_cooperative_suspension_enabled () && !mono_threads_is_hybrid_suspension_enabled ()) {
-		/* Async suspend can't async fail on coop */
-		g_assert (result == BeginSuspendOkCooperative);
-		return TRUE;
-	}
-
 	switch (result) {
 	case BeginSuspendOkCooperative:
 		return TRUE;
