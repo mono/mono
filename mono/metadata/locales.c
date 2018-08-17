@@ -559,7 +559,8 @@ get_current_locale_name (void)
 #ifdef HOST_WIN32
 	locale = g_win32_getlocale ();
 #elif defined (__APPLE__)	
-	locale = get_darwin_locale ();
+	if (!g_hasenv ("MONO_DARWIN_FAST_LOCALE"))
+		locale = get_darwin_locale ();
 	if (!locale)
 		locale = get_posix_locale ();
 #else
