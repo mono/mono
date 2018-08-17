@@ -82,6 +82,7 @@ typedef void* (*MonoDlFallbackClose) (void *handle, void *user_data);
 
 typedef void *(*mono_dl_fallback_register_fn) (MonoDlFallbackLoad load_func, MonoDlFallbackSymbol symbol_func, MonoDlFallbackClose close_func, void *user_data);
 
+typedef void (*mono_jvm_initialize_fn) (JavaVM *vm);
 typedef MonoDomain* (*mono_jit_init_version_fn) (const char *root_domain_name, const char *runtime_version);
 typedef void (*mono_jit_cleanup_fn) (MonoDomain *domain);
 typedef int (*mono_jit_exec_fn) (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
@@ -115,6 +116,7 @@ typedef void *(*mono_runtime_quit_fn) (void);
 
 static JavaVM *jvm;
 
+static mono_jvm_initialize_fn mono_jvm_initialize;
 static mono_jit_init_version_fn mono_jit_init_version;
 static mono_jit_cleanup_fn mono_jit_cleanup;
 static mono_assembly_open_fn mono_assembly_open;
@@ -150,33 +152,65 @@ static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
 static void *mono_posix_helper_dso;
 
-static jclass AndroidRunner_klass = NULL;
-static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
-
 //forward decls
 
 static void* my_dlsym (void *handle, const char *name, char **err, void *user_data);
 static void* my_dlopen (const char *name, int flags, char **err, void *user_data);
 
-static JNIEnv* mono_jvm_get_jnienv (void);
-
 //stuff
+
+static JNIEnv*
+get_jnienv (void)
+{
+	JNIEnv *env;
+
+	if (!jvm)
+		__android_log_assert ("", "mono-sdks", "%s: Fatal error: jvm is not initialized", __func__);
+
+	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	if (env)
+		return env;
+
+	(*jvm)->AttachCurrentThread(jvm, &env, NULL);
+	if (env)
+		return env;
+
+	__android_log_assert ("", "mono-sdks", "%s: Fatal error: Could not create env", __func__);
+}
+
+static jobject
+lref_to_gref (JNIEnv *env, jobject lref)
+{
+	jobject g;
+	if (lref == 0)
+		return 0;
+	g = (*env)->NewGlobalRef (env, lref);
+	(*env)->DeleteLocalRef (env, lref);
+	return g;
+}
 
 static void
 _runtime_log (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data)
 {
+	static jclass AndroidRunner_klass = NULL;
+	static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
 	JNIEnv *env;
 	jstring j_message;
 
-	if (jvm == NULL)
+	if (!jvm)
 		__android_log_assert ("", "mono-sdks", "%s: jvm is NULL", __func__);
 
-	if (AndroidRunner_klass == NULL)
-		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_klass is NULL", __func__);
-	if (AndroidRunner_WriteLineToInstrumentation_method == NULL)
-		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_WriteLineToInstrumentation_method is NULL", __func__);
+	env = get_jnienv ();
 
-	env = mono_jvm_get_jnienv ();
+	if (!AndroidRunner_klass)
+		AndroidRunner_klass = lref_to_gref(env, (*env)->FindClass (env, "org/mono/android/AndroidRunner"));
+	if (!AndroidRunner_klass)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_klass", __func__);
+
+	if (!AndroidRunner_WriteLineToInstrumentation_method)
+		AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
+	if (!AndroidRunner_WriteLineToInstrumentation_method)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_WriteLineToInstrumentation_method", __func__);
 
 	j_message = (*env)->NewStringUTF(env, message);
 
@@ -372,6 +406,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 		_exit (1);
 	}
 
+	mono_jvm_initialize = dlsym (libmono, "mono_jvm_initialize");
 	mono_jit_init_version = dlsym (libmono, "mono_jit_init_version");
 	mono_jit_cleanup = dlsym (libmono, "mono_jit_cleanup");
 	mono_assembly_open = dlsym (libmono, "mono_assembly_open");
@@ -402,6 +437,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_method_get_name = dlsym (libmono, "mono_method_get_name");
 	mono_trace_init = dlsym (libmono, "mono_trace_init");
 	mono_trace_set_log_handler = dlsym (libmono, "mono_trace_set_log_handler");
+
+	mono_jvm_initialize (jvm);
 
 	//MUST HAVE envs
 	setenv ("TMPDIR", cache_dir, 1);
@@ -591,25 +628,6 @@ _monodroid_get_android_api_level (void)
 JNIEXPORT jint JNICALL
 JNI_OnLoad (JavaVM *vm, void *reserved)
 {
-	mono_jvm_initialize (vm);
+	jvm = vm;
 	return JNI_VERSION_1_6;
-}
-
-static JNIEnv*
-mono_jvm_get_jnienv (void)
-{
-	JNIEnv *env;
-
-	if (!initialized)
-		__android_log_assert ("", "mono-sdks", "%s: Fatal error: jvm not initialized", __func__);
-
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
-	if (env)
-		return env;
-
-	(*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
-	if (env)
-		return env;
-
-	__android_log_assert ("", "mono-sdks", "%s: Fatal error: Could not create env", __func__);
 }
