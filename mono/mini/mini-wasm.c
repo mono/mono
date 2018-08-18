@@ -365,7 +365,7 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	return FALSE;
 }
 
-#endif
+#endif // DISABLE_JIT
 
 int
 mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
@@ -404,7 +404,7 @@ G_BEGIN_DECLS // FIXMEcxx
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
-#endif
+#endif // HOST_WASM
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -577,8 +577,14 @@ mono_wasm_set_timeout (int timeout, int id)
 {
 #ifdef HOST_WASM
 	mono_set_timeout (timeout, id);
+<<<<<<< HEAD
 #endif
 }
+=======
+}
+
+#endif // HOST_WASM
+>>>>>>> annotate endif for clarity
 
 void
 mono_arch_register_icall (void)
@@ -709,6 +715,6 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	
 }
 
-#endif
+#endif // HOST_WASM
 
 G_END_DECLS // FIXMEcxx
