@@ -213,6 +213,7 @@ G_BEGIN_DECLS // FIXMEcxx wasm
 
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
+
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
 #endif // HOST_WASM
@@ -301,6 +302,20 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	return 0;
 }
 
+GSList*
+mono_arch_get_delegate_invoke_impls (void)
+{
+	g_error ("mono_arch_get_delegate_invoke_impls");
+	return NULL;
+}
+
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	g_error ("mono_arch_get_delegate_invoke_impl");
+	return NULL;
+}
+
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
@@ -308,7 +323,13 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 	return 0;
 }
 
-#ifdef HOST_WASM
+int
+mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
+{
+	g_error ("mono_arch_get_argument_info");
+	return 0;
+
+}
 
 void
 mono_runtime_setup_stat_profiler (void)
@@ -348,6 +369,7 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	g_error ("WASM systems don't support mono_thread_state_init_from_handle");
 	return FALSE;
 }
+
 
 EMSCRIPTEN_KEEPALIVE void
 mono_set_timeout_exec (int id)
@@ -393,6 +415,11 @@ mono_arch_register_icall (void)
 #ifdef HOST_WASM
 	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", (gconstpointer)mono_wasm_set_timeout);
 #endif
+
+void
+mono_arch_register_icall (void)
+{
+	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
 }
 
 void
@@ -400,8 +427,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 {
 	g_error ("mono_arch_patch_code_new");
 }
-
-#ifdef HOST_WASM
 
 /*
 The following functions don't belong here, but are due to laziness.

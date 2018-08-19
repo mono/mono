@@ -209,9 +209,6 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
-// extern const void *mono_aot_module_{0}_info;
-
-
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
