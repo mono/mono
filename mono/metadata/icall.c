@@ -7646,14 +7646,11 @@ mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 	return typed_reference_to_object (tref, error);
 }
 
-ICALL_EXPORT MonoTypedRef
-mono_TypedReference_MakeTypedReferenceInternal (MonoObjectHandle target, MonoArrayHandle fields)
+ICALL_EXPORT void
+mono_TypedReference_MakeTypedReferenceInternal (MonoTypedRef *res, MonoObjectHandle target, MonoArrayHandle fields)
 {
 	gsize offset = 0;
-	MonoTypedRef res;
 	MonoReflectionFieldHandle f = MONO_HANDLE_NEW (MonoReflectionField, NULL);
-
-	memset (&res, 0, sizeof (res));
 
 	g_assert (!MONO_HANDLE_IS_NULL (fields));
 	gsize const array_length = mono_array_handle_length (fields);
@@ -7662,16 +7659,14 @@ mono_TypedReference_MakeTypedReferenceInternal (MonoObjectHandle target, MonoArr
 	for (gsize i = 0; i < array_length; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (f, fields, i);
 		g_assert (!MONO_HANDLE_IS_NULL (f));
-
-		res.type = MONO_HANDLE_GETVAL (f, field)->type;
-		res.klass = mono_class_from_mono_type (res.type);
 		offset += MONO_HANDLE_GETVAL (f, field)->offset;
 		if (i)
 			offset -= sizeof (MonoObject);
 	}
 
-	res.value = (guint8*)MONO_HANDLE_RAW (target) + offset;
-	return res;
+	res->type = MONO_HANDLE_GETVAL (f, field)->type;
+	res->klass = mono_class_from_mono_type (res->type);
+	res->value = (guint8*)MONO_HANDLE_RAW (target) + offset;
 }
 
 static void
