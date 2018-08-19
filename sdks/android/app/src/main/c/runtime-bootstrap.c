@@ -150,31 +150,33 @@ static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
 static void *mono_posix_helper_dso;
 
+static jclass AndroidRunner_klass = NULL;
+static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
+
 //forward decls
 
 static void* my_dlsym (void *handle, const char *name, char **err, void *user_data);
 static void* my_dlopen (const char *name, int flags, char **err, void *user_data);
 
+static JNIEnv* mono_jvm_get_jnienv (void);
 
 //stuff
 
 static void
 _runtime_log (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data)
 {
-	static jclass AndroidRunner_klass = NULL;
-	static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
 	JNIEnv *env;
 	jstring j_message;
 
 	if (jvm == NULL)
 		__android_log_assert ("", "mono-sdks", "%s: jvm is NULL", __func__);
 
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	if (AndroidRunner_klass == NULL)
+		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_klass is NULL", __func__);
+	if (AndroidRunner_WriteLineToInstrumentation_method == NULL)
+		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_WriteLineToInstrumentation_method is NULL", __func__);
 
-	if (AndroidRunner_klass == NULL || AndroidRunner_WriteLineToInstrumentation_method == NULL) {
-		AndroidRunner_klass = (*env)->FindClass (env, "org/mono/android/AndroidRunner");
-		AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
-	}
+	env = mono_jvm_get_jnienv ();
 
 	j_message = (*env)->NewStringUTF(env, message);
 
@@ -431,7 +433,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 
 	wait_for_unmanaged_debugger ();
 
-#ifdef RUN_WITH_MANAGED_DEBUGGER
+#ifdef MONO_DEBUGGER_TESTS
 	// Using adb reverse
 	char *host = "127.0.0.1";
 	int sdb_port = 6100;
@@ -744,15 +746,66 @@ _monodroid_get_dns_servers (void **dns_servers_array)
 	return count;
 }
 
-JNIEXPORT jint JNICALL
-JNI_OnLoad (JavaVM *vm, void *reserved)
+static int initialized = 0;
+
+static jobject
+lref_to_gref (JNIEnv *env, jobject lref)
+{
+	jobject g;
+	if (lref == 0)
+		return 0;
+	g = (*env)->NewGlobalRef (env, lref);
+	(*env)->DeleteLocalRef (env, lref);
+	return g;
+}
+
+static void
+mono_jvm_initialize (JavaVM *vm)
 {
 	JNIEnv *env;
 
+	if (initialized)
+		return;
+
 	jvm = vm;
 
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
-	// FIXME do something with env
+	int res = (*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	if (!env)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not create env, res = %d", __func__, res);
 
+	AndroidRunner_klass = lref_to_gref(env, (*env)->FindClass (env, "org/mono/android/AndroidRunner"));
+	if (!AndroidRunner_klass)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_klass", __func__);
+
+	AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
+	if (!AndroidRunner_WriteLineToInstrumentation_method)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_WriteLineToInstrumentation_method", __func__);
+
+	initialized = 1;
+}
+
+JNIEXPORT jint JNICALL
+JNI_OnLoad (JavaVM *vm, void *reserved)
+{
+	mono_jvm_initialize (vm);
 	return JNI_VERSION_1_6;
+}
+
+static JNIEnv*
+mono_jvm_get_jnienv (void)
+{
+	JNIEnv *env;
+
+	if (!initialized)
+		__android_log_assert ("", "mono-sdks", "%s: Fatal error: jvm not initialized", __func__);
+
+	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	if (env)
+		return env;
+
+	(*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
+	if (env)
+		return env;
+
+	__android_log_assert ("", "mono-sdks", "%s: Fatal error: Could not create env", __func__);
 }
