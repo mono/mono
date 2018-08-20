@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
 	/* Disables AOT mode */
@@ -205,9 +208,6 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	free (native_res);
 	return res;
 }
-
-// extern const void *mono_aot_module_{0}_info;
-
 
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
@@ -520,3 +520,6 @@ mono_wasm_array_to_heap (MonoArray *src, char *dest)
 	memcpy (dest, source_addr, mono_array_length(src) * element_size);
 }
 
+#ifdef __cplusplus
+} // extern "C"
+#endif

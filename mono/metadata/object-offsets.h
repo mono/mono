@@ -154,12 +154,6 @@ DECL_OFFSET(SgenThreadInfo, tlab_temp_end)
 
 // Offsets for structures defined in mini/
 #ifndef DISABLE_JIT_OFFSETS
-DECL_SIZE(MonoMethodRuntimeGenericContext)
-DECL_SIZE(MonoLMF)
-DECL_SIZE(MonoTypedRef)
-DECL_SIZE(CallContext)
-DECL_SIZE(MonoContext)
-
 DECL_OFFSET(MonoLMF, previous_lmf)
 
 DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
