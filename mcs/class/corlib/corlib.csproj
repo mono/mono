@@ -408,6 +408,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ModuleResolveEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscateAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterAttributes.cs" />
@@ -1381,7 +1382,6 @@
     <Compile Include="System.Reflection\LocalVariableInfo.cs" />
     <Compile Include="System.Reflection\MethodBody.cs" />
     <Compile Include="System.Reflection\Module.cs" />
-    <Compile Include="System.Reflection\ModuleResolveEventHandler.cs" />
     <Compile Include="System.Reflection\MonoAssembly.cs" />
     <Compile Include="System.Reflection\MonoEvent.cs" />
     <Compile Include="System.Reflection\MonoField.cs" />
