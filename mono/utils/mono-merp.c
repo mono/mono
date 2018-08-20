@@ -88,6 +88,7 @@ typedef struct {
 	MERPExcType exceptionArg; // Exception type (refer to merpcommon.h and mach/exception_types.h for more info (optional)
 
 	const char *serviceNameArg; // This is the Bootstrap service name that MERP GUI will create to receive mach_task_self on a port created. Bails out if MERP GUI fails to receive mach_task_self from the crashed app. (Required for crash log generation)
+	const char *servicePathArg; // The path to the executable, used to relaunch the crashed app.
 
 	const char *moduleName;
 	const char *moduleVersion;
@@ -99,6 +100,8 @@ typedef struct {
 	const char systemModel [100];
 	const char *systemManufacturer;
 
+	const char *eventType;
+
 	MonoStackHash hashes;
 } MERPStruct;
 
@@ -106,9 +109,11 @@ typedef struct {
 	gboolean enable_merp;
 
 	const char *appBundleID;
+	const char *appPath;
 	const char *appSignature; 
 	const char *appVersion;
 	const char *merpGUIPath; 
+	const char *eventType;
 	gboolean log;
 } MerpOptions;
 
@@ -168,8 +173,8 @@ get_merp_exctype (MERPExcType exc)
 		case MERP_EXC_HANG: 
 			return "0x02000000";
 		case MERP_EXC_NONE:
-			// Exception type is optional
-			return "";
+			// Exception type documented as optional, not optional
+			g_assert_not_reached ();
 		default:
 			g_assert_not_reached ();
 	}
@@ -190,6 +195,11 @@ parse_exception_type (const char *signal)
 	if (!strcmp (signal, "SIGABRT"))
 		return MERP_EXC_SIGABRT;
 
+	// Force quit == hang?
+	// We need a default for this
+	if (!strcmp (signal, "SIGTERM"))
+		return MERP_EXC_HANG;
+
 	// FIXME: There are no other such signal
 	// strings passed to mono_handle_native_crash at the
 	// time of writing this
@@ -209,6 +219,7 @@ mono_encode_merp_params (MERPStruct *merp)
 
 	// Provided by icall
 	g_string_append_printf (output, "ApplicationName: %s\n", merp->serviceNameArg);
+	g_string_append_printf (output, "ApplicationPath: %s\n", merp->servicePathArg);
 
 	// Provided by icall
 	g_string_append_printf (output, "BlameModuleName: %s\n", merp->moduleName);
@@ -225,6 +236,7 @@ mono_encode_merp_params (MERPStruct *merp)
 	g_string_append_printf (output, "LanguageID: 0x%x\n", merp->uiLidArg);
 	g_string_append_printf (output, "SystemManufacturer: %s\n", merp->systemManufacturer);
 	g_string_append_printf (output, "SystemModel: %s\n", merp->systemModel);
+	g_string_append_printf (output, "EventType: %s\n", merp->eventType);
 
 	return g_string_free (output, FALSE);
 }
@@ -266,7 +278,7 @@ mono_merp_send (const char *merpFile, const char *crashLog, const char *werXml)
 	write_file (crashLog, crashLogPath);
 	g_free (crashLogPath);
 
-	char *werXmlPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/WERInternalMetadata.txt", home);
+	char *werXmlPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/CustomLogsMetadata.xml", home);
 	write_file (werXml, werXmlPath);
 	g_free (werXmlPath);
 
@@ -323,6 +335,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->exceptionArg = parse_exception_type (signal);
 
 	merp->serviceNameArg = config.appBundleID;
+	merp->servicePathArg = config.appPath;
 
 	merp->moduleName = "Mono Exception";
 	merp->moduleVersion = version;
@@ -336,6 +349,8 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	// FIXME: THis is apple-only for now
 	merp->systemManufacturer = "apple";
 	get_apple_model ((char *) merp->systemModel, sizeof (merp->systemModel));
+
+	merp->eventType = config.eventType;
 
 	merp->hashes = *hashes;
 }
@@ -413,6 +428,10 @@ mono_merp_fingerprint_payload (const char *non_param_data, const MERPStruct *mer
 	mono_json_writer_object_key(&writer, "SystemModel:");
 	mono_json_writer_printf (&writer, "\"%s\"\n", merp->systemModel);
 
+	mono_json_writer_indent (&writer);
+	mono_json_writer_object_key(&writer, "EventType:");
+	mono_json_writer_printf (&writer, "\"%s\"\n", merp->eventType);
+
 	// End of payload
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_end (&writer);
@@ -442,7 +461,7 @@ mono_wer_template (MERPStruct *merp)
 	g_string_append_printf (output, "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n");
 	g_string_append_printf (output, "<WERReportMetadata>\n");
 	g_string_append_printf (output, "<ProblemSignatures>\n");
-	g_string_append_printf (output, "<EventType>MonoAppCrash</EventType>\n");
+	g_string_append_printf (output, "<EventType>%s</EventType>\n", merp->eventType);
 
 	int i=0;
 
@@ -523,11 +542,13 @@ mono_merp_disable (void)
 	g_free ((char*)config.appSignature);
 	g_free ((char*)config.appVersion);
 	g_free ((char*)config.merpGUIPath);
+	g_free ((char*)config.eventType);
+	g_free ((char*)config.appPath); 
 	memset (&config, 0, sizeof (config));
 }
 
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath)
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath)
 {
 	g_assert (!config.enable_merp);
 
@@ -535,6 +556,8 @@ mono_merp_enable (const char *appBundleID, const char *appSignature, const char 
 	config.appSignature = g_strdup (appSignature);
 	config.appVersion = g_strdup (appVersion);
 	config.merpGUIPath = g_strdup (merpGUIPath);
+	config.eventType = g_strdup (eventType);
+	config.appPath = g_strdup (appPath);
 
 	config.log = g_getenv ("MONO_MERP_VERBOSE") != NULL;
 

@@ -5688,7 +5688,7 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolea
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
+ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 {
 #ifdef TARGET_OSX
 	mono_merp_disable ();
@@ -5699,10 +5699,10 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (void)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, MonoError *error)
 {
 #ifdef TARGET_OSX
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
@@ -7969,7 +7969,7 @@ ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_Wind
 ICALL_EXPORT void
 ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, const char *message)
 {
-	g_log (appname, (GLogLevelFlags)level, message);
+	g_log (appname, (GLogLevelFlags)level, "%s", message);
 }
 
 static MonoIcallTableCallbacks icall_table;
