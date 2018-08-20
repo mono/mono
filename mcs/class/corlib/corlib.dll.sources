@@ -1178,6 +1178,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ObfuscationAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterModifier.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Pointer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ProcessorArchitecture.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PropertyAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ReflectionContext.cs
@@ -1196,7 +1197,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/pointer.cs
 ../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs
 ../referencesource/mscorlib/system/reflection/typeinfo.cs
@@ -1574,6 +1574,7 @@ corert/Stream.cs
 corert/Task.cs
 corert/ThreadPool.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
+corert/Type.cs
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
