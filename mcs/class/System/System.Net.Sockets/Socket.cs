@@ -926,6 +926,7 @@ namespace System.Net.Sockets
 					return false;
 				}
 			} catch (Exception exc) {
+				e.in_progress = 0;
 				e.socket_async_result.Complete (exc, true);
 				return false;
 			}
