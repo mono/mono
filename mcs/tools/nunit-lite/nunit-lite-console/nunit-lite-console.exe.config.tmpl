@@ -2,13 +2,7 @@
 <configuration>
   <!-- __INSERT_CUSTOM_APP_CONFIG_GLOBAL__ -->
   <runtime>
-    <!-- 
-      This is necessary to prevent the runner from terminating on
-      any unhandled exceptions which occur. We account for unhandled exceptions on
-      other threads with an event handler, but would still be terminated using the
-      new behavior.
-    -->
-    <legacyUnhandledExceptionPolicy enabled="1" />
+    <legacyUnhandledExceptionPolicy enabled="0" />
     <!-- __INSERT_CUSTOM_APP_CONFIG_RUNTIME__ -->
   </runtime>
 </configuration>
