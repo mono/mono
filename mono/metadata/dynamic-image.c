@@ -416,7 +416,7 @@ mono_dynamic_image_create (MonoDynamicAssembly *assembly, char *assembly_name, c
 #endif /* DISABLE_REFLECTION_EMIT */
 
 guint32
-mono_dynamic_image_add_to_blob_cached (MonoDynamicImage *assembly, gconstpointer b1, int s1, char gconstpointer b2, int s2)
+mono_dynamic_image_add_to_blob_cached (MonoDynamicImage *assembly, gconstpointer b1, int s1, gconstpointer b2, int s2)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
