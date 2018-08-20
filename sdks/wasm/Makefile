@@ -157,7 +157,7 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
 aot-sample: .stamp-build-aot-test
 	for f in aot/managed/*.dll; do	\
-		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$$f.bc $$f;	\
+		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,static,llvm-outfile=$$f.bc $$f;	\
 	done	\
 
 link-sample: driver.o library_mono.js binding_support.js dotnet_support.js
