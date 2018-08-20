@@ -2159,6 +2159,10 @@ mono_method_get_marshal_info (MonoMethod *method, MonoMarshalSpec **mspecs)
 		return;
 	}
 
+	/* dynamic method added to non-dynamic image */
+	if (method->dynamic)
+		return;
+
 	mono_class_init (klass);
 
 	methodt = &klass->image->tables [MONO_TABLE_METHOD];
