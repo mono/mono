@@ -126,13 +126,6 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 	return cinfo;
 }
 
-G_END_DECLS // FIXMEcxx
-
-// include "ir-emit.h"
-#include "cpu-wasm.h"
-
-G_BEGIN_DECLS // FIXMEcxx
-
 gboolean
 mono_arch_have_fast_tls (void)
 {
@@ -577,14 +570,8 @@ mono_wasm_set_timeout (int timeout, int id)
 {
 #ifdef HOST_WASM
 	mono_set_timeout (timeout, id);
-<<<<<<< HEAD
 #endif
 }
-=======
-}
-
-#endif // HOST_WASM
->>>>>>> annotate endif for clarity
 
 void
 mono_arch_register_icall (void)
