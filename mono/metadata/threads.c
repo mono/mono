@@ -173,7 +173,7 @@ static gboolean threads_wait_pending_joinable_threads (uint32_t timeout);
 static gchar* thread_dump_dir = NULL;
 
 #define SET_CURRENT_OBJECT(x) (mono_tls_set_thread (x))
-#define GET_CURRENT_OBJECT() ((MonoInternalThread*) mono_tls_get_thread ())
+#define GET_CURRENT_OBJECT mono_tls_get_thread
 
 /* function called at thread start */
 static MonoThreadStartCB mono_thread_start_cb = NULL;
@@ -1224,7 +1224,7 @@ start_wrapper (gpointer data)
 	info->runtime_thread = TRUE;
 
 	/* Run the actual main function of the thread */
-	res = start_wrapper_internal (start_info, info->stack_end);
+	res = start_wrapper_internal (start_info, (gsize*)info->stack_end);
 
 	mono_thread_info_exit (res);
 
@@ -1301,7 +1301,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	else
 		stack_set_size = 0;
 
-	if (!mono_thread_platform_create_thread ((MonoThreadStart)start_wrapper, start_info, &stack_set_size, &tid)) {
+	if (!mono_thread_platform_create_thread (start_wrapper, start_info, &stack_set_size, &tid)) {
 		/* The thread couldn't be created, so set an exception */
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
@@ -1374,7 +1374,7 @@ mono_threads_get_default_stacksize (void)
  *   ARG should not be a GC reference.
  */
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
+(mono_thread_create_internal) (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
 {
 	MonoThread *thread;
 	MonoInternalThread *internal;
@@ -1400,7 +1400,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
  * mono_thread_create:
  */
 void
-mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
+mono_thread_create (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg)
 {
 	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
@@ -1410,7 +1410,7 @@ mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 }
 
 gboolean
-mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error)
+(mono_thread_create_checked) (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg, MonoError *error)
 {
 	return (NULL != mono_thread_create_internal (domain, func, arg, MONO_THREAD_CREATE_FLAGS_NONE, error));
 }
@@ -1852,10 +1852,11 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
  * Gets the priority of the given thread.
  * @return: The priority of the given thread.
  */
-int
+ICALL_EXPORT
+int/*MonoThreadPriority FIXMEcxx*/
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
-	gint32 priority;
+	int priority;
 
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -1873,8 +1874,9 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  *
  * Sets the priority of the given thread.
  */
+ICALL_EXPORT
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error)
+ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int/*MonoThreadPriority FIXMEcxx*/ priority, MonoError *error)
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -2070,7 +2072,7 @@ ves_icall_System_Threading_Thread_Join_internal (MonoThreadObjectHandle thread_h
 
 		/* Wait for the thread to really exit */
 		MonoNativeThreadId tid = thread_get_tid (thread);
-		mono_thread_join ((gpointer)tid);
+		mono_thread_join ((gpointer)(gsize)tid);
 
 		return TRUE;
 	}
@@ -2428,26 +2430,26 @@ ves_icall_System_Threading_Thread_MemoryBarrier (void)
 }
 
 void
-ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32 state, MonoError *error)
+ves_icall_System_Threading_Thread_ClrState (MonoInternalThreadHandle this_obj, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
-	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), state);
+	mono_thread_clr_state (mono_internal_thread_handle_ptr (this_obj), (MonoThreadState)state);
 }
 
 void
-ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32 state, MonoError *error)
+ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_handle, guint32/*MonoThreadState FIXMEcxx*/ state, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
-	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), state);
+	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), (MonoThreadState)state);
 }
 
-guint32
+guint32/*MonoThreadState FIXMEcplusplus*/
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (thread_handle);
 
-	guint32 state;
+	guint32/*MonoThreadState FIXMEcxx*/ state;
 
 	LOCK_THREAD (this_obj);
 	
