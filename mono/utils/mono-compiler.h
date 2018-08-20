@@ -178,7 +178,7 @@ typedef int32_t __mono_off32_t;
  * we must carefully declare the 32-bit mmap here without changing the ABI along the way. Carefully because
  * in this instance off_t is redeclared to be 64-bit and that's not what we want.
  */
-void* mmap (void*, size_t, int, int, int, __mono_off32_t);
+//void* mmap (void*, size_t, int, int, int, __mono_off32_t);
 #endif /* !mmap */
 
 #ifdef HAVE_SYS_SENDFILE_H
