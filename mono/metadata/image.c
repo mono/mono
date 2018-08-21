@@ -1900,7 +1900,7 @@ mono_image_fixup_vtable (MonoImage *image)
 		slot_count = vtfixup->count;
 		if (slot_type & VTFIXUP_TYPE_32BIT)
 			while (slot_count--) {
-				*((guint32*) slot) = (guint32) mono_marshal_get_vtfixup_ftnptr (image, *((guint32*) slot), slot_type);
+qz				*((guint32*) slot) = (guint32)(gsize)mono_marshal_get_vtfixup_ftnptr (image, *((guint32*) slot), slot_type);
 				slot = ((guint32*) slot) + 1;
 			}
 		else if (slot_type & VTFIXUP_TYPE_64BIT)
