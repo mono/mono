@@ -158,7 +158,7 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
-	ret = getsockopt (sock, level, optname, optval, optlen);
+	ret = getsockopt (sock, level, optname, (char*)optval, optlen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -168,7 +168,7 @@ mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
-	ret = setsockopt (sock, level, optname, optval, optlen);
+	ret = setsockopt (sock, level, optname, (const char*)optval, optlen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
@@ -194,7 +194,7 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 }
 
 static gint
-mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, DWORD *written)
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
@@ -2256,10 +2256,15 @@ ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, g
 gint
 ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code, MonoArrayHandle input, MonoArrayHandle output, gint32 *werror, MonoError *error)
 {
+#ifdef HOST_WIN32
+	DWORD output_bytes = 0;
+#else
 	glong output_bytes = 0;
+#endif
 	gchar *i_buffer, *o_buffer;
 	gint i_len, o_len;
-	uint32_t i_gchandle, o_gchandle;
+	uint32_t i_gchandle = 0;
+	uint32_t o_gchandle = 0;
 	gint ret;
 
 	error_init (error);
@@ -2289,10 +2294,8 @@ ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code,
 
 	ret = mono_w32socket_ioctl (sock, code, i_buffer, i_len, o_buffer, o_len, &output_bytes);
 
-	if (i_gchandle)
-		mono_gchandle_free (i_gchandle);
-	if (o_gchandle)
-		mono_gchandle_free (o_gchandle);
+	mono_gchandle_free (i_gchandle);
+	mono_gchandle_free (o_gchandle);
 
 	if (ret == SOCKET_ERROR) {
 		*werror = mono_w32socket_get_last_error ();
