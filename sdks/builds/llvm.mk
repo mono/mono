@@ -3,7 +3,10 @@ LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 $(dir $(LLVM_SRC)):
 	mkdir -p $@
 
-.stamp-llvm-download: | setup-llvm-llvm32 setup-llvm-llvm64
+$(TOP)/sdks/out:
+	mkdir -p $@
+
+.stamp-llvm-download: | setup-llvm-llvm32 setup-llvm-llvm64 $(TOP)/sdks/out
 	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm
 	$(RM) -r $(TOP)/sdks/out/ios-llvm32 $(TOP)/sdks/out/ios-llvm64
 	mv $(TOP)/llvm/llvm-tmp/usr32 $(TOP)/sdks/out/ios-llvm32
@@ -16,7 +19,7 @@ LLVM36_SRC?=$(TOP)/sdks/builds/toolchains/llvm36
 $(dir $(LLVM36_SRC)):
 	mkdir -p $@
 
-.stamp-llvm36-download:
+.stamp-llvm36-download: | $(TOP)/sdks/out
 	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm36
 	$(RM) -r $(TOP)/sdks/out/ios-llvm36-32
 	mv $(TOP)/llvm/llvm36-tmp/usr32 $(TOP)/sdks/out/ios-llvm36-32
