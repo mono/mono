@@ -104,6 +104,7 @@
 #include <mono/utils/mono-state.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/environment-internal.h>
+#include "icall.h"
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
@@ -739,7 +740,7 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 }
 
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* dest, int dest_idx, int length)
 {
 	int element_size;
@@ -2212,6 +2213,13 @@ leave:
 		mono_gchandle_free (value_gchandle);
 }
 
+void
+ves_icall_MonoField_SetValueInternal2 (MonoReflectionFieldHandle field, MonoObjectHandle obj, MonoObjectHandle value, MonoError  *error)
+// Duplicated due to multiple managed names.
+{
+	return  ves_icall_MonoField_SetValueInternal (field, obj, value, error);
+}
+
 static MonoObjectHandle
 typed_reference_to_object (MonoTypedRef *tref, MonoError *error)
 {
@@ -2362,16 +2370,6 @@ ves_icall_MonoField_ResolveType (MonoReflectionFieldHandle ref_field, MonoError 
 	}
 	return mono_type_get_object_handle (domain, type, error);
 }
-
-/* From MonoProperty.cs */
-typedef enum {
-	PInfo_Attributes = 1,
-	PInfo_GetMethod  = 1 << 1,
-	PInfo_SetMethod  = 1 << 2,
-	PInfo_ReflectedType = 1 << 3,
-	PInfo_DeclaringType = 1 << 4,
-	PInfo_Name = 1 << 5
-} PInfo;
 
 ICALL_EXPORT void
 ves_icall_MonoPropertyInfo_get_property_info (MonoReflectionPropertyHandle property, MonoPropertyInfo *info, PInfo req_info, MonoError *error)
@@ -2810,6 +2808,62 @@ ves_icall_reflection_get_token (MonoObjectHandle obj, MonoError *error)
 	return mono_reflection_get_token_checked (obj, error);
 }
 
+guint32
+ves_icall_reflection_get_token1 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token2 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token3 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token4 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token5 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token6 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token7 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
+guint32
+ves_icall_reflection_get_token8 (MonoObjectHandle obj, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_reflection_get_token (obj, error);
+}
+
 ICALL_EXPORT MonoReflectionModuleHandle
 ves_icall_RuntimeTypeHandle_GetModule (MonoReflectionTypeHandle type, MonoError *error)
 {
@@ -2959,7 +3013,7 @@ leave:
 	return res;
 }
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_RuntimeTypeHandle_IsGenericTypeDefinition (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -3050,7 +3104,7 @@ ves_icall_RuntimeType_MakeGenericType (MonoReflectionTypeHandle reftype, MonoArr
 	return mono_type_get_object_handle (domain, geninst, error);
 }
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_RuntimeTypeHandle_HasInstantiation (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -3123,6 +3177,15 @@ ves_icall_RuntimeType_GetCorrespondingInflatedMethod (MonoReflectionTypeHandle r
         }
 
 	return ret;
+}
+
+MonoReflectionMethodHandle
+ves_icall_RuntimeType_GetCorrespondingInflatedMethod2 (MonoReflectionTypeHandle ref_type, 
+						      MonoReflectionMethodHandle generic,
+						      MonoError *error)
+// Duplicated due to multiple managed names.
+{
+	return ves_icall_RuntimeType_GetCorrespondingInflatedMethod (ref_type, generic, error);
 }
 
 ICALL_EXPORT MonoReflectionMethodHandle
@@ -3260,14 +3323,21 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_
 	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (ref_method), result, NULL, error);
 }
 
-ICALL_EXPORT gboolean
+MonoReflectionMethodHandle
+ves_icall_MonoMethod_GetGenericMethodDefinition2 (MonoReflectionMethodHandle ref_method, MonoError *error)
+// Duplicate because exposed under two managed names and HANDLES() creates duplicate wrappers. 
+{
+	return  ves_icall_MonoMethod_GetGenericMethodDefinition (ref_method, error);
+}
+
+ICALL_EXPORT MonoBoolean
 ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
 	return mono_method_signature (method)->generic_param_count != 0;
 }
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *Error)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
@@ -5401,8 +5471,8 @@ ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error)
 }
 
 ICALL_EXPORT MonoStringHandle
-ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gboolean full_name,
-										  gboolean assembly_qualified, MonoError *error)
+ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, MonoBoolean full_name,
+										  MonoBoolean assembly_qualified, MonoError *error)
 {
 	MonoDomain *domain = mono_object_domain (MONO_HANDLE_RAW (object));
 	MonoType *type = MONO_HANDLE_RAW (object)->type;
@@ -5458,6 +5528,13 @@ ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfi
 	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (rfield, method);
 	return mono_security_core_clr_method_level (method, TRUE);
+}
+
+int
+ves_icall_MonoMethod_get_core_clr_security_level2 (MonoReflectionMethodHandle rfield, MonoError *error)
+// Duplicate because one per managed exposure.
+{
+	return ves_icall_MonoMethod_get_core_clr_security_level (rfield, error);
 }
 
 ICALL_EXPORT MonoStringHandle
@@ -7397,6 +7474,18 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError 
 	return mcpath;
 }
 
+MonoStringHandle
+ves_icall_System_Environment_GetMachineConfigPath (MonoError *error)
+{
+	return ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (error);
+}
+
+MonoStringHandle
+ves_icall_System_Web_Util_ICalls_GetMachineConfigPath (MonoError *error)
+{
+	return ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (error);
+}
+
 ICALL_EXPORT MonoStringHandle
 ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_app_config (MonoError *error)
 {
@@ -7494,7 +7583,7 @@ ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 	return ipath;
 }
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *result, gint32 *size, MonoError *error)
 {
 	error_init (error);
@@ -7579,7 +7668,7 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 }
 
 ICALL_EXPORT MonoReflectionMethodHandle
-ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, gboolean definition, MonoError *error)
+ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, MonoBoolean definition, MonoError *error)
 {
 	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
@@ -8704,9 +8793,38 @@ ves_icall_System_Threading_Thread_SystemMaxStackSize (void)
 	return mono_thread_info_get_system_max_stack_size ();
 }
 
-ICALL_EXPORT gboolean
+ICALL_EXPORT MonoBoolean
 ves_icall_System_Threading_Thread_YieldInternal (void)
 {
 	mono_threads_platform_yield ();
 	return TRUE;
 }
+
+// Generate wrappers.
+
+#ifdef DISABLE_POLICY_EVIDENCE
+#define ENABLE_POLICY_EVIDENCE 0
+#else
+#define ENABLE_POLICY_EVIDENCE 1
+#endif
+#undef DISABLE_POLICY_EVIDENCE // Not redefined so keep at end of file.
+
+#define ICALL_TYPE(id,name,first) /* nothing */
+#define ICALL(id,name,func) /* nothing */
+#define NOHANDLES(inner)  /* nothing */
+
+#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) \
+	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
+	MONO_HANDLE_DECLARE_RAW (id, name, func, ret, nargs, argtypes); \
+	MONO_HANDLE_IMPLEMENT_MAYBE (cond, id, name, func, ret, nargs, argtypes)
+
+#define HANDLES(id, name, func, ret, nargs, argtypes) \
+	HANDLES_MAYBE (TRUE, id, name, func, ret, nargs, argtypes)
+
+#include "metadata/icall-def.h"
+
+#undef HANDLES
+#undef HANDLES_MAYBE
+#undef ICALL_TYPE
+#undef ICALL
+#undef NOHANDLES
