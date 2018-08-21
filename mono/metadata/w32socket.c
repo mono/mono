@@ -1031,7 +1031,6 @@ static MonoObjectHandle
 mono_w32socket_getname (gsize sock, gint32 af, int (*getname)(SOCKET, struct sockaddr*, socklen_t*),
 	const char *log, gint32 *werror, MonoError *error)
 {
-	gchar *sa;
 	socklen_t salen;
 	int ret;
 
@@ -1042,8 +1041,8 @@ mono_w32socket_getname (gsize sock, gint32 af, int (*getname)(SOCKET, struct soc
 		*werror = WSAEAFNOSUPPORT;
 		return NULL_HANDLE;
 	}
-	// FIXME zeros only sometimes
-	sa = (salen <= 128) ? g_newa (char, salen) : (char *)g_malloc0 (salen);
+	gpointer sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
+	memset (sa, 0, salen);
 
 	ret = getname (sock, (struct sockaddr *)sa, &salen);
 	if (ret == SOCKET_ERROR) {
