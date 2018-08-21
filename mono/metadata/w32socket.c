@@ -1042,10 +1042,14 @@ mono_w32socket_getname (gsize sock, gint32 af, gboolean local, gint32 *werror, M
 		*werror = WSAEAFNOSUPPORT;
 		goto exit;
 	}
-	sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
-	/* Note: linux returns just 2 for AF_UNIX. Always. */
-	memset (sa, 0, salen);
+	if (salen <= 128) {
+		sa = g_alloca (salen);
+		memset (sa, 0, salen);
+	} else {
+		sa = g_malloc0 (salen);
+	}
 
+	/* Note: linux returns just 2 for AF_UNIX. Always. */
 	ret = (local ? mono_w32socket_getsockname : mono_w32socket_getpeername) (sock, (struct sockaddr *)sa, &salen);
 	if (ret == SOCKET_ERROR) {
 		*werror = mono_w32socket_get_last_error ();
