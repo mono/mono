@@ -30,29 +30,29 @@ mono_w32process_get_pid (gpointer handle)
 static gboolean
 mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 size, PDWORD needed)
 {
-	return EnumProcessModules (process, modules, size, needed);
+	return EnumProcessModules (process, (HMODULE)modules, size, needed);
 }
 
 static guint32
 mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleBaseName (process, module, basename, size);
+	return GetModuleBaseName (process, (HMODULE)module, basename, size);
 }
 
 static guint32
 mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleFileNameEx (process, module, basename, size);
+	return GetModuleFileNameEx (process, (HMODULE)module, basename, size);
 }
 
 static gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size)
 {
-	return GetModuleInformation (process, module, modinfo, size);
+	return GetModuleInformation (process, (HMODULE)module, modinfo, size);
 }
 
 static gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
 	DWORD handle;
 	gsize datasize;
