@@ -67,9 +67,14 @@ private:
 	void * const x;
 public:
 	explicit g_cast (void *y) : x(y) { }
-	g_cast (g_cast&& y) : x(y.x) { }
+	// Lack of rvalue constructor inhibits ternary operator.
+	// Either don't use ternary, or cast each side.
+	// sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
+	// w32socket.c:1045:24: error: call to deleted constructor of 'monoeg_g_cast'
+	//g_cast (g_cast&& y) : x(y.x) { }
+	g_cast (g_cast&&) = delete;
 	g_cast () = delete;
-	g_cast (const g_cast& y) = delete;
+	g_cast (const g_cast&) = delete;
 
 	template <typename TTo>
 	operator TTo* () const
