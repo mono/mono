@@ -4250,25 +4250,6 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	mklass = mono_class_from_mono_type (mtype);
 	g_assert (mklass != NULL);
 
-	/*
-
-	if (!mono_class_is_assignable_from (ICustomMarshaler, mklass))
-		exception_msg = g_strdup_printf ("Custom marshaler '%s' does not implement the ICustomMarshaler interface.", m_class_get_name (mklass));
-
-	get_instance = mono_class_get_method_from_name_checked (mklass, "GetInstance", 1, METHOD_ATTRIBUTE_STATIC, error);
-	mono_error_assert_ok (error);
-	if (get_instance) {
-		MonoMethodSignature *get_sig = mono_method_signature (get_instance);
-		if ((get_sig->ret->type != MONO_TYPE_CLASS) ||
-			(mono_class_from_mono_type (get_sig->ret) != ICustomMarshaler) ||
-			(get_sig->params [0]->type != MONO_TYPE_STRING))
-			get_instance = NULL;
-	}
-
-	if (!get_instance)
-		exception_msg = g_strdup_printf ("Custom marshaler '%s' does not implement a static GetInstance method that takes a single string parameter and returns an ICustomMarshaler.", m_class_get_name (mklass));
-	*/
-
 handle_exception:
 	/* Throw exception and emit compensation code if neccesary */
 	if (exception_msg) {
@@ -4290,11 +4271,6 @@ handle_exception:
 		}
 		return 0;
 	}
-
-	/* FIXME: MS.NET seems to create one instance for each klass + cookie pair */
-	/* FIXME: MS.NET throws an exception if GetInstance returns null */
-
-	int index;
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
