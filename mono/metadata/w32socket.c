@@ -1550,7 +1550,7 @@ Socket_to_SOCKET (MonoObjectHandle sockobj)
 	if (MONO_HANDLE_IS_NULL (safe_handle))
 		return -1;
 
-	return (SOCKET)MONO_HANDLE_GETVAL (safe_handle, handle);
+	return (SOCKET)(gsize)MONO_HANDLE_GETVAL (safe_handle, handle);
 }
 
 #define POLL_ERRORS (MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL)
@@ -1765,7 +1765,7 @@ ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gi
 		
 	case SocketOptionName_SendTimeout:
 	case SocketOptionName_ReceiveTimeout:
-		ret = mono_w32socket_getsockopt (sock, system_level, system_name, (char *)&time_ms, &time_ms_size);
+		ret = mono_w32socket_getsockopt (sock, system_level, system_name, &time_ms, &time_ms_size);
 		break;
 
 #ifdef SO_PEERCRED
@@ -2162,14 +2162,14 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 				/* int_val is interface index */
 				struct ip_mreqn mreq = {{0}};
 				mreq.imr_ifindex = int_val;
-				ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &mreq, sizeof (mreq));
+				ret = mono_w32socket_setsockopt (sock, system_level, system_name, &mreq, sizeof (mreq));
 				break;
 			}
 			int_val = GUINT32_TO_BE (int_val);
 #endif /* HAVE_STRUCT_IP_MREQN */
 #endif /* HOST_WIN32 */
 			/* int_val is in_addr */
-			ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, &int_val, sizeof (int_val));
 			break;
 		case SocketOptionName_DontFragment:
 #ifdef HAVE_IP_MTU_DISCOVER
@@ -2182,7 +2182,7 @@ ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32
 #endif
 			
 		default:
-			ret = mono_w32socket_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
+			ret = mono_w32socket_setsockopt (sock, system_level, system_name, &int_val, sizeof (int_val));
 		}
 	}
 
@@ -2618,7 +2618,7 @@ mono_network_cleanup (void)
 	mono_networking_shutdown ();
 }
 
-void
+ICALL_EXPORT void
 ves_icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoError *error)
 {
 	error_init (error);
