@@ -3162,7 +3162,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
  */
 
 void*
-(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar*)p;
 
@@ -3183,7 +3183,7 @@ enum {
 };
 
 void*
-(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar*)p;
 	int save_mode = SAVE_NONE;

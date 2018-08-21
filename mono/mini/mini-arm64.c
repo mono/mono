@@ -2789,14 +2789,14 @@ mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 }
 
 void*
-(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
 }
 
 void*
-(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	NOT_IMPLEMENTED;
 	return NULL;

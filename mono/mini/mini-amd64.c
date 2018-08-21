@@ -7562,7 +7562,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 #endif /* DISABLE_JIT */
 
 void*
-(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar *)p;
 	MonoMethodSignature *sig;
@@ -7617,7 +7617,7 @@ enum {
 };
 
 void*
-(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar *)p;
 	int save_mode = SAVE_NONE;

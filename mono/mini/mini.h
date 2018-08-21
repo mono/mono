@@ -2238,9 +2238,7 @@ void      mono_arch_cleanup                     (void);
 void      mono_arch_cpu_init                    (void);
 guint32   mono_arch_cpu_optimizations           (guint32 *exclude_mask);
 void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
-#define mono_arch_instrument_prolog(cfg, func, p, arg) (g_cast (mono_arch_instrument_prolog ((cfg), (gpointer)(func), (p), (arg))))
 void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
-#define mono_arch_instrument_epilog(cfg, func, p, arg) (g_cast (mono_arch_instrument_epilog ((cfg), (gpointer)(func), (p), (arg))))
 const char *mono_arch_regname                   (int reg);
 const char *mono_arch_fregname                  (int reg);
 void      mono_arch_exceptions_init             (void);
