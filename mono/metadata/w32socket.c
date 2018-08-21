@@ -1031,30 +1031,31 @@ static MonoObjectHandle
 mono_w32socket_getname (gsize sock, gint32 af, int (*getname)(SOCKET, struct sockaddr*, socklen_t*),
 	const char *log, gint32 *werror, MonoError *error)
 {
-	socklen_t salen;
+	gpointer sa = NULL;
+	socklen_t salen = 0;
 	int ret;
+	MonoObjectHandle result = NULL_HANDLE;
 
 	*werror = 0;
 	
 	salen = get_sockaddr_size (convert_family ((MonoAddressFamily)af));
 	if (salen == 0) {
 		*werror = WSAEAFNOSUPPORT;
-		return NULL_HANDLE;
+		goto exit;
 	}
-	gpointer sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
+	sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
 	memset (sa, 0, salen);
 
 	ret = getname (sock, (struct sockaddr *)sa, &salen);
 	if (ret == SOCKET_ERROR) {
 		*werror = mono_w32socket_get_last_error ();
-		if (salen > 128)
-			g_free (sa);
-		return NULL_HANDLE;
+		goto exit;
 	}
 	
 	LOGDEBUG (g_message("%s: %s to %s port %d", __func__, log, inet_ntoa (((struct sockaddr_in *)&sa)->sin_addr), ntohs (((struct sockaddr_in *)&sa)->sin_port)));
 
-	MonoObjectHandle result = create_object_handle_from_sockaddr ((struct sockaddr *)sa, salen, werror, error);
+	result = create_object_handle_from_sockaddr ((struct sockaddr *)sa, salen, werror, error);
+exit:
 	if (salen > 128)
 		g_free (sa);
 	return result;
