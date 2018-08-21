@@ -1580,7 +1580,11 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 {
 	MonoInst *ins = NULL;
 	int i, addr_reg;
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
 	gboolean is_ldaddr = (args [0]->opcode == OP_LDADDR && args [0]->inst_left->opcode != OP_ARG);
+#else
+	gboolean is_ldaddr = args [0]->opcode == OP_LDADDR;
+#endif
 	MonoMethodSignature *sig = mono_method_signature (cmethod);
 	int store_op = mono_type_to_store_membase (cfg, sig->params [0]);
 	int arg_size = mono_type_size (sig->params [0], &i);
