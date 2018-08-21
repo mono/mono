@@ -2,6 +2,6 @@ namespace System
 {
     partial class Type
     {
-        public bool IsRuntimeImplemented() => true;
+        internal bool IsRuntimeImplemented () => true;
     }
 }
