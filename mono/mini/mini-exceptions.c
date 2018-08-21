@@ -906,7 +906,13 @@ mono_exception_walk_trace (MonoException *ex, MonoExceptionFrameWalk func, gpoin
 		memcpy (&trace_ip, mono_array_addr_fast (ta, ExceptionTraceIp, i), sizeof (ExceptionTraceIp));
 		gpointer ip = trace_ip.ip;
 		gpointer generic_info = trace_ip.generic_info;
-		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
+
+		MonoJitInfo *ji = NULL;
+		if (trace_ip.ji) {
+			ji = trace_ip.ji;
+		} else {
+			ji = mono_jit_info_table_find (domain, ip);
+		}
 
 		if (ji == NULL) {
 			if (func (NULL, ip, 0, FALSE, user_data))
