@@ -4179,7 +4179,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 }
 
 static void
-emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *class, MonoMarshalSpec *spec)
+emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *klass, MonoMarshalSpec *spec)
 {
 	static MonoClass *Marshal = NULL;
 	static MonoMethod *get_instance;
@@ -4192,10 +4192,9 @@ emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *class, MonoM
 		g_assert (get_instance);
 	}
 
-	MonoType *thistype = m_class_get_byval_arg (class);
-
 	// HACK: We cannot use ldtoken in this type of wrapper.
-	mono_mb_emit_ptr (mb, thistype);
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_op (mb, CEE_MONO_CLASSCONST, klass);
 	mono_mb_emit_icall (mb, mono_marshal_get_type_object);
 	mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
 

@@ -6217,11 +6217,11 @@ mono_icall_handle_new_interior (gpointer rawobj)
 }
 
 MonoObject*
-mono_marshal_get_type_object (MonoType *type)
+mono_marshal_get_type_object (MonoClass *klass)
 {
 	ERROR_DECL (error);
-	MonoObject * result;
-	result = (MonoObject*)mono_type_get_object_checked (mono_domain_get (), type, error);
+	MonoType *type = m_class_get_byval_arg (klass);
+	MonoObject *result = (MonoObject*)mono_type_get_object_checked (mono_domain_get (), type, error);
 	mono_error_set_pending_exception (error);
 	return result;
 }

@@ -648,7 +648,7 @@ mono_icall_handle_new (gpointer rawobj);
 gpointer
 mono_icall_handle_new_interior (gpointer rawobj);
 
-MonoObject* mono_marshal_get_type_object (MonoType *type);
+MonoObject* mono_marshal_get_type_object (MonoClass *klass);
 
 ICALL_EXPORT
 void*
