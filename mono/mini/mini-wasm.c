@@ -10,10 +10,16 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 #ifndef DISABLE_JIT
+
+G_END_DECLS // FIXMEcxx wasm
 
 #include "ir-emit.h"
 #include "cpu-wasm.h"
+
+G_BEGIN_DECLS // FIXMEcxx wasm
 
  //FIXME figure out if we need to distingush between i,l,f,d types
 typedef enum {
@@ -351,7 +357,8 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 {
 	return FALSE;
 }
-#endif
+
+#endif // DISABLE_JIT
 
 int
 mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
@@ -379,12 +386,18 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 }
 
 #ifdef HOST_WASM
+
+G_END_DECLS // FIXMEcxx wasm
+
 #include <emscripten.h>
+
+G_BEGIN_DECLS // FIXMEcxx
+
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
-#endif
+#endif // HOST_WASM
 
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
@@ -562,7 +575,7 @@ void
 mono_arch_register_icall (void)
 {
 #ifdef HOST_WASM
-	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
+	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", (gconstpointer)mono_wasm_set_timeout);
 #endif
 }
 
@@ -622,15 +635,20 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 	return 0;
 }
 
+#ifdef __cplusplus
+#define MONO_RESTRICT /* nothing */
+#else
+#define MONO_RESTRICT restrict
+#endif
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *MONO_RESTRICT attr, size_t *MONO_RESTRICT stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * restrict set, sigset_t * restrict oset)
+pthread_sigmask (int how, const sigset_t * MONO_RESTRICT set, sigset_t * MONO_RESTRICT oset)
 {
 	return 0;
 }
@@ -688,4 +706,7 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
-#endif
+
+#endif // HOST_WASM
+
+G_END_DECLS // FIXMEcxx

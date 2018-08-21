@@ -322,7 +322,7 @@ mono_ppc_is_direct_call_sequence (guint32 *code)
 
 #define MAX_ARCH_DELEGATE_PARAMS 7
 
-static gpointer
+static guint8*
 get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 param_count, gboolean aot)
 {
 	guint8 *code, *start;
@@ -1876,7 +1876,7 @@ mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
  */
 
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = p;
 
@@ -1897,7 +1897,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
@@ -5966,7 +5966,7 @@ mono_arch_skip_single_step (MonoContext *ctx)
  *   See mini-amd64.c for docs.
  */
 gpointer
-mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
+mono_arch_get_seq_point_info (MonoDomain *domain, gpointer code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
