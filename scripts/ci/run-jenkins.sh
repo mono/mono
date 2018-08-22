@@ -35,6 +35,9 @@ if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
     export MONO_FLAKY_TEST_RETRIES=5
 fi
 
+# We don't want to have to maintain symbolification blobs for CI
+export EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-crash-privacy=no "
+
 if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
 if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64 -mmacosx-version-min=10.8"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
