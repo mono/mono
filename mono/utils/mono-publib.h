@@ -15,8 +15,8 @@
 #define MONO_BEGIN_DECLS  extern "C" {
 #define MONO_END_DECLS    }
 #else
-#define MONO_BEGIN_DECLS
-#define MONO_END_DECLS
+#define MONO_BEGIN_DECLS /* nothing */
+#define MONO_END_DECLS   /* nothing */
 #endif
 
 MONO_BEGIN_DECLS
@@ -187,6 +187,20 @@ mono_set_allocator_vtable (MonoAllocatorVTable* vtable);
 #endif
 
 #define MONO_DEPRECATED MONO_API MONO_RT_EXTERNAL_ONLY _MONO_DEPRECATED
+
+// Provide for math on enums.
+// This alleviates a fair number of casts in porting C to C++.
+// Debugging and typesafety are sacrificed.
+// We can also overload operators.
+// Note that enums are sometimes unsigned, but it depends not only on the values,
+// but the compiler.
+#ifdef __cplusplus
+#define MONO_ENUM_BEGIN(x) enum { // consider enum _##x
+#define MONO_ENUM_END(x)   }; typedef int x;
+#else
+#define MONO_ENUM_BEGIN(x) typedef enum { // consider enum x or _##x
+#define MONO_ENUM_END(x)   } x;
+#endif
 
 MONO_END_DECLS
 

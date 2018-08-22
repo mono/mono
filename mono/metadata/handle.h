@@ -52,8 +52,6 @@
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
 
-G_BEGIN_DECLS
-
 /*
 Handle stack.
 
@@ -112,7 +110,7 @@ struct _HandleChunk {
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
 };
 
-typedef struct {
+typedef struct HandleStack {
 	HandleChunk *top; //alloc from here
 	HandleChunk *bottom; //scan from here
 #ifdef MONO_HANDLE_TRACK_SP
@@ -161,8 +159,10 @@ gpointer mono_handle_new_interior (gpointer rawptr, const char *owner);
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check);
 gboolean mono_handle_stack_is_empty (HandleStack *stack);
+G_BEGIN_DECLS // FIXMEcxx this is for tests compiled as C
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
+G_END_DECLS   // FIXMEcxx this is for tests compiled as C
 MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
 void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
@@ -224,7 +224,7 @@ Icall macros
 
 #define CLEAR_ICALL_FRAME_VALUE(RESULT, HANDLE)				\
 	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
-	(RESULT) = mono_stack_mark_pop_value (__info, &__mark, (HANDLE));
+	(RESULT) = g_cast (mono_stack_mark_pop_value (__info, &__mark, (HANDLE)));
 
 #define HANDLE_FUNCTION_ENTER() do {				\
 	MonoThreadInfo *__info = mono_thread_info_current ();	\
@@ -245,7 +245,7 @@ Icall macros
 	do {							\
 		void* __result = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME;				\
-		return __result;				\
+		return g_cast (__result);			\
 	} while (0); } while (0);
 
 #if MONO_TYPE_SAFE_HANDLES
@@ -326,7 +326,7 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 		CLEAR_ICALL_COMMON	\
 		void* __ret = MONO_HANDLE_RAW (HANDLE);	\
 		CLEAR_ICALL_FRAME	\
-		return __ret;	\
+		return g_cast (__ret);	\
 	} while (0); } while (0)
 
 /*
@@ -771,7 +771,5 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 {
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
-
-G_END_DECLS
 
 #endif /* __MONO_HANDLE_H__ */

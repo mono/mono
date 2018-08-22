@@ -17,19 +17,16 @@
 #include <glib.h>
 #include <mono/utils/mono-membar.h>
 
+#ifdef HOST_WIN32
+#define WIN32_LEAN_AND_MEAN 1
+#include <windows.h>
+
 /*
 The current Nexus 7 arm-v7a fails with:
 F/MonoDroid( 1568): shared runtime initialization error: Cannot load library: reloc_library[1285]:    37 cannot locate '__sync_val_compare_and_swap_8'
 
 Apple targets have historically being problematic, xcode 4.6 would miscompile the intrinsic.
 */
-
-#if defined(HOST_WIN32)
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
 
 static inline gint32
 mono_atomic_cas_i32 (volatile gint32 *dest, gint32 exch, gint32 comp)
