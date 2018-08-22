@@ -414,9 +414,9 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 						mono_class_compute_gc_descriptor (klass);
 				}
 				if (size_ins)
-					mono_emit_jit_icall (cfg, mono_gsharedvt_value_copy, iargs);
+					mono_emit_jit_icall (cfg, (gconstpointer)mono_gsharedvt_value_copy, iargs);
 				else
-					mono_emit_jit_icall (cfg, mono_value_copy, iargs);
+					mono_emit_jit_icall (cfg, (gconstpointer)mono_value_copy, iargs);
 			} else {
 				/* We don't unroll more than 5 stores to avoid code bloat. */
 				/*This is harmless and simplify mono_gc_get_range_copy_func */
@@ -424,7 +424,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 				size &= ~(TARGET_SIZEOF_VOID_P - 1);
 
 				EMIT_NEW_ICONST (cfg, iargs [2], size);
-				mono_emit_jit_icall (cfg, mono_gc_get_range_copy_func (), iargs);
+				mono_emit_jit_icall (cfg, (gconstpointer)mono_gc_get_range_copy_func (), iargs);
 			}
 			return;
 		}
