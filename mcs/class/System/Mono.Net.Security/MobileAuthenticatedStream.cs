@@ -393,8 +393,8 @@ namespace Mono.Net.Security
 			}
 
                        if (result.Error != null) {
-                               readBuffer = null;
-                               writeBuffer = null;
+				readBuffer = null;
+				writeBuffer = null;
 				result.Error.Throw ();
                        }
 		}
