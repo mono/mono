@@ -8578,7 +8578,7 @@ MonoJitICallInfo *
 }
 
 MonoJitICallInfo *
-(mono_register_jit_icall) (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 {
 	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
 }

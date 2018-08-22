@@ -1068,9 +1068,6 @@ mono_create_icall_signature (const char *sigstr);
 MonoJitICallInfo *
 mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean is_save);
 
-// Cast the first parameter to gpointer; macros do not recurse.
-#define mono_register_jit_icall(func, name, sig, no_wrapper) (mono_register_jit_icall ((gpointer)(func), (name), (sig), (no_wrapper)))
-
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
 
