@@ -531,7 +531,7 @@ mono_marshal_get_remoting_invoke (MonoMethod *method, MonoError *error)
 
 	mono_mb_emit_ptr (mb, method);
 	mono_mb_emit_ldloc (mb, params_var);
-	mono_mb_emit_icall (mb, mono_remoting_wrapper);
+	mono_mb_emit_icall (mb, (gpointer)mono_remoting_wrapper);
 	// FIXME: this interrupt checkpoint code is a no-op since 'mb'
 	//  is a MONO_WRAPPER_REMOTING_INVOKE, and
 	//  mono_thread_interruption_checkpoint_request (FALSE)
@@ -599,14 +599,14 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst)
 static void
 mono_marshal_emit_xdomain_copy_value (MonoMethodBuilder *mb, MonoClass *pclass)
 {
-	mono_mb_emit_icall (mb, ves_icall_mono_marshal_xdomain_copy_value);
+	mono_mb_emit_icall (mb, (gpointer)ves_icall_mono_marshal_xdomain_copy_value);
 	mono_mb_emit_op (mb, CEE_CASTCLASS, pclass);
 }
 
 static void
 mono_marshal_emit_xdomain_copy_out_value (MonoMethodBuilder *mb, MonoClass *pclass)
 {
-	mono_mb_emit_icall (mb, mono_marshal_xdomain_copy_out_value);
+	mono_mb_emit_icall (mb, (gpointer)mono_marshal_xdomain_copy_out_value);
 }
 #endif
 
@@ -643,7 +643,7 @@ mono_marshal_set_domain_by_id (gint32 id, MonoBoolean push)
 static void
 mono_marshal_emit_switch_domain (MonoMethodBuilder *mb)
 {
-	mono_mb_emit_icall (mb, mono_marshal_set_domain_by_id);
+	mono_mb_emit_icall (mb, (gpointer)mono_marshal_set_domain_by_id);
 }
 
 gpointer
@@ -666,7 +666,7 @@ mono_marshal_emit_load_domain_method (MonoMethodBuilder *mb, MonoMethod *method)
 	 * that compiles the method).
 	 */
 	mono_mb_emit_ptr (mb, method);
-	mono_mb_emit_icall (mb, mono_compile_method_icall);
+	mono_mb_emit_icall (mb, (gpointer)mono_compile_method_icall);
 }
 #endif
 
@@ -932,7 +932,7 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 	/* handler code */
 	main_clause->handler_offset = mono_mb_get_label (mb);
 
-	mono_mb_emit_icall (mb, mono_remoting_update_exception);
+	mono_mb_emit_icall (mb, (gpointer)mono_remoting_update_exception);
 	mono_mb_emit_op (mb, CEE_CASTCLASS, mono_defaults.exception_class);
 	mono_mb_emit_managed_call (mb, method_rs_serialize_exc, NULL);
 	mono_mb_emit_stloc (mb, loc_serialized_exc);
@@ -1050,7 +1050,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 
 	/* Save thread domain data */
 
-	mono_mb_emit_icall (mb, mono_context_get_icall);
+	mono_mb_emit_icall (mb, (gpointer)mono_context_get_icall);
 	mono_mb_emit_byte (mb, CEE_DUP);
 	mono_mb_emit_stloc (mb, loc_context);
 
@@ -1080,7 +1080,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 
 	mono_mb_emit_ldloc (mb, loc_domainid);
 	mono_mb_emit_ptr (mb, m_class_get_image (method->klass));
-	mono_mb_emit_icall (mb, mono_marshal_check_domain_image);
+	mono_mb_emit_icall (mb, (gpointer)mono_marshal_check_domain_image);
 	pos_dispatch = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
 	/* Use the whole remoting sink to dispatch this message */
@@ -1196,7 +1196,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 	/* Restore thread domain data */
 	
 	mono_mb_emit_ldloc (mb, loc_context);
-	mono_mb_emit_icall (mb, mono_context_set_icall);
+	mono_mb_emit_icall (mb, (gpointer)mono_context_set_icall);
 	
 	/* if (loc_serialized_exc != null) ... */
 
@@ -1671,7 +1671,7 @@ mono_marshal_get_ldflda_wrapper (MonoType *type)
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoRealProxy, context));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
-	mono_mb_emit_icall (mb, mono_context_get_icall);
+	mono_mb_emit_icall (mb, (gpointer)mono_context_get_icall);
 	pos3 = mono_mb_emit_branch (mb, CEE_BEQ);
 
 	mono_mb_emit_exception_full (mb, "System", "InvalidOperationException", "Attempt to load field address from object in another context.");
@@ -1910,7 +1910,7 @@ mono_marshal_get_proxy_cancast (MonoClass *klass)
 	
 	/* get the reflection type from the type handle */
 	mono_mb_emit_ptr (mb, m_class_get_byval_arg (klass));
-	mono_mb_emit_icall (mb, type_from_handle);
+	mono_mb_emit_icall (mb, (gpointer)type_from_handle);
 	
 	mono_mb_emit_ldarg (mb, 0);
 	
@@ -1925,10 +1925,10 @@ mono_marshal_get_proxy_cancast (MonoClass *klass)
 
 	/* Upgrade the proxy vtable by calling: mono_upgrade_remote_class_wrapper (type, ob)*/
 	mono_mb_emit_ptr (mb, m_class_get_byval_arg (klass));
-	mono_mb_emit_icall (mb, type_from_handle);
+	mono_mb_emit_icall (mb, (gpointer)type_from_handle);
 	mono_mb_emit_ldarg (mb, 0);
 	
-	mono_mb_emit_icall (mb, mono_upgrade_remote_class_wrapper);
+	mono_mb_emit_icall (mb, (gpointer)mono_upgrade_remote_class_wrapper);
 	mono_marshal_emit_thread_interrupt_checkpoint (mb);
 	
 	mono_mb_emit_ldarg (mb, 0);
