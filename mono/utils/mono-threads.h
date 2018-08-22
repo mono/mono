@@ -193,7 +193,7 @@ enum {
  * These flags control how the rest of the runtime will see and interact with
  * a thread.
  */
-typedef enum {
+G_ENUM_BEGIN (MonoThreadInfoFlags)
 	/*
 	 * No flags means it's a normal thread that takes part in all runtime
 	 * functionality.
@@ -209,9 +209,7 @@ typedef enum {
 	 * The thread will not be subject to profiler sampling signals.
 	 */
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
-} MonoThreadInfoFlags;
-
-G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
+G_ENUM_END (MonoThreadInfoFlags)
 
 struct HandleStack;
 struct MonoJitTlsData;
@@ -807,12 +805,12 @@ gboolean mono_thread_is_gc_unsafe_mode (void);
  * BLOCKING_SUSPEND_REQUESTED state, in which case they are preemptively
  * suspended.
  */
-typedef enum {
+G_ENUM_BEGIN (MonoThreadSuspendPhase)
 	MONO_THREAD_SUSPEND_PHASE_INITIAL = 0,
 	MONO_THREAD_SUSPEND_PHASE_MOPUP = 1,
 	// number of phases
 	MONO_THREAD_SUSPEND_PHASE_COUNT = 2,
-} MonoThreadSuspendPhase;
+G_ENUM_END (MonoThreadSuspendPhase)
 
 typedef enum {
 	MONO_THREAD_BEGIN_SUSPEND_SKIP = 0,
@@ -841,14 +839,12 @@ mono_thread_info_is_current (THREAD_INFO_TYPE *info);
 
 G_END_DECLS // FIXMEcxx THREAD_INFO_TYPE varying makes prototypes incorrect
 
-typedef enum {
+G_ENUM_BEGIN (MonoThreadInfoWaitRet)
 	MONO_THREAD_INFO_WAIT_RET_SUCCESS_0   =  0,
 	MONO_THREAD_INFO_WAIT_RET_ALERTED     = -1,
 	MONO_THREAD_INFO_WAIT_RET_TIMEOUT     = -2,
 	MONO_THREAD_INFO_WAIT_RET_FAILED      = -3,
-} MonoThreadInfoWaitRet;
-
-G_ENUM_FUNCTIONS (MonoThreadInfoWaitRet)
+G_ENUM_END (MonoThreadInfoWaitRet)
 
 MonoThreadInfoWaitRet
 mono_thread_info_wait_one_handle (MonoThreadHandle *handle, guint32 timeout, gboolean alertable);
