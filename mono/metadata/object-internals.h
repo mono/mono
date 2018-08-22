@@ -23,6 +23,8 @@
 #include "mono/utils/mono-coop-mutex.h"
 #include <mono/metadata/icalls.h>
 
+G_BEGIN_DECLS // FIXMEcxx wasm
+
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
@@ -439,7 +441,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	guint32	    state;
+	guint32/*MonoThreadState*/ state; // FIXMEcxx
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
@@ -466,7 +468,7 @@ struct _MonoInternalThread {
 	gsize    flags;
 	gpointer thread_pinning_ref;
 	gsize __abort_protected_block_count;
-	gint32 priority;
+	gint32/*MonoThreadPriority*/ priority; // FIXMEcxx
 	GPtrArray *owned_mutexes;
 	MonoOSEvent *suspended;
 	gint32 self_suspended; // TRUE | FALSE
@@ -1289,11 +1291,11 @@ typedef struct {
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
 TYPED_HANDLE_DECL (MonoReflectionModuleBuilder);
 
-typedef enum {
+G_ENUM_BEGIN (MonoTypeBuilderState)
 	MonoTypeBuilderNew = 0,
 	MonoTypeBuilderEntered = 1,
 	MonoTypeBuilderFinished = 2
-} MonoTypeBuilderState;
+G_ENUM_END (MonoTypeBuilderState)
 
 struct _MonoReflectionTypeBuilder {
 	MonoReflectionType type;
@@ -1771,6 +1773,8 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 gpointer
 mono_method_alloc_generic_virtual_trampoline (MonoDomain *domain, int size);
 
+#define mono_method_alloc_generic_virtual_trampoline(domain, size) (g_cast (mono_method_alloc_generic_virtual_trampoline ((domain), (size))))
+
 typedef enum {
 	MONO_UNHANDLED_POLICY_LEGACY,
 	MONO_UNHANDLED_POLICY_CURRENT
@@ -2115,6 +2119,8 @@ gpointer
 mono_object_get_data (MonoObject *o);
 
 gpointer
-mono_vtype_get_field_addr (guint8 *vtype, MonoClassField *field);
+mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
+
+G_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

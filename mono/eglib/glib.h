@@ -25,7 +25,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
 #endif
@@ -61,14 +60,53 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
+#endif
+
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
+	g_cast () = delete;
+	g_cast (const g_cast& y) = delete;
+
+	template <typename TTo> operator TTo* () const { return (TTo*)x; }
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
+#endif
+
+// Provide for math on enums.
+// This alleviates a fair number of casts in porting C to C++.
+// Debugging and typesafety are sacrificed.
+// We can also overload operators.
+// Note that enums are sometimes unsigned, but it depends not only on the values,
+// but the compiler.
+#ifdef __cplusplus
+#define G_ENUM_BEGIN(x) enum { // consider enum _##x
+#define G_ENUM_END(x)   }; typedef int x;
+#else
+#define G_ENUM_BEGIN(x) typedef enum { // consider enum x or _##x
+#define G_ENUM_END(x)   } x;
 #endif
 
 G_BEGIN_DECLS
@@ -185,7 +223,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
-#define g_alloca(size)		alloca (size)
+#define g_alloca(size)		(g_cast (alloca (size)))
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
@@ -211,7 +249,9 @@ typedef struct _GMemChunk GMemChunk;
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
+G_BEGIN_DECLS // FIXMEcxxwasm
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
+G_END_DECLS // FIXMEcxxwasm
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);
@@ -542,6 +582,7 @@ void    g_array_set_size          (GArray *array, gint length);
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -573,6 +614,7 @@ gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
@@ -600,7 +642,7 @@ void     g_queue_foreach   (GQueue   *queue, GFunc func, gpointer user_data);
 #define G_LOG_DOMAIN ((gchar*) 0)
 #endif
 
-typedef enum {
+G_ENUM_BEGIN (GLogLevelFlags)
 	G_LOG_FLAG_RECURSION          = 1 << 0,
 	G_LOG_FLAG_FATAL              = 1 << 1,
 	
@@ -612,7 +654,7 @@ typedef enum {
 	G_LOG_LEVEL_DEBUG             = 1 << 7,
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
-} GLogLevelFlags;
+G_ENUM_END (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -659,7 +701,7 @@ gpointer g_convert_error_quark(void);
  * bare minimum to build.
  */
 
-typedef enum {
+G_ENUM_BEGIN (GUnicodeType)
 	G_UNICODE_CONTROL,
 	G_UNICODE_FORMAT,
 	G_UNICODE_UNASSIGNED,
@@ -690,7 +732,7 @@ typedef enum {
 	G_UNICODE_LINE_SEPARATOR,
 	G_UNICODE_PARAGRAPH_SEPARATOR,
 	G_UNICODE_SPACE_SEPARATOR
-} GUnicodeType;
+G_ENUM_END (GUnicodeType)
 
 typedef enum {
 	G_UNICODE_BREAK_MANDATORY,
@@ -938,14 +980,13 @@ typedef enum {
 	G_FILE_ERROR_FAILED
 } GFileError;
 
-typedef enum {
+G_ENUM_BEGIN (GFileTest)
 	G_FILE_TEST_IS_REGULAR = 1 << 0,
 	G_FILE_TEST_IS_SYMLINK = 1 << 1,
 	G_FILE_TEST_IS_DIR = 1 << 2,
 	G_FILE_TEST_IS_EXECUTABLE = 1 << 3,
 	G_FILE_TEST_EXISTS = 1 << 4
-} GFileTest;
-
+G_ENUM_END (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
@@ -1172,4 +1213,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H
