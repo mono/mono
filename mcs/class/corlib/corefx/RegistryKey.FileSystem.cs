@@ -55,6 +55,11 @@ namespace Microsoft.Win32
 
         partial void CloseCore()
         {
+            RegistryApi.Flush(this);
+
+            if (!isRemoteRoot && IsRoot)
+                return;
+
             RegistryApi.Close(this);
         }
 
