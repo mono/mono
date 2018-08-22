@@ -312,6 +312,12 @@ mono_trace_set_mask_string (const char *value)
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "profiler", MONO_TRACE_PROFILER },
+		{ "android-default", MONO_TRACE_ANDROID_DEFAULT },
+		{ "android-net", MONO_TRACE_ANDROID_NET },
+		{ "android-netlink", MONO_TRACE_ANDROID_NETLINK },
+		{ "android", MONO_TRACE_ANDROID_DEFAULT
+		              | MONO_TRACE_ANDROID_NET
+		              | MONO_TRACE_ANDROID_NETLINK },
 		{ "all", (MonoTraceMask)~0 }, // FIXMEcxx there is a better way -- operator overloads of enums
 		{ NULL, (MonoTraceMask)0 },
 	};

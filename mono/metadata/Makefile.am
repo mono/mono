@@ -70,6 +70,10 @@ else
 platform_sources += threadpool-worker-default.c
 endif
 
+if ENABLE_MONODROID
+platform_sources += android.c android.h android-ifaddrs.c
+endif
+
 if BITCODE
 libmonoldflags = -no-undefined
 endif

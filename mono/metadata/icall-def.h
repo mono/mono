@@ -92,6 +92,7 @@ HANDLES(ICALL(TLS_PROVIDER_FACTORY_1, "IsBtlsSupported", ves_icall_Mono_TlsProvi
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 HANDLES(ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry))
 HANDLES(ICALL(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_EnableMicrosoftTelemetry))
+NOHANDLES(ICALL(RUNTIME_4, "GFree", ves_icall_Mono_Runtime_GFree))
 HANDLES(ICALL(RUNTIME_3, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
 HANDLES(ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace))
 
@@ -116,6 +117,11 @@ HANDLES(ICALL(KPAIR_3, "_IsUserProtected", ves_icall_Mono_Security_Cryptography_
 HANDLES(ICALL(KPAIR_4, "_ProtectMachine", ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine))
 HANDLES(ICALL(KPAIR_5, "_ProtectUser", ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser))
 #endif /* !PLATFORM_RO_FS */
+
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(ANDROIDUTILS, "Mono.Unix.Android.AndroidUtils", ANDROIDUTILS_1)
+NOHANDLES(ICALL(ANDROIDUTILS_1, "DetectCpuAndArchitecture", ves_icall_Mono_Unix_Android_AndroidUtils_DetectCpuAndArchitecture))
+#endif
 
 ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_23)
 HANDLES(ICALL(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException))
@@ -459,9 +465,26 @@ HANDLES(ICALL(NDNS_1, "GetHostByAddr_internal(string,string&,string[]&,string[]&
 HANDLES(ICALL(NDNS_2, "GetHostByName_internal(string,string&,string[]&,string[]&,int)", ves_icall_System_Net_Dns_GetHostByName_internal))
 HANDLES(ICALL(NDNS_3, "GetHostName_internal(string&)", ves_icall_System_Net_Dns_GetHostName_internal))
 
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(LINUXNETWORKINTERFACE, "System.Net.NetworkInformation.LinuxNetworkInterface", LINUXNETWORKINTERFACE_1)
+NOHANDLES(ICALL(LINUXNETWORKINTERFACE_1, "GetSupportsMulticast", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetSupportsMulticast))
+NOHANDLES(ICALL(LINUXNETWORKINTERFACE_2, "GetUpState", ves_icall_System_Net_NetworkInformation_LinuxNetworkInterface_GetUpState))
+#endif
+
 #if defined(HOST_DARWIN) || defined(HOST_BSD)
 ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
 ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
+#endif
+
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(UNIXNETWORKINTERFACEAPI, "System.Net.NetworkInformation.NetworkInterfaceFactory/UnixNetworkInterfaceAPI", UNIXNETWORKINTERFACEAPI_1)
+NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_1, "freeifaddrs", ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_freeifaddrs))
+NOHANDLES(ICALL(UNIXNETWORKINTERFACEAPI_2, "getifaddrs", ves_icall_System_Net_NetworkInformation_NetworkInterfaceFactory_UnixNetworkInterfaceAPI_getifaddrs))
+#endif
+
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(UNIXIPINTERFACEPROPERTIES, "System.Net.NetworkInformation.UnixIPInterfaceProperties", UNIXIPINTERFACEPROPERTIES_1)
+NOHANDLES(ICALL(UNIXIPINTERFACEPROPERTIES_1, "GetDNSServers", ves_icall_System_Net_NetworkInformation_UnixIPInterfaceProperties_GetDNSServers))
 #endif
 
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
@@ -1056,6 +1079,12 @@ NOHANDLES(ICALL(VOLATILE_26, "Write(ulong&,ulong)", ves_icall_System_Threading_V
 ICALL_TYPE(WAITH, "System.Threading.WaitHandle", WAITH_1)
 HANDLES(ICALL(WAITH_1, "SignalAndWait_Internal", ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal))
 HANDLES(ICALL(WAITH_2, "Wait_internal", ves_icall_System_Threading_WaitHandle_Wait_internal))
+
+#ifdef ENABLE_MONODROID
+ICALL_TYPE(ANDROIDTIMEZONES, "System.TimeZoneInfo/AndroidTimeZones", ANDROIDTIMEZONES_1)
+NOHANDLES(ICALL(ANDROIDTIMEZONES_1, "GetDefaultTimeZoneId", ves_icall_System_TimezoneInfo_AndroidTimeZones_GetDefaultTimeZoneId))
+NOHANDLES(ICALL(ANDROIDTIMEZONES_2, "GetSystemProperty", ves_icall_System_TimezoneInfo_AndroidTimeZones_GetSystemProperty))
+#endif
 
 ICALL_TYPE(TYPE, "System.Type", TYPE_1)
 HANDLES(ICALL(TYPE_1, "internal_from_handle", ves_icall_System_Type_internal_from_handle))

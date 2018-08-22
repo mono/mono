@@ -82,6 +82,7 @@ typedef void* (*MonoDlFallbackClose) (void *handle, void *user_data);
 
 typedef void *(*mono_dl_fallback_register_fn) (MonoDlFallbackLoad load_func, MonoDlFallbackSymbol symbol_func, MonoDlFallbackClose close_func, void *user_data);
 
+typedef void (*mono_jvm_initialize_fn) (JavaVM *vm);
 typedef MonoDomain* (*mono_jit_init_version_fn) (const char *root_domain_name, const char *runtime_version);
 typedef void (*mono_jit_cleanup_fn) (MonoDomain *domain);
 typedef int (*mono_jit_exec_fn) (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
@@ -115,6 +116,7 @@ typedef void *(*mono_runtime_quit_fn) (void);
 
 static JavaVM *jvm;
 
+static mono_jvm_initialize_fn mono_jvm_initialize;
 static mono_jit_init_version_fn mono_jit_init_version;
 static mono_jit_cleanup_fn mono_jit_cleanup;
 static mono_assembly_open_fn mono_assembly_open;
@@ -150,33 +152,65 @@ static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
 static void *mono_posix_helper_dso;
 
-static jclass AndroidRunner_klass = NULL;
-static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
-
 //forward decls
 
 static void* my_dlsym (void *handle, const char *name, char **err, void *user_data);
 static void* my_dlopen (const char *name, int flags, char **err, void *user_data);
 
-static JNIEnv* mono_jvm_get_jnienv (void);
-
 //stuff
+
+static JNIEnv*
+get_jnienv (void)
+{
+	JNIEnv *env;
+
+	if (!jvm)
+		__android_log_assert ("", "mono-sdks", "%s: Fatal error: jvm is not initialized", __func__);
+
+	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
+	if (env)
+		return env;
+
+	(*jvm)->AttachCurrentThread(jvm, &env, NULL);
+	if (env)
+		return env;
+
+	__android_log_assert ("", "mono-sdks", "%s: Fatal error: Could not create env", __func__);
+}
+
+static jobject
+lref_to_gref (JNIEnv *env, jobject lref)
+{
+	jobject g;
+	if (lref == 0)
+		return 0;
+	g = (*env)->NewGlobalRef (env, lref);
+	(*env)->DeleteLocalRef (env, lref);
+	return g;
+}
 
 static void
 _runtime_log (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data)
 {
+	static jclass AndroidRunner_klass = NULL;
+	static jmethodID AndroidRunner_WriteLineToInstrumentation_method = NULL;
 	JNIEnv *env;
 	jstring j_message;
 
-	if (jvm == NULL)
+	if (!jvm)
 		__android_log_assert ("", "mono-sdks", "%s: jvm is NULL", __func__);
 
-	if (AndroidRunner_klass == NULL)
-		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_klass is NULL", __func__);
-	if (AndroidRunner_WriteLineToInstrumentation_method == NULL)
-		__android_log_assert ("", "mono-sdks", "%s: AndroidRunner_WriteLineToInstrumentation_method is NULL", __func__);
+	env = get_jnienv ();
 
-	env = mono_jvm_get_jnienv ();
+	if (!AndroidRunner_klass)
+		AndroidRunner_klass = lref_to_gref(env, (*env)->FindClass (env, "org/mono/android/AndroidRunner"));
+	if (!AndroidRunner_klass)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_klass", __func__);
+
+	if (!AndroidRunner_WriteLineToInstrumentation_method)
+		AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
+	if (!AndroidRunner_WriteLineToInstrumentation_method)
+		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_WriteLineToInstrumentation_method", __func__);
 
 	j_message = (*env)->NewStringUTF(env, message);
 
@@ -372,6 +406,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 		_exit (1);
 	}
 
+	mono_jvm_initialize = dlsym (libmono, "mono_jvm_initialize");
 	mono_jit_init_version = dlsym (libmono, "mono_jit_init_version");
 	mono_jit_cleanup = dlsym (libmono, "mono_jit_cleanup");
 	mono_assembly_open = dlsym (libmono, "mono_assembly_open");
@@ -402,6 +437,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_method_get_name = dlsym (libmono, "mono_method_get_name");
 	mono_trace_init = dlsym (libmono, "mono_trace_init");
 	mono_trace_set_log_handler = dlsym (libmono, "mono_trace_set_log_handler");
+
+	mono_jvm_initialize (jvm);
 
 	//MUST HAVE envs
 	setenv ("TMPDIR", cache_dir, 1);
@@ -583,229 +620,14 @@ my_dlsym (void *handle, const char *name, char **err, void *user_data)
 }
 
 MONO_API int
-monodroid_get_system_property (const char *name, char **value)
-{
-	char *pvalue;
-	char  sp_value [PROP_VALUE_MAX+1] = { 0, };
-	int   len;
-
-	if (value)
-		*value = NULL;
-
-	pvalue  = sp_value;
-	len     = __system_property_get (name, sp_value);
-
-	if (len >= 0 && value) {
-		*value = malloc (len + 1);
-		if (!*value)
-			return -len;
-		memcpy (*value, pvalue, len);
-		(*value)[len] = '\0';
-	}
-
-	return len;
-}
-
-MONO_API void
-monodroid_free (void *ptr)
-{
-	free (ptr);
-}
-
-typedef struct {
-	struct _monodroid_ifaddrs *ifa_next; /* Pointer to the next structure.      */
-
-	char *ifa_name;                      /* Name of this network interface.     */
-	unsigned int ifa_flags;              /* Flags as from SIOCGIFFLAGS ioctl.   */
-
-	struct sockaddr *ifa_addr;           /* Network address of this interface.  */
-	struct sockaddr *ifa_netmask;        /* Netmask of this interface.          */
-	union {
-		/* At most one of the following two is valid.  If the IFF_BROADCAST
-		   bit is set in `ifa_flags', then `ifa_broadaddr' is valid.  If the
-		   IFF_POINTOPOINT bit is set, then `ifa_dstaddr' is valid.
-		   It is never the case that both these bits are set at once.  */
-		struct sockaddr *ifu_broadaddr;  /* Broadcast address of this interface. */
-		struct sockaddr *ifu_dstaddr;    /* Point-to-point destination address.  */
-	} ifa_ifu;
-	void *ifa_data;               /* Address-specific data (may be unused).  */
-} m_ifaddrs;
-
-typedef int (*get_ifaddr_fn)(m_ifaddrs **ifap);
-typedef void (*freeifaddr_fn)(m_ifaddrs *ifap);
-
-static void
-init_sock_addr (struct sockaddr **res, const char *str_addr)
-{
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	inet_pton (AF_INET, str_addr, &addr.sin_addr);
-
-	*res = calloc (1, sizeof (struct sockaddr));
-	**(struct sockaddr_in**)res = addr;
-}
-
-MONO_API int
-monodroid_getifaddrs (m_ifaddrs **ifap)
-{
-	char buff[1024];
-	FILE * f = fopen ("/proc/net/route", "r");
-	if (f) {
-		int i = 0;
-		fgets (buff, 1023, f);
-		fgets (buff, 1023, f);
-		while (!isspace (buff [i]) && i < 1024)
-			++i;
-		buff [i] = 0;
-		fclose (f);
-	} else {
-		strcpy (buff, "wlan0");
-	}
-
-	m_ifaddrs *res = calloc (1, sizeof (m_ifaddrs));
-	memset (res, 0, sizeof (*res));
-
-	res->ifa_next = NULL;
-	res->ifa_name = m_strdup_printf ("%s", buff);
-	res->ifa_flags = 0;
-	res->ifa_ifu.ifu_dstaddr = NULL;
-	init_sock_addr (&res->ifa_addr, "192.168.0.1");
-	init_sock_addr (&res->ifa_netmask, "255.255.255.0");
-
-	*ifap = res;
-	return 0;
-}
-
-MONO_API void
-monodroid_freeifaddrs (m_ifaddrs *ifap)
-{
-	free (ifap->ifa_name);
-	if (ifap->ifa_addr)
-		free (ifap->ifa_addr);
-	if (ifap->ifa_netmask)
-		free (ifap->ifa_netmask);
-	free (ifap);
-}
-
-MONO_API int
 _monodroid_get_android_api_level (void)
 {
 	return 24;
 }
 
-MONO_API int
-_monodroid_get_network_interface_up_state (void *ifname, int *is_up)
-{
-	*is_up = 1;
-	return 1;
-}
-
-MONO_API int
-_monodroid_get_network_interface_supports_multicast (void *ifname, int *supports_multicast)
-{
-	*supports_multicast = 0;
-	return 1;
-}
-
-MONO_API int
-_monodroid_get_dns_servers (void **dns_servers_array)
-{
-	*dns_servers_array = NULL;
-	if (!dns_servers_array)
-		return -1;
-
-	size_t  len;
-	char   *dns;
-	char   *dns_servers [8];
-	int     count = 0;
-	char    prop_name[] = "net.dnsX";
-	int i;
-	for (i = 0; i < 8; i++) {
-		prop_name [7] = (char)(i + 0x31);
-		len = monodroid_get_system_property (prop_name, &dns);
-		if (len <= 0) {
-			dns_servers [i] = NULL;
-			continue;
-		}
-		dns_servers [i] = strndup (dns, len);
-		count++;
-	}
-
-	if (count <= 0)
-		return 0;
-
-	char **ret = (char**)malloc (sizeof (char*) * count);
-	char **p = ret;
-	for (i = 0; i < 8; i++) {
-		if (!dns_servers [i])
-			continue;
-		*p++ = dns_servers [i];
-	}
-
-	*dns_servers_array = (void*)ret;
-	return count;
-}
-
-static int initialized = 0;
-
-static jobject
-lref_to_gref (JNIEnv *env, jobject lref)
-{
-	jobject g;
-	if (lref == 0)
-		return 0;
-	g = (*env)->NewGlobalRef (env, lref);
-	(*env)->DeleteLocalRef (env, lref);
-	return g;
-}
-
-static void
-mono_jvm_initialize (JavaVM *vm)
-{
-	JNIEnv *env;
-
-	if (initialized)
-		return;
-
-	jvm = vm;
-
-	int res = (*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
-	if (!env)
-		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not create env, res = %d", __func__, res);
-
-	AndroidRunner_klass = lref_to_gref(env, (*env)->FindClass (env, "org/mono/android/AndroidRunner"));
-	if (!AndroidRunner_klass)
-		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_klass", __func__);
-
-	AndroidRunner_WriteLineToInstrumentation_method = (*env)->GetStaticMethodID (env, AndroidRunner_klass, "WriteLineToInstrumentation", "(Ljava/lang/String;)V");
-	if (!AndroidRunner_WriteLineToInstrumentation_method)
-		__android_log_assert ("", "mono-sdks", "%s: fatal error: Could not find AndroidRunner_WriteLineToInstrumentation_method", __func__);
-
-	initialized = 1;
-}
-
 JNIEXPORT jint JNICALL
 JNI_OnLoad (JavaVM *vm, void *reserved)
 {
-	mono_jvm_initialize (vm);
+	jvm = vm;
 	return JNI_VERSION_1_6;
-}
-
-static JNIEnv*
-mono_jvm_get_jnienv (void)
-{
-	JNIEnv *env;
-
-	if (!initialized)
-		__android_log_assert ("", "mono-sdks", "%s: Fatal error: jvm not initialized", __func__);
-
-	(*jvm)->GetEnv (jvm, (void**)&env, JNI_VERSION_1_6);
-	if (env)
-		return env;
-
-	(*jvm)->AttachCurrentThread(jvm, (void **)&env, NULL);
-	if (env)
-		return env;
-
-	__android_log_assert ("", "mono-sdks", "%s: Fatal error: Could not create env", __func__);
 }

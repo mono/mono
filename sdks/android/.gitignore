@@ -3,4 +3,5 @@
 /app/assets/asm
 /app/src/main/jniLibs/
 /lldb-mono-0.1
+/lldb-mono-0.1.tar.gz
 /local.properties

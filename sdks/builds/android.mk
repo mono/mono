@@ -6,6 +6,16 @@ ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 
+ifeq ($(UNAME),Darwin)
+JDK_INCLUDE_DIRS?=$(wildcard /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home/include /Library/Java/JavaVirtualMachines/jdk1.8.0_*.jdk/Contents/Home/include/darwin)
+else
+ifeq ($(UNAME),Linux)
+JDK_INCLUDE_DIRS?=$(error "FIXME figure out where the jvm includes are on Linux")
+else
+$(error "Unknown UNAME=$(UNAME)")
+endif
+endif
+
 $(ANDROID_TOOLCHAIN_CACHE_DIR) $(ANDROID_TOOLCHAIN_DIR):
 	mkdir -p $@
 
@@ -122,11 +132,13 @@ _android-$(1)_AC_VARS= \
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 \
+	-DLINUX=1 \
 	$$(android-$(1)_CFLAGS)
 
 _android-$(1)_CXXFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 \
+	-DLINUX=1 \
 	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CPPFLAGS= \
@@ -191,8 +203,8 @@ $(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,aarch64-linux-android,aarch6
 $(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-android))
 
 ## android-x86_64
-android-x86_64_CFLAGS=-DL_cuserid=9
-android-x86_64_CXXFLAGS=-DL_cuserid=9
+android-x86_64_CFLAGS=-DL_cuserid=9 -DANDROID64
+android-x86_64_CXXFLAGS=-DL_cuserid=9 -DANDROID64
 $(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
 
 ##
@@ -213,8 +225,13 @@ _android-$(1)_LD=ld
 _android-$(1)_RANLIB=ranlib
 _android-$(1)_STRIP=strip
 
-_android-$(1)_CFLAGS=$$(android-$(1)_CFLAGS)
-_android-$(1)_CXXFLAGS=$$(android-$(1)_CXXFLAGS)
+_android-$(1)_CFLAGS= \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CFLAGS)
+
+_android-$(1)_CXXFLAGS= \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
@@ -238,9 +255,15 @@ $$(eval $$(call RuntimeTemplate,android-$(1)))
 
 endef
 
+ifeq ($(UNAME),Darwin)
 android-host-Darwin_CFLAGS=-mmacosx-version-min=10.9
 $(eval $(call AndroidHostTemplate,host-Darwin))
+else
+ifeq ($(UNAME),Linux)
+android-host-Linux_CFLAGS=-DLINUX
 $(eval $(call AndroidHostTemplate,host-Linux))
+endif
+endif
 
 ##
 # Parameters
@@ -250,25 +273,31 @@ define AndroidHostMxeTemplate
 
 _android-$(1)_PATH=$$(MXE_PREFIX)/bin
 
-_android-$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ar
-_android-$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-as
-_android-$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-gcc
-_android-$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-g++
-_android-$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-dlltool
-_android-$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ld
-_android-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-objdump
-_android-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
-_android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
+_android-$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ar
+_android-$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-as
+_android-$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-gcc
+_android-$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-g++
+_android-$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-dlltool
+_android-$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ld
+_android-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-objdump
+_android-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ranlib
+_android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-strip
 
 _android-$(1)_AC_VARS= \
 	ac_cv_header_zlib_h=no \
 	ac_cv_search_dlopen=no
 
 _android-$(1)_CFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0
+	-DWINDOWS=1 \
+	-DXAMARIN_PRODUCT_VERSION=0 \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CFLAGS)
 
 _android-$(1)_CXXFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0
+	-DWINDOWS=1 \
+	-DXAMARIN_PRODUCT_VERSION=0 \
+	$$(patsubst %,-I%,$$(JDK_INCLUDE_DIRS)) \
+	$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
