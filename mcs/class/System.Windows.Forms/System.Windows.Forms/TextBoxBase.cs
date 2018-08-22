@@ -73,6 +73,8 @@ namespace System.Windows.Forms
 		
 		internal bool has_been_focused;
 
+		private bool			delayed_font_or_color_change;
+
 		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
 		internal bool show_caret_w_selection;  // TextBox shows the caret when the selection is visible
 		internal int			canvas_width;
@@ -1008,6 +1010,9 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+			if (delayed_font_or_color_change) {
+				TextBoxBase_FontOrColorChanged (this, e);
+			}
 			FixupHeight ();
 		}
 
@@ -2238,8 +2243,10 @@ namespace System.Windows.Forms
 		{
 			Line	line;
 
-			if (!IsHandleCreated)
+			if (!IsHandleCreated) {
+				delayed_font_or_color_change = true;
 				return;
+			}
 
 			document.SuspendRecalc ();
 			// Font changes apply to the whole document
