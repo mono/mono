@@ -71,6 +71,20 @@
 #define G_END_DECLS
 #endif
 
+// Provide for math on enums.
+// This alleviates a fair number of casts in porting C to C++.
+// Debugging and typesafety are sacrificed.
+// We can also overload operators.
+// Note that enums are sometimes unsigned, but it depends not only on the values,
+// but the compiler.
+#ifdef __cplusplus
+#define G_ENUM_BEGIN(x) enum { // consider enum _##x
+#define G_ENUM_END(x)   }; typedef int x;
+#else
+#define G_ENUM_BEGIN(x) typedef enum { // consider enum x or _##x
+#define G_ENUM_END(x)   } x;
+#endif
+
 G_BEGIN_DECLS
 
 /*
@@ -600,7 +614,7 @@ void     g_queue_foreach   (GQueue   *queue, GFunc func, gpointer user_data);
 #define G_LOG_DOMAIN ((gchar*) 0)
 #endif
 
-typedef enum {
+G_ENUM_BEGIN (GLogLevelFlags)
 	G_LOG_FLAG_RECURSION          = 1 << 0,
 	G_LOG_FLAG_FATAL              = 1 << 1,
 	
@@ -612,7 +626,7 @@ typedef enum {
 	G_LOG_LEVEL_DEBUG             = 1 << 7,
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
-} GLogLevelFlags;
+G_ENUM_END (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -659,7 +673,7 @@ gpointer g_convert_error_quark(void);
  * bare minimum to build.
  */
 
-typedef enum {
+G_ENUM_BEGIN (GUnicodeType)
 	G_UNICODE_CONTROL,
 	G_UNICODE_FORMAT,
 	G_UNICODE_UNASSIGNED,
@@ -690,7 +704,7 @@ typedef enum {
 	G_UNICODE_LINE_SEPARATOR,
 	G_UNICODE_PARAGRAPH_SEPARATOR,
 	G_UNICODE_SPACE_SEPARATOR
-} GUnicodeType;
+G_ENUM_END (GUnicodeType)
 
 typedef enum {
 	G_UNICODE_BREAK_MANDATORY,
@@ -938,14 +952,13 @@ typedef enum {
 	G_FILE_ERROR_FAILED
 } GFileError;
 
-typedef enum {
+G_ENUM_BEGIN (GFileTest)
 	G_FILE_TEST_IS_REGULAR = 1 << 0,
 	G_FILE_TEST_IS_SYMLINK = 1 << 1,
 	G_FILE_TEST_IS_DIR = 1 << 2,
 	G_FILE_TEST_IS_EXECUTABLE = 1 << 3,
 	G_FILE_TEST_EXISTS = 1 << 4
-} GFileTest;
-
+G_ENUM_END (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
