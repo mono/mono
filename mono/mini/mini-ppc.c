@@ -580,7 +580,7 @@ mono_arch_init (void)
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 
-	mono_aot_register_jit_icall ("mono_ppc_throw_exception", mono_ppc_throw_exception);
+	mono_aot_register_jit_icall ("mono_ppc_throw_exception", (gpointer)mono_ppc_throw_exception);
 
 	// FIXME: Fix partial sharing for power and remove this
 	mono_set_partial_sharing_supported (FALSE);
