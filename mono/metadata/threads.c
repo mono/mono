@@ -1876,14 +1876,14 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  */
 ICALL_EXPORT
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int/*MonoThreadPriority FIXMEcxx*/ priority, MonoError *error)
+ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, MonoThreadPriority priority, MonoError *error)
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
 	LOCK_THREAD (internal);
 	internal->priority = priority;
 	if (internal->thread_info != NULL)
-		mono_thread_internal_set_priority (internal, (MonoThreadPriority)priority);
+		mono_thread_internal_set_priority (internal, priority);
 	UNLOCK_THREAD (internal);
 }
 
