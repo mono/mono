@@ -53,6 +53,11 @@ namespace Microsoft.Win32
             FlushCore();
         }
 
+        partial void CloseCore()
+        {
+            RegistryApi.Close(this);
+        }
+
         private void FlushCore()
         {
             RegistryApi.Flush(this);
@@ -241,7 +246,12 @@ namespace Microsoft.Win32
         {
             if (_keyName != null)
                 return _keyName.GetHashCode();
-            return base.GetHashCode();
+            return 0;
+        }
+
+        public override bool Equals(object o)
+        {
+            return IsEquals(this, (RegistryKey)o);
         }
     }
 }
