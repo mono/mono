@@ -58,6 +58,20 @@ mono_method_get_index      (MonoMethod *method);
 MONO_API void
 mono_add_internal_call     (const char *name, const void* method);
 
+#ifdef __cplusplus
+extern "C++" // due to surrounding extern "C"
+{
+
+template <typename T>
+inline void
+mono_add_internal_call (const char *name, T method)
+{
+	return mono_add_internal_call (name, (const void*)method);
+}
+
+} // extern "C++"
+#endif // __cplusplus
+
 MONO_API void*
 mono_lookup_internal_call (MonoMethod *method);
 

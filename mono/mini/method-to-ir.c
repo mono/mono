@@ -82,8 +82,6 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
-#define mono_emit_jit_icall(a, b, c) (mono_emit_jit_icall ((a), (gconstpointer)(b), (c)))
-
 #define BRANCH_COST 10
 #define CALL_COST 10
 /* Used for the JIT */
@@ -2728,8 +2726,7 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 }
 
 MonoInst*
-// parens to avoid macro
-(mono_emit_jit_icall) (MonoCompile *cfg, gconstpointer func, MonoInst **args)
+mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
 {
 	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
 
