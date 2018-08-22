@@ -1,0 +1,80 @@
+#!/bin/sh -e
+
+function show_help () {
+cat <<EOL
+Usage: configure [options]
+    -h, --help       Displays this help
+    --ios            Enable IOS build (disabled by default)
+    --android        Enable Android build (disabled by default)
+    --wasm           Enable WebAssembly build (disabled by default)
+	--desktop        Enable Desktop build (disabled by default)
+    --disable-bcl    Disable BLC build (enabled by default)
+EOL
+}
+
+CONFIGURED_FILE=Make.local
+
+rm -f $CONFIGURED_FILE
+
+echo "# Configure arguments: $*" >> $CONFIGURED_FILE
+
+disable_ios=true
+disable_android=true
+disable_wasm=true
+disable_desktop=true
+disable_bcl=false
+
+
+while test x$1 != x; do
+	case $1 in
+	--ios)
+		$disable_ios = false
+		shift
+		;;
+	--android)
+		$disable_android = false
+		shift
+		;;
+	--wasm)
+		$disable_wasm = false
+		shift
+		;;
+	--desktop)
+		$disable_desktop = false
+		shift
+		;;
+	--disable-bcl)
+		$disable_bcl = false
+		shift
+		;;
+	--help|-h)
+		show_help
+		exit 0
+		;;
+	*)
+		echo Unknown configure argument $1 >&2
+		shift
+		;;
+	esac
+done
+
+# ifeq ($(DISABLE_IOS), true)
+if [ $disable_ios = true ]; then
+echo "DISABLE_IOS = 1" >> $CONFIGURED_FILE
+fi
+
+if [ $disable_android = true ]; then
+echo "DISABLE_ANDROID = 1" >> $CONFIGURED_FILE
+fi
+
+if [ $disable_wasm = true ]; then
+echo "DISABLE_WASM = 1" >> $CONFIGURED_FILE
+fi
+
+if [ $disable_desktop = true ]; then
+echo "DISABLE_DESKTOP = 1" >> $CONFIGURED_FILE
+fi
+
+if [ $disable_bcl = true ]; then
+echo "DISABLE_BCL = 1" >> $CONFIGURED_FILE
+fi
