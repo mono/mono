@@ -14,12 +14,6 @@
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
 #endif
-#ifdef HAVE_COPYFILE_H
-#include <copyfile.h>
-#  if !defined(COPYFILE_CLONE)
-#    #define COPYFILE_CLONE (1 << 24)
-#  endif
-#endif
 #if defined(HAVE_SYS_STATFS_H)
 #include <sys/statfs.h>
 #endif
@@ -35,9 +29,16 @@
 #include <linux/fs.h>
 #include <mono/utils/linux_magic.h>
 #endif
+#ifdef _AIX
+#include <sys/mntctl.h>
+#include <sys/vmount.h>
+#endif
 #include <sys/time.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
+#endif
+#if HOST_DARWIN
+#include <dlfcn.h>
 #endif
 
 #include "w32file.h"
@@ -107,6 +108,12 @@ static MonoCoopMutex file_share_mutex;
 
 static GHashTable *finds;
 static MonoCoopMutex finds_mutex;
+
+#if HOST_DARWIN
+typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
+static void *libc_handle;
+static clonefile_fn clonefile_ptr;
+#endif
 
 static void
 time_t_to_filetime (time_t timeval, FILETIME *filetime)
@@ -2327,21 +2334,23 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 	return TRUE ;
 }
 
-#if HAVE_COPYFILE_H
+#if HOST_DARWIN
 static int
-_wapi_copyfile(const char *from, const char *to, copyfile_state_t state, copyfile_flags_t flags)
+_wapi_clonefile(const char *from, const char *to, int flags)
 {
 	gchar *located_from, *located_to;
 	int ret;
+
+	g_assert (clonefile_ptr != NULL);
 
 	located_from = mono_portability_find_file (from, FALSE);
 	located_to = mono_portability_find_file (to, FALSE);
 
 	MONO_ENTER_GC_SAFE;
-	ret = copyfile (
+	ret = clonefile_ptr (
 		located_from == NULL ? from : located_from,
 		located_to == NULL ? to : located_to,
-		state, flags);
+		flags);
 	MONO_EXIT_GC_SAFE;
 
 	g_free (located_from);
@@ -2394,39 +2403,6 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		return(FALSE);
 	}
 
-#if HAVE_COPYFILE_H
-	if (!_wapi_stat (utf8_dest, &dest_st)) {
-		/* Before trying to open/create the dest, we need to report a 'file busy'
-		 * error if src and dest are actually the same file. We do the check here to take
-		 * advantage of the IOMAP capability */
-		if (!_wapi_stat (utf8_src, &st) && st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
-			g_free (utf8_src);
-			g_free (utf8_dest);
-
-			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-			return (FALSE);
-		}
-
-		/* Also bail out if the destination is read-only (FIXME: path is not translated by mono_portability_find_file!) */
-		if (!is_file_writable (&dest_st, utf8_dest)) {
-			g_free (utf8_src);
-			g_free (utf8_dest);
-
-			mono_w32error_set_last (ERROR_ACCESS_DENIED);
-			return (FALSE);
-		}
-	}
-
-	ret = _wapi_copyfile (utf8_src, utf8_dest, NULL, COPYFILE_ALL | COPYFILE_CLONE | (fail_if_exists ? COPYFILE_EXCL : COPYFILE_UNLINK));
-	g_free (utf8_src);
-	g_free (utf8_dest);
-	if (ret != 0) {
-		_wapi_set_last_error_from_errno ();
-		return FALSE;
-	}
-
-	return TRUE;
-#else
 	gint src_fd, dest_fd;
 	gint ret_utime;
 	gint syscall_res;
@@ -2456,21 +2432,75 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		return(FALSE);
 	}
 
-	/* Before trying to open/create the dest, we need to report a 'file busy'
-	 * error if src and dest are actually the same file. We do the check here to take
-	 * advantage of the IOMAP capability */
-	if (!_wapi_stat (utf8_dest, &dest_st) && st.st_dev == dest_st.st_dev && 
-			st.st_ino == dest_st.st_ino) {
+	if (!_wapi_stat (utf8_dest, &dest_st)) {
+		/* Before trying to open/create the dest, we need to report a 'file busy'
+		 * error if src and dest are actually the same file. We do the check here to take
+		 * advantage of the IOMAP capability */
+		if (st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
 
-		g_free (utf8_src);
-		g_free (utf8_dest);
-		MONO_ENTER_GC_SAFE;
-		close (src_fd);
-		MONO_EXIT_GC_SAFE;
+			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
+			return (FALSE);
+		}
 
-		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-		return (FALSE);
+		/* Take advantage of the fact that we already know the file exists and bail out
+		 * early */
+		if (fail_if_exists) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			mono_w32error_set_last (ERROR_ALREADY_EXISTS);
+			return (FALSE);
+		}
+
+#if HOST_DARWIN
+		/* If we attempt to use clonefile API we need to unlink the destination file
+		 * first */
+		if (clonefile_ptr != NULL) {
+
+			/* Bail out if the destination is read-only */
+			if (!is_file_writable (&dest_st, utf8_dest)) {
+				g_free (utf8_src);
+				g_free (utf8_dest);
+				MONO_ENTER_GC_SAFE;
+				close (src_fd);
+				MONO_EXIT_GC_SAFE;
+
+				mono_w32error_set_last (ERROR_ACCESS_DENIED);
+				return (FALSE);
+			}
+
+			_wapi_unlink (utf8_dest);
+		}
+#endif
 	}
+
+#if HOST_DARWIN
+	if (clonefile_ptr != NULL) {
+		ret = _wapi_clonefile (utf8_src, utf8_dest, 0);
+		if (ret == 0 || errno != ENOTSUP) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			if (ret == 0) {
+				return (TRUE);
+			} else {
+				_wapi_set_last_error_from_errno ();
+				return (FALSE);
+			}
+		}
+	}
+#endif
 
 	if (fail_if_exists) {
 		dest_fd = _wapi_open (utf8_dest, O_WRONLY | O_CREAT | O_EXCL, st.st_mode);
@@ -2529,7 +2559,6 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	g_free (utf8_dest);
 
 	return ret;
-#endif
 }
 
 static gchar*
@@ -3791,6 +3820,49 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	g_free (stats);
 	return total;
 }
+#elif _AIX
+gint32
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+{
+	struct vmount *mounts;
+	// ret will first be the errno cond, then no of structs
+	int needsize, ret, total;
+	gunichar2 *dir;
+	glong length;
+	total = 0;
+
+	MONO_ENTER_GC_SAFE;
+	ret = mntctl (MCTL_QUERY, sizeof(needsize), &needsize);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1)
+		return 0;
+	mounts = (struct vmount *) g_malloc (needsize);
+	if (mounts == NULL)
+		return 0;
+	MONO_ENTER_GC_SAFE;
+	ret = mntctl (MCTL_QUERY, needsize, mounts);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1) {
+		g_free (mounts);
+		return 0;
+	}
+
+	for (int i = 0; i < ret; i++) {
+		dir = g_utf8_to_utf16 (vmt2dataptr(mounts, VMT_STUB), -1, NULL, &length, NULL);
+		if (total + length < len){
+			memcpy (buf + total, dir, sizeof (gunichar2) * length);
+			buf [total+length] = 0;
+		} 
+		g_free (dir);
+		total += length + 1;
+		mounts = (void*)mounts + mounts->vmt_length; // next!
+	}
+	if (total < len)
+		buf [total] = 0;
+	total++;
+	g_free (mounts);
+	return total;
+}
 #else
 /* In-place octal sequence replacement */
 static void
@@ -4355,12 +4427,21 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 typedef struct {
 	guint32 drive_type;
 #if __linux__
-	const long fstypeid;
+	// http://man7.org/linux/man-pages/man2/statfs.2.html
+	//
+	// The __fsword_t type used for various fields in the statfs structure
+	// definition is a glibc internal type, not intended for public use.
+	// This leaves the programmer in a bit of a conundrum when trying to
+	// copy or compare these fields to local variables in a program.  Using
+	// unsigned int for such variables suffices on most systems.
+	//
+	// Let's hope "most" is enough, and that it works with other libc.
+	unsigned fstypeid;
 #endif
 	const gchar* fstype;
 } _wapi_drive_type;
 
-static _wapi_drive_type _wapi_drive_types[] = {
+static const _wapi_drive_type _wapi_drive_types[] = {
 #if HOST_DARWIN
 	{ DRIVE_REMOTE, "afp" },
 	{ DRIVE_REMOTE, "afpfs" },
@@ -4368,6 +4449,7 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_CDROM, "cddafs" },
 	{ DRIVE_CDROM, "cd9660" },
 	{ DRIVE_RAMDISK, "devfs" },
+	{ DRIVE_RAMDISK, "nullfs" },
 	{ DRIVE_FIXED, "exfat" },
 	{ DRIVE_RAMDISK, "fdesc" },
 	{ DRIVE_REMOTE, "ftp" },
@@ -4380,6 +4462,7 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_REMOTE, "smbfs" },
 	{ DRIVE_FIXED, "udf" },
 	{ DRIVE_REMOTE, "webdav" },
+	{ DRIVE_FIXED, "ufsd_NTFS"},
 	{ DRIVE_UNKNOWN, NULL }
 #elif __linux__
 	{ DRIVE_FIXED, ADFS_SUPER_MAGIC, "adfs"},
@@ -4462,7 +4545,13 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_RAMDISK, "debugfs"    },
 	{ DRIVE_RAMDISK, "devpts"     },
 	{ DRIVE_RAMDISK, "securityfs" },
+	{ DRIVE_RAMDISK, "procfs"     }, // AIX procfs
+	{ DRIVE_RAMDISK, "namefs"     }, // AIX soft mounts
+	{ DRIVE_RAMDISK, "nullfs"     },
 	{ DRIVE_CDROM,   "iso9660"    },
+	{ DRIVE_CDROM,   "cdrfs"      }, // AIX ISO9660 CDs
+	{ DRIVE_CDROM,   "udfs"       }, // AIX UDF CDs
+	{ DRIVE_CDROM,   "QOPT"       }, // IBM i CD mount
 	{ DRIVE_FIXED,   "ext2"       },
 	{ DRIVE_FIXED,   "ext3"       },
 	{ DRIVE_FIXED,   "ext4"       },
@@ -4477,6 +4566,12 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_FIXED,   "qnx4"       },
 	{ DRIVE_FIXED,   "ntfs"       },
 	{ DRIVE_FIXED,   "ntfs-3g"    },
+	{ DRIVE_FIXED,   "jfs"        }, // IBM JFS
+	{ DRIVE_FIXED,   "jfs2"       }, // IBM JFS (AIX defalt filesystem)
+	{ DRIVE_FIXED,   "EPFS"       }, // IBM i IFS (root and QOpenSys)
+	{ DRIVE_FIXED,   "EPFSP"      }, // IBM i auxiliary storage pool FS
+	{ DRIVE_FIXED,   "QSYS"       }, // IBM i native system libraries
+	{ DRIVE_FIXED,   "QDLS"       }, // IBM i legacy S/36 directories
 	{ DRIVE_REMOTE,  "smbfs"      },
 	{ DRIVE_REMOTE,  "fuse"       },
 	{ DRIVE_REMOTE,  "nfs"        },
@@ -4485,14 +4580,21 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_REMOTE,  "ncpfs"      },
 	{ DRIVE_REMOTE,  "coda"       },
 	{ DRIVE_REMOTE,  "afs"        },
+	{ DRIVE_REMOTE,  "nfs3"       },
+	{ DRIVE_REMOTE,  "stnfs"      }, // AIX "short-term" NFS
+	{ DRIVE_REMOTE,  "autofs"     }, // AIX automounter NFS
+	{ DRIVE_REMOTE,  "cachefs"    }, // AIX cached NFS
+	{ DRIVE_REMOTE,  "NFS"        }, // IBM i NFS
+	{ DRIVE_REMOTE,  "QNETC"      }, // IBM i CIFS
+	{ DRIVE_REMOTE,  "QRFS"       }, // IBM i native remote FS
 	{ DRIVE_UNKNOWN, NULL         }
 #endif
 };
 
 #if __linux__
-static guint32 _wapi_get_drive_type(long f_type)
+static guint32 _wapi_get_drive_type(unsigned f_type)
 {
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 
 	current = &_wapi_drive_types[0];
 	while (current->drive_type != DRIVE_UNKNOWN) {
@@ -4506,34 +4608,44 @@ static guint32 _wapi_get_drive_type(long f_type)
 #else
 static guint32 _wapi_get_drive_type(const gchar* fstype)
 {
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 
 	current = &_wapi_drive_types[0];
 	while (current->drive_type != DRIVE_UNKNOWN) {
 		if (strcmp (current->fstype, fstype) == 0)
-			break;
+			return current->drive_type;
 
 		current++;
 	}
 	
-	return current->drive_type;
+	return DRIVE_UNKNOWN;
 }
 #endif
 
-#if defined (HOST_DARWIN) || defined (__linux__)
+#if defined (HOST_DARWIN) || defined (__linux__) || defined (_AIX)
 static guint32
 GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 {
+#if defined (_AIX)
+	struct statvfs buf;
+#else
 	struct statfs buf;
+#endif
 	gint res;
 
 	MONO_ENTER_GC_SAFE;
+#if defined (_AIX)
+	res = statvfs (utf8_root_path_name, &buf);
+#else
 	res = statfs (utf8_root_path_name, &buf);
+#endif
 	MONO_EXIT_GC_SAFE;
 	if (res == -1)
 		return DRIVE_UNKNOWN;
 #if HOST_DARWIN
 	return _wapi_get_drive_type (buf.f_fstypename);
+#elif defined (_AIX)
+	return _wapi_get_drive_type (buf.f_basetype);
 #else
 	return _wapi_get_drive_type (buf.f_type);
 #endif
@@ -4629,10 +4741,24 @@ mono_w32file_get_drive_type(const gunichar2 *root_path_name)
 static gchar*
 get_fstypename (gchar *utfpath)
 {
-#if defined (HOST_DARWIN) || defined (__linux__)
+#if defined (_AIX)
+	/* statvfs offers the FS type name, easily, no need to iterate */
+	struct statvfs stat;
+	gint statvfs_res;
+
+	MONO_ENTER_GC_SAFE;
+	statvfs_res = statvfs (utfpath, &stat);
+	MONO_EXIT_GC_SAFE;
+
+	if (statvfs_res != -1) {
+		return g_strdup (stat.f_basetype);
+	}
+
+	return NULL;
+#elif defined (HOST_DARWIN) || defined (__linux__)
 	struct statfs stat;
 #if __linux__
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 #endif
 	gint statfs_res;
 	MONO_ENTER_GC_SAFE;
@@ -4795,6 +4921,12 @@ mono_w32file_init (void)
 	finds = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, finds_remove);
 	mono_coop_mutex_init (&finds_mutex);
 
+#if HOST_DARWIN
+	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	g_assert (libc_handle);
+	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
+#endif
+
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
 		lock_while_writing = TRUE;
 }
@@ -4809,6 +4941,10 @@ mono_w32file_cleanup (void)
 
 	g_hash_table_destroy (finds);
 	mono_coop_mutex_destroy (&finds_mutex);
+
+#if HOST_DARWIN
+	dlclose (libc_handle);
+#endif
 }
 
 gboolean

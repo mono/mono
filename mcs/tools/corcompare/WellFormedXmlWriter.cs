@@ -11,9 +11,9 @@ using System.Globalization;
 using System.Collections;
 using System.Xml;
 
-namespace CorCompare {
+namespace Mono.ApiTools {
 
-	public class WellFormedXmlWriter : DefaultXmlWriter
+	class WellFormedXmlWriter : DefaultXmlWriter
 	{
 		public static bool IsInvalid (int ch)
 		{
@@ -110,7 +110,7 @@ namespace CorCompare {
 
 	}
 
-	public class DefaultXmlWriter : XmlWriter
+	class DefaultXmlWriter : XmlWriter
 	{
 		XmlWriter writer;
 

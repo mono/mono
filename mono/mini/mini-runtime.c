@@ -941,6 +941,9 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 static void
 free_jit_tls_data (MonoJitTlsData *jit_tls)
 {
+	//This happens during AOT cuz the thread is never attached
+	if (!jit_tls)
+		return;
 	mono_arch_free_jit_tls_data (jit_tls);
 	mono_free_altstack (jit_tls);
 
@@ -1402,7 +1405,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
-		g_assert (mono_threads_are_safepoints_enabled ());
 		target = (gpointer)&mono_polling_required;
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
@@ -1439,7 +1441,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_ADJUSTED_IID:
 		mono_class_init (patch_info->data.klass);
-		target = GUINT_TO_POINTER ((guint32)(-((m_class_get_interface_id (patch_info->data.klass) + 1) * SIZEOF_VOID_P)));
+		target = GUINT_TO_POINTER ((guint32)(-((m_class_get_interface_id (patch_info->data.klass) + 1) * TARGET_SIZEOF_VOID_P)));
 		break;
 	case MONO_PATCH_INFO_VTABLE:
 		target = mono_class_vtable_checked (domain, patch_info->data.klass, error);
@@ -2267,7 +2269,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, gboolean jit_
 		}
 	}
 	if (use_interp) {
-		code = mini_get_interp_callbacks ()->create_method_pointer (method, error);
+		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 		if (code)
 			return code;
 	}
@@ -2382,7 +2384,7 @@ lookup_start:
 		code = compile_special (method, target_domain, error);
 
 	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		code = mini_get_interp_callbacks ()->create_method_pointer (method, error);
+		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 
 	if (!code) {
 		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
@@ -3652,7 +3654,7 @@ mono_get_delegate_virtual_invoke_impl_name (gboolean load_imt_reg, int offset)
 	abs_offset = offset;
 	if (abs_offset < 0)
 		abs_offset = - abs_offset;
-	return g_strdup_printf ("delegate_virtual_invoke%s_%s%d", load_imt_reg ? "_imt" : "", offset < 0 ? "m_" : "", abs_offset / SIZEOF_VOID_P);
+	return g_strdup_printf ("delegate_virtual_invoke%s_%s%d", load_imt_reg ? "_imt" : "", offset < 0 ? "m_" : "", abs_offset / TARGET_SIZEOF_VOID_P);
 }
 
 gpointer
@@ -3675,11 +3677,11 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 	load_imt_reg = is_virtual_generic || is_interface;
 
 	if (is_interface)
-		offset = ((gint32)mono_method_get_imt_slot (method) - MONO_IMT_SIZE) * SIZEOF_VOID_P;
+		offset = ((gint32)mono_method_get_imt_slot (method) - MONO_IMT_SIZE) * TARGET_SIZEOF_VOID_P;
 	else
-		offset = G_STRUCT_OFFSET (MonoVTable, vtable) + ((mono_method_get_vtable_index (method)) * (SIZEOF_VOID_P));
+		offset = G_STRUCT_OFFSET (MonoVTable, vtable) + ((mono_method_get_vtable_index (method)) * (TARGET_SIZEOF_VOID_P));
 
-	idx = (offset / SIZEOF_VOID_P + MONO_IMT_SIZE) * 2 + (load_imt_reg ? 1 : 0);
+	idx = (offset / TARGET_SIZEOF_VOID_P + MONO_IMT_SIZE) * 2 + (load_imt_reg ? 1 : 0);
 	g_assert (idx >= 0);
 
 	/* Resize the cache to idx + 1 */
@@ -4581,7 +4583,9 @@ register_icalls (void)
 	register_opcode_emulation (OP_LCONV_TO_R_UN, "__emul_lconv_to_r8_un", "double long", mono_lconv_to_r8_un, "mono_lconv_to_r8_un", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_FREM
-	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", fmod, "fmod", FALSE);
+	// fmod is overloaded in C++, capture local to disambiguate -- an implied safe static cast.
+	double (*pfmod)(double, double) = fmod;
+	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", pfmod, "fmod", FALSE);
 	register_opcode_emulation (OP_RREM, "__emul_rrem", "float float float", fmodf, "fmodf", FALSE);
 #endif
 
@@ -4600,7 +4604,7 @@ register_icalls (void)
 		register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", "uint8 double", mono_fconv_u1, "mono_fconv_u1", FALSE);
 		register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", "uint16 double", mono_fconv_u2, "mono_fconv_u2", FALSE);
 
-#if SIZEOF_VOID_P == 4
+#if TARGET_SIZEOF_VOID_P == 4
 		register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
 #endif
 

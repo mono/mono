@@ -81,12 +81,56 @@ namespace Mono {
 			return true;
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string ExceptionToState_internal (Exception exc, out ulong portable_hash, out ulong unportable_hash);
+
+		static Tuple<String, ulong, ulong>
+		ExceptionToState (Exception exc)
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+
 #if !MOBILE 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void DisableMicrosoftTelemetry (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath);
+		static extern void DisableMicrosoftTelemetry ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+
+		static void SendMicrosoftTelemetry (string payload_str, ulong portable_hash, ulong unportable_hash)
+		{
+			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
+				using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
+				{
+					SendMicrosoftTelemetry_internal (payload_chars.Value, portable_hash, unportable_hash);
+				}
+			} else {
+				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
+			}
+		}
+
+		// Usage: 
+		//
+		// catch (Exception exc) {
+		//   var monoType = Type.GetType ("Mono.Runtime", false);
+		//   var m = monoType.GetMethod("SendExceptionToTelemetry", BindingFlags.NonPublic | BindingFlags.Static);
+		//   m.Invoke(null, new object[] { exc });
+		// }
+		static void SendExceptionToTelemetry (Exception exc)
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
+		}
 
 		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
 		{

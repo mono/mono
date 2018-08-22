@@ -14,6 +14,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/w32handle.h>
+#include <mono/metadata/abi-details.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-counters.h>
@@ -163,10 +164,10 @@ mono_gc_make_root_descr_all_refs (int numbits)
 	return NULL;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *key, const char *msg)
 {
-	return g_malloc0 (size);
+	return (MonoObject*)g_malloc0 (size);
 }
 
 void
@@ -175,7 +176,7 @@ mono_gc_free_fixed (void* addr)
 	g_free (addr);
 }
 
-void *
+MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = g_calloc (1, size);
@@ -185,7 +186,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void *
+MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj = g_calloc (1, size);
@@ -196,7 +197,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return obj;
 }
 
-void *
+MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *obj = g_calloc (1, size);
@@ -210,7 +211,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return obj;
 }
 
-void *
+MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *obj = g_calloc (1, size);
@@ -222,13 +223,13 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
 	return mono_gc_alloc_obj (vtable, size);
 }
 
-void*
+MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	return mono_gc_alloc_obj (vtable, size);
@@ -279,8 +280,8 @@ void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {
 	/* do not copy the sync state */
-	mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
-			mono_object_class (obj)->instance_size - sizeof (MonoObject));
+	mono_gc_memmove_aligned (mono_object_get_data (obj), (char*)src + MONO_ABI_SIZEOF (MonoObject),
+			mono_object_class (obj)->instance_size - MONO_ABI_SIZEOF (MonoObject));
 }
 
 gboolean
@@ -410,12 +411,12 @@ mono_gc_is_disabled (void)
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	g_assert_not_reached ();
 }
 
-void*
+MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
 	return &mono_gc_wbarrier_range_copy;

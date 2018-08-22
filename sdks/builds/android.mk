@@ -2,13 +2,11 @@
 include runtime.mk
 
 ANDROID_URI?=https://dl.google.com/android/repository/
-ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
-ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
-ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
-
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
-$(ANDROID_TOOLCHAIN_CACHE_DIR):
+ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
+
+$(ANDROID_TOOLCHAIN_CACHE_DIR) $(ANDROID_TOOLCHAIN_DIR):
 	mkdir -p $@
 
 ##
@@ -22,7 +20,7 @@ define AndroidProvisioningTemplate
 $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
 	wget --no-verbose -O $$@ $(4)$(1).zip
 
-$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
+$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip | $$(ANDROID_TOOLCHAIN_DIR)
 	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
 	./unzip-android-archive.sh "$$<" "$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))"
 	touch $$@
@@ -160,7 +158,9 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-sigaltstack=yes \
 	--with-tls=pthread \
-	--without-ikvm-native
+	--without-ikvm-native \
+	--disable-cooperative-suspend \
+	--disable-hybrid-suspend
 
 .stamp-android-$(1)-toolchain: | $$(if $$(IGNORE_PROVISION_ANDROID),,provision-android)
 	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang

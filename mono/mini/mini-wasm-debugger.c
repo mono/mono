@@ -11,6 +11,8 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
+#ifdef HOST_WASM
+
 #include <emscripten.h>
 
 
@@ -20,6 +22,7 @@ static int log_level = 1;
 
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE int mono_wasm_set_breakpoint (const char *assembly_name, int method_token, int il_offset);
+EMSCRIPTEN_KEEPALIVE int mono_wasm_remove_breakpoint (int bp_id);
 EMSCRIPTEN_KEEPALIVE int mono_wasm_current_bp_id (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_enum_frames (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
@@ -427,6 +430,17 @@ mono_wasm_set_breakpoint (const char *assembly_name, int method_token, int il_of
 	return req->id;
 }
 
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_remove_breakpoint (int bp_id)
+{
+	MonoBreakpoint *bp = mono_de_get_breakpoint_by_id (bp_id);
+	if (!bp)
+		return 0;
+
+	mono_de_clear_breakpoint (bp);
+	return 1;
+}
+
 void
 mono_wasm_single_step_hit (void)
 {
@@ -655,3 +669,22 @@ mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)
 {
 	return 1;
 }
+
+#else
+
+void
+mono_wasm_single_step_hit (void)
+{
+}
+
+void
+mono_wasm_breakpoint_hit (void)
+{
+}
+
+void
+mono_wasm_debugger_init (void)
+{
+}
+
+#endif

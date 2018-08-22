@@ -83,6 +83,9 @@
 /* Disable support debug logging */
 /* #undef DISABLE_LOGGING */
 
+/* Disable runtime state dumping */
+#define DISABLE_CRASH_REPORTING 1
+
 /* Disable P/Invoke support */
 /* #undef DISABLE_PINVOKE */
 
@@ -292,7 +295,8 @@
 #ifdef _MSC_VER
 #define MONO_KEYWORD_THREAD __declspec (thread)
 #else
-#define MONO_KEYWORD_THREAD __thread
+// Cygwin/gcc emulates __thread.
+#undef MONO_KEYWORD_THREAD
 #endif
 
 /* Have large file support */

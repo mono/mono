@@ -47,6 +47,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="AssemblyStripper.cs" />
     <Compile Include="Mono.Cecil.Binary\BaseImageVisitor.cs" />
@@ -363,7 +364,7 @@
     <Compile Include="Mono.Xml\SmallXmlParser.cs" />
     <Compile Include="cilstrip.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/System/System.csproj" />

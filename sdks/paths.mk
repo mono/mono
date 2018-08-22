@@ -8,3 +8,10 @@ $(error Could not find Xcode at $(XCODE_DIR))
 endif
 
 endif # DISABLE_IOS
+
+ifndef DISABLE_ANDROID
+
+ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
+ANDROID_TOOLCHAIN_CACHE_DIR?=$(HOME)/android-archives
+
+endif

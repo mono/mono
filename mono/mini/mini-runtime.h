@@ -306,7 +306,7 @@ struct MonoJumpInfo {
 	MonoJumpInfoType type;
 	union {
 		gconstpointer   target;
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 		gint64          offset;
 #else
 		int             offset;
@@ -338,11 +338,11 @@ extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;
 extern MonoAotMode mono_aot_mode;
-extern MONO_API const char *mono_build_date;
+MONO_API_DATA const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
-extern MONO_API gboolean mono_use_llvm;
-extern MONO_API gboolean mono_use_interpreter;
+MONO_API_DATA gboolean mono_use_llvm;
+MONO_API_DATA gboolean mono_use_interpreter;
 extern const char* mono_interp_opts_string;
 extern gboolean mono_do_single_method_regression;
 extern guint32 mono_single_method_regression_opt;
@@ -563,9 +563,7 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #define DISABLE_SDB 1
 #endif
 
-#ifdef TARGET_OSX
 void mini_register_sigterm_handler (void);
-#endif
 
 #endif /* __MONO_MINI_RUNTIME_H__ */
 

@@ -49,7 +49,7 @@ namespace Mono.Security.X509 {
 	 * 
 	 * RelativeDistinguishedName ::= SET OF AttributeTypeAndValue
 	 */
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 

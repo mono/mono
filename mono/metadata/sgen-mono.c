@@ -30,6 +30,7 @@
 #include "metadata/sgen-mono-ilgen.h"
 #include "metadata/gc-internals.h"
 #include "metadata/handle.h"
+#include "metadata/abi-details.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
 #include "utils/mono-threads-coop.h"
@@ -118,7 +119,7 @@ mono_gc_wbarrier_value_copy (gpointer dest, gpointer src, int count, MonoClass *
 		int i;
 		for (i = 0; i < count; ++i) {
 			scan_object_for_binary_protocol_copy_wbarrier ((char*)dest + i * element_size,
-					(char*)src + i * element_size - sizeof (MonoObject),
+					(char*)src + i * element_size - MONO_ABI_SIZEOF (MonoObject),
 					(mword) klass->gc_descr);
 		}
 	}
@@ -142,8 +143,8 @@ mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 	SGEN_ASSERT (6, !ptr_on_stack (obj), "Why is this called for a non-reference type?");
 	if (sgen_ptr_in_nursery (obj) || !SGEN_OBJECT_HAS_REFERENCES (src)) {
 		size = m_class_get_instance_size (mono_object_class (obj));
-		mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
-				size - sizeof (MonoObject));
+		mono_gc_memmove_aligned ((char*)obj + MONO_ABI_SIZEOF (MonoObject), (char*)src + MONO_ABI_SIZEOF (MonoObject),
+				size - MONO_ABI_SIZEOF (MonoObject));
 		return;	
 	}
 
@@ -183,12 +184,12 @@ mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* val
 }
 
 void
-mono_gc_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+mono_gc_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	sgen_wbarrier_range_copy (_dest, _src, size);
 }
 
-void*
+MonoRangeCopyFunction
 mono_gc_get_range_copy_func (void)
 {
 	return sgen_get_remset ()->wbarrier_range_copy;
@@ -902,7 +903,7 @@ mono_gc_clear_domain (MonoDomain * domain)
  * Allocation
  */
 
-void*
+MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj (vtable, size);
@@ -913,7 +914,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
@@ -924,7 +925,7 @@ mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 	return obj;
 }
 
-void*
+MonoObject*
 mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj = sgen_alloc_obj_mature (vtable, size);
@@ -938,7 +939,7 @@ mono_gc_alloc_mature (MonoVTable *vtable, size_t size)
 /**
  * mono_gc_alloc_fixed:
  */
-void*
+MonoObject*
 mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
 	/* FIXME: do a single allocation */
@@ -949,7 +950,7 @@ mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource sourc
 		g_free (res);
 		res = NULL;
 	}
-	return res;
+	return (MonoObject*)res;
 }
 
 /**
@@ -1286,7 +1287,7 @@ LOOP_HEAD:
  * Array and string allocation
  */
 
-void*
+MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *arr;
@@ -1327,7 +1328,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	return arr;
 }
 
-void*
+MonoArray*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
 	MonoArray *arr;
@@ -1375,7 +1376,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	return arr;
 }
 
-void*
+MonoString*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
 	MonoString *str;
@@ -2310,9 +2311,11 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 {
 	int res;
 
+	MONO_ENTER_GC_SAFE;
 	mono_threads_join_lock ();
 	res = pthread_create (new_thread, attr, start_routine, arg);
 	mono_threads_join_unlock ();
+	MONO_EXIT_GC_SAFE;
 
 	return res;
 }

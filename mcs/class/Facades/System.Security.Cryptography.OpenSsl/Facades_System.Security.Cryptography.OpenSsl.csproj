@@ -90,13 +90,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ECDsaOpenSsl.cs" />
     <Compile Include="RSAOpenSsl.cs" />
     <Compile Include="SafeEvpPKeyHandle.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System.Core/System.Core.csproj" />

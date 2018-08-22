@@ -70,6 +70,8 @@ RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE)
 endif
 
+MODULE_DEPS += LinkerDescriptor/mscorlib.xml
+
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
 	resources/collation.core.bin \
@@ -132,6 +134,7 @@ TEST_LIB_REFS = System.Core System
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
 XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
+XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)

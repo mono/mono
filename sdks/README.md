@@ -44,11 +44,11 @@ make build-bcl package-bcl
 Go to the `wasm` directory for building and testing WebAssembly. Right now the following targets are available:
 
 - build: Build the test runner and test suites
-- run-mini: Run mini test suite
-- run-corlib: Run corlib test suite
-- run-system: Run System test suite
-- run-system-core: Run System.Core test suite
-
+- run-all-mini: Run mini test suite
+- run-all-corlib: Run corlib test suite
+- run-all-system: Run System test suite
+- run-all-system-core: Run System.Core test suite
+- run-all-binding: Run bindings test suite
 
 For bcl or runtime changes, you must manually run the corresponding build/package steps in `builds`.
 For test suite changes, it's enough to just rerun the local target.

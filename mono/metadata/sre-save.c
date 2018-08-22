@@ -172,7 +172,7 @@ add_mono_string_to_blob_cached (MonoDynamicImage *assembly, MonoString *str)
 		g_free (swapped);
 	}
 #else
-	idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, (char*)mono_string_chars (str), len);
+	idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, mono_string_chars (str), len);
 #endif
 	return idx;
 }
@@ -1770,8 +1770,10 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			break;
 		case MONO_TABLE_TYPEREF:
 			g_assert (!strcmp (iltoken_member_class_name, "RuntimeType"));
-			MonoClass *k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
-			MonoObject *obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
+			MonoClass *k;
+			k = mono_class_from_mono_type (((MonoReflectionType*)iltoken->member)->type);
+			MonoObject *obj;
+			obj = mono_class_get_ref_info_raw (k); /* FIXME use handles */
 			g_assert (obj);
 			g_assert (!strcmp (m_class_get_name (mono_object_class (obj)), "TypeBuilder"));
 			g_assert (((MonoReflectionTypeBuilder*)obj)->module->dynamic_image != assembly);

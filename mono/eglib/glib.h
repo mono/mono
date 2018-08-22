@@ -1,5 +1,22 @@
 #ifndef __GLIB_H
 #define __GLIB_H
+
+// Ask stdint.h and inttypes.h for the full C99 features for CentOS 6 g++ 4.4, Android, etc.
+// See for example:
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/inttypes.h
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/stdint.h
+#ifdef __cplusplus
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+#endif // __cplusplus
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,7 +100,14 @@ typedef float          gfloat;
 typedef double         gdouble;
 typedef int32_t        gboolean;
 
+#if defined (HOST_WIN32) || defined (_WIN32)
+G_END_DECLS
+#include <wchar.h>
+typedef wchar_t gunichar2;
+G_BEGIN_DECLS
+#else
 typedef guint16 gunichar2;
+#endif
 typedef guint32 gunichar;
 
 /*
@@ -160,7 +184,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
-#define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
+#define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
 #define g_alloca(size)		alloca (size)
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);

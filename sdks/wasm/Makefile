@@ -112,8 +112,11 @@ binding_tests.dll: $(BINDING_TEST_SOURCES)
 bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
-sample.dll:  $(TEST_DEPS) sample.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
+Simple.Dependency.dll: dependency.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
+
+sample.dll: Simple.Dependency.dll sample.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
 Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
 	cp $< $@
@@ -125,8 +128,8 @@ packager.exe: packager.cs Mono.Cecil.dll
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
-	touch $@
-
+	touch $@	
+	
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 .stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
@@ -134,11 +137,44 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	cp test.js test-suite/
 	touch $@
 
+MINI_BASIC_TEST_FILES= \
+    basic-calls.cs  \
+    basic-float.cs  \
+    basic-long.cs   \
+    basic-math.cs   \
+    basic.cs        \
+    objects.cs
+
+MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
+
+mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
+
+.stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
+	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
+	touch $@
+
+AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
+aot-sample: .stamp-build-aot-test
+	for f in aot/managed/*.dll; do	\
+		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$$f.bc $$f;	\
+	done	\
+
+link-sample: driver.o library_mono.js binding_support.js dotnet_support.js
+	$(EMCC) -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono-aot.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver.o $(TOP)/sdks/out/wasm-aot-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
+
+
+
+build-aot-test: .stamp-build-aot-test
+
 build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
 build-managed: build-debug-sample build-test-suite
+
+build-dbg-proxy:
+	dotnet build ProxyDriver
 
 build: build-native build-managed
 
@@ -168,7 +204,7 @@ run-all-%:
 
 clean:
 	
-package: build
+package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
@@ -197,6 +233,10 @@ package: build
 	cp Mono.Cecil.dll tmp/
 	cp packager.exe tmp/
 	cp runtime.g.js tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
+	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
+	mkdir tmp/dbg-proxy
+	cp ProxyDriver/bin/Debug/netcoreapp2.1/* tmp/dbg-proxy/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

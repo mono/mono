@@ -68,6 +68,7 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/os-event.h>
+#include <mono/utils/mono-state.h>
 #include <mono/mini/debugger-state-machine.h>
 
 #include "mini.h"
@@ -223,11 +224,11 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	}
 }
 
-#ifdef TARGET_OSX
 MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 {
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
+#ifndef DISABLE_CRASH_REPORTING
 	// Note: this function only returns for a single thread
 	// When it's invoked on other threads once the dump begins,
 	// those threads perform their dumps and then sleep until we
@@ -239,20 +240,22 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	if (!mono_threads_summarize (&mctx, &output, &hashes))
 		g_assert_not_reached ();
 
+#ifdef TARGET_OSX
 	if (mono_merp_enabled ()) {
 		pid_t crashed_pid = getpid ();
-		char *full_version = mono_get_runtime_build_info ();
-		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes, full_version);
-	} else {
+		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes);
+	} else
+#endif
+	{
 		// Only the dumping-supervisor thread exits mono_thread_summarize
 		MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
 		sleep (3);
 	}
+#endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 	exit (1);
 }
-#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -405,14 +408,14 @@ remove_signal_handler (int signo)
 	}
 }
 
-#ifdef TARGET_OSX
 void
 mini_register_sigterm_handler (void)
 {
+#ifndef DISABLE_CRASH_REPORTING
 	/* always catch SIGTERM, conditionals inside of handler */
 	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
-}
 #endif
+}
 
 void
 mono_runtime_posix_install_handlers (void)
@@ -852,7 +855,7 @@ mono_runtime_setup_stat_profiler (void)
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
 
 	MonoError error;
-	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
 	mono_error_assert_ok (&error);
 
 	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
@@ -956,44 +959,6 @@ print_process_map (void)
 #endif
 }
 
-#ifdef TARGET_OSX
-static void
-mono_crash_dump (const char *jsonFile)
-{
-	size_t size = strlen (jsonFile);
-
-	pid_t pid = getpid ();
-	gboolean success = FALSE;
-
-	// Save up to 100 dump files for a pid, in case mono is embedded?
-	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
-
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
-		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
-		}
-
-		/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
-
-		if (success)
-			return;
-	}
-
-	return;
-}
-#endif /*TARGET_OSX*/
-
 static void
 dump_native_stacktrace (const char *signal, void *ctx)
 {
@@ -1027,9 +992,8 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		int status;
 		pid_t crashed_pid = getpid ();
 
-#if defined(TARGET_OSX)
+#ifndef DISABLE_CRASH_REPORTING
 		MonoStackHash hashes;
-#endif
 		gchar *output = NULL;
 		MonoContext mctx;
 		if (ctx) {
@@ -1042,12 +1006,11 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
 				leave = TRUE;
-#elif defined(TARGET_OSX)
+#else
 				mini_register_sigterm_handler ();
 #endif
 			}
 
-#ifdef TARGET_OSX
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
 				// Do before forking
@@ -1058,9 +1021,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
 			if (!leave && !dump_for_merp)
-				mono_crash_dump (output);
-#endif
+				mono_crash_dump (output, &hashes);
 		}
+#endif
 
 		/*
 		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
@@ -1087,7 +1050,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		}
 #endif
 
-#if defined(TARGET_OSX)
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 		if (mono_merp_enabled ()) {
 			if (pid == 0) {
 				if (!ctx) {
@@ -1095,9 +1058,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 					exit (1);
 				}
 
-				char *full_version = mono_get_runtime_build_info ();
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes, full_version);
+				mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 				exit (1);
 			}
