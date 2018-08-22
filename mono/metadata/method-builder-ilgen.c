@@ -538,8 +538,6 @@ mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpoin
 	mono_mb_emit_calli (mb, sig);
 }
 
-#undef mono_mb_emit_icall
-
 void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func)
 {
