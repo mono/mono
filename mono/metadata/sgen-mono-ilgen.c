@@ -165,7 +165,7 @@ emit_nursery_check_ilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
+	mono_mb_emit_icall (mb, (gpointer)mono_gc_wbarrier_generic_nostore);
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
 }
@@ -183,16 +183,16 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		case ATYPE_NORMAL:
 		case ATYPE_SMALL:
 			mono_mb_emit_ldarg (mb, 0);
-			mono_mb_emit_icall (mb, ves_icall_object_new_specific);
+			mono_mb_emit_icall (mb, (gpointer)ves_icall_object_new_specific);
 			break;
 		case ATYPE_VECTOR:
 			mono_mb_emit_ldarg (mb, 0);
 			mono_mb_emit_ldarg (mb, 1);
-			mono_mb_emit_icall (mb, ves_icall_array_new_specific);
+			mono_mb_emit_icall (mb, (gpointer)ves_icall_array_new_specific);
 			break;
 		case ATYPE_STRING:
 			mono_mb_emit_ldarg (mb, 1);
-			mono_mb_emit_icall (mb, ves_icall_string_alloc);
+			mono_mb_emit_icall (mb, (gpointer)ves_icall_string_alloc);
 			break;
 		default:
 			g_assert_not_reached ();
@@ -426,13 +426,13 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldloc (mb, real_size_var);
 	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
-		mono_mb_emit_icall (mb, mono_gc_alloc_obj);
+		mono_mb_emit_icall (mb, (gpointer)mono_gc_alloc_obj);
 	} else if (atype == ATYPE_VECTOR) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_vector);
+		mono_mb_emit_icall (mb, (gpointer)mono_gc_alloc_vector);
 	} else if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_string);
+		mono_mb_emit_icall (mb, (gpointer)mono_gc_alloc_string);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -530,7 +530,7 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 		mono_mb_emit_byte (mb, CEE_DUP);
-		mono_mb_emit_icall (mb, mono_profiler_raise_gc_allocation);
+		mono_mb_emit_icall (mb, (gpointer)mono_profiler_raise_gc_allocation);
 
 		mono_mb_patch_short_branch (mb, prof_br);
 	}
