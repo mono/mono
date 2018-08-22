@@ -402,7 +402,7 @@ namespace Microsoft.Win32 {
 					break;
 				case RegistryHive.CurrentConfig:
 				case RegistryHive.ClassesRoot:
-				//TODO: case RegistryHive.DynData:
+				case RegistryHive.DynData:
 				case RegistryHive.LocalMachine:
 				case RegistryHive.PerformanceData:
 				case RegistryHive.Users:

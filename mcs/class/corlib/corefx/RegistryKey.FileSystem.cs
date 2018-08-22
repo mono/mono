@@ -233,8 +233,8 @@ namespace Microsoft.Win32
                     return "HKEY_CURRENT_CONFIG";
                 case RegistryHive.CurrentUser:
                     return "HKEY_CURRENT_USER";
-                //case RegistryHive.DynData:
-                //    return "HKEY_DYN_DATA";
+                case RegistryHive.DynData:
+                    return "HKEY_DYN_DATA";
                 case RegistryHive.LocalMachine:
                     return "HKEY_LOCAL_MACHINE";
                 case RegistryHive.PerformanceData:
