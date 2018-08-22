@@ -11,4 +11,3 @@ System.Text/EncodingHelper.MonoTouch.cs
 System/Environment.iOS.cs
 System/Guid.MonoTouch.cs
 System/NotSupportedException.iOS.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.FileSystem.cs

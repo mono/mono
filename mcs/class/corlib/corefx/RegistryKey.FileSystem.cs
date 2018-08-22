@@ -8,12 +8,8 @@ using System.IO;
 
 namespace Microsoft.Win32
 {
-#if REGISTRY_ASSEMBLY
-    public
-#else
-    internal
-#endif
-    sealed partial class RegistryKey : MarshalByRefObject, IDisposable
+#if WIN_PLATFORM || XAMMAC_4_5
+    public sealed partial class RegistryKey : MarshalByRefObject, IDisposable
     {
         object hive, handle;
         static readonly UnixRegistryApi RegistryApi;
@@ -259,4 +255,116 @@ namespace Microsoft.Win32
             return IsEquals(this, (RegistryKey)o);
         }
     }
+#else
+    public sealed partial class RegistryKey : IDisposable
+    {
+        private void ClosePerfDataKey()
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private void FlushCore()
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private RegistryKey CreateSubKeyInternalCore(string subkey, RegistryKeyPermissionCheck permissionCheck, object registrySecurityObj, RegistryOptions registryOptions)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private void DeleteSubKeyCore(string subkey, bool throwOnMissingSubKey)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private void DeleteSubKeyTreeCore(string subkey)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private void DeleteValueCore(string name, bool throwOnMissingValue)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private static RegistryKey OpenBaseKeyCore(RegistryHive hKey, RegistryView view)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private static RegistryKey OpenRemoteBaseKeyCore(RegistryHive hKey, string machineName, RegistryView view)
+        {
+            throw new PlatformNotSupportedException(SR.Security_RegistryPermission); // remote stores not supported on Unix
+        }
+
+        private RegistryKey InternalOpenSubKeyCore(string name, RegistryKeyPermissionCheck permissionCheck, int rights, bool throwOnPermissionFailure)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private RegistryKey InternalOpenSubKeyCore(string name, bool writable, bool throwOnPermissionFailure)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        internal RegistryKey InternalOpenSubKeyWithoutSecurityChecksCore(string name, bool writable)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private SafeRegistryHandle SystemKeyHandle
+        {
+            get
+            {
+                throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+            }
+        }
+
+        private int InternalSubKeyCountCore()
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private string[] InternalGetSubKeyNamesCore(int subkeys)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private int InternalValueCountCore()
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private string[] GetValueNamesCore(int values)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private Object InternalGetValueCore(string name, Object defaultValue, bool doNotExpand)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private RegistryValueKind GetValueKindCore(string name)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private void SetValueCore(string name, Object value, RegistryValueKind valueKind)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private static int GetRegistryKeyAccess(bool isWritable)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+
+        private static int GetRegistryKeyAccess(RegistryKeyPermissionCheck mode)
+        {
+            throw new PlatformNotSupportedException(SR.PlatformNotSupported_Registry);
+        }
+    }
+#endif
 }
