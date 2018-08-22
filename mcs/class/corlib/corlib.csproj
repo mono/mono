@@ -413,6 +413,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterModifier.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Pointer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PortableExecutableKinds.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ProcessorArchitecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PropertyAttributes.cs" />
@@ -861,7 +862,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\pointer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\typedelegator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\typeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
@@ -1992,6 +1992,7 @@
     <Compile Include="corert\Stream.cs" />
     <Compile Include="corert\Task.cs" />
     <Compile Include="corert\ThreadPool.cs" />
+    <Compile Include="corert\Type.cs" />
     <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
