@@ -347,7 +347,7 @@ gpointer
 g_slist_nth_data (GSList *list, guint n)
 {
 	GSList *node = g_slist_nth (list, n);
-	return node ? node->data : (gpointer)NULL;
+	return node ? node->data : NULL;
 }
 
 typedef GSList list_node;

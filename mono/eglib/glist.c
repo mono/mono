@@ -306,7 +306,7 @@ gpointer
 g_list_nth_data (GList *list, guint n)
 {
 	GList *node = g_list_nth (list, n);
-	return node ? node->data : (gpointer)NULL;
+	return node ? node->data : NULL;
 }
 
 GList*
