@@ -813,7 +813,7 @@ namespace System
 			get {
 				return false;
 			}
-		}	
+		}
 
 		[System.Runtime.InteropServices.ComVisible(true)]
 		[Pure]
