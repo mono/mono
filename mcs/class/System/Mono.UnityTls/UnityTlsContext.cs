@@ -172,7 +172,6 @@ namespace Mono.Unity
 
 		public override (int ret, bool wantMore) Read (byte[] buffer, int offset, int count)
 		{
-			bool wantMore = false;
 			int numBytesRead = 0;
 
 			lastException = null;
@@ -183,19 +182,27 @@ namespace Mono.Unity
 			if (lastException != null)
 				throw lastException;
 
-			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK || numBytesRead < count) // In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial read
-				wantMore = true;
-			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
-				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
-			else
-				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data from TLS context");
+			switch (errorState.code)
+			{
+				case UnityTls.unitytls_error_code.UNITYTLS_SUCCESS:
+					// In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial write.
+					// The Mono Api however requires us to set the wantMore flag also if we didn't read all the data.
+					return (numBytesRead, numBytesRead < count);
+				
+				case UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK:
+					return (numBytesRead, true);
+				
+				case UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED:
+					return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 
-			return (numBytesRead, wantMore);
+				default:
+					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data to TLS context");
+					return (0, false);
+			}
 		}
 
 		public override (int ret, bool wantMore) Write (byte[] buffer, int offset, int count)
 		{
-			bool wantMore = false;
 			int numBytesWritten = 0;
 
 			lastException = null;
@@ -206,14 +213,23 @@ namespace Mono.Unity
 			if (lastException != null)
 				throw lastException;
 
-			if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK || numBytesWritten < count) // In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial write
-				wantMore = true;
-			else if (errorState.code == UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED)
-				return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
-			else
-				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
+			switch (errorState.code)
+			{
+				case UnityTls.unitytls_error_code.UNITYTLS_SUCCESS:
+					// In contrast to some other APIs (like Apple security) WOULD_BLOCK is not set if we did a partial write.
+					// The Mono Api however requires us to set the wantMore flag also if we didn't write all the data.
+					return (numBytesWritten, numBytesWritten < count);
+				
+				case UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK:
+					return (numBytesWritten, true);
+				
+				case UnityTls.unitytls_error_code.UNITYTLS_STREAM_CLOSED:
+					return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 
-			return (numBytesWritten, wantMore);
+				default:
+					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to write data to TLS context");
+					return (0, false);
+			}
 		}
 
 		public override void Shutdown ()
