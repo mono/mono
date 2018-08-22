@@ -24,7 +24,7 @@
 #include <mono/metadata/icalls.h>
 
 /* This is a copy of System.Threading.ThreadState */
-typedef enum MonoThreadState {
+G_ENUM_BEGIN (MonoThreadState)
 	ThreadState_Running = 0x00000000,
 	ThreadState_SuspendRequested = 0x00000002,
 	ThreadState_Background = 0x00000004,
@@ -34,9 +34,7 @@ typedef enum MonoThreadState {
 	ThreadState_Suspended = 0x00000040,
 	ThreadState_AbortRequested = 0x00000080,
 	ThreadState_Aborted = 0x00000100
-} MonoThreadState;
-
-G_ENUM_FUNCTIONS (MonoThreadState)
+G_ENUM_END (MonoThreadState)
 
 /* This is a copy of System.Threading.ApartmentState */
 typedef enum {
@@ -73,15 +71,13 @@ typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);
 void
 mono_thread_callbacks_init (void);
 
-typedef enum MonoThreadCreateFlags {
+G_ENUM_BEGIN (MonoThreadCreateFlags)
 	MONO_THREAD_CREATE_FLAGS_NONE         = 0x0,
 	MONO_THREAD_CREATE_FLAGS_THREADPOOL   = 0x1,
 	MONO_THREAD_CREATE_FLAGS_DEBUGGER     = 0x2,
 	MONO_THREAD_CREATE_FLAGS_FORCE_CREATE = 0x4,
 	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
-} MonoThreadCreateFlags;
-
-G_ENUM_FUNCTIONS (MonoThreadCreateFlags)
+G_ENUM_END (MonoThreadCreateFlags)
 
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer /* FIXMEcxx MonoThreadStart */ func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
