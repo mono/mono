@@ -716,7 +716,7 @@ mono_mb_emit_cominterop_get_function_pointer (MonoMethodBuilder *mb, MonoMethod 
 	slot = cominterop_get_com_slot_for_method (method, error);
 	if (is_ok (error)) {
 		mono_mb_emit_icon (mb, slot);
-		mono_mb_emit_icall (mb, cominterop_get_function_pointer);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_function_pointer);
 		/* Leaves the function pointer on top of the stack */
 	}
 	else {
@@ -777,7 +777,7 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_icon (mb, TRUE);
-		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 		pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
 		if (!com_interop_proxy_get_proxy) {
@@ -798,7 +798,7 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_ptr (mb, m_class_get_byval_arg (mono_class_get_com_object_class ()));
-		mono_mb_emit_icall (mb, cominterop_type_from_handle);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_type_from_handle);
 		mono_mb_emit_managed_call (mb, com_interop_proxy_get_proxy, NULL);
 		mono_mb_emit_managed_call (mb, get_transparent_proxy, NULL);
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
@@ -813,7 +813,7 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
 		mono_mb_emit_icon (mb, TRUE);
-		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
 			g_assert (klass);
@@ -855,7 +855,7 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 
 		mono_mb_emit_ldloc (mb, 0);	
 		mono_mb_emit_byte (mb, CEE_LDIND_REF);
-		mono_mb_emit_icall (mb, cominterop_object_is_rcw);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_object_is_rcw);
 		pos_rcw = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 
 		// load dst to store later
@@ -873,7 +873,7 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 
 		if (conv == MONO_MARSHAL_CONV_OBJECT_INTERFACE) {
 			mono_mb_emit_ptr (mb, mono_type_get_class (type));
-			mono_mb_emit_icall (mb, cominterop_get_interface);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_get_interface);
 
 		}
 		else if (conv == MONO_MARSHAL_CONV_OBJECT_IUNKNOWN) {
@@ -912,7 +912,7 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 			mono_mb_emit_ptr (mb, mono_class_get_idispatch_class ());
 		else
 			g_assert_not_reached ();
-		mono_mb_emit_icall (mb, cominterop_get_ccw);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw);
 		mono_mb_emit_byte (mb, CEE_STIND_I);
 
 		mono_mb_patch_short_branch (mb, pos_end);
@@ -1105,8 +1105,8 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 			// and then get the underlying COM interface for that type
 			mono_mb_emit_ldarg (mb, 0);
 			mono_mb_emit_ptr (mb, method);
-			mono_mb_emit_icall (mb, cominterop_get_method_interface);
-			mono_mb_emit_icall (mb, cominterop_get_interface);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_get_method_interface);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_get_interface);
 			mono_mb_emit_stloc (mb, ptr_this);
 
 			// arg 1 is unmanaged this pointer
@@ -1336,7 +1336,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 
 		if (klass && klass != mono_defaults.object_class) {
 			mono_mb_emit_ptr (mb, t);
-			mono_mb_emit_icall (mb, cominterop_type_from_handle);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_type_from_handle);
 			mono_mb_emit_managed_call (mb, get_com_interface_for_object_internal, NULL);
 		}
 		else if (spec->native == MONO_NATIVE_IUNKNOWN)
@@ -1367,7 +1367,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_icon (mb, TRUE);
-			mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 			mono_mb_emit_stloc (mb, ccw_obj);
 			mono_mb_emit_ldloc (mb, ccw_obj);
 			pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
@@ -1424,7 +1424,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 
 		mono_mb_emit_ldloc (mb, ret_ptr);
 		mono_mb_emit_icon (mb, TRUE);
-		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 		mono_mb_emit_stloc (mb, ccw_obj);
 		mono_mb_emit_ldloc (mb, ccw_obj);
 		pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
@@ -1481,7 +1481,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 		if (t->byref)
 			mono_mb_emit_byte (mb, CEE_LDIND_REF);
 		mono_mb_emit_icon (mb, TRUE);
-		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+		mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 		mono_mb_emit_stloc (mb, ccw_obj);
 		mono_mb_emit_ldloc (mb, ccw_obj);
 		pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
@@ -1531,7 +1531,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 			mono_mb_emit_ldloc (mb, conv_arg);
 			if (klass && klass != mono_defaults.object_class) {
 				mono_mb_emit_ptr (mb, t);
-				mono_mb_emit_icall (mb, cominterop_type_from_handle);
+				mono_mb_emit_icall (mb, (gpointer)cominterop_type_from_handle);
 				mono_mb_emit_managed_call (mb, get_com_interface_for_object_internal, NULL);
 			}
 			else if (spec->native == MONO_NATIVE_IUNKNOWN)
@@ -1576,7 +1576,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 		mono_mb_emit_ldloc (mb, ccw_obj);
 		if (klass && klass != mono_defaults.object_class) {
 			mono_mb_emit_ptr (mb, t);
-			mono_mb_emit_icall (mb, cominterop_type_from_handle);
+			mono_mb_emit_icall (mb, (gpointer)cominterop_type_from_handle);
 			mono_mb_emit_managed_call (mb, get_com_interface_for_object_internal, NULL);
 		}
 		else if (spec->native == MONO_NATIVE_IUNKNOWN)
@@ -2367,7 +2367,7 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	/* the CCW -> object conversion */
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_icon (mb, FALSE);
-	mono_mb_emit_icall (mb, cominterop_get_ccw_object);
+	mono_mb_emit_icall (mb, (gpointer)cominterop_get_ccw_object);
 
 	for (i = 0; i < sig->param_count; i++)
 		mono_mb_emit_ldarg (mb, i+1);
@@ -2972,7 +2972,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			mono_mb_emit_ldloc_addr (mb, safearray_var);
 			mono_mb_emit_ldloc_addr (mb, indices_var);
 			mono_mb_emit_ldloc_addr (mb, empty_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_create);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_create);
 
 			label1 = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 
@@ -3018,7 +3018,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 			mono_mb_emit_ldloc (mb, safearray_var);
 			mono_mb_emit_ldloc (mb, indices_var);
 			mono_mb_emit_ldloc_addr (mb, elem_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_set_value);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_set_value);
 
 			if (!variant_clear) {
 				ERROR_DECL (error);
@@ -3033,13 +3033,13 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			mono_mb_emit_ldloc (mb, safearray_var);
 			mono_mb_emit_ldloc (mb, indices_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_next);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_next);
 			mono_mb_emit_branch_label (mb, CEE_BRTRUE, label3);
 
 			mono_mb_patch_short_branch (mb, label2);
 
 			mono_mb_emit_ldloc (mb, indices_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_free_indices);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_free_indices);
 
 			mono_mb_patch_short_branch (mb, label1);
 		}
@@ -3100,7 +3100,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 				mono_mb_emit_byte (mb, CEE_LDC_I4_0);
 			else
 				mono_mb_emit_byte (mb, CEE_LDC_I4_1);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_begin);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_begin);
 
 			label1 = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 
@@ -3123,7 +3123,7 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_ldloc (mb, indices_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_get_value);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_get_value);
 
 			if (!get_object_for_native_variant) {
 				ERROR_DECL (error);
@@ -3156,14 +3156,14 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_ldloc (mb, indices_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_next);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_next);
 			mono_mb_emit_branch_label (mb, CEE_BRTRUE, label3);
 
 			mono_mb_patch_short_branch (mb, label2);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_ldloc (mb, indices_var);
-			mono_mb_emit_icall (mb, mono_marshal_safearray_end);
+			mono_mb_emit_icall (mb, (gpointer)mono_marshal_safearray_end);
 
 			mono_mb_patch_short_branch (mb, label1);
 
