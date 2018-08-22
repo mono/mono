@@ -85,7 +85,7 @@ MONO_API mono_bool mono_profiler_enable_clauses (void);
 
 typedef struct _MonoProfilerCallContext MonoProfilerCallContext;
 
-typedef enum {
+MONO_ENUM_BEGIN (MonoProfilerCallInstrumentationFlags)
 	/**
 	 * Do not instrument calls.
 	 */
@@ -114,7 +114,7 @@ typedef enum {
 	 * Instrument exceptional method exits.
 	 */
 	MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE = 1 << 6,
-} MonoProfilerCallInstrumentationFlags;
+MONO_ENUM_END (MonoProfilerCallInstrumentationFlags)
 
 typedef MonoProfilerCallInstrumentationFlags (*MonoProfilerCallInstrumentationFilterCallback) (MonoProfiler *prof, MonoMethod *method);
 
