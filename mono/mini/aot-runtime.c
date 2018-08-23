@@ -5189,7 +5189,6 @@ mono_create_ftnptr_malloc (guint8 *code)
  *   Register a JIT icall which is called by trampolines in full-aot mode. This should
  * be called from mono_arch_init () during startup.
  */
-#undef mono_aot_register_jit_icall
 void
 mono_aot_register_jit_icall (const char *name, gpointer addr)
 {
@@ -6256,7 +6255,6 @@ mono_aot_get_unwind_info (MonoJitInfo *ji, guint32 *unwind_info_len)
 	return NULL;
 }
 
-#undef mono_aot_register_jit_icall
 void
 mono_aot_register_jit_icall (const char *name, gpointer addr)
 {
