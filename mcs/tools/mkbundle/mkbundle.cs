@@ -974,7 +974,7 @@ typedef struct {
 					FileStream cf = File.OpenRead (fname + ".config");
 					if (!quiet)
 						Console.WriteLine (" config from: " + fname + ".config");
-					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+					tc.WriteLine ("extern const char assembly_config_{0} [];", encoded);
 					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
 					WriteBuffer (ts, cf, buffer);
 					ts.WriteLine ();
