@@ -987,7 +987,7 @@ mono_get_array_new_va_icall (int rank)
 	if (info == NULL) {
 		esig = mono_get_array_new_va_signature (rank);
 		name = g_strdup (icall_name);
-		info = mono_register_jit_icall ((gpointer)mono_array_new_va, name, esig, FALSE);
+		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
 	}
 	mono_jit_unlock ();
 
