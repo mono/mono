@@ -689,11 +689,6 @@ register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpo
 #endif
 }
 
-#ifdef __cplusplus
-#define register_opcode_emulation(opcode, name, sigstr, func, symbol, no_wrapper) \
-	(register_opcode_emulation ((opcode), (name), (sigstr), (gpointer)(func), (symbol), (no_wrapper)))
-#endif
-
 /*
  * For JIT icalls implemented in C.
  * NAME should be the same as the name of the C function whose address is FUNC.
@@ -756,11 +751,6 @@ register_icall_with_wrapper (gpointer func, const char *name, const char *sigstr
 
 	mono_register_jit_icall_full (func, name, sig, FALSE, NULL);
 }
-
-#ifdef __cplusplus
-#define register_icall_with_wrapper(func, name, sigstr) \
-	(register_icall_with_wrapper ((gpointer)(func), (name), (sigstr)))
-#endif
 
 static void
 register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
@@ -4486,17 +4476,17 @@ static void
 register_icalls (void)
 {
 	mono_add_internal_call ("System.Diagnostics.StackFrame::get_frame_info",
-				(gpointer)ves_icall_get_frame_info);
+				ves_icall_get_frame_info);
 	mono_add_internal_call ("System.Diagnostics.StackTrace::get_trace",
-				(gpointer)ves_icall_get_trace);
+				ves_icall_get_trace);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers",
-				(gpointer)mono_runtime_install_handlers);
+				mono_runtime_install_handlers);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
-				(gpointer)mono_runtime_cleanup_handlers);
+				mono_runtime_cleanup_handlers);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
 	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
-							(gpointer)mini_get_dbg_callbacks ()->unhandled_exception);
+							mini_get_dbg_callbacks ()->unhandled_exception);
 #endif
 
 	/*
