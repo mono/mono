@@ -164,7 +164,11 @@ system_native_common_sources = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h
 
 if ENABLE_GSS
-system_native_common_sources += \
+libmono_system_net_security_native_la_SOURCES = \
+	pal_config.h \
+	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
+	../../external/corefx/src/Native/Unix/Common/pal_types.h \
+	../../external/corefx/src/Native/Unix/Common/pal_utilities.h \
 	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.c \
 	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.h
 endif
