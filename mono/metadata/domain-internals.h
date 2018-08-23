@@ -7,6 +7,7 @@
 #ifndef __MONO_METADATA_DOMAIN_INTERNALS_H__
 #define __MONO_METADATA_DOMAIN_INTERNALS_H__
 
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mempool.h>
@@ -215,7 +216,7 @@ struct _MonoJitInfo {
 	union {
 		MonoMethod *method;
 		MonoImage *image;
-		struct MonoAotModule *aot_info;
+		MonoAotModule *aot_info;
 		gpointer tramp_info;
 	} d;
 	union {

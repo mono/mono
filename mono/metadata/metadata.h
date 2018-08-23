@@ -23,8 +23,6 @@ MONO_BEGIN_DECLS
 
 #define MONO_CLASS_IS_IMPORT(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_IMPORT))
 
-typedef struct _MonoDomain MonoDomain;
-
 typedef enum {
 	MONO_EXCEPTION_CLAUSE_NONE,
 	MONO_EXCEPTION_CLAUSE_FILTER,

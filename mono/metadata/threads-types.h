@@ -59,8 +59,6 @@ typedef enum {
 #define SPECIAL_STATIC_THREAD 1
 #define SPECIAL_STATIC_CONTEXT 2
 
-typedef struct _MonoInternalThread MonoInternalThread;
-
 /* It's safe to access System.Threading.InternalThread from native code via a
  * raw pointer because all instances should be pinned.  But for uniformity of
  * icall wrapping, let's declare a MonoInternalThreadHandle anyway.

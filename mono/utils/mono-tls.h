@@ -85,22 +85,16 @@ gint32 mono_tls_get_tls_offset (MonoTlsKey key);
 gpointer mono_tls_get_tls_getter (MonoTlsKey key, gboolean name);
 gpointer mono_tls_get_tls_setter (MonoTlsKey key, gboolean name);
 
-struct _MonoInternalThread;
-struct  MonoJitTlsData;
-struct _MonoDomain;
-struct _SgenThreadInfo;
-struct  MonoLMF;
+MonoInternalThread *mono_tls_get_thread (void);
+MonoJitTlsData     *mono_tls_get_jit_tls (void);
+MonoDomain         *mono_tls_get_domain (void);
+SgenThreadInfo     *mono_tls_get_sgen_thread_info (void);
+MonoLMF           **mono_tls_get_lmf_addr (void);
 
-struct _MonoInternalThread *mono_tls_get_thread (void);
-struct  MonoJitTlsData     *mono_tls_get_jit_tls (void);
-struct _MonoDomain         *mono_tls_get_domain (void);
-struct _SgenThreadInfo     *mono_tls_get_sgen_thread_info (void);
-struct  MonoLMF           **mono_tls_get_lmf_addr (void);
-
-void mono_tls_set_thread 	   (struct _MonoInternalThread *value);
-void mono_tls_set_jit_tls 	   (struct  MonoJitTlsData     *value);
-void mono_tls_set_domain 	   (struct _MonoDomain         *value);
-void mono_tls_set_sgen_thread_info (struct _SgenThreadInfo     *value);
-void mono_tls_set_lmf_addr 	   (struct  MonoLMF           **value);
+void mono_tls_set_thread 	   (MonoInternalThread *value);
+void mono_tls_set_jit_tls 	   (MonoJitTlsData     *value);
+void mono_tls_set_domain 	   (MonoDomain         *value);
+void mono_tls_set_sgen_thread_info (SgenThreadInfo     *value);
+void mono_tls_set_lmf_addr 	   (MonoLMF           **value);
 
 #endif /* __MONO_TLS_H__ */

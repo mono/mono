@@ -1079,7 +1079,7 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 
 	// The handle stack is a pseudo-root similar to the finalizer queues.
 	MONO_PROFILER_RAISE (gc_root_register, (
-		info->handle_stack,
+		(const mono_byte*)info->handle_stack,
 		1,
 		MONO_ROOT_SOURCE_HANDLE,
 		(void *) tid,

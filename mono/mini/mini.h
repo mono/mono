@@ -16,6 +16,7 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/mempool.h>
 #include <mono/utils/monobitset.h>
@@ -342,7 +343,6 @@ typedef struct MonoCallInst MonoCallInst;
 typedef struct MonoCallArgParm MonoCallArgParm;
 typedef struct MonoMethodVar MonoMethodVar;
 typedef struct MonoBasicBlock MonoBasicBlock;
-typedef struct MonoLMF MonoLMF;
 typedef struct MonoSpillInfo MonoSpillInfo;
 
 extern MonoCallSpec *mono_jit_trace_calls;
@@ -942,8 +942,6 @@ struct MonoMethodVar {
 	 */
 	gint32         vreg;
 };
-
-typedef struct MonoJitTlsData MonoJitTlsData;
 
 /* Generic sharing */
 
