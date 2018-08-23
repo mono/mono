@@ -1560,7 +1560,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						MONO_INST_NEW (cfg, iargs [2], OP_MOVE);
 						iargs [2]->dreg = ins->sreg1;
 
-						dest = mono_emit_jit_icall (cfg, (gconstpointer)ves_icall_array_new, iargs);
+						dest = mono_emit_jit_icall (cfg, ves_icall_array_new, iargs);
 						dest->dreg = ins->dreg;
 					} else {
 						MonoClass *array_class = mono_class_create_array (ins->inst_newa_class, 1);
@@ -1577,7 +1577,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 						if (managed_alloc)
 							dest = mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 						else
-							dest = mono_emit_jit_icall (cfg, (gconstpointer)ves_icall_array_new_specific, iargs);
+							dest = mono_emit_jit_icall (cfg, ves_icall_array_new_specific, iargs);
 						dest->dreg = ins->dreg;
 					}
 					break;
@@ -1709,7 +1709,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					/* Arg 2 is the address to store to */
 					addr_reg = mono_alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, iargs [1], OP_PADD_IMM, addr_reg, ins->inst_destbasereg, ins->inst_offset);
-					mono_emit_jit_icall (cfg, (gconstpointer)mono_fstore_r4, iargs);
+					mono_emit_jit_icall (cfg, mono_fstore_r4, iargs);
 					restart = TRUE;
 					break;
 				}
@@ -1720,7 +1720,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 
 					addr_reg = mono_alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, iargs [0], OP_PADD_IMM, addr_reg, ins->inst_basereg, ins->inst_offset);
-					conv = mono_emit_jit_icall (cfg, (gconstpointer)mono_fload_r4, iargs);
+					conv = mono_emit_jit_icall (cfg, mono_fload_r4, iargs);
 					conv->dreg = ins->dreg;
 					break;
 				}					
@@ -1761,7 +1761,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 
 						/* Emit an r4->r8 conversion */
 						EMIT_NEW_VARLOADA_VREG (cfg, iargs [0], call2->inst.dreg, mono_get_int32_type ());
-						conv = mono_emit_jit_icall (cfg, (gconstpointer)mono_fload_r4, iargs);
+						conv = mono_emit_jit_icall (cfg, mono_fload_r4, iargs);
 						conv->dreg = ins->dreg;
 
 						/* The call sequence might include fp ins */
@@ -1868,7 +1868,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					MONO_INST_NEW (cfg, iargs [0], OP_ARG);
 					iargs [0]->dreg = ins->sreg1;
 
-					call = mono_emit_jit_icall (cfg, (gconstpointer)mono_isfinite, iargs);
+					call = mono_emit_jit_icall (cfg, mono_isfinite, iargs);
 
 					MONO_INST_NEW (cfg, cmp, OP_ICOMPARE_IMM);
 					cmp->sreg1 = call->dreg;
