@@ -15,11 +15,11 @@ G_BEGIN_DECLS
 
 #ifdef HOST_WASM
 
-G_END_DECLS
+G_END_DECLS // Each header takes care of itself -- end decls.
 
 #include <emscripten.h>
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // Each header takes care of itself -- resume decls.
 
 static int log_level = 1;
 
