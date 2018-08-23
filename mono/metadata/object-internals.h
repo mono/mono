@@ -23,8 +23,6 @@
 #include "mono/utils/mono-coop-mutex.h"
 #include <mono/metadata/icalls.h>
 
-G_BEGIN_DECLS // FIXMEcxx wasm
-
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
@@ -2121,7 +2119,5 @@ mono_object_get_data (MonoObject *o);
 
 gpointer
 mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
-
-G_END_DECLS
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

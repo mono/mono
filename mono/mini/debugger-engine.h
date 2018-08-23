@@ -9,8 +9,6 @@
 #include <mono/metadata/seq-points-data.h>
 #include <mono/mini/debugger-state-machine.h>
 
-G_BEGIN_DECLS // FIXMEcxx for wasm
-
 /*
 FIXME:
 - Move EventKind back to debugger-agent.c as it contains sdb wire protocol constants.
@@ -265,7 +263,5 @@ void mono_de_process_breakpoint (void *tls, gboolean from_signal);
 void mono_de_process_single_step (void *tls, gboolean from_signal);
 DbgEngineErrorCode mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
 void mono_de_cancel_ss (void);
-
-G_END_DECLS // FIXMEcxx for wasm
 
 #endif
