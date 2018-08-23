@@ -408,10 +408,8 @@ mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
  * @thread_info_size is sizeof (GcThreadInfo), a struct the GC defines to make it possible to have
  * a single block with info from both camps. 
  */
-G_BEGIN_DECLS // FIXMEcxx this is for tests compiled as C
 void
 mono_thread_info_init (size_t thread_info_size);
-G_END_DECLS   // FIXMEcxx this is for tests compiled as C
 
 /*
  * Wait for the above mono_thread_info_init to be called

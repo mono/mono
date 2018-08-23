@@ -84,7 +84,6 @@ public:
 	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
 	g_cast () = delete;
 	g_cast (const g_cast& y) = delete;
-
 	template <typename TTo> operator TTo* () const { return (TTo*)x; }
 };
 
