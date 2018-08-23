@@ -1765,10 +1765,10 @@ namespace System.Windows.Forms
 			if (!richtext) {
 				if (!document.multiline) {
 					if (PreferredHeight != Height) {
-						SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
+						SetBoundsCore (Left, Top, Width, PreferredHeight, BoundsSpecified.Height);
 					}
 				} else {
-					SetBoundsCore (Left, Top, Width, Math.Max(PreferredHeight, ExplicitBounds.Height), BoundsSpecified.None);
+					SetBoundsCore (Left, Top, Width, Math.Max(PreferredHeight, ExplicitBounds.Height), BoundsSpecified.Height);
 				}
 			}
 		}
