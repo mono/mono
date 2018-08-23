@@ -379,14 +379,14 @@ typedef struct {
 	guint32 vt_offset; /* for valuetypes */
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	guint32 stack_usage;
 	guint32 reg_usage;
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
-} CallInfo;
+};
 
 #define DEBUG(a)
 
@@ -1336,7 +1336,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
 
-	mini_emit_memcpy (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, SIZEOF_VOID_P);
+	mini_emit_memcpy (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, TARGET_SIZEOF_VOID_P);
 }
 
 void

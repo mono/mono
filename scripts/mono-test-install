@@ -110,7 +110,7 @@ class X {
 EOF
 if mcs -pkg:dotnet $temp_cs >& /dev/null; then
     if mono $temp_exe >& /dev/null; then
-	echo Your have a working System.Drawing setup
+	echo You have a working System.Drawing setup
     else
         echo Your system has a broken System.Drawing setup
         if mono $temp_exe 2>&1 | grep 'System.DllNotFoundException: gdiplus.dll' > /dev/null; then

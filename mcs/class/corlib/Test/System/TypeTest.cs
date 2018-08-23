@@ -309,6 +309,38 @@ namespace MonoTests.System
 
 		}
 
+		public class DummyReflectionWildcardClass {
+			public DummyReflectionWildcardClass() { }
+			public DummyReflectionWildcardClass(string p) { }
+
+			public event EventHandler<string> DummyEvent;
+			public event EventHandler<string> DummyEvent2;
+
+			public string DummyField = "dummy";
+			public string DummyField2 = "dummy2";
+			public string AlternateField = "Alt";
+
+			public string DummyProperty {
+				get; set;
+			}
+
+			public string DummyProperty2 {
+				get; set;
+			}
+
+			public void DummyMethod() { }
+			public void DummyMethod2() { }
+
+			public class DummyNested {
+				public void Go() { }
+			}
+
+			public class DummyNested2 {
+				public void Go() { }
+			}
+		}
+
+
 		[Test]
 		public void TestIsAssignableFrom ()
 		{
@@ -445,6 +477,11 @@ namespace MonoTests.System
 			Assert.IsNull (paramType.BaseType, "#02-b");
 			Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
 			Assert.IsFalse (paramType.IsSubclassOf (paramType), "#04");
+
+			// IsSubclassOf is not reflexive
+			Assert.IsFalse (typeof (string).IsSubclassOf (typeof (string)), "#05");
+			Assert.IsFalse (typeof (int).IsSubclassOf (typeof (int)), "#06");
+			Assert.IsFalse (typeof (object).IsSubclassOf (typeof (object)), "#07");
 		}
 
 		[Test]
@@ -3438,33 +3475,62 @@ namespace MonoTests.System
 		Assert.IsTrue (new UserType(null).GenericParameterPosition == 0);
 	}
 
-		[Test]
-		public void TypeGetMemberReturnTypeTest ()
-		{
-			object obj;
-			MemberTypes memtype;
-			Type testtype;
-			object [] flagsandtypes = new object [] {
-				MemberTypes.All, typeof (MemberInfo []),
-				MemberTypes.Constructor, typeof (ConstructorInfo []),
-				MemberTypes.Custom, typeof (MemberInfo []),
-				MemberTypes.Event, typeof (EventInfo []),
-				MemberTypes.Field, typeof (FieldInfo []),
-				MemberTypes.Method, typeof (MethodInfo []),
-				MemberTypes.NestedType, typeof (Type []),
-				MemberTypes.Property, typeof (PropertyInfo []),
-				MemberTypes.TypeInfo, typeof (Type [])};
+	[Test]
+	public void TypeGetMemberReturnTypeTest ()
+	{
+		object obj;
+		MemberTypes memtype;
+		Type testtype;
 
-			for (int i=0; i < flagsandtypes.Length; i+=2) {
-				memtype = (MemberTypes)flagsandtypes [i];
-				testtype = (Type)flagsandtypes [i+1];
-				obj = GetType ().GetMember ("DummyMember", memtype,
-						BindingFlags.Public | BindingFlags.Instance);
-				Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
-						"Expected #" + i + " " + testtype.FullName);
-			}
+		Tuple<MemberTypes, Type>[] flagsandtypes = new Tuple<MemberTypes, Type>[] {
+			Tuple.Create<MemberTypes, Type>(MemberTypes.All, typeof (MemberInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Constructor, typeof (ConstructorInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Custom, typeof (MemberInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Event, typeof (EventInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Field, typeof (FieldInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Method, typeof (MethodInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.NestedType, typeof (Type [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Property, typeof (PropertyInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.TypeInfo, typeof (Type []))
+		};
 
+		for (int i=0; i < flagsandtypes.Length; i++) {
+			memtype = (MemberTypes)flagsandtypes[i].Item1;
+			testtype = (Type)flagsandtypes[i].Item2;
+			obj = GetType ().GetMember ("DummyMember", memtype,
+					BindingFlags.Public | BindingFlags.Instance);
+			Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
+					"Expected #" + i + " " + testtype.FullName);
 		}
+	}
+
+	[Test]
+	public void TypeGetMemberWildcardTypeTest() {
+		MemberInfo[] obj;
+		MemberTypes memType;
+		string wildcard;
+		Type testType = typeof(FieldInfo[]);
+
+		Tuple<MemberTypes, Type, string>[] flagsandtypes = new Tuple<MemberTypes, Type, string>[] {
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Field, typeof (FieldInfo []), "Fi*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Event, typeof (EventInfo []), "Ev*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Method, typeof (MethodInfo []), "Me*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Property, typeof (PropertyInfo []), "Pr*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.NestedType, typeof (Type []), "Ne*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.TypeInfo, typeof (Type[]), "Ne*")
+		};
+		
+		for (int i=0; i < flagsandtypes.Length; i++) {
+			memType = (MemberTypes)flagsandtypes[i].Item1;
+			testType = (Type)flagsandtypes[i].Item2;
+			wildcard = flagsandtypes[i].Item3.ToString();
+
+			obj = typeof(DummyReflectionWildcardClass).GetMember("Dummy" + wildcard, memType, BindingFlags.Public | BindingFlags.Instance);
+
+			Assert.AreEqual(testType.GetHashCode(), obj.GetType().GetHashCode(), "Expected #" + i + " A1: " + testType.FullName);
+			Assert.AreEqual(2, obj.Length, "Expected #" + i + " B1: Member Length = 2");
+		}
+	}
  
  		[Test]
  		public void TypeNameStartsWithSpace ()

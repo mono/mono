@@ -30,8 +30,10 @@ extern alias MonoSecurity;
 
 #if MONO_SECURITY_ALIAS
 using MX = MonoSecurity::Mono.Security.X509;
+using MonoSecurity::Mono.Security.Cryptography;
 #else
 using MX = Mono.Security.X509;
+using Mono.Security.Cryptography;
 #endif
 
 using System;
@@ -41,7 +43,6 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.InteropServices;
-using Mono.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 
 namespace Mono.Btls

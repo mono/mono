@@ -45,6 +45,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\AptcaCommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
@@ -311,7 +312,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ValueProviders\ValueProviderFactory.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http\ValueProviders\ValueProviderResult.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">

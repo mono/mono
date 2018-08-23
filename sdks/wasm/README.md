@@ -61,16 +61,35 @@ Go to `http://localhost:8000/sample.html`
 
 # Debugging
 
+The debugger requires dotnet core version 2.1.301 or greater installed.
+
 To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
 - Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
-- Download and run the debugger proxy: https://github.com/kumpera/ws-proxy
+- Run the proxy: `dotnet dbg-proxy/ProxyDriver.dll`
 - Connect to the remote debugged Chrome and pick the page which is running the wasm code
 - Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
 - Refresh the debugged page and you should be set
 
 Beware that the debugger is in active development so bugs and missing features will be present.
+
+# AOT development
+
+AOT experimentation happens with the following steps:
+
+1) go to `sdks` and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
+2) go to `sdks/builds` and hit `make package`
+3) go to `sdks/wasm` and hit `make build`
+
+Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results. This is experimental, so expect stuff to not work as intended.
+
+To update the runtimes used use the following target in `sdks/build`
+
+`package-wasm-interp` for the interpreter-based runtime
+`package-wasm-aot` for the aot compiler
+`package-wasm-aot-runtime` for the wasm runtime that works with AOT'd code.
+
 
 # Notes
 

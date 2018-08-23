@@ -71,6 +71,7 @@ static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
 
 static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
+GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
 
 static
 MonoImage *
@@ -424,8 +425,8 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 		}
 		const char *klass_name = m_class_get_name (klass);
 		if (format == MONO_TYPE_NAME_FORMAT_IL) {
-			char *s = strchr (klass_name, '`');
-			int len = s ? s - klass_name : strlen (klass_name);
+			const char *s = strchr (klass_name, '`');
+			gssize len = s ? (s - klass_name) : (gssize)strlen (klass_name);
 			g_string_append_len (str, klass_name, len);
 		} else {
 			mono_identifier_escape_type_name_chars (str, klass_name);
@@ -734,6 +735,14 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		nt = mono_metadata_type_dup (image, type);
 		nt->type = MONO_TYPE_GENERICINST;
 		nt->data.generic_class = gclass;
+		return nt;
+	}
+	case MONO_TYPE_PTR: {
+		MonoType *nt, *inflated = inflate_generic_type (image, type->data.type, context, error);
+		if (!inflated || !mono_error_ok (error))
+			return NULL;
+		nt = mono_metadata_type_dup (image, type);
+		nt->data.type = inflated;
 		return nt;
 	}
 	default:
@@ -1298,7 +1307,7 @@ mono_class_alloc (MonoClass *klass, int size)
 }
 
 gpointer
-mono_class_alloc0 (MonoClass *klass, int size)
+(mono_class_alloc0) (MonoClass *klass, int size)
 {
 	gpointer res;
 
@@ -2000,33 +2009,6 @@ mono_class_min_align (MonoClass *klass)
 		mono_class_init (klass);
 
 	return m_class_get_min_align (klass);
-}
-
-/**
- * mono_class_value_size:
- * \param klass a class 
- *
- * This function is used for value types, and return the
- * space and the alignment to store that kind of value object.
- *
- * \returns the size of a value of kind \p klass
- */
-gint32
-mono_class_value_size (MonoClass *klass, guint32 *align)
-{
-	gint32 size;
-
-	/* fixme: check disable, because we still have external revereces to
-	 * mscorlib and Dummy Objects 
-	 */
-	/*g_assert (klass->valuetype);*/
-
-	size = mono_class_instance_size (klass) - sizeof (MonoObject);
-
-	if (align)
-		*align = m_class_get_min_align (klass);
-
-	return size;
 }
 
 /**
@@ -3002,7 +2984,7 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 
 	g_hash_table_insert (visited_images, image, GUINT_TO_POINTER(1));
 
-	if ((nested = strchr (name, '/'))) {
+	if ((nested = (char*)strchr (name, '/'))) {
 		int pos = nested - name;
 		int len = strlen (name);
 		if (len > 1023)
@@ -3852,6 +3834,58 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 }
 
 /**
+ * mono_generic_param_get_base_type:
+ *
+ * Return the base type of the given generic parameter from its constraints.
+ *
+ * Could be another generic parameter, or it could be Object or ValueType.
+ */
+MonoClass*
+mono_generic_param_get_base_type (MonoClass *klass)
+{
+	MonoType *type = m_class_get_byval_arg (klass);
+	g_assert (mono_type_is_generic_argument (type));
+
+	MonoGenericParam *gparam = type->data.generic_param;
+
+	MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
+
+	MonoClass *base_class = mono_defaults.object_class;
+
+	if (constraints) {
+		int i;
+		for (i = 0; constraints [i]; ++i) {
+			MonoClass *constraint = constraints[i];
+
+			if (MONO_CLASS_IS_INTERFACE (constraint))
+				continue;
+
+			MonoType *constraint_type = m_class_get_byval_arg (constraint);
+			if (mono_type_is_generic_argument (constraint_type)) {
+				MonoGenericParam *constraint_param = constraint_type->data.generic_param;
+				MonoGenericParamInfo *constraint_info = mono_generic_param_info (constraint_param);
+				if ((constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0 &&
+				    (constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) == 0)
+					continue;
+			}
+
+			base_class = constraint;
+		}
+
+	}
+
+	if (base_class == mono_defaults.object_class)
+	{
+		MonoGenericParamInfo *gparam_info = mono_generic_param_info (gparam);
+		if ((gparam_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0) {
+			base_class = mono_class_get_valuetype_class ();
+		}
+	}
+
+	return base_class;
+}
+
+/**
  * mono_class_get_cctor:
  * \param klass A MonoClass pointer
  *
@@ -3976,7 +4010,7 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY: 
-		return sizeof (gpointer);
+		return TARGET_SIZEOF_VOID_P;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R8:
@@ -3987,7 +4021,7 @@ handle_enum:
 			klass = m_class_get_element_class (klass);
 			goto handle_enum;
 		}
-		return mono_class_instance_size (klass) - sizeof (MonoObject);
+		return mono_class_value_size (klass, NULL);
 	case MONO_TYPE_GENERICINST:
 		type = m_class_get_byval_arg (type->data.generic_class->container_class);
 		goto handle_enum;
@@ -4327,6 +4361,7 @@ mono_class_get_namespace (MonoClass *klass)
 	MONO_ENTER_GC_UNSAFE;
 	result = m_class_get_name_space (klass);
 	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -4809,6 +4844,7 @@ mono_field_get_flags (MonoClassField *field)
 guint32
 mono_field_get_offset (MonoClassField *field)
 {
+	mono_class_setup_fields(field->parent);
 	return field->offset;
 }
 

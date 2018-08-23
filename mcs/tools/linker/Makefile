@@ -8,20 +8,27 @@ LIB_REFS = System System.Core System.Xml Mono.Cecil
 
 TEST_CASES := \
 	mscorlib/test-array.cs \
-	mscorlib/test-remoting.cs \
+	mscorlib/test-exception-01.cs \
+	mscorlib/test-locale-01.cs \
+	mscorlib/test-reflection-01.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
+	mscorlib/test-task-01.cs \
 	System/test-security.cs
+
+ifdef MOBILE_PROFILE
+TEST_CASES += \
+	mscorlib/test-crypto-01.cs
+endif
 
 ifndef AOT_FRIENDLY_PROFILE
 TEST_CASES += \
+	mscorlib/test-remoting.cs \
 	mscorlib/test-reflection.cs
 endif
 
-SIZE_TEST_CASES := \
-	link-all/link-all.cs \
-	link-sdk/link-sdk.cs
+SIZE_TEST_CASES :=
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
@@ -36,25 +43,27 @@ mscorlib/test-%.cs:
 System/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
-link-all/link-all.cs: $(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll
-	$(TESTS_COMPILER) -resource:Tests/LinkerDescriptor/link-all.xml -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/I18N.MidEast.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/I18N.Other.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ComponentModel.Composition.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll $(wildcard Tests/link-all/*.cs) /out:Tests/$(@:.cs=.exe)
-
-link-sdk/link-sdk.cs: $(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll
-	$(TESTS_COMPILER) -resource:Tests/LinkerDescriptor/link-sdk.xml -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.Linq.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ComponentModel.Composition.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ServiceModel.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.ServiceModel.Web.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Json.dll  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Data.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/Mono.Data.Sqlite.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll $(wildcard Tests/link-sdk/*.cs) /out:Tests/$(@:.cs=.exe)
-
-$(topdir)/class/lib/$(PROFILE_DIRECTORY)/nunitlite.dll:
-	$(MAKE) -C $(topdir)/tools/nunit-lite
-
 run-tests: $(TEST_CASES:.cs=.exe)
+
+LINKER_PROFILE_OPTIONS :=
+
+# Should be in sync with runtime sdk flags
+ifeq ($(PROFILE),monotouch)
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com
+endif
+
+ifeq ($(PROFILE),wasm)
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature sre
+endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH) $(LINKER_PROFILE_OPTIONS)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 
 .NOTPARALLEL:
 
-System/test-%.exe mscorlib/test-%.exe link-all/link-%.exe link-sdk/link-%.exe:
+System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@
@@ -89,13 +98,15 @@ bcl-size-diff:
 	$(Q) $(MAKE) bcl-size-current PROFILE=net_4_x   || true
 	$(Q) $(MAKE) bcl-size-current PROFILE=monotouch || true
 	$(Q) $(MAKE) bcl-size-current PROFILE=monodroid || true
+	$(Q) $(MAKE) bcl-size-current PROFILE=wasm || true
 	@echo "Checking size differences..."
 	@mkdir -p sizediff
 	$(Q) git diff HEAD "*.csv" > temp.patch
 	$(Q) git show HEAD:./net_4_x-linked-size.csv > net_4_x-linked-size.old.csv
 	$(Q) git show HEAD:./monotouch-linked-size.csv > monotouch-linked-size.old.csv
 	$(Q) git show HEAD:./monodroid-linked-size.csv > monodroid-linked-size.old.csv
-	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "/@olddata-net_4_x@/r net_4_x-linked-size.old.csv" -e "/@olddata-net_4_x@/d" -e "/@olddata-monotouch@/r monotouch-linked-size.old.csv" -e "/@olddata-monotouch@/d" -e "/@olddata-monodroid@/r monodroid-linked-size.old.csv" -e "/@olddata-monodroid@/d" -e "/@newdata-net_4_x@/r net_4_x-linked-size.csv" -e "/@newdata-net_4_x@/d" -e "/@newdata-monotouch@/r monotouch-linked-size.csv" -e "/@newdata-monotouch@/d" -e "/@newdata-monodroid@/r monodroid-linked-size.csv" -e "/@newdata-monodroid@/d" linked-size-diff.html.in > sizediff/index.html
+	$(Q) git show HEAD:./wasm-linked-size.csv > wasm-linked-size.old.csv
+	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "/@olddata-net_4_x@/r net_4_x-linked-size.old.csv" -e "/@olddata-net_4_x@/d" -e "/@olddata-monotouch@/r monotouch-linked-size.old.csv" -e "/@olddata-monotouch@/d" -e "/@olddata-monodroid@/r monodroid-linked-size.old.csv" -e "/@olddata-monodroid@/d" -e "/@olddata-wasm@/r wasm-linked-size.old.csv" -e "/@olddata-wasm@/d" -e "/@newdata-net_4_x@/r net_4_x-linked-size.csv" -e "/@newdata-net_4_x@/d" -e "/@newdata-monotouch@/r monotouch-linked-size.csv" -e "/@newdata-monotouch@/d" -e "/@newdata-monodroid@/r monodroid-linked-size.csv" -e "/@newdata-monodroid@/d" -e "/@newdata-wasm@/r wasm-linked-size.csv" -e "/@newdata-wasm@/d" linked-size-diff.html.in > sizediff/index.html
 	$(Q) if [ -s temp.patch ]; then echo "Error: Found BCL Linked Size differences, see mcs/tools/linker/sizediff/index.html."; rm -f temp.patch *.old.csv; exit 1; else echo "No differences found."; rm -f temp.patch *.old.csv; fi
 
 include ../../build/executable.make

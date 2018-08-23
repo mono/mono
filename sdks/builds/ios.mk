@@ -119,6 +119,8 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--without-sigaltstack \
+	--disable-cooperative-suspend \
+	--disable-hybrid-suspend \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
@@ -133,8 +135,8 @@ tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDK
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
-ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS)
+ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS) --with-monotouch-tv
+ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS) --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
@@ -249,6 +251,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
+	--disable-cooperative-suspend \
+	--disable-hybrid-suspend \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
@@ -370,8 +374,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 
 $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
-		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
-			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
+		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_64 \
+			mono --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
 build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
@@ -382,6 +386,6 @@ endef
 
 ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
 ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
-$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
