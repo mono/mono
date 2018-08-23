@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 // using System.Collections.Generic;
 using System.IO;
 // using System.Linq;
@@ -14,19 +15,31 @@ public class Driver
 
 	public static void RunTests ()
 	{
-		string assembly = File.ReadAllText ($"{AppDomain.CurrentDomain.BaseDirectory}/testassembly.txt");
-
-		Console.WriteLine ($"Testing assembly \"{assembly}\"");
-		Console.WriteLine ($"");
-
 		string exclude = "NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,SatelliteAssembliesNotWorking,AndroidNotWorking";
 		if (IntPtr.Size == 4)
 			exclude += ",LargeFileSupport";
 
-		string[] args = new string[] {
+		string assembly = null;
+		if (File.Exists($"{AppDomain.CurrentDomain.BaseDirectory}/testassembly.txt"))
+			assembly = File.ReadAllText ($"{AppDomain.CurrentDomain.BaseDirectory}/testassembly.txt");
+
+		if (assembly != null) {
+			assembly = $"{AppDomain.CurrentDomain.BaseDirectory}/{assembly}";
+			Console.WriteLine ($"Testing single assembly \"{assembly}\"");
+		} else {
+			Console.WriteLine($"Looking for assemblies in ${AppDomain.CurrentDomain.BaseDirectory}");
+
+			assembly = "";
+			foreach (var file in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "monodroid_*_test.dll", SearchOption.TopDirectoryOnly))
+				assembly += $"{AppDomain.CurrentDomain.BaseDirectory}/{file} ";
+
+			Console.WriteLine ($"Testing multiple assemblies \"{assembly}\"");
+		}
+
+		string[] args = new string [] {
 			$"-labels",
 			$"-exclude={exclude}",
-			$"{AppDomain.CurrentDomain.BaseDirectory}/{assembly}",
+			$"{assembly}",
 		};
 
 		Runner = new TextUI ();

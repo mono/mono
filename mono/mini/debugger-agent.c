@@ -919,23 +919,23 @@ debugger_agent_init (void)
 	if (!agent_config.enabled)
 		return;
 
-	DebuggerEngineCallbacks cbs = {
-		.tls_get_restore_state = tls_get_restore_state,
-		.try_process_suspend = try_process_suspend,
-		.begin_breakpoint_processing = begin_breakpoint_processing,
-		.begin_single_step_processing = begin_single_step_processing,
-		.ss_discard_frame_context = ss_discard_frame_context,
-		.ss_calculate_framecount = ss_calculate_framecount,
-		.ensure_jit = ensure_jit,
-		.ensure_runtime_is_suspended = ensure_runtime_is_suspended,
-		.get_this_async_id = get_this_async_id,
-		.set_set_notification_for_wait_completion_flag = set_set_notification_for_wait_completion_flag,
-		.get_notify_debugger_of_wait_completion_method = get_notify_debugger_of_wait_completion_method,
-		.create_breakpoint_events = create_breakpoint_events,
-		.process_breakpoint_events = process_breakpoint_events,
-		.ss_create_init_args = ss_create_init_args,
-		.ss_args_destroy = ss_args_destroy,
-	};
+	DebuggerEngineCallbacks cbs;
+	memset (&cbs, 0, sizeof (cbs));
+	cbs.tls_get_restore_state = tls_get_restore_state;
+	cbs.try_process_suspend = try_process_suspend;
+	cbs.begin_breakpoint_processing = begin_breakpoint_processing;
+	cbs.begin_single_step_processing = begin_single_step_processing;
+	cbs.ss_discard_frame_context = ss_discard_frame_context;
+	cbs.ss_calculate_framecount = ss_calculate_framecount;
+	cbs.ensure_jit = ensure_jit;
+	cbs.ensure_runtime_is_suspended = ensure_runtime_is_suspended;
+	cbs.get_this_async_id = get_this_async_id;
+	cbs.set_set_notification_for_wait_completion_flag = set_set_notification_for_wait_completion_flag;
+	cbs.get_notify_debugger_of_wait_completion_method = get_notify_debugger_of_wait_completion_method;
+	cbs.create_breakpoint_events = create_breakpoint_events;
+	cbs.process_breakpoint_events = process_breakpoint_events;
+	cbs.ss_create_init_args = ss_create_init_args;
+	cbs.ss_args_destroy = ss_args_destroy;
 
 	mono_de_init (&cbs);
 
@@ -1615,7 +1615,7 @@ start_debugger_thread (void)
 	ERROR_DECL (error);
 	MonoInternalThread *thread;
 
-	thread = mono_thread_create_internal (mono_get_root_domain (), debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, error);
+	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, error);
 	mono_error_assert_ok (error);
 
 	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
@@ -4296,7 +4296,7 @@ static MonoMethod*
 get_set_notification_method (MonoClass* async_builder_class)
 {
 	ERROR_DECL (error);
-	GPtrArray* array = mono_class_get_methods_by_name (async_builder_class, "SetNotificationForWaitCompletion", 0x24, FALSE, FALSE, error);
+	GPtrArray* array = mono_class_get_methods_by_name (async_builder_class, "SetNotificationForWaitCompletion", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	if (array->len == 0) {
 		g_ptr_array_free (array, TRUE);
@@ -4311,7 +4311,7 @@ static MonoMethod*
 get_object_id_for_debugger_method (MonoClass* async_builder_class)
 {
 	ERROR_DECL (error);
-	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, FALSE, FALSE, error);
+	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	g_assert (array->len == 1);
 	MonoMethod *method = (MonoMethod *)g_ptr_array_index (array, 0);
@@ -4417,7 +4417,7 @@ get_notify_debugger_of_wait_completion_method (void)
 		return notify_debugger_of_wait_completion_method_cache;
 	ERROR_DECL (error);
 	MonoClass* task_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading.Tasks", "Task");
-	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, FALSE, FALSE, error);
+	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
 	g_assert (array->len == 1);
 	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
@@ -6765,12 +6765,12 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 		mono_loader_lock ();
 
-		GetTypesArgs args = {
-			.info = &info,
-			.ignore_case = ignore_case,
-			.res_classes = res_classes,
-			.res_domains = res_domains
-		};
+		GetTypesArgs args;
+		memset (&args, 0, sizeof (args));
+		args.info = &info;
+		args.ignore_case = ignore_case;
+		args.res_classes = res_classes;
+		args.res_domains = res_domains;
 
 		mono_de_foreach_domain (get_types, &args);
 
@@ -7856,11 +7856,12 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	case CMD_TYPE_GET_METHODS_BY_NAME_FLAGS: {
 		char *name = decode_string (p, &p, end);
 		int i, flags = decode_int (p, &p, end);
+		int mlisttype = decode_int (p, &p, end);
 		ERROR_DECL (error);
 		GPtrArray *array;
 
 		error_init (error);
-		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, (flags & BINDING_FLAGS_IGNORE_CASE) != 0, TRUE, error);
+		array = mono_class_get_methods_by_name (klass, name, flags & ~BINDING_FLAGS_IGNORE_CASE, mlisttype, TRUE, error);
 		if (!is_ok (error)) {
 			mono_error_cleanup (error);
 			return ERR_LOADER_ERROR;

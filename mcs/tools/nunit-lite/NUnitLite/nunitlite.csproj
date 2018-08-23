@@ -47,6 +47,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Api\ExpectedExceptionData.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Api\IParameterDataSource.cs" />
@@ -317,7 +318,7 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Throws.cs" />
     <Compile Include="BabysitterSupport.cs" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../../class/System/System.csproj" />

@@ -139,6 +139,10 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 	mono_register_jit_icall (func, name, sig, TRUE);
 }
 
+// Cast the first parameter to gpointer; macros do not recurse.
+#define register_icall(func, name, sigstr, no_wrapper) (register_icall ((gpointer)(func), (name), (sigstr), (no_wrapper)))
+#define register_icall_no_wrapper(func, name, sigstr) (register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
+
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
 {
@@ -364,7 +368,8 @@ mono_delegate_handle_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
 		goto leave;
 	}
 
-	MonoObjectHandle delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
+	MonoObjectHandle delegate_target;
+	delegate_target = MONO_HANDLE_NEW_GET (MonoObject, delegate, target);
 	if (!MONO_HANDLE_IS_NULL (delegate_target)) {
 		/* Produce a location which can be embedded in JITted code */
 		target_handle = mono_gchandle_new_weakref_from_handle (delegate_target);
@@ -748,13 +753,13 @@ mono_byvalarray_to_array (MonoArray *arr, gpointer native_arr, MonoClass *elclas
 
 	if (elclass == mono_defaults.byte_class) {
 		GError *gerror = NULL;
-		guint16 *ut;
+		gunichar2 *ut;
 		glong items_written;
 
 		ut = g_utf8_to_utf16 ((const gchar *)native_arr, elnum, NULL, &items_written, &gerror);
 
 		if (!gerror) {
-			memcpy (mono_array_addr (arr, guint16, 0), ut, items_written * sizeof (guint16));
+			memcpy (mono_array_addr (arr, gunichar2, 0), ut, items_written * sizeof (gunichar2));
 			g_free (ut);
 		}
 		else
@@ -2188,7 +2193,7 @@ emit_delegate_invoke_internal_noilgen (MonoMethodBuilder *mb, MonoMethodSignatur
 MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method)
 {
-	MonoMethodSignature *sig, *static_sig, *invoke_sig;
+	MonoMethodSignature *sig, *invoke_sig;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	GHashTable *cache;
@@ -2264,7 +2269,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 			return res;
 		cache_key = method->klass;
 	} else if (static_method_with_first_arg_bound) {
-		cache = get_cache (&get_method_image (method)->delegate_bound_static_invoke_cache,
+		cache = get_cache (&get_method_image (target_method)->delegate_bound_static_invoke_cache,
 						   (GHashFunc)mono_signature_hash, 
 						   (GCompareFunc)mono_metadata_signature_equal);
 		/*
@@ -2302,10 +2307,10 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		cache_key = sig;
 	}
 
-	static_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
-	static_sig->hasthis = 0;
-	if (!static_method_with_first_arg_bound)
-		invoke_sig = static_sig;
+	if (!static_method_with_first_arg_bound) {
+		invoke_sig = mono_metadata_signature_dup_full (get_method_image (method), sig);
+		invoke_sig->hasthis = 0;
+	}
 
 	if (static_method_with_first_arg_bound)
 		name = mono_signature_to_name (invoke_sig, "invoke_bound");
@@ -2594,7 +2599,11 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 	const char *param_names [16];
 	WrapperInfo *info;
 	MonoWrapperMethodCacheKey *method_key;
-	MonoWrapperMethodCacheKey method_key_lookup_only = { .method = method, .virtual_ = virtual_, .need_direct_wrapper = need_direct_wrapper };
+	MonoWrapperMethodCacheKey method_key_lookup_only;
+	memset (&method_key_lookup_only, 0, sizeof (method_key_lookup_only));
+	method_key_lookup_only.method = method;
+	method_key_lookup_only.virtual_ = virtual_;
+	method_key_lookup_only.need_direct_wrapper = need_direct_wrapper;
 	method_key = &method_key_lookup_only;
 
 	g_assert (method);
@@ -2647,7 +2656,10 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		MonoMethodSignature *tmp_sig;
 
 		callsig = mono_marshal_get_runtime_invoke_sig (callsig);
-		MonoWrapperSignatureCacheKey sig_key = { .signature = callsig, .valuetype = m_class_is_valuetype (method->klass)};
+		MonoWrapperSignatureCacheKey sig_key;
+		memset (&sig_key, 0, sizeof (sig_key));
+		sig_key.signature = callsig;
+		sig_key.valuetype = m_class_is_valuetype (method->klass);
 
 		cache_table = &mono_method_get_wrapper_cache (method)->runtime_invoke_signature_cache;
 		sig_cache = get_cache (cache_table, (GHashFunc) wrapper_cache_signature_key_hash, (GCompareFunc) wrapper_cache_signature_key_equal);
@@ -4527,7 +4539,7 @@ mono_marshal_get_virtual_stelemref_wrappers (int *nwrappers)
 	*nwrappers = STELEMREF_KIND_COUNT;
 	res = (MonoMethod **)g_malloc0 (STELEMREF_KIND_COUNT * sizeof (MonoMethod*));
 	for (i = 0; i < STELEMREF_KIND_COUNT; ++i)
-		res [i] = get_virtual_stelemref_wrapper (i);
+		res [i] = get_virtual_stelemref_wrapper ((MonoStelemrefKind)i);
 	return res;
 }
 
@@ -5035,10 +5047,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 }
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const guint16 *ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error)
 {
 	gsize len = 0;
-	const guint16 *t = ptr;
+	const gunichar2 *t = ptr;
 
 	if (!ptr)
 		return NULL_HANDLE_STRING;
@@ -5053,7 +5065,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const guint16 *
 }
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const guint16 *ptr, gint32 len, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunichar2 *ptr, gint32 len, MonoError *error)
 {
 	if (!ptr) {
 		mono_error_set_argument_null (error, "ptr", "");
@@ -5728,7 +5740,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			gboolean as_field, gboolean unicode)
 {
 	gint32 padded_size;
-	MonoMarshalNative native_type = mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
+	MonoMarshalNative native_type = (MonoMarshalNative)mono_type_to_unmanaged (type, mspec, as_field, unicode, NULL);
 	MonoClass *klass;
 
 	switch (native_type) {

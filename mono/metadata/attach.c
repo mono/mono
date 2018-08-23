@@ -276,7 +276,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	gpointer pa [1];
 	MonoImageOpenStatus open_status;
 
-	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -491,7 +491,7 @@ transport_start_receive (void)
 	if (!listen_fd)
 		return;
 
-	internal = mono_thread_create_internal (mono_get_root_domain (), receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	internal = mono_thread_create_internal (mono_get_root_domain (), (gpointer)receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	mono_error_assert_ok (error);
 
 	receiver_thread_handle = mono_threads_open_thread_handle (internal->handle);

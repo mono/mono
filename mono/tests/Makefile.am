@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = gc-descriptors . testing_gac
+SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
 
 check-local:
 	ok=:; \
@@ -21,6 +21,7 @@ check-local:
 	$(MAKE) test-internalsvisibleto || ok=false; \
 	$(MAKE) rm-empty-logs || ok=false; \
 	$(MAKE) runtest-gac-loading || ok=false; \
+	$(MAKE) runtest-assembly-load-reference || ok=false; \
 	$$ok
 
 BUILT_SOURCES =
@@ -206,7 +207,7 @@ MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
-	-nowarn:0197 $(PROFILE_MCS_FLAGS)
+	-nowarn:0197 -langversion:latest $(PROFILE_MCS_FLAGS)
 MCS_NO_LIB = $(MCS_NO_UNSAFE) -unsafe
 
 MCS = $(MCS_NO_LIB)
@@ -688,7 +689,8 @@ TESTS_CS_SRC=		\
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
-	verbose.cs
+	verbose.cs \
+	generic-unmanaged-constraint.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -871,7 +873,7 @@ endif # HOST_WIN32
 endif # HOST_WASM
 endif # CROSS_COMPILING
 
-BUILT_SOURCES=$(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
+BUILT_SOURCES += $(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
 
 TESTS_IL_SRC=			\
 	tailcall/2.il	     \
@@ -1244,6 +1246,7 @@ PROFILE_DISABLED_TESTS += \
 	invalid-token.exe \
 	call_missing_method.exe \
 	call_missing_class.exe \
+	custom-attr-errors.exe \
 	ldfld_missing_field.exe \
 	ldfld_missing_class.exe \
 	vt-sync-method.exe \
@@ -1373,6 +1376,9 @@ PROFILE_DISABLED_TESTS += \
 	assembly-load-bytes.exe \
 	assembly-load-bytes-bindingredirect.exe
 
+# Tests which require AOT of a multi-netmodule assemblies
+PROFILE_DISABLED_TESTS += test-multi-netmodule-4-exe.exe
+
 # Tests which depend on a case-insensitive filesystem when using AOT
 if HOST_DARWIN
 else
@@ -1483,7 +1489,6 @@ CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
 	main-returns-background-abort-resetabort.exe	\
 	assemblyresolve_event3.exe \
-	delegate2.exe	\
 	finally_guard.exe \
 	generic-xdomain.2.exe
 
@@ -1491,6 +1496,9 @@ CI_DISABLED_TESTS = \
 # so they don't interfere with other people's work
 CI_PR_DISABLED_TESTS = \
 	appdomain-threadpool-unload.exe
+
+# FIXME Hybrid Suspend - see https://github.com/mono/mono/issues/9959
+# CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1934,7 +1942,7 @@ test-env-options:
 compile-tests:
 	$(MAKE) -j4 compile-tests-parallel
 
-compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading
+compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -2056,7 +2064,7 @@ test-multi-netmodule-4-exe.exe: test-multi-netmodule-4-exe.cs test-multi-netmodu
 	$(Q) $(MCS) -r:test-multi-netmodule-2-dll1.dll -out:$@ $<
 
 test-multi-netmodule: test-multi-netmodule-4-exe.exe
-	$(Q) $(RUNTIME) test-multi-netmodule-4-exe.exe > test-multi-netmodule-4-exe.exe.stdout 2> test-multi-netmodule-4-exe.exe.stderr
+	$(Q) $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" $<
 
 EXTRA_DIST += custom-attr-errors.cs custom-attr-errors-lib.cs
 
@@ -2066,7 +2074,7 @@ custom-attr-errors.exe custom-attr-errors-lib.dll: custom-attr-errors.cs custom-
 	$(Q) $(MCS) /t:library custom-attr-errors-lib.cs
 
 test-cattr-type-load: custom-attr-errors.exe
-	$(Q) $(RUNTIME) custom-attr-errors.exe > custom-attr-errors.exe.stdout 2> custom-attr-errors.exe.stderr
+	$(Q) $(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ --disabled "$(DISABLED_TESTS)" $<
 
 EXTRA_DIST += reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
 
@@ -2899,6 +2907,13 @@ runtest-gac-loading: test-runner.exe
 
 compile-gac-loading:
 	$(MAKE) -C testing_gac compile-tests
+
+runtest-assembly-load-reference: test-runner.exe
+	$(MAKE) -C assembly-load-reference runtest
+
+compile-assembly-load-reference:
+	$(MAKE) -C assembly-load-reference compile-tests
+
 
 TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-1.cs	\

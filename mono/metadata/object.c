@@ -1672,7 +1672,7 @@ mono_vtable_build_imt_slot (MonoVTable* vtable, int imt_slot)
  * LOCKING: The domain lock must be held.
  */
 gpointer
-mono_method_alloc_generic_virtual_trampoline (MonoDomain *domain, int size)
+(mono_method_alloc_generic_virtual_trampoline) (MonoDomain *domain, int size)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
@@ -2383,7 +2383,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 	/* initialize vtable */
 	mono_class_setup_vtable (klass);
-	MonoMethod **klass_vtable = m_class_get_vtable (klass);
+	MonoMethod **klass_vtable;
+	klass_vtable = m_class_get_vtable (klass);
 	for (i = 0; i < m_class_get_vtable_size (klass); ++i) {
 		MonoMethod *cm;
 		    
@@ -3502,7 +3503,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 	MonoObject *o;
 	MonoClass *klass;
 	MonoVTable *vtable = NULL;
-	gchar *v;
+	gpointer v;
 	gboolean is_static = FALSE;
 	gboolean is_ref = FALSE;
 	gboolean is_literal = FALSE;
@@ -3584,7 +3585,6 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 		static MonoMethod *m;
 		gpointer args [2];
 		gpointer *ptr;
-		gpointer v;
 
 		if (!m) {
 			MonoClass *ptr_klass = mono_class_get_pointer_class ();
@@ -3623,7 +3623,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 
 	o = mono_object_new_checked (domain, klass, error);
 	return_val_if_nok (error, NULL);
-	v = (gpointer)mono_object_get_data (o);
+	v = mono_object_get_data (o);
 
 	if (is_literal) {
 		get_default_field_value (domain, field, v, error);
@@ -3638,13 +3638,15 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 	return o;
 }
 
-int
-mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const char *blob, void *value, MonoError *error)
+/*
+ * Important detail, if type is MONO_TYPE_STRING we return a blob encoded string (ie, utf16 + leb128 prefixed size)
+ */
+gboolean
+mono_metadata_read_constant_value (const char *blob, MonoTypeEnum type, void *value, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
-	int retval = 0;
+	gboolean retval = TRUE;
 	const char *p = blob;
 	mono_metadata_decode_blob_size (p, &p);
 
@@ -3674,16 +3676,30 @@ mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const 
 		readr8 (p, (double*) value);
 		break;
 	case MONO_TYPE_STRING:
-		*(gpointer*) value = mono_ldstr_metadata_sig (domain, blob, error);
+		*(const char**) value = blob;
 		break;
 	case MONO_TYPE_CLASS:
 		*(gpointer*) value = NULL;
 		break;
 	default:
-		retval = -1;
-		g_warning ("type 0x%02x should not be in constant table", type);
+		retval = FALSE;
+		mono_error_set_execution_engine (error, "Type 0x%02x should not be in constant table", type);
 	}
 	return retval;
+}
+
+int
+mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const char *blob, void *value, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE
+
+	if (!mono_metadata_read_constant_value (blob, type, value, error))
+		return -1;
+
+	if (type == MONO_TYPE_STRING)
+		*(gpointer*)value = mono_ldstr_metadata_sig (domain, *(const char**)value, error);
+
+	return 0;
 }
 
 static void
@@ -4604,7 +4620,8 @@ make_transparent_proxy (MonoObjectHandle obj, MonoError *error)
 	MonoDomain *domain = mono_domain_get ();
 	MonoRealProxyHandle real_proxy = MONO_HANDLE_CAST (MonoRealProxy, mono_object_new_handle (domain, mono_defaults.real_proxy_class, error));
 	goto_if_nok (error, return_null);
-	MonoReflectionTypeHandle reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
+	MonoReflectionTypeHandle reflection_type;
+	reflection_type = mono_type_get_object_handle (domain, m_class_get_byval_arg (mono_handle_class (obj)), error);
 	goto_if_nok (error, return_null);
 
 	MONO_HANDLE_SET (real_proxy, class_to_proxy, reflection_type);
@@ -4675,13 +4692,14 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	goto_if_nok (error, return_null);
 	g_assert (method);
 
-	MonoBoolean is_terminating = TRUE;
-	gpointer args [ ] = {
-		MONO_HANDLE_RAW (exc), // FIXMEcoop
-		&is_terminating
-	};
+	MonoBoolean is_terminating;
+	is_terminating = TRUE;
+	gpointer args [2];
+	args [0] = MONO_HANDLE_RAW (exc); // FIXMEcoop
+	args [1] = &is_terminating;
 
-	MonoObjectHandle obj = mono_object_new_handle (mono_domain_get (), klass, error);
+	MonoObjectHandle obj;
+	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
 	mono_runtime_invoke_handle (method, obj, args, error);
@@ -5324,7 +5342,7 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 	gboolean has_byref_nullables = FALSE;
 
 	if (NULL != params) {
-		pa = (void **)alloca (sizeof (gpointer) * mono_array_length (params));
+		pa = g_newa (gpointer, mono_array_length (params));
 		for (i = 0; i < mono_array_length (params); i++) {
 			MonoType *t = sig->params [i];
 			pa [i] = invoke_array_extract_argument (params, i, t, &has_byref_nullables, error);
@@ -5610,7 +5628,7 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 	vtable = mono_class_vtable_checked (domain, klass, error);
 	return_val_if_nok (error, NULL);
 
-	MonoObject *o = (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
+	MonoObject *o = mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
 
 	return object_new_common_tail (o, klass, error);
 }
@@ -6028,8 +6046,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array_handle, Mo
 		size *= mono_array_element_size (klass);
 	} else {
 		guint8 klass_rank = m_class_get_rank (klass);
-		uintptr_t *sizes = (uintptr_t *)alloca (klass_rank * sizeof (uintptr_t));
-		intptr_t *lower_bounds = (intptr_t *)alloca (klass_rank * sizeof (intptr_t));
+		uintptr_t *sizes = g_newa (uintptr_t, klass_rank);
+		intptr_t *lower_bounds = g_newa (intptr_t, klass_rank);
 		size = mono_array_element_size (klass);
 		for (int i = 0; i < klass_rank; ++i) {
 			sizes [i] = array_bounds [i].length;
@@ -6040,7 +6058,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array_handle, Mo
 		goto_if_nok (error, leave);
 	}
 
-	uint32_t dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
+	uint32_t dst_handle;
+	dst_handle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, o), TRUE);
 	array_full_copy_unchecked_size (MONO_HANDLE_RAW (array_handle), MONO_HANDLE_RAW (o), klass, size);
 	mono_gchandle_free (dst_handle);
 
@@ -6395,7 +6414,7 @@ mono_string_empty_handle (MonoDomain *domain)
  * \returns A newly created string object which contains \p text.
  */
 MonoString *
-mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
+mono_string_new_utf16 (MonoDomain *domain, const mono_unichar2 *text, gint32 len)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6416,7 +6435,7 @@ mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
  * On error, returns NULL and sets \p error.
  */
 MonoString *
-mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error)
+mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -6440,7 +6459,7 @@ mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 l
  * On error, returns NULL and sets \p error.
  */
 MonoStringHandle
-mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error)
+mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
 }
@@ -6575,7 +6594,7 @@ mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint len
 
 	GError *eg_error = NULL;
 	MonoStringHandle o = NULL_HANDLE_STRING;
-	guint16 *ut = NULL;
+	gunichar2 *ut = NULL;
 	glong items_written;
 
 	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
@@ -6647,7 +6666,7 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
-	guint16 *ut;
+	gunichar2 *ut;
 	glong items_written;
 	int len;
 
@@ -6711,7 +6730,7 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 
 	GError *eg_error = NULL;
 	MonoString *o = NULL;
-	guint16 *ut = NULL;
+	gunichar2 *ut = NULL;
 	glong items_written;
 
 	ut = eg_wtf8_to_utf16 (text, length, NULL, &items_written, &eg_error);
@@ -6795,7 +6814,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
@@ -6860,7 +6879,7 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
 
-	guint8 *data = mono_object_get_data (res);
+	gpointer data = mono_object_get_data (res);
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		mono_gc_wbarrier_value_copy (data, value, 1, klass);
@@ -7109,7 +7128,8 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 	if (MONO_HANDLE_IS_NULL (obj))
 		goto leave;
 
-	MonoVTable *vt = MONO_HANDLE_GETVAL (obj, vtable);
+	MonoVTable *vt;
+	vt = MONO_HANDLE_GETVAL (obj, vtable);
 	
 	if (mono_class_is_interface (klass)) {
 		if (MONO_VTABLE_IMPLEMENTS_INTERFACE (vt, m_class_get_interface_id (klass))) {
@@ -7369,6 +7389,26 @@ mono_ldstr_handle (MonoDomain *domain, MonoImage *image, guint32 idx, MonoError 
 	return MONO_HANDLE_NEW (MonoString, mono_ldstr_checked (domain, image, idx, error));
 }
 
+
+char*
+mono_string_from_blob (const char *str, MonoError *error)
+{
+	gsize len = mono_metadata_decode_blob_size (str, &str) >> 1;
+
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
+	gunichar2 *src = (gunichar2*)str;
+	gunichar2 *copy = g_new (gunichar2, len);
+	int i;
+	for (i = 0; i < len; ++i)
+		copy [i] = GUINT16_FROM_LE (src [i]);
+
+	char *res = mono_utf16_to_utf8 (copy, len, error);
+	g_free (copy);
+	return res;
+#else
+	return mono_utf16_to_utf8 ((const gunichar2*)str, len, error);
+#endif
+}
 /**
  * mono_ldstr_metadata_sig
  * \param domain the domain for the string
@@ -7390,12 +7430,12 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error)
 	len2 = mono_metadata_decode_blob_size (str, &str);
 	len2 >>= 1;
 
-	o = mono_string_new_utf16_checked (domain, (guint16*)str, len2, error);
+	o = mono_string_new_utf16_checked (domain, (gunichar2*)str, len2, error);
 	return_val_if_nok (error, NULL);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	{
 		int i;
-		guint16 *p2 = (guint16*)mono_string_chars (o);
+		gunichar2 *p2 = (gunichar2*)mono_string_chars (o);
 		for (i = 0; i < len2; ++i) {
 			*p2 = GUINT16_FROM_LE (*p2);
 			++p2;
@@ -7446,7 +7486,7 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error)
 	len2 = mono_metadata_decode_blob_size (str, &str);
 	len2 >>= 1;
 
-	as = g_utf16_to_utf8 ((guint16*)str, len2, NULL, &written, &gerror);
+	as = g_utf16_to_utf8 ((gunichar2*)str, len2, NULL, &written, &gerror);
 	if (gerror) {
 		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);

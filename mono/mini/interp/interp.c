@@ -768,7 +768,7 @@ ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackva
 	MonoObject *obj;
 	int i;
 
-	lengths = (uintptr_t*)alloca (sizeof (uintptr_t) * m_class_get_rank (klass) * 2);
+	lengths = g_newa (uintptr_t, m_class_get_rank (klass) * 2);
 	for (i = 0; i < param_count; ++i) {
 		lengths [i] = values->data.i;
 		values ++;
@@ -1267,7 +1267,7 @@ interp_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpoint
 	}
 
 	g_assert (imethod->method);
-	gpointer entry = mini_get_interp_callbacks ()->create_method_pointer (imethod->method, error);
+	gpointer entry = mini_get_interp_callbacks ()->create_method_pointer (imethod->method, FALSE, error);
 	return_if_nok (error);
 
 	MONO_HANDLE_SETVAL (MONO_HANDLE_CAST (MonoDelegate, this_obj), interp_method, gpointer, imethod);
@@ -1579,7 +1579,6 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	MonoMethodSignature *sig = mono_method_signature (method);
 	MonoClass *klass = mono_class_from_mono_type (sig->ret);
 	stackval result;
-	stackval *args;
 	MonoMethod *target_method = method;
 
 	error_init (error);
@@ -1603,7 +1602,7 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	//* <code>MonoObject *runtime_invoke (MonoObject *this_obj, void **params, MonoObject **exc, void* method)</code>
 
 	result.data.vt = alloca (mono_class_instance_size (klass));
-	args = (stackval*)alloca (sizeof (stackval) * 4);
+	stackval args [4];
 
 	if (sig->hasthis)
 		args [0].data.p = obj;
@@ -1670,7 +1669,7 @@ interp_entry (InterpEntryData *data)
 	}
 	old_frame = context->current_frame;
 
-	args = (stackval*)alloca (sizeof (stackval) * (sig->param_count + (sig->hasthis ? 1 : 0)));
+	args = g_newa (stackval, sig->param_count + (sig->hasthis ? 1 : 0));
 	if (sig->hasthis)
 		args [0].data.p = data->this_arg;
 
@@ -2416,7 +2415,7 @@ interp_no_native_to_managed (void)
  * interpreter. Return NULL for methods which are not supported.
  */
 static gpointer
-interp_create_method_pointer (MonoMethod *method, MonoError *error)
+interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *error)
 {
 #ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
 	return interp_no_native_to_managed;
@@ -2425,6 +2424,12 @@ interp_create_method_pointer (MonoMethod *method, MonoError *error)
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *info;
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
+
+	if (compile) {
+		/* Return any errors from method compilation */
+		mono_interp_transform_method (imethod, (ThreadContext*)mono_native_tls_get_value (thread_context_id), error);
+		return_val_if_nok (error, NULL);
+	}
 
 	/* HACK: method_ptr of delegate should point to a runtime method*/
 	if (method->wrapper_type && (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD ||
@@ -2612,14 +2617,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	}
 
 	if (!start_with_ip) {
-		frame->args = (char*)alloca (rtm->alloca_size);
+		frame->args = g_newa (char, rtm->alloca_size);
 		memset (frame->args, 0, rtm->alloca_size);
 
 		ip = rtm->code;
 	} else {
 		ip = start_with_ip;
 		if (base_frame) {
-			frame->args = (char*)alloca (rtm->alloca_size);
+			frame->args = g_newa (char, rtm->alloca_size);
 			memcpy (frame->args, base_frame->args, rtm->alloca_size);
 		}
 	}
@@ -2793,7 +2798,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			 * than the callee stack frame (at the interp level)
 			 */
 			if (realloc_frame) {
-				frame->args = (char*)alloca (rtm->alloca_size);
+				frame->args = g_newa (char, rtm->alloca_size);
 				memset (frame->args, 0, rtm->alloca_size);
 				sp = frame->stack = (stackval *) ((char *) frame->args + rtm->args_size);
 			}
@@ -2909,7 +2914,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				MonoMethod *m;
 
 				/* Pinvoke call is missing the wrapper. See mono_get_native_calli_wrapper */
-				mspecs = (MonoMarshalSpec**)alloca (sizeof (MonoMarshalSpec*) * (csignature->param_count + 1));
+				mspecs = g_newa (MonoMarshalSpec*, csignature->param_count + 1);
 				memset (&piinfo, 0, sizeof (piinfo));
 
 				m = mono_marshal_get_native_func_wrapper (m_class_get_image (frame->imethod->method->klass), csignature, &piinfo, mspecs, code);
@@ -5700,12 +5705,16 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 {
 	InterpFrame *iframe = (InterpFrame*)frame->interp_frame;
 	ThreadContext *context = (ThreadContext*)mono_native_tls_get_value (thread_context_id);
+	const unsigned short *old_ip = iframe->ip;
+
 
 	interp_exec_method_full (iframe, context, (guint16*)handler_ip, NULL, clause_index, NULL);
-	if (context->has_resume_state)
+	if (context->has_resume_state) {
 		return TRUE;
-	else
+	} else {
+		iframe->ip = old_ip;
 		return FALSE;
+	}
 }
 
 /*

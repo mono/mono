@@ -34,4 +34,10 @@ endif
 # Override this so we don't try to re-copy llvm when we install mono
 install:
 
+if TARGET_WASM
+LLVM_TARGET=wasm32
+else
+LLVM_TARGET=
+endif
+
 include build.mk

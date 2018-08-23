@@ -59,6 +59,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract bool Build (X509Certificate2 certificate);
 
+		public abstract void AddStatus (X509ChainStatusFlags errorCode);
+
 		public abstract void Reset ();
 
 		public void Dispose ()

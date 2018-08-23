@@ -97,7 +97,7 @@ typedef struct {
 	const char *osVersion; 
 	int uiLidArg; // Application LCID 
 
-	const char systemModel [100];
+	char systemModel [100];
 	const char *systemManufacturer;
 
 	const char *eventType;
@@ -318,9 +318,14 @@ get_apple_model (char *buffer, size_t max_length)
 	sysctlbyname("hw.model", buffer, &sz, NULL, 0);
 }
 
+static void
+mono_merp_free (MERPStruct *merp)
+{
+	g_free ((char *)merp->moduleVersion);
+}
 
 static void
-mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *hashes, MERPStruct *merp, const char *version)
+mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *hashes, MERPStruct *merp)
 {
 	g_assert (mono_merp_enabled ());
 
@@ -338,7 +343,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->servicePathArg = config.appPath;
 
 	merp->moduleName = "Mono Exception";
-	merp->moduleVersion = version;
+	merp->moduleVersion = mono_get_runtime_callbacks ()->get_runtime_build_info ();
 
 	merp->moduleOffset = 0;
 
@@ -426,7 +431,7 @@ mono_merp_fingerprint_payload (const char *non_param_data, const MERPStruct *mer
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "SystemModel:");
-	mono_json_writer_printf (&writer, "\"%s\"\n", merp->systemModel);
+	mono_json_writer_printf (&writer, "\"%s\",\n", merp->systemModel);
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "EventType:");
@@ -514,12 +519,12 @@ mono_wer_template (MERPStruct *merp)
 }
 
 void
-mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes, char *version)
+mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes)
 {
 	MERPStruct merp;
 	memset (&merp, 0, sizeof (merp));
-	mono_init_merp (crashed_pid, signal, hashes, &merp, version);
 
+	mono_init_merp (crashed_pid, signal, hashes, &merp);
 	gchar *merpCfg = mono_encode_merp_params (&merp);
 	gchar *fullData = mono_merp_fingerprint_payload (non_param_data, &merp);
 	gchar *werXmlCfg = mono_wer_template (&merp);
@@ -527,6 +532,7 @@ mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *no
 	// Write out to disk, start program
 	mono_merp_send (merpCfg, fullData, werXmlCfg);
 
+	mono_merp_free (&merp);
 	g_free (fullData);
 	g_free (merpCfg);
 	g_free (werXmlCfg);

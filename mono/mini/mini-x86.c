@@ -597,7 +597,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 
 	/* Avoid g_malloc as it is not signal safe */
 	len = sizeof (CallInfo) + (sizeof (ArgInfo) * (csig->param_count + 1));
-	cinfo = (CallInfo*)g_newa (guint8*, len);
+	cinfo = (CallInfo*)g_alloca (len);
 	memset (cinfo, 0, len);
 
 	cinfo = get_call_info_internal (cinfo, csig);
@@ -1026,7 +1026,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	cfg->frame_reg = X86_EBP;
 	offset = 0;
@@ -1193,7 +1193,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	sig_ret = mini_get_underlying_type (sig->ret);
 
@@ -1687,7 +1687,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 void*
 mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 	MonoMethodSignature *sig = mono_method_signature (cfg->method);
 	int argument_copy_size = 0;
 	const guint32* param_regs;
@@ -1699,7 +1699,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		MonoJitArgumentInfo* arg_info;
 		int i;
 
-		arg_info = (MonoJitArgumentInfo *)alloca (sizeof (MonoJitArgumentInfo) * (sig->param_count + 1));
+		arg_info = g_newa (MonoJitArgumentInfo, sig->param_count + 1);
 
 		stack_size = mono_arch_get_argument_info (sig, sig->param_count, arg_info);
 
@@ -1768,7 +1768,7 @@ enum {
 void*
 mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 	int arg_size = 0, stack_usage = 0, save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
@@ -5330,7 +5330,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		inst = cfg->args [pos];
@@ -5420,7 +5420,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	}
 
 	/* Load returned vtypes into registers if needed */
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 	if (cinfo->ret.storage == ArgValuetypeInReg) {
 		for (quad = 0; quad < 2; quad ++) {
 			switch (cinfo->ret.pair_storage [quad]) {
@@ -5445,7 +5445,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		x86_leave (code);
 
 	if (CALLCONV_IS_STDCALL (sig)) {
-		MonoJitArgumentInfo *arg_info = alloca (sizeof (MonoJitArgumentInfo) * (sig->param_count + 1));
+		MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, sig->param_count + 1);
 
 		stack_to_pop = mono_arch_get_argument_info (sig, sig->param_count, arg_info);
 	} else if (cinfo->callee_stack_pop)

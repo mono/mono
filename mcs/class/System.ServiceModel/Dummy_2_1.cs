@@ -177,39 +177,34 @@ namespace System.ServiceModel
 	// introduced for silverlight sdk compatibility
 	internal interface IDuplexHelper { }
 
-	[FriendAccessAllowed ()]
-	internal class DiagnosticUtility
+	internal static class DiagnosticUtility
 	{
-		[FriendAccessAllowed ()]
-		internal class ExceptionUtility
+		internal static class ExceptionUtility
 		{
-			public static Exception ThrowHelperArgument (string message) { throw new NotImplementedException (); }
-			
-			public static Exception ThrowHelperArgument (string paramName, string message) { throw new NotImplementedException (); }
-			
-			public static Exception ThrowHelperArgumentNull (string arg)
+			internal static ArgumentException ThrowHelperArgument (string message)
 			{
-				return new ArgumentNullException (arg);
+				return (ArgumentException)ThrowHelperError (new ArgumentException (message));
 			}
 
-			[FriendAccessAllowed]
-			internal static Exception ThrowHelperCallback (Exception e) { throw new NotImplementedException (); }
-			
-			[FriendAccessAllowed]
-			internal static Exception ThrowHelperCallback (string message, Exception innerException) { throw new NotImplementedException (); }
-			
-			public static Exception ThrowHelperError (Exception error)
+			internal static ArgumentException ThrowHelperArgument (string paramName, string message)
 			{
-				return error;
+				return (ArgumentException)ThrowHelperError (new ArgumentException (message, paramName));
 			}
-			
-			[FriendAccessAllowed]
-			internal static Exception ThrowHelperFatal (string message, Exception innerException) { throw new NotImplementedException (); }
-			
-			[FriendAccessAllowed]
-			internal static Exception ThrowHelperInternal (bool fatal) { throw new NotImplementedException (); }
-			
-			public static Exception ThrowHelperWarning (Exception e) { throw new NotImplementedException (); }
+
+			internal static ArgumentNullException ThrowHelperArgumentNull (string paramName)
+			{
+				return (ArgumentNullException)ThrowHelperError (new ArgumentNullException (paramName));
+			}
+
+			internal static Exception ThrowHelperError (Exception exception)
+			{
+				return exception;
+			}
+
+			internal static Exception ThrowHelperWarning (Exception exception)
+			{
+				return exception;
+			}
 		}
 	}
 }

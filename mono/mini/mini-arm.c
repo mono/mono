@@ -502,7 +502,7 @@ mono_arm_emit_vfp_scratch_save (MonoCompile *cfg, guint8 *code, int reg)
 
 	g_assert (reg == vfp_scratch1 || reg == vfp_scratch2);
 
-	inst = (MonoInst *) cfg->arch.vfp_scratch_slots [reg == vfp_scratch1 ? 0 : 1];
+	inst = cfg->arch.vfp_scratch_slots [reg == vfp_scratch1 ? 0 : 1];
 
 	if (IS_HARD_FLOAT) {
 		if (!arm_is_fpimm8 (inst->inst_offset)) {
@@ -522,7 +522,7 @@ mono_arm_emit_vfp_scratch_restore (MonoCompile *cfg, guint8 *code, int reg)
 
 	g_assert (reg == vfp_scratch1 || reg == vfp_scratch2);
 
-	inst = (MonoInst *) cfg->arch.vfp_scratch_slots [reg == vfp_scratch1 ? 0 : 1];
+	inst = cfg->arch.vfp_scratch_slots [reg == vfp_scratch1 ? 0 : 1];
 
 	if (IS_HARD_FLOAT) {
 		if (!arm_is_fpimm8 (inst->inst_offset)) {
@@ -1690,7 +1690,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	ccontext->stack_size = ALIGN_TO (cinfo->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
 	if (ccontext->stack_size)
-		ccontext->stack = calloc (1, ccontext->stack_size);
+		ccontext->stack = (guint8*)calloc (1, ccontext->stack_size);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		ainfo = &cinfo->ret;
@@ -1707,7 +1707,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size)
-			storage = alloca (temp_size);
+			storage = alloca (temp_size); // FIXME? alloca in a loop
 		else
 			storage = arg_get_storage (ccontext, ainfo);
 
@@ -1763,7 +1763,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size) {
-			storage = alloca (temp_size);
+			storage = alloca (temp_size); // FIXME? alloca in a loop
 			arg_get_val (ccontext, ainfo, storage);
 		} else {
 			storage = arg_get_storage (ccontext, ainfo);
@@ -2218,7 +2218,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 			MonoInst *inst = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.double_class), OP_LOCAL);
 			inst->flags |= MONO_INST_VOLATILE;
 
-			cfg->arch.vfp_scratch_slots [i] = (gpointer) inst;
+			cfg->arch.vfp_scratch_slots [i] = inst;
 		}
 	}
 
@@ -2418,10 +2418,10 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		if (!cfg->arch.vret_addr_loc) {
 			cfg->arch.vret_addr_loc = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 			/* Prevent it from being register allocated or optimized away */
-			((MonoInst*)cfg->arch.vret_addr_loc)->flags |= MONO_INST_VOLATILE;
+			cfg->arch.vret_addr_loc->flags |= MONO_INST_VOLATILE;
 		}
 
-		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ((MonoInst*)cfg->arch.vret_addr_loc)->dreg, call->vret_var->dreg);
+		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->arch.vret_addr_loc->dreg, call->vret_var->dreg);
 		break;
 	case RegTypeStructByAddr: {
 		MonoInst *vtarg;
@@ -3164,7 +3164,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 void*
 mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 
 	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
 	ARM_MOV_REG_IMM8 (code, ARMREG_R1, 0); /* NULL ebp for now */
@@ -3185,7 +3185,7 @@ enum {
 void*
 mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);

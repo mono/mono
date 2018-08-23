@@ -99,6 +99,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\ArgumentObject.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.CSharp\src\Microsoft\CSharp\RuntimeBinder\Binder.cs" />
@@ -252,15 +253,16 @@
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
+    <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      <Private>False</Private>
+      <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />

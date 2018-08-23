@@ -875,6 +875,9 @@ mono_metadata_free_inflated_signature (MonoMethodSignature *sig);
 MonoMethodSignature*
 mono_inflate_generic_signature (MonoMethodSignature *sig, MonoGenericContext *context, MonoError *error);
 
+MonoClass*
+mono_generic_param_get_base_type (MonoClass *klass);
+
 typedef struct {
 	MonoImage *corlib;
 	MonoClass *object_class;
@@ -1001,6 +1004,8 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (variant)
 #endif
 
 GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
+
+GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
 
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
@@ -1173,6 +1178,8 @@ mono_class_alloc (MonoClass *klass, int size);
 gpointer
 mono_class_alloc0 (MonoClass *klass, int size);
 
+#define mono_class_alloc0(klass, size) (g_cast (mono_class_alloc0 (klass, size)))
+
 void
 mono_class_setup_interfaces (MonoClass *klass, MonoError *error);
 
@@ -1215,7 +1222,7 @@ void
 mono_unload_interface_id (MonoClass *klass);
 
 GPtrArray*
-mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoError *error);
+mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, guint32 mlisttype, gboolean allow_ctors, MonoError *error);
 
 char*
 mono_class_full_name (MonoClass *klass);

@@ -229,6 +229,7 @@ typedef struct MonoAotOptions {
 	char *llvm_opts;
 	gboolean dump_json;
 	gboolean profile_only;
+	gboolean no_opt;
 } MonoAotOptions;
 
 typedef enum {
@@ -402,7 +403,7 @@ static const struct msgstr_t {
 #undef PATCH_INFO
 };
 static const gint16 opidx [] = {
-#define PATCH_INFO(a,b) [MONO_PATCH_INFO_ ## a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define PATCH_INFO(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "patch-info.h"
 #undef PATCH_INFO
 };
@@ -4858,10 +4859,11 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 
 		iter = NULL;
 		while ((method = mono_class_get_methods (array_class, &iter))) {
-			if (strstr (method->name, name_prefix)) {
+			if (!strncmp (method->name, name_prefix, strlen (name_prefix))) {
 				MonoMethod *m = mono_aot_get_array_helper_from_wrapper (method);
 
-				add_extra_method_with_depth (acfg, m, depth);
+				if (m->is_inflated && !mono_method_is_generic_sharable_full (m, FALSE, FALSE, FALSE))
+					add_extra_method_with_depth (acfg, m, depth);
 			}
 		}
 
@@ -7593,6 +7595,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (!strcmp (arg, "deterministic")) {
 			opts->deterministic = TRUE;
+		} else if (!strcmp (arg, "no-opt")) {
+			opts->no_opt = TRUE;
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -7634,6 +7638,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			printf ("    threads=\n");
 			printf ("    write-symbols\n");
 			printf ("    verbose\n");
+			printf ("    no-opt\n");
 			printf ("    help/?\n");
 			exit (0);
 		} else {
@@ -8316,29 +8321,6 @@ mono_aot_get_method_name (MonoCompile *cfg)
 		return g_strdup_printf ("%s_%s", llvm_acfg->assembly_name_sym, get_debug_sym (cfg->orig_method, "", llvm_acfg->method_label_hash));
 	else
 		return get_debug_sym (cfg->orig_method, "", llvm_acfg->method_label_hash);
-}
-
-/*
- * mono_aot_is_linkonce_method:
- *
- *   Return whenever METHOD should be emitted with linkonce linkage,
- * eliminating duplicate copies when compiling in static mode.
- */
-gboolean
-mono_aot_is_linkonce_method (MonoMethod *method)
-{
-	return FALSE;
-#if 0
-	WrapperInfo *info;
-
-	// FIXME: Add more cases
-	if (method->wrapper_type != MONO_WRAPPER_UNKNOWN)
-		return FALSE;
-	info = mono_marshal_get_wrapper_info (method);
-	if ((info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)))
-		return TRUE;
-	return FALSE;
-#endif
 }
 
 static gboolean
@@ -9069,7 +9051,10 @@ emit_llvm_file (MonoAotCompile *acfg)
 	char *command, *opts, *tempbc, *optbc, *output_fname;
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only) {
-		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
+		if (acfg->aot_opts.no_opt)
+			tempbc = g_strdup (acfg->aot_opts.llvm_outfile);
+		else
+			tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
 		optbc = g_strdup (acfg->aot_opts.llvm_outfile);
 	} else {
 		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
@@ -9078,6 +9063,8 @@ emit_llvm_file (MonoAotCompile *acfg)
 
 	mono_llvm_emit_aot_module (tempbc, g_path_get_basename (acfg->image->name));
 
+	if (acfg->aot_opts.no_opt)
+		return TRUE;
 	/*
 	 * FIXME: Experiment with adding optimizations, the -std-compile-opts set takes
 	 * a lot of time, and doesn't seem to save much space.
@@ -11230,7 +11217,7 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [0] = acfg;
 			user_data [1] = frag;
 			
-			thread = mono_thread_create_internal (mono_domain_get (), compile_thread_main, (gpointer) user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
+			thread = mono_thread_create_internal (mono_domain_get (), (gpointer)compile_thread_main, (gpointer) user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
 			mono_error_assert_ok (error);
 
 			thread_handle = mono_threads_open_thread_handle (thread->handle);

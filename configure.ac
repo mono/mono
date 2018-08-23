@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.17.0],
+AC_INIT(mono, [5.19.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -46,7 +46,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=40525B4A-F860-49BF-936E-6B29CBBF357C
+MONO_CORLIB_VERSION=67C68E7F-E554-4766-A151-8B94F457A035
 
 #
 # Put a quoted #define in config.h.
@@ -105,12 +105,6 @@ need_link_unlink=no
 #Set to extra linker flags to be passed to the runtime binaries (mono /mono-sgen)
 extra_runtime_ldflags=""
 
-
-# Hack for WASM
-# Current autotools (v1.15) doesn't have a triplet we can use for wasm so the kludge we do is to
-# work around it by using a feature flag instead
-AC_ARG_ENABLE(wasm,[  --enable-wasm    Hack to set the current runtime to target wasm], enable_wasm=$enableval)
-
 # Thread configuration inspired by sleepycat's db
 AC_MSG_CHECKING([host platform characteristics])
 
@@ -127,17 +121,14 @@ platform_ios=no
 host_darwin=no
 host_linux=no
 
-
-if test "x$enable_wasm" = "xyes"; then
-CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
-CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -D_GNU_SOURCE -DNO_UNALIGNED_ACCESS -s WASM=1"
-libdl="-ldl"
-libgc_threads=pthreads
-platform_wasm=yes
-
-else
-
 case "$host" in
+	wasm32*)
+		CFLAGS="$CFLAGS -D_REENTRANT -D_GNU_SOURCE -s WASM=1"
+		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DUSE_MMAP -s WASM=1"
+		libdl="-ldl"
+		libgc_threads=pthreads
+		platform_wasm=yes
+		;;
 	*-mingw*|*-*-cygwin*)
 		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
 		AC_DEFINE(HOST_NO_SYMLINKS,1,[This platform does not support symlinks])
@@ -374,7 +365,8 @@ case "$host" in
 		esac
 		;;
 	*-*-haiku*)
-		CPPFLAGS="$CPPFLAGS -D_REENTRANT -D_THREAD_SAFE"
+		dnl BSD_SOURCE is for getifaddrs
+		CPPFLAGS="$CPPFLAGS -D_BSD_SOURCE -D_REENTRANT -D_THREAD_SAFE"
 		libmono_cflags="-D_REENTRANT -D_THREAD_SAFE"
 		libdl=
 		LIBS="$LIBS -lnetwork -ltextencoding"
@@ -384,6 +376,7 @@ case "$host" in
 		with_tls=pthread
 		libgc_threads=pthreads
 		use_sigposix=yes
+		with_sigaltstack=no
 		;;
 	*-*-aix*|*-*-os400*)
 		dnl Set up a 64-bit build
@@ -413,9 +406,6 @@ case "$host" in
 		libdl="-ldl"
 		;;
 esac
-
-# WASM hack
-fi
 
 AC_MSG_RESULT(ok)
 
@@ -668,15 +658,8 @@ if test x$platform_android = xyes; then
 fi # Android
 
 # not 64 bit clean in cross-compile
-if test "x$enable_wasm" = "xyes"; then
-AC_DEFINE(SIZEOF_VOID_P,4)
-AC_DEFINE(SIZEOF_LONG,4)
-ac_cv_sizeof_void_p="4"
-ac_cv_sizeof_long="4"
-else
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(long)
-fi
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long long)
@@ -1000,15 +983,27 @@ fi
 #--with-crash_privacy=no --with-structured_crashes=no means you want to see no crash dumps on failure and you don't care about privacy. This is how you'd set a "don't want it, don't care" configuration.
 #--with-crash_privacy=no --with-structured_crashes=yes means you want full crashes and you want to see them in the terminal, not on telemetry. This is going to be how we build for CI.
 
-AC_ARG_WITH(crash-privacy,       [  --with-crash_privacy=yes,no         If you want your crashes to not include names of symbols present in the binary. ], [], [with_crash_privacy=no])
+AC_ARG_WITH(crash-privacy,       [  --with-crash_privacy=yes,no         If you want your crashes to not include names of symbols present in the binary. ], [], [with_crash_privacy=yes])
 AC_ARG_WITH(structured-crashes,  [  --with-structured_crashes=yes,no    If you want your unmanaged crashes to result in a small crash dump file. ],        [], [with_structured_crashes=yes])
+AC_ARG_ENABLE(crash-reporting,  [  --disable-crash-reporting            Enable or Disable crash reporting subsystem],        [crash_reporting=$enableval], [crash_reporting=yes])
 
-if test "x$with_crash_privacy" = "xno"; then
+if test "x$with_crash_privacy" = "xyes"; then
 AC_DEFINE(MONO_PRIVATE_CRASHES,1,[Do not include names of unmanaged functions in the crash dump])
 fi
 
 if test "x$with_structured_crashes" = "xno"; then
 AC_DEFINE(DISABLE_STRUCTURED_CRASH,1,[Do not create structured crash files during unmanaged crashes])
+fi
+
+case "$host" in
+	*-mingw*|*-*-cygwin*|*-*-aix*|*-*-os400*)
+		crash_reporting=no
+		;;
+esac
+
+if test "x$crash_reporting" != "xyes"; then
+CFLAGS="$CFLAGS -DDISABLE_CRASH_REPORTING=1"
+CXXFLAGS="$CXXFLAGS -DDISABLE_CRASH_REPORTING=1"
 fi
 
 AC_ARG_ENABLE(monodroid, [ --enable-monodroid Enable runtime support for Monodroid (Xamarin.Android)], enable_monodroid=$enableval, enable_monodroid=no)
@@ -1031,7 +1026,8 @@ if test "x$enable_cxx" = "xyes"; then
 
 	# FIXME Centos6 requires a different flag for prerelease C++11.
 	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CXX_ADD_CFLAGS=' -xc++ -std=gnu++11 -fno-exceptions -fno-rtti '
+	CXX_ADD_CFLAGS=' -xc++ -std=gnu++0x -fno-exceptions -fno-rtti '
+	# "c++0x" instead of C++11, for compat with Centos6/gcc4.4
 
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
@@ -1933,6 +1929,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(getrlimit)
 	AC_CHECK_FUNCS(prctl)
 	AC_CHECK_FUNCS(arc4random)
+	AC_CHECK_FUNCS(nl_langinfo)
 
 	AC_CHECK_FUNCS(sched_getaffinity)
 	AC_CHECK_FUNCS(sched_setaffinity)
@@ -2329,6 +2326,23 @@ if test x$host_win32 = xno; then
 		# Yes, we have it...
 		AC_MSG_RESULT(yes)
 		AC_DEFINE(HAVE_GETPROTOBYNAME, 1, [Have getprotobyname])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+	dnl **********************************
+	dnl *** Check for getprotobyname_r ***
+	dnl **********************************
+	AC_MSG_CHECKING(for getprotobyname_r)
+		AC_TRY_LINK([
+		#include <stdio.h>
+		#include <netdb.h>
+	], [
+		getprotobyname_r(NULL, NULL, NULL, 0, NULL);
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_GETPROTOBYNAME_R, 1, [Have getprotobyname_r])
 	], [
 		AC_MSG_RESULT(no)
 	])
@@ -3052,17 +3066,7 @@ if test x$host_win32 = xno; then
 	])
 
 	if test x$host_darwin = xno; then
-		AC_MSG_CHECKING(for struct flock64)
-		AC_TRY_COMPILE([
-			#include <fcntl.h>
-		], [
-			struct flock64;
-		],[
-			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)
-		], [
-			AC_MSG_RESULT(no)
-		])
+		AC_CHECK_TYPES([struct flock64], [AC_DEFINE(HAVE_FLOCK64, 1, struct flock64)], , [#include <fcntl.h>])
 	fi
 
 	AC_CHECK_FUNC(lseek64,           [AC_DEFINE(HAVE_LSEEK64, 1, [lseek64])])
@@ -3914,19 +3918,14 @@ boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
 
-if test "x$enable_wasm" = "xyes"; then
-TARGET=WASM
-HOST=WASM
-arch_target=wasm
-AC_DEFINE(TARGET_WASM, 1, [Target wasm])
-AC_DEFINE(HOST_WASM, 1, [Host wasm])
-BTLS_SUPPORTED=no
-with_tls=pthread
-target_mach=no
-
-else
-
 case "$host" in
+	wasm32*)
+		TARGET=WASM
+		arch_target=wasm
+		BTLS_SUPPORTED=no
+		ACCESS_UNALIGNED="no"
+		with_tls=pthread
+		;;
 	mips*)
 		TARGET=MIPS;
 		arch_target=mips;
@@ -4051,7 +4050,7 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc-*-aix* | powerpc-*-os400* )
+        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
@@ -4147,6 +4146,11 @@ if test "x$host" != "x$target"; then
    with_tls=pthread
    target_mach=no
    case "$target" in
+   wasm32*)
+		TARGET=WASM
+		arch_target=wasm
+		AC_DEFINE(TARGET_WASM, 1, [Target wasm])
+		;;
    arm*-darwin*)
 		TARGET=ARM;
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
@@ -4222,6 +4226,11 @@ if test "x$host" != "x$target"; then
 fi
 
 case "$TARGET" in
+WASM)
+	AC_DEFINE(TARGET_WASM, 1, [...])
+	arch_target=wasm
+	target_sizeof_void_p=4
+	;;
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
 	arch_target=x86
@@ -4263,6 +4272,9 @@ SPARC64)
 esac
 
 case "$HOST" in
+WASM)
+	AC_DEFINE(HOST_WASM, 1, [...])
+	;;
 X86)
 	AC_DEFINE(HOST_X86, 1, [...])
 	;;
@@ -4296,9 +4308,6 @@ SPARC64)
 	;;
 esac
 
-#WASM hack
-fi
-
 MONO_ARCH_GSHAREDVT_SUPPORTED=0
 case "$HOST" in
 X86 | AMD64 | ARM | ARM64)
@@ -4307,6 +4316,7 @@ X86 | AMD64 | ARM | ARM64)
 esac
 
 AM_CONDITIONAL(MONO_ARCH_GSHAREDVT_SUPPORTED, test $MONO_ARCH_GSHAREDVT_SUPPORTED = 1)
+AM_CONDITIONAL(TARGET_WASM, test $arch_target = wasm)
 
 dnl *************
 dnl *** VTUNE ***
@@ -4632,8 +4642,9 @@ if test $found_export_dynamic = no; then
 	LDFLAGS="${old_ldflags}"
 fi
 
-AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h localcharset.h sys/types.h sys/resource.h)
-AC_CHECK_LIB([iconv], [locale_charset],[],[AC_CHECK_LIB([charset], [locale_charset],[LIBS+=" -liconv -lcharset"])])
+AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
+dnl giconv.c will check on HAVE_ICONV_H but we need this for link time
+AC_CHECK_LIB(iconv, iconv_open)
 AC_CHECK_HEADER(alloca.h, [HAVE_ALLOCA_H=1], [HAVE_ALLOCA_H=0])
 AC_SUBST(HAVE_ALLOCA_H)
 
@@ -5540,7 +5551,7 @@ if test x"$GCC" = xyes; then
 fi
 
 # Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules.sh
+(cd $srcdir && scripts/update_submodules.sh)
 
 AC_OUTPUT([
 Makefile
@@ -5568,6 +5579,7 @@ mono/arch/arm64/Makefile
 mono/arch/mips/Makefile
 mono/sgen/Makefile
 mono/tests/Makefile
+mono/tests/assembly-load-reference/Makefile
 mono/tests/tests-config
 mono/tests/gc-descriptors/Makefile
 mono/tests/testing_gac/Makefile
@@ -5806,6 +5818,7 @@ echo "
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
+	crash reporting: $crash_reporting
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

@@ -42,7 +42,7 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.X509 {
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
@@ -59,7 +59,7 @@ namespace Mono.Security.X509 {
 		public PKCS5 () {}
 	}
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
@@ -92,7 +92,7 @@ namespace Mono.Security.X509 {
 	}
 
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
