@@ -16,7 +16,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/ConstructorInfoTests.cs
 ../../../external/corefx/src/System.Reflection/tests/ManifestResourceInfoTests.cs
-../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
+#../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
 
 #TODO: audit the commented out tests and fix or disable
 
@@ -154,6 +154,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
