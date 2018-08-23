@@ -96,42 +96,6 @@ public:
 #endif
 
 #ifdef __cplusplus
-
-#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
-
-// g_cast converts void* to T*.
-// e.g. #define malloc(x) (g_cast (malloc (x)))
-// FIXME It used to do more. Rename?
-struct g_cast
-{
-private:
-	void * const x;
-public:
-	explicit g_cast (void *y) : x(y) { }
-	// Lack of rvalue constructor inhibits ternary operator.
-	// Either don't use ternary, or cast each side.
-	// sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
-	// w32socket.c:1045:24: error: call to deleted constructor of 'monoeg_g_cast'
-	//g_cast (g_cast&& y) : x(y.x) { }
-	g_cast (g_cast&&) = delete;
-	g_cast () = delete;
-	g_cast (const g_cast&) = delete;
-
-	template <typename TTo>
-	operator TTo* () const
-	{
-		return (TTo*)x;
-	}
-};
-
-#else
-
-// FIXME? Parens are omitted to preserve prior meaning.
-#define g_cast(x) x
-
-#endif
-
-#ifdef __cplusplus
 // Provide for math on enums.
 // This alleviates a fair number of casts in porting C to C++.
 // Debugging and typesafety are sacrificed.
