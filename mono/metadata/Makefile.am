@@ -217,6 +217,8 @@ endif
 # Add back CXX_REMOVE_CFLAGS to keep this as C until/unless https://github.com/dotnet/corefx/pull/31342.
 libmono_system_native_la_CFLAGS = -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common -I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native -Wno-typedef-redefinition @CXX_REMOVE_CFLAGS@
 libmono_system_native_la_LDFLAGS = $(libmonoldflags)
+libmono_system_net_security_native_la_CFLAGS = $(libmono_system_native_la_CFLAGS)
+libmono_system_net_security_native_la_LDFLAGS = $(libmono_system_native_la_LDFLAGS)
 
 CLEANFILES = mono-bundle.stamp
 
