@@ -160,11 +160,11 @@
 
 /* Tls variables for each MonoTlsKey */
 
-static MONO_KEYWORD_THREAD gpointer mono_tls_thread MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_jit_tls MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_domain MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_sgen_thread_info MONO_TLS_FAST;
-static MONO_KEYWORD_THREAD gpointer mono_tls_lmf_addr MONO_TLS_FAST;
+static MONO_KEYWORD_THREAD struct _MonoInternalThread *mono_tls_thread MONO_TLS_FAST;
+static MONO_KEYWORD_THREAD struct  MonoJitTlsData     *mono_tls_jit_tls MONO_TLS_FAST;
+static MONO_KEYWORD_THREAD struct _MonoDomain         *mono_tls_domain MONO_TLS_FAST;
+static MONO_KEYWORD_THREAD struct _SgenThreadInfo     *mono_tls_sgen_thread_info MONO_TLS_FAST;
+static MONO_KEYWORD_THREAD struct  MonoLMF           **mono_tls_lmf_addr MONO_TLS_FAST;
 
 #else
 
@@ -294,53 +294,53 @@ mono_tls_get_tls_setter (MonoTlsKey key, gboolean name)
 }
 
 /* Getters for each tls key */
-gpointer mono_tls_get_thread (void)
+struct _MonoInternalThread *mono_tls_get_thread (void)
 {
 	return MONO_TLS_GET_VALUE (mono_tls_thread, mono_tls_key_thread);
 }
 
-gpointer mono_tls_get_jit_tls (void)
+struct  MonoJitTlsData     *mono_tls_get_jit_tls (void)
 {
 	return MONO_TLS_GET_VALUE (mono_tls_jit_tls, mono_tls_key_jit_tls);
 }
 
-gpointer mono_tls_get_domain (void)
+struct _MonoDomain         *mono_tls_get_domain (void)
 {
 	return MONO_TLS_GET_VALUE (mono_tls_domain, mono_tls_key_domain);
 }
 
-gpointer mono_tls_get_sgen_thread_info (void)
+struct _SgenThreadInfo     *mono_tls_get_sgen_thread_info (void)
 {
 	return MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
-gpointer mono_tls_get_lmf_addr (void)
+struct  MonoLMF           **mono_tls_get_lmf_addr (void)
 {
 	return MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr);
 }
 
 /* Setters for each tls key */
-void mono_tls_set_thread (gpointer value)
+void mono_tls_set_thread 	   (struct _MonoInternalThread *value)
 {
 	MONO_TLS_SET_VALUE (mono_tls_thread, mono_tls_key_thread, value);
 }
 
-void mono_tls_set_jit_tls (gpointer value)
+void mono_tls_set_jit_tls 	   (struct  MonoJitTlsData     *value)
 {
 	MONO_TLS_SET_VALUE (mono_tls_jit_tls, mono_tls_key_jit_tls, value);
 }
 
-void mono_tls_set_domain (gpointer value)
+void mono_tls_set_domain 	   (struct _MonoDomain         *value)
 {
 	MONO_TLS_SET_VALUE (mono_tls_domain, mono_tls_key_domain, value);
 }
 
-void mono_tls_set_sgen_thread_info (gpointer value)
+void mono_tls_set_sgen_thread_info (struct _SgenThreadInfo     *value)
 {
 	MONO_TLS_SET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info, value);
 }
 
-void mono_tls_set_lmf_addr (gpointer value)
+void mono_tls_set_lmf_addr 	   (struct  MonoLMF           **value)
 {
 	MONO_TLS_SET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr, value);
 }
