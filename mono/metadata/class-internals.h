@@ -1071,6 +1071,8 @@ mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignatu
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
 
+#define mono_register_jit_icall_full(func, name, sig, nowrap, csym) (mono_register_jit_icall_full ((gpointer)(func), (name), (sig), (nowrap), (csym)))
+
 void
 mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper);
 
