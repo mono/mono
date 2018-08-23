@@ -1068,9 +1068,6 @@ MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
 
 #ifdef __cplusplus
-extern "C++" // in case of surrounding extern "C"
-{
-
 template <typename T>
 inline MonoJitICallInfo *
 mono_register_jit_icall (T func, const char *name, MonoMethodSignature *sig, gboolean is_save)
@@ -1084,8 +1081,6 @@ mono_register_jit_icall_full (T func, const char *name, MonoMethodSignature *sig
 {
 	return mono_register_jit_icall_full ((gconstpointer)func, name, sig, no_wrapper, c_symbol);
 }
-
-} // extern "C++"
 #endif // __cplusplus
 
 void

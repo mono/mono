@@ -246,17 +246,12 @@ void     mono_aot_handle_pagefault          (void *ptr);
 void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
 
 #ifdef __cplusplus
-extern "C++" // in case of surrounding extern "C"
-{
-
 template <typename T>
 inline void
 mono_aot_register_jit_icall (const char *name, T addr)
 {
 	mono_aot_register_jit_icall (name, (gpointer)addr);
 }
-
-} // extern "C++"
 #endif // __cplusplus
 
 guint32  mono_aot_find_method_index         (MonoMethod *method);
