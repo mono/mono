@@ -11,16 +11,10 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
-G_BEGIN_DECLS // FIXMEcxx wasm
-
 #ifndef DISABLE_JIT
-
-G_END_DECLS // FIXMEcxx wasm
 
 #include "ir-emit.h"
 #include "cpu-wasm.h"
-
-G_BEGIN_DECLS // FIXMEcxx wasm
 
  //FIXME figure out if we need to distingush between i,l,f,d types
 typedef enum {
@@ -388,16 +382,16 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 #ifdef HOST_WASM
 
-G_END_DECLS // FIXMEcxx wasm
-
 #include <emscripten.h>
 
-G_BEGIN_DECLS // FIXMEcxx
-
 //functions exported to be used by JS
+G_BEGIN_DECLS
 EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
+
 //JS functions imported that we use
 extern void mono_set_timeout (int t, int d);
+G_END_DECLS
+
 #endif // HOST_WASM
 
 gpointer
@@ -594,6 +588,9 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 The following functions don't belong here, but are due to laziness.
 */
 gboolean mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
+
+G_BEGIN_DECLS
+
 void * getgrnam (const char *name);
 void * getgrgid (gid_t gid);
 int inotify_init (void);
@@ -601,6 +598,7 @@ int inotify_rm_watch (int fd, int wd);
 int inotify_add_watch (int fd, const char *pathname, uint32_t mask);
 int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
 
+G_END_DECLS
 
 //w32file-wasm.c
 gboolean
@@ -621,6 +619,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	return status;
 }
 
+G_BEGIN_DECLS
 
 //llvm builtin's that we should not have used in the first place
 
@@ -703,6 +702,7 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	return 0;
 	
 }
-#endif // HOST_WASM
 
-G_END_DECLS // FIXMEcxx
+G_END_DECLS
+
+#endif // HOST_WASM
