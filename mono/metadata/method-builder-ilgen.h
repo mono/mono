@@ -50,6 +50,20 @@ mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethod
 void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func);
 
+#ifdef __cplusplus
+extern "C++" // in case of surrounding extern "C"
+{
+
+template <typename T>
+inline void
+mono_mb_emit_icall (MonoMethodBuilder *mb, T func)
+{
+	mono_mb_emit_icall (mb, (gpointer)func);
+}
+
+} // extern "C++"
+#endif // __cplusplus
+
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);
 
