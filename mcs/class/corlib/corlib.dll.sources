@@ -1531,8 +1531,8 @@ corefx/BinaryEnums.cs
 ../referencesource/mscorlib/system/threading/synchronizationcontext.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/SynchronizationLockException.cs
 ../referencesource/mscorlib/system/threading/thread.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadAbortException.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/ThreadInterruptedException.cs
+../referencesource/mscorlib/system/threading/threadabortexception.cs
+../referencesource/mscorlib/system/threading/threadinterruptedexception.cs
 ../referencesource/mscorlib/system/threading/ThreadLocal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadPriority.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ThreadStart.cs

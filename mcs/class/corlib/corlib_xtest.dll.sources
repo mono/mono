@@ -152,7 +152,6 @@
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/UIntPtrTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
