@@ -1167,10 +1167,10 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
  always_slowpath:
 	if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, (gpointer)ves_icall_string_alloc);
+		mono_mb_emit_icall (mb, ves_icall_string_alloc);
 	} else {
 		mono_mb_emit_ldarg (mb, 0);
-		mono_mb_emit_icall (mb, (gpointer)ves_icall_object_new_specific);
+		mono_mb_emit_icall (mb, ves_icall_object_new_specific);
 	}
 
 	mono_mb_emit_byte (mb, MONO_CEE_RET);
