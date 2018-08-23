@@ -236,8 +236,8 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	mono_aot_register_jit_icall ("mono_arm_throw_exception", (gpointer)mono_arm_throw_exception);
-	mono_aot_register_jit_icall ("mono_arm_resume_unwind", (gpointer)mono_arm_resume_unwind);
+	mono_aot_register_jit_icall ("mono_arm_throw_exception", mono_arm_throw_exception);
+	mono_aot_register_jit_icall ("mono_arm_resume_unwind", mono_arm_resume_unwind);
 
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();

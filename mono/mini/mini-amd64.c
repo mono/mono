@@ -1316,12 +1316,12 @@ mono_arch_init (void)
 {
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
 
-	mono_aot_register_jit_icall ("mono_amd64_throw_exception", (gpointer)mono_amd64_throw_exception);
-	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", (gpointer)mono_amd64_throw_corlib_exception);
-	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", (gpointer)mono_amd64_resume_unwind);
+	mono_aot_register_jit_icall ("mono_amd64_throw_exception", mono_amd64_throw_exception);
+	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
+	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", (gpointer)mono_amd64_start_gsharedvt_call);
+	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
 #endif
 
 	if (!mono_aot_only)
