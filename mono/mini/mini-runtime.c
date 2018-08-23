@@ -202,7 +202,7 @@ get_method_from_ip (void *ip)
 		else
 			return NULL;
 	} else if (ji->is_trampoline) {
-		res = g_strdup_printf ("<%p - %s trampoline>", ip, ((MonoTrampInfo*)ji->d.tramp_info)->name);
+		res = g_strdup_printf ("<%p - %s trampoline>", ip, ji->d.tramp_info->name);
 		return res;
 	}
 
@@ -268,7 +268,7 @@ mono_print_method_from_ip (void *ip)
 		domain = mono_get_root_domain ();
 	ji = mini_jit_info_table_find_ext (domain, (char *)ip, TRUE, &target_domain);
 	if (ji && ji->is_trampoline) {
-		MonoTrampInfo *tinfo = (MonoTrampInfo *)ji->d.tramp_info;
+		MonoTrampInfo *tinfo = ji->d.tramp_info;
 
 		printf ("IP %p is at offset 0x%x of trampoline '%s'.\n", ip, (int)((guint8*)ip - tinfo->code), tinfo->name);
 		return;
@@ -426,7 +426,7 @@ mono_tramp_info_create (const char *name, guint8 *code, guint32 code_size, MonoJ
 {
 	MonoTrampInfo *info = g_new0 (MonoTrampInfo, 1);
 
-	info->name = g_strdup ((char*)name);
+	info->name = g_strdup (name);
 	info->code = code;
 	info->code_size = code_size;
 	info->ji = ji;

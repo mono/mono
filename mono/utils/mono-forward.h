@@ -8,5 +8,6 @@
 #define _MONO_UTILS_FORWARD_
 
 typedef struct _MonoDomain MonoDomain;
+typedef struct _MonoJitInfo MonoJitInfo;
 
 #endif

@@ -217,11 +217,11 @@ struct _MonoJitInfo {
 		MonoMethod *method;
 		MonoImage *image;
 		MonoAotModule *aot_info;
-		gpointer tramp_info;
+		MonoTrampInfo *tramp_info;
 	} d;
 	union {
-		struct _MonoJitInfo *next_jit_code_hash;
-		struct _MonoJitInfo *next_tombstone;
+		MonoJitInfo *next_jit_code_hash;
+		MonoJitInfo *next_tombstone;
 	} n;
 	gpointer    code_start;
 	guint32     unwind_info;

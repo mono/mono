@@ -13,6 +13,7 @@ typedef struct MonoAotModule MonoAotModule;
 typedef struct MonoHandleStack MonoHandleStack;
 typedef struct MonoJitTlsData MonoJitTlsData;
 typedef struct MonoLMF MonoLMF;
+typedef struct MonoTrampInfo MonoTrampInfo;
 typedef struct _MonoInternalThread MonoInternalThread;
 typedef struct _SgenThreadInfo SgenThreadInfo;
 
