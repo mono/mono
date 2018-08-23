@@ -1068,13 +1068,29 @@ mono_create_icall_signature (const char *sigstr);
 MonoJitICallInfo *
 mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean is_save);
 
-// Cast the first parameter to gpointer; macros do not recurse.
-#define mono_register_jit_icall(func, name, sig, no_wrapper) (mono_register_jit_icall ((gpointer)(func), (name), (sig), (no_wrapper)))
-
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol);
 
-#define mono_register_jit_icall_full(func, name, sig, nowrap, csym) (mono_register_jit_icall_full ((gpointer)(func), (name), (sig), (nowrap), (csym)))
+#ifdef __cplusplus
+extern "C++" // in case of surrounding extern "C"
+{
+
+template <typename T>
+inline MonoJitICallInfo *
+mono_register_jit_icall (T func, const char *name, MonoMethodSignature *sig, gboolean is_save)
+{
+	return mono_register_jit_icall ((gconstpointer)func, name, sig, is_save);
+}
+
+template <typename T>
+inline MonoJitICallInfo *
+mono_register_jit_icall_full (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper, const char *c_symbol)
+{
+	return mono_register_jit_icall_full ((gconstpointer)func, name, sig, no_wrapper, c_symbol);
+}
+
+} // extern "C++"
+#endif // __cplusplus
 
 void
 mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper);
