@@ -320,10 +320,8 @@ mono_install_marshal_callbacks (MonoMarshalCallbacks *cb);
 
 /* marshaling helper functions */
 
-G_BEGIN_DECLS // FIXMEcxx for pedump
 void
 mono_marshal_init (void);
-G_END_DECLS // FIXMEcxx for pedump
 
 void
 mono_marshal_init_tls (void);

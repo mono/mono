@@ -17,6 +17,8 @@ static_libs=	\
 runtime_lib=$(static_libs)
 endif
 
+CXXFLAGS += @CXXFLAGS_COMMON@
+
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
 else
