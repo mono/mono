@@ -4,8 +4,6 @@
 #include <mono/utils/mono-sigcontext.h>
 #include <mono/utils/mono-context.h>
 
-G_BEGIN_DECLS
-
 #define MONO_ARCH_CPU_SPEC mono_wasm_desc
 
 #define MONO_MAX_IREGS 1
@@ -105,13 +103,16 @@ typedef struct {
 
 void mono_wasm_debugger_init (void);
 
+G_BEGIN_DECLS // see sdks/wasm/driver.c
+
 void mono_wasm_enable_debugging (void);
+
+G_END_DECLS
+
 void mono_wasm_breakpoint_hit (void);
 void mono_wasm_set_timeout (int timeout, int id);
 
 void mono_wasm_single_step_hit (void);
 void mono_wasm_breakpoint_hit (void);
-
-G_END_DECLS
 
 #endif /* __MONO_MINI_WASM_H__ */  
