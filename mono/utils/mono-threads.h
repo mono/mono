@@ -71,8 +71,6 @@ typedef gsize (*MonoThreadStart)(gpointer);
 
 #endif /* #ifdef HOST_WIN32 */
 
-G_BEGIN_DECLS // FIXMEcxx for wasm
-
 #ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 #endif
@@ -425,10 +423,8 @@ mono_thread_info_callbacks_init (MonoThreadInfoCallbacks *callbacks);
 void
 mono_thread_info_signals_init (void);
 
-G_BEGIN_DECLS // FIXMEcxx for monodis
 void
 mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
-G_END_DECLS
 
 MonoThreadInfoRuntimeCallbacks *
 mono_threads_get_runtime_callbacks (void);
@@ -859,7 +855,5 @@ void mono_threads_join_unlock (void);
 typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
-
-G_END_DECLS
 
 #endif /* __MONO_THREADS_H__ */

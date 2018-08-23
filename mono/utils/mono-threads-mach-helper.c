@@ -17,8 +17,6 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
-G_BEGIN_DECLS // FIXMEcxx wasm
-
 /*
  * We cannot include mono-threads.h as this includes io-layer internal types
  * which conflicts with objc.
@@ -135,7 +133,5 @@ mono_threads_init_dead_letter (void)
 	objc_msgSend (mono_dead_letter_key, retain);
 	objc_msgSend (pool, release);
 }
-
-G_END_DECLS // FIXMEcxx wasm
 
 #endif
