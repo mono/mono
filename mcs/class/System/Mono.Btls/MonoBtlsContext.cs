@@ -160,7 +160,7 @@ namespace Mono.Btls
 			}
 		}
 
-		static Exception GetException (MonoBtlsSslError status)
+               private Exception GetException (MonoBtlsSslError status)
 		{
 			string file;
 			int line;
@@ -179,6 +179,7 @@ namespace Mono.Btls
 				message = string.Format ("{0} {1}\n  at {2}:{3}", status, text, file, line);
 			else
 				message = string.Format ("{0} {1}", status, text);
+                       Dispose (true);
 			return new MonoBtlsException (message);
 		}
 
