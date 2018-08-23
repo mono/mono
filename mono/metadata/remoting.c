@@ -108,6 +108,9 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 	mono_register_jit_icall (func, name, sig, save);
 }
 
+#define register_icall(func, name, sigstr, save) \
+	(register_icall ((gpointer)(func), (name), (sigstr), (save)))
+
 static inline void
 remoting_lock (void)
 {
@@ -214,21 +217,22 @@ mono_remoting_marshal_init (void)
 	mono_loader_lock ();
 
 	if (!icalls_registered) {
-		register_icall ((gpointer)type_from_handle, "type_from_handle", "object ptr", FALSE);
-		register_icall ((gpointer)mono_marshal_set_domain_by_id, "mono_marshal_set_domain_by_id", "int32 int32 int32", FALSE);
-		register_icall ((gpointer)mono_marshal_check_domain_image, "mono_marshal_check_domain_image", "int32 int32 ptr", FALSE);
-		register_icall ((gpointer)ves_icall_mono_marshal_xdomain_copy_value, "ves_icall_mono_marshal_xdomain_copy_value", "object object", FALSE);
-		register_icall ((gpointer)mono_marshal_xdomain_copy_out_value, "mono_marshal_xdomain_copy_out_value", "void object object", FALSE);
-		register_icall ((gpointer)mono_remoting_wrapper, "mono_remoting_wrapper", "object ptr ptr", FALSE);
-		register_icall ((gpointer)mono_remoting_update_exception, "mono_remoting_update_exception", "object object", FALSE);
-		register_icall ((gpointer)mono_upgrade_remote_class_wrapper, "mono_upgrade_remote_class_wrapper", "void object object", FALSE);
+		register_icall (type_from_handle, "type_from_handle", "object ptr", FALSE);
+		register_icall (mono_marshal_set_domain_by_id, "mono_marshal_set_domain_by_id", "int32 int32 int32", FALSE);
+		register_icall (mono_marshal_check_domain_image, "mono_marshal_check_domain_image", "int32 int32 ptr", FALSE);
+		register_icall (ves_icall_mono_marshal_xdomain_copy_value, "ves_icall_mono_marshal_xdomain_copy_value", "object object", FALSE);
+		register_icall (mono_marshal_xdomain_copy_out_value, "mono_marshal_xdomain_copy_out_value", "void object object", FALSE);
+		register_icall (mono_remoting_wrapper, "mono_remoting_wrapper", "object ptr ptr", FALSE);
+		register_icall (mono_remoting_update_exception, "mono_remoting_update_exception", "object object", FALSE);
+		register_icall (mono_upgrade_remote_class_wrapper, "mono_upgrade_remote_class_wrapper", "void object object", FALSE);
 
 #ifndef DISABLE_JIT
-		register_icall ((gpointer)mono_compile_method_icall, "mono_compile_method_icall", "ptr ptr", FALSE);
+		register_icall (mono_compile_method_icall, "mono_compile_method_icall", "ptr ptr", FALSE);
 #endif
 
-		register_icall ((gpointer)mono_context_get_icall, "mono_context_get_icall", "object", FALSE);
-		register_icall ((gpointer)mono_context_set_icall, "mono_context_set_icall", "void object", FALSE);
+		register_icall (mono_context_get_icall, "mono_context_get_icall", "object", FALSE);
+		register_icall (mono_context_set_icall, "mono_context_set_icall", "void object", FALSE);
+
 	}
 
 	icalls_registered = TRUE;
