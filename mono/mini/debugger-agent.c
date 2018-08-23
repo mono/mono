@@ -1149,7 +1149,8 @@ mono_debugger_run_debugger_thread_func(void* arg)
 }
 
 typedef struct {
-	void(*il2cpp_debugger_save_thread_context)(Il2CppThreadUnwindState* context);
+	void(*il2cpp_debugger_save_thread_context)(Il2CppThreadUnwindState* context, int frameCountAdjust);
+    void(*il2cpp_debugger_free_thread_context)(Il2CppThreadUnwindState* context);
 } MonoDebuggerRuntimeCallbacks;
 
 static MonoDebuggerRuntimeCallbacks callbacks;
@@ -2679,7 +2680,7 @@ save_thread_context (MonoContext *ctx)
 	else
 		mono_thread_state_init_from_current (&tls->context);
 #else
-	callbacks.il2cpp_debugger_save_thread_context(&tls->il2cpp_context);
+	callbacks.il2cpp_debugger_save_thread_context(&tls->il2cpp_context, 0);
 #endif // !RUNTIME_IL2CPP
 }
 
@@ -4213,6 +4214,8 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 			/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
 #ifndef RUNTIME_IL2CPP
 			MONO_GC_UNREGISTER_ROOT (tls->thread);
+#else
+            callbacks.il2cpp_debugger_free_thread_context(&tls->il2cpp_context);
 #endif
 			tls->thread = NULL;
 		}
@@ -12319,6 +12322,19 @@ gboolean unity_sequence_point_active(Il2CppSequencePoint *seqPoint)
 	}
 
 	return FALSE;
+}
+
+void il2cpp_save_current_thread_context_func_exit()
+{
+    DebuggerTlsData *tls;
+
+    MonoInternalThread *thread = mono_thread_internal_current();
+
+    mono_loader_lock();
+    tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, thread);
+    mono_loader_unlock();
+
+    callbacks.il2cpp_debugger_save_thread_context(&tls->il2cpp_context, -1);
 }
 
 #endif // RUNTIME_IL2CPP
