@@ -163,6 +163,12 @@ system_native_common_sources = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h
 
+if ENABLE_GSS
+system_native_common_sources += \
+	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.c \
+	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.h
+endif
+
 system_native_full_sources = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
@@ -201,12 +207,6 @@ endif
 endif
 endif
 endif
-endif
-
-if ENABLE_GSS
-libmono_system_native_la_SOURCES += \
-	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.c \
-	../../external/corefx/src/Native/Unix/System.Net.Security.Native/pal_gssapi.h
 endif
 
 # Add back CXX_REMOVE_CFLAGS to keep this as C until/unless https://github.com/dotnet/corefx/pull/31342.
