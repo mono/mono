@@ -196,6 +196,7 @@ system_native_android_sources = \
 if !TARGET_WIN32
 if !WASM
 lib_LTLIBRARIES += libmono-system-native.la
+lib_LTLIBRARIES += libmono-system-net-security-native.la
 libmono_system_native_la_SOURCES = $(system_native_common_sources)
 if TARGET_OSX
 libmono_system_native_la_SOURCES += $(system_native_full_sources)
