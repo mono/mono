@@ -207,6 +207,7 @@ struct _MonoTableInfo {
 #define REFERENCE_MISSING ((gpointer) -1)
 
 typedef struct _MonoDllMap MonoDllMap;
+struct MonoAotModule;
 
 typedef struct {
 	gboolean (*match) (MonoImage*);
@@ -320,7 +321,7 @@ struct _MonoImage {
 	MonoImage **files;
 	guint32 file_count;
 
-	gpointer aot_module;
+	struct MonoAotModule *aot_module;
 
 	guint8 aotid[16];
 

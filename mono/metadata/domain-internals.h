@@ -215,7 +215,7 @@ struct _MonoJitInfo {
 	union {
 		MonoMethod *method;
 		MonoImage *image;
-		gpointer aot_info;
+		struct MonoAotModule *aot_info;
 		gpointer tramp_info;
 	} d;
 	union {
