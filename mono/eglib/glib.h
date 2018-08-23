@@ -109,7 +109,7 @@ public:
 #define G_ENUM_END(x)   } x;
 #endif
 
-G_BEGIN_DECLS
+G_BEGIN_DECLS // FIXMEcxx This is for main.c, which remains C, in order to avoid linking to libstdc++.
 
 /*
  * Basic data types
@@ -243,15 +243,20 @@ struct _GMemChunk {
 };
 
 typedef struct _GMemChunk GMemChunk;
+
 /*
  * Misc.
  */
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
-G_BEGIN_DECLS // FIXMEcxxwasm
+
+G_BEGIN_DECLS // sdks/wasm/driver.c is C and uses this
+
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
-G_END_DECLS // FIXMEcxxwasm
+
+G_END_DECLS
+
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);
@@ -1210,8 +1215,8 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
- 
-G_END_DECLS
+
+G_END_DECLS // FIXMEcxx This is for main.c, which remains C, in order to avoid linking to libstdc++.
 
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.
