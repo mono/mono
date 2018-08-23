@@ -48,11 +48,7 @@ The JIT will generate code that will land on this function
 
 #define CHECKED_MONO_INIT() do { checked_build_init (); } while (0)
 
-G_BEGIN_DECLS // FIXMEcxx for monodis
-
 void checked_build_init (void);
-
-G_END_DECLS
 
 #else
 

@@ -17,6 +17,8 @@ static_libs=	\
 runtime_lib=$(static_libs)
 endif
 
+CXXFLAGS += @CXXFLAGS_COMMON@
+
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
 else
@@ -27,6 +29,12 @@ if SUPPORT_SGEN
 bin_PROGRAMS = monograph
 endif
 endif
+endif
+
+if ENABLE_CXX
+monograph_SOURCES = monograph-cpp.cpp
+else
+monograph_SOURCES = monograph.c
 endif
 
 AM_CPPFLAGS = 				\
@@ -50,5 +58,3 @@ graphs: $(OUT)
 %.jpeg: monograph
 	./monograph -n -o $*.png corlib.dll $*
 	convert -geometry '480x360>' $*.png $*.jpeg
-
-
