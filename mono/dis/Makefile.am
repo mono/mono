@@ -34,6 +34,8 @@ endif
 
 noinst_LIBRARIES = libmonodis.a
 
+CXXFLAGS += @CXXFLAGS_COMMON@
+
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
 libmonodis_a_CFLAGS = $(CFLAGS) @CXX_ADD_CFLAGS@
@@ -47,12 +49,25 @@ libmonodis_a_SOURCES =	\
 	util.c		\
 	util.h
 
+if ENABLE_CXX
+
+monodis_SOURCES =	\
+	dump-cpp.cpp	\
+	main-cpp.cpp	\
+	declsec-cpp.cpp
+
+else
+
 monodis_SOURCES =	\
 	dump.c		\
-	dump.h		\
 	main.c		\
+	declsec.c
+
+endif
+
+monodis_SOURCES +=	\
+	dump.h		\
 	meta.h		\
-	declsec.c	\
 	declsec.h
 
 monodis_LDADD = 			\

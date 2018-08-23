@@ -17,9 +17,7 @@ typedef enum {
 	MONO_VERIFIER_MODE_STRICT
 } MiniVerifierMode;
 
-G_BEGIN_DECLS // FIXMEcxx for pedump
 void mono_verifier_set_mode (MiniVerifierMode mode);
-G_END_DECLS // FIXMEcxx for pedump
 void mono_verifier_enable_verify_all (void);
 
 gboolean mono_verifier_is_enabled_for_image (MonoImage *image);
@@ -35,13 +33,11 @@ gboolean mono_verifier_verify_class (MonoClass *klass);
 
 GSList* mono_method_verify_with_current_settings (MonoMethod *method, gboolean skip_visibility, gboolean is_fulltrust);
 
-G_BEGIN_DECLS // FIXMEcxx for pedump
 gboolean mono_verifier_verify_pe_data (MonoImage *image, MonoError *error);
 gboolean mono_verifier_verify_cli_data (MonoImage *image, MonoError *error);
 gboolean mono_verifier_verify_table_data (MonoImage *image, MonoError *error);
 
 gboolean mono_verifier_verify_full_table_data (MonoImage *image, MonoError *error);
-G_END_DECLS // FIXMEcxx for pedump
 
 gboolean mono_verifier_verify_field_signature (MonoImage *image, guint32 offset, MonoError *error);
 gboolean mono_verifier_verify_method_header (MonoImage *image, guint32 offset, MonoError *error);
