@@ -50,7 +50,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Net.Security
 {
-	class MonoTlsStream
+	class MonoTlsStream : IDisposable
 	{
 #if SECURITY_DEP
 		readonly MonoTlsProvider provider;
@@ -73,6 +73,7 @@ namespace Mono.Net.Security
 #endif
 
 		WebExceptionStatus status;
+		int disposed;
 
 		internal WebExceptionStatus ExceptionStatus {
 			get { return status; }
@@ -136,6 +137,7 @@ namespace Mono.Net.Security
 					request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
 				else {
 					request.ServicePoint.UpdateClientCertificate (null);
+					sslStream?.Dispose ();
 					sslStream = null;
 				}
 			}
@@ -153,6 +155,22 @@ namespace Mono.Net.Security
 #else
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 #endif
+		}
+
+		void Dispose (bool disposing)
+		{
+			if (Interlocked.CompareExchange (ref disposed, 1, 0) != 0)
+				return;
+
+			if (sslStream != null) {
+				sslStream.Dispose ();
+				sslStream = null;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
 		}
 	}
 }

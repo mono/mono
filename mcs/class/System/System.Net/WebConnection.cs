@@ -412,6 +412,13 @@ namespace System.Net
 					networkStream = null;
 				}
 
+				if (monoTlsStream != null) {
+					try {
+						monoTlsStream.Dispose ();
+					} catch { }
+					monoTlsStream = null;
+				}
+
 				if (socket != null) {
 					try {
 						socket.Dispose ();
