@@ -78,18 +78,36 @@ Beware that the debugger is in active development so bugs and missing features w
 
 AOT experimentation happens with the following steps:
 
-1) go to `sdks` and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
-2) go to `sdks/builds` and hit `make package`
-3) go to `sdks/wasm` and hit `make build`
+1) from `sdks` and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
+2) from `sdks/builds` hit `make package`
+3) from `sdks/wasm` hit `make build`
+4) from `sdks/wasm` hit `make build-aot-sample`
+4) from `sdks/wasm/aot` hit `~/.jsvu/sm aot-driver.js`
 
-Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results. This is experimental, so expect stuff to not work as intended.
+If you don't have jsvu installed, run `make toolchain` from `sdks/wasm`. It requires a recent version of node installed in your system.
 
-To update the runtimes used use the following target in `sdks/build`
+Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results.
+
+To update the runtimes used use the following make target in `sdks/build`
 
 `package-wasm-interp` for the interpreter-based runtime
 `package-wasm-aot` for the aot compiler
 `package-wasm-aot-runtime` for the wasm runtime that works with AOT'd code.
 
+
+To update the aot compiler:
+```
+make -C sdks/builds package-wasm-aot-compiler
+make -C sdks/wasm aot-sample
+make -C sdks/wasm link-sample
+```
+
+To update the aot runtime:
+```
+make -C sdks/builds package-wasm-aot
+make -C sdks/wasm aot-sample
+make -C sdks/wasm link-sample
+```
 
 # Notes
 
