@@ -736,10 +736,10 @@ mono_arch_init (void)
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
 
-	mono_aot_register_jit_icall ("mono_x86_throw_exception", (gpointer)mono_x86_throw_exception);
-	mono_aot_register_jit_icall ("mono_x86_throw_corlib_exception", (gpointer)mono_x86_throw_corlib_exception);
+	mono_aot_register_jit_icall ("mono_x86_throw_exception", mono_x86_throw_exception);
+	mono_aot_register_jit_icall ("mono_x86_throw_corlib_exception", mono_x86_throw_corlib_exception);
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	mono_aot_register_jit_icall ("mono_x86_start_gsharedvt_call", (gpointer)mono_x86_start_gsharedvt_call);
+	mono_aot_register_jit_icall ("mono_x86_start_gsharedvt_call", mono_x86_start_gsharedvt_call);
 #endif
 }
 
