@@ -56,7 +56,7 @@ static void
 interrupt_CFRunLoop (gpointer data)
 {
 	g_assert (data);
-	CFRunLoopStop (data);
+	CFRunLoopStop ((CFRunLoopRef)data);
 }
 
 void
