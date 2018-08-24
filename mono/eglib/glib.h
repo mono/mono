@@ -109,6 +109,13 @@ public:
 
 #ifdef __cplusplus
 
+// G++4.4 breaks opeq below without this.
+#if defined  (__GNUC__) || defined  (__clang__)
+#define G_MAY_ALIAS  __attribute__((__may_alias__))
+#else
+#define G_MAY_ALIAS /* nothing */
+#endif
+
 // Provide for bit operations on enums, but not all integer operations.
 // This alleviates a fair number of casts in porting C to C++.
 
@@ -121,22 +128,24 @@ template <> struct g_size_to_int<2> { typedef int16_t type; };
 template <> struct g_size_to_int<4> { typedef int32_t type; };
 template <> struct g_size_to_int<8> { typedef int64_t type; };
 
-template <typename T>
-using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+// g++4.4 does not accept:
+//template <typename T>
+//using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+#define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
 
 #define G_ENUM_BINOP(Enum, op, opeq) 		\
 inline Enum					\
 operator op (Enum a, Enum b)			\
 {						\
-	typedef g_size_to_int_t <Enum> type; 	\
+	typedef g_size_to_int_t (Enum) type; 	\
 	return static_cast<Enum>(static_cast<type>(a) op static_cast<type>(b)); \
 }						\
 						\
 inline Enum&					\
 operator opeq (Enum& a, Enum b)			\
 {						\
-	typedef g_size_to_int_t <Enum> type; 	\
-	return (Enum&)((type&)(a) opeq static_cast<type>(b)); \
+	typedef g_size_to_int_t (Enum) G_MAY_ALIAS type; \
+	return (Enum&)((type&)a opeq b); 	\
 }						\
 
 #define G_ENUM_FUNCTIONS(Enum)			\
@@ -144,7 +153,7 @@ extern "C++" { /* in case within extern "C" */	\
 inline Enum					\
 operator~ (Enum a)				\
 {						\
-	typedef g_size_to_int_t <Enum> type; 	\
+	typedef g_size_to_int_t (Enum) type; 	\
 	return static_cast<Enum>(~static_cast<type>(a)); \
 }						\
 						\
