@@ -16,14 +16,16 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-publib.h>
 
-G_ENUM_BEGIN (MonoCheckMode)
+typedef enum {
 	MONO_CHECK_MODE_NONE = 0,
 	MONO_CHECK_MODE_GC = 0x1,
 	MONO_CHECK_MODE_METADATA = 0x2,
 	MONO_CHECK_MODE_THREAD = 0x4,
 	MONO_CHECK_MODE_ALL = MONO_CHECK_MODE_GC | MONO_CHECK_MODE_METADATA | MONO_CHECK_MODE_THREAD,
 	MONO_CHECK_MODE_UNKNOWN = 0x8
-G_ENUM_END (MonoCheckMode)
+} MonoCheckMode;
+
+G_ENUM_FUNCTIONS (MonoCheckMode)
 
 mono_bool mono_check_mode_enabled (MonoCheckMode query);
 

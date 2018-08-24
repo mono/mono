@@ -157,6 +157,12 @@ template <> struct g_size_to_int<8> { typedef int64_t type; };
 //using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
 #define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
 
+// Template specializations.
+template <> struct mono_size_to_int<1> { typedef int8_t T; };
+template <> struct mono_size_to_int<2> { typedef int16_t T; };
+template <> struct mono_size_to_int<4> { typedef int32_t T; };
+template <> struct mono_size_to_int<8> { typedef int64_t T; };
+
 #define G_ENUM_BINOP(Enum, op, opeq) 		\
 inline Enum					\
 operator op (Enum a, Enum b)			\
@@ -731,7 +737,7 @@ void     g_queue_foreach   (GQueue   *queue, GFunc func, gpointer user_data);
 #define G_LOG_DOMAIN ((gchar*) 0)
 #endif
 
-G_ENUM_BEGIN (GLogLevelFlags)
+typedef enum {
 	G_LOG_FLAG_RECURSION          = 1 << 0,
 	G_LOG_FLAG_FATAL              = 1 << 1,
 	
@@ -743,7 +749,9 @@ G_ENUM_BEGIN (GLogLevelFlags)
 	G_LOG_LEVEL_DEBUG             = 1 << 7,
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
-G_ENUM_END (GLogLevelFlags)
+} GLogLevelFlags;
+
+G_ENUM_FUNCTIONS (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -790,7 +798,7 @@ gpointer g_convert_error_quark(void);
  * bare minimum to build.
  */
 
-G_ENUM_BEGIN (GUnicodeType)
+typedef enum {
 	G_UNICODE_CONTROL,
 	G_UNICODE_FORMAT,
 	G_UNICODE_UNASSIGNED,
@@ -821,7 +829,7 @@ G_ENUM_BEGIN (GUnicodeType)
 	G_UNICODE_LINE_SEPARATOR,
 	G_UNICODE_PARAGRAPH_SEPARATOR,
 	G_UNICODE_SPACE_SEPARATOR
-G_ENUM_END (GUnicodeType)
+} GUnicodeType;
 
 typedef enum {
 	G_UNICODE_BREAK_MANDATORY,
@@ -1069,13 +1077,15 @@ typedef enum {
 	G_FILE_ERROR_FAILED
 } GFileError;
 
-G_ENUM_BEGIN (GFileTest)
+typedef enum {
 	G_FILE_TEST_IS_REGULAR = 1 << 0,
 	G_FILE_TEST_IS_SYMLINK = 1 << 1,
 	G_FILE_TEST_IS_DIR = 1 << 2,
 	G_FILE_TEST_IS_EXECUTABLE = 1 << 3,
 	G_FILE_TEST_EXISTS = 1 << 4
-G_ENUM_END (GFileTest)
+} GFileTest;
+
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);

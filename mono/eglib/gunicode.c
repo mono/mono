@@ -60,7 +60,7 @@ g_unichar_type (gunichar c)
 			continue;
 		if (unicode_category_ranges [i].end <= cp)
 			continue;
-		return unicode_category [i] [cp - unicode_category_ranges [i].start];
+		return (GUnicodeType)(unicode_category [i] [cp - unicode_category_ranges [i].start]);
 	}
 
 	/*
