@@ -34,7 +34,7 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 	 * Return a trampoline which calls ADDR passing in ARG.
 	 * Pass the argument in ip1, clobbering ip0.
 	 */
-	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
+	buf = code = mono_global_codeman_reserve (buf_len);
 
 	code = mono_arm_emit_imm64 (code, ARMREG_IP1, (guint64)arg);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
@@ -218,7 +218,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	int br_ret_index, bcc_ret_index;
 
 	buf_len = 2048;
-	buf = code = (guint8*)mono_global_codeman_reserve (buf_len);
+	buf = code = mono_global_codeman_reserve (buf_len);
 
 	/*
 	 * We are being called by an gsharedvt arg trampoline, the info argument is in IP1.

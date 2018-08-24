@@ -101,7 +101,7 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 	guint8 *code, *start;
 
 	if (has_target) {
-		start = code = (guint8*)mono_global_codeman_reserve (12);
+		start = code = mono_global_codeman_reserve (12);
 
 		/* Replace the this argument with the target */
 		arm_ldrx (code, ARMREG_IP0, ARMREG_R0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
@@ -116,7 +116,7 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		int size, i;
 
 		size = 8 + param_count * 4;
-		start = code = (guint8*)mono_global_codeman_reserve (size);
+		start = code = mono_global_codeman_reserve (size);
 
 		arm_ldrx (code, ARMREG_IP0, ARMREG_R0, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr));
 		/* slide down the arguments */
@@ -1315,9 +1315,9 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 	n = sig->hasthis + sig->param_count;
 
 	if (mp)
-		cinfo = (CallInfo*)mono_mempool_alloc0 (mp, sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+		cinfo = mono_mempool_alloc0 (mp, sizeof (CallInfo) + (sizeof (ArgInfo) * n));
 	else
-		cinfo = (CallInfo*)g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+		cinfo = g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
 
 	cinfo->nargs = n;
 	cinfo->pinvoke = sig->pinvoke;
@@ -3079,7 +3079,7 @@ emit_move_return_value (MonoCompile *cfg, guint8 * code, MonoInst *ins)
 	MonoCallInst *call;
 
 	call = (MonoCallInst*)ins;
-	cinfo = (CallInfo*)call->call_info;
+	cinfo = call->call_info;
 	g_assert (cinfo);
 	switch (cinfo->ret.storage) {
 	case ArgNone:
@@ -3229,7 +3229,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 			break;
 		case OP_JUMP_TABLE:
-			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
+			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
 			code = emit_imm64_template (code, dreg);
 			break;
 		case OP_BREAK:
@@ -4994,7 +4994,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	sig = mono_method_signature (method);
 	cfg->code_size = 256 + sig->param_count * 64;
-	code = cfg->native_code = (guint8*)g_malloc (cfg->code_size);
+	code = cfg->native_code = g_malloc (cfg->code_size);
 
 	/* This can be unaligned */
 	cfg->stack_offset = ALIGN_TO (cfg->stack_offset, MONO_ARCH_FRAME_ALIGNMENT);
@@ -5288,9 +5288,9 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (fail_tramp)
-		buf = (guint8*)mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
+		buf = mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
 	else
-		buf = (guint8*)mono_domain_code_reserve (domain, buf_len);
+		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;
 
 	/*
@@ -5395,7 +5395,7 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	guint32 native_offset = ip - (guint8*)ji->code_start;
 
 	if (ji->from_aot) {
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		g_assert (native_offset % 4 == 0);
 		g_assert (info->bp_addrs [native_offset / 4] == 0);
@@ -5415,7 +5415,7 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 
 	if (ji->from_aot) {
 		guint32 native_offset = ip - (guint8*)ji->code_start;
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		g_assert (native_offset % 4 == 0);
 		info->bp_addrs [native_offset / 4] = NULL;
@@ -5482,7 +5482,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 		ji = mono_jit_info_table_find (domain, code);
 		g_assert (ji);
 
-		info = (SeqPointInfo*)g_malloc0 (sizeof (SeqPointInfo) + (ji->code_size / 4) * sizeof(guint8*));
+		info = g_malloc0 (sizeof (SeqPointInfo) + (ji->code_size / 4) * sizeof(guint8*));
 
 		info->ss_tramp_addr = &ss_trampoline;
 
