@@ -107,6 +107,56 @@ public:
 
 #endif
 
+#ifdef __cplusplus
+
+// Provide for bit operations on enums, but not all integer operations.
+// This alleviates a fair number of casts in porting C to C++.
+
+// Forward declare template with no generic implementation.
+template <size_t> struct mono_size_to_int;
+
+// Template specializations.
+template <> struct mono_size_to_int<1> { typedef int8_t T; };
+template <> struct mono_size_to_int<2> { typedef int16_t T; };
+template <> struct mono_size_to_int<4> { typedef int32_t T; };
+template <> struct mono_size_to_int<8> { typedef int64_t T; };
+
+#define MONO_SIZE_TO_INT(x) mono_size_to_int <sizeof (x)>::T
+
+#define G_ENUM_BINOP(Enum, op, opeq) 		\
+inline Enum					\
+operator op (Enum a, Enum b)			\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T;		\
+	return (Enum)((T)a op (T)b);		\
+}						\
+						\
+inline Enum&					\
+operator opeq (Enum& a, Enum b)			\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T; 	\
+	return (Enum&)((T&)a opeq (T)b);	\
+}						\
+
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T;		\
+	return (Enum)~(T)a;			\
+}						\
+						\
+G_ENUM_BINOP (Enum, |, |=) 			\
+G_ENUM_BINOP (Enum, &, &=) 			\
+G_ENUM_BINOP (Enum, ^, ^=) 			\
+						\
+} /* extern "C++" */
+
+#else
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
+#endif
+
 G_BEGIN_DECLS
 
 /*
@@ -652,6 +702,8 @@ typedef enum {
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
 } GLogLevelFlags;
 
+G_ENUM_FUNCTIONS (GLogLevelFlags)
+
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
 void           g_printerr             (const gchar *format, ...);
@@ -984,6 +1036,7 @@ typedef enum {
 	G_FILE_TEST_EXISTS = 1 << 4
 } GFileTest;
 
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
