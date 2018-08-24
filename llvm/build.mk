@@ -15,6 +15,10 @@ LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
 LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
 LLVM_RELEASE ?= llvm
 
+# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
+LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz"
+LLVM36_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm/llvm-osx64-$(NEEDED_LLVM36_VERSION).tar.gz"
+
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
 
@@ -73,14 +77,13 @@ build-llvm: configure-llvm
 install-llvm: build-llvm | $(LLVM_PREFIX)
 	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
 
-# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
 .PHONY: download-llvm
 download-llvm:
-	mkdir -p llvm-tmp && cd llvm-tmp && wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz | tar xzf -
+	mkdir -p llvm-tmp && cd llvm-tmp && (wget --no-verbose -O - $(LLVM_DOWNLOAD_LOCATION) || curl -L $(LLVM_DOWNLOAD_LOCATION)) | tar xzf -
 
 .PHONY: download-llvm36
 download-llvm36:
-	mkdir -p llvm36-tmp && cd llvm36-tmp && wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm/llvm-osx64-$(NEEDED_LLVM36_VERSION).tar.gz | tar xzf -
+	mkdir -p llvm36-tmp && cd llvm36-tmp && (wget --no-verbose -O - $(LLVM36_DOWNLOAD_LOCATION) || curl -L $(LLVM36_DOWNLOAD_LOCATION)) | tar xzf -
 
 .PHONY: clean-llvm
 clean-llvm:
