@@ -2946,6 +2946,8 @@ noinst_LTLIBRARIES = libtest.la
 
 AM_CPPFLAGS = $(GLIB_CFLAGS)
 
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+
 if HOST_WIN32
 # gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call
 # This shows up when compiling mono_test_marshal_delegate ()
