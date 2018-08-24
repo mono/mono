@@ -159,10 +159,8 @@ gpointer mono_handle_new_interior (gpointer rawptr, const char *owner);
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check);
 gboolean mono_handle_stack_is_empty (HandleStack *stack);
-G_BEGIN_DECLS // FIXMEcxx this is for tests compiled as C
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
-G_END_DECLS   // FIXMEcxx this is for tests compiled as C
 MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
 void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
