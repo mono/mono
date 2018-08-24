@@ -17,11 +17,11 @@
 
 #define MONO_OS_EVENT_WAIT_MAXIMUM_OBJECTS 64
 
-G_ENUM_BEGIN (MonoOSEventWaitRet)
+typedef enum {
 	MONO_OS_EVENT_WAIT_RET_SUCCESS_0 =  0,
 	MONO_OS_EVENT_WAIT_RET_ALERTED   = -1,
 	MONO_OS_EVENT_WAIT_RET_TIMEOUT   = -2,
-G_ENUM_END (MonoOSEventWaitRet)
+} MonoOSEventWaitRet;
 
 typedef struct _MonoOSEvent MonoOSEvent;
 

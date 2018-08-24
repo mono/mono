@@ -1290,11 +1290,11 @@ typedef struct {
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
 TYPED_HANDLE_DECL (MonoReflectionModuleBuilder);
 
-G_ENUM_BEGIN (MonoTypeBuilderState)
+typedef enum {
 	MonoTypeBuilderNew = 0,
 	MonoTypeBuilderEntered = 1,
 	MonoTypeBuilderFinished = 2
-G_ENUM_END (MonoTypeBuilderState)
+} MonoTypeBuilderState;
 
 struct _MonoReflectionTypeBuilder {
 	MonoReflectionType type;
