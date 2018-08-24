@@ -138,7 +138,7 @@ inline Enum					\
 operator op (Enum a, Enum b)			\
 {						\
 	typedef g_size_to_int_t (Enum) type; 	\
-	return static_cast<Enum>(static_cast<type>(a) op static_cast<type>(b)); \
+	return static_cast<Enum>(static_cast<type>(a) op b); \
 }						\
 						\
 inline Enum&					\
