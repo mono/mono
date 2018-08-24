@@ -55,38 +55,68 @@ noinst_LTLIBRARIES = libtestlib.la
 libtestlib_la_SOURCES =
 libtestlib_la_LIBADD = ../metadata/libmonoruntimesgen.la ../sgen/libmonosgen.la ../utils/libmonoutils.la
 
+CXXFLAGS += @CXXFLAGS_COMMON@
+
+if ENABLE_CXX
+test_sgen_qsort_SOURCES = test-sgen-qsort-cpp.cpp
+else
 test_sgen_qsort_SOURCES = test-sgen-qsort.c
+endif
 test_sgen_qsort_CFLAGS = $(test_cflags)
 test_sgen_qsort_LDADD = $(test_ldadd)
 test_sgen_qsort_LDFLAGS = $(test_ldflags)
 
+if ENABLE_CXX
+test_memfuncs_SOURCES = test-memfuncs-cpp.cpp
+else
 test_memfuncs_SOURCES = test-memfuncs.c
+endif
 test_memfuncs_CFLAGS = $(test_cflags)
 test_memfuncs_LDADD = $(test_ldadd)
 test_memfuncs_LDFLAGS = $(test_ldflags)
 
+if ENABLE_CXX
+test_mono_linked_list_set_SOURCES = test-mono-linked-list-set-cpp.cpp
+else
 test_mono_linked_list_set_SOURCES = test-mono-linked-list-set.c
+endif
 test_mono_linked_list_set_CFLAGS = $(test_cflags)
 test_mono_linked_list_set_LDADD = $(test_ldadd)
 test_mono_linked_list_set_LDFLAGS = $(test_ldflags)
 
+if ENABLE_CXX
+test_conc_hashtable_SOURCES = test-conc-hashtable-cpp.cpp
+else
 test_conc_hashtable_SOURCES = test-conc-hashtable.c
+endif
 test_conc_hashtable_CFLAGS = $(test_cflags)
 test_conc_hashtable_LDADD = $(test_ldadd)
 test_conc_hashtable_LDFLAGS = $(test_ldflags)
 
+if ENABLE_CXX
+test_mono_handle_SOURCES = test-mono-handle-cpp.cpp
+else
 test_mono_handle_SOURCES = test-mono-handle.c
+endif
 test_mono_handle_CFLAGS = $(test_cflags)
 test_mono_handle_LDADD = $(test_ldadd)
 test_mono_handle_LDFLAGS = $(test_ldflags)
 
+if ENABLE_CXX
+test_mono_callspec_SOURCES = test-mono-callspec-cpp.cpp
+else
 test_mono_callspec_SOURCES = test-mono-callspec.c
+endif
 test_mono_callspec_CFLAGS = $(AM_CFLAGS)
 test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
 test_mono_callspec_LDFLAGS = $(test_ldflags)
 test_mono_callspec_DEPENDENCIES = callspec.exe
 
+if ENABLE_CXX
+test_mono_string_SOURCES = test-mono-string-cpp.cpp
+else
 test_mono_string_SOURCES = test-mono-string.c
+endif
 test_mono_string_CFLAGS = $(test-cflags)
 test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
 test_mono_string_LDFLAGS = $(test_ldflags)
@@ -117,4 +147,3 @@ clean-local:
 
 endif !HOST_WIN32
 endif !CROSS_COMPILE
-

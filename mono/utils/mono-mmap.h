@@ -59,10 +59,13 @@ MONO_API void* mono_valloc     (void *addr, size_t length, int flags, MonoMemAcc
 MONO_API void* mono_valloc_aligned (size_t length, size_t alignment, int flags, MonoMemAccountType type);
 MONO_API int   mono_vfree      (void *addr, size_t length, MonoMemAccountType type);
 MONO_API void* mono_file_map   (size_t length, int flags, int fd, guint64 offset, void **ret_handle);
+
+#define mono_file_map(len, fl, fd, off, ret) (g_cast (mono_file_map ((len), (fl), (fd), (off), (ret))))
+
 // Last two parameters are optional.
 // This is mono_file_map but with optionally returning an error message.
 // See https://github.com/mono/mono/issues/8225.
-#ifdef HOST_WIN32
+#if defined (HOST_WIN32) || defined (__cplusplus) // FIXMEcxx is this needed? G_BEGIN_DECLS instead?
 MONO_API
 #endif
 void*

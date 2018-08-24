@@ -948,7 +948,7 @@ test_thread_func (ThreadData *td)
 				}
 			} else {
 				int pos = random () % MAX_ADDR;
-				char *addr = (char*)(gulong) pos;
+				char *addr = (char*)(uintptr_t)pos;
 				MonoJitInfo *ji;
 
 				ji = mono_jit_info_table_find (domain, addr);
@@ -2687,6 +2687,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 /**
  * mono_jit_set_aot_mode:
  */
+G_BEGIN_DECLS // FIXMEcxxwasmn
 void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
@@ -2697,6 +2698,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	mono_runtime_set_execution_mode ((MonoEEMode)mode);
 
 }
+G_END_DECLS
 
 mono_bool
 mono_jit_aot_compiling (void)

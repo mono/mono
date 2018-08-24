@@ -85,7 +85,7 @@ typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
 	guint32   size;
-	guint8    type;
+	guint8    type; // FIXMEcxx GCHandleType type : 8;
 	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
@@ -546,7 +546,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }
@@ -1516,7 +1516,7 @@ mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_da
 	g_assert (GC_base (obj) == (char*)obj - offset);
 #endif
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, (GC_finalization_proc)user_data, GUINT_TO_POINTER (offset), NULL, NULL);
+	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
 #ifndef HOST_WIN32

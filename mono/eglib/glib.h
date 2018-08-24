@@ -25,7 +25,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
 #endif
@@ -61,14 +60,12 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 #ifdef __cplusplus
@@ -84,20 +81,10 @@ private:
 	void * const x;
 public:
 	explicit g_cast (void *y) : x(y) { }
-	// Lack of rvalue constructor inhibits ternary operator.
-	// Either don't use ternary, or cast each side.
-	// sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
-	// w32socket.c:1045:24: error: call to deleted constructor of 'monoeg_g_cast'
-	//g_cast (g_cast&& y) : x(y.x) { }
-	g_cast (g_cast&&) = delete;
+	g_cast (g_cast&& y) : x(y.x) { } // used by ternary operator
 	g_cast () = delete;
-	g_cast (const g_cast&) = delete;
-
-	template <typename TTo>
-	operator TTo* () const
-	{
-		return (TTo*)x;
-	}
+	g_cast (const g_cast& y) = delete;
+	template <typename TTo> operator TTo* () const { return (TTo*)x; }
 };
 
 #else
@@ -105,6 +92,20 @@ public:
 // FIXME? Parens are omitted to preserve prior meaning.
 #define g_cast(x) x
 
+#endif
+
+#ifdef __cplusplus
+// Provide for math on enums.
+// This alleviates a fair number of casts in porting C to C++.
+// Debugging and typesafety are sacrificed.
+// We can also overload operators.
+// Note that enums are sometimes unsigned, but it depends not only on the values,
+// but the compiler.
+#define G_ENUM_BEGIN(x) enum { // consider enum _##x
+#define G_ENUM_END(x)   }; typedef int x;
+#else
+#define G_ENUM_BEGIN(x) typedef enum { // consider enum x or _##x
+#define G_ENUM_END(x)   } x;
 #endif
 
 G_BEGIN_DECLS
@@ -247,7 +248,9 @@ typedef struct _GMemChunk GMemChunk;
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
+G_BEGIN_DECLS // FIXMEcxxwasm
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
+G_END_DECLS // FIXMEcxxwasm
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);
@@ -638,7 +641,7 @@ void     g_queue_foreach   (GQueue   *queue, GFunc func, gpointer user_data);
 #define G_LOG_DOMAIN ((gchar*) 0)
 #endif
 
-typedef enum {
+G_ENUM_BEGIN (GLogLevelFlags)
 	G_LOG_FLAG_RECURSION          = 1 << 0,
 	G_LOG_FLAG_FATAL              = 1 << 1,
 	
@@ -650,7 +653,7 @@ typedef enum {
 	G_LOG_LEVEL_DEBUG             = 1 << 7,
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
-} GLogLevelFlags;
+G_ENUM_END (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -697,7 +700,7 @@ gpointer g_convert_error_quark(void);
  * bare minimum to build.
  */
 
-typedef enum {
+G_ENUM_BEGIN (GUnicodeType)
 	G_UNICODE_CONTROL,
 	G_UNICODE_FORMAT,
 	G_UNICODE_UNASSIGNED,
@@ -728,7 +731,7 @@ typedef enum {
 	G_UNICODE_LINE_SEPARATOR,
 	G_UNICODE_PARAGRAPH_SEPARATOR,
 	G_UNICODE_SPACE_SEPARATOR
-} GUnicodeType;
+G_ENUM_END (GUnicodeType)
 
 typedef enum {
 	G_UNICODE_BREAK_MANDATORY,
@@ -976,14 +979,13 @@ typedef enum {
 	G_FILE_ERROR_FAILED
 } GFileError;
 
-typedef enum {
+G_ENUM_BEGIN (GFileTest)
 	G_FILE_TEST_IS_REGULAR = 1 << 0,
 	G_FILE_TEST_IS_SYMLINK = 1 << 1,
 	G_FILE_TEST_IS_DIR = 1 << 2,
 	G_FILE_TEST_IS_EXECUTABLE = 1 << 3,
 	G_FILE_TEST_EXISTS = 1 << 4
-} GFileTest;
-
+G_ENUM_END (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
