@@ -96,17 +96,53 @@ public:
 #endif
 
 #ifdef __cplusplus
-// Provide for math on enums.
+
+// Provide for bit operations on enums, but not all integer operations.
 // This alleviates a fair number of casts in porting C to C++.
-// Debugging and typesafety are sacrificed.
-// We can also overload operators.
-// Note that enums are sometimes unsigned, but it depends not only on the values,
-// but the compiler.
-#define G_ENUM_BEGIN(x) enum { // consider enum _##x
-#define G_ENUM_END(x)   }; typedef int x;
+
+// Forward declare template with no generic implementation.
+template <size_t> struct mono_size_to_int;
+
+// Template specializations.
+template <> struct mono_size_to_int<1> { typedef int8_t T; };
+template <> struct mono_size_to_int<2> { typedef int16_t T; };
+template <> struct mono_size_to_int<4> { typedef int32_t T; };
+template <> struct mono_size_to_int<8> { typedef int64_t T; };
+
+#define MONO_SIZE_TO_INT(x) mono_size_to_int <sizeof (x)>::T
+
+#define G_ENUM_BINOP(Enum, op, opeq) 		\
+inline Enum					\
+operator op (Enum a, Enum b)			\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T; 	\
+	return (Enum)((T)a op (T)b);		\
+}						\
+						\
+inline Enum&					\
+operator opeq (Enum& a, Enum b)			\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T; 	\
+	return (Enum&)((T&)a opeq (T)b);	\
+}						\
+
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	typedef MONO_SIZE_TO_INT (a) T; 	\
+	return (Enum)~(T)a;			\
+}						\
+						\
+G_ENUM_BINOP (Enum, |, |= ) 			\
+G_ENUM_BINOP (Enum, &, &= ) 			\
+G_ENUM_BINOP (Enum, ^, ^= ) 			\
+						\
+} /* extern "C++" */
+
 #else
-#define G_ENUM_BEGIN(x) typedef enum { // consider enum x or _##x
-#define G_ENUM_END(x)   } x;
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
 #endif
 
 G_BEGIN_DECLS // FIXMEcxx This is for main.c, which remains C, in order to avoid linking to libstdc++.
@@ -647,7 +683,7 @@ void     g_queue_foreach   (GQueue   *queue, GFunc func, gpointer user_data);
 #define G_LOG_DOMAIN ((gchar*) 0)
 #endif
 
-G_ENUM_BEGIN (GLogLevelFlags)
+typedef enum {
 	G_LOG_FLAG_RECURSION          = 1 << 0,
 	G_LOG_FLAG_FATAL              = 1 << 1,
 	
@@ -659,7 +695,9 @@ G_ENUM_BEGIN (GLogLevelFlags)
 	G_LOG_LEVEL_DEBUG             = 1 << 7,
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
-G_ENUM_END (GLogLevelFlags)
+} GLogLevelFlags;
+
+G_ENUM_FUNCTIONS (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -706,7 +744,7 @@ gpointer g_convert_error_quark(void);
  * bare minimum to build.
  */
 
-G_ENUM_BEGIN (GUnicodeType)
+typedef enum {
 	G_UNICODE_CONTROL,
 	G_UNICODE_FORMAT,
 	G_UNICODE_UNASSIGNED,
@@ -737,7 +775,7 @@ G_ENUM_BEGIN (GUnicodeType)
 	G_UNICODE_LINE_SEPARATOR,
 	G_UNICODE_PARAGRAPH_SEPARATOR,
 	G_UNICODE_SPACE_SEPARATOR
-G_ENUM_END (GUnicodeType)
+} GUnicodeType;
 
 typedef enum {
 	G_UNICODE_BREAK_MANDATORY,
@@ -985,13 +1023,15 @@ typedef enum {
 	G_FILE_ERROR_FAILED
 } GFileError;
 
-G_ENUM_BEGIN (GFileTest)
+typedef enum {
 	G_FILE_TEST_IS_REGULAR = 1 << 0,
 	G_FILE_TEST_IS_SYMLINK = 1 << 1,
 	G_FILE_TEST_IS_DIR = 1 << 2,
 	G_FILE_TEST_IS_EXECUTABLE = 1 << 3,
 	G_FILE_TEST_EXISTS = 1 << 4
-G_ENUM_END (GFileTest)
+} GFileTest;
+
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);

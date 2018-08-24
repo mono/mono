@@ -46,13 +46,13 @@ typedef struct MonoW32Handle {
 	gpointer specific;
 } MonoW32Handle;
 
-G_ENUM_BEGIN (MonoW32HandleWaitRet)
+typedef enum {
 	MONO_W32HANDLE_WAIT_RET_SUCCESS_0   =  0,
 	MONO_W32HANDLE_WAIT_RET_ABANDONED_0 =  MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS,
 	MONO_W32HANDLE_WAIT_RET_ALERTED     = -1,
 	MONO_W32HANDLE_WAIT_RET_TIMEOUT     = -2,
 	MONO_W32HANDLE_WAIT_RET_FAILED      = -3,
-G_ENUM_END (MonoW32HandleWaitRet)
+} MonoW32HandleWaitRet;
 
 typedef struct 
 {
