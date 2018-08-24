@@ -10,16 +10,15 @@
 #define G_MODULE_EXPORT
 #endif
 
-G_BEGIN_DECLS
-
 /*
  * Modules
  */
-typedef enum {
+G_ENUM_BEGIN (GModuleFlags)
 	G_MODULE_BIND_LAZY = 0x01,
 	G_MODULE_BIND_LOCAL = 0x02,
 	G_MODULE_BIND_MASK = 0x03
-} GModuleFlags;
+G_ENUM_END (GModuleFlags)
+
 typedef struct _GModule GModule;
 
 GModule *g_module_open (const gchar *file, GModuleFlags flags);
@@ -31,7 +30,5 @@ gchar *  g_module_build_path (const gchar *directory, const gchar *module_name);
 
 extern char *gmodule_libprefix;
 extern char *gmodule_libsuffix;
-
-G_END_DECLS
 
 #endif

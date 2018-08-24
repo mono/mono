@@ -99,7 +99,7 @@ mono_native_thread_id_get (void)
 }
 
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
+(mono_native_thread_create) (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	g_error ("WASM doesn't support threading");
 }
@@ -130,7 +130,7 @@ mono_threads_platform_yield (void)
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-	*staddr = (void*)wasm_get_stack_base ();
+	*staddr = (guint8*)wasm_get_stack_base ();
 	*stsize = wasm_get_stack_size ();
 }
 
@@ -158,8 +158,9 @@ mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
 	return FALSE;
 }
 
-
+G_BEGIN_DECLS
 extern void schedule_background_exec (void);
+G_END_DECLS
 
 static GSList *jobs;
 
@@ -169,10 +170,11 @@ mono_threads_schedule_background_job (background_job_cb cb)
 	if (!jobs)
 		schedule_background_exec ();
 
-	if (!g_slist_find (jobs, cb))
-		jobs = g_slist_prepend (jobs, cb);
+	if (!g_slist_find (jobs, (gconstpointer)cb))
+		jobs = g_slist_prepend (jobs, (gpointer)cb);
 }
 
+MONO_EXTERN_C
 EMSCRIPTEN_KEEPALIVE void
 mono_background_exec (void)
 {

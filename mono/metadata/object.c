@@ -2823,7 +2823,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -4891,7 +4891,7 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				gpointer main_args)
 {
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+	mono_thread_create_checked (domain, (gpointer)main_func, main_args, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -5794,9 +5794,7 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
-
-	o = (MonoObject *)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
@@ -5834,11 +5832,7 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	MonoObject *o;
-
-	error_init (error);
-
-	o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
 
@@ -5865,9 +5859,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 	size *= 2;
 #endif
 
-	MonoObject *o;
-
-	o = mono_gc_alloc_mature (vtable, size);
+	MonoObject *o = mono_gc_alloc_mature (vtable, size);
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
@@ -5932,7 +5924,6 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
 	MonoClass *klass = mono_object_class (obj);
 	int size;
 
@@ -5941,7 +5932,7 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 	if (m_class_get_rank (klass))
 		return (MonoObject*)mono_array_clone_checked ((MonoArray*)obj, error);
 
-	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
+	MonoObject *o = mono_gc_alloc_obj (obj->vtable, size);
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	if (G_LIKELY (o))
@@ -9035,9 +9026,9 @@ mono_object_get_data (MonoObject *o)
  *   Return the address of the FIELD in the valuetype VTYPE.
  */
 gpointer
-mono_vtype_get_field_addr (guint8 *vtype, MonoClassField *field)
+mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field)
 {
-	return vtype + field->offset - MONO_ABI_SIZEOF (MonoObject);
+	return ((char*)vtype) + field->offset - MONO_ABI_SIZEOF (MonoObject);
 }
 
 

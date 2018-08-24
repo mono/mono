@@ -44,8 +44,6 @@
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 #endif
 
-G_BEGIN_DECLS
-
 typedef enum {
 	MONO_SEM_FLAGS_NONE      = 0,
 	MONO_SEM_FLAGS_ALERTABLE = 1 << 0,
@@ -353,7 +351,5 @@ mono_os_sem_post (MonoSemType *sem)
 }
 
 #endif
-
-G_END_DECLS
 
 #endif /* _MONO_SEMAPHORE_H_ */

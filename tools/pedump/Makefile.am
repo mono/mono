@@ -15,8 +15,14 @@ endif
 endif
 endif
 
+CXXFLAGS += @CXXFLAGS_COMMON@
+
+if ENABLE_CXX
+pedump_SOURCES = pedump-cpp.cpp
+else
 pedump_SOURCES =		\
 	pedump.c
+endif
 
 pedump_LDADD = 			\
 	$(top_builddir)/mono/metadata/libmonoruntimesgen.la \

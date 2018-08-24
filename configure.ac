@@ -1022,12 +1022,35 @@ fi
 
 AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 
-if test "x$enable_cxx" = "xyes"; then
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+#AM_CONDITIONAL(ENABLE_CXX, [test "x$enable_cxx" = "xyes"])
+AM_CONDITIONAL(ENABLE_CXX, [test "x" = "x"])
 
-	# FIXME Centos6 requires a different flag for prerelease C++11.
-	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CXX_ADD_CFLAGS=' -xc++ -std=gnu++0x -fno-exceptions -fno-rtti '
-	# "c++0x" instead of C++11, for compat with Centos6/gcc4.4
+# FIXME mono/corefx/native has a lot of invalid C++98 in its headers
+# dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
+# mono/corefx is months behind dotnet/corefx
+#CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
+CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
+# "c++0x" instead of C++11, for compat with Centos6/gcc4.4
+
+AC_SUBST(CXXFLAGS_COMMON)
+
+# C++11 helps with coop handles but we can do without it.
+# -fno-exceptions reduces/removes C++ runtime dependency on some platforms (Linux).
+# FIXME -fno-exceptions should be redundant with some undetermined source code changes.
+# i.e. most functions do not reference C++ runtime. Fix any that do.
+
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+# DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
+#if test "x$enable_cxx" = "xyes"; then
+if test "x" = "x"; then
+
+	CXX_ADD_CFLAGS=" -xc++ $CXXFLAGS_COMMON "
 
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
