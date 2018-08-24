@@ -8,7 +8,6 @@
 
 #include "config.h"
 
-#include <glib.h>
 #include "utils/memfuncs.h"
 
 #include <stdlib.h>
