@@ -192,7 +192,7 @@ typedef struct {
 	int unw_info_len;
 } MonoUnwindJitInfo;
 
-G_ENUM_BEGIN (MonoJitInfoFlags)
+typedef enum {
 	JIT_INFO_NONE = 0,
 	JIT_INFO_HAS_GENERIC_JIT_INFO = (1 << 0),
 	JIT_INFO_HAS_TRY_BLOCK_HOLES = (1 << 1),
@@ -203,7 +203,9 @@ G_ENUM_BEGIN (MonoJitInfoFlags)
 	 * 'unwind_info' field.
 	 */
 	JIT_INFO_HAS_UNWIND_INFO = (1 << 4)
-G_ENUM_END (MonoJitInfoFlags)
+} MonoJitInfoFlags;
+
+G_ENUM_FUNCTIONS (MonoJitInfoFlags)
 
 struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and

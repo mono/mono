@@ -13,11 +13,13 @@
 /*
  * Modules
  */
-G_ENUM_BEGIN (GModuleFlags)
+typedef enum {
 	G_MODULE_BIND_LAZY = 0x01,
 	G_MODULE_BIND_LOCAL = 0x02,
 	G_MODULE_BIND_MASK = 0x03
-G_ENUM_END (GModuleFlags)
+} GModuleFlags;
+
+G_ENUM_FUNCTIONS (GModuleFlags)
 
 typedef struct _GModule GModule;
 
