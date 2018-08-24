@@ -1026,8 +1026,8 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
-AM_CONDITIONAL(ENABLE_CXX, [test "x$enable_cxx" = "xyes"])
-#AM_CONDITIONAL(ENABLE_CXX, [test "x" = "x"])
+#AM_CONDITIONAL(ENABLE_CXX, [test "x$enable_cxx" = "xyes"])
+AM_CONDITIONAL(ENABLE_CXX, [test "x" = "x"])
 
 # FIXME mono/corefx/native has a lot of invalid C++98 in its headers
 # dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
