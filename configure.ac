@@ -1029,8 +1029,8 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
 # DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE DO NOT MERGE
-AM_CONDITIONAL(ENABLE_CXX, [test "x$enable_cxx" = "xyes"])
-#AM_CONDITIONAL(ENABLE_CXX, [test "x" = "x"])
+#AM_CONDITIONAL(ENABLE_CXX, [test "x$enable_cxx" = "xyes"])
+AM_CONDITIONAL(ENABLE_CXX, [test "x" = "x"])
 
 #CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
 CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
