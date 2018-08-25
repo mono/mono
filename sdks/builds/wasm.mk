@@ -1,9 +1,9 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-WASM_INTERP_CONFIGURE_FLAGS = \
-	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
-	--prefix=$(TOP)/sdks/out/wasm-interp \
+WASM_RUNTIME_CONFIGURE_FLAGS = \
+	--cache-file=$(TOP)/sdks/builds/wasm-runtime.config.cache \
+	--prefix=$(TOP)/sdks/out/wasm-runtime \
 	--disable-mcs-build \
 	--disable-nls \
 	--disable-boehm \
@@ -15,8 +15,9 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
 	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter \
-	--host=wasm32
-
+	--host=wasm32 \
+	--enable-llvm-runtime \
+	--with-bitcode=yes
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
@@ -26,30 +27,30 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.38.11-64bit
 	touch $@
 
-.stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
+.stamp-wasm-runtime-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-interp-configure: $(TOP)/configure
-	mkdir -p $(TOP)/sdks/builds/wasm-interp
-	cd $(TOP)/sdks/builds/wasm-interp && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_INTERP_CONFIGURE_FLAGS)
+.stamp-wasm-runtime-configure: $(TOP)/configure
+	mkdir -p $(TOP)/sdks/builds/wasm-runtime
+	cd $(TOP)/sdks/builds/wasm-runtime && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@
 
-build-custom-wasm-interp:
-	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && make -C wasm-interp
+build-custom-wasm-runtime:
+	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && make -C wasm-runtime
 
-.PHONY: package-wasm-interp
-package-wasm-interp:
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-interp/mono install
+.PHONY: package-wasm-runtime
+package-wasm-runtime:
+	$(MAKE) -C $(TOP)/sdks/builds/wasm-runtime/mono install
 
 .PHONY: clean-wasm
 clean-wasm:
-	rm -rf .stamp-wasm-toolchain $(TOP)/sdks/builds/toolchains/emsdk
+	rm -rf .stamp-wasm-runtime-toolchain $(TOP)/sdks/builds/toolchains/emsdk
 
-.PHONY: clean-wasm-interp
-clean-wasm-interp: clean-wasm
-	rm -rf .stamp-wasm-interp-toolchain .stamp-wasm-interp-configure $(TOP)/sdks/builds/wasm-interp $(TOP)/sdks/builds/wasm.config.cache $(TOP)/sdks/out/wasm-interp
+.PHONY: clean-wasm-runtime
+clean-wasm-runtime: clean-wasm
+	rm -rf .stamp-wasm-runtime-configure $(TOP)/sdks/builds/wasm-runtime $(TOP)/sdks/builds/wasm-runtime.config.cache $(TOP)/sdks/out/wasm-runtime
 
-TARGETS += wasm-interp
+TARGETS += wasm-runtime
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
@@ -90,43 +91,3 @@ clean-wasm-cross: clean-wasm
 	rm -rf .stamp-wasm-aot-toolchain .stamp-wasm-cross-configure $(TOP)/sdks/builds/wasm-cross $(TOP)/sdks/builds/wasm-cross.config.cache $(TOP)/sdks/out/wasm-cross
 
 TARGETS += wasm-cross
-
-
-WASM_AOT_RUNTIME_CONFIGURE_FLAGS = \
-	--cache-file=$(TOP)/sdks/builds/wasm-aot-runtime.config.cache \
-	--prefix=$(TOP)/sdks/out/wasm-aot-runtime \
-	--enable-llvm-runtime \
-	--with-bitcode=yes	\
-	--host=wasm32	\
-	--disable-mcs-build \
-	--disable-nls \
-	--disable-boehm \
-	--disable-btls \
-	--with-lazy-gc-thread-creation=yes \
-	--with-libgc=none \
-	--disable-executables \
-	--disable-support-build \
-	--disable-visibility-hidden \
-	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug
-
-.stamp-wasm-aot-runtime-toolchain: .stamp-wasm-toolchain
-	touch $@
-
-.stamp-wasm-aot-runtime-configure: $(TOP)/configure
-	mkdir -p $(TOP)/sdks/builds/wasm-aot-runtime
-	cd $(TOP)/sdks/builds/wasm-aot-runtime && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_AOT_RUNTIME_CONFIGURE_FLAGS)
-	touch $@
-
-build-custom-wasm-aot-runtime:
-	source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && make -C wasm-aot-runtime
-
-.PHONY: package-wasm-aot-runtime
-package-wasm-aot-runtime:
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-aot-runtime/mono install
-
-.PHONY: clean-wasm-aot-runtime
-clean-wasm-aot-runtime: clean-wasm
-	rm -rf .stamp-wasm-aot-runtime-toolchain .stamp-wasm-aot-runtime-configure $(TOP)/sdks/builds/wasm-aot-runtime $(TOP)/sdks/builds/wasm.config.cache $(TOP)/sdks/out/wasm-aot-runtime
-
-TARGETS += wasm-aot-runtime
