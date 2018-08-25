@@ -19,12 +19,15 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-llvm-runtime \
 	--with-bitcode=yes
 
+EMSCRIPTEN_VERSION=1.38.11
+EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
+
 $(TOP)/sdks/builds/toolchains/emsdk:
-	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
+	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
 .stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.38.11-64bit
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.38.11-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
 	touch $@
 
 .stamp-wasm-runtime-toolchain: .stamp-wasm-toolchain
@@ -72,15 +75,22 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--enable-maintainer-mode	\
 	--with-llvm=$(TOP)/sdks/out/ios-llvm32 \
-	--enable-minimal=appdomains,com,remoting
+	--enable-minimal=appdomains,com,remoting \
+	--with-cross-offsets=wasm-offsets.h
 
 .stamp-wasm-cross-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-cross-configure: $(TOP)/configure $(if $(IGNORE_PACKAGE_LLVM),package-llvm-llvm32,download-llvm-llvm32)
+.stamp-wasm-cross-configure: | $(TOP)/configure $(if $(IGNORE_PACKAGE_LLVM),package-llvm-llvm32,download-llvm-llvm32)
 	mkdir -p $(TOP)/sdks/builds/wasm-cross
 	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
 	touch $@
+
+# This needs to be run after the target runtime has been configured
+$(TOP)/sdks/builds/wasm-cross/wasm-offsets.h: .stamp-wasm-cross-configure .stamp-wasm-runtime-configure $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+	cd $(TOP)/sdks/builds/wasm-cross && MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_64 mono --debug $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe --emscripten-sdk=$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION) --abi wasm32-unknown-unknown --outfile $@ --mono $(TOP) --targetdir $(TOP)/sdks/builds/wasm-runtime
+
+build-wasm-cross: $(TOP)/sdks/builds/wasm-cross/wasm-offsets.h
 
 .PHONY: package-wasm-cross
 package-wasm-cross:
