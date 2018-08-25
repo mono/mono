@@ -59,7 +59,7 @@ appbuilder.exe: appbuilder/appbuilder.cs $(OPTIONS_CS)
 	csc /out:$@ $^
 
 test-runner.exe: test-runner/runner.cs
-	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll test-runner/runner.cs
+	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll -r:$(BCL_DIR)/Mono.Security.dll test-runner/runner.cs
 
 runtime/runtime:
 	make -C runtime

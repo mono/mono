@@ -23,6 +23,10 @@ Mono.Globalization.Unicode/SortKey.cs
 Mono.Globalization.Unicode/SortKeyBuffer.cs
 Mono.Globalization.Unicode/Normalization.cs
 Mono.Globalization.Unicode/NormalizationTableUtil.cs
+Mono/CertificateImportFlags.cs
+Mono/DependencyInjector.cs
+Mono/ISystemCertificateProvider.cs
+Mono/ISystemDependencyProvider.cs
 Mono/Runtime.cs
 Mono/RuntimeHandles.cs
 Mono/RuntimeMarshal.cs
@@ -163,6 +167,7 @@ System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
 System.Configuration.Assemblies/ProcessorID.cs
 System.Deployment.Internal/InternalActivationContextHelper.cs
 System.Deployment.Internal/InternalApplicationIdentityHelper.cs
+System.Diagnostics/Debug.cs
 System.Diagnostics/Debugger.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
@@ -701,14 +706,9 @@ System.Security.Cryptography/RSAPKCS1SignatureDeformatter.cs
 System.Security.Cryptography/RSAPKCS1SignatureFormatter.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
-System.Security.Cryptography.X509Certificates/INativeCertificateHelper.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
-System.Security.Cryptography.X509Certificates/X509Certificate20.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImpl.cs
-System.Security.Cryptography.X509Certificates/X509CertificateImplMono.cs
 System.Security.Cryptography.X509Certificates/X509Helper.cs
-System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
-System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
@@ -800,8 +800,8 @@ System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
-System.Security.Policy/Publisher.cs
-System.Security.Policy/PublisherMembershipCondition.cs
+../../../external/corefx/src/System.Security.Permissions/src/System/Security/Policy/Publisher.cs
+../../../external/corefx/src/System.Security.Permissions/src/System/Security/Policy/PublisherMembershipCondition.cs
 System.Security.Policy/Site.cs
 System.Security.Policy/SiteMembershipCondition.cs
 System.Security.Policy/StrongName.cs
@@ -856,6 +856,8 @@ System.Threading.Tasks/DecoupledTask.cs
 
 CoreFoundation/CFHelpers.cs
 
+ReferenceSources/SR.cs
+ReferenceSources/SR2.cs
 ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
@@ -1388,8 +1390,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/tripledescryptoserviceprovider.cs
 ../referencesource/mscorlib/system/security/cryptography/utils.cs
 
-../referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
-
 ../referencesource/mscorlib/system/security/principal/genericidentity.cs
 
 ../referencesource/mscorlib/system/security/util/hex.cs
@@ -1541,12 +1541,12 @@ corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/CompareInfo.cs
+corefx/Interop.GetRandomBytes.Mono.cs
 corefx/GlobalizationMode.cs
 corefx/RuntimeImports.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs
-corert/Debug.cs
 corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
@@ -1560,8 +1560,6 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/Internal/Runtime/Augments/TaskTraceCallbacks.cs
@@ -1609,6 +1607,7 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/ArraySegment.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
+../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HResults.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MathF.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs
@@ -1771,7 +1770,16 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
 
+../../../external/corefx/src/Common/src/Internal/Cryptography/Helpers.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Helpers.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/ErrorCode.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
+
+corefx/Mono.SafePasswordHandle.Unix.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeHandleCache.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs

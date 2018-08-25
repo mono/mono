@@ -25,22 +25,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Text;
+using System.Collections.Generic;
+using Microsoft.Win32.SafeHandles;
+
 namespace System.Security.Cryptography.X509Certificates
 {
 	internal abstract class X509Certificate2Impl : X509CertificateImpl
 	{
-#if SECURITY_DEP
-
 		public abstract bool Archived {
 			get; set;
 		}
 
-		public abstract X509ExtensionCollection Extensions {
+		public abstract IEnumerable<X509Extension> Extensions {
 			get;
 		}
 
-		public abstract bool HasPrivateKey {
-			get;
+		public abstract string FriendlyName {
+			get; set;
 		}
 
 		public abstract X500DistinguishedName IssuerName {
@@ -55,7 +57,7 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
-		public abstract Oid SignatureAlgorithm {
+		public abstract string SignatureAlgorithm {
 			get;
 		}
 
@@ -77,14 +79,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract string GetNameInfo (X509NameType nameType, bool forIssuer);
 
-		public abstract void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags);
-
-		public abstract byte[] Export (X509ContentType contentType, string password);
-
 		public abstract bool Verify (X509Certificate2 thisCertificate);
 
-		public abstract void Reset ();
+		public abstract void AppendPrivateKeyInfo (StringBuilder sb);
 
-#endif
+		public abstract void Reset ();
 	}
 }

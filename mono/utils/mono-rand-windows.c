@@ -85,7 +85,7 @@ mono_rand_open (void)
  * \returns On success, a non-NULL handle which can be used to fetch random data from \c mono_rand_try_get_bytes. On failure, NULL.
  */
 gpointer
-mono_rand_init (guchar *seed, gint seed_size)
+mono_rand_init (const guchar *seed, gssize seed_size)
 {
 	MONO_WIN32_CRYPT_PROVIDER_HANDLE provider = 0;
 
@@ -120,7 +120,7 @@ mono_rand_init (guchar *seed, gint seed_size)
  * \returns FALSE on failure and sets \p error, TRUE on success.
  */
 gboolean
-mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, MonoError *error)
+mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, MonoError *error)
 {
 	MONO_WIN32_CRYPT_PROVIDER_HANDLE provider;
 

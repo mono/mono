@@ -1,5 +1,4 @@
 Assembly/AssemblyInfo.cs
-../../build/common/SR.cs
 corefx/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
@@ -147,10 +146,15 @@ System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtecti
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerEncoder.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerSequenceReader.cs
+
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs
 
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Oids.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Pal.OSX/CertificateData.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs
@@ -164,6 +168,7 @@ System.Security.Cryptography.X509Certificates/X509Certificate2Collection.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2ImplUnix.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs
@@ -198,6 +203,12 @@ System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
 
 System.Windows.Input/ICommand.cs
+
+Mono/SystemCertificateProvider.cs
+Mono/SystemDependencyProvider.cs
+Mono/X509Pal.cs
+Mono/X509PalImpl.cs
+Mono/X509PalImpl.Mono.cs
 
 Mono.Btls/MonoBtlsBio.cs
 Mono.Btls/MonoBtlsContext.cs
@@ -237,20 +248,9 @@ Mono.Btls/MonoBtlsX509VerifyFlags.cs
 Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
+Mono.Btls/X509PalImpl.Btls.cs
 
-Mono.AppleTls/AppleCertificateHelper.cs
-Mono.AppleTls/AppleTlsContext.cs
-Mono.AppleTls/AppleTlsProvider.cs
-Mono.AppleTls/AppleTlsStream.cs
 Mono.AppleTls/INativeObject.cs
-Mono.AppleTls/Certificate.cs
-Mono.AppleTls/ImportExport.cs
-Mono.AppleTls/Enums.cs
-Mono.AppleTls/SecureTransport.cs
-Mono.AppleTls/Policy.cs
-Mono.AppleTls/Trust.cs
-Mono.AppleTls/SslConnection.cs
-Mono.AppleTls/Items.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
@@ -270,8 +270,6 @@ ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
-ReferenceSources/SR.cs
-ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -793,8 +791,6 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/compmod/system/codedom/compiler/GeneratedCodeAttribute.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
-
-corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
 
