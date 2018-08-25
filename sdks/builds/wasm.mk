@@ -60,9 +60,9 @@ ifeq ($(UNAME),Darwin)
 	CROSS_HOST=i386-apple-darwin10
 endif
 
-WASM_AOT_CONFIGURE_FLAGS = \
-	--cache-file=$(TOP)/sdks/builds/wasm-aot.config.cache \
-	--prefix=$(TOP)/sdks/out/wasm-aot \
+WASM_CROSS_CONFIGURE_FLAGS = \
+	--cache-file=$(TOP)/sdks/builds/wasm-cross.config.cache \
+	--prefix=$(TOP)/sdks/out/wasm-cross \
 	--host=$(CROSS_HOST)	\
 	--target=wasm32	\
 	--disable-mcs-build \
@@ -74,23 +74,23 @@ WASM_AOT_CONFIGURE_FLAGS = \
 	--enable-llvm	\
 	--enable-minimal=appdomains,com,remoting
 
-.stamp-wasm-aot-toolchain: .stamp-wasm-toolchain
+.stamp-wasm-cross-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-aot-configure: $(TOP)/configure
-	mkdir -p $(TOP)/sdks/builds/wasm-aot
-	cd $(TOP)/sdks/builds/wasm-aot && CFLAGS="-g" $(TOP)/configure $(WASM_AOT_CONFIGURE_FLAGS)
+.stamp-wasm-cross-configure: $(TOP)/configure
+	mkdir -p $(TOP)/sdks/builds/wasm-cross
+	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
 	touch $@
 
-.PHONY: package-wasm-aot
-package-wasm-aot:
-	$(MAKE) -C $(TOP)/sdks/builds/wasm-aot/mono install
+.PHONY: package-wasm-cross
+package-wasm-cross:
+	$(MAKE) -C $(TOP)/sdks/builds/wasm-cross/mono install
 
-.PHONY: clean-wasm-aot
-clean-wasm-aot: clean-wasm
-	rm -rf .stamp-wasm-aot-toolchain .stamp-wasm-aot-configure $(TOP)/sdks/builds/wasm-aot $(TOP)/sdks/builds/wasm.config.cache $(TOP)/sdks/out/wasm-aot
+.PHONY: clean-wasm-cross
+clean-wasm-cross: clean-wasm
+	rm -rf .stamp-wasm-aot-toolchain .stamp-wasm-cross-configure $(TOP)/sdks/builds/wasm-cross $(TOP)/sdks/builds/wasm-cross.config.cache $(TOP)/sdks/out/wasm-cross
 
-TARGETS += wasm-aot
+TARGETS += wasm-cross
 
 
 WASM_AOT_RUNTIME_CONFIGURE_FLAGS = \

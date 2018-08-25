@@ -159,7 +159,7 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 	cp aot-driver.js aot/
 	touch $@
 
-AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
+AOT_COMPILER=$(TOP)/sdks/out/wasm-cross/bin/wasm32-mono-sgen
 aot-sample: .stamp-build-aot-test
 	for f in aot/managed/*.dll; do	\
 		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,static,llvm-outfile=$$f.bc $$f;	\
