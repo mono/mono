@@ -97,6 +97,7 @@ public:
 
 #ifdef __cplusplus
 
+<<<<<<< HEAD
 #define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
 
 // g_cast converts void* to T*.
@@ -133,6 +134,8 @@ public:
 
 #ifdef __cplusplus
 
+=======
+>>>>>>> [cxx] G_ENUM_FUNCTIONS updates from master PR https://github.com/mono/mono/pull/10274.
 // G++4.4 breaks opeq below without this.
 #if defined  (__GNUC__) || defined  (__clang__)
 #define G_MAY_ALIAS  __attribute__((__may_alias__))
@@ -145,6 +148,7 @@ public:
 
 // Forward declare template with no generic implementation.
 template <size_t> struct g_size_to_int;
+<<<<<<< HEAD
 
 // Template specializations.
 template <> struct g_size_to_int<1> { typedef int8_t type; };
@@ -156,13 +160,23 @@ template <> struct g_size_to_int<8> { typedef int64_t type; };
 //template <typename T>
 //using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
 #define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
+=======
+>>>>>>> [cxx] G_ENUM_FUNCTIONS updates from master PR https://github.com/mono/mono/pull/10274.
 
 // Template specializations.
-template <> struct mono_size_to_int<1> { typedef int8_t T; };
-template <> struct mono_size_to_int<2> { typedef int16_t T; };
-template <> struct mono_size_to_int<4> { typedef int32_t T; };
-template <> struct mono_size_to_int<8> { typedef int64_t T; };
+template <> struct g_size_to_int<1> { typedef int8_t type; };
+template <> struct g_size_to_int<2> { typedef int16_t type; };
+template <> struct g_size_to_int<4> { typedef int32_t type; };
+template <> struct g_size_to_int<8> { typedef int64_t type; };
 
+<<<<<<< HEAD
+=======
+// g++4.4 does not accept:
+//template <typename T>
+//using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+#define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
+
+>>>>>>> [cxx] G_ENUM_FUNCTIONS updates from master PR https://github.com/mono/mono/pull/10274.
 #define G_ENUM_BINOP(Enum, op, opeq) 		\
 inline Enum					\
 operator op (Enum a, Enum b)			\
