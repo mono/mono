@@ -4,7 +4,6 @@ SHELL:=/bin/bash
 WASM_INTERP_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-interp.config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-interp \
-	--enable-interpreter \
 	--disable-mcs-build \
 	--disable-nls \
 	--disable-boehm \
@@ -15,7 +14,7 @@ WASM_INTERP_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter \
 	--host=wasm32
 
 
