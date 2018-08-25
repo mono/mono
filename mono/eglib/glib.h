@@ -97,33 +97,43 @@ public:
 
 #ifdef __cplusplus
 
+// G++4.4 breaks opeq below without this.
+#if defined  (__GNUC__) || defined  (__clang__)
+#define G_MAY_ALIAS  __attribute__((__may_alias__))
+#else
+#define G_MAY_ALIAS /* nothing */
+#endif
+
 // Provide for bit operations on enums, but not all integer operations.
 // This alleviates a fair number of casts in porting C to C++.
 
 // Forward declare template with no generic implementation.
-template <size_t> struct mono_size_to_int;
+template <size_t> struct g_size_to_int;
 
 // Template specializations.
-template <> struct mono_size_to_int<1> { typedef int8_t T; };
-template <> struct mono_size_to_int<2> { typedef int16_t T; };
-template <> struct mono_size_to_int<4> { typedef int32_t T; };
-template <> struct mono_size_to_int<8> { typedef int64_t T; };
+template <> struct g_size_to_int<1> { typedef int8_t type; };
+template <> struct g_size_to_int<2> { typedef int16_t type; };
+template <> struct g_size_to_int<4> { typedef int32_t type; };
+template <> struct g_size_to_int<8> { typedef int64_t type; };
 
-#define MONO_SIZE_TO_INT(x) mono_size_to_int <sizeof (x)>::T
+// g++4.4 does not accept:
+//template <typename T>
+//using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+#define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
 
 #define G_ENUM_BINOP(Enum, op, opeq) 		\
 inline Enum					\
 operator op (Enum a, Enum b)			\
 {						\
-	typedef MONO_SIZE_TO_INT (a) T; 	\
-	return (Enum)((T)a op (T)b);		\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(static_cast<type>(a) op b); \
 }						\
 						\
 inline Enum&					\
 operator opeq (Enum& a, Enum b)			\
 {						\
-	typedef MONO_SIZE_TO_INT (a) T; 	\
-	return (Enum&)((T&)a opeq (T)b);	\
+	typedef g_size_to_int_t (Enum) G_MAY_ALIAS type; \
+	return (Enum&)((type&)a opeq b); 	\
 }						\
 
 #define G_ENUM_FUNCTIONS(Enum)			\
@@ -131,13 +141,13 @@ extern "C++" { /* in case within extern "C" */	\
 inline Enum					\
 operator~ (Enum a)				\
 {						\
-	typedef MONO_SIZE_TO_INT (a) T; 	\
-	return (Enum)~(T)a;			\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(~static_cast<type>(a)); \
 }						\
 						\
-G_ENUM_BINOP (Enum, |, |= ) 			\
-G_ENUM_BINOP (Enum, &, &= ) 			\
-G_ENUM_BINOP (Enum, ^, ^= ) 			\
+G_ENUM_BINOP (Enum, |, |=) 			\
+G_ENUM_BINOP (Enum, &, &=) 			\
+G_ENUM_BINOP (Enum, ^, ^=) 			\
 						\
 } /* extern "C++" */
 
