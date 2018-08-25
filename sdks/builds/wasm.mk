@@ -71,13 +71,13 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 	--disable-btls \
 	--disable-support-build \
 	--enable-maintainer-mode	\
-	--enable-llvm	\
+	--with-llvm=$(TOP)/sdks/out/ios-llvm32 \
 	--enable-minimal=appdomains,com,remoting
 
 .stamp-wasm-cross-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-cross-configure: $(TOP)/configure
+.stamp-wasm-cross-configure: $(TOP)/configure $(if $(IGNORE_PACKAGE_LLVM),package-llvm-llvm32,download-llvm-llvm32)
 	mkdir -p $(TOP)/sdks/builds/wasm-cross
 	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
 	touch $@
