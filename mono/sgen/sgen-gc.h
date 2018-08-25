@@ -15,8 +15,6 @@
 /* pthread impl */
 #include "config.h"
 
-#include <stddef.h>
-void sgen_qsort (void *array, size_t count, size_t element_size, int (*compare) (const void*, const void*));
 
 #ifdef HAVE_SGEN_GC
 
@@ -1106,6 +1104,8 @@ void sgen_debug_check_nursery_is_clean (void);
 void sgen_env_var_error (const char *env_var, const char *fallback, const char *description_format, ...);
 
 /* Utilities */
+
+void sgen_qsort (void *array, size_t count, size_t element_size, int (*compare) (const void*, const void*));
 
 gint64 sgen_timestamp (void);
 
