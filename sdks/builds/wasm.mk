@@ -47,7 +47,7 @@ clean-wasm:
 	rm -rf .stamp-wasm-runtime-toolchain $(TOP)/sdks/builds/toolchains/emsdk
 
 .PHONY: clean-wasm-runtime
-clean-wasm-runtime: clean-wasm
+clean-wasm-runtime:
 	rm -rf .stamp-wasm-runtime-configure $(TOP)/sdks/builds/wasm-runtime $(TOP)/sdks/builds/wasm-runtime.config.cache $(TOP)/sdks/out/wasm-runtime
 
 TARGETS += wasm-runtime
@@ -87,7 +87,7 @@ package-wasm-cross:
 	$(MAKE) -C $(TOP)/sdks/builds/wasm-cross/mono install
 
 .PHONY: clean-wasm-cross
-clean-wasm-cross: clean-wasm
+clean-wasm-cross:
 	rm -rf .stamp-wasm-aot-toolchain .stamp-wasm-cross-configure $(TOP)/sdks/builds/wasm-cross $(TOP)/sdks/builds/wasm-cross.config.cache $(TOP)/sdks/out/wasm-cross
 
 TARGETS += wasm-cross
