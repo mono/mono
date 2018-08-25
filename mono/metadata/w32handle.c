@@ -253,10 +253,6 @@ retry:
 
 	handles_slots_last = (handles_slots_last->next = g_new0 (MonoW32HandleSlot, 1));
 	goto retry_from_beginning;
-
-	/* We already went around and didn't find a slot, so let's put ourselves on the empty slot we just allocated */
-	slot_last = handles_slots_last;
-	index_last = 0;
 }
 
 gpointer
@@ -1002,10 +998,10 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 		mono_w32handle_unlock_handles (handles_data, nhandles);
 
 		if (signalled) {
-			ret = MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + lowest;
+			ret = (MonoW32HandleWaitRet)(MONO_W32HANDLE_WAIT_RET_SUCCESS_0 + lowest);
 			for (i = lowest; i < nhandles; i++) {
 				if (abandoned [i]) {
-					ret = MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + lowest;
+					ret = (MonoW32HandleWaitRet)(MONO_W32HANDLE_WAIT_RET_ABANDONED_0 + lowest);
 					break;
 				}
 			}

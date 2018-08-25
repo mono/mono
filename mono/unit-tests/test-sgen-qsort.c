@@ -8,6 +8,8 @@
 
 #include "config.h"
 
+#define  HAVE_SGEN_GC
+
 #include <mono/sgen/sgen-gc.h>
 #include <mono/sgen/sgen-qsort.h>
 
