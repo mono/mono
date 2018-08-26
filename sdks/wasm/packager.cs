@@ -28,6 +28,7 @@ class Driver {
 		Console.WriteLine ("\t--debug         Enable Debugging (default false)");
 		Console.WriteLine ("\t--debugrt       Use the debug runtime (default release) - this has nothing to do with C# debugging");
 		Console.WriteLine ("\t--nobinding     Disable binding engine (default include engine)");
+		Console.WriteLine ("\t--aot           Enable AOT mode");
 		Console.WriteLine ("\t--prefix=x      Set the input assembly prefix to 'x' (default to the current directory)");
 		Console.WriteLine ("\t--out=x         Set the output directory to 'x' (default to the current directory)");
 		Console.WriteLine ("\t--mono-sdkdir=x Set the mono sdk directory to 'x'");
@@ -141,7 +142,9 @@ class Driver {
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
 		var use_release_runtime = true;
+		var enable_aot = false;
 		var print_usage = false;
+		var emit_ninja = false;
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -154,6 +157,7 @@ class Driver {
 				{ "prefix=", s => app_prefix = s },
 				{ "deploy=", s => deploy_prefix = s },
 				{ "vfs=", s => vfs_prefix = s },
+				{ "aot", s => enable_aot = true },
 				{ "help", s => print_usage = true },
 					};
 
@@ -190,16 +194,23 @@ class Driver {
 		if (add_binding)
 			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
 
-		if (!Directory.Exists (out_prefix))
-			Directory.CreateDirectory (out_prefix);
+		if (builddir != null) {
+			emit_ninja = true;
+			if (!Directory.Exists (builddir))
+				Directory.CreateDirectory (builddir);
+		}
 
-		var bcl_dir = Path.Combine (out_prefix, deploy_prefix);
-		if (Directory.Exists (bcl_dir))
-			Directory.Delete (bcl_dir, true);
-		Directory.CreateDirectory (bcl_dir);
-		foreach (var f in file_list) {
-			Console.WriteLine ($"cp {f} -> {Path.Combine (bcl_dir, Path.GetFileName (f))}");
-			File.Copy (f, Path.Combine (bcl_dir, Path.GetFileName (f)));
+		if (!emit_ninja) {
+			if (!Directory.Exists (out_prefix))
+				Directory.CreateDirectory (out_prefix);
+			var bcl_dir = Path.Combine (out_prefix, deploy_prefix);
+			if (Directory.Exists (bcl_dir))
+				Directory.Delete (bcl_dir, true);
+			Directory.CreateDirectory (bcl_dir);
+			foreach (var f in file_list) {
+				Console.WriteLine ($"cp {f} -> {Path.Combine (bcl_dir, Path.GetFileName (f))}");
+				File.Copy (f, Path.Combine (bcl_dir, Path.GetFileName (f)));
+			}
 		}
 
 		if (deploy_prefix.EndsWith ("/"))
@@ -219,21 +230,90 @@ class Driver {
 		else
 			template = template.Replace ("@BINDINGS_LOADING@", "");
 
-		var runtime_js = Path.Combine (out_prefix, "runtime.js");
+		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
 		Debug ($"create {runtime_js}");
 		File.Delete (runtime_js);
 		File.WriteAllText (runtime_js, template);
 
 		string runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
-		File.Delete (Path.Combine (out_prefix, "mono.js"));
-		File.Delete (Path.Combine (out_prefix, "mono.wasm"));
+		if (!emit_ninja) {
+			File.Delete (Path.Combine (out_prefix, "mono.js"));
+			File.Delete (Path.Combine (out_prefix, "mono.wasm"));
 
-		File.Copy (
-			Path.Combine (runtime_dir, "mono.js"),
-			Path.Combine (out_prefix, "mono.js"));
-		File.Copy (
-			Path.Combine (runtime_dir, "mono.wasm"),
-			Path.Combine (out_prefix, "mono.wasm"));
+			File.Copy (
+					   Path.Combine (runtime_dir, "mono.js"),
+					   Path.Combine (out_prefix, "mono.js"));
+			File.Copy (
+					   Path.Combine (runtime_dir, "mono.wasm"),
+					   Path.Combine (out_prefix, "mono.wasm"));
+		}
+
+		if (!emit_ninja)
+			return;
+
+		if (enable_aot) {
+			if (sdkdir == null) {
+				Console.WriteLine ("The --mono-sdkdir argument is required when using AOT.");
+				Environment.Exit (1);
+			}
+		}
+
+		runtime_dir = Path.GetFullPath (runtime_dir);
+		sdkdir = Path.GetFullPath (sdkdir);
+		out_prefix = Path.GetFullPath (out_prefix);
+
+		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
+
+		// Defines
+		ninja.WriteLine ($"mono_sdkdir = {sdkdir}");
+		ninja.WriteLine ($"appdir = {out_prefix}");
+		ninja.WriteLine ($"builddir = .");
+		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
+		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
+		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
+		// Rules
+		ninja.WriteLine ("rule aot");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
+		ninja.WriteLine ("rule mkdir");
+		ninja.WriteLine ("  command = mkdir -p $out");
+		ninja.WriteLine ("rule cpifdiff");
+		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
+		ninja.WriteLine ("  restat = true");
+
+		// Targets
+		ninja.WriteLine ("build $appdir: mkdir");
+		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
+		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
+		ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
+		ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
+
+		var ofiles = "";
+		var assembly_names = new List<string> ();
+		foreach (var assembly in asm_list) {
+			string filename = Path.GetFileName (assembly);
+			var filename_noext = Path.GetFileNameWithoutExtension (filename);
+
+			File.Copy (assembly, Path.Combine (builddir, filename), true);
+			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff $builddir/{filename}");
+
+			if (enable_aot) {
+				string destdir = null;
+				string srcfile = null;
+				destdir = "$builddir";
+				srcfile = $"{filename}";
+
+				string outputs = $"{destdir}/{filename}.bc";
+				ninja.WriteLine ($"build {outputs}: aot {srcfile}");
+				ninja.WriteLine ($"  src_file={srcfile}");
+				ninja.WriteLine ($"  outfile={destdir}/{filename}.bc");
+				ninja.WriteLine ($"  mono_path={destdir}");
+
+				ofiles += " " + ($"{destdir}/{filename}.bc");
+			}
+		}
+
+		ninja.Close ();
 	}
 
 }
