@@ -837,8 +837,9 @@ decompose_vtype_opt_uses_simd_intrinsics (MonoCompile *cfg, MonoInst *ins)
 }
 
 static void
-decompose_vtype_opt_load_arg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, guint32 *sreg)
+decompose_vtype_opt_load_arg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, gint32 *sreg_int32)
 {
+	guint32 *sreg = (guint32*)sreg_int32;
 	MonoInst *src_var = get_vreg_to_inst (cfg, *sreg);
 	if (src_var && src_var->opcode == OP_ARG && src_var->klass && MONO_CLASS_IS_SIMD (cfg, src_var->klass)) {
 		MonoInst *varload_ins, *load_ins;
