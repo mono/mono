@@ -3,7 +3,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 using Mono.Cecil;
-
+using Mono.Options;
 
 class Driver {
 	static bool enable_debug;
@@ -22,15 +22,17 @@ class Driver {
 	}
 
 	static void Usage () {
-		Console.WriteLine ("Valid arguments:");
-		Console.WriteLine ("\t-help         Show this help message");
-		Console.WriteLine ("\t-debug        Enable Debugging (default false)");
-		Console.WriteLine ("\t-debugrt      Use the debug runtime (default release) - this has nothing to do with C# debugging");
-		Console.WriteLine ("\t-nobinding    Disable binding engine (default include engine)");
-		Console.WriteLine ("\t-prefix=x     Set the input assembly prefix to 'x' (default to the current directory)");
-		Console.WriteLine ("\t-out=x        Set the output directory to 'x' (default to the current directory)");
-		Console.WriteLine ("\t-deploy=x     Set the deploy prefix to 'x' (default to 'managed')");
-		Console.WriteLine ("\t-vfs=x        Set the VFS prefix to 'x' (default to 'managed')");
+		Console.WriteLine ("Usage: packager.exe <options> <assemblies>");
+		Console.WriteLine ("Valid options:");
+		Console.WriteLine ("\t--help          Show this help message");
+		Console.WriteLine ("\t--debug         Enable Debugging (default false)");
+		Console.WriteLine ("\t--debugrt       Use the debug runtime (default release) - this has nothing to do with C# debugging");
+		Console.WriteLine ("\t--nobinding     Disable binding engine (default include engine)");
+		Console.WriteLine ("\t--prefix=x      Set the input assembly prefix to 'x' (default to the current directory)");
+		Console.WriteLine ("\t--out=x         Set the output directory to 'x' (default to the current directory)");
+		Console.WriteLine ("\t--mono-sdkdir=x Set the mono sdk directory to 'x'");
+		Console.WriteLine ("\t--deploy=x      Set the deploy prefix to 'x' (default to 'managed')");
+		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 	}
@@ -132,17 +134,47 @@ class Driver {
 		var root_assemblies = new List<string> ();
 		enable_debug = false;
 		var add_binding = true;
+		string builddir = null;
+		string sdkdir = null;
 		out_prefix = Environment.CurrentDirectory;
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
 		var use_release_runtime = true;
+		var print_usage = false;
+
+		var p = new OptionSet () {
+				{ "debug", s => enable_debug = true },
+				{ "nobinding", s => add_binding = false },
+				{ "debugrt", s => use_release_runtime = false },
+				{ "out=", s => out_prefix = s },
+				{ "appdir=", s => out_prefix = s },
+				{ "builddir=", s => builddir = s },
+				{ "mono-sdkdir=", s => sdkdir = s },
+				{ "prefix=", s => app_prefix = s },
+				{ "deploy=", s => deploy_prefix = s },
+				{ "vfs=", s => vfs_prefix = s },
+				{ "help", s => print_usage = true },
+					};
+
+		var new_args = p.Parse (args).ToArray ();
+		foreach (var a in new_args) {
+			root_assemblies.Add (a);
+		}
+
+		if (print_usage) {
+			Usage ();
+			return;
+		}
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
-		if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
-			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packaker.exe
+		if (sdkdir != null) {
+			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
+			bcl_prefix = Path.Combine (sdkdir, "bcl/wasm");
+		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
+			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (tool_prefix, "../out/bcl/wasm");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
@@ -150,47 +182,6 @@ class Driver {
 		}
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
 
-		foreach (var a in args) {
-			if (a [0] != '-') {
-				root_assemblies.Add (a);
-				continue;
-			}
-			var kv = a.Split (new char[] { '=' });
-			string key = kv [0].Substring (1);
-			string value = kv.Length > 1 ? kv [1] : null;
-			switch (key) {
-			case "debug":
-				enable_debug = true;
-				break;
-			case "nobinding":
-				add_binding = false;
-				break;
-			case "out":
-				out_prefix = value;
-				break;
-			case "prefix":
-				app_prefix = value;
-				break;
-			case "deploy":
-				deploy_prefix = value;
-				break;
-			case "vfs":
-				vfs_prefix = value;
-				break;
-			case "debugrt":
-				use_release_runtime = false;
-				break;
-			case "help":
-				Usage ();
-				return;
-			default:
-				Console.WriteLine ($"Invalid parameter {key}");
-				Usage ();
-				Environment.Exit (-1);
-				break;
-			}
-		}
-		
 		foreach (var ra in root_assemblies) {
 			AssemblyKind kind;
 			var resolved = Resolve (ra, out kind);

@@ -128,8 +128,8 @@ Mono.Cecil.dll: Makefile
 	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
 # We use system csc as this is a desktop program
-packager.exe: packager.cs Mono.Cecil.dll
-	csc /debug:portable -r:Mono.Cecil.dll packager.cs
+packager.exe: packager/packager.cs Mono.Cecil.dll $(OPTIONS_CS)
+	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager/packager.cs $(OPTIONS_CS)
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
