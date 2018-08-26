@@ -10,6 +10,7 @@ class Driver {
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_list = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
+	static List<string> assembly_names = new List<string> ();
 
 	const string BINDINGS_ASM_NAME = "bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
@@ -120,6 +121,7 @@ class Driver {
 		if (!asm_list.Add (ra))
 			return;
 		file_list.Add (ra);
+		assembly_names.Add (image.Assembly.Name.Name);
 		Debug ($"Processing {ra} debug {add_pdb}");
 
 		if (add_pdb && kind == AssemblyKind.User)
@@ -131,12 +133,38 @@ class Driver {
 		}
 	}
 
-	static void Main (string[] args) {
+	void GenDriver (string builddir, List<string> assembly_names) {
+		var symbols = new List<string> ();
+		foreach (var img in assembly_names) {
+			symbols.Add (String.Format ("mono_aot_module_{0}_info", img.Replace ('.', '_').Replace ('-', '_')));
+		}
+
+		var w = File.CreateText (Path.Combine (builddir, "driver-gen.c"));
+
+		foreach (var symbol in symbols) {
+			w.WriteLine ($"extern void *{symbol};");
+		}
+
+		w.WriteLine ("static void register_aot_modules ()");
+		w.WriteLine ("{");
+		foreach (var symbol in symbols)
+			w.WriteLine ($"\tmono_aot_register_module ({symbol});");
+		w.WriteLine ("}");
+
+		w.Close ();
+	}
+
+	public static void Main (string[] args) {
+		new Driver ().Run (args);
+	}
+
+	void Run (string[] args) {
 		var root_assemblies = new List<string> ();
 		enable_debug = false;
 		var add_binding = true;
 		string builddir = null;
 		string sdkdir = null;
+		string emscripten_sdkdir = null;
 		out_prefix = Environment.CurrentDirectory;
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
@@ -154,6 +182,7 @@ class Driver {
 				{ "appdir=", s => out_prefix = s },
 				{ "builddir=", s => builddir = s },
 				{ "mono-sdkdir=", s => sdkdir = s },
+				{ "emscripten-sdkdir=", s => emscripten_sdkdir = s },
 				{ "prefix=", s => app_prefix = s },
 				{ "deploy=", s => deploy_prefix = s },
 				{ "vfs=", s => vfs_prefix = s },
@@ -256,7 +285,16 @@ class Driver {
 				Console.WriteLine ("The --mono-sdkdir argument is required when using AOT.");
 				Environment.Exit (1);
 			}
+			if (emscripten_sdkdir == null) {
+				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
+				Environment.Exit (1);
+			}
 		}
+
+		GenDriver (builddir, assembly_names);
+
+		File.Delete (Path.Combine (builddir, "driver.c"));
+		File.Copy (Path.Combine (tool_prefix, "driver.c"), Path.Combine (builddir, "driver.c"));
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
@@ -266,11 +304,13 @@ class Driver {
 
 		// Defines
 		ninja.WriteLine ($"mono_sdkdir = {sdkdir}");
+		ninja.WriteLine ($"emscripten_sdkdir = {emscripten_sdkdir}");
 		ninja.WriteLine ($"appdir = {out_prefix}");
 		ninja.WriteLine ($"builddir = .");
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
+		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// Rules
 		ninja.WriteLine ("rule aot");
 		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$outfile $src_file");
@@ -280,6 +320,9 @@ class Driver {
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
+		ninja.WriteLine ("rule emcc");
+		ninja.WriteLine ("  command = $emcc -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE='clamp'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 $in -c $flags -o $out");
+		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
@@ -287,9 +330,11 @@ class Driver {
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
 		ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 		ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
+		ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c");
+		if (enable_aot)
+			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
 
 		var ofiles = "";
-		var assembly_names = new List<string> ();
 		foreach (var assembly in asm_list) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
