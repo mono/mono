@@ -2993,4 +2993,26 @@ sgen_client_schedule_background_job (void (*cb)(void))
 
 #endif
 
+#ifdef __cplusplus
+
+gpointer
+mono_gc_thread_attach (MonoThreadInfo *info)
+{
+	return mono_gc_thread_attach ((SgenThreadInfo*)info);
+}
+
+void
+mono_gc_thread_detach_with_lock (MonoThreadInfo *info)
+{
+	return mono_gc_thread_detach_with_lock ((SgenThreadInfo*)info);
+}
+
+gboolean
+mono_gc_thread_in_critical_region (MonoThreadInfo *info)
+{
+	return mono_gc_thread_in_critical_region ((SgenThreadInfo*)info);
+}
+
+#endif // __cplusplus
+
 #endif
