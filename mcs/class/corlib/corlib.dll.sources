@@ -4,9 +4,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/AssemblyRef.cs
 ../../build/common/SR.cs
 Microsoft.Win32/IRegistryApi.cs
-Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryKey.cs
-corefx/Registry.cs
+Microsoft.Win32/Registry.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKeyPermissionCheck.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryHive.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryOptions.cs
