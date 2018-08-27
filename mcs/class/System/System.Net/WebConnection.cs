@@ -405,6 +405,7 @@ namespace System.Net
 		void CloseSocket ()
 		{
 			lock (this) {
+				Debug ($"WC CLOSE SOCKET: Cnc={ID} NS={networkStream} TLS={monoTlsStream}");
 				if (networkStream != null) {
 					try {
 						networkStream.Dispose ();
