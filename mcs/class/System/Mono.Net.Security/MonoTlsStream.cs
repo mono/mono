@@ -73,7 +73,6 @@ namespace Mono.Net.Security
 #endif
 
 		WebExceptionStatus status;
-		int disposed;
 
 		internal WebExceptionStatus ExceptionStatus {
 			get { return status; }
