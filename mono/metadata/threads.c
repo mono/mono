@@ -5923,7 +5923,7 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	if (!thread)
 		return FALSE;
 
-	memset (out, 0, sizeof (*out));
+	memset (out, 0, sizeof (MonoThreadSummary));
 	domain = thread->obj.vtable->domain;
 	out->native_thread_id = (intptr_t) thread_get_tid (thread);
 	out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);
