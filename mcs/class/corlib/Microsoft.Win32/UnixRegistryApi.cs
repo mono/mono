@@ -92,10 +92,26 @@ namespace Microsoft.Win32 {
 			return sb.ToString ();
 		}
 	}
+
+	class RegistryKeyComparer : IEqualityComparer {
+		public new bool Equals(object x, object y)
+		{
+			return RegistryKey.IsEquals ((RegistryKey) x, (RegistryKey) y);
+			
+		}
+
+		public int GetHashCode(object obj)
+		{
+			var n = ((RegistryKey) obj).Name;
+			if (n == null)
+				return 0;
+			return n.GetHashCode ();
+		}
+	}
 	
 	class KeyHandler
 	{
-		static Hashtable key_to_handler = new Hashtable ();
+		static Hashtable key_to_handler = new Hashtable (new RegistryKeyComparer ());
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		const string VolatileDirectoryName = "volatile-keys";
@@ -613,8 +629,11 @@ namespace Microsoft.Win32 {
 			lock (values){
 				switch (valueKind){
 				case RegistryValueKind.String:
-					values [name] = value?.ToString ();
-					return;
+					if (value is string){
+						values [name] = value;
+						return;
+					}
+					break;
 				case RegistryValueKind.ExpandString:
 					if (value is string){
 						values [name] = new ExpandString ((string)value);
@@ -709,9 +728,6 @@ namespace Microsoft.Win32 {
 		public void RemoveValue (string name)
 		{
 			AssertNotMarkedForDeletion ();
-
-			if (name == null)
-				return;
 
 			lock (values)
 				values.Remove (name);
@@ -812,7 +828,7 @@ namespace Microsoft.Win32 {
 		}
 	}
 	
-	internal class UnixRegistryApi {
+	internal class UnixRegistryApi : IRegistryApi {
 
 		static string ToUnix (string keyname)
 		{

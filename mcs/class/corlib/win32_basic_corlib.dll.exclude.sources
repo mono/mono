@@ -1,4 +1,0 @@
-corefx/RegistryKey.FileSystem.cs
-Microsoft.Win32/UnixRegistryApi.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.FileSystem.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.FileSystem.cs

@@ -3,8 +3,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/AssemblyRef.cs
 ../../build/common/SR.cs
-
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.cs
+Microsoft.Win32/IRegistryApi.cs
+Microsoft.Win32/RegistryKey.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKeyPermissionCheck.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/Registry.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryHive.cs
@@ -13,18 +13,10 @@ Assembly/AssemblyInfo.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryValueOptions.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryView.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/ThrowHelper.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegistryOptions.cs
-
-corefx/Interop.Libraries.Kernel32.cs
-corefx/Interop.Libraries.Advapi32.cs
-../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
-
-corefx/RegistryKey.FileSystem.cs
 Microsoft.Win32/UnixRegistryApi.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.FileSystem.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.FileSystem.cs
-
+Microsoft.Win32/Win32RegistryApi.cs
+Microsoft.Win32/Win32ResultCode.cs
 Mono.Globalization.Unicode/CodePointIndexer.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTable.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
@@ -669,10 +661,11 @@ System.Security.AccessControl/PrivilegeNotHeldException.cs
 System.Security.AccessControl/PropagationFlags.cs
 System.Security.AccessControl/QualifiedAce.cs
 System.Security.AccessControl/RawAcl.cs
+System.Security.AccessControl/RegistryAccessRule.cs	
+System.Security.AccessControl/RegistryAuditRule.cs
 System.Security.AccessControl/RawSecurityDescriptor.cs
 System.Security.AccessControl/RegistryRights.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.cs
-
+System.Security.AccessControl/RegistrySecurity.cs
 System.Security.AccessControl/ResourceType.cs
 System.Security.AccessControl/SddlAccessRight.cs
 System.Security.AccessControl/SecurityInfos.cs
@@ -1558,6 +1551,7 @@ ReferenceSources/AppContextDefaultValues.cs
 
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safefindhandle.cs
+../referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
