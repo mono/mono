@@ -20,6 +20,8 @@ _llvm-$(1)_LDFLAGS= \
 	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
 
 _llvm-$(1)_CONFIGURE_ENVIRONMENT= \
+	$$(if $$(llvm-$(1)_CC),CC="$$(llvm-$(1)_CC)") \
+	$$(if $$(llvm-$(1)_CXX),CC="$$(llvm-$(1)_CXX)") \
 	CXXFLAGS="$$(_llvm-$(1)_CXXFLAGS)" \
 	LDFLAGS="$$(_llvm-$(1)_LDFLAGS)"
 
