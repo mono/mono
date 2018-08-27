@@ -56,7 +56,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx	\
-	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx	
+	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
