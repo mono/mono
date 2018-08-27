@@ -128,6 +128,7 @@ static void mono_uninstall_current_handler_block_guard (void);
 
 #ifdef TARGET_OSX
 static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 #endif
 
 static gboolean
@@ -236,6 +237,7 @@ mono_exceptions_init (void)
 
 #ifdef TARGET_OSX
 	cbs.mono_summarize_stack = mono_summarize_stack;
+	cbs.mono_summarize_exception = mono_summarize_exception;
 #endif
 
 	if (mono_llvm_only) {
@@ -904,7 +906,13 @@ mono_exception_walk_trace (MonoException *ex, MonoExceptionFrameWalk func, gpoin
 		memcpy (&trace_ip, mono_array_addr_fast (ta, ExceptionTraceIp, i), sizeof (ExceptionTraceIp));
 		gpointer ip = trace_ip.ip;
 		gpointer generic_info = trace_ip.generic_info;
-		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
+
+		MonoJitInfo *ji = NULL;
+		if (trace_ip.ji) {
+			ji = trace_ip.ji;
+		} else {
+			ji = mono_jit_info_table_find (domain, ip);
+		}
 
 		if (ji == NULL) {
 			if (func (NULL, ip, 0, FALSE, user_data))
@@ -1336,21 +1344,16 @@ summarize_offset_rich_hash (intptr_t accum, MonoFrameSummary *frame)
 }
 
 static gboolean
-summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
 {
-	MonoMethod *method = NULL;
-	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) data;
+	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) user_data;
 	g_assert (ud->num_frames + 1 < ud->max_frames);
 	MonoFrameSummary *dest = &ud->frames [ud->num_frames];
 	ud->num_frames++;
 
-	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &dest->unmanaged_data.ip, NULL);
-	dest->unmanaged_data.is_trampoline = frame->ji && frame->ji->is_trampoline;
+	dest->unmanaged_data.ip = (intptr_t) ip;
+	dest->is_managed = managed;
 
-	if (frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE)
-		method = jinfo_get_method (frame->ji);
-
-	dest->is_managed = (method != NULL);
 	if (method && method->wrapper_type != MONO_WRAPPER_NONE) {
 		dest->is_managed = FALSE;
 		dest->unmanaged_data.has_name = TRUE;
@@ -1360,16 +1363,17 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 
 	MonoDebugSourceLocation *location = NULL;
 
-	if (dest->is_managed) {
+	if (managed) {
+		g_assert (method);
 		MonoImage *image = mono_class_get_image (method->klass);
 		// Used for hashing, more stable across rebuilds than using GUID
 		copy_summary_string_safe (dest->str_descr, image->assembly_name);
 
 		dest->managed_data.guid = image->guid;
 
-		dest->managed_data.native_offset = frame->native_offset;
+		dest->managed_data.native_offset = native_offset;
 		dest->managed_data.token = method->token;
-		location = mono_debug_lookup_source_location (method, frame->native_offset, mono_domain_get ());
+		location = mono_debug_lookup_source_location (method, native_offset, mono_domain_get ());
 	} else {
 		dest->managed_data.token = -1;
 	}
@@ -1386,12 +1390,47 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	return FALSE;
 }
 
+static gboolean
+summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+{
+	// Don't record trampolines between managed frames
+	if (frame->ji && frame->ji->is_trampoline)
+		return TRUE;
+
+	MonoMethod *method = NULL;
+	intptr_t ip = 0x0;
+	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &ip, NULL);
+
+	g_assert (frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE);
+	method = jinfo_get_method (frame->ji);
+
+	gboolean is_managed = (method != NULL);
+
+	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
+}
+
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	memset (out, 0, sizeof (MonoThreadSummary));
+
+	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
+	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
+	data.num_frames = 0;
+	data.frames = out->managed_frames;
+	data.hashes = &out->hashes;
+
+	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
+	out->num_managed_frames = data.num_frames;
+}
+
+
 static void 
 mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
 {
-	intptr_t frame_ips [MONO_MAX_SUMMARY_FRAMES];
-
 	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
 	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
 	data.num_frames = 0;
 	data.frames = out->managed_frames;
@@ -1406,11 +1445,12 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	mono_walk_stack_with_ctx (summarize_frame, crash_ctx, MONO_UNWIND_LOOKUP_IL_OFFSET, &data);
 	out->num_managed_frames = data.num_frames;
 
-
 	// 
 	// Summarize unmanaged stack
 	// 
 #ifdef HAVE_BACKTRACE_SYMBOLS
+	intptr_t frame_ips [MONO_MAX_SUMMARY_FRAMES];
+
 	out->num_unmanaged_frames = backtrace ((void **)frame_ips, MONO_MAX_SUMMARY_FRAMES);
 
 	for (int i =0; i < out->num_unmanaged_frames; ++i) {
@@ -1428,6 +1468,7 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 #endif
+
 
 MonoBoolean
 ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info, 
@@ -2856,42 +2897,6 @@ static void print_process_map (void)
 #endif
 }
 
-static void
-mono_crash_dump (const char *jsonFile) 
-{
-	size_t size = strlen (jsonFile);
-
-	pid_t pid = getpid ();
-	gboolean success = FALSE;
-
-	// Save up to 100 dump files for a pid, in case mono is embedded?
-	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
-
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
-		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
-		}
-
-	/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
-
-		if (success)
-			return;
-	}
-
-	return;
-}
-
 static gboolean handle_crash_loop = FALSE;
 
 /*
@@ -2991,7 +2996,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
 			if (!leave && !dump_for_merp)
-				mono_crash_dump (output);
+				mono_crash_dump (output, &hashes);
 #endif
 		}
 
@@ -3028,9 +3033,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 					exit (1);
 				}
 
-				char *full_version = mono_get_runtime_build_info ();
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes, full_version);
+				mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 				exit (1);
 			}

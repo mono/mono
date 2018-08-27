@@ -234,8 +234,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 
 	if (mono_merp_enabled ()) {
 		pid_t crashed_pid = getpid ();
-		char *full_version = mono_get_runtime_build_info ();
-		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes, full_version);
+		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes);
 	} else {
 		// Only the dumping-supervisor thread exits mono_thread_summarize
 		MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
