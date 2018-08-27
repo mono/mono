@@ -661,9 +661,9 @@ System.Security.AccessControl/PrivilegeNotHeldException.cs
 System.Security.AccessControl/PropagationFlags.cs
 System.Security.AccessControl/QualifiedAce.cs
 System.Security.AccessControl/RawAcl.cs
+System.Security.AccessControl/RawSecurityDescriptor.cs
 System.Security.AccessControl/RegistryAccessRule.cs	
 System.Security.AccessControl/RegistryAuditRule.cs
-System.Security.AccessControl/RawSecurityDescriptor.cs
 System.Security.AccessControl/RegistryRights.cs
 System.Security.AccessControl/RegistrySecurity.cs
 System.Security.AccessControl/ResourceType.cs
