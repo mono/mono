@@ -959,7 +959,8 @@ corert/Decimal.DecCalc.cs
 ../referencesource/mscorlib/system/iserviceobjectprovider.cs
 ../referencesource/mscorlib/system/invalidtimezoneexception.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Lazy.cs
-../referencesource/mscorlib/system/math.cs
+coreclr/Math.CoreCLR.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Math.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemberAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MethodAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MidpointRounding.cs

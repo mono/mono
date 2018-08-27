@@ -308,3 +308,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/IO/*.cs:FileLoadException.InteropTests.cs,DirectoryNotFoundException.InteropTests.cs,FileNotFoundException.InteropTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Threading/*.cs:WaitHandleTests.cs
+
+# System.Runtime.Extensions
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Math.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathF.netcoreapp.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
