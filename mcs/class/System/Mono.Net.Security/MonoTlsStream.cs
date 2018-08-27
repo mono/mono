@@ -137,7 +137,7 @@ namespace Mono.Net.Security
 					request.ServicePoint.UpdateClientCertificate (sslStream.InternalLocalCertificate);
 				else {
 					request.ServicePoint.UpdateClientCertificate (null);
-					sslStream?.Dispose ();
+					sslStream.Dispose ();
 					sslStream = null;
 				}
 			}
