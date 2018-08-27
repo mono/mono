@@ -34,6 +34,10 @@ $(dir $(LLVM36_SRC)):
 define LLVMTemplate
 
 _llvm-$(1)_CMAKE_ARGS = \
+	$$(if $$(llvm-$(1)_CC),-DCMAKE_C_FLAGS="$$(wordlist 2,$$(words $$(llvm-$(1)_CC)),$$(llvm-$(1)_CC))") \
+	$$(if $$(llvm-$(1)_CXX),-DCMAKE_CXX_FLAGS="$$(wordlist 2,$$(words $$(llvm-$(1)_CXX)),$$(llvm-$(1)_CXX))") \
+	$$(if $$(llvm-$(1)_CFLAGS),-DCMAKE_C_FLAGS="$$(llvm-$(1)_CFLAGS)") \
+	$$(if $$(llvm-$(1)_CXXFLAGS),-DCMAKE_CXX_FLAGS="$$(llvm-$(1)_CXXFLAGS)") \
 	$$(llvm-$(1)_CMAKE_ARGS)
 
 .stamp-llvm-$(1)-toolchain:
