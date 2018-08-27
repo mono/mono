@@ -6,6 +6,7 @@
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.NTSTATUS.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Win32Marshal.cs
 
 ../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
@@ -36,9 +37,7 @@ corefx/Mono.SafePasswordHandle.Windows.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.cs
 corefx/Interop.Libraries.Advapi32.cs
-../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.FormatMessage.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.Windows.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.Windows.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.Windows.cs

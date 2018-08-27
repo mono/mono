@@ -307,25 +307,19 @@ else
 GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
 endif
 
-ifndef PROFILE_PLATFORM
-CURRENT_PLATFORM=$(PROFILE_PLATFORM)
-else
-CURRENT_PLATFORM=$(BUILD_PLATFORM)
-endif
-
-sourcefile = $(depsdir)/$(CURRENT_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
+sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(GENSOURCES_CS)
-	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(LIBRARY)" "$(CURRENT_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 
-response = $(depsdir)/$(CURRENT_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
+response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
 $(response): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(sourcefile) >$@
 
 library_CLEAN_FILES += $(response)
 
-makefrag = $(depsdir)/$(CURRENT_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 $(makefrag): $(sourcefile) $(topdir)/build/library.make $(depsdir)/.stamp
 #	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
