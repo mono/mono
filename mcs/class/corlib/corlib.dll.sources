@@ -5,6 +5,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
+corefx/Registry.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKeyPermissionCheck.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/Registry.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryHive.cs
@@ -662,7 +663,7 @@ System.Security.AccessControl/PropagationFlags.cs
 System.Security.AccessControl/QualifiedAce.cs
 System.Security.AccessControl/RawAcl.cs
 System.Security.AccessControl/RawSecurityDescriptor.cs
-System.Security.AccessControl/RegistryAccessRule.cs	
+System.Security.AccessControl/RegistryAccessRule.cs
 System.Security.AccessControl/RegistryAuditRule.cs
 System.Security.AccessControl/RegistryRights.cs
 System.Security.AccessControl/RegistrySecurity.cs
