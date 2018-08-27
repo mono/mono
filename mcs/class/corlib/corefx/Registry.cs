@@ -8,7 +8,7 @@ namespace Microsoft.Win32
 {
     partial class Registry
     {
-        [Obsolete("The DynData registry key only works on Win9x, which is no longer supported. On NT-based operating systems, use the PerformanceData registry key instead.")]
+        [Obsolete("Use PerformanceData instead")]
         public static readonly RegistryKey DynData = RegistryKey.OpenBaseKey(RegistryHive.DynData, RegistryView.Default);
     }
 }
