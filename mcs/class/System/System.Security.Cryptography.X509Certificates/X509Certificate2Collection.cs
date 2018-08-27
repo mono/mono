@@ -333,8 +333,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public void Import (byte[] rawData) 
 		{
 			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
-			X509Certificate2 cert = new X509Certificate2 ();
-			cert.Import (rawData);
+			X509Certificate2 cert = new X509Certificate2 (rawData);
 			Add (cert);
 		}
 
@@ -342,8 +341,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
-			X509Certificate2 cert = new X509Certificate2 ();
-			cert.Import (rawData, password, keyStorageFlags);
+			X509Certificate2 cert = new X509Certificate2 (rawData, password, keyStorageFlags);
 			Add (cert);
 		}
 
@@ -351,8 +349,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public void Import (string fileName) 
 		{
 			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
-			X509Certificate2 cert = new X509Certificate2 ();
-			cert.Import (fileName);
+			X509Certificate2 cert = new X509Certificate2 (fileName);
 			Add (cert);
 		}
 
@@ -360,8 +357,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
 			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
-			X509Certificate2 cert = new X509Certificate2 ();
-			cert.Import (fileName, password, keyStorageFlags);
+			X509Certificate2 cert = new X509Certificate2 (fileName, password, keyStorageFlags);
 			Add (cert);
 		}
 

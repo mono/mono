@@ -102,7 +102,7 @@ static const struct msgstr_t {
 #undef OPTFLAG
 };
 static const gint16 opt_names [] = {
-#define OPTFLAG(id,shift,name,desc) [(shift)] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define OPTFLAG(id,shift,name,desc) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "optflags-def.h"
 #undef OPTFLAG
 };
@@ -408,7 +408,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #else
 					func = (TestMethod)(gpointer)cfg->native_code;
 #endif
-				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), func);
+				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
 				result = func ();
 				if (result != expected) {
 					failed++;
@@ -1057,7 +1057,7 @@ jit_info_table_test (MonoDomain *domain)
 	*/
 
 	for (i = 0; i < num_threads; ++i) {
-		mono_thread_create_checked (domain, test_thread_func, &thread_datas [i], error);
+		mono_thread_create_checked (domain, (gpointer)test_thread_func, &thread_datas [i], error);
 		mono_error_assert_ok (error);
 	}
 }
@@ -1167,7 +1167,7 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	 * Need to create a mono thread since compilation might trigger
 	 * running of managed code.
 	 */
-	mono_thread_create_checked (mono_domain_get (), compile_all_methods_thread_main, &args, error);
+	mono_thread_create_checked (mono_domain_get (), (gpointer)compile_all_methods_thread_main, &args, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -2235,7 +2235,20 @@ mono_main (int argc, char* argv[])
 		return 1;
 	}
 
-#if !defined(HOST_WIN32) && defined(HAVE_UNISTD_H)
+/*
+ * XXX: verify if other OSes need it; many platforms seem to have it so that
+ * mono_w32process_get_path -> mono_w32process_get_name, and the name is not
+ * necessarily a path instead of just the program name
+ */
+#if defined (_AIX)
+	/*
+	 * mono_w32process_get_path on these can only return a name, not a path;
+	 * which may not be good for us if the mono command name isn't on $PATH,
+	 * like in CI scenarios. chances are argv based is fine if we inherited
+	 * the environment variables.
+	 */
+	mono_w32process_set_cli_launcher (argv [0]);
+#elif !defined(HOST_WIN32) && defined(HAVE_UNISTD_H)
 	/*
 	 * If we are not embedded, use the mono runtime executable to run managed exe's.
 	 */

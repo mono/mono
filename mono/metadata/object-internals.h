@@ -696,6 +696,7 @@ typedef struct {
 	void (*mono_clear_abort_threshold) (void);
 	void (*mono_reraise_exception) (MonoException *ex);
 	void (*mono_summarize_stack) (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
@@ -1604,6 +1605,12 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *module, MonoError *error
 int
 mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const char *blob, void *value, MonoError *error);
 
+gboolean
+mono_metadata_read_constant_value (const char *blob, MonoTypeEnum type, void *value, MonoError *error);
+
+char*
+mono_string_from_blob (const char *str, MonoError *error);
+
 void
 mono_release_type_locks (MonoInternalThread *thread);
 
@@ -1764,6 +1771,8 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 
 gpointer
 mono_method_alloc_generic_virtual_trampoline (MonoDomain *domain, int size);
+
+#define mono_method_alloc_generic_virtual_trampoline(domain, size) (g_cast (mono_method_alloc_generic_virtual_trampoline ((domain), (size))))
 
 typedef enum {
 	MONO_UNHANDLED_POLICY_LEGACY,
@@ -1947,10 +1956,10 @@ MonoString*
 mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MonoString *
-mono_string_new_utf16_checked (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
+mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
 
 MonoStringHandle
-mono_string_new_utf16_handle (MonoDomain *domain, const guint16 *text, gint32 len, MonoError *error);
+mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
 
 MonoStringHandle
 mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint length, MonoError *error);

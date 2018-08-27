@@ -1309,14 +1309,6 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Pkcs7_Import ()
-		{
-			X509Certificate2 x = new X509Certificate2 ();
-			x.Import (farscape_pkcs7);
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetCertContentType_byte_Null ()
 		{
@@ -1510,13 +1502,6 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		public void Empty_PrivateKey_Get ()
 		{
 			Assert.IsNull (new X509Certificate2 ().PrivateKey);
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Empty_PrivateKey_Set ()
-		{
-			new X509Certificate2 ().PrivateKey = null;
 		}
 
 		[Test]

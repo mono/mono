@@ -153,7 +153,7 @@ typedef struct {
 	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by ArgStructByVal */
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	int gr;
 	int fr;
@@ -166,7 +166,7 @@ typedef struct {
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
-} CallInfo;
+};
 
 void patch_lui_addiu(guint32 *ip, guint32 val);
 static
@@ -5813,7 +5813,7 @@ mono_arch_skip_single_step (MonoContext *ctx)
  *
  *   See mini-amd64.c for docs.
  */
-gpointer
+SeqPointInfo*
 mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;

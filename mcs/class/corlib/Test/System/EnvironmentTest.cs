@@ -231,6 +231,13 @@ namespace MonoTests.System
 			Environment.SetEnvironmentVariable ("A3", "\0");
 			Assert.IsNull (Environment.GetEnvironmentVariables ()["A3"]);
 		}
+
+		[Test] // github issue #9839
+		public void MachineNameIsNotFullyQualifiedDomainName ()
+		{
+			Assert.IsNotNull (Environment.MachineName);
+			Assert.AreEqual (-1, Environment.MachineName.IndexOf("."));
+		}
 #endif
 	}
 }

@@ -274,7 +274,6 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 	MonoAppDomainSetupHandle setup;
 	MonoAppDomainHandle ad;
-	MonoClass *klass;
 
 	error_init (error);
 
@@ -295,18 +294,20 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 	mono_thread_init (start_cb, attach_cb);
 
-	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	setup = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_pinned_handle (domain, klass, error));
-	goto_if_nok (error, exit);
+	if (!mono_runtime_get_no_exec ()) {
+		MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+		setup = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_pinned_handle (domain, klass, error));
+		goto_if_nok (error, exit);
 
-	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomain");
+		klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomain");
 
-	ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_pinned_handle (domain, klass, error));
-	goto_if_nok (error, exit);
+		ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_pinned_handle (domain, klass, error));
+		goto_if_nok (error, exit);
 
-	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
-	domain->domain = MONO_HANDLE_RAW (ad);
-	domain->setup = MONO_HANDLE_RAW (setup);
+		MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
+		domain->domain = MONO_HANDLE_RAW (ad);
+		domain->setup = MONO_HANDLE_RAW (setup);
+	}
 
 	mono_thread_attach (domain);
 
@@ -342,6 +343,9 @@ exit:
 static void
 mono_context_set_default_context (MonoDomain *domain)
 {
+	if (mono_runtime_get_no_exec ())
+		return;
+
 	HANDLE_FUNCTION_ENTER ();
 	mono_context_set_handle (MONO_HANDLE_NEW (MonoAppContext, domain->default_context));
 	HANDLE_FUNCTION_RETURN ();
@@ -350,36 +354,30 @@ mono_context_set_default_context (MonoDomain *domain)
 static char*
 mono_get_corlib_version (void)
 {
-	// Return NULL for errors, including the old integer form, else
-	// a string to be passed to g_free (or typically just exit).
-
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 
 	MonoClass *klass;
 	MonoClassField *field;
-	MonoObjectHandle value;
-	char *result = NULL;
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System", "Environment");
 	mono_class_init (klass);
 	field = mono_class_get_field_from_name_full (klass, "mono_corlib_version", NULL);
 	if (!field)
-		goto exit;
+		return NULL;
 
-	if (! (field->type->attrs & FIELD_ATTRIBUTE_STATIC))
-		goto exit;
+	if (! (field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_LITERAL)))
+		return NULL;
 
-	value = mono_static_field_get_value_handle (mono_domain_get (), field, error);
+	char *value;
+	MonoTypeEnum field_type;
+	const char *data = mono_class_get_field_default_value (field, &field_type);
+	mono_metadata_read_constant_value (data, field_type, &value, error);
 	mono_error_assert_ok (error);
-	klass = mono_handle_class (value);
-	if (klass != mono_defaults.string_class)
-		goto exit;
 
-	result = mono_string_handle_to_utf8 (MONO_HANDLE_CAST (MonoString, value), error);
+	char *res = mono_string_from_blob (value, error);
 	mono_error_assert_ok (error);
-exit:
-	HANDLE_FUNCTION_RETURN_VAL (result);
+
+	return res;
 }
 
 /**
@@ -452,6 +450,8 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 	MonoAppContext *context;
 
 	error_init (error);
+	if (mono_runtime_get_no_exec ())
+		return;
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
 	context = (MonoAppContext *) mono_object_new_pinned (domain, klass, error);
@@ -1674,7 +1674,7 @@ make_sibling_path (const gchar *path, gint pathlen, const char *extension, Shado
 static gboolean
 shadow_copy_sibling (const gchar *src_pristine, gint srclen, const char *extension, ShadowCopySiblingExt extopt, const gchar *target_pristine, gint targetlen)
 {
-	guint16 *orig, *dest;
+	gunichar2 *orig, *dest;
 	gboolean copy_result;
 	gint32 copy_error;
 	gchar *src = NULL;
@@ -1856,7 +1856,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 {
 	char *dir_name;
 	char *ini_file;
-	guint16 *u16_ini;
+	gunichar2 *u16_ini;
 	gboolean result;
 	guint32 n;
 	HANDLE handle;
@@ -1968,7 +1968,7 @@ mono_make_shadow_copy (const char *filename, MonoError *oerror)
 {
 	ERROR_DECL (error);
 	gint filename_len, shadow_len;
-	guint16 *orig, *dest;
+	gunichar2 *orig, *dest;
 	guint32 attrs;
 	char *shadow;
 	gboolean copy_result;
@@ -2333,7 +2333,8 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	name = filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
 	
-	MonoAssembly *requesting_assembly = NULL;
+	MonoAssembly *requesting_assembly;
+	requesting_assembly = NULL;
 	if (!refOnly) {
 		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
 		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
@@ -2371,6 +2372,11 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 
 	filename = mono_string_handle_to_utf8 (fname, error);
 	goto_if_nok (error, leave);
+
+	if (!g_path_is_absolute (filename)) {
+		mono_error_set_argument (error, "assemblyFile", "Absolute path information is required.");
+		goto leave;
+	}
 
 	MonoImageOpenStatus status;
 	MonoMethod *executing_method;
@@ -2494,8 +2500,10 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		return refass;
 	}
 
-	MonoAssemblyContextKind asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
-	const char *basedir = NULL;
+	MonoAssemblyContextKind asmctx;
+	asmctx = refOnly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT;
+	const char *basedir;
+	basedir = NULL;
 	if (!refOnly) {
 		/* Determine if the current assembly is in LoadFrom context.
 		 * If it is, we must include the executing assembly's basedir

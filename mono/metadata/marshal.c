@@ -753,13 +753,13 @@ mono_byvalarray_to_array (MonoArray *arr, gpointer native_arr, MonoClass *elclas
 
 	if (elclass == mono_defaults.byte_class) {
 		GError *gerror = NULL;
-		guint16 *ut;
+		gunichar2 *ut;
 		glong items_written;
 
 		ut = g_utf8_to_utf16 ((const gchar *)native_arr, elnum, NULL, &items_written, &gerror);
 
 		if (!gerror) {
-			memcpy (mono_array_addr (arr, guint16, 0), ut, items_written * sizeof (guint16));
+			memcpy (mono_array_addr (arr, gunichar2, 0), ut, items_written * sizeof (gunichar2));
 			g_free (ut);
 		}
 		else
@@ -2599,7 +2599,11 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 	const char *param_names [16];
 	WrapperInfo *info;
 	MonoWrapperMethodCacheKey *method_key;
-	MonoWrapperMethodCacheKey method_key_lookup_only = { .method = method, .virtual_ = virtual_, .need_direct_wrapper = need_direct_wrapper };
+	MonoWrapperMethodCacheKey method_key_lookup_only;
+	memset (&method_key_lookup_only, 0, sizeof (method_key_lookup_only));
+	method_key_lookup_only.method = method;
+	method_key_lookup_only.virtual_ = virtual_;
+	method_key_lookup_only.need_direct_wrapper = need_direct_wrapper;
 	method_key = &method_key_lookup_only;
 
 	g_assert (method);
@@ -2652,7 +2656,10 @@ mono_marshal_get_runtime_invoke_full (MonoMethod *method, gboolean virtual_, gbo
 		MonoMethodSignature *tmp_sig;
 
 		callsig = mono_marshal_get_runtime_invoke_sig (callsig);
-		MonoWrapperSignatureCacheKey sig_key = { .signature = callsig, .valuetype = m_class_is_valuetype (method->klass)};
+		MonoWrapperSignatureCacheKey sig_key;
+		memset (&sig_key, 0, sizeof (sig_key));
+		sig_key.signature = callsig;
+		sig_key.valuetype = m_class_is_valuetype (method->klass);
 
 		cache_table = &mono_method_get_wrapper_cache (method)->runtime_invoke_signature_cache;
 		sig_cache = get_cache (cache_table, (GHashFunc) wrapper_cache_signature_key_hash, (GCompareFunc) wrapper_cache_signature_key_equal);
@@ -5040,10 +5047,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 }
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const guint16 *ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error)
 {
 	gsize len = 0;
-	const guint16 *t = ptr;
+	const gunichar2 *t = ptr;
 
 	if (!ptr)
 		return NULL_HANDLE_STRING;
@@ -5058,7 +5065,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const guint16 *
 }
 
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const guint16 *ptr, gint32 len, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunichar2 *ptr, gint32 len, MonoError *error)
 {
 	if (!ptr) {
 		mono_error_set_argument_null (error, "ptr", "");

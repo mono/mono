@@ -71,6 +71,7 @@ static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
 
 static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
+GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
 
 static
 MonoImage *
@@ -736,6 +737,14 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		nt->data.generic_class = gclass;
 		return nt;
 	}
+	case MONO_TYPE_PTR: {
+		MonoType *nt, *inflated = inflate_generic_type (image, type->data.type, context, error);
+		if (!inflated || !mono_error_ok (error))
+			return NULL;
+		nt = mono_metadata_type_dup (image, type);
+		nt->data.type = inflated;
+		return nt;
+	}
 	default:
 		return NULL;
 	}
@@ -1298,7 +1307,7 @@ mono_class_alloc (MonoClass *klass, int size)
 }
 
 gpointer
-mono_class_alloc0 (MonoClass *klass, int size)
+(mono_class_alloc0) (MonoClass *klass, int size)
 {
 	gpointer res;
 
@@ -3822,6 +3831,58 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 	/*FIXME properly handle nullables */
 	/*FIXME properly handle (M)VAR */
 	return FALSE;
+}
+
+/**
+ * mono_generic_param_get_base_type:
+ *
+ * Return the base type of the given generic parameter from its constraints.
+ *
+ * Could be another generic parameter, or it could be Object or ValueType.
+ */
+MonoClass*
+mono_generic_param_get_base_type (MonoClass *klass)
+{
+	MonoType *type = m_class_get_byval_arg (klass);
+	g_assert (mono_type_is_generic_argument (type));
+
+	MonoGenericParam *gparam = type->data.generic_param;
+
+	MonoClass **constraints = mono_generic_container_get_param_info (gparam->owner, gparam->num)->constraints;
+
+	MonoClass *base_class = mono_defaults.object_class;
+
+	if (constraints) {
+		int i;
+		for (i = 0; constraints [i]; ++i) {
+			MonoClass *constraint = constraints[i];
+
+			if (MONO_CLASS_IS_INTERFACE (constraint))
+				continue;
+
+			MonoType *constraint_type = m_class_get_byval_arg (constraint);
+			if (mono_type_is_generic_argument (constraint_type)) {
+				MonoGenericParam *constraint_param = constraint_type->data.generic_param;
+				MonoGenericParamInfo *constraint_info = mono_generic_param_info (constraint_param);
+				if ((constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0 &&
+				    (constraint_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) == 0)
+					continue;
+			}
+
+			base_class = constraint;
+		}
+
+	}
+
+	if (base_class == mono_defaults.object_class)
+	{
+		MonoGenericParamInfo *gparam_info = mono_generic_param_info (gparam);
+		if ((gparam_info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT) != 0) {
+			base_class = mono_class_get_valuetype_class ();
+		}
+	}
+
+	return base_class;
 }
 
 /**

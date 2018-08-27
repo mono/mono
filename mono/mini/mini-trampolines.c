@@ -1390,7 +1390,11 @@ mono_trampolines_init (void)
 {
 	mono_os_mutex_init_recursive (&trampolines_mutex);
 
-	if (mono_aot_only)
+	if (mono_aot_only
+#if TARGET_WASM
+		 || mono_compile_aot
+#endif
+	)
 		return;
 
 	mono_trampoline_code [MONO_TRAMPOLINE_JIT] = create_trampoline_code (MONO_TRAMPOLINE_JIT);
@@ -1456,7 +1460,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 	error_init (error);
 
 	if (mono_use_interpreter) {
-		gpointer ret = mini_get_interp_callbacks ()->create_method_pointer (method, error);
+		gpointer ret = mini_get_interp_callbacks ()->create_method_pointer (method, FALSE, error);
 		if (!mono_error_ok (error))
 			return NULL;
 		return ret;

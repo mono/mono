@@ -42,6 +42,12 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/metadata/icalls.h>
 
+// Forward declare so that mini-*.h can have pointers to them.
+// CallInfo is presently architecture specific.
+typedef struct MonoInst MonoInst;
+typedef struct CallInfo CallInfo;
+typedef struct SeqPointInfo SeqPointInfo;
+
 #include "mini-arch.h"
 #include "regalloc.h"
 #include "mini-unwind.h"
@@ -177,15 +183,6 @@ typedef struct {
  * FIXME This typedef exists only to avoid tons of code rewriting
  */
 typedef MonoStackFrameInfo StackFrameInfo;
-
-#ifndef MONO_CROSS_COMPILE
-/* Can't define these in object-offsets.h */
-#define MONO_SIZEOF_MonoMethodRuntimeGenericContext sizeof (MonoMethodRuntimeGenericContext)
-#define MONO_SIZEOF_MonoLMF sizeof (MonoLMF)
-#define MONO_SIZEOF_MonoTypedRef sizeof (MonoTypedRef)
-#define MONO_SIZEOF_CallContext sizeof (CallContext)
-#define MONO_SIZEOF_MonoContext sizeof (MonoContext)
-#endif
 
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
@@ -341,7 +338,6 @@ enum {
 #endif
 
 typedef struct MonoInstList MonoInstList;
-typedef struct MonoInst MonoInst;
 typedef struct MonoCallInst MonoCallInst;
 typedef struct MonoCallArgParm MonoCallArgParm;
 typedef struct MonoMethodVar MonoMethodVar;
@@ -764,7 +760,7 @@ struct MonoCallInst {
 	GSList *out_ireg_args;
 	GSList *out_freg_args;
 	GSList *outarg_vts;
-	gpointer call_info;
+	CallInfo *call_info;
 #ifdef ENABLE_LLVM
 	LLVMCallInfo *cinfo;
 	int rgctx_arg_reg, imt_arg_reg;
@@ -2136,6 +2132,9 @@ gpointer*         mini_resolve_imt_method (MonoVTable *vt, gpointer *vtable_slot
 MonoFtnDesc      *mini_create_llvmonly_ftndesc (MonoDomain *domain, gpointer addr, gpointer arg);
 
 void*             mono_global_codeman_reserve (int size);
+
+#define mono_global_codeman_reserve(size) (g_cast (mono_global_codeman_reserve ((size))))
+
 void              mono_global_codeman_foreach (MonoCodeManagerFunc func, void *user_data);
 const char       *mono_regname_full (int reg, int bank);
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_size, guint32 *stack_align);
@@ -2317,7 +2316,7 @@ gboolean  mono_arch_is_single_step_event        (void *info, void *sigctx);
 gboolean  mono_arch_is_breakpoint_event         (void *info, void *sigctx);
 void     mono_arch_skip_breakpoint              (MonoContext *ctx, MonoJitInfo *ji);
 void     mono_arch_skip_single_step             (MonoContext *ctx);
-gpointer mono_arch_get_seq_point_info           (MonoDomain *domain, guint8 *code);
+SeqPointInfo *mono_arch_get_seq_point_info      (MonoDomain *domain, guint8 *code);
 #endif
 
 gboolean

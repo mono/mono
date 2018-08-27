@@ -1026,7 +1026,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	cfg->frame_reg = X86_EBP;
 	offset = 0;
@@ -1193,7 +1193,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	sig_ret = mini_get_underlying_type (sig->ret);
 
@@ -1687,7 +1687,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 void*
 mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 	MonoMethodSignature *sig = mono_method_signature (cfg->method);
 	int argument_copy_size = 0;
 	const guint32* param_regs;
@@ -1768,7 +1768,7 @@ enum {
 void*
 mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
-	guchar *code = p;
+	guchar *code = (guchar*)p;
 	int arg_size = 0, stack_usage = 0, save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
@@ -3272,7 +3272,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			CallInfo *cinfo;
 
 			call = (MonoCallInst*)ins;
-			cinfo = (CallInfo*)call->call_info;
+			cinfo = call->call_info;
 
 			switch (ins->opcode) {
 			case OP_FCALL:
@@ -5330,7 +5330,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		inst = cfg->args [pos];
@@ -5420,7 +5420,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	}
 
 	/* Load returned vtypes into registers if needed */
-	cinfo = (CallInfo *)cfg->arch.cinfo;
+	cinfo = cfg->arch.cinfo;
 	if (cinfo->ret.storage == ArgValuetypeInReg) {
 		for (quad = 0; quad < 2; quad ++) {
 			switch (cinfo->ret.pair_storage [quad]) {
@@ -6548,7 +6548,7 @@ mono_arch_skip_single_step (MonoContext *ctx)
  *
  *   See mini-amd64.c for docs.
  */
-gpointer
+SeqPointInfo*
 mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
