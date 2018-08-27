@@ -121,20 +121,46 @@ namespace System.Net.NetworkInformation
 		public NetworkInterfaceType IfType;
 		public OperationalStatus OperStatus;
 		public int Ipv6IfIndex;
-		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 16 * 4)]
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 16)]
 		public uint [] ZoneIndices;
+		public IntPtr FirstPrefix; // to PIP_ADAPTER_PREFIX
+		public UInt64 TransmitLinkSpeed;
+		public UInt64 ReceiveLinkSpeed;
+		public IntPtr FirstWinsServerAddress; // to PIP_ADAPTER_WINS_SERVER_ADDRESS_LH
+		public IntPtr FirstGatewayAddress; // to PIP_ADAPTER_GATEWAY_ADDRESS_LH
+		public uint Ipv4Metric;
+		public uint Ipv6Metric;
+		public UInt64 Luid;
+		public Win32_SOCKET_ADDRESS Dhcpv4Server;
+		public uint CompartmentId;
+		public UInt64 NetworkGuid;
+		public int ConnectionType;
+		public int TunnelType;
+		public Win32_SOCKET_ADDRESS Dhcpv6Server;
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst = MAX_DHCPV6_DUID_LENGTH)]
+		public byte [] Dhcpv6ClientDuid;
+		public ulong Dhcpv6ClientDuidLength;
+		public ulong Dhcpv6Iaid;
+		public IntPtr FirstDnsSuffix; // to PIP_ADAPTER_DNS_SUFFIX
 
-		// Note that Vista-only members and XP-SP1-only member are
-		// omitted.
+		//Flags For GetAdapterAddresses
+		public const int GAA_FLAG_INCLUDE_WINS_INFO = 0x0040;
+		public const int GAA_FLAG_INCLUDE_GATEWAYS = 0x0080;
 
 		const int MAX_ADAPTER_ADDRESS_LENGTH = 8;
+		const int MAX_DHCPV6_DUID_LENGTH = 130;
 
 		const int IP_ADAPTER_DDNS_ENABLED = 1;
+		const int IP_ADAPTER_DHCP_ENABLED = 4;
 		const int IP_ADAPTER_RECEIVE_ONLY = 8;
 		const int IP_ADAPTER_NO_MULTICAST = 0x10;
 
 		public bool DdnsEnabled {
 			get { return (Flags & IP_ADAPTER_DDNS_ENABLED) != 0; }
+		}
+
+		public bool DhcpEnabled {
+			get { return (Flags & IP_ADAPTER_DHCP_ENABLED) != 0; }
 		}
 
 		public bool IsReceiveOnly {
@@ -264,6 +290,22 @@ namespace System.Net.NetworkInformation
 	{
 		public Win32LengthFlagsUnion LengthFlags;
 		public IntPtr Next; // to Win32_IP_ADAPTER_MULTICAST_ADDRESS
+		public Win32_SOCKET_ADDRESS Address;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	struct Win32_IP_ADAPTER_GATEWAY_ADDRESS
+	{
+		public Win32LengthFlagsUnion LengthFlags;
+		public IntPtr Next; // to Win32_IP_ADAPTER_GATEWAY_ADDRESS
+		public Win32_SOCKET_ADDRESS Address;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	struct Win32_IP_ADAPTER_WINS_SERVER_ADDRESS
+	{
+		public Win32LengthFlagsUnion LengthFlags;
+		public IntPtr Next; // to Win32_IP_ADAPTER_WINS_SERVER_ADDRESS
 		public Win32_SOCKET_ADDRESS Address;
 	}
 
