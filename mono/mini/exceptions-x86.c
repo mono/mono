@@ -135,7 +135,7 @@ mono_win32_get_handle_stackoverflow (void)
  *  - done
  */
 static void 
-win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx) 
+win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 {
 	SYSTEM_INFO si;
 	DWORD page_size;
