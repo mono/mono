@@ -166,7 +166,6 @@ namespace MonoTests.Microsoft.Win32
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#c4");
 				Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#C5");
-				Assert.IsNotNull (ex.ParamName, "#C6");
 			}
 		}
 
@@ -636,7 +635,6 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNull (ex.InnerException, "#C3");
 					Assert.IsNotNull (ex.Message, "#C4");
 					Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#C5");
-					Assert.IsNotNull (ex.ParamName, "#C6");
 				}
 			}
 		}
@@ -1052,7 +1050,6 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNull (ex.InnerException, "#B3");
 					Assert.IsNotNull (ex.Message, "#B4");
 					Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#B5");
-					Assert.IsNotNull (ex.ParamName, "#B6");
 				}
 			}
 		}
@@ -1266,7 +1263,6 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNull (ex.InnerException, "#B3");
 					Assert.IsNotNull (ex.Message, "#B4");
 					Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#B5");
-					Assert.IsNotNull (ex.ParamName, "#B6");
 				}
 			}
 		}
@@ -1615,8 +1611,6 @@ namespace MonoTests.Microsoft.Win32
 					*/
 					Assert.IsNotNull (createdKey.GetValue (null), "#A9");
 					Assert.AreEqual ("value2", createdKey.GetValue (null), "#A10");
-
-					createdKey.DeleteValue (null);
 				}
 			} finally {
 				try {
@@ -2341,7 +2335,6 @@ namespace MonoTests.Microsoft.Win32
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
 						Assert.IsNull (ex.InnerException, "#C3");
 						Assert.IsNotNull (ex.Message, "#C4");
-						Assert.IsNotNull (ex.ParamName, "#C6");
 					}
 				}
 			} finally {
@@ -2878,7 +2871,6 @@ namespace MonoTests.Microsoft.Win32
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
 						Assert.IsNull (ex.InnerException, "#C3");
 						Assert.IsNotNull (ex.Message, "#C4");
-						Assert.IsNotNull (ex.ParamName, "#C6");
 					}
 				}
 			} finally {
