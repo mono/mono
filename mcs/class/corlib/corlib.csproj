@@ -328,6 +328,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\InvalidProgramException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Lazy.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Math.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemberAccessException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
@@ -850,7 +851,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystreamwrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\math.cs" />
     <Compile Include="..\referencesource\mscorlib\system\notsupportedexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
@@ -1972,6 +1972,7 @@
     <Compile Include="System\WeakReference_T.cs" />
     <Compile Include="System\WindowsConsoleDriver.cs" />
     <Compile Include="System\__ComObject.cs" />
+    <Compile Include="coreclr\Math.CoreCLR.cs" />
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
