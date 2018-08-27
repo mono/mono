@@ -1898,43 +1898,30 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
-		internal struct MarshalerInstanceKey {
-			public Type Type;
-			public string Cookie;
-
-			public override int GetHashCode () {
-				int result = 0;
-				if (Type != null)
-					result = Type.GetHashCode();
-				if (Cookie != null)
-					result ^= Cookie.GetHashCode();
-				return result;
-			}
-		}
-
-		internal class MarshalerInstanceKeyComparer : IEqualityComparer<MarshalerInstanceKey> {
-			public bool Equals (MarshalerInstanceKey lhs, MarshalerInstanceKey rhs) {
-				return (lhs.Type == rhs.Type) && (lhs.Cookie == rhs.Cookie);
+		internal class MarshalerInstanceKeyComparer : IEqualityComparer<(Type, string)> {
+			public bool Equals ((Type, string) lhs, (Type, string) rhs) {
+				return lhs.CompareTo(rhs) == 0;
 			}
 
-			public int GetHashCode (MarshalerInstanceKey key) {
+			public int GetHashCode ((Type, string) key) {
 				return key.GetHashCode ();
 			}
 		}
 
-		internal static Dictionary<MarshalerInstanceKey, ICustomMarshaler> MarshalerInstanceCache = 
-			new Dictionary<MarshalerInstanceKey, ICustomMarshaler> (new MarshalerInstanceKeyComparer ());
+		internal static Dictionary<(Type, string), ICustomMarshaler> MarshalerInstanceCache = null;
+		internal static object MarshalerInstanceCacheLock = new object ();
 
 		internal static ICustomMarshaler GetCustomMarshalerInstance (Type type, string cookie) {
-			var key = new MarshalerInstanceKey {
-				Type = type,
-				Cookie = cookie
-			};
+			var key = (type, cookie);
 
 			ICustomMarshaler result;
 			bool gotExistingInstance;
-			lock (MarshalerInstanceCache)
+			lock (MarshalerInstanceCacheLock) {
+				LazyInitializer.EnsureInitialized (
+					ref MarshalerInstanceCache, () => new Dictionary<(Type, string), ICustomMarshaler> (new MarshalerInstanceKeyComparer ())
+				);
 				gotExistingInstance = MarshalerInstanceCache.TryGetValue (key, out result);
+			}
 
 			if (!gotExistingInstance) {
 				MonoMethod getInstanceMethod;
@@ -1970,7 +1957,7 @@ namespace System.Runtime.InteropServices
 				if (result == null)
 					throw new ApplicationException ($"A call to GetInstance() for custom marshaler '{type.FullName}' returned null, which is not allowed.");
 
-				lock (MarshalerInstanceCache)
+				lock (MarshalerInstanceCacheLock)
 					MarshalerInstanceCache[key] = result;
 			}
 
