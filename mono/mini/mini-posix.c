@@ -923,8 +923,12 @@ dump_memory_around_ip (void *ctx)
 	MonoContext mctx;
 	mono_sigctx_to_monoctx (ctx, &mctx);
 	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
-	g_printerr ("Memory around native instruction pointer (%p):\n", native_ip);
-	xxd_mem (((guint8 *) native_ip) - 0x10, 0x40);
+	if (native_ip) {
+		mono_runtime_printf_err ("Memory around native instruction pointer (%p):", native_ip);
+		xxd_mem (((guint8 *) native_ip) - 0x10, 0x40);
+	} else {
+		mono_runtime_printf_err ("instruction pointer is NULL, skip dumping");
+	}
 #endif
 }
 
