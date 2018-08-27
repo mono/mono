@@ -157,20 +157,12 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		void Dispose (bool disposing)
+		public void Dispose ()
 		{
-			if (Interlocked.CompareExchange (ref disposed, 1, 0) != 0)
-				return;
-
 			if (sslStream != null) {
 				sslStream.Dispose ();
 				sslStream = null;
 			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
 		}
 	}
 }

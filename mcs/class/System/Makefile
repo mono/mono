@@ -41,6 +41,8 @@ USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
 LIB_MCS_FLAGS = -d:COREFX -d:CONFIGURATION_2_0 -d:XML_DEP -d:SECURITY_DEP $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%) -nowarn:436
 
+LIB_MCS_FLAGS += -d:MONO_WEB_DEBUG -d:MONO_TLS_DEBUG
+
 ifndef NO_MONO_SECURITY
 MONO_SECURITY := Mono.Security
 LIB_MCS_FLAGS += -d:MONO_SECURITY_ALIAS
