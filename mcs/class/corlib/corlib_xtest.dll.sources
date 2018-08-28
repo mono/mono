@@ -1,4 +1,5 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../external/corefx/src/Common/tests/System/MockType.cs
 
 ../../../external/corefx/src/Common/tests/System/RandomExtensions.cs
 ../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
@@ -15,6 +16,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/ConstructorInfoTests.cs
 ../../../external/corefx/src/System.Reflection/tests/ManifestResourceInfoTests.cs
+#../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
 
 #TODO: audit the commented out tests and fix or disable
 
@@ -152,6 +154,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
@@ -308,3 +312,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/IO/*.cs:FileLoadException.InteropTests.cs,DirectoryNotFoundException.InteropTests.cs,FileNotFoundException.InteropTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Threading/*.cs:WaitHandleTests.cs
+
+# System.Runtime.Extensions
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Math.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathF.netcoreapp.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs

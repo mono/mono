@@ -328,6 +328,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\InvalidProgramException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Lazy.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Marvin.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Math.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MathF.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\MemberAccessException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Memory.cs" />
@@ -404,6 +405,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\InvalidFilterCriteriaException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ManifestResourceInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberFilter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
@@ -545,6 +547,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\MutableDecimal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
@@ -651,6 +654,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\Generic\DebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\ObjectModel\KeyedCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\Collections\ObjectModel\ReadOnlyDictionary.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\Requires.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\TypeExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\AppDomainUnloadedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\ApplicationId.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CannotUnloadAppDomainException.cs" />
@@ -850,7 +855,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystreamwrapper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\math.cs" />
     <Compile Include="..\referencesource\mscorlib\system\notsupportedexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
@@ -858,7 +862,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
@@ -1972,6 +1975,8 @@
     <Compile Include="System\WeakReference_T.cs" />
     <Compile Include="System\WindowsConsoleDriver.cs" />
     <Compile Include="System\__ComObject.cs" />
+    <Compile Include="coreclr\Math.CoreCLR.cs" />
+    <Compile Include="coreclr\MemberInfo.cs" />
     <Compile Include="coreclr\SorterArray.cs" />
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\CompareInfo.cs" />

@@ -397,6 +397,8 @@ partial class SR
 	public const string Arg_NullArgumentNullRef = "The method was called with a null array argument.";
 	public const string Arg_TypeNotSupported = "Specified type is not supported";
 	public const string Arg_InsufficientNumberOfElements = "At least {0} element(s) are expected in the parameter \"{1}\".";
+	public const string NoMetadataTokenAvailable = "There is no metadata token available for the given member.";
+	public const string PlatformNotSupported_ReflectionTypeExtensions = "System.Reflection.TypeExtensions is not supported on NET Standard 1.3 or 1.5.";
 	public const string Argument_EmptyApplicationName = "ApplicationId cannot have an empty string for the name.";
 	public const string ArgumentOutOfRange_GenericPositive = "Value must be positive.";
 	public const string Argument_PathEmpty = "Path cannot be the empty string or all whitespace.";
