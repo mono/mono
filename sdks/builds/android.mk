@@ -143,9 +143,6 @@ _android-$(1)_LDFLAGS= \
 	$$(android-$(1)_LDFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	--host=$(4) \
-	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-executables \
 	--disable-iconv \
@@ -160,13 +157,14 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--disable-cooperative-suspend \
-	--disable-hybrid-suspend
+	--disable-hybrid-suspend \
+	--disable-crash-reporting
 
 .stamp-android-$(1)-toolchain: | $$(if $$(IGNORE_PROVISION_ANDROID),,provision-android)
 	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android-$(1)))
+$$(eval $$(call RuntimeTemplate,android-$(1),$(4)))
 
 endef
 
@@ -217,8 +215,6 @@ _android-$(1)_CFLAGS=$$(android-$(1)_CFLAGS)
 _android-$(1)_CXXFLAGS=$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mono-debugger \
@@ -229,7 +225,8 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--with-mcs-docs=no \
 	--with-monodroid \
 	--with-profile4_x=no \
-	--without-ikvm-native
+	--without-ikvm-native \
+	--disable-crash-reporting
 
 .stamp-android-$(1)-toolchain:
 	touch $$@
@@ -271,24 +268,21 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
-	--target=$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static) \
-	--cache-file=$$(TOP)/sdks/builds/android-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-llvm \
 	--disable-mcs-build \
 	--disable-nls \
 	--enable-maintainer-mode \
 	--enable-monodroid \
-	--with-monodroid
+	--with-monodroid \
+	--disable-crash-reporting
 
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
-$$(eval $$(call RuntimeTemplate,android-$(1)))
+$$(eval $$(call RuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)))
 
 endef
 
