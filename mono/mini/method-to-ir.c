@@ -6561,6 +6561,13 @@ branch_target:
 	return info;
 }
 
+typedef struct {
+	//Skip JIT internal verification
+	gboolean dont_verify :1;
+	//Skip verification of stlic
+	gboolean dont_verify_stloc :1;
+} PerMethodState;
+
 /*
  * mono_method_to_ir:
  *
@@ -6608,31 +6615,32 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	int breakpoint_id = 0;
 	guint num_args;
 	GSList *class_inits = NULL;
-	gboolean dont_verify, dont_verify_stloc, readonly = FALSE;
+	gboolean readonly = FALSE;
 	int context_used;
 	gboolean init_locals, seq_points, skip_dead_blocks;
 	gboolean sym_seq_points = FALSE;
 	MonoDebugMethodInfo *minfo;
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
+	PerMethodState ms;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
 
 	image = m_class_get_image (method->klass);
 
 	/* serialization and xdomain stuff may need access to private fields and methods */
-	dont_verify = image->assembly->corlib_internal? TRUE: FALSE;
-	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
-	dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
- 	dont_verify |= method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE; /* bug #77896 */
-	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP;
-	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP_INVOKE;
+	ms.dont_verify = image->assembly->corlib_internal? TRUE: FALSE;
+	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
+	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH;
+ 	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE; /* bug #77896 */
+	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP;
+	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP_INVOKE;
 
 	/* still some type unsafety issues in marshal wrappers... (unknown is PtrToStructure) */
-	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
-	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
-	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED;
-	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_STELEMREF;
+	ms.dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
+	ms.dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
+	ms.dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED;
+	ms.dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_STELEMREF;
 
 	header = mono_method_get_header_checked (method, &cfg->error);
 	if (!header) {
@@ -6715,9 +6723,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	}
 
 	/* SkipVerification is not allowed if core-clr is enabled */
-	if (!dont_verify && mini_assembly_can_skip_verification (cfg->domain, method)) {
-		dont_verify = TRUE;
-		dont_verify_stloc = TRUE;
+	if (!ms.dont_verify && mini_assembly_can_skip_verification (cfg->domain, method)) {
+		ms.dont_verify = TRUE;
+		ms.dont_verify_stloc = TRUE;
 	}
 
 	if (sig->is_inflated)
@@ -7038,7 +7046,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		MONO_EMIT_NEW_CHECK_THIS (cfg, arg_ins->dreg);
 	}
 
-	skip_dead_blocks = !dont_verify;
+	skip_dead_blocks = !ms.dont_verify;
 	if (skip_dead_blocks) {
 		original_bb = bb = mono_basic_block_split (method, &cfg->error, header);
 		CHECK_CFG_ERROR;
@@ -7282,7 +7290,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_LOCAL (n);
 			--sp;
 			*sp = convert_value (cfg, header->locals [n], *sp);
-			if (!dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
+			if (!ms.dont_verify_stloc && target_type_is_incompatible (cfg, header->locals [n], *sp))
 				UNVERIFIED;
 			emit_stloc_ir (cfg, sp, header, n);
 			inline_costs += 1;
@@ -7299,7 +7307,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			--sp;
 			CHECK_ARG (n);
 			*sp = convert_value (cfg, param_types [n], *sp);
-			if (!dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
+			if (!ms.dont_verify_stloc && target_type_is_incompatible (cfg, param_types [n], *sp))
 				UNVERIFIED;
 			emit_starg_ir (cfg, sp, n);
 			break;
@@ -7708,7 +7716,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 					
-			if (!dont_verify && !cfg->skip_visibility) {
+			if (!ms.dont_verify && !cfg->skip_visibility) {
 				MonoMethod *target_method = cil_method;
 				if (method->is_inflated) {
 					target_method = mini_get_method_allow_open (method, token, NULL, &(mono_method_get_generic_container (method_definition)->context), &cfg->error);
@@ -9290,7 +9298,7 @@ calli_end:
 
 			context_used = mini_method_check_context_used (cfg, cmethod);
 
-			if (!dont_verify && !cfg->skip_visibility) {
+			if (!ms.dont_verify && !cfg->skip_visibility) {
 				MonoMethod *cil_method = cmethod;
 				MonoMethod *target_method = cil_method;
 
@@ -9747,7 +9755,7 @@ calli_end:
 				field = mono_field_from_token_checked (image, token, &klass, generic_context, &cfg->error);
 				CHECK_CFG_ERROR;
 			}
-			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
+			if (!ms.dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE (method, field);
 			mono_class_init (klass);
 
@@ -11532,7 +11540,7 @@ mono_ldptr:
 			context_used = mini_method_check_context_used (cfg, cmethod);
 
 			cil_method = cmethod;
-			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cmethod))
+			if (!ms.dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cmethod))
 				emit_method_access_failure (cfg, method, cil_method);
 
 			if (mono_security_core_clr_enabled ())
