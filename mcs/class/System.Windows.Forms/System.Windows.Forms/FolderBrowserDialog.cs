@@ -615,9 +615,6 @@ namespace System.Windows.Forms {
 				ArrayList folders = vfs.GetFoldersOnly ();
 				
 				foreach (FSEntry fsentry in folders) {
-					if (fsentry.Name.StartsWith ("."))
-						continue;
-					
 					FBTreeNode child = new FBTreeNode (fsentry.Name);
 					child.Tag = fsentry.FullName;
 					child.RealPath = fsentry.RealName == null ? fsentry.FullName : fsentry.RealName;
@@ -627,10 +624,8 @@ namespace System.Windows.Forms {
 					ArrayList sub_folders = vfs.GetFoldersOnly ();
 					
 					foreach (FSEntry fsentry_sub in sub_folders) {
-						if (!fsentry_sub.Name.StartsWith (".")) {
-							child.Nodes.Add (new TreeNode (String.Empty));
-							break;
-						}
+						child.Nodes.Add (new TreeNode (String.Empty));
+						break;
 					}
 					
 					node.Nodes.Add (child);
