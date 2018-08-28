@@ -2712,6 +2712,33 @@ static void print_process_map (void)
 
 static gboolean handle_crash_loop = FALSE;
 
+MONO_API int
+mono_unity_backtrace_from_context (void* context, void* array[], int count)
+{
+#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
+	MonoContext mctx;
+	void*  ip = 0;
+	void** bp = 0;
+	int idx = 0;
+
+	mono_sigctx_to_monoctx(context, &mctx);
+
+	ip = (void*)MONO_CONTEXT_GET_IP(&mctx);
+	bp = (void**)MONO_CONTEXT_GET_BP(&mctx);
+
+	while(ip && bp && count-- > 0)
+	{
+		array[idx++] = ip;
+
+		ip = bp[1];
+		bp = (void**)bp[0];
+	}
+
+	return idx;
+#else
+	return 0;
+#endif
+}
 /*
  * mono_handle_native_crash:
  *

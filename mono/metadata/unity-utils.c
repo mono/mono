@@ -1098,13 +1098,6 @@ mono_unity_domain_set_config (MonoDomain *domain, const char *base_dir, const ch
 	mono_domain_set_config (domain, base_dir, config_file_name);
 }
 
-// only needed on OSX
-MONO_API int
-mono_unity_backtrace_from_context (void* context, void* array[], int count)
-{
-	return 0;
-}
-
 MONO_API MonoException*
 mono_unity_loader_get_last_error_and_error_prepare_exception ()
 {
