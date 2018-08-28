@@ -1028,7 +1028,7 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method, gboolean fail_compile)
 	/*skip verification implies the assembly must be */
 	is_fulltrust = mono_verifier_is_method_full_trust (method) ||  mini_assembly_can_skip_verification (cfg->domain, method);
 
-	res = mono_method_verify_with_current_settings (method, cfg->skip_visibility, is_fulltrust);
+	res = mono_method_verify_with_current_settings (method, method->skip_visibility, is_fulltrust);
 
 	if (res) { 
 		for (tmp = res; tmp; tmp = tmp->next) {
@@ -3158,7 +3158,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->compile_aot = compile_aot;
 	cfg->full_aot = full_aot;
 	cfg->disable_omit_fp = mini_debug_options.disable_omit_fp;
-	cfg->skip_visibility = method->skip_visibility;
 	cfg->orig_method = method;
 	cfg->gen_seq_points = !mini_debug_options.no_seq_points_compact_data || mini_debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;

@@ -6562,10 +6562,12 @@ branch_target:
 }
 
 typedef struct {
+	//Skip visibility checks
+	gboolean skip_visibility : 1;
 	//Skip JIT internal verification
-	gboolean dont_verify :1;
+	gboolean dont_verify : 1;
 	//Skip verification of stlic
-	gboolean dont_verify_stloc :1;
+	gboolean dont_verify_stloc : 1;
 } PerMethodState;
 
 /*
@@ -6628,6 +6630,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	image = m_class_get_image (method->klass);
 
+	ms.skip_visibility = method->skip_visibility;
 	/* serialization and xdomain stuff may need access to private fields and methods */
 	ms.dont_verify = image->assembly->corlib_internal? TRUE: FALSE;
 	ms.dont_verify |= method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE;
@@ -7716,7 +7719,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 					
-			if (!ms.dont_verify && !cfg->skip_visibility) {
+			if (!ms.dont_verify && !ms.skip_visibility) {
 				MonoMethod *target_method = cil_method;
 				if (method->is_inflated) {
 					target_method = mini_get_method_allow_open (method, token, NULL, &(mono_method_get_generic_container (method_definition)->context), &cfg->error);
@@ -9298,7 +9301,7 @@ calli_end:
 
 			context_used = mini_method_check_context_used (cfg, cmethod);
 
-			if (!ms.dont_verify && !cfg->skip_visibility) {
+			if (!ms.dont_verify && !ms.skip_visibility) {
 				MonoMethod *cil_method = cmethod;
 				MonoMethod *target_method = cil_method;
 
@@ -9755,7 +9758,7 @@ calli_end:
 				field = mono_field_from_token_checked (image, token, &klass, generic_context, &cfg->error);
 				CHECK_CFG_ERROR;
 			}
-			if (!ms.dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
+			if (!ms.dont_verify && !ms.skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE (method, field);
 			mono_class_init (klass);
 
@@ -11540,7 +11543,7 @@ mono_ldptr:
 			context_used = mini_method_check_context_used (cfg, cmethod);
 
 			cil_method = cmethod;
-			if (!ms.dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cmethod))
+			if (!ms.dont_verify && !ms.skip_visibility && !mono_method_can_access_method (method, cmethod))
 				emit_method_access_failure (cfg, method, cil_method);
 
 			if (mono_security_core_clr_enabled ())
