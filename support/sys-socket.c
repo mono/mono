@@ -333,11 +333,11 @@ Mono_Posix_ToSockaddr (void* source, gint64 size, struct Mono_Posix__SockaddrHea
     } else if (address->type == Mono_Posix_SockaddrType_SockaddrUn) { \
         /* Use alloca() for up to 2048 bytes, use malloc() otherwise */ \
         need_free = addrlen > 2048;                                     \
-        addr = need_free ? malloc (addrlen) : alloca (addrlen);         \
+        addr = (struct sockaddr*)(need_free ? malloc (addrlen) : alloca (addrlen)); \
         if (!addr)                                                      \
             return -1;                                                  \
     } else {                                                            \
-        addr = alloca (addrlen);                                        \
+        addr = (struct sockaddr*)alloca (addrlen);                      \
     }
 
 
@@ -654,6 +654,8 @@ Mono_Posix_Syscall_CMSG_LEN (guint64 length)
 	return CMSG_LEN (length);
 }
 #endif
+
+G_END_DECLS
 
 /*
  * vim: noexpandtab

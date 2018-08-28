@@ -284,7 +284,7 @@ ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 #endif
 
 			NL_DEBUG_PRINT ("\tAttribute: %d %d (%s)", rtap->rta_len, rtap->rta_type, FIND_RTM_ATTRS_NAME (rtap->rta_type));
-			data = RTA_DATA (rtap);
+			data = (char*)RTA_DATA (rtap);
 			switch (rtap->rta_type) {
 			case RTA_DST:
 				have_dst = TRUE;
