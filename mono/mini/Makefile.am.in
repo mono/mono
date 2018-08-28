@@ -431,6 +431,7 @@ common_sources = \
 	trace.c			\
 	trace.h			\
 	patch-info.h		\
+	method-state.h	\
 	mini-ops.h		\
 	mini-arch.h		\
 	dominators.c		\
