@@ -144,9 +144,9 @@ delete_bundled_libraries (void)
 {
 	GSList *list;
 
-	for (list = bundle_library_paths; list != NULL; list = list->next){
+	for (list = bundle_library_paths; list != NULL; list = list->next)
 		unlink ((const char*)list->data);
-	}
+
 	rmdir (bundled_dylibrary_directory);
 }
 
