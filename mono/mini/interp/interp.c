@@ -1174,7 +1174,8 @@ interp_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *
 	}
 }
 
-static MONO_NEVER_INLINE void
+/* MONO_NO_OPTIMIATION is needed due to usage of INTERP_PUSH_LMF_WITH_CTX. */
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr, gboolean string_ctor, ThreadContext *context)
 {
 	MonoLMFExt ext;
@@ -1785,7 +1786,8 @@ interp_entry (InterpEntryData *data)
 	}
 }
 
-static MONO_NEVER_INLINE stackval *
+/* MONO_NO_OPTIMIATION is needed due to usage of INTERP_PUSH_LMF_WITH_CTX. */
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE stackval *
 do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 {
 	MonoLMFExt ext;
