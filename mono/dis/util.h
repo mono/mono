@@ -1,6 +1,3 @@
-// FIXME due to link -xc++, monodis cannot be built as all C++
-G_BEGIN_DECLS
-
 typedef struct {
 	int code;
 	const char *str;
@@ -13,5 +10,3 @@ char*       data_dump (const char *data, int len, const char* prefix);
 
 extern int dis_isinf (double num);
 extern int dis_isnan (double num);
-
-G_END_DECLS
