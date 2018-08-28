@@ -8,6 +8,10 @@
 #include "inflate.h"
 #include "inffast.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef ASMINF
 
 /* Allow machine dependent optimization for post-increment or pre-increment.
@@ -64,9 +68,9 @@
       requires strm->avail_out >= 258 for each loop to avoid checking for
       output space.
  */
-void ZLIB_INTERNAL inflate_fast(strm, start)
-z_streamp strm;
-unsigned start;         /* inflate()'s starting value for strm->avail_out */
+void ZLIB_INTERNAL inflate_fast (
+z_streamp strm,
+unsigned start)         /* inflate()'s starting value for strm->avail_out */
 {
     struct inflate_state FAR *state;
     unsigned char FAR *in;      /* local strm->next_in */
@@ -338,3 +342,7 @@ unsigned start;         /* inflate()'s starting value for strm->avail_out */
  */
 
 #endif /* !ASMINF */
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

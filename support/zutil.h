@@ -29,6 +29,14 @@
 #  include <stdlib.h>
 #endif
 
+#ifdef DEBUG
+#  include <stdio.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef local
 #  define local static
 #endif
@@ -243,7 +251,6 @@ extern const char * const z_errmsg[10]; /* indexed by 2-zlib_error */
 
 /* Diagnostic functions */
 #ifdef DEBUG
-#  include <stdio.h>
    extern int ZLIB_INTERNAL z_verbose;
    extern void ZLIB_INTERNAL z_error OF((char *m));
 #  define Assert(cond,msg) {if(!(cond)) z_error(msg);}
@@ -270,5 +277,9 @@ void ZLIB_INTERNAL zcfree  OF((voidpf opaque, voidpf ptr));
            (*((strm)->zalloc))((strm)->opaque, (items), (size))
 #define ZFREE(strm, addr)  (*((strm)->zfree))((strm)->opaque, (voidpf)(addr))
 #define TRY_FREE(s, p) {if (p) ZFREE(s, p);}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ZUTIL_H */

@@ -17,6 +17,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+G_BEGIN_DECLS
+
 #ifndef MONO_API
 #define MONO_API
 #endif
@@ -251,3 +253,4 @@ WriteZStream (ZStream *stream, guchar *buffer, gint length)
 	return length;
 }
 
+G_END_DECLS
