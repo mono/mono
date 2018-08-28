@@ -1,4 +1,3 @@
-# build artifacts
 .stamp-*
 *.mk.generated
 *.config.cache
@@ -16,6 +15,14 @@ android-host-Darwin-*/
 android-host-Linux-*/
 android-host-mxe-Win32-*/
 android-host-mxe-Win64-*/
+android-cross-arm-*/
+android-cross-arm64-*/
+android-cross-x86-*/
+android-cross-x86_64-*/
+android-cross-arm-win-*/
+android-cross-arm64-win-*/
+android-cross-x86-win-*/
+android-cross-x86_64-win-*/
 ios-target32-*/
 ios-target32s-*/
 ios-target64-*/
@@ -30,6 +37,4 @@ ios-simtv-*/
 ios-simwatch-*/
 wasm-interp/
 bcl/
-
-# android toolchain
 toolchains/
