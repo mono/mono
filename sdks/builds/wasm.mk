@@ -23,8 +23,8 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(TOP)/sdks/builds/toolchains/emsdk
 
 .stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.37.36-64bit
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.37.36-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-1.38.11-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-1.38.11-64bit
 	touch $@
 
 .stamp-wasm-interp-toolchain: .stamp-wasm-toolchain
