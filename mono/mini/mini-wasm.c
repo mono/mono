@@ -638,13 +638,13 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 }
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *__restrict__ attr, size_t *__restrict__ stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *attr, size_t *stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * __restrict__ set, sigset_t * __restrict__ oset)
+pthread_sigmask (int how, const sigset_t *set, sigset_t *oset)
 {
 	return 0;
 }
