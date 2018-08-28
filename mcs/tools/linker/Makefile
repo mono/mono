@@ -15,7 +15,8 @@ TEST_CASES := \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
-	System/test-security.cs
+	System/test-security.cs \
+	mscorlib/test-marshaling.cs
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
@@ -32,12 +33,20 @@ SIZE_TEST_CASES :=
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
+MARSHALING_TEST_NATIVE = mscorlib/test-marshaling-native.so
+
 check: compile-tests
 	$(MAKE) run-tests
 
 compile-tests: $(TEST_CASES) $(SIZE_TEST_CASES)
 
 mscorlib/test-%.cs:
+	$(TESTS_COMPILER) Tests/$@ /out:Tests/$(@:.cs=.exe)
+
+$(MARSHALING_TEST_NATIVE): $(@:.so=.c)
+	$(CCOMPILE) Tests/$(@:.so=.c) -shared -o Tests/$@
+
+mscorlib/test-marshaling.cs: $(MARSHALING_TEST_NATIVE)
 	$(TESTS_COMPILER) Tests/$@ /out:Tests/$(@:.cs=.exe)
 
 System/test-%.cs:
@@ -69,6 +78,15 @@ System/test-%.exe mscorlib/test-%.exe:
 	@echo Testing $@
 	$(LINKER) -a Tests/$@
 	$(TEST_EXEC) $(LINKER_OUTPUT)/$(@F)
+	@rm -rf $(LINKER_OUTPUT)
+
+mscorlib/test-marshaling.exe: $(MARSHALING_TEST_NATIVE)
+	@rm -rf $(LINKER_OUTPUT)
+	@mkdir $(LINKER_OUTPUT)
+	@echo Testing $@
+	$(LINKER) -a Tests/$@
+	cp Tests/$(MARSHALING_TEST_NATIVE) $(LINKER_OUTPUT)
+	(cd $(LINKER_OUTPUT); MONO_PATH=. $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot ./$(@F))
 	@rm -rf $(LINKER_OUTPUT)
 
 BCL_ASSEMBLIES_CORE=mscorlib.dll System.dll System.Core.dll System.Xml.dll
