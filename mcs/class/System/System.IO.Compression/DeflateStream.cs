@@ -380,7 +380,9 @@ namespace System.IO.Compression
 				GC.SuppressFinalize (this);
 			
 				io_buffer = null;
-			
+			}
+
+			if (z_stream != null) {
 				z_stream.Dispose();
 			}
 
