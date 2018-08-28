@@ -108,7 +108,7 @@ namespace System.Reflection {
 		{
 			return ParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
 		}
-	};
+	}
 	
 	abstract class RuntimeMethodInfo : MethodInfo, ISerializable
 	{
@@ -220,6 +220,9 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern MonoMethod get_base_method (MonoMethod method, bool definition);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoMethod method);
+
 		public override MethodInfo GetBaseDefinition ()
 		{
 			return get_base_method (this, true);
@@ -244,6 +247,12 @@ namespace System.Reflection {
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { 
 			get {
 				return MonoMethodInfo.GetReturnParameterInfo (this);
+			}
+		}
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
 			}
 		}
 		
@@ -560,6 +569,8 @@ namespace System.Reflection {
 		public override bool IsSecuritySafeCritical {
 			get { return get_core_clr_security_level () == 1; }
 		}
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoMethod> (other);
 	}
 	
 
@@ -809,6 +820,8 @@ namespace System.Reflection {
 		public extern int get_core_clr_security_level ();
 #endif
 
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoCMethod> (other);
+
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
 		}
@@ -820,5 +833,14 @@ namespace System.Reflection {
 		public override bool IsSecuritySafeCritical {
 			get { return get_core_clr_security_level () == 1; }
 		}
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoCMethod method);		
 	}
 }
