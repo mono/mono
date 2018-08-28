@@ -97,9 +97,6 @@ _ios-$(1)_LDFLAGS= \
 
 _ios-$(1)_CONFIGURE_FLAGS = \
 	--build=i386-apple-darwin10 \
-	--host=$(3)-apple-darwin10 \
-	--cache-file=$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -121,12 +118,13 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--without-sigaltstack \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
+	--disable-crash-reporting \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(3)-apple-darwin10))
 
 endef
 
@@ -236,9 +234,6 @@ _ios-$(1)_LDFLAGS= \
 	$$(ios-$(1)_LDFLAGS)
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-apple-darwin10 \
-	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -253,6 +248,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--without-ikvm-native \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
+	--disable-crash-reporting \
 	$$(ios-$(1)_CONFIGURE_FLAGS)
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
@@ -260,7 +256,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
 endef
 
@@ -308,10 +304,11 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
-#  $(2): arch (arm or aarch64)
-#  $(3): llvm (llvm32 or llvm64)
-#  $(4): configure target arch
-#  $(5): offsets tool --abi argument
+#  $(2): host triple arch (i386 or x86_64)
+#  $(3): target triple arch (arm or aarch64)
+#  $(4): llvm (llvm32 or llvm64)
+#  $(5): configure target arch
+#  $(6): offsets tool --abi argument
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -321,7 +318,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSET_TOOL_ABI=$(5)
+_ios-$(1)_OFFSET_TOOL_ABI=$(6)
 
 _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
@@ -352,7 +349,7 @@ _ios-$(1)_LDFLAGS= \
 
 _ios-$(1)_CONFIGURE_FLAGS= \
 	$$(ios-$(1)_CONFIGURE_FLAGS) \
-	--target=$(4) \
+	--target=$(5) \
 	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
@@ -364,28 +361,28 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
-	--with-cross-offsets=$(4).h \
-	--with-llvm=$$(TOP)/sdks/out/ios-$(3)
+	--disable-crash-reporting \
+	--with-cross-offsets=$(5).h \
+	--with-llvm=$$(TOP)/sdks/out/ios-$(4)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
 .stamp-ios-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PACKAGE_LLVM),package-llvm-$(3),download-llvm-$(3))
 
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_64 \
 			mono --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
 endef
 
-ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
-ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,cross32,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
-$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
+ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
