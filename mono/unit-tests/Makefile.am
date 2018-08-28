@@ -48,77 +48,57 @@ if !DISABLE_DEBUGGER_AGENT
 mini_libs += $(monodir)/mono/mini/libmono-dbg.la
 endif
 
+CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
 if !CROSS_COMPILE
 if !HOST_WIN32
 
 noinst_LTLIBRARIES = libtestlib.la
-libtestlib_la_SOURCES =
+libtestlib_la_CFLAGS = @CXX_ADD_CFLAGS@
+libtestlib_la_SOURCES = \
+	test-sgen-qsort.c \
+	test-memfuncs.c \
+	test-mono-linked-list-set.c \
+	test-conc-hashtable.c \
+	test-mono-handle.c \
+	test-mono-callspec.c \
+	test-mono-string.c
 libtestlib_la_LIBADD = ../metadata/libmonoruntimesgen.la ../sgen/libmonosgen.la ../utils/libmonoutils.la
 
-CXXFLAGS += @CXXFLAGS_COMMON@
-
-if ENABLE_CXX
-test_sgen_qsort_SOURCES = test-sgen-qsort-cpp.cpp
-else
-test_sgen_qsort_SOURCES = test-sgen-qsort.c
-endif
-test_sgen_qsort_CFLAGS = $(test_cflags)
-test_sgen_qsort_LDADD = $(test_ldadd)
+test_sgen_qsort_SOURCES = main.c
+test_sgen_qsort_CFLAGS = $(test_cflags) -DMAIN=test_sgen_qsort_main
+test_sgen_qsort_LDADD = $(test_ldadd) libtestlib_la-test-sgen-qsort.$(OBJEXT)
 test_sgen_qsort_LDFLAGS = $(test_ldflags)
 
-if ENABLE_CXX
-test_memfuncs_SOURCES = test-memfuncs-cpp.cpp
-else
-test_memfuncs_SOURCES = test-memfuncs.c
-endif
-test_memfuncs_CFLAGS = $(test_cflags)
-test_memfuncs_LDADD = $(test_ldadd)
+test_memfuncs_SOURCES = main.c
+test_memfuncs_CFLAGS = $(test_cflags) -DMAIN=test_memfuncs_main
+test_memfuncs_LDADD = $(test_ldadd) libtestlib_la-test-memfuncs.$(OBJEXT)
 test_memfuncs_LDFLAGS = $(test_ldflags)
 
-if ENABLE_CXX
-test_mono_linked_list_set_SOURCES = test-mono-linked-list-set-cpp.cpp
-else
-test_mono_linked_list_set_SOURCES = test-mono-linked-list-set.c
-endif
-test_mono_linked_list_set_CFLAGS = $(test_cflags)
-test_mono_linked_list_set_LDADD = $(test_ldadd)
+test_mono_linked_list_set_SOURCES = main.c
+test_mono_linked_list_set_CFLAGS = $(test_cflags) -DMAIN=test_mono_linked_list_set_main
+test_mono_linked_list_set_LDADD = $(test_ldadd) libtestlib_la-test-mono-linked-list-set.$(OBJEXT)
 test_mono_linked_list_set_LDFLAGS = $(test_ldflags)
 
-if ENABLE_CXX
-test_conc_hashtable_SOURCES = test-conc-hashtable-cpp.cpp
-else
-test_conc_hashtable_SOURCES = test-conc-hashtable.c
-endif
-test_conc_hashtable_CFLAGS = $(test_cflags)
-test_conc_hashtable_LDADD = $(test_ldadd)
+test_conc_hashtable_SOURCES = main.c
+test_conc_hashtable_CFLAGS = $(test_cflags) -DMAIN=test_conc_hashtable_main
+test_conc_hashtable_LDADD = $(test_ldadd) libtestlib_la-test-conc-hashtable.$(OBJEXT)
 test_conc_hashtable_LDFLAGS = $(test_ldflags)
 
-if ENABLE_CXX
-test_mono_handle_SOURCES = test-mono-handle-cpp.cpp
-else
-test_mono_handle_SOURCES = test-mono-handle.c
-endif
-test_mono_handle_CFLAGS = $(test_cflags)
-test_mono_handle_LDADD = $(test_ldadd)
+test_mono_handle_SOURCES = main.c
+test_mono_handle_CFLAGS = $(test_cflags) -DMAIN=test_mono_handle_main
+test_mono_handle_LDADD = $(test_ldadd) libtestlib_la-test-mono-handle.$(OBJEXT)
 test_mono_handle_LDFLAGS = $(test_ldflags)
 
-if ENABLE_CXX
-test_mono_callspec_SOURCES = test-mono-callspec-cpp.cpp
-else
-test_mono_callspec_SOURCES = test-mono-callspec.c
-endif
-test_mono_callspec_CFLAGS = $(AM_CFLAGS)
-test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
+test_mono_callspec_SOURCES = main.c
+test_mono_callspec_CFLAGS = $(AM_CFLAGS) -DMAIN=test_mono_string_main
+test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-string.$(OBJEXT)
 test_mono_callspec_LDFLAGS = $(test_ldflags)
 test_mono_callspec_DEPENDENCIES = callspec.exe
 
-if ENABLE_CXX
-test_mono_string_SOURCES = test-mono-string-cpp.cpp
-else
-test_mono_string_SOURCES = test-mono-string.c
-endif
-test_mono_string_CFLAGS = $(test-cflags)
-test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs)
+test_mono_string_SOURCES = main.c
+test_mono_string_CFLAGS = $(test-cflags) -DMAIN=test_mono_string_main
+test_mono_string_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-string.$(OBJEXT)
 test_mono_string_LDFLAGS = $(test_ldflags)
 
 check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
