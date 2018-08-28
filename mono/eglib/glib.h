@@ -213,8 +213,6 @@ G_ENUM_BINOP (Enum, ^, ^=) 			\
 
 #endif
 
-G_BEGIN_DECLS // FIXMEcxx This is for main.c, which remains C, in order to avoid linking to libstdc++.
-
 /*
  * Basic data types
  */
@@ -243,10 +241,8 @@ typedef double         gdouble;
 typedef int32_t        gboolean;
 
 #if defined (HOST_WIN32) || defined (_WIN32)
-G_END_DECLS
 #include <wchar.h>
 typedef wchar_t gunichar2;
-G_BEGIN_DECLS
 #else
 typedef guint16 gunichar2;
 #endif
@@ -1321,8 +1317,6 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
-
-G_END_DECLS // FIXMEcxx This is for main.c, which remains C, in order to avoid linking to libstdc++.
 
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.
