@@ -86,7 +86,7 @@ test_conc_hashtable_LDADD = $(test_ldadd) libtestlib_la-test-conc-hashtable.$(OB
 test_conc_hashtable_LDFLAGS = $(test_ldflags)
 
 test_mono_handle_SOURCES = main.c
-test_mono_handle_CFLAGS = $(test_cflags) -DMAIN=test_mono_handle_main
+test_mono_handle_CFLAGS = $(test_cflags) -DMAIN=test_mono_handle
 test_mono_handle_LDADD = $(test_ldadd) libtestlib_la-test-mono-handle.$(OBJEXT)
 test_mono_handle_LDFLAGS = $(test_ldflags)
 
