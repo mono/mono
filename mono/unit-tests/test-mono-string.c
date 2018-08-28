@@ -49,8 +49,14 @@ new_string_conv_err (void)
 	return 0;
 }
 
+#ifdef __cplusplus
+extern "C"
+#endif
 int
-main (void)
+test_mono_string_main (void);
+
+int
+test_mono_string_main (void)
 {
 
 	mono_jit_init_version ("test-mono-string", "v4.0.30319");

@@ -17,8 +17,6 @@ static_libs=	\
 runtime_lib=$(static_libs)
 endif
 
-CXXFLAGS += @CXXFLAGS_COMMON@
-
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
 else
@@ -27,21 +25,23 @@ bin_PROGRAMS =
 else
 if SUPPORT_SGEN
 bin_PROGRAMS = monograph
+noinst_LIBRARIES = libmonograph.a
 endif
 endif
 endif
 
-if ENABLE_CXX
-monograph_SOURCES = monograph-cpp.cpp
-else
-monograph_SOURCES = monograph.c
-endif
+CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+libmonograph_a_CFLAGS = @CXX_ADD_CFLAGS@
+
+monograph_SOURCES =
+libmonograph_a_SOURCES = monograph.c
 
 AM_CPPFLAGS = 				\
 	-I$(top_srcdir)			\
 	$(GLIB_CFLAGS)
 
 monograph_LDADD = \
+	libmonograph_a-monograph.$(OBJEXT) \
 	$(runtime_lib)			\
 	$(glib_libs)			\
 	$(LLVM_LIBS)
