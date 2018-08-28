@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 int
 Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 {
-	struct stat *to = _to;
+	struct stat *to = (struct stat*)_to;
 	memset (to, 0, sizeof(*to));
 
 	to->st_dev         = from->st_dev;
@@ -75,7 +75,7 @@ Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 int
 Mono_Posix_ToStat (void *_from, struct Mono_Posix_Stat *to)
 {
-	struct stat *from = _from;
+	struct stat *from = (struct stat*)_from;
 	memset (to, 0, sizeof(*to));
 
 	to->st_dev        = from->st_dev;
@@ -204,8 +204,6 @@ Mono_Posix_Syscall_mknodat (int dirfd, const char *pathname, guint32 mode, mph_d
 }
 #endif
 
-G_END_DECLS
-
 gint64
 Mono_Posix_Syscall_get_utime_now ()
 {
@@ -268,6 +266,7 @@ Mono_Posix_Syscall_utimensat(int dirfd, const char *pathname, struct Mono_Posix_
 }
 #endif /* def HAVE_UTIMENSAT */
 
+G_END_DECLS
 
 /*
  * vim: noexpandtab

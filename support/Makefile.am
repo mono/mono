@@ -8,6 +8,9 @@ if BUILD_SUPPORT
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
+
+noinst_LTLIBRARIES=				\
+	libMonoSupportC.la
 endif
 
 AM_CPPFLAGS =					\
@@ -15,6 +18,8 @@ AM_CPPFLAGS =					\
 	-I$(top_srcdir)
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
+
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.
@@ -107,12 +112,22 @@ Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
 endif
 
-libMonoPosixHelper_la_SOURCES =			\
-	$(MPH_SOURCE)				\
+# C; uses no glib
+libMonoSupportC_la_SOURCES = \
 	$(Z_SOURCE)				\
 	$(MINIZIP_SOURCE)
 
+libMonoSupportC_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+
+# optionally C++; uses some glib
+libMonoSupportW_la_CFLAGS = @CXX_ADD_CFLAGS@
+libMonoPosixHelper_la_CFLAGS = @CXX_ADD_CFLAGS@
+
+libMonoPosixHelper_la_SOURCES =			\
+	$(MPH_SOURCE)
+
 libMonoPosixHelper_la_LIBADD =			\
+	libMonoSupportC.la			\
 	$(MPH_LIBS)				\
 	$(Z_LIBS)				\
 	$(XATTR_LIB)

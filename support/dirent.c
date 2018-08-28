@@ -79,7 +79,7 @@ Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry
 	}
 
 	errno = 0;
-	d = readdir (dirp);
+	d = readdir ((DIR*)dirp);
 
 	if (d == NULL) {
 		return -1;
@@ -93,10 +93,10 @@ Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry
 gint32
 Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
-	struct dirent *_entry = malloc (sizeof (struct dirent) + MPH_PATH_MAX + 1);
+	struct dirent *_entry = (struct dirent*)malloc (sizeof (struct dirent) + MPH_PATH_MAX + 1);
 	int r;
 
-	r = readdir_r (dirp, _entry, (struct dirent**) result);
+	r = readdir_r ((DIR*)dirp, _entry, (struct dirent**) result);
 
 	if (r == 0 && *result != NULL) {
 		copy_dirent (entry, _entry);
@@ -110,7 +110,7 @@ Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *ent
 int
 Mono_Posix_Syscall_rewinddir (void* dir)
 {
-	rewinddir (dir);
+	rewinddir ((DIR*)dir);
 	return 0;
 }
 
