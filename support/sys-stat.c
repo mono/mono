@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 int
 Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 {
-	struct stat *to = _to;
+	struct stat *to = (struct stat*)_to;
 	memset (to, 0, sizeof(*to));
 
 	to->st_dev         = from->st_dev;
@@ -75,7 +75,7 @@ Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 int
 Mono_Posix_ToStat (void *_from, struct Mono_Posix_Stat *to)
 {
-	struct stat *from = _from;
+	struct stat *from = (struct stat*)_from;
 	memset (to, 0, sizeof(*to));
 
 	to->st_dev        = from->st_dev;

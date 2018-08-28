@@ -7,6 +7,10 @@
 
 #include "zutil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef NO_DUMMY_DECL
 struct internal_state      {int dummy;}; /* for buggy compilers */
 #endif
@@ -130,8 +134,7 @@ void ZLIB_INTERNAL z_error (m)
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(err)
-    int err;
+const char * ZEXPORT zError (int err)
 {
     return ERR_MSG(err);
 }
@@ -146,10 +149,7 @@ const char * ZEXPORT zError(err)
 
 #ifndef HAVE_MEMCPY
 
-void ZLIB_INTERNAL zmemcpy(dest, source, len)
-    Bytef* dest;
-    const Bytef* source;
-    uInt  len;
+void ZLIB_INTERNAL zmemcpy (Bytef* dest, const Bytef* source, uInt len)
 {
     if (len == 0) return;
     do {
@@ -157,10 +157,7 @@ void ZLIB_INTERNAL zmemcpy(dest, source, len)
     } while (--len != 0);
 }
 
-int ZLIB_INTERNAL zmemcmp(s1, s2, len)
-    const Bytef* s1;
-    const Bytef* s2;
-    uInt  len;
+int ZLIB_INTERNAL zmemcmp (const Bytef* s1, const Bytef* s2, uInt len)
 {
     uInt j;
 
@@ -170,9 +167,7 @@ int ZLIB_INTERNAL zmemcmp(s1, s2, len)
     return 0;
 }
 
-void ZLIB_INTERNAL zmemzero(dest, len)
-    Bytef* dest;
-    uInt  len;
+void ZLIB_INTERNAL zmemzero (Bytef* dest, uInt len)
 {
     if (len == 0) return;
     do {
@@ -297,22 +292,21 @@ extern voidp  calloc OF((uInt items, uInt size));
 extern void   free   OF((voidpf ptr));
 #endif
 
-voidpf ZLIB_INTERNAL zcalloc (opaque, items, size)
-    voidpf opaque;
-    unsigned items;
-    unsigned size;
+voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
 {
     if (opaque) items += size - size; /* make compiler happy */
     return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
                               (voidpf)calloc(items, size);
 }
 
-void ZLIB_INTERNAL zcfree (opaque, ptr)
-    voidpf opaque;
-    voidpf ptr;
+void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 {
     free(ptr);
     if (opaque) return; /* make compiler happy */
 }
 
 #endif /* MY_ZCALLOC */
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
