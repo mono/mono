@@ -70,10 +70,10 @@ void mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy);
  */
 
 gpointer
-mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
+mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, MonoStackData *stackdata);
 
 gpointer
-mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
+mono_threads_enter_gc_safe_region_with_info (MonoThreadInfo *info, MonoStackData *stackdata);
 
 #define MONO_ENTER_GC_SAFE_WITH_INFO(info)	\
 	do {	\
@@ -83,10 +83,10 @@ mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackDa
 #define MONO_EXIT_GC_SAFE_WITH_INFO	MONO_EXIT_GC_SAFE
 
 gpointer
-mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
+mono_threads_enter_gc_unsafe_region_with_info (MonoThreadInfo *, MonoStackData *stackdata);
 
 gpointer
-mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
+mono_threads_enter_gc_unsafe_region_with_info (MonoThreadInfo *, MonoStackData *stackdata);
 
 #define MONO_ENTER_GC_UNSAFE_WITH_INFO(info)	\
 	do {	\
@@ -96,6 +96,6 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData
 #define MONO_EXIT_GC_UNSAFE_WITH_INFO	MONO_EXIT_GC_UNSAFE
 
 gpointer
-mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
+mono_threads_enter_gc_unsafe_region_unbalanced_with_info (MonoThreadInfo *info, MonoStackData *stackdata);
 
 #endif
