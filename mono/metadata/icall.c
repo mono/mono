@@ -1878,6 +1878,10 @@ ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info (MonoMethod *metho
 	MonoClass *klass = NULL;
 	if (!MONO_HANDLE_IS_NULL (reftype))
 		klass = mono_class_from_mono_type (MONO_HANDLE_GETVAL (reftype, type));
+
+	/* UNITY: handle wrapper methods leaking into call stacks. case 1073634 */
+	method = mono_marshal_method_from_wrapper (method);
+
 	return mono_param_get_objects_internal (domain, method, klass, error);
 }
 
