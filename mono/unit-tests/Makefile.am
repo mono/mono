@@ -91,8 +91,8 @@ test_mono_handle_LDADD = $(test_ldadd) libtestlib_la-test-mono-handle.$(OBJEXT)
 test_mono_handle_LDFLAGS = $(test_ldflags)
 
 test_mono_callspec_SOURCES = main.c
-test_mono_callspec_CFLAGS = $(AM_CFLAGS) -DMAIN=test_mono_string_main
-test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-string.$(OBJEXT)
+test_mono_callspec_CFLAGS = $(AM_CFLAGS) -DMAIN=test_mono_callspec_main
+test_mono_callspec_LDADD = $(test_ldadd) $(mini_libs) $(sgen_libs) libtestlib_la-test-mono-callspec.$(OBJEXT)
 test_mono_callspec_LDFLAGS = $(test_ldflags)
 test_mono_callspec_DEPENDENCIES = callspec.exe
 
