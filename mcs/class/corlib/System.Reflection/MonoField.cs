@@ -329,5 +329,22 @@ namespace System.Reflection {
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int get_metadata_token (MonoField monoField);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern Type[] GetTypeModifiers (bool optional);
+
+		public override Type[] GetOptionalCustomModifiers () {
+			Type[] types = GetTypeModifiers (true);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
+		}
+
+		public override Type[] GetRequiredCustomModifiers () {
+			Type[] types = GetTypeModifiers (false);
+			if (types == null)
+				return Type.EmptyTypes;
+			return types;
+		}
 	}
 }

@@ -228,6 +228,8 @@ System.Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/FieldInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/FieldInfo.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/MissingMetadataException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
