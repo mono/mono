@@ -27,8 +27,8 @@ BITCODE_CONFIGURE_FLAGS=--enable-llvm-runtime --with-bitcode=yes
 #
 # Parameters
 #  $(1): target (target32/target32s/target64)
-#  $(2): arch (armv7 or arm64)
-#  $(3): arch (arm or aarch64)
+#  $(2): host arch (arm or aarch64)
+#  $(3): host arch for compiler (armv7 or arm64)
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -64,31 +64,30 @@ _ios-$(1)_AC_VARS= \
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-Wl,-application_extension \
 	-fexceptions \
 	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-Wl,-application_extension \
 	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 
 _ios-$(1)_LDFLAGS= \
 	-Wl,-no_weak_imports \
-	-arch $(2) \
+	-arch $(3) \
 	-framework CoreFoundation \
 	-lobjc -lc++
 
 _ios-$(1)_CONFIGURE_FLAGS = \
-	--build=i386-apple-darwin10 \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -112,7 +111,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(3)-apple-darwin10))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
 endef
 
@@ -157,11 +156,11 @@ ios-targettv_AC_VARS = \
 ios-targetwatch_AC_VARS = $(ios-targettv_AC_VARS)
 
 # ios-target32_BITCODE_MARKER=-fembed-bitcode-marker
-$(eval $(call iOSDeviceTemplate,target32,armv7,arm))
-$(eval $(call iOSDeviceTemplate,target32s,armv7s,arm))
+$(eval $(call iOSDeviceTemplate,target32,arm,armv7))
+$(eval $(call iOSDeviceTemplate,target32s,arm,armv7s))
 # ios-target64_BITCODE_MARKER=-fembed-bitcode-marker
-$(eval $(call iOSDeviceTemplate,target64,arm64,aarch64))
-$(eval $(call iOSDeviceTemplate,targettv,arm64,aarch64))
+$(eval $(call iOSDeviceTemplate,target64,aarch64,arm64))
+$(eval $(call iOSDeviceTemplate,targettv,aarch64,arm64))
 $(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
 
 ##
@@ -169,7 +168,7 @@ $(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
 #
 # Parameters
 #  $(1): target (sim32 or sim64)
-#  $(2): arch (i386 or x86_64)
+#  $(2): host arch (i386 or x86_64)
 #
 # Flags:
 #  ios-$(1)_SYSROOT
@@ -310,11 +309,11 @@ endif
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
-#  $(2): host triple arch (i386 or x86_64)
-#  $(3): target triple arch (arm or aarch64)
-#  $(4): llvm (llvm32 or llvm64)
-#  $(5): configure target arch
-#  $(6): offsets tool --abi argument
+#  $(2): host arch (i386 or x86_64)
+#  $(3): target arch (arm or aarch64)
+#  $(4): device target (target32, target64, ...)
+#  $(5): llvm (llvm32 or llvm64)
+#  $(6): offsets dumper abi
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -324,7 +323,7 @@ endif
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSET_TOOL_ABI=$(6)
+_ios-$(1)_OFFSETS_DUMPER_ARGS=--gen-ios
 
 _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
@@ -349,9 +348,6 @@ _ios-$(1)_LDFLAGS= \
 	-stdlib=libc++
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	--target=$(5) \
-	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-iconv \
@@ -360,28 +356,13 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dtrace=no \
 	--enable-icall-symbol-map \
-	--enable-minimal=com,remoting \
-	--with-cross-offsets=$(5).h \
-	--with-llvm=$$(TOP)/sdks/out/ios-$(4)
+	--enable-minimal=com,remoting
 
-.stamp-ios-$(1)-toolchain:
-	touch $$@
-
-.stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
-
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
-	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
-		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
-			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
-				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
-
-build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h
-
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
+$$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-32,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm64,aarch64-apple-darwin10))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-32,armv7k-apple-darwin))
