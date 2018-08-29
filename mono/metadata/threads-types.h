@@ -46,6 +46,8 @@ typedef enum {
 } MonoThreadApartmentState;
 
 typedef enum {
+// These values match System.Threading.ThreadPriority.
+// These values match System.Diagnostics.ThreadPriorityLevel and Windows, but are offset by 2.
 	MONO_THREAD_PRIORITY_LOWEST       = 0,
 	MONO_THREAD_PRIORITY_BELOW_NORMAL = 1,
 	MONO_THREAD_PRIORITY_NORMAL       = 2,
@@ -119,7 +121,7 @@ ICALL_EXPORT
 int ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error);
 
 ICALL_EXPORT
-void ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error);
+void ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, MonoThreadPriority priority, MonoError *error);
 
 ICALL_EXPORT
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
