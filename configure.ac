@@ -1032,10 +1032,7 @@ AC_SUBST(CXXFLAGS_COMMON)
 
 if test "x$enable_cxx" = "xyes"; then
 
-	# FIXME Centos6 requires a different flag for prerelease C++11.
-	#CXX_ADD_CFLAGS=' -xc++ -std=gnu++98 -fno-exceptions -fno-rtti '
-	CXX_ADD_CFLAGS=' -xc++ -std=gnu++0x -fno-exceptions -fno-rtti '
-	# "c++0x" instead of C++11, for compat with Centos6/gcc4.4
+	CXX_ADD_CFLAGS=" -xc++ $CXXFLAGS_COMMON "
 
 	# -std=gnu99 -xc++ is not allowed and errors.
 	CXX_REMOVE_CFLAGS=-std=gnu99
