@@ -209,5 +209,16 @@ namespace System.Reflection {
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoEvent> (other);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoEvent monoEvent);
 	}
 }

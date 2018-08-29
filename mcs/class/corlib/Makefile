@@ -43,6 +43,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
 	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Reflection.TypeExtensions/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.Extensions/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
@@ -55,8 +56,8 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx
-	
+	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx	\
+	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -124,7 +125,7 @@ ifdef MONO_FEATURE_APPLE_X509
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
 endif
 
-COREFX_FLAGS := -d:BIT64
+COREFX_FLAGS := -d:BIT64,REGISTRY_ASSEMBLY
 
 WARNING_ABOUT_DISABLED_WARNING=1635
 LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3002,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) $(COREFX_FLAGS)

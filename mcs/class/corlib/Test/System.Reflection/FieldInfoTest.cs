@@ -224,6 +224,14 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D10");
 		}
 
+		[Test]
+		public void MetadataToken ()
+		{
+			Type type = typeof (FieldInfoTest);
+			FieldInfo field = type.GetField ("i");
+			Assert.IsTrue ((int)field.MetadataToken > 0);
+		}
+
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle)
 		public void GetFieldFromHandle1_Handle_Zero ()
 		{

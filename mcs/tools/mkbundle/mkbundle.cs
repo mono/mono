@@ -884,6 +884,7 @@ typedef struct {
 			template_stream.Dispose ();
 
 			if (compress) {
+				tc.WriteLine ("#define USE_COMPRESSED_ASSEMBLY\n");
 				tc.WriteLine ("typedef struct _compressed_data {");
 				tc.WriteLine ("\tMonoBundledAssembly assembly;");
 				tc.WriteLine ("\tint compressed_size;");
@@ -973,7 +974,7 @@ typedef struct {
 					FileStream cf = File.OpenRead (fname + ".config");
 					if (!quiet)
 						Console.WriteLine (" config from: " + fname + ".config");
-					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+					tc.WriteLine ("extern const char assembly_config_{0} [];", encoded);
 					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
 					WriteBuffer (ts, cf, buffer);
 					ts.WriteLine ();
@@ -1044,7 +1045,8 @@ typedef struct {
 				tc.WriteLine ("\textern const void *mono_aot_module_{0}_info;", asm);
 			}
 
-			tc.WriteLine ("\nstatic void install_aot_modules (void) {\n");
+			tc.WriteLine ("\n#ifndef USE_COMPRESSED_ASSEMBLY\n");
+			tc.WriteLine ("static void install_aot_modules (void) {\n");
 			foreach (string asm in aot_names){
 				tc.WriteLine ("\tmono_api.mono_aot_register_module (mono_aot_module_{0}_info);\n", asm);
 			}
@@ -1066,6 +1068,7 @@ typedef struct {
 			tc.WriteLine ("\tmono_api.mono_jit_set_aot_mode ({0});", enum_aot_mode);
 
 			tc.WriteLine ("\n}\n");
+			tc.WriteLine ("#endif\n");
 
 
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
