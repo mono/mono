@@ -143,7 +143,12 @@ Mono_Posix_Syscall_mincore (void *start, mph_size_t length, unsigned char *vec)
 #else
 	mph_return_if_size_t_overflow (length);
 
-	return mincore (start, (size_t) length, (char*)vec);
+#ifdef __linux__
+	typedef unsigned char T;
+#else
+	typedef char T;
+#endif
+	return mincore (start, (size_t) length, (T*)vec);
 #endif
 }
 
