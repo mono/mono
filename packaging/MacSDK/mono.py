@@ -65,10 +65,10 @@ class MonoMasterPackage(Package):
     def arch_build(self, arch):
         Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit build pass
-            self.local_configure_flags.extend (['--build=x86_64-apple-darwin11.2.0', '--disable-boehm'])
+            self.local_configure_flags.extend (['--build=x86_64-apple-darwin13.0.0', '--disable-boehm'])
 
         if arch == 'darwin-32':  # 32-bit build pass
-            self.local_configure_flags.extend (['--build=i386-apple-darwin11.2.0'])
+            self.local_configure_flags.extend (['--build=i386-apple-darwin13.0.0'])
 
         self.local_configure_flags.extend(
             ['--cache-file=%s/%s-%s.cache' % (self.profile.bockbuild.build_root, self.name, arch)])

@@ -179,10 +179,10 @@ namespace CppSharp
                 Environment.Exit (1);
             }
             string abi = Abis [0];
-            if (abi == "i386-apple-darwin11.2.0") {
+            if (abi == "i386-apple-darwin13.0.0") {
                 Targets.Add(new Target {
                         Platform = TargetPlatform.OSX,
-                        Triple = "i386-apple-darwin11.2.0",
+                        Triple = "i386-apple-darwin13.0.0",
                         Build = "",
                         Defines = { "TARGET_X86" },
                 });
