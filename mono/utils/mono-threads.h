@@ -80,81 +80,6 @@ typedef struct {
 	MonoOSEvent event;
 } MonoThreadHandle;
 
-/*
-THREAD_INFO_TYPE is a way to make the mono-threads module parametric - or sort of.
-The GC using mono-threads might extend the MonoThreadInfo struct to add its own
-data, this avoid a pointer indirection on what is on a lot of hot paths.
-
-But extending MonoThreadInfo has the disavantage that all functions here return type
-would require a cast, something like the following:
-
-typedef struct {
-	MonoThreadInfo info;
-	int stuff;
-}  MyThreadInfo;
-
-...
-((MyThreadInfo*)mono_thread_info_current ())->stuff = 1;
-
-While porting sgen to use mono-threads, the number of casts required was too much and
-code ended up looking horrible. So we use this cute little hack. The idea is that
-whomever is including this header can set the expected type to be used by functions here
-and reduce the number of casts drastically.
-
-Older version of this ran afoul of C++ typesafe linkage.
-The declarations did not match the implementation.
-That is fixed by having the "real" declarations and implementations
-always use MonoThreadInfo* and then having wrapper macros cast.
-
-One could also use wrapper static inlines, but that would require
-a rename of the functions and for example, breakpoints would no longer work.
-
-With C++ other workarounds will be viable.
-  - The wrappers can be same-named overloads -- still maybe breaking breakpoints.
-  - Inputs can be just derived classes.
-*/
-/*
-This technique breaks with C++ name mangling.
-
-Another technique that is compatible with that is e.g.
-
-1. inputs
-
-mono-threads.h:
-
-static inline void* mono_thread_info_typecheck (THREAD_INFO_TYPE *info) { return info; }
-
-void mono_threads_in (void *info);
-
-// Macros do not recurse.
-#define mono_threads_in(info) \
-	(mono_threads_in (mono_thread_info_typecheck (info)))
-
-mono-threads.c:
-
-void (mono_threads_in) (void *void_info) // parens avoid macro
-{
-	THREAD_INFO_TYPE *info = (THREAD_INFO_TYPE*)void_info;
-	...
-}
-
-2. outputs
-
-void*
-mono_threads_out (void);
-
-// Macros do not recurse.
-#define mono_threads_out() \
-	((THREAD_INFO_TYPE*)mono_threads_out ())
-
-For now we use extern "C" instead.
-*/
-#ifndef THREAD_INFO_TYPE
-#define THREAD_INFO_TYPE MonoThreadInfo
-#else
-#define MONO_THREADS_NEED_THREAD_INFO_TYPE_WRAPPERS
-#endif
-
 /* Mono Threads internal configuration knows*/
 
 /* If this is defined, use the signals backed on Mach. Debug only as signals can't be made usable on OSX. */
@@ -329,7 +254,7 @@ typedef struct _MonoThreadInfo {
 } MonoThreadInfo;
 
 typedef struct {
-	void* (*thread_attach)(THREAD_INFO_TYPE *info);
+	void* (*thread_attach)(MonoThreadInfo *info);
 	/*
 	This callback is called right before thread_detach_with_lock. This is called
 	without any locks held so it's the place for complicated cleanup.
@@ -337,15 +262,15 @@ typedef struct {
 	The thread must remain operational between this call and thread_detach_with_lock.
 	It must be possible to successfully suspend it after thread_detach completes.
 	*/
-	void (*thread_detach)(THREAD_INFO_TYPE *info);
+	void (*thread_detach)(MonoThreadInfo *info);
 	/*
 	This callback is called with @info still on the thread list.
 	This call is made while holding the suspend lock, so don't do callbacks.
 	SMR remains functional as its small_id has not been reclaimed.
 	*/
-	void (*thread_detach_with_lock)(THREAD_INFO_TYPE *info);
+	void (*thread_detach_with_lock)(MonoThreadInfo *info);
 	gboolean (*ip_in_critical_region) (MonoDomain *domain, gpointer ip);
-	gboolean (*thread_in_critical_region) (THREAD_INFO_TYPE *info);
+	gboolean (*thread_in_critical_region) (MonoThreadInfo *info);
 
 	// Called on the affected thread.
 	void (*thread_flags_changing) (MonoThreadInfoFlags old, MonoThreadInfoFlags new_);
@@ -365,7 +290,7 @@ typedef enum {
 	KeepSuspended = 0x4321,
 } SuspendThreadResult;
 
-typedef SuspendThreadResult (*MonoSuspendThreadCallback) (THREAD_INFO_TYPE *info, gpointer user_data);
+typedef SuspendThreadResult (*MonoSuspendThreadCallback) (MonoThreadInfo *info, gpointer user_data);
 
 MONO_API MonoThreadInfoFlags
 mono_thread_info_get_flags (MonoThreadInfo *info);
@@ -387,10 +312,10 @@ mono_threads_filter_exclude_flags (MonoThreadInfo *info, MonoThreadInfoFlags fla
 /* Normal iteration; requires the world to be stopped. */
 
 #define FOREACH_THREAD_ALL(thread) \
-	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_lls_filter_accept_all, NULL)
+	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), MonoThreadInfo, thread, mono_lls_filter_accept_all, NULL)
 
 #define FOREACH_THREAD_EXCLUDE(thread, not_flags) \
-	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_exclude_flags, not_flags)
+	MONO_LLS_FOREACH_FILTERED (mono_thread_info_list_head (), MonoThreadInfo, thread, mono_threads_filter_exclude_flags, not_flags)
 
 #define FOREACH_THREAD_END \
 	MONO_LLS_FOREACH_END
@@ -398,22 +323,22 @@ mono_threads_filter_exclude_flags (MonoThreadInfo *info, MonoThreadInfoFlags fla
 /* Snapshot iteration; can be done anytime but is slower. */
 
 #define FOREACH_THREAD_SAFE_ALL(thread) \
-	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_lls_filter_accept_all, NULL)
+	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), MonoThreadInfo, thread, mono_lls_filter_accept_all, NULL)
 
 #define FOREACH_THREAD_SAFE_EXCLUDE(thread, not_flags) \
-	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), THREAD_INFO_TYPE, thread, mono_threads_filter_exclude_flags, not_flags)
+	MONO_LLS_FOREACH_FILTERED_SAFE (mono_thread_info_list_head (), MonoThreadInfo, thread, mono_threads_filter_exclude_flags, not_flags)
 
 #define FOREACH_THREAD_SAFE_END \
 	MONO_LLS_FOREACH_SAFE_END
 
 static inline MonoNativeThreadId
-mono_thread_info_get_tid (THREAD_INFO_TYPE *info)
+mono_thread_info_get_tid (MonoThreadInfo *info)
 {
 	return MONO_UINT_TO_NATIVE_THREAD_ID (((MonoThreadInfo*) info)->node.key);
 }
 
 static inline void
-mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
+mono_thread_info_set_tid (MonoThreadInfo *info, MonoNativeThreadId tid)
 {
 	((MonoThreadInfo*) info)->node.key = (uintptr_t) MONO_NATIVE_THREAD_ID_TO_UINT (tid);
 }
@@ -829,88 +754,6 @@ typedef void (*background_job_cb)(void);
 void mono_threads_schedule_background_job (background_job_cb cb);
 #endif
 
-#ifdef MONO_THREADS_NEED_THREAD_INFO_TYPE_WRAPPERS
-#undef MONO_THREADS_NEED_THREAD_INFO_TYPE_WRAPPERS
-
-// This scheme for dealing with THREAD_INFO_TYPE differs
-// from the old scheme, in that it has function prototypes match function implementations.
-// It does break taking address of functions ("can't take address of macros").
-// FIXME In C++ future, can replace this hack with derivation from MonoThreadInfo.
-// That will require changing all the explicit accesses to the "named base".
-// SgenThreadInfo * info;
-// info->base.foo => info-foo, and can be only one foo between base and derived.
-// This at least solves the input casts, which is most of the problem.
-
-// Output casts.
-#define mono_thread_info_attach(info)		((THREAD_INFO_TYPE*)mono_thread_info_attach ())
-#define mono_thread_info_current()		((THREAD_INFO_TYPE*)mono_thread_info_current ())
-#define mono_thread_info_current_unchecked()	((THREAD_INFO_TYPE*)mono_thread_info_current_unchecked ())
-#define mono_thread_info_lookup(id) 		((THREAD_INFO_TYPE*)mono_thread_info_lookup (id))
-
-// Input casts, only accepting the one type (not void*).
-
-static inline MonoThreadInfo*
-mono_thread_info (THREAD_INFO_TYPE *info)
-{
-	return (MonoThreadInfo*)info;
-}
-
-#define mono_thread_info_get_flags(info)				  (mono_thread_info_get_flags (mono_thread_info (info)))
-#define mono_thread_info_try_get_internal_thread_gchandle(info, gchandle) (mono_thread_info_try_get_internal_thread_gchandle (mono_thread_info (info), (gchandle)))
-#define mono_thread_info_set_internal_thread_gchandle(info, gchandle)	  (mono_thread_info_set_internal_thread_gchandle (mono_thread_info (info), (gchandle)))
-#define mono_thread_info_unset_internal_thread_gchandle(info)		  (mono_thread_info_unset_internal_thread_gchandle (mono_thread_info (info)))
-
-#define mono_thread_info_setup_async_call(info, target_func, user_data)   (mono_thread_info_setup_async_call (mono_thread_info (info), (target_func), (user_data)))
-#define mono_thread_info_tls_set(info, key, value)			  (mono_thread_info_tls_set (mono_thread_info (info), (key), (value)))
-#define mono_thread_info_prepare_interrupt(info)			  (mono_thread_info_prepare_interrupt (mono_thread_info (info)))
-#define mono_thread_info_is_interrupt_state(info) 			  (mono_thread_info_is_interrupt_state (mono_thread_info (info)))
-
-#define mono_thread_info_describe_interrupt_token(info, text)		  (mono_thread_info_describe_interrupt_token (mono_thread_info (info), (text)))
-#define mono_thread_info_is_live(info)					  (mono_thread_info_is_live (mono_thread_info (info)))
-#define mono_threads_pthread_kill(info, signum)				  (mono_threads_pthread_kill (mono_thread_info (info), (signum)))
-#define mono_threads_suspend_begin_async_suspend(info, interrupt_kernel)  (mono_threads_suspend_begin_async_suspend (mono_thread_info (info), (interrupt_kernel)))
-
-#define mono_threads_suspend_check_suspend_result(info)			  (mono_threads_suspend_check_suspend_result (mono_thread_info (info)))
-#define mono_threads_suspend_begin_async_resume(info)			  (mono_threads_suspend_begin_async_resume (mono_thread_info (info)))
-#define mono_threads_suspend_register(info)				  (mono_threads_suspend_register (mono_thread_info (info)))
-#define mono_threads_suspend_free(info)					  (mono_threads_suspend_free (mono_thread_info (info)))
-
-#define mono_threads_suspend_abort_syscall(info)			  (mono_threads_suspend_abort_syscall (mono_thread_info (info)))
-#define mono_threads_notify_initiator_of_suspend(info)			  (mono_threads_notify_initiator_of_suspend (mono_thread_info (info)))
-#define mono_threads_notify_initiator_of_resume(info)			  (mono_threads_notify_initiator_of_resume (mono_thread_info (info)))
-#define mono_threads_notify_initiator_of_abort(info)			  (mono_threads_notify_initiator_of_abort (mono_thread_info (info)))
-
-#define mono_threads_transition_attach(info)				  (mono_threads_transition_attach (mono_thread_info (info)))
-#define mono_threads_transition_detach(info)				  (mono_threads_transition_detach (mono_thread_info (info)))
-#define mono_threads_transition_request_suspension(info)		  (mono_threads_transition_request_suspension (mono_thread_info (info)))
-#define mono_threads_transition_state_poll(info)			  (mono_threads_transition_state_poll (mono_thread_info (info)))
-
-#define mono_threads_transition_request_resume(info)			  (mono_threads_transition_request_resume (mono_thread_info (info)))
-#define mono_threads_transition_finish_async_suspend(info)		  (mono_threads_transition_finish_async_suspend (mono_thread_info (info)))
-#define mono_threads_transition_do_blocking(info)			  (mono_threads_transition_do_blocking (mono_thread_info (info), (func)))
-#define mono_threads_transition_done_blocking(info)			  (mono_threads_transition_done_blocking (mono_thread_info (info), (func)))
-
-#define mono_threads_transition_abort_blocking(info)			  (mono_threads_transition_abort_blocking (mono_thread_info (info), (func)))
-#define mono_threads_transition_peek_blocking_suspend_requested(info)	  (mono_threads_transition_peek_blocking_suspend_requested (mono_thread_info (info)))
-#define mono_thread_info_get_suspend_state(info) 			  (mono_thread_info_get_suspend_state (mono_thread_info (info)))
-#define mono_thread_info_wait_for_resume(info) 				  (mono_thread_info_wait_for_resume (mono_thread_info (info)))
-
-#define mono_thread_info_is_running(info) 				  (mono_thread_info_is_running (mono_thread_info (info)))
-#define mono_thread_info_is_live(info) 					  (mono_thread_info_is_live (mono_thread_info (info)))
-#define mono_thread_info_suspend_count(info) 				  (mono_thread_info_suspend_count (mono_thread_info (info)))
-#define mono_thread_info_current_state(info) 				  (mono_thread_info_current_state (mono_thread_info (info)))
-
-#define mono_thread_info_in_critical_location(info) 			  (mono_thread_info_in_critical_location (mono_thread_info (info)))
-#define mono_thread_info_begin_suspend(info, phase) 			  (mono_thread_info_begin_suspend (mono_thread_info (info), (phase)))
-#define mono_thread_info_begin_resume(info) 				  (mono_thread_info_begin_resume (mono_thread_info (info)))
-#define mono_thread_info_is_current(info) 				  (mono_thread_info_is_current (mono_thread_info (info)))
-
-#define mono_threads_filter_exclude_flags(info, flags)			  (mono_threads_filter_exclude_flags (mono_thread_info (info), (flags)))
-
-#else
-
 #define mono_thread_info_tls_get(info, key) (g_cast (mono_thread_info_tls_get ((info), (key))))
-
-#endif
 
 #endif /* __MONO_THREADS_H__ */

@@ -613,7 +613,7 @@ It returns one of:
 -Wait: Blocking state successfully aborted, there's a pending suspend to be processed though, wait for resume.
 */
 MonoAbortBlockingResult
-mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char *func)
+mono_threads_transition_abort_blocking (MonoThreadInfo* info, const char *func)
 {
 	int raw_state, cur_state, suspend_count;
 
