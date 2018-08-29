@@ -189,8 +189,6 @@ endif
 
 mono_boehm_SOURCES =
 
-mono_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
-
 mono_boehm_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
 AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
@@ -649,8 +647,6 @@ endif
 
 if MONO_JEMALLOC_ENABLED
 libmonoldflags += $(JEMALLOC_LDFLAGS)
-mono_CFLAGS += $(JEMALLOC_CFLAGS)
-#CFLAGS += $(JEMALLOC_CFLAGS)
 endif
 
 libmono_ee_interp_la_SOURCES = $(interp_sources)
