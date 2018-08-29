@@ -145,7 +145,7 @@ get_saved_signal_handler (int signo, gboolean remove)
 {
 	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = (struct sigaction *)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		if (remove && handler)
 			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		return handler;
@@ -301,7 +301,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	mono_thread_info_set_is_async_context (TRUE);
 
-	MONO_PROFILER_RAISE (sample_hit, (mono_arch_ip_from_context (ctx), ctx));
+	MONO_PROFILER_RAISE (sample_hit, ((const mono_byte*)mono_arch_ip_from_context (ctx), ctx));
 
 	mono_thread_info_set_is_async_context (FALSE);
 
@@ -413,7 +413,7 @@ mini_register_sigterm_handler (void)
 {
 #ifndef DISABLE_CRASH_REPORTING
 	/* always catch SIGTERM, conditionals inside of handler */
-	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	add_signal_handler (SIGTERM, (gpointer)sigterm_signal_handler, 0);
 #endif
 }
 
@@ -424,20 +424,20 @@ mono_runtime_posix_install_handlers (void)
 	sigset_t signal_set;
 	sigemptyset (&signal_set);
 	if (mini_get_debug_options ()->handle_sigint) {
-		add_signal_handler (SIGINT, mono_sigint_signal_handler, SA_RESTART);
+		add_signal_handler (SIGINT, (gpointer)mono_sigint_signal_handler, SA_RESTART);
 		sigaddset (&signal_set, SIGINT);
 	}
 
-	add_signal_handler (SIGFPE, mono_sigfpe_signal_handler, 0);
+	add_signal_handler (SIGFPE, (gpointer)mono_sigfpe_signal_handler, 0);
 	sigaddset (&signal_set, SIGFPE);
-	add_signal_handler (SIGQUIT, sigquit_signal_handler, SA_RESTART);
+	add_signal_handler (SIGQUIT, (gpointer)sigquit_signal_handler, SA_RESTART);
 	sigaddset (&signal_set, SIGQUIT);
-	add_signal_handler (SIGILL, mono_sigill_signal_handler, 0);
+	add_signal_handler (SIGILL, (gpointer)mono_sigill_signal_handler, 0);
 	sigaddset (&signal_set, SIGILL);
-	add_signal_handler (SIGBUS, mono_sigsegv_signal_handler, 0);
+	add_signal_handler (SIGBUS, (gpointer)mono_sigsegv_signal_handler, 0);
 	sigaddset (&signal_set, SIGBUS);
 	if (mono_jit_trace_calls != NULL) {
-		add_signal_handler (SIGUSR2, sigusr2_signal_handler, SA_RESTART);
+		add_signal_handler (SIGUSR2, (gpointer)sigusr2_signal_handler, SA_RESTART);
 		sigaddset (&signal_set, SIGUSR2);
 	}
 
@@ -454,11 +454,11 @@ mono_runtime_posix_install_handlers (void)
 	signal (SIGPIPE, SIG_IGN);
 	sigaddset (&signal_set, SIGPIPE);
 
-	add_signal_handler (SIGABRT, sigabrt_signal_handler, 0);
+	add_signal_handler (SIGABRT, (gpointer)sigabrt_signal_handler, 0);
 	sigaddset (&signal_set, SIGABRT);
 
 	/* catch SIGSEGV */
-	add_signal_handler (SIGSEGV, mono_sigsegv_signal_handler, 0);
+	add_signal_handler (SIGSEGV, (gpointer)mono_sigsegv_signal_handler, 0);
 	sigaddset (&signal_set, SIGSEGV);
 
 	sigprocmask (SIG_UNBLOCK, &signal_set, NULL);
@@ -690,7 +690,7 @@ sampling_thread_func (gpointer unused)
 	mono_thread_set_name_internal (thread, name, FALSE, FALSE, error);
 	mono_error_assert_ok (error);
 
-	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
+	mono_thread_info_set_flags ((MonoThreadInfoFlags)(MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE));
 
 	int old_policy;
 	struct sched_param old_sched;
@@ -843,7 +843,7 @@ mono_runtime_setup_stat_profiler (void)
 	profiler_signal = SIGPROF;
 #endif
 
-	add_signal_handler (profiler_signal, profiler_signal_handler, SA_RESTART);
+	add_signal_handler (profiler_signal, (gpointer)profiler_signal_handler, SA_RESTART);
 
 	mono_counters_register ("Sampling signals sent", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_signals_sent);
 	mono_counters_register ("Sampling signals received", MONO_COUNTER_UINT | MONO_COUNTER_PROFILER | MONO_COUNTER_MONOTONIC, &profiler_signals_received);

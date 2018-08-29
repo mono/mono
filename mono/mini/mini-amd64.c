@@ -1167,6 +1167,12 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
 
+	if (0) {
+done:
+		g_free (cinfo);
+		return;
+	}
+
 	/* No return value */
 	if (sig->ret->type == MONO_TYPE_VOID)
 		return;
@@ -1193,7 +1199,7 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 		}
 		case ArgValuetypeInReg: {
 			storage = g_newa (mgreg_t, ainfo->nregs);
-			mgreg_t *storage_tmp = storage;
+			mgreg_t *storage_tmp = (mgreg_t*)storage;
 			/* Reconstruct the value type */
 			for (int k = 0; k < ainfo->nregs; k++) {
 				storage_type = ainfo->pair_storage [k];
@@ -1217,8 +1223,7 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 			g_error ("Arg storage type not yet supported");
 	}
 	interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
-done:
-	g_free (cinfo);
+	goto done;
 }
 
 /*
@@ -1311,12 +1316,12 @@ mono_arch_init (void)
 {
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
 
-	mono_aot_register_jit_icall ("mono_amd64_throw_exception", mono_amd64_throw_exception);
-	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
-	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
+	mono_aot_register_jit_icall ("mono_amd64_throw_exception", (gpointer)mono_amd64_throw_exception);
+	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", (gpointer)mono_amd64_throw_corlib_exception);
+	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", (gpointer)mono_amd64_resume_unwind);
 
 #if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
+	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", (gpointer)mono_amd64_start_gsharedvt_call);
 #endif
 
 	if (!mono_aot_only)
@@ -4633,11 +4638,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_mov_reg_imm_size (code, ins->dreg, ins->inst_c0, 8);
 			break;
 		case OP_AOTCONST:
-			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0);
 			amd64_mov_reg_membase (code, ins->dreg, AMD64_RIP, 0, sizeof(gpointer));
 			break;
 		case OP_JUMP_TABLE:
-			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0);
 			amd64_mov_reg_imm_size (code, ins->dreg, 0, 8);
 			break;
 		case OP_MOVE:
@@ -6688,7 +6693,7 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_amd64_throw_exception, "mono_amd64_throw_exception", mono_create_icall_signature ("void"), TRUE);
+	mono_register_jit_icall ((gpointer)mono_amd64_throw_exception, "mono_amd64_throw_exception", mono_create_icall_signature ("void"), TRUE);
 
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
 #if _MSC_VER
@@ -7176,7 +7181,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (trace) {
 		args_clobbered = TRUE;
-		code = (guint8 *)mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
+		code = (guint8 *)mono_arch_instrument_prolog (cfg, (gpointer)mono_trace_enter_method, code, TRUE);
 	}
 
 	/*
@@ -7314,7 +7319,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	mono_emit_unwind_op_remember_state (cfg, code);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint8 *)mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
+		code = (guint8 *)mono_arch_instrument_epilog (cfg, (gpointer)mono_trace_leave_method, code, TRUE);
 
 	/* the code restoring the registers must be kept in sync with OP_TAILCALL */
 	

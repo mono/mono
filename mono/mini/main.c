@@ -116,7 +116,7 @@ load_from_region (int fd, uint64_t offset, uint64_t size)
 	} while (loc == -1 && errno == EINTR);
 	if (loc == -1)
 		return NULL;
-	buffer = g_malloc (size + 1);
+	buffer = (char*)g_malloc (size + 1);
 	if (buffer == NULL)
 		return NULL;
 	buffer [size] = 0;
@@ -145,7 +145,7 @@ delete_bundled_libraries (void)
 	GSList *list;
 
 	for (list = bundle_library_paths; list != NULL; list = list->next){
-		unlink (list->data);
+		unlink ((const char*)list->data);
 	}
 	rmdir (bundled_dylibrary_directory);
 }
@@ -297,7 +297,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		
 		if (mapaddress == NULL) {
 			char *error_message = NULL;
-			mapaddress = mono_file_map_error (directory_location - offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE,
+			mapaddress = (guchar*)mono_file_map_error (directory_location - offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE,
 				fd, offset, &maphandle, program, &error_message);
 			if (mapaddress == NULL) {
 				if (error_message)

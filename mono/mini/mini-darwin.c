@@ -125,7 +125,7 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	mono_mach_arch_thread_states_to_mono_context (state, fpstate, &tctx->ctx);
 
 	/* mono_set_jit_tls () sets this */
-	jit_tls = mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);
+	jit_tls = (MonoJitTlsData*)mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);
 	/* SET_APPDOMAIN () sets this */
 	domain = mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
 
@@ -139,9 +139,9 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	 * can be accessed through MonoThreadInfo.
 	 */
 	/* mono_set_lmf_addr () sets this */
-	addr = mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
+	addr = (gpointer*)mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
 	if (addr)
-		lmf = *addr;
+		lmf = (MonoLMF*)*addr;
 
 
 	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = domain;
