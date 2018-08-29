@@ -1914,14 +1914,15 @@ namespace System.Runtime.InteropServices
 		internal static ICustomMarshaler GetCustomMarshalerInstance (Type type, string cookie) {
 			var key = (type, cookie);
 
+			LazyInitializer.EnsureInitialized (
+				ref MarshalerInstanceCache, 
+				() => new Dictionary<(Type, string), ICustomMarshaler> (new MarshalerInstanceKeyComparer ())
+			);
+
 			ICustomMarshaler result;
 			bool gotExistingInstance;
-			lock (MarshalerInstanceCacheLock) {
-				LazyInitializer.EnsureInitialized (
-					ref MarshalerInstanceCache, () => new Dictionary<(Type, string), ICustomMarshaler> (new MarshalerInstanceKeyComparer ())
-				);
+			lock (MarshalerInstanceCacheLock)
 				gotExistingInstance = MarshalerInstanceCache.TryGetValue (key, out result);
-			}
 
 			if (!gotExistingInstance) {
 				MonoMethod getInstanceMethod;
