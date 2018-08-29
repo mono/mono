@@ -1,6 +1,4 @@
 
-include runtime.mk
-
 ANDROID_URI?=https://dl.google.com/android/repository/
 ANDROID_TOOLCHAIN_PREFIX?=$(HOME)/android-toolchain/toolchains
 ANDROID_TOOLCHAIN_DIR?=$(HOME)/android-toolchain
@@ -122,13 +120,11 @@ _android-$(1)_AC_VARS= \
 
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
-	-DMONODROID=1 \
-	$$(android-$(1)_CFLAGS)
+	-DMONODROID=1
 
 _android-$(1)_CXXFLAGS= \
 	-fstack-protector \
-	-DMONODROID=1 \
-	$$(android-$(1)_CXXFLAGS)
+	-DMONODROID=1
 
 _android-$(1)_CPPFLAGS= \
 	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
@@ -140,8 +136,7 @@ _android-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
 	-ldl -lm -llog -lc -lgcc \
 	-Wl,-rpath-link=$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib,-dynamic-linker=/system/bin/linker \
-	-L$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib \
-	$$(android-$(1)_LDFLAGS)
+	-L$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -207,9 +202,6 @@ _android-$(1)_CXXCPP=cpp
 _android-$(1)_LD=ld
 _android-$(1)_RANLIB=ranlib
 _android-$(1)_STRIP=strip
-
-_android-$(1)_CFLAGS=$$(android-$(1)_CFLAGS)
-_android-$(1)_CXXFLAGS=$$(android-$(1)_CXXFLAGS)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \

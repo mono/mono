@@ -36,6 +36,8 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 
 TARGETS=
 
+include runtime.mk
+
 ## MXE targets
 ifndef DISABLE_ANDROID
 # FIXME add iOS support(?)
