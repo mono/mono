@@ -171,14 +171,14 @@ typedef int32_t __mono_off32_t;
 #include <sys/mman.h>
 #endif
 
-#if !defined(mmap)
+#if !defined(mmap) && !defined(__clang__)
 /* Unified headers before API 21 do not declare mmap when LARGE_FILES are used (via -D_FILE_OFFSET_BITS=64)
  * which is always the case when Mono build targets Android. The problem here is that the unified headers
  * map `mmap` to `mmap64` if large files are enabled but this api exists only in API21 onwards. Therefore
  * we must carefully declare the 32-bit mmap here without changing the ABI along the way. Carefully because
  * in this instance off_t is redeclared to be 64-bit and that's not what we want.
  */
-//void* mmap (void*, size_t, int, int, int, __mono_off32_t);
+void* mmap (void*, size_t, int, int, int, __mono_off32_t);
 #endif /* !mmap */
 
 #ifdef HAVE_SYS_SENDFILE_H
