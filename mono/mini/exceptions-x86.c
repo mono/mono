@@ -135,7 +135,7 @@ mono_win32_get_handle_stackoverflow (void)
  *  - done
  */
 static void 
-win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx) 
+win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 {
 	SYSTEM_INFO si;
 	DWORD page_size;
@@ -249,7 +249,7 @@ void win32_seh_init()
 {
 	/* install restore stack helper */
 	if (!restore_stack)
-		restore_stack = mono_win32_get_handle_stackoverflow ();
+		restore_stack = (void (*) (void))mono_win32_get_handle_stackoverflow ();
 
 	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
@@ -733,17 +733,18 @@ mono_arch_exceptions_init (void)
  * or (eventually) Windows 7 SP1.
  */
 #ifdef TARGET_WIN32
-	DWORD flags;
-	FARPROC getter;
-	FARPROC setter;
 	HMODULE kernel32 = LoadLibraryW (L"kernel32.dll");
-
 	if (kernel32) {
-		getter = GetProcAddress (kernel32, "GetProcessUserModeExceptionPolicy");
-		setter = GetProcAddress (kernel32, "SetProcessUserModeExceptionPolicy");
-		if (getter && setter) {
-			if (getter (&flags))
-				setter (flags & ~PROCESS_CALLBACK_FILTER_ENABLED);
+		typedef BOOL (WINAPI * SetProcessUserModeExceptionPolicy_t) (DWORD dwFlags);
+		typedef BOOL (WINAPI * GetProcessUserModeExceptionPolicy_t) (PDWORD dwFlags);
+		GetProcessUserModeExceptionPolicy_t const getter = (GetProcessUserModeExceptionPolicy_t)GetProcAddress (kernel32, "GetProcessUserModeExceptionPolicy");
+		if (getter) {
+			SetProcessUserModeExceptionPolicy_t const setter = (SetProcessUserModeExceptionPolicy_t)GetProcAddress (kernel32, "SetProcessUserModeExceptionPolicy");
+			if (setter) {
+				DWORD flags = 0;
+				if (getter (&flags))
+					setter (flags & ~PROCESS_CALLBACK_FILTER_ENABLED);
+			}
 		}
 	}
 #endif
@@ -820,9 +821,9 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		regs [X86_EDI] = new_ctx->edi;
 		regs [X86_NREG] = new_ctx->eip;
 
-		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
+		mono_unwind_frame (unwind_info, unwind_info_len, (guint8*)ji->code_start,
 						   (guint8*)ji->code_start + ji->code_size,
-						   ip, NULL, regs, MONO_MAX_IREGS + 1,
+						   (guint8*)ip, NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
 
 		new_ctx->eax = regs [X86_EAX];
@@ -874,7 +875,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			 * expression points to a stack location which can be used as ESP */
 			new_ctx->esp = (unsigned long)&((*lmf)->eip);
 
-		*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
+		*lmf = (MonoLMF*)(((gsize)(*lmf)->previous_lmf) & ~3);
 
 		return TRUE;
 	}
@@ -895,7 +896,7 @@ mono_arch_ip_from_context (void *sigctx)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	return (gpointer)UCONTEXT_REG_EIP (ctx);
 #elif defined(HOST_WIN32)
-	return ((CONTEXT*)sigctx)->Eip;
+	return (gpointer)((CONTEXT*)sigctx)->Eip;
 #else
 	struct sigcontext *ctx = sigctx;
 	return (gpointer)ctx->SC_EIP;
@@ -915,7 +916,7 @@ handle_signal_exception (gpointer obj)
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
-	mono_handle_exception (&ctx, obj);
+	mono_handle_exception (&ctx, (MonoObject*)obj);
 
 	mono_restore_context (&ctx);
 }
@@ -1015,7 +1016,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #elif defined (TARGET_WIN32)
 	MonoContext mctx;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	struct sigcontext *ctx = (struct sigcontext *)sigctx;
 
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
@@ -1063,7 +1063,7 @@ static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
 	gpointer *sp;
-	sp = (gpointer)(mctx->esp);
+	sp = (gpointer*)(mctx->esp);
 	sp -= 1;
 	/* the return addr */
 	sp [0] = (gpointer)(mctx->eip);
@@ -1079,7 +1079,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 
 	mctx = *ctx;
 
-	mono_handle_exception (&mctx, obj);
+	mono_handle_exception (&mctx, (MonoObject*)obj);
 	if (stack_ovf) {
 		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
 		jit_tls->stack_ovf_pending = 1;
@@ -1103,7 +1103,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	 * we try the lookup again with the return address pushed on the stack
 	 */
 	if (!ji && fault_addr == (gpointer)UCONTEXT_REG_EIP (ctx)) {
-		glong *sp = (gpointer)UCONTEXT_REG_ESP (ctx);
+		glong *sp = (glong*)UCONTEXT_REG_ESP (ctx);
 		ji = mini_jit_info_table_find (mono_domain_get (), (gpointer)sp [0], NULL);
 		if (ji)
 			UCONTEXT_REG_EIP (ctx) = sp [0];
@@ -1127,8 +1127,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
  	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (gpointer)(UCONTEXT_REG_ESP (ctx) & ~15);
-	sp = (gpointer)((char*)sp - frame_size);
+	sp = (gpointer*)(UCONTEXT_REG_ESP (ctx) & ~15);
+	sp = (gpointer*)((char*)sp - frame_size);
 	/* the incoming arguments are aligned to 16 bytes boundaries, so the return address IP
 	 * goes at sp [-1]
 	 */

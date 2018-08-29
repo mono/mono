@@ -738,7 +738,7 @@ mono_thread_info_set_internal_thread_gchandle (MonoThreadInfo *info, guint32 gch
 }
 
 void
-mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info)
+mono_thread_info_unset_internal_thread_gchandle (MonoThreadInfo *info)
 {
 	g_assert (info);
 	g_assert (mono_thread_info_is_current (info));
@@ -1316,6 +1316,7 @@ This async call must cause stack unwinding as the current implementation doesn't
 to resume execution of the top-of-stack function. It's an acceptable limitation since this is
 currently used only to deliver exceptions.
 */
+
 void
 mono_thread_info_setup_async_call (MonoThreadInfo *info, void (*target_func)(void*), void *user_data)
 {
@@ -1655,9 +1656,9 @@ mono_thread_info_usleep (guint64 us)
 }
 
 gpointer
-mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
+(mono_thread_info_tls_get) (MonoThreadInfo *info, MonoTlsKey key)
 {
-	return ((MonoThreadInfo*)info)->tls [key];
+	return info->tls [key];
 }
 
 /*
@@ -1669,9 +1670,9 @@ mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
  * be paired with setting the real TLS variable since this provides no GC tracking.
  */
 void
-mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value)
+mono_thread_info_tls_set (MonoThreadInfo *info, MonoTlsKey key, gpointer value)
 {
-	((MonoThreadInfo*)info)->tls [key] = value;
+	info->tls [key] = value;
 }
 
 /*

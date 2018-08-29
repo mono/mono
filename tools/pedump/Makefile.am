@@ -11,14 +11,18 @@ bin_PROGRAMS =
 else
 if SUPPORT_SGEN
 bin_PROGRAMS = pedump
+noinst_LIBRARIES = libpedump.a
 endif
 endif
 endif
 
-pedump_SOURCES =		\
-	pedump.c
+CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+libpedump_a_CFLAGS = @CXX_ADD_CFLAGS@
 
+pedump_SOURCES =
+libpedump_a_SOURCES = pedump.c
 pedump_LDADD = 			\
+	libpedump_a-pedump.$(OBJEXT) \
 	$(top_builddir)/mono/metadata/libmonoruntimesgen.la \
 	$(top_builddir)/mono/sgen/libmonosgen.la \
 	$(top_builddir)/mono/utils/libmonoutils.la \

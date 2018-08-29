@@ -679,7 +679,7 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly)
 static void
 process_deferred_assembly (gpointer key, gpointer value, gpointer userdata)
 {
-	MonoAssembly *assembly = key;
+	MonoAssembly *assembly = (MonoAssembly*)key;
 
 	assembly_loaded ((MonoProfiler *) userdata, assembly);
 	mono_assembly_close (assembly);
@@ -1036,7 +1036,7 @@ mono_profiler_init_coverage (const char *desc)
 		filters = g_ptr_array_new ();
 		int i;
 		for (i = 0; i < coverage_config.cov_filter_files->len; ++i) {
-			const char *name = coverage_config.cov_filter_files->pdata [i];
+			const char *name = (const char*)coverage_config.cov_filter_files->pdata [i];
 			parse_cov_filter_file (filters, name);
 		}
 	}

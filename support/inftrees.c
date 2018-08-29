@@ -8,6 +8,11 @@
 
 #define MAXBITS 15
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern
 const char inflate_copyright[] =
    " inflate 1.2.5 Copyright 1995-2010 Mark Adler ";
 /*
@@ -29,13 +34,7 @@ const char inflate_copyright[] =
    table index bits.  It will differ if the request is greater than the
    longest code or if it is less than the shortest code.
  */
-int ZLIB_INTERNAL inflate_table(type, lens, codes, table, bits, work)
-codetype type;
-unsigned short FAR *lens;
-unsigned codes;
-code FAR * FAR *table;
-unsigned FAR *bits;
-unsigned short FAR *work;
+int ZLIB_INTERNAL inflate_table (codetype type, unsigned short FAR *lens, unsigned codes, code FAR * FAR *table, unsigned FAR *bits, unsigned short FAR *work)
 {
     unsigned len;               /* a code's length in bits */
     unsigned sym;               /* index of code symbols */
@@ -328,3 +327,7 @@ unsigned short FAR *work;
     *bits = root;
     return 0;
 }
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

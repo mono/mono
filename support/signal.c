@@ -43,19 +43,19 @@ static int count_handlers (int signum);
 void*
 Mono_Posix_Stdlib_SIG_DFL (void)
 {
-	return SIG_DFL;
+	return (void*)SIG_DFL;
 }
 
 void*
 Mono_Posix_Stdlib_SIG_ERR (void)
 {
-	return SIG_ERR;
+	return (void*)SIG_ERR;
 }
 
 void*
 Mono_Posix_Stdlib_SIG_IGN (void)
 {
-	return SIG_IGN;
+	return (void*)SIG_IGN;
 }
 
 void
@@ -330,7 +330,7 @@ Mono_Unix_UnixSignal_install (int sig)
 		// We're still looking for a signal_info spot, and this one is available:
 		if (h == NULL && mph_int_get (&signals [i].signum) == 0) {
 			h = &signals [i];
-			h->handler = signal (sig, default_handler);
+			h->handler = (void*)signal (sig, default_handler);
 			if (h->handler == SIG_ERR) {
 				h->handler = NULL;
 				h = NULL;
@@ -397,7 +397,7 @@ Mono_Unix_UnixSignal_uninstall (void* info)
 	if (acquire_mutex (&signals_mutex) == -1)
 		return -1;
 
-	h = info;
+	h = (signal_info*)info;
 
 	if (h == NULL || h < signals || h > &signals [NUM_SIGNALS])
 		errno = EINVAL;
@@ -405,7 +405,7 @@ Mono_Unix_UnixSignal_uninstall (void* info)
 		/* last UnixSignal -- we can unregister */
 		int signum = mph_int_get (&h->signum);
 		if (h->have_handler && count_handlers (signum) == 1) {
-			mph_sighandler_t p = signal (signum, h->handler);
+			mph_sighandler_t p = (mph_sighandler_t)signal (signum, (void (*)(int))h->handler);
 			if (p != SIG_ERR)
 				r = 0;
 			h->handler      = NULL;

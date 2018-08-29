@@ -66,7 +66,6 @@ MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, cons
 							  gpointer user_data,
 							  MonoImageOpenStatus *status);
 
-
 /* MonoAssemblyCandidatePredicate that compares the assembly name (name, version,
  * culture, public key token) of the candidate with the wanted name, if the
  * wanted name has a public key token (if not present, always return true).

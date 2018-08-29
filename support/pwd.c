@@ -129,7 +129,7 @@ Mono_Posix_Syscall_getpwnam_r (const char *name,
 	buflen = 2;
 
 	do {
-		buf2 = realloc (buf, buflen *= 2);
+		buf2 = (char*)realloc (buf, buflen *= 2);
 		if (buf2 == NULL) {
 			free (buf);
 			errno = ENOMEM;
@@ -172,7 +172,7 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 	buflen = 2;
 
 	do {
-		buf2 = realloc (buf, buflen *= 2);
+		buf2 = (char*)realloc (buf, buflen *= 2);
 		if (buf2 == NULL) {
 			free (buf);
 			errno = ENOMEM;

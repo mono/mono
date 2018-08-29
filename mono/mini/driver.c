@@ -948,7 +948,7 @@ test_thread_func (ThreadData *td)
 				}
 			} else {
 				int pos = random () % MAX_ADDR;
-				char *addr = (char*)(gulong) pos;
+				char *addr = (char*)(uintptr_t)pos;
 				MonoJitInfo *ji;
 
 				ji = mono_jit_info_table_find (domain, addr);

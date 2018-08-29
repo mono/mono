@@ -16,6 +16,8 @@ AM_CPPFLAGS =					\
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.
 MPH_C_SOURCE =					\

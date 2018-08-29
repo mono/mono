@@ -15,6 +15,10 @@
 
 #include "zutil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* define NO_GZIP when compiling if you want to disable gzip header and
    trailer creation by deflate().  NO_GZIP would be used to avoid linking in
    the crc code when it is not needed.  For shared libraries, gzip encoding
@@ -337,6 +341,10 @@ void ZLIB_INTERNAL _tr_stored_block OF((deflate_state *s, charf *buf,
 # define _tr_tally_lit(s, c, flush) flush = _tr_tally(s, 0, c)
 # define _tr_tally_dist(s, distance, length, flush) \
               flush = _tr_tally(s, distance, length)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* DEFLATE_H */
