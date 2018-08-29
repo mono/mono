@@ -363,7 +363,7 @@ mono_threads_enter_gc_unsafe_region (gpointer *stackpointer)
 }
 
 gpointer
-mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata)
+mono_threads_enter_gc_unsafe_region_with_info (MonoThreadInfo *info, MonoStackData *stackdata)
 {
 	gpointer cookie;
 

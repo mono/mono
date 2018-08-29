@@ -18,8 +18,6 @@
 #ifdef HAVE_SGEN_GC
 
 typedef struct _SgenThreadInfo SgenThreadInfo;
-#undef THREAD_INFO_TYPE
-#define THREAD_INFO_TYPE SgenThreadInfo
 
 #include <glib.h>
 #include <stdio.h>

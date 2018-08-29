@@ -78,7 +78,7 @@ static size_t pending_suspends;
 
 static mono_mutex_t join_mutex;
 
-#define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & THREAD_STATE_MASK)
+#define mono_thread_info_run_state(info) (info->thread_state & THREAD_STATE_MASK)
 
 /*warn at 50 ms*/
 #define SLEEP_DURATION_BEFORE_WARNING (50)
@@ -738,7 +738,7 @@ mono_thread_info_set_internal_thread_gchandle (MonoThreadInfo *info, guint32 gch
 }
 
 void
-mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info)
+mono_thread_info_unset_internal_thread_gchandle (MonoThreadInfo *info)
 {
 	g_assert (info);
 	g_assert (mono_thread_info_is_current (info));
@@ -1662,9 +1662,9 @@ mono_thread_info_usleep (guint64 us)
 }
 
 gpointer
-mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
+mono_thread_info_tls_get (MonoThreadInfo *info, MonoTlsKey key)
 {
-	return ((MonoThreadInfo*)info)->tls [key];
+	return info->tls [key];
 }
 
 /*
@@ -1676,9 +1676,9 @@ mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
  * be paired with setting the real TLS variable since this provides no GC tracking.
  */
 void
-mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value)
+mono_thread_info_tls_set (MonoThreadInfo *info, MonoTlsKey key, gpointer value)
 {
-	((MonoThreadInfo*)info)->tls [key] = value;
+	info->tls [key] = value;
 }
 
 /*
