@@ -1,6 +1,4 @@
 
-include runtime.mk
-
 #
 # Targets:
 # - build-ios-<target>
@@ -62,22 +60,19 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
 	mono_cv_sizeof_sunpath=104 \
-	mono_cv_uscore=yes \
-	$$(ios-$(1)_AC_VARS)
+	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
 	-fexceptions \
-	$$(ios-$(1)_BITCODE_MARKER) \
-	$$(ios-$(1)_CFLAGS)
+	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	$$(ios-$(1)_CXXFLAGS) \
 	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CPPFLAGS= \
@@ -85,15 +80,12 @@ _ios-$(1)_CPPFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS) \
 	-Wl,-no_weak_imports \
 	-arch $(2) \
 	-framework CoreFoundation \
-	-lobjc -lc++ \
-	$$(ios-$(1)_LDFLAGS)
+	-lobjc -lc++
 
 _ios-$(1)_CONFIGURE_FLAGS = \
 	--build=i386-apple-darwin10 \
@@ -115,8 +107,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
-	--without-sigaltstack \
-	$$(ios-$(1)_CONFIGURE_FLAGS)
+	--without-sigaltstack
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -204,31 +195,26 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
-	mono_cv_uscore=yes \
-	$(ios-$(1)_AC_VARS)
+	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension \
-	$$(ios-$(1)_CFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension \
-	$$(ios-$(1)_CPPFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension\
-	$$(ios-$(1)_CXXFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS) \
-	$$(ios-$(1)_LDFLAGS)
+	$$(ios_LDFLAGS)
 
 _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -242,8 +228,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=com,remoting,shared_perfcounters \
 	--enable-monotouch \
 	--with-tls=pthread \
-	--without-ikvm-native \
-	$$(ios-$(1)_CONFIGURE_FLAGS)
+	--without-ikvm-native
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
@@ -345,31 +330,25 @@ _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
-	ac_cv_func_shm_open_working_with_mmap=no \
-	$$(ios-$(1)_AC_VARS)
+	ac_cv_func_shm_open_working_with_mmap=no
 
 _ios-$(1)_CFLAGS= \
 	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
-	-Qunused-arguments \
-	$$(ios-$(1)_CFLAGS)
+	-Qunused-arguments
 
 _ios-$(1)_CXXFLAGS= \
 	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments \
-	-stdlib=libc++ \
-	$$(ios-$(1)_CXXFLAGS)
+	-stdlib=libc++
 
 _ios-$(1)_CPPFLAGS= \
-	-DMONOTOUCH=1 \
-	$$(ios-$(1)_CPPFLAGS)
+	-DMONOTOUCH=1
 
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
-	-stdlib=libc++ \
-	$$(ios-$(1)_LDFLAGS)
+	-stdlib=libc++
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	$$(ios-$(1)_CONFIGURE_FLAGS) \
 	--target=$(5) \
 	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
