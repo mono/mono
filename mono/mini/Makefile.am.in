@@ -188,15 +188,11 @@ endif
 endif
 
 mono_boehm_SOURCES =
-
 mono_boehm_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
 AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
 
 mono_sgen_SOURCES =
-
-mono_SOURCES =
-
 mono_sgen_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
 # We build this after libmono was built so it contains the date when the final
@@ -241,7 +237,7 @@ LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
 mono_boehm_LDADD = \
-	libmain_a-main.o 	\
+	libmain_a-main.$(OBJEXT) \
 	$(MONO_LIB)		\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
@@ -252,7 +248,7 @@ mono_boehm_LDFLAGS = \
 	$(static_flags) $(monobinldflags) $(monobin_platform_ldflags) 
 
 mono_sgen_LDADD = \
-	libmain_a-main-sgen.o 	\
+	libmain_a-main-sgen.$(OBJEXT) \
 	$(MONO_SGEN_LIB)	\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
