@@ -18,8 +18,6 @@
 #include "mono-threads.h"
 #include "mono-threads-api.h"
 
-G_BEGIN_DECLS
-
 /* JIT specific interface */
 extern volatile size_t mono_polling_required;
 
@@ -99,7 +97,5 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData
 
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
-
-G_END_DECLS
 
 #endif

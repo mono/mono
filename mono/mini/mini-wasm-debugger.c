@@ -20,6 +20,8 @@ static int log_level = 1;
 
 #define DEBUG_PRINTF(level, ...) do { if (G_UNLIKELY ((level) <= log_level)) { fprintf (stdout, __VA_ARGS__); } } while (0)
 
+G_BEGIN_DECLS
+
 //functions exported to be used by JS
 EMSCRIPTEN_KEEPALIVE int mono_wasm_set_breakpoint (const char *assembly_name, int method_token, int il_offset);
 EMSCRIPTEN_KEEPALIVE int mono_wasm_remove_breakpoint (int bp_id);
@@ -38,6 +40,8 @@ extern void mono_wasm_add_long_var (gint64);
 extern void mono_wasm_add_float_var (float);
 extern void mono_wasm_add_double_var (double);
 extern void mono_wasm_add_string_var (const char*);
+
+G_END_DECLS
 
 //FIXME move all of those fields to the profiler object
 static gboolean debugger_enabled;
