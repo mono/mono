@@ -501,14 +501,15 @@ find_pinning_ref_from_thread (char *obj, size_t size)
 #ifndef SGEN_WITHOUT_MONO
 	char *endobj = obj + size;
 
-	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+	FOREACH_THREAD_EXCLUDE (mono_thread_info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+		SgenThreadInfo *info = (SgenThreadInfo*)mono_thread_info;
 		mword *ctxstart, *ctxcurrent, *ctxend;
 		char **start = (char**)info->client_info.stack_start;
 		if (info->client_info.skip)
 			continue;
 		while (start < (char**)info->client_info.info.stack_end) {
 			if (*start >= obj && *start < endobj)
-				SGEN_LOG (0, "Object %p referenced in thread %p (id %p) at %p, stack: %p-%p", obj, info, (gpointer)mono_thread_info_get_tid (info), start, info->client_info.stack_start, info->client_info.info.stack_end);
+				SGEN_LOG (0, "Object %p referenced in thread %p (id %p) at %p, stack: %p-%p", obj, info, (gpointer)mono_thread_info_get_tid (&info->client_info.info), start, info->client_info.stack_start, mono_thread_info->stack_end);
 			start++;
 		}
 
@@ -516,7 +517,7 @@ find_pinning_ref_from_thread (char *obj, size_t size)
 			mword w = *ctxcurrent;
 
 			if (w >= (mword)obj && w < (mword)obj + size)
-				SGEN_LOG (0, "Object %p referenced in saved reg %d of thread %p (id %p)", obj, (int) (ctxcurrent - ctxstart), info, (gpointer)mono_thread_info_get_tid (info));
+				SGEN_LOG (0, "Object %p referenced in saved reg %d of thread %p (id %p)", obj, (int) (ctxcurrent - ctxstart), info, (gpointer)mono_thread_info_get_tid (&info->client_info.info));
 		}
 	} FOREACH_THREAD_END
 #endif

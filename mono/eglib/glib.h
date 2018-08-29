@@ -25,7 +25,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-
 #ifdef _MSC_VER
 #pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
 #endif
@@ -61,14 +60,12 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
 #endif
 
 #ifdef __cplusplus
@@ -164,10 +161,10 @@ G_ENUM_BINOP (Enum, ^, ^=) 			\
 } /* extern "C++" */
 
 #else
-#define G_ENUM_FUNCTIONS(Enum) /* nothing */
-#endif
 
-G_BEGIN_DECLS
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
+
+#endif
 
 /*
  * Basic data types
@@ -197,10 +194,8 @@ typedef double         gdouble;
 typedef int32_t        gboolean;
 
 #if defined (HOST_WIN32) || defined (_WIN32)
-G_END_DECLS
 #include <wchar.h>
 typedef wchar_t gunichar2;
-G_BEGIN_DECLS
 #else
 typedef guint16 gunichar2;
 #endif
@@ -301,13 +296,20 @@ struct _GMemChunk {
 };
 
 typedef struct _GMemChunk GMemChunk;
+
 /*
  * Misc.
  */
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
+
+G_BEGIN_DECLS // sdks/wasm/driver.c is C and uses this
+
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
+
+G_END_DECLS
+
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);
@@ -853,8 +855,8 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ > 2)
-#define G_LIKELY(expr) (__builtin_expect ((expr) != 0, 1))
-#define G_UNLIKELY(expr) (__builtin_expect ((expr) != 0, 0))
+#define G_LIKELY(expr) (__builtin_expect (!!(expr), 1))
+#define G_UNLIKELY(expr) (__builtin_expect (!!(expr), 0))
 #else
 #define G_LIKELY(x) (x)
 #define G_UNLIKELY(x) (x)
@@ -1268,8 +1270,6 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
 #define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
- 
-G_END_DECLS
 
 // For each allocator; i.e. returning gpointer that needs to be cast.
 // Macros do not recurse, so naming function and macro the same is ok.

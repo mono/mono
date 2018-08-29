@@ -20,6 +20,8 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 
+G_BEGIN_DECLS
+
 typedef struct {
 	const char *fname;
 	void *fnptr;
@@ -41,7 +43,7 @@ static int
 compare_names (const void *key, const void *p)
 {
 	FnPtr *ptr = (FnPtr *) p;
-	return strcmp (key, ptr->fname);
+	return strcmp ((const char*)key, ptr->fname);
 }
 
 static gpointer
@@ -49,7 +51,7 @@ get_function (const char *name)
 {
 	FnPtr *ptr;
 
-	ptr = bsearch (name, functions, NFUNCTIONS, sizeof (FnPtr),
+	ptr = (FnPtr*)bsearch (name, functions, NFUNCTIONS, sizeof (FnPtr),
 			compare_names);
 
 	if (ptr == NULL) {
@@ -67,7 +69,7 @@ supportw_register_delegate (const char *function_name, void *fnptr)
 
 	g_return_val_if_fail (function_name && fnptr, FALSE);
 
-	ptr = bsearch (function_name, functions, NFUNCTIONS, sizeof (FnPtr),
+	ptr = (FnPtr*)bsearch (function_name, functions, NFUNCTIONS, sizeof (FnPtr),
 			compare_names);
 
 	if (ptr == NULL) {
@@ -186,3 +188,5 @@ GetWindowLongA (gpointer hwnd, int a)
 {
 	return 0;
 }
+
+G_END_DECLS

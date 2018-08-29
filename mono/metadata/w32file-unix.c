@@ -4810,6 +4810,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	g_free (utfpath);
 	return status;
 }
+
 #endif
 
 static gboolean

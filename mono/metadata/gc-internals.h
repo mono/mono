@@ -161,6 +161,12 @@ gboolean mono_gc_user_markers_supported (void);
  * must not be stored in the returned memory)
  */
 MonoObject* mono_gc_alloc_fixed      (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
+
+// C++ callers outside of metadata must use mono_gc_alloc_fixed_no_descriptor instead of mono_gc_alloc_fixed,
+// or else compile twice -- boehm and sgen.
+MonoObject*
+mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *key, const char *msg);
+
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
@@ -437,11 +443,11 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
 
-gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
+gpointer mono_gc_thread_attach (MonoThreadInfo *info);
 
-void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
+void mono_gc_thread_detach_with_lock (MonoThreadInfo *info);
 
-gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
+gboolean mono_gc_thread_in_critical_region (MonoThreadInfo *info);
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean mono_log_finalizers;

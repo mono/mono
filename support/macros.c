@@ -12,6 +12,8 @@
 #include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
 
+G_BEGIN_DECLS // FIXMEcxx?
+
 int wifexited (int status)
 {
 	return WIFEXITED (status);
@@ -158,3 +160,4 @@ int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid,
 }
 #endif  /* def HAVE_GETPWNAM_R */
 
+G_END_DECLS // FIXMEcxx?

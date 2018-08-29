@@ -134,7 +134,7 @@ backtrace_mutex_unlock (void)
 static CheckState*
 get_state (void)
 {
-	CheckState *state = mono_native_tls_get_value (thread_status);
+	CheckState *state = (CheckState*)mono_native_tls_get_value (thread_status);
 	if (!state) {
 		state = (CheckState*) g_malloc0 (sizeof (CheckState) + sizeof(ThreadTransition) * MAX_TRANSITIONS);
 		mono_native_tls_set_value (thread_status, state);
@@ -282,7 +282,7 @@ translate_backtrace (gpointer native_trace[], int size)
 #endif
 
 void
-checked_build_thread_transition (const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace)
+checked_build_thread_transition (const char *transition, MonoThreadInfo *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace)
 {
 	if (!mono_check_mode_enabled (MONO_CHECK_MODE_THREAD))
 		return;
@@ -573,7 +573,7 @@ check_image_may_reference_image(MonoImage *from, MonoImage *to)
 		int current_idx;
 		for(current_idx = 0; current_idx < current->len; current_idx++)
 		{
-			MonoImage *checking = g_ptr_array_index (current, current_idx); // CAST?
+			MonoImage *checking = (MonoImage*)g_ptr_array_index (current, current_idx);
 
 			mono_image_lock (checking);
 

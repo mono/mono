@@ -85,7 +85,7 @@ typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
 	guint32   size;
-	guint8    type;
+	guint8    type; // FIXMEcxx GCHandleType type : 8;
 	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
@@ -546,7 +546,7 @@ typedef struct {
 static gpointer
 register_root (gpointer arg)
 {
-	RootData* root_data = arg;
+	RootData* root_data = (RootData*)arg;
 	g_hash_table_insert (roots, root_data->start, root_data->end);
 	return NULL;
 }
@@ -705,6 +705,12 @@ mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, void *ke
 	void *start = GC_MALLOC_UNCOLLECTABLE (size);
 	MONO_PROFILER_RAISE (gc_root_register, ((const mono_byte *) start, size, source, key, msg));
 	return (MonoObject*)start;
+}
+
+MonoObject*
+mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *key, const char *msg)
+{
+	return mono_gc_alloc_fixed (size, NULL, source, key, msg);
 }
 
 void
@@ -1516,7 +1522,7 @@ mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_da
 	g_assert (GC_base (obj) == (char*)obj - offset);
 #endif
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, (GC_finalization_proc)user_data, GUINT_TO_POINTER (offset), NULL, NULL);
+	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
 #ifndef HOST_WIN32
@@ -1804,7 +1810,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 #endif
 	unlock_handles (handles);
 	res = MONO_GC_HANDLE (slot, handles->type);
-	MONO_PROFILER_RAISE (gc_handle_created, (res, handles->type, obj));
+	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
 	return res;
 }
 
@@ -2005,7 +2011,7 @@ mono_gchandle_free (guint32 gchandle)
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
-	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, handles->type));
+	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
 }
 
 /**
@@ -2056,6 +2062,30 @@ mono_gc_ephemeron_array_add (MonoObject *obj)
 {
 	return TRUE;
 }
+
+#ifdef __cplusplus
+
+struct _SgenThreadInfo;
+
+gpointer
+mono_gc_thread_attach (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_attach ((MonoThreadInfo*)info);
+}
+
+void
+mono_gc_thread_detach_with_lock (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_detach_with_lock ((MonoThreadInfo*)info);
+}
+
+gboolean
+mono_gc_thread_in_critical_region (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_in_critical_region ((MonoThreadInfo*)info);
+}
+
+#endif // __cplusplus
 
 #else
 
