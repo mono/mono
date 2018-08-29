@@ -528,7 +528,7 @@ namespace System.Windows.Forms
 					size = tag.SizeOfPosition (g, pos);
 					w = size.Width;
 					newWidth = widths[pos] + w;
-					add_width += w;
+					if (text[pos] == '\t') add_width += w;
 				}
 
 				if (Char.IsWhiteSpace (text[pos]))
