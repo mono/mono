@@ -16,7 +16,18 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/loader.h>
+#if 0 //FIXME
 #include <mono/metadata/loader-internals.h>
+#else
+#ifdef __cplusplus
+template <typename T>
+inline void
+mono_add_internal_call (const char *name, T method)
+{
+	return mono_add_internal_call (name, (const void*)method);
+}
+#endif // __cplusplus
+#endif
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-gc.h>
