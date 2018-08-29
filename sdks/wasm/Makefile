@@ -169,6 +169,10 @@ link-sample: driver-aot-sample.o library_mono.js binding_support.js dotnet_suppo
 	$(EMCC) -Os -g -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver-aot-sample.o $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
 
 
+do-aot-sample: build-aot-sample
+	(cd aot && $(SM) aot-driver.js)
+
+
 build-aot-test: .stamp-build-aot-test
 
 build-debug-sample: .stamp-build-debug-sample

@@ -4051,6 +4051,9 @@ handle_enum:
 gint32
 mono_array_element_size (MonoClass *ac)
 {
+	if (!m_class_get_rank (ac)) {
+		printf ("bad aray class %p name %s\n", ac, mono_class_full_name (ac));
+	}
 	g_assert (m_class_get_rank (ac));
 	if (G_UNLIKELY (!m_class_is_size_inited (ac))) {
 		mono_class_setup_fields (ac);
