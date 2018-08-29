@@ -1,15 +1,18 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace marshalertest
 {
     struct MarshalTest : ICustomMarshaler
     {
+        public static readonly List<string> Log = new List<string>();
+
         public static int NextId = 1;
 
         public int Id;
         public string Key;
-        private IntPtr _stored;
 
         public static ICustomMarshaler GetInstance (string key) {
             return new MarshalTest() { Key = key, Id = NextId++};            
@@ -19,7 +22,7 @@ namespace marshalertest
         }
 
         public void CleanUpNativeData(IntPtr pNativeData) {
-            Console.WriteLine($"CleanUpNativeData: {this}, pNativeData = {pNativeData}");
+            Log.Add($"{this}.CleanUpNativeData");
         }
 
         public int GetNativeDataSize () {
@@ -27,18 +30,17 @@ namespace marshalertest
         }
 
         public IntPtr MarshalManagedToNative (object ManagedObj) {
-            _stored = (IntPtr)int.Parse((string)ManagedObj);
-            Console.WriteLine($"MarshalManagedToNative: {this}, returning = {_stored}");
-            return _stored;
+            Log.Add($"{this}.MarshalManagedToNative");
+            return IntPtr.Zero;
         }
 
         public object MarshalNativeToManaged (IntPtr pNativeData) {
-            Console.WriteLine($"MarshalNativeToManaged: {this}, {pNativeData}");
-            return pNativeData.ToString();
+            Log.Add($"{this}.MarshalNativeToManaged");
+            return null;
         }
 
         public override string ToString () {
-            return $"Id={Id}, Key={Key}, Stored={_stored}";
+            return $"(id:{Id}, key:{Key})";
         }
     }
 
@@ -212,6 +214,8 @@ namespace marshalertest
     static class Program {
         const string fileName = "./test-marshaling-native.so";
 
+        public delegate void TestFn(ref string p);
+
         [DllImport(fileName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TestMarshalling")]
         static extern void TestMarshalling(
             [param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MarshalTest), MarshalCookie = "1")]
@@ -272,7 +276,28 @@ namespace marshalertest
             ref string p
         );
 
-        public static unsafe void Main(string[] args) {
+        public static unsafe void ExpectThrow<T> (string message, TestFn func, ref int errorCount) 
+            where T: Exception {
+
+            try {
+                string param = "1";
+                func(ref param);
+            } catch (Exception exc) {
+                if (exc.GetType() != typeof(T)) {
+                    Console.Error.WriteLine($"Expected {func.Method.Name} to throw {typeof(T)} but it threw {exc.GetType()}.");
+                    Console.Error.WriteLine(exc);
+                    Console.Error.WriteLine();
+                    errorCount++;
+                } else if (!exc.Message.Contains(message)) {
+                    Console.Error.WriteLine($"Expected {func.Method.Name} to throw {typeof(T)} with '{message}' in its message.");
+                    Console.Error.WriteLine(exc);
+                    Console.Error.WriteLine();
+                    errorCount++;
+                }
+            }
+        }
+
+        public static unsafe int Main(string[] args) {
             var param = "1";
             TestMarshalling(ref param);
             param = "2";
@@ -280,54 +305,46 @@ namespace marshalertest
             param = "3";
             TestMarshalling2(ref param);
 
-            try {
-                Console.WriteLine("No interface");
-                TestNoInterface(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
+            var expected = new string[] {
+                "(id:1, key:1).MarshalManagedToNative",
+                "(id:1, key:1).MarshalNativeToManaged",
+                "(id:1, key:1).CleanUpNativeData",
+                "(id:1, key:1).MarshalManagedToNative",
+                "(id:1, key:1).MarshalNativeToManaged",
+                "(id:1, key:1).CleanUpNativeData",
+                "(id:2, key:2).MarshalManagedToNative",
+                "(id:2, key:2).MarshalNativeToManaged",
+                "(id:2, key:2).CleanUpNativeData"
+            };
+
+            if (!expected.SequenceEqual(MarshalTest.Log)) {
+                Console.Error.WriteLine("Log does not match expected sequence. Log follows:");
+                foreach (var entry in MarshalTest.Log)
+                    Console.Error.WriteLine(entry);
+
+                return 1;
             }
-            try {
-                Console.WriteLine("No getinstance");
-                TestNoGetInstance(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Wrong argtype");
-                TestWrongArgumentType(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Wrong argcount");
-                TestWrongArgumentCount(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Null instance");
-                TestNullInstance(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Wrong getinstance return type");
-                TestWrongReturnType(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Getinstance throws");
-                TestGetInstanceThrows(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
-            try {
-                Console.WriteLine("Getinstance throws nested");
-                TestGetInstanceNestedThrow(ref param);
-            } catch (Exception exc) {
-                Console.Error.WriteLine(exc);
-            }
+
+            int errorCount = 0;
+
+            ExpectThrow<ApplicationException>("returned null, which is not allowed", 
+                TestNoInterface, ref errorCount);
+            ExpectThrow<ApplicationException>("does not implement a static GetInstance method", 
+                TestNoGetInstance, ref errorCount);
+            ExpectThrow<ApplicationException>("does not implement a static GetInstance method", 
+                TestWrongArgumentType, ref errorCount);
+            ExpectThrow<ApplicationException>("does not implement a static GetInstance method", 
+                TestWrongArgumentCount, ref errorCount);
+            ExpectThrow<ApplicationException>("returned null, which is not allowed", 
+                TestNullInstance, ref errorCount);
+            ExpectThrow<ApplicationException>("does not implement a static GetInstance method", 
+                TestWrongReturnType, ref errorCount);
+            ExpectThrow<Exception>("Custom GetInstance exception", 
+                TestGetInstanceThrows, ref errorCount);
+            ExpectThrow<Exception>("Inner exception", 
+                TestGetInstanceNestedThrow, ref errorCount);
+
+            return errorCount;
         }
     }
 }
