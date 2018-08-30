@@ -3733,11 +3733,9 @@ if test "x$enable_llvm" = "xdefault"; then
 fi
 
 if test "x$enable_llvm" = "xyes"; then
+   if test "x$host_win32" = "xno"; then
    if test "x$with_llvm" != "x"; then
    	  LLVM_CONFIG=$with_llvm/bin/llvm-config
-   	  if test x$host_win32 = xyes; then
-   	  	LLVM_CONFIG=$LLVM_CONFIG.exe
-   	  fi
 	  if test ! -x $LLVM_CONFIG; then
 	  	 AC_MSG_ERROR([LLVM executable $LLVM_CONFIG not found.])
       fi
@@ -3749,6 +3747,7 @@ if test "x$enable_llvm" = "xyes"; then
       if test "x$with_llvm" = "x"; then
          with_llvm=`$LLVM_CONFIG --prefix`
       fi
+   fi
    fi
 
    llvm_codegen="x86codegen"
