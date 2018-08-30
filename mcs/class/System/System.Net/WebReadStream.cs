@@ -41,7 +41,7 @@ namespace System.Net
 		}
 
 #if MONO_WEB_DEBUG
-		internal string ME => $"WRS({GetType ().Name}:Op={Operation.ID})";
+		internal string ME => $"WRS({GetType ().Name}:Op={operation.ID})";
 #else
 		internal string ME => null;
 #endif
