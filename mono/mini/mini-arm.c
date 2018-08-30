@@ -362,7 +362,9 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 #endif
 
 #ifdef HAVE_AEABI_READ_TP
+G_BEGIN_DECLS
 gpointer __aeabi_read_tp (void);
+G_END_DECLS
 #endif
 
 gboolean
