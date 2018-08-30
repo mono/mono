@@ -587,13 +587,13 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
 		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	/* Write the header */
@@ -617,7 +617,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 		gint errnum = errno;
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
 		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	do {
@@ -723,7 +723,8 @@ retry_socket:
 	 * https://bugzilla.novell.com/show_bug.cgi?id=MONO53992
 	 */
 	{
-		int ret, true_ = 1;
+		int ret;
+		const int true_ = 1;
 
 		MONO_ENTER_GC_SAFE;
 		ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_REUSEADDR, &true_, sizeof (true_));
@@ -901,11 +902,11 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 }
 
 gint
-mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen)
+mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, gconstpointer optval, socklen_t optlen)
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gpointer tmp_val;
+	gconstpointer tmp_val;
 #if defined (__linux__)
 	/* This has its address taken so it cannot be moved to the if block which uses it */
 	gint bufsize = 0;

@@ -1,6 +1,7 @@
 App,mscorlib.dll,System.dll,System.Core.dll,System.Xml.dll,System.ComponentModel.Composition.dll,System.ComponentModel.DataAnnotations.dll,System.Data.Services.Client.dll,System.Data.dll,System.IO.Compression.FileSystem.dll,System.IO.Compression.dll,System.IdentityModel.dll,System.Json.dll,System.Net.Http.WinHttpHandler.dll,System.Net.Http.dll,System.Net.dll,System.Numerics.Vectors.dll,System.Numerics.dll,System.Reflection.Context.dll,System.Runtime.CompilerServices.Unsafe.dll,System.Runtime.Serialization.dll,System.Security.dll,System.ServiceModel.Internals.dll,System.ServiceModel.Web.dll,System.ServiceModel.dll,System.Transactions.dll,System.Web.Services.dll,System.Windows.dll,System.Xml.Linq.dll,System.Xml.Serialization.dll
-System/test-security.exe,1661440,36352,7680,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+System/test-security.exe,1661952,40960,7680,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-array.exe,1482240,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-crypto-01.exe,1483264,0,5120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-exception-01.exe,1482240,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-locale-01.exe,1483776,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-reflection-01.exe,1482240,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

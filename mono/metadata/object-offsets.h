@@ -8,7 +8,6 @@ Input defines: (those to be defined by the includer file)
 Required:
 DECL_OFFSET(struct,field)
 DECL_OFFSET2(struct,field,offset)
-DECL_ALIGN(name,type)
 DECL_ALIGN2(name,alignment)
 
 Optional:
@@ -42,14 +41,6 @@ MONO_OFFSETS_FILE - Name of the header file containing the offsets to be used.
 #endif
 
 #ifndef USED_CROSS_COMPILER_OFFSETS
-
-DECL_ALIGN(gint8)
-DECL_ALIGN(gint16)
-DECL_ALIGN(gint32)
-DECL_ALIGN(gint64)
-DECL_ALIGN(float)
-DECL_ALIGN(double)
-DECL_ALIGN(gpointer)
 
 DECL_SIZE(gint8)
 DECL_SIZE(gint16)
@@ -154,6 +145,12 @@ DECL_OFFSET(SgenThreadInfo, tlab_temp_end)
 
 // Offsets for structures defined in mini/
 #ifndef DISABLE_JIT_OFFSETS
+DECL_SIZE(MonoMethodRuntimeGenericContext)
+DECL_SIZE(MonoLMF)
+DECL_SIZE(MonoTypedRef)
+DECL_SIZE(CallContext)
+DECL_SIZE(MonoContext)
+
 DECL_OFFSET(MonoLMF, previous_lmf)
 
 DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
@@ -303,7 +300,6 @@ DECL_OFFSET(MonoFtnDesc, addr)
 
 #undef DECL_OFFSET
 #undef DECL_OFFSET2
-#undef DECL_ALIGN
 #undef DECL_ALIGN2
 #undef DECL_SIZE
 #undef DECL_SIZE2

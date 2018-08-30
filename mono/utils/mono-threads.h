@@ -153,8 +153,6 @@ enum {
 	ASYNC_SUSPEND_STATE_INDEX = 1,
 };
 
-typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
-
 /*
  * These flags control how the rest of the runtime will see and interact with
  * a thread.
@@ -176,6 +174,10 @@ typedef enum {
 	 */
 	MONO_THREAD_INFO_FLAGS_NO_SAMPLE = 2,
 } MonoThreadInfoFlags;
+
+G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
+
+typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
 typedef struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
@@ -365,6 +367,8 @@ mono_thread_info_set_tid (THREAD_INFO_TYPE *info, MonoNativeThreadId tid)
 	((MonoThreadInfo*) info)->node.key = (uintptr_t) MONO_NATIVE_THREAD_ID_TO_UINT (tid);
 }
 
+void
+mono_thread_info_cleanup (void);
 
 /*
  * @thread_info_size is sizeof (GcThreadInfo), a struct the GC defines to make it possible to have
@@ -669,6 +673,8 @@ gboolean mono_threads_transition_finish_async_suspend (THREAD_INFO_TYPE* info);
 MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char* func);
+gboolean mono_threads_transition_peek_blocking_suspend_requested (THREAD_INFO_TYPE* info);
+
 
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
 
@@ -685,8 +691,37 @@ int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
 gboolean mono_thread_is_gc_unsafe_mode (void);
 
+/* Suspend phases:
+ *
+ * In a full coop or full preemptive suspend, there is only a single phase.  In
+ * the initial phase, all threads are either cooperatively or preemptively
+ * suspended, respectively.
+ *
+ * In hybrid suspend, there may be two phases.  In the initial phase, threads
+ * are invited to cooperatively suspend.  Running threads are expected to
+ * finish cooperatively suspending (the phase waits for them), but blocking
+ * threads need not.
+ *
+ * If any blocking thread was encountered in the initial phase, a second
+ * "mop-up" phase runs which checks whether the blocking threads self-suspended
+ * (in which case nothing more needs to be done) or if they're still in the
+ * BLOCKING_SUSPEND_REQUESTED state, in which case they are preemptively
+ * suspended.
+ */
+#define MONO_THREAD_SUSPEND_PHASE_INITIAL (0)
+#define MONO_THREAD_SUSPEND_PHASE_MOPUP (1)
+// number of phases
+#define MONO_THREAD_SUSPEND_PHASE_COUNT (2)
+typedef int MonoThreadSuspendPhase;
+
+typedef enum {
+	MONO_THREAD_BEGIN_SUSPEND_SKIP = 0,
+	MONO_THREAD_BEGIN_SUSPEND_SUSPENDED = 1,
+	MONO_THREAD_BEGIN_SUSPEND_NEXT_PHASE = 2,
+} MonoThreadBeginSuspendResult;
+
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
-gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info);
+MonoThreadBeginSuspendResult mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info, MonoThreadSuspendPhase phase);
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
 
 void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX rename to something to reflect the fact that this is used for both suspend and resume

@@ -60,7 +60,6 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/rand.h>
-#include <mono/metadata/sysmath.h>
 #include <mono/metadata/appdomain-icalls.h>
 #include <mono/metadata/string-icalls.h>
 #include <mono/metadata/debug-helpers.h>
@@ -102,6 +101,7 @@
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-merp.h>
+#include <mono/utils/mono-state.h>
 #include <mono/utils/mono-logger-internals.h>
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
@@ -5778,7 +5778,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, gboolean free_struct, MonoError *error)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
 {
 	mono_assembly_name_free (aname);
 	if (free_struct)
@@ -5803,6 +5803,61 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
+}
+
+ICALL_EXPORT MonoStringHandle
+ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out, MonoError *error)
+{
+	MonoStringHandle result;
+
+#ifndef DISABLE_CRASH_REPORTING
+	// FIXME: Push handles down into mini/mini-exceptions.c
+	MonoException *exc = MONO_HANDLE_RAW (exc_handle);
+	MonoThreadSummary out;
+	mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+
+	*portable_hash_out = (guint64) out.hashes.offset_free_hash;
+	*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
+
+	JsonWriter writer;
+	mono_json_writer_init (&writer);
+	mono_native_state_init (&writer);
+	gboolean first_thread_added = TRUE;
+	mono_native_state_add_thread (&writer, &out, NULL, first_thread_added);
+	char *output = mono_native_state_free (&writer, FALSE);
+	result = mono_string_new_handle (mono_domain_get (), output, error);
+	g_free (output);
+#else
+	*portable_hash_out = 0;
+	*unportable_hash_out = 0;
+	result = mono_string_new_handle (mono_domain_get (), "", error);
+#endif
+
+	return result;
+}
+
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+{
+#ifdef TARGET_OSX
+	if (!mono_merp_enabled ())
+		g_error ("Cannot send telemetry without registering parameters first");
+
+	pid_t crashed_pid = getpid ();
+
+	MonoStackHash hashes;
+	memset (&hashes, 0, sizeof (MonoStackHash));
+	hashes.offset_free_hash = portable_hash;
+	hashes.offset_rich_hash = unportable_hash;
+
+	// Tells mono that we want to send the HANG EXC_TYPE.
+	const char *signal = "SIGTERM";
+
+	mono_merp_invoke (crashed_pid, signal, payload, &hashes);
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
@@ -6648,7 +6703,7 @@ mono_icall_get_machine_name (MonoError *error)
 #if !defined(DISABLE_SOCKETS)
 	MonoStringHandle result;
 	char *buf;
-	int n;
+	int n, i;
 #if defined _SC_HOST_NAME_MAX
 	n = sysconf (_SC_HOST_NAME_MAX);
 	if (n == -1)
@@ -6658,6 +6713,13 @@ mono_icall_get_machine_name (MonoError *error)
 
 	if (gethostname (buf, n) == 0){
 		buf [n] = 0;
+		// try truncating the string at the first dot
+		for (i = 0; i < n; i++) {
+			if (buf [i] == '.') {
+				buf [i] = 0;
+				break;
+			}
+		}
 		result = mono_string_new_handle (mono_domain_get (), buf, error);
 	} else
 		result = MONO_HANDLE_CAST (MonoString, NULL_HANDLE);
@@ -7633,13 +7695,10 @@ mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter)
 	return iter->sig->params [i];
 }
 
-ICALL_EXPORT MonoObject*
-mono_TypedReference_ToObject (MonoTypedRef* tref)
+ICALL_EXPORT MonoObjectHandle
+mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 {
-	ICALL_ENTRY ();
-	MonoObjectHandle result = typed_reference_to_object (tref, error);
-	mono_error_set_pending_exception (error);
-	ICALL_RETURN_OBJ (result);
+	return typed_reference_to_object (tref, error);
 }
 
 ICALL_EXPORT MonoTypedRef
@@ -7717,6 +7776,17 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
 		prelink_method (m, error);
 		return_if_nok (error);
 	}
+}
+
+/*
+ * used by System.Runtime.InteropServices.RuntimeInformation.(OS|Process)Architecture;
+ * which use them in different ways for filling in an enum
+ */
+ICALL_EXPORT MonoStringHandle
+ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitecture (MonoError *error)
+{
+	error_init (error);
+	return mono_string_new_handle (mono_domain_get (), mono_config_get_cpu (), error);
 }
 
 ICALL_EXPORT int

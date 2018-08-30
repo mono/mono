@@ -11,6 +11,8 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
+#ifdef HOST_WASM
+
 #include <emscripten.h>
 
 
@@ -464,7 +466,7 @@ mono_wasm_current_bp_id (void)
 	g_assert (((guint64)lmf->previous_lmf) & 2);
 	MonoLMFExt *ext = (MonoLMFExt*)lmf;
 
-	g_assert (ext->interp_exit);
+	g_assert (ext->kind == MONO_LMFEXT_INTERP_EXIT || ext->kind == MONO_LMFEXT_INTERP_EXIT_WITH_CTX);
 	MonoInterpFrameHandle *frame = ext->interp_exit_data;
 	MonoJitInfo *ji = mini_get_interp_callbacks ()->frame_get_jit_info (frame);
 	guint8 *ip = mini_get_interp_callbacks ()->frame_get_ip (frame);
@@ -667,3 +669,22 @@ mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)
 {
 	return 1;
 }
+
+#else
+
+void
+mono_wasm_single_step_hit (void)
+{
+}
+
+void
+mono_wasm_breakpoint_hit (void)
+{
+}
+
+void
+mono_wasm_debugger_init (void)
+{
+}
+
+#endif

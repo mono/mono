@@ -128,6 +128,7 @@ static void mono_uninstall_current_handler_block_guard (void);
 static gboolean mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 
 static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 
 static gboolean
 first_managed (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer addr)
@@ -233,6 +234,7 @@ mono_exceptions_init (void)
 	cbs.mono_walk_stack_with_ctx = mono_runtime_walk_stack_with_ctx;
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
 	cbs.mono_summarize_stack = mono_summarize_stack;
+	cbs.mono_summarize_exception = mono_summarize_exception;
 
 	if (mono_llvm_only) {
 		cbs.mono_raise_exception = mono_llvm_raise_exception;
@@ -401,16 +403,20 @@ arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			*new_ctx = *ctx;
 
-			if (ext->debugger_invoke) {
+			if (ext->kind == MONO_LMFEXT_DEBUGGER_INVOKE) {
 				/*
 				 * This LMF entry is created by the soft debug code to mark transitions to
 				 * managed code done during invokes.
 				 */
 				frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 				memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-			} else if (ext->interp_exit) {
+			} else if (ext->kind == MONO_LMFEXT_INTERP_EXIT || ext->kind == MONO_LMFEXT_INTERP_EXIT_WITH_CTX) {
 				frame->type = FRAME_TYPE_INTERP_TO_MANAGED;
 				frame->interp_exit_data = ext->interp_exit_data;
+				if (ext->kind == MONO_LMFEXT_INTERP_EXIT_WITH_CTX) {
+					frame->type = FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX;
+					memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
+				}
 			} else {
 				g_assert_not_reached ();
 			}
@@ -613,7 +619,9 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (!err)
 		return FALSE;
 
-	if (frame->type != FRAME_TYPE_INTERP_TO_MANAGED && *lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) >= (gpointer)(*lmf))) {
+	gboolean not_i2m = frame->type != FRAME_TYPE_INTERP_TO_MANAGED && frame->type != FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX;
+
+	if (not_i2m && *lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) >= (gpointer)(*lmf))) {
 		/*
 		 * Remove any unused lmf.
 		 * Mask out the lower bits which might be used to hold additional information.
@@ -711,7 +719,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 		if (unwinder->last_frame_addr < (gpointer)(*lmf)) {
 			if (((gsize)(*lmf)->previous_lmf) & 2) {
 				MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-				if (ext->debugger_invoke) {
+				if (ext->kind == MONO_LMFEXT_DEBUGGER_INVOKE) {
 					*lmf = (MonoLMF *)(((gsize)(*lmf)->previous_lmf) & ~7);
 					frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 					return TRUE;
@@ -732,7 +740,7 @@ unwinder_unwind_frame (Unwinder *unwinder,
 											   save_locations, frame);
 		if (!res)
 			return FALSE;
-		if (frame->type == FRAME_TYPE_INTERP_TO_MANAGED) {
+		if (frame->type == FRAME_TYPE_INTERP_TO_MANAGED || frame->type == FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX) {
 			unwinder->in_interp = TRUE;
 			mini_get_interp_callbacks ()->frame_iter_init (&unwinder->interp_iter, frame->interp_exit_data);
 		}
@@ -911,7 +919,13 @@ mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk fu
 		memcpy (&trace_ip, mono_array_addr_fast (ta, ExceptionTraceIp, i), sizeof (ExceptionTraceIp));
 		gpointer ip = trace_ip.ip;
 		gpointer generic_info = trace_ip.generic_info;
-		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
+
+		MonoJitInfo *ji = NULL;
+		if (trace_ip.ji) {
+			ji = trace_ip.ji;
+		} else {
+			ji = mono_jit_info_table_find (domain, ip);
+		}
 
 		if (ji == NULL) {
 			gboolean r;
@@ -1264,6 +1278,12 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	return;
+}
+
 #else
 
 typedef struct {
@@ -1355,21 +1375,16 @@ summarize_offset_rich_hash (intptr_t accum, MonoFrameSummary *frame)
 }
 
 static gboolean
-summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
 {
-	MonoMethod *method = NULL;
-	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) data;
+	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) user_data;
 	g_assert (ud->num_frames + 1 < ud->max_frames);
 	MonoFrameSummary *dest = &ud->frames [ud->num_frames];
 	ud->num_frames++;
 
-	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &dest->unmanaged_data.ip, NULL);
-	dest->unmanaged_data.is_trampoline = frame->ji && frame->ji->is_trampoline;
+	dest->unmanaged_data.ip = (intptr_t) ip;
+	dest->is_managed = managed;
 
-	if (frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE)
-		method = jinfo_get_method (frame->ji);
-
-	dest->is_managed = (method != NULL);
 	if (method && method->wrapper_type != MONO_WRAPPER_NONE) {
 		dest->is_managed = FALSE;
 		dest->unmanaged_data.has_name = TRUE;
@@ -1379,16 +1394,17 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 
 	MonoDebugSourceLocation *location = NULL;
 
-	if (dest->is_managed) {
+	if (managed) {
+		g_assert (method);
 		MonoImage *image = mono_class_get_image (method->klass);
 		// Used for hashing, more stable across rebuilds than using GUID
 		copy_summary_string_safe (dest->str_descr, image->assembly_name);
 
 		dest->managed_data.guid = image->guid;
 
-		dest->managed_data.native_offset = frame->native_offset;
+		dest->managed_data.native_offset = native_offset;
 		dest->managed_data.token = method->token;
-		location = mono_debug_lookup_source_location (method, frame->native_offset, mono_domain_get ());
+		location = mono_debug_lookup_source_location (method, native_offset, mono_domain_get ());
 	} else {
 		dest->managed_data.token = -1;
 	}
@@ -1405,12 +1421,47 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	return FALSE;
 }
 
+static gboolean
+summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+{
+	// Don't record trampolines between managed frames
+	if (frame->ji && frame->ji->is_trampoline)
+		return TRUE;
+
+	MonoMethod *method = NULL;
+	intptr_t ip = 0x0;
+	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &ip, NULL);
+
+	g_assert (frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE);
+	method = jinfo_get_method (frame->ji);
+
+	gboolean is_managed = (method != NULL);
+
+	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
+}
+
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
+{
+	memset (out, 0, sizeof (MonoThreadSummary));
+
+	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
+	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
+	data.num_frames = 0;
+	data.frames = out->managed_frames;
+	data.hashes = &out->hashes;
+
+	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
+	out->num_managed_frames = data.num_frames;
+}
+
+
 static void 
 mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
 {
-	intptr_t frame_ips [MONO_MAX_SUMMARY_FRAMES];
-
 	MonoSummarizeUserData data;
+	memset (&data, 0, sizeof (MonoSummarizeUserData));
 	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
 	data.num_frames = 0;
 	data.frames = out->managed_frames;
@@ -1425,11 +1476,12 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	mono_walk_stack_with_ctx (summarize_frame, crash_ctx, MONO_UNWIND_LOOKUP_IL_OFFSET, &data);
 	out->num_managed_frames = data.num_frames;
 
-
 	// 
 	// Summarize unmanaged stack
 	// 
 #ifdef HAVE_BACKTRACE_SYMBOLS
+	intptr_t frame_ips [MONO_MAX_SUMMARY_FRAMES];
+
 	out->num_unmanaged_frames = backtrace ((void **)frame_ips, MONO_MAX_SUMMARY_FRAMES);
 
 	for (int i =0; i < out->num_unmanaged_frames; ++i) {
@@ -1447,6 +1499,7 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	return;
 }
 #endif
+
 
 MonoBoolean
 ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info, 
@@ -1520,6 +1573,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 			case FRAME_TYPE_DEBUGGER_INVOKE:
 			case FRAME_TYPE_TRAMPOLINE:
 			case FRAME_TYPE_INTERP_TO_MANAGED:
+			case FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX:
 				continue;
 			case FRAME_TYPE_INTERP:
 			case FRAME_TYPE_MANAGED:
@@ -1926,6 +1980,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 		case FRAME_TYPE_MANAGED_TO_NATIVE:
 		case FRAME_TYPE_TRAMPOLINE:
 		case FRAME_TYPE_INTERP_TO_MANAGED:
+		case FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX:
 			*ctx = new_ctx;
 			continue;
 		case FRAME_TYPE_INTERP:
@@ -2362,6 +2417,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			case FRAME_TYPE_DEBUGGER_INVOKE:
 			case FRAME_TYPE_MANAGED_TO_NATIVE:
 			case FRAME_TYPE_TRAMPOLINE:
+			case FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX:
 				*ctx = new_ctx;
 				continue;
 			case FRAME_TYPE_INTERP_TO_MANAGED:
@@ -2397,6 +2453,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 			MONO_STACKDATA (stackptr);
 
 			mono_threads_enter_gc_safe_region_unbalanced_internal (&stackptr);
+			mono_set_lmf (lmf);
 			ftnptr_eh_callback (handle);
 			g_error ("Did not expect ftnptr_eh_callback to return.");
 		}

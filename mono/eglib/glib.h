@@ -71,6 +71,102 @@
 #define G_END_DECLS
 #endif
 
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void *y) : x(y) { }
+	// Lack of rvalue constructor inhibits ternary operator.
+	// Either don't use ternary, or cast each side.
+	// sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
+	// w32socket.c:1045:24: error: call to deleted constructor of 'monoeg_g_cast'
+	//g_cast (g_cast&& y) : x(y.x) { }
+	g_cast (g_cast&&) = delete;
+	g_cast () = delete;
+	g_cast (const g_cast&) = delete;
+
+	template <typename TTo>
+	operator TTo* () const
+	{
+		return (TTo*)x;
+	}
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
+#endif
+
+#ifdef __cplusplus
+
+// G++4.4 breaks opeq below without this.
+#if defined  (__GNUC__) || defined  (__clang__)
+#define G_MAY_ALIAS  __attribute__((__may_alias__))
+#else
+#define G_MAY_ALIAS /* nothing */
+#endif
+
+// Provide for bit operations on enums, but not all integer operations.
+// This alleviates a fair number of casts in porting C to C++.
+
+// Forward declare template with no generic implementation.
+template <size_t> struct g_size_to_int;
+
+// Template specializations.
+template <> struct g_size_to_int<1> { typedef int8_t type; };
+template <> struct g_size_to_int<2> { typedef int16_t type; };
+template <> struct g_size_to_int<4> { typedef int32_t type; };
+template <> struct g_size_to_int<8> { typedef int64_t type; };
+
+// g++4.4 does not accept:
+//template <typename T>
+//using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+#define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
+
+#define G_ENUM_BINOP(Enum, op, opeq) 		\
+inline Enum					\
+operator op (Enum a, Enum b)			\
+{						\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(static_cast<type>(a) op b); \
+}						\
+						\
+inline Enum&					\
+operator opeq (Enum& a, Enum b)			\
+{						\
+	typedef g_size_to_int_t (Enum) G_MAY_ALIAS type; \
+	return (Enum&)((type&)a opeq b); 	\
+}						\
+
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(~static_cast<type>(a)); \
+}						\
+						\
+G_ENUM_BINOP (Enum, |, |=) 			\
+G_ENUM_BINOP (Enum, &, &=) 			\
+G_ENUM_BINOP (Enum, ^, ^=) 			\
+						\
+} /* extern "C++" */
+
+#else
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
+#endif
+
 G_BEGIN_DECLS
 
 /*
@@ -185,7 +281,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
-#define g_alloca(size)		alloca (size)
+#define g_alloca(size)		(g_cast (alloca (size)))
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
@@ -542,6 +638,7 @@ void    g_array_set_size          (GArray *array, gint length);
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -573,6 +670,7 @@ gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
@@ -613,6 +711,8 @@ typedef enum {
 	
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
 } GLogLevelFlags;
+
+G_ENUM_FUNCTIONS (GLogLevelFlags)
 
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
@@ -946,6 +1046,7 @@ typedef enum {
 	G_FILE_TEST_EXISTS = 1 << 4
 } GFileTest;
 
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
@@ -1089,8 +1190,6 @@ extern const guchar g_utf8_jump_table[256];
 
 gboolean  g_utf8_validate      (const gchar *str, gssize max_len, const gchar **end);
 gunichar  g_utf8_get_char_validated (const gchar *str, gssize max_len);
-gchar    *g_utf8_find_prev_char (const char *str, const char *p);
-gchar    *g_utf8_prev_char     (const char *str);
 #define   g_utf8_next_char(p)  ((p) + g_utf8_jump_table[(guchar)(*p)])
 gunichar  g_utf8_get_char      (const gchar *src);
 glong     g_utf8_strlen        (const gchar *str, gssize max);
@@ -1172,4 +1271,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H

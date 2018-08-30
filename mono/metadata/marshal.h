@@ -648,6 +648,8 @@ mono_icall_handle_new (gpointer rawobj);
 gpointer
 mono_icall_handle_new_interior (gpointer rawobj);
 
+MonoObject* mono_marshal_get_type_object (MonoClass *klass);
+
 ICALL_EXPORT
 void*
 ves_icall_marshal_alloc (gsize size);
@@ -672,11 +674,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 
 ICALL_EXPORT
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const guint16 *ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error);
 
 ICALL_EXPORT
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const guint16 *ptr, gint32 len, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunichar2 *ptr, gint32 len, MonoError *error);
 
 ICALL_EXPORT
 MonoStringHandle

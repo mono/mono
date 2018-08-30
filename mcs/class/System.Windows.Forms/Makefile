@@ -142,3 +142,9 @@ notepad.exe: samples/notepad.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Fo
 
 test-notepad: notepad.exe
 	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) notepad.exe
+
+issue10235.exe: samples/issue10235.cs $(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll $(topdir)/class/lib/$(PROFILE)/System.Drawing.dll $(topdir)/class/lib/$(PROFILE)/System.dll $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+	$(CSCOMPILE) -out:$@ samples/issue10235.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Windows.Forms.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Drawing.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
+test-issue10235: issue10235.exe
+	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) issue10235.exe
