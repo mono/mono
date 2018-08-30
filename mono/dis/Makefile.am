@@ -52,13 +52,6 @@ libmonodismain_a_SOURCES =	\
 	main.c		\
 	declsec.c
 
-monodis_SOURCES +=	\
-	dump.h		\
-	main.c		\
-	meta.h		\
-	declsec.c	\
-	declsec.h
-
 monodis_SOURCES =
 
 monodis_LDADD = 			\
