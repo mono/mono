@@ -121,13 +121,15 @@ Simple.Dependency.dll: dependency.cs
 sample.dll: Simple.Dependency.dll sample.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
+OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
+
 Mono.Cecil.dll: Makefile
 	nuget install -version 0.10.0 Mono.Cecil
 	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
 # We use system csc as this is a desktop program
-packager.exe: packager/packager.cs Mono.Cecil.dll $(OPTIONS_CS)
-	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager/packager.cs $(OPTIONS_CS)
+packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
+	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
