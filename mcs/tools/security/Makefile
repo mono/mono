@@ -66,4 +66,4 @@ permview.exe: permview.cs
 	$(CSCOMPILE) $^ $(HELPER_SOURCES) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
 
 %.exe: %.cs $(HELPER_SOURCES)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll $^
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/Mono.Security.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll /out:$(topdir)/class/lib/$(PROFILE)/$@ $^
