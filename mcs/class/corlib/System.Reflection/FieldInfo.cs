@@ -59,10 +59,7 @@ namespace System.Reflection {
 			return fi;
 		}
 
-		internal virtual int GetFieldOffset ()
-		{
-			throw new SystemException ("This method should not be called");
-		}
+		internal abstract int GetFieldOffset ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern MarshalAsAttribute get_marshal_info ();
