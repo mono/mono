@@ -61,6 +61,7 @@ enum {
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, "System.Runtime.InteropServices", "ICustomMarshaler");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (marshal, "System.Runtime.InteropServices", "Marshal");
 
 /* MonoMethod pointers to SafeHandle::DangerousAddRef and ::DangerousRelease */
 static MonoMethod *sh_dangerous_add_ref;
@@ -162,7 +163,7 @@ get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len
 															  &typed_args, &named_args, &num_named_args, &arginfo, error);
 		if (!is_ok (error))
 			return FALSE;
-		*out_etype = typed_args [0];
+		*out_etype = (MonoType*)typed_args [0];
 		*out_len = *(gint32*)typed_args [1];
 		g_free (typed_args);
 		g_free (named_args);
@@ -566,77 +567,77 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 	*ind_store_type = CEE_STIND_I;
 	switch (conv) {
 	case MONO_MARSHAL_CONV_STR_LPWSTR:
-		return mono_marshal_string_to_utf16;		
+		return (gpointer)mono_marshal_string_to_utf16;
 	case MONO_MARSHAL_CONV_LPWSTR_STR:
 		*ind_store_type = CEE_STIND_REF;
-		return ves_icall_mono_string_from_utf16;
+		return (gpointer)ves_icall_mono_string_from_utf16;
 	case MONO_MARSHAL_CONV_LPTSTR_STR:
 		*ind_store_type = CEE_STIND_REF;
-		return ves_icall_string_new_wrapper;
+		return (gpointer)ves_icall_string_new_wrapper;
 	case MONO_MARSHAL_CONV_UTF8STR_STR:
 	case MONO_MARSHAL_CONV_LPSTR_STR:
 		*ind_store_type = CEE_STIND_REF;
-		return ves_icall_string_new_wrapper;
+		return (gpointer)ves_icall_string_new_wrapper;
 	case MONO_MARSHAL_CONV_STR_LPTSTR:
 #ifdef TARGET_WIN32
-		return mono_marshal_string_to_utf16;
+		return (gpointer)mono_marshal_string_to_utf16;
 #else
-		return mono_string_to_utf8str;
+		return (gpointer)mono_string_to_utf8str;
 #endif
 		// In Mono historically LPSTR was treated as a UTF8STR
 	case MONO_MARSHAL_CONV_STR_UTF8STR:
 	case MONO_MARSHAL_CONV_STR_LPSTR:
-		return mono_string_to_utf8str;
+		return (gpointer)mono_string_to_utf8str;
 	case MONO_MARSHAL_CONV_STR_BSTR:
-		return mono_string_to_bstr;
+		return (gpointer)mono_string_to_bstr;
 	case MONO_MARSHAL_CONV_BSTR_STR:
 		*ind_store_type = CEE_STIND_REF;
-		return mono_string_from_bstr_icall;
+		return (gpointer)mono_string_from_bstr_icall;
 	case MONO_MARSHAL_CONV_STR_TBSTR:
 	case MONO_MARSHAL_CONV_STR_ANSIBSTR:
-		return mono_string_to_ansibstr;
+		return (gpointer)mono_string_to_ansibstr;
 	case MONO_MARSHAL_CONV_SB_UTF8STR:
 	case MONO_MARSHAL_CONV_SB_LPSTR:
-		return mono_string_builder_to_utf8;
+		return (gpointer)mono_string_builder_to_utf8;
 	case MONO_MARSHAL_CONV_SB_LPTSTR:
 #ifdef TARGET_WIN32
-		return mono_string_builder_to_utf16;
+		return (gpointer)mono_string_builder_to_utf16;
 #else
-		return mono_string_builder_to_utf8;
+		return (gpointer)mono_string_builder_to_utf8;
 #endif
 	case MONO_MARSHAL_CONV_SB_LPWSTR:
-		return mono_string_builder_to_utf16;
+		return (gpointer)mono_string_builder_to_utf16;
 	case MONO_MARSHAL_CONV_ARRAY_SAVEARRAY:
-		return mono_array_to_savearray;
+		return (gpointer)mono_array_to_savearray;
 	case MONO_MARSHAL_CONV_ARRAY_LPARRAY:
-		return mono_array_to_lparray;
+		return (gpointer)mono_array_to_lparray;
 	case MONO_MARSHAL_FREE_LPARRAY:
-		return mono_free_lparray;
+		return (gpointer)mono_free_lparray;
 	case MONO_MARSHAL_CONV_DEL_FTN:
-		return mono_delegate_to_ftnptr;
+		return (gpointer)mono_delegate_to_ftnptr;
 	case MONO_MARSHAL_CONV_FTN_DEL:
 		*ind_store_type = CEE_STIND_REF;
-		return mono_ftnptr_to_delegate;
+		return (gpointer)mono_ftnptr_to_delegate;
 	case MONO_MARSHAL_CONV_UTF8STR_SB:
 	case MONO_MARSHAL_CONV_LPSTR_SB:
 		*ind_store_type = CEE_STIND_REF;
-		return mono_string_utf8_to_builder;
+		return (gpointer)mono_string_utf8_to_builder;
 	case MONO_MARSHAL_CONV_LPTSTR_SB:
 		*ind_store_type = CEE_STIND_REF;
 #ifdef TARGET_WIN32
-		return mono_string_utf16_to_builder;
+		return (gpointer)mono_string_utf16_to_builder;
 #else
-		return mono_string_utf8_to_builder;
+		return (gpointer)mono_string_utf8_to_builder;
 #endif
 	case MONO_MARSHAL_CONV_LPWSTR_SB:
 		*ind_store_type = CEE_STIND_REF;
-		return mono_string_utf16_to_builder;
+		return (gpointer)mono_string_utf16_to_builder;
 	case MONO_MARSHAL_FREE_ARRAY:
-		return mono_marshal_free_array;
+		return (gpointer)mono_marshal_free_array;
 	case MONO_MARSHAL_CONV_STR_BYVALSTR:
-		return mono_string_to_byvalstr;
+		return (gpointer)mono_string_to_byvalstr;
 	case MONO_MARSHAL_CONV_STR_BYVALWSTR:
-		return mono_string_to_byvalwstr;
+		return (gpointer)mono_string_to_byvalwstr;
 	default:
 		g_assert_not_reached ();
 	}
@@ -1183,13 +1184,13 @@ emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb)
 	if (strstr (mb->name, "mono_thread_interruption_checkpoint"))
 		return;
 	
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_interruption_checkpoint);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_interruption_checkpoint);
 }
 
 static void
 emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb)
 {
-	emit_thread_interrupt_checkpoint_call (mb, mono_thread_force_interruption_checkpoint_noraise);
+	emit_thread_interrupt_checkpoint_call (mb, (gpointer)mono_thread_force_interruption_checkpoint_noraise);
 }
 
 void
@@ -4177,6 +4178,29 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	mono_mb_emit_byte (mb, CEE_RET);
 }
 
+static void
+emit_marshal_custom_get_instance (MonoMethodBuilder *mb, MonoClass *klass, MonoMarshalSpec *spec)
+{
+	static MonoClass *Marshal = NULL;
+	static MonoMethod *get_instance;
+
+	if (!Marshal) {
+		Marshal = mono_class_try_get_marshal_class ();
+		g_assert (Marshal);
+
+		get_instance = get_method_nofail (Marshal, "GetCustomMarshalerInstance", 2, 0);
+		g_assert (get_instance);
+	}
+
+	// HACK: We cannot use ldtoken in this type of wrapper.
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_op (mb, CEE_MONO_CLASSCONST, klass);
+	mono_mb_emit_icall (mb, mono_marshal_get_type_object);
+	mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
+
+	mono_mb_emit_op (mb, CEE_CALL, get_instance);
+}
+
 static int
 emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					 MonoMarshalSpec *spec, 
@@ -4189,7 +4213,6 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	static MonoClass *ICustomMarshaler = NULL;
 	static MonoMethod *cleanup_native, *cleanup_managed;
 	static MonoMethod *marshal_managed_to_native, *marshal_native_to_managed;
-	MonoMethod *get_instance = NULL;
 	MonoMethodBuilder *mb = m->mb;
 	char *exception_msg = NULL;
 	guint32 loc1;
@@ -4227,22 +4250,6 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	mklass = mono_class_from_mono_type (mtype);
 	g_assert (mklass != NULL);
 
-	if (!mono_class_is_assignable_from (ICustomMarshaler, mklass))
-		exception_msg = g_strdup_printf ("Custom marshaler '%s' does not implement the ICustomMarshaler interface.", m_class_get_name (mklass));
-
-	get_instance = mono_class_get_method_from_name_checked (mklass, "GetInstance", 1, METHOD_ATTRIBUTE_STATIC, error);
-	mono_error_assert_ok (error);
-	if (get_instance) {
-		MonoMethodSignature *get_sig = mono_method_signature (get_instance);
-		if ((get_sig->ret->type != MONO_TYPE_CLASS) ||
-			(mono_class_from_mono_type (get_sig->ret) != ICustomMarshaler) ||
-			(get_sig->params [0]->type != MONO_TYPE_STRING))
-			get_instance = NULL;
-	}
-
-	if (!get_instance)
-		exception_msg = g_strdup_printf ("Custom marshaler '%s' does not implement a static GetInstance method that takes a single string parameter and returns an ICustomMarshaler.", m_class_get_name (mklass));
-
 handle_exception:
 	/* Throw exception and emit compensation code if neccesary */
 	if (exception_msg) {
@@ -4264,9 +4271,6 @@ handle_exception:
 		}
 		return 0;
 	}
-
-	/* FIXME: MS.NET seems to create one instance for each klass + cookie pair */
-	/* FIXME: MS.NET throws an exception if GetInstance returns null */
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
@@ -4303,9 +4307,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 				
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
@@ -4335,17 +4337,13 @@ handle_exception:
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
 
-			mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-			mono_mb_emit_op (mb, CEE_CALL, get_instance);
+			emit_marshal_custom_get_instance (mb, mklass, spec);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_native_to_managed);
 			mono_mb_emit_byte (mb, CEE_STIND_REF);
 		} else if (t->attrs & PARAM_ATTRIBUTE_OUT) {
-			mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-			mono_mb_emit_op (mb, CEE_CALL, get_instance);
+			emit_marshal_custom_get_instance (mb, mklass, spec);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_native_to_managed);
@@ -4354,9 +4352,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_POP);
 		}
 
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 
 		mono_mb_emit_ldloc (mb, conv_arg);
 
@@ -4384,9 +4380,7 @@ handle_exception:
 		mono_mb_emit_ldloc (mb, 3);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 		mono_mb_emit_byte (mb, CEE_DUP);
 
 		mono_mb_emit_ldloc (mb, 3);
@@ -4414,8 +4408,7 @@ handle_exception:
 			mono_mb_emit_byte (mb, CEE_LDIND_I);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 				
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref)
@@ -4441,8 +4434,7 @@ handle_exception:
 		mono_mb_emit_ldloc (mb, 3);
 		pos2 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 		mono_mb_emit_byte (mb, CEE_DUP);
 
 		mono_mb_emit_ldloc (mb, 3);
@@ -4464,9 +4456,7 @@ handle_exception:
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
 
-			mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-			mono_mb_emit_op (mb, CEE_CALL, get_instance);
+			emit_marshal_custom_get_instance (mb, mklass, spec);
 
 			mono_mb_emit_ldloc (mb, conv_arg);
 			mono_mb_emit_op (mb, CEE_CALLVIRT, marshal_managed_to_native);
@@ -4474,9 +4464,7 @@ handle_exception:
 		}
 
 		/* Call CleanUpManagedData */
-		mono_mb_emit_ldstr (mb, g_strdup (spec->data.custom_data.cookie));
-
-		mono_mb_emit_op (mb, CEE_CALL, get_instance);
+		emit_marshal_custom_get_instance (mb, mklass, spec);
 				
 		mono_mb_emit_ldloc (mb, conv_arg);
 		mono_mb_emit_op (mb, CEE_CALLVIRT, cleanup_managed);

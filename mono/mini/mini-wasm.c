@@ -3,6 +3,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/mini/aot-runtime.h>
 #include <mono/mini/seq-points.h>
@@ -28,13 +29,13 @@ typedef struct {
 	ArgStorage storage : 8;
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	gboolean gsharedvt;
 
 	ArgInfo ret;
 	ArgInfo args [1];
-} CallInfo;
+};
 
 static ArgStorage
 get_storage (MonoType *type, gboolean is_return)
@@ -467,6 +468,8 @@ mono_arch_cpu_enumerate_simd_versions (void)
 guint32
 mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
+	/* No arch specific passes yet */
+	*exclude_mask = 0;
 	return 0;
 }
 
@@ -561,9 +564,7 @@ mono_wasm_set_timeout (int timeout, int id)
 void
 mono_arch_register_icall (void)
 {
-#ifdef HOST_WASM
 	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
-#endif
 }
 
 void
@@ -624,13 +625,13 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *attr, size_t *stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * restrict set, sigset_t * restrict oset)
+pthread_sigmask (int how, const sigset_t *set, sigset_t *oset)
 {
 	return 0;
 }

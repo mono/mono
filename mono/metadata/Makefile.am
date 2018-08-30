@@ -286,6 +286,7 @@ common_sources = \
 	image-internals.h	\
 	jit-info.c		\
 	loader.c		\
+	loader-internals.h	\
 	locales.c		\
 	locales.h		\
 	lock-tracer.c		\
@@ -353,7 +354,6 @@ common_sources = \
 	security-manager.h	\
 	string-icalls.c 	\
 	string-icalls.h 	\
-	sysmath.h		\
 	sysmath.c		\
 	tabledefs.h 		\
 	threads.c		\
@@ -401,7 +401,8 @@ common_sources = \
 	fdhandle.h	\
 	fdhandle.c	\
 	callspec.h	\
-	callspec.c
+	callspec.c	\
+	abi.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \

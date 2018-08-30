@@ -123,25 +123,33 @@ get_method_image (MonoMethod *method)
 	return m_class_get_image (method->klass);
 }
 
+#ifdef __cplusplus
+template <typename T>
+static void
+register_icall (T func, const char *name, const char *sigstr, gboolean no_wrapper)
+#else
 static void
 register_icall (gpointer func, const char *name, const char *sigstr, gboolean no_wrapper)
+#endif
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
 	mono_register_jit_icall (func, name, sig, no_wrapper);
 }
 
+#ifdef __cplusplus
+template <typename T>
+static void
+register_icall_no_wrapper (T func , const char *name, const char *sigstr)
+#else
 static void
 register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
+#endif
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
 	mono_register_jit_icall (func, name, sig, TRUE);
 }
-
-// Cast the first parameter to gpointer; macros do not recurse.
-#define register_icall(func, name, sigstr, no_wrapper) (register_icall ((gpointer)(func), (name), (sigstr), (no_wrapper)))
-#define register_icall_no_wrapper(func, name, sigstr) (register_icall_no_wrapper ((gpointer)(func), (name), (sigstr)))
 
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
@@ -281,6 +289,7 @@ mono_marshal_init (void)
 		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new, "mono_icall_handle_new", "ptr ptr", TRUE);
 		register_icall (mono_icall_handle_new_interior, "mono_icall_handle_new_interior", "ptr ptr", TRUE);
+		register_icall (mono_marshal_get_type_object, "mono_marshal_get_type_object", "object ptr", TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -6213,6 +6222,16 @@ mono_icall_handle_new_interior (gpointer rawobj)
 #else
 	return mono_handle_new_interior (rawobj);
 #endif
+}
+
+MonoObject*
+mono_marshal_get_type_object (MonoClass *klass)
+{
+	ERROR_DECL (error);
+	MonoType *type = m_class_get_byval_arg (klass);
+	MonoObject *result = (MonoObject*)mono_type_get_object_checked (mono_domain_get (), type, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
 
 void
