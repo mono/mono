@@ -153,8 +153,8 @@ namespace System.Reflection {
 
 		private static object CanonicalizeValue (object value)
 		{
-			if (value.GetType ().IsEnum)
-				return ((Enum)value).GetValue ();
+			if (value is Enum e) 
+				return e.GetValue ();
 			return value;
 		}		
 	}
