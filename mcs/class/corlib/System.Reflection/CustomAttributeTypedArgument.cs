@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Reflection {
 
@@ -108,16 +109,16 @@ namespace System.Reflection {
 					return string.Format (CultureInfo.CurrentCulture, "typeof({0})", ((Type)Value).FullName);
 
 				else if (ArgumentType.IsArray) {
-					string result = null;
+					StringBuilder result = new StringBuilder ();
 					IList<CustomAttributeTypedArgument> array = Value as IList<CustomAttributeTypedArgument>;
 
 					Type elementType = ArgumentType.GetElementType ();
-					result = string.Format (CultureInfo.CurrentCulture, @"new {0}[{1}] {{ ", elementType.IsEnum ? elementType.FullName : elementType.Name, array.Count);
+					result.AppendFormat (CultureInfo.CurrentCulture, @"new {0}[{1}] {{ ", elementType.IsEnum ? elementType.FullName : elementType.Name, array.Count);
 
 					for (int i = 0; i < array.Count; i++)
-						result += string.Format (CultureInfo.CurrentCulture, i == 0 ? "{0}" : ", {0}", array [i].ToString (elementType != typeof (object)));
+						result.AppendFormat (CultureInfo.CurrentCulture, i == 0 ? "{0}" : ", {0}", array [i].ToString (elementType != typeof (object)));
 
-					return result += " }";
+					return result.Append (" }").ToString ();
 				}
 
 				return string.Format (CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.Name);
