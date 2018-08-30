@@ -49,8 +49,11 @@ libmonodis_a_SOURCES =	\
 
 libmonodismain_a_SOURCES =	\
 	dump.c		\
+	dump.h		\
 	main.c		\
-	declsec.c
+	meta.h		\
+	declsec.c	\
+	declsec.h
 
 monodis_SOURCES =
 
