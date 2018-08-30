@@ -306,12 +306,15 @@ $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
 ##
+# Cross compiler builds
+#
 # Parameters:
 #  $(1): target (cross32 or cross64)
 #  $(2): arch (arm or aarch64)
 #  $(3): llvm (llvm32 or llvm64)
 #  $(4): configure target arch
 #  $(5): offsets tool --abi argument
+#  $(6): xcode dir
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -321,22 +324,24 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
+_ios_$(1)_PLATFORM_BIN=$(6)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+
 _ios-$(1)_OFFSET_TOOL_ABI=$(5)
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no \
 	$$(ios-$(1)_AC_VARS)
 
 _ios-$(1)_CFLAGS= \
-	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
+	-isysroot $(6)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments \
 	$$(ios-$(1)_CFLAGS)
 
 _ios-$(1)_CXXFLAGS= \
-	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
+	-isysroot $(6)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments \
 	-stdlib=libc++ \
 	$$(ios-$(1)_CXXFLAGS)
@@ -386,6 +391,6 @@ endef
 
 ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
 ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,cross32,arm,llvm36-32,arm-darwin,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
-$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,cross32,arm,llvm36-32,arm-darwin,arm-apple-darwin10,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm36-32,armv7k-unknown-darwin,armv7k-apple-darwin,$(XCODE32_DIR)))
