@@ -46,6 +46,8 @@
 #include <IOKit/IOBSD.h>
 #endif
 
+G_BEGIN_DECLS
+
 /* This is a copy of System.IO.Ports.Handshake */
 typedef enum {
 	NoneHandshake = 0,
@@ -72,14 +74,20 @@ typedef enum {
 } MonoStopBits;
 
 /* This is a copy of System.IO.Ports.SerialSignal */
-typedef enum {
+enum _MonoSerialSignal {
 	NoneSignal,
 	Cd = 1, /* Carrier detect */
 	Cts = 2, /* Clear to send */
 	Dsr = 4, /* Data set ready */
 	Dtr = 8, /* Data terminal ready */
 	Rts = 16  /* Request to send */
-} MonoSerialSignal;
+};
+
+#ifdef __cplusplus
+typedef int MonoSerialSignal;
+#else
+typedef enum _MonoSerialSignal MonoSerialSignal;
+#endif
 
 /*
  * Silence the compiler, we do not need these prototypes to be public, since these are only
@@ -604,3 +612,4 @@ list_serial_devices (void)
 }
 #endif
 
+G_END_DECLS
