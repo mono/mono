@@ -2,6 +2,13 @@
 EXTRA_DIST=SUBMODULES.json build.mk build_llvm_config.sh
 
 if ENABLE_LLVM
+
+if HOST_WIN32
+llvm_config=llvm-config.exe
+else
+llvm_config=llvm-config
+endif
+
 if INTERNAL_LLVM
 
 all-local: configure-llvm build-llvm install-llvm llvm_config.mk
@@ -9,7 +16,7 @@ all-local: configure-llvm build-llvm install-llvm llvm_config.mk
 clean-local: clean-llvm clean-llvm-config
 
 $(mono_build_root)/llvm/llvm_config.mk: install-llvm
-	$(top_srcdir)/llvm/build_llvm_config.sh $(top_srcdir)/llvm/usr/bin/llvm-config $(LLVM_CODEGEN_LIBS) > $@
+	$(top_srcdir)/llvm/build_llvm_config.sh $(top_srcdir)/llvm/usr/bin/$(llvm_config) $(LLVM_CODEGEN_LIBS) > $@
 
 else
 all-local: llvm_config.mk
