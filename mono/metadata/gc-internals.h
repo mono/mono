@@ -443,15 +443,14 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 
 gboolean mono_gc_is_critical_method (MonoMethod *method);
 
-G_BEGIN_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
-
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer mono_gc_thread_attach (THREAD_INFO_TYPE *info);
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 void mono_gc_thread_detach_with_lock (THREAD_INFO_TYPE *info);
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_gc_thread_in_critical_region (THREAD_INFO_TYPE *info);
-
-G_END_DECLS // FIXMEcxx THREAD_INFO_TYPE varies between declaration and definition
 
 /* If set, print debugging messages around finalizers. */
 extern gboolean mono_log_finalizers;
