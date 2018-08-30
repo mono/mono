@@ -1,16 +1,14 @@
-if HOST_WIN32
-SUPPORT=
-else
-SUPPORT=libMonoSupportW.la
-endif
-
 if BUILD_SUPPORT
-lib_LTLIBRARIES = 				\
-	libMonoPosixHelper.la			\
-	$(SUPPORT)
 
-noinst_LTLIBRARIES=				\
-	libMonoSupportC.la
+lib_LTLIBRARIES = libMonoPosixHelper.la
+noinst_LTLIBRARIES = libMonoPosixHelper-cxx.la
+
+if !HOST_WIN32
+
+lib_LTLIBRARIES += libMonoSupportW.la
+noinst_LTLIBRARIES += libMonoSupportW-cxx.la
+
+endif
 endif
 
 AM_CPPFLAGS =					\
@@ -66,11 +64,11 @@ MPH_UNIX_SOURCE =				\
 
 if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
-MPH_LIBS   = $(glib_libs)
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-MPH_LIBS   = $(glib_libs)
 endif
+
+MPH_LIBS   = $(glib_libs)
 
 MINIZIP_SOURCE = \
 	minizip/crypt.h \
@@ -112,22 +110,18 @@ Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
 endif
 
-# C; uses no glib
-libMonoSupportC_la_SOURCES = \
+libMonoPosixHelper_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libMonoPosixHelper_cxx_la_CFLAGS = @CXX_ADD_CFLAGS@
+
+libMonoPosixHelper_la_SOURCES =			\
 	$(Z_SOURCE)				\
 	$(MINIZIP_SOURCE)
 
-libMonoSupportC_la_CFLAGS = @CXX_REMOVE_CFLAGS@
-
-# optionally C++; uses some glib
-libMonoSupportW_la_CFLAGS = @CXX_ADD_CFLAGS@
-libMonoPosixHelper_la_CFLAGS = @CXX_ADD_CFLAGS@
-
-libMonoPosixHelper_la_SOURCES =			\
+libMonoPosixHelper_cxx_la_SOURCES =		\
 	$(MPH_SOURCE)
 
 libMonoPosixHelper_la_LIBADD =			\
-	libMonoSupportC.la			\
+	libMonoPosixHelper-cxx.la		\
 	$(MPH_LIBS)				\
 	$(Z_LIBS)				\
 	$(XATTR_LIB)
@@ -136,12 +130,18 @@ libMonoPosixHelper_la_LIBADD =			\
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
 libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
 
-libMonoSupportW_la_SOURCES =			\
+libMonoSupportW_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libMonoSupportW_cxx_la_CFLAGS = @CXX_ADD_CFLAGS@
+
+libMonoSupportW_la_SOURCES =
+
+libMonoSupportW_cxx_la_SOURCES =		\
 		supportw.c			\
 		support-heap.c			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
+		libMonoSupportW-cxx.la	\
 		$(glib_libs)
 
 # 
