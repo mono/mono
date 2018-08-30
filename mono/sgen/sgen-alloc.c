@@ -477,7 +477,8 @@ sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 void
 sgen_clear_tlabs (void)
 {
-	FOREACH_THREAD_ALL (info) {
+	FOREACH_THREAD_ALL (mono_thread_info) {
+		SgenThreadInfo *info = (SgenThreadInfo*)mono_thread_info;
 		/* A new TLAB will be allocated when the thread does its first allocation */
 		info->tlab_start = NULL;
 		info->tlab_next = NULL;

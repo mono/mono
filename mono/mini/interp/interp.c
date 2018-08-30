@@ -2597,7 +2597,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	GSList *finally_ips = NULL;
 	const unsigned short *endfinally_ip = NULL;
 	const unsigned short *ip = NULL;
-	register stackval *sp;
+	stackval *sp;
 	InterpMethod *rtm = NULL;
 #if DEBUG_INTERP
 	gint tracing = global_tracing;
@@ -3876,7 +3876,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 					if (!mono_error_ok (error))
 						THROW_EX (mono_error_convert_to_exception (error), ip);
 				}
-				o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+				o = (MonoObject*)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 				if (G_UNLIKELY (!o)) {
 					mono_error_set_out_of_memory (error, "Could not allocate %i bytes", m_class_get_instance_size (vtable->klass));
 					THROW_EX (mono_error_convert_to_exception (error), ip);

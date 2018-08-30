@@ -73,9 +73,9 @@ static gboolean
 ptr_on_stack (void *ptr)
 {
 	gpointer stack_start = &stack_start;
-	SgenThreadInfo *info = mono_thread_info_current ();
+	MonoThreadInfo *info = mono_thread_info_current ();
 
-	if (ptr >= stack_start && ptr < (gpointer)info->client_info.info.stack_end)
+	if (ptr >= stack_start && ptr < (gpointer)info->stack_end)
 		return TRUE;
 	return FALSE;
 }
@@ -836,7 +836,7 @@ mono_gc_clear_domain (MonoDomain * domain)
 	sgen_clear_nursery_fragments ();
 
 	FOREACH_THREAD_ALL (info) {
-		mono_handle_stack_free_domain ((HandleStack*)info->client_info.info.handle_stack, domain);
+		mono_handle_stack_free_domain ((HandleStack*)info->handle_stack, domain);
 	} FOREACH_THREAD_END
 
 	if (sgen_mono_xdomain_checks && domain != mono_get_root_domain ()) {
@@ -956,7 +956,7 @@ mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource sourc
 MonoObject*
 mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *key, const char *msg)
 {
-	return mono_gc_alloc_fixed (size, NULL, source, key, msg);
+	return mono_gc_alloc_fixed (size, 0, source, key, msg);
 }
 
 /**
@@ -1590,7 +1590,7 @@ find_pinned_obj (char *addr)
  * We pass @root_report_address so register are properly accounted towards their thread
 */
 static void
-report_conservative_roots (GCRootReport *report, char *root_report_address, void **start, void **end)
+report_conservative_roots (GCRootReport *report, void *root_report_address, void **start, void **end)
 {
 	while (start < end) {
 		mword addr = (mword)*start;
@@ -1644,19 +1644,20 @@ static void
 report_stack_roots (void)
 {
 	GCRootReport report = {0};
-	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+	FOREACH_THREAD_EXCLUDE (mono_thread_info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+		SgenThreadInfo *info = (SgenThreadInfo*)mono_thread_info;
 		void *aligned_stack_start;
 
 		if (info->client_info.skip) {
 			continue;
-		} else if (!mono_thread_info_is_live (info)) {
+		} else if (!mono_thread_info_is_live (mono_thread_info)) {
 			continue;
 		} else if (!info->client_info.stack_start) {
 			continue;
 		}
 
 		g_assert (info->client_info.stack_start);
-		g_assert (info->client_info.info.stack_end);
+		g_assert (mono_thread_info->stack_end);
 
 		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
 #ifdef HOST_WIN32
@@ -1677,7 +1678,7 @@ report_stack_roots (void)
 
 		g_assert (info->client_info.suspend_done);
 
-		report_conservative_roots (&report, aligned_stack_start, (void **)aligned_stack_start, (void **)info->client_info.info.stack_end);
+		report_conservative_roots (&report, aligned_stack_start, (void **)aligned_stack_start, (void **)mono_thread_info->stack_end);
 		report_conservative_roots (&report, aligned_stack_start, (void**)&info->client_info.ctx, (void**)(&info->client_info.ctx + 1));
 
 		report_handle_stack_roots (&report, info, FALSE);
@@ -2008,15 +2009,16 @@ mono_gc_get_gc_callbacks ()
 }
 
 gpointer
-mono_gc_thread_attach (SgenThreadInfo *info)
+mono_gc_thread_attach (MonoThreadInfo *info)
 {
-	return sgen_thread_attach (info);
+	return sgen_thread_attach ((SgenThreadInfo*)info);
 }
 
 void
 sgen_client_thread_attach (SgenThreadInfo* info)
 {
-	mono_tls_set_sgen_thread_info (info);
+	MonoThreadInfo *mono_thread_info = &info->client_info.info;
+	mono_tls_set_sgen_thread_info (mono_thread_info);
 
 	info->client_info.skip = FALSE;
 
@@ -2032,29 +2034,30 @@ sgen_client_thread_attach (SgenThreadInfo* info)
 	if (mono_gc_get_gc_callbacks ()->thread_attach_func)
 		info->client_info.runtime_data = mono_gc_get_gc_callbacks ()->thread_attach_func ();
 
-	sgen_binary_protocol_thread_register ((gpointer)mono_thread_info_get_tid (info));
+	sgen_binary_protocol_thread_register ((gpointer)mono_thread_info_get_tid (mono_thread_info));
 
-	SGEN_LOG (3, "registered thread %p (%p) stack end %p", info, (gpointer)mono_thread_info_get_tid (info), info->client_info.info.stack_end);
+	SGEN_LOG (3, "registered thread %p (%p) stack end %p", info, (gpointer)mono_thread_info_get_tid (mono_thread_info), mono_thread_info->stack_end);
 
-	info->client_info.info.handle_stack = mono_handle_stack_alloc ();
+	mono_thread_info->handle_stack = mono_handle_stack_alloc ();
 }
 
 void
-mono_gc_thread_detach_with_lock (SgenThreadInfo *info)
+mono_gc_thread_detach_with_lock (MonoThreadInfo *info)
 {
-	return sgen_thread_detach_with_lock (info);
+	return sgen_thread_detach_with_lock ((SgenThreadInfo*)info);
 }
 
 void
 sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 {
+	MonoThreadInfo *mono_thread_info = &p->client_info.info;
 	MonoNativeThreadId tid;
 
 	mono_tls_set_sgen_thread_info (NULL);
 
-	tid = mono_thread_info_get_tid (p);
+	tid = mono_thread_info_get_tid (mono_thread_info);
 
-	mono_threads_add_joinable_runtime_thread (&p->client_info.info);
+	mono_threads_add_joinable_runtime_thread (mono_thread_info);
 
 	if (mono_gc_get_gc_callbacks ()->thread_detach_func) {
 		mono_gc_get_gc_callbacks ()->thread_detach_func (p->client_info.runtime_data);
@@ -2064,8 +2067,8 @@ sgen_client_thread_detach_with_lock (SgenThreadInfo *p)
 	sgen_binary_protocol_thread_unregister ((gpointer)tid);
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)tid);
 
-	HandleStack *handles = (HandleStack*) p->client_info.info.handle_stack;
-	p->client_info.info.handle_stack = NULL;
+	HandleStack *handles = (HandleStack*) mono_thread_info->handle_stack;
+	mono_thread_info->handle_stack = NULL;
 	mono_handle_stack_free (handles);
 }
 
@@ -2085,7 +2088,7 @@ mono_gc_skip_thread_changing (gboolean skip)
 		 * If we skip scanning a thread with a non-empty handle stack, we may move an
 		 * object but fail to update the reference in the handle.
 		 */
-		HandleStack *stack = mono_thread_info_current ()->client_info.info.handle_stack;
+		HandleStack *stack = (HandleStack*)mono_thread_info_current ()->handle_stack;
 		g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 	}
 }
@@ -2097,8 +2100,9 @@ mono_gc_skip_thread_changed (gboolean skip)
 }
 
 gboolean
-mono_gc_thread_in_critical_region (SgenThreadInfo *info)
+mono_gc_thread_in_critical_region (MonoThreadInfo *mono_thread_info)
 {
+	SgenThreadInfo *info = (SgenThreadInfo*)mono_thread_info;
 	return info->client_info.in_critical_region;
 }
 
@@ -2168,22 +2172,23 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 	return;
 #endif
 
-	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+	FOREACH_THREAD_EXCLUDE (mono_thread_info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+		SgenThreadInfo *info = (SgenThreadInfo*)mono_thread_info;
 		int skip_reason = 0;
 		void *aligned_stack_start;
 
 		if (info->client_info.skip) {
-			SGEN_LOG (3, "Skipping dead thread %p, range: %p-%p, size: %zd", info, info->client_info.stack_start, info->client_info.info.stack_end, (char*)info->client_info.info.stack_end - (char*)info->client_info.stack_start);
+			SGEN_LOG (3, "Skipping dead thread %p, range: %p-%p, size: %zd", info, info->client_info.stack_start, mono_thread_info->stack_end, (char*)mono_thread_info->stack_end - (char*)info->client_info.stack_start);
 			skip_reason = 1;
-		} else if (!mono_thread_info_is_live (info)) {
-			SGEN_LOG (3, "Skipping non-running thread %p, range: %p-%p, size: %zd (state %x)", info, info->client_info.stack_start, info->client_info.info.stack_end, (char*)info->client_info.info.stack_end - (char*)info->client_info.stack_start, info->client_info.info.thread_state);
+		} else if (!mono_thread_info_is_live (mono_thread_info)) {
+			SGEN_LOG (3, "Skipping non-running thread %p, range: %p-%p, size: %zd (state %x)", info, info->client_info.stack_start, mono_thread_info->stack_end, (char*)mono_thread_info->stack_end - (char*)info->client_info.stack_start, info->client_info.info.thread_state);
 			skip_reason = 3;
 		} else if (!info->client_info.stack_start) {
 			SGEN_LOG (3, "Skipping starting or detaching thread %p", info);
 			skip_reason = 4;
 		}
 
-		sgen_binary_protocol_scan_stack ((gpointer)mono_thread_info_get_tid (info), info->client_info.stack_start, info->client_info.info.stack_end, skip_reason);
+		sgen_binary_protocol_scan_stack ((gpointer)mono_thread_info_get_tid (mono_thread_info), info->client_info.stack_start, mono_thread_info->stack_end, skip_reason);
 
 		if (skip_reason) {
 			if (precise) {
@@ -2191,14 +2196,14 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				 * resumes running we may potentially move an object but fail to
 				 * update the reference in the handle.
 				 */
-				HandleStack *stack = info->client_info.info.handle_stack;
+				HandleStack *stack = mono_thread_info->handle_stack;
 				g_assert (stack == NULL || mono_handle_stack_is_empty (stack));
 			}
 			continue;
 		}
 
 		g_assert (info->client_info.stack_start);
-		g_assert (info->client_info.info.stack_end);
+		g_assert (mono_thread_info->stack_end);
 
 		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
 #ifdef HOST_WIN32
@@ -2218,16 +2223,16 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 #endif
 
 		g_assert (info->client_info.suspend_done);
-		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.info.stack_end, (char*)info->client_info.info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
+		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, mono_thread_info->stack_end, (char*)mono_thread_info->stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
 		if (mono_gc_get_gc_callbacks ()->thread_mark_func && !conservative_stack_mark) {
-			mono_gc_get_gc_callbacks ()->thread_mark_func (info->client_info.runtime_data, (guint8 *)aligned_stack_start, (guint8 *)info->client_info.info.stack_end, precise, &ctx);
+			mono_gc_get_gc_callbacks ()->thread_mark_func (info->client_info.runtime_data, (guint8 *)aligned_stack_start, (guint8 *)mono_thread_info->stack_end, precise, &ctx);
 		} else if (!precise) {
 			if (!conservative_stack_mark) {
 				fprintf (stderr, "Precise stack mark not supported - disabling.\n");
 				conservative_stack_mark = TRUE;
 			}
 			//FIXME we should eventually use the new stack_mark from coop
-			sgen_conservatively_pin_objects_from ((void **)aligned_stack_start, (void **)info->client_info.info.stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
+			sgen_conservatively_pin_objects_from ((void **)aligned_stack_start, (void **)mono_thread_info->stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
 		}
 
 		if (!precise) {
@@ -2237,7 +2242,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 			{
 				// This is used on Coop GC for platforms where we cannot get the data for individual registers.
 				// We force a spill of all registers into the stack and pass a chunk of data into sgen.
-				//FIXME under coop, for now, what we need to ensure is that we scan any extra memory from info->client_info.info.stack_end to stack_mark
+				//FIXME under coop, for now, what we need to ensure is that we scan any extra memory from mono_thread_info->stack_end to stack_mark
 				MonoThreadUnwindState *state = &info->client_info.info.thread_saved_state [SELF_SUSPEND_STATE_INDEX];
 				if (state && state->gc_stackdata) {
 					sgen_conservatively_pin_objects_from ((void **)state->gc_stackdata, (void**)((char*)state->gc_stackdata + state->gc_stackdata_size),
@@ -2259,7 +2264,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 				memset (&ud, 0, sizeof (ud));
 				ud.start_nursery = (void**)start_nursery;
 				ud.end_nursery = (void**)end_nursery;
-				mono_handle_stack_scan ((HandleStack*)info->client_info.info.handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
+				mono_handle_stack_scan ((HandleStack*)mono_thread_info->handle_stack, pin_handle_stack_interior_ptrs, &ud, precise, FALSE);
 			}
 		}
 	} FOREACH_THREAD_END
@@ -2274,13 +2279,13 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 void
 mono_gc_set_stack_end (void *stack_end)
 {
-	SgenThreadInfo *info;
+	MonoThreadInfo *info;
 
 	LOCK_GC;
 	info = mono_thread_info_current ();
 	if (info) {
-		SGEN_ASSERT (0, stack_end < info->client_info.info.stack_end, "Can only lower stack end");
-		info->client_info.info.stack_end = stack_end;
+		SGEN_ASSERT (0, stack_end < info->stack_end, "Can only lower stack end");
+		info->stack_end = stack_end;
 	}
 	UNLOCK_GC;
 }
@@ -2470,7 +2475,7 @@ mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
 void
 mono_gc_register_obj_with_weak_fields (void *obj)
 {
-	return sgen_register_obj_with_weak_fields (obj);
+	return sgen_register_obj_with_weak_fields ((MonoObject*)obj);
 }
 
 void*
@@ -2634,23 +2639,23 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 }
 
 void
-sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
+sgen_client_gchandle_created (int /*FIXMEcxx GCHandleType*/ handle_type, GCObject *obj, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_created, (handle, handle_type, obj));
+	MONO_PROFILER_RAISE (gc_handle_created, (handle, (MonoGCHandleType)handle_type, obj));
 }
 
 void
-sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
+sgen_client_gchandle_destroyed (int /*FIXMEcxx GCHandleType*/ handle_type, guint32 handle)
 {
 #ifndef DISABLE_PERFCOUNTERS
 	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, handle_type));
+	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, (MonoGCHandleType)handle_type));
 }
 
 void

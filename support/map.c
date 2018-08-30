@@ -83,6 +83,8 @@
 #include <errno.h>    /* errno, EOVERFLOW */
 #include <glib.h>     /* g* types, g_assert_not_reached() */
 
+G_BEGIN_DECLS
+
 #if defined (G_MININT8)
 #define CNM_MININT8 G_MININT8
 #else
@@ -9324,3 +9326,5 @@ int Mono_Posix_ToXattrFlags (int x, int *r)
 #endif /* ndef XATTR_REPLACE */
 	return 0;
 }
+
+G_END_DECLS

@@ -31,7 +31,7 @@ _mph_from_iovec_array (struct Mono_Posix_Iovec *iov, gint32 iovcnt)
 		return NULL;
 	}
 
-	v = malloc (iovcnt * sizeof (struct iovec));
+	v = (struct iovec*)malloc (iovcnt * sizeof (struct iovec));
 	if (!v) {
 		return NULL;
 	}
@@ -122,6 +122,7 @@ Mono_Posix_Syscall_pwritev (int dirfd, struct Mono_Posix_Iovec *iov, gint32 iovc
 }
 #endif /* def HAVE_PWRITEV */
 
+G_END_DECLS
 
 /*
  * vim: noexpandtab

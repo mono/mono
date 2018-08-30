@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include "supportw.h"
 
+G_BEGIN_DECLS
+
 gpointer HeapAlloc            (gpointer unused1, gint32 unused2, gint32 nbytes);
 gpointer HeapCreate           (gint32 flags, gint32 initial_size, gint32 max_size);
 gboolean HeapSetInformation   (gpointer handle, gpointer heap_info_class,
@@ -170,3 +172,5 @@ GetProcessHeap (void)
 	return process_heap;
 }
 /* end Heap* functions */
+
+G_END_DECLS

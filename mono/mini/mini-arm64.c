@@ -1953,7 +1953,9 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 }
 
 #if __APPLE__
+G_BEGIN_DECLS
 void sys_icache_invalidate (void *start, size_t len);
+G_END_DECLS
 #endif
 
 void
@@ -2789,14 +2791,14 @@ mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
 }
 
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
 }
 
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
@@ -3079,7 +3081,7 @@ emit_move_return_value (MonoCompile *cfg, guint8 * code, MonoInst *ins)
 	MonoCallInst *call;
 
 	call = (MonoCallInst*)ins;
-	cinfo = call->call_info;
+	cinfo = (CallInfo*)call->call_info;
 	g_assert (cinfo);
 	switch (cinfo->ret.storage) {
 	case ArgNone:
@@ -3229,7 +3231,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 			break;
 		case OP_JUMP_TABLE:
-			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
+			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
 			code = emit_imm64_template (code, dreg);
 			break;
 		case OP_BREAK:
@@ -5288,7 +5290,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (fail_tramp)
-		buf = mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
+		buf = (guint8*)mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
 	else
 		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;

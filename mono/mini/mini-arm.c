@@ -67,7 +67,9 @@
 #define THUNK_SIZE (3 * 4)
 
 #if __APPLE__
+G_BEGIN_DECLS
 void sys_icache_invalidate (void *start, size_t len);
+G_END_DECLS
 #endif
 
 /* This mutex protects architecture specific caches */
@@ -360,7 +362,9 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 #endif
 
 #ifdef HAVE_AEABI_READ_TP
+G_BEGIN_DECLS
 gpointer __aeabi_read_tp (void);
+G_END_DECLS
 #endif
 
 gboolean
@@ -625,7 +629,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 
 #define MAX_ARCH_DELEGATE_PARAMS 3
 
-static gpointer
+static guint8*
 get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean param_count)
 {
 	guint8 *code, *start;
@@ -719,7 +723,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		}
 
 		if (mono_ee_features.use_aot_trampolines) {
-			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
+			start = (guint8*)mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
 		} else {
 			MonoTrampInfo *info;
 			start = get_delegate_invoke_impl (&info, TRUE, 0);
@@ -747,7 +751,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 		if (mono_ee_features.use_aot_trampolines) {
 			char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", sig->param_count);
-			start = mono_aot_get_trampoline (name);
+			start = (guint8*)mono_aot_get_trampoline (name);
 			g_free (name);
 		} else {
 			MonoTrampInfo *info;
@@ -1076,7 +1080,7 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #elif __APPLE__
 	sys_icache_invalidate (code, size);
 #else
-    __builtin___clear_cache (code, code + size);
+    __builtin___clear_cache ((char*)code, (char*)code + size);
 #endif
 }
 
@@ -3162,7 +3166,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
  */
 
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_prolog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar*)p;
 
@@ -3183,7 +3187,7 @@ enum {
 };
 
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+(mono_arch_instrument_epilog) (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar*)p;
 	int save_mode = SAVE_NONE;
@@ -7329,7 +7333,7 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	MonoDebugOptions *opt = mini_get_debug_options ();
 
 	if (ji->from_aot) {
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		if (!breakpoint_tramp)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
@@ -7378,7 +7382,7 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 
 	if (ji->from_aot) {
 		guint32 native_offset = ip - (guint8*)ji->code_start;
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		if (!breakpoint_tramp)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
@@ -7515,7 +7519,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	// FIXME: Add a free function
 
 	mono_domain_lock (domain);
-	info = g_hash_table_lookup (domain_jit_info (domain)->arch_seq_points, 
+	info = (SeqPointInfo*)g_hash_table_lookup (domain_jit_info (domain)->arch_seq_points,
 								code);
 	mono_domain_unlock (domain);
 
@@ -7627,7 +7631,7 @@ static G_GNUC_UNUSED guint8*
 emit_aotconst (MonoCompile *cfg, guint8 *code, int dreg, int patch_type, gpointer data)
 {
 	/* OP_AOTCONST */
-	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
+	mono_add_patch_info (cfg, code - cfg->native_code, (MonoJumpInfoType)patch_type, data);
 	ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 	ARM_B (code, 0);
 	*(gpointer*)code = NULL;
@@ -7642,7 +7646,7 @@ mono_arm_emit_aotconst (gpointer ji_list, guint8 *code, guint8 *buf, int dreg, i
 {
 	MonoJumpInfo **ji = (MonoJumpInfo**)ji_list;
 
-	*ji = mono_patch_info_list_prepend (*ji, code - buf, patch_type, data);
+	*ji = mono_patch_info_list_prepend (*ji, code - buf, (MonoJumpInfoType)patch_type, data);
 	ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 	ARM_B (code, 0);
 	*(gpointer*)code = NULL;

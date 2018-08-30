@@ -1,4 +1,3 @@
-
 /*
  * These return allocated strings
  */

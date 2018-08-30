@@ -32,12 +32,18 @@ extern __declspec(dllimport) void __stdcall CoTaskMemFree(void *ptr);
 
 typedef int (STDCALL *SimpleDelegate) (int a);
 
-#if defined(WIN32) && defined (_MSC_VER)
-#define LIBTEST_API __declspec(dllexport)
-#elif defined(__GNUC__)
-#define LIBTEST_API  __attribute__ ((__visibility__ ("default")))
+#ifdef __cplusplus
+#define MONO_EXTERN_C extern "C"
 #else
-#define LIBTEST_API
+#define MONO_EXTERN_C /* nothing */
+#endif
+
+#if defined(WIN32) && defined (_MSC_VER)
+#define LIBTEST_API MONO_EXTERN_C __declspec(dllexport)
+#elif defined(__GNUC__)
+#define LIBTEST_API  MONO_EXTERN_C __attribute__ ((__visibility__ ("default")))
+#else
+#define LIBTEST_API MONO_EXTERN_C
 #endif
 
 static void marshal_free (void *ptr)
@@ -1248,30 +1254,6 @@ mono_test_marshal_stringbuilder_ref (char **s)
 	return 0;
 }
 
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wc++-compat"
-#endif
-
-/*
-* Standard C and C++ doesn't allow empty structs, empty structs will always have a size of 1 byte.
-* GCC have an extension to allow empty structs, https://gcc.gnu.org/onlinedocs/gcc/Empty-Structures.html.
-* This cause a little dilemma since runtime build using none GCC compiler will not be compatible with
-* GCC build C libraries and the other way around. On platforms where empty structs has size of 1 byte
-* it must be represented in call and cannot be dropped. On Windows x64 structs will always be represented in the call
-* meaning that an empty struct must have a representation in the callee in order to correctly follow the ABI used by the
-* C/C++ standard and the runtime.
-*/
-typedef struct {
-#if !defined(__GNUC__) || defined(TARGET_WIN32)
-    char a;
-#endif
-} EmptyStruct;
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
-
 LIBTEST_API int STDCALL 
 mono_test_marshal_empty_string_array (char **array)
 {
@@ -1351,37 +1333,6 @@ mono_test_marshal_unicode_string_array (gunichar2 **array, char **array2)
 		return 4;
 
 	return 0;
-}
-
-/* this does not work on Redhat gcc 2.96 */
-LIBTEST_API int STDCALL  
-mono_test_empty_struct (int a, EmptyStruct es, int b)
-{
-	// printf ("mono_test_empty_struct %d %d\n", a, b);
-
-	// Intel icc on ia64 passes 'es' in 2 registers
-#if defined(__ia64) && defined(__INTEL_COMPILER)
-	return 0;
-#else
-	if (a == 1 && b == 2)
-		return 0;
-	return 1;
-#endif
-}
-
-LIBTEST_API EmptyStruct STDCALL
-mono_test_return_empty_struct (int a)
-{
-	EmptyStruct s;
-
-	memset (&s, 0, sizeof (s));
-
-#if !(defined(__i386__) && defined(__clang__))
-	/* https://bugzilla.xamarin.com/show_bug.cgi?id=58901 */
-	g_assert (a == 42);
-#endif
-
-	return s;
 }
 
 typedef struct {
@@ -1771,8 +1722,9 @@ mono_test_last_error (int err)
 }
 
 LIBTEST_API int STDCALL 
-mono_test_asany (void *ptr, int what)
+mono_test_asany (void *void_ptr, int what)
 {
+	const char *ptr = (const char*)void_ptr;
 	switch (what) {
 	case 1:
 		return (*(int*)ptr == 5) ? 0 : 1;
@@ -2061,7 +2013,7 @@ typedef void (STDCALL *CustomOutParamDelegate) (void **pptr);
 LIBTEST_API int STDCALL 
 mono_test_marshal_custom_out_param_delegate (CustomOutParamDelegate del)
 {
-	void* pptr = del;
+	void* pptr = (void*)del;
 
 	del (&pptr);
 
@@ -2475,7 +2427,7 @@ add_delegate (int i, int j)
 LIBTEST_API gpointer STDCALL 
 mono_test_marshal_return_fnptr (void)
 {
-	return &add_delegate;
+	return (gpointer)&add_delegate;
 }
 
 LIBTEST_API int STDCALL 
@@ -5503,12 +5455,13 @@ mono_test_marshal_safearray_mixed(
 
 static int call_managed_res;
 
-static void
+static gpointer
 call_managed (gpointer arg)
 {
 	SimpleDelegate del = (SimpleDelegate)arg;
 
 	call_managed_res = del (42);
+	return 0;
 }
 
 LIBTEST_API int STDCALL 
@@ -5520,7 +5473,7 @@ mono_test_marshal_thread_attach (SimpleDelegate del)
 	int res;
 	pthread_t t;
 
-	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed, del);
+	res = pthread_create (&t, NULL, call_managed, (gpointer)del);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 
@@ -5534,16 +5487,17 @@ typedef struct {
 
 typedef int (STDCALL *LargeStructDelegate) (LargeStruct *s);
 
-static void
+static gpointer
 call_managed_large_vt (gpointer arg)
 {
 	LargeStructDelegate del = (LargeStructDelegate)arg;
 	LargeStruct s;
 
 	call_managed_res = del (&s);
+	return 0;
 }
 
-LIBTEST_API int STDCALL
+LIBTEST_API gulong STDCALL
 mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
 {
 #ifdef WIN32
@@ -5552,7 +5506,7 @@ mono_test_marshal_thread_attach_large_vt (SimpleDelegate del)
 	int res;
 	pthread_t t;
 
-	res = pthread_create (&t, NULL, (gpointer (*)(gpointer))call_managed_large_vt, del);
+	res = pthread_create (&t, NULL, call_managed_large_vt, (gpointer)del);
 	g_assert (res == 0);
 	pthread_join (t, NULL);
 
@@ -7600,7 +7554,7 @@ LIBTEST_API void STDCALL
 mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFunc func)
 {
 	pthread_t t;
-	pthread_create (&t, NULL, mono_test_native_to_managed_exception_rethrow_thread, func);
+	pthread_create (&t, NULL, mono_test_native_to_managed_exception_rethrow_thread, (gpointer)func);
 	pthread_join (t, NULL);
 }
 #endif

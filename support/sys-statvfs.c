@@ -41,7 +41,7 @@ G_BEGIN_DECLS
 int
 Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 {
-	struct statvfs *from = _from;
+	struct statvfs *from = (struct statvfs*)_from;
 
 	to->f_bsize   = from->f_bsize;
 	to->f_frsize  = from->f_frsize;
@@ -71,7 +71,7 @@ Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 int
 Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
 {
-	struct statvfs *to = _to;
+	struct statvfs *to = (struct statvfs*)_to;
 	guint64 flag;
 
 	to->f_bsize   = from->f_bsize;
@@ -151,7 +151,7 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 int
 Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 {
-	struct statfs *from = _from;
+	struct statfs *from = (struct statfs*)_from;
 
 	to->f_bsize   = from->f_bsize;
 	to->f_frsize  = from->f_bsize;
@@ -177,7 +177,7 @@ Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 int
 Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
 {
-	struct statfs *to = _to;
+	struct statfs *to = (struct statfs*)_to;
 	guint64 flag;
 
 	to->f_bsize   = from->f_bsize;
