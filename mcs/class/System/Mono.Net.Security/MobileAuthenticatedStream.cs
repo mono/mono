@@ -77,7 +77,7 @@ namespace Mono.Net.Security
 			Settings = settings;
 			Provider = provider;
 
-			readBuffer = new BufferOffsetSize2 (16384);
+			readBuffer = new BufferOffsetSize2 (16500);
 			writeBuffer = new BufferOffsetSize2 (16384);
 			operation = Operation.None;
 		}
