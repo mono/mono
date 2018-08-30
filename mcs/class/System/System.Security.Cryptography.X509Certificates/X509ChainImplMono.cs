@@ -110,10 +110,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// methods
 
-		public override void AddStatus (X509ChainStatusFlags error) 
-		{
-		}
-
 		[MonoTODO ("Not totally RFC3280 compliant, but neither is MS implementation...")]
 		public override bool Build (X509Certificate2 certificate)
 		{
