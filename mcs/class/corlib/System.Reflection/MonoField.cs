@@ -333,18 +333,10 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern Type[] GetTypeModifiers (bool optional);
 
-		public override Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
 
-		public override Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
+
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
 	}
 }
