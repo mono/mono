@@ -46,9 +46,7 @@ include mxe.mk
 endif
 
 ## LLVM targets
-ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)
 include llvm.mk
-endif
 
 ## BCL targets
 ifndef DISABLE_BCL
