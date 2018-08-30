@@ -421,18 +421,20 @@ var BindingSupportLib = {
 			var gc_handle = this.mono_wasm_free_list.length ? this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
-			this.mono_wasm_object_registry[gc_handle] = js_obj;
+			this.mono_wasm_object_registry[gc_handle] = {refcount: 1, value: js_obj};;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
 
 		extract_mono_obj: function (js_obj) {
-			//help JS ppl, is this enough?
+
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 
-			if (!js_obj.__mono_gchandle__) {
-				this.mono_wasm_register_obj(js_obj);
+			if (!js_obj.is_mono_bridged_obj) {
+				var gc_handle = this.mono_wasm_register_obj(js_obj);
+				return this.wasm_get_raw_obj (gc_handle);
 			}
+
 
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
@@ -451,7 +453,7 @@ var BindingSupportLib = {
 				is_mono_bridged_obj: true
 			};
 
-			this.mono_wasm_object_registry[gcHandle] = js_obj;
+			this.mono_wasm_object_registry[gcHandle] = {refcount: 1, value: js_obj};
 			return js_obj;
 		},
 
@@ -597,40 +599,68 @@ var BindingSupportLib = {
 		mono_wasm_register_obj: function(obj) {
 
 			var gc_handle = undefined;
-			if (obj !== null && typeof obj !== "undefined") {
+			if (obj !== null && typeof obj !== "undefined") 
+			{
 				gc_handle = obj.__mono_gchandle__;
-				if (typeof gc_handle === "undefined") {
+				if (gc_handle !== null && typeof gc_handle !== "undefined")
+				{
+					this.mono_wasm_object_registry[obj.__mono_jshandle__].refcount += 1;
+				}
+				else
+				{
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
-					gc_handle = handle + 1;
-					obj.__mono_gchandle__ = this.wasm_binding_obj_new(gc_handle);
-						
+					obj.__mono_jshandle__ = handle;
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1);
+					this.mono_wasm_object_registry[handle] = {refcount: 1, value: obj};
 				}
-				this.mono_wasm_object_registry[handle] = obj;
 			}
 			return gc_handle;
 		},
 		mono_wasm_require_handle: function(handle) {
 			if (handle > 0)
-				return this.mono_wasm_object_registry[handle - 1];
+				return this.mono_wasm_object_registry[handle - 1].value;
 			return null;
 		},
 		mono_wasm_unregister_obj: function(js_id) {
-			var obj = this.mono_wasm_object_registry[js_id - 1]
+			var obj = this.mono_wasm_object_registry[js_id - 1].value;
 			if (typeof obj  !== "undefined" && obj !== null) {
-				var gc_handle = obj.__mono_gchandle__;
-				if (typeof gc_handle  !== "undefined") {
+				if (0 === --this.mono_wasm_object_registry[js_id - 1].refcount) {
 					this.wasm_unbind_js_obj_and_free(js_id);
 					delete obj.__mono_gchandle__;
+					delete obj.__mono_jshandle__;
+					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
-					return obj;
 				}
 			}
-			return null;
+			return obj;
 		},
 		mono_wasm_free_handle: function(handle) {
 			this.mono_wasm_unregister_obj(handle);
 		},
+		mono_wasm_get_global: function() {
+			function testGlobal(obj) {
+				obj['___mono_wasm_global___'] = obj;
+				var success = typeof ___mono_wasm_global___ === 'object' && obj['___mono_wasm_global___'] === obj;
+				if (!success) {
+					delete obj['___mono_wasm_global___'];
+				}
+				return success;
+			}
+			if (typeof ___mono_wasm_global___ === 'object') {
+				return ___mono_wasm_global___;
+			}
+			if (typeof global === 'object' && testGlobal(global)) {
+				___mono_wasm_global___ = global;
+			} else if (typeof window === 'object' && testGlobal(window)) {
+				___mono_wasm_global___ = window;
+			}
+			if (typeof ___mono_wasm_global___ === 'object') {
+				return ___mono_wasm_global___;
+			}
+			throw Error('unable to get mono wasm global object.');
+		},
+	
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -737,10 +767,41 @@ var BindingSupportLib = {
         
         }
         return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
-    },
+	},
+	mono_wasm_get_global_object: function(global_name, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var js_name = BINDING.conv_string (global_name);
+
+		var globalObj = undefined;
+
+		if (!js_name) {
+			globalObj = BINDING.mono_wasm_get_global();
+		}
+		else {
+			globalObj = BINDING.mono_wasm_get_global()[js_name];
+		}
+
+		if (globalObj === null || typeof globalObj === undefined) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Global object '" + js_name + "' not found.");
+		}
+
+		return BINDING.js_to_mono_obj (globalObj);
+	},
+	mono_wasm_add_ref: function(handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_object_registry[handle-1].refcount += 1;
+	},
+	mono_wasm_release_ref: function(handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_unregister_obj(handle);
+	},
+	
 
 };
 
 autoAddDeps(BindingSupportLib, '$BINDING')
 mergeInto(LibraryManager.library, BindingSupportLib)
-
