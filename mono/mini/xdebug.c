@@ -96,12 +96,12 @@ struct jit_code_entry
 
 typedef struct jit_descriptor
 {
-  guint32 version;
-  /* This type should be jit_actions_t, but we use guint32
-     to be explicit about the bitwidth.  */
-  guint32 action_flag;
-  jit_code_entry *relevant_entry;
-  jit_code_entry *first_entry;
+	guint32 version;
+	/* This type should be jit_actions_t, but we use guint32
+	   to be explicit about the bitwidth.  */
+	guint32 action_flag;
+	jit_code_entry *relevant_entry;
+	jit_code_entry *first_entry;
 } jit_descriptor;
 
 G_BEGIN_DECLS
