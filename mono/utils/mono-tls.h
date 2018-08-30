@@ -15,6 +15,7 @@
 
 #include <config.h>
 #include <glib.h>
+#include <mono/utils/mono-forward-internal.h>
 
 /* TLS entries used by the runtime */
 typedef enum {

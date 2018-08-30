@@ -8,7 +8,6 @@
  * Copyright 2013 Xamarin, Inc (http://www.xamarin.com)
  */
 
-#include <mono/utils/mono-forward-internal.h>
 #include <mono/utils/mach-support.h>
 
 #include "mono-tls.h"

@@ -17,7 +17,7 @@
 
 #ifdef HAVE_SGEN_GC
 
-#include <mono/utils/mono-forward.h>
+#include <mono/utils/mono-forward-internal.h>
 #undef THREAD_INFO_TYPE
 #define THREAD_INFO_TYPE SgenThreadInfo
 

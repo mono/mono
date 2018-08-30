@@ -15,6 +15,7 @@
 
 #include <glib.h>
 
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object.h>
 #include "mono/metadata/handle.h"
 #include "mono/utils/mono-compiler.h"
