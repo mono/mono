@@ -3827,14 +3827,16 @@ if test "x$enable_llvm" = "xyes"; then
        LLVM_CFLAGS="-I$with_llvm/include -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
        LLVM_CXXFLAGS="$LLVM_CFLAGS -std=gnu++11 -fvisibility-inlines-hidden -fno-rtti -Woverloaded-virtual -Wcast-qual"
        LLVM_LDFLAGS="-L$with_llvm/lib"
-       LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm"
+       LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm -lz -luuid -lole32"
        LLVM_LIBS="-lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter \
-         -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMSelectionDAG -lLLVMAsmPrinter \
-         -lLLVMMCDisassembler -lLLVMJIT -lLLVMAnalysis -lLLVMTarget \
-         -lLLVMIRReader -lLLVMAsmParser -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation \
-         -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
-         -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld \
-         -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore \
+         -lLLVMTableGen  -lLLVMOption -lLLVMSelectionDAG -lLLVMAsmPrinter \
+         -lLLVMARMAsmPrinter -lLLVMX86AsmParser \
+         -lLLVMMCDisassembler -lLLVMAnalysis -lLLVMTarget \
+         -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF \
+         -lLLVMIRReader -lLLVMAsmParser -lLLVMLineEditor -lLLVMInstrumentation \
+         -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
+         -lLLVMBinaryFormat -lLLVMProfileData -lLLVMTarget \
+         -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore \
          -lLLVMSupport -lstdc++"
        LLVM_LIBS="$LLVM_LIBS $LLVM_ARCH_LIBS $LLVM_SYSTEM_LIBS"
 
