@@ -20,11 +20,15 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../ecma.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
@@ -113,7 +117,6 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
-    <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
