@@ -6,6 +6,7 @@ llvm-llvm32/
 llvm-llvm64/
 llvm-llvmwin32/
 llvm-llvmwin64/
+llvm36-llvm32/
 android-armeabi-*/
 android-armeabi-v7a-*/
 android-arm64-v8a-*/

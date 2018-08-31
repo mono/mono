@@ -29,6 +29,9 @@ provision-android-$(3)-$(1): $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.st
 .PHONY: provision-android
 provision-android: provision-android-$(3)-$(1)
 
+.PHONY: provision
+provision: provision-android-$(3)-$(1)
+
 endef
 
 AndroidNDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),,ndk,$(ANDROID_URI))
@@ -326,10 +329,10 @@ $$(eval $$(call CrossRuntimeTemplate,android-$(1),$$(if $$(filter $$(UNAME),Darw
 
 endef
 
-$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,android-armeabi-v7a,llvm32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,android-arm64-v8a,llvm64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,android-x86,llvm32,i686-none-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,android-x86_64,llvm64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,android-armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,android-x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,android-x86_64,llvm-llvm64,x86_64-none-linux-android))
 
 ##
 # Parameters
@@ -386,7 +389,7 @@ $$(eval $$(call CrossRuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filte
 
 endef
 
-$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v7a,llvmwin32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvmwin32,i686-none-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvmwin64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
