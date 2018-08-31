@@ -63,7 +63,7 @@ _runtime_$(1)_CONFIGURE_FLAGS= \
 
 .stamp-$(1)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-$(1)-toolchain
 	mkdir -p $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)
-	$(if $$(_$(1)_PATH),PATH="$$$$PATH:$$(_$(1)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $(abspath $(TOP)/configure) $$(_runtime_$(1)_AC_VARS) $$(_runtime_$(1)_CONFIGURE_ENVIRONMENT) $$(_runtime_$(1)_CONFIGURE_FLAGS)
+	$(if $$(_$(1)_PATH),PATH="$$$$PATH:$$(_$(1)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(abspath $$<) $$(_runtime_$(1)_AC_VARS) $$(_runtime_$(1)_CONFIGURE_ENVIRONMENT) $$(_runtime_$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
 .PHONY: .stamp-$(1)-configure
