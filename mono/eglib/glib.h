@@ -24,16 +24,13 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <limits.h>
-
-
-#ifdef _MSC_VER
-#pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
-#endif
-
 #include <stdint.h>
 #include <inttypes.h>
-
+#ifdef _MSC_VER
+#include <eglib-config.hw>
+#else
 #include <eglib-config.h>
+#endif
 
 // - Pointers should only be converted to or from pointer-sized integers.
 // - Any size integer can be converted to any other size integer.
