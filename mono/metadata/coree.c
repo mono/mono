@@ -893,7 +893,7 @@ mono_coree_set_act_ctx (const char* file_name)
 	act_ctx.dwFlags = ACTCTX_FLAG_SET_PROCESS_DEFAULT | ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID | ACTCTX_FLAG_RESOURCE_NAME_VALID | ACTCTX_FLAG_APPLICATION_NAME_VALID;
 	act_ctx.lpSource = full_path_utf16;
 	act_ctx.lpAssemblyDirectory = dir_name_utf16;
-	act_ctx.lpResourceName = MAKEINTRESOURCE (CREATEPROCESS_MANIFEST_RESOURCE_ID);
+	act_ctx.lpResourceName = CREATEPROCESS_MANIFEST_RESOURCE_ID;
 	act_ctx.lpApplicationName = base_name_utf16;
 
 	handle = CreateActCtx_proc (&act_ctx);
