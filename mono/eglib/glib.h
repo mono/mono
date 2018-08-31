@@ -61,8 +61,6 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
