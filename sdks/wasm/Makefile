@@ -156,24 +156,13 @@ MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
 mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
 
-.stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
-	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
-	cp aot-driver.js aot/
-	touch $@
-
 aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding mini_tests_basic.dll
 	ninja -v -C obj/aot-sample
 
-link-sample: driver-aot-sample.o library_mono.js binding_support.js dotnet_support.js
-	$(EMCC) -Os -g -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver-aot-sample.o $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
-
-
-do-aot-sample: build-aot-sample
-	(cd aot && $(SM) aot-driver.js)
-
-
-build-aot-test: .stamp-build-aot-test
+do-aot-sample: aot-sample
+	cp aot-driver.js bin/aot-sample
+	(cd bin/aot-sample && $(SM) aot-driver.js)
 
 build-debug-sample: .stamp-build-debug-sample
 
