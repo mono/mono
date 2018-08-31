@@ -421,7 +421,7 @@ static gint64 stat_entry_invalidated = 0;
 #endif
 
 static int
-add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entries, GCObject *obj, void *user_data)
+add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entries, GCObject *obj, SGenFinalizationProc user_data)
 {
 	gint32 index, new_next_entry, old_next_entry;
 	gint32 previous_state;
