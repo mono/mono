@@ -15,7 +15,7 @@
 #include "mono/utils/mono-coop-mutex.h"
 
 #ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE (gpointer)-1
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 #endif
 
 #define MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS 64
