@@ -158,7 +158,7 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
-	ret = getsockopt (sock, level, optname, optval, optlen);
+	ret = getsockopt (sock, level, optname, (char*)optval, optlen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
