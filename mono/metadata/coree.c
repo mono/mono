@@ -827,7 +827,7 @@ STDAPI MonoFixupExe(HMODULE ModuleHandle)
 					else
 					{
 						IMAGE_IMPORT_BY_NAME* ImportByName = (IMAGE_IMPORT_BY_NAME*)((DWORD_PTR)DosHeader + ImportThunkData->u1.AddressOfData);
-						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, ImportByName->Name);
+						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, (PCSTR)ImportByName->Name);
 					}
 					if (ProcAddress == 0)
 						return E_FAIL;
