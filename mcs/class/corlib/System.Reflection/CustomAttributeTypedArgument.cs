@@ -96,19 +96,19 @@ namespace System.Reflection {
 				if (ArgumentType.IsEnum)
 					return string.Format (CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.FullName);
 
-				else if (Value == null)
+				if (Value == null)
 					return string.Format (CultureInfo.CurrentCulture, typed ? "null" : "({0})null", ArgumentType.Name);
 
-				else if (ArgumentType == typeof (string))
+				if (ArgumentType == typeof (string))
 					return string.Format (CultureInfo.CurrentCulture, "\"{0}\"", Value);
 
-				else if (ArgumentType == typeof (char))
+				if (ArgumentType == typeof (char))
 					return string.Format (CultureInfo.CurrentCulture, "'{0}'", Value);
 
-				else if (ArgumentType == typeof (Type))
+				if (ArgumentType == typeof (Type))
 					return string.Format (CultureInfo.CurrentCulture, "typeof({0})", ((Type)Value).FullName);
 
-				else if (ArgumentType.IsArray) {
+				if (ArgumentType.IsArray) {
 					StringBuilder result = new StringBuilder ();
 					IList<CustomAttributeTypedArgument> array = Value as IList<CustomAttributeTypedArgument>;
 
