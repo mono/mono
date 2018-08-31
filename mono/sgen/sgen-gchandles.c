@@ -155,7 +155,7 @@ sgen_gc_handles_report_roots (SgenUserReportRootFunc report_func, void *gc_data)
 		revealed = MONO_GC_REVEAL_POINTER (hidden, FALSE);
 
 		if (MONO_GC_HANDLE_IS_OBJECT_POINTER (hidden))
-			report_func ((void*)slot, revealed, gc_data);
+			report_func ((void*)slot, (GCObject*)revealed, gc_data);
 	} SGEN_ARRAY_LIST_END_FOREACH_SLOT;
 }
 
