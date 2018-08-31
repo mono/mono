@@ -280,7 +280,6 @@ endif
 wasm_sources = \
 	mini-wasm.c		\
 	mini-wasm.h		\
-	mini-wasm-debugger.c	\
 	debugger-engine.c	\
 	exceptions-wasm.c	\
 	tramp-wasm.c
