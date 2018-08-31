@@ -3960,15 +3960,8 @@ enum {
 	BFLAGS_OptionalParamBinding = 0x40000
 };
 
-enum {
-	MLISTTYPE_All = 0,
-	MLISTTYPE_CaseSensitive = 1,
-	MLISTTYPE_CaseInsensitive = 2,
-	MLISTTYPE_HandleToInfo = 3
-};
-
 ICALL_EXPORT GPtrArray*
-ves_icall_RuntimeType_GetFields_native (MonoReflectionTypeHandle ref_type, char *utf8_name, guint32 bflags, guint32 mlisttype, MonoError *error)
+ves_icall_RuntimeType_GetFields_native (MonoReflectionTypeHandle ref_type, char *utf8_name, guint32 bflags, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -3978,7 +3971,7 @@ ves_icall_RuntimeType_GetFields_native (MonoReflectionTypeHandle ref_type, char 
 	}
 
 	int (*compare_func) (const char *s1, const char *s2) = NULL;	
-	compare_func = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	compare_func = (bflags & BFLAGS_IgnoreCase) ? mono_utf8_strcasecmp : strcmp;
 
 	MonoClass *startklass, *klass;
 	klass = startklass = mono_class_from_mono_type (type);
@@ -4022,7 +4015,7 @@ handle_parent:
 		if (!match)
 			continue;
 
-		if (((mlisttype != MLISTTYPE_All) && (utf8_name != NULL)) && compare_func (mono_field_get_name (field), utf8_name))
+		if (utf8_name != NULL && compare_func (mono_field_get_name (field), utf8_name))
 				continue;
 
 		g_ptr_array_add (ptr_array, field);
@@ -4053,7 +4046,7 @@ method_nonpublic (MonoMethod* method, gboolean start_klass)
 }
 
 GPtrArray*
-mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, guint32 mlisttype, gboolean allow_ctors, MonoError *error)
+mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoError *error)
 {
 	GPtrArray *array;
 	MonoClass *startklass;
@@ -4068,8 +4061,9 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 	array = g_ptr_array_new ();
 	startklass = klass;
 	error_init (error);
-	
-	compare_func = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+
+	if (name != NULL)
+		compare_func = (ignore_case) ? mono_utf8_strcasecmp : strcmp;
 
 	/* An optimization for calls made from Delegate:CreateDelegate () */
 	if (m_class_is_delegate (klass) && name && !strcmp (name, "Invoke") && (bflags == (BFLAGS_Public | BFLAGS_Static | BFLAGS_Instance))) {
@@ -4135,7 +4129,7 @@ handle_parent:
 		if (!match)
 			continue;
 
-		if ((mlisttype != MLISTTYPE_All) && (name != NULL)) {
+		if (name != NULL) {
 			if (compare_func (name, method->name))
 				continue;
 		}
@@ -4161,7 +4155,7 @@ loader_error:
 }
 
 ICALL_EXPORT GPtrArray*
-ves_icall_RuntimeType_GetMethodsByName_native (MonoReflectionTypeHandle ref_type, const char *mname, guint32 bflags, guint32 mlisttype, MonoError *error)
+ves_icall_RuntimeType_GetMethodsByName_native (MonoReflectionTypeHandle ref_type, const char *mname, guint32 bflags, MonoBoolean ignore_case, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -4171,7 +4165,7 @@ ves_icall_RuntimeType_GetMethodsByName_native (MonoReflectionTypeHandle ref_type
 		return g_ptr_array_new ();
 	}
 
-	return mono_class_get_methods_by_name (klass, mname, bflags, mlisttype, FALSE, error);
+	return mono_class_get_methods_by_name (klass, mname, bflags, ignore_case, FALSE, error);
 }
 
 ICALL_EXPORT GPtrArray*
@@ -4292,7 +4286,7 @@ property_accessor_nonpublic (MonoMethod* accessor, gboolean start_klass)
 }
 
 ICALL_EXPORT GPtrArray*
-ves_icall_RuntimeType_GetPropertiesByName_native (MonoReflectionTypeHandle ref_type, gchar *propname, guint32 bflags, guint32 mlisttype, MonoError *error)
+ves_icall_RuntimeType_GetPropertiesByName_native (MonoReflectionTypeHandle ref_type, gchar *propname, guint32 bflags, MonoBoolean ignore_case, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -4306,7 +4300,7 @@ ves_icall_RuntimeType_GetPropertiesByName_native (MonoReflectionTypeHandle ref_t
 	MonoClass *startklass, *klass;
 	klass = startklass = mono_class_from_mono_type (type);
 
-	int (*compare_func) (const char *s1, const char *s2) = (mlisttype == MLISTTYPE_CaseInsensitive) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = (ignore_case) ? mono_utf8_strcasecmp : strcmp;
 
 	GPtrArray *res_array = g_ptr_array_sized_new (8); /*This the average for ASP.NET types*/
 
@@ -4357,7 +4351,7 @@ handle_parent:
 			continue;
 		match = 0;
 
-		if ((mlisttype != MLISTTYPE_All) && (propname != NULL) && compare_func (propname, prop->name))
+		if (propname != NULL && compare_func (propname, prop->name))
 			continue;
 		
 		if (g_hash_table_lookup (properties, prop))
@@ -4399,7 +4393,7 @@ event_equal (MonoEvent *event1, MonoEvent *event2)
 }
 
 ICALL_EXPORT GPtrArray*
-ves_icall_RuntimeType_GetEvents_native (MonoReflectionTypeHandle ref_type, char *utf8_name, guint32 bflags, guint32 mlisttype, MonoError *error)
+ves_icall_RuntimeType_GetEvents_native (MonoReflectionTypeHandle ref_type, char *utf8_name, guint32 bflags, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -4408,7 +4402,7 @@ ves_icall_RuntimeType_GetEvents_native (MonoReflectionTypeHandle ref_type, char 
 		return g_ptr_array_new ();
 	}
 
-	int (*compare_func) (const char *s1, const char *s2) = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
+	int (*compare_func) (const char *s1, const char *s2) = (bflags & BFLAGS_IgnoreCase) ? mono_utf8_strcasecmp : strcmp;
 
 	GPtrArray *res_array = g_ptr_array_sized_new (4);
 
@@ -4465,7 +4459,7 @@ handle_parent:
 		if (!match)
 			continue;
 
-		if ((mlisttype != MLISTTYPE_All) && (utf8_name != NULL) && compare_func (event->name, utf8_name))
+		if (utf8_name != NULL && compare_func (event->name, utf8_name))
 			continue;
 
 		if (g_hash_table_lookup (events, event))
@@ -4492,7 +4486,7 @@ failure:
 }
 
 ICALL_EXPORT GPtrArray *
-ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionTypeHandle ref_type, char *str, guint32 bflags, guint32 mlisttype, MonoError *error)
+ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionTypeHandle ref_type, char *str, guint32 bflags, MonoError *error)
 {
 	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -4500,8 +4494,6 @@ ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionTypeHandle ref_type, 
 	if (type->byref) {
 		return g_ptr_array_new ();
 	}
-
-	int (*compare_func) (const char *s1, const char *s2) = ((bflags & BFLAGS_IgnoreCase) || (mlisttype == MLISTTYPE_CaseInsensitive)) ? mono_utf8_strcasecmp : strcmp;
 
 	MonoClass *klass = mono_class_from_mono_type (type);
 
@@ -4533,7 +4525,7 @@ ves_icall_RuntimeType_GetNestedTypes_native (MonoReflectionTypeHandle ref_type, 
 		if (!match)
 			continue;
 
-		if ((mlisttype != MLISTTYPE_All) && (str != NULL) && compare_func (m_class_get_name (nested), str))
+		if (str != NULL && strcmp (m_class_get_name (nested), str))
 				continue;
 
 		g_ptr_array_add (res_array, m_class_get_byval_arg (nested));

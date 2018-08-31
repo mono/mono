@@ -2822,7 +2822,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeMethodInfo[] cache = GetMethodsByName (name, bindingAttr, listType, this);
+            RuntimeMethodInfo[] cache = GetMethodsByName (name, bindingAttr, ignoreCase, this);
 #else
             RuntimeMethodInfo[] cache = Cache.GetMethodList(listType, name);
 #endif
@@ -2878,7 +2878,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimePropertyInfo[] cache = GetPropertiesByName (name, bindingAttr, listType, this);
+            RuntimePropertyInfo[] cache = GetPropertiesByName (name, bindingAttr, ignoreCase, this);
 #else
 #if FEATURE_LEGACYNETCF
             // Dev11 466969 quirk
@@ -2996,7 +2996,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, listType, this);
+            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, this);
 #else
             RuntimeEventInfo[] cache = Cache.GetEventList(listType, name);
 #endif
@@ -3023,7 +3023,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, listType, this);
+            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, this);
 #else
             RuntimeFieldInfo[] cache = Cache.GetFieldList(listType, name);
 #endif
@@ -3053,7 +3053,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr, listType);
+            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr);
 #else
             RuntimeType[] cache = Cache.GetNestedTypeList(listType, name);
 #endif
@@ -3327,7 +3327,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, listType, this);
+            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, this);
 #else
             RuntimeEventInfo[] cache = Cache.GetEventList(listType, name);
 #endif
@@ -3360,7 +3360,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, listType, this);
+            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, this); 
 #else
             RuntimeFieldInfo[] cache = Cache.GetFieldList(listType, name);
 #endif
@@ -3462,7 +3462,7 @@ namespace System
             SplitName(fullname, out name, out ns);            
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 #if MONO
-            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr, listType);
+            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr);
 #else
             RuntimeType[] cache = Cache.GetNestedTypeList(listType, name);
 #endif
