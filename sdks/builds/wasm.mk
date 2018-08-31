@@ -58,9 +58,11 @@ TARGETS += wasm-runtime
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	CROSS_HOST=i386-unknown-linux
+	CPP_SHARP_DIR=linux_64
 endif
 ifeq ($(UNAME),Darwin)
 	CROSS_HOST=i386-apple-darwin10
+	CPP_SHARP_DIR=osx_64
 endif
 
 WASM_CROSS_CONFIGURE_FLAGS = \
@@ -88,7 +90,7 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 
 # This needs to be run after the target runtime has been configured
 $(TOP)/sdks/builds/wasm-cross/wasm-offsets.h: .stamp-wasm-cross-configure .stamp-wasm-runtime-configure $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
-	cd $(TOP)/sdks/builds/wasm-cross && MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_64 mono --debug $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe --emscripten-sdk=$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION) --abi wasm32-unknown-unknown --outfile $@ --mono $(TOP) --targetdir $(TOP)/sdks/builds/wasm-runtime
+	cd $(TOP)/sdks/builds/wasm-cross && MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/$(CPP_SHARP_DIR) mono --debug $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe --emscripten-sdk=$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION) --abi wasm32-unknown-unknown --outfile $@ --mono $(TOP) --targetdir $(TOP)/sdks/builds/wasm-runtime
 
 build-wasm-cross: $(TOP)/sdks/builds/wasm-cross/wasm-offsets.h
 
