@@ -63,7 +63,9 @@ MONO_API void* mono_file_map   (size_t length, int flags, int fd, guint64 offset
 // Last two parameters are optional.
 // This is mono_file_map but with optionally returning an error message.
 // See https://github.com/mono/mono/issues/8225.
-#if defined (HOST_WIN32) || defined (__cplusplus) // FIXMEcxx is this needed? G_BEGIN_DECLS instead?
+#if defined (__cplusplus)
+G_EXTERN_C
+#elif defined (HOST_WIN32)
 MONO_API
 #endif
 void*
