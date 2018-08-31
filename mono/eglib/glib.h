@@ -285,6 +285,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
 #define g_alloca(size)		(g_cast (alloca (size)))
 
+G_EXTERN_C // Used by libtest, at least.
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
 gchar **g_strdupv (gchar **str_array);
@@ -344,6 +345,7 @@ void    g_propagate_error (GError **dest, GError *src);
 /*
  * Strings utility
  */
+G_EXTERN_C // Used by libtest, at least.
 gchar       *g_strdup_printf  (const gchar *format, ...);
 gchar       *g_strdup_vprintf (const gchar *format, va_list args);
 gchar       *g_strndup        (const gchar *str, gsize n);
@@ -932,9 +934,11 @@ gchar     *g_utf8_strdown (const gchar *str, gssize len);
 gint       g_unichar_to_utf8 (gunichar c, gchar *outbuf);
 gunichar  *g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written);
 gunichar  *g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+G_EXTERN_C // Used by libtest, at least.
 gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *eg_utf8_to_utf16_with_nuls (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *eg_wtf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+G_EXTERN_C // Used by libtest, at least.
 gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
