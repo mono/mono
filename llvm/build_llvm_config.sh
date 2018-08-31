@@ -48,7 +48,11 @@ if [[ $use_llvm_config = 1 ]]; then
 	llvm_config_cflags=`$llvm_config --cflags`
 	llvm_system=`$llvm_config --system-libs`
 	llvm_core_components=`$llvm_config --libs analysis core bitwriter`
-	llvm_old_jit=`$llvm_config --libs mcjit jit 2>>/dev/null`
+	if [[ $llvm_api_version -lt 600 ]]; then
+		llvm_old_jit=`$llvm_config --libs mcjit jit 2>>/dev/null`
+	else
+		llvm_old_jit=`$llvm_config --libs mcjit 2>>/dev/null`
+	fi
 	llvm_new_jit=`$llvm_config --libs orcjit 2>>/dev/null`
 	llvm_extra=`$llvm_config --libs $extra_libs`
 
@@ -67,13 +71,66 @@ if [[ $llvm_host_win32 = 1 ]] && [[ $use_llvm_config = 0 ]]; then
 	with_llvm="$(dirname $with_llvm)"
 	llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
 
+	# llvm-config.exe --mono-api-version
 	llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
+
+	# llvm-config.exe --cflags, returned information currently not used.
 	llvm_config_cflags=
-	llvm_system="-lshell32 -lpsapi -limagehlp"
-	llvm_core_components="-lLLVMBitWriter -lLLVMAnalysis -lLLVMTarget -lLLVMMC -lLLVMCore -lLLVMSupport"
-	llvm_old_jit="-lLLVMJIT -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport"
+
+	# llvm-config.exe --system-libs
+	if [[ $llvm_api_version -lt 600 ]]; then
+		llvm_system="-limagehlp -lpsapi -lshell32"
+	else
+		llvm_system="-lpsapi -lshell32 -lole32 -luuid -ladvapi32"
+	fi
+
+	# llvm-config.exe --libs analysis core bitwriter
+	if [[ $llvm_api_version -lt 600 ]]; then
+		llvm_core_components="-lLLVMBitWriter -lLLVMAnalysis -lLLVMTarget -lLLVMMC -lLLVMCore -lLLVMSupport"
+	else
+		llvm_core_components="-lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMMC -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle"
+	fi
+
+	# llvm-config.exe --libs mcjit jit
+	if [[ $llvm_api_version -lt 600 ]]; then
+		llvm_old_jit="-lLLVMJIT -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport"
+	else
+		# Current build of LLVM 60 for cross Windows builds doesn't support LLVM JIT.
+		llvm_old_jit=
+	fi
+
+	# LLVM 36 doesn't support new JIT and LLVM 60 is build without LLVM JIT support for cross Windows builds.
 	llvm_new_jit=
-	llvm_extra=
+
+	# Check codegen libs and add needed libraries.
+	case "$extra_libs" in
+		*x86codegen*)
+			# llvm-config.exe --libs x86codegen
+			if [[ $llvm_api_version -lt 600 ]]; then
+				llvm_extra="-lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMObject -lLLVMBitReader -lLLVMMCDisassembler -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMTarget -lLLVMMC -lLLVMCore -lLLVMSupport"
+			else
+				llvm_extra="-lLLVMX86CodeGen -lLLVMGlobalISel -lLLVMX86Desc -lLLVMX86Info -lLLVMMCDisassembler -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMMC -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle"
+			fi
+			;;
+		*armcodegen*)
+			# llvm-config.exe --libs armcodegen
+			if [[ $llvm_api_version -lt 600 ]]; then
+				llvm_extra="-lLLVMARMCodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMTarget -lLLVMCore -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMMC -lLLVMSupport"
+			else
+				llvm_extra="-lLLVMARMCodeGen -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMARMUtils -lLLVMMC -lLLVMSupport -lLLVMDemangle"
+			fi
+			;;
+		*aarch64codegen*)
+			# llvm-config.exe --libs aarch64codegen
+			if [ [$llvm_api_version -lt 600 ]]; then
+				llvm_extra="-lLLVMAArch64CodeGen -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMMC -lLLVMAArch64Utils -lLLVMSupport -lLLVMDemangle"
+			else
+				llvm_extra="-lLLVMAArch64CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMTarget -lLLVMCore -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMMC -lLLVMAArch64Utils -lLLVMSupport"
+			fi
+			;;
+		*)
+			llvm_extra=$extra_libs
+	esac
 fi
 
 if [[ $llvm_config_cflags = *"stdlib=libc++"* ]]; then
