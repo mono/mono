@@ -22,7 +22,7 @@ if [[ ${CI_TAGS} == *'win-'* ]]; then
     # Passing -ggdb3 on Cygwin breaks linking against libmonosgen-x.y.dll
     export CFLAGS="$CFLAGS -g -O2"
 else
-    export CFLAGS="$CFLAGS -ggdb3 -O2"
+    export EXTRA_CFLAGS="$EXTRA_CFLAGS -ggdb3 -O2"
 fi
 
 if [[ $CI_TAGS == *'collect-coverage'* ]]; then
@@ -35,8 +35,8 @@ if [[ $CI_TAGS == *'retry-flaky-tests'* ]]; then
     export MONO_FLAKY_TEST_RETRIES=5
 fi
 
-if [[ ${CI_TAGS} == *'osx-i386'* ]]; then CFLAGS="$CFLAGS -m32 -arch i386"; LDFLAGS="$LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
-if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then CFLAGS="$CFLAGS -m64 -arch x86_64"; LDFLAGS="$LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
+if [[ ${CI_TAGS} == *'osx-i386'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m32 -arch i386"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m32 -arch i386"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib --host=i386-apple-darwin11.2.0 --build=i386-apple-darwin11.2.0"; fi
+if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m64 -arch x86_64"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -m64 -arch x86_64" EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-libgdiplus=/Library/Frameworks/Mono.framework/Versions/Current/lib/libgdiplus.dylib"; fi
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 
@@ -120,14 +120,15 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
         echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
-        echo "IGNORE_PACKAGE_LLVM=1" >> sdks/Make.config
+        echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
         if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
             ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
         fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j4 -C sdks/builds package-llvm-llvm{,win}{32,64}
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j4 -C sdks/builds provision-llvm-llvm{,win}{32,64}
+        # FIXME: ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}
         exit 0
 fi
 
@@ -155,7 +156,7 @@ fi
 
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
-	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh $EXTRA_CONF_FLAGS
+	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" $EXTRA_CONF_FLAGS
 fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then

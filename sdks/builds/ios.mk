@@ -279,33 +279,6 @@ $(eval $(call iOSSimulatorTemplate,sim64,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
-ifndef IGNORE_PACKAGE_LLVM
-
-# Download a prebuilt llvm
-.stamp-ios-llvm-$(LLVM_HASH):
-	./download-llvm.sh $(LLVM_HASH) $(LLVM_JENKINS_LANE)
-	touch $@
-
-.stamp-ios-llvm-$(LLVM36_HASH):
-	./download-llvm36.sh $(LLVM36_HASH) $(LLVM36_JENKINS_LANE)
-	touch $@
-
-build-ios-llvm: .stamp-ios-llvm-$(LLVM_HASH) .stamp-ios-llvm-$(LLVM36_HASH)
-
-clean-ios-llvm: clean-llvm-llvm32 clean-llvm-llvm64
-	$(RM) -rf ../out/ios-llvm64 ../out/ios-llvm32 ../out/ios-llvm36-32 .stamp-ios-llvm-$(LLVM_HASH) .stamp-ios-llvm-$(LLVM36_HASH)
-
-else
-
-build-ios-llvm: package-llvm-llvm64 package-llvm-llvm32
-	ln -sf ../out/llvm-llvm32 ../out/ios-llvm32
-	ln -sf ../out/llvm-llvm64 ../out/ios-llvm64
-
-clean-ios-llvm: clean-llvm-llvm64 clean-llvm-llvm32
-	$(RM) -rf ../out/{ios-llvm32,ios-llvm64}
-
-endif
-
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
@@ -362,7 +335,7 @@ $$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-32,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm64,aarch64-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-llvm32,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm-llvm64,aarch64-apple-darwin10))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-32,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-llvm32,armv7k-apple-darwin))
