@@ -66,7 +66,7 @@ static DWORD get_socket_timeout (SOCKET sock, int optname)
 */
 static gboolean alertable_socket_wait (SOCKET sock, int event_bit)
 {
-	static char *EVENT_NAMES[] = { "FD_READ", "FD_WRITE", NULL /*FD_OOB*/, "FD_ACCEPT", "FD_CONNECT", "FD_CLOSE" };
+	static char const * const EVENT_NAMES[] = { "FD_READ", "FD_WRITE", NULL /*FD_OOB*/, "FD_ACCEPT", "FD_CONNECT", "FD_CLOSE" };
 	gboolean success = FALSE;
 	int error = -1;
 	DWORD timeout = WSA_INFINITE;
