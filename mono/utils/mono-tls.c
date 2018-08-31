@@ -172,6 +172,8 @@ MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoDomain         *mono_tls_domain MONO_TLS
 MONO_TLS_STATIC MONO_KEYWORD_THREAD SgenThreadInfo     *mono_tls_sgen_thread_info MONO_TLS_FAST;
 MONO_TLS_STATIC MONO_KEYWORD_THREAD MonoLMF           **mono_tls_lmf_addr MONO_TLS_FAST;
 
+#undef MONO_TLS_STATIC // no further uses
+
 #else
 
 #if defined(TARGET_AMD64) && (defined(TARGET_MACH) || defined(HOST_WIN32))
