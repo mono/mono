@@ -27,3 +27,11 @@ mono Documentation/en/examples/commands.exe help invalid-command
 mono Documentation/en/examples/commands.exe has spaces
 
 mono Documentation/en/examples/commands.exe set file type whatever
+
+mono Documentation/en/examples/commands.exe completions
+
+mono Documentation/en/examples/commands.exe completions e
+
+mono Documentation/en/examples/commands.exe completions s
+
+mono Documentation/en/examples/commands.exe completions s o
