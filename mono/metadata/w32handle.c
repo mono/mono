@@ -253,10 +253,6 @@ retry:
 
 	handles_slots_last = (handles_slots_last->next = g_new0 (MonoW32HandleSlot, 1));
 	goto retry_from_beginning;
-
-	/* We already went around and didn't find a slot, so let's put ourselves on the empty slot we just allocated */
-	slot_last = handles_slots_last;
-	index_last = 0;
 }
 
 gpointer

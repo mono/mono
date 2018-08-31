@@ -2960,6 +2960,8 @@ endif
 libtest_la_SOURCES = libtest.c
 libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
 
+libtest_la_LDFLAGS += -no-undefined
+
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \
 	internalsvisibleto-compilertest.cs

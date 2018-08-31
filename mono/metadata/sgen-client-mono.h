@@ -662,7 +662,7 @@ sgen_client_binary_protocol_pin_stats (int objects_pinned_in_nursery, size_t byt
 }
 
 static void G_GNUC_UNUSED
-sgen_client_root_registered (char *start, size_t size, int source, void *key, const char *msg)
+sgen_client_root_registered (char *start, size_t size, MonoGCRootSource source, void *key, const char *msg)
 {
 	MONO_PROFILER_RAISE (gc_root_register, ((const mono_byte *) start, size, source, key, msg));
 }
@@ -683,7 +683,7 @@ sgen_client_binary_protocol_collection_end_stats (long long major_scan, long lon
 {
 }
 
-#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = (SgenThreadInfo*)mono_tls_get_sgen_thread_info ()
+#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = mono_tls_get_sgen_thread_info ()
 #define IN_CRITICAL_REGION (__thread_info__->client_info.in_critical_region)
 
 /* Enter must be visible before anything is done in the critical region. */

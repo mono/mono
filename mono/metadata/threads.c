@@ -182,7 +182,7 @@ static gboolean threads_wait_pending_joinable_threads (uint32_t timeout);
 static gchar* thread_dump_dir = NULL;
 
 #define SET_CURRENT_OBJECT(x) (mono_tls_set_thread (x))
-#define GET_CURRENT_OBJECT() ((MonoInternalThread*) mono_tls_get_thread ())
+#define GET_CURRENT_OBJECT mono_tls_get_thread
 
 /* function called at thread start */
 static MonoThreadStartCB mono_thread_start_cb = NULL;
@@ -468,7 +468,7 @@ thread_get_tid (MonoInternalThread *thread)
 static void
 free_synch_cs (void *user_data)
 {
-	MonoCoopMutex *synch_cs = user_data;
+	MonoCoopMutex *synch_cs = (MonoCoopMutex*)user_data;
 	g_assert (synch_cs);
 	mono_coop_mutex_destroy (synch_cs);
 	g_free (synch_cs);
@@ -700,7 +700,7 @@ mono_thread_internal_set_priority (MonoInternalThread *internal, MonoThreadPrior
 	g_assert (internal->native_handle);
 
 	MONO_ENTER_GC_SAFE;
-	res = SetThreadPriority (internal->native_handle, (int)priority - 2);
+	res = SetThreadPriority (internal->native_handle, priority - 2);
 	last_error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	if (!res)
@@ -1079,14 +1079,15 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 
 	// The handle stack is a pseudo-root similar to the finalizer queues.
 	MONO_PROFILER_RAISE (gc_root_register, (
-		info->handle_stack,
+		(const mono_byte*)info->handle_stack,
 		1,
 		MONO_ROOT_SOURCE_HANDLE,
 		(void *) tid,
 		"Handle Stack"));
 }
 
-static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
+static gulong WINAPI
+start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 {
 	ERROR_DECL (error);
 	MonoThreadStart start_func;
@@ -1136,7 +1137,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	 */
 
 	if (mono_thread_start_cb)
-		mono_thread_start_cb (tid, stack_ptr, start_func);
+		mono_thread_start_cb (tid, stack_ptr, (gpointer)start_func);
 
 	/* On 2.0 profile (and higher), set explicitly since state might have been
 	   Unknown */
@@ -1219,7 +1220,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	return 0;
 }
 
-static gsize WINAPI
+static mono_thread_start_return_t WINAPI
 start_wrapper (gpointer data)
 {
 	StartInfo *start_info;
@@ -1310,7 +1311,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	else
 		stack_set_size = 0;
 
-	if (!mono_thread_platform_create_thread ((MonoThreadStart)start_wrapper, start_info, &stack_set_size, &tid)) {
+	if (!mono_thread_platform_create_thread (start_wrapper, start_info, &stack_set_size, &tid)) {
 		/* The thread couldn't be created, so set an exception */
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
@@ -1383,7 +1384,7 @@ mono_threads_get_default_stacksize (void)
  *   ARG should not be a GC reference.
  */
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
+(mono_thread_create_internal) (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
 {
 	MonoThread *thread;
 	MonoInternalThread *internal;
@@ -1409,7 +1410,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, Mo
  * mono_thread_create:
  */
 void
-mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
+mono_thread_create (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg)
 {
 	MONO_ENTER_GC_UNSAFE;
 	ERROR_DECL (error);
@@ -1419,7 +1420,7 @@ mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 }
 
 gboolean
-mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error)
+(mono_thread_create_checked) (MonoDomain *domain, gpointer /*FIXMEcxx MonoThreadStart*/ func, gpointer arg, MonoError *error)
 {
 	return (NULL != mono_thread_create_internal (domain, func, arg, MONO_THREAD_CREATE_FLAGS_NONE, error));
 }
@@ -1861,10 +1862,11 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
  * Gets the priority of the given thread.
  * @return: The priority of the given thread.
  */
-int
+ICALL_EXPORT
+int/*MonoThreadPriority FIXMEcxx*/
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
-	gint32 priority;
+	int priority;
 
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
@@ -1884,14 +1886,14 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  */
 ICALL_EXPORT
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error)
+ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, MonoThreadPriority priority, MonoError *error)
 {
 	MonoInternalThread *internal = thread_handle_to_internal_ptr (this_obj);
 
 	LOCK_THREAD (internal);
 	internal->priority = priority;
 	if (internal->thread_info != NULL)
-		mono_thread_internal_set_priority (internal, (MonoThreadPriority)priority);
+		mono_thread_internal_set_priority (internal, priority);
 	UNLOCK_THREAD (internal);
 }
 
@@ -2451,13 +2453,13 @@ ves_icall_System_Threading_Thread_SetState (MonoInternalThreadHandle thread_hand
 	mono_thread_set_state (mono_internal_thread_handle_ptr (thread_handle), (MonoThreadState)state);
 }
 
-guint32
+guint32/*MonoThreadState FIXMEcplusplus*/
 ves_icall_System_Threading_Thread_GetState (MonoInternalThreadHandle thread_handle, MonoError *error)
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (thread_handle);
 
-	guint32 state;
+	guint32/*MonoThreadState FIXMEcxx*/ state;
 
 	LOCK_THREAD (this_obj);
 	

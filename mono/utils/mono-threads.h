@@ -100,7 +100,6 @@ While porting sgen to use mono-threads, the number of casts required was too muc
 code ended up looking horrible. So we use this cute little hack. The idea is that
 whomever is including this header can set the expected type to be used by functions here
 and reduce the number of casts drastically.
-
 */
 #ifndef THREAD_INFO_TYPE
 #define THREAD_INFO_TYPE MonoThreadInfo
@@ -177,6 +176,8 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
 
+struct HandleStack;
+struct MonoJitTlsData;
 typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
 typedef struct _MonoThreadInfo {
@@ -246,12 +247,12 @@ typedef struct _MonoThreadInfo {
 	/* Set when the thread is started, or in _wapi_thread_duplicate () */
 	MonoThreadHandle *handle;
 
-	void *jit_data;
+	struct MonoJitTlsData *jit_data;
 
 	MonoThreadInfoInterruptToken *interrupt_token;
 
 	/* HandleStack for coop handles */
-	gpointer handle_stack;
+	struct HandleStack *handle_stack;
 
 	/* Stack mark for targets that explicitly require one */
 	gpointer stack_mark;
@@ -425,7 +426,6 @@ mono_thread_info_set_tools_data (void *data);
 MONO_API void*
 mono_thread_info_get_tools_data (void);
 
-
 THREAD_INFO_TYPE*
 mono_thread_info_current_unchecked (void);
 
@@ -477,6 +477,8 @@ mono_thread_info_usleep (guint64 us);
 gpointer
 mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key);
 
+#define mono_thread_info_tls_get(info, key) (g_cast (mono_thread_info_tls_get ((info), (key))))
+
 void
 mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value);
 
@@ -507,6 +509,7 @@ mono_thread_info_is_interrupt_state (THREAD_INFO_TYPE *info);
 void
 mono_thread_info_describe_interrupt_token (THREAD_INFO_TYPE *info, GString *text);
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean
 mono_thread_info_is_live (THREAD_INFO_TYPE *info);
 
@@ -571,6 +574,7 @@ gboolean mono_threads_suspend_begin_async_resume (THREAD_INFO_TYPE *info);
 void mono_threads_suspend_register (THREAD_INFO_TYPE *info); //ok
 void mono_threads_suspend_free (THREAD_INFO_TYPE *info);
 void mono_threads_suspend_abort_syscall (THREAD_INFO_TYPE *info);
+
 gint mono_threads_suspend_search_alternative_signal (void);
 gint mono_threads_suspend_get_suspend_signal (void);
 gint mono_threads_suspend_get_restart_signal (void);
@@ -595,8 +599,15 @@ mono_native_thread_id_get (void);
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 
+//FIXMEcxx typedef mono_native_thread_return_t (MONO_STDCALL * MonoNativeThreadStart)(void*);
+
 MONO_API gboolean
-mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg);
+mono_native_thread_create (MonoNativeThreadId *tid, gpointer /*FIXMEcxx MonoNativeThreadStart*/ func, gpointer arg);
+
+#ifdef __cplusplus
+// Macros do not recurse.
+#define mono_native_thread_create(tid, func, arg) (mono_native_thread_create ((tid), (gpointer)(func), (arg)))
+#endif
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
@@ -663,7 +674,6 @@ typedef enum {
 	AbortBlockingWait, //Abort worked, but should wait for resume
 } MonoAbortBlockingResult;
 
-
 void mono_threads_transition_attach (THREAD_INFO_TYPE* info);
 gboolean mono_threads_transition_detach (THREAD_INFO_TYPE *info);
 MonoRequestSuspendResult mono_threads_transition_request_suspension (THREAD_INFO_TYPE *info);
@@ -675,19 +685,21 @@ MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* 
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char* func);
 gboolean mono_threads_transition_peek_blocking_suspend_requested (THREAD_INFO_TYPE* info);
 
-
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
 
 gpointer
 mono_threads_enter_gc_unsafe_region_cookie (void);
 
-
 void mono_thread_info_wait_for_resume (THREAD_INFO_TYPE *info);
 /* Advanced suspend API, used for suspending multiple threads as once. */
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_is_running (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_is_live (THREAD_INFO_TYPE *info);
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
+
 const char* mono_thread_state_name (int state);
 gboolean mono_thread_is_gc_unsafe_mode (void);
 
@@ -720,11 +732,15 @@ typedef enum {
 	MONO_THREAD_BEGIN_SUSPEND_NEXT_PHASE = 2,
 } MonoThreadBeginSuspendResult;
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadBeginSuspendResult mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info, MonoThreadSuspendPhase phase);
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
 
 void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX rename to something to reflect the fact that this is used for both suspend and resume
+
 gboolean mono_threads_wait_pending_operations (void);
 void mono_threads_begin_global_suspend (void);
 void mono_threads_end_global_suspend (void);

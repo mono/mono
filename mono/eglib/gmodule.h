@@ -10,8 +10,6 @@
 #define G_MODULE_EXPORT
 #endif
 
-G_BEGIN_DECLS
-
 /*
  * Modules
  */
@@ -25,7 +23,9 @@ G_ENUM_FUNCTIONS (GModuleFlags)
 
 typedef struct _GModule GModule;
 
+G_EXTERN_C // Used by libtest, at least.
 GModule *g_module_open (const gchar *file, GModuleFlags flags);
+G_EXTERN_C // Used by libtest, at least.
 gboolean g_module_symbol (GModule *module, const gchar *symbol_name,
 			  gpointer *symbol);
 const gchar *g_module_error (void);
@@ -34,7 +34,5 @@ gchar *  g_module_build_path (const gchar *directory, const gchar *module_name);
 
 extern char *gmodule_libprefix;
 extern char *gmodule_libsuffix;
-
-G_END_DECLS
 
 #endif
