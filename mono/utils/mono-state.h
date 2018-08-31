@@ -20,7 +20,7 @@
 
 #define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.1"
 
-G_BEGIN_DECLS
+MONO_BEGIN_DECLS
 
 /*
  * These use static memory, can only be called once
@@ -54,7 +54,7 @@ mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, Mon
 void
 mono_crash_dump (const char *jsonFile, MonoStackHash *hashes);
 
-G_END_DECLS
+MONO_END_DECLS
 #endif // DISABLE_CRASH_REPORTING
 
 #endif // MONO_UTILS_NATIVE_STATE
