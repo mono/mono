@@ -213,7 +213,9 @@ void check_metadata_store_local(void *from, void *to);
 		checked_build_thread_transition (transition, info, from_state, suspend_count, next_state, suspend_count_delta, FALSE); \
 } while (0)
 
-void checked_build_thread_transition(const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace);
+struct _MonoThreadInfo;
+
+void checked_build_thread_transition(const char *transition, struct _MonoThreadInfo *info, int from_state, int suspend_count, int next_state, int suspend_count_delta, gboolean capture_backtrace);
 
 G_GNUC_NORETURN MONO_ATTR_FORMAT_PRINTF(1,2) void mono_fatal_with_history(const char *msg, ...);
 
