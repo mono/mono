@@ -478,7 +478,7 @@ namespace System.Runtime.Remoting
 		{
 			const BindingFlags bfinst = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 			RuntimeType type = (RuntimeType) msg.MethodBase.DeclaringType;
-			return type.GetMethodsByName (msg.MethodName, bfinst, RuntimeType.MemberListType.CaseSensitive, type).Length > 1;
+			return type.GetMethodsByName (msg.MethodName, bfinst, false, type).Length > 1;
 		}
 
 		public static bool IsObjectOutOfAppDomain(object tp)
