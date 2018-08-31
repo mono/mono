@@ -511,13 +511,13 @@ typedef struct _EXPORT_FIXUP
 
 /* Has to be binary ordered. */
 static const EXPORT_FIXUP ExportFixups[] = {
-	{"CorBindToRuntime", {&CorBindToRuntime}},
-	{"CorBindToRuntimeEx", {&CorBindToRuntimeEx}},
-	{"CorExitProcess", {&CorExitProcess}},
-	{"_CorDllMain", {&_CorDllMain}},
-	{"_CorExeMain", {&_CorExeMain}},
-	{"_CorImageUnloading", {&_CorImageUnloading}},
-	{"_CorValidateImage", {&_CorValidateImage}},
+	{"CorBindToRuntime", {(PVOID)&CorBindToRuntime}},
+	{"CorBindToRuntimeEx", {(PVOID)&CorBindToRuntimeEx}},
+	{"CorExitProcess", {(PVOID)&CorExitProcess}},
+	{"_CorDllMain", {(PVOID)&_CorDllMain}},
+	{"_CorExeMain", {(PVOID)&_CorExeMain}},
+	{"_CorImageUnloading", {(PVOID)&_CorImageUnloading}},
+	{"_CorValidateImage", {(PVOID)&_CorValidateImage}},
 	{NULL, {NULL}}
 };
 
