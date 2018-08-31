@@ -771,6 +771,8 @@ mono_profiler_call_context_free_buffer (void *buffer)
 	mono_profiler_state.context_free_buffer (buffer);
 }
 
+G_ENUM_FUNCTIONS (MonoProfilerCallInstrumentationFlags)
+
 MonoProfilerCallInstrumentationFlags
 mono_profiler_get_call_instrumentation_flags (MonoMethod *method)
 {
