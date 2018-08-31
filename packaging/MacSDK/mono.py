@@ -84,6 +84,13 @@ class MonoMasterPackage(Package):
             "LocalMachine")
         ensure_dir(registry_dir)
 
+        # LLVM build installs itself under the source tree; move tools to mono's install path
+        llvm_tools_path = os.path.join(self.workspace, 'llvm/usr/bin')
+        target = os.path.join(self.staged_prefix, 'bin')
+        ensure_dir(target)
+        for tool in ['opt','llc']:
+            shutil.move(os.path.join(llvm_tools_path, tool), target)
+
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':
             os.symlink('mono-sgen64', '%s/bin/mono64' % self.staged_profile)
