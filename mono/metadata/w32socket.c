@@ -168,7 +168,7 @@ mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, gconstpointer 
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
-	ret = setsockopt (sock, level, optname, optval, optlen);
+	ret = setsockopt (sock, level, optname, (const char*)optval, optlen);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
