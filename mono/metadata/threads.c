@@ -1220,7 +1220,7 @@ start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
 	return 0;
 }
 
-static gsize WINAPI
+static mono_thread_start_return_t WINAPI
 start_wrapper (gpointer data)
 {
 	StartInfo *start_info;
