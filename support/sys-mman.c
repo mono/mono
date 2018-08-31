@@ -89,7 +89,7 @@ Mono_Posix_Syscall_msync (void *start, mph_size_t len, int flags)
 int
 Mono_Posix_Syscall_mlock (void *start, mph_size_t len)
 {
-#if !defined(HAVE_MINCORE)
+#if !defined(HAVE_MLOCK)
 	return ENOSYS;
 #else
 	mph_return_if_size_t_overflow (len);
