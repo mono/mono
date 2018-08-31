@@ -194,7 +194,7 @@ mono_w32socket_shutdown (SOCKET sock, gint how)
 }
 
 static gint
-mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, glong *written)
+mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, gchar *output, gint outputlen, DWORD *written)
 {
 	gint ret;
 	MONO_ENTER_GC_SAFE;
