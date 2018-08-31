@@ -313,7 +313,7 @@ MonoDomain *mono_tls_get_domain (void)
 
 SgenThreadInfo *mono_tls_get_sgen_thread_info (void)
 {
-	return MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
+	return (SgenThreadInfo*)MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
 MonoLMF **mono_tls_get_lmf_addr (void)
