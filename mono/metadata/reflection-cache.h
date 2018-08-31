@@ -107,7 +107,7 @@ check_object_handle (MonoDomain* domain, MonoClass *klass, gpointer item)
 	if (!hash)
 		return MONO_HANDLE_NEW (MonoObject, NULL);
 
-	return MONO_HANDLE_NEW (MonoObject, mono_conc_g_hash_table_lookup (hash, &e));
+	return MONO_HANDLE_NEW (MonoObject, (MonoObject*)mono_conc_g_hash_table_lookup (hash, &e));
 }
 
 
