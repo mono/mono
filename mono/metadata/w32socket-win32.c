@@ -186,7 +186,7 @@ int mono_w32socket_send (SOCKET s, void *buf, int len, int flags, gboolean block
 {
 	int ret = SOCKET_ERROR;
 	MONO_ENTER_GC_SAFE;
-	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, send, s, buf, len, flags);
+	ALERTABLE_SOCKET_CALL (FD_WRITE_BIT, blocking, TRUE, ret, send, s, (char*)buf, len, flags);
 	MONO_EXIT_GC_SAFE;
 	return ret;
 }
