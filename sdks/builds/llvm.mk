@@ -13,15 +13,14 @@ $(LLVM_SRC)/configure: | $(LLVM_SRC)
 #  $(2): arch
 define LLVMTemplate
 
-_llvm-$(1)_CXXFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9 -stdlib=libc++)
-
-_llvm-$(1)_LDFLAGS= \
-	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
+_llvm-$(1)_CFLAGS=
+_llvm-$(1)_CXXFLAGS=$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9 -stdlib=libc++)
+_llvm-$(1)_LDFLAGS=$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
 
 _llvm-$(1)_CONFIGURE_ENVIRONMENT= \
 	$$(if $$(llvm-$(1)_CC),CC="$$(llvm-$(1)_CC)") \
 	$$(if $$(llvm-$(1)_CXX),CXX="$$(llvm-$(1)_CXX)") \
+	CFLAGS="$$(_llvm-$(1)_CFLAGS)" \
 	CXXFLAGS="$$(_llvm-$(1)_CXXFLAGS)" \
 	LDFLAGS="$$(_llvm-$(1)_LDFLAGS)"
 
@@ -39,7 +38,7 @@ _llvm-$(1)_CONFIGURE_FLAGS= \
 
 .stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && $$< $$(_llvm-$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm-$(1)_CONFIGURE_FLAGS)
+	PATH="$$$$PATH:$$(_llvm-$(1)_PATH)" ./wrap-configure.sh $$(TOP)/sdks/builds/llvm-$(1) $$(abspath $$<) $$(_llvm-$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm-$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
 .PHONY: package-llvm-$(1)
@@ -78,8 +77,8 @@ _llvm-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),D
 _llvm-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-ranlib
 _llvm-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)-strip
 
+_llvm-$(1)_CFLAGS=
 _llvm-$(1)_CXXFLAGS=
-
 _llvm-$(1)_LDFLAGS=
 
 _llvm-$(1)_CONFIGURE_ENVIRONMENT = \
@@ -92,6 +91,7 @@ _llvm-$(1)_CONFIGURE_ENVIRONMENT = \
 	OBJDUMP="$$(_llvm-$(1)_OBJDUMP)" \
 	RANLIB="$$(_llvm-$(1)_RANLIB)" \
 	STRIP="$$(_llvm-$(1)_STRIP)" \
+	CFLAGS="$$(_llvm-$(1)_CFLAGS)" \
 	CXXFLAGS="$$(_llvm-$(1)_CXXFLAGS)" \
 	LDFLAGS="$$(_llvm-$(1)_LDFLAGS)"
 
@@ -110,7 +110,7 @@ _llvm-$(1)_CONFIGURE_FLAGS = \
 
 .stamp-llvm-$(1)-configure: $$(LLVM_SRC)/configure | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && PATH="$$$$PATH:$$(_llvm-$(1)_PATH)" $$< $$(_llvm-$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm-$(1)_CONFIGURE_FLAGS)
+	PATH="$$$$PATH:$$(_llvm-$(1)_PATH)" ./wrap-configure.sh $$(TOP)/sdks/builds/llvm-$(1) $$(abspath $$<) $$(_llvm-$(1)_CONFIGURE_ENVIRONMENT) $$(_llvm-$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
 .PHONY: package-llvm-$(1)

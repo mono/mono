@@ -1,6 +1,4 @@
 
-include runtime.mk
-
 #
 # Targets:
 # - build-ios-<target>
@@ -61,22 +59,19 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	mono_cv_sizeof_sunpath=104 \
-	mono_cv_uscore=yes \
-	$$(ios-$(1)_AC_VARS)
+	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
 	-fexceptions \
-	$$(ios-$(1)_BITCODE_MARKER) \
-	$$(ios-$(1)_CFLAGS)
+	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension \
-	$$(ios-$(1)_CXXFLAGS) \
 	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CPPFLAGS= \
@@ -84,21 +79,15 @@ _ios-$(1)_CPPFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
-	$$(ios-$(1)_CPPFLAGS)
 
 _ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS) \
 	-Wl,-no_weak_imports \
 	-arch $(2) \
 	-framework CoreFoundation \
-	-lobjc -lc++ \
-	$$(ios-$(1)_LDFLAGS)
+	-lobjc -lc++
 
 _ios-$(1)_CONFIGURE_FLAGS = \
 	--build=i386-apple-darwin10 \
-	--host=$(3)-apple-darwin10 \
-	--cache-file=$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -116,13 +105,12 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
-	--without-sigaltstack \
-	$$(ios-$(1)_CONFIGURE_FLAGS)
+	--without-sigaltstack
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(3)-apple-darwin10))
 
 endef
 
@@ -204,36 +192,28 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_getentropy=no \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
-	mono_cv_uscore=yes \
-	$(ios-$(1)_AC_VARS)
+	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension \
-	$$(ios-$(1)_CFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_CPPFLAGS= \
 	$$(ios_CPPFLAGS) \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension \
-	$$(ios-$(1)_CPPFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
-	-Wl,-application_extension\
-	$$(ios-$(1)_CXXFLAGS)
+	-Wl,-application_extension
 
 _ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS) \
-	$$(ios-$(1)_LDFLAGS)
+	$$(ios_LDFLAGS)
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	--host=$(2)-apple-darwin10 \
-	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
-	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -244,15 +224,14 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--enable-minimal=com,remoting,shared_perfcounters \
 	--with-tls=pthread \
-	--without-ikvm-native \
-	$$(ios-$(1)_CONFIGURE_FLAGS)
+	--without-ikvm-native
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
 endef
 
@@ -323,10 +302,11 @@ endif
 ##
 # Parameters:
 #  $(1): target (cross32 or cross64)
-#  $(2): arch (arm or aarch64)
-#  $(3): llvm (llvm32 or llvm64)
-#  $(4): configure target arch
-#  $(5): offsets tool --abi argument
+#  $(2): host triple arch (i386 or x86_64)
+#  $(3): target triple arch (arm or aarch64)
+#  $(4): llvm (llvm32 or llvm64)
+#  $(5): configure target arch
+#  $(6): offsets tool --abi argument
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -336,37 +316,29 @@ endif
 #  ios-$(1)_CONFIGURE_FLAGS
 define iOSCrossTemplate
 
-_ios-$(1)_OFFSET_TOOL_ABI=$(5)
+_ios-$(1)_OFFSET_TOOL_ABI=$(6)
 
 _ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
 _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
-_ios-$(1)_AC_VARS= \
-	$$(ios-$(1)_AC_VARS)
-
 _ios-$(1)_CFLAGS= \
 	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
-	-Qunused-arguments \
-	$$(ios-$(1)_CFLAGS)
+	-Qunused-arguments
 
 _ios-$(1)_CXXFLAGS= \
 	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments \
-	-stdlib=libc++ \
-	$$(ios-$(1)_CXXFLAGS)
+	-stdlib=libc++
 
 _ios-$(1)_CPPFLAGS= \
-	-DMONOTOUCH=1 \
-	$$(ios-$(1)_CPPFLAGS)
+	-DMONOTOUCH=1
 
 _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS) \
-	-stdlib=libc++ \
-	$$(ios-$(1)_LDFLAGS)
+	-stdlib=libc++
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	$$(ios-$(1)_CONFIGURE_FLAGS) \
-	--target=$(4) \
+	--target=$(5) \
 	--cache-file=$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/ios-$(1)-$$(CONFIGURATION) \
 	--disable-boehm \
@@ -378,28 +350,27 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
-	--with-cross-offsets=$(4).h \
-	--with-llvm=$$(TOP)/sdks/out/ios-$(3)
+	--with-cross-offsets=$(5).h \
+	--with-llvm=$$(TOP)/sdks/out/ios-$(4)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
 .stamp-ios-$(1)-$$(CONFIGURATION)-configure: | build-ios-llvm
 
-$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
+$$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h: .stamp-ios-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe
 	cd $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$(TOP)/tools/offsets-tool/CppSharp/osx_32 \
 			mono --arch=32 --debug $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe \
 				--gen-ios --abi $$(_ios-$(1)_OFFSET_TOOL_ABI) --outfile $$@ --mono $$(TOP) --targetdir $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)
 
-build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(4).h
+build-ios-$(1): $$(TOP)/sdks/builds/ios-$(1)-$$(CONFIGURATION)/$(5).h
 
-$$(eval $$(call RuntimeTemplate,ios-$(1)))
+$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
 endef
 
-ios-cross32_CONFIGURE_FLAGS=--build=i386-apple-darwin10
-ios-crosswatch_CONFIGURE_FLAGS=--build=i386-apple-darwin10 	--with-cooperative-gc=yes
-$(eval $(call iOSCrossTemplate,cross32,arm,llvm32,arm-darwin,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
-$(eval $(call iOSCrossTemplate,crosswatch,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
+ios-crosswatch_CONFIGURE_FLAGS=--with-cooperative-gc=yes
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,llvm32,arm-darwin,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,llvm64,aarch64-darwin,aarch64-apple-darwin10))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k,llvm32,armv7k-unknown-darwin,armv7k-apple-darwin))
