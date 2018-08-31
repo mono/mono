@@ -264,13 +264,13 @@ typedef guint32 gunichar;
 /*
  * Allocation
  */
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void g_free (void *ptr);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_realloc (gpointer obj, gsize size);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_malloc (gsize x);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_malloc0 (gsize x);
 G_EXTERN_C // Used by profilers, at least.
 gpointer g_calloc (gsize n, gsize x);
@@ -575,28 +575,28 @@ struct _GHashTableIter
 	gpointer dummy [8];
 };
 
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 GHashTable     *g_hash_table_new             (GHashFunc hash_func, GEqualFunc key_equal_func);
 GHashTable     *g_hash_table_new_full        (GHashFunc hash_func, GEqualFunc key_equal_func,
 					      GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gpointer value, gboolean replace);
 guint           g_hash_table_size            (GHashTable *hash);
 GList          *g_hash_table_get_keys        (GHashTable *hash);
 GList          *g_hash_table_get_values      (GHashTable *hash);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_foreach         (GHashTable *hash, GHFunc func, gpointer user_data);
 gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicate, gpointer user_data);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_steal           (GHashTable *hash, gconstpointer key);
 void            g_hash_table_remove_all      (GHashTable *hash);
 guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
 guint           g_hash_table_foreach_steal   (GHashTable *hash, GHRFunc func, gpointer user_data);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_destroy         (GHashTable *hash);
 void            g_hash_table_print_stats     (GHashTable *table);
 
@@ -608,9 +608,9 @@ guint           g_spaced_primes_closest      (guint x);
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
 
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 guint    g_direct_hash  (gconstpointer v1);
 gboolean g_int_equal    (gconstpointer v1, gconstpointer v2);
 guint    g_int_hash     (gconstpointer v1);
@@ -736,9 +736,9 @@ void           g_printerr             (const gchar *format, ...);
 GLogLevelFlags g_log_set_always_fatal (GLogLevelFlags fatal_mask);
 GLogLevelFlags g_log_set_fatal_mask   (const gchar *log_domain, GLogLevelFlags fatal_mask);
 void           g_logv                 (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, va_list args);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_log                  (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, ...);
-G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_assertion_message    (const gchar *format, ...) G_GNUC_NORETURN;
 const char *   g_get_assertion_message (void);
 
