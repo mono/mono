@@ -7333,7 +7333,7 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	MonoDebugOptions *opt = mini_get_debug_options ();
 
 	if (ji->from_aot) {
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		if (!breakpoint_tramp)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
@@ -7382,7 +7382,7 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 
 	if (ji->from_aot) {
 		guint32 native_offset = ip - (guint8*)ji->code_start;
-		SeqPointInfo *info = (SeqPointInfo*)mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
+		SeqPointInfo *info = mono_arch_get_seq_point_info (mono_domain_get (), (guint8*)ji->code_start);
 
 		if (!breakpoint_tramp)
 			breakpoint_tramp = mini_get_breakpoint_trampoline ();
