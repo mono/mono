@@ -12411,8 +12411,10 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	// Avoid thousands of new malloc entries
 	// FIXME: allocate into imageset, so we don't need to free.
 	// put the other mangled names there too.
-	char *bulk = g_malloc0 (fileLength * sizeof (char));
-	size_t offset = 0;
+	char *bulk;
+	bulk = g_malloc0 (fileLength * sizeof (char));
+	size_t offset;
+	offset = 0;
 
 	while (fgets (&bulk [offset], fileLength - offset, cache)) {
 		// strip newline
