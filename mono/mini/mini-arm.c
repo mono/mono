@@ -7631,7 +7631,7 @@ static G_GNUC_UNUSED guint8*
 emit_aotconst (MonoCompile *cfg, guint8 *code, int dreg, int patch_type, gpointer data)
 {
 	/* OP_AOTCONST */
-	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
+	mono_add_patch_info (cfg, code - cfg->native_code, (MonoJumpInfoType)patch_type, data);
 	ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 	ARM_B (code, 0);
 	*(gpointer*)code = NULL;
@@ -7646,7 +7646,7 @@ mono_arm_emit_aotconst (gpointer ji_list, guint8 *code, guint8 *buf, int dreg, i
 {
 	MonoJumpInfo **ji = (MonoJumpInfo**)ji_list;
 
-	*ji = mono_patch_info_list_prepend (*ji, code - buf, patch_type, data);
+	*ji = mono_patch_info_list_prepend (*ji, code - buf, (MonoJumpInfoType)patch_type, data);
 	ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 	ARM_B (code, 0);
 	*(gpointer*)code = NULL;
