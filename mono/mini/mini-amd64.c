@@ -1199,7 +1199,7 @@ done:
 		}
 		case ArgValuetypeInReg: {
 			storage = g_newa (mgreg_t, ainfo->nregs);
-			mgreg_t *storage_tmp = storage;
+			mgreg_t *storage_tmp = (mgreg_t*)storage;
 			/* Reconstruct the value type */
 			for (int k = 0; k < ainfo->nregs; k++) {
 				storage_type = ainfo->pair_storage [k];
