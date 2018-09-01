@@ -2456,7 +2456,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	header = cfg->header;
 
 	if (cfg->gshared)
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_GENERIC_JIT_INFO);
+		flags |= JIT_INFO_HAS_GENERIC_JIT_INFO;
 
 	if (cfg->arch_eh_jit_info) {
 		MonoJitArgumentInfo *arg_info;
@@ -2470,14 +2470,14 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		stack_size = mono_arch_get_argument_info (sig, sig->param_count, arg_info);
 
 		if (stack_size)
-			flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_ARCH_EH_INFO);
+			flags |= JIT_INFO_HAS_ARCH_EH_INFO;
 	}
 
 	if (cfg->has_unwind_info_for_epilog && !(flags & JIT_INFO_HAS_ARCH_EH_INFO))
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_ARCH_EH_INFO);
+		flags |= JIT_INFO_HAS_ARCH_EH_INFO;
 
 	if (cfg->thunk_area)
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_THUNK_INFO);
+		flags |= JIT_INFO_HAS_THUNK_INFO;
 
 	if (cfg->try_block_holes) {
 		for (tmp = cfg->try_block_holes; tmp; tmp = tmp->next) {
@@ -2492,7 +2492,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 				++num_holes;
 		}
 		if (num_holes)
-			flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_TRY_BLOCK_HOLES);
+			flags |= JIT_INFO_HAS_TRY_BLOCK_HOLES;
 		if (G_UNLIKELY (cfg->verbose_level >= 4))
 			printf ("Number of try block holes %d\n", num_holes);
 	}
