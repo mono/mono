@@ -1608,7 +1608,7 @@ void
 mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 {
 	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
-	ArgInfo *ainfo = ins->inst_p1;
+	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
 
 	if (ainfo->storage == ArgValuetypeInReg) {
