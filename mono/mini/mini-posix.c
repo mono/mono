@@ -337,14 +337,16 @@ MONO_SIG_HANDLER_FUNC (static, sigusr2_signal_handler)
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 }
 
+typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoSignalHandler));
+
 static void
-add_signal_handler (int signo, gpointer handler, int flags)
+add_signal_handler (int signo, MonoSignalHandler handler, int flags)
 {
 	struct sigaction sa;
 	struct sigaction previous_sa;
 
 #ifdef MONO_ARCH_USE_SIGACTION
-	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
+	sa.sa_sigaction = handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO | flags;
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
@@ -375,7 +377,7 @@ add_signal_handler (int signo, gpointer handler, int flags)
 		sigemptyset (&block_mask);
 	}
 #else
-	sa.sa_handler = handler;
+	sa.sa_handler = (void (*)(int))handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = flags;
 #endif
