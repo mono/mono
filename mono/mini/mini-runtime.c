@@ -3561,7 +3561,7 @@ mini_get_vtable_trampoline (MonoVTable *vt, int slot_index)
 			IMTTrampInfo *info = g_new0 (IMTTrampInfo, 1);
 			info->vtable = vt;
 			info->slot = index;
-			ftndesc [0] = mini_llvmonly_initial_imt_tramp;
+			ftndesc [0] = (gpointer)mini_llvmonly_initial_imt_tramp;
 			ftndesc [1] = info;
 			mono_memory_barrier ();
 			return ftndesc;
