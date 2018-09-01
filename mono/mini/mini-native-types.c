@@ -163,7 +163,7 @@ emit_narrow (MonoCompile *cfg, const MagicTypeInfo *info, int sreg)
 		ins->type = cfg->r4_stack_type;
 	else
 		ins->type = info->small_stack_type;
-	ins->dreg = alloc_dreg (cfg, ins->type);
+	ins->dreg = alloc_dreg (cfg, (MonoStackType)ins->type);
 	MONO_ADD_INS (cfg->cbb, ins);
 	return mono_decompose_opcode (cfg, ins);
 }
