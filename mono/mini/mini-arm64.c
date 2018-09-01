@@ -5290,7 +5290,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	}
 
 	if (fail_tramp)
-		buf = mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
+		buf = (guint8*)mono_method_alloc_generic_virtual_trampoline (domain, buf_len);
 	else
 		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;
