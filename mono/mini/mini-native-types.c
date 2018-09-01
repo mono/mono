@@ -260,7 +260,7 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 
 		/* We have IR for inc/dec */
 		MONO_INST_NEW (cfg, ins, inc ? info->inc_op : info->dec_op);
-		ins->dreg = alloc_dreg (cfg, info->stack_type);
+		ins->dreg = alloc_dreg (cfg, (MonoStackType)info->stack_type);
 		ins->sreg1 = args [0]->dreg;
 		ins->inst_imm = 1;
 		ins->type = info->stack_type;
