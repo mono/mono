@@ -249,7 +249,7 @@ void win32_seh_init()
 {
 	/* install restore stack helper */
 	if (!restore_stack)
-		restore_stack = (void (*) (void))mono_win32_get_handle_stackoverflow ();
+		restore_stack = (void (*) (void*))mono_win32_get_handle_stackoverflow ();
 
 	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
