@@ -6913,7 +6913,7 @@ mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 /*		                               			    */
 /*------------------------------------------------------------------*/
 
-static gpointer
+static guint8*
 get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 param_count, gboolean aot)
 {
 	guint8 *code, *start;
