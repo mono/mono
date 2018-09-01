@@ -780,22 +780,10 @@ mono_get_lmf (void)
 	return NULL;
 }
 
-MonoLMF **
-mono_get_lmf_addr (void)
-{
-	return mono_tls_get_lmf_addr ();
-}
-
 void
 mono_set_lmf (MonoLMF *lmf)
 {
 	(*mono_get_lmf_addr ()) = lmf;
-}
-
-MonoJitTlsData*
-mono_get_jit_tls (void)
-{
-	return (MonoJitTlsData *)mono_tls_get_jit_tls ();
 }
 
 static void
