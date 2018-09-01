@@ -1724,7 +1724,7 @@ mini_get_interp_lmf_wrapper (void)
 	if (wrapper)
 		return wrapper;
 
-	wrapper = mini_create_interp_lmf_wrapper (mono_interp_entry_from_trampoline);
+	wrapper = (MonoMethod*)mini_create_interp_lmf_wrapper ((gpointer)mono_interp_entry_from_trampoline);
 
 	return wrapper;
 }
@@ -2675,7 +2675,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 		if (slot < first_slot + size - 1) {
 			rgctx_index = slot - first_slot + 1 + offset;
-			info = rgctx [rgctx_index];
+			info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
 			if (info) {
 				mono_domain_unlock (domain);
 				return info;
@@ -2696,7 +2696,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	oti = class_get_rgctx_template_oti (get_shared_class (klass),
 										method_inst ? method_inst->type_argc : 0, slot, TRUE, TRUE, &do_free);
 	/* This might take the loader lock */
-	info = instantiate_info (domain, &oti, &context, klass, error);
+	info = (MonoRuntimeGenericContext*)instantiate_info (domain, &oti, &context, klass, error);
 	return_val_if_nok (error, NULL);
 	g_assert (info);
 
@@ -2711,7 +2711,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	/* Check whether the slot hasn't been instantiated in the
 	   meantime. */
 	if (rgctx [rgctx_index])
-		info = rgctx [rgctx_index];
+		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
 	else
 		rgctx [rgctx_index] = info;
 
@@ -2819,7 +2819,7 @@ mini_method_get_mrgctx (MonoVTable *class_vtable, MonoMethod *method)
 
 		if (!domain_info->mrgctx_hash)
 			domain_info->mrgctx_hash = g_hash_table_new (NULL, NULL);
-		mrgctx = g_hash_table_lookup (domain_info->mrgctx_hash, method);
+		mrgctx = (MonoMethodRuntimeGenericContext*)g_hash_table_lookup (domain_info->mrgctx_hash, method);
 	} else {
 		g_assert (!method_inst->is_open);
 
