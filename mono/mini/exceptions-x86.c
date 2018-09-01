@@ -1016,7 +1016,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 #elif defined (TARGET_WIN32)
 	MonoContext mctx;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	struct sigcontext *ctx = (struct sigcontext *)sigctx;
 
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 
