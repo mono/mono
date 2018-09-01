@@ -23,10 +23,6 @@
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
-    <!-- Force the pre-build event to run after references have been resolved. The default
-      behavior is to run them before resolving references, which can cause things like
-      culevel.exe to be used before they have been built. -->
-    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
@@ -79,6 +75,12 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mono RabbitMQ.Client.Apigen.exe /n:v0_9 "/apiName:AMQP_0_9" $(ProjectDir)..\..\docs\specs\amqp0-9.stripped.xml $(ProjectDir)..\..\docs\specs\net_4_x-api-0-9.cs
 mono RabbitMQ.Client.Apigen.exe /n:v0_8 "/apiName:AMQP_0_8" $(ProjectDir)..\..\docs\specs\amqp0-8.stripped.xml $(ProjectDir)..\..\docs\specs\net_4_x-api-0-8.cs

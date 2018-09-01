@@ -24,10 +24,6 @@
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
-    <!-- Force the pre-build event to run after references have been resolved. The default
-      behavior is to run them before resolving references, which can cause things like
-      culevel.exe to be used before they have been built. -->
-    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
@@ -122,6 +118,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.jay &gt; $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.cs</PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.jay &gt; $(ProjectDir)\Commons.Xml.Relaxng.Rnc\RncParser.cs</PreBuildEvent>
