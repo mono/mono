@@ -733,17 +733,18 @@ mono_arch_exceptions_init (void)
  * or (eventually) Windows 7 SP1.
  */
 #ifdef TARGET_WIN32
-	DWORD flags;
-	FARPROC getter;
-	FARPROC setter;
 	HMODULE kernel32 = LoadLibraryW (L"kernel32.dll");
-
 	if (kernel32) {
-		getter = GetProcAddress (kernel32, "GetProcessUserModeExceptionPolicy");
-		setter = GetProcAddress (kernel32, "SetProcessUserModeExceptionPolicy");
-		if (getter && setter) {
-			if (getter (&flags))
-				setter (flags & ~PROCESS_CALLBACK_FILTER_ENABLED);
+		typedef BOOL (WINAPI * SetProcessUserModeExceptionPolicy_t) (DWORD dwFlags);
+		typedef BOOL (WINAPI * GetProcessUserModeExceptionPolicy_t) (PDWORD dwFlags);
+		GetProcessUserModeExceptionPolicy_t const getter = (GetProcessUserModeExceptionPolicy_t)GetProcAddress (kernel32, "GetProcessUserModeExceptionPolicy");
+		if (getter) {
+			SetProcessUserModeExceptionPolicy_t const setter = (SetProcessUserModeExceptionPolicy_t)GetProcAddress (kernel32, "SetProcessUserModeExceptionPolicy");
+			if (setter) {
+				DWORD flags = 0;
+				if (getter (&flags))
+					setter (flags & ~PROCESS_CALLBACK_FILTER_ENABLED);
+			}
 		}
 	}
 #endif
