@@ -166,12 +166,6 @@ $$(eval $$(call RuntimeTemplate,android-$(1),$(4)))
 
 endef
 
-## android-armeabi
-android-armeabi_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv5te
-android-armeabi_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv5te
-android-armeabi_LDFLAGS=-Wl,--fix-cortex-a8
-$(eval $(call AndroidTargetTemplate,armeabi,arm,arm-linux-androideabi,armv5-linux-androideabi))
-
 ## android-armeabi-v7a
 android-armeabi-v7a_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
 android-armeabi-v7a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
