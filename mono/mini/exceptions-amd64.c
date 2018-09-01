@@ -804,7 +804,7 @@ mono_arch_ip_from_context (void *sigctx)
 
 	return (gpointer)UCONTEXT_REG_RIP (ctx);
 #elif defined(HOST_WIN32)
-	return ((CONTEXT*)sigctx)->Rip;
+	return (gpointer)(((CONTEXT*)sigctx)->Rip);
 #else
 	MonoContext *ctx = sigctx;
 	return (gpointer)ctx->gregs [AMD64_RIP];
