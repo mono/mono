@@ -145,7 +145,7 @@ get_saved_signal_handler (int signo, gboolean remove)
 {
 	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = (struct sigaction*)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		if (remove && handler)
 			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		return handler;
@@ -301,7 +301,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	mono_thread_info_set_is_async_context (TRUE);
 
-	MONO_PROFILER_RAISE (sample_hit, (mono_arch_ip_from_context (ctx), ctx));
+	MONO_PROFILER_RAISE (sample_hit, ((const mono_byte*)mono_arch_ip_from_context (ctx), ctx));
 
 	mono_thread_info_set_is_async_context (FALSE);
 
