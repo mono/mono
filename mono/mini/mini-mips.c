@@ -514,7 +514,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 /* The delegate object plus 3 params */
 #define MAX_ARCH_DELEGATE_PARAMS (4 - 1)
 
-static gpointer
+static guint8*
 get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, gboolean param_count)
 {
 	guint8 *code, *start;
