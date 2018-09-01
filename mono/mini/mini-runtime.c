@@ -3146,13 +3146,13 @@ static gpointer
 mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
 	IMTTrampInfo *info = (IMTTrampInfo*)arg;
-	gpointer *imt;
-	gpointer *ftndesc;
+	IMTTrampFunc **imt;
+	IMTTrampFunc *ftndesc;
 	IMTTrampFunc func;
 
 	mono_vtable_build_imt_slot (info->vtable, info->slot);
 
-	imt = (gpointer*)info->vtable;
+	imt = (IMTTrampFunc**)info->vtable;
 	imt -= MONO_IMT_SIZE;
 
 	/* Return what the real IMT trampoline returns */
