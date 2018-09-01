@@ -4471,7 +4471,8 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 	if (mini_get_debug_options ()->load_aot_jit_info_eagerly)
 		jinfo = mono_aot_find_jit_info (domain, amodule->assembly->image, code);
 
-	gboolean inited_ok = TRUE;
+	gboolean inited_ok;
+	inited_ok = TRUE;
 	if (init_class) {
 		MonoVTable *vt = mono_class_vtable_checked (domain, init_class, error);
 		if (!is_ok (error))
