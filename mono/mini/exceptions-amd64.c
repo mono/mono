@@ -1200,8 +1200,8 @@ fast_find_range_in_table_no_lock_ex (gsize begin_range, gsize end_range, gboolea
 
 	// Fast path, look at boundaries.
 	if (g_dynamic_function_table_begin != NULL) {
-		DynamicFunctionTableEntry *first_entry = g_dynamic_function_table_begin->data;
-		DynamicFunctionTableEntry *last_entry = (g_dynamic_function_table_end != NULL ) ? g_dynamic_function_table_end->data : first_entry;
+		DynamicFunctionTableEntry *first_entry = (DynamicFunctionTableEntry*)g_dynamic_function_table_begin->data;
+		DynamicFunctionTableEntry *last_entry = (g_dynamic_function_table_end != NULL ) ? (DynamicFunctionTableEntry*)g_dynamic_function_table_end->data : first_entry;
 
 		// Sorted in descending order based on begin_range, check first item, that is the entry with highest range.
 		if (first_entry != NULL && first_entry->begin_range <= begin_range && first_entry->end_range >= end_range) {
