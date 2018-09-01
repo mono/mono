@@ -3231,7 +3231,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RELAXED_NOP:
 			break;
 		case OP_JUMP_TABLE:
-			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
+			mono_add_patch_info_rel (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0, MONO_R_ARM64_IMM);
 			code = emit_imm64_template (code, dreg);
 			break;
 		case OP_BREAK:
