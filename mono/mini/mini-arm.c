@@ -1080,7 +1080,7 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #elif __APPLE__
 	sys_icache_invalidate (code, size);
 #else
-    __builtin___clear_cache (code, code + size);
+    __builtin___clear_cache ((char*)code, (char*)code + size);
 #endif
 }
 
