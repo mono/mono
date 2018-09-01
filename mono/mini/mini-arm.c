@@ -7519,7 +7519,7 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	// FIXME: Add a free function
 
 	mono_domain_lock (domain);
-	info = g_hash_table_lookup (domain_jit_info (domain)->arch_seq_points, 
+	info = (SeqPointInfo*)g_hash_table_lookup (domain_jit_info (domain)->arch_seq_points,
 								code);
 	mono_domain_unlock (domain);
 
