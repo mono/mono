@@ -1746,7 +1746,7 @@ initialize_unwind_info_internal (GSList *unwind_ops)
 {
 	PUNWIND_INFO unwindinfo;
 
-	mono_arch_unwindinfo_create (&unwindinfo);
+	mono_arch_unwindinfo_create ((gpointer*)&unwindinfo);
 	initialize_unwind_info_internal_ex (unwind_ops, unwindinfo);
 
 	return unwindinfo;
