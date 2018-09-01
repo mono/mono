@@ -1167,6 +1167,12 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
 
+	if (0) {
+done:
+		g_free (cinfo);
+		return;
+	}
+
 	/* No return value */
 	if (sig->ret->type == MONO_TYPE_VOID)
 		return;
@@ -1217,8 +1223,7 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 			g_error ("Arg storage type not yet supported");
 	}
 	interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
-done:
-	g_free (cinfo);
+	goto done;
 }
 
 /*
