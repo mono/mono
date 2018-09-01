@@ -3963,7 +3963,7 @@ mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint8 *st
 }
 
 void
-mono_cfg_set_exception (MonoCompile *cfg, int type)
+mono_cfg_set_exception (MonoCompile *cfg, MonoExceptionType type)
 {
 	cfg->exception_type = type;
 }
