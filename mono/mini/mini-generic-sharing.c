@@ -1256,7 +1256,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1329,7 +1329,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached)
 		res = cached;
 	else
@@ -1360,7 +1360,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)mono_metadata_signature_equal, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1452,7 +1452,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached)
 		res = cached;
 	else
@@ -1497,7 +1497,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	gshared_lock ();
 	if (!cache)
 		cache = g_hash_table_new_full ((GHashFunc)mono_signature_hash, (GEqualFunc)signature_equal_pinvoke, NULL, NULL);
-	res = g_hash_table_lookup (cache, sig);
+	res = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	gshared_unlock ();
 	if (res) {
 		g_free (sig);
@@ -1663,7 +1663,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 	res = mono_mb_create (mb, csig, sig->param_count + 16, info);
 
 	gshared_lock ();
-	cached = g_hash_table_lookup (cache, sig);
+	cached = (MonoMethod*)g_hash_table_lookup (cache, sig);
 	if (cached) {
 		mono_free_method (res);
 		res = cached;
