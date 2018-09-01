@@ -4256,7 +4256,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	MonoCallInst *call;
 
 	call = (MonoCallInst*)ins;
-	cinfo = (CallInfo*)call->call_info;
+	cinfo = call->call_info;
 
 	switch (cinfo->ret.storage) {
 	case RegTypeStructByVal:
