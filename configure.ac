@@ -4172,11 +4172,7 @@ if test "x$host" != "x$target"; then
 			# TEGRA
 			CPPFLAGS="$CPPFLAGS"
 			;;
-   		armv5-*-linux-androideabi*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			CPPFLAGS="$CPPFLAGS"
-			;;
-   		*-linux-androideabi*)
+   		*-linux-android*)
 			AC_DEFINE(TARGET_ANDROID, 1, [...])
 			CPPFLAGS="$CPPFLAGS"
 			;;
