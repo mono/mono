@@ -1968,3 +1968,9 @@ mono_arch_undo_ip_adjustment (MonoContext *ctx)
 {
 	ctx->gregs [AMD64_RIP]++;
 }
+
+void
+mono_arch_do_ip_adjustment (MonoContext *ctx)
+{
+	ctx->gregs [AMD64_RIP]--;
+}

@@ -5,13 +5,13 @@ MXE_HASH?=b9cbb53541a0e10fe4fe81f22bd586cb9cdc922a
 
 # LLVM
 
-#LLVM_HASH?=3b82b3c9041eb997f627f881a67d20be37264e9c
-#LLVM_JENKINS_LANE=build-package-osx-llvm
-LLVM_HASH?=fc854b8ec5873d294b80afa3e6cf6a88c5c48886
-LLVM36_HASH?=0b3cb8ac12cd839f8110775d4085e822e8af4d7b
-LLVM_JENKINS_LANE=build-package-osx-llvm-release60
-LLVM36_JENKINS_LANE=build-package-osx-llvm
 LLVM_BRANCH=release_60
+LLVM_HASH?=fc854b8ec5873d294b80afa3e6cf6a88c5c48886
+LLVM_JENKINS_LANE=build-package-osx-llvm-release60
+
+LLVM36_BRANCH=master
+LLVM36_HASH?=0b3cb8ac12cd839f8110775d4085e822e8af4d7b
+LLVM36_JENKINS_LANE=build-package-osx-llvm
 
 # Android
 

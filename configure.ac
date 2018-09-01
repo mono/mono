@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=10
+MONO_CORLIB_COUNTER=11
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -4173,11 +4173,7 @@ if test "x$host" != "x$target"; then
 			# TEGRA
 			CPPFLAGS="$CPPFLAGS"
 			;;
-   		armv5-*-linux-androideabi*)
-			AC_DEFINE(TARGET_ANDROID, 1, [...])
-			CPPFLAGS="$CPPFLAGS"
-			;;
-   		*-linux-androideabi*)
+   		*-linux-android*)
 			AC_DEFINE(TARGET_ANDROID, 1, [...])
 			CPPFLAGS="$CPPFLAGS"
 			;;
@@ -5503,6 +5499,9 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 
+# Update all submodules recursively to ensure everything is checked out
+$srcdir/scripts/update_submodules.sh
+
 AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
@@ -5583,9 +5582,6 @@ runtime/Makefile
 msvc/Makefile
 po/Makefile
 ])
-
-# Update all submodules recursively to ensure everything is checked out
-$srcdir/scripts/update_submodules.sh
 
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
