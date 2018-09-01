@@ -9771,13 +9771,13 @@ calli_end:
 			if (is_instance && ftype->attrs & FIELD_ATTRIBUTE_STATIC) {
 				switch (il_op) {
 				case MONO_CEE_LDFLD:
-					il_op = CEE_LDSFLD;
+					il_op = MONO_CEE_LDSFLD;
 					break;
 				case MONO_CEE_STFLD:
-					il_op = CEE_STSFLD;
+					il_op = MONO_CEE_STSFLD;
 					break;
 				case MONO_CEE_LDFLDA:
-					il_op = CEE_LDSFLDA;
+					il_op = MONO_CEE_LDSFLDA;
 					break;
 				default:
 					g_assert_not_reached ();
