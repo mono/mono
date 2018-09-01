@@ -800,7 +800,7 @@ mono_set_jit_tls (MonoJitTlsData *jit_tls)
 }
 
 static void
-mono_set_lmf_addr (gpointer lmf_addr)
+mono_set_lmf_addr (MonoLMF **lmf_addr)
 {
 	MonoThreadInfo *info;
 
