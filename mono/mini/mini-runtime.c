@@ -1327,7 +1327,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		if (ji1->data.target == ji2->data.target)
 			return 1;
-		return strcmp (ji1->data.target, ji2->data.target) == 0 ? 1 : 0;
+		return strcmp ((const char*)ji1->data.target, (const char*)ji2->data.target) == 0 ? 1 : 0;
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig) ? 1 : 0;
 	default:
@@ -1652,10 +1652,10 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mini_get_gsharedvt_wrapper (TRUE, NULL, patch_info->data.sig, NULL, -1, FALSE);
 		break;
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
-		target = mono_tls_get_tls_getter (patch_info->data.index, FALSE);
+		target = mono_tls_get_tls_getter ((MonoTlsKey)patch_info->data.index, FALSE);
 		break;
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
-		target = mono_tls_get_tls_setter (patch_info->data.index, FALSE);
+		target = mono_tls_get_tls_setter ((MonoTlsKey)patch_info->data.index, FALSE);
 		break;
 	case MONO_PATCH_INFO_JIT_THREAD_ATTACH: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach");
@@ -1963,7 +1963,7 @@ find_method (MonoMethod *method, MonoDomain *domain)
 {
 	int i;
 	for (i = 0; i < compilation_data.in_flight_methods->len; ++i){
-		JitCompilationEntry *e = compilation_data.in_flight_methods->pdata [i];
+		JitCompilationEntry *e = (JitCompilationEntry*)compilation_data.in_flight_methods->pdata [i];
 		if (e->method == method && e->domain == domain)
 			return e;
 	}
@@ -2140,7 +2140,7 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 				 * sometimes we load methods too eagerly and have to create them even if they
 				 * will never be called.
 				 */
-				return no_gsharedvt_in_wrapper;
+				return (gpointer)no_gsharedvt_in_wrapper;
 			}
 		}
 	}
@@ -2566,7 +2566,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 		char *type_and_method = g_strdup_printf ("%s.%s", type, method->name);
 
 		g_free (type);
-		mono_arch_invalidate_method (ji->ji, invalidated_delegate_trampoline, type_and_method);
+		mono_arch_invalidate_method (ji->ji, (gpointer)invalidated_delegate_trampoline, (gpointer)type_and_method);
 		destroy = FALSE;
 	}
 #endif
@@ -2815,7 +2815,7 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				/* The out wrapper has the same signature as the compiled gsharedvt method */
 				MonoMethodSignature *wrapper_sig = mini_get_gsharedvt_out_sig_wrapper_signature (sig->hasthis, sig->ret->type != MONO_TYPE_VOID, sig->param_count);
 
-				info->wrapper_arg = mono_method_needs_static_rgctx_invoke (method, TRUE) ? mini_method_get_rgctx (method) : NULL;
+				info->wrapper_arg = (gpointer*)(mono_method_needs_static_rgctx_invoke (method, TRUE) ? mini_method_get_rgctx (method) : NULL);
 
 				invoke = mono_marshal_get_runtime_invoke_for_sig (wrapper_sig);
 				g_free (wrapper_sig);
