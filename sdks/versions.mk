@@ -10,7 +10,7 @@ LLVM_HASH?=fc854b8ec5873d294b80afa3e6cf6a88c5c48886
 LLVM_JENKINS_LANE=build-package-osx-llvm-release60
 
 LLVM36_BRANCH=master
-LLVM36_HASH?=0b3cb8ac12cd839f8110775d4085e822e8af4d7b
+LLVM36_HASH?=acb33f3436e7dd5b6588c9f044d012846c4d55c4
 LLVM36_JENKINS_LANE=build-package-osx-llvm
 
 # Android
