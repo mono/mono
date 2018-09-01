@@ -3040,18 +3040,18 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		unwind_info = decode_value (p, &p);
 	}
 	if (has_generic_jit_info)
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_GENERIC_JIT_INFO);
+		flags |= JIT_INFO_HAS_GENERIC_JIT_INFO;
 
 	if (has_try_block_holes) {
 		num_holes = decode_value (p, &p);
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_TRY_BLOCK_HOLES);
+		flags |= JIT_INFO_HAS_TRY_BLOCK_HOLES;
 		try_holes_info_size = sizeof (MonoTryBlockHoleTableJitInfo) + num_holes * sizeof (MonoTryBlockHoleJitInfo);
 	} else {
 		num_holes = try_holes_info_size = 0;
 	}
 
 	if (has_arch_eh_jit_info) {
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_ARCH_EH_INFO);
+		flags |= JIT_INFO_HAS_ARCH_EH_INFO;
 		/* Overwrite the original code_len which includes alignment padding */
 		code_len = decode_value (p, &p);
 	}
@@ -3121,7 +3121,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 			}
 		}
 
-		flags = (MonoJitInfoFlags)(flags | JIT_INFO_HAS_UNWIND_INFO);
+		flags |= JIT_INFO_HAS_UNWIND_INFO;
 
 		int num_llvm_clauses;
 		/* Get the length first */
