@@ -190,7 +190,8 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 	int i = 0;
 	const char *name = cmethod->name;
 	MonoInst *ins;
-	int type_index, stack_type;
+	int type_index;
+	MonoStackType stack_type;
 
 	if (info->op_index == 2 && cfg->r4fp && TARGET_SIZEOF_VOID_P == 4) {
 		type_index = 3;
