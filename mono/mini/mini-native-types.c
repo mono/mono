@@ -24,9 +24,15 @@ typedef struct {
 
 typedef struct {
 	short op_index;
+#ifdef __cplusplus
+	MonoStackType big_stack_type : 16;
+	MonoStackType small_stack_type : 16;
+	MonoStackType stack_type : 16;
+#else
 	short big_stack_type;
 	short small_stack_type;
 	short stack_type;
+#endif
 	short conv_4_to_8;
 	short conv_8_to_4;
 	short move;
