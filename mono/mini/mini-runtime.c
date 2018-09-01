@@ -3293,20 +3293,20 @@ mono_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIM
 	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer));
 	switch (real_count) {
 	case 1:
-		res [0] = mono_llvmonly_imt_tramp_1;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_1;
 		break;
 	case 2:
-		res [0] = mono_llvmonly_imt_tramp_2;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_2;
 		break;
 	case 3:
-		res [0] = mono_llvmonly_imt_tramp_3;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp_3;
 		break;
 	default:
-		res [0] = mono_llvmonly_imt_tramp;
+		res [0] = (gpointer)mono_llvmonly_imt_tramp;
 		break;
 	}
 	if (virtual_generic || fail_tramp)
-		res [0] = mono_llvmonly_fallback_imt_tramp;
+		res [0] = (gpointer)mono_llvmonly_fallback_imt_tramp;
 	res [1] = buf;
 
 	return res;
