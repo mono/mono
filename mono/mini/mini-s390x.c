@@ -6458,7 +6458,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (tracing) {
 		argsClobbered = TRUE;
-		code = mono_arch_instrument_prolog (cfg, enter_method, code, TRUE);
+		code = (guint8*)mono_arch_instrument_prolog (cfg, enter_method, code, TRUE);
 	}
 
 	/*
@@ -6565,7 +6565,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	code = realloc_code (cfg, max_epilog_size);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method)) {
-		code = mono_arch_instrument_epilog (cfg, leave_method, code, TRUE);
+		code = (guint8*)mono_arch_instrument_epilog (cfg, leave_method, code, TRUE);
 		tracing = 1;
 	}
 	
