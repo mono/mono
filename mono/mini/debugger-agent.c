@@ -1172,7 +1172,7 @@ socket_transport_send (void *data, int len)
 	MONO_ENTER_GC_SAFE;
 
 	do {
-		res = send (conn_fd, data, len, 0);
+		res = send (conn_fd, (const char*)data, len, 0);
 	} while (res == -1 && get_last_sock_error () == MONO_EINTR);
 
 	MONO_EXIT_GC_SAFE;
@@ -1263,7 +1263,7 @@ socket_transport_connect (const char *address)
 				if (sfd == -1)
 					continue;
 
-				if (setsockopt (sfd, SOL_SOCKET, SO_REUSEADDR, &n, sizeof(n)) == -1)
+				if (setsockopt (sfd, SOL_SOCKET, SO_REUSEADDR, (const char*)&n, sizeof(n)) == -1)
 					continue;
 
 				res = bind (sfd, &sockaddr.addr, sock_len);
@@ -2721,7 +2721,7 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 	InterruptData interrupt_data = { 0 };
 	interrupt_data.tls = tls;
 
-	mono_thread_info_safe_suspend_and_run ((MonoNativeThreadId)(gpointer)(gsize)thread->tid, FALSE, debugger_interrupt_critical, &interrupt_data);
+	mono_thread_info_safe_suspend_and_run ((MonoNativeThreadId)(gsize)thread->tid, FALSE, debugger_interrupt_critical, &interrupt_data);
 	if (!interrupt_data.valid_info) {
 		DEBUG_PRINTF (1, "[%p] mono_thread_info_suspend_sync () failed for %p...\n", (gpointer) (gsize) mono_native_thread_id_get (), (gpointer)tid);
 		/* 
