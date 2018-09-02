@@ -10,11 +10,9 @@ top_srcdir ?= $(abspath $(CURDIR)/..)
 LLVM_PATH ?= $(abspath $(top_srcdir)/external/llvm)
 LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
 LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
-LLVM_RELEASE ?= llvm
 
 # FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(NEEDED_LLVM_BRANCH)/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz
 LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(NEEDED_LLVM_VERSION).tar.gz"
-LLVM36_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm/llvm-osx64-$(NEEDED_LLVM36_VERSION).tar.gz"
 
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
@@ -23,7 +21,6 @@ SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
 include $(top_srcdir)/scripts/submodules/versions.mk
 
 $(eval $(call ValidateVersionTemplate,llvm,LLVM))
-$(eval $(call ValidateVersionTemplate,llvm36,LLVM36))
 
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
@@ -40,7 +37,10 @@ bump-current-llvm: __bump-current-version-llvm
 $(LLVM_BUILD) $(LLVM_PREFIX):
 	mkdir -p $@
 
-$(LLVM_PATH)/CMakeLists.txt: | reset-$(LLVM_RELEASE)
+$(LLVM_PATH):
+	$(MAKE) -f build.mk reset-llvm
+
+$(LLVM_PATH)/CMakeLists.txt: | $(LLVM_PATH)
 
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
@@ -73,11 +73,7 @@ install-llvm: build-llvm | $(LLVM_PREFIX)
 
 .PHONY: download-llvm
 download-llvm:
-	mkdir -p llvm-tmp && cd llvm-tmp && (wget --no-verbose -O - $(LLVM_DOWNLOAD_LOCATION) || curl -L $(LLVM_DOWNLOAD_LOCATION)) | tar xzf -
-
-.PHONY: download-llvm36
-download-llvm36:
-	mkdir -p llvm36-tmp && cd llvm36-tmp && (wget --no-verbose -O - $(LLVM36_DOWNLOAD_LOCATION) || curl -L $(LLVM36_DOWNLOAD_LOCATION)) | tar xzf -
+	(wget --no-verbose -O - $(LLVM_DOWNLOAD_LOCATION) || curl -L $(LLVM_DOWNLOAD_LOCATION)) | tar -xzf - -C $(dir $(LLVM_PREFIX))
 
 .PHONY: clean-llvm
 clean-llvm:
