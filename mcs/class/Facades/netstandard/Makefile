@@ -13,10 +13,7 @@ KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
 SIGN_FLAGS = /delaysign /nowarn:1616,1699 /nowarn:618
 LIB_REFS = System System.Xml System.Xml.Linq System.Runtime.Serialization System.Core System.Numerics System.Numerics.Vectors System.Net.Http System.Transactions \
-System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem Facades/System.Runtime.InteropServices.RuntimeInformation \
-Facades/System.Security.Cryptography.Algorithms Facades/System.Globalization.Extensions Facades/System.Data.Common \
-Facades/System.Diagnostics.StackTrace Facades/System.Runtime.Serialization.Xml Facades/System.Runtime.Serialization.Primitives \
-Facades/System.Security.SecureString Facades/System.Threading.Overlapped Facades/System.Xml.XPath.XDocument
+System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem
 
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
