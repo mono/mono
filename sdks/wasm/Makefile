@@ -115,6 +115,9 @@ binding_tests.dll: $(BINDING_TEST_SOURCES)
 bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
+wasmhttp.dll: WasmHttpMessageHandler.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:bindings.dll WasmHttpMessageHandler.cs
+
 Simple.Dependency.dll: dependency.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
 
@@ -129,15 +132,15 @@ Mono.Cecil.dll: Makefile
 packager.exe: packager.cs Mono.Cecil.dll
 	csc /debug:portable -r:Mono.Cecil.dll packager.cs
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll wasmhttp.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
 	
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
-	mono packager.exe -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll wasmhttp.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
+	mono packager.exe -out=test-suite binding_tests.dll wasmhttp.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	cp test.js test-suite/
 	touch $@
 
@@ -234,6 +237,9 @@ package: build build-dbg-proxy
 	cp bindings.cs tmp
 	cp bindings.dll tmp/framework
 	cp bindings.pdb tmp/framework
+	cp WasmHttpMessageHandler.cs tmp
+	cp wasmhttp.dll tmp/framework
+	cp wasmhttp.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/
