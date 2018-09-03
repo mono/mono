@@ -395,6 +395,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\EventAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ExceptionHandlingClauseOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\GenericParameterAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ICustomAttributeProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\IReflect.cs" />
@@ -704,6 +705,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingMemberException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\OutOfMemoryException.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenRegistration.cs" />
