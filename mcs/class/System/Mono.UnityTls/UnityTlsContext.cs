@@ -41,6 +41,7 @@ namespace Mono.Unity
 		MonoTlsConnectionInfo connectioninfo;
 		bool                  isAuthenticated = false;
 		bool                  hasContext = false;
+		bool                  closedGraceful = false;
 
 		// Memory-buffer
 		byte [] writeBuffer;
@@ -196,7 +197,9 @@ namespace Mono.Unity
 					return (0, false);	// According to Apple and Btls implementation this is how we should handle gracefully closed connections.
 
 				default:
-					Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data to TLS context");
+					if (!closedGraceful) {
+						Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to read data to TLS context");
+					}
 					return (0, false);
 			}
 		}
@@ -387,17 +390,28 @@ namespace Mono.Unity
 
 				bool wouldBlock;
 				int numBytesRead = Parent.InternalRead (readBuffer, 0, bufferLen, out wouldBlock);
-				if (wouldBlock) {
-					UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
-					return 0;
-				}
+
+				// Non graceful exit.
 				if (numBytesRead < 0) {
 					UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
-					return 0;
+				} else if (numBytesRead > 0) {
+					Marshal.Copy (readBuffer, 0, (IntPtr)buffer, bufferLen);
+				} else  { // numBytesRead == 0
+					// careful when rearranging this: wouldBlock might be true even if stream was closed abruptly. 
+					if (wouldBlock) {
+						UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_WOULD_BLOCK);
+					} 
+					// indicates graceful exit.
+					// UnityTls only accepts an exit as gracful, if it was closed via a special TLS protocol message.
+					// Both .Net and MobileTlsContext have a different idea of this concept though!
+					else {
+						closedGraceful = true;
+						UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_READ_FAILED);
+					}
 				}
 
-				Marshal.Copy (readBuffer, 0, (IntPtr)buffer, bufferLen);
-				return numBytesRead;
+				// Note that UnityTls ignores this number when raising an error.
+				return numBytesRead; 
 			} catch (Exception ex) { // handle all exceptions and store them for later since we don't want to let them go through native code.
 				UnityTls.NativeInterface.unitytls_errorstate_raise_error (errorState, UnityTls.unitytls_error_code.UNITYTLS_USER_UNKNOWN_ERROR);
 				if (lastException == null)
