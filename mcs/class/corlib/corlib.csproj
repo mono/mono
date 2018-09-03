@@ -19,10 +19,10 @@
     <AssemblyName>mscorlib</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -395,6 +395,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\EventAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ExceptionHandlingClauseOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\GenericParameterAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ICustomAttributeProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\IReflect.cs" />
@@ -704,6 +705,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingMemberException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\OutOfMemoryException.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenRegistration.cs" />
@@ -1990,10 +1992,16 @@
     <Compile Include="corert\Task.cs" />
     <Compile Include="corert\ThreadPool.cs" />
     <Compile Include="corert\Type.cs" />
-    <!--Genconsts dependency because this project includes Consts.cs-->
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\mcs\tools\cil-stringreplacer\cil-stringreplacer.csproj">
+      <Name>cil-stringreplacer</Name>
+      <Project>{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Private>false</Private>
@@ -3009,11 +3017,19 @@
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
   <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">move $(TargetPath) $(TargetPath).tmp
-$(ProjectDir)\..\..\build\cil-stringreplacer.exe --mscorlib-debug $(TargetPath).tmp
-move $(TargetPath).tmp $(TargetPath)</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">move $(TargetPath) $(TargetPath).tmp
-$(ProjectDir)\..\..\build\cil-stringreplacer.exe --mscorlib-debug $(TargetPath).tmp
-move $(TargetPath).tmp $(TargetPath)</PostBuildEvent>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"$(MSBuildFrameworkToolsPath)\Ilasm.exe" /dll /noautoinherit /out:"$(TargetPath).il.tmp" "$(ProjectDir)\..\..\class\corlib\System.Runtime.CompilerServices\Unsafe.il"
+move "$(TargetPath)" "$(TargetPath).tmp"
+"$(ProjectDir)\..\..\build\cil-stringreplacer.exe" --mscorlib-debug --ilreplace="$(TargetPath).il.tmp" "$(TargetPath).tmp"
+move "$(TargetPath).tmp" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"$(MSBuildFrameworkToolsPath)\Ilasm.exe" /dll /noautoinherit /out:"$(TargetPath).il.tmp" "$(ProjectDir)\..\..\class\corlib\System.Runtime.CompilerServices\Unsafe.il"
+move "$(TargetPath)" "$(TargetPath).tmp"
+"$(ProjectDir)\..\..\build\cil-stringreplacer.exe" --mscorlib-debug --ilreplace="$(TargetPath).il.tmp" "$(TargetPath).tmp"
+move "$(TargetPath).tmp" "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

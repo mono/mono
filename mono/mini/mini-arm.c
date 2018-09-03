@@ -67,7 +67,9 @@
 #define THUNK_SIZE (3 * 4)
 
 #if __APPLE__
+G_BEGIN_DECLS
 void sys_icache_invalidate (void *start, size_t len);
+G_END_DECLS
 #endif
 
 /* This mutex protects architecture specific caches */
@@ -360,7 +362,9 @@ mono_arm_patchable_bl (guint8 *code, int cond)
 #endif
 
 #ifdef HAVE_AEABI_READ_TP
+G_BEGIN_DECLS
 gpointer __aeabi_read_tp (void);
+G_END_DECLS
 #endif
 
 gboolean
@@ -1690,7 +1694,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	ccontext->stack_size = ALIGN_TO (cinfo->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
 	if (ccontext->stack_size)
-		ccontext->stack = (guint8*)calloc (1, ccontext->stack_size);
+		ccontext->stack = (guint8*)g_calloc (1, ccontext->stack_size);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		ainfo = &cinfo->ret;

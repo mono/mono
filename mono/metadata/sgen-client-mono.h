@@ -115,7 +115,7 @@ sgen_client_slow_object_get_size (GCVTable vtable, GCObject* o)
 	 * mono_array_length_fast not using the object's vtable.
 	 */
 	if (klass == mono_defaults.string_class) {
-		return G_STRUCT_OFFSET (MonoString, chars) + 2 * mono_string_length_fast ((MonoString*) o) + 2;
+		return MONO_SIZEOF_MONO_STRING + 2 * mono_string_length_fast ((MonoString*) o) + 2;
 	} else if (m_class_get_rank (klass)) {
 		return sgen_mono_array_size (vtable, (MonoArray*)o, NULL, 0);
 	} else {
@@ -683,7 +683,7 @@ sgen_client_binary_protocol_collection_end_stats (long long major_scan, long lon
 {
 }
 
-#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = (SgenThreadInfo*)mono_tls_get_sgen_thread_info ()
+#define TLAB_ACCESS_INIT	SgenThreadInfo *__thread_info__ = mono_tls_get_sgen_thread_info ()
 #define IN_CRITICAL_REGION (__thread_info__->client_info.in_critical_region)
 
 /* Enter must be visible before anything is done in the critical region. */

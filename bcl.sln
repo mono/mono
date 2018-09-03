@@ -2,16 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 MinimumVisualStudioVersion = 15.0.0.0
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay", "mcs/jay/jay.vcxproj", "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jay", "mcs/jay/jay.vcxproj", "{5d485d32-3b9f-4287-ab24-c8da5b89f537}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "genconsts", "msvc/scripts/genconsts.csproj", "{702AE2C0-71DD-4112-9A06-E4FABCA59986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cil-stringreplacer", "mcs/tools/cil-stringreplacer/cil-stringreplacer.csproj", "{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cil-stringreplacer", "mcs/tools/cil-stringreplacer/cil-stringreplacer.csproj", "{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corlib", "mcs/class/corlib/corlib.csproj", "{4627BDAB-CA24-40D0-A627-01692BA51B44}"
-	ProjectSection(ProjectDependencies) = postProject
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B} = {53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Security", "mcs/class/Mono.Security/Mono.Security.csproj", "{117140AC-A163-4B86-9E69-A46EA268A9DB}"
 EndProject
@@ -70,9 +67,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web.Services", "mcs/class/System.Web.Services/System.Web.Services.csproj", "{7395C26D-7C2A-4F7F-AB7D-CE0B50BDFF38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web", "mcs/class/System.Web/System.Web.csproj", "{06AB80F3-E8A7-41DB-8794-3BDDF2B0E84A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E8E246BD-CD0C-4734-A3C2-7F44796EC47B} = {E8E246BD-CD0C-4734-A3C2-7F44796EC47B}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Runtime.Remoting", "mcs/class/System.Runtime.Remoting/System.Runtime.Remoting.csproj", "{F1FF1B63-103C-45CA-BC85-71E13074A5B8}"
 EndProject
@@ -85,9 +79,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cscompmgd", "mcs/class/Cscompmgd/Cscompmgd.csproj", "{546B21E5-FB99-44A5-8721-2D672FBCD7FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons.Xml.Relaxng", "mcs/class/Commons.Xml.Relaxng/Commons.Xml.Relaxng.csproj", "{79381DFE-F13A-4A37-9A89-6640702D46E3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Messaging", "mcs/class/Mono.Messaging/Mono.Messaging.csproj", "{9D2D7829-0F66-411B-80BC-AEB6D65DE9F3}"
 EndProject
@@ -134,9 +125,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web.DynamicData", "mcs/class/System.Web.DynamicData/System.Web.DynamicData.csproj", "{60723529-1132-43A7-B978-764AD9F1BE35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.CSharp", "mcs/class/Mono.CSharp/Mono.CSharp.csproj", "{817CE046-07E8-409D-84BF-A6EA4F2879DE}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net", "mcs/class/System.Net/System.Net.csproj", "{182E5AD7-2F59-48E5-B338-C515733AE79B}"
 EndProject
@@ -193,9 +181,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Build.Tasks", "mcs/class/Microsoft.Build.Tasks/Microsoft.Build.Tasks.csproj", "{C974013C-AC76-4B3C-BCCF-3E707D314D71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Build", "mcs/class/Microsoft.Build/Microsoft.Build.csproj", "{86E2C258-C0D8-48D0-BA76-0280A981CEE0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PEAPI", "mcs/class/PEAPI/PEAPI.csproj", "{4EF7E333-3008-4553-BB12-324D436AEC09}"
 EndProject
@@ -296,9 +281,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebMatrix.Data", "mcs/class/WebMatrix.Data/WebMatrix.Data.csproj", "{5FC0608B-F22B-474C-A9EE-3ECD8B1547E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monodoc", "mcs/class/monodoc/monodoc.csproj", "{EBB33B9C-EC1B-4EBB-92BE-3DE3231BD106}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Deployment", "mcs/class/System.Deployment/System.Deployment.csproj", "{419D5017-08F7-4F8D-812B-B92405698BD2}"
 EndProject
@@ -607,9 +589,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit-console", "mcs/nunit24/ConsoleRunner/nunit-console-exe/nunit-console.csproj", "{2D845BF5-42C7-41D3-AC01-F63980F76B22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ilasm", "mcs/ilasm/ilasm.csproj", "{C02B3C37-DB98-40A5-84F0-F98633DA7EE4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gacutil", "mcs/tools/gacutil/gacutil.csproj", "{E2F36F4D-4F8F-40B8-8E8B-58ED2313DE85}"
 EndProject
@@ -706,9 +685,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "illinkanalyzer", "mcs/tools/linker-analyzer/illinkanalyzer.csproj", "{87F7EAE1-FFB2-4011-84E6-7E43C2FEF987}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mcs", "mcs/mcs/mcs.csproj", "{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537} = {5D485D32-3B9F-4287-AB24-C8DA5B89F537}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -734,46 +710,46 @@ Global
 		Release|xammac = Release|xammac
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|net_4_x.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|net_4_x.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|net_4_x.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|net_4_x.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monodroid.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monodroid.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monodroid.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monodroid.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_tv.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_tv.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_tv.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_tv.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_watch.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|monotouch_watch.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_watch.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|monotouch_watch.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|orbis.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|orbis.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|orbis.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|orbis.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|unreal.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|unreal.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|unreal.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|unreal.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|wasm.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|wasm.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|wasm.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|wasm.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|winaot.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|winaot.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|winaot.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|winaot.Build.0 = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|xammac.ActiveCfg = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Debug|xammac.Build.0 = Debug|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|xammac.ActiveCfg = Release|Win32
-		{5D485D32-3B9F-4287-AB24-C8DA5B89F537}.Release|xammac.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|net_4_x.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|net_4_x.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|net_4_x.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|net_4_x.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monodroid.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monodroid.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monodroid.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monodroid.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch_tv.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch_tv.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch_tv.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch_tv.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch_watch.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|monotouch_watch.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch_watch.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|monotouch_watch.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|orbis.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|orbis.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|orbis.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|orbis.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|unreal.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|unreal.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|unreal.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|unreal.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|wasm.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|wasm.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|wasm.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|wasm.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|winaot.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|winaot.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|winaot.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|winaot.Build.0 = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|xammac.ActiveCfg = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Debug|xammac.Build.0 = Debug|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|xammac.ActiveCfg = Release|Win32
+		{5d485d32-3b9f-4287-ab24-c8da5b89f537}.Release|xammac.Build.0 = Release|Win32
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|net_4_x.ActiveCfg = Debug|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|net_4_x.Build.0 = Debug|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|net_4_x.ActiveCfg = Release|x86
@@ -814,46 +790,46 @@ Global
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Debug|xammac.Build.0 = Debug|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.ActiveCfg = Release|x86
 		{702AE2C0-71DD-4112-9A06-E4FABCA59986}.Release|xammac.Build.0 = Release|x86
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|net_4_x.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|net_4_x.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|net_4_x.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|net_4_x.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monodroid.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monodroid.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monodroid.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monodroid.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_tv.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_tv.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_tv.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_tv.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_watch.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|monotouch_watch.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_watch.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|monotouch_watch.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|orbis.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|orbis.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|orbis.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|orbis.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|unreal.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|unreal.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|unreal.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|unreal.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|wasm.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|wasm.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|wasm.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|wasm.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|winaot.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|winaot.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|winaot.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|winaot.Build.0 = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|xammac.ActiveCfg = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Debug|xammac.Build.0 = Debug|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|xammac.ActiveCfg = Release|AnyCPU
-		{53C50FFA-8B39-4C70-8BA8-CAA70C41A47B}.Release|xammac.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|net_4_x.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|net_4_x.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|net_4_x.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|net_4_x.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monodroid.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monodroid.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monodroid.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monodroid.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch_tv.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch_tv.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch_tv.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch_tv.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch_watch.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|monotouch_watch.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch_watch.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|monotouch_watch.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|orbis.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|orbis.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|orbis.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|orbis.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|unreal.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|unreal.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|unreal.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|unreal.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|wasm.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|wasm.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|wasm.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|wasm.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|winaot.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|winaot.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|winaot.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|winaot.Build.0 = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|xammac.ActiveCfg = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Debug|xammac.Build.0 = Debug|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|xammac.ActiveCfg = Release|AnyCPU
+		{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}.Release|xammac.Build.0 = Release|AnyCPU
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{4627BDAB-CA24-40D0-A627-01692BA51B44}.Release|net_4_x.ActiveCfg = Release|net_4_x

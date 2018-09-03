@@ -20,10 +20,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../class/mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -525,6 +525,13 @@
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\UncompiledDocStorage.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\monodoc\Monodoc\storage\ZipStorage.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <ProjectReference Include="$(SolutionDir)\mcs\jay\jay.vcxproj">
+      <Name>jay</Name>
+      <Project>{5d485d32-3b9f-4287-ab24-c8da5b89f537}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
@@ -937,6 +944,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.jay &gt; $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.cs</PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">$(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.jay &gt; $(ProjectDir)\Monodoc.Ecma\EcmaUrlParser.cs</PreBuildEvent>

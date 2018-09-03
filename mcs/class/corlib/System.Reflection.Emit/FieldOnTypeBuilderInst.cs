@@ -128,6 +128,11 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
+        internal override int GetFieldOffset ()
+        {
+            throw new SystemException ("This method should not be called");
+        }
+
 		// Called from the runtime to return the corresponding finished FieldInfo object
 		internal FieldInfo RuntimeResolve () {
 			var type = instantiation.RuntimeResolve ();
