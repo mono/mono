@@ -1,7 +1,8 @@
 #!/bin/bash
 
 llvm_config=$1
-extra_libs="${@:2}"
+llvm_codegen_libs="$2"
+llvm_extra_libs="${@:3}"
 
 use_llvm_config=1
 llvm_host_win32=0
@@ -54,7 +55,10 @@ if [[ $use_llvm_config = 1 ]]; then
 		llvm_old_jit=`$llvm_config --libs mcjit 2>>/dev/null`
 	fi
 	llvm_new_jit=`$llvm_config --libs orcjit 2>>/dev/null`
-	llvm_extra=`$llvm_config --libs $extra_libs`
+
+	if [[ ! -z $llvm_codegen_libs ]]; then
+		llvm_extra=`$llvm_config --libs $llvm_codegen_libs`
+	fi
 
 	# When building for Windows subsystem using WSL or CygWin the path returned from llvm-config.exe
 	# could be a Windows style path, make sure to format it into a path usable for WSL/CygWin.
@@ -103,7 +107,7 @@ if [[ $llvm_host_win32 = 1 ]] && [[ $use_llvm_config = 0 ]]; then
 	llvm_new_jit=
 
 	# Check codegen libs and add needed libraries.
-	case "$extra_libs" in
+	case "$llvm_codegen_libs" in
 		*x86codegen*)
 			# llvm-config.exe --libs x86codegen
 			if [[ $llvm_api_version -lt 600 ]]; then
@@ -129,7 +133,7 @@ if [[ $llvm_host_win32 = 1 ]] && [[ $use_llvm_config = 0 ]]; then
 			fi
 			;;
 		*)
-			llvm_extra=$extra_libs
+			llvm_extra=$llvm_codegen_libs
 	esac
 fi
 
@@ -147,6 +151,10 @@ if [[ $llvm_host_win32 = 1 ]]; then
 else
 	host_cxxflag_additions="-std=c++11"
 	host_cflag_additions=""
+fi
+
+if [[ ! -z $llvm_extra_libs ]]; then
+	llvm_extra="$llvm_extra $llvm_extra_libs"
 fi
 
 # llvm-config --clfags adds warning and optimization flags we don't want
