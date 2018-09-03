@@ -86,6 +86,13 @@ namespace System
 			return -1;
 		}
 
+		[CLSCompliant(false)] 
+		public static String Concat(Object arg0, Object arg1, Object arg2, Object arg3, __arglist) 
+		{
+			// Added to maintain backward compatibility, see https://github.com/mono/mono/issues/9996
+			throw new PlatformNotSupportedException();
+		}
+
 		internal unsafe int IndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
 		{
 			int valueLen = value.Length;
