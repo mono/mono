@@ -98,7 +98,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
 			Assert.AreEqual (typeof (UnmanagedType), marshalAsAttributeCtorArg.ArgumentType);
-			Assert.AreEqual (UnmanagedType.LPStr, marshalAsAttributeCtorArg.Value);
+			Assert.AreEqual ((int)UnmanagedType.LPStr, marshalAsAttributeCtorArg.Value);
 		}
 
 		[Test]
@@ -116,7 +116,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (NonSerializedAttribute), nonSerializedAttributeData.AttributeType);
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
 			Assert.AreEqual (typeof (UnmanagedType), marshalAsAttributeDataCtorArg.ArgumentType);
-			Assert.AreEqual (UnmanagedType.LPStr, marshalAsAttributeDataCtorArg.Value);
+			Assert.AreEqual ((int)UnmanagedType.LPStr, marshalAsAttributeDataCtorArg.Value);
 		}
 
 		[Test]
@@ -131,7 +131,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (1, customAttributesData.Count);
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
 			Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
-			Assert.AreEqual (UnmanagedType.LPStr, ctorArg.Value);
+			Assert.AreEqual ((int)UnmanagedType.LPStr, ctorArg.Value);
 		}
 	}
 }

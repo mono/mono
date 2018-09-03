@@ -1445,7 +1445,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	ccontext->stack_size = ALIGN_TO (cinfo->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
 	if (ccontext->stack_size)
-		ccontext->stack = (guint8*)calloc (1, ccontext->stack_size);
+		ccontext->stack = (guint8*)g_calloc (1, ccontext->stack_size);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		ainfo = &cinfo->ret;
@@ -1953,7 +1953,9 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 }
 
 #if __APPLE__
+G_BEGIN_DECLS
 void sys_icache_invalidate (void *start, size_t len);
+G_END_DECLS
 #endif
 
 void
