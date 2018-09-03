@@ -105,7 +105,6 @@
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System.Core/System.Core.csproj" />
-    <ProjectReference Include="../System.Security.Cryptography.Algorithms/Facades_System.Security.Cryptography.Algorithms.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">

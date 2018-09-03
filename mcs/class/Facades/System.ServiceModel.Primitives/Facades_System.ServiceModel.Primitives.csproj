@@ -116,7 +116,6 @@
     <ProjectReference Include="../../System.ServiceModel/System.ServiceModel.csproj" />
     <ProjectReference Include="../../System.XML/System.Xml.csproj" />
     <ProjectReference Include="../../System.IdentityModel/System.IdentityModel.csproj" />
-    <ProjectReference Include="../System.Security.Cryptography.X509Certificates/Facades_System.Security.Cryptography.X509Certificates.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">

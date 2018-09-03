@@ -115,7 +115,6 @@
     <ProjectReference Include="../../System/System.csproj" />
     <ProjectReference Include="../../System.Runtime.Serialization/System.Runtime.Serialization.csproj" />
     <ProjectReference Include="../../System.XML/System.Xml.csproj" />
-    <ProjectReference Include="../System.Runtime.Serialization.Primitives/Facades_System.Runtime.Serialization.Primitives.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">

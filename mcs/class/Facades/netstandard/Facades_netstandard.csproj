@@ -125,16 +125,6 @@
     <ProjectReference Include="../../System.Data/System.Data.csproj" />
     <ProjectReference Include="../../System.ComponentModel.Composition.4.5/System.ComponentModel.Composition.csproj" />
     <ProjectReference Include="../../System.IO.Compression.FileSystem/System.IO.Compression.FileSystem.csproj" />
-    <ProjectReference Include="../System.Runtime.InteropServices.RuntimeInformation/Facades_System.Runtime.InteropServices.RuntimeInformation.csproj" />
-    <ProjectReference Include="../System.Security.Cryptography.Algorithms/Facades_System.Security.Cryptography.Algorithms.csproj" />
-    <ProjectReference Include="../System.Globalization.Extensions/Facades_System.Globalization.Extensions.csproj" />
-    <ProjectReference Include="../System.Data.Common/Facades_System.Data.Common.csproj" />
-    <ProjectReference Include="../System.Diagnostics.StackTrace/Facades_System.Diagnostics.StackTrace.csproj" />
-    <ProjectReference Include="../System.Runtime.Serialization.Xml/Facades_System.Runtime.Serialization.Xml.csproj" />
-    <ProjectReference Include="../System.Runtime.Serialization.Primitives/Facades_System.Runtime.Serialization.Primitives.csproj" />
-    <ProjectReference Include="../System.Security.SecureString/Facades_System.Security.SecureString.csproj" />
-    <ProjectReference Include="../System.Threading.Overlapped/Facades_System.Threading.Overlapped.csproj" />
-    <ProjectReference Include="../System.Xml.XPath.XDocument/Facades_System.Xml.XPath.XDocument.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
