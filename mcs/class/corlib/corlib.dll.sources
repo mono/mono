@@ -226,7 +226,7 @@ System.Reflection/AssemblyName.cs
 System.Reflection/CustomAttributeData.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CustomAttributeFormatException.cs
 System.Reflection/CustomAttributeNamedArgument.cs
-System.Reflection/CustomAttributeTypedArgument.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/FieldInfo.cs
