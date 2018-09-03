@@ -6,13 +6,5 @@
       "remote-branch": "origin/release_60", 
       "branch": "release_60", 
       "directory": "llvm"
-  },
-  {
-      "name": "llvm36",
-      "url": "git://github.com/mono/llvm.git",
-      "rev": "0b3cb8ac12cd839f8110775d4085e822e8af4d7b",
-      "remote-branch": "origin/master",
-      "branch": "master",
-      "directory": "llvm36"
   }
 ]
