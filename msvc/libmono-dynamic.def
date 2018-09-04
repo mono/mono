@@ -1,0 +1,10 @@
+LIBRARY mono-2.0-bdwgc.dll
+EXPORTS
+GC_dirty_inner
+GC_malloc
+GC_malloc_uncollectable
+GC_malloc_kind
+GC_malloc_atomic
+GC_gcj_malloc
+GC_make_descriptor
+GC_free
