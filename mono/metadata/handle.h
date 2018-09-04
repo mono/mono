@@ -384,7 +384,7 @@ Handle macros/functions
 
 #if MONO_TYPE_SAFE_HANDLES
 #define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct TYPED_HANDLE_NAME (TYPE) {				\
+	typedef struct {							\
 		MONO_IF_CPLUSPLUS (						\
 			MONO_ALWAYS_INLINE					\
 			TYPE * GetRaw () { return __raw ? *__raw : NULL; }	\
