@@ -102,6 +102,33 @@ namespace WebAssembly
 
         }
 
+
+        static int UnBindRawJSObjectAndFree(int gcHandle)
+        {
+
+            GCHandle h = (GCHandle)(IntPtr)gcHandle;
+            JSObject obj = (JSObject)h.Target;
+            if (obj != null && obj.RawObject != null)
+            {
+                var raw_obj = obj.RawObject;
+                if (raw_to_js.ContainsKey(raw_obj))
+                {
+                    raw_to_js.Remove(raw_obj);
+                }
+
+
+                ReleaseRef(obj.JSHandle);
+
+                var gCHandle = obj.Handle;
+                obj.Handle.Free();
+                obj.JSHandle = -1;
+                return (int)(IntPtr)gCHandle;
+            }
+
+            return 0;
+
+        }
+
         static object CreateTaskSource(int js_id)
         {
             return new TaskCompletionSource<object>();
@@ -124,6 +151,7 @@ namespace WebAssembly
 
         static int BindExistingObject(object raw_obj, int js_id)
         {
+
             JSObject obj;
             if (raw_obj is JSObject)
                 obj = (JSObject)raw_obj;
@@ -308,7 +336,7 @@ namespace WebAssembly
 
     public class JSObject : IDisposable
     {
-        internal int JSHandle;
+        public int JSHandle { get; internal set; }
         internal GCHandle Handle;
         internal object RawObject;
 

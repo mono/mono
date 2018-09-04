@@ -73,6 +73,7 @@ var BindingSupportLib = {
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
 			this.unbind_js_obj_and_fee = get_method ("UnBindJSObjectAndFree");			
+			this.unbind_raw_obj_and_fee = get_method ("UnBindRawJSObjectAndFree");			
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
@@ -195,11 +196,17 @@ var BindingSupportLib = {
 		},
 
 		set_task_result: function (tcs, result) {
+			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_result, null, "oo", [ tcs, result ]);
+			if (tcs.is_mono_tcs_task_bound)
+				this.free_task_completion_source(tcs);
 		},
 
 		set_task_failure: function (tcs, reason) {
+			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
+			if (tcs.is_mono_tcs_task_bound)
+				this.free_task_completion_source(tcs);
 		},
 
 		// https://github.com/Planeshifter/emscripten-examples/blob/master/01_PassingArrays/sum_post.js
@@ -312,7 +319,7 @@ var BindingSupportLib = {
 				if (the_task)
 					return the_task;
 				var tcs = this.create_task_completion_source ();
-				//FIXME dispose the TCS once the promise completes
+
 				js_obj.then (function (result) {
 					BINDING.set_task_result (tcs, result);
 				}, function (reason) {
@@ -422,7 +429,16 @@ var BindingSupportLib = {
 			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
 			this.mono_wasm_object_registry[gc_handle] = {refcount: 1, value: js_obj};;
+			this.free_task_completion_source(tcs);
+			tcs.is_mono_tcs_task_bound = true;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
+		},
+
+		free_task_completion_source: function (tcs) {
+			if (tcs.is_mono_tcs_result_set)
+			{
+				this.call_method (this.unbind_raw_obj_and_fee, null, "ii", [ tcs.__mono_gchandle__ ]);
+			}
 		},
 
 		extract_mono_obj: function (js_obj) {
