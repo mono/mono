@@ -130,6 +130,42 @@ namespace MonoTests.Mono.Options
 		}
 
 		[Test]
+		public void GetCompletions ()
+		{
+			var commands = new CommandSet ("example") {
+				new Command ("a"),
+				new Command ("aa"),
+				new Command ("a a"),
+				new Command ("cs c"),
+				new CommandSet ("cs") {
+					new CommandSet ("cs2") {
+						new CommandSet ("cs3") {
+							new Command ("cs-cs2-cs3-c"),
+						},
+					},
+				},
+			};
+			Assert.IsTrue (new[]{
+					"a",
+					"aa",
+					"a a",
+					"cs c",
+					"cs cs2 cs3 cs-cs2-cs3-c",
+			}.SequenceEqual (commands.GetCompletions ()));
+
+			Assert.IsTrue (new[]{
+					"a",
+					"aa",
+					"a a",
+			}.SequenceEqual (commands.GetCompletions ("a")));
+
+			Assert.IsTrue (new[]{
+					"cs c",
+					"cs cs2 cs3 cs-cs2-cs3-c",
+			}.SequenceEqual (commands.GetCompletions ("cs")));
+		}
+
+		[Test]
 		public void Run_Help ()
 		{
 			var o = new StringWriter ();

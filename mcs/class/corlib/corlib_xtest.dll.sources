@@ -14,7 +14,9 @@
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/Utilities.cs
 
+../../../external/corefx/src/System.Reflection/tests/Common.cs
 ../../../external/corefx/src/System.Reflection/tests/ConstructorInfoTests.cs
+../../../external/corefx/src/System.Reflection/tests/FieldInfoTests.cs
 ../../../external/corefx/src/System.Reflection/tests/ManifestResourceInfoTests.cs
 #../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
 
