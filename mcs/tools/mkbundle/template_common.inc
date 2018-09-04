@@ -56,7 +56,7 @@ init_default_mono_api_struct ()
 	mono_api.mono_register_bundled_assemblies = mono_register_bundled_assemblies;
 	mono_api.mono_register_config_for_assembly = mono_register_config_for_assembly;
 	mono_api.mono_jit_set_aot_mode = mono_jit_set_aot_mode;
-	mono_api.mono_aot_register_module = mono_aot_register_module;
+	mono_api.mono_aot_register_module = mono_jit_set_aot_mode;
 	mono_api.mono_config_parse_memory = mono_config_parse_memory;
 	mono_api.mono_register_machine_config = mono_register_machine_config;
 #endif // USE_DEFAULT_MONO_API_STRUCT
