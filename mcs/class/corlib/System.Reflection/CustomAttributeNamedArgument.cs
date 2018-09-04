@@ -41,17 +41,17 @@ namespace System.Reflection {
 		public
 		CustomAttributeNamedArgument (MemberInfo memberInfo, object value)
 		{
-            if (memberInfo == null)
-                throw new ArgumentNullException (nameof (memberInfo));
-                			
+			if (memberInfo == null)
+				throw new ArgumentNullException (nameof (memberInfo));
+							
 			this.memberInfo = memberInfo;
 			this.typedArgument = (CustomAttributeTypedArgument) value;
 		}
 		
 		public CustomAttributeNamedArgument (MemberInfo memberInfo, CustomAttributeTypedArgument typedArgument)
 		{
-            if (memberInfo == null)
-                throw new ArgumentNullException (nameof (memberInfo));
+			if (memberInfo == null)
+				throw new ArgumentNullException (nameof (memberInfo));
 
 			this.memberInfo = memberInfo;
 			this.typedArgument = typedArgument;
