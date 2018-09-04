@@ -1167,12 +1167,6 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo;
 
-	if (0) {
-done:
-		g_free (cinfo);
-		return;
-	}
-
 	/* No return value */
 	if (sig->ret->type == MONO_TYPE_VOID)
 		return;
@@ -1183,10 +1177,13 @@ done:
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg)
 		goto done;
 
-	ArgInfo *ainfo = &cinfo->ret;
+	ArgInfo *ainfo;
+	ainfo = &cinfo->ret;
 	gpointer storage;
-	int storage_type = ainfo->storage;
-	int reg_storage = ainfo->reg;
+	int storage_type;
+	storage_type = ainfo->storage;
+	int reg_storage;
+	reg_storage = ainfo->reg;
 	switch (storage_type) {
 		case ArgInIReg: {
 			storage = &ccontext->gregs [reg_storage];
@@ -1223,7 +1220,8 @@ done:
 			g_error ("Arg storage type not yet supported");
 	}
 	interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
-	goto done;
+done:
+	g_free (cinfo);
 }
 
 /*
