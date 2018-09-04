@@ -1086,8 +1086,7 @@ fire_attach_profiler_events (MonoNativeThreadId tid)
 		"Handle Stack"));
 }
 
-static gulong WINAPI
-start_wrapper_internal (StartInfo *start_info, gsize *stack_ptr)
+static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack_ptr)
 {
 	ERROR_DECL (error);
 	MonoThreadStart start_func;
