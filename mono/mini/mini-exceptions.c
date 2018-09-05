@@ -127,7 +127,7 @@ static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 static void mono_uninstall_current_handler_block_guard (void);
 
 #ifdef TARGET_OSX
-static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+static void mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 #endif
 
@@ -1212,7 +1212,6 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 
 	/*The LMF will be null if the target have no managed frames.*/
  	/* g_assert (lmf); */
-
 	if (async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD)) {
 		g_warning ("async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD) not legal");
 		return;
@@ -1274,7 +1273,7 @@ next:
 	}
 }
 
-#ifdef TARGET_OSX
+#ifdef DISABLE_CRASH_REPORTING
 typedef struct {
 	MonoFrameSummary *frames;
 	int num_frames;
@@ -1465,7 +1464,7 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 
 
 static void 
-mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
+mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 {
 	MonoSummarizeUserData data;
 	memset (&data, 0, sizeof (MonoSummarizeUserData));

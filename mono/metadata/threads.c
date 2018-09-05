@@ -5893,47 +5893,20 @@ mono_set_thread_dump_dir (gchar* dir) {
 
 #ifdef TARGET_OSX
 
-static size_t num_threads_summarized = 0;
-
-// mono_thread_internal_current doesn't always work in signal
-// handler contexts. This does.
-static MonoInternalThread *
-find_missing_thread (MonoNativeThreadId id)
-{
-	MonoInternalThread *thread_array [128];
-	int nthreads = collect_threads (thread_array, 128);
-
-	for (int i=0; i < nthreads; i++) {
-		MonoNativeThreadId tid = thread_get_tid (thread_array [i]);
-		if (tid == id)
-			return thread_array [i];
-	}
-	return NULL;
-}
-
 static gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 {
-	MonoDomain *domain;
+	memset (out, 0, sizeof (MonoThreadSummary));
 
 	MonoNativeThreadId current = mono_native_thread_id_get();
-	MonoInternalThread *thread = find_missing_thread (current);
+	out->native_thread_id = (intptr_t) current;
+	mono_native_thread_get_name (current, out->name, MONO_MAX_SUMMARY_NAME_LEN);
+	mono_get_eh_callbacks ()->mono_summarize_stack (out, ctx);
 
-	// Not one of ours
-	if (!thread)
-		return FALSE;
-
-	memset (out, 0, sizeof (MonoThreadSummary));
-	domain = thread->obj.vtable->domain;
-	out->native_thread_id = (intptr_t) thread_get_tid (thread);
-	out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);
-	out->info_addr = (intptr_t) thread->thread_info;
-	if (thread->name) {
-		char *name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, NULL);
-		out->name = name;
-	}
-
-	mono_get_eh_callbacks ()->mono_summarize_stack (domain, out, ctx);
+	// FIXME: Figure out how to store and look these up?
+	/*MonoDomain *domain = thread->obj.vtable->domain;*/
+	/*out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);*/
+	/*out->info_addr = (intptr_t) thread->thread_info;*/
 
 	return TRUE;
 }
