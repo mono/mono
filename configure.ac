@@ -3748,26 +3748,23 @@ if test "x$enable_llvm" = "xyes"; then
          with_llvm=`$LLVM_CONFIG --prefix`
       fi
    fi
-   fi
 
    llvm_codegen="x86codegen"
-   LLVM_ARCH_LIBS="-lLLVMX86Disassembler -lLLVMX86CodeGen -lLLVMX86AsmParser -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils"
+   LLVM_ARCH_LIBS=" -lLLVMX86AsmPrinter -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMX86Utils -lLLVMMCDisassembler"
    case "$target" in
    arm*)
 		llvm_codegen="armcodegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
+		LLVM_ARCH_LIBS="-lLLVMARMAsmPrinter -lLLVMARMCodeGen -lLLVMARMDesc -lLLVMARMInfo  -lLLVMARMUtils -lLLVMMCDisassembler"
 		;;
    aarch64*)
 		llvm_codegen="aarch64codegen"
-		LLVM_ARCH_LIBS="-lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter"
+		LLVM_ARCH_LIBS="-lLLVMAArch64AsmPrinter -lLLVMAArch64CodeGen -lLLVMAArch64Desc -lLLVMAArch64Info  -lLLVMAArch64Utils"
 		;;
    powerpc*)
 		llvm_codegen="powerpccodegen"
-		LLVM_ARCH_LIBS="-lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter"
+		LLVM_ARCH_LIBS="-lLLVMPowerPCAsmPrinter -lLLVMPowerPCCodeGen -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCUtils"
 		;;
    esac
-
-   if test "x$host_win32" = "xno"; then
 
    # Should be something like '2.6' or '2.7svn'
    llvm_version=`$LLVM_CONFIG --version`
@@ -3824,24 +3821,25 @@ if test "x$enable_llvm" = "xyes"; then
    expected_llvm_version="3.4svn-mono-mono/e656cac"
 
    else
-       LLVM_CFLAGS="-I$with_llvm/include -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS"
-       LLVM_CXXFLAGS="$LLVM_CFLAGS -std=gnu++11 -fvisibility-inlines-hidden -fno-rtti -Woverloaded-virtual -Wcast-qual"
+       LLVM_CFLAGS="-I$with_llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -DNDEBUG"
+       LLVM_CXXFLAGS="-I$with_llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -DNDEBUG -fno-rtti -fexceptions -std=gnu++11"
        LLVM_LDFLAGS="-L$with_llvm/lib"
-       LLVM_SYSTEM_LIBS="-lshell32 -lpsapi -limagehlp -ldbghelp -lm -lz -luuid -lole32"
-       LLVM_LIBS="-lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter \
-         -lLLVMTableGen  -lLLVMOption -lLLVMSelectionDAG -lLLVMAsmPrinter \
-         -lLLVMARMAsmPrinter -lLLVMX86AsmParser \
-         -lLLVMMCDisassembler -lLLVMAnalysis -lLLVMTarget \
-         -lLLVMDebugInfoPDB -lLLVMDebugInfoDWARF \
-         -lLLVMIRReader -lLLVMAsmParser -lLLVMLineEditor -lLLVMInstrumentation \
-         -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils \
-         -lLLVMBinaryFormat -lLLVMProfileData -lLLVMTarget \
-         -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMMC -lLLVMCore \
-         -lLLVMSupport -lstdc++"
-       LLVM_LIBS="$LLVM_LIBS $LLVM_ARCH_LIBS $LLVM_SYSTEM_LIBS"
 
-       llvm_config_path=$with_llvm/include/llvm/Config/llvm-config.h
-       llvm_api_version=`awk '/MONO_API_VERSION/ { print $3 }' $llvm_config_path`
+		case "$target" in
+		arm*)
+			LLVM_LIBS="-lLLVMARMCodeGen -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMARMDesc -lLLVMMCDisassembler -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMARMUtils -lLLVMMC -lLLVMSupport -lLLVMDemangle"
+			;;
+		aarch64*)
+			LLVM_LIBS="-lLLVMAArch64CodeGen -lLLVMGlobalISel -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMMC -lLLVMAArch64Utils -lLLVMSupport -lLLVMDemangle"
+			;;
+		*)
+			LLVM_LIBS="-lLLVMX86CodeGen -lLLVMGlobalISel -lLLVMX86Desc -lLLVMX86Info -lLLVMMCDisassembler -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMDebugInfoCodeView -lLLVMDebugInfoMSF -lLLVMCodeGen -lLLVMTarget -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMBitWriter -lLLVMAnalysis -lLLVMProfileData -lLLVMObject -lLLVMMCParser -lLLVMMC -lLLVMBitReader -lLLVMCore -lLLVMBinaryFormat -lLLVMSupport -lLLVMDemangle"
+			;;
+		esac
+
+		LLVM_LIBS="$LLVM_LIBS -lpsapi -lshell32 -lole32 -luuid -ladvapi32 -lz -lstdc++"
+
+       llvm_api_version=600
    fi  
 
    if test "x$llvm_api_version" = "x"; then
