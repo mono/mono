@@ -296,10 +296,12 @@ namespace System.Runtime.Remoting.Channels
 			serializer.SurrogateSelector = null;
 			mem.Position = 0;
 
-			if (msg == null)
-				return (IMessage) serializer.Deserialize(mem, null);
-			else
-				return (IMessage) serializer.DeserializeMethodResponse(mem, null, msg);
+			lock (serializer) {
+				if (msg == null)
+					return (IMessage) serializer.Deserialize(mem, null);
+				else
+					return (IMessage) serializer.DeserializeMethodResponse(mem, null, msg);
+			}
 #else
 			throw new NotSupportedException ();
 #endif
@@ -311,8 +313,9 @@ namespace System.Runtime.Remoting.Channels
 			BinaryFormatter serializer = new BinaryFormatter ();                
 
 			serializer.SurrogateSelector = new RemotingSurrogateSelector ();
-			serializer.Serialize (mem, msg);
-
+			lock (serializer) {
+				serializer.Serialize (mem, msg);
+			}
 			mem.Position = 0;
 
 			return mem;
@@ -340,7 +343,9 @@ namespace System.Runtime.Remoting.Channels
 			BinaryFormatter serializer = new BinaryFormatter ();                
 
 			serializer.SurrogateSelector = new RemotingSurrogateSelector ();
-			serializer.Serialize (mem, obj);
+			lock (serializer) {
+				serializer.Serialize (mem, obj);
+			}
 
 			mem.Position = 0;
 
@@ -354,7 +359,9 @@ namespace System.Runtime.Remoting.Channels
 			serializer.SurrogateSelector = null;
 			mem.Position = 0;
 
-			return serializer.Deserialize (mem);
+			lock (serializer) {
+				return serializer.Deserialize (mem);
+			}
 		}
 	}
 	
