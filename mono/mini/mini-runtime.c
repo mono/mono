@@ -840,6 +840,35 @@ mono_pop_lmf (MonoLMF *lmf)
 MonoDomain*
 mono_jit_thread_attach (MonoDomain *domain)
 {
+	gpointer dummy;
+	MONO_STACKDATA (stackdata);
+	stackdata.stackpointer = &dummy;
+	/* This function is only called by mono embedders.  Therefore if the
+	 * thread wasn't previously attached, it should start out in GC Safe
+	 * (blocking) mode.  It will transition to GC Unsafe if they call a
+	 * Mono API function or call a trampoline for a managed delegate.
+	 */
+	return mono_threads_attach_coop_internal (domain, &dummy, &stackdata, TRUE);
+}
+
+/*
+ * mono_jit_thread_attach_internal:
+ *
+ * Called by the runtime in preemptive suspend, only.  Attach thread to runtime if
+ * needed and switch to @domain.
+ *
+ * @return the original domain which needs to be restored, or NULL.
+ */
+MonoDomain*
+mono_jit_thread_attach_internal (MonoDomain *domain)
+{
+	/* FIXME: this function is only used with preemptive suspend, and in that case is
+	 * almost identical to
+	 *     gpointer unused;
+	 *     mono_threads_attach_coop (domain, &unused);
+	 * We should just use that one.
+	 * (The only difference is that "attached" is set based on the value of different TLS keys)
+	 */
 	MonoDomain *orig;
 	gboolean attached;
 
@@ -1642,7 +1671,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mono_tls_get_tls_setter (patch_info->data.index, FALSE);
 		break;
 	case MONO_PATCH_INFO_JIT_THREAD_ATTACH: {
-		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach");
+		MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("mono_jit_thread_attach_internal");
 		g_assert (mi);
 		target = mi->func;
 		break;
@@ -4486,7 +4515,7 @@ register_icalls (void)
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
 	register_icall (mono_get_lmf_addr, "mono_get_lmf_addr", "ptr", TRUE);
-	register_icall (mono_jit_thread_attach, "mono_jit_thread_attach", "ptr ptr", TRUE);
+	register_icall (mono_jit_thread_attach_internal, "mono_jit_thread_attach_internal", "ptr ptr", TRUE);
 	register_icall (mono_jit_set_domain, "mono_jit_set_domain", "void ptr", TRUE);
 	register_icall (mono_domain_get, "mono_domain_get", "ptr", TRUE);
 
