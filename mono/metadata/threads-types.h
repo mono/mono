@@ -372,6 +372,10 @@ typedef struct {
 	intptr_t info_addr;
 	intptr_t native_thread_id;
 
+	// Print reason we don't have a complete
+	// managed trace
+	const char *error_msg;
+
 	int num_managed_frames;
 	MonoFrameSummary managed_frames [MONO_MAX_SUMMARY_FRAMES];
 
