@@ -12,6 +12,8 @@ class Driver {
 	static List<string>  file_list = new List<string> ();
 
 	const string BINDINGS_ASM_NAME = "bindings";
+	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
+
 	enum AssemblyKind {
 		User,
 		Framework,
@@ -222,7 +224,7 @@ class Driver {
 		template = template.Replace ("@DEPLOY_PREFIX@", deploy_prefix);
 		template = template.Replace ("@ENABLE_DEBUGGING@", enable_debug ? "1" : "0");
 		if (add_binding)
-			template = template.Replace ("@BINDINGS_LOADING@", $"Module.mono_bindings_init (\"{BINDINGS_ASM_NAME}\");");
+			template = template.Replace ("@BINDINGS_LOADING@", $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");");
 		else
 			template = template.Replace ("@BINDINGS_LOADING@", "");
 
