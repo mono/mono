@@ -539,6 +539,7 @@ MONO_COLD void
 mono_set_pending_exception_handle (MonoExceptionHandle exc);
 
 #define MONO_MAX_SUMMARY_NAME_LEN 140
+#define MONO_MAX_THREAD_NAME_LEN 140
 #define MONO_MAX_SUMMARY_THREADS 32
 #define MONO_MAX_SUMMARY_FRAMES 40
 
@@ -566,7 +567,8 @@ typedef struct {
 typedef struct {
 	gboolean is_managed;
 
-	const char *name;
+	char name [MONO_MAX_THREAD_NAME_LEN];
+
 	intptr_t managed_thread_ptr;
 	intptr_t info_addr;
 	intptr_t native_thread_id;

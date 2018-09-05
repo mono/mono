@@ -6032,55 +6032,42 @@ static size_t num_threads_summarized = 0;
 
 // mono_thread_internal_current doesn't always work in signal
 // handler contexts. This does.
-static gboolean
-find_missing_thread (MonoNativeThreadId id, guint32 *out)
-{
-	guint32 thread_array [128];
-	int nthreads = collect_threads (thread_array, 128);
-	gboolean success = FALSE;
+/*static gboolean*/
+/*find_missing_thread (MonoNativeThreadId id, guint32 *out)*/
+/*{*/
+	/*guint32 thread_array [128];*/
+	/*int nthreads = collect_threads (thread_array, 128);*/
+	/*gboolean success = FALSE;*/
 
-	for (int i=0; i < nthreads; i++) {
-		guint32 handle = thread_array [i];
-		MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target (handle);
-		MonoNativeThreadId tid = thread_get_tid (thread);
-		if (tid == id) {
-			*out = handle;
-			success = TRUE;
-		} else {
-			mono_gchandle_free (handle);
-		}
-	}
+	/*for (int i=0; i < nthreads; i++) {*/
+		/*guint32 handle = thread_array [i];*/
+		/*MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target (handle);*/
+		/*MonoNativeThreadId tid = thread_get_tid (thread);*/
+		/*if (tid == id) {*/
+			/**out = handle;*/
+			/*success = TRUE;*/
+		/*} else {*/
+			/*mono_gchandle_free (handle);*/
+		/*}*/
+	/*}*/
 
-	return success;
-}
+	/*return success;*/
+/*}*/
 
 static gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 {
-	MonoDomain *domain;
-	guint32 handle;
+	memset (out, 0, sizeof (MonoThreadSummary));
 
 	MonoNativeThreadId current = mono_native_thread_id_get();
+	out->native_thread_id = (intptr_t) current;
+	mono_native_thread_get_name (current, out->name, MONO_MAX_SUMMARY_NAME_LEN);
+	mono_get_eh_callbacks ()->mono_summarize_stack (out, ctx);
 
-	// Not one of ours
-	if (!find_missing_thread (current, &handle))
-		return FALSE;
-
-	MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target (handle);
-
-	memset (out, 0, sizeof (MonoThreadSummary));
-	domain = thread->obj.vtable->domain;
-	out->native_thread_id = (intptr_t) thread_get_tid (thread);
-	out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);
-	out->info_addr = (intptr_t) thread->thread_info;
-	if (thread->name) {
-		char *name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, NULL);
-		out->name = name;
-	}
-
-	mono_get_eh_callbacks ()->mono_summarize_stack (domain, out, ctx);
-
-	mono_gchandle_free (handle);
+	// FIXME: Figure out how to store and look these up?
+	/*MonoDomain *domain = thread->obj.vtable->domain;*/
+	/*out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);*/
+	/*out->info_addr = (intptr_t) thread->thread_info;*/
 
 	return TRUE;
 }

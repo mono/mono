@@ -701,7 +701,7 @@ typedef struct {
 	gboolean (*mono_above_abort_threshold) (void);
 	void (*mono_clear_abort_threshold) (void);
 	void (*mono_reraise_exception) (MonoException *ex);
-	void (*mono_summarize_stack) (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+	void (*mono_summarize_stack) (MonoThreadSummary *out, MonoContext *crash_ctx);
 	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
 } MonoRuntimeExceptionHandlingCallbacks;
 
