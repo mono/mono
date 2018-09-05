@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" ${TESTCMD} --label=bockbuild --timeout=300m --fatal ${MONO_REPO_ROOT}/scripts/mac-sdk-package.sh
+${TESTCMD} --label=bockbuild --timeout=300m --fatal ${MONO_REPO_ROOT}/scripts/mac-sdk-package.sh
 
 # switch to using package Mono instead of system
 export PATH=${MONO_REPO_ROOT}/external/bockbuild/stage/bin:$PATH
