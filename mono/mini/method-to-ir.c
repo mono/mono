@@ -11245,7 +11245,7 @@ mono_ldptr:
 				EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_THREAD_ATTACH, NULL);
 				ins = mini_emit_calli (cfg, helper_sig_jit_thread_attach, args, addr, NULL, NULL);
 			} else {
-				ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach, args);
+				ins = mono_emit_jit_icall (cfg, mono_jit_thread_attach_internal, args);
 			}
 			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->orig_domain_var->dreg, ins->dreg);
 

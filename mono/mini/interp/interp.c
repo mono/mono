@@ -5096,7 +5096,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			gpointer tls_jit = mono_tls_get_jit_tls ();
 
 			if (tls_domain != rtm->domain || !tls_jit) {
-				context->original_domain = mono_jit_thread_attach (rtm->domain);
+				context->original_domain = mono_jit_thread_attach_internal (rtm->domain);
 				/*
 				 * Make sure the JitTlsData contains the interp context, in case
 				 * we weren't yet attached at interp_entry time.

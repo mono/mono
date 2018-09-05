@@ -455,7 +455,7 @@ MONO_API void
 mono_threads_detach_coop (gpointer cookie, gpointer *dummy);
 
 MonoDomain*
-mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata);
+mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata, gboolean attach_external_gc_safe);
 
 void
 mono_threads_detach_coop_internal (MonoDomain *orig_domain, gpointer cookie, MonoStackData *stackdata);

@@ -5758,10 +5758,13 @@ ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoA
  *    - blocking mode: contains gc unsafe transition cookie
  *    - non-blocking mode: contains random data
  *  - @stackdata: semi-opaque struct: stackpointer and function_name
+ *  - @attach_external_gc_safe: if TRUE, and if the thread wasn't previously attached, start in GC Safe mode (blocking).
+ *      Threads that don't belong to mono should set this to TRUE unless they will definitely call
+ *      mono_threads_detach_coop when they're done.
  *  - @return: the original domain which needs to be restored, or NULL.
  */
 MonoDomain*
-mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata)
+mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoStackData *stackdata, gboolean attach_external_gc_safe)
 {
 	MonoDomain *orig;
 	MonoThreadInfo *info;
@@ -5797,6 +5800,11 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 			/* mono_thread_attach put the thread in RUNNING mode from STARTING, but we need to
 			 * return the right cookie. */
 			*cookie = mono_threads_enter_gc_unsafe_region_cookie ();
+
+			if (attach_external_gc_safe) {
+				MONO_STACKDATA (stackdata2);
+				mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata2);
+			}
 		} else {
 			/* thread state (BLOCKING|RUNNING) -> RUNNING */
 			*cookie = mono_threads_enter_gc_unsafe_region_unbalanced_internal (stackdata);
@@ -5820,7 +5828,7 @@ mono_threads_attach_coop (MonoDomain *domain, gpointer *dummy)
 {
 	MONO_STACKDATA (stackdata);
 	stackdata.stackpointer = dummy;
-	return mono_threads_attach_coop_internal (domain, dummy, &stackdata);
+	return mono_threads_attach_coop_internal (domain, dummy, &stackdata, FALSE);
 }
 
 /*
