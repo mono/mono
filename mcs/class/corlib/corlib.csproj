@@ -705,6 +705,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingMemberException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\OutOfMemoryException.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\TaskAwaiter.cs" />
@@ -1375,7 +1376,6 @@
     <Compile Include="System.Reflection\AssemblyName.cs" />
     <Compile Include="System.Reflection\CustomAttributeData.cs" />
     <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />
-    <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
     <Compile Include="System.Reflection\EventInfo.cs" />
     <Compile Include="System.Reflection\ExceptionHandlingClause.cs" />
     <Compile Include="System.Reflection\FieldInfo.cs" />
