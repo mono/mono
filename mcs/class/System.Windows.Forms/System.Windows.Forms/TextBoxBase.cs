@@ -116,8 +116,7 @@ namespace System.Windows.Forms
 			current_link = null;
 			show_caret_w_selection = (this is TextBox);
 			document = new Document(this);
-			document.WidthChanged += new EventHandler(document_WidthChanged);
-			document.HeightChanged += new EventHandler(document_HeightChanged);
+			document.SizeChanged += new EventHandler<Document.SizeChangedEventArgs>(document_SizeChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = false;
 			click_last = DateTime.Now;
@@ -2049,8 +2048,7 @@ namespace System.Windows.Forms
 		internal bool CalculateScrollBars ()
 		{
 			var old_canvas_width = canvas_width;
-			var old_canvas_height = canvas_height;
-
+			
 			SizeControls ();
 
 			if (document.Width > document.ViewPortWidth) {
@@ -2116,19 +2114,15 @@ namespace System.Windows.Forms
 
 			SizeControls (); //Update sizings now we've decided whats visible
 
-			return (canvas_width != old_canvas_width || canvas_height != old_canvas_height);
+			return (canvas_width != old_canvas_width);
 		}
 
-		private void document_WidthChanged (object sender, EventArgs e)
+		private void document_SizeChanged (object sender, Document.SizeChangedEventArgs e)
 		{
-			if (CalculateScrollBars())
+			var canvas_width_changed = CalculateScrollBars();
+			if (e.HeightChanged && canvas_width_changed)
 				CalculateDocument(); // Viewport has changed due to the document change, update the document.
-		}
-
-		private void document_HeightChanged (object sender, EventArgs e)
-		{
-			if (CalculateScrollBars())
-				CalculateDocument();
+			// TODO: technically the opposite situation could happen too, where a document width change causes a change in canvas height.
 		}
 
 		private void ScrollLinks (int xChange, int yChange)

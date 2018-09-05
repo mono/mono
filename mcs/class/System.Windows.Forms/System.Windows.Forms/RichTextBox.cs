@@ -95,8 +95,7 @@ namespace System.Windows.Forms {
 
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;
-			document.WidthChanged += new EventHandler(ContentWidthChanged);
-			document.HeightChanged += new EventHandler(ContentHeightChanged);
+			document.SizeChanged += new EventHandler<Document.SizeChangedEventArgs>(ContentSizeChanged);
 			LostFocus += new EventHandler(RichTextBox_LostFocus);
 			GotFocus += new EventHandler(RichTextBox_GotFocus);
 			BackColor = ThemeEngine.Current.ColorWindow;
@@ -144,10 +143,7 @@ namespace System.Windows.Forms {
 			Invalidate();
 		}
 
-		private void ContentWidthChanged (object sender, EventArgs e) {
-			ContentSizeChanged();
-		}
-		private void ContentHeightChanged (object sender, EventArgs e) {
+		private void ContentSizeChanged (object sender, Document.SizeChangedEventArgs e) {
 			ContentSizeChanged();
 		}
 

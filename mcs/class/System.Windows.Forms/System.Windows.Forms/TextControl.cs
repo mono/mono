@@ -3883,12 +3883,8 @@ namespace System.Windows.Forms {
 				height_changed = true;
 			}
 
-			if (width_changed && WidthChanged != null) {
-				WidthChanged(this, null);
-			}
-
-			if (height_changed && HeightChanged != null) {
-				HeightChanged(this, null);
+			if (height_changed || width_changed) {
+				SizeChanged?.Invoke(this, new SizeChangedEventArgs(height_changed));
 			}
 
 			RecalculateAlignments();
@@ -4207,9 +4203,16 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 
 		#region Events
+		internal class SizeChangedEventArgs : EventArgs {
+			public bool HeightChanged { get; }
+
+			public SizeChangedEventArgs(bool HeightChanged) {
+				this.HeightChanged = HeightChanged;
+			}
+		}
+
 		internal event EventHandler CaretMoved;
-		internal event EventHandler WidthChanged;
-		internal event EventHandler HeightChanged;
+		internal event EventHandler<SizeChangedEventArgs> SizeChanged;
 		internal event EventHandler LengthChanged;
 		internal event EventHandler UIASelectionChanged;
 		#endregion	// Events
