@@ -7,7 +7,7 @@ using Mono.Cecil;
 
 class Driver {
 	static bool enable_debug;
-	static string app_prefix, framework_prefix, bcl_prefix, out_prefix;
+	static string app_prefix, framework_prefix, bcl_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_list = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
 
@@ -76,6 +76,10 @@ class Driver {
 		return ResolveWithExtension (bcl_prefix, asm_name);
 	}
 
+	static string ResolveBclFacade (string asm_name) {
+		return ResolveWithExtension (bcl_facades_prefix, asm_name);
+	}
+
 	static string Resolve (string asm_name, out AssemblyKind kind) {
 		kind = AssemblyKind.User;
 		var asm = ResolveUser (asm_name);
@@ -89,6 +93,8 @@ class Driver {
 
 		kind = AssemblyKind.Bcl;
 		asm = ResolveBcl (asm_name);
+		if (asm == null)
+			asm = ResolveBclFacade (asm_name);
 		if (asm != null)
 			return asm;
 
@@ -140,6 +146,7 @@ class Driver {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
 			bcl_prefix = Path.Combine (tool_prefix, "bcl");
 		}
+		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
 
 		foreach (var a in args) {
 			if (a [0] != '-') {
