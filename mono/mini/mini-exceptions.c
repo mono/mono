@@ -1163,7 +1163,7 @@ mono_walk_stack (MonoJitStackWalk func, MonoUnwindOptions options, void *user_da
 static void
 mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data)
 {
-	gint il_offset, i;
+	gint il_offset;
 	MonoContext ctx, new_ctx;
 	StackFrameInfo frame;
 	gboolean res;
@@ -1206,14 +1206,28 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	}
 #endif
 
-	g_assert (start_ctx);
-	g_assert (domain);
-	g_assert (jit_tls);
+	if (!start_ctx) {
+		g_warning ("start_ctx required for stack walk");
+		return;
+	}
+
+	if (!domain) {
+		g_warning ("domain required for stack walk");
+		return;
+	}
+
+	if (!jit_tls) {
+		g_warning ("jit_tls required for stack walk");
+		return;
+	}
+
 	/*The LMF will be null if the target have no managed frames.*/
  	/* g_assert (lmf); */
 
-	if (async)
-		g_assert (unwind_options == MONO_UNWIND_NONE);
+	if (async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD)) {
+		g_warning ("async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD) not legal");
+		return;
+	}
 
 	memcpy (&ctx, start_ctx, sizeof (MonoContext));
 	memset (reg_locations, 0, sizeof (reg_locations));
@@ -1262,7 +1276,7 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 
 next:
 		if (get_reg_locations) {
-			for (i = 0; i < MONO_MAX_IREGS; ++i)
+			for (int i = 0; i < MONO_MAX_IREGS; ++i)
 				if (new_reg_locations [i])
 					reg_locations [i] = new_reg_locations [i];
 		}
@@ -1284,6 +1298,12 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 	return;
 }
 
+static void
+mono_summarize_exception (MonoException *exc, MonoThreadSummary *out, MonoError *error)
+{
+	return;
+}
+
 #else
 
 typedef struct {
@@ -1291,6 +1311,7 @@ typedef struct {
 	int num_frames;
 	int max_frames;
 	MonoStackHash *hashes;
+	const char *error;
 } MonoSummarizeUserData;
 
 static void
@@ -1314,7 +1335,9 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
 	Dl_info info;
 	int success = dladdr ((void*) mono_get_portable_ip, &info);
 	intptr_t this_module = (intptr_t) info.dli_fbase;
-	g_assert (success);
+
+	if (!success)
+		return FALSE;
 
 	success = dladdr ((void*)in_ip, &info);
 	if (!success)
@@ -1378,9 +1401,14 @@ static gboolean
 summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
 {
 	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) user_data;
-	g_assert (ud->num_frames + 1 < ud->max_frames);
+
+	gboolean valid_state = ud->num_frames + 1 < ud->max_frames;
+	if (!valid_state) {
+		ud->error = "Exceeded the maximum number of frames";
+		return TRUE;
+	}
+
 	MonoFrameSummary *dest = &ud->frames [ud->num_frames];
-	ud->num_frames++;
 
 	dest->unmanaged_data.ip = (intptr_t) ip;
 	dest->is_managed = managed;
@@ -1395,7 +1423,11 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	MonoDebugSourceLocation *location = NULL;
 
 	if (managed) {
-		g_assert (method);
+		if (!method) {
+			ud->error = "Managed method frame, but no provided managed method";
+			return TRUE;
+		}
+
 		MonoImage *image = mono_class_get_image (method->klass);
 		// Used for hashing, more stable across rebuilds than using GUID
 		copy_summary_string_safe (dest->str_descr, image->assembly_name);
@@ -1418,12 +1450,16 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	ud->hashes->offset_free_hash = summarize_offset_free_hash (ud->hashes->offset_free_hash, dest);
 	ud->hashes->offset_rich_hash = summarize_offset_rich_hash (ud->hashes->offset_rich_hash, dest);
 
+	// We return FALSE, so we're continuing walking
+	// And we increment the pointer because we're done with this cell in the array
+	ud->num_frames++;
 	return FALSE;
 }
 
 static gboolean
 summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 {
+	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) data;
 	// Don't record trampolines between managed frames
 	if (frame->ji && frame->ji->is_trampoline)
 		return TRUE;
@@ -1431,10 +1467,12 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	MonoMethod *method = NULL;
 	intptr_t ip = 0x0;
 	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &ip, NULL);
+	// Don't need to handle return status "success" because this ip is stored below only, NULL is okay
 
 	if (frame && frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE)
 		method = jinfo_get_method (frame->ji);
 
+	method = jinfo_get_method (frame->ji);
 	gboolean is_managed = (method != NULL);
 
 	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
@@ -1473,8 +1511,12 @@ mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *c
 	// 
 	// Summarize managed stack
 	// 
-	mono_walk_stack_with_ctx (summarize_frame, crash_ctx, MONO_UNWIND_LOOKUP_IL_OFFSET, &data);
+	mono_walk_stack_full (summarize_frame, out->ctx, out->domain, out->jit_tls, out->lmf, MONO_UNWIND_LOOKUP_IL_OFFSET, &data);
 	out->num_managed_frames = data.num_frames;
+
+	if (data.error != NULL)
+		out->error_msg = data.error;
+}
 
 	// 
 	// Summarize unmanaged stack
