@@ -145,8 +145,8 @@ namespace System.Windows.Forms
 					height = Font.Height;
 					XplatUI.GetFontMetrics (Hwnd.GraphicsContext, Font, out ascent, out descent);
 					float scale_factor = font.GetHeight() / font.FontFamily.GetLineSpacing(font.Style);
-					ascent = (int) (ascent * scale_factor);
-					descent = (int) (descent * scale_factor);
+					ascent = (int) Math.Ceiling(ascent * scale_factor);
+					descent = (int) Math.Ceiling(descent * scale_factor);
 					line.recalc = true;
 				}
 			}
