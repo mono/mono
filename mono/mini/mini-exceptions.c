@@ -127,7 +127,7 @@ static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 static void mono_uninstall_current_handler_block_guard (void);
 static gboolean mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 
-static void mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+static void mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 
 static gboolean
@@ -1223,7 +1223,6 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 
 	/*The LMF will be null if the target have no managed frames.*/
  	/* g_assert (lmf); */
-
 	if (async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD)) {
 		g_warning ("async && (unwind_options & MONO_UNWIND_LOOKUP_ACTUAL_METHOD) not legal");
 		return;
@@ -1287,19 +1286,13 @@ next:
 
 #ifdef DISABLE_CRASH_REPORTING
 static void
-mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
+mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 {
 	return;
 }
 
 static void
 mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
-{
-	return;
-}
-
-static void
-mono_summarize_exception (MonoException *exc, MonoThreadSummary *out, MonoError *error)
 {
 	return;
 }
@@ -1496,7 +1489,7 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 
 
 static void 
-mono_summarize_stack (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx)
+mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 {
 	MonoSummarizeUserData data;
 	memset (&data, 0, sizeof (MonoSummarizeUserData));
