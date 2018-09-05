@@ -6077,13 +6077,8 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 		char *name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, NULL);
 		out->name = name;
 	}
-	mono_get_eh_callbacks ()->mono_summarize_stack (domain, out, ctx);
 
-	// FIXME: handle failure gracefully
-	// Enable when doing unmanaged
-	/*g_assert (out->num_frames > 0);*/
-	/*if (out->num_frames == 0)*/
-		/*return FALSE;*/
+	mono_get_eh_callbacks ()->mono_summarize_stack (domain, out, ctx);
 
 	mono_gchandle_free (handle);
 
