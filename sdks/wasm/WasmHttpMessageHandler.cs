@@ -129,6 +129,11 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 HttpResponseMessage httpresponse = new HttpResponseMessage((HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), status.Status.ToString()));
 
+                if (buffer != null)
+                    httpresponse.Content = new ByteArrayContent(buffer);
+
+                buffer = null;
+
                 // Fill the response headers
                 // CORS will only allow access to certain headers.
                 // If a request is made for a resource on another origin which returns the CORs headers, then the type is cors. 
@@ -145,15 +150,14 @@ namespace WebAssembly.Net.Http.HttpClient
                     {
 
                         if (!httpresponse.Headers.TryAddWithoutValidation((string)name, (string)value))
-                            Console.WriteLine($"Warning: Can not add response header for name: {name} value: {value}");
+                            if (httpresponse.Content != null)
+                                if (!httpresponse.Content.Headers.TryAddWithoutValidation((string)name, (string)value))
+                                    Console.WriteLine($"Warning: Can not add response header for name: {name} value: {value}");
                         ((JSObject)other).Dispose();
                     }
                     ));
                 }
 
-
-                if (buffer != null)
-                    httpresponse.Content = new ByteArrayContent(buffer);
 
                 tcs.SetResult(httpresponse);
 

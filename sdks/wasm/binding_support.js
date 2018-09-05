@@ -72,8 +72,8 @@ var BindingSupportLib = {
 			this.bind_js_obj = get_method ("BindJSObject");
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
-			this.unbind_js_obj_and_fee = get_method ("UnBindJSObjectAndFree");			
-			this.unbind_raw_obj_and_fee = get_method ("UnBindRawJSObjectAndFree");			
+			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");			
+			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");			
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
@@ -399,7 +399,7 @@ var BindingSupportLib = {
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj_and_fee, null, "i", [js_obj_id]);
+			return this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
 		},		
 
 		wasm_get_js_id: function (mono_obj)
@@ -437,7 +437,7 @@ var BindingSupportLib = {
 		free_task_completion_source: function (tcs) {
 			if (tcs.is_mono_tcs_result_set)
 			{
-				this.call_method (this.unbind_raw_obj_and_fee, null, "ii", [ tcs.__mono_gchandle__ ]);
+				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_gchandle__ ]);
 			}
 		},
 
