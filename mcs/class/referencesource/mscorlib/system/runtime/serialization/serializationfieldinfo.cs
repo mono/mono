@@ -88,11 +88,6 @@ namespace System.Runtime.Serialization {
                 return m_field.FieldType;
             }
         }
-
-        internal override int GetFieldOffset ()
-        {
-            throw new SystemException ("This method should not be called");
-        }
         
         public override Object GetValue(Object obj) {
             return m_field.GetValue(obj);
