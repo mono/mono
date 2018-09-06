@@ -31,13 +31,13 @@ basic_SUBDIRS := \
 	../ilasm \
 	corlib/il
 
-build_SUBDIRS :=  \
+build_SUBDIRS = \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
 	corlib
 
-build_PARALLEL_SUBDIRS := \
+build_PARALLEL_SUBDIRS = \
 	Mono.Security \
 	System \
 	System.XML \
@@ -55,6 +55,15 @@ build_PARALLEL_SUBDIRS := \
 
 ifdef MCS_MODE
 basic_PARALLEL_SUBDIRS := ../mcs
+
+build_SUBDIRS += \
+	Mono.Security \
+	System \
+	System.XML \
+	System.Security \
+	Mono.Posix \
+	System.Core
+
 build_PARALLEL_SUBDIRS += ../mcs
 endif
 
