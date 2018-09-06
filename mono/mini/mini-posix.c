@@ -247,14 +247,13 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	} else
 #endif
 	{
-		// Only the dumping-supervisor thread exits mono_thread_summarize
-		MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
-		sleep (3);
+		// Controlling thread gets the dump
+		if (output)
+			MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
 	}
 #endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
-	exit (1);
 }
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
