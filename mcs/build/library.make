@@ -14,12 +14,11 @@
 #                 command line.
 #
 
-# All dependent libs become dependent dirs for parallel builds
-# Have to rename to handle differences between assembly/directory names
-DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
-
 LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS)) $(DEFAULT_REFERENCES)
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
+
+# All dependent libs become dependent dirs for parallel builds
+DEP_LIBS = $(filter-out %=, $(subst =,= ,$(LIB_REFS)))
 
 ifdef TARGET_NET_REFERENCE
 # System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
@@ -393,7 +392,7 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 
 # Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS
 gen-deps:
-	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
+	@echo "$(patsubst System.Xml,System.XML,$(DEPS_TARGET_DIR)): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
 
 update-corefx-sr-generic:
 ifneq ($(RESX_STRINGS),)
