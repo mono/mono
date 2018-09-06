@@ -380,7 +380,12 @@ namespace System.IO.Compression
 				GC.SuppressFinalize (this);
 			
 				io_buffer = null;
-			
+			} else {
+				// When we are in the finalizer we don't want to access the underlying stream anymore
+				base_stream = Stream.Null;
+			}
+
+			if (z_stream != null) {
 				z_stream.Dispose();
 			}
 
