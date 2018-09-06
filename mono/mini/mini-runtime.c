@@ -2367,7 +2367,7 @@ lookup_start:
 		if ((code = mono_aot_get_method (domain, method, error))) {
 			MonoVTable *vtable;
 
-			if (FALSE && mono_gc_is_critical_method (method)) {
+			if (mono_gc_is_critical_method (method)) {
 				/*
 				 * The suspend code needs to be able to lookup these methods by ip in async context,
 				 * so preload their jit info.
@@ -2431,7 +2431,9 @@ lookup_start:
 	if (!code)
 		return NULL;
 
-	if (FALSE && (method->wrapper_type == MONO_WRAPPER_WRITE_BARRIER || method->wrapper_type == MONO_WRAPPER_ALLOC)) {
+	//FIXME mini_jit_info_table_find doesn't work yet under wasm due to code_start/code_end issues.
+#ifndef HOST_WASM
+	if ((method->wrapper_type == MONO_WRAPPER_WRITE_BARRIER || method->wrapper_type == MONO_WRAPPER_ALLOC)) {
 		MonoDomain *d;
 
 		/*
@@ -2440,6 +2442,7 @@ lookup_start:
 		ji = mini_jit_info_table_find (mono_domain_get (), (char *)code, &d);
 		g_assert (ji);
 	}
+#endif
 
 	p = mono_create_ftnptr (target_domain, code);
 
