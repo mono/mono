@@ -6019,8 +6019,12 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out)
 	*out = mono_summarize_native_state_end ();
 
 	// Clean up all of our state
-	memset (&state, 0, sizeof (state));
+	memset (state, 0, sizeof (*state));
+	mono_atomic_store_i32 ((volatile gint32 *)&state->summary_state, 0);
 	mono_memory_barrier ();
+
+	// Wait for other threads to continue
+	sleep (2);
 }
 
 static void
@@ -6028,9 +6032,12 @@ summarizer_state_wait (SummarizerGlobalState *state)
 {
 	// We saw this was set with a synchronized read
 	// Loop until it's unset
-	while (state->summary_state) {
-		g_usleep (100);
+	guint32 not_done = 1;
+	while (not_done) {
+		MOSTLY_ASYNC_SAFE_PRINTF ("Waiting, seeing %d\n", not_done);
+		sleep (1);
 		mono_memory_barrier ();
+		not_done = mono_atomic_load_i32 (&state->summary_state);
 	}
 }
 
