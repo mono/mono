@@ -3812,6 +3812,11 @@ typedef struct {
 	guint32 *threads;
 } CollectThreadsUserData;
 
+typedef struct {
+	int nthreads, max_threads;
+	MonoNativeThreadId *threads;
+} CollectThreadIdsUserData;
+
 static void
 collect_thread (gpointer key, gpointer value, gpointer user)
 {
@@ -3820,6 +3825,16 @@ collect_thread (gpointer key, gpointer value, gpointer user)
 
 	if (ud->nthreads < ud->max_threads)
 		ud->threads [ud->nthreads ++] = mono_gchandle_new (&thread->obj, TRUE);
+}
+
+static void
+collect_thread_id (gpointer key, gpointer value, gpointer user)
+{
+	CollectThreadIdsUserData *ud = (CollectThreadIdsUserData *)user;
+	MonoInternalThread *thread = (MonoInternalThread *)value;
+
+	if (ud->nthreads < ud->max_threads)
+		ud->threads [ud->nthreads ++] = thread_get_tid (thread);
 }
 
 /*
@@ -3842,6 +3857,27 @@ collect_threads (guint32 *thread_handles, int max_threads)
 
 	mono_threads_lock ();
 	mono_g_hash_table_foreach (threads, collect_thread, &ud);
+	mono_threads_unlock ();
+
+	return ud.nthreads;
+}
+
+static int
+collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
+{
+	CollectThreadIdsUserData ud;
+
+	mono_memory_barrier ();
+	if (!threads)
+		return 0;
+
+	memset (&ud, 0, sizeof (ud));
+	/* This array contains refs, but its on the stack, so its ok */
+	ud.threads = thread_ids;
+	ud.max_threads = max_threads;
+
+	mono_threads_lock ();
+	mono_g_hash_table_foreach (threads, collect_thread_id, &ud);
 	mono_threads_unlock ();
 
 	return ud.nthreads;
@@ -6028,32 +6064,6 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 
 #else
 
-static size_t num_threads_summarized = 0;
-
-// mono_thread_internal_current doesn't always work in signal
-// handler contexts. This does.
-/*static gboolean*/
-/*find_missing_thread (MonoNativeThreadId id, guint32 *out)*/
-/*{*/
-	/*guint32 thread_array [128];*/
-	/*int nthreads = collect_threads (thread_array, 128);*/
-	/*gboolean success = FALSE;*/
-
-	/*for (int i=0; i < nthreads; i++) {*/
-		/*guint32 handle = thread_array [i];*/
-		/*MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target (handle);*/
-		/*MonoNativeThreadId tid = thread_get_tid (thread);*/
-		/*if (tid == id) {*/
-			/**out = handle;*/
-			/*success = TRUE;*/
-		/*} else {*/
-			/*mono_gchandle_free (handle);*/
-		/*}*/
-	/*}*/
-
-	/*return success;*/
-/*}*/
-
 static gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 {
@@ -6063,6 +6073,7 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	out->native_thread_id = (intptr_t) current;
 	mono_native_thread_get_name (current, out->name, MONO_MAX_SUMMARY_NAME_LEN);
 	mono_get_eh_callbacks ()->mono_summarize_stack (out, ctx);
+	out->ctx = ctx;
 
 	// FIXME: Figure out how to store and look these up?
 	/*MonoDomain *domain = thread->obj.vtable->domain;*/
@@ -6072,222 +6083,85 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	return TRUE;
 }
 
-typedef enum {
-	MONO_SUMMARY_EMPTY = 0x0,
-	MONO_SUMMARY_EXPECT = 0x1,
-	MONO_SUMMARY_IN_PROGRESS = 0x2,
-	MONO_SUMMARY_EXAMINE = 0x3,
-	MONO_SUMMARY_MUTATE_SHARED = 0x4
-} MonoSummaryState;
-
-static const char *
-thread_summary_state_to_str (MonoSummaryState state)
-{
-	switch (state) {
-	case MONO_SUMMARY_EMPTY:
-		return "MONO_SUMMARY_EMPTY";
-	case MONO_SUMMARY_EXPECT:
-		return "MONO_SUMMARY_EXPECT";
-	case MONO_SUMMARY_IN_PROGRESS:
-		return "MONO_SUMMARY_IN_PROGRESS";
-	case MONO_SUMMARY_EXAMINE:
-		return "MONO_SUMMARY_EXAMINE";
-	case MONO_SUMMARY_MUTATE_SHARED:
-		return "MONO_SUMMARY_MUTATE_SHARED";
-	default:
-		g_assert_not_reached ();
-	}
-}
-
-static gint32 summary_started;
-static gint32 summarizing_thread_state;
-static MonoNativeThreadId summarizing_thread;
-
-static inline MonoNativeThreadId
-mono_atomic_cas_native_thread_id (volatile MonoNativeThreadId *dest, MonoNativeThreadId exch, MonoNativeThreadId comp)
-{
-	// FIXME static_assert
-	g_assert (sizeof (MonoNativeThreadId) == 4 || sizeof (MonoNativeThreadId) == sizeof (gpointer));
-
-	// Extra casts are needed to avoid warnings. MonoNativeThreadId can be an integer or a pointer.
-
-	if (sizeof (MonoNativeThreadId) == 4)
-		return (MonoNativeThreadId)(gsize)mono_atomic_cas_i32 ((gint32*)dest, (gint32)(gsize)exch, (gint32)(gsize)comp);
-	return (MonoNativeThreadId)(gsize)mono_atomic_cas_ptr ((gpointer*)dest, (gpointer)(gsize)exch, (gpointer)(gsize)comp);
-}
-
 gboolean
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 {
-	gint32 started_state = mono_atomic_cas_i32 (&summary_started, 1 /* set */, 0 /* compare */);
-	gboolean not_started = started_state == 0;
-
 	MonoNativeThreadId current = mono_native_thread_id_get ();
 
-	MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer from %zx\n", current);
+	const int max_num_threads = 128;
+	static MonoNativeThreadId thread_array [max_num_threads];
+	static int nthreads;
+	static MonoThreadSummary *all_threads [max_num_threads];
+	static gint32 summary_started;
+
+	gint32 started_state = mono_atomic_cas_i32 (&summary_started, 1 /* set */, 0 /* compare */);
+	gboolean not_started = started_state == 0;
+	if (not_started)
+		nthreads = collect_thread_ids (thread_array, max_num_threads);
+
+	int my_index = 0;
+	for (int i = 0; i < nthreads; i++) {
+		if (thread_array [i] == current) {
+			my_index = i;
+			break;
+		}
+	}
 
 	if (not_started) {
-		// Setup state
-		mono_summarize_native_state_begin ();
-
-		if (!current)
-			g_error ("Can't get native thread ID");
-
-		// Note: this list can get out of date. We can have
-		// threads disappear from existince between us getting
-		// this list and us dumping them. We have to do our best.
-		//
-		// Thankfully the memory behind these pointers is always leaked,
-		// we never have dangling pointers.
-		guint32 thread_array [128];
-		int nthreads = collect_threads (thread_array, 128);
-
-		if (nthreads == 0)
-			MOSTLY_ASYNC_SAFE_PRINTF("No managed threads detected, error occured before thread init\n");
-
 		sigset_t sigset, old_sigset;
 		sigemptyset(&sigset);
 		sigaddset(&sigset, SIGTERM);
 
 		for (int i=0; i < nthreads; i++) {
-			guint32 handle = thread_array [i];
-			MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target (handle);
-
-			MonoNativeThreadId tid = thread_get_tid (thread);
-			if (current == tid)
-				continue;
-
-			// Request every other thread dumps themselves before us
-			MonoThreadInfo *info = thread->thread_info;
-
-			mono_memory_barrier ();
-			size_t old_num_summarized = num_threads_summarized;
-
 			sigprocmask (SIG_UNBLOCK, &sigset, &old_sigset);
 
-			gint32 prev_state = mono_atomic_cas_i32(&summarizing_thread_state, MONO_SUMMARY_EXPECT /* set */, MONO_SUMMARY_EMPTY /* compare */);
-			g_assertf(prev_state == MONO_SUMMARY_EMPTY, "Summary memory was not in a clean state prior to entry", NULL);
-
-			if (summarizing_thread_state != MONO_SUMMARY_EXPECT) {
-				const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
-				g_error ("Status after init wrong: %s\n", name);
-			}
-
-			summarizing_thread = tid;
-			mono_threads_pthread_kill (info, SIGTERM);
-
-			// Number of rounds of 40 milliseconds seconds to give each dumping thread
-			int count = 400;
-
-			while (old_num_summarized == num_threads_summarized && count > 0) {
-				if (thread->state & (ThreadState_Unstarted | ThreadState_Aborted | ThreadState_Stopped))
-					break;
-
-				usleep (10);
-				mono_memory_barrier ();
-				const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
-				MOSTLY_ASYNC_SAFE_PRINTF("Waiting for signalled thread %zx to collect stacktrace. Status: %s\n. Thread state: 0x%x\n", tid, name, thread->state);
-				count--;
-			}
-
-			// Free the gchandle; we're done waiting on this one, no matter how the waiting went.
-			mono_gchandle_free (handle);
-
-			if (count == 0) {
-				// After timeout
-				// Thread may have been in lock or something, may have died
-				// Either way, didn't respond. Rather than failing, we have to
-				// skip it.
-				mono_memory_barrier ();
-				switch (summarizing_thread_state) {
-				case MONO_SUMMARY_MUTATE_SHARED:
-					g_error ("Timed out when writing json log!");
-					break;
-
-				case MONO_SUMMARY_EMPTY: {
-					g_assert (summarizing_thread == (MonoNativeThreadId) NULL);
-					break;
-
-				case MONO_SUMMARY_EXAMINE:
-					MOSTLY_ASYNC_SAFE_PRINTF("Timed out, thread did not finish dumping\n");
-
-					MonoNativeThreadId old_val = mono_atomic_cas_native_thread_id (&summarizing_thread, tid /* set */, 0 /* compare */);
-					g_assertf (old_val == NULL, "Attempting to abandon dumping of thread, and thread changed.", NULL);
-
-					gint32 timeout_abort_state = mono_atomic_cas_i32(&summarizing_thread_state, MONO_SUMMARY_EMPTY /* set */, MONO_SUMMARY_EXAMINE /* compare */);
-					g_assertf (timeout_abort_state == MONO_SUMMARY_EXAMINE, "Thread state changed during timeout abort", NULL);
-
-					break;
-				}
-				case MONO_SUMMARY_EXPECT: {
-					MOSTLY_ASYNC_SAFE_PRINTF("Timed out, thread did not respond to signal\n");
-
-					MonoNativeThreadId old_val = mono_atomic_cas_native_thread_id (&summarizing_thread, 0 /* set */, tid /* compare */);
-					g_assertf (tid == old_val, "Attempting to abandon dumping of thread %zx, and thread changed to %zx.", tid, old_val);
-
-					gint32 timeout_abort_state = mono_atomic_cas_i32(&summarizing_thread_state, MONO_SUMMARY_EMPTY /* set */, MONO_SUMMARY_EXPECT /* compare */);
-					g_assertf (timeout_abort_state == MONO_SUMMARY_EXPECT, "Thread state changed during timeout abort", NULL);
-
-					break;
-				}
-				default:
-					g_assert_not_reached ();
-				}
-			}
+	#ifdef HAVE_PTHREAD_KILL
+			pthread_kill (thread_array [i], SIGTERM);
+	#else
+			g_error ("pthread_kill () is not supported by this platform");
+	#endif
 		}
-
-		// After dumping all the other threads, we dump our own.
-		summarizing_thread = current;
 	}
 
-	mono_memory_barrier ();
-
-	MOSTLY_ASYNC_SAFE_PRINTF("Self-reporting for thread %zx. Registered summarizing thread right now is %zx\n", current, summarizing_thread);
-	g_assert (current == summarizing_thread);
-
-	if (!not_started) {
-		gint32 restart_state = mono_atomic_cas_i32 (&summarizing_thread_state, MONO_SUMMARY_EXAMINE /* set */, MONO_SUMMARY_EXPECT /* compare */);
-		if (restart_state != MONO_SUMMARY_EXPECT) {
-			const char *name = thread_summary_state_to_str ((MonoSummaryState)summarizing_thread_state);
-			MOSTLY_ASYNC_SAFE_PRINTF ("Dumping thread could not obtain ownership of dumping memory. Timeout? Enum was %s", name);
-			goto fail;
-		}
-	} else {
-		summarizing_thread_state = MONO_SUMMARY_EXAMINE;
-		mono_memory_barrier ();
-	}
-
-	// Dump ourselves
 	MonoThreadSummary this_thread;
 	if (mono_threads_summarize_one (&this_thread, ctx)) {
-		gint32 write_state = mono_atomic_cas_i32 (&summarizing_thread_state, MONO_SUMMARY_MUTATE_SHARED /* set */, MONO_SUMMARY_EXAMINE /* compare */);
-		if (write_state != MONO_SUMMARY_EXAMINE) {
-			MOSTLY_ASYNC_SAFE_PRINTF ("Terminated when walking stack, thread dump lost!\n");
-			goto fail;
-		}
-
-		mono_summarize_native_state_add_thread (&this_thread, ctx);
-
-		gint32 write_done_state = mono_atomic_cas_i32 (&summarizing_thread_state, MONO_SUMMARY_EMPTY /* set */, MONO_SUMMARY_MUTATE_SHARED /* compare */);
-		g_assertf (write_done_state == MONO_SUMMARY_MUTATE_SHARED, "Memory unsafety: dumping thread ownership of shared memory ignored!", NULL);
+		mono_memory_barrier ();
+		mono_atomic_store_ptr ((volatile gpointer *)&all_threads [my_index], &this_thread);
+	} else {
+		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.", current);
 	}
 
-	mono_memory_barrier ();
-	num_threads_summarized++;
-	mono_memory_barrier ();
-
+	// From summarizer, wait and dump.
 	if (not_started) {
-		// We are the dumper
+		MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
+		// Wait 2 seconds for all of the other threads to catch up
+		sleep (2);
+		MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx. %d threads suspended.\n", current);
+
+		// See the array writes
+		mono_memory_barrier ();
+
+		mono_summarize_native_state_begin ();
+		for (int i=0; i < nthreads; i++) {
+			MonoThreadSummary *thread = all_threads [i];
+			if (!thread)
+				continue;
+
+			mono_summarize_native_state_add_thread (thread, thread->ctx);
+		}
 		*out = mono_summarize_native_state_end ();
+
 		if (hashes)
 			*hashes = this_thread.hashes;
 		return TRUE;
 	}
 
-fail:
+	// Fixme: allow dumping threads to continue?
+	// Allow caller to signal them somehow.
 	while (1)
-		sleep (10);
+		sleep (2);
 }
+
 #endif
 
 
