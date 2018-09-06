@@ -540,6 +540,7 @@ typedef struct {
 	MonoFrameSummary unmanaged_frames [MONO_MAX_SUMMARY_FRAMES];
 
 	MonoStackHash hashes;
+	MonoContext *ctx;
 } MonoThreadSummary;
 
 gboolean
