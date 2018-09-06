@@ -208,7 +208,9 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			stream->eof = TRUE;
 			break;
 		} else if (status == Z_BUF_ERROR && stream->total_in == zs->total_in) {
-			stream->eof = TRUE;
+			if (zs->avail_in != 0) {
+				stream->eof = TRUE;
+			}
 			break;
 		} else if (status != Z_OK) {
 			return status;
