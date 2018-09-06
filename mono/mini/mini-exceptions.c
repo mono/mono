@@ -1273,7 +1273,7 @@ next:
 	}
 }
 
-#ifdef DISABLE_CRASH_REPORTING
+#ifdef TARGET_OSX
 typedef struct {
 	MonoFrameSummary *frames;
 	int num_frames;

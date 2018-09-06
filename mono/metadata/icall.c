@@ -5924,7 +5924,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_h
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_DumpTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
-#ifndef DISABLE_CRASH_REPORTING
+#ifdef TARGET_OSX
 	MonoStackHash hashes;
 	memset (&hashes, 0, sizeof (MonoStackHash));
 	hashes.offset_free_hash = portable_hash;
