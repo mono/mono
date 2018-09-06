@@ -3565,15 +3565,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	 * Emit the call
 	 */
 	lcall = emit_call (ctx, bb, &builder, callee, args, LLVMCountParamTypes (llvm_sig));
-#if 0
-	static int count;
-	count ++;
-	if (count == 624)
-		printf ("HIT!\n");
-	fprintf (stderr, "%d ", count);
-	LLVMDumpValue (lcall);
-	fprintf (stderr, "\n");
-#endif
 
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
