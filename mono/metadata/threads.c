@@ -3809,6 +3809,7 @@ get_thread_dump (MonoThreadInfo *info, gpointer ud)
 
 typedef struct {
 	int nthreads, max_threads;
+
 	guint32 *threads;
 } CollectThreadsUserData;
 
@@ -6083,83 +6084,134 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	return TRUE;
 }
 
-gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
+static const int max_num_threads = 128;
+typedef struct {
+	MonoNativeThreadId thread_array [max_num_threads];
+	int nthreads;
+	MonoThreadSummary *all_threads [max_num_threads];
+	gint32 summary_state;
+} SummarizerGlobalState;
+
+static gboolean
+summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
 {
-	MonoNativeThreadId current = mono_native_thread_id_get ();
-
-	const int max_num_threads = 128;
-	static MonoNativeThreadId thread_array [max_num_threads];
-	static int nthreads;
-	static MonoThreadSummary *all_threads [max_num_threads];
-	static gint32 summary_started;
-
-	gint32 started_state = mono_atomic_cas_i32 (&summary_started, 1 /* set */, 0 /* compare */);
+	gint32 started_state = mono_atomic_cas_i32 (&state->summary_state, 1 /* set */, 0 /* compare */);
 	gboolean not_started = started_state == 0;
 	if (not_started)
-		nthreads = collect_thread_ids (thread_array, max_num_threads);
+		state->nthreads = collect_thread_ids (state->thread_array, max_num_threads);
 
-	int my_index = 0;
-	for (int i = 0; i < nthreads; i++) {
-		if (thread_array [i] == current) {
-			my_index = i;
+	for (int i = 0; i < state->nthreads; i++) {
+		if (state->thread_array [i] == current) {
+			*my_index = i;
 			break;
 		}
 	}
 
-	if (not_started) {
-		sigset_t sigset, old_sigset;
-		sigemptyset(&sigset);
-		sigaddset(&sigset, SIGTERM);
+	return not_started;
+}
 
-		for (int i=0; i < nthreads; i++) {
-			sigprocmask (SIG_UNBLOCK, &sigset, &old_sigset);
+static void
+summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx)
+{
+	sigset_t sigset, old_sigset;
+	sigemptyset(&sigset);
+	sigaddset(&sigset, SIGTERM);
+
+	for (int i=0; i < state->nthreads; i++) {
+		sigprocmask (SIG_UNBLOCK, &sigset, &old_sigset);
+
+		if (i == current_idx)
+			continue;
 
 	#ifdef HAVE_PTHREAD_KILL
-			pthread_kill (thread_array [i], SIGTERM);
+		pthread_kill (state->thread_array [i], SIGTERM);
+		MOSTLY_ASYNC_SAFE_PRINTF("Pkilling 0x%zx from 0x%zx\n", state->thread_array [i], current);
 	#else
-			g_error ("pthread_kill () is not supported by this platform");
+		g_error ("pthread_kill () is not supported by this platform");
 	#endif
-		}
 	}
+}
+
+static void
+summarizer_post_dump (SummarizerGlobalState *state, MonoThreadSummary *this_thread, int current_idx)
+{
+	mono_memory_barrier ();
+	mono_atomic_store_ptr ((volatile gpointer *)&state->all_threads [current_idx], this_thread);
+}
+
+static void
+summarizer_state_term (SummarizerGlobalState *state, gchar **out)
+{
+	// See the array writes
+	mono_memory_barrier ();
+
+	mono_summarize_native_state_begin ();
+	for (int i=0; i < state->nthreads; i++) {
+		MonoThreadSummary *thread = state->all_threads [i];
+		if (!thread)
+			continue;
+
+		mono_summarize_native_state_add_thread (thread, thread->ctx);
+	}
+	*out = mono_summarize_native_state_end ();
+
+	// Clean up all of our state
+	memset (&state, 0, sizeof (state));
+	mono_memory_barrier ();
+}
+
+static void
+summarizer_state_wait (SummarizerGlobalState *state)
+{
+	// We saw this was set with a synchronized read
+	// Loop until it's unset
+	while (state->summary_state) {
+		g_usleep (100);
+		mono_memory_barrier ();
+	}
+}
+
+gboolean
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
+{
+	static SummarizerGlobalState state;
+
+	int current_idx;
+	MonoNativeThreadId current = mono_native_thread_id_get ();
+	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
+
+	if (this_thread_controls)
+		summarizer_signal_other_threads (&state, current, current_idx);
 
 	MonoThreadSummary this_thread;
 	if (mono_threads_summarize_one (&this_thread, ctx)) {
-		mono_memory_barrier ();
-		mono_atomic_store_ptr ((volatile gpointer *)&all_threads [my_index], &this_thread);
+		// Store a reference to our stack memory into global state
+		summarizer_post_dump (&state, &this_thread, current_idx);
+		// FIXME: How many threads should be counted?
+		if (hashes)
+			*hashes = this_thread.hashes;
+		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
 	} else {
-		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.", current);
+		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.\n", current);
 	}
 
 	// From summarizer, wait and dump.
-	if (not_started) {
+	if (this_thread_controls) {
 		MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
 		// Wait 2 seconds for all of the other threads to catch up
 		sleep (2);
-		MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx. %d threads suspended.\n", current);
+		MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
-		// See the array writes
-		mono_memory_barrier ();
+		// Dump and cleanup all the stack memory
+		summarizer_state_term (&state, out);
 
-		mono_summarize_native_state_begin ();
-		for (int i=0; i < nthreads; i++) {
-			MonoThreadSummary *thread = all_threads [i];
-			if (!thread)
-				continue;
-
-			mono_summarize_native_state_add_thread (thread, thread->ctx);
-		}
-		*out = mono_summarize_native_state_end ();
-
-		if (hashes)
-			*hashes = this_thread.hashes;
-		return TRUE;
+	} else {
+		// Wait here, keeping our stack memory alive
+		// for the dumper
+		summarizer_state_wait (&state);
 	}
 
-	// Fixme: allow dumping threads to continue?
-	// Allow caller to signal them somehow.
-	while (1)
-		sleep (2);
+	return TRUE;
 }
 
 #endif
