@@ -93,7 +93,7 @@ extern MonoObject* mono_wasm_set_object_property (int js_handle, MonoString *met
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
 extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
-
+void mono_aot_register_module (void **aot_info);
 void mono_jit_set_aot_mode (MonoAotMode mode);
 MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
 MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
@@ -206,17 +206,29 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
-// extern const void *mono_aot_module_{0}_info;
+#ifdef EXPERIMENTAL_AOT_DRIVER
 
+extern void *mono_aot_module_mini_tests_basic_info;
+extern void *mono_aot_module_mscorlib_info;
+
+#endif
 
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
+
+#ifdef EXPERIMENTAL_AOT_DRIVER
+	mono_aot_register_module (mono_aot_module_mscorlib_info);
+	mono_aot_register_module (mono_aot_module_mini_tests_basic_info);
+	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
+#else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
+#endif
+
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 

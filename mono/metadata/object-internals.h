@@ -5,6 +5,7 @@
 #ifndef __MONO_OBJECT_INTERNALS_H__
 #define __MONO_OBJECT_INTERNALS_H__
 
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
@@ -152,6 +153,8 @@ struct _MonoString {
 	int32_t length;
 	mono_unichar2 chars [MONO_ZERO_LEN_ARRAY];
 };
+
+#define MONO_SIZEOF_MONO_STRING (MONO_STRUCT_OFFSET (MonoString, chars))
 
 #define mono_object_class(obj) (((MonoObject*)(obj))->vtable->klass)
 #define mono_object_domain(obj) (((MonoObject*)(obj))->vtable->domain)
@@ -489,7 +492,7 @@ struct _MonoInternalThread {
 
 struct _MonoThread {
 	MonoObject obj;
-	struct _MonoInternalThread *internal_thread;
+	MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 };
@@ -2118,6 +2121,6 @@ gpointer
 mono_object_get_data (MonoObject *o);
 
 gpointer
-mono_vtype_get_field_addr (guint8 *vtype, MonoClassField *field);
+mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */

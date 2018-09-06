@@ -30,6 +30,7 @@ namespace CppSharp
         static string MaccoreDir = @"";
         static string TargetDir = @"";
         static bool GenIOS;
+        static bool GenAndroid;
 
         public enum TargetPlatform
         {
@@ -179,10 +180,10 @@ namespace CppSharp
                 Environment.Exit (1);
             }
             string abi = Abis [0];
-            if (abi == "i386-apple-darwin11.2.0") {
+            if (abi == "i386-apple-darwin13.0.0") {
                 Targets.Add(new Target {
                         Platform = TargetPlatform.OSX,
-                        Triple = "i386-apple-darwin11.2.0",
+                        Triple = "i386-apple-darwin13.0.0",
                         Build = "",
                         Defines = { "TARGET_X86" },
                 });
@@ -221,7 +222,7 @@ namespace CppSharp
                 MonodroidDir = Path.Combine (monodroidDir);
             }
 
-            if (Directory.Exists (MonodroidDir))
+            if (Directory.Exists (MonodroidDir) || GenAndroid)
                 SetupAndroidTargets();
 
             string maccoreDir;
@@ -304,6 +305,7 @@ namespace CppSharp
                 { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
                 { "gen-ios", "generate iOS offsets", v => GenIOS = v != null },
+                { "gen-android", "generate Android offsets", v => GenAndroid = v != null },
                 { "h|help",  "show this message and exit",  v => showHelp = v != null },
             };
 

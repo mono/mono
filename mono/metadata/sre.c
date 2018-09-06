@@ -240,7 +240,10 @@ mono_image_typedef_or_ref (MonoDynamicImage *assembly, MonoType *type)
  * dest may be misaligned.
  */
 static void
-swap_with_size (char *dest, const char* val, int len, int nelem) {
+swap_with_size (gpointer void_dest, gconstpointer void_val, int len, int nelem)
+{
+	char *dest = (char*)void_dest;
+	const char* val = (const char*)void_val;
 	MONO_REQ_GC_NEUTRAL_MODE;
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	int elem;
@@ -2107,8 +2110,9 @@ mono_is_sre_generic_instance (MonoClass *klass)
  * @error set on error.
  */
 static void
-encode_cattr_value (MonoAssembly *assembly, char *buffer, char *p, char **retbuffer, char **retp, guint32 *buflen, MonoType *type, MonoObject *arg, char *argval, MonoError *error)
+encode_cattr_value (MonoAssembly *assembly, char *buffer, char *p, char **retbuffer, char **retp, guint32 *buflen, MonoType *type, MonoObject *arg, gconstpointer void_argval, MonoError *error)
 {
+	const char *argval = (const char*)void_argval;
 	MonoTypeEnum simple_type;
 	
 	error_init (error);
@@ -2120,7 +2124,7 @@ encode_cattr_value (MonoAssembly *assembly, char *buffer, char *p, char **retbuf
 		buffer = newbuf;
 	}
 	if (!argval)
-		argval = mono_object_get_data (arg);
+		argval = (const char*)mono_object_get_data (arg);
 	simple_type = type->type;
 handle_enum:
 	switch (simple_type) {
@@ -2670,7 +2674,7 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 		gboolean recursive_init = TRUE;
 
 		if (is_sre_type_builder (parent_klass)) {
-			MonoTypeBuilderState parent_state = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionTypeBuilder, ref_parent), state);
+			MonoTypeBuilderState parent_state = (MonoTypeBuilderState)MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionTypeBuilder, ref_parent), state);
 
 			if (parent_state != MonoTypeBuilderNew) {
 				// Initialize types reachable from parent recursively
@@ -2733,7 +2737,7 @@ reflection_init_generic_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError
 
 	error_init (error);
 
-	MonoTypeBuilderState ref_state = MONO_HANDLE_GETVAL (ref_tb, state);
+	MonoTypeBuilderState ref_state = (MonoTypeBuilderState)MONO_HANDLE_GETVAL (ref_tb, state);
 	g_assert (ref_state == MonoTypeBuilderFinished);
 
 	MonoType *type = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionType, ref_tb), type);
@@ -3483,7 +3487,7 @@ mono_reflection_method_get_handle (MonoObject *method, MonoError *error)
 	if (mono_is_sre_method_on_tb_inst (klass)) {
 		MonoClass *handle_class;
 
-		MonoMethod *result =  mono_reflection_resolve_object (NULL, method, &handle_class, NULL, error);
+		MonoMethod *result = (MonoMethod*)mono_reflection_resolve_object (NULL, method, &handle_class, NULL, error);
 		return_val_if_nok (error, NULL);
 
 		return result;
@@ -3684,7 +3688,7 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 
 	error_init (error);
 
-	info = mono_class_get_property_info (klass);
+	info = (MonoClassPropertyInfo*)mono_class_get_property_info (klass);
 	if (!info) {
 		info = mono_class_alloc0 (klass, sizeof (MonoClassPropertyInfo));
 		mono_class_set_property_info (klass, info);
@@ -3847,8 +3851,7 @@ reflection_setup_internal_class (MonoReflectionTypeBuilderHandle ref_tb, MonoErr
 	}
 }
 
-
-MonoReflectionTypeHandle
+ICALL_EXPORT MonoReflectionTypeHandle
 ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle ref_tb, MonoError *error)
 {
 	error_init (error);

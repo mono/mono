@@ -99,7 +99,7 @@ strrchr_seperator (const gchar* filename)
 
 	p = (char*)strrchr (filename, G_DIR_SEPARATOR);
 #ifdef G_OS_WIN32
-	p2 = strrchr (filename, '/');
+	p2 = (char*)strrchr (filename, '/');
 	if (p2 > p)
 		p = p2;
 #endif
@@ -224,7 +224,7 @@ g_find_program_in_path (const gchar *program)
 	char *save = NULL;
 #ifdef G_OS_WIN32
 	char *program_exe;
-	char *suffix_list[5] = {".exe",".cmd",".bat",".com",NULL};
+	static char const * const suffix_list[5] = {".exe",".cmd",".bat",".com",NULL};
 	int listx;
 	gboolean hasSuffix;
 #endif

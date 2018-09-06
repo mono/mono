@@ -125,6 +125,8 @@ static int num_entries;
 #define lldb_lock() mono_os_mutex_lock (&mutex)
 #define lldb_unlock() mono_os_mutex_unlock (&mutex)
 
+G_BEGIN_DECLS
+
 void MONO_NEVER_INLINE __mono_jit_debug_register_code (void);
 
 /* The native debugger puts a breakpoint in this function. */
@@ -136,6 +138,8 @@ __mono_jit_debug_register_code (void)
 	asm ("");
 #endif
 }
+
+G_END_DECLS
 
 /*
  * Functions to encode protocol data
@@ -257,7 +261,7 @@ typedef struct {
 static int
 find_code_region (void *data, int csize, int size, void *user_data)
 {
-	UserData *ud = user_data;
+	UserData *ud = (UserData*)user_data;
 
 	if ((char*)ud->code >= (char*)data && (char*)ud->code < (char*)data + csize) {
 		ud->region_start = data;
@@ -373,7 +377,7 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 	/* We use the unencoded version of the unwind info to make it easier to decode */
 	nunwind_ops = 0;
 	for (l = unwind_ops; l; l = l->next) {
-		MonoUnwindOp *op = l->data;
+		MonoUnwindOp *op = (MonoUnwindOp*)l->data;
 
 		/* lldb can't handle these */
 		if (op->op == DW_CFA_mono_advance_loc)
@@ -384,7 +388,7 @@ emit_unwind_info (GSList *unwind_ops, Buffer *buf)
 	buffer_add_byte (buf, ret_reg);
 	buffer_add_int (buf, nunwind_ops);
 	for (l = unwind_ops; l; l = l->next) {
-		MonoUnwindOp *op = l->data;
+		MonoUnwindOp *op = (MonoUnwindOp*)l->data;
 
 		if (op->op == DW_CFA_mono_advance_loc)
 			break;
@@ -425,8 +429,8 @@ typedef struct
 static int
 compare_by_addr (const void *arg1, const void *arg2)
 {
-	const FullSeqPoint *sp1 = arg1;
-	const FullSeqPoint *sp2 = arg2;
+	const FullSeqPoint *sp1 = (const FullSeqPoint *)arg1;
+	const FullSeqPoint *sp2 = (const FullSeqPoint *)arg2;
 
 	return sp1->native_offset - sp2->native_offset;
 }

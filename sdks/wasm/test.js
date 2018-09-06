@@ -73,7 +73,7 @@ var Module = {
 	},
 };
 
-var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll", "binding_tests.dll" ];
+var assemblies = [ "mscorlib.dll", "System.dll", "System.Core.dll", "System.Net.Http.dll", "Mono.Security.dll", "main.exe", "nunitlite.dll", "mini_tests.dll", "wasm_corlib_test.dll", "wasm_System_test.dll", "wasm_System.Core_test.dll", "binding_tests.dll" ];
 
 load ("mono.js");
 Module.finish_loading ();
@@ -96,13 +96,13 @@ var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['nu
 const IGNORE_PARAM_COUNT = -1;
 
 //test driver support code
-var bad_semd_msg_detected = false;
+var bad_send_msg_detected = false;
 function mono_send_msg (key, val) {
 	try {
 		return Module.mono_method_invoke (send_message, null, "ss", [key, val]);
 	} catch (e) {
 		print ("BAD SEND MSG: " + e);
-		bad_semd_msg_detected = true;
+		bad_send_msg_detected = true;
 		return null;
 	}
 }
@@ -159,5 +159,5 @@ print ("Test status " + status)
 if (status != "PASS")
 	fail_exec ("BAD TEST STATUS");
 
-if (bad_semd_msg_detected)
+if (bad_send_msg_detected)
 	fail_exec ("BAD MSG SEND DETECTED");

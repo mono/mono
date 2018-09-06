@@ -112,7 +112,7 @@ struct _HandleChunk {
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
 };
 
-typedef struct {
+typedef struct MonoHandleStack {
 	HandleChunk *top; //alloc from here
 	HandleChunk *bottom; //scan from here
 #ifdef MONO_HANDLE_TRACK_SP
@@ -177,7 +177,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 #ifdef MONO_HANDLE_TRACK_SP
 	gpointer sptop = &stackmark;
 #endif
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	stackmark->size = handles->top->size;
 	stackmark->chunk = handles->top;
 	stackmark->interior_size = handles->interior->size;
@@ -190,7 +190,7 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 static inline void
 mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
-	HandleStack *handles = (HandleStack *)info->handle_stack;
+	HandleStack *handles = info->handle_stack;
 	HandleChunk *old_top = stackmark->chunk;
 	old_top->size = stackmark->size;
 	mono_memory_write_barrier ();
@@ -376,11 +376,23 @@ Handle macros/functions
  * #endif
  */
 
+#ifdef __cplusplus
+#define MONO_IF_CPLUSPLUS(x) x
+#else
+#define MONO_IF_CPLUSPLUS(x) /* nothing */
+#endif
+
 #if MONO_TYPE_SAFE_HANDLES
 #define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct { TYPE **__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE),	\
-					 TYPED_HANDLE_NAME (TYPE),		\
-					 TYPED_OUT_HANDLE_NAME (TYPE);		\
+	typedef struct {							\
+		MONO_IF_CPLUSPLUS (						\
+			MONO_ALWAYS_INLINE					\
+			TYPE * GetRaw () { return __raw ? *__raw : NULL; }	\
+		)								\
+		TYPE **__raw;							\
+	} TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
+	  TYPED_HANDLE_NAME (TYPE),						\
+	  TYPED_OUT_HANDLE_NAME (TYPE);						\
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
@@ -442,7 +454,11 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #endif
 
 #define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
+#ifdef __cplusplus
+#define MONO_HANDLE_RAW(handle)     ((handle).GetRaw())
+#else
 #define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST (*(handle).__raw, mono_handle_raw ((handle).__raw)))
+#endif
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
 
 #else // MONO_TYPE_SAFE_HANDLES

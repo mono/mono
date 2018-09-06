@@ -195,7 +195,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 void win32_seh_init()
 {
 	if (!mono_aot_only)
-		restore_stack = get_win32_restore_stack ();
+		restore_stack = (void (*) (void))get_win32_restore_stack ();
 
 	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
 	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
@@ -727,7 +727,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
@@ -773,7 +773,7 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	 * signal is disabled, and we could run arbitrary code though the debugger. So
 	 * resume into the normal stack and do most work there if possible.
 	 */
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 
 	/* Pass the ctx parameter in TLS */
 	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
@@ -804,9 +804,9 @@ mono_arch_ip_from_context (void *sigctx)
 
 	return (gpointer)UCONTEXT_REG_RIP (ctx);
 #elif defined(HOST_WIN32)
-	return ((CONTEXT*)sigctx)->Rip;
+	return (gpointer)(((CONTEXT*)sigctx)->Rip);
 #else
-	MonoContext *ctx = sigctx;
+	MonoContext *ctx = (MonoContext*)sigctx;
 	return (gpointer)ctx->gregs [AMD64_RIP];
 #endif	
 }
@@ -814,7 +814,7 @@ mono_arch_ip_from_context (void *sigctx)
 static MonoObject*
 restore_soft_guard_pages ()
 {
-	MonoJitTlsData *jit_tls = (MonoJitTlsData *)mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
 
@@ -858,7 +858,7 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_o
 
 	mono_handle_exception (&mctx, obj);
 	if (stack_ovf) {
-		MonoJitTlsData *jit_tls = (MonoJitTlsData *) mono_tls_get_jit_tls ();
+		MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->stack_ovf_pending = 1;
 		prepare_for_guard_pages (&mctx);
 	}
@@ -1200,8 +1200,8 @@ fast_find_range_in_table_no_lock_ex (gsize begin_range, gsize end_range, gboolea
 
 	// Fast path, look at boundaries.
 	if (g_dynamic_function_table_begin != NULL) {
-		DynamicFunctionTableEntry *first_entry = g_dynamic_function_table_begin->data;
-		DynamicFunctionTableEntry *last_entry = (g_dynamic_function_table_end != NULL ) ? g_dynamic_function_table_end->data : first_entry;
+		DynamicFunctionTableEntry *first_entry = (DynamicFunctionTableEntry*)g_dynamic_function_table_begin->data;
+		DynamicFunctionTableEntry *last_entry = (g_dynamic_function_table_end != NULL ) ? (DynamicFunctionTableEntry*)g_dynamic_function_table_end->data : first_entry;
 
 		// Sorted in descending order based on begin_range, check first item, that is the entry with highest range.
 		if (first_entry != NULL && first_entry->begin_range <= begin_range && first_entry->end_range >= end_range) {
@@ -1746,7 +1746,7 @@ initialize_unwind_info_internal (GSList *unwind_ops)
 {
 	PUNWIND_INFO unwindinfo;
 
-	mono_arch_unwindinfo_create (&unwindinfo);
+	mono_arch_unwindinfo_create ((gpointer*)&unwindinfo);
 	initialize_unwind_info_internal_ex (unwind_ops, unwindinfo);
 
 	return unwindinfo;
@@ -1980,4 +1980,10 @@ void
 mono_arch_undo_ip_adjustment (MonoContext *ctx)
 {
 	ctx->gregs [AMD64_RIP]++;
+}
+
+void
+mono_arch_do_ip_adjustment (MonoContext *ctx)
+{
+	ctx->gregs [AMD64_RIP]--;
 }

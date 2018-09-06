@@ -5,13 +5,15 @@ Assembly/AssemblyInfo.cs
 ../../build/common/SR.cs
 Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
-Microsoft.Win32/RegistryKeyPermissionCheck.cs
 Microsoft.Win32/Registry.cs
-Microsoft.Win32/RegistryHive.cs
-Microsoft.Win32/RegistryOptions.cs
-Microsoft.Win32/RegistryValueKind.cs
-Microsoft.Win32/RegistryValueOptions.cs
-Microsoft.Win32/RegistryView.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKeyPermissionCheck.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryHive.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryOptions.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryValueKind.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryValueOptions.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryView.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/ThrowHelper.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegistryOptions.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
@@ -224,10 +226,12 @@ System.Reflection/AssemblyName.cs
 System.Reflection/CustomAttributeData.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CustomAttributeFormatException.cs
 System.Reflection/CustomAttributeNamedArgument.cs
-System.Reflection/CustomAttributeTypedArgument.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/FieldInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/FieldInfo.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/MissingMetadataException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
@@ -1149,6 +1153,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyKeyNameAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyMetadataAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyNameFlags.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/Reflection/AssemblyNameProxy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyProductAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblySignatureKeyAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AssemblyTitleAttribute.cs
@@ -1172,6 +1177,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/IReflectableType.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ManifestResourceInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberFilter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MemberTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/MethodImplAttributes.cs
@@ -1193,9 +1199,11 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
 
+../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/TypeExtensions.cs
+../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
+
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
-../referencesource/mscorlib/system/reflection/memberinfo.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
@@ -1560,6 +1568,7 @@ corefx/BinaryEnums.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 coreclr/SorterArray.cs
+coreclr/MemberInfo.cs
 
 corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
@@ -1810,3 +1819,5 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeHandleCache.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
+
+../../../external/corefx/src/Common/src/System/NotImplemented.cs

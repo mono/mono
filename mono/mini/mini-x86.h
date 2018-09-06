@@ -155,9 +155,9 @@ typedef struct {
 	gboolean need_stack_frame_inited;
 	gboolean need_stack_frame;
 	int sp_fp_offset, param_area_size;
-	gpointer cinfo;
-	gpointer ss_tramp_var;
-	gpointer bp_tramp_var;
+	CallInfo *cinfo;
+	MonoInst *ss_tramp_var;
+	MonoInst *bp_tramp_var;
 } MonoCompileArch;
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->eax = (gsize)exc; } while (0)
@@ -166,7 +166,6 @@ typedef struct {
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx, start_func) do { \
     unsigned int stackptr; \
-	mono_arch_flush_register_windows (); \
     { \
 	   __asm mov stackptr, ebp \
     } \
@@ -178,7 +177,6 @@ typedef struct {
 #else
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
-		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\

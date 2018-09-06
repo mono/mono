@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Reflection;
 
 using NUnit.Framework;
 using WebAssembly;
@@ -269,7 +271,32 @@ public class TestClass {
 		taDouble = (double[])obj.GetObjectProperty ("typedArray");
 	}	
 
+	public static HttpClient client;
+	public static string fakeClientHandlerString;
+	public static HttpClientHandler fakeClientHandler;
+	public static void SetMessageHandler () {
+		
+		var httpMessageHandler = typeof(HttpClient).GetField("GetHttpMessageHandler", 
+                            BindingFlags.Static | 
+                            BindingFlags.NonPublic);
 
+        httpMessageHandler.SetValue(null, (Func<HttpClientHandler>) (() => {
+			return new FakeHttpClientHandler ();
+		}));
+
+		client = new HttpClient();
+	}	
+
+}
+
+
+public class FakeHttpClientHandler : HttpClientHandler
+{
+	public FakeHttpClientHandler () : base()
+	{
+		TestClass.fakeClientHandlerString = "Fake HttpClientHandler";
+		TestClass.fakeClientHandler = this;
+	}
 }
 
 [TestFixture]
@@ -919,6 +946,21 @@ public class BindingTests {
 		Assert.AreEqual (18, TestClass.taDouble.Length);
 		Assert.AreEqual (3.14d, TestClass.taDouble[0]);
 		Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
+	}
+
+
+	[Test]
+	public static void HttpMessageHandler () {
+		TestClass.fakeClientHandlerString = string.Empty;
+		TestClass.fakeClientHandler = null;
+		TestClass.client = null;
+		Runtime.InvokeJS (@"
+			call_test_method (""SetMessageHandler"", ""o"", [  ]);
+		");
+		Assert.AreEqual ("Fake HttpClientHandler", TestClass.fakeClientHandlerString);
+		Assert.AreNotEqual (null, TestClass.fakeClientHandler);
+		Assert.AreEqual (typeof(FakeHttpClientHandler), TestClass.fakeClientHandler.GetType());
+		Assert.AreNotEqual (null, TestClass.client);
 	}
 
 }
