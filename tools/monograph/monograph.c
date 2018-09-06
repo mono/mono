@@ -752,7 +752,7 @@ compare_bblock (const void *a, const void *b)
 static GPtrArray*
 mono_method_find_bblocks (MonoMethodHeader *header)
 {
-	const unsigned char *ip, *end, *start;
+	const unsigned char *ip, *end;
 	const MonoOpcode *opcode;
 	guint32 i, block_end = 0;
 	GPtrArray *result = g_ptr_array_new ();
@@ -777,7 +777,6 @@ mono_method_find_bblocks (MonoMethodHeader *header)
 
 	/* handle exception code blocks... */
 	while (ip < end) {
-		start = ip;
 		if ((target = (MonoBasicBlock*)g_hash_table_lookup (table, ip)) && target != bb) {
 			if (!block_end)
 				link_bblock (bb, target);
