@@ -141,11 +141,11 @@ public class SlnGenerator {
 		var fallbackProfileNames = new List<string> ();
 
 		foreach (var profile in profiles) {
-			if (!observedProfiles.Contains (profile))
+			if (!observedProfiles.Contains (profile) && !forceBuild)
 				continue;
 
 			var platformToBuild = profile;
-			var isBuildEnabled = true;			
+			var isBuildEnabled = true;
 
 			HashSet<string> projectProfiles;
 			if (
@@ -156,6 +156,9 @@ public class SlnGenerator {
 				platformToBuild = defaultPlatform;
 				isBuildEnabled = forceBuild;
 			}
+
+			if (!isBuildEnabled)
+				Console.Error.WriteLine($"// Project {guid} not set to build due to lack of appropriate profiles");
 
 			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
 			if (isBuildEnabled)
