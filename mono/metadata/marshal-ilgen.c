@@ -5879,7 +5879,11 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 	mono_mb_emit_byte (mb, CEE_CONV_U4);
 	mono_mb_emit_stloc (mb, ex_local);
 
-	if (!mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_get_use_interpreter ()) {
+		/* FIXME: the interpreter should stop using
+		 * CEE_MONO_JIT_ATTACH; it should provide a callback for
+		 * mono_threads_attach_coop */
+		g_assert (!mono_threads_is_blocking_transition_enabled ());
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_JIT_ATTACH);
 	} else {
@@ -6036,7 +6040,11 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		}
 	}
 
-	if (!mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_get_use_interpreter ()) {
+		/* FIXME: the interpreter should stop using CEE_MONO_JIT_DETACH
+		 * and should provide a callback for
+		 * mono_threads_detach_coop */
+		g_assert (!mono_threads_is_blocking_transition_enabled ());
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_byte (mb, CEE_MONO_JIT_DETACH);
 	} else {

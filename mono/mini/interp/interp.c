@@ -5091,6 +5091,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_MONO_JIT_ATTACH) {
 			++ip;
 
+			/* FIXME: add this as a hook to mono_threads_attach_coop () */
+
 			context->original_domain = NULL;
 			MonoDomain *tls_domain = (MonoDomain *) mono_tls_get_domain ();
 			gpointer tls_jit = mono_tls_get_jit_tls ();
@@ -5108,6 +5110,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		}
 		MINT_IN_CASE(MINT_MONO_JIT_DETACH)
 			++ip;
+
 			mono_jit_set_domain (context->original_domain);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_LDDOMAIN)
