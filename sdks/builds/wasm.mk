@@ -76,7 +76,7 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 	--disable-btls \
 	--disable-support-build \
 	--enable-maintainer-mode	\
-	--with-llvm=$(TOP)/sdks/out/ios-llvm32 \
+	--with-llvm=$(TOP)/sdks/out/llvm-llvm32 \
 	--enable-minimal=appdomains,com,remoting \
 	--with-cross-offsets=wasm-offsets.h
 
