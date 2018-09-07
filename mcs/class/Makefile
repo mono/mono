@@ -110,7 +110,7 @@ testing_aot_full_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd
 
-testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs)
+testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
 xammac_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
