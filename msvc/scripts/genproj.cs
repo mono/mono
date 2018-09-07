@@ -139,6 +139,7 @@ public class SlnGenerator {
 	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform, bool forceBuild)
 	{
 		var fallbackProfileNames = new List<string> ();
+		var didBuildAnyProfile = false;
 
 		foreach (var profile in profiles) {
 			if (!observedProfiles.Contains (profile) && !forceBuild)
@@ -157,8 +158,8 @@ public class SlnGenerator {
 				isBuildEnabled = forceBuild;
 			}
 
-			if (!isBuildEnabled)
-				Console.Error.WriteLine($"// Project {guid} not set to build due to lack of appropriate profiles");
+			if (isBuildEnabled)
+				didBuildAnyProfile = true;
 
 			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
 			if (isBuildEnabled)
@@ -167,6 +168,9 @@ public class SlnGenerator {
 			if (isBuildEnabled)
 				sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
 		}
+
+		if (!didBuildAnyProfile)
+			Console.Error.WriteLine($"// Project {guid} not set to build in any profile");
 
 		if (fallbackProfileNames.Count > 0)
 			Console.Error.WriteLine ($"// Project {guid} does not have profile(s) {string.Join(", ", fallbackProfileNames)} so using {defaultPlatform}");
