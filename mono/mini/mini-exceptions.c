@@ -1292,6 +1292,13 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 	return;
 }
 
+static void
+mono_crash_reporting_register_native_library (const char *module_path, const char *module_name)
+{
+	return;
+}
+
+
 #else
 
 typedef struct {
@@ -1316,34 +1323,84 @@ copy_summary_string_safe (char *in, const char *out)
 	return;
 }
 
+static GHashTable *native_library_whitelist;
+
+static void
+mono_crash_reporting_register_native_library (const char *module_path, const char *module_name)
+{
+	Dl_info info;
+	if (!native_library_whitelist) {
+		native_library_whitelist = g_hash_table_new_full (NULL, NULL, NULL, g_free);
+
+		dladdr ((void*) mono_crash_reporting_register_native_library, &info);
+
+		if (info.dli_fname && strlen(info.dli_fname) > 0)
+			g_hash_table_insert (native_library_whitelist, g_strdup (info.dli_fname), g_strdup ("mono"));
+	}
+
+	// Examples: libsystem_pthread.dylib -> "pthread"
+	// Examples: libsystem_platform.dylib -> "platform"
+	// Examples: mono-sgen -> "mono" from above line
+	g_hash_table_insert (native_library_whitelist, g_strdup (module_path), g_strdup (module_name));
+}
+
 static gboolean
-mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
+mono_make_portable_ip (intptr_t in_ip, intptr_t module_base)
+{
+	// FIXME: Make generalize away from llvm tools?
+	// So lldb starts the pointer base at 0x100000000
+	// and expects to get pointers as (offset + constant)
+	//
+	// Quirk shared by:
+	// /usr/bin/symbols  -- symbols version:			@(#)PROGRAM:symbols  PROJECT:SamplingTools-63501
+	// *CoreSymbolicationDT.framework version:	63750*/
+	intptr_t offset = in_ip - module_base;
+	intptr_t magic_value = offset + 0x100000000;
+	return magic_value;
+}
+
+static gboolean
+check_whitelisted_module (const char *in_name, const char **out_module)
+{
+	if (!native_library_whitelist) {
+		if (g_str_has_suffix (in_name, "mono-sgen")) {
+			*out_module = "mono";
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	GHashTableIter iter;
+	char *file_suffix;
+	char *module_suffix;
+	g_hash_table_iter_init (&iter, native_library_whitelist);
+	while (g_hash_table_iter_next (&iter, (gpointer *) &file_suffix, (gpointer *) &module_suffix)) {
+		if (!g_str_has_suffix (in_name, file_suffix))
+			continue;
+		if (out_module)
+			*out_module = module_suffix;
+		return TRUE;
+	}
+
+	/*fprintf (stderr, "%s == %s\n", info.dli_fname, *out_module);*/
+
+	return FALSE;
+}
+
+static gboolean
+mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, const char **out_module, char *out_name)
 {
 	// We're only able to get reliable info about pointers in this assembly
 	Dl_info info;
-	int success = dladdr ((void*) mono_get_portable_ip, &info);
-	intptr_t this_module = (intptr_t) info.dli_fbase;
-
+	gboolean success = dladdr ((void*)in_ip, &info);
 	if (!success)
 		return FALSE;
 
-	success = dladdr ((void*)in_ip, &info);
-	if (!success)
+	if (!check_whitelisted_module (info.dli_fname, out_module))
 		return FALSE;
 
-	if ((intptr_t) info.dli_fbase == this_module) {
-		// FIXME: Make generalize away from llvm tools?
-		// So lldb starts the pointer base at 0x100000000
-		// and expects to get pointers as (offset + constant)
-		//
-		// Quirk shared by:
-		// /usr/bin/symbols  -- symbols version:			@(#)PROGRAM:symbols  PROJECT:SamplingTools-63501
-		// *CoreSymbolicationDT.framework version:	63750*/
-		intptr_t offset = in_ip - this_module;
-		intptr_t magic_value = offset + 0x100000000;
-
-		*out_ip = magic_value;
-	}
+	*out_ip = mono_make_portable_ip (in_ip, (intptr_t) info.dli_fbase);
 
 #ifndef MONO_PRIVATE_CRASHES
 	if (info.dli_saddr && out_name)
@@ -1454,7 +1511,7 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 
 	MonoMethod *method = NULL;
 	intptr_t ip = 0x0;
-	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &ip, NULL);
+	mono_get_portable_ip ((intptr_t) MONO_CONTEXT_GET_IP (ctx), &ip, NULL, NULL);
 	// Don't need to handle return status "success" because this ip is stored below only, NULL is okay
 
 	if (frame && frame->ji && frame->type != FRAME_TYPE_TRAMPOLINE)
@@ -1516,8 +1573,9 @@ mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 
 	for (int i =0; i < out->num_unmanaged_frames; ++i) {
 		intptr_t ip = frame_ips [i];
+		MonoFrameSummary *frame = &out->unmanaged_frames [i];
 
-		int success = mono_get_portable_ip (ip, &out->unmanaged_frames [i].unmanaged_data.ip, (char *) &out->unmanaged_frames [i].str_descr);
+		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.module, (char *) frame->str_descr);
 		if (!success)
 			continue;
 

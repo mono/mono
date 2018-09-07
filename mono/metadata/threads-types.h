@@ -554,6 +554,7 @@ typedef struct {
 	} managed_data;
 	struct {
 		intptr_t ip;
+		const char *module;
 		gboolean is_trampoline;
 		gboolean has_name;
 	} unmanaged_data;

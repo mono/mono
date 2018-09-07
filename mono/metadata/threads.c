@@ -6171,7 +6171,6 @@ summarizer_state_wait (SummarizerGlobalState *state)
 	// Loop until it's unset
 	guint32 not_done = 1;
 	while (not_done) {
-		MOSTLY_ASYNC_SAFE_PRINTF ("Waiting, seeing %d\n", not_done);
 		sleep (1);
 		mono_memory_barrier ();
 		not_done = mono_atomic_load_i32 (&state->summary_state);
