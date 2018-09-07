@@ -214,7 +214,6 @@ create_domain_objects (MonoDomain *domain)
 	if (bitconverter_class) {
 		MonoClassField *bitconverter_isle_fld = mono_class_get_field_from_name_full (bitconverter_class, "IsLittleEndian", NULL);
 		if (bitconverter_isle_fld) {
-			gint x = 1;
 			MonoBoolean is_le = G_BYTE_ORDER == G_BIG_ENDIAN ? FALSE : TRUE;
 			MonoVTable *bitconverter_vt = mono_class_vtable_checked (domain, bitconverter_class, error);
 			mono_field_static_set_value (bitconverter_vt, bitconverter_isle_fld, &is_le);
