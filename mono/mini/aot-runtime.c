@@ -4505,7 +4505,7 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *
 	ERROR_DECL (error);
 
 	res = init_method (amodule, method_index, method, init_class, context, error);
-	if (!is_ok (error)) {
+	if (!res) {
 		MonoException *ex = mono_error_convert_to_exception (error);
 		/* Its okay to raise in llvmonly mode */
 		if (ex)
