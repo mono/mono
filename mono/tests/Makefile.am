@@ -2560,7 +2560,7 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe
 safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-2.2.exe pinvoke17.exe pinvoke13.exe \
 	pinvoke11.exe pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe pinvoke_ppcc.exe pinvoke.exe \
 	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
-	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
+	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la libtest-c.la
 
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
@@ -2821,7 +2821,7 @@ patch-libtool:
 	cp "../../libtool" .
 	sed -e 's,build_libtool_libs=no,build_libtool_libs=yes,g' libtool > 2; mv 2 libtool
 	sed -e 's,LIBTOOL =,LIBTOOL2 =,g' Makefile > 2 && echo "LIBTOOL = bash ./libtool" > 1 && cat 1 2 > Makefile
-	touch libtest.c
+	touch libtest.c libtest-c.c
 
 
 EXTRA_DIST += threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
@@ -2942,22 +2942,29 @@ EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
 	python test_lldb.py $(JITTEST_PROG)
 
-noinst_LTLIBRARIES = libtest.la
+noinst_LTLIBRARIES = libtest.la libtest-c.la
 
 AM_CPPFLAGS = $(GLIB_CFLAGS)
+
+# libtest may be compiled as C++, but libtest-c may not be, due to empty structs.
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
 if HOST_WIN32
 # gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call
 # This shows up when compiling mono_test_marshal_delegate ()
-libtest_la_CFLAGS=-fno-optimize-sibling-calls
+libtest_la_CFLAGS=@CXX_ADD_CFLAGS@ -fno-optimize-sibling-calls
 # the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
 # can't find them. So we use --kill-at to remove the @ suffix as well.
 libtest_la_LDFLAGS = -no-undefined -rpath `pwd` -Wl,--kill-at
 else
+libtest_la_CFLAGS=@CXX_ADD_CFLAGS@
 libtest_la_LDFLAGS = -no-undefined -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
-libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
+libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la libtest-c.la
+
+libtest_c_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libtest_c_la_SOURCES = libtest-c.c
 
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \

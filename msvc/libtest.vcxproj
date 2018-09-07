@@ -168,6 +168,9 @@
     <ClCompile Include="..\mono\tests\libtest.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\mono\tests\libtest-c.c" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
     </ProjectReference>

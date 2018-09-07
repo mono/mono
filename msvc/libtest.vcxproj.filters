@@ -15,5 +15,8 @@
     <ClCompile Include="..\mono\tests\libtest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mono\tests\libtest-c.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
