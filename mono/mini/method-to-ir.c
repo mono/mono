@@ -6956,7 +6956,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		/* Allocate locals */
 		locals_var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 		/* prevent it from being register allocated */
-		//locals_var->flags |= MONO_INST_VOLATILE;
+		locals_var->flags |= MONO_INST_VOLATILE;
 		cfg->gsharedvt_locals_var = locals_var;
 
 		dreg = alloc_ireg (cfg);
