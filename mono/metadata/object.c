@@ -55,6 +55,23 @@
 #include <mono/utils/w32api.h>
 #include <mono/utils/unlocked.h>
 
+#ifdef __cplusplus
+class Testing
+{
+public:
+	Testing () {}
+	Testing (const Testing&) = delete;
+	Testing& operator= (const Testing &) = delete;
+};
+
+int foo (void)
+{
+	Testing testing;
+	Testing testing2 (testing);
+	testing = Testing ();
+}
+#endif
+
 static void
 get_default_field_value (MonoDomain* domain, MonoClassField *field, void *value, MonoError *error);
 
