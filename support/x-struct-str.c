@@ -47,7 +47,7 @@ _mph_copy_structure_strings (
 			len[i] = -1;
 	}
 
-	cur = buf = malloc (buflen);
+	cur = buf = (char*)malloc (buflen);
 	if (buf == NULL) {
 		return NULL;
 	}
@@ -122,4 +122,3 @@ main ()
 	return 0;
 }
 #endif
-

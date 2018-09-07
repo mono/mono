@@ -1,13 +1,14 @@
-if HOST_WIN32
-SUPPORT=
-else
-SUPPORT=libMonoSupportW.la
-endif
-
 if BUILD_SUPPORT
-lib_LTLIBRARIES = 				\
-	libMonoPosixHelper.la			\
-	$(SUPPORT)
+
+lib_LTLIBRARIES = libMonoPosixHelper.la
+noinst_LTLIBRARIES = libMonoPosixHelper-cxx.la
+
+if !HOST_WIN32
+
+lib_LTLIBRARIES += libMonoSupportW.la
+noinst_LTLIBRARIES += libMonoSupportW-cxx.la
+
+endif
 endif
 
 AM_CPPFLAGS =					\
@@ -15,6 +16,8 @@ AM_CPPFLAGS =					\
 	-I$(top_srcdir)
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
+
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.
@@ -61,11 +64,11 @@ MPH_UNIX_SOURCE =				\
 
 if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
-MPH_LIBS   = $(glib_libs)
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-MPH_LIBS   = $(glib_libs)
 endif
+
+MPH_LIBS   = $(glib_libs)
 
 MINIZIP_SOURCE = \
 	minizip/crypt.h \
@@ -107,12 +110,18 @@ Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
 endif
 
+libMonoPosixHelper_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libMonoPosixHelper_cxx_la_CFLAGS = @CXX_ADD_CFLAGS@
+
 libMonoPosixHelper_la_SOURCES =			\
-	$(MPH_SOURCE)				\
 	$(Z_SOURCE)				\
 	$(MINIZIP_SOURCE)
 
+libMonoPosixHelper_cxx_la_SOURCES =		\
+	$(MPH_SOURCE)
+
 libMonoPosixHelper_la_LIBADD =			\
+	libMonoPosixHelper-cxx.la		\
 	$(MPH_LIBS)				\
 	$(Z_LIBS)				\
 	$(XATTR_LIB)
@@ -121,12 +130,18 @@ libMonoPosixHelper_la_LIBADD =			\
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
 libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
 
-libMonoSupportW_la_SOURCES =			\
+libMonoSupportW_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libMonoSupportW_cxx_la_CFLAGS = @CXX_ADD_CFLAGS@
+
+libMonoSupportW_la_SOURCES =
+
+libMonoSupportW_cxx_la_SOURCES =		\
 		supportw.c			\
 		support-heap.c			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
+		libMonoSupportW-cxx.la	\
 		$(glib_libs)
 
 # 

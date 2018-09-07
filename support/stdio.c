@@ -168,13 +168,13 @@ gint32
 Mono_Posix_Stdlib_setvbuf (void* stream, void *buf, int mode, mph_size_t size)
 {
 	mph_return_if_size_t_overflow (size);
-	return setvbuf (stream, (char *) buf, mode, (size_t) size);
+	return setvbuf ((FILE*)stream, (char *) buf, mode, (size_t) size);
 }
 
 int 
 Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
 {
-	setbuf (stream, buf);
+	setbuf ((FILE*)stream, (char*)buf);
 	return 0;
 }
 
@@ -187,49 +187,49 @@ Mono_Posix_Stdlib_fopen (char* path, char* mode)
 void*
 Mono_Posix_Stdlib_freopen (char* path, char* mode, void *stream)
 {
-	return freopen (path, mode, stream);
+	return freopen (path, mode, (FILE*)stream);
 }
 
 gint32
 Mono_Posix_Stdlib_fprintf (void* stream, char* format, char *message)
 {
-	return fprintf (stream, format, message);
+	return fprintf ((FILE*)stream, format, message);
 }
 
 gint32
 Mono_Posix_Stdlib_fgetc (void* stream)
 {
-	return fgetc (stream);
+	return fgetc ((FILE*)stream);
 }
 
 char*
 Mono_Posix_Stdlib_fgets (char* str, gint32 size, void* stream)
 {
-	return fgets (str, size, stream);
+	return fgets (str, size, (FILE*)stream);
 }
 
 gint32
 Mono_Posix_Stdlib_fputc (gint32 c, void* stream)
 {
-	return fputc (c, stream);
+	return fputc (c, (FILE*)stream);
 }
 
 gint32
 Mono_Posix_Stdlib_fputs (char* s, void* stream)
 {
-	return fputs (s, stream);
+	return fputs (s, (FILE*)stream);
 }
 
 gint32
 Mono_Posix_Stdlib_fclose (void* stream)
 {
-	return fclose (stream);
+	return fclose ((FILE*)stream);
 }
 
 gint32
 Mono_Posix_Stdlib_fflush (void* stream)
 {
-	return fflush (stream);
+	return fflush ((FILE*)stream);
 }
 
 gint32
@@ -237,39 +237,39 @@ Mono_Posix_Stdlib_fseek (void* stream, gint64 offset, int origin)
 {
 	mph_return_if_long_overflow (offset);
 
-	return fseek (stream, offset, origin);
+	return fseek ((FILE*)stream, offset, origin);
 }
 
 gint64
 Mono_Posix_Stdlib_ftell (void* stream)
 {
-	return ftell (stream);
+	return ftell ((FILE*)stream);
 }
 
 void*
 Mono_Posix_Stdlib_CreateFilePosition (void)
 {
-	fpos_t* pos = malloc (sizeof(fpos_t));
+	fpos_t* pos = (fpos_t*)malloc (sizeof(fpos_t));
 	return pos;
 }
 
 gint32
 Mono_Posix_Stdlib_fgetpos (void* stream, void *pos)
 {
-	return fgetpos (stream, (fpos_t*) pos);
+	return fgetpos ((FILE*)stream, (fpos_t*) pos);
 }
 
 gint32
 Mono_Posix_Stdlib_fsetpos (void* stream, void *pos)
 {
-	return fsetpos (stream, (fpos_t*) pos);
+	return fsetpos ((FILE*)stream, (fpos_t*) pos);
 }
 
 int
 Mono_Posix_Stdlib_rewind (void* stream)
 {
 	do {
-		rewind (stream);
+		rewind ((FILE*)stream);
 	} while (errno == EINTR);
 	mph_return_if_val_in_list5(errno, EAGAIN, EBADF, EFBIG, EINVAL, EIO);
 	mph_return_if_val_in_list5(errno, ENOSPC, ENXIO, EOVERFLOW, EPIPE, ESPIPE);
@@ -286,7 +286,7 @@ Mono_Posix_Stdlib_clearerr (void* stream)
 gint32
 Mono_Posix_Stdlib_ungetc (gint32 c, void* stream)
 {
-	return ungetc (c, stream);
+	return ungetc (c, (FILE*)stream);
 }
 
 gint32

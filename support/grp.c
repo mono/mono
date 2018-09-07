@@ -76,8 +76,8 @@ copy_group (struct Mono_Posix_Syscall__Group *to, struct group *from)
 	count_members (from->gr_mem, &count, &buflen);
 
 	to->_gr_nmem_ = count;
-	cur = to->_gr_buf_ = (char*) malloc (buflen);
-	to_mem = to->gr_mem = malloc (sizeof(char*)*(count+1));
+	cur = (char*)(to->_gr_buf_ = malloc (buflen));
+	to_mem = (char**)(to->gr_mem = malloc (sizeof(char*)*(count+1)));
 	if (to->_gr_buf_ == NULL || to->gr_mem == NULL) {
 		free (to->_gr_buf_);
 		free (to->gr_mem);
@@ -162,7 +162,7 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 	buflen = 2;
 
 	do {
-		buf2 = realloc (buf, buflen *= 2);
+		buf2 = (char*)realloc (buf, buflen *= 2);
 		if (buf2 == NULL) {
 			free (buf);
 			errno = ENOMEM;
@@ -205,7 +205,7 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 	buflen = 2;
 
 	do {
-		buf2 = realloc (buf, buflen *= 2);
+		buf2 = (char*)realloc (buf, buflen *= 2);
 		if (buf2 == NULL) {
 			free (buf);
 			errno = ENOMEM;

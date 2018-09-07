@@ -14,6 +14,8 @@
 #include "mph.h"
 #include "old-map.h"
 
+G_BEGIN_DECLS
+
 int map_Mono_Posix_AccessMode (int mode);
 int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
@@ -188,3 +190,4 @@ int map_Mono_Posix_PollEvents (int x)
 	return r;
 }
 
+G_END_DECLS
