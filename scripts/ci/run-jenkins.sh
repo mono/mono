@@ -202,19 +202,6 @@ make_continue=
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then make_continue=-k; fi
 
 
-# FIXME For now C++ means just build mono (metadata, mini, sgen, utils) and ignore errors to get more.
-# Once this succeeds, we can let it proceed more normally through tests.
-if [[ ${CI_TAGS} == *'cxx'* ]];
-   then
-	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
-        exit 0
-fi
-if [[ ${CI_TAGS} == *'cplusplus'* ]];
-   then
-	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} -k -w -C mono V=1
-        exit 0
-fi
-
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	then
 	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1
