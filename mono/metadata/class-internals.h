@@ -941,7 +941,6 @@ typedef struct {
 	MonoClass *threadpool_wait_callback_class;
 	MonoMethod *threadpool_perform_wait_callback_method;
 	MonoClass *console_class;
-	MonoClass *bitconverter_class;
 } MonoDefaults;
 
 #ifdef DISABLE_REMOTING
