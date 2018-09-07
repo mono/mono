@@ -223,7 +223,7 @@ net_4_x_dirs := \
 	corlib \
 	Mono.Security \
 	System	\
-	System.Xml
+	System.XML
 
 net_4_x_parallel_dirs = \
 	System.Security			\
