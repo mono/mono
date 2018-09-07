@@ -210,7 +210,7 @@ create_domain_objects (MonoDomain *domain)
 	domain->empty_string = empty_str;
 
 	/* Initialize BitConverter.IsLittleEndian */
-	MonoClass *bitconverter_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "BitConverter")
+	MonoClass *bitconverter_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "BitConverter");
 	if (bitconverter_class) {
 		MonoClassField *bitconverter_isle_fld = mono_class_get_field_from_name_full (bitconverter_class, "IsLittleEndian", NULL);
 		if (bitconverter_isle_fld) {
