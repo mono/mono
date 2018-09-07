@@ -83,7 +83,7 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 .stamp-wasm-cross-toolchain: .stamp-wasm-toolchain
 	touch $@
 
-.stamp-wasm-cross-configure: | $(TOP)/configure $(if $(IGNORE_PACKAGE_LLVM),package-llvm-llvm32,download-llvm-llvm32)
+.stamp-wasm-cross-configure: | $(TOP)/configure provision-llvm-llvm32
 	mkdir -p $(TOP)/sdks/builds/wasm-cross
 	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
 	touch $@
