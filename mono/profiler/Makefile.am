@@ -12,6 +12,7 @@ if !DISABLE_LIBRARIES
 if !DISABLE_PROFILER
 
 bin_PROGRAMS = mprof-report
+noinst_LIBRARIES = libmprof-report.a
 
 if HAVE_VTUNE
 vtune_libs = \
@@ -111,38 +112,50 @@ endif
 # the shared version on those targets since it's useful for e.g. simulator
 # builds.
 
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
 libmono_profiler_aot_la_SOURCES = aot.c
+libmono_profiler_aot_la_CFLAGS = @CXX_ADD_CFLAGS@
 libmono_profiler_aot_la_LIBADD =  $(libmono_dep) $(glib_libs)
 libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_aot_static_la_SOURCES = aot.c
+libmono_profiler_aot_static_la_CFLAGS = @CXX_ADD_CFLAGS@
 libmono_profiler_aot_static_la_LDFLAGS = -static
 
 libmono_profiler_log_la_SOURCES = log.c log-args.c
+libmono_profiler_log_la_CFLAGS = @CXX_ADD_CFLAGS@
 libmono_profiler_log_la_LIBADD = $(libmono_dep) $(glib_libs) $(zlib_dep)
 libmono_profiler_log_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_log_static_la_SOURCES = log.c log-args.c
 libmono_profiler_log_static_la_LDFLAGS = -static
 
 libmono_profiler_coverage_la_SOURCES = coverage.c
+libmono_profiler_coverage_la_CFLAGS = @CXX_ADD_CFLAGS@
 libmono_profiler_coverage_la_LIBADD = $(libmono_dep) $(glib_libs)
 libmono_profiler_coverage_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_coverage_static_la_SOURCES = coverage.c
+libmono_profiler_coverage_static_la_CFLAGS = @CXX_ADD_CFLAGS@
 libmono_profiler_coverage_static_la_LDFLAGS = -static
 
 if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = vtune.c
 libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
+libmono_profiler_vtune_la_CFLAGS += @CXX_ADD_CFLAGS@
 libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(libmono_dep) $(glib_libs)
 libmono_profiler_vtune_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_vtune_static_la_SOURCES = vtune.c
 libmono_profiler_vtune_static_la_LDFLAGS = -static
 libmono_profiler_vtune_static_la_CFLAGS = $(VTUNE_CFLAGS)
+libmono_profiler_vtune_static_la_CFLAGS += @CXX_ADD_CFLAGS@
 libmono_profiler_vtune_static_la_LIBADD = $(VTUNE_LIBS)
 endif
 
-mprof_report_SOURCES = mprof-report.c
-mprof_report_LDADD = $(glib_libs) $(zlib_dep)
+mprof_report_SOURCES =
+mprof_report_LDADD = libmprof_report_a-mprof-report.$(OBJEXT) $(glib_libs) $(zlib_dep)
 mprof_report_LDFLAGS = -no-undefined
+
+libmprof_report_a_SOURCES = mprof-report.c
+libmprof_report_a_CFLAGS = @CXX_ADD_CFLAGS@
 
 PLOG_TESTS_SRC = \
 	test-alloc.cs \
