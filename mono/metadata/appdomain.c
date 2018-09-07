@@ -188,6 +188,7 @@ create_domain_objects (MonoDomain *domain)
 	MonoStringHandle arg;
 	MonoVTable *string_vt;
 	MonoClassField *string_empty_fld;
+	MonoClassField *bitconverter_isle_fld;
 
 	if (domain != old_domain) {
 		mono_thread_push_appdomain_ref (domain);
@@ -208,6 +209,14 @@ create_domain_objects (MonoDomain *domain)
 	mono_error_assert_ok (error);
 	mono_field_static_set_value (string_vt, string_empty_fld, empty_str);
 	domain->empty_string = empty_str;
+
+	bitconverter_isle_fld = mono_class_get_field_from_name_full (mono_defaults.bitconverter_class, "IsLittleEndian", NULL);
+	if (bitconverter_isle_fld) {
+		gint x = 1;
+		MonoBoolean is_le = *((char*) &x); // 00 00 00 01 for little-endian and 01 00 00 00 for big-endian
+		MonoVTable *bitconverter_vt = mono_class_vtable_checked (domain, mono_defaults.bitconverter_class, error);
+		mono_field_static_set_value (bitconverter_vt, bitconverter_isle_fld, &is_le);
+	}
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.

@@ -783,6 +783,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_defaults.console_class = mono_class_try_load_from_name (
 		mono_defaults.corlib, "System", "Console");
+	mono_defaults.bitconverter_class = mono_class_try_load_from_name (
+		mono_defaults.corlib, "System", "BitConverter");
 
 	domain->friendly_name = g_path_get_basename (filename);
 
