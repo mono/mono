@@ -25,7 +25,6 @@ namespace CppSharp
 
         static string AndroidNdkPath = @"";
         static string EmscriptenSdkPath = @"";
-        static string MaccoreDir = @"";
         static string TargetDir = @"";
         static bool GenIOS;
         static bool GenAndroid;
