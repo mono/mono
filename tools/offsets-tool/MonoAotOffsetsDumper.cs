@@ -25,11 +25,7 @@ namespace CppSharp
 
         static string MonodroidDir = @"";
         static string AndroidNdkPath = @"";
-<<<<<<< HEAD
-=======
         static string EmscriptenSdkPath = @"";
-        static string MaccoreDir = @"";
->>>>>>> [offset-tool] Add WASM support.
         static string TargetDir = @"";
         static bool GenIOS;
         static bool GenAndroid;
