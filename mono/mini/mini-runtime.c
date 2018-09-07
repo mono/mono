@@ -848,10 +848,32 @@ mono_pop_lmf (MonoLMF *lmf)
  * Called by Xamarin.Mac and other products. Attach thread to runtime if
  * needed and switch to @domain.
  *
+ * This function is external only and @deprecated don't use it.  Use mono_threads_attach_coop ().
+ *
+ * If the thread is newly-attached, put into GC Safe mode.
+ *
  * @return the original domain which needs to be restored, or NULL.
  */
 MonoDomain*
 mono_jit_thread_attach (MonoDomain *domain)
+{
+	MonoDomain *result = mono_jit_thread_attach_interp (domain);
+	/* FIXME: set to GC Safe if attaching*/
+	return result;
+}
+
+/*
+ * mono_jit_thread_attach_interp:
+ *
+ * Attach thread to runtime if
+ * needed and switch to @domain.
+ *
+ * @return the original domain which needs to be restored, or NULL.
+ *
+ * @deprecated Don't use this function, use mono_threads_attach_coop.
+ */
+MonoDomain*
+mono_jit_thread_attach_interp (MonoDomain *domain)
 {
 	MonoDomain *orig;
 	gboolean attached;

@@ -431,7 +431,9 @@ void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 #define mono_get_jit_tls mono_tls_get_jit_tls
 MonoJitTlsData* mono_get_jit_tls            (void);
+MONO_RT_EXTERNAL_ONLY
 MONO_API MonoDomain* mono_jit_thread_attach (MonoDomain *domain);
+/*MONO_DEPRECATED*/ MonoDomain* mono_jit_thread_attach_interp (MonoDomain *domain);
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);
