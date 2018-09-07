@@ -3160,7 +3160,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
 				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes))
+				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE))
 					g_assert_not_reached ();
 			}
 

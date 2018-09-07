@@ -226,7 +226,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	gchar *output = NULL;
 	MonoStackHash hashes;
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	if (!mono_threads_summarize (&mctx, &output, &hashes))
+	if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE))
 		g_assert_not_reached ();
 
 	if (mono_merp_enabled ()) {

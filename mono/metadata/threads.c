@@ -5974,7 +5974,7 @@ summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current,
 }
 
 static void
-summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx)
+summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx, gboolean silent)
 {
 	sigset_t sigset, old_sigset;
 	sigemptyset(&sigset);
@@ -5988,7 +5988,9 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 
 	#ifdef HAVE_PTHREAD_KILL
 		pthread_kill (state->thread_array [i], SIGTERM);
-		MOSTLY_ASYNC_SAFE_PRINTF("Pkilling 0x%zx from 0x%zx\n", state->thread_array [i], current);
+
+		if (!silent)
+			MOSTLY_ASYNC_SAFE_PRINTF("Pkilling 0x%zx from 0x%zx\n", state->thread_array [i], current);
 	#else
 		g_error ("pthread_kill () is not supported by this platform");
 	#endif
@@ -6042,7 +6044,7 @@ summarizer_state_wait (SummarizerGlobalState *state)
 }
 
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent)
 {
 	static SummarizerGlobalState state;
 
@@ -6051,7 +6053,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
 
 	if (this_thread_controls)
-		summarizer_signal_other_threads (&state, current, current_idx);
+		summarizer_signal_other_threads (&state, current, current_idx, silent);
 
 	MonoThreadSummary this_thread;
 	if (mono_threads_summarize_one (&this_thread, ctx)) {
@@ -6060,21 +6062,24 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes)
 		// FIXME: How many threads should be counted?
 		if (hashes)
 			*hashes = this_thread.hashes;
-		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
-	} else {
-		MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.\n", current);
+
+		if (!silent)
+			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
+	} else if (!silent) {
+			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.\n", current);
 	}
 
 	// From summarizer, wait and dump.
 	if (this_thread_controls) {
-		MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
+		if (!silent)
+			MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
 		// Wait 2 seconds for all of the other threads to catch up
 		sleep (2);
-		MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
+		if (!silent)
+			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
 		// Dump and cleanup all the stack memory
 		summarizer_state_term (&state, out);
-
 	} else {
 		// Wait here, keeping our stack memory alive
 		// for the dumper
