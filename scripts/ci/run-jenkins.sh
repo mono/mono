@@ -179,7 +179,7 @@ fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
-     ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=boehm msvc/mono.sln
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=boehm msvc/mono.sln
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
