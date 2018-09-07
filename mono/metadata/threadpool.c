@@ -432,7 +432,11 @@ mono_threadpool_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod
 
 	error_init (error);
 
-	message = mono_method_call_message_new (method, params, mono_get_delegate_invoke (method->klass), (params != NULL) ? (&async_callback) : NULL, (params != NULL) ? (&state) : NULL, error);
+	MonoMethod* invoke = NULL;
+	if (mono_class_is_delegate(method->klass->parent))
+		invoke = mono_get_delegate_invoke (method->klass);
+
+	message = mono_method_call_message_new (method, params, invoke, (params != NULL) ? (&async_callback) : NULL, (params != NULL) ? (&state) : NULL, error);
 	return_val_if_nok (error, NULL);
 
 	async_call = (MonoAsyncCall*) mono_object_new_checked (domain, async_call_klass, error);
