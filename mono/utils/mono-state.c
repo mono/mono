@@ -168,7 +168,13 @@ mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, Mon
 	mono_json_writer_object_key(writer, "thread_info_addr");
 	mono_json_writer_printf (writer, "\"0x%x\",\n", (gpointer) thread->info_addr);
 
-	if (thread->name) {
+	if (thread->error_msg != NULL) {
+		mono_json_writer_indent (writer);
+		mono_json_writer_object_key(writer, "dumping_error");
+		mono_json_writer_printf (writer, "\"%s\",\n", thread->error_msg);
+	}
+
+	if (thread->name [0] != '\0') {
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "thread_name");
 		mono_json_writer_printf (writer, "\"%s\",\n", thread->name);
