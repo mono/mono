@@ -4337,11 +4337,18 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
-					icall_op = interp_icall_op_for_sig (info->sig);
-					g_assert (icall_op != -1);
+					if (!strcmp (info->name, "mono_threads_attach_coop")) {
+						/* This icall can be called on
+						 * threads that aren't attached
+						 * yet. */
+						ADD_CODE (td, MINT_MONO_THREADS_ATTACH_COOP);
+					} else {
+						icall_op = interp_icall_op_for_sig (info->sig);
+						g_assert (icall_op != -1);
 
-					ADD_CODE(td, icall_op);
-					ADD_CODE(td, get_data_item_index (td, func));
+						ADD_CODE(td, icall_op);
+						ADD_CODE(td, get_data_item_index (td, func));
+					}
 					td->sp -= info->sig->param_count;
 
 					if (!MONO_TYPE_IS_VOID (info->sig->ret)) {
