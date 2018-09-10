@@ -11,7 +11,7 @@ namespace System
 		[Intrinsic]
 		public static readonly bool IsLittleEndian;
 
-#if !MOBILE // Should be PLATFROM_LINUX instead
+#if !MOBILE // Should be PLATFORM_LINUX instead
 		static BitConverter () {
 			unsafe {
 				ushort i = 0x1234;
