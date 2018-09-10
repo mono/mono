@@ -209,6 +209,17 @@ create_domain_objects (MonoDomain *domain)
 	mono_field_static_set_value (string_vt, string_empty_fld, empty_str);
 	domain->empty_string = empty_str;
 
+	/* Initialize BitConverter.IsLittleEndian */
+	MonoClass *bitconverter_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "BitConverter");
+	if (bitconverter_class) {
+		MonoClassField *bitconverter_isle_fld = mono_class_get_field_from_name_full (bitconverter_class, "IsLittleEndian", NULL);
+		if (bitconverter_isle_fld) {
+			MonoBoolean is_le = G_BYTE_ORDER == G_BIG_ENDIAN ? FALSE : TRUE;
+			MonoVTable *bitconverter_vt = mono_class_vtable_checked (domain, bitconverter_class, error);
+			mono_field_static_set_value (bitconverter_vt, bitconverter_isle_fld, &is_le);
+		}
+	}
+
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
 	 */
