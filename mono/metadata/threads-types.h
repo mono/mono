@@ -507,6 +507,11 @@ typedef struct {
 		int il_offset;
 		int native_offset;
 		const char *guid;
+
+#ifndef MONO_PRIVATE_CRASHES
+		char *name;
+#endif
+
 	} managed_data;
 	struct {
 		intptr_t ip;
