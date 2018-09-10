@@ -4438,14 +4438,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				++td->ip;
 				break;
 			case CEE_MONO_JIT_ATTACH:
-				/* FIXME: This goes away once CEE_MONO_JIT_ATTACH is gone */
-				ADD_CODE (td, MINT_MONO_JIT_ATTACH);
-				++td->ip;
-				break;
 			case CEE_MONO_JIT_DETACH:
-				/* FIXME: This goes away once CEE_MONO_JIT_DETACH is gone */
-				ADD_CODE (td, MINT_MONO_JIT_DETACH);
-				++td->ip;
+				g_error ("transform.c: did not expect to see JIT attach/detach opcode");
 				break;
 			case CEE_MONO_LDDOMAIN:
 				ADD_CODE (td, MINT_MONO_LDDOMAIN);
