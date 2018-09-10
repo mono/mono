@@ -19,6 +19,7 @@
 ../../../external/corefx/src/System.Reflection/tests/FieldInfoTests.cs
 ../../../external/corefx/src/System.Reflection/tests/ManifestResourceInfoTests.cs
 #../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
+../../../external/corefx/src/System.Reflection/tests/PropertyInfoTests.cs
 
 #TODO: audit the commented out tests and fix or disable
 
