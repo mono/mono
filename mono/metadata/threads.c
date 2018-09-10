@@ -6063,9 +6063,15 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	return FALSE;
 }
 
+gboolean
+mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
+{
+	return FALSE;
+}
+
 #else
 
-static gboolean
+gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 {
 	memset (out, 0, sizeof (MonoThreadSummary));
@@ -6084,11 +6090,11 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 	return TRUE;
 }
 
-static const int max_num_threads = 128;
+#define MAX_NUM_THREADS 128
 typedef struct {
-	MonoNativeThreadId thread_array [max_num_threads];
+	MonoNativeThreadId thread_array [MAX_NUM_THREADS];
+	MonoThreadSummary *all_threads [MAX_NUM_THREADS];
 	int nthreads;
-	MonoThreadSummary *all_threads [max_num_threads];
 	gint32 summary_state;
 } SummarizerGlobalState;
 
@@ -6098,7 +6104,7 @@ summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current,
 	gint32 started_state = mono_atomic_cas_i32 (&state->summary_state, 1 /* set */, 0 /* compare */);
 	gboolean not_started = started_state == 0;
 	if (not_started)
-		state->nthreads = collect_thread_ids (state->thread_array, max_num_threads);
+		state->nthreads = collect_thread_ids (state->thread_array, MAX_NUM_THREADS);
 
 	for (int i = 0; i < state->nthreads; i++) {
 		if (state->thread_array [i] == current) {
