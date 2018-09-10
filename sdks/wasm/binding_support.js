@@ -372,8 +372,9 @@ var BindingSupportLib = {
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays#ArrayBuffer
 			if (ArrayBuffer.isView(js_obj) || js_obj instanceof ArrayBuffer)
 			{
-				var heapBytes = this.js_typedarray_to_heap(new Uint8Array(js_obj));
-
+				var byteView = new Uint8Array(js_obj);
+				var heapBytes = this.js_typedarray_to_heap(byteView);
+				byteView = null;
 				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, heapBytes.length, heapBytes.BYTES_PER_ELEMENT, 2);
 				Module._free(heapBytes.byteOffset);
 				return bufferArray;
@@ -428,9 +429,11 @@ var BindingSupportLib = {
 			var gc_handle = this.mono_wasm_free_list.length ? this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
-			this.mono_wasm_object_registry[gc_handle] = {refcount: 1, value: js_obj};;
+			this.mono_wasm_object_registry[gc_handle] = js_obj;
 			this.free_task_completion_source(tcs);
 			tcs.is_mono_tcs_task_bound = true;
+			js_obj.__mono_bound_tcs__ = tcs.__mono_gchandle__;
+			tcs.__mono_bound_task__ = js_obj.__mono_gchandle__;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
 
@@ -438,6 +441,10 @@ var BindingSupportLib = {
 			if (tcs.is_mono_tcs_result_set)
 			{
 				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_gchandle__ ]);
+			}
+			if (tcs.__mono_bound_task__)
+			{
+				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_bound_task__ ]);
 			}
 		},
 
@@ -469,7 +476,7 @@ var BindingSupportLib = {
 				is_mono_bridged_obj: true
 			};
 
-			this.mono_wasm_object_registry[gcHandle] = {refcount: 1, value: js_obj};
+			this.mono_wasm_object_registry[gcHandle] = js_obj;
 			return js_obj;
 		},
 
@@ -618,30 +625,28 @@ var BindingSupportLib = {
 			if (obj !== null && typeof obj !== "undefined") 
 			{
 				gc_handle = obj.__mono_gchandle__;
-				if (gc_handle !== null && typeof gc_handle !== "undefined")
-				{
-					this.mono_wasm_object_registry[obj.__mono_jshandle__].refcount += 1;
-				}
-				else
-				{
+
+				if (typeof gc_handle === "undefined") {
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 					obj.__mono_jshandle__ = handle;
 					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1);
-					this.mono_wasm_object_registry[handle] = {refcount: 1, value: obj};
+					this.mono_wasm_object_registry[handle] = obj;
+						
 				}
 			}
 			return gc_handle;
 		},
 		mono_wasm_require_handle: function(handle) {
 			if (handle > 0)
-				return this.mono_wasm_object_registry[handle - 1].value;
+				return this.mono_wasm_object_registry[handle - 1];
 			return null;
 		},
 		mono_wasm_unregister_obj: function(js_id) {
-			var obj = this.mono_wasm_object_registry[js_id - 1].value;
+			var obj = this.mono_wasm_object_registry[js_id - 1];
 			if (typeof obj  !== "undefined" && obj !== null) {
-				if (0 === --this.mono_wasm_object_registry[js_id - 1].refcount) {
+				var gc_handle = obj.__mono_gchandle__;
+				if (typeof gc_handle  !== "undefined") {
 					this.wasm_unbind_js_obj_and_free(js_id);
 					delete obj.__mono_gchandle__;
 					delete obj.__mono_jshandle__;
@@ -805,17 +810,6 @@ var BindingSupportLib = {
 
 		return BINDING.js_to_mono_obj (globalObj);
 	},
-	mono_wasm_add_ref: function(handle, is_exception) {
-		BINDING.bindings_lazy_init ();
-
-		BINDING.mono_wasm_object_registry[handle-1].refcount += 1;
-	},
-	mono_wasm_release_ref: function(handle, is_exception) {
-		BINDING.bindings_lazy_init ();
-
-		BINDING.mono_wasm_unregister_obj(handle);
-	},
-	
 
 };
 

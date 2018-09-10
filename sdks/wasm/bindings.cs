@@ -31,10 +31,6 @@ namespace WebAssembly
         internal static extern object SetObjectProperty(int js_obj_handle, string propertyName, object value, bool createIfNotExists, bool hasOwnProperty, out int exceptional_result);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern object GetGlobalObject(string globalName, out int exceptional_result);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern object AddRef(int js_obj_handle, out int exceptional_result);
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern object ReleaseRef(int js_obj_handle, out int exceptional_result);
 
         public static string InvokeJS(string str)
         {
@@ -96,6 +92,7 @@ namespace WebAssembly
                 var gCHandle = obj.Handle;
                 obj.Handle.Free();
                 obj.JSHandle = -1;
+                obj.RawObject = null;
                 return (int)(IntPtr)gCHandle;
             }
             return 0;
@@ -117,11 +114,12 @@ namespace WebAssembly
                 }
 
 
-                ReleaseRef(obj.JSHandle);
+                obj.Dispose();
 
                 var gCHandle = obj.Handle;
                 obj.Handle.Free();
                 obj.JSHandle = -1;
+                obj.RawObject = null;
                 return (int)(IntPtr)gCHandle;
             }
 
@@ -303,28 +301,6 @@ namespace WebAssembly
                 throw new JSException($"Error obtaining a handle to global {str}");
 
             return globalHandle;
-        }
-
-
-        public static void AddRef(int js_handle)
-        {
-            int exception = 0;
-            Runtime.AddRef(js_handle, out exception);
-
-            if (exception != 0)
-                throw new JSException($"Error incrementint reference for JSHandle: {js_handle}");
-
-        }
-
-
-        public static void ReleaseRef(int js_handle)
-        {
-            int exception = 0;
-            Runtime.ReleaseRef(js_handle, out exception);
-
-            if (exception != 0)
-                throw new JSException($"Error decrementing reference for JSHandle: {js_handle}");
-
         }
 
     }

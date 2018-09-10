@@ -230,27 +230,11 @@ namespace WebAssembly.Net.Http.HttpClient
                     throw new ArgumentException($"Unknown request mode '{Mode}'.");
             }
         }
+
         private string[][] GetHeadersAsStringArray(HttpRequestMessage request)
             => (from header in request.Headers.Concat(request.Content?.Headers ?? Enumerable.Empty<KeyValuePair<string, IEnumerable<string>>>())
                     from headerValue in header.Value // There can be more than one value for each name
                     select new[] { header.Key, headerValue }).ToArray();
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            // Make sure we clean up
-            window?.Dispose();
-            window = null;
-            json?.Dispose();
-            json = null;
-            fetch?.Dispose();
-            fetch = null;
-            global?.Dispose();
-            global = null;
-
-        }
-
 
         class WasmFetchResponse : IDisposable
         {
