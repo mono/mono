@@ -4192,12 +4192,6 @@ mono_interp_entry_from_trampoline (gpointer ccontext, gpointer imethod)
 	mini_get_interp_callbacks ()->entry_from_trampoline (ccontext, imethod);
 }
 
-static gboolean
-mini_get_use_interpreter (void)
-{
-	return mono_use_interpreter;
-}
-
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -4290,9 +4284,6 @@ mini_init (const char *filename, const char *runtime_version)
 		callbacks.interp_get_remoting_invoke = mini_get_interp_callbacks ()->get_remoting_invoke;
 #endif
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
-#ifndef DISABLE_INTERPRETER
-	callbacks.get_use_interpreter = mini_get_use_interpreter;
-#endif
 
 #ifdef TARGET_OSX
 	callbacks.install_state_summarizer = mini_register_sigterm_handler;
