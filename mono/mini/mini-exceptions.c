@@ -621,7 +621,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	gboolean not_i2m = frame->type != FRAME_TYPE_INTERP_TO_MANAGED && frame->type != FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX;
 
-	if (not_i2m && *lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) >= (gpointer)(*lmf))) {
+	if (not_i2m && *lmf && ((*lmf) != jit_tls->first_lmf) && ((gpointer)MONO_CONTEXT_GET_SP (new_ctx) > (gpointer)(*lmf))) {
 		/*
 		 * Remove any unused lmf.
 		 * Mask out the lower bits which might be used to hold additional information.
