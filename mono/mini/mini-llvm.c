@@ -159,6 +159,7 @@ typedef struct {
 	gboolean llvm_only;
 	gboolean has_got_access;
 	gboolean is_linkonce;
+	gboolean emit_dummy_arg;
 	int this_arg_pindex, rgctx_arg_pindex;
 	LLVMValueRef imt_rgctx_loc;
 	GHashTable *llvm_types;
@@ -3220,7 +3221,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		cinfo->rgctx_arg = TRUE;
 	if (call->imt_arg_reg)
 		cinfo->imt_arg = TRUE;
-	if (cfg->llvm_only && call->method && !call->method->wrapper_type)
+	if (cfg->llvm_only && ctx->emit_dummy_arg && call->method && !call->method->wrapper_type)
 		cinfo->dummy_arg = TRUE;
 
 	vretaddr = (cinfo->ret.storage == LLVMArgVtypeRetAddr || cinfo->ret.storage == LLVMArgVtypeByRef || cinfo->ret.storage == LLVMArgGsharedvtFixed || cinfo->ret.storage == LLVMArgGsharedvtVariable || cinfo->ret.storage == LLVMArgGsharedvtFixedVtype);
@@ -7049,6 +7050,9 @@ mono_llvm_emit_method (MonoCompile *cfg)
 	ctx->lmodule = ctx->module->lmodule;
 #endif
 	ctx->llvm_only = ctx->module->llvm_only;
+#ifdef TARGET_WASM
+	ctx->emit_dummy_arg = TRUE;
+#endif
 
 	emit_method_inner (ctx);
 
@@ -7134,7 +7138,7 @@ emit_method_inner (EmitContext *ctx)
 
 	if (cfg->rgctx_var)
 		linfo->rgctx_arg = TRUE;
-	else if (cfg->llvm_only && !cfg->method->wrapper_type)
+	else if (ctx->emit_dummy_arg && cfg->llvm_only && !cfg->method->wrapper_type)
 		linfo->dummy_arg = TRUE;
 	ctx->method_type = method_type = sig_to_llvm_sig_full (ctx, sig, linfo);
 	if (!ctx_ok (ctx))
