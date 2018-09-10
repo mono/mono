@@ -800,6 +800,8 @@ namespace System
 			}
 		}
 
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
+
 		public override bool IsSZArray {
 			get {
 				// TODO: intrinsic
@@ -826,6 +828,5 @@ namespace System
 
 			return RuntimeTypeHandle.IsSubclassOf (this, rtType);
 		}
-
 	}
 }

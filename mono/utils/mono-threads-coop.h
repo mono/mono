@@ -56,8 +56,8 @@ mono_threads_safepoint (void)
 // 0 also used internally for uninitialized
 typedef enum {
 	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
-	MONO_THREADS_SUSPEND_FULL_COOP,
-	MONO_THREADS_SUSPEND_HYBRID
+	MONO_THREADS_SUSPEND_FULL_COOP       = 2,
+	MONO_THREADS_SUSPEND_HYBRID          = 3,
 } MonoThreadsSuspendPolicy;
 
 /* Don't use this. */
@@ -71,9 +71,11 @@ void mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy);
  * runtime assertion error when trying to switch the state of the current thread.
  */
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
 
@@ -84,9 +86,11 @@ mono_threads_enter_gc_safe_region_with_info (THREAD_INFO_TYPE *info, MonoStackDa
 
 #define MONO_EXIT_GC_SAFE_WITH_INFO	MONO_EXIT_GC_SAFE
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData *stackdata);
 
@@ -97,6 +101,7 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData
 
 #define MONO_EXIT_GC_UNSAFE_WITH_INFO	MONO_EXIT_GC_UNSAFE
 
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
 

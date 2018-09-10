@@ -2823,7 +2823,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObjectHandle proxy_object, Mo
 		MONO_HANDLE_SETVAL (tproxy, remote_class, MonoRemoteClass*, fresh_remote_class);
 		MonoRealProxyHandle real_proxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
 		MONO_HANDLE_GET (real_proxy, tproxy, rp);
-		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
+		MONO_HANDLE_SETVAL (proxy_object, vtable, MonoVTable*, (MonoVTable*)mono_remote_class_vtable (domain, fresh_remote_class, real_proxy, error));
 		goto_if_nok (error, leave);
 	}
 	
@@ -5794,9 +5794,7 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
-
-	o = (MonoObject *)mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
@@ -5834,11 +5832,7 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
 
-	MonoObject *o;
-
-	error_init (error);
-
-	o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+	MonoObject *o = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
 
 	// This deliberately skips object_new_common_tail.
 
@@ -5865,9 +5859,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 	size *= 2;
 #endif
 
-	MonoObject *o;
-
-	o = mono_gc_alloc_mature (vtable, size);
+	MonoObject *o = mono_gc_alloc_mature (vtable, size);
 
 	return object_new_common_tail (o, vtable->klass, error);
 }
@@ -5932,16 +5924,14 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
 	MonoClass *klass = mono_object_class (obj);
-	int size;
 
-	size = m_class_get_instance_size (klass);
+	int size = m_class_get_instance_size (klass);
 
 	if (m_class_get_rank (klass))
 		return (MonoObject*)mono_array_clone_checked ((MonoArray*)obj, error);
 
-	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
+	MonoObject *o = mono_gc_alloc_obj (obj->vtable, size);
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	if (G_LIKELY (o))
@@ -6997,7 +6987,7 @@ mono_object_get_size (MonoObject* o)
 
 	MonoClass* klass = mono_object_class (o);
 	if (klass == mono_defaults.string_class) {
-		return sizeof (MonoString) + 2 * mono_string_length ((MonoString*) o) + 2;
+		return MONO_SIZEOF_MONO_STRING + 2 * mono_string_length ((MonoString*) o) + 2;
 	} else if (o->vtable->rank) {
 		MonoArray *array = (MonoArray*)o;
 		size_t size = MONO_SIZEOF_MONO_ARRAY + mono_array_element_size (klass) * mono_array_length (array);
@@ -7240,7 +7230,7 @@ mono_string_get_pinned (MonoString *str, MonoError *error)
 		return str;
 	int size;
 	MonoString *news;
-	size = sizeof (MonoString) + 2 * (mono_string_length (str) + 1);
+	size = MONO_SIZEOF_MONO_STRING + 2 * (mono_string_length (str) + 1);
 	news = (MonoString *)mono_gc_alloc_pinned_obj (((MonoObject*)str)->vtable, size);
 	if (news) {
 		memcpy (mono_string_chars (news), mono_string_chars (str), mono_string_length (str) * 2);
@@ -7841,9 +7831,10 @@ mono_get_eh_callbacks (void)
 void
 mono_raise_exception (MonoException *ex) 
 {
-	MONO_ENTER_GC_UNSAFE;
+	/* raise_exception doesn't return, so the transition to GC Unsafe is unbalanced */
+	MONO_STACKDATA (stackdata);
+	mono_threads_enter_gc_unsafe_region_unbalanced_with_info (mono_thread_info_current (), &stackdata);
 	mono_raise_exception_deprecated (ex);
-	MONO_EXIT_GC_UNSAFE;
 }
 
 /*
@@ -9035,9 +9026,9 @@ mono_object_get_data (MonoObject *o)
  *   Return the address of the FIELD in the valuetype VTYPE.
  */
 gpointer
-mono_vtype_get_field_addr (guint8 *vtype, MonoClassField *field)
+mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field)
 {
-	return vtype + field->offset - MONO_ABI_SIZEOF (MonoObject);
+	return ((char*)vtype) + field->offset - MONO_ABI_SIZEOF (MonoObject);
 }
 
 

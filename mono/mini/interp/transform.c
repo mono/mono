@@ -993,6 +993,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 		} else if (!strcmp ("Parse", tm)) {
 			/* white list */
 			return FALSE;
+		} else if (!strcmp ("IsNaN", tm)) {
+			g_assert (type_index == 2); // nfloat only
+			/* white list */
+			return FALSE;
 		}
 
 		for (i = 0; i < sizeof (int_unnop) / sizeof  (MagicIntrinsic); ++i) {
@@ -4863,7 +4867,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodHeader *header = NULL;
 	MonoMethodSignature *signature = mono_method_signature (method);
-	register const unsigned char *ip, *end;
+	const unsigned char *ip, *end;
 	const MonoOpcode *opcode;
 	MonoMethod *m;
 	MonoClass *klass;

@@ -52,7 +52,7 @@
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
-#define GET_APPDOMAIN() ((MonoDomain*)mono_tls_get_domain ())
+#define GET_APPDOMAIN    mono_tls_get_domain
 #define SET_APPDOMAIN(x) do { \
 	MonoThreadInfo *info; \
 	mono_tls_set_domain (x); \
@@ -858,6 +858,8 @@ void
 mono_cleanup (void)
 {
 	mono_close_exe_image ();
+
+	mono_thread_info_cleanup ();
 
 	mono_defaults.corlib = NULL;
 

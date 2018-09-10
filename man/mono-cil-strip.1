@@ -2,12 +2,17 @@
 .SH NAME
 Mono CIL strip
 .SH SYNOPSIS
-.B mono-cil-strip assembly [output-assembly]
+.B mono-cil-strip [options] assembly [output-assembly]
 .SH DESCRIPTION
 mono-cil-strip is a tool which takes an assembly, and empty its method bodies.
 This is useful to reduce an assembly size when an assembly has already been
 compiled using Mono's Ahead Of Time compiler (AOT), where the CIL code is no
 longer necessary, but the metadata still is.
+.SH OPTIONS
+The following options are available:
+.TP
+.I "-q"
+Only output errors.
 .SH COPYRIGHT
 Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 .SH MAILING LISTS

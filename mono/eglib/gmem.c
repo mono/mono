@@ -29,8 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <glib.h>
-// Remove the cast macros and restore the rename macros.
-#include <eglib-remap.h>
+#include <eglib-remap.h> // Remove the cast macros and restore the rename macros.
 #undef malloc
 #undef realloc
 #undef free
@@ -117,7 +116,7 @@ gpointer g_calloc (gsize n, gsize x)
 	gpointer ptr;
 	if (!x || !n)
 		return 0;
-		ptr = G_CALLOC_INTERNAL (n, x);
+	ptr = G_CALLOC_INTERNAL (n, x);
 	if (ptr)
 		return ptr;
 	g_error ("Could not allocate %i (%i * %i) bytes", x*n, n, x);

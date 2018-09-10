@@ -136,6 +136,7 @@ monoutils_sources = \
 	mono-counters.h	\
 	mono-digest.h	\
 	mono-error.h	\
+	mono-forward-internal.h	\
 	mono-machine.h	\
 	mono-math.h	\
 	mono-membar.h	\
@@ -299,7 +300,7 @@ arch_sources += mono-hwcap-cross.c
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
-libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS)
+libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS) @CXX_ADD_CFLAGS@
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 
@@ -309,6 +310,7 @@ libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 libmonoutilsinclude_HEADERS = 	\
 	mono-logger.h		\
 	mono-error.h		\
+	mono-forward.h	\
 	mono-publib.h		\
 	mono-jemalloc.h		\
 	mono-dl-fallback.h	\

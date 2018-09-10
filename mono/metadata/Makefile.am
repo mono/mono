@@ -193,8 +193,8 @@ system_native_android_sources = \
 	pal-android.h \
 	pal-android.c
 
-if !TARGET_WIN32
-if !WASM
+if !HOST_WIN32
+if !HOST_WASM
 lib_LTLIBRARIES += libmono-system-native.la
 lib_LTLIBRARIES += libmono-system-net-security-native.la
 libmono_system_native_la_SOURCES = $(system_native_common_sources)
@@ -299,6 +299,7 @@ common_sources = \
 	image-internals.h	\
 	jit-info.c		\
 	loader.c		\
+	loader-internals.h	\
 	locales.c		\
 	locales.h		\
 	lock-tracer.c		\
@@ -366,7 +367,6 @@ common_sources = \
 	security-manager.h	\
 	string-icalls.c 	\
 	string-icalls.h 	\
-	sysmath.h		\
 	sysmath.c		\
 	tabledefs.h 		\
 	threads.c		\
@@ -414,7 +414,8 @@ common_sources = \
 	fdhandle.h	\
 	fdhandle.c	\
 	callspec.h	\
-	callspec.c
+	callspec.c	\
+	abi.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \

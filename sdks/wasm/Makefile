@@ -71,6 +71,9 @@ toolchain: .stamp-jsvu
 driver.o: driver.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
+driver-aot-sample.o: driver.c
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -DEXPERIMENTAL_AOT_DRIVER -o driver-aot-sample.o
+
 debug/:
 	mkdir -p $@
 release/:
@@ -98,7 +101,7 @@ do-runtime:
 	make -j4 -C ../builds package-bcl
 	make build-native
 
-BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll
+BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
 main.exe: $(APP_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(APP_SOURCES)
@@ -118,8 +121,9 @@ Simple.Dependency.dll: dependency.cs
 sample.dll: Simple.Dependency.dll sample.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
-Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
-	cp $< $@
+Mono.Cecil.dll: Makefile
+	nuget install -version 0.10.0 Mono.Cecil
+	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
 # We use system csc as this is a desktop program
 packager.exe: packager.cs Mono.Cecil.dll
@@ -152,18 +156,21 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 
 .stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
 	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
+	cp aot-driver.js aot/
 	touch $@
 
 AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
 aot-sample: .stamp-build-aot-test
 	for f in aot/managed/*.dll; do	\
-		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,dedup-skip,static,llvm-outfile=$$f.bc $$f;	\
+		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,static,llvm-outfile=$$f.bc $$f;	\
 	done	\
 
-link-sample: driver.o library_mono.js binding_support.js dotnet_support.js
-	$(EMCC) -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono-aot.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver.o $(TOP)/sdks/out/wasm-aot-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
+link-sample: driver-aot-sample.o library_mono.js binding_support.js dotnet_support.js
+	$(EMCC) -Os -g -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver-aot-sample.o $(TOP)/sdks/out/wasm-aot-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
 
-
+build-aot-sample:
+	make aot-sample
+	make link-sample
 
 build-aot-test: .stamp-build-aot-test
 
@@ -236,7 +243,7 @@ package: build build-dbg-proxy
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
-	cp ProxyDriver/bin/Debug/netcoreapp2.1/* tmp/dbg-proxy/
+	cp -r ProxyDriver/bin/Debug/netcoreapp2.1/ tmp/dbg-proxy/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

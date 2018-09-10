@@ -235,7 +235,7 @@ namespace Mono.ApiTools {
 				output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
 				output.WriteLine ("<pre class='removed' data-is-breaking>");
 			} else {
-				output.WriteLine ("<p>Removed {0}:</p>\n", list.Count () > 1 ? member.GroupName : member.ElementName);
+				output.WriteLine ("<p>Removed {0}:</p>", list.Count () > 1 ? member.GroupName : member.ElementName);
 				output.WriteLine ("<pre>");
 			}
 			State.Indent++;
@@ -303,7 +303,7 @@ namespace Mono.ApiTools {
 		public override void Diff (TextWriter output, ApiChange apichange)
 		{
 			output.Write ("<div {0}>", apichange.Breaking ? "data-is-breaking" : "data-is-non-breaking");
-			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
+			foreach (var line in apichange.Member.ToString ().Split (new[] { Environment.NewLine }, 0)) {
 				output.Write ('\t');
 				output.WriteLine (line);
 			}

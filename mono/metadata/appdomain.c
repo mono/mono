@@ -399,7 +399,7 @@ mono_check_corlib_version (void)
 static const char *
 mono_check_corlib_version_internal (void)
 {
-#if defined(MONO_CROSS_COMPILE) && SIZEOF_VOID_P != TARGET_SIZEOF_VOID_P
+#if defined(MONO_CROSS_COMPILE)
 	/* Can't read the corlib version because we only have the target class layouts */
 	return NULL;
 #endif
@@ -957,7 +957,7 @@ ves_icall_System_AppDomain_GetData (MonoAppDomainHandle ad, MonoStringHandle nam
 	else if (!strcmp (str, "FORCE_CACHE_INSTALL"))
 		o = MONO_HANDLE_NEW_GET (MonoString, ad_setup, shadow_copy_files);
 	else 
-		o = MONO_HANDLE_NEW (MonoString, mono_g_hash_table_lookup (add->env, MONO_HANDLE_RAW (name)));
+		o = MONO_HANDLE_NEW (MonoString, (MonoString*)mono_g_hash_table_lookup (add->env, MONO_HANDLE_RAW (name)));
 
 	mono_domain_unlock (add);
 	g_free (str);

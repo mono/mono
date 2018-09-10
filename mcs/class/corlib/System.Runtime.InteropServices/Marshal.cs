@@ -1897,5 +1897,72 @@ namespace System.Runtime.InteropServices
 			throw new NotSupportedException();
 		}
 #endif
+
+		internal class MarshalerInstanceKeyComparer : IEqualityComparer<(Type, string)> {
+			public bool Equals ((Type, string) lhs, (Type, string) rhs) {
+				return lhs.CompareTo(rhs) == 0;
+			}
+
+			public int GetHashCode ((Type, string) key) {
+				return key.GetHashCode ();
+			}
+		}
+
+		internal static Dictionary<(Type, string), ICustomMarshaler> MarshalerInstanceCache = null;
+		internal static object MarshalerInstanceCacheLock = new object ();
+
+		internal static ICustomMarshaler GetCustomMarshalerInstance (Type type, string cookie) {
+			var key = (type, cookie);
+
+			LazyInitializer.EnsureInitialized (
+				ref MarshalerInstanceCache, 
+				() => new Dictionary<(Type, string), ICustomMarshaler> (new MarshalerInstanceKeyComparer ())
+			);
+
+			ICustomMarshaler result;
+			bool gotExistingInstance;
+			lock (MarshalerInstanceCacheLock)
+				gotExistingInstance = MarshalerInstanceCache.TryGetValue (key, out result);
+
+			if (!gotExistingInstance) {
+				MonoMethod getInstanceMethod;
+				try {
+					getInstanceMethod = (MonoMethod)type.GetMethod (
+						"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.InvokeMethod,
+						null, new Type[] { typeof(string) }, null
+					);
+				} catch (AmbiguousMatchException) {
+					throw new ApplicationException ($"Custom marshaler '{type.FullName}' implements multiple static GetInstance methods that take a single string parameter.");
+				}
+
+				if ((getInstanceMethod == null) || 
+					(getInstanceMethod.ReturnType != typeof (ICustomMarshaler))) {
+					throw new ApplicationException ($"Custom marshaler '{type.FullName}' does not implement a static GetInstance method that takes a single string parameter and returns an ICustomMarshaler.");
+				}
+
+				Exception exc;
+				try {
+					result = (ICustomMarshaler)getInstanceMethod.InternalInvoke (null, new object[] { cookie }, out exc);
+				} catch (Exception e) {
+					// FIXME: mscorlib's legacyUnhandledExceptionPolicy is apparently 1, 
+					//  so exceptions are thrown instead of being passed through the outparam
+					exc = e;
+					result = null;
+				}
+
+				if (exc != null) {
+					var edi = System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture (exc);
+					edi.Throw ();
+				}
+
+				if (result == null)
+					throw new ApplicationException ($"A call to GetInstance() for custom marshaler '{type.FullName}' returned null, which is not allowed.");
+
+				lock (MarshalerInstanceCacheLock)
+					MarshalerInstanceCache[key] = result;
+			}
+
+			return result;
+		}
 	}
 }

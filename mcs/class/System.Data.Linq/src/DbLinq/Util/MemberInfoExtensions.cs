@@ -35,7 +35,7 @@ namespace DbLinq.Util
 #if !MONO_STRICT
     public
 #endif
-    static class MemberInfoExtensions
+    static class DbLinqMemberInfoExtensions
     {
         /// <summary>
         /// Returns the type of the specified member

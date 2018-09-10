@@ -1428,6 +1428,7 @@ PROFILE_DISABLED_TESTS += \
 if MONO_ARCH_GSHAREDVT_SUPPORTED
 PROFILE_DISABLED_TESTS += tailcall-interface-conservestack.exe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail.exe
+PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/20.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/26.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/31.exe
 PROFILE_DISABLED_TESTS += tailcall/interface-conservestack/33.exe
@@ -1494,8 +1495,7 @@ CI_DISABLED_TESTS = \
 
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
-CI_PR_DISABLED_TESTS = \
-	appdomain-threadpool-unload.exe
+CI_PR_DISABLED_TESTS =
 
 # FIXME Hybrid Suspend - see https://github.com/mono/mono/issues/9959
 # CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
@@ -2952,9 +2952,9 @@ if HOST_WIN32
 libtest_la_CFLAGS=-fno-optimize-sibling-calls
 # the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
 # can't find them. So we use --kill-at to remove the @ suffix as well.
-libtest_la_LDFLAGS=-no-undefined -rpath `pwd` -Wl,--kill-at
+libtest_la_LDFLAGS = -no-undefined -rpath `pwd` -Wl,--kill-at
 else
-libtest_la_LDFLAGS = -rpath `pwd`
+libtest_la_LDFLAGS = -no-undefined -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
 libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la

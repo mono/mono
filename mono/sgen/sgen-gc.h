@@ -17,7 +17,7 @@
 
 #ifdef HAVE_SGEN_GC
 
-typedef struct _SgenThreadInfo SgenThreadInfo;
+#include <mono/utils/mono-forward-internal.h>
 #undef THREAD_INFO_TYPE
 #define THREAD_INFO_TYPE SgenThreadInfo
 
@@ -394,7 +394,7 @@ enum {
 
 extern SgenHashTable sgen_roots_hash [ROOT_TYPE_NUM];
 
-int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg)
+int sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
 	MONO_PERMIT (need (sgen_lock_gc));
 void sgen_deregister_root (char* addr)
 	MONO_PERMIT (need (sgen_lock_gc));
@@ -440,7 +440,14 @@ typedef struct
 	SgenGrayQueue *queue;
 } ScanCopyContext;
 
-#define CONTEXT_FROM_OBJECT_OPERATIONS(ops, queue) ((ScanCopyContext) { (ops), (queue) })
+// error C4576: a parenthesized type followed by an initializer list is a non-standard explicit type conversion
+// An inline function or constructor would work here too.
+#ifdef _MSC_VER
+#define MONO_MSC_WARNING_SUPPRESS(warn, body) __pragma (warning (suppress:warn)) body
+#else
+#define MONO_MSC_WARNING_SUPPRESS(warn, body) body
+#endif
+#define CONTEXT_FROM_OBJECT_OPERATIONS(ops, queue) MONO_MSC_WARNING_SUPPRESS (4576, ((ScanCopyContext) { (ops), (queue) }))
 
 void sgen_report_internal_mem_usage (void);
 void sgen_dump_internal_mem_usage (FILE *heap_dump_file);

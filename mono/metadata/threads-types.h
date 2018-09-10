@@ -15,6 +15,7 @@
 
 #include <glib.h>
 
+#include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object.h>
 #include "mono/metadata/handle.h"
 #include "mono/utils/mono-compiler.h"
@@ -34,7 +35,9 @@ typedef enum {
 	ThreadState_Suspended = 0x00000040,
 	ThreadState_AbortRequested = 0x00000080,
 	ThreadState_Aborted = 0x00000100
-} MonoThreadState; 
+} MonoThreadState;
+
+G_ENUM_FUNCTIONS (MonoThreadState)
 
 /* This is a copy of System.Threading.ApartmentState */
 typedef enum {
@@ -44,6 +47,8 @@ typedef enum {
 } MonoThreadApartmentState;
 
 typedef enum {
+// These values match System.Threading.ThreadPriority.
+// These values match System.Diagnostics.ThreadPriorityLevel and Windows, but are offset by 2.
 	MONO_THREAD_PRIORITY_LOWEST       = 0,
 	MONO_THREAD_PRIORITY_BELOW_NORMAL = 1,
 	MONO_THREAD_PRIORITY_NORMAL       = 2,
@@ -54,8 +59,6 @@ typedef enum {
 #define SPECIAL_STATIC_NONE 0
 #define SPECIAL_STATIC_THREAD 1
 #define SPECIAL_STATIC_CONTEXT 2
-
-typedef struct _MonoInternalThread MonoInternalThread;
 
 /* It's safe to access System.Threading.InternalThread from native code via a
  * raw pointer because all instances should be pinned.  But for uniformity of
@@ -78,8 +81,18 @@ typedef enum {
 	MONO_THREAD_CREATE_FLAGS_SMALL_STACK  = 0x8,
 } MonoThreadCreateFlags;
 
+// FIXME func should be MonoThreadStart and remove the template
 MonoInternalThread*
 mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error);
+
+#ifdef __cplusplus
+template <typename T>
+inline MonoInternalThread*
+mono_thread_create_internal (MonoDomain *domain, T func, gpointer arg, MonoThreadCreateFlags flags, MonoError *error)
+{
+	return mono_thread_create_internal(domain, (gpointer)func, arg, flags, error);
+}
+#endif
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func);
 
@@ -437,8 +450,18 @@ void
 mono_thread_resume_interruption (gboolean exec);
 void mono_threads_perform_thread_dump (void);
 
+// FIXME Correct the type of func and remove the template.
 gboolean
 mono_thread_create_checked (MonoDomain *domain, gpointer func, gpointer arg, MonoError *error);
+
+#ifdef __cplusplus
+template <typename T>
+inline gboolean
+mono_thread_create_checked (MonoDomain *domain, T func, gpointer arg, MonoError *error)
+{
+	return mono_thread_create_checked (domain, (gpointer)func, arg, error);
+}
+#endif
 
 void mono_threads_add_joinable_runtime_thread (MonoThreadInfo *thread_info);
 void mono_threads_add_joinable_thread (gpointer tid);
@@ -474,6 +497,9 @@ mono_thread_internal_is_current (MonoInternalThread *internal);
 
 gboolean
 mono_threads_is_current_thread_in_protected_block (void);
+
+gboolean
+mono_threads_is_critical_method (MonoMethod *method);
 
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced_internal (MonoStackData *stackdata);

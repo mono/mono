@@ -237,12 +237,12 @@ typedef struct {
 } CallContext;
 
 /* Structure used by the sequence points in AOTed code */
-typedef struct {
+struct SeqPointInfo {
 	gpointer ss_trigger_page;
 	gpointer bp_trigger_page;
 	gpointer ss_tramp_addr;
 	guint8* bp_addrs [MONO_ZERO_LEN_ARRAY];
-} SeqPointInfo;
+};
 
 typedef struct {
 	double fpregs [FP_PARAM_REGS];
@@ -300,7 +300,8 @@ typedef struct MonoCompileArch {
 	MonoInst *seq_point_ss_method_var;
 	MonoInst *seq_point_bp_method_var;
 	MonoInst *vret_addr_loc;
-	gboolean omit_fp, omit_fp_computed;
+	gboolean omit_fp;
+	gboolean omit_fp_computed;
 	CallInfo *cinfo;
 	MonoInst *vfp_scratch_slots [2];
 	int atomic_tmp_offset;

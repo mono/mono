@@ -209,7 +209,8 @@ typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gint32 sp_fp_offset;
 	guint32 saved_iregs;
-	gboolean omit_fp, omit_fp_computed;
+	gboolean omit_fp;
+	gboolean omit_fp_computed;
 	CallInfo *cinfo;
 	gint32 async_point_count;
 	MonoInst *vret_addr_loc;
@@ -275,10 +276,10 @@ typedef struct {
 } GSharedVtCallInfo;
 
 /* Structure used by the sequence points in AOTed code */
-typedef struct {
+struct SeqPointInfo {
 	gpointer ss_tramp_addr;
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
-} SeqPointInfo;
+};
 
 typedef struct {
 	mgreg_t res;
@@ -358,7 +359,6 @@ typedef struct {
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx, start_func) do { \
     guint64 stackptr; \
-	mono_arch_flush_register_windows (); \
 	stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));\
 	MONO_CONTEXT_SET_IP ((ctx), (start_func)); \
 	MONO_CONTEXT_SET_BP ((ctx), stackptr); \
@@ -374,7 +374,6 @@ typedef struct {
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
         int tmp; \
         guint64 stackptr = (guint64)&tmp; \
-		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
 		MONO_CONTEXT_SET_BP ((ctx), stackptr);	\
 		MONO_CONTEXT_SET_SP ((ctx), stackptr);	\

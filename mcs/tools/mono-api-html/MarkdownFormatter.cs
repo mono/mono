@@ -191,7 +191,7 @@ namespace Mono.ApiTools {
 
 		public override void Diff (TextWriter output, ApiChange apichange)
 		{
-			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
+			foreach (var line in apichange.Member.ToString ().Split (new[] { Environment.NewLine }, 0)) {
 				if (line.Contains ("+++")) {
 					output.WriteLine ("-{0}", Clean (line, "+++", "---"));
 					output.WriteLine ("+{0}", Clean (line, "---", "+++"));
