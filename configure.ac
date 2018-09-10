@@ -46,7 +46,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=E06DCE2D-7852-4BBA-AD9F-54D67EEF1FF9
+MONO_CORLIB_VERSION=5F2CEB7B-13B1-4694-A0D5-3DD7EDE81388
 
 #
 # Put a quoted #define in config.h.
@@ -5766,7 +5766,7 @@ echo "
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
-	crash reporting: $crash_reporting (private crashes: $crash_privacy)
+	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

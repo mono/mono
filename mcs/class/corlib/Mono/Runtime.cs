@@ -165,5 +165,43 @@ namespace Mono {
 		}
 #endif
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateAll_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		static Tuple<String, ulong, ulong>
+		DumpStateSingle ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		static Tuple<String, ulong, ulong>
+		DumpStateAll ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateAll_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
+
 	}
 }
