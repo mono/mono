@@ -342,7 +342,7 @@ mono_set_thread_dump_dir(gchar* dir);
 #define MONO_MAX_SUMMARY_NAME_LEN 140
 #define MONO_MAX_THREAD_NAME_LEN 140
 #define MONO_MAX_SUMMARY_THREADS 32
-#define MONO_MAX_SUMMARY_FRAMES 40
+#define MONO_MAX_SUMMARY_FRAMES 80
 
 typedef struct {
 	gboolean is_managed;
