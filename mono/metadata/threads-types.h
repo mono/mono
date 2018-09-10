@@ -541,7 +541,7 @@ mono_set_pending_exception_handle (MonoExceptionHandle exc);
 #define MONO_MAX_SUMMARY_NAME_LEN 140
 #define MONO_MAX_THREAD_NAME_LEN 140
 #define MONO_MAX_SUMMARY_THREADS 32
-#define MONO_MAX_SUMMARY_FRAMES 40
+#define MONO_MAX_SUMMARY_FRAMES 80
 
 typedef struct {
 	gboolean is_managed;
