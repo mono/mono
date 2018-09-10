@@ -699,6 +699,7 @@ typedef struct {
 	void (*mono_reraise_exception) (MonoException *ex);
 	void (*mono_summarize_stack) (MonoThreadSummary *out, MonoContext *crash_ctx);
 	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
+	void (*mono_register_native_library) (const char *module_path, const char *module_name);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
