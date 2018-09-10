@@ -680,7 +680,6 @@ typedef struct {
 	gpointer (*interp_get_remoting_invoke) (gpointer imethod, MonoError *error);
 	GHashTable *(*get_weak_field_indexes) (MonoImage *image);
 	void     (*install_state_summarizer) (void);
-	gboolean (*get_use_interpreter) (void);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -763,10 +762,6 @@ mono_install_eh_callbacks (MonoRuntimeExceptionHandlingCallbacks *cbs);
 
 MonoRuntimeExceptionHandlingCallbacks *
 mono_get_eh_callbacks (void);
-
-/* FIXME: Don't use this - it's a mistake */
-/*MONO_DEPRECATED*/ gboolean
-mono_get_use_interpreter (void);
 
 void
 mono_raise_exception_deprecated (MonoException *ex);

@@ -691,13 +691,6 @@ mono_get_runtime_callbacks (void)
 	return &callbacks;
 }
 
-/* FIXME: Don't use this function - it's the wrong granularity. */
-gboolean
-mono_get_use_interpreter (void)
-{
-	return callbacks.get_use_interpreter != NULL && callbacks.get_use_interpreter ();
-}
-
 void
 mono_install_imt_trampoline_builder (MonoImtTrampolineBuilder func)
 {
