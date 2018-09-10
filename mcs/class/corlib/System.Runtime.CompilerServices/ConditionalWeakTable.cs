@@ -225,7 +225,6 @@ namespace System.Runtime.CompilerServices
 					if (k == key) {
 						data [idx].key = GC.EPHEMERON_TOMBSTONE;
 						data [idx].value = null;
-						--size;
 						return true;
 					}
 					if (k == null)
@@ -325,7 +324,7 @@ namespace System.Runtime.CompilerServices
 			{
 				for (int i = 0; i < data.Length; i++)
 				{
-					data[i].key = GC.EPHEMERON_TOMBSTONE;
+					data[i].key = null;
 					data[i].value = null;
 				}
 

@@ -139,7 +139,6 @@ System.IO/NullFileWatcher.cs
 System.IO/FileAction.cs
 System.IO/FileSystemWatcher.cs
 System.IO/IFileWatcher.cs
-System.IO/InotifyWatcher.cs
 System.IO/KeventWatcher.cs
 System.IO/SearchPattern.cs
 

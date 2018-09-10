@@ -420,7 +420,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 47;
+		internal const int MINOR_VERSION = 48;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -2325,7 +2325,10 @@ namespace Mono.Debugger.Soft
 		public long[] Type_GetMethodsByNameFlags (long id, string name, int flags, bool ignoreCase) {
 			flags |= ignoreCase ? (int)BindingFlagsExtensions.BINDING_FLAGS_IGNORE_CASE : 0;
 			int listType = ignoreCase ? (int)MemberListTypeExtensions.CaseInsensitive : (int)MemberListTypeExtensions.CaseSensitive;
-			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CMD_TYPE_GET_METHODS_BY_NAME_FLAGS, new PacketWriter ().WriteId (id).WriteString (name).WriteInt (flags).WriteInt (listType));
+			var w = new PacketWriter ().WriteId (id).WriteString (name).WriteInt (flags);
+			if (Version.AtLeast (2, 48))
+				w.WriteInt (listType);
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CMD_TYPE_GET_METHODS_BY_NAME_FLAGS, w);
 			int len = r.ReadInt ();
 			long[] res = new long [len];
 			for (int i = 0; i < len; ++i)

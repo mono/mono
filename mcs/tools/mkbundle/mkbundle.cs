@@ -470,7 +470,7 @@ class MakeBundle {
 		// Modern bundling starts here
 		if (!custom_mode){
 			if (runtime != null){
-				// Nothing to do here, the user has chosen to manually specify --runtime nad libraries
+				// Nothing to do here, the user has chosen to manually specify --runtime and libraries
 			} else if (sdk_path != null) {
 				VerifySdk (sdk_path);
 			} else if (cross_target == "default" || cross_target == null){
@@ -655,15 +655,28 @@ class MakeBundle {
 
 	class PackageMaker {
 		Dictionary<string, Tuple<long,int>> locations = new Dictionary<string, Tuple<long,int>> ();
-		const int align = 4096;
+		int align = 4096; // first non-Windows alignment, saving on average 30K
 		Stream package;
 		
-		public PackageMaker (string output)
+		public PackageMaker (string runtime, string output)
 		{
 			package = File.Create (output, 128*1024);
 			if (IsUnix){
 				File.SetAttributes (output, unchecked ((FileAttributes) 0x80000000));
 			}
+
+			Console.WriteLine ("Using runtime: " + runtime);
+
+			// Probe for MZ signature to decide if we are targeting Windows,
+			// so we can optimize an average of 30K away on Unix.
+			using (Stream runtimeStream = File.OpenRead (runtime)) {
+				var runtimeBuffer = new byte [2];
+				if (runtimeStream.Read (runtimeBuffer, 0, 2) == 2
+					&& runtimeBuffer [0] == (byte)'M'
+					&& runtimeBuffer [1] == (byte)'Z')
+					align = 1 << 16; // first Windows alignment
+			}
+			AddFile (runtime);
 		}
 
 		public int AddFile (string fname)
@@ -675,6 +688,7 @@ class MakeBundle {
 					Console.WriteLine ("At {0:x} with input {1}", package.Position, fileStream.Length);
 				fileStream.CopyTo (package);
 				package.Position = package.Position + (align - (package.Position % align));
+				align = 4096; // rest of alignment for all systems
 				return (int) ret;
 			}
 		}
@@ -688,14 +702,17 @@ class MakeBundle {
 
 		public void AddString (string entry, string text)
 		{
+			// FIXME Strings are over-aligned?
 			var bytes = Encoding.UTF8.GetBytes (text);
 			locations [entry] = Tuple.Create (package.Position, bytes.Length);
 			package.Write (bytes, 0, bytes.Length);
+			package.WriteByte (0);
 			package.Position = package.Position + (align - (package.Position % align));
 		}
 
 		public void AddStringPair (string entry, string key, string value)
 		{
+			// FIXME Strings are over-aligned?
 			var kbytes = Encoding.UTF8.GetBytes (key);
 			var vbytes = Encoding.UTF8.GetBytes (value);
 
@@ -785,9 +802,7 @@ class MakeBundle {
 			return false;
 		}
 		
-		var maker = new PackageMaker (output);
-		Console.WriteLine ("Using runtime: " + runtime);
-		maker.AddFile (runtime);
+		var maker = new PackageMaker (runtime, output);
 		
 		foreach (var url in files){
 			string fname = LocateFile (new Uri (url).LocalPath);

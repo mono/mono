@@ -158,6 +158,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/MemberInfoTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/CustomAttribute_Named_Typed_ArgumentTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 

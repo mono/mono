@@ -1177,10 +1177,13 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg)
 		goto done;
 
-	ArgInfo *ainfo = &cinfo->ret;
+	ArgInfo *ainfo;
+	ainfo = &cinfo->ret;
 	gpointer storage;
-	int storage_type = ainfo->storage;
-	int reg_storage = ainfo->reg;
+	int storage_type;
+	storage_type = ainfo->storage;
+	int reg_storage;
+	reg_storage = ainfo->reg;
 	switch (storage_type) {
 		case ArgInIReg: {
 			storage = &ccontext->gregs [reg_storage];
@@ -1193,7 +1196,7 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 		}
 		case ArgValuetypeInReg: {
 			storage = g_newa (mgreg_t, ainfo->nregs);
-			mgreg_t *storage_tmp = storage;
+			mgreg_t *storage_tmp = (mgreg_t*)storage;
 			/* Reconstruct the value type */
 			for (int k = 0; k < ainfo->nregs; k++) {
 				storage_type = ainfo->pair_storage [k];
@@ -4633,11 +4636,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_mov_reg_imm_size (code, ins->dreg, ins->inst_c0, 8);
 			break;
 		case OP_AOTCONST:
-			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0);
 			amd64_mov_reg_membase (code, ins->dreg, AMD64_RIP, 0, sizeof(gpointer));
 			break;
 		case OP_JUMP_TABLE:
-			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)(gsize)ins->inst_i1, ins->inst_p0);
 			amd64_mov_reg_imm_size (code, ins->dreg, 0, 8);
 			break;
 		case OP_MOVE:
@@ -6625,6 +6628,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_sse_movsd_reg_reg (code, ins->dreg, ins->sreg1);
 			amd64_sse_pshufd_reg_reg_imm (code, ins->dreg, ins->dreg, 0x44);
 			break;
+		case OP_SSE41_ROUNDPD:
+			amd64_sse_roundpd_reg_reg_imm (code, ins->dreg, ins->sreg1, ins->inst_c0);
+			break;
 #endif
 		case OP_LIVERANGE_START: {
 			if (cfg->verbose_level > 1)
@@ -7179,7 +7185,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (trace) {
 		args_clobbered = TRUE;
-		code = (guint8 *)mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
+		code = (guint8 *)mono_arch_instrument_prolog (cfg, (gpointer)mono_trace_enter_method, code, TRUE);
 	}
 
 	/*
@@ -7317,7 +7323,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	mono_emit_unwind_op_remember_state (cfg, code);
 
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint8 *)mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
+		code = (guint8 *)mono_arch_instrument_epilog (cfg, (gpointer)mono_trace_leave_method, code, TRUE);
 
 	/* the code restoring the registers must be kept in sync with OP_TAILCALL */
 	
@@ -8312,6 +8318,25 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->inst_i1 = args [1];
 		}
 #endif
+
+		if (!cfg->compile_aot && (mono_arch_cpu_enumerate_simd_versions () & SIMD_VERSION_SSE41) && fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R8) {
+			int mode = -1;
+			if (!strcmp (cmethod->name, "Round"))
+				mode = 0;
+			else if (!strcmp (cmethod->name, "Floor"))
+				mode = 1;
+			else if (!strcmp (cmethod->name, "Ceiling"))
+				mode = 2;
+			if (mode != -1) {
+				int xreg = alloc_xreg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_FCONV_TO_R8_X, xreg, args [0]->dreg);
+				EMIT_NEW_UNALU (cfg, ins, OP_SSE41_ROUNDPD, xreg, xreg);
+				ins->inst_c0 = mode;
+				int dreg = alloc_freg (cfg);
+				EMIT_NEW_UNALU (cfg, ins, OP_EXTRACT_R8, dreg, xreg);
+				return ins;
+			}
+		}
 	}
 
 	return ins;

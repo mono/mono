@@ -62,7 +62,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")] // #10263
 		public void Arrays () {
 			IList<CustomAttributeData> cdata = CustomAttributeData.GetCustomAttributes (typeof (CustomAttributeDataTest).GetMethod ("MethodWithAttr"));
 			Assert.AreEqual (1, cdata.Count);

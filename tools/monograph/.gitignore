@@ -3,6 +3,7 @@
 /Makefile
 /Makefile.in
 /monograph
+/*.a
 /*.o
 /*.lo
 /*.exe

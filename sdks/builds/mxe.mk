@@ -28,3 +28,6 @@ $(MXE_PREFIX)/.stamp:
 .PHONY: provision-mxe
 provision-mxe: $(MXE_PREFIX)/.stamp
 endif
+
+.PHONY: provision
+provision: provision-mxe
