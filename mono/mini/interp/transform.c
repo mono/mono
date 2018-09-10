@@ -4437,10 +4437,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				ADD_CODE (td, MINT_MONO_MEMORY_BARRIER);
 				++td->ip;
 				break;
-			case CEE_MONO_JIT_ATTACH:
-			case CEE_MONO_JIT_DETACH:
-				g_error ("transform.c: did not expect to see JIT attach/detach opcode");
-				break;
 			case CEE_MONO_LDDOMAIN:
 				ADD_CODE (td, MINT_MONO_LDDOMAIN);
 				td->sp [0].type = STACK_TYPE_I;
