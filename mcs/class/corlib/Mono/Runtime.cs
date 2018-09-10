@@ -169,7 +169,7 @@ namespace Mono {
 		static extern string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string DumpStateAll_internal (out ulong portable_hash, out ulong unportable_hash);
+		static extern string DumpStateTotal_internal (out ulong portable_hash, out ulong unportable_hash);
 
 		static Tuple<String, ulong, ulong>
 		DumpStateSingle ()
@@ -182,11 +182,11 @@ namespace Mono {
 		}
 
 		static Tuple<String, ulong, ulong>
-		DumpStateAll ()
+		DumpStateTotal ()
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
-			string payload_str = DumpStateAll_internal (out portable_hash, out unportable_hash);
+			string payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
 
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}

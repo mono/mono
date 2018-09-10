@@ -413,8 +413,14 @@ void
 mini_register_sigterm_handler (void)
 {
 #ifndef DISABLE_CRASH_REPORTING
-	/* always catch SIGTERM, conditionals inside of handler */
-	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	static gboolean enabled;
+
+	if (!enabled) {
+		enabled = TRUE;
+
+		/* always catch SIGTERM, conditionals inside of handler */
+		add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	}
 #endif
 }
 
