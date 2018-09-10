@@ -11196,11 +11196,6 @@ mono_ldptr:
 			MONO_ADD_INS (cfg->cbb, ins);
 			break;
 		}
-		case MONO_CEE_MONO_JIT_ATTACH:
-		case MONO_CEE_MONO_JIT_DETACH: {
-			g_error ("Did not expect to see attach/detach opcodes in mini. Should be using mono_threads_attach_coop ()");
-			break;
-		}
 		case MONO_CEE_MONO_LD_DELEGATE_METHOD_PTR: {
 			MonoInst *addr;
 
