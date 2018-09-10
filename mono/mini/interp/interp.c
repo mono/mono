@@ -5104,7 +5104,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				 * we weren't yet attached at interp_entry time.
 				 */
 				g_assert (context == mono_native_tls_get_value (thread_context_id));
-				set_context (context);
 			}
 			MINT_IN_BREAK;
 		}
@@ -5933,6 +5932,15 @@ interp_stop_single_stepping (void)
 	ss_enabled = FALSE;
 }
 
+static void
+interp_thread_attach_cb (void)
+{
+	ThreadContext *context = (ThreadContext*)mono_native_tls_get_value (thread_context_id);
+	if (context == NULL)
+		context = g_new0 (ThreadContext, 1);
+	set_context (context);
+}
+
 void
 mono_ee_interp_init (const char *opts)
 {
@@ -5975,5 +5983,6 @@ mono_ee_interp_init (const char *opts)
 	c.frame_arg_set_storage = interp_frame_arg_set_storage;
 	c.start_single_stepping = interp_start_single_stepping;
 	c.stop_single_stepping = interp_stop_single_stepping;
+	c.thread_attach_cb = interp_thread_attach_cb;
 	mini_install_interp_callbacks (&c);
 }

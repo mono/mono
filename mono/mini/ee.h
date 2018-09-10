@@ -53,6 +53,7 @@ struct _MonoEECallbacks {
 	MonoInterpFrameHandle (*frame_get_parent) (MonoInterpFrameHandle frame);
 	void (*start_single_stepping) (void);
 	void (*stop_single_stepping) (void);
+	void (*thread_attach_cb) (void);
 };
 
 typedef struct _MonoEECallbacks MonoEECallbacks;
