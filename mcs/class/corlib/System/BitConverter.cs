@@ -2,19 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
-using Internal.Runtime.CompilerServices;
 
 namespace System
 {
-    public static partial class BitConverter
+	public static partial class BitConverter
 	{
 		[Intrinsic]
 		public static readonly bool IsLittleEndian;
 
+#if !MOBILE // Should be PLATFROM_LINUX instead
 		static BitConverter () {
 			unsafe {
 				ushort i = 0x1234;
@@ -22,5 +19,6 @@ namespace System
 				IsLittleEndian = (*b == 0x34);
 			}
 		}
+#endif
 	}
 }
