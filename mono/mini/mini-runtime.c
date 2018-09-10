@@ -861,6 +861,15 @@ mono_jit_thread_attach (MonoDomain *domain)
 
 		// #678164
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
+
+		/* mono_jit_thread_attach is external-only and not called by
+		 * the runtime on any of our own threads.  So if we get here,
+		 * the thread is running native code - leave it in GC Safe mode
+		 * and leave it to the n2m invoke wrappers or MONO_API entry
+		 * points to switch to GC Unsafe.
+		 */
+		MONO_STACKDATA (stackdata);
+		mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata);
 	}
 
 	orig = mono_domain_get ();
