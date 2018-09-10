@@ -6002,6 +6002,7 @@ typedef struct {
 	MonoThreadSummary *all_threads [MAX_NUM_THREADS];
 	int nthreads;
 	gint32 summary_state;
+	gboolean silent;
 } SummarizerGlobalState;
 
 static gboolean
@@ -6023,7 +6024,7 @@ summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current,
 }
 
 static void
-summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx, gboolean silent)
+summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx)
 {
 	sigset_t sigset, old_sigset;
 	sigemptyset(&sigset);
@@ -6038,7 +6039,7 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 	#ifdef HAVE_PTHREAD_KILL
 		pthread_kill (state->thread_array [i], SIGTERM);
 
-		if (!silent)
+		if (!state->silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Pkilling 0x%zx from 0x%zx\n", state->thread_array [i], current);
 	#else
 		g_error ("pthread_kill () is not supported by this platform");
@@ -6100,8 +6101,10 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	MonoNativeThreadId current = mono_native_thread_id_get ();
 	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
 
-	if (this_thread_controls)
-		summarizer_signal_other_threads (&state, current, current_idx, silent);
+	if (this_thread_controls) {
+		state.silent = silent;
+		summarizer_signal_other_threads (&state, current, current_idx);
+	}
 
 	MonoThreadSummary this_thread;
 	if (mono_threads_summarize_one (&this_thread, ctx)) {
@@ -6111,19 +6114,19 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 		if (hashes)
 			*hashes = this_thread.hashes;
 
-		if (!silent)
+		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
-	} else if (!silent) {
+	} else if (!state.silent) {
 			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.\n", current);
 	}
 
 	// From summarizer, wait and dump.
 	if (this_thread_controls) {
-		if (!silent)
+		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
 		// Wait 2 seconds for all of the other threads to catch up
 		sleep (2);
-		if (!silent)
+		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
 		// Dump and cleanup all the stack memory
