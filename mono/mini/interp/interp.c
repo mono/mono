@@ -5088,30 +5088,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			mono_memory_barrier ();
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_MONO_JIT_ATTACH) {
-			++ip;
-
-			/* FIXME: add this as a hook to mono_threads_attach_coop () */
-
-			context->original_domain = NULL;
-			MonoDomain *tls_domain = (MonoDomain *) mono_tls_get_domain ();
-			gpointer tls_jit = mono_tls_get_jit_tls ();
-
-			if (tls_domain != rtm->domain || !tls_jit) {
-				context->original_domain = mono_jit_thread_attach_interp (rtm->domain);
-				/*
-				 * Make sure the JitTlsData contains the interp context, in case
-				 * we weren't yet attached at interp_entry time.
-				 */
-				g_assert (context == mono_native_tls_get_value (thread_context_id));
-			}
-			MINT_IN_BREAK;
-		}
-		MINT_IN_CASE(MINT_MONO_JIT_DETACH)
-			++ip;
-
-			mono_jit_set_domain (context->original_domain);
-			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_LDDOMAIN)
 			sp->data.p = mono_domain_get ();
 			++sp;
