@@ -79,6 +79,7 @@ System/ArgIterator.cs
 System/Array.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AssemblyLoadEventArgs.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AssemblyLoadEventHandler.cs
+System/BitConverter.cs
 System/CStreamReader.cs
 System/CStreamWriter.cs
 System/Console.cs
