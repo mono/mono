@@ -5091,7 +5091,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_MONO_THREADS_ATTACH_COOP) {
 			++ip;
 			--sp;
-			sp [-1].data.p = mono_threads_attach_coop ((MonoDomain*)sp[-1].data.p, sp[0].data.p);
+			sp [-1].data.p = mono_threads_attach_coop ((MonoDomain*)sp[-1].data.p, (gpointer*)sp[0].data.p);
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_MONO_LDDOMAIN)
