@@ -247,7 +247,7 @@ System.Reflection/MonoParameterInfo.cs
 System.Reflection/MonoProperty.cs
 System.Reflection/ParameterInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PortableExecutableKinds.cs
-System.Reflection/PropertyInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PropertyInfo.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
