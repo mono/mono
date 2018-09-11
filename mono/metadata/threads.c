@@ -6044,7 +6044,7 @@ summarizer_state_wait (SummarizerGlobalState *state)
 }
 
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent)
+mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent)
 {
 	static SummarizerGlobalState state;
 
@@ -6087,6 +6087,54 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	}
 
 	return TRUE;
+}
+
+gboolean 
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first)
+{
+	// The staggered values are due to the need to use inc_i64 for the first value
+	static gint64 next_pending_request_id = 0;
+	static gint64 request_available_to_run = 1;
+	gint64 this_request_id = mono_atomic_inc_i64 ((volatile gint64 *) &next_pending_request_id);
+
+	// This is a global queue of summary requests. 
+	// It's not safe to signal a thread while they're in the
+	// middle of a dump. Dladdr is not reentrant. It's the one lock
+	// we rely on being able to take. 
+	//
+	// We don't use it in almost any other place in managed code, so 
+	// our problem is in the stack dumping code racing with the signalling code.
+	//
+	// A dump is wait-free to the degree that it's not going to loop indefinitely.
+	// If we're running from a crash handler block, we're not in any position to 
+	// wait for an in-flight dump to finish. If we crashed while dumping, we cannot dump.
+	// We should simply return so we can die cleanly.
+	//
+	// critical_first should be set only from a handler that expects itself to be the only
+	// entry point, where the runtime already being dumping means we can't dump.
+
+	gboolean success = FALSE;
+
+	// We use exponential backoff
+	while (TRUE) {
+		gint64 next_request_id = mono_atomic_load_i64 ((volatile gint64 *) &request_available_to_run);
+
+		if (next_request_id == this_request_id) {
+			success = mono_threads_summarize_execute (ctx, out, hashes, silent);
+
+			// Only the thread that gets the ticket can unblock future dumpers.
+			mono_atomic_inc_i64 ((volatile gint64 *) &request_available_to_run);
+			break;
+		} else if (critical_first) {
+			// We're done. We can't do anything.
+			MOSTLY_ASYNC_SAFE_PRINTF ("Attempted to dump for critical failure when already in dump. Error reporting crashed?");
+			break;
+		} else {
+			sleep (2);
+		}
+	}
+
+	return success;
 }
 
 #endif

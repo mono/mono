@@ -1299,7 +1299,9 @@ copy_summary_string_safe (char *in, const char *out)
 static gboolean
 mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, char *out_name)
 {
-	// We're only able to get reliable info about pointers in this assembly
+	// Note: it's not safe for us to be interrupted while inside of dl_addr, because if we
+	// try to call dl_addr while interrupted while inside the lock, we will try to take a
+	// non-recursive lock twice on this thread, and will deadlock.
 	Dl_info info;
 	int success = dladdr ((void*) mono_get_portable_ip, &info);
 	intptr_t this_module = (intptr_t) info.dli_fbase;
@@ -1384,10 +1386,10 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	if (method && method->wrapper_type != MONO_WRAPPER_NONE) {
 		dest->is_managed = FALSE;
 		dest->unmanaged_data.has_name = TRUE;
-
-		copy_summary_string_safe (dest->str_descr, mono_method_full_name (method, TRUE));
+		char *name = mono_method_get_name_full (method, TRUE, FALSE, MONO_TYPE_NAME_FORMAT_IL);
+		copy_summary_string_safe (dest->str_descr, name);
 	}
-
+	
 	MonoDebugSourceLocation *location = NULL;
 
 	if (managed) {

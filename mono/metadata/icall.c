@@ -5979,7 +5979,9 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	memset (&hashes, 0, sizeof (MonoStackHash));
 	MonoContext *ctx = NULL;
 
-	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE);
+	mono_get_runtime_callbacks ()->install_state_summarizer ();
+
+	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE, FALSE);
 	if (!success)
 		return mono_string_new_handle (mono_domain_get (), "", error);
 
