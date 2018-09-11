@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -41,11 +41,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_EnumBuilder))]
+	//[ComDefaultInterface (typeof (_EnumBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class EnumBuilder : 
 		TypeInfo
-		, _EnumBuilder
+//		, _EnumBuilder
 	{
 		private TypeBuilder _tb;
 		private FieldBuilder _underlyingField;
@@ -401,7 +401,7 @@ namespace System.Reflection.Emit {
 		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
-
+/*
 		void _EnumBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -421,7 +421,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		internal override bool IsUserType {
 			get {
 				return false;

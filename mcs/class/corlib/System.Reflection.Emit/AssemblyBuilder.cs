@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Resources;
@@ -208,10 +208,10 @@ namespace System.Reflection.Emit
 
 
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_AssemblyBuilder))]
+	//[ComDefaultInterface (typeof (_AssemblyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
+	public sealed class AssemblyBuilder : Assembly/*, _AssemblyBuilder*/ {
 #pragma warning disable 169, 414, 649
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_assembly; /* GC-tracked */
@@ -1062,7 +1062,7 @@ namespace System.Reflection.Emit
 		{
 			return new TypeBuilderInstantiation (gtd, typeArguments);
 		}
-
+/*
 		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1082,7 +1082,7 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)

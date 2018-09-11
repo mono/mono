@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -41,10 +41,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_PropertyBuilder))]
+	//[ComDefaultInterface (typeof (_PropertyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
+	public sealed class PropertyBuilder : PropertyInfo/*, _PropertyBuilder*/ {
 
 // Managed version of MonoReflectionPropertyBuilder
 #pragma warning disable 169, 414
@@ -177,7 +177,7 @@ namespace System.Reflection.Emit {
 				return base.Module;
 			}
 		}
-
+/*
                 void _PropertyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
                 {
                         throw new NotImplementedException ();
@@ -197,7 +197,7 @@ namespace System.Reflection.Emit {
                 {
                         throw new NotImplementedException ();
                 }
-
+*/
 		private Exception not_supported ()
 		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");

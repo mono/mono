@@ -32,7 +32,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -42,10 +42,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ParameterBuilder))]
+//	[ComDefaultInterface (typeof (_ParameterBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public class ParameterBuilder : _ParameterBuilder {
+	public class ParameterBuilder /*: _ParameterBuilder*/ {
 
 #pragma warning disable 169, 414
 		private MethodBase methodb; /* MethodBuilder, ConstructorBuilder or DynamicMethod */
@@ -148,7 +148,7 @@ namespace System.Reflection.Emit {
 			marshal_info = unmanagedMarshal;
 			attrs |= ParameterAttributes.HasFieldMarshal;
 		}
-
+/*
                 void _ParameterBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
                 {
                         throw new NotImplementedException ();
@@ -168,6 +168,7 @@ namespace System.Reflection.Emit {
                 {
                         throw new NotImplementedException ();
                 }
+*/
 	}
 }
 

@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;

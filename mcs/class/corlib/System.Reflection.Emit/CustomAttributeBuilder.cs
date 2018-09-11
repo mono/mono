@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -40,10 +40,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_CustomAttributeBuilder))]
+//	[ComDefaultInterface (typeof (_CustomAttributeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public class CustomAttributeBuilder : _CustomAttributeBuilder {
+	public class CustomAttributeBuilder /*: _CustomAttributeBuilder*/ {
 		ConstructorInfo ctor;
 		byte[] data;
 		object [] args;
@@ -538,7 +538,7 @@ namespace System.Reflection.Emit {
 
 			return info;
 		}
-
+/*
 		void _CustomAttributeBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -558,7 +558,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		static ParameterInfo [] GetParameters (ConstructorInfo ctor)
 		{
 			ConstructorBuilder cb = ctor as ConstructorBuilder;

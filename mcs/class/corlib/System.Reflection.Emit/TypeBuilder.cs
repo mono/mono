@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Text;
 using System.Reflection;
@@ -49,10 +49,10 @@ using System.Diagnostics.SymbolStore;
 namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_TypeBuilder))]
+//	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class TypeBuilder : TypeInfo, _TypeBuilder
+	public sealed class TypeBuilder : TypeInfo /*, _TypeBuilder*/
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
@@ -1868,7 +1868,7 @@ namespace System.Reflection.Emit
 				return res;
 		}
 
-
+/*
 		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1888,7 +1888,7 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		internal override bool IsUserType {
 			get {
 				return false;

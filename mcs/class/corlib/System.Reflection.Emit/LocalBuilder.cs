@@ -42,15 +42,11 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-#if !FULL_AOT_RUNTIME
-	[ComDefaultInterface (typeof (_LocalBuilder))]
-#endif
+//	[ComDefaultInterface (typeof (_LocalBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed class LocalBuilder : LocalVariableInfo
-#if !FULL_AOT_RUNTIME
-		, _LocalBuilder
-#endif
+//		, _LocalBuilder
 	{
 
 		// Some fields are already defined in LocalVariableInfo
@@ -112,7 +108,7 @@ namespace System.Reflection.Emit {
 		internal int EndOffset {
 			get { return endOffset; }
 		}
-#if !FULL_AOT_RUNTIME
+/*
 		void _LocalBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -132,6 +128,6 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
+*/
 	}
 }

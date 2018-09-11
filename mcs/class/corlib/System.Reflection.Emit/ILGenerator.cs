@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -187,10 +187,10 @@ namespace System.Reflection.Emit {
 	}		
 
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ILGenerator))]
+//	[ComDefaultInterface (typeof (_ILGenerator))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public class ILGenerator: _ILGenerator {
+	public class ILGenerator /*: _ILGenerator*/ {
 		private struct LabelFixup {
 			public int offset;    // The number of bytes between pos and the
 							      // offset of the jump
@@ -1133,7 +1133,7 @@ namespace System.Reflection.Emit {
 		virtual int ILOffset {
 			get { return code_len; }
 		}
-
+/*
 		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1153,6 +1153,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+*/
 	}
 	
 	internal class SequencePointList

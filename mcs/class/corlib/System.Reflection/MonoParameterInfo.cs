@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.CompilerServices;
@@ -50,7 +50,7 @@ namespace System.Reflection
 	[StructLayout (LayoutKind.Sequential)]
 	class MonoParameterInfo : RuntimeParameterInfo {
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;

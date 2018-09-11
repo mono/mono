@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.CompilerServices;
@@ -40,7 +40,9 @@ using System.Runtime.Serialization;
 namespace System.Reflection
 {
 	[ComVisible (true)]
+#if !MOBILE	
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
+#endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
@@ -292,7 +294,7 @@ namespace System.Reflection
 			throw new NotImplementedException ();
 		}
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
 		{
 			return new MonoParameterInfo (pb, type, member, position);

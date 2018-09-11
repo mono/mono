@@ -30,7 +30,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Collections;
@@ -44,10 +44,10 @@ using System.Globalization;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ModuleBuilder))]
+	//[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public class ModuleBuilder : Module, _ModuleBuilder {
+	public class ModuleBuilder : Module/*, _ModuleBuilder*/ {
 
 #pragma warning disable 169, 414
 		#region Sync with object-internals.h
@@ -1023,7 +1023,7 @@ namespace System.Reflection.Emit {
 		{
 			return mb.GetModuleVersionId ();
 		}
-
+/*
 		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1043,7 +1043,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}

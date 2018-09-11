@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -44,10 +44,10 @@ using System.Diagnostics.SymbolStore;
 namespace System.Reflection.Emit {
 
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ConstructorBuilder))]
+	//[ComDefaultInterface (typeof (_ConstructorBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class ConstructorBuilder : ConstructorInfo, _ConstructorBuilder {
+	public sealed class ConstructorBuilder : ConstructorInfo/*, _ConstructorBuilder*/ {
 	
 #pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
@@ -421,7 +421,7 @@ namespace System.Reflection.Emit {
 		{
 			return new NotSupportedException ("The type is not yet created.");
 		}
-
+/*
 		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -441,6 +441,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+*/
 	}
 }
 #endif

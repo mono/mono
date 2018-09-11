@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -41,10 +41,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_EventBuilder))]
+	//[ComDefaultInterface (typeof (_EventBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class EventBuilder : _EventBuilder {
+	public sealed class EventBuilder /*: _EventBuilder*/ {
 #pragma warning disable 169, 414
 		internal string name;
 		Type type;
@@ -139,7 +139,7 @@ namespace System.Reflection.Emit {
 			if (typeb.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
 		}
-
+/*
 		void _EventBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -159,6 +159,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+*/
 	}
 }
 

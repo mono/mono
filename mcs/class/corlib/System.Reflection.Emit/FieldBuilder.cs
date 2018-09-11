@@ -31,7 +31,7 @@
 // (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -41,10 +41,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_FieldBuilder))]
+	//[ComDefaultInterface (typeof (_FieldBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
+	public sealed class FieldBuilder : FieldInfo/*, _FieldBuilder*/ {
 	
 #pragma warning disable 169, 414
 		private FieldAttributes attrs;
@@ -244,7 +244,7 @@ namespace System.Reflection.Emit {
 				return base.Module;
 			}
 		}
-
+/*
 		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -264,6 +264,7 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+*/
 	}
 }
 

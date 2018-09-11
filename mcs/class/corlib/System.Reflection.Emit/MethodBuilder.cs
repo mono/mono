@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -45,10 +45,10 @@ using System.Collections.Generic;
 namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_MethodBuilder))]
+	//[ComDefaultInterface (typeof (_MethodBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
+	public sealed class MethodBuilder : MethodInfo/*, _MethodBuilder*/
 	{
 #pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
@@ -696,7 +696,7 @@ namespace System.Reflection.Emit
 				return GetModule ();
 			}
 		}
-
+/*
 		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -716,7 +716,7 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
-
+*/
 		public override ParameterInfo ReturnParameter {
 			get { return base.ReturnParameter; }
 		}
