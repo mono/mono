@@ -388,6 +388,8 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 static MonoAssembly*
 prevent_reference_assembly_from_running (MonoAssembly* candidate, gboolean refonly);
 
+static gint32 mono_assembly_dropref (MonoAssembly *assembly, gboolean pinning);
+
 /* Assembly name matching */
 static gboolean
 exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name);
@@ -399,6 +401,9 @@ mono_asmctx_get_name (const MonoAssemblyContext *asmctx);
 
 static gboolean
 assembly_loadfrom_asmctx_from_path (const char *filename, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
+
+static void
+force_close_except_image_pools (MonoAssembly *assm);
 
 static gchar*
 encode_public_tok (const guchar *token, gint32 len)
@@ -1248,9 +1253,21 @@ assemblyref_public_tok_checked (MonoImage *image, guint32 key_index, guint32 fla
  * invoked.
  */
 void
-mono_assembly_addref (MonoAssembly *assembly)
+mono_assembly_addref (MonoAssembly *assembly, gboolean pinning)
 {
 	mono_atomic_inc_i32 (&assembly->ref_count);
+	/* Order matters: increment pincount second */
+	if (pinning)
+		mono_atomic_inc_i32 (&assembly->pin_count);
+}
+
+gint32
+mono_assembly_dropref (MonoAssembly *assembly, gboolean pinning)
+{
+	/* Order matters: decrement pincount first */
+	if (pinning)
+		mono_atomic_dec_i32 (&assembly->pin_count);
+	return mono_atomic_dec_i32 (&assembly->ref_count);
 }
 
 /*
@@ -1707,10 +1724,10 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	if (!image->references [index]) {
 		if (reference != REFERENCE_MISSING){
-			mono_assembly_addref (reference);
+			mono_assembly_addref (reference, FALSE);
 			if (image->assembly)
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s[%p] -> %s[%p]: %d",
-				    image->assembly->aname.name, image->assembly, reference->aname.name, reference, reference->ref_count);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s[%p] -> %s[%p]: %d; pin_count = %d",
+					    image->assembly->aname.name, image->assembly, reference->aname.name, reference, m_assembly_get_ref_count (reference), m_assembly_get_pin_count (reference));
 		} else {
 			if (image->assembly)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Failed to load assembly %s[%p].",
@@ -1723,7 +1740,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	if (image->references [index] != reference) {
 		/* Somebody loaded it before us */
-		mono_assembly_close (reference);
+		mono_assembly_close_internal (reference, FALSE);
 	}
 }
 
@@ -4505,27 +4522,39 @@ mono_assembly_release_gc_roots (MonoAssembly *assembly)
  * unload in two steps.
  */
 gboolean
-mono_assembly_close_except_image_pools (MonoAssembly *assembly)
+mono_assembly_close_except_image_pools (MonoAssembly *assembly, mono_bool drop_pinning)
 {
-	GSList *tmp;
 	g_return_val_if_fail (assembly != NULL, FALSE);
 
 	if (assembly == REFERENCE_MISSING)
 		return FALSE;
 
 	/* Might be 0 already */
-	if (mono_atomic_dec_i32 (&assembly->ref_count) > 0)
+	if (mono_assembly_dropref (assembly, drop_pinning) > 0) {
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Dropref assembly %s [%p] ref_count=%d, pin_count=%d", assembly->aname.name, assembly, m_assembly_get_ref_count (assembly), m_assembly_get_pin_count (assembly));
 		return FALSE;
+	}
+
+	mono_assemblies_lock ();
+	loaded_assemblies = g_list_remove (loaded_assemblies, assembly);
+	mono_assemblies_unlock ();
+
+	force_close_except_image_pools (assembly);
+
+	return TRUE;
+}
+
+
+void
+force_close_except_image_pools (MonoAssembly *assembly)
+{
+	GSList *tmp;
 
 	MONO_PROFILER_RAISE (assembly_unloading, (assembly));
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading assembly %s [%p].", assembly->aname.name, assembly);
 
 	mono_debug_close_image (assembly->image);
-
-	mono_assemblies_lock ();
-	loaded_assemblies = g_list_remove (loaded_assemblies, assembly);
-	mono_assemblies_unlock ();
 
 	assembly->image->assembly = NULL;
 
@@ -4541,8 +4570,6 @@ mono_assembly_close_except_image_pools (MonoAssembly *assembly)
 	g_free (assembly->basedir);
 
 	MONO_PROFILER_RAISE (assembly_unloaded, (assembly));
-
-	return TRUE;
 }
 
 void
@@ -4570,9 +4597,17 @@ mono_assembly_close_finish (MonoAssembly *assembly)
 void
 mono_assembly_close (MonoAssembly *assembly)
 {
-	if (mono_assembly_close_except_image_pools (assembly))
+	mono_assembly_close_internal (assembly, TRUE);
+}
+
+void
+mono_assembly_close_internal (MonoAssembly *assembly, mono_bool drop_pinning)
+{
+	if (mono_assembly_close_except_image_pools (assembly, drop_pinning))
 		mono_assembly_close_finish (assembly);
 }
+
+
 
 /**
  * mono_assembly_load_module:
@@ -4908,4 +4943,347 @@ mono_asmctx_get_name (const MonoAssemblyContext *asmctx)
 	};
 	g_assert (asmctx->kind >= 0 && asmctx->kind <= MONO_ASMCTX_LAST);
 	return names [asmctx->kind];
+}
+
+/*********************************************************************************/
+/* Assembly garbage collection */
+
+typedef struct _Worklist {
+	GQueue *grey_queue;
+} Worklist;
+
+typedef struct _Freelist {
+	GList *free_list;
+} Freelist;
+
+
+static Worklist *
+worklist_init (void)
+{
+	Worklist *w = g_new0 (Worklist, 1);
+	w->grey_queue = g_queue_new ();
+	return w;
+}
+
+static void
+worklist_free (Worklist *w)
+{
+	if (!w)
+		return;
+	g_queue_free (w->grey_queue);
+	g_free (w);
+}
+
+static void
+worklist_push (Worklist *w, MonoAssembly *assm)
+{
+	g_queue_push_tail (w->grey_queue, assm);
+}
+
+static gboolean
+worklist_pop (Worklist *w, MonoAssembly **out_assm)
+{
+	MonoAssembly *assm = (MonoAssembly *)g_queue_pop_head (w->grey_queue);
+	*out_assm = assm;
+	return assm != NULL;
+}
+
+static Freelist*
+freelist_init (void)
+{
+	Freelist *fl = g_new (Freelist, 1);
+	fl->free_list = NULL;
+	return fl;
+}
+
+static void
+freelist_free (Freelist *fl)
+{
+	if (!fl)
+		return;
+	g_list_free (fl->free_list);
+	g_free (fl);
+}
+
+static void
+freelist_add (Freelist *fl, MonoAssembly *assm)
+{
+	fl->free_list = g_list_prepend (fl->free_list, assm);
+}
+
+static void
+mark_phase (void);
+static void
+mark_pinned (Worklist *w);
+
+static void
+scan_reachable (Worklist *w);
+
+static void
+scan_assembly (Worklist *w, MonoAssembly *assm);
+
+static void
+scan_image_references (Worklist *w, MonoImage *image);
+
+static void
+sweep_phase (Freelist *fl);
+
+static void
+freelist_close_assemblies (Freelist *fl);
+
+static gboolean
+is_pinned (MonoAssembly *assm)
+{
+	return m_assembly_get_pin_count (assm) > 0;
+}
+
+static gboolean
+is_marked (MonoAssembly *assm)
+{
+	return !!assm->gc_mark;
+}
+
+static void
+assembly_set_mark (MonoAssembly *assm)
+{
+	assm->gc_mark = 1;
+}
+
+static void
+assembly_unset_mark (MonoAssembly *assm)
+{
+	assm->gc_mark = 0;
+}
+
+/* mono_assembly_collect_unreachable:
+ *
+ * mark/sweep GC of the loaded assemblies, treating domains as
+ * the roots and following image references. A positive pin_count means
+ * the assembly still has references from the outside somewhere.
+ *
+ * LOCKING: takes the assemblies_mutex
+ */
+void
+mono_assembly_collect_unreachable (void)
+{
+	/* Grey queue invariant: reachable bit is set; pin_count = 0.
+	 * 
+	 * Push invariant: if the reachable bit is marked the object is either
+	 * already on the queue or used to be on the queue but has now been
+	 * scanned.  Don't push it again.  When pushing, mark the reachable bit.
+	 * 
+	 * # Lock the assembly lock #
+	 * - Mark phase -
+	 *
+	 * 1. Iterate over all the assemblies, push everything with a positive pin_count
+	 *    on the grey queue.
+	 *
+	 * 2. While grey queue is not empty:
+	 *    Take an object off the queue
+	 *      push all its image->references
+	 *
+	 * - Sweep phase -
+	 *
+	 * 3. Iterate over all the assemblies:
+	 *      if reachable bit is set, unset it.
+	 *      else add one pinning ref to each candidate assembly (to prevent them from going away from another GC)
+	 *      and collect into a free list.
+	 *
+	 * # Unlock the assembly lock #
+	 *
+	 * - Reclaim phase -
+	 *
+	 * # Lock the assembly lock #
+	 * 4. For each assembly in the free list:
+	 *    a. remove it from loaded_assemblies
+	 *    b. decrement refcounts of all refrenced assemblies, but don't close any of them;
+	 *       set each references to NULL.
+	 *    At this point closing an assembly in the free list won't affect any other assembly.
+	 * # Unlock the assembly lock #
+	 * 5. For each assembly in the free list, force close it (it still has pin_count = 1).
+	 */
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Running Assembly Collection ");
+
+	Freelist *freelist = freelist_init ();
+	{
+		mono_assemblies_lock ();
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Running Mark Phase ");
+		mark_phase ();
+
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Running Sweep Phase ");
+		sweep_phase (freelist);
+
+		mono_assemblies_unlock ();
+	}
+
+	freelist_close_assemblies (freelist);
+	freelist_free (freelist);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Finished Assembly Collection ");
+
+}
+
+static void
+image_mark_func (MonoImage* image, gpointer user_data)
+{
+	Worklist *w = (Worklist*)user_data;
+	scan_image_references (w, image);
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+mark_phase (void)
+{
+	Worklist *w = worklist_init ();
+
+	/* mark roots */
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Marking pinned assemblies");
+
+	/* Mark assemblies referenced by the exe_image.  It is unloaded late, so we can't unload its assemblies early. */
+	mono_assembly_collect_mark_exe_image (&image_mark_func, (gpointer)w);
+	mark_pinned (w);
+
+	/* mark objects reachable from the queue */
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Scanning and marking queued reachable assemblies");
+	scan_reachable (w);
+
+	worklist_free (w);
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+mark_pinned (Worklist *w)
+{
+	for (GList *l = loaded_assemblies; l; l = l->next) {
+		MonoAssembly *assm = (MonoAssembly *)l->data;
+		if (is_pinned (assm) && !is_marked (assm)) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Marking %s", assm->aname.name);
+			assembly_set_mark (assm);
+			scan_assembly (w, assm);
+		}
+	}
+}
+
+static void
+scan_image_references (Worklist *w, MonoImage *image)
+{
+	for (int i = 0; i < image->nreferences; i++) {
+		MonoAssembly *ref_assm = image->references [i];
+		if (ref_assm && ref_assm != REFERENCE_MISSING && !is_marked (ref_assm)) {
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Marking and pushing %s [%d] = %s", image->name, i, ref_assm->aname.name);
+			assembly_set_mark (ref_assm);
+			worklist_push (w, ref_assm);
+		}
+	}
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+scan_assembly (Worklist *w, MonoAssembly *assm)
+{
+	g_assertf (is_marked (assm), "Assembly %s in worklist wasn't marked", assm->aname.name);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Scanning %s", assm->aname.name);
+	scan_image_references (w, assm->image);
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+scan_reachable (Worklist *w)
+{
+	MonoAssembly *assm;
+	while (worklist_pop (w, &assm)) {
+		scan_assembly (w, assm);
+	}
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+sweep_phase (Freelist *fl)
+{
+	for (GList *l = loaded_assemblies; l; l = l->next) {
+		MonoAssembly *assm = (MonoAssembly *)l->data;
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Sweep of %s (%s) pin_count = %d", assm->aname.name, is_marked (assm) ? "marked" : "unmarked", m_assembly_get_pin_count (assm));
+		if (is_marked (assm)) {
+			assembly_unset_mark (assm);
+			continue;
+		}
+		g_assertf (m_assembly_get_pin_count (assm) == 0, "Assembly %s had pin count %d (ref count %d) expected 0", assm->aname.name, m_assembly_get_pin_count (assm), m_assembly_get_ref_count (assm));
+
+		/* Add 1 pinning ref to the reclaim candidate assembly.  We
+		 * will be force-closing outside the assemblies lock, but until
+		 * then it should stay alive.
+		 */
+		mono_assembly_addref (assm, TRUE);
+		freelist_add (fl, assm);
+	}
+}
+
+static void
+freelist_prepare_to_close (MonoAssembly *assm);
+static void
+freelist_force_close (MonoAssembly *assm);
+
+/* LOCKING: takes the assemblies lock */
+static void
+freelist_close_assemblies (Freelist *fl)
+{
+	GList *l;
+
+	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+		for (l = fl->free_list; l; l = l->next) {
+			MonoAssembly *assm = (MonoAssembly *)l->data;
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Candidate for freeing: %s (pin_count = %d, ref_count = %d)", assm->aname.name, m_assembly_get_pin_count (assm), m_assembly_get_ref_count (assm));
+		}
+	}
+	
+
+	/* while holding the lock, remove all the freelist assemblies from
+	 * loaded_assemblies and also drop the reference count and clear all
+	 * references.  Do this all before freeing anything so that
+	 * mono_image_close_except_pools () only affects the dying assembly and
+	 * not any references.
+	 */
+	mono_assemblies_lock ();
+	for (l = fl->free_list; l; l = l->next) {
+		MonoAssembly *assm = (MonoAssembly *)l->data;
+		loaded_assemblies = g_list_remove (loaded_assemblies, assm);
+		freelist_prepare_to_close (assm);
+	}
+	mono_assemblies_unlock();
+
+	for (l = fl->free_list; l; l = l->next) {
+		MonoAssembly *assm = (MonoAssembly *)l->data;
+		freelist_force_close (assm);
+	}
+}
+
+/* LOCKING: assumes assemblies are locked */
+static void
+freelist_prepare_to_close (MonoAssembly *assm)
+{
+	/* Drop the refcount (in case we're referencing a real non-garbage
+	 * assembly) and arrange it so that mono_image_close_except_pool
+	 * doesn't try to follow any references and free them.
+	 *
+	 * This way, no matter what order we process the freelist, we
+	 * only process one assembly at a time and don't end up trying
+	 * to free the same assembly twice.
+	 */
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Dropping refcounts of assemblies referenced from %s, but not closing them", assm->aname.name);
+	for (int i = 0; i < assm->image->nreferences; i++) {
+		MonoAssembly *ref_assm = assm->image->references[i];
+		if (ref_assm != NULL &&  ref_assm != REFERENCE_MISSING) {
+			mono_assembly_dropref (ref_assm, FALSE);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Refcount of %s is ref count = %d, pin count = %d", ref_assm->aname.name, m_assembly_get_ref_count (ref_assm), m_assembly_get_pin_count (ref_assm));
+		}
+		assm->image->references[i] = NULL;
+	}
+}
+
+/* LOCKING: */
+static void
+freelist_force_close (MonoAssembly *assm)
+{
+	force_close_except_image_pools (assm);
+	mono_assembly_close_finish (assm);
 }

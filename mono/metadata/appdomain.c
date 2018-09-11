@@ -1393,10 +1393,10 @@ add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *ht)
 	/* FIXME: handle lazy loaded assemblies */
 
 	if (!g_hash_table_lookup (ht, ass)) {
-		mono_assembly_addref (ass);
+		mono_assembly_addref (ass, TRUE);
 		g_hash_table_insert (ht, ass, ass);
 		domain->domain_assemblies = g_slist_append (domain->domain_assemblies, ass);
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly %s[%p] added to domain %s, ref_count=%d", ass->aname.name, ass, domain->friendly_name, ass->ref_count);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly %s[%p] added to domain %s, ref_count=%d, pin_count=%d", ass->aname.name, ass, domain->friendly_name, m_assembly_get_ref_count (ass), m_assembly_get_pin_count (ass));
 	}
 
 	if (ass->image->references) {

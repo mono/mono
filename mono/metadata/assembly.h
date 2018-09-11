@@ -45,7 +45,7 @@ MONO_API void          mono_assembly_get_assemblyref (MonoImage *image, int inde
 MONO_API void          mono_assembly_load_reference (MonoImage *image, int index);
 MONO_API void          mono_assembly_load_references (MonoImage *image, MonoImageOpenStatus *status);
 MONO_API MONO_RT_EXTERNAL_ONLY MonoImage*    mono_assembly_load_module (MonoAssembly *assembly, uint32_t idx);
-MONO_API void          mono_assembly_close      (MonoAssembly *assembly);
+MONO_API MONO_RT_EXTERNAL_ONLY void          mono_assembly_close      (MonoAssembly *assembly);
 MONO_API void          mono_assembly_setrootdir (const char *root_dir);
 MONO_API MONO_CONST_RETURN char *mono_assembly_getrootdir (void);
 MONO_API char         *mono_native_getrootdir (void);

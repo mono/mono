@@ -2118,7 +2118,7 @@ mono_image_close_except_pools (MonoImage *image)
 	if (image->references && !image_is_dynamic (image)) {
 		for (i = 0; i < image->nreferences; i++) {
 			if (image->references [i] && image->references [i] != REFERENCE_MISSING) {
-				if (!mono_assembly_close_except_image_pools (image->references [i]))
+				if (!mono_assembly_close_except_image_pools (image->references [i], FALSE))
 					image->references [i] = NULL;
 			}
 		}

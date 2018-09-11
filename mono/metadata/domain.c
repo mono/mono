@@ -129,6 +129,8 @@ get_runtime_by_version (const char *version);
 MonoAssembly *
 mono_domain_assembly_open_internal (MonoDomain *domain, const char *name);
 
+static gboolean mono_option_collect_assemblies (void);
+
 static LockFreeMempool*
 lock_free_mempool_new (void)
 {
@@ -617,6 +619,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		
 		exit (1);
 	}
+
 	mono_defaults.corlib = mono_assembly_get_image_internal (ass);
 
 	mono_defaults.object_class = mono_class_load_from_name (
@@ -883,8 +886,15 @@ mono_cleanup (void)
 void
 mono_close_exe_image (void)
 {
-	if (exe_image)
-		mono_image_close (exe_image);
+	if (exe_image) {
+		MonoImage *image = exe_image;
+		exe_image = NULL;
+		mono_image_close (image);
+		/* Unload any cyclic references that are no longer referenced by the main assembly */
+		if (mono_option_collect_assemblies ())
+			mono_assembly_collect_unreachable ();
+
+	}
 }
 
 /**
@@ -1055,6 +1065,16 @@ unregister_vtable_reflection_type (MonoVTable *vtable)
 		MONO_GC_UNREGISTER_ROOT_IF_MOVING (vtable->type);
 }
 
+static gboolean
+mono_option_collect_assemblies (void)
+{
+	static int do_collect = -1;
+	if (G_UNLIKELY (do_collect < 0)) {
+		do_collect = g_hasenv ("MONO_DONT_GC_ASSM") ? 0 : 1;
+	}
+	return do_collect != 0;
+}
+
 /**
  * mono_domain_free:
  * \param domain the domain to release
@@ -1138,8 +1158,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		MonoAssembly *ass = (MonoAssembly *)tmp->data;
 		if (!ass->image || !image_is_dynamic (ass->image))
 			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
-		if (!mono_assembly_close_except_image_pools (ass))
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d, pin_count=%d", domain->friendly_name, domain, ass->aname.name, ass, m_assembly_get_ref_count (ass), m_assembly_get_pin_count (ass));
+		if (!mono_assembly_close_except_image_pools (ass, TRUE))
 			tmp->data = NULL;
 	}
 
@@ -1149,8 +1169,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 			continue;
 		if (!ass->image || image_is_dynamic (ass->image))
 			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
-		if (!mono_assembly_close_except_image_pools (ass))
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d, pin_count=%d", domain->friendly_name, domain, ass->aname.name, ass, m_assembly_get_ref_count (ass), m_assembly_get_pin_count (ass));
+		if (!mono_assembly_close_except_image_pools (ass, TRUE))
 			tmp->data = NULL;
 	}
 
@@ -1161,6 +1181,9 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	}
 	g_slist_free (domain->domain_assemblies);
 	domain->domain_assemblies = NULL;
+
+	if (mono_option_collect_assemblies ())
+		mono_assembly_collect_unreachable ();
 
 	/* 
 	 * Send this after the assemblies have been unloaded and the domain is still in a 
@@ -2004,4 +2027,13 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 	}
 	mono_domain_assemblies_unlock (domain);
 	return assemblies;
+}
+
+void
+mono_assembly_collect_mark_exe_image (MonoAssemblyGCImageMarkFunc func, gpointer user_data)
+{
+	if (exe_image) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Marking exe_image %s", exe_image->name);
+		func (exe_image, user_data);
+	}
 }

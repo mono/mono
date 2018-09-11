@@ -122,8 +122,48 @@ struct _MonoAssembly {
 	 * might point to assemblies which are only loaded in some appdomains, and without
 	 * the additional reference, they can be freed at any time.
 	 * The ref_count is initially 0.
+	 *
+	 * Note that this is broken for assemblies with cyclic references which
+	 * will never be unloaded even if every domain that referenced them is
+	 * unloaded.
+	 *
+	 * To fix that, we keep a second "pin_count" which excludes image
+	 * references, but includes domain references.
+	 *
+	 * The invariant is that pin_count <= ref_count.
+	 * If the pin count is > 0, we cannot free the assembly.
+	 * If the pin count is = 0, the assembly may be garbage:
+	 *   - if the ref count is = 0 the assembly actually is garbage and we can free it eagerly.
+	 *   - if the ref count is > 0 we don't know if it's reachable or if it's part of a cycle.
+	 *
+	 * We periodically (at domain unload) run a tracing GC that attempt to
+	 * free the cycles.
+	 *
+	 * The correct order of operations if incrementing both counts is to
+	 * increment ref_count first, followed by the pinning count.  Decrement
+	 * should use the opposite order.
+	 *
+	 * WONTFIX: There is a problem here for embedders: mono_assembly_open() and
+	 * other APIs that don't reference a domain will hand back assemblies
+	 * without incrementing their refcounts.  So once we start running a GC
+	 * on domain unload, the assembly will go away.  This was already a
+	 * problem, however, for embedders if there were multiple threads and
+	 * one of them called mono_assembly_close() that was open in both.
+	 *
+	 * FIXME: There is also a race here for Mono.  If one thread tries to
+	 * open an assembly while another is running the GC, the fresh assembly
+	 * will be added to loaded_assemblies before its pinning count could be
+	 * incremented.  that means the GC may consider it garbage since it
+	 * hasn't been added to a domain or an image->references yet.  A
+	 * solution would be to have a flag on assembly open indicating to
+	 * pre-pin the fresh assembly and then to transfer the pin to the image
+	 * or the domain (or drop it if two threads race to open and one
+	 * loses).
+	 *  
+	 *
 	 */
-	int ref_count; /* use atomic operations only */
+	gint32 ref_count; /* use atomic operations only */
+	gint32 pin_count; /* use atomic operations only */
 	char *basedir;
 	MonoAssemblyName aname;
 	MonoImage *image;
@@ -143,6 +183,7 @@ struct _MonoAssembly {
 	guint32 fulltrust:2;	/* Has FullTrust permission */
 	guint32 unmanaged:2;	/* Has SecurityPermissionFlag.UnmanagedCode permission */
 	guint32 skipverification:2;	/* Has SecurityPermissionFlag.SkipVerification permission */
+	guint32 gc_mark:1;      /* Used by mono_assembly_collect_unreachable(). Value is invalid outside a collection */
 };
 
 typedef struct {
@@ -865,12 +906,12 @@ gboolean
 mono_metadata_generic_param_equal (MonoGenericParam *p1, MonoGenericParam *p2);
 
 void mono_dynamic_stream_reset  (MonoDynamicStream* stream);
-MONO_API void mono_assembly_addref       (MonoAssembly *assembly);
+MONO_API void mono_assembly_addref       (MonoAssembly *assembly, gboolean pinning);
 void mono_assembly_load_friends (MonoAssembly* ass);
 gboolean mono_assembly_has_skip_verification (MonoAssembly* ass);
 
 void mono_assembly_release_gc_roots (MonoAssembly *assembly);
-gboolean mono_assembly_close_except_image_pools (MonoAssembly *assembly);
+gboolean mono_assembly_close_except_image_pools (MonoAssembly *assembly, mono_bool drop_pinning);
 void mono_assembly_close_finish (MonoAssembly *assembly);
 
 

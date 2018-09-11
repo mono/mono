@@ -31,6 +31,7 @@ typedef enum {
 	MONO_ANAME_EQ_MASK = 0x7
 } MonoAssemblyNameEqFlags;
 
+
 void
 mono_assembly_name_free_internal (MonoAssemblyName *aname);
 
@@ -114,5 +115,21 @@ mono_assembly_get_name_internal (MonoAssembly *assembly);
 
 MONO_PROFILER_API MonoImage*
 mono_assembly_get_image_internal (MonoAssembly *assembly);
+
+MONO_PROFILER_API void
+mono_assembly_close_internal (MonoAssembly *assembly, mono_bool drop_pinning);
+
+void
+mono_assembly_collect_unreachable (void);
+
+static inline
+gint32 m_assembly_get_ref_count (MonoAssembly *assembly) {
+	return (gint32)assembly->ref_count;
+}
+
+static inline
+gint32 m_assembly_get_pin_count (MonoAssembly *assembly) {
+	return assembly->pin_count;
+}
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

@@ -647,4 +647,10 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
 
+/* Passed by the assembly collector to mono_assembly_collect_mark_exe_image */
+typedef void (*MonoAssemblyGCImageMarkFunc)(MonoImage *, gpointer user_data);
+
+void
+mono_assembly_collect_mark_exe_image (MonoAssemblyGCImageMarkFunc func, gpointer user_data);
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

@@ -1321,6 +1321,7 @@ mono_reflection_dynimage_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	MONO_PROFILER_RAISE (assembly_loading, (&assembly->assembly));
 	
 	assembly->assembly.ref_count = 1;
+	assembly->assembly.pin_count = 1; /* Added to domain, below */
 	assembly->assembly.dynamic = TRUE;
 	assembly->assembly.corlib_internal = assemblyb->corlib_internal;
 	assemblyb->assembly.assembly = (MonoAssembly*)assembly;
