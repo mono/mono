@@ -2067,6 +2067,32 @@ mono_gc_ephemeron_array_add (MonoObject *obj)
 	return TRUE;
 }
 
+#ifdef __cplusplus
+
+// Provide overloads for clients compiled for sgen.
+
+struct _SgenThreadInfo;
+
+gpointer
+mono_gc_thread_attach (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_attach ((MonoThreadInfo*)info);
+}
+
+void
+mono_gc_thread_detach_with_lock (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_detach_with_lock ((MonoThreadInfo*)info);
+}
+
+gboolean
+mono_gc_thread_in_critical_region (struct _SgenThreadInfo *info)
+{
+	return mono_gc_thread_in_critical_region ((MonoThreadInfo*)info);
+}
+
+#endif // __cplusplus
+
 #else
 
 MONO_EMPTY_SOURCE_FILE (boehm_gc);
