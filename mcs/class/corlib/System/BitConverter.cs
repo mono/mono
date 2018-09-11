@@ -11,14 +11,13 @@ namespace System
 		[Intrinsic]
 		public static readonly bool IsLittleEndian;
 
-#if !MOBILE // Should be PLATFORM_LINUX instead
-		static BitConverter () {
+		static BitConverter ()
+		{
 			unsafe {
 				ushort i = 0x1234;
 				byte *b = (byte*)&i;
 				IsLittleEndian = (*b == 0x34);
 			}
 		}
-#endif
 	}
 }
