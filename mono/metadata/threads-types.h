@@ -550,7 +550,10 @@ typedef struct {
 } MonoThreadSummary;
 
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent);
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first);
+
+gboolean
+mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent);
 
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
