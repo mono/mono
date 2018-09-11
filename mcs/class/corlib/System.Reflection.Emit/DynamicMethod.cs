@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 
 using System;
 using System.Reflection;
@@ -424,8 +424,9 @@ namespace System.Reflection.Emit {
 		}
 
 		// This class takes care of constructing the module in a thread safe manner
-		class AnonHostModuleHolder {
-			public static Module anon_host_module;
+		static class AnonHostModuleHolder
+		{
+			public static readonly Module anon_host_module;
 
 			static AnonHostModuleHolder () {
 				AssemblyName aname = new AssemblyName ();
