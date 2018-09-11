@@ -100,7 +100,6 @@ mobile_common_dirs_parallel := \
 	System.Net.Http	\
 	System.Windows \
 	System.Xml.Serialization \
-	Mono.CSharp	\
 	Microsoft.CSharp \
 	System.Reflection.Context	\
 	System.Net.Http.WinHttpHandler \
@@ -108,7 +107,8 @@ mobile_common_dirs_parallel := \
 
 testing_aot_full_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	Mono.Simd
+	Mono.Simd \
+	Mono.CSharp
 
 testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
@@ -120,7 +120,8 @@ monodroid_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
-	Mono.Posix
+	Mono.Posix \
+	Mono.CSharp
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
@@ -129,7 +130,8 @@ monodroid_tools_dirs_parallel := \
 
 monotouch_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	Mono.Simd
+	Mono.Simd \
+	Mono.CSharp
 
 monotouch_watch_dirs_parallel := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs_parallel))
 
@@ -167,7 +169,7 @@ wasm_dirs_parallel := \
 	System.Drawing
 
 orbis_dirs_parallel := \
-	$(filter-out Microsoft.CSharp Mono.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
+	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
 	System.Drawing
 
 xammac_4_5_dirs_parallel := \
