@@ -1916,6 +1916,7 @@
     <Compile Include="System\ApplicationIdentity.cs" />
     <Compile Include="System\ArgIterator.cs" />
     <Compile Include="System\Array.cs" />
+    <Compile Include="System\BitConverter.cs" />
     <Compile Include="System\CStreamReader.cs" />
     <Compile Include="System\CStreamWriter.cs" />
     <Compile Include="System\Console.cs" />
