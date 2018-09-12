@@ -54580,7 +54580,7 @@
         <size>19</size>
       </method>
       <method name="Void Main()" attrs="150">
-        <size>247</size>
+        <size>281</size>
       </method>
       <method name="Void &lt;BaseM&gt;__BaseCallProxy0()" attrs="129">
         <size>7</size>
@@ -54649,6 +54649,9 @@
       </method>
       <method name="Void &lt;Main&gt;m__5(E)" attrs="145">
         <size>35</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__6()" attrs="145">
+        <size>4</size>
       </method>
     </type>
   </test>
