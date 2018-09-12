@@ -139,12 +139,34 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android
+        # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
+        # but doesn't get stuck when called via the shell, so let's just call it here now.
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
             ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
         fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm-llvm{,win}{32,64}
+        ${TESTCMD} --label=provision-llvm --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm-llvm{,win}{32,64}
         ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-android-{armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+        ${TESTCMD} --label=package --timeout=60m --fatal make -C sdks/android package
+        ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
+        ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
+        ${TESTCMD} --label=System --timeout=60m make -C sdks/android check-System
+        ${TESTCMD} --label=System.Core --timeout=60m make -C sdks/android check-System.Core
+        ${TESTCMD} --label=System.Data --timeout=60m make -C sdks/android check-System.Data
+        ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=60m make -C sdks/android check-System.IO.Compression.FileSystem
+        ${TESTCMD} --label=System.IO.Compression --timeout=60m make -C sdks/android check-System.IO.Compression
+        ${TESTCMD} --label=System.Json --timeout=60m make -C sdks/android check-System.Json
+        ${TESTCMD} --label=System.Net.Http --timeout=60m make -C sdks/android check-System.Net.Http
+        ${TESTCMD} --label=System.Numerics --timeout=60m make -C sdks/android check-System.Numerics
+        ${TESTCMD} --label=System.Runtime.Serialization --timeout=60m make -C sdks/android check-System.Runtime.Serialization
+        ${TESTCMD} --label=System.ServiceModel.Web --timeout=60m make -C sdks/android check-System.ServiceModel.Web
+        ${TESTCMD} --label=System.Transactions --timeout=60m make -C sdks/android check-System.Transactions
+        ${TESTCMD} --label=System.Xml --timeout=60m make -C sdks/android check-System.Xml
+        ${TESTCMD} --label=System.Xml.Linq --timeout=60m make -C sdks/android check-System.Xml.Linq
+        ${TESTCMD} --label=Mono.CSharp --timeout=60m make -C sdks/android check-Mono.CSharp
+        ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m make -C sdks/android check-Mono.Data.Sqlite
+        ${TESTCMD} --label=Mono.Data.Tds --timeout=60m make -C sdks/android check-Mono.Data.Tds
+        ${TESTCMD} --label=Mono.Security --timeout=60m make -C sdks/android check-Mono.Security
         exit 0
 fi
 
