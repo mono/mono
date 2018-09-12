@@ -74,17 +74,6 @@ endif
 endif
 endif
 
-#
-# The bare directory contains the plain versions of System and System.Xml
-#
-bare_libdir = $(the_libdir_base)bare
-
-#
-# The secxml directory contains the System version that depends on 
-# System.Xml and Mono.Security
-#
-secxml_libdir = $(the_libdir_base)secxml
-
 the_libdir = $(the_libdir_base)$(intermediate)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
@@ -392,7 +381,7 @@ $(the_libdir)/.doc-stamp: $(the_lib)
 
 # Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS
 gen-deps:
-	@echo "$(patsubst System.Xml,System.XML,$(DEPS_TARGET_DIR)): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
+	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)
 
 update-corefx-sr-generic:
 ifneq ($(RESX_STRINGS),)

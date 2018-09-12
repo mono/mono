@@ -296,6 +296,15 @@ namespace System.Reflection {
 		[DebuggerStepThrough]
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
+			if (!IsStatic) {
+				if (!DeclaringType.IsInstanceOfType (obj)) {
+					if (obj == null)
+						throw new TargetException ("Non-static method requires a target.");
+					else
+						throw new TargetException ("Object does not match target type.");
+				}
+			}
+
 			if (binder == null)
 				binder = Type.DefaultBinder;
 
