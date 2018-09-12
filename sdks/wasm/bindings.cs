@@ -227,7 +227,7 @@ namespace WebAssembly {
 	}
 
 	public class JSObject : IDisposable {
-		internal int JSHandle;
+		public int JSHandle {get; internal set; }
 		internal GCHandle Handle;
 		internal object RawObject;
 

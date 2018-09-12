@@ -31,8 +31,9 @@ class Driver {
 		Console.WriteLine ("\t-out=x        Set the output directory to 'x' (default to the current directory)");
 		Console.WriteLine ("\t-deploy=x     Set the deploy prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t-vfs=x        Set the VFS prefix to 'x' (default to 'managed')");
+        Console.WriteLine ("\t-template=x   Set the template name to  'x' (default to 'runtime.g.js')");
 
-		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
+        Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 	}
 
 	static void Debug (string s) {
@@ -137,8 +138,10 @@ class Driver {
 		var deploy_prefix = "managed";
 		var vfs_prefix = "managed";
 		var use_release_runtime = true;
+        var dfltTemplate = "runtime.g.js";
 
-		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
+
+        var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
 		if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
@@ -180,7 +183,10 @@ class Driver {
 			case "debugrt":
 				use_release_runtime = false;
 				break;
-			case "help":
+            case "template":
+                dfltTemplate = value;
+                break;
+            case "help":
 				Usage ();
 				return;
 			default:
@@ -216,7 +222,7 @@ class Driver {
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
-		var template = File.ReadAllText (Path.Combine (tool_prefix, "runtime.g.js"));
+		var template = File.ReadAllText (Path.Combine (tool_prefix, dfltTemplate));
 		
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\""));
 		template = template.Replace ("@FILE_LIST@", file_list_str);
