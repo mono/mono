@@ -233,15 +233,19 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
 	} while (0)
 
 static void
-set_context (ThreadContext *context)
+update_jittls_context (ThreadContext *context)
 {
-	MonoJitTlsData *jit_tls;
-
-	mono_native_tls_set_value (thread_context_id, context);
-	jit_tls = mono_tls_get_jit_tls ();
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	if (jit_tls)
 		/* jit_tls assumes ownership of 'context' */
 		jit_tls->interp_context = context;
+}
+
+static void
+set_context (ThreadContext *context)
+{
+	mono_native_tls_set_value (thread_context_id, context);
+	update_jittls_context (context);
 }
 
 static void
@@ -720,6 +724,11 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, gco
 		}
 	}
 	mono_error_assert_ok (error);
+
+	/* Make sure context in MonoJitTls is in sync, as EH relies on it. Out of
+	 * sync can happen if we resume interp execution from an unattached thread
+	 */
+	update_jittls_context (context);
 
 	MonoContext ctx;
 	memset (&ctx, 0, sizeof (MonoContext));
