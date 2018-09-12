@@ -20,16 +20,4 @@
 // THE SOFTWARE.
 // 
 
-using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly: AssemblyTitle ("System.Memory")]
-[assembly: AssemblyDescription ("System.Memory")]
-[assembly: AssemblyDefaultAlias ("System.Memory")]
-[assembly: AssemblyCompany ("Mono development team")]
-[assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
-[assembly: AssemblyCopyright ("(c) Various Mono authors")]
-[assembly: AssemblyVersion ("4.0.99.0")]
-[assembly: AssemblyInformationalVersion ("4.0.99.0")]
-[assembly: AssemblyFileVersion ("4.0.99.0")]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.ArrayPool<>))]
