@@ -204,6 +204,8 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	g_free (caller_cinfo);
 	g_free (callee_cinfo);
 
+	mono_memory_barrier ();
+
 	return info;
 }
 #endif

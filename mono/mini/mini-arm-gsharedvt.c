@@ -334,6 +334,8 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	info->callee_cinfo = callee_cinfo;
 	info->have_fregs = have_fregs;
 
+	mono_memory_barrier ();
+
 	return info;
 }
 
