@@ -470,9 +470,9 @@ namespace System.Reflection {
 			string entryPoint, dllName = null;
 			PInvokeAttributes flags = 0;
 
-			((MonoMethod)this).GetPInvoke (out flags, out entryPoint, out dllName);
+			GetPInvoke (out flags, out entryPoint, out dllName);
 
-			CharSet charSet = CharSet.None;
+			CharSet charSet;
 
 			switch (flags & PInvokeAttributes.CharSetMask) {
 			case PInvokeAttributes.CharSetNotSpec: 
@@ -488,10 +488,12 @@ namespace System.Reflection {
 				charSet = CharSet.Auto; 
 				break;
 			// Invalid: default to CharSet.None
-			default: break;
+			default: 
+				charSet = CharSet.None;
+				break;
 			}
 
-			var callingConvention = InteropServicesCallingConvention.Cdecl;
+			InteropServicesCallingConvention callingConvention;
 
 			switch (flags & PInvokeAttributes.CallConvMask) {
 			case PInvokeAttributes.CallConvWinapi: 
@@ -510,7 +512,9 @@ namespace System.Reflection {
 				callingConvention = InteropServicesCallingConvention.FastCall; 
 				break;
 			// Invalid: default to CallingConvention.Cdecl
-			default: break;
+			default: 
+				callingConvention = InteropServicesCallingConvention.Cdecl;
+				break;
 			}
 
 			bool exactSpelling = (flags & PInvokeAttributes.NoMangle) != 0;
