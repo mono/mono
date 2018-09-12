@@ -1,6 +1,9 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
+WASM_RUNTIME_AC_VARS= \
+	ac_cv_func_shm_open_working_with_mmap=no
+
 WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-runtime.config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-runtime \
@@ -35,7 +38,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 
 .stamp-wasm-runtime-configure: $(TOP)/configure
 	mkdir -p $(TOP)/sdks/builds/wasm-runtime
-	cd $(TOP)/sdks/builds/wasm-runtime && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_CONFIGURE_FLAGS)
+	cd $(TOP)/sdks/builds/wasm-runtime && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@
 
 build-custom-wasm-runtime:
