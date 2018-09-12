@@ -145,11 +145,6 @@ stub_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer
 	g_assert_not_reached ();
 }
 
-static void
-stub_thread_attach_cb (void)
-{
-}
-
 void
 mono_interp_stub_init (void)
 {
@@ -179,6 +174,5 @@ mono_interp_stub_init (void)
 	c.start_single_stepping = stub_start_single_stepping;
 	c.stop_single_stepping = stub_stop_single_stepping;
 	c.delegate_ctor = stub_delegate_ctor;
-	c.thread_attach_cb = stub_thread_attach_cb;
 	mini_install_interp_callbacks (&c);
 }

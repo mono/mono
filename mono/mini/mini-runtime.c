@@ -1009,7 +1009,6 @@ mono_thread_attach_cb (intptr_t tid, gpointer stack_start)
 	thread = mono_thread_info_current_unchecked ();
 	if (thread)
 		thread->jit_data = jit_tls;
-	mini_get_interp_callbacks ()->thread_attach_cb ();
 
 	mono_arch_cpu_init ();
 }
