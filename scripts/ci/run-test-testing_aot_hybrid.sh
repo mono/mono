@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k aotcheck
+${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
