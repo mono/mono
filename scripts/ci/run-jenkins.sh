@@ -198,7 +198,7 @@ fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 
-make_parallelism=-j4
+make_parallelism="-j ${CI_CPU_COUNT}"
 if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
 make_continue=
