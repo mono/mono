@@ -24,9 +24,9 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Memory")]
-[assembly: AssemblyDescription ("System.Memory")]
-[assembly: AssemblyDefaultAlias ("System.Memory")]
+[assembly: AssemblyTitle ("System.Buffers")]
+[assembly: AssemblyDescription ("System.Buffers")]
+[assembly: AssemblyDefaultAlias ("System.Buffers")]
 [assembly: AssemblyCompany ("Mono development team")]
 [assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
 [assembly: AssemblyCopyright ("(c) Various Mono authors")]
