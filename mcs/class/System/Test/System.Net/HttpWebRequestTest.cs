@@ -27,6 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using Mono.Security.Authenticode;
+using System.Runtime.ExceptionServices;
 
 using MonoTests.Helpers;
 
@@ -2325,15 +2326,26 @@ namespace MonoTests.System.Net
 			ManualResetEvent [] completed = new ManualResetEvent [2];
 			completed [0] = new ManualResetEvent (false);
 			completed [1] = new ManualResetEvent (false);
+			ExceptionDispatchInfo edi = null;
 
-			using (ListenerScope scope = new ListenerScope (processor, port, completed [0])) {
+			using (ListenerScope scope = new ListenerScope (processor, port, completed [0], e => { edi = ExceptionDispatchInfo.Capture (e); })) {
 				Uri address = new Uri (string.Format ("http://localhost:{0}", port));
 				HttpWebRequest client = (HttpWebRequest) WebRequest.Create (address);
 
-				ThreadPool.QueueUserWorkItem ((o) => request (client, completed [1]));
+				ThreadPool.QueueUserWorkItem (l => {
+					try {
+						request (client, completed [1]);
+					} catch (Exception e) {
+						edi = ExceptionDispatchInfo.Capture (e);
+					}
+				});
 
-				if (!WaitHandle.WaitAll (completed, 10000))
-					Assert.Fail ("Test hung.");
+				if (!WaitHandle.WaitAll (completed, 10000)) {
+					edi?.Throw ();
+					Assert.Fail ("Test hung");
+				}
+
+				edi?.Throw ();
 			}
 		}
 
@@ -2543,11 +2555,13 @@ namespace MonoTests.System.Net
 			EventWaitHandle completed;
 			public HttpListener listener;
 			Action<HttpListenerContext> processor;
+			Action<Exception> eh;
 
-			public ListenerScope (Action<HttpListenerContext> processor, int port, EventWaitHandle completed)
+			public ListenerScope (Action<HttpListenerContext> processor, int port, EventWaitHandle completed, Action<Exception> exceptionHandler)
 			{
 				this.processor = processor;
 				this.completed = completed;
+				this.eh = exceptionHandler;
 
 				this.listener = new HttpListener ();
 				this.listener.Prefixes.Add (string.Format ("http://localhost:{0}/", port));
@@ -2576,6 +2590,8 @@ namespace MonoTests.System.Net
 					try {
 						this.processor (context);
 					} catch (HttpListenerException) {
+					} catch (Exception e) {
+						eh (e);
 					}
 				});
 
