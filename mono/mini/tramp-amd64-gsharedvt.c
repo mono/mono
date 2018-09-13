@@ -173,14 +173,17 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 	if (info->vcall_offset != -1){
 		MonoObject *this_obj = (MonoObject*)caller [0];
 
-		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target is a vcall at offset %d\n", __func__, thread, info->vcall_offset / 8);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target is a vcall at offset %d this_obj:%p\n", __func__, thread, info->vcall_offset / 8, this_obj);
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
-		if (info->vcall_offset == MONO_GSHAREDVT_DEL_INVOKE_VT_OFFSET)
+		if (info->vcall_offset == MONO_GSHAREDVT_DEL_INVOKE_VT_OFFSET) {
 			/* delegate invoke */
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target delegate invoke %p\n", __func__, thread, ((MonoDelegate*)this_obj)->invoke_impl);
 			return ((MonoDelegate*)this_obj)->invoke_impl;
-		else
+		} else {
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target is %p\n", __func__, thread, *(gpointer*)((char*)this_obj->vtable + info->vcall_offset));
 			return *(gpointer*)((char*)this_obj->vtable + info->vcall_offset);
+		}
 	} else if (info->calli) {
 		/* The address to call is passed in the mrgctx reg */
 		return mrgctx_reg;
