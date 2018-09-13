@@ -237,6 +237,9 @@ set_context (ThreadContext *context)
 {
 	mono_native_tls_set_value (thread_context_id, context);
 
+	if (!context)
+		return;
+
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	g_assertf (jit_tls, "ThreadContext needs initialized JIT TLS");
 
