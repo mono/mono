@@ -597,6 +597,17 @@ void mono_threads_coop_end_global_suspend (void);
 MONO_API MonoNativeThreadId
 mono_native_thread_id_get (void);
 
+static inline gpointer
+mono_native_thread_id_get_ptr (void)
+{
+	// mono_native_thread_id_get is either a pointer,
+	// or a pointer-sized integer,
+	// or a smaller integer.
+	// Normalization to a pointer is useful for printf("%p").
+	// This form should avoid warnings on all platforms.
+	return (gpointer)(gsize)mono_native_thread_id_get ();
+}
+
 MONO_API gboolean
 mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2);
 

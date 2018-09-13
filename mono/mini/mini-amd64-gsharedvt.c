@@ -29,7 +29,49 @@
 #include "mini-amd64-gsharedvt.h"
 #include "debugger-agent.h"
 
+#ifdef ENABLE_CHECKED_BUILD
+#define DEBUG_AMD64_GSHAREDVT
+#endif
+
 #if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
+
+#ifdef DEBUG_AMD64_GSHAREDVT
+
+#include <mono/utils/mono-logger-internals.h>
+
+#define DEBUG_AMD64_GSHAREDVT_PRINT mono_amd64_gsharedvt_print_get_call_info
+
+static void
+mono_amd64_gsharedvt_print_get_call_info (const char *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	mono_tracev (G_LOG_LEVEL_DEBUG, MONO_TRACE_GSHAREDVT_GET_CALL_INFO, format, args);
+	va_end (args);
+}
+
+static const char *
+mono_amd64_ret_marshal_name (GSharedVtRetMarshal ret_marshal)
+{
+    switch (ret_marshal) {
+    case GSHAREDVT_RET_NONE:    return "GSHAREDVT_RET_NONE";
+    case GSHAREDVT_RET_I1:      return "GSHAREDVT_RET_I1";
+    case GSHAREDVT_RET_U2:      return "GSHAREDVT_RET_U2";
+    case GSHAREDVT_RET_I4:      return "GSHAREDVT_RET_I4";
+    case GSHAREDVT_RET_U4:      return "GSHAREDVT_RET_U4";
+    case GSHAREDVT_RET_I8:      return "GSHAREDVT_RET_I8";
+    case GSHAREDVT_RET_IREGS_1: return "GSHAREDVT_RET_IREGS_1";
+    case GSHAREDVT_RET_R8:      return "GSHAREDVT_RET_R8";
+    case GSHAREDVT_RET_NUM:     return "GSHAREDVT_RET_NUM";
+    default:                    g_error("unknown GSharedVtRetMarshal %d", ret_marshal);
+    }
+}
+
+#else
+
+#define DEBUG_AMD64_GSHAREDVT_PRINT(...) /* nothing */
+
+#endif
 
 gboolean
 mono_arch_gsharedvt_sig_supported (MonoMethodSignature *sig)
@@ -262,6 +304,9 @@ handle_map_when_gsharedvt_on_stack (ArgInfo *reg_info, int *n, int **map, gboole
 gpointer
 mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
 {
+#ifdef DEBUG_AMD64_GSHAREDVT
+    gpointer thread = mono_native_thread_id_get_ptr ();
+#endif
 	GSharedVtCallInfo *info;
 	CallInfo *caller_cinfo, *callee_cinfo;
 	MonoMethodSignature *caller_sig, *callee_sig;
@@ -302,8 +347,8 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 		gcinfo = caller_cinfo;
 	}
 
-	DEBUG_AMD64_GSHAREDVT_PRINT ("source sig: (%s) return (%s)\n", mono_signature_get_desc (caller_sig, FALSE), mono_type_full_name (mono_signature_get_return_type (caller_sig))); // Leak
-	DEBUG_AMD64_GSHAREDVT_PRINT ("dest sig: (%s) return (%s)\n", mono_signature_get_desc (callee_sig, FALSE), mono_type_full_name (mono_signature_get_return_type (callee_sig)));
+	DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p source sig: (%s) return (%s)\n", __func__,  thread, mono_signature_get_desc (caller_sig, FALSE), mono_type_full_name (mono_signature_get_return_type (caller_sig))); // Leak
+	DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p dest sig: (%s) return (%s)\n", __func__, thread, mono_signature_get_desc (callee_sig, FALSE), mono_type_full_name (mono_signature_get_return_type (callee_sig)));
 
 	if (gcinfo->ret.storage == ArgGsharedvtVariableInReg) {
 		/*
@@ -329,7 +374,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 
 		int arg_marshal = GSHAREDVT_ARG_NONE;
 		int arg_slots = 0; // Size in quadwords
-		DEBUG_AMD64_GSHAREDVT_PRINT ("-- arg %d in (%s) out (%s)\n", aindex, arg_info_desc (src_info), arg_info_desc (dst_info));
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p -- arg %d in (%s) out (%s)\n", __func__, thread, aindex, arg_info_desc (src_info), arg_info_desc (dst_info));
 
 		switch (src_info->storage) {
 		case ArgInIReg:
@@ -400,7 +445,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 
 		/* Merge and add to the global list*/
 		nslots = MIN (nsrc, ndst);
-		DEBUG_AMD64_GSHAREDVT_PRINT ("nsrc %d ndst %d\n", nsrc, ndst);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p nsrc %d ndst %d\n", __func__, thread, nsrc, ndst);
 
 		for (i = 0; i < nslots; ++i)
 			add_to_map (map, src [i], dst [i]);
@@ -409,7 +454,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 		g_free (dst);
 	}
 
-	DEBUG_AMD64_GSHAREDVT_PRINT ("-- return in (%s) out (%s) var_ret %d\n", arg_info_desc (&caller_cinfo->ret),  arg_info_desc (&callee_cinfo->ret), var_ret);
+	DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p -- return in (%s) out (%s) var_ret %d\n", __func__, thread, arg_info_desc (&caller_cinfo->ret),  arg_info_desc (&callee_cinfo->ret), var_ret);
 
 	if (cinfo->ret.storage == ArgValuetypeAddrInIReg) {
 		/* Both the caller and the callee pass the vtype ret address in r8 (System V) and RCX or RDX (Windows) */
@@ -428,16 +473,16 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	if (var_ret) {
 		g_assert (gcinfo->ret.storage == ArgGsharedvtVariableInReg);
 		info->vret_arg_reg = map_reg (gcinfo->ret.reg);
-		DEBUG_AMD64_GSHAREDVT_PRINT ("mapping vreg_arg_reg to %d in reg %s\n", info->vret_arg_reg, mono_arch_regname (gcinfo->ret.reg));
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p mapping vreg_arg_reg to %d in reg %s\n", __func__, thread, info->vret_arg_reg, mono_arch_regname (gcinfo->ret.reg));
 	} else {
 		info->vret_arg_reg = -1;
 	}
 
 #ifdef DEBUG_AMD64_GSHAREDVT
-	printf ("final map:\n");
+	DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p final map:\n", __func__, thread);
 	for (i = 0; i < map->len; i += 2) {
-		printf ("\t[%d] src %x dst %x\n ", 
-			i / 2,
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p [%d] src %x dst %x\n",
+			__func__, thread, i / 2,
 			GPOINTER_TO_UINT (g_ptr_array_index (map, i)),
 			GPOINTER_TO_UINT (g_ptr_array_index (map, i + 1)));
 	}
@@ -516,7 +561,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 			info->vret_slot = map_stack_slot (info->stack_usage / sizeof (gpointer));
 			info->stack_usage += mono_type_stack_size_internal (normal_sig->ret, NULL, FALSE) + sizeof (gpointer);
 		}
-		DEBUG_AMD64_GSHAREDVT_PRINT ("RET marshal is %s\n", ret_marshal_name [info->ret_marshal]);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p RET marshal is %s (%d)\n", __func__, thread, mono_amd64_ret_marshal_name (info->ret_marshal), info->ret_marshal);
 	}
 
 	info->stack_usage = ALIGN_TO (info->stack_usage, MONO_ARCH_FRAME_ALIGNMENT);
@@ -524,7 +569,7 @@ mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_si
 	g_free (callee_cinfo);
 	g_free (caller_cinfo);
 
-	DEBUG_AMD64_GSHAREDVT_PRINT ("allocated an info at %p stack usage %d\n", info, info->stack_usage);
+	DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p allocated an info at %p stack usage %d\n", __func__, thread, info, info->stack_usage);
 	return info;
 }
 

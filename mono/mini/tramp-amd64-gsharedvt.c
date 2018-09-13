@@ -40,21 +40,47 @@
 #define SLOT_COUNT_SHIFT 24
 #define SLOT_COUNT_MASK 0xFF
 
+#ifdef ENABLE_CHECKED_BUILD
+#define DEBUG_AMD64_GSHAREDVT
+#endif
+
+#ifdef DEBUG_AMD64_GSHAREDVT
+
+#include <mono/utils/mono-logger-internals.h>
+
+#define DEBUG_AMD64_GSHAREDVT_PRINT mono_amd64_gsharedvt_print_start_call
+
+static void
+mono_amd64_gsharedvt_print_start_call (const char *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	mono_tracev (G_LOG_LEVEL_DEBUG, MONO_TRACE_GSHAREDVT_START_CALL, format, args);
+	va_end (args);
+}
+
+#else
+
+#define DEBUG_AMD64_GSHAREDVT_PRINT(...) /* nothing */
+
+#endif
+
 gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
 {
 	int i;
 
 #ifdef DEBUG_AMD64_GSHAREDVT
-	printf ("mono_amd64_start_gsharedvt_call info %p caller %p callee %p ctx %p\n", info, caller, callee, mrgctx_reg);
+	gpointer thread = mono_native_thread_id_get_ptr ();
+#endif
+	DEBUG_AMD64_GSHAREDVT_PRINT ("\n\n%s thread:%p info:%p caller:%p callee:%p mrgctx_reg:%p\n", __func__, thread, info, caller, callee, mrgctx_reg);
 
 	for (i = 0; i < PARAM_REGS; ++i)
-		printf ("\treg [%d] -> %p\n", i, caller [i]);
-#endif
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p in reg [%d] %p\n", __func__, thread, i, caller [i]);
 
 	/* Set vtype ret arg */
 	if (info->vret_slot != -1) {
-		DEBUG_AMD64_GSHAREDVT_PRINT ("vret handling\n[%d] < &%d (%p)\n", info->vret_arg_reg, info->vret_slot, &callee [info->vret_slot]);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p vret handling\n[%d] < &%d (%p)\n", __func__, thread, info->vret_arg_reg, info->vret_slot, &callee [info->vret_slot]);
 		g_assert (info->vret_slot);
 		callee [info->vret_arg_reg] = &callee [info->vret_slot];
 	}
@@ -67,46 +93,71 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 		int source_reg = src & SRC_REG_MASK;
 		int dest_reg = dst & SRC_REG_MASK;
 
-		DEBUG_AMD64_GSHAREDVT_PRINT ("source %x dest %x marshal %d: ", src, dst, arg_marshal);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p %d source %x dest %x marshal %d: ", __func__, thread, i, src, dst, arg_marshal);
 		switch (arg_marshal) {
 		case GSHAREDVT_ARG_NONE:
 			callee [dest_reg] = caller [source_reg];
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- %d (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], caller [source_reg]);
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p none: [%d] <- %d (%p/%p) <- (%p/%p)\n",
+						__func__, thread,
+						dest_reg, source_reg,
+						&callee [dest_reg], callee [dest_reg],
+						&caller [source_reg], caller [source_reg]);
 			break;
 		case GSHAREDVT_ARG_BYVAL_TO_BYREF:
 			/* gsharedvt argument passed by addr in reg/stack slot */
 			callee [dest_reg] = &caller [source_reg];
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- &%d (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p byval_to_byref: [%d] <- &%d (%p/%p) <- (%p/%p)\n",
+						__func__, thread,
+						dest_reg, source_reg,
+						&callee [dest_reg], callee [dest_reg],
+						&caller [source_reg], caller [source_reg]);
 			break;
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL: {
 			int slot_count = (src >> SLOT_COUNT_SHIFT) & SLOT_COUNT_MASK;
 			int j;
 			gpointer *addr = (gpointer*)caller [source_reg];
 
-			for (j = 0; j < slot_count; ++j)
+			for (j = 0; j < slot_count; ++j) {
+				DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p byref_to_byval: [%d] <- [%d] (%d words) (%p/%p) <- (%p/%p/%p)\n",
+					__func__, thread,
+					dest_reg, source_reg, slot_count,
+					&callee [dest_reg + j], callee [dest_reg + j],
+					&caller [source_reg + j], caller [source_reg + j], addr [j]);
 				callee [dest_reg + j] = addr [j];
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- [%d] (%d words) (%p) <- (%p)\n", dest_reg, source_reg, slot_count, &callee [dest_reg], &caller [source_reg]);
+			}
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
 			guint8 *addr = (guint8*)caller [source_reg];
 
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p byref_to_byval_u1: [%d] <- (u1) [%d] (%p/%p) <- (%p/%p)\n",
+						__func__, thread,
+						dest_reg, source_reg,
+						&callee [dest_reg], callee [dest_reg],
+						&caller [source_reg], caller [source_reg]);
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u1) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
 			guint16 *addr = (guint16*)caller [source_reg];
 
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p byref_to_byval_u2: [%d] <- (u2) [%d] (%p/%p) <- (%p/%p)\n",
+				__func__, thread,
+				dest_reg, source_reg,
+				&callee [dest_reg], callee [dest_reg],
+				&caller [source_reg], caller [source_reg]);
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u2) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U4: {
 			guint32 *addr = (guint32*)caller [source_reg];
 
+			DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p byref_to_byval_u4: [%d] <- (u4) [%d] (%p/%p) <- (%p/%p)\n",
+				__func__, thread,
+				dest_reg, source_reg,
+				&callee [dest_reg], callee [dest_reg],
+				&caller [source_reg], caller [source_reg]);
 			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
-			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u4) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 
@@ -115,11 +166,14 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 		}
 	}
 
+	for (i = 0; i < PARAM_REGS; ++i)
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p out reg [%d] %p\n", __func__, thread, i, callee [i]);
+
 	//Can't handle for now
 	if (info->vcall_offset != -1){
 		MonoObject *this_obj = (MonoObject*)caller [0];
 
-		DEBUG_AMD64_GSHAREDVT_PRINT ("target is a vcall at offset %d\n", info->vcall_offset / 8);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target is a vcall at offset %d\n", __func__, thread, info->vcall_offset / 8);
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
 		if (info->vcall_offset == MONO_GSHAREDVT_DEL_INVOKE_VT_OFFSET)
@@ -131,7 +185,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 		/* The address to call is passed in the mrgctx reg */
 		return mrgctx_reg;
 	} else {
-		DEBUG_AMD64_GSHAREDVT_PRINT ("target is %p\n", info->addr);
+		DEBUG_AMD64_GSHAREDVT_PRINT ("%s thread:%p target is %p\n", __func__, thread, info->addr);
 		return info->addr;
 	}
 }

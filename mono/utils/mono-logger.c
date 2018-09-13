@@ -312,6 +312,9 @@ mono_trace_set_mask_string (const char *value)
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "profiler", MONO_TRACE_PROFILER },
+		{ "gsharedvt_get_call_info", MONO_TRACE_GSHAREDVT_GET_CALL_INFO },
+		{ "gsharedvt_start_call", MONO_TRACE_GSHAREDVT_START_CALL },
+		{ "gsharedvt", MONO_TRACE_GSHAREDVT_GET_CALL_INFO | MONO_TRACE_GSHAREDVT_START_CALL },
 		{ "all", (MonoTraceMask)~0 }, // FIXMEcxx there is a better way -- operator overloads of enums
 		{ NULL, (MonoTraceMask)0 },
 	};
