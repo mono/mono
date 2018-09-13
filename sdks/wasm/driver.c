@@ -97,6 +97,10 @@ extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, Mo
 void mono_aot_register_module (void **aot_info);
 void mono_jit_set_aot_mode (MonoAotMode mode);
 MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
+void mono_ee_interp_init (const char *opts);
+void mono_marshal_ilgen_init (void);
+void mono_method_builder_ilgen_init (void);
+void mono_sgen_mono_ilgen_init (void);
 MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
 int mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 void mono_set_assemblies_path (const char* path);
@@ -207,11 +211,8 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
-#ifdef EXPERIMENTAL_AOT_DRIVER
-
-extern void *mono_aot_module_mini_tests_basic_info;
-extern void *mono_aot_module_mscorlib_info;
-
+#ifdef ENABLE_AOT
+#include "driver-gen.c"
 #endif
 
 EMSCRIPTEN_KEEPALIVE void
@@ -220,14 +221,21 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
 
-#ifdef EXPERIMENTAL_AOT_DRIVER
-	mono_aot_register_module (mono_aot_module_mscorlib_info);
-	mono_aot_register_module (mono_aot_module_mini_tests_basic_info);
+#ifdef ENABLE_AOT
+	// Defined in driver-gen.c
+	register_aot_modules ();
 	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
 #else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
+#endif
+
+#ifndef ENABLE_AOT
+	mono_ee_interp_init ("");
+	mono_marshal_ilgen_init ();
+	mono_method_builder_ilgen_init ();
+	mono_sgen_mono_ilgen_init ();
 #endif
 
 	mono_set_assemblies_path (m_strdup (managed_path));

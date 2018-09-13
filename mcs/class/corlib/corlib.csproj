@@ -455,6 +455,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PortableExecutableKinds.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ProcessorArchitecture.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PropertyAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PropertyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionContext.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceAttributes.cs" />
@@ -1427,7 +1428,6 @@
     <Compile Include="System.Reflection\MonoParameterInfo.cs" />
     <Compile Include="System.Reflection\MonoProperty.cs" />
     <Compile Include="System.Reflection\ParameterInfo.cs" />
-    <Compile Include="System.Reflection\PropertyInfo.cs" />
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
@@ -1916,6 +1916,7 @@
     <Compile Include="System\ApplicationIdentity.cs" />
     <Compile Include="System\ArgIterator.cs" />
     <Compile Include="System\Array.cs" />
+    <Compile Include="System\BitConverter.cs" />
     <Compile Include="System\CStreamReader.cs" />
     <Compile Include="System\CStreamWriter.cs" />
     <Compile Include="System\Console.cs" />

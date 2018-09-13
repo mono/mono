@@ -3,6 +3,8 @@
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 
+export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
+
 export TEST_HARNESS_VERBOSE=1
 
 make_timeout=300m
@@ -83,6 +85,7 @@ fi
 
 if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
 fi
 
 if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
@@ -101,13 +104,13 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=provision-llvm --timeout=60m --fatal make -j4 -C sdks/builds provision-llvm36-llvm32 provision-llvm-llvm64
+	   ${TESTCMD} --label=provision-llvm --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm36-llvm32 provision-llvm-llvm64
 
-	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
-	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
+	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{cross64,cross32,crosswatch}
 
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
+	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
 	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
@@ -136,12 +139,12 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android
         if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
-            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
+            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
         fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j4 -C sdks/builds provision-llvm-llvm{,win}{32,64}
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm-llvm{,win}{32,64}
+        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-android-{armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
         exit 0
 fi
 
@@ -150,9 +153,9 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
-	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
+	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-wasm-runtime package-wasm-cross
+	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
+	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
 	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
 	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
 	   ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
@@ -178,11 +181,11 @@ fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release /p:MONO_TARGET_GC=boehm msvc/mono.sln
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=boehm msvc/mono.sln
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release /p:MONO_TARGET_GC=sgen msvc/mono.sln
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=sgen msvc/mono.sln
 fi
 
 if [[ ${CI_TAGS} == *'winaot'* ]];
@@ -195,7 +198,7 @@ fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
 
-make_parallelism=-j4
+make_parallelism="-j ${CI_CPU_COUNT}"
 if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 
 make_continue=

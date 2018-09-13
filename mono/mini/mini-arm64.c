@@ -1196,6 +1196,7 @@ add_valuetype (CallInfo *cinfo, ArgInfo *ainfo, MonoType *t)
 			cinfo->fr = FP_PARAM_REGS;
 			size = ALIGN_TO (size, 8);
 			ainfo->storage = ArgVtypeOnStack;
+			cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, align);
 			ainfo->offset = cinfo->stack_usage;
 			ainfo->size = size;
 			ainfo->hfa = TRUE;
@@ -1215,6 +1216,7 @@ add_valuetype (CallInfo *cinfo, ArgInfo *ainfo, MonoType *t)
 	if (cinfo->gr + nregs > PARAM_REGS) {
 		size = ALIGN_TO (size, 8);
 		ainfo->storage = ArgVtypeOnStack;
+		cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, align);
 		ainfo->offset = cinfo->stack_usage;
 		ainfo->size = size;
 		cinfo->stack_usage += size;
@@ -1609,6 +1611,7 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 		case ArgInFRegR4:
 		case ArgHFA:
 		case ArgVtypeByRef:
+		case ArgVtypeByRefOnStack:
 		case ArgOnStack:
 		case ArgVtypeOnStack:
 			break;
@@ -1725,7 +1728,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		ArgInfo *ainfo = &cinfo->args [aindex + sig->hasthis];
 		int slot = -1;
 
-		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgVtypeOnStack) {
+		if (ainfo->storage == ArgOnStack || ainfo->storage == ArgVtypeOnStack || ainfo->storage == ArgVtypeByRefOnStack) {
 			slot = PARAM_REGS + 1 + (ainfo->offset / sizeof (mgreg_t));
 		} else {
 			slot = ainfo->reg;
@@ -1848,6 +1851,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				p->n_fpargs += ainfo->nregs;
 				break;
 			case ArgVtypeByRef:
+			case ArgVtypeByRefOnStack:
 				p->regs [slot] = (mgreg_t)arg;
 				break;
 			case ArgVtypeOnStack:

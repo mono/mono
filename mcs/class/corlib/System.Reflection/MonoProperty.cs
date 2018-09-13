@@ -381,9 +381,9 @@ namespace System.Reflection {
 #if !FULL_AOT_RUNTIME
 				if (cached_getter == null) {
 					MethodInfo method = GetGetMethod (true);
+					if (method == null)
+						throw new ArgumentException ($"Get Method not found for '{Name}'");
 					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
-						if (method == null)
-							throw new ArgumentException ("Get Method not found for '" + Name + "'");
 						cached_getter = CreateGetterDelegate (method);
 						// The try-catch preserves the .Invoke () behaviour
 						try {
@@ -411,7 +411,7 @@ namespace System.Reflection {
 
 			MethodInfo method = GetGetMethod (true);
 			if (method == null)
-				throw new ArgumentException ("Get Method not found for '" + Name + "'");
+				throw new ArgumentException ($"Get Method not found for '{Name}'");
 
 			try {
 				if (index == null || index.Length == 0) 
@@ -473,5 +473,18 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int get_metadata_token (MonoProperty monoProperty);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern PropertyInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
+
+        internal static PropertyInfo GetPropertyFromHandle (Mono.RuntimePropertyHandle handle, RuntimeTypeHandle reflectedType)
+        {
+            if (handle.Value == IntPtr.Zero)
+                throw new ArgumentException ("The handle is invalid.");
+            PropertyInfo pi = internal_from_handle_type (handle.Value, reflectedType.Value);
+            if (pi == null)
+                throw new ArgumentException ("The property handle and the type handle are incompatible.");
+            return pi;
+        }		
 	}
 }

@@ -3905,7 +3905,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		break;
 	}
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
-	case MONO_PATCH_INFO_JIT_THREAD_ATTACH:
 		break;
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
@@ -4501,10 +4500,9 @@ init_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, M
 static void
 init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, MonoClass *init_class, MonoGenericContext *context)
 {
-	gboolean res;
 	ERROR_DECL (error);
 
-	res = init_method (amodule, method_index, method, init_class, context, error);
+	init_method (amodule, method_index, method, init_class, context, error);
 	if (!is_ok (error)) {
 		MonoException *ex = mono_error_convert_to_exception (error);
 		/* Its okay to raise in llvmonly mode */
