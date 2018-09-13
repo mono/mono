@@ -20,7 +20,7 @@ $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 ifeq ($(UNAME),Darwin)
 ifeq ($(DISABLE_DOWNLOAD_LLVM),)
 	mkdir -p $(TOP)/sdks/builds/toolchains/llvm-download
-	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
+	-$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
 		LLVM_PREFIX="$(TOP)/sdks/builds/toolchains/llvm-download/usr"
 	touch $@
 endif
@@ -120,7 +120,7 @@ clean-llvm-$(1)::
 
 endef
 
-llvm-llvm32_CMAKE_FLAGS=-DLLVM_BUILD_32_BITS=On
+llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMTemplate,llvm32,i386))
 $(eval $(call LLVMTemplate,llvm64,x86_64))
 
