@@ -161,6 +161,8 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 tcs.SetResult(httpresponse);
 
+                httpresponse = null;
+                
                 status.Dispose();
             }
             catch (Exception exception) 
