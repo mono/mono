@@ -36,6 +36,7 @@ class Driver {
 		Console.WriteLine ("\t--deploy=x      Set the deploy prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.g.js')");
+		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 	}
@@ -175,6 +176,7 @@ class Driver {
 		var print_usage = false;
 		var emit_ninja = false;
 		var runtimeTemplate = "runtime.g.js";
+		var assets = new List<string> ();
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -189,7 +191,8 @@ class Driver {
 				{ "deploy=", s => deploy_prefix = s },
 				{ "vfs=", s => vfs_prefix = s },
 				{ "aot", s => enable_aot = true },
-				{ "template", s => runtimeTemplate = s },
+				{ "template=", s => runtimeTemplate = s },
+				{ "asset=", s => assets.Add(s) },
 				{ "help", s => print_usage = true },
 					};
 
@@ -278,6 +281,13 @@ class Driver {
 			File.Copy (
 					   Path.Combine (runtime_dir, "mono.wasm"),
 					   Path.Combine (out_prefix, "mono.wasm"));
+
+			foreach(var asset in assets)
+			{
+				Console.WriteLine ($"Asset: cp {asset} -> {Path.Combine (out_prefix, Path.GetFileName (asset))}");
+				File.Copy (asset, 
+						Path.Combine (out_prefix, asset));
+			}
 		}
 
 		if (!emit_ninja)
