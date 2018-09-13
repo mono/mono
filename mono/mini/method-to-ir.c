@@ -6962,6 +6962,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		dreg = alloc_ireg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, dreg, var->dreg, MONO_STRUCT_OFFSET (MonoGSharedVtMethodRuntimeInfo, locals_size));
 
+		// FIXME: Increase locals_size by 1, to probably cover up some miscalculation elsewhere,
+		// that causes locals to be corrupt. Inconsistent test case is
+		// MonoTests.System.Linq.ParallelEnumerableTests.TestGroupBy on Linux/amd64/FullAOT/LLVM.
+		// Adding logging to gsharedvt memcpy calls should uncover it. Obvious candidate of
+		// cleaning up instantiate_info failed.
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADD_IMM, dreg, dreg, 1);
+
 		MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
 		ins->dreg = locals_var->dreg;
 		ins->sreg1 = dreg;
