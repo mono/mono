@@ -282,7 +282,7 @@ mono_trace_set_mask_string (const char *value)
 	const char *tok;
 	guint32 flags = 0;
 
-	static const struct { const char * const flag; const MonoTraceMask mask; } flag_mask_map[] = {
+	static const struct { const char * flag; MonoTraceMask mask; } flag_mask_map[] = {
 		{ "asm", MONO_TRACE_ASSEMBLY },
 		{ "type", MONO_TRACE_TYPE },
 		{ "dll", MONO_TRACE_DLLIMPORT },
@@ -302,20 +302,20 @@ mono_trace_set_mask_string (const char *value)
 		{ "io-layer-semaphore", MONO_TRACE_IO_LAYER_SEMAPHORE },
 		{ "io-layer-mutex", MONO_TRACE_IO_LAYER_MUTEX },
 		{ "io-layer-handle", MONO_TRACE_IO_LAYER_HANDLE },
-		{ "io-layer", (MonoTraceMask)(MONO_TRACE_IO_LAYER_PROCESS
+		{ "io-layer", MONO_TRACE_IO_LAYER_PROCESS
 		               | MONO_TRACE_IO_LAYER_SOCKET
 		               | MONO_TRACE_IO_LAYER_FILE
 		               | MONO_TRACE_IO_LAYER_EVENT
 		               | MONO_TRACE_IO_LAYER_SEMAPHORE
 		               | MONO_TRACE_IO_LAYER_MUTEX
-		               | MONO_TRACE_IO_LAYER_HANDLE) },
+		               | MONO_TRACE_IO_LAYER_HANDLE },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "profiler", MONO_TRACE_PROFILER },
 		{ "gsharedvt_get_call_info", MONO_TRACE_GSHAREDVT_GET_CALL_INFO },
 		{ "gsharedvt_start_call", MONO_TRACE_GSHAREDVT_START_CALL },
 		{ "gsharedvt", MONO_TRACE_GSHAREDVT_GET_CALL_INFO | MONO_TRACE_GSHAREDVT_START_CALL },
-		{ "all", (MonoTraceMask)~0 }, // FIXMEcxx there is a better way -- operator overloads of enums
+		{ "all", ~(MonoTraceMask)0 },
 		{ NULL, (MonoTraceMask)0 },
 	};
 

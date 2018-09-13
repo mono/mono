@@ -34,6 +34,8 @@ typedef enum {
 	MONO_TRACE_GSHAREDVT_START_CALL = 1 << 19,
 } MonoTraceMask;
 
+G_ENUM_FUNCTIONS (MonoTraceMask)
+
 MONO_API_DATA GLogLevelFlags mono_internal_current_level;
 MONO_API_DATA MonoTraceMask mono_internal_current_mask;
 
