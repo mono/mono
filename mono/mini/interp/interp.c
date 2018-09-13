@@ -2964,6 +2964,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				memset (&piinfo, 0, sizeof (piinfo));
 
 				m = mono_marshal_get_native_func_wrapper (m_class_get_image (frame->imethod->method->klass), csignature, &piinfo, mspecs, code);
+
+				for (int i = csignature->param_count; i >= 0; i--)
+					if (mspecs [i])
+						mono_metadata_free_marshal_spec (mspecs [i]);
+				g_free (mspecs);
+
 				child_frame.imethod = mono_interp_get_imethod (rtm->domain, m, error);
 				mono_error_cleanup (error); /* FIXME: don't swallow the error */
 
