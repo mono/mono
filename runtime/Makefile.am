@@ -200,19 +200,12 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	else \
 		echo "Unknown directory '$(abs_top_builddir)/support'" && false; \
 	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-native.la",' $@ > $@.tmp \
+	if test -d "$(abs_top_builddir)/mono/native"; then \
+		sed 's,target="$$mono_libdir/$(MONO_NATIVE_LIBRARY_NAME)$(libsuffix)",target="$(abs_top_builddir)/mono/native/$(MONO_NATIVE_LIBRARY_NAME).la",' $@ > $@.tmp \
 		 && mv $@.tmp $@ \
 		 ; \
 	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
-	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-net-security-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-net-security-native.la",' $@ > $@.tmp \
-		 && mv $@.tmp $@ \
-		 ; \
-	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+		echo "Unknown directory '$(abs_top_builddir)/mono/native'" && false; \
 	fi
 	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
 		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \

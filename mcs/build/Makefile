@@ -2,7 +2,7 @@ thisdir = build
 SUBDIRS = 
 include ../build/rules.make
 
-BUILT_FILES = common/Consts.cs
+BUILT_FILES = common/Consts.cs common/MonoNativeConfig.cs
 
 all-local install-local test-local run-test-local csproj-local run-test-ondotnet-local uninstall-local doc-update-local: $(BUILT_FILES)
 	@:
@@ -14,6 +14,14 @@ common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 	test -n '$(MONO_VERSION)'
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_VERSION@,$(MONO_VERSION),' -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
+
+common/MonoNativeConfig.cs: common/MonoNativeConfig.cs.in $(wildcard config.make)
+	test -n '$(MONO_NATIVE_SUPPORTED)'
+	sed -e 's,@''MONO_NATIVE_SUPPORTED@,$(MONO_NATIVE_SUPPORTED),' \
+		-e 's,@''MONO_NATIVE_USING_COMPAT@,$(MONO_NATIVE_USING_COMPAT),' \
+		-e 's,@''MONO_NATIVE_PLATFORM_TYPE@,$(MONO_NATIVE_PLATFORM_TYPE),' \
+		-e 's,@''MONO_NATIVE_PLATFORM@,$(MONO_NATIVE_PLATFORM),' \
+		$< > $@
 
 PLATFORMS = macos linux win32 unix
 PROFILES = \

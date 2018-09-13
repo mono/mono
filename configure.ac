@@ -2962,7 +2962,7 @@ if test x$host_win32 = xno; then
 	fi
 
 	dnl *********************************
-	dnl *** Checks for System.Native  ***
+	dnl *** Checks for Mono.Native  ***
 	dnl *********************************
 
 	AC_MSG_CHECKING(for linux/in.h)
@@ -4311,6 +4311,7 @@ if test "x$target_mach" = "xyes"; then
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  BTLS_SUPPORTED=no
+	  target_ios=yes
    else
        AC_TRY_COMPILE([#include "TargetConditionals.h"],[
        #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
@@ -5483,6 +5484,190 @@ if test x"$GCC" = xyes; then
 	])
 fi
 
+#
+# Mono.Native Support
+# -------------------
+# Mono.Native is the new name for both System.Native and System.Security.Cryptography.Apple.
+# It is built as a stand-alone shared library and not bundled with the runtime because we
+# may need to build two different versions of it.
+#
+# Starting with macOS 10.12+ and iOS 10+, Apple introduced a new Unified API for some of the
+# crypto primitives that we're using as part of System.Security.Cryptography.Apple.
+#
+# On Desktop, we can check at runtime whether the OS version is recent enough and switch
+# implementation accordingly.  We build a single `libmono_native` shared library.
+#
+# However, on Mobile we cannot have any undefined symbols as this would break Bitcode.
+#
+# During the mobile build, we are called with `CC` containing an explicit minium version flag,
+# which is eiter `-mmacosx-version-min=`, `-mios-simulator-version-min=` or `-miphoneos-version-min=`
+# depending on platform.
+#
+# We build two versions of the shared library:
+# - `libmono_native_compat` is built with whichever minimum version is passed to us via `CC`.
+# - `libmono_native_unifed` is built with the minimum version set to macOS 10.12+ / iOS 10+.
+#
+# For testing purpuses, there is a function called `mono_native_get_platform_type ()`
+# (see mono/native/mono-native-platform.c), which returns a `MonoNativePlatformType` enum value.
+# There is also `Mono.MonoNativePlatform.GetPlatformType ()` (see mcs/class/System/Mono/MonoNativePlatform.cs).
+#
+# This can be called by automated tests both to ensure that the library has been correctly installed and also
+# to verify that it's the correct version of it.
+#
+
+if test x$target_ios = xyes; then
+	AC_MSG_CHECKING([whether we are using the iOS Simulator])
+	AC_TRY_COMPILE([
+		#include "TargetConditionals.h"
+		#include "AvailabilityMacros.h"
+	],[
+		#if TARGET_IPHONE_SIMULATOR == 1
+		#error using simulator
+		#endif
+	], [
+		target_ios_sim=no
+	], [
+		target_ios_sim=yes
+	])
+	AC_MSG_RESULT($target_ios_sim)
+else
+	target_ios_sim=no
+fi
+
+AC_MSG_CHECKING([Mono.Native support])
+sed_version_pattern='[[0-9]]\{1,2\}\(\.[[0-9]]\{1,2\}\)'
+if test x$target_osx = xyes; then
+	sed_remove_mac_version_pattern="s/-mmacosx-version-min=$sed_version_pattern//g"
+	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_mac_version_pattern`
+	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_mac_version_pattern`
+	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_mac_version_pattern`
+	MONO_NATIVE_CFLAGS=`echo $CFLAGS | sed -e $sed_remove_mac_version_pattern`
+	MONO_NATIVE_CXXFLAGS=`echo $CXXFLAGS | sed -e $sed_remove_mac_version_pattern`
+	MONO_NATIVE_LDFLAGS=`echo $LDFLAGS | sed -e $sed_remove_mac_version_pattern`
+
+	mono_native=yes
+	MONO_NATIVE_PLATFORM=macos
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_MACOS"
+	AC_MSG_RESULT(macos)
+
+	AC_MSG_CHECKING([whether we need the compatibility layer])
+	AC_TRY_COMPILE([
+		#include "TargetConditionals.h"
+		#include "AvailabilityMacros.h"
+	],[
+		#if !(TARGET_OS_MAC && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_12))
+		#error fail
+		#endif
+	], [
+		mono_native_compat=no
+		mono_native_text="Mac OSX"
+	], [
+		mono_native_compat=yes
+		mono_native_text="Mac OSX (compat+unified)"
+		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS"
+		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -mmacosx-version-min=10.12"
+		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS"
+		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -mmacosx-version-min=10.12"
+	])
+
+	AC_MSG_RESULT($mono_native_compat)
+elif test x$target_ios = xyes; then
+	if test x$target_ios_sim = xyes; then
+		mono_native_text="iOS Simulator"
+		sed_remove_ios_version_pattern="s/-mios-simulator-version-min=$sed_version_pattern//g"
+	else
+		mono_native_text="iOS Device"
+		sed_remove_ios_version_pattern="s/-miphoneos-version-min=$sed_version_pattern//g"
+	fi
+	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_ios_version_pattern`
+	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_ios_version_pattern`
+	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_ios_version_pattern`
+	MONO_NATIVE_CXXFLAGS=`echo $CXXFLAGS | sed -e $sed_remove_ios_version_pattern`
+	MONO_NATIVE_CFLAGS=`echo $CFLAGS | sed -e $sed_remove_ios_version_pattern`
+	MONO_NATIVE_LDFLAGS=`echo $LDFLAGS | sed -e $sed_remove_ios_version_pattern`
+
+	mono_native=yes
+	MONO_NATIVE_PLATFORM=ios
+	AC_MSG_RESULT(ios)
+
+	if test x$target_ios_sim=xyes; then
+		MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_SIMULATOR"
+	else
+		MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS"
+	fi
+
+	AC_MSG_CHECKING([whether we need the compatibility layer])
+	AC_TRY_COMPILE([
+		#include "TargetConditionals.h"
+		#include "AvailabilityMacros.h"
+	],[
+		#if !((TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0))
+		#error fail
+		#endif
+	], [
+		mono_native_compat=no
+	], [
+		mono_native_compat=yes
+		mono_native_text="$mono_native_text (compat+unified)"
+		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS"
+		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -iphoneos-version-min=10"
+		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS"
+		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -iphoneos-version-min=10"
+	])
+
+	AC_MSG_RESULT($mono_native_compat)
+elif test x$host_linux = xyes; then
+	mono_native_text="Linux"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=linux
+	AC_MSG_RESULT(linux)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
+else
+	mono_native=no
+	mono_native_text="no"
+	AC_MSG_RESULT(no)
+fi
+
+if test x$mono_native_compat = xyes; then
+	MONO_NATIVE_LIBRARY_NAME=libmono-native-compat
+else
+	MONO_NATIVE_LIBRARY_NAME=libmono-native
+fi
+
+AC_SUBST(MONO_NATIVE_PLATFORM)
+AC_SUBST(MONO_NATIVE_CC)
+AC_SUBST(MONO_NATIVE_CXX)
+AC_SUBST(MONO_NATIVE_CPPFLAGS)
+AC_SUBST(MONO_NATIVE_CXXFLAGS)
+AC_SUBST(MONO_NATIVE_CFLAGS)
+AC_SUBST(MONO_NATIVE_COMPAT_CFLAGS)
+AC_SUBST(MONO_NATIVE_UNIFIED_CFLAGS)
+AC_SUBST(MONO_NATIVE_LDFLAGS)
+AC_SUBST(MONO_NATIVE_COMPAT_LDFLAGS)
+AC_SUBST(MONO_NATIVE_UNIFIED_LDFLAGS)
+AC_SUBST(MONO_NATIVE_LIBRARY_NAME)
+
+AM_CONDITIONAL(MONO_NATIVE, test x$mono_native = xyes)
+AM_CONDITIONAL(MONO_NATIVE_COMPAT, test x$mono_native_compat = xyes)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_MACOS, test x$MONO_NATIVE_PLATFORM = xmacos)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_IOS, test x$MONO_NATIVE_PLATFORM = xios)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
+
+MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
+MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"
+AC_SUBST(MONO_NATIVE_PLATFORM_TYPE)
+AC_SUBST(MONO_NATIVE_PLATFORM_TYPE_COMPAT)
+AC_SUBST(MONO_NATIVE_PLATFORM_TYPE_UNIFIED)
+
 # Update all submodules recursively to ensure everything is checked out
 (cd $srcdir && scripts/update_submodules.sh)
 
@@ -5496,6 +5681,7 @@ scripts/mono-find-requires
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
+mono/native/Makefile
 mono/utils/Makefile
 mono/utils/jemalloc/Makefile
 mono/metadata/Makefile
@@ -5511,6 +5697,9 @@ mono/arch/arm/Makefile
 mono/arch/arm64/Makefile
 mono/arch/mips/Makefile
 mono/sgen/Makefile
+mono/native/platform-type.c
+mono/native/platform-type-compat.c
+mono/native/platform-type-unified.c
 mono/tests/Makefile
 mono/tests/assembly-load-reference/Makefile
 mono/tests/tests-config
@@ -5692,6 +5881,21 @@ fi
       echo "HAVE_BTLS=1" >> $srcdir/$mcsdir/build/config.make
     fi
 
+    if test "x$mono_native" = "xyes"; then
+      echo "MONO_NATIVE_SUPPORTED=true" >> $srcdir/$mcsdir/build/config.make
+    else
+      echo "MONO_NATIVE_SUPPORTED=false" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test x$mono_native_compat = xyes; then
+      echo "MONO_NATIVE_USING_COMPAT=true" >> $srcdir/$mcsdir/build/config.make
+    else
+      echo "MONO_NATIVE_USING_COMPAT=false" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make
+    echo "MONO_NATIVE_PLATFORM=$MONO_NATIVE_PLATFORM" >> $srcdir/$mcsdir/build/config.make
+
   fi
 
 )
@@ -5734,6 +5938,7 @@ echo "
 	DTrace:        $enable_dtrace
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts)
 	Spectre:       $spectre_mitigation_status
+	Mono.Native:   $mono_native_text
 
    Libraries:
 	.NET 4.x:        $with_profile4_x
