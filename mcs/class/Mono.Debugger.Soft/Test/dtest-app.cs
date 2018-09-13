@@ -369,6 +369,7 @@ public class Tests : TestsBase, ITest2
 		set_ip ();
 		step_filters ();
 		pointers ();
+		ref_return ();
 		if (args.Length > 0 && args [0] == "local-reflect")
 			local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
@@ -1796,6 +1797,21 @@ public class Tests : TestsBase, ITest2
 		BlittableStruct s = new BlittableStruct () { i = 2, d = 3.0 };
 		fixed (int* pa = a)
 			pointer_arguments (pa, &s);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ref_return () {
+
+	}
+
+	static int ret_val = 1;
+	public static ref int get_ref_int() {
+		return ref ret_val;
+	}
+
+	static string ref_return_string = "byref";
+	public static ref string get_ref_string() {
+		return ref ref_return_string;
 	}
 }
 
