@@ -122,8 +122,8 @@
     <Link>
       <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
-      <ModuleDefinitionFile>libmono-dynamic.def</ModuleDefinitionFile>
+      <AdditionalOptions Condition="'$(MONO_TARGET_GC)'=='bdwgc'">/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
+      <ModuleDefinitionFile Condition="'$(MONO_TARGET_GC)'=='bdwgc'">libmono-dynamic.def</ModuleDefinitionFile>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
@@ -162,8 +162,8 @@
     <Link>
       <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
-      <ModuleDefinitionFile>libmono-dynamic.def</ModuleDefinitionFile>
+      <AdditionalOptions Condition="'$(MONO_TARGET_GC)'=='bdwgc'">/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
+      <ModuleDefinitionFile Condition="'$(MONO_TARGET_GC)'=='bdwgc'">libmono-dynamic.def</ModuleDefinitionFile>
       <ImportLibrary>$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -194,8 +194,8 @@
     <Link>
       <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
-      <ModuleDefinitionFile>libmono-dynamic.def</ModuleDefinitionFile>
+      <AdditionalOptions Condition="'$(MONO_TARGET_GC)'=='bdwgc'">/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
+      <ModuleDefinitionFile Condition="'$(MONO_TARGET_GC)'=='bdwgc'">libmono-dynamic.def</ModuleDefinitionFile>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
@@ -234,8 +234,8 @@
     <Link>
       <AdditionalDependencies Condition="'$(MONO_TARGET_GC)'!='sgen'">$(GC_LIB);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
-      <ModuleDefinitionFile>libmono-dynamic.def</ModuleDefinitionFile>
+      <AdditionalOptions Condition="'$(MONO_TARGET_GC)'=='bdwgc'">/WHOLEARCHIVE:libgcbdwgc.lib</AdditionalOptions>
+      <ModuleDefinitionFile Condition="'$(MONO_TARGET_GC)'=='bdwgc'">libmono-dynamic.def</ModuleDefinitionFile>
       <ImportLibrary>$(MONO_BUILD_DIR_PREFIX)$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
