@@ -2417,7 +2417,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	ArgInfo *ainfo = NULL;
 	int stackSize;    
 	MonoMethodHeader *header;
-	int frmReg;
 
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
@@ -2441,10 +2440,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	}
 
 	header = cfg->header;
-	if ((cfg->flags & MONO_CFG_HAS_ALLOCA) || header->num_clauses)
-		frmReg = s390_r11;
-	else
-		frmReg = STK_BASE;
 
 	for (i = 0; i < n; ++i) {
 		MonoType *t;
@@ -2595,8 +2590,6 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	} else {
 		ERROR_DECL (error);
 		MonoMethodHeader *header;
-		MonoInst *vtcopy = mono_compile_create_var (cfg, m_class_get_byval_arg (src->klass), OP_LOCAL);
-		guint32 size;
 		int srcReg;
 
 		header = mono_method_get_header_checked (cfg->method, error);
@@ -2605,14 +2598,6 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			srcReg = s390_r11;
 		else
 			srcReg = STK_BASE;
-
-		/* FIXME: alignment? */
-		if (call->signature->pinvoke) {
-			size = mono_type_native_stack_size (m_class_get_byval_arg (src->klass), NULL);
-			vtcopy->backend.is_pinvoke = 1;
-		} else {
-			size = mini_type_stack_size (m_class_get_byval_arg (src->klass), NULL);
-		}
 
 		if (ainfo->reg == STK_BASE) {
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, srcReg, ainfo->offset, src->dreg);
