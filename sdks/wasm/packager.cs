@@ -359,8 +359,8 @@ class Driver {
 		foreach (var assembly in asm_list) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
-
-			File.Copy (assembly, Path.Combine (builddir, filename), true);
+			var source_file_path = Path.GetFullPath (assembly);
+			ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff $builddir/{filename}");
 
 			if (enable_aot) {
@@ -381,6 +381,13 @@ class Driver {
 		if (enable_aot) {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a {ofiles} | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
+
+		foreach(var asset in assets) {
+			var filename = Path.GetFileName (asset);
+			var abs_path = Path.GetFullPath (asset);
+			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff {abs_path}");
+		}
+
 
 		ninja.Close ();
 	}

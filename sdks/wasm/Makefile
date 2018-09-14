@@ -157,11 +157,10 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
 
 aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding mini_tests_basic.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding --asset=aot-driver.js mini_tests_basic.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	cp aot-driver.js bin/aot-sample
 	(cd bin/aot-sample && $(SM) aot-driver.js)
 
 build-debug-sample: .stamp-build-debug-sample
