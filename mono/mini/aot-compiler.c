@@ -9192,7 +9192,10 @@ static void
 emit_code (MonoAotCompile *acfg)
 {
 	int oindex, i, prev_index;
+#ifndef TARGET_AMD64
+	// See mono_aot_get_unbox_trampoline.
 	gboolean saved_unbox_info = FALSE;
+#endif
 	char symbol [MAX_SYMBOL_SIZE];
 
 	if (acfg->aot_opts.llvm_only)
@@ -9293,6 +9296,7 @@ emit_code (MonoAotCompile *acfg)
 			if (acfg->thumb_mixed && cfg->compile_llvm)
 				emit_set_arm_mode (acfg);
 
+#ifndef TARGET_AMD64
 			if (!saved_unbox_info) {
 				char user_symbol [128];
 				GSList *unwind_ops;
@@ -9309,6 +9313,7 @@ emit_code (MonoAotCompile *acfg)
 
 				saved_unbox_info = TRUE;
 			}
+#endif
 		}
 
 		if (cfg->compile_llvm) {
