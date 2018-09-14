@@ -2543,6 +2543,17 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	    (i == sig->sentinelpos)) {
 		emit_sig_cookie (cfg, call, cinfo);
 	}
+
+	if (cinfo->struct_ret) {
+		MonoInst *vtarg;
+
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+		vtarg->sreg1 = call->vret_var->dreg;
+		vtarg->dreg = mono_alloc_preg (cfg);
+		MONO_ADD_INS (cfg->cbb, vtarg);
+
+		mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->struct_ret, FALSE);
+	}
 }
 
 /*========================= End of Function ========================*/
