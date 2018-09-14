@@ -2,6 +2,22 @@ This project provides build scripts and sample apps for Mono targeting its suppo
 
 # Build instructions
 
+## Dependencies
+
+ - automake 1.16.1
+
+ if you have already built before using a previous version of automake you may need to clean the repo.
+
+```
+git clean -xffd
+```
+
+the previous should be sufficient but if that does not work then try hard resetting
+
+```
+git reset --hard && git clean -xffd && git submodule foreach --recursive git reset --hard && git submodule foreach --recursive git clean -xffd && git submodule update --init --recursive
+```
+
 ## Setup
 
 Copy `Make.config.sample` to `Make.config` and edit the new file to disable building the target you're not interested in.
@@ -27,22 +43,23 @@ make -C builds {toolchain,configure,build,package,clean}-android-{armeabi,armeab
 make -C builds {toolchain,configure,build,package,clean}-ios-{target{32,64},sim{32,64},cross{32,64}}
 
 # WebAssembly
-make -C builds {toolchain,configure,build,package,clean}-wasm-interp
+make -C builds {toolchain,configure,build,package,clean}-wasm-runtime
 ```
 
 # Testing instructions
 
 ## WebAssembly
 
-First, ensure you built&packaged bcl and wasm-inter in the `builds` directory:
+First, ensure the bcl and wasm-runtime have been built and packaged in the `builds` directory:
 
 ```
-make build-wasm-interp package-wasm-interp
+make build-wasm-runtime package-wasm-runtime
 make build-bcl package-bcl
 ````
 
 Go to the `wasm` directory for building and testing WebAssembly. Right now the following targets are available:
 
+- do-runtime: Encompasses all the previous steps
 - build: Build the test runner and test suites
 - run-all-mini: Run mini test suite
 - run-all-corlib: Run corlib test suite
