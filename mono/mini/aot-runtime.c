@@ -5384,8 +5384,6 @@ mono_aot_get_trampoline (const char *name)
 	return code;
 }
 
-#if defined (MONOTOUCH) || !defined (HOST_AMD64)
-
 static gpointer
 read_unwind_info (MonoAotModule *amodule, MonoTrampInfo *info, const char *symbol_name)
 {
@@ -5411,8 +5409,6 @@ read_unwind_info (MonoAotModule *amodule, MonoTrampInfo *info, const char *symbo
 	/* If successful return the address of the following data */
 	return (guint32*)symbol_addr + 1;
 }
-
-#endif
 
 #ifdef MONOTOUCH
 #include <mach/mach.h>
@@ -5813,44 +5809,6 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 
 	tinfo = mono_tramp_info_create (NULL, (guint8 *)code, 0, NULL, NULL);
 
-#ifdef HOST_AMD64
-	// Unbox trampoline size is tricky. See arch_emit_unbox_trampoline.
-	//
-	// For most architectures, the first unbox trampoline gets extra data so runtime
-	// can read its size. All unbox trampolines are presumed to be the same size.
-	// In the LLVM/x86 case, the jmp might be 2 bytes (0xEB) or 5 bytes (0xE9),
-	// the trampoline 6 or 9 bytes (the first instruction is 4 bytes).
-	//
-	// An exact size is not required. What is required is to cover the
-	// executed bytes, or at least the first instruction, or at least the
-	// instruction starts, and esp. not to overlap the following function.
-	//
-	// Overlapping the following function can be fatal, such
-	// as when it is gsharedvt and we need to find it and wrap it. It happened.
-	//
-	// Therefore, hardcode size as 5.
-	// There is no need to describe the interior bytes of instructions
-	// and the last instruction starts at offset 5.
-	//
-	// Alternatives include forcing the assembler to output 0xE9, if that is possible.
-	//   GNU as supports jmp.d32, Apple as nothing known.
-	//
-	// Or runtime disassembling of the thunk, very possible, but precludes
-	//   breakpoints and execute-only pages.
-	//
-	// Or having the assembler generate the size of every thunk, or even the entire TrampInfo.
-	//
-	// Or padding out with 3 bytes to a minimum size of 9 -- really the same as 5 or 6 though.
-	//    Rip cannot be in the padding just as well as it cannot be in the middle
-	//    of the last instruction.
-	//
-	// Or maybe alignment.
-	//
-	// Really these table entries are probably not needed at all.
-	// Stack walk through leaf function does not require metadata.
-	// Return address can be correctly assumed to be at *rsp.
-	tinfo->code_size = 5;
-#else
 	gpointer const symbol_addr = read_unwind_info (amodule, tinfo, "unbox_trampoline_p");
 	if (!symbol_addr) {
 		mono_tramp_info_free (tinfo);
@@ -5858,7 +5816,6 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	}
 
 	tinfo->code_size = *(guint32*)symbol_addr;
-#endif
 	mono_aot_tramp_info_register (tinfo, NULL);
 
 	/* The caller expects an ftnptr */
