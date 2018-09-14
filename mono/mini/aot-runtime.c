@@ -5747,6 +5747,35 @@ mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr)
 	return mono_create_ftnptr (mono_domain_get (), code);
 }
 
+#ifdef HOST_AMD64
+
+static guint
+mono_amd64_get_unbox_trampoline_size (gpointer code, guint candidate_code_size)
+{
+	// Assembler will encode this with an 8 or 32bit displacement, varying per thunk.
+	// FIXME Ideally we would not read code bytes -- cannot
+	// set a breakpoint here or have execute-only pages.
+
+	guint8 const * const p = (guint8 const*)code;
+	guint8 const modrm = p [2];
+	g_assert ((p [0] & 0x4F) == 0x48); 	// rex byte with 64bit override
+	g_assert (p [1] == 0x83); 		// add
+#ifdef HOST_WIN32
+	g_assert (modrm == 0xC1);		// rcx
+#else
+	g_assert (modrm == 0xC7);		// rdi
+#endif
+	g_assert (p [3] == sizeof (MonoObject));
+
+	guint8 const branch = p [4];
+
+	g_assert ((branch == 0xE9 || branch == 0xEB)
+		&& (candidate_code_size == 6 || candidate_code_size == 9));
+	return (branch == 0xE9) ? 9 : 6;
+}
+
+#endif
+
 gpointer
 mono_aot_get_unbox_trampoline (MonoMethod *method)
 {
@@ -5821,32 +5850,11 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	}
 
 	guint32 const code_size = *(guint32*)symbol_addr;
-	tinfo->code_size = code_size;
-
 #ifdef HOST_AMD64
-
-	// Assembler will encode this with an 8 or 32bit displacement, varying per thunk.
-	// FIXME Ideally we would not read code bytes -- cannot
-	// set a breakpoint here or have execute-only pages.
-
-	guint8 const * const p = (guint8 const*)code;
-	guint8 const modrm = p [2];
-	g_assert ((p [0] & 0x4F) == 0x48); 	// rex byte with 64bit override
-	g_assert (p [1] == 0x83); 		// add
-#ifdef HOST_WIN32
-	g_assert (modrm == 0xC1);		// rcx
+	tinfo->code_size = mono_amd64_get_unbox_trampoline_size (code, code_size);
 #else
-	g_assert (modrm == 0xC7);		// rdi
+	tinfo->code_size = code_size;
 #endif
-	g_assert (p [3] == MONO_ABI_SIZEOF (MonoObject));
-
-	guint8 const branch = p [4];
-
-	g_assert ((branch == 0xE9 || branch == 0xEB)
-		&& (code_size == 6 || code_size == 9));
-	tinfo->code_size = (branch == 0xE9) ? 9 : 6;
-#endif
-
 	mono_aot_tramp_info_register (tinfo, NULL);
 
 	/* The caller expects an ftnptr */
