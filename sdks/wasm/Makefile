@@ -44,7 +44,6 @@ APP_SOURCES = \
 	incrementalrunner.cs
 
 BINDING_TEST_SOURCES = \
-	bindings.cs	\
 	bindings-test.cs
 
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
@@ -109,8 +108,8 @@ main.exe: $(APP_SOURCES)
 mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-binding_tests.dll: $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+binding_tests.dll: bindings.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
@@ -141,10 +140,8 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll wasmhttp.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
-	mono packager.exe -out=test-suite binding_tests.dll wasmhttp.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
-	cp test.js test-suite/
-	touch $@
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll wasmhttp.dll mini_tests.dll main.exe runtime-tests.g.js
+	mono packager.exe -template=runtime-tests.g.js -out=test-suite binding_tests.dll wasmhttp.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 
 MINI_BASIC_TEST_FILES= \
     basic-calls.cs  \
@@ -184,16 +181,16 @@ JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 run-ch-%: toolchain build-test-suite
-	(cd test-suite && $(CHAKRA) test.js -args $*)
+	(cd test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd test-suite && $(D8) --expose_wasm test.js -- $*)
+	(cd test-suite && $(D8) --expose_wasm runtime.js -- $*)
 
 run-jsc-%: toolchain build-test-suite
-	(cd test-suite && $(JSC) test.js -- $*)
+	(cd test-suite && $(JSC) runtime.js -- $*)
 
 run-sm-%: toolchain build-test-suite
-	(cd test-suite && $(SM) test.js $*)
+	(cd test-suite && $(SM) runtime.js $*)
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
@@ -214,7 +211,7 @@ package: build build-dbg-proxy
 	rm -rf tmp/bcl/tests
 	rm -rf tmp/bcl/corlib.unsafe.dll.tmp
 	cp driver.c tmp/
-	cp $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a tmp/
+	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
 	cp dotnet_support.js tmp/

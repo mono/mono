@@ -29,6 +29,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -43,6 +44,9 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class CustomAttributeDataTest
 	{
+		[DllImport ("libc")]
+		public static extern void pinvoke ();
+
 		[MarshalAs (UnmanagedType.LPStr)]
 		[NonSerialized]
 		public string fieldDecoratedWithPseudoCustomAttributes = "test";
@@ -131,6 +135,24 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
 			Assert.AreEqual (typeof (UnmanagedType), ctorArg.ArgumentType);
 			Assert.AreEqual ((int)UnmanagedType.LPStr, ctorArg.Value);
+		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/10544
+		public void MethodIncludesDllImportAttributeData ()
+		{
+			var mi = typeof (CustomAttributeDataTest).FindMembers (MemberTypes.Method, BindingFlags.Static | BindingFlags.Public, (m, criteria) => m.Name == "pinvoke", null);
+			var data = ((MethodInfo)(mi[0])).CustomAttributes;
+			
+			Assert.AreEqual (2, data.Count ());
+
+			Assert.AreEqual (typeof (PreserveSigAttribute), data.First ().AttributeType);
+
+			var dllImportAttributeData = data.Last ();
+			var ctorArg = dllImportAttributeData.ConstructorArguments [0];
+
+			Assert.AreEqual (typeof (DllImportAttribute), dllImportAttributeData.AttributeType);
+			Assert.AreEqual ("libc", ctorArg.Value);
 		}
 	}
 }

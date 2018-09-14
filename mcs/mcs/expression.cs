@@ -13302,6 +13302,10 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			throw new NotImplementedException ();

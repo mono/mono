@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using InteropServicesCallingConvention = System.Runtime.InteropServices.CallingConvention;
 using System.Runtime.Serialization;
 #if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
@@ -464,17 +465,95 @@ namespace System.Reflection {
 
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				attrsData [count++] = new CustomAttributeData ((typeof (PreserveSigAttribute)).GetConstructor (Type.EmptyTypes));
-			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
-				this.GetPInvoke (out PInvokeAttributes flags, out string entryPoint, out string dllName);
-				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument(typeof(string), dllName) };
-				attrsData [count++] = new CustomAttributeData (
-					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (string) }),
-					ctorArgs,
-					EmptyArray<CustomAttributeNamedArgument>.Value); //FIXME Get named params
-			}
+			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0)
+				attrsData [count++] = GetDllImportAttributeData ();
 
 			return attrsData;
 		}
+
+        private CustomAttributeData GetDllImportAttributeData ()
+        {
+			if ((Attributes & MethodAttributes.PinvokeImpl) == 0)
+				return null;
+
+			string entryPoint, dllName = null;
+			PInvokeAttributes flags = 0;
+
+			GetPInvoke (out flags, out entryPoint, out dllName);
+
+			CharSet charSet;
+
+			switch (flags & PInvokeAttributes.CharSetMask) {
+			case PInvokeAttributes.CharSetNotSpec: 
+				charSet = CharSet.None; 
+				break;
+			case PInvokeAttributes.CharSetAnsi: 
+				charSet = CharSet.Ansi; 
+				break;
+			case PInvokeAttributes.CharSetUnicode: 
+				charSet = CharSet.Unicode; 
+				break;
+			case PInvokeAttributes.CharSetAuto: 
+				charSet = CharSet.Auto; 
+				break;
+			// Invalid: default to CharSet.None
+			default: 
+				charSet = CharSet.None;
+				break;
+			}
+
+			InteropServicesCallingConvention callingConvention;
+
+			switch (flags & PInvokeAttributes.CallConvMask) {
+			case PInvokeAttributes.CallConvWinapi: 
+				callingConvention = InteropServicesCallingConvention.Winapi; 
+				break;
+			case PInvokeAttributes.CallConvCdecl: 
+				callingConvention = InteropServicesCallingConvention.Cdecl; 
+				break;
+			case PInvokeAttributes.CallConvStdcall: 
+				callingConvention = InteropServicesCallingConvention.StdCall; 
+				break;
+			case PInvokeAttributes.CallConvThiscall: 
+				callingConvention = InteropServicesCallingConvention.ThisCall; 
+				break;
+			case PInvokeAttributes.CallConvFastcall: 
+				callingConvention = InteropServicesCallingConvention.FastCall; 
+				break;
+			// Invalid: default to CallingConvention.Cdecl
+			default: 
+				callingConvention = InteropServicesCallingConvention.Cdecl;
+				break;
+			}
+
+			bool exactSpelling = (flags & PInvokeAttributes.NoMangle) != 0;
+			bool setLastError = (flags & PInvokeAttributes.SupportsLastError) != 0;
+			bool bestFitMapping = (flags & PInvokeAttributes.BestFitMask) == PInvokeAttributes.BestFitEnabled;
+			bool throwOnUnmappableChar = (flags & PInvokeAttributes.ThrowOnUnmappableCharMask) == PInvokeAttributes.ThrowOnUnmappableCharEnabled;
+			bool preserveSig = (GetMethodImplementationFlags () & MethodImplAttributes.PreserveSig) != 0;
+
+			var ctorArgs = new CustomAttributeTypedArgument [] { 
+				new CustomAttributeTypedArgument (typeof (string), dllName),
+			};
+
+			var attrType = typeof (DllImportAttribute); 
+
+			var namedArgs = new CustomAttributeNamedArgument [] { 
+				new CustomAttributeNamedArgument (attrType.GetField ("EntryPoint"), entryPoint),
+				new CustomAttributeNamedArgument (attrType.GetField ("CharSet"), charSet),
+				new CustomAttributeNamedArgument (attrType.GetField ("ExactSpelling"), exactSpelling),
+				new CustomAttributeNamedArgument (attrType.GetField ("SetLastError"), setLastError),
+				new CustomAttributeNamedArgument (attrType.GetField ("PreserveSig"), preserveSig),
+				new CustomAttributeNamedArgument (attrType.GetField ("CallingConvention"), callingConvention),
+				new CustomAttributeNamedArgument (attrType.GetField ("BestFitMapping"), bestFitMapping),
+				new CustomAttributeNamedArgument (attrType.GetField ("ThrowOnUnmappableChar"), throwOnUnmappableChar)
+			};
+
+			return new CustomAttributeData (
+				attrType.GetConstructor (new[] { typeof (string) }),
+				ctorArgs,
+				namedArgs);
+        }
 
 		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
 		{
