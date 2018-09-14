@@ -2155,6 +2155,9 @@ static void
 arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *method, const char *call_target)
 {
 #if defined(TARGET_AMD64)
+
+	// See mono_aot_get_unbox_trampoline.
+
 	guint8 buf [32];
 	guint8 *code;
 	int this_reg;
