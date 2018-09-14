@@ -902,6 +902,67 @@ done:
 	return ret;
 }
 
+static MonoW32Handle*
+mono_w32handle_has_duplicates (MonoW32Handle *handles [ ], gsize nhandles)
+{
+	if (nhandles < 2 || nhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS)
+		return NULL;
+
+	MonoW32Handle *sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS]; // 64
+	memcpy (sorted, handles, nhandles * sizeof (handles[0]));
+	qsort (sorted, nhandles, sizeof (gpointer), g_direct_equal);
+	for (gsize i = 1; i < nhandles; ++i) {
+		MonoW32Handle * const h1 = sorted [i - 1];
+		MonoW32Handle * const h2 = sorted [i];
+		if (h1 == h2)
+			return h1;
+	}
+
+	return NULL;
+}
+
+static void
+mono_w32handle_clear_duplicates (MonoW32Handle *handles [ ], gsize nhandles)
+{
+	for (gsize i = 0; i < nhandles; ++i) {
+		if (!handles [i])
+			continue;
+		for (gsize j = i + 1; j < nhandles; ++j) {
+			if (handles [i] == handles [j]) {
+				mono_w32handle_unref (handles [j]);
+				handles [j] = NULL;
+			}
+		}
+	}
+}
+
+void
+mono_w32handle_check_duplicates (MonoW32Handle *handles [ ], gsize nhandles, gboolean waitall, MonoError *error)
+{
+	// Duplication is ok for WaitAny, exception for WaitAll.
+	// System.DuplicateWaitObjectException: Duplicate objects in argument.
+
+	MonoW32Handle *duplicate = mono_w32handle_has_duplicates (handles, nhandles);
+	if (!duplicate)
+		return;
+
+	if (waitall) {
+		mono_error_set_duplicate_wait_object (error);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "mono_w32handle_wait_multiple: handle %p is duplicated", duplicate);
+		return;
+	}
+
+	// There is at least one duplicate. This is not an error.
+	// Remove all duplicates -- in-place in order to return the
+	// lowest signaled, equal to the caller's indices, and ease
+	// the exit path's dereference.
+	// That is, we cannot use sorted data, nor can we
+	// compress the array to remove elements. We must operate
+	// on each element in its original index, but we can skip some.
+
+	mono_w32handle_clear_duplicates (handles, nhandles);
+}
+
 MonoW32HandleWaitRet
 mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waitall, guint32 timeout, gboolean alertable, MonoError *error)
 {
@@ -909,7 +970,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	gboolean alerted, poll;
 	gint i;
 	gint64 start;
-	MonoW32Handle *handles_data [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS], *handles_data_sorted [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
+	MonoW32Handle *handles_data [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS];
 	gboolean abandoned [MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS] = {0};
 
 	if (nhandles == 0)
@@ -944,46 +1005,12 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 			ret = MONO_W32HANDLE_WAIT_RET_FAILED;
 			goto done;
 		}
-
-		handles_data_sorted [i] = handles_data [i];
 	}
 
-	// Duplication is ok for WaitAny, exception for WaitAll.
-	// System.DuplicateWaitObjectException: Duplicate objects in argument.
-	// It is not obviously sensible to otherwise sort/unique the handles,
-	// as we have to return the lowest signaled one when multiple are signaled.
-	// Lowest in terms of array index in the input array.
-	qsort (handles_data_sorted, nhandles, sizeof (gpointer), g_direct_equal);
-	{
-		gboolean duplicate = FALSE;
-		for (i = 1; !duplicate && i < nhandles; ++i)
-			duplicate = handles_data_sorted [i - 1] == handles_data_sorted [i];
-		if (duplicate) {
-			if (waitall) {
-				mono_error_set_duplicate_wait_object (error);
-				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: handle %p is duplicated", __func__, handles_data_sorted [i]);
-				ret = MONO_W32HANDLE_WAIT_RET_FAILED;
-				goto done;
-			} else {
-				// There is at least one duplicate.
-				// Remove all duplicates -- in-place in order to return the
-				// lowest signaled, equal to the caller's indices, and ease
-				// the exit path's dereference.
-				// That is, we cannot use the sorted data, nor can we
-				// compress the array to remove elements. We must operate
-				// on each element in its original index, but we can skip some.
-				for (i = 0; i < nhandles; ++i) {
-					if (!handles_data [i])
-						continue;
-					for (gsize j = i + 1; j < nhandles; ++j) {
-						if (handles_data [i] == handles_data [j]) {
-							mono_w32handle_unref (handles_data [j]);
-							handles_data [j] = NULL;
-						}
-					}
-				}
-			}
-		}
+	mono_w32handle_check_duplicates (handles_data, nhandles, waitall, error);
+	if (!is_ok (error)) {
+		ret = MONO_W32HANDLE_WAIT_RET_FAILED;
+		goto done;
 	}
 
 	poll = FALSE;
