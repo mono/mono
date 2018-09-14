@@ -36,9 +36,23 @@ using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Reflection
 {
+	enum Levels { one, two, three }
+
 	class Attr : Attribute {
 		public Attr (byte[] arr) {
 		}
+	}
+
+	[AttributeUsage (AttributeTargets.Method)]
+	class TestAttrWithObjectCtorParam : Attribute {
+		object o;
+		public TestAttrWithObjectCtorParam (object o) => this.o = o;
+	}
+
+	[AttributeUsage (AttributeTargets.Method)]
+	class TestAttrWithEnumCtorParam : Attribute {
+		Levels level;
+		public TestAttrWithEnumCtorParam (Levels level) => this.level = level;
 	}
 
 	[TestFixture]
@@ -53,6 +67,16 @@ namespace MonoTests.System.Reflection
 
 		[Attr (new byte [] { 1, 2 })]
 		public void MethodWithAttr () {
+		}
+
+		[TestAttrWithObjectCtorParam (Levels.two)]
+		public void MethodDecoratedWithAttribute1 ()
+		{
+		}
+
+		[TestAttrWithEnumCtorParam (Levels.two)]
+		public void MethodDecoratedWithAttribute2 ()
+		{
 		}
 
 		public void MethodWithParamDecoratedWithPseudoCustomAttributes ([Optional, In, Out, MarshalAs (UnmanagedType.LPStr)] String s)
@@ -153,6 +177,33 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual (typeof (DllImportAttribute), dllImportAttributeData.AttributeType);
 			Assert.AreEqual ("libc", ctorArg.Value);
+		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/10555
+		public void CustomAttributeCtor_TakesEnumArg ()
+		{
+			var method = GetMethod (nameof (MethodDecoratedWithAttribute1));
+			var data = method.CustomAttributes;
+			var ctorArg = data.First ().ConstructorArguments [0];
+
+			Assert.AreEqual (typeof (Levels), ctorArg.ArgumentType);
+			Assert.AreEqual (1, ctorArg.Value);
+			Assert.AreEqual (typeof (int), ctorArg.Value.GetType ());
+
+			method = GetMethod (nameof (MethodDecoratedWithAttribute2));
+			data = method.CustomAttributes;
+			ctorArg = data.First ().ConstructorArguments [0];
+
+			Assert.AreEqual (typeof (Levels), ctorArg.ArgumentType);
+			Assert.AreEqual (1, ctorArg.Value);
+			Assert.AreEqual (typeof (int), ctorArg.Value.GetType ());			
+		}
+
+		private MethodInfo GetMethod (string methodName)
+		{
+			var mi = typeof (CustomAttributeDataTest).FindMembers (MemberTypes.Method, BindingFlags.Instance | BindingFlags.Public, (m, criteria) => m.Name == methodName, null);
+			return (MethodInfo)(mi [0]);
 		}
 	}
 }
