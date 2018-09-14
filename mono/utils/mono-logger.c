@@ -302,20 +302,20 @@ mono_trace_set_mask_string (const char *value)
 		{ "io-layer-semaphore", MONO_TRACE_IO_LAYER_SEMAPHORE },
 		{ "io-layer-mutex", MONO_TRACE_IO_LAYER_MUTEX },
 		{ "io-layer-handle", MONO_TRACE_IO_LAYER_HANDLE },
-		{ "io-layer", MONO_TRACE_IO_LAYER_PROCESS
+		{ "io-layer", (MonoTraceMask)(MONO_TRACE_IO_LAYER_PROCESS
 		               | MONO_TRACE_IO_LAYER_SOCKET
 		               | MONO_TRACE_IO_LAYER_FILE
 		               | MONO_TRACE_IO_LAYER_EVENT
 		               | MONO_TRACE_IO_LAYER_SEMAPHORE
 		               | MONO_TRACE_IO_LAYER_MUTEX
-		               | MONO_TRACE_IO_LAYER_HANDLE },
+		               | MONO_TRACE_IO_LAYER_HANDLE) },
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "profiler", MONO_TRACE_PROFILER },
 		{ "gsharedvt_get_call_info", MONO_TRACE_GSHAREDVT_GET_CALL_INFO },
 		{ "gsharedvt_start_call", MONO_TRACE_GSHAREDVT_START_CALL },
 		{ "gsharedvt", MONO_TRACE_GSHAREDVT_GET_CALL_INFO | MONO_TRACE_GSHAREDVT_START_CALL },
-		{ "all", ~(MonoTraceMask)0 },
+		{ "all", (MonoTraceMask)~0 },
 		{ NULL, (MonoTraceMask)0 },
 	};
 
