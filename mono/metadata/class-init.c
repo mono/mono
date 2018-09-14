@@ -4176,6 +4176,22 @@ mono_class_init (MonoClass *klass)
 
 		if (MONO_CLASS_IS_INTERFACE_INTERNAL (klass))
 			mono_class_setup_interface_id (klass);
+
+		MonoGenericInst *ginstance = mono_class_get_generic_class (klass)->context.class_inst;
+		for (guint x = 0; x < ginstance->type_argc; x++) {
+			if (mono_type_is_generic_parameter (ginstance->type_argv [x]))
+				break;
+
+			MonoClass *type_param = mono_class_from_mono_type_internal (ginstance->type_argv [x]);
+
+			if (!m_class_get_cast_class (type_param))
+				break;
+
+			if (m_class_get_cast_class (type_param) == m_class_get_element_class (type_param))
+				break; // element_class is taken care of
+
+			mono_class_init (m_class_get_cast_class (type_param));
+		}
 	}
 
 	if (klass->parent && !klass->parent->inited)
