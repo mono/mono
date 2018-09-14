@@ -5820,13 +5820,43 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 
 	tinfo = mono_tramp_info_create (NULL, (guint8 *)code, 0, NULL, NULL);
 
+	// First trampoline's size is indicated by unbox_trampoline_p,
+	// and all trampolines are presumed to be the same size.
+	// FIXME Get the size of each trampoline from unwind info?
+
 	symbol_addr = read_unwind_info (amodule, tinfo, "unbox_trampoline_p");
 	if (!symbol_addr) {
 		mono_tramp_info_free (tinfo);
 		return FALSE;
 	}
 
-	tinfo->code_size = *(guint32*)symbol_addr;
+	guint32 const code_size = *(guint32*)symbol_addr;
+	tinfo->code_size = code_size;
+
+#ifdef HOST_AMD64
+
+	// Assembler will encode this with an 8 or 32bit displacement, varying per thunk.
+	// FIXME Ideally we would not read code bytes -- cannot
+	// set a breakpoint here or have execute-only pages.
+
+	guint8 const * const p = (guint8 const*)code;
+	guint8 const modrm = p [2];
+	g_assert ((p [0] & 0x4F) == 0x48); 	// rex byte with 64bit override
+	g_assert (p [1] == 0x83); 		// add
+#ifdef HOST_WIN32
+	g_assert (modrm == 0xC1);		// rcx
+#else
+	g_assert (modrm == 0xC7);		// rdi
+#endif
+	g_assert (p [3] == MONO_ABI_SIZEOF (MonoObject));
+
+	guint8 const branch = p [4];
+
+	g_assert ((branch == 0xE9 || branch == 0xEB)
+		&& (code_size == 6 || code_size == 9));
+	tinfo->code_size = (branch == 0xE9) ? 9 : 6;
+#endif
+
 	mono_aot_tramp_info_register (tinfo, NULL);
 
 	/* The caller expects an ftnptr */
