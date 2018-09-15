@@ -936,7 +936,7 @@ mono_w32handle_clear_duplicates (MonoW32Handle *handles [ ], gsize nhandles)
 	}
 }
 
-void
+static void
 mono_w32handle_check_duplicates (MonoW32Handle *handles [ ], gsize nhandles, gboolean waitall, MonoError *error)
 {
 	// Duplication is ok for WaitAny, exception for WaitAll.
