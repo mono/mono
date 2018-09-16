@@ -101,6 +101,7 @@ void mono_ee_interp_init (const char *opts);
 void mono_marshal_ilgen_init (void);
 void mono_method_builder_ilgen_init (void);
 void mono_sgen_mono_ilgen_init (void);
+void mono_icall_table_init (void);
 MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
 int mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 void mono_set_assemblies_path (const char* path);
@@ -237,6 +238,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();
 #endif
+	mono_icall_table_init ();
 
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
