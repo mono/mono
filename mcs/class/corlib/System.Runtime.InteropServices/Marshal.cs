@@ -946,7 +946,7 @@ namespace System.Runtime.InteropServices
 				return *(short*)addr;
 
 			short s;
-			Buffer.Memcpy ((byte*)&s, (byte*)ptr, 2);
+			Buffer.InternalMemcpy ((byte*)&s, (byte*)ptr, 2);
 			return s;
 		}
 
@@ -958,7 +958,7 @@ namespace System.Runtime.InteropServices
 				return *(short*)addr;
 
 			short s;
-			Buffer.Memcpy ((byte*)&s, addr, 2);
+			Buffer.InternalMemcpy ((byte*)&s, addr, 2);
 			return s;
 		}
 
@@ -978,7 +978,7 @@ namespace System.Runtime.InteropServices
 				return *(int*)addr;
 
 			int s;
-			Buffer.Memcpy ((byte*)&s, addr, 4);
+			Buffer.InternalMemcpy ((byte*)&s, addr, 4);
 			return s;
 		}
 
@@ -991,7 +991,7 @@ namespace System.Runtime.InteropServices
 				return *(int*)addr;
 			else {
 				int s;
-				Buffer.Memcpy ((byte*)&s, addr, 4);
+				Buffer.InternalMemcpy ((byte*)&s, addr, 4);
 				return s;
 			}
 		}
@@ -1015,7 +1015,7 @@ namespace System.Runtime.InteropServices
 				return *(long*)ptr;
 
 			long s;
-			Buffer.Memcpy ((byte*)&s, addr, 8);
+			Buffer.InternalMemcpy ((byte*)&s, addr, 8);
 			return s;
 		}
 
@@ -1027,7 +1027,7 @@ namespace System.Runtime.InteropServices
 				return *(long*)addr;
 			
 			long s;
-			Buffer.Memcpy ((byte*)&s, addr, 8);
+			Buffer.InternalMemcpy ((byte*)&s, addr, 8);
 			return s;
 		}
 
@@ -1381,7 +1381,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 1) == 0)
 				*(short*)addr = val;
 			else
-				Buffer.Memcpy (addr, (byte*)&val, 2);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 2);
 		}
 
 		public static unsafe void WriteInt16 (IntPtr ptr, int ofs, short val)
@@ -1391,7 +1391,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 1) == 0)
 				*(short*)addr = val;
 			else {
-				Buffer.Memcpy (addr, (byte*)&val, 2);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 2);
 			}
 		}
 
@@ -1425,7 +1425,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 3) == 0) 
 				*(int*)addr = val;
 			else {
-				Buffer.Memcpy (addr, (byte*)&val, 4);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 4);
 			}
 		}
 
@@ -1436,7 +1436,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 3) == 0) 
 				*(int*)addr = val;
 			else {
-				Buffer.Memcpy (addr, (byte*)&val, 4);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 4);
 			}
 		}
 
@@ -1456,7 +1456,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 7) == 0) 
 				*(long*)addr = val;
 			else 
-				Buffer.Memcpy (addr, (byte*)&val, 8);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 8);
 		}
 
 		public static unsafe void WriteInt64 (IntPtr ptr, int ofs, long val)
@@ -1468,7 +1468,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 7) == 0) 
 				*(long*)addr = val;
 			else 
-				Buffer.Memcpy (addr, (byte*)&val, 8);
+				Buffer.InternalMemcpy (addr, (byte*)&val, 8);
 		}
 
 		[MonoTODO]
