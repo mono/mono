@@ -318,6 +318,13 @@ public class ModuleTest
 	}
 
 	[Test]
+	public void ResolveInvalidMember () // https://github.com/mono/mono/issues/9604
+	{
+		Module m = typeof (ModuleTest).Module;
+		Assert.Throws<ArgumentOutOfRangeException> (() => m.ResolveMember(0x0A00F000));
+	}
+
+	[Test]
 	public void FindTypes ()
 	{
 		Module m = typeof (ModuleTest).Module;
