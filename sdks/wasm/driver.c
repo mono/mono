@@ -222,12 +222,12 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 #include "driver-gen.c"
 #endif
 
+typedef struct WasmAssembly_ WasmAssembly;
+
 struct WasmAssembly_ {
 	MonoBundledAssembly assembly;
-	struct WasmAssembly_ *next;
+	WasmAssembly *next;
 };
-
-typedef struct WasmAssembly_ WasmAssembly;
 
 static WasmAssembly *assemblies;
 static int assembly_count;
@@ -235,7 +235,7 @@ static int assembly_count;
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
 {
-	WasmAssembly *entry = malloc(sizeof (MonoBundledAssembly));
+	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
@@ -268,7 +268,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 
 	if (assembly_count) {
-		MonoBundledAssembly **bundle_array = malloc (sizeof (MonoBundledAssembly*) * (assembly_count + 1));
+		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
 		WasmAssembly *cur = assemblies;
 		bundle_array [assembly_count] = NULL;
 		int i = 0;
