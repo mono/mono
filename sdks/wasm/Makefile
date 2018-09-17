@@ -223,7 +223,7 @@ package: build build-dbg-proxy
 	mkdir tmp/framework
 	cp bindings.cs tmp
 	cp WebAssembly.Bindings.dll tmp/framework
-	cp bindings.pdb tmp/framework
+	cp WebAssembly.Bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
 	cp WebAssembly.Net.Http.dll tmp/framework
 	cp wasmhttp.pdb tmp/framework
