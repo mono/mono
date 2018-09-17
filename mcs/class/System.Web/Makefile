@@ -273,8 +273,10 @@ EXTRA_DISTFILES = \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
 	$(shell find Test/standalone/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
-	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 	ASPState.sql
+
+# This break for strange reason
+# 	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
