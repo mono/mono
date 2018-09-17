@@ -12,7 +12,7 @@ class Driver {
 	static List<string>  file_list = new List<string> ();
 	static List<string> assembly_names = new List<string> ();
 
-	const string BINDINGS_ASM_NAME = "bindings";
+	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
 
 	enum AssemblyKind {

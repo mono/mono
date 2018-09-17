@@ -108,14 +108,14 @@ main.exe: $(APP_SOURCES)
 mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-binding_tests.dll: bindings.dll $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-bindings.dll: bindings.cs
+WebAssembly.Bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
-wasmhttp.dll: bindings.dll WasmHttpMessageHandler.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
 
 Simple.Dependency.dll: dependency.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
@@ -133,15 +133,15 @@ Mono.Cecil.dll: Makefile
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll wasmhttp.dll sample.dll debug.html runtime.g.js
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
 	
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll wasmhttp.dll mini_tests.dll main.exe runtime-tests.g.js
-	mono packager.exe -template=runtime-tests.g.js -out=test-suite binding_tests.dll wasmhttp.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.g.js
+	mono packager.exe -template=runtime-tests.g.js -out=test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 
 MINI_BASIC_TEST_FILES= \
     basic-calls.cs  \
@@ -222,10 +222,10 @@ package: build build-dbg-proxy
 	cp sample.html tmp/
 	mkdir tmp/framework
 	cp bindings.cs tmp
-	cp bindings.dll tmp/framework
+	cp WebAssembly.Bindings.dll tmp/framework
 	cp bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
-	cp wasmhttp.dll tmp/framework
+	cp WebAssembly.Net.Http.dll tmp/framework
 	cp wasmhttp.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
