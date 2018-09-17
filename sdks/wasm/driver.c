@@ -162,6 +162,14 @@ int mono_array_length (MonoArray *array);
 int mono_array_element_size(MonoClass *klass);
 void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
 
+typedef struct {
+	const char *name;
+	const unsigned char *data;
+	unsigned int size;
+} MonoBundledAssembly;
+
+void mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
+
 static char*
 m_strdup (const char *str)
 {
@@ -216,6 +224,28 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 #include "driver-gen.c"
 #endif
 
+typedef struct WasmAssembly_ WasmAssembly;
+
+struct WasmAssembly_ {
+	MonoBundledAssembly assembly;
+	WasmAssembly *next;
+};
+
+static WasmAssembly *assemblies;
+static int assembly_count;
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
+{
+	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
+	entry->assembly.name = m_strdup (name);
+	entry->assembly.data = data;
+	entry->assembly.size = size;
+	entry->next = assemblies;
+	assemblies = entry;
+	++assembly_count;
+}
+
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
@@ -239,6 +269,19 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_sgen_mono_ilgen_init ();
 #endif
 	mono_icall_table_init ();
+
+	if (assembly_count) {
+		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
+		WasmAssembly *cur = assemblies;
+		bundle_array [assembly_count] = NULL;
+		int i = 0;
+		while (cur) {
+			bundle_array [i] = &cur->assembly;
+			cur = cur->next;
+			++i;
+		}
+		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
+	}
 
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
