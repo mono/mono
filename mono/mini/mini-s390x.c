@@ -2601,7 +2601,21 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	} else {
 		ERROR_DECL (error);
 		MonoMethodHeader *header;
-		int srcReg;
+		MonoInst *vtcopy = mono_compile_create_var (cfg, m_class_get_byval_arg (src->klass), OP_LOCAL);
+		MonoInst *load;
+		int ovf_size = ainfo->vtsize,
+		    srcReg;
+		guint32 size;
+
+		/* FIXME: alignment? */
+		if (call->signature->pinvoke) {
+			size = mono_type_native_stack_size (m_class_get_byval_arg (src->klass), NULL);
+			vtcopy->backend.is_pinvoke = 1;
+		} else {
+			size = mini_type_stack_size (m_class_get_byval_arg (src->klass), NULL);
+		}
+		if (size > 0)
+			g_assert (ovf_size > 0);
 
 		header = mono_method_get_header_checked (cfg->method, error);
 		mono_error_assert_ok (error); /* FIXME don't swallow the error */
@@ -2610,8 +2624,11 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		else
 			srcReg = STK_BASE;
 
+		EMIT_NEW_VARLOADA (cfg, load, vtcopy, vtcopy->inst_vtype);
+		mini_emit_memcpy (cfg, load->dreg, 0, src->dreg, 0, size, TARGET_SIZEOF_VOID_P);
+
 		if (ainfo->reg == STK_BASE) {
-			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, srcReg, ainfo->offset, src->dreg);
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, srcReg, ainfo->offset, load->dreg);
 
 			if (cfg->compute_gc_maps) {
 				MonoInst *def;
@@ -2619,7 +2636,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 				EMIT_NEW_GC_PARAM_SLOT_LIVENESS_DEF (cfg, def, ainfo->offset, m_class_get_byval_arg (ins->klass));
 			}
 		} else
-			mono_call_inst_add_outarg_reg (cfg, call, src->dreg, ainfo->reg, FALSE);
+			mono_call_inst_add_outarg_reg (cfg, call, load->dreg, ainfo->reg, FALSE);
 	}
 }
 
