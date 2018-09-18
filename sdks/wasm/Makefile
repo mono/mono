@@ -76,7 +76,7 @@ debug/:
 release/:
 	mkdir -p $@
 
-MONO_LIBS = $(TOP)/sdks/out/wasm-runtime/lib/libmono-ee-interp.a $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a $(TOP)/sdks/out/wasm-runtime/lib/libmono-ilgen.a
+MONO_LIBS = $(TOP)/sdks/out/wasm-runtime/lib/libmono-ee-interp.a $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a $(TOP)/sdks/out/wasm-runtime/lib/libmono-ilgen.a $(TOP)/sdks/out/wasm-runtime/lib/libmono-icall-table.a
 
 debug/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a | debug/
 	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
