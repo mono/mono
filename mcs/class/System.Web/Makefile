@@ -275,7 +275,7 @@ EXTRA_DISTFILES = \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	ASPState.sql
 
-# This break for strange reason
+# This breaks for strange reason
 # 	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
