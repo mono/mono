@@ -415,9 +415,6 @@ namespace System.Runtime.CompilerServices
 
 			public Enumerator(ConditionalWeakTable<TKey, TValue> table)
 			{
-				Debug.Assert(table != null, "Must provide a valid table");
-				Debug.Assert(Monitor.IsEntered(table._lock), "Must hold the _lock lock to construct the enumerator");
-
 				// Store a reference to the parent table and increase its active enumerator count.
 				_table = table;
 				_currentIndex = -1;
