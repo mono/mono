@@ -469,10 +469,7 @@
 		<!-- icalls - but (at least parts of them) are used thru interfaces at runtime and cannot be linked out -->
 		<type fullname="System.Globalization.DateTimeFormatInfo" preserve="fields" />
 		<type fullname="System.Globalization.CompareInfo" preserve="fields" />
-		<type fullname="System.Globalization.CultureInfo" preserve="fields">
-			<!-- icall.c: fill_reflection_assembly_name (assert) and ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (assert) -->
-			<method name="CreateCulture" />
-		</type>
+		<type fullname="System.Globalization.CultureInfo" preserve="fields" />
 		<type fullname="System.Globalization.NumberFormatInfo" preserve="fields" />
 		<type fullname="System.Globalization.RegionInfo" preserve="fields" />
 		<type fullname="System.Globalization.SortKey" preserve="fields" />
