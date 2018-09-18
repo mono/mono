@@ -71,16 +71,15 @@ namespace System
 
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
-
 			/* FIXME: Add other types */
-			if (obj is MonoMethod)
-				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributes ();
-			else if (obj is FieldInfo)
-				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is ParameterInfo)
-				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is Type)
-				pseudoAttrs = GetPseudoCustomAttributes (((Type)obj));
+			if (obj is MonoMethod monoMethod)
+				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
+			else if (obj is FieldInfo fieldInfo)
+				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
+			else if (obj is MonoParameterInfo monoParamInfo)
+				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
+			else if (obj is Type t)
+				pseudoAttrs = GetPseudoCustomAttributes (t);
 
 			if ((attributeType != null) && (pseudoAttrs != null)) {
 				for (int i = 0; i < pseudoAttrs.Length; ++i)
@@ -461,14 +460,14 @@ namespace System
 			CustomAttributeData[] pseudoAttrsData = null;
 
 			/* FIXME: Add other types */
-			if (obj is MonoMethod)
-				pseudoAttrsData = ((MonoMethod)obj).GetPseudoCustomAttributesData ();
-			else if (obj is FieldInfo)
-				pseudoAttrsData = ((FieldInfo)obj).GetPseudoCustomAttributesData ();
-			else if (obj is ParameterInfo)
-				pseudoAttrsData = ((ParameterInfo)obj).GetPseudoCustomAttributesData ();
-			else if (obj is Type)
-				pseudoAttrsData = GetPseudoCustomAttributesData (((Type)obj));
+			if (obj is MonoMethod monoMethod)
+				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
+			else if (obj is FieldInfo fieldInfo)
+				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
+			else if (obj is MonoParameterInfo monoParamInfo)
+				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();
+			else if (obj is Type t)
+				pseudoAttrsData = GetPseudoCustomAttributesData (t);
 
 			if ((attributeType != null) && (pseudoAttrsData != null)) {
 				for (int i = 0; i < pseudoAttrsData.Length; ++i) {

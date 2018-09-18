@@ -48,7 +48,36 @@ namespace System.Reflection
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	class MonoParameterInfo : RuntimeParameterInfo {
+	class MonoParameterInfo : RuntimeParameterInfo {		
+		internal MarshalAsAttribute marshalAs;
+
+		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
+		{
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type t = p[i].ParameterType;
+
+				string typeName = t.FormatTypeName (serialization);
+
+				// Legacy: Why use "ByRef" for by ref parameters? What language is this?
+				// VB uses "ByRef" but it should precede (not follow) the parameter name.
+				// Why don't we just use "&"?
+				if (t.IsByRef && !serialization) {
+					sb.Append (typeName.TrimEnd (new char[] { '&' }));
+					sb.Append (" ByRef");
+				} else {
+					sb.Append (typeName);
+				}
+			}
+
+			if ((callingConvention & CallingConventions.VarArgs) != 0) {
+				if (p.Length > 0)
+					sb.Append (", ");
+				sb.Append ("...");
+			}
+		}
 
 #if !FULL_AOT_RUNTIME
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
@@ -87,8 +116,7 @@ namespace System.Reflection
 			this.NameImpl = pinfo.Name;
 			this.PositionImpl = pinfo.Position;
 			this.AttrsImpl = pinfo.Attributes;
-			this.DefaultValueImpl = pinfo.GetDefaultValueImpl ();
-			//this.parent = pinfo;
+			this.DefaultValueImpl = GetDefaultValueImpl (pinfo);
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
@@ -160,6 +188,11 @@ namespace System.Reflection
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
+		internal object GetDefaultValueImpl (ParameterInfo pinfo)
+		{
+			FieldInfo field = typeof (ParameterInfo).GetField ("DefaultValueImpl", BindingFlags.Instance | BindingFlags.NonPublic);
+			return field.GetValue (pinfo);
+		}
 
 		public
 		override
@@ -171,6 +204,8 @@ namespace System.Reflection
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern int GetMetadataToken ();
 
 		public
 		override
@@ -179,6 +214,72 @@ namespace System.Reflection
 			if (types == null)
 				return Type.EmptyTypes;
 			return types;
+		}
+
+		internal object[] GetPseudoCustomAttributes () 
+		{
+			int count = 0;
+
+			if (IsIn)
+				count ++;
+			if (IsOut)
+				count ++;
+			if (IsOptional)
+				count ++;
+			if (marshalAs != null)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if (IsIn)
+				attrs [count ++] = new InAttribute ();
+			if (IsOut)
+				attrs [count ++] = new OutAttribute ();
+			if (IsOptional)
+				attrs [count ++] = new OptionalAttribute ();
+
+			if (marshalAs != null)
+				attrs [count ++] = marshalAs.Copy ();
+
+			return attrs;
+		}
+
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
+		{
+			int count = 0;
+
+			if (IsIn)
+				count++;
+			if (IsOut)
+				count++;
+			if (IsOptional)
+				count++;
+			if (marshalAs != null)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if (IsIn)
+				attrsData [count++] = new CustomAttributeData ((typeof (InAttribute)).GetConstructor (Type.EmptyTypes));
+			if (IsOut)
+				attrsData [count++] = new CustomAttributeData ((typeof (OutAttribute)).GetConstructor (Type.EmptyTypes));
+			if (IsOptional)
+				attrsData [count++] = new CustomAttributeData ((typeof (OptionalAttribute)).GetConstructor (Type.EmptyTypes));				
+			if (marshalAs != null) {
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) };
+				attrsData [count++] = new CustomAttributeData (
+					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof (UnmanagedType) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
+			}
+
+			return attrsData;
 		}
 
 		public
@@ -202,5 +303,30 @@ namespace System.Reflection
 				return true;
 			}
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern Type[] GetTypeModifiers (bool optional);		
+
+#if !FULL_AOT_RUNTIME
+		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
+		{
+			return new MonoParameterInfo (pb, type, member, position);
+		}
+#endif
+
+		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
+		{
+			return new MonoParameterInfo (pinfo, type, member, position);
+		}
+
+		internal static ParameterInfo New (ParameterInfo pinfo, MemberInfo member)
+		{
+			return new MonoParameterInfo (pinfo, member);
+		}
+
+		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
+		{
+			return new MonoParameterInfo (type, member, marshalAs);
+		}		
 	}
 }

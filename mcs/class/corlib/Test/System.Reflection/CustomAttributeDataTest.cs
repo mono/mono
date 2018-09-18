@@ -113,15 +113,15 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (4, customAttributesData.Count);
 
 			var inAttributeData = customAttributesData [0];
-			var optionalAttributeData = customAttributesData [1];
-			var outAttributeData = customAttributesData [2];
+			var outAttributeData = customAttributesData [1];
+			var optionalAttributeData = customAttributesData [2];			
 			var marshalAsAttributeData = customAttributesData [3];
 
 			var marshalAsAttributeCtorArg = marshalAsAttributeData.ConstructorArguments [0];
 
 			Assert.AreEqual (typeof (InAttribute), inAttributeData.AttributeType);
-			Assert.AreEqual (typeof (OptionalAttribute), optionalAttributeData.AttributeType);
 			Assert.AreEqual (typeof (OutAttribute), outAttributeData.AttributeType);
+			Assert.AreEqual (typeof (OptionalAttribute), optionalAttributeData.AttributeType);
 
 			Assert.AreEqual (typeof (MarshalAsAttribute), marshalAsAttributeData.AttributeType);
 			Assert.AreEqual (typeof (UnmanagedType), marshalAsAttributeCtorArg.ArgumentType);
