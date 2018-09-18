@@ -97,6 +97,20 @@
 #endif
 #endif
 
+// FIXME if defined (MONO_ARCH_USE_SIGACTION) || defined (HOST_WIN32)
+#if defined (MONO_ARCH_USE_SIGACTION) && defined (HOST_LINUX)
+#define MONO_SIG_HANDLER_DEBUG 1 // "with_fault_addr" but could be extended in future, so "debug"
+#endif
+
+#ifdef MONO_SIG_HANDLER_DEBUG
+// Same as MONO_SIG_HANDLER_FUNC but debug_fault_addr is added to params, and no_optimize.
+// The Krait workaround is not needed here, due to this not actually being the signal handler,
+// so MONO_SIGNAL_HANDLER_FUNC is combined into it.
+#define MONO_SIG_HANDLER_FUNC_DEBUG(access, ftn) access MONO_ATTRIBUTE_NO_OPTIMIZE void ftn \
+	(int _dummy, MONO_SIG_HANDLER_INFO_TYPE *_info, void *context, void * volatile debug_fault_addr G_GNUC_UNUSED)
+#define MONO_SIG_HANDLER_PARAMS_DEBUG MONO_SIG_HANDLER_PARAMS, debug_fault_addr
+#endif
+
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
 
