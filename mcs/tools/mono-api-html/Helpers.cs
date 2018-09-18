@@ -180,7 +180,7 @@ namespace Mono.ApiTools {
 			case "System.nint":
 				return "nint";
 			case "System.nuint":
-				return "uint";
+				return "nuint";
 			case "System.nfloat":
 				return "nfloat";
 			case "System.IntPtr":
