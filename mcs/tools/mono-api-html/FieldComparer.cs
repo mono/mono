@@ -61,6 +61,18 @@ namespace Mono.ApiTools {
 						change.AppendAdded ("[NonSerialized]\n");
 					}
 				}
+
+				var srcHasFieldMarshal = (source & FieldAttributes.HasFieldMarshal) != 0;
+				var tgtHasFieldMarshal = (target & FieldAttributes.HasFieldMarshal) != 0;
+				if (srcHasFieldMarshal != tgtHasFieldMarshal) {
+					// this is not a breaking change, so only render it if it changed.
+					if (srcHasFieldMarshal) {
+						change.AppendRemoved ("[MarshalAs]", false);
+					} else {
+						change.AppendAdded ("[MarshalAs]", false);
+					}
+					change.Append (Environment.NewLine);
+				}
 			}
 
 			// the visibility values are the same for MethodAttributes and FieldAttributes, so just use the same method.
