@@ -1360,7 +1360,7 @@ namespace System.Text
         }
 
 #if MONO
-        public unsafe string GetString(ReadOnlySpan<byte> bytes)
+        internal unsafe string GetString(ReadOnlySpan<byte> bytes)
         {
             fixed (byte* bytesPtr = &bytes.DangerousGetPinnableReference())
             {

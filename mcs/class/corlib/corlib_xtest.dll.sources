@@ -181,12 +181,12 @@
 ../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs,ReaderWriterLockTests.cs,SynchronizationContextTests.cs,ExecutionContextTests.cs,HostExecutionContextManagerTests.cs,EtwTests.cs
 
 # System.Memory
-../../../external/corefx/src/System.Memory/tests/*.cs
-../../../external/corefx/src/System.Memory/tests/Binary/*.cs
-../../../external/corefx/src/System.Memory/tests/Memory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
-../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
-../../../external/corefx/src/System.Memory/tests/Span/*.cs
+#../../../external/corefx/src/System.Memory/tests/*.cs
+#../../../external/corefx/src/System.Memory/tests/Binary/*.cs
+#../../../external/corefx/src/System.Memory/tests/Memory/*.cs
+#../../../external/corefx/src/System.Memory/tests/ReadOnlyMemory/*.cs
+#../../../external/corefx/src/System.Memory/tests/ReadOnlySpan/*.cs
+#../../../external/corefx/src/System.Memory/tests/Span/*.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
@@ -240,3 +240,4 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/HybridDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
+
