@@ -107,7 +107,7 @@ namespace System.Reflection {
 
 		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
 		{
-			return ParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
+			return MonoParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
 		}
 	}
 	
@@ -144,7 +144,7 @@ namespace System.Reflection {
                 sbName.Append(RuntimeMethodHandle.ConstructInstantiation(this, format));
 
             sbName.Append("(");
-            ParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, serialization);
+            MonoParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, serialization);
             sbName.Append(")");
 
             return sbName.ToString();

@@ -245,7 +245,7 @@ System.Reflection/MonoMethod.cs
 System.Reflection/MonoModule.cs
 System.Reflection/MonoParameterInfo.cs
 System.Reflection/MonoProperty.cs
-System.Reflection/ParameterInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PortableExecutableKinds.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PropertyInfo.cs
 System.Reflection/StrongNameKeyPair.cs

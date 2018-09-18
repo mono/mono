@@ -120,7 +120,7 @@ namespace System.Reflection {
 			var pi = GetIndexParameters ();
 			if (pi.Length > 0) {
 				sbName.Append (" [");
-				ParameterInfo.FormatParameters (sbName, pi, 0, serialization);
+				MonoParameterInfo.FormatParameters (sbName, pi, 0, serialization);
 				sbName.Append ("]");
 			}
 
@@ -274,7 +274,7 @@ namespace System.Reflection {
 
 			var dest = new ParameterInfo [length];
 			for (int i = 0; i < length; ++i) {
-				dest [i] = ParameterInfo.New (src [i], this);
+				dest [i] = MonoParameterInfo.New (src [i], this);
 			}
 			return dest;	
 		}
