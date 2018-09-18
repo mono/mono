@@ -20,6 +20,8 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-minimal=ssa,com,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter \
 	--host=wasm32 \
 	--enable-llvm-runtime \
+	--enable-icall-export \
+	--disable-icall-tables \
 	--with-bitcode=yes
 
 EMSCRIPTEN_VERSION=1.38.11
