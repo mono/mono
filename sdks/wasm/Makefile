@@ -226,7 +226,7 @@ package: build build-dbg-proxy
 	cp WebAssembly.Bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
 	cp WebAssembly.Net.Http.dll tmp/framework
-	cp wasmhttp.pdb tmp/framework
+	cp WebAssembly.Net.Http.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/
