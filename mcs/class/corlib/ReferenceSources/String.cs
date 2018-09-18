@@ -51,7 +51,7 @@ namespace System
 
 		public static readonly String Empty;
 
-		public unsafe static implicit operator ReadOnlySpan<char> (String value)
+		internal unsafe static ReadOnlySpan<char> ToReadOnlySpan (String value)
 		{
 			if (value == null)
 				return default;

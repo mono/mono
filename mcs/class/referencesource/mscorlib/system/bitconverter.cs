@@ -476,7 +476,7 @@ namespace System {
 
 #if MONO
         // Converts a Span into an int
-        public static int ToInt32(ReadOnlySpan<byte> value)
+        internal static int ToInt32(ReadOnlySpan<byte> value)
         {
             if (value.Length < sizeof(int))
                 ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
