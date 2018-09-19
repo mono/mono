@@ -190,7 +190,7 @@ namespace CppSharp
             return false;
         }
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             ParseCommandLineArgs(args);
 
@@ -229,10 +229,11 @@ namespace CppSharp
 
                 BuildParseOptions(driver, target);
                 if (!driver.ParseCode())
-                    return;
+                    return 1;
 
                 Dump(driver.Context.ASTContext, driver.Context.TargetInfo, target);
             }
+            return 0;
         }
 
         static void BuildParseOptions(Driver driver, Target target)
