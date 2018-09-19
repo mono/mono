@@ -139,7 +139,7 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
 	if [[ ${CI_TAGS} == *'cxx'* ]]; then
-		echo "ENABLE_CXX=1" >> sdks/Make.config
+            echo "ENABLE_CXX=1" >> sdks/Make.config
 	fi
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
         # but doesn't get stuck when called via the shell, so let's just call it here now.
@@ -178,7 +178,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
 	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
-		echo "ENABLE_CXX=1" >> sdks/Make.config
+	       echo "ENABLE_CXX=1" >> sdks/Make.config
 	   fi
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-wasm-runtime package-wasm-cross
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
