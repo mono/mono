@@ -93,11 +93,8 @@ mono.js: $(DRIVER_CONF)/.stamp-build
 mono.wasm: $(DRIVER_CONF)/.stamp-build
 	cp $(DRIVER_CONF)/mono.wasm $@
 
-$(TOP)/mcs/class/lib/class/wasm/Mono.Cecil.dll:
-	$(MAKE) -C $(TOP)/mcs/class/Mono.Cecil
-
-$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/class/wasm/Mono.Cecil.dll
-	$(MAKE) -C $(TOP)/mcs/tools/linker all install PROGRAM_INSTALL_DIR=$(WASM_BCL_DIR)
+$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
+	cp $< $@
 
 build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
 
