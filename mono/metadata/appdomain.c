@@ -1503,14 +1503,9 @@ set_domain_search_path (MonoDomain *domain)
 		 *
 		 * The issue was reported in bug #81446
 		 */
-
 #ifndef TARGET_WIN32
-		gsize const slen = strlen (search_path);
-		for (gsize i = 0; i < slen; i++)
-			if (search_path [i] == ':')
-				search_path [i] = ';';
+		g_strdelimit (search_path, ':', ';');
 #endif
-		
 		pvt_split = g_strsplit (search_path, ";", 1000);
 		g_free (search_path);
 		for (tmp = pvt_split; *tmp; tmp++, npaths++);
