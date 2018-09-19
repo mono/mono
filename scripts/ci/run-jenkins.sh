@@ -86,7 +86,6 @@ fi
 if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
-	echo "ENABLE_CXX=1" >> sdks/Make.config
 fi
 
 if [[ ${CI_TAGS} == *'win-'* ]];
