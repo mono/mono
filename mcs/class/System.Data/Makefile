@@ -31,6 +31,12 @@ LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
 endif
 endif
 
+ifndef PROFILE_DISABLE_OPENSSL
+ifdef HAVE_OPENSSLL
+LIB_MCS_FLAGS += -d:MONO_FEATURE_OPENSSL
+endif
+endif
+
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx	\

@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_BTLS;MONO_FEATURE_OPENSSL</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -54,12 +54,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS;MONO_FEATURE_OPENSSL</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_BTLS;MONO_FEATURE_OPENSSL</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>

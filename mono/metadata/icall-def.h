@@ -88,6 +88,7 @@ HANDLES(ICALL(COMPROX_2, "FindProxy", ves_icall_Mono_Interop_ComInteropProxy_Fin
 
 ICALL_TYPE(TLS_PROVIDER_FACTORY, "Mono.Net.Security.MonoTlsProviderFactory", TLS_PROVIDER_FACTORY_1)
 HANDLES(ICALL(TLS_PROVIDER_FACTORY_1, "IsBtlsSupported", ves_icall_Mono_TlsProviderFactory_IsBtlsSupported))
+HANDLES(ICALL(TLS_PROVIDER_FACTORY_2, "IsOpenSSLSupported", ves_icall_Mono_TlsProviderFactory_IsOpenSSLSupported))
 
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 HANDLES(ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry))

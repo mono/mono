@@ -40,6 +40,10 @@ using MX = Mono.Security.X509;
 using Mono.Btls;
 #endif
 
+#if MONO_FEATURE_OPENSSL
+using Mono.OpenSSL;
+#endif
+
 using System.IO;
 using System.Text;
 using Mono;
@@ -95,7 +99,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
 		internal static long GetSubjectNameHash (X509Certificate certificate)
 		{
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_BTLS || MONO_FEATURE_OPENSSL
 			X509Helper.ThrowIfContextInvalid (certificate.Impl);
 			using (var x509 = GetNativeInstance (certificate.Impl))
 			using (var subject = x509.GetSubjectName ())
@@ -108,17 +112,30 @@ namespace System.Security.Cryptography.X509Certificates
 		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
 		internal static void ExportAsPEM (X509Certificate certificate, Stream stream, bool includeHumanReadableForm)
 		{
+			var type = Environment.GetEnvironmentVariable ("XA_TLS_PROVIDER");
+			switch (type) {
 #if MONO_FEATURE_BTLS
-			X509Helper.ThrowIfContextInvalid (certificate.Impl);
-			using (var x509 = GetNativeInstance (certificate.Impl))
-			using (var bio = MonoBtlsBio.CreateMonoStream (stream))
-				x509.ExportAsPEM (bio, includeHumanReadableForm);
-#else
-			throw new PlatformNotSupportedException ();
+			case "btls":
+				X509Helper.ThrowIfContextInvalid (certificate.Impl);
+				using (var x509 = GetNativeInstance (certificate.Impl))
+				using (var bio = MonoBtlsBio.CreateMonoStream (stream))
+					x509.ExportAsPEM (bio, includeHumanReadableForm);
+				return;
 #endif
+#if MONO_FEATURE_OPENSSL
+			case "openSSL":
+				X509Helper.ThrowIfContextInvalid (certificate.Impl);
+				using (var x509 = GetNativeInstance (certificate.Impl))
+				using (var bio = MonoOpenSSLBio.CreateMonoStream (stream))
+					x509.ExportAsPEM (bio, includeHumanReadableForm);
+				return;
+#endif
+			default : 
+				throw new PlatformNotSupportedException ();
+			}
 		}
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_BTLS 
 		static MonoBtlsX509 GetNativeInstance (X509CertificateImpl impl)
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
@@ -127,6 +144,17 @@ namespace System.Security.Cryptography.X509Certificates
 				return btlsImpl.X509.Copy ();
 			else
 				return MonoBtlsX509.LoadFromData (impl.RawData, MonoBtlsX509Format.DER);
+		}
+#endif
+#if MONO_FEATURE_OPENSSL
+		static MonoOpenSSLX509 GetNativeInstance (X509CertificateImpl impl)
+		{
+			X509Helper.ThrowIfContextInvalid (impl);
+			var openSSLImpl = impl as X509CertificateImplOpenSSL;
+			if (openSSLImpl != null)
+				return openSSLImpl.X509.Copy ();
+			else
+				return MonoOpenSSLX509.LoadFromData (impl.RawData, MonoOpenSSLX509Format.DER);
 		}
 #endif
 	}

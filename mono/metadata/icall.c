@@ -8089,6 +8089,16 @@ ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (MonoError *error)
 	return FALSE;
 #endif
 }
+ 
+ICALL_EXPORT MonoBoolean
+ves_icall_Mono_TlsProviderFactory_IsOpenSSLSupported (void)
+{
+#if HAVE_OPENSSL
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
 
 #ifndef DISABLE_COM
 

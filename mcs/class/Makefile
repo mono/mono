@@ -302,6 +302,7 @@ net_4_x_parallel_dirs = \
 	Cscompmgd			\
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Btls.Interface		\
+	Mono.OpenSSL.Interface		\
 	Mono.Http			\
 	Mono.Cairo                      \
 	Mono.Cecil			\

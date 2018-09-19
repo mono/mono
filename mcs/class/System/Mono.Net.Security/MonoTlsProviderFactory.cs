@@ -46,6 +46,10 @@ using System.Runtime.CompilerServices;
 using Mono.Btls;
 #endif
 
+#if MONO_FEATURE_OPENSSL
+using Mono.OpenSSL;
+#endif
+
 #if MONO_FEATURE_APPLETLS
 using Mono.AppleTls;
 #endif
@@ -214,6 +218,7 @@ namespace Mono.Net.Security
 
 		internal static readonly Guid AppleTlsId = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
 		internal static readonly Guid BtlsId = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
+		internal static readonly Guid OpenSSLId = new Guid ("432d18c9-9348-4b91-bfbf-9f2a10e1f15b");
 		internal static readonly Guid LegacyId = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
 
 		static void InitializeProviderRegistration ()
@@ -265,14 +270,21 @@ namespace Mono.Net.Security
 			var legacyEntry = new Tuple<Guid,String> (LegacyId, typeof (Mono.Net.Security.LegacyTlsProvider).FullName);
 			providerRegistration.Add ("legacy", legacyEntry);
 
-			Tuple<Guid,String> btlsEntry = null;
 #if MONO_FEATURE_BTLS
+			Tuple<Guid,String> btlsEntry = null;
 			if (IsBtlsSupported ()) {
 				btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
 				providerRegistration.Add ("btls", btlsEntry);
 			}
 #endif
 
+#if MONO_FEATURE_OPENSSL
+			Tuple<Guid,String> openSSLEntry = null;
+			if (IsOpenSSLSupported ()) {
+				openSSLEntry = new Tuple<Guid,String> (OpenSSLId, typeof (Mono.OpenSSL.MonoOpenSSLProvider).FullName);
+				providerRegistration.Add ("openSSL", openSSLEntry);
+			}
+#endif
 #if MONO_FEATURE_APPLETLS
 			if (Platform.IsMacOS)
 				providerRegistration.Add ("default", appleTlsEntry);
@@ -281,6 +293,11 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 			if (btlsEntry != null)
 				providerRegistration.Add ("default", btlsEntry);
+			else
+#endif
+#if MONO_FEATURE_OPENSSL
+			if (openSSLEntry != null)
+				providerRegistration.Add ("default", openSSLEntry);
 			else
 #endif
 				providerRegistration.Add ("default", legacyEntry);
@@ -295,6 +312,11 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		internal extern static bool IsBtlsSupported ();
+#endif
+
+#if MONO_FEATURE_OPENSSL
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal extern static bool IsOpenSSLSupported ();
 #endif
 
 		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
@@ -312,6 +334,12 @@ namespace Mono.Net.Security
 				if (!IsBtlsSupported ())
 					throw new NotSupportedException ("BTLS in not supported!");
 				return new MonoBtlsProvider ();
+#endif
+#if MONO_FEATURE_OPENSSL
+			case "openssl":
+				if (!IsOpenSSLSupported ())
+					throw new NotSupportedException ("OPENSSL in not supported!");
+				return new MonoOpenSSLProvider ();
 #endif
 			default:
 				throw new NotSupportedException (string.Format ("Invalid TLS Provider: `{0}'.", provider));
@@ -333,6 +361,10 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 				if (IsBtlsSupported ())
 					goto case "btls";
+#if MONO_FEATURE_OPENSSL
+				if (IsOpenSSLSupported ())
+					goto case "openssl";
+#endif
 #endif
 				goto case "legacy";
 #if MONO_FEATURE_APPLETLS
@@ -342,6 +374,10 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 			case "btls":
 				return new MonoBtlsProvider ();
+#endif
+#if MONO_FEATURE_OPENSSL
+			case "openssl":
+				return new MonoOpenSSLProvider ();
 #endif
 			case "legacy":
 				return new Mono.Net.Security.LegacyTlsProvider ();
