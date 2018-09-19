@@ -7,6 +7,8 @@
 
 #include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
+#include <mono/metadata/handle-0.h>
+
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/reflection.h>
@@ -957,9 +959,6 @@ struct _MonoReflectionAssembly {
 	MonoString *name;
 };
 
-/* Safely access System.Reflection.Assembly from native code */
-TYPED_HANDLE_DECL (MonoReflectionAssembly);
-
 typedef struct {
 	MonoReflectionType *utype;
 	MonoArray *values;
@@ -1326,9 +1325,6 @@ struct _MonoReflectionTypeBuilder {
 	MonoReflectionType *created;
 	gint32 state;
 };
-
-/* Safely access System.Reflection.Emit.TypeBuilder from native code */
-TYPED_HANDLE_DECL (MonoReflectionTypeBuilder);
 
 typedef struct {
 	MonoReflectionType type;

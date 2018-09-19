@@ -383,6 +383,7 @@ common_sources = \
 	seq-points-data.h	\
 	seq-points-data.c	\
 	handle.c	\
+	handle-0.h	\
 	handle.h	\
 	w32mutex.h	\
 	w32semaphore.h	\

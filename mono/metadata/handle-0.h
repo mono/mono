@@ -16,6 +16,8 @@
 
 #include <config.h>
 #include <glib.h>
+#include <mono/metadata/object-forward.h>
+#include <mono/utils/mono-compiler.h>
 
 // Type-safe handles are a struct with a pointer to pointer.
 // The only operations allowed on them are the functions/macros in this file, and assignment
@@ -44,8 +46,6 @@
 #else
 #define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
 #endif
-
-G_BEGIN_DECLS
 
 /*
 Handle macros/functions
@@ -132,6 +132,10 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
  */
 #define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
 
-G_END_DECLS
+/* Safely access System.Reflection.Assembly from native code */
+TYPED_HANDLE_DECL (MonoReflectionAssembly);
+
+/* Safely access System.Reflection.Emit.TypeBuilder from native code */
+TYPED_HANDLE_DECL (MonoReflectionTypeBuilder);
 
 #endif /* __MONO_HANDLE_0_H__ */

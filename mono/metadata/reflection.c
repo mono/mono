@@ -2140,30 +2140,30 @@ leave:
 MonoType*
 mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoType *type;
-	MonoReflectionAssembly *assembly;
-	GString *fullName;
+	MonoReflectionAssemblyHandle assembly;
+	GString *fullName = NULL;
 	GList *mod;
 
 	error_init (error);
 
 	if (image && image_is_dynamic (image))
 		type = mono_reflection_get_type_internal_dynamic (rootimage, image->assembly, info, ignorecase, error);
-	else {
+	else
 		type = mono_reflection_get_type_internal (rootimage, image, info, ignorecase, error);
-	}
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 
 	if (type)
-		return type;
+		goto exit;
 	if (!mono_domain_has_type_resolve (mono_domain_get ()))
-		return NULL;
+		goto return_null;
 
 	if (type_resolve) {
 		if (*type_resolve) 
-			return NULL;
-		else
-			*type_resolve = TRUE;
+			goto return_null;
+		*type_resolve = TRUE;
 	}
 	
 	/* Reconstruct the type name */
@@ -2176,22 +2176,28 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 		g_string_append_printf (fullName, "+%s", (char*)mod->data);
 
 	assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), fullName->str, error);
-	if (!is_ok (error)) {
-		g_string_free (fullName, TRUE);
-		return NULL;
-	}
+	if (!is_ok (error))
+		goto return_null;
 
-	if (assembly) {
-		if (assembly_is_dynamic (assembly->assembly))
-			type = mono_reflection_get_type_internal_dynamic (rootimage, assembly->assembly,
+	if (!MONO_HANDLE_IS_NULL (assembly)) {
+		if (assembly_is_dynamic (MONO_HANDLE_GETVAL (assembly, assembly)))
+			type = mono_reflection_get_type_internal_dynamic (rootimage, MONO_HANDLE_GETVAL (assembly, assembly),
 									  info, ignorecase, error);
 		else
-			type = mono_reflection_get_type_internal (rootimage, assembly->assembly->image, 
+			type = mono_reflection_get_type_internal (rootimage, MONO_HANDLE_GETVAL (assembly, assembly)->image,
 								  info, ignorecase, error);
 	}
-	g_string_free (fullName, TRUE);
-	return_val_if_nok (error, NULL);
-	return type;
+	goto_if_nok (error, return_null);
+	goto exit;
+
+return_null:
+	type = NULL;
+	goto exit;
+
+exit:
+	if (fullName)
+		g_string_free (fullName, TRUE);
+	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
 /**

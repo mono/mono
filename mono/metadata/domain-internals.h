@@ -18,6 +18,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/metadata/handle-0.h>
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -614,11 +615,11 @@ MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer add
 
 void mono_enable_debug_domain_unload (gboolean enable);
 
-MonoReflectionAssembly *
+MonoReflectionAssemblyHandle
 mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error);
 
-MonoReflectionAssembly *
-mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilder *typebuilder, MonoError *error);
+MonoReflectionAssemblyHandle
+mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilderHandle typebuilder, MonoError *error);
 
 void
 mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoThreadAttachCB attach_cb, MonoError *error);
