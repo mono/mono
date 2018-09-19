@@ -60,21 +60,6 @@ var Module = {
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
-	instantiateWasm: function (env, receiveInstance) {
-		//merge Module's env with emcc's env
-		env.env = Object.assign({}, env.env, this.env);
-		var module = new WebAssembly.Module (read ('mono.wasm', 'binary'))
-		this.wasm_instance = new WebAssembly.Instance (module, env);
-		this.em_cb = receiveInstance;
-		return this
-	},
-
-	finish_loading: function () {
-		this.em_cb (this.wasm_instance);
-	},
-
-	env: {
-	},
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl (
 			"@VFS_PREFIX@",
@@ -105,11 +90,9 @@ var Module = {
 			}
 		);
 	},
-
 };
 
 load ("mono.js");
-Module.finish_loading ();
 
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
@@ -122,6 +105,15 @@ var App = {
 
 		Module.print("Initializing.....");
 		Module.print("Arguments: " + testArguments);
+
+		if (testArguments[0] == "regression") {
+			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
+			var res = exec_regresion (10, testArguments[1]);
+			print("REGRESSION RESULT: " + res);
+			if (res)
+				fail_exec ("REGRESSION TEST FAILED");
+			return;
+		}
 		
 		Module.print("Initializing Binding Test Suite support.....");
 
