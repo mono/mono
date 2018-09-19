@@ -6,17 +6,25 @@ This project provides build scripts and sample apps for Mono targeting its suppo
 
  - automake 1.16.1
 
- if you have already built before using a previous version of automake you may need to clean the repo.
+   if you have already built before using a previous version of automake you may need to clean the repo.
 
-```
-git clean -xffd
-```
+   ```
+      git clean -xffd
+   ```
 
-the previous should be sufficient but if that does not work then try hard resetting
+   The previous should be sufficient but if that does not work then try hard resetting
 
-```
-git reset --hard && git clean -xffd && git submodule foreach --recursive git reset --hard && git submodule foreach --recursive git clean -xffd && git submodule update --init --recursive
-```
+   ```
+   git reset --hard && git clean -xffd && git submodule foreach --recursive git reset --hard && git submodule foreach --recursive git clean -xffd && git submodule update --init --recursive
+   ```
+
+- [ninja build system](https://ninja-build.org)
+
+  - Getting Ninja
+
+    You can [download the Ninja binary](https://github.com/ninja-build/ninja/releases) or [find
+it in your system's package manager](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
+
 
 ## Setup
 
