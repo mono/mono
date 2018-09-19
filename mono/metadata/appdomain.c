@@ -1836,7 +1836,8 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 		goto exit;
 
 	full_path = mono_path_resolve_symlinks (filename);
-	gint32 win32error = 0;
+	gint32 win32error;
+	win32error = 0;
 	result = mono_w32file_write (handle, full_path, strlen (full_path), &n, &win32error);
 exit:
 	if (handle != INVALID_HANDLE_VALUE)
