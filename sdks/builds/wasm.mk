@@ -88,7 +88,7 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 
 .stamp-wasm-cross-configure: | $(TOP)/configure provision-llvm-llvm32
 	mkdir -p $(TOP)/sdks/builds/wasm-cross
-	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
+	cd $(TOP)/sdks/builds/wasm-cross && CFLAGS="-g -m32" CXXFLAGS="-g -m32" $(TOP)/configure $(WASM_CROSS_CONFIGURE_FLAGS)
 	touch $@
 
 # This needs to be run after the target runtime has been configured
