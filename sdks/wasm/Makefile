@@ -87,16 +87,11 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s ALLOW_MEMORY_GROWTH=1 -s "BINARYEN_TRAP_MODE='clamp'" -s EMULATED_FUNCTION_POINTERS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
-mono.js: $(DRIVER_CONF)/.stamp-build
-	cp $(DRIVER_CONF)/mono.js $@
-
-mono.wasm: $(DRIVER_CONF)/.stamp-build
-	cp $(DRIVER_CONF)/mono.wasm $@
 
 $(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
 	cp $< $@
 
-build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
+build-native: debug/.stamp-build release/.stamp-build
 
 do-runtime:
 	make -j4 -C ../builds package-wasm-runtime
@@ -128,7 +123,7 @@ sample.dll: Simple.Dependency.dll sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-Mono.Cecil.dll: Makefile
+Mono.Cecil.dll: Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll
 	nuget install -version 0.10.0 Mono.Cecil
 	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
