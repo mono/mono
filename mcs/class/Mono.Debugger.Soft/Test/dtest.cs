@@ -4606,5 +4606,21 @@ public class DebuggerTests
 				t.InvokeMethod (e.Thread, m, null);
 			});
 	}
+
+	[Test]
+	public void InvokeRefReturnMethod () {
+		Event e = run_until ("ref_return");
+		StackFrame frame = e.Thread.GetFrames()[0];
+		TypeMirror t = frame.Method.DeclaringType;
+		MethodMirror m;
+
+		m = t.GetMethod ("get_ref_int");
+		var v = t.InvokeMethod (e.Thread, m, null);
+		AssertValue (1, v);
+
+		m = t.GetMethod ("get_ref_string");
+		v = t.InvokeMethod (e.Thread, m, null);
+		AssertValue ("byref", v);
+	}
 } // class DebuggerTests
 } // namespace

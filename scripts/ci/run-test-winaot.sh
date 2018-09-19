@@ -2,9 +2,9 @@
 
 if test -n "${MONO_LLVMONLY}";
 then
-${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k llvmonlycheck
+${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k llvmonlycheck
 else
-${TESTCMD} --label=mini --timeout=25m make -j 4 -w -C mono/mini -k fullaotcheck
+${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
 fi
 
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1

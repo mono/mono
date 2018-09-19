@@ -229,7 +229,7 @@ namespace System
 			}
 			if (!argLengthMatch) {
 				if (throwOnBindFailure)
-					throw new ArgumentException ("method argument length mismatch");
+					throw new TargetParameterCountException ("Parameter count mismatch.");
 				else
 					return null;
 			}

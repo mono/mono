@@ -72,7 +72,8 @@ var BindingSupportLib = {
 			this.bind_js_obj = get_method ("BindJSObject");
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
-			this.unbind_js_obj_and_fee = get_method ("UnBindJSObjectAndFree");			
+			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");			
+			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");			
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
@@ -195,11 +196,17 @@ var BindingSupportLib = {
 		},
 
 		set_task_result: function (tcs, result) {
+			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_result, null, "oo", [ tcs, result ]);
+			if (tcs.is_mono_tcs_task_bound)
+				this.free_task_completion_source(tcs);
 		},
 
 		set_task_failure: function (tcs, reason) {
+			tcs.is_mono_tcs_result_set = true;
 			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
+			if (tcs.is_mono_tcs_task_bound)
+				this.free_task_completion_source(tcs);
 		},
 
 		// https://github.com/Planeshifter/emscripten-examples/blob/master/01_PassingArrays/sum_post.js
@@ -312,7 +319,7 @@ var BindingSupportLib = {
 				if (the_task)
 					return the_task;
 				var tcs = this.create_task_completion_source ();
-				//FIXME dispose the TCS once the promise completes
+
 				js_obj.then (function (result) {
 					BINDING.set_task_result (tcs, result);
 				}, function (reason) {
@@ -365,8 +372,9 @@ var BindingSupportLib = {
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays#ArrayBuffer
 			if (ArrayBuffer.isView(js_obj) || js_obj instanceof ArrayBuffer)
 			{
-				var heapBytes = this.js_typedarray_to_heap(new Uint8Array(js_obj));
-
+				var byteView = new Uint8Array(js_obj);
+				var heapBytes = this.js_typedarray_to_heap(byteView);
+				byteView = null;
 				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, heapBytes.length, heapBytes.BYTES_PER_ELEMENT, 2);
 				Module._free(heapBytes.byteOffset);
 				return bufferArray;
@@ -392,7 +400,7 @@ var BindingSupportLib = {
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj_and_fee, null, "i", [js_obj_id]);
+			return this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
 		},		
 
 		wasm_get_js_id: function (mono_obj)
@@ -422,17 +430,34 @@ var BindingSupportLib = {
 			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
 			this.mono_wasm_object_registry[gc_handle] = js_obj;
+			this.free_task_completion_source(tcs);
+			tcs.is_mono_tcs_task_bound = true;
+			js_obj.__mono_bound_tcs__ = tcs.__mono_gchandle__;
+			tcs.__mono_bound_task__ = js_obj.__mono_gchandle__;
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
 
+		free_task_completion_source: function (tcs) {
+			if (tcs.is_mono_tcs_result_set)
+			{
+				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_gchandle__ ]);
+			}
+			if (tcs.__mono_bound_task__)
+			{
+				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_bound_task__ ]);
+			}
+		},
+
 		extract_mono_obj: function (js_obj) {
-			//help JS ppl, is this enough?
+
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 
-			if (!js_obj.__mono_gchandle__) {
-				this.mono_wasm_register_obj(js_obj);
+			if (!js_obj.is_mono_bridged_obj) {
+				var gc_handle = this.mono_wasm_register_obj(js_obj);
+				return this.wasm_get_raw_obj (gc_handle);
 			}
+
 
 			return this.wasm_get_raw_obj (js_obj.__mono_gchandle__);
 		},
@@ -597,16 +622,18 @@ var BindingSupportLib = {
 		mono_wasm_register_obj: function(obj) {
 
 			var gc_handle = undefined;
-			if (obj !== null && typeof obj !== "undefined") {
+			if (obj !== null && typeof obj !== "undefined") 
+			{
 				gc_handle = obj.__mono_gchandle__;
+
 				if (typeof gc_handle === "undefined") {
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
-					gc_handle = handle + 1;
-					obj.__mono_gchandle__ = this.wasm_binding_obj_new(gc_handle);
+					obj.__mono_jshandle__ = handle;
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1);
+					this.mono_wasm_object_registry[handle] = obj;
 						
 				}
-				this.mono_wasm_object_registry[handle] = obj;
 			}
 			return gc_handle;
 		},
@@ -616,21 +643,45 @@ var BindingSupportLib = {
 			return null;
 		},
 		mono_wasm_unregister_obj: function(js_id) {
-			var obj = this.mono_wasm_object_registry[js_id - 1]
+			var obj = this.mono_wasm_object_registry[js_id - 1];
 			if (typeof obj  !== "undefined" && obj !== null) {
 				var gc_handle = obj.__mono_gchandle__;
 				if (typeof gc_handle  !== "undefined") {
 					this.wasm_unbind_js_obj_and_free(js_id);
 					delete obj.__mono_gchandle__;
+					delete obj.__mono_jshandle__;
+					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
-					return obj;
 				}
 			}
-			return null;
+			return obj;
 		},
 		mono_wasm_free_handle: function(handle) {
 			this.mono_wasm_unregister_obj(handle);
 		},
+		mono_wasm_get_global: function() {
+			function testGlobal(obj) {
+				obj['___mono_wasm_global___'] = obj;
+				var success = typeof ___mono_wasm_global___ === 'object' && obj['___mono_wasm_global___'] === obj;
+				if (!success) {
+					delete obj['___mono_wasm_global___'];
+				}
+				return success;
+			}
+			if (typeof ___mono_wasm_global___ === 'object') {
+				return ___mono_wasm_global___;
+			}
+			if (typeof global === 'object' && testGlobal(global)) {
+				___mono_wasm_global___ = global;
+			} else if (typeof window === 'object' && testGlobal(window)) {
+				___mono_wasm_global___ = window;
+			}
+			if (typeof ___mono_wasm_global___ === 'object') {
+				return ___mono_wasm_global___;
+			}
+			throw Error('unable to get mono wasm global object.');
+		},
+	
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -737,10 +788,30 @@ var BindingSupportLib = {
         
         }
         return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
-    },
+	},
+	mono_wasm_get_global_object: function(global_name, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		var js_name = BINDING.conv_string (global_name);
+
+		var globalObj = undefined;
+
+		if (!js_name) {
+			globalObj = BINDING.mono_wasm_get_global();
+		}
+		else {
+			globalObj = BINDING.mono_wasm_get_global()[js_name];
+		}
+
+		if (globalObj === null || typeof globalObj === undefined) {
+			setValue (is_exception, 1, "i32");
+			return BINDING.js_string_to_mono_string ("Global object '" + js_name + "' not found.");
+		}
+
+		return BINDING.js_to_mono_obj (globalObj);
+	},
 
 };
 
 autoAddDeps(BindingSupportLib, '$BINDING')
 mergeInto(LibraryManager.library, BindingSupportLib)
-

@@ -14,9 +14,6 @@ namespace CppSharp
      * This tool dumps the offsets of structures used in the Mono VM needed
      * by the AOT compiler for cross-compiling code to target platforms
      * different than the host the compiler is being invoked on.
-     * 
-     * It takes two arguments: the path to your clone of the Mono repo and
-     * the path to the root of Android NDK.
      */
     static class MonoAotOffsetsDumper
     {
@@ -26,17 +23,19 @@ namespace CppSharp
         static string OutputDir;
         static string OutputFile;
 
+        static string AndroidNdkPath = @"";
+        static string EmscriptenSdkPath = @"";
         static string TargetDir = @"";
         static bool GenIOS;
         static bool GenAndroid;
-        static string AndroidNdkPath = @"";
 
         public enum TargetPlatform
         {
             Android,
             iOS,
             WatchOS,
-            OSX
+            OSX,
+            WASM
         }
 
         public class Target
@@ -186,6 +185,13 @@ namespace CppSharp
                         Build = "",
                         Defines = { "TARGET_X86" },
                 });
+            } else if (abi == "wasm32-unknown-unknown") {
+                Targets.Add(new Target {
+                        Platform = TargetPlatform.WASM,
+                        Triple = "wasm32-wasm32-unknown-unknown",
+                        Build = "",
+                        Defines = { "TARGET_WASM" },
+                });
             } else {
                 Console.WriteLine ($"Unsupported abi: {abi}.");
                 Environment.Exit (1);
@@ -211,7 +217,7 @@ namespace CppSharp
             return false;
         }
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             ParseCommandLineArgs(args);
 
@@ -241,10 +247,11 @@ namespace CppSharp
 
                 BuildParseOptions(driver, target);
                 if (!driver.ParseCode())
-                    return;
+                    return 1;
 
                 Dump(driver.Context.ASTContext, driver.Context.TargetInfo, target);
             }
+            return 0;
         }
 
         static void BuildParseOptions(Driver driver, Target target)
@@ -272,6 +279,7 @@ namespace CppSharp
                 { "o|out=", "output directory", v => OutputDir = v },
                 { "outfile=", "output directory", v => OutputFile = v },
                 { "android-ndk=", "Path to Android NDK", v => AndroidNdkPath = v },
+                { "emscripten-sdk=", "Path to emscripten sdk", v => EmscriptenSdkPath = v },
                 { "targetdir=", "Path to the directory containing the mono build", v =>TargetDir = v },
                 { "mono=", "include directory", v => MonoDir = v },
                 { "gen-ios", "generate iOS offsets", v => GenIOS = v != null },
@@ -356,11 +364,16 @@ namespace CppSharp
                 break;
             }
             case TargetPlatform.OSX:
+            case TargetPlatform.WASM:
                 if (MonoDir == "") {
                     Console.Error.WriteLine ("The --mono= option is required when targeting osx.");
                     Environment.Exit (1);
                 }
-                targetBuild = ".";
+                if (!string.IsNullOrEmpty (TargetDir)) {
+                    targetBuild = TargetDir;
+                } else {
+                    targetBuild = ".";
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException ();
@@ -421,6 +434,22 @@ namespace CppSharp
             case TargetPlatform.WatchOS:
             case TargetPlatform.OSX:
                 SetupXcode(driver, target);
+                break;
+            case TargetPlatform.WASM:
+                if (EmscriptenSdkPath == "") {
+                    Console.Error.WriteLine ("The --emscripten-sdk= option is required when targeting wasm.");
+                    Environment.Exit (1);
+                }
+                string include_dir = Path.Combine (EmscriptenSdkPath, "system", "include", "libc");
+                if (!Directory.Exists (include_dir)) {
+                    Console.Error.WriteLine ($"emscripten include directory {include_dir} does not exist.");
+                    Environment.Exit (1);
+                }
+                var parserOptions = driver.ParserOptions;
+                parserOptions.NoBuiltinIncludes = true;
+                parserOptions.NoStandardIncludes = true;
+                parserOptions.TargetTriple = target.Triple;
+                parserOptions.AddSystemIncludeDirs(include_dir);
                 break;
             default:
                 throw new ArgumentOutOfRangeException ();
@@ -672,6 +701,8 @@ namespace CppSharp
                 return "TARGET_WATCHOS";
             case TargetPlatform.OSX:
                 return "TARGET_OSX";
+            case TargetPlatform.WASM:
+                return "TARGET_WASM";
             default:
                 throw new ArgumentOutOfRangeException ();
             }

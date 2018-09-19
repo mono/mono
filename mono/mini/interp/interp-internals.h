@@ -96,6 +96,7 @@ typedef struct _InterpMethod
 	guint32 alloca_size;
 	unsigned int init_locals : 1;
 	unsigned int vararg : 1;
+	unsigned int needs_thread_attach : 1;
 	unsigned short *code;
 	unsigned short *new_body_start; /* after all STINARG instrs */
 	MonoPIFunc func;
@@ -138,7 +139,6 @@ struct _InterpFrame {
 };
 
 typedef struct {
-	MonoDomain *original_domain;
 	InterpFrame *current_frame;
 	/* Resume state for resuming execution in mixed mode */
 	gboolean       has_resume_state;

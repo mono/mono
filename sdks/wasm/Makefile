@@ -14,6 +14,7 @@ SHELL:=/bin/bash
 DRIVER_CONF=release
 
 
+EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
 MINI_PATH=$(TOP)/mono/mini
@@ -43,7 +44,6 @@ APP_SOURCES = \
 	incrementalrunner.cs
 
 BINDING_TEST_SOURCES = \
-	bindings.cs	\
 	bindings-test.cs
 
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
@@ -69,23 +69,22 @@ jsup:
 toolchain: .stamp-jsvu
 
 driver.o: driver.c
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
-
-driver-aot-sample.o: driver.c
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -DEXPERIMENTAL_AOT_DRIVER -o driver-aot-sample.o
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
 
 debug/:
 	mkdir -p $@
 release/:
 	mkdir -p $@
 
-debug/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a | debug/
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+MONO_LIBS = $(TOP)/sdks/out/wasm-runtime/lib/libmono-ee-interp.a $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a $(TOP)/sdks/out/wasm-runtime/lib/libmono-ilgen.a $(TOP)/sdks/out/wasm-runtime/lib/libmono-icall-table.a
+
+debug/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a | debug/
+	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
-release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a debug/.stamp-build | release/
-	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime/lib/libmonosgen-2.0.a debug/.stamp-build | release/
+	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
 mono.js: $(DRIVER_CONF)/.stamp-build
@@ -94,10 +93,13 @@ mono.js: $(DRIVER_CONF)/.stamp-build
 mono.wasm: $(DRIVER_CONF)/.stamp-build
 	cp $(DRIVER_CONF)/mono.wasm $@
 
+$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
+	cp $< $@
+
 build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
 
 do-runtime:
-	make -j4 -C ../builds package-wasm-interp
+	make -j4 -C ../builds package-wasm-runtime
 	make -j4 -C ../builds package-bcl
 	make build-native
 
@@ -109,11 +111,14 @@ main.exe: $(APP_SOURCES)
 mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-binding_tests.dll: $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-bindings.dll: bindings.cs
+WebAssembly.Bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
+
+WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
 
 Simple.Dependency.dll: dependency.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
@@ -121,24 +126,26 @@ Simple.Dependency.dll: dependency.cs
 sample.dll: Simple.Dependency.dll sample.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
+OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
+
 Mono.Cecil.dll: Makefile
 	nuget install -version 0.10.0 Mono.Cecil
 	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
 # We use system csc as this is a desktop program
-packager.exe: packager.cs Mono.Cecil.dll
-	csc /debug:portable -r:Mono.Cecil.dll packager.cs
+packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
+	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll sample.dll debug.html runtime.g.js
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
-	
+
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll mini_tests.dll main.exe runtime.g.js
-	mono packager.exe -out=test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
-	cp test.js test-suite/
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.g.js
+	mono --debug packager.exe --template=runtime-tests.g.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+	ninja -v -C obj/test-suite
 	touch $@
 
 MINI_BASIC_TEST_FILES= \
@@ -151,34 +158,18 @@ MINI_BASIC_TEST_FILES= \
 
 MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
 
-mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
+aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests.dll main.exe runtime.g.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests.dll main.exe
+	ninja -v -C obj/aot-sample
 
-.stamp-build-aot-test: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
-	mono packager.exe -out=aot -nobinding mini_tests_basic.dll
-	cp aot-driver.js aot/
-	touch $@
-
-AOT_COMPILER=$(TOP)/sdks/out/wasm-aot/bin/wasm32-mono-sgen
-aot-sample: .stamp-build-aot-test
-	for f in aot/managed/*.dll; do	\
-		MONO_PATH=aot/managed $(AOT_COMPILER) --aot=llvmonly,asmonly,no-opt,static,llvm-outfile=$$f.bc $$f;	\
-	done	\
-
-link-sample: driver-aot-sample.o library_mono.js binding_support.js dotnet_support.js
-	$(EMCC) -Os -g -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js -o aot/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" driver-aot-sample.o $(TOP)/sdks/out/wasm-aot-runtime/lib/libmonosgen-2.0.a aot/managed/*.bc
-
-build-aot-sample:
-	make aot-sample
-	make link-sample
-
-build-aot-test: .stamp-build-aot-test
+do-aot-sample: aot-sample
+	(cd bin/aot-sample && $(SM) runtime.js mini)
 
 build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite
+build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
@@ -191,16 +182,16 @@ JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 run-ch-%: toolchain build-test-suite
-	(cd test-suite && $(CHAKRA) test.js -args $*)
+	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd test-suite && $(D8) --expose_wasm test.js -- $*)
+	(cd bin/test-suite && $(D8) --expose_wasm runtime.js -- $*)
 
 run-jsc-%: toolchain build-test-suite
-	(cd test-suite && $(JSC) test.js -- $*)
+	(cd bin/test-suite && $(JSC) runtime.js -- $*)
 
 run-sm-%: toolchain build-test-suite
-	(cd test-suite && $(SM) test.js $*)
+	(cd bin/test-suite && $(SM) runtime.js $*)
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
@@ -210,7 +201,7 @@ run-all-%:
 	make -C . run-jsc-$*
 
 clean:
-	
+
 package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
@@ -221,7 +212,7 @@ package: build build-dbg-proxy
 	rm -rf tmp/bcl/tests
 	rm -rf tmp/bcl/corlib.unsafe.dll.tmp
 	cp driver.c tmp/
-	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
+	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
 	cp dotnet_support.js tmp/
@@ -232,8 +223,11 @@ package: build build-dbg-proxy
 	cp sample.html tmp/
 	mkdir tmp/framework
 	cp bindings.cs tmp
-	cp bindings.dll tmp/framework
-	cp bindings.pdb tmp/framework
+	cp WebAssembly.Bindings.dll tmp/framework
+	cp WebAssembly.Bindings.pdb tmp/framework
+	cp WasmHttpMessageHandler.cs tmp
+	cp WebAssembly.Net.Http.dll tmp/framework
+	cp WebAssembly.Net.Http.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/

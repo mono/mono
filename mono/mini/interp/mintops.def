@@ -180,6 +180,7 @@ OPDEF(MINT_RETHROW, "rethrow", 2, MintOpUShortInt)
 OPDEF(MINT_ENDFINALLY, "endfinally", 2, MintOpNoArgs)
 
 OPDEF(MINT_CHECKPOINT, "checkpoint", 1, MintOpNoArgs)
+OPDEF(MINT_SAFEPOINT, "safepoint", 1, MintOpNoArgs)
 
 OPDEF(MINT_BRFALSE_I4, "brfalse.i4", 3, MintOpBranch)
 OPDEF(MINT_BRFALSE_I8, "brfalse.i8", 3, MintOpBranch)
@@ -567,8 +568,6 @@ OPDEF(MINT_MONO_RETOBJ, "mono_retobj", 1, MintOpNoArgs)
 OPDEF(MINT_MONO_FREE, "mono_free", 1, MintOpNoArgs)
 OPDEF(MINT_MONO_ATOMIC_STORE_I4, "mono_atomic.store.i4", 1, MintOpNoArgs)
 OPDEF(MINT_MONO_MEMORY_BARRIER, "mono_memory_barrier", 1, MintOpNoArgs)
-OPDEF(MINT_MONO_JIT_ATTACH, "mono_jit_attach", 1, MintOpNoArgs)
-OPDEF(MINT_MONO_JIT_DETACH, "mono_jit_detach", 1, MintOpNoArgs)
 OPDEF(MINT_MONO_LDDOMAIN, "mono_lddomain", 1, MintOpNoArgs)
 
 // FIXME: MintOp

@@ -89,7 +89,7 @@ Mono_Posix_Syscall_msync (void *start, mph_size_t len, int flags)
 int
 Mono_Posix_Syscall_mlock (void *start, mph_size_t len)
 {
-#if !defined(HAVE_MINCORE)
+#if !defined (HAVE_MLOCK)
 	return ENOSYS;
 #else
 	mph_return_if_size_t_overflow (len);
@@ -101,7 +101,7 @@ Mono_Posix_Syscall_mlock (void *start, mph_size_t len)
 int
 Mono_Posix_Syscall_munlock (void *start, mph_size_t len)
 {
-#if defined(__HAIKU__)
+#if !defined (HAVE_MUNLOCK)
 	return ENOSYS;
 #else
 	mph_return_if_size_t_overflow (len);
@@ -138,12 +138,17 @@ Mono_Posix_Syscall_mremap (void *old_address, mph_size_t old_size,
 int
 Mono_Posix_Syscall_mincore (void *start, mph_size_t length, unsigned char *vec)
 {
-#if defined(__HAIKU__)
+#if !defined (HAVE_MINCORE)
 	return ENOSYS;
 #else
 	mph_return_if_size_t_overflow (length);
 
-	return mincore (start, (size_t) length, (void*)vec);
+#if defined (__linux__) || defined (HOST_WASM)
+	typedef unsigned char T;
+#else
+	typedef char T;
+#endif
+	return mincore (start, (size_t) length, (T*)vec);
 #endif
 }
 

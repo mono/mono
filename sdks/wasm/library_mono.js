@@ -84,6 +84,7 @@ var MonoSupportLib = {
 
 			var pending = file_list.length;
 			var loaded_files = [];
+			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
 			file_list.forEach (function(file_name) {
 				var fetch_promise = null;
 				if (fetch_file_cb)
@@ -98,7 +99,11 @@ var MonoSupportLib = {
 					return response ['arrayBuffer'] ();
 				}).then (function (blob) {
 					var asm = new Uint8Array (blob);
-					Module.FS_createDataFile (vfs_prefix + "/" + file_name, null, asm, true, true, true);
+					var memory = Module._malloc(asm.length);
+					var heapBytes = new Uint8Array(Module.HEAPU8.buffer, memory, asm.length);
+					heapBytes.set (asm);
+					mono_wasm_add_assembly (file_name, memory, asm.length);
+
 					console.log ("Loaded: " + file_name);
 					--pending;
 					if (pending == 0) {

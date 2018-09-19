@@ -270,8 +270,13 @@ ifneq ($(PROFILE_PARALLEL_SUBDIRS),)
 
 dep_dirs = .dep_dirs-$(PROFILE)
 
-$(dep_dirs):
-	@echo "Creating $@..."
+#
+# This should track dependencies better but the variable can be defined in any
+# Makefile dependency. On top of that we should also regenerate when any of the
+# PROFILE_PARALLEL_SUBDIRS Makefile's are changed
+#
+$(dep_dirs): Makefile
+	$(if $(V),@echo "Creating $(abspath $@)...",)
 	list='$(PROFILE_PARALLEL_SUBDIRS)'; \
 	echo > $@; \
 	for d in $$list; do \

@@ -14,3 +14,6 @@
 
 #Disables building the Desktop profile
 #DISABLE_DESKTOP = 1
+
+#Disables building LLVM toolchain (some targets like ios/android/wasm will still use it)
+#DISABLE_LLVM = 1

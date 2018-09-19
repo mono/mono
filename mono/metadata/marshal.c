@@ -2462,6 +2462,11 @@ get_runtime_invoke_type (MonoType *t, gboolean ret)
 	if (t->byref) {
 		if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
 			return t;
+
+		/* The result needs loaded indirectly */
+		if (ret)
+			return t;
+
 		/* Can't share this with 'I' as that needs another indirection */
 		return m_class_get_this_arg (mono_defaults.int_class);
 	}
@@ -5106,6 +5111,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandl
 
 	if (type->type == MONO_TYPE_PTR || type->type == MONO_TYPE_FNPTR) {
 		return sizeof (gpointer);
+	} else if (type->type == MONO_TYPE_VOID) {
+		return 1;
 	} else if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		mono_error_set_argument_format (error, "t", "Type %s cannot be marshaled as an unmanaged structure.", m_class_get_name (klass));
 		return 0;

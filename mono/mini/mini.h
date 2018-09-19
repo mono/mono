@@ -647,6 +647,8 @@ typedef struct {
 	gboolean rgctx_arg;
 	/* Whenever there is an IMT argument */
 	gboolean imt_arg;
+	/* Whenever there is a dummy extra argument */
+	gboolean dummy_arg;
 	/* 
 	 * The position of the vret arg in the argument list.
 	 * Only if ret->storage == ArgVtypeRetAddr.
@@ -654,7 +656,7 @@ typedef struct {
 	 */
 	int vret_arg_index;
 	/* The indexes of various special arguments in the LLVM signature */
-	int vret_arg_pindex, this_arg_pindex, rgctx_arg_pindex, imt_arg_pindex;
+	int vret_arg_pindex, this_arg_pindex, rgctx_arg_pindex, imt_arg_pindex, dummy_arg_pindex;
 
 	/* Inline array of argument info */
 	/* args [0] is for the this argument if it exists */
@@ -961,59 +963,59 @@ enum {
 };
 
 typedef enum {
-	MONO_RGCTX_INFO_STATIC_DATA,
-	MONO_RGCTX_INFO_KLASS,
-	MONO_RGCTX_INFO_ELEMENT_KLASS,
-	MONO_RGCTX_INFO_VTABLE,
-	MONO_RGCTX_INFO_TYPE,
-	MONO_RGCTX_INFO_REFLECTION_TYPE,
-	MONO_RGCTX_INFO_METHOD,
+	MONO_RGCTX_INFO_STATIC_DATA                  = 0,
+	MONO_RGCTX_INFO_KLASS                        = 1,
+	MONO_RGCTX_INFO_ELEMENT_KLASS                = 2,
+	MONO_RGCTX_INFO_VTABLE                       = 3,
+	MONO_RGCTX_INFO_TYPE                         = 4,
+	MONO_RGCTX_INFO_REFLECTION_TYPE              = 5,
+	MONO_RGCTX_INFO_METHOD                       = 6,
 	/* In llvmonly mode, this is a function descriptor */
-	MONO_RGCTX_INFO_GENERIC_METHOD_CODE,
-	MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER,
-	MONO_RGCTX_INFO_CLASS_FIELD,
-	MONO_RGCTX_INFO_METHOD_RGCTX,
-	MONO_RGCTX_INFO_METHOD_CONTEXT,
-	MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK,
-	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE,
-	MONO_RGCTX_INFO_CAST_CACHE,
-	MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE,
-	MONO_RGCTX_INFO_VALUE_SIZE,
+	MONO_RGCTX_INFO_GENERIC_METHOD_CODE          = 7,
+	MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER        = 8,
+	MONO_RGCTX_INFO_CLASS_FIELD                  = 9,
+	MONO_RGCTX_INFO_METHOD_RGCTX                 = 10,
+	MONO_RGCTX_INFO_METHOD_CONTEXT               = 11,
+	MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK   = 12,
+	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE         = 13,
+	MONO_RGCTX_INFO_CAST_CACHE                   = 14,
+	MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE           = 15,
+	MONO_RGCTX_INFO_VALUE_SIZE                   = 16,
 	/* +1 to avoid zero values in rgctx slots */
-	MONO_RGCTX_INFO_FIELD_OFFSET,
+	MONO_RGCTX_INFO_FIELD_OFFSET                 = 17,
 	/* Either the code for a gsharedvt method, or the address for a gsharedvt-out trampoline for the method */
 	/* In llvmonly mode, this is a function descriptor */
-	MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE,
+	MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE = 18,
 	/* Same for virtual calls */
 	/* In llvmonly mode, this is a function descriptor */
-	MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT,
+	MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT = 19,
 	/* Same for calli, associated with a signature */
-	MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI,
-	MONO_RGCTX_INFO_SIG_GSHAREDVT_IN_TRAMPOLINE_CALLI,
+	MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI = 20,
+	MONO_RGCTX_INFO_SIG_GSHAREDVT_IN_TRAMPOLINE_CALLI = 21,
 	/* One of MONO_GSHAREDVT_BOX_TYPE */
-	MONO_RGCTX_INFO_CLASS_BOX_TYPE,
+	MONO_RGCTX_INFO_CLASS_BOX_TYPE                = 22,
 	/* Resolves to a MonoGSharedVtMethodRuntimeInfo */
-	MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO,
-	MONO_RGCTX_INFO_LOCAL_OFFSET,
-	MONO_RGCTX_INFO_MEMCPY,
-	MONO_RGCTX_INFO_BZERO,
+	MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO         = 23,
+	MONO_RGCTX_INFO_LOCAL_OFFSET                  = 24,
+	MONO_RGCTX_INFO_MEMCPY                        = 25,
+	MONO_RGCTX_INFO_BZERO                         = 26,
 	/* The address of Nullable<T>.Box () */
 	/* In llvmonly mode, this is a function descriptor */
-	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX,
-	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX,
+	MONO_RGCTX_INFO_NULLABLE_CLASS_BOX            = 27,
+	MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX          = 28,
 	/* MONO_PATCH_INFO_VCALL_METHOD */
 	/* In llvmonly mode, this is a function descriptor */
-	MONO_RGCTX_INFO_VIRT_METHOD_CODE,
+	MONO_RGCTX_INFO_VIRT_METHOD_CODE              = 29,
 	/*
 	 * MONO_PATCH_INFO_VCALL_METHOD
 	 * Same as MONO_RGCTX_INFO_CLASS_BOX_TYPE, but for the class
 	 * which implements the method.
 	 */
-	MONO_RGCTX_INFO_VIRT_METHOD_BOX_TYPE,
+	MONO_RGCTX_INFO_VIRT_METHOD_BOX_TYPE          = 30,
 	/* Resolve to 2 (TRUE) or 1 (FALSE) */
-	MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS,
+	MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS = 31,
 	/* The MonoDelegateTrampInfo instance */
-	MONO_RGCTX_INFO_DELEGATE_TRAMP_INFO,
+	MONO_RGCTX_INFO_DELEGATE_TRAMP_INFO           = 32,
 } MonoRgctxInfoType;
 
 typedef struct _MonoRuntimeGenericContextInfoTemplate {
@@ -1096,15 +1098,15 @@ typedef struct MonoJumpInfo MonoJumpInfo;
 typedef struct MonoJumpInfoGSharedVtCall MonoJumpInfoGSharedVtCall;
 
 typedef enum {
-	MONO_TRAMPOLINE_JIT,
-	MONO_TRAMPOLINE_JUMP,
-	MONO_TRAMPOLINE_RGCTX_LAZY_FETCH,
-	MONO_TRAMPOLINE_AOT,
-	MONO_TRAMPOLINE_AOT_PLT,
-	MONO_TRAMPOLINE_DELEGATE,
-	MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING,
-	MONO_TRAMPOLINE_VCALL,
-	MONO_TRAMPOLINE_NUM
+	MONO_TRAMPOLINE_JIT      = 0,
+	MONO_TRAMPOLINE_JUMP     = 1,
+	MONO_TRAMPOLINE_RGCTX_LAZY_FETCH = 2,
+	MONO_TRAMPOLINE_AOT      = 3,
+	MONO_TRAMPOLINE_AOT_PLT  = 4,
+	MONO_TRAMPOLINE_DELEGATE = 5,
+	MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING = 6,
+	MONO_TRAMPOLINE_VCALL    = 7,
+	MONO_TRAMPOLINE_NUM      = 8,
 } MonoTrampolineType;
 
 /* These trampolines return normally to their caller */
@@ -2183,6 +2185,7 @@ MonoInst*         mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, Mon
 MonoInst*         mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*         mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*         mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
+MonoInst*         mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field);
 MonoInst*         mini_handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_this, int enum_val_reg, MonoInst *enum_flag);
 
 MonoMethod*       mini_get_memcpy_method (void);
