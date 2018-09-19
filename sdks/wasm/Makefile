@@ -141,7 +141,9 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 .stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.g.js
-	mono packager.exe -template=runtime-tests.g.js -out=test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+	mono --debug packager.exe --template=runtime-tests.g.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+	ninja -v -C obj/test-suite
+	touch $@
 
 MINI_BASIC_TEST_FILES= \
     basic-calls.cs  \
@@ -157,11 +159,10 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
 
 aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding mini_tests_basic.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out --appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding --asset=aot-driver.js mini_tests_basic.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	cp aot-driver.js bin/aot-sample
 	(cd bin/aot-sample && $(SM) aot-driver.js)
 
 build-debug-sample: .stamp-build-debug-sample
@@ -181,16 +182,16 @@ JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 run-ch-%: toolchain build-test-suite
-	(cd test-suite && $(CHAKRA) runtime.js -args $*)
+	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd test-suite && $(D8) --expose_wasm runtime.js -- $*)
+	(cd bin/test-suite && $(D8) --expose_wasm runtime.js -- $*)
 
 run-jsc-%: toolchain build-test-suite
-	(cd test-suite && $(JSC) runtime.js -- $*)
+	(cd bin/test-suite && $(JSC) runtime.js -- $*)
 
 run-sm-%: toolchain build-test-suite
-	(cd test-suite && $(SM) runtime.js $*)
+	(cd bin/test-suite && $(SM) runtime.js $*)
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
