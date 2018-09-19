@@ -915,9 +915,9 @@ g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii)
 }
 
 void
-g_strdelimit (gchar *string, char delimiter, char new_delimiter)
+g_strdelimit (gchar *string, gchar delimiter, gchar new_delimiter)
 {
-	char *ptr;
+	gchar *ptr;
 
 	g_return_if_fail (string != NULL);
 

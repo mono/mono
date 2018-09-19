@@ -1451,12 +1451,12 @@ set_domain_search_path (MonoDomain *domain)
 {
 	ERROR_DECL (error);
 	MonoAppDomainSetup *setup;
-	char **tmp;
-	char *search_path = NULL;
-	int npaths = 1;
-	char **pvt_split = NULL;
+	gchar **tmp;
+	gchar *search_path = NULL;
+	gint npaths = 1;
+	gchar **pvt_split = NULL;
 	GError *gerror = NULL;
-	int appbaselen = -1;
+	gint appbaselen = -1;
 
 	/* 
 	 * We use the low-level domain assemblies lock, since this is called from
@@ -1514,7 +1514,7 @@ set_domain_search_path (MonoDomain *domain)
 	g_strfreev (domain->search_path);
 	domain->search_path = NULL;
 
-	tmp = g_new (char*, npaths + 1);
+	tmp = g_new (gchar*, npaths + 1);
 	tmp [npaths] = NULL;
 
 	*tmp = mono_string_to_utf8_checked (setup->application_base, error);
@@ -1639,11 +1639,11 @@ make_sibling_path (const gchar *path, gint pathlen, const char *extension, Shado
 static gboolean
 shadow_copy_sibling (const gchar *src_pristine, gint srclen, const char *extension, ShadowCopySiblingExt extopt, const gchar *target_pristine, gint targetlen)
 {
-	char *file = NULL;
+	gchar *file = NULL;
 	gunichar2 *orig = NULL;
 	gunichar2 *dest = NULL;
 	gboolean copy_result = TRUE;
-	char *target = NULL;
+	gchar *target = NULL;
 	
 	char *src = make_sibling_path (src_pristine, srclen, extension, extopt);
 
@@ -1818,7 +1818,7 @@ shadow_copy_create_ini (const char *shadow, const char *filename)
 	gboolean result = FALSE;
 	guint32 n;
 	HANDLE handle = INVALID_HANDLE_VALUE;
-	char *full_path = NULL;
+	gchar *full_path = NULL;
 
 	char *dir_name = g_path_get_dirname (shadow);
 	char *ini_file = g_build_filename (dir_name, "__AssemblyInfo__.ini", NULL);
@@ -1853,11 +1853,11 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 {
 	ERROR_DECL (error);
 	MonoAppDomainSetup *setup;
-	char *all_dirs = NULL;
-	char **dir_ptr;
-	char **directories = NULL;
-	char *shadow_status_string;
-	char *base_dir = NULL;
+	gchar *all_dirs = NULL;
+	gchar **dir_ptr;
+	gchar **directories = NULL;
+	gchar *shadow_status_string;
+	gchar *base_dir = NULL;
 	gboolean shadow_enabled;
 	gboolean found = FALSE;
 
