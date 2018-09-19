@@ -89,10 +89,6 @@ if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	echo "ENABLE_CXX=1" >> sdks/Make.config
 fi
 
-if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
-	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
-fi
-
 if [[ ${CI_TAGS} == *'win-'* ]];
 then
 	mkdir -p ~/.config/.mono/
