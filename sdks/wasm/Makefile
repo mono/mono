@@ -93,6 +93,9 @@ mono.js: $(DRIVER_CONF)/.stamp-build
 mono.wasm: $(DRIVER_CONF)/.stamp-build
 	cp $(DRIVER_CONF)/mono.wasm $@
 
+$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
+	cp $< $@
+
 build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
 
 do-runtime:
@@ -137,7 +140,7 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
-	
+
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 .stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.g.js
@@ -166,7 +169,7 @@ build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite
+build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
@@ -198,7 +201,7 @@ run-all-%:
 	make -C . run-jsc-$*
 
 clean:
-	
+
 package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
