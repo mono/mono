@@ -36,7 +36,6 @@ MONO_PATH_TOP = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/
 MONO_PATH_TESTS = $(MONO_PATH_TOP)/tests
 TEST_MONO_PATH = $(MONO_PATH_TOP)$(PLATFORM_PATH_SEPARATOR)$(MONO_PATH_TESTS)
 TEST_RUNTIME = MONO_PATH="$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR).$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
-ENABLE_GSS =
 
 # In case you want to add MCS_FLAGS, this lets you not have to
 # keep track of the default value
