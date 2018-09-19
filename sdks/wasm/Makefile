@@ -110,21 +110,23 @@ binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 WebAssembly.Bindings.dll: bindings.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
 WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
 
 Simple.Dependency.dll: dependency.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
 
 sample.dll: Simple.Dependency.dll sample.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-Mono.Cecil.dll: Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll
+Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll:
 	nuget install -version 0.10.0 Mono.Cecil
+
+Mono.Cecil.dll: Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll
 	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
 
 # We use system csc as this is a desktop program
