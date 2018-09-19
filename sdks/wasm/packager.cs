@@ -258,6 +258,9 @@ class Driver {
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
+		var dontlink_assemblies = new Dictionary<string, bool> ();
+		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
+
 		var template = File.ReadAllText (Path.Combine (tool_prefix, runtimeTemplate));
 		
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\""));
@@ -347,7 +350,8 @@ class Driver {
 		ninja.WriteLine ("  command = $emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out $linker_args");
+
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
@@ -379,7 +383,6 @@ class Driver {
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
 
 			var source_file_path = Path.GetFullPath (assembly);
-			ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
 			string infile = "";
 
 			if (enable_linker) {
@@ -415,6 +418,9 @@ class Driver {
 			foreach (var assembly in root_assemblies) {
 				string filename = Path.GetFileName (assembly);
 				linker_args += $"-a linker-in/{filename} ";
+			}
+			foreach (var assembly in dontlink_assemblies.Keys) {
+				linker_args += $"-p copy {assembly} ";
 			}
 			linker_args += " -d $bcl_dir -c link";
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
