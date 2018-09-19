@@ -83,13 +83,18 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+rm -f sdks/Make.config
+
 if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
+	echo "ENABLE_CXX=1" >> sdks/Make.config
 fi
 
 if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
+	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
+	echo "ENABLE_CXX=1" >> sdks/Make.config
 fi
 
 if [[ ${CI_TAGS} == *'win-'* ]];
@@ -100,7 +105,7 @@ fi
 
 if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
-	   echo "DISABLE_ANDROID=1" > sdks/Make.config
+	   echo "DISABLE_ANDROID=1" >> sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
@@ -135,7 +140,7 @@ fi
 
 if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
-        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
+        echo "IGNORE_PROVISION_ANDROID=1" >> sdks/Make.config
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
