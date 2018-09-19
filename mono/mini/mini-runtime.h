@@ -397,6 +397,7 @@ MONO_API int         mono_main                      (int argc, char* argv[]);
 MONO_API void        mono_set_defaults              (int verbose_level, guint32 opts);
 MONO_API void        mono_parse_env_options         (int *ref_argc, char **ref_argv []);
 MONO_API char       *mono_parse_options_from        (const char *options, int *ref_argc, char **ref_argv []);
+MONO_API int         mono_exec_regression (int verbose_level, int count, char *images [], gboolean single_method);
 
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (MonoEECallbacks *cbs);
