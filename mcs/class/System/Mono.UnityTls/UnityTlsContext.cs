@@ -35,6 +35,13 @@ namespace Mono.Unity
 		UnityTls.unitytls_x509list*	requestedClientCertChain = null;
 		UnityTls.unitytls_key*		requestedClientKey = null;
 
+		// Delegates we passed to native to ensure they are not garbage collected
+		UnityTls.unitytls_tlsctx_read_callback readCallback;
+		UnityTls.unitytls_tlsctx_write_callback writeCallback;
+		UnityTls.unitytls_tlsctx_trace_callback traceCallback;
+		UnityTls.unitytls_tlsctx_certificate_callback certificateCallback;
+		UnityTls.unitytls_tlsctx_x509verify_callback verifyCallback;
+
 		// States and certificates
 		X509Certificate       localClientCertificate;
 		X509Certificate       remoteCertificate;
@@ -68,9 +75,11 @@ namespace Mono.Unity
 				max = UnityTlsConversions.GetMaxProtocol (enabledProtocols),
 			};
 
+			readCallback = ReadCallback;
+			writeCallback = WriteCallback;
 			UnityTls.unitytls_tlsctx_callbacks callbacks = new UnityTls.unitytls_tlsctx_callbacks {
-				write = WriteCallback,
-				read = ReadCallback,
+				write = writeCallback,
+				read = readCallback,
 				data = (void*)(IntPtr)handle,
 			};
 
@@ -104,15 +113,18 @@ namespace Mono.Unity
 					tlsContext = UnityTls.NativeInterface.unitytls_tlsctx_create_client (protocolRange, callbacks, targetHostUtf8Ptr, targetHostUtf8.Length, &errorState);
 				}
 
-				UnityTls.NativeInterface.unitytls_tlsctx_set_certificate_callback (tlsContext, CertificateCallback, (void*)(IntPtr)handle, &errorState);				
+				certificateCallback = CertificateCallback;
+				UnityTls.NativeInterface.unitytls_tlsctx_set_certificate_callback (tlsContext, certificateCallback, (void*)(IntPtr)handle, &errorState);				
 			}
 
-			UnityTls.NativeInterface.unitytls_tlsctx_set_x509verify_callback (tlsContext, VerifyCallback, (void*)(IntPtr)handle, &errorState);
+			verifyCallback = VerifyCallback;
+			UnityTls.NativeInterface.unitytls_tlsctx_set_x509verify_callback (tlsContext, verifyCallback, (void*)(IntPtr)handle, &errorState);
 
 			Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to create UnityTls context");
 
 			if (ActivateTracing) {
-				UnityTls.NativeInterface.unitytls_tlsctx_set_trace_callback (tlsContext, TraceCallback, null, &errorState);
+				traceCallback = TraceCallback;
+				UnityTls.NativeInterface.unitytls_tlsctx_set_trace_callback (tlsContext, traceCallback, null, &errorState);
 				Mono.Unity.Debug.CheckAndThrow (errorState, "Failed to set trace callback");
 			}
 
