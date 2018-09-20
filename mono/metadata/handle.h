@@ -17,7 +17,7 @@
 #include <config.h>
 #include <glib.h>
 
-#include <mono/metadata/handle-0.h>
+#include <mono/metadata/handle-decl.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/class.h>
 #include <mono/utils/mono-error-internals.h>
@@ -350,6 +350,7 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST (*(handle).__raw, mono_handle_raw ((handle).__raw)))
 #endif
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
+#define MONO_HANDLE_BOOL(handle)   (!mono_handle_is_null ((handle).__raw))
 
 #else // MONO_TYPE_SAFE_HANDLES
 
@@ -362,6 +363,7 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 
 #define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST ((handle)->__raw, mono_handle_raw (handle)))
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null (handle))
+#define MONO_HANDLE_BOOL(handle)   (!mono_handle_is_null (handle))
 
 #endif // MONO_TYPE_SAFE_HANDLES
 

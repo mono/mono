@@ -7,7 +7,7 @@
 
 #include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
-#include <mono/metadata/handle-0.h>
+#include <mono/metadata/handle-decl.h>
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
@@ -2075,10 +2075,6 @@ ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, Mono
 ICALL_EXPORT
 void
 ves_icall_DynamicMethod_create_dynamic_method (MonoReflectionDynamicMethodHandle mb, MonoError *error);
-
-ICALL_EXPORT
-MonoReflectionTypeHandle
-ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, MonoError *error);
 
 ICALL_EXPORT
 void

@@ -2143,7 +2143,7 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 	HANDLE_FUNCTION_ENTER ();
 
 	MonoType *type;
-	MonoReflectionAssemblyHandle assembly;
+	MonoReflectionAssemblyHandle reflection_assembly;
 	GString *fullName = NULL;
 	GList *mod;
 
@@ -2175,16 +2175,17 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 	for (mod = info->nested; mod; mod = mod->next)
 		g_string_append_printf (fullName, "+%s", (char*)mod->data);
 
-	assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), fullName->str, error);
+	reflection_assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), fullName->str, error);
 	if (!is_ok (error))
 		goto return_null;
 
-	if (!MONO_HANDLE_IS_NULL (assembly)) {
-		if (assembly_is_dynamic (MONO_HANDLE_GETVAL (assembly, assembly)))
-			type = mono_reflection_get_type_internal_dynamic (rootimage, MONO_HANDLE_GETVAL (assembly, assembly),
+	if (MONO_HANDLE_BOOL (reflection_assembly)) {
+		MonoAssembly *assembly = MONO_HANDLE_GETVAL (reflection_assembly, assembly);
+		if (assembly_is_dynamic (assembly))
+			type = mono_reflection_get_type_internal_dynamic (rootimage, assembly,
 									  info, ignorecase, error);
 		else
-			type = mono_reflection_get_type_internal (rootimage, MONO_HANDLE_GETVAL (assembly, assembly)->image,
+			type = mono_reflection_get_type_internal (rootimage, assembly->image,
 								  info, ignorecase, error);
 	}
 	goto_if_nok (error, return_null);
