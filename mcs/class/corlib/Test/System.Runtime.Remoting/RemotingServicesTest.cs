@@ -36,6 +36,7 @@ namespace MonoTests.System.Runtime.Remoting
 				appDomainObject.Init(crossDomainSerializedObject);
 		}
 
+#if !MOBILE
 		[Test]
 		public void Bug46473 () // concurrent serialization/deserialization
 		{
@@ -48,13 +49,9 @@ namespace MonoTests.System.Runtime.Remoting
 				var name = "AppDomainWithCall" + i;
 				tasks [i] = Task.Factory.StartNew(() => AppDomainWithRemotingSerialization(assembly, name));
 			}
-			try {
-				Task.WaitAll (tasks);
-			} catch (AggregateException e) {
-				success = false;
-				Console.WriteLine ($"{e}, {e.InnerException}");
-			}
-			Assert.IsTrue (success, "Bug46473 (exception during remoting call)");
+
+			Assert.IsTrue (Task.WaitAll (tasks, 5000));
 		}
+#endif
 	}
 }
