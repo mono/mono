@@ -29,6 +29,9 @@ ICALL_EXPORT
 MonoReflectionTypeHandle
 ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, MonoError *error);
 
+MonoReflectionTypeBuilderHandle
+mono_class_get_ref_info (MonoClass *klass);
+
 gboolean
 mono_reflection_parse_type_checked (char *name, MonoTypeNameParse *info, MonoError *error);
 
