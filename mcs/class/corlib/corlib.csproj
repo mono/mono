@@ -449,6 +449,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscateAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ParameterModifier.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Pointer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\PortableExecutableKinds.cs" />
@@ -1430,7 +1431,6 @@
     <Compile Include="System.Reflection\MonoModule.cs" />
     <Compile Include="System.Reflection\MonoParameterInfo.cs" />
     <Compile Include="System.Reflection\MonoProperty.cs" />
-    <Compile Include="System.Reflection\ParameterInfo.cs" />
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Resources\Win32Resources.cs" />
     <Compile Include="System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
