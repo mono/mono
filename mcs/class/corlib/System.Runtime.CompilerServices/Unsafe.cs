@@ -133,6 +133,15 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
+		public static bool IsAddressGreaterThan<T>(ref T left, ref T right)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool IsAddressLessThan<T>(ref T left, ref T right)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		unsafe internal static ref T AddByteOffset<T> (ref T source, nuint byteOffset)

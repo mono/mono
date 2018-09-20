@@ -1638,6 +1638,32 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
+\fBMONO_TLS_PROVIDER\fR
+This environment variable controls which TLS/SSL provider Mono will
+use.  The options are usually determined by the operating system where
+Mono was compiled and the configuration options that were used for
+it.   
+.RS
+.ne 8
+.TP
+.I default
+Uses the default TLS stack that the Mono runtime was configured with.
+Usually this is configured to use Apple's SSL stack on Apple
+platforms, and Boring SSL on other platforms.
+.TP
+.I apple
+Forces the use of the Apple SSL stack, only works on Apple platforms.
+.TP
+.I btls
+Forces the use of the BoringSSL stack.    See
+https://opensource.google.com/projects/boringssl for more information
+about this stack.
+.TP
+.I legacy
+This is the old Mono stack, which only supports SSL and TLS up to
+version 1.0.   It is deprecated and will be removed in the future.
+.RE
+.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very

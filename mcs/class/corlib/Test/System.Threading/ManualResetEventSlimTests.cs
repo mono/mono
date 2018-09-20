@@ -53,7 +53,7 @@ namespace MonoTests.System.Threading
 		public void Constructor_Defaults ()
 		{
 			Assert.IsFalse (mre.IsSet, "#1");
-			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 10, mre.SpinCount, "#2");
+			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 35, mre.SpinCount, "#2");
 		}
 
 		[Test]

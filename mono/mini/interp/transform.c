@@ -19,6 +19,7 @@
 #include <mono/metadata/seq-points-data.h>
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/reflection-internals.h>
 
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
@@ -315,9 +316,13 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	int target = td->ip + offset - td->il_code;
 	if (target < 0 || target >= td->code_size)
 		g_assert_not_reached ();
-	/* Add exception checkpoint for backward branches */
-	if (offset < 0)
-		ADD_CODE(td, MINT_CHECKPOINT);
+	/* Add exception checkpoint or safepoint for backward branches */
+	if (offset < 0) {
+		if (mono_threads_are_safepoints_enabled ())
+			ADD_CODE (td, MINT_SAFEPOINT);
+		else
+			ADD_CODE (td, MINT_CHECKPOINT);
+	}
 	if (offset > 0 && td->stack_height [target] < 0) {
 		td->stack_height [target] = td->sp - td->stack;
 		if (td->stack_height [target] > 0)
@@ -2149,6 +2154,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 	if (rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER)
 		ADD_CODE (td, MINT_PROF_ENTER);
+
+	/* safepoint is required on method entry */
+	if (mono_threads_are_safepoints_enabled ())
+		ADD_CODE (td, MINT_SAFEPOINT);
 
 	if (sym_seq_points) {
 		InterpBasicBlock *cbb = td->offset_to_bb [0];
@@ -4229,13 +4238,30 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			g_assert (mt == MINT_TYPE_VT);
 			size = mono_class_value_size (klass, NULL);
 			g_assert (size == sizeof(gpointer));
-			PUSH_VT (td, sizeof(gpointer));
-			ADD_CODE (td, MINT_LDTOKEN);
-			ADD_CODE (td, get_data_item_index (td, handle));
 
-			SET_TYPE (td->sp, stack_type [mt], klass);
-			td->sp++;
-			td->ip += 5;
+			const unsigned char *next_ip = td->ip + 5;
+			MonoMethod *cmethod;
+			if (next_ip < end &&
+					!is_bb_start [next_ip - td->il_code] &&
+					(*next_ip == CEE_CALL || *next_ip == CEE_CALLVIRT) &&
+					(cmethod = mono_get_method_checked (image, read32 (next_ip + 1), NULL, generic_context, error)) &&
+					(cmethod->klass == mono_defaults.systemtype_class) &&
+					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
+				ADD_CODE (td, MINT_MONO_LDPTR);
+				gpointer systype = mono_type_get_object_checked (domain, (MonoType*)handle, error);
+				goto_if_nok (error, exit);
+				ADD_CODE (td, get_data_item_index (td, systype));
+				PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
+				td->ip = next_ip + 5;
+			} else {
+				PUSH_VT (td, sizeof(gpointer));
+				ADD_CODE (td, MINT_LDTOKEN);
+				ADD_CODE (td, get_data_item_index (td, handle));
+				SET_TYPE (td->sp, stack_type [mt], klass);
+				td->sp++;
+				td->ip += 5;
+			}
+
 			break;
 		}
 		case CEE_ADD_OVF:

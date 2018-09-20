@@ -825,7 +825,7 @@ System.Threading/LockQueue.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
 System.Threading/NativeEventCalls.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/NativeOverlapped.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
@@ -954,7 +954,7 @@ corert/Decimal.DecCalc.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/InvalidOperationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/InvalidProgramException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/InsufficientExecutionStackException.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/InsufficientMemoryException.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/InsufficientMemoryException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Int16.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Int32.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Int64.cs
@@ -970,8 +970,9 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemberAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MethodAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MidpointRounding.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/MissingFieldException.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/MissingMemberException.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/MissingFieldException.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/MissingMemberException.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/MissingMemberException.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MissingMethodException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MulticastNotSupportedException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/NonSerializedAttribute.cs
@@ -981,13 +982,13 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/NullReferenceException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Number.Formatting.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Number.NumberBuffer.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Number.Parsing.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Number.Parsing.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Number.Unix.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Number.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ObjectDisposedException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ObsoleteAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/OperationCanceledException.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/OutOfMemoryException.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/OutOfMemoryException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/OverflowException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ParamArrayAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ParamsArray.cs
@@ -1307,7 +1308,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/irestrictederrorinfo.cs
 ../referencesource/mscorlib/system/runtime/interopservices/windowsruntime/windowsruntimemarshal.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/ConstrainedExecution/CriticalFinalizerObject.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/ConstrainedExecution/CriticalFinalizerObject.cs
 ../../../external/corefx/src/System.Runtime/src/System/Runtime/ConstrainedExecution/PrePrepareMethodAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ConstrainedExecution/ReliabilityContractAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/ConstrainedExecution/Consistency.cs
@@ -1530,14 +1531,12 @@ corefx/BinaryEnums.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LazyInitializer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LockRecursionException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ManualResetEvent.cs
-../referencesource/mscorlib/system/threading/ManualResetEventSlim.cs
 ../referencesource/mscorlib/system/threading/monitor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ParameterizedThreadStart.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/SemaphoreFullException.cs
 ../referencesource/mscorlib/system/threading/SemaphoreSlim.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/SendOrPostCallback.cs
 ../referencesource/mscorlib/system/threading/SpinLock.cs
-../referencesource/mscorlib/system/threading/SpinWait.cs
 ../referencesource/mscorlib/system/threading/synchronizationcontext.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/SynchronizationLockException.cs
 ../referencesource/mscorlib/system/threading/thread.cs
@@ -1555,10 +1554,14 @@ corefx/BinaryEnums.cs
 ../referencesource/mscorlib/system/threading/waithandle.cs
 ../referencesource/mscorlib/system/threading/waithandleExtensions.cs
 
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/ManualResetEventSlim.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/SpinWait.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/TimeoutHelper.cs
+
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenRegistration.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskExceptionHolder.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskToApm.cs
 
@@ -1605,12 +1608,13 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ByReference.cs
 # TODO: Should all come from shared
-../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ArraySortHelper.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.CoreRT.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ReflectionBlockedAttribute.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/TaskAwaiter.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TaskAwaiter.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/LockHolder.cs
 
