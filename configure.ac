@@ -78,6 +78,8 @@ CPPFLAGS_FOR_LIBGC=$CPPFLAGS
 CFLAGS_FOR_LIBGC=$CFLAGS
 CPPFLAGS_FOR_BTLS=$CPPFLAGS
 CFLAGS_FOR_BTLS=$CFLAGS
+CPPFLAGS_FOR_OPENSSL=$CPPFLAGS
+CFLAGS_FOR_OPENSSL=$CFLAGS
 
 # libgc uses some deprecated APIs
 CFLAGS_FOR_LIBGC="$CFLAGS -Wno-deprecated-declarations"
@@ -3863,6 +3865,8 @@ jit_wanted=true
 boehm_supported=true
 BTLS_SUPPORTED=no
 BTLS_PLATFORM=
+OPENSSL_SUPPORTED=no
+OPENSSL_PLATFORM=
 
 case "$host" in
 	wasm32*)
@@ -4074,8 +4078,8 @@ case "$host" in
 		TARGET=S390X;
 		arch_target=s390x;
 		ACCESS_UNALIGNED="yes"
-		BTLS_SUPPORTED=yes
-		BTLS_PLATFORM=s390x
+		OPENSSL_SUPPORTED=yes
+		OPENSSL_PLATFORM=s390x
 		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
 		;;
 esac
@@ -4320,11 +4324,13 @@ if test "x$target_mach" = "xyes"; then
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  BTLS_SUPPORTED=no
+	  OPENSSL_SUPPORTED=no
    elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM64"; then
    	  AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  BTLS_SUPPORTED=no
+	  OPENSSL_SUPPORTED=no
    else
        AC_TRY_COMPILE([#include "TargetConditionals.h"],[
        #if TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1
@@ -4340,6 +4346,7 @@ if test "x$target_mach" = "xyes"; then
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
           BTLS_SUPPORTED=no
+          OPENSSL_SUPPORTED=no
 		  target_ios=yes
        ])
 	fi
@@ -4906,6 +4913,7 @@ if test "x$platform_android" = "xyes"; then
 			;;
 		*)
 			BTLS_SUPPORTED=no
+			OPENSSL_SUPPORTED=no
 			;;
 		esac
 		;;
@@ -5174,7 +5182,7 @@ if test "x$enable_btls" = "xyes"; then
 		btls_cflags="-march=armv8-a+crypto"
 		;;
 	s390x)
-		btls_arch=s390x
+		openssl_arch=s390x
 		;;
 	powerpc)
 		btls_arch=powerpc
@@ -5227,11 +5235,68 @@ if test "x$enable_btls" = "xyes"; then
 	AC_SUBST(BTLS_CMAKE_ARGS)
 
 	AC_DEFINE(HAVE_BTLS, 1, [BoringTls is supported])
+	AC_DEFINE(HAVE_TLS, 1, [Unix Tls is supported])
 else
 	enable_btls=no
 fi
 
 AM_CONDITIONAL(BTLS_ANDROID, test x$btls_android = xyes)
+
+dnl ****************
+dnl ***  OpenSSL ***
+dnl ****************
+
+AC_ARG_ENABLE(openssl, [  --disable-openssl             Disable the OpenSSL provider], enable_openssl=$enableval, enable_openssl=$OPENSSL_SUPPORTED)
+
+AM_CONDITIONAL(OPENSSL, test x$enable_openssl = xyes)
+
+if test "x$enable_openssl" = "xyes"; then
+	AC_PATH_PROG(CMAKE, [cmake], [no], [$PATH:/Applications/CMake.app/Contents/bin:/usr/local/bin])
+	if test "x$CMAKE" = "xno"; then
+		AC_MSG_ERROR("cmake not found")
+	fi
+
+	openssl_arch=
+	openssl_cflags=
+	OPENSSL_CMAKE_ARGS=
+
+	case "$OPENSSL_PLATFORM" in
+	s390x)
+		openssl_arch=s390x
+		;;
+	powerpc)
+		openssl_arch=powerpc
+		case $host_os in
+			aix*|os400*)
+				openssl_cflags="$openssl_cflags -maix64 -mminimal-toc -pthread -D_ALL_SOURCE -D_THREAD_SAFE -D_REENTRANT"
+				OPENSSL_CMAKE_ARGS="-DCMAKE_AR=/usr/bin/ar -DCMAKE_C_ARCHIVE_CREATE=\"<CMAKE_AR> -X64 cr <TARGET> <LINK_FLAGS> <OBJECTS>\""
+		esac
+		;;
+	*)
+		AC_MSG_ERROR(Invalid OPENSSL platform)
+	esac
+
+	if test "x$openssl_arch" != "x"; then
+		OPENSSL_CMAKE_ARGS="$OPENSSL_CMAKE_ARGS -DOPENSSL_ARCH=\"$openssl_arch\""
+	fi
+
+	AC_CHECK_HEADERS(openssl/bio.h)
+	OPENSSL_CFLAGS=`pkg-config --cflags openssl`
+	OPENSSL_CFLAGS="$OPENSSL_CFLAGS $CPPFLAGS_FOR_OPENSSL $openssl_cflags"
+	OPENSSL_LDFLAGS=`pkg-config --libs openssl`
+	AC_SUBST(OPENSSL_ARCH)
+	AC_SUBST(OPENSSL_CFLAGS)
+	AC_SUBST(OPENSSL_LDFLAGS)
+	AC_SUBST(OPENSSL_PLATFORM)
+	AC_SUBST(OPENSSL_CMAKE_ARGS)
+
+	AC_DEFINE(HAVE_OPENSSL, 1, [OpenSSL is supported])
+	if test "x$enable_btls" = "xno"; then
+		AC_DEFINE(HAVE_TLS, 1, [Unix TLS is supported])
+	fi
+else
+	enable_openssl=no
+fi
 
 if test x$DISABLE_MCS_DOCS = xyes; then
    docs_dir=""
@@ -5510,6 +5575,7 @@ scripts/mono-find-requires
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
+mono/openssl/Makefile
 mono/utils/Makefile
 mono/utils/jemalloc/Makefile
 mono/metadata/Makefile
@@ -5706,6 +5772,14 @@ fi
       echo "HAVE_BTLS=1" >> $srcdir/$mcsdir/build/config.make
     fi
 
+    if test "x$enable_openssl" = "xyes"; then
+      echo "HAVE_OPENSSL=1" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test "x$enable_btls" = "xyes" -o "x$enable_openssl" = "xyes"; then
+      echo "HAVE_TLS=1" >> $srcdir/$mcsdir/build/config.make
+    fi
+
   fi
 
 )
@@ -5732,6 +5806,11 @@ if test x$buildsgen = xyes; then
 	fi
 fi
 	
+openssl_platform_string=
+if test x$enable_openssl = xyes; then
+	openssl_platform_string=" ($OPENSSL_PLATFORM)"
+fi
+
 echo "
         mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
@@ -5765,6 +5844,7 @@ echo "
 	libgdiplus:      $libgdiplus_msg
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
+	OPENSSL:         $enable_openssl$openssl_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting
 	$disabled

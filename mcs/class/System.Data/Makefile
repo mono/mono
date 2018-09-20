@@ -27,9 +27,14 @@ endif
 
 ifndef PROFILE_DISABLE_BTLS
 ifdef HAVE_BTLS
-LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
+else
+ifdef HAVE_OPENSSL
+LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
 endif
 endif
+endif
+
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
 RESX_RESOURCE_STRING = \

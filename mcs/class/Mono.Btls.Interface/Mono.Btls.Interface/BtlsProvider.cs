@@ -34,7 +34,7 @@ namespace Mono.Btls.Interface
 	{
 		public static bool IsSupported ()
 		{
-			return MNS.MonoTlsProviderFactory.IsBtlsSupported ();
+			return MNS.MonoTlsProviderFactory.IsTlsSupported ();
 		}
 
 		public static MonoTlsProvider GetProvider ()

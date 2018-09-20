@@ -33,48 +33,48 @@ typedef enum {
 } MonoBtlsX509NameEntryType;
 
 MonoBtlsX509Name *
-mono_btls_x509_name_from_name (X509_NAME *name);
+mono_tls_x509_name_from_name (X509_NAME *name);
 
 MonoBtlsX509Name *
-mono_btls_x509_name_copy (X509_NAME *xn);
+mono_tls_x509_name_copy (X509_NAME *xn);
 
 void
-mono_btls_x509_name_free (MonoBtlsX509Name *name);
+mono_tls_x509_name_free (MonoBtlsX509Name *name);
 
 X509_NAME *
-mono_btls_x509_name_peek_name (MonoBtlsX509Name *name);
+mono_tls_x509_name_peek_name (MonoBtlsX509Name *name);
 
 MonoBtlsX509Name *
-mono_btls_x509_name_from_data (const void *data, int len, int use_canon_enc);
+mono_tls_x509_name_from_data (const void *data, int len, int use_canon_enc);
 
 int
-mono_btls_x509_name_print_bio (MonoBtlsX509Name *name, BIO *bio);
+mono_tls_x509_name_print_bio (MonoBtlsX509Name *name, BIO *bio);
 
 int
-mono_btls_x509_name_print_string (MonoBtlsX509Name *name, char *buffer, int size);
+mono_tls_x509_name_print_string (MonoBtlsX509Name *name, char *buffer, int size);
 
 int
-mono_btls_x509_name_get_raw_data (MonoBtlsX509Name *name, void **buffer, int use_canon_enc);
+mono_tls_x509_name_get_raw_data (MonoBtlsX509Name *name, void **buffer, int use_canon_enc);
 
 int64_t
-mono_btls_x509_name_hash (MonoBtlsX509Name *name);
+mono_tls_x509_name_hash (MonoBtlsX509Name *name);
 
 int64_t
-mono_btls_x509_name_hash_old (MonoBtlsX509Name *name);
+mono_tls_x509_name_hash_old (MonoBtlsX509Name *name);
 
 int
-mono_btls_x509_name_get_entry_count (MonoBtlsX509Name *name);
+mono_tls_x509_name_get_entry_count (MonoBtlsX509Name *name);
 
 MonoBtlsX509NameEntryType
-mono_btls_x509_name_get_entry_type (MonoBtlsX509Name *name, int index);
+mono_tls_x509_name_get_entry_type (MonoBtlsX509Name *name, int index);
 
 int
-mono_btls_x509_name_get_entry_oid (MonoBtlsX509Name *name, int index, char *buffer, int size);
+mono_tls_x509_name_get_entry_oid (MonoBtlsX509Name *name, int index, char *buffer, int size);
 
 int
-mono_btls_x509_name_get_entry_oid_data (MonoBtlsX509Name *name, int index, const void **data);
+mono_tls_x509_name_get_entry_oid_data (MonoBtlsX509Name *name, int index, const void **data);
 
 int
-mono_btls_x509_name_get_entry_value (MonoBtlsX509Name *name, int index, int *tag, unsigned char **str);
+mono_tls_x509_name_get_entry_value (MonoBtlsX509Name *name, int index, int *tag, unsigned char **str);
 
 #endif /* __btls__btls_x509_name__ */

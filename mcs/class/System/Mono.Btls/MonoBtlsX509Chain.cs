@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -43,7 +43,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_btls_x509_chain_free (handle);
+				mono_tls_x509_chain_free (handle);
 				return true;
 			}
 		}
@@ -53,25 +53,25 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_chain_new ();
+		extern static IntPtr mono_tls_x509_chain_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_chain_get_count (IntPtr handle);
+		extern static int mono_tls_x509_chain_get_count (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_chain_get_cert (IntPtr Handle, int index);
+		extern static IntPtr mono_tls_x509_chain_get_cert (IntPtr Handle, int index);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_chain_add_cert (IntPtr chain, IntPtr x509);
+		extern static int mono_tls_x509_chain_add_cert (IntPtr chain, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_chain_up_ref (IntPtr handle);
+		extern static IntPtr mono_tls_x509_chain_up_ref (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_x509_chain_free (IntPtr handle);
+		extern static void mono_tls_x509_chain_free (IntPtr handle);
 
 		public MonoBtlsX509Chain ()
-			: base (new BoringX509ChainHandle (mono_btls_x509_chain_new ()))
+			: base (new BoringX509ChainHandle (mono_tls_x509_chain_new ()))
 		{
 		}
 
@@ -81,14 +81,14 @@ namespace Mono.Btls
 		}
 
 		public int Count {
-			get { return mono_btls_x509_chain_get_count (Handle.DangerousGetHandle ()); }
+			get { return mono_tls_x509_chain_get_count (Handle.DangerousGetHandle ()); }
 		}
 
 		public MonoBtlsX509 GetCertificate (int index)
 		{
 			if (index >= Count)
 				throw new IndexOutOfRangeException ();
-			var handle = mono_btls_x509_chain_get_cert (
+			var handle = mono_tls_x509_chain_get_cert (
 				Handle.DangerousGetHandle (), index);
 			CheckError (handle != IntPtr.Zero);
 			return new MonoBtlsX509 (new MonoBtlsX509.BoringX509Handle (handle));
@@ -106,14 +106,14 @@ namespace Mono.Btls
 
 		public void AddCertificate (MonoBtlsX509 x509)
 		{
-			mono_btls_x509_chain_add_cert (
+			mono_tls_x509_chain_add_cert (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 		}
 
 		internal MonoBtlsX509Chain Copy ()
 		{
-			var copy = mono_btls_x509_chain_up_ref (Handle.DangerousGetHandle ());
+			var copy = mono_tls_x509_chain_up_ref (Handle.DangerousGetHandle ());
 			CheckError (copy != IntPtr.Zero);
 			return new MonoBtlsX509Chain (new BoringX509ChainHandle (copy));
 		}

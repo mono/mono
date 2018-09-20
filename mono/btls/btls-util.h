@@ -34,13 +34,13 @@
 #endif
 
 void
-mono_btls_free (void *data);
+mono_tls_free (void *data);
 
 int64_t
-mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time);
+mono_tls_util_asn1_time_to_ticks (ASN1_TIME *time);
 
 int
-mono_btls_debug_printf (BIO *bio, const char *format, va_list args);
+mono_tls_debug_printf (BIO *bio, const char *format, va_list args);
 
 OPENSSL_EXPORT void CRYPTO_refcount_inc(CRYPTO_refcount_t *count);
 OPENSSL_EXPORT int CRYPTO_refcount_dec_and_test_zero(CRYPTO_refcount_t *count);

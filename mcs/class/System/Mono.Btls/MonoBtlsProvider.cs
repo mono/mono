@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -61,8 +61,8 @@ namespace Mono.Btls
 
 		internal MonoBtlsProvider ()
 		{
-			if (!MNS.MonoTlsProviderFactory.IsBtlsSupported ())
-				throw new NotSupportedException ("BTLS is not supported in this runtime.");
+			if (!MNS.MonoTlsProviderFactory.IsTlsSupported ())
+				throw new NotSupportedException ("TLS is not supported in this runtime.");
 		}
 
 		public override bool SupportsSslStream {

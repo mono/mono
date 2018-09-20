@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -53,7 +53,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_btls_x509_store_free (handle);
+				mono_tls_x509_store_free (handle);
 				return true;
 			}
 		}
@@ -63,28 +63,28 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_store_new ();
+		extern static IntPtr mono_tls_x509_store_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_store_from_ctx (IntPtr ctx);
+		extern static IntPtr mono_tls_x509_store_from_ctx (IntPtr ctx);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_store_from_ssl_ctx (IntPtr handle);
+		extern static IntPtr mono_tls_x509_store_from_ssl_ctx (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_store_load_locations (IntPtr handle, IntPtr file, IntPtr path);
+		extern static int mono_tls_x509_store_load_locations (IntPtr handle, IntPtr file, IntPtr path);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_store_set_default_paths (IntPtr handle);
+		extern static int mono_tls_x509_store_set_default_paths (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_store_add_cert (IntPtr handle, IntPtr x509);
+		extern static int mono_tls_x509_store_add_cert (IntPtr handle, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_store_get_count (IntPtr handle);
+		extern static int mono_tls_x509_store_get_count (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_x509_store_free (IntPtr handle);
+		extern static void mono_tls_x509_store_free (IntPtr handle);
 
 		Dictionary<IntPtr,MonoBtlsX509Lookup> lookupHash;
 
@@ -97,7 +97,7 @@ namespace Mono.Btls
 					filePtr = Marshal.StringToHGlobalAnsi (file);
 				if (path != null)
 					pathPtr = Marshal.StringToHGlobalAnsi (path);
-				var ret = mono_btls_x509_store_load_locations (
+				var ret = mono_tls_x509_store_load_locations (
 					Handle.DangerousGetHandle (), filePtr, pathPtr);
 				CheckError (ret);
 			} finally {
@@ -110,13 +110,13 @@ namespace Mono.Btls
 
 		public void SetDefaultPaths ()
 		{
-			var ret = mono_btls_x509_store_set_default_paths (Handle.DangerousGetHandle ());
+			var ret = mono_tls_x509_store_set_default_paths (Handle.DangerousGetHandle ());
 			CheckError (ret);
 		}
 
 		static BoringX509StoreHandle Create_internal ()
 		{
-			var handle = mono_btls_x509_store_new ();
+			var handle = mono_tls_x509_store_new ();
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
 			return new BoringX509StoreHandle (handle);
@@ -124,7 +124,7 @@ namespace Mono.Btls
 
 		static BoringX509StoreHandle Create_internal (IntPtr store_ctx)
 		{
-			var handle = mono_btls_x509_store_from_ssl_ctx (store_ctx);
+			var handle = mono_tls_x509_store_from_ssl_ctx (store_ctx);
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
 			return new BoringX509StoreHandle (handle);
@@ -132,7 +132,7 @@ namespace Mono.Btls
 
 		static BoringX509StoreHandle Create_internal (MonoBtlsSslCtx.BoringSslCtxHandle ctx)
 		{
-			var handle = mono_btls_x509_store_from_ssl_ctx (ctx.DangerousGetHandle ());
+			var handle = mono_tls_x509_store_from_ssl_ctx (ctx.DangerousGetHandle ());
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
 			return new BoringX509StoreHandle (handle);
@@ -155,7 +155,7 @@ namespace Mono.Btls
 
 		public void AddCertificate (MonoBtlsX509 x509)
 		{
-			var ret = mono_btls_x509_store_add_cert (
+			var ret = mono_tls_x509_store_add_cert (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 			CheckError (ret);
@@ -163,7 +163,7 @@ namespace Mono.Btls
 
 		public int GetCount ()
 		{
-			return mono_btls_x509_store_get_count (Handle.DangerousGetHandle ());
+			return mono_tls_x509_store_get_count (Handle.DangerousGetHandle ());
 		}
 
 		internal void AddTrustedRoots ()

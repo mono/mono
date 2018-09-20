@@ -16,13 +16,13 @@ extern int64_t btls_timegm64 (const struct tm *date);
 
 
 MONO_API void
-mono_btls_free (void *data)
+mono_tls_free (void *data)
 {
 	OPENSSL_free (data);
 }
 
 int64_t
-mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time)
+mono_tls_util_asn1_time_to_ticks (ASN1_TIME *time)
 {
 	ASN1_GENERALIZEDTIME *gtime;
 	struct tm tm;
@@ -47,7 +47,7 @@ mono_btls_util_asn1_time_to_ticks (ASN1_TIME *time)
 
 // Copied from crypto/bio/printf.c, takes va_list
 int
-mono_btls_debug_printf (BIO *bio, const char *format, va_list args)
+mono_tls_debug_printf (BIO *bio, const char *format, va_list args)
 {
 	char buf[256], *out, out_malloced = 0;
 	int out_len, ret;

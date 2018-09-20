@@ -14,7 +14,7 @@ struct MonoBtlsX509Name {
 };
 
 MONO_API MonoBtlsX509Name *
-mono_btls_x509_name_from_name (X509_NAME *xn)
+mono_tls_x509_name_from_name (X509_NAME *xn)
 {
 	MonoBtlsX509Name *name;
 
@@ -28,7 +28,7 @@ mono_btls_x509_name_from_name (X509_NAME *xn)
 }
 
 MONO_API MonoBtlsX509Name *
-mono_btls_x509_name_copy (X509_NAME *xn)
+mono_tls_x509_name_copy (X509_NAME *xn)
 {
 	MonoBtlsX509Name *name;
 
@@ -43,7 +43,7 @@ mono_btls_x509_name_copy (X509_NAME *xn)
 }
 
 MONO_API void
-mono_btls_x509_name_free (MonoBtlsX509Name *name)
+mono_tls_x509_name_free (MonoBtlsX509Name *name)
 {
 	if (name->owns) {
 		if (name->name) {
@@ -55,19 +55,19 @@ mono_btls_x509_name_free (MonoBtlsX509Name *name)
 }
 
 MONO_API X509_NAME *
-mono_btls_x509_name_peek_name (MonoBtlsX509Name *name)
+mono_tls_x509_name_peek_name (MonoBtlsX509Name *name)
 {
 	return name->name;
 }
 
 MONO_API int
-mono_btls_x509_name_print_bio (MonoBtlsX509Name *name, BIO *bio)
+mono_tls_x509_name_print_bio (MonoBtlsX509Name *name, BIO *bio)
 {
 	return X509_NAME_print_ex (bio, name->name, 0, ASN1_STRFLGS_RFC2253 | XN_FLAG_FN_SN | XN_FLAG_SEP_CPLUS_SPC | XN_FLAG_DN_REV);
 }
 
 MONO_API int
-mono_btls_x509_name_get_raw_data (MonoBtlsX509Name *name, void **buffer, int use_canon_enc)
+mono_tls_x509_name_get_raw_data (MonoBtlsX509Name *name, void **buffer, int use_canon_enc)
 {
 	int len;
 	void *ptr;
@@ -92,7 +92,7 @@ mono_btls_x509_name_get_raw_data (MonoBtlsX509Name *name, void **buffer, int use
 }
 
 MONO_API MonoBtlsX509Name *
-mono_btls_x509_name_from_data (const void *data, int len, int use_canon_enc)
+mono_tls_x509_name_from_data (const void *data, int len, int use_canon_enc)
 {
 	MonoBtlsX509Name *name;
 	uint8_t *buf;
@@ -122,7 +122,7 @@ mono_btls_x509_name_from_data (const void *data, int len, int use_canon_enc)
 		    !CBB_add_bytes(&contents, data, len) ||
 		    !CBB_finish(&cbb, &buf, &buf_len)) {
 			CBB_cleanup (&cbb);
-			mono_btls_x509_name_free (name);
+			mono_tls_x509_name_free (name);
 			return NULL;
 		}
 
@@ -139,7 +139,7 @@ mono_btls_x509_name_from_data (const void *data, int len, int use_canon_enc)
 		OPENSSL_free (buf);
 
 	if (ret != name->name) {
-		mono_btls_x509_name_free (name);
+		mono_tls_x509_name_free (name);
 		return NULL;
 	}
 
@@ -147,26 +147,26 @@ mono_btls_x509_name_from_data (const void *data, int len, int use_canon_enc)
 }
 
 MONO_API int
-mono_btls_x509_name_print_string (MonoBtlsX509Name *name, char *buffer, int size)
+mono_tls_x509_name_print_string (MonoBtlsX509Name *name, char *buffer, int size)
 {
 	*buffer = 0;
 	return X509_NAME_oneline (name->name, buffer, size) != NULL;
 }
 
 MONO_API int64_t
-mono_btls_x509_name_hash (MonoBtlsX509Name *name)
+mono_tls_x509_name_hash (MonoBtlsX509Name *name)
 {
 	return X509_NAME_hash (name->name);
 }
 
 MONO_API int64_t
-mono_btls_x509_name_hash_old (MonoBtlsX509Name *name)
+mono_tls_x509_name_hash_old (MonoBtlsX509Name *name)
 {
 	return X509_NAME_hash_old (name->name);
 }
 
 MONO_API int
-mono_btls_x509_name_get_entry_count (MonoBtlsX509Name *name)
+mono_tls_x509_name_get_entry_count (MonoBtlsX509Name *name)
 {
 	return X509_NAME_entry_count (name->name);
 }
@@ -211,7 +211,7 @@ nid2mono (int nid)
 }
 
 MONO_API MonoBtlsX509NameEntryType
-mono_btls_x509_name_get_entry_type (MonoBtlsX509Name *name, int index)
+mono_tls_x509_name_get_entry_type (MonoBtlsX509Name *name, int index)
 {
 	X509_NAME_ENTRY *entry;
 	ASN1_OBJECT *obj;
@@ -231,7 +231,7 @@ mono_btls_x509_name_get_entry_type (MonoBtlsX509Name *name, int index)
 }
 
 MONO_API int
-mono_btls_x509_name_get_entry_oid (MonoBtlsX509Name *name, int index, char *buffer, int size)
+mono_tls_x509_name_get_entry_oid (MonoBtlsX509Name *name, int index, char *buffer, int size)
 {
 	X509_NAME_ENTRY *entry;
 	ASN1_OBJECT *obj;
@@ -251,7 +251,7 @@ mono_btls_x509_name_get_entry_oid (MonoBtlsX509Name *name, int index, char *buff
 }
 
 MONO_API int
-mono_btls_x509_name_get_entry_oid_data (MonoBtlsX509Name *name, int index, const void **data)
+mono_tls_x509_name_get_entry_oid_data (MonoBtlsX509Name *name, int index, const void **data)
 {
 	X509_NAME_ENTRY *entry;
 	ASN1_OBJECT *obj;
@@ -272,7 +272,7 @@ mono_btls_x509_name_get_entry_oid_data (MonoBtlsX509Name *name, int index, const
 }
 
 MONO_API int
-mono_btls_x509_name_get_entry_value (MonoBtlsX509Name *name, int index, int *tag, unsigned char **str)
+mono_tls_x509_name_get_entry_value (MonoBtlsX509Name *name, int index, int *tag, unsigned char **str)
 {
 	X509_NAME_ENTRY *entry;
 	ASN1_STRING *data;

@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if MONO_FEATURE_BTLS || MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_TLS || MONO_FEATURE_APPLETLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -46,7 +46,7 @@ namespace Mono
 {
 	class SystemCertificateProvider : ISystemCertificateProvider
 	{
-#if MONO_FEATURE_BTLS || MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_TLS || MONO_FEATURE_APPLETLS
 		public MonoTlsProvider Provider {
 			get {
 				EnsureInitialized ();
@@ -65,7 +65,7 @@ namespace Mono
 #elif MONO_FEATURE_APPLE_X509
 			return new Mono.AppleTls.X509PalImplApple ();
 #endif
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			if (provider?.ID == MNS.MonoTlsProviderFactory.BtlsId)
 				return new Mono.Btls.X509PalImplBtls (provider);
 #endif
@@ -86,7 +86,7 @@ namespace Mono
 			if (Interlocked.CompareExchange (ref initialized, 1, 0) != 0)
 				return;
 
-#if MONO_FEATURE_BTLS || MONO_FEATURE_APPLETLS
+#if MONO_FEATURE_TLS || MONO_FEATURE_APPLETLS
 			provider = MonoTlsProviderFactory.GetProvider ();
 #endif
 			x509pal = GetX509Pal ();

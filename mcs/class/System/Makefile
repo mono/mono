@@ -85,11 +85,19 @@ ifdef ONLY_APPLETLS
 LIB_MCS_FLAGS += -d:ONLY_APPLETLS
 endif
 
+X=$(shell echo "Checking")
 ifndef PROFILE_DISABLE_BTLS
 ifdef HAVE_BTLS
 
-LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
 
+else
+ifdef HAVE_OPENSSL
+X=$(shell echo "Checked")
+
+LIB_MCS_FLAGS += -d:MONO_FEATURE_TLS
+
+endif
 endif
 endif
 

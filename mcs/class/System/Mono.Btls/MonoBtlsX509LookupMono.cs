@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -42,7 +42,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_btls_x509_lookup_mono_free (handle);
+				mono_tls_x509_lookup_mono_free (handle);
 				return true;
 			}
 		}
@@ -52,14 +52,14 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_x509_lookup_mono_new ();
+		extern static IntPtr mono_tls_x509_lookup_mono_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_x509_lookup_mono_init (
+		extern static void mono_tls_x509_lookup_mono_init (
 			IntPtr handle, IntPtr instance, IntPtr by_subject_func);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_x509_lookup_mono_free (IntPtr handle);
+		extern static int mono_tls_x509_lookup_mono_free (IntPtr handle);
 
 		delegate int BySubjectFunc (IntPtr instance, IntPtr name, out IntPtr x509_ptr);
 
@@ -70,13 +70,13 @@ namespace Mono.Btls
 		MonoBtlsX509Lookup lookup;
 
 		internal MonoBtlsX509LookupMono ()
-			: base (new BoringX509LookupMonoHandle (mono_btls_x509_lookup_mono_new ()))
+			: base (new BoringX509LookupMonoHandle (mono_tls_x509_lookup_mono_new ()))
 		{
 			gch = GCHandle.Alloc (this);
 			instance = GCHandle.ToIntPtr (gch);
 			bySubjectFunc = OnGetBySubject;
 			bySubjectFuncPtr = Marshal.GetFunctionPointerForDelegate (bySubjectFunc);
-			mono_btls_x509_lookup_mono_init (Handle.DangerousGetHandle (), instance, bySubjectFuncPtr);
+			mono_tls_x509_lookup_mono_init (Handle.DangerousGetHandle (), instance, bySubjectFuncPtr);
 		}
 
 		internal void Install (MonoBtlsX509Lookup lookup)

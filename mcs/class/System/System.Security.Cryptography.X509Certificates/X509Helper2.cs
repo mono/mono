@@ -36,7 +36,7 @@ using MX = MonoSecurity::Mono.Security.X509;
 using MX = Mono.Security.X509;
 #endif
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 using Mono.Btls;
 #endif
 
@@ -95,7 +95,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
 		internal static long GetSubjectNameHash (X509Certificate certificate)
 		{
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			X509Helper.ThrowIfContextInvalid (certificate.Impl);
 			using (var x509 = GetNativeInstance (certificate.Impl))
 			using (var subject = x509.GetSubjectName ())
@@ -108,7 +108,7 @@ namespace System.Security.Cryptography.X509Certificates
 		[Obsolete ("This is only used by Mono.Security's X509Store and will be replaced shortly.")]
 		internal static void ExportAsPEM (X509Certificate certificate, Stream stream, bool includeHumanReadableForm)
 		{
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			X509Helper.ThrowIfContextInvalid (certificate.Impl);
 			using (var x509 = GetNativeInstance (certificate.Impl))
 			using (var bio = MonoBtlsBio.CreateMonoStream (stream))
@@ -118,7 +118,7 @@ namespace System.Security.Cryptography.X509Certificates
 #endif
 		}
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 		static MonoBtlsX509 GetNativeInstance (X509CertificateImpl impl)
 		{
 			X509Helper.ThrowIfContextInvalid (impl);

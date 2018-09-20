@@ -1,0 +1,5 @@
+Makefile
+Makefile.in
+build/
+build-shared/
+build-static/

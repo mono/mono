@@ -14,27 +14,27 @@ struct MonoBtlsX509Revoked {
 };
 
 MONO_API MonoBtlsX509Revoked *
-mono_btls_x509_revoked_new (MonoBtlsX509Crl *owner, X509_REVOKED *revoked)
+mono_tls_x509_revoked_new (MonoBtlsX509Crl *owner, X509_REVOKED *revoked)
 {
 	MonoBtlsX509Revoked *instance;
 
 	instance = OPENSSL_malloc (sizeof (MonoBtlsX509Revoked));
 	memset (instance, 0, sizeof (MonoBtlsX509Revoked));
 
-	instance->owner = mono_btls_x509_crl_ref (owner);
+	instance->owner = mono_tls_x509_crl_ref (owner);
 	instance->revoked = revoked;
 	return instance;
 }
 
 MONO_API void
-mono_btls_x509_revoked_free (MonoBtlsX509Revoked *revoked)
+mono_tls_x509_revoked_free (MonoBtlsX509Revoked *revoked)
 {
-	mono_btls_x509_crl_free (revoked->owner);
+	mono_tls_x509_crl_free (revoked->owner);
 	OPENSSL_free (revoked);
 }
 
 MONO_API int
-mono_btls_x509_revoked_get_serial_number (MonoBtlsX509Revoked *revoked, char *buffer, int size)
+mono_tls_x509_revoked_get_serial_number (MonoBtlsX509Revoked *revoked, char *buffer, int size)
 {
 	ASN1_INTEGER *serial;
 
@@ -47,7 +47,7 @@ mono_btls_x509_revoked_get_serial_number (MonoBtlsX509Revoked *revoked, char *bu
 }
 
 MONO_API int64_t
-mono_btls_x509_revoked_get_revocation_date (MonoBtlsX509Revoked *revoked)
+mono_tls_x509_revoked_get_revocation_date (MonoBtlsX509Revoked *revoked)
 {
 	ASN1_TIME *date;
 
@@ -55,17 +55,17 @@ mono_btls_x509_revoked_get_revocation_date (MonoBtlsX509Revoked *revoked)
 	if (!date)
 		return 0;
 
-	return mono_btls_util_asn1_time_to_ticks (date);
+	return mono_tls_util_asn1_time_to_ticks (date);
 }
 
 MONO_API int
-mono_btls_x509_revoked_get_reason (MonoBtlsX509Revoked *revoked)
+mono_tls_x509_revoked_get_reason (MonoBtlsX509Revoked *revoked)
 {
 	return revoked->revoked->reason;
 }
 
 MONO_API int
-mono_btls_x509_revoked_get_sequence (MonoBtlsX509Revoked *revoked)
+mono_tls_x509_revoked_get_sequence (MonoBtlsX509Revoked *revoked)
 {
 	return revoked->revoked->sequence;
 }

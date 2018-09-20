@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 using System;
 using System.Threading;
 using System.Security.Cryptography;
@@ -117,11 +117,11 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_free (IntPtr data);
+		extern static void mono_tls_free (IntPtr data);
 
 		protected void FreeDataPtr (IntPtr data)
 		{
-			mono_btls_free (data);
+			mono_tls_free (data);
 		}
 
 		protected virtual void Close ()

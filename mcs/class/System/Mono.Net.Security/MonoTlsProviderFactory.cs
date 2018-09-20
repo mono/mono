@@ -42,7 +42,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 using Mono.Btls;
 #endif
 
@@ -248,7 +248,7 @@ namespace Mono.Net.Security
 
 			providerRegistration.Add ("legacy", legacyEntry);
 
-	#if MONO_FEATURE_BTLS
+	#if MONO_FEATURE_TLS
 			var btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
 			if (btlsEntry != null)
 				providerRegistration.Add ("default", btlsEntry);
@@ -266,8 +266,8 @@ namespace Mono.Net.Security
 			providerRegistration.Add ("legacy", legacyEntry);
 
 			Tuple<Guid,String> btlsEntry = null;
-#if MONO_FEATURE_BTLS
-			if (IsBtlsSupported ()) {
+#if MONO_FEATURE_TLS
+			if (IsTlsSupported ()) {
 				btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
 				providerRegistration.Add ("btls", btlsEntry);
 			}
@@ -278,7 +278,7 @@ namespace Mono.Net.Security
 				providerRegistration.Add ("default", appleTlsEntry);
 			else
 #endif
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			if (btlsEntry != null)
 				providerRegistration.Add ("default", btlsEntry);
 			else
@@ -292,9 +292,9 @@ namespace Mono.Net.Security
 #endif
 
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		internal extern static bool IsBtlsSupported ();
+		internal extern static bool IsTlsSupported ();
 #endif
 
 		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
@@ -307,9 +307,9 @@ namespace Mono.Net.Security
 			case "default":
 			case "legacy":
 				return new LegacyTlsProvider ();
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			case "btls":
-				if (!IsBtlsSupported ())
+				if (!IsTlsSupported ())
 					throw new NotSupportedException ("BTLS in not supported!");
 				return new MonoBtlsProvider ();
 #endif
@@ -330,8 +330,8 @@ namespace Mono.Net.Security
 				if (Platform.IsMacOS)
 					goto case "apple";
 #endif
-#if MONO_FEATURE_BTLS
-				if (IsBtlsSupported ())
+#if MONO_FEATURE_TLS
+				if (IsTlsSupported ())
 					goto case "btls";
 #endif
 				goto case "legacy";
@@ -339,7 +339,7 @@ namespace Mono.Net.Security
 			case "apple":
 				return new AppleTlsProvider ();
 #endif
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			case "btls":
 				return new MonoBtlsProvider ();
 #endif

@@ -28,7 +28,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !MONO_FEATURE_BTLS
+#if !MONO_FEATURE_TLS
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security.Cryptography;
@@ -46,7 +46,7 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 using Mono.Net;
 
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 using Mono.Btls;
 #endif
 
@@ -140,7 +140,7 @@ namespace Mono.AppleTls
 
 		static byte[] ExportKey (RSA key)
 		{
-#if MONO_FEATURE_BTLS
+#if MONO_FEATURE_TLS
 			using (var btlsKey = MonoBtlsKey.CreateFromRSAPrivateKey (key))
 				return btlsKey.GetBytes (true);
 #else

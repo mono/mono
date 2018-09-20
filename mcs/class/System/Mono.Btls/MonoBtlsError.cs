@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 using System;
 using System.IO;
 using System.Text;
@@ -39,39 +39,39 @@ namespace Mono.Btls
 	static class MonoBtlsError
 	{
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static int mono_btls_error_peek_error ();
+		extern static int mono_tls_error_peek_error ();
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static int mono_btls_error_get_error ();
+		extern static int mono_tls_error_get_error ();
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static void mono_btls_error_clear_error ();
+		extern static void mono_tls_error_clear_error ();
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static int mono_btls_error_peek_error_line (out IntPtr file, out int line);
+		extern static int mono_tls_error_peek_error_line (out IntPtr file, out int line);
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static int mono_btls_error_get_error_line (out IntPtr file, out int line);
+		extern static int mono_tls_error_get_error_line (out IntPtr file, out int line);
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static void mono_btls_error_get_error_string_n (int error, IntPtr buf, int len);
+		extern static void mono_tls_error_get_error_string_n (int error, IntPtr buf, int len);
 
 		[DllImport (MonoBtlsObject.BTLS_DYLIB)]
-		extern static int mono_btls_error_get_reason (int error);
+		extern static int mono_tls_error_get_reason (int error);
 
 		public static int PeekError ()
 		{
-			return mono_btls_error_peek_error ();
+			return mono_tls_error_peek_error ();
 		}
 
 		public static int GetError ()
 		{
-			return mono_btls_error_get_error ();
+			return mono_tls_error_get_error ();
 		}
 
 		public static void ClearError ()
 		{
-			mono_btls_error_clear_error ();
+			mono_tls_error_clear_error ();
 		}
 
 		public static string GetErrorString (int error)
@@ -81,7 +81,7 @@ namespace Mono.Btls
 			if (buffer == IntPtr.Zero)
 				throw new OutOfMemoryException ();
 			try {
-				mono_btls_error_get_error_string_n (error, buffer, size);
+				mono_tls_error_get_error_string_n (error, buffer, size);
 				return Marshal.PtrToStringAnsi (buffer);
 			} finally {
 				Marshal.FreeHGlobal (buffer);
@@ -91,7 +91,7 @@ namespace Mono.Btls
 		public static int PeekError (out string file, out int line)
 		{
 			IntPtr filePtr;
-			var error = mono_btls_error_peek_error_line (out filePtr, out line);
+			var error = mono_tls_error_peek_error_line (out filePtr, out line);
 			if (filePtr != IntPtr.Zero)
 				file = Marshal.PtrToStringAnsi (filePtr);
 			else
@@ -102,7 +102,7 @@ namespace Mono.Btls
 		public static int GetError (out string file, out int line)
 		{
 			IntPtr filePtr;
-			var error = mono_btls_error_get_error_line (out filePtr, out line);
+			var error = mono_tls_error_get_error_line (out filePtr, out line);
 			if (filePtr != IntPtr.Zero)
 				file = Marshal.PtrToStringAnsi (filePtr);
 			else
@@ -112,7 +112,7 @@ namespace Mono.Btls
 
 		public static int GetErrorReason (int error)
 		{
-			return mono_btls_error_get_reason (error);
+			return mono_tls_error_get_reason (error);
 		}
 	}
 }

@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-#if SECURITY_DEP && MONO_FEATURE_BTLS
+#if SECURITY_DEP && MONO_FEATURE_TLS
 using System;
 using System.IO;
 using System.Text;
@@ -46,99 +46,99 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_btls_ssl_destroy (handle);
+				mono_tls_ssl_destroy (handle);
 				handle = IntPtr.Zero;
 				return true;
 			}
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_destroy (IntPtr handle);
+		extern static void mono_tls_ssl_destroy (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_ssl_new (IntPtr handle);
+		extern static IntPtr mono_tls_ssl_new (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_use_certificate (IntPtr handle, IntPtr x509);
+		extern static int mono_tls_ssl_use_certificate (IntPtr handle, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_use_private_key (IntPtr handle, IntPtr key);
+		extern static int mono_tls_ssl_use_private_key (IntPtr handle, IntPtr key);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_add_chain_certificate (IntPtr handle, IntPtr x509);
+		extern static int mono_tls_ssl_add_chain_certificate (IntPtr handle, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_accept (IntPtr handle);
+		extern static int mono_tls_ssl_accept (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_connect (IntPtr handle);
+		extern static int mono_tls_ssl_connect (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_handshake (IntPtr handle);
+		extern static int mono_tls_ssl_handshake (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_close (IntPtr handle);
+		extern static void mono_tls_ssl_close (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_shutdown (IntPtr handle);
+		extern static int mono_tls_ssl_shutdown (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_set_quiet_shutdown (IntPtr handle, int mode);
+		extern static void mono_tls_ssl_set_quiet_shutdown (IntPtr handle, int mode);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_set_bio (IntPtr handle, IntPtr bio);
+		extern static void mono_tls_ssl_set_bio (IntPtr handle, IntPtr bio);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_read (IntPtr handle, IntPtr data, int len);
+		extern static int mono_tls_ssl_read (IntPtr handle, IntPtr data, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_write (IntPtr handle, IntPtr data, int len);
+		extern static int mono_tls_ssl_write (IntPtr handle, IntPtr data, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_get_error (IntPtr handle, int ret_code);
+		extern static int mono_tls_ssl_get_error (IntPtr handle, int ret_code);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_get_version (IntPtr handle);
+		extern static int mono_tls_ssl_get_version (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_set_min_version (IntPtr handle, int version);
+		extern static void mono_tls_ssl_set_min_version (IntPtr handle, int version);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_set_max_version (IntPtr handle, int version);
+		extern static void mono_tls_ssl_set_max_version (IntPtr handle, int version);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_get_cipher (IntPtr handle);
+		extern static int mono_tls_ssl_get_cipher (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_get_ciphers (IntPtr handle, out IntPtr data);
+		extern static int mono_tls_ssl_get_ciphers (IntPtr handle, out IntPtr data);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_ssl_get_peer_certificate (IntPtr handle);
+		extern static IntPtr mono_tls_ssl_get_peer_certificate (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_set_cipher_list (IntPtr handle, IntPtr str);
+		extern static int mono_tls_ssl_set_cipher_list (IntPtr handle, IntPtr str);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_print_errors_cb (IntPtr func, IntPtr ctx);
+		extern static void mono_tls_ssl_print_errors_cb (IntPtr func, IntPtr ctx);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_set_verify_param (IntPtr handle, IntPtr param);
+		extern static int mono_tls_ssl_set_verify_param (IntPtr handle, IntPtr param);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_set_server_name (IntPtr handle, IntPtr name);
+		extern static int mono_tls_ssl_set_server_name (IntPtr handle, IntPtr name);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_ssl_get_server_name (IntPtr handle);
+		extern static IntPtr mono_tls_ssl_get_server_name (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_btls_ssl_set_renegotiate_mode (IntPtr handle, int mode);
+		extern static void mono_tls_ssl_set_renegotiate_mode (IntPtr handle, int mode);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_btls_ssl_renegotiate_pending (IntPtr handle);
+		extern static int mono_tls_ssl_renegotiate_pending (IntPtr handle);
 
 		static BoringSslHandle Create_internal (MonoBtlsSslCtx ctx)
 		{
-			var handle = mono_btls_ssl_new (ctx.Handle.DangerousGetHandle ());
+			var handle = mono_tls_ssl_new (ctx.Handle.DangerousGetHandle ());
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
 			return new BoringSslHandle (handle);
@@ -163,7 +163,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 			this.bio = bio;
-			mono_btls_ssl_set_bio (
+			mono_tls_ssl_set_bio (
 				Handle.DangerousGetHandle (),
 				bio.Handle.DangerousGetHandle ());
 		}
@@ -190,7 +190,7 @@ namespace Mono.Btls
 			CheckThrow ();
 			bio.CheckLastError ();
 
-			var error = mono_btls_ssl_get_error (
+			var error = mono_tls_ssl_get_error (
 				Handle.DangerousGetHandle (), ret_code);
 			return (MonoBtlsSslError)error;
 		}
@@ -199,7 +199,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_use_certificate (
+			var ret = mono_tls_ssl_use_certificate (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 			if (ret <= 0)
@@ -210,7 +210,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_use_private_key (
+			var ret = mono_tls_ssl_use_private_key (
 				Handle.DangerousGetHandle (),
 				key.Handle.DangerousGetHandle ());
 			if (ret <= 0)
@@ -221,7 +221,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_add_chain_certificate (
+			var ret = mono_tls_ssl_add_chain_certificate (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 			if (ret <= 0)
@@ -232,7 +232,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_accept (Handle.DangerousGetHandle ());
+			var ret = mono_tls_ssl_accept (Handle.DangerousGetHandle ());
 
 			var error = GetError (ret);
 			return error;
@@ -242,7 +242,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_connect (Handle.DangerousGetHandle ());
+			var ret = mono_tls_ssl_connect (Handle.DangerousGetHandle ());
 
 			var error = GetError (ret);
 			return error;
@@ -252,7 +252,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 
-			var ret = mono_btls_ssl_handshake (Handle.DangerousGetHandle ());
+			var ret = mono_tls_ssl_handshake (Handle.DangerousGetHandle ());
 
 			var error = GetError (ret);
 			return error;
@@ -279,7 +279,7 @@ namespace Mono.Btls
 			var handle = GCHandle.Alloc (text);
 
 			try {
-				mono_btls_ssl_print_errors_cb (printErrorsFuncPtr, GCHandle.ToIntPtr (handle));
+				mono_tls_ssl_print_errors_cb (printErrorsFuncPtr, GCHandle.ToIntPtr (handle));
 				return text.ToString ();
 			} finally {
 				if (handle.IsAllocated)
@@ -298,7 +298,7 @@ namespace Mono.Btls
 		public MonoBtlsSslError Read (IntPtr data, ref int dataSize)
 		{
 			CheckThrow ();
-			var ret = mono_btls_ssl_read (
+			var ret = mono_tls_ssl_read (
 				Handle.DangerousGetHandle (), data, dataSize);
 
 			if (ret > 0) {
@@ -320,7 +320,7 @@ namespace Mono.Btls
 		public MonoBtlsSslError Write (IntPtr data, ref int dataSize)
 		{
 			CheckThrow ();
-			var ret = mono_btls_ssl_write (
+			var ret = mono_tls_ssl_write (
 				Handle.DangerousGetHandle (), data, dataSize);
 
 			if (ret >= 0) {
@@ -328,7 +328,7 @@ namespace Mono.Btls
 				return MonoBtlsSslError.None;
 			}
 
-			var error = mono_btls_ssl_get_error (
+			var error = mono_tls_ssl_get_error (
 				Handle.DangerousGetHandle (), ret);
 			dataSize = 0;
 			return (MonoBtlsSslError)error;
@@ -337,25 +337,25 @@ namespace Mono.Btls
 		public int GetVersion ()
 		{
 			CheckThrow ();
-			return mono_btls_ssl_get_version (Handle.DangerousGetHandle ());
+			return mono_tls_ssl_get_version (Handle.DangerousGetHandle ());
 		}
 
 		public void SetMinVersion (int version)
 		{
 			CheckThrow ();
-			mono_btls_ssl_set_min_version (Handle.DangerousGetHandle (), version);
+			mono_tls_ssl_set_min_version (Handle.DangerousGetHandle (), version);
 		}
 
 		public void SetMaxVersion (int version)
 		{
 			CheckThrow ();
-			mono_btls_ssl_set_max_version (Handle.DangerousGetHandle (), version);
+			mono_tls_ssl_set_max_version (Handle.DangerousGetHandle (), version);
 		}
 
 		public int GetCipher ()
 		{
 			CheckThrow ();
-			var cipher = mono_btls_ssl_get_cipher (Handle.DangerousGetHandle ());
+			var cipher = mono_tls_ssl_get_cipher (Handle.DangerousGetHandle ());
 			CheckError (cipher > 0);
 			return cipher;
 		}
@@ -364,7 +364,7 @@ namespace Mono.Btls
 		{
 			CheckThrow ();
 			IntPtr data;
-			var count = mono_btls_ssl_get_ciphers (
+			var count = mono_tls_ssl_get_ciphers (
 				Handle.DangerousGetHandle (), out data);
 			CheckError (count > 0);
 			try {
@@ -382,7 +382,7 @@ namespace Mono.Btls
 			IntPtr strPtr = IntPtr.Zero;
 			try {
 				strPtr = Marshal.StringToHGlobalAnsi (str);
-				var ret = mono_btls_ssl_set_cipher_list (
+				var ret = mono_tls_ssl_set_cipher_list (
 					Handle.DangerousGetHandle (), strPtr);
 				CheckError (ret);
 			} finally {
@@ -394,7 +394,7 @@ namespace Mono.Btls
 		public MonoBtlsX509 GetPeerCertificate ()
 		{
 			CheckThrow ();
-			var x509 = mono_btls_ssl_get_peer_certificate (
+			var x509 = mono_tls_ssl_get_peer_certificate (
 				Handle.DangerousGetHandle ());
 			if (x509 == IntPtr.Zero)
 				return null;
@@ -404,7 +404,7 @@ namespace Mono.Btls
 		public void SetVerifyParam (MonoBtlsX509VerifyParam param)
 		{
 			CheckThrow ();
-			var ret = mono_btls_ssl_set_verify_param (
+			var ret = mono_tls_ssl_set_verify_param (
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
@@ -416,7 +416,7 @@ namespace Mono.Btls
 			IntPtr namePtr = IntPtr.Zero;
 			try {
 				namePtr = Marshal.StringToHGlobalAnsi (name);
-				var ret = mono_btls_ssl_set_server_name (
+				var ret = mono_tls_ssl_set_server_name (
 					Handle.DangerousGetHandle (), namePtr);
 				CheckError (ret);
 			} finally {
@@ -428,7 +428,7 @@ namespace Mono.Btls
 		public string GetServerName ()
 		{
 			CheckThrow ();
-			var namePtr = mono_btls_ssl_get_server_name (
+			var namePtr = mono_tls_ssl_get_server_name (
 				Handle.DangerousGetHandle ());
 			if (namePtr == IntPtr.Zero)
 				return null;
@@ -438,7 +438,7 @@ namespace Mono.Btls
 		public void Shutdown ()
 		{
 			CheckThrow ();
-			var ret = mono_btls_ssl_shutdown (Handle.DangerousGetHandle ());
+			var ret = mono_tls_ssl_shutdown (Handle.DangerousGetHandle ());
 			if (ret < 0)
 				throw ThrowError ();
 		}
@@ -446,24 +446,24 @@ namespace Mono.Btls
 		public void SetQuietShutdown ()
 		{
 			CheckThrow ();
-			mono_btls_ssl_set_quiet_shutdown (Handle.DangerousGetHandle (), 1);
+			mono_tls_ssl_set_quiet_shutdown (Handle.DangerousGetHandle (), 1);
 		}
 
 		protected override void Close ()
 		{
 			if (!Handle.IsInvalid)
-				mono_btls_ssl_close (Handle.DangerousGetHandle ());
+				mono_tls_ssl_close (Handle.DangerousGetHandle ());
 		}
 
 		public void SetRenegotiateMode (MonoBtlsSslRenegotiateMode mode)
 		{
 			CheckThrow ();
-			mono_btls_ssl_set_renegotiate_mode (Handle.DangerousGetHandle (), (int)mode);
+			mono_tls_ssl_set_renegotiate_mode (Handle.DangerousGetHandle (), (int)mode);
 		}
 
 		public bool RenegotiatePending ()
 		{
-			return mono_btls_ssl_renegotiate_pending (Handle.DangerousGetHandle ()) != 0;
+			return mono_tls_ssl_renegotiate_pending (Handle.DangerousGetHandle ()) != 0;
 		}
 	}
 }
