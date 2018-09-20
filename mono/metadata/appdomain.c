@@ -791,17 +791,19 @@ mono_domain_try_type_resolve (MonoDomain *domain, char *name, MonoObject *typebu
 
 	ERROR_DECL (error);
 
-	MonoReflectionAssemblyHandle ret;
+	MonoReflectionAssemblyHandle ret = NULL_HANDLE_INIT;
 
 	if (name) {
-		ret = mono_domain_try_type_resolve_name (domain, name, error);
+		MonoStringHandle name_handle = mono_string_new_handle (mono_domain_get (), name, error);
+		goto_if_nok (error, exit);
+		ret = mono_domain_try_type_resolve_name (domain, name_handle, error);
 	} else {
 		MONO_HANDLE_DCL (MonoObject, typebuilder);
 		ret = mono_domain_try_type_resolve_typebuilder (domain, MONO_HANDLE_CAST (MonoReflectionTypeBuilder, typebuilder), error);
 	}
 
+exit:
 	mono_error_cleanup (error);
-
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
@@ -839,18 +841,17 @@ mono_class_get_appdomain_do_type_resolve_method (MonoError *error)
  * \returns A \c MonoReflectionAssembly or NULL if not found
  */
 MonoReflectionAssemblyHandle
-mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoError *error)
+mono_domain_try_type_resolve_name (MonoDomain *domain, MonoStringHandle name, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
+	void *params [1] = { 0 };
+
 	g_assert (domain);
-	g_assert (name);
+	g_assert (MONO_HANDLE_BOOL (name));
 	g_assert (error);
 
 	error_init (error);
-
-	void *params [ ] = { mono_string_new_checked (mono_domain_get (), name, error) };
-	goto_if_nok (error, return_null);
 
 	MonoMethod *method;
 	method = mono_class_get_appdomain_do_type_resolve_method (error);
@@ -860,6 +861,7 @@ mono_domain_try_type_resolve_name (MonoDomain *domain, const char *name, MonoErr
 	appdomain = MONO_HANDLE_NEW (MonoAppDomain, domain->domain);
 
 	MonoObjectHandle ret;
+	params [0] = MONO_HANDLE_RAW (name);
 	ret = mono_runtime_invoke_handle (method, MONO_HANDLE_CAST (MonoObject, appdomain), params, error);
 	goto_if_nok (error, return_null);
 	goto exit;

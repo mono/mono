@@ -85,7 +85,7 @@ mono_reflection_init (void)
 /*
  * mono_class_get_ref_info:
  *
- *   Return the type builder/generic param builder corresponding to KLASS, if it exists.
+ *   Return the type builder corresponding to KLASS, if it exists.
  */
 MonoReflectionTypeBuilderHandle
 mono_class_get_ref_info (MonoClass *klass)
@@ -2173,9 +2173,11 @@ mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image,
 	for (mod = info->nested; mod; mod = mod->next)
 		g_string_append_printf (fullName, "+%s", (char*)mod->data);
 
-	reflection_assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), fullName->str, error);
-	if (!is_ok (error))
-		goto return_null;
+	MonoStringHandle name_handle;
+	name_handle = mono_string_new_handle (mono_domain_get (), fullName->str, error);
+	goto_if_nok (error, return_null);
+	reflection_assembly = mono_domain_try_type_resolve_name ( mono_domain_get (), name_handle, error);
+	goto_if_nok (error, return_null);
 
 	if (MONO_HANDLE_BOOL (reflection_assembly)) {
 		MonoAssembly *assembly = MONO_HANDLE_GETVAL (reflection_assembly, assembly);
