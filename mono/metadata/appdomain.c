@@ -885,7 +885,7 @@ mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionType
 	HANDLE_FUNCTION_ENTER ();
 
 	g_assert (domain);
-	g_assert (!MONO_HANDLE_IS_NULL (typebuilder));
+	g_assert (MONO_HANDLE_BOOL (typebuilder));
 	g_assert (error);
 
 	error_init (error);

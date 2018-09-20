@@ -4289,7 +4289,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		g_assert (result);
 	} else if (strcmp (oklass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_NEW (MonoReflectionTypeBuilder, (MonoReflectionTypeBuilder*)obj);
-		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)MONO_HANDLE_RAW (tb), error);
+		MonoType *type = mono_reflection_type_get_handle (&MONO_HANDLE_RAW (tb)->type, error);
 		goto_if_nok (error, return_null);
 		MonoClass *klass;
 
