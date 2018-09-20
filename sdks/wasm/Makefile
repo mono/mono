@@ -93,6 +93,9 @@ mono.js: $(DRIVER_CONF)/.stamp-build
 mono.wasm: $(DRIVER_CONF)/.stamp-build
 	cp $(DRIVER_CONF)/mono.wasm $@
 
+$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
+	cp $< $@
+
 build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
 
 do-runtime:
@@ -108,14 +111,14 @@ main.exe: $(APP_SOURCES)
 mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-binding_tests.dll: bindings.dll $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-bindings.dll: bindings.cs
+WebAssembly.Bindings.dll: bindings.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
-wasmhttp.dll: bindings.dll WasmHttpMessageHandler.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
+	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
 
 Simple.Dependency.dll: dependency.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
@@ -133,15 +136,17 @@ Mono.Cecil.dll: Makefile
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll wasmhttp.dll sample.dll debug.html runtime.g.js
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.g.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
-	
+
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe bindings.dll binding_tests.dll wasmhttp.dll mini_tests.dll main.exe runtime-tests.g.js
-	mono packager.exe -template=runtime-tests.g.js -out=test-suite binding_tests.dll wasmhttp.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.g.js
+	mono --debug packager.exe --template=runtime-tests.g.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+	ninja -v -C obj/test-suite
+	touch $@
 
 MINI_BASIC_TEST_FILES= \
     basic-calls.cs  \
@@ -153,22 +158,18 @@ MINI_BASIC_TEST_FILES= \
 
 MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
 
-mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32,NO_BITCODE /r:$(WASM_BCL_DIR)/mscorlib.dll $(MINI_BASIC_TEST_SOURCES)
-
-aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll runtime.g.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --nobinding mini_tests_basic.dll
+aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests.dll main.exe runtime.g.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests.dll main.exe
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	cp aot-driver.js bin/aot-sample
-	(cd bin/aot-sample && $(SM) aot-driver.js)
+	(cd bin/aot-sample && $(SM) runtime.js mini)
 
 build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite
+build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
@@ -181,16 +182,16 @@ JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 run-ch-%: toolchain build-test-suite
-	(cd test-suite && $(CHAKRA) runtime.js -args $*)
+	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
-	(cd test-suite && $(D8) --expose_wasm runtime.js -- $*)
+	(cd bin/test-suite && $(D8) --expose_wasm runtime.js -- $*)
 
 run-jsc-%: toolchain build-test-suite
-	(cd test-suite && $(JSC) runtime.js -- $*)
+	(cd bin/test-suite && $(JSC) runtime.js -- $*)
 
 run-sm-%: toolchain build-test-suite
-	(cd test-suite && $(SM) runtime.js $*)
+	(cd bin/test-suite && $(SM) runtime.js $*)
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
@@ -200,7 +201,7 @@ run-all-%:
 	make -C . run-jsc-$*
 
 clean:
-	
+
 package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
@@ -222,11 +223,11 @@ package: build build-dbg-proxy
 	cp sample.html tmp/
 	mkdir tmp/framework
 	cp bindings.cs tmp
-	cp bindings.dll tmp/framework
-	cp bindings.pdb tmp/framework
+	cp WebAssembly.Bindings.dll tmp/framework
+	cp WebAssembly.Bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
-	cp wasmhttp.dll tmp/framework
-	cp wasmhttp.pdb tmp/framework
+	cp WebAssembly.Net.Http.dll tmp/framework
+	cp WebAssembly.Net.Http.pdb tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/

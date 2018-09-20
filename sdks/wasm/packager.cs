@@ -6,13 +6,13 @@ using Mono.Cecil;
 using Mono.Options;
 
 class Driver {
-	static bool enable_debug;
+	static bool enable_debug, enable_linker;
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_list = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
 	static List<string> assembly_names = new List<string> ();
 
-	const string BINDINGS_ASM_NAME = "bindings";
+	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
 
 	enum AssemblyKind {
@@ -206,6 +206,9 @@ class Driver {
 			return;
 		}
 
+		if (enable_aot)
+			enable_linker = true;
+
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
@@ -215,9 +218,11 @@ class Driver {
 		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
 			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (tool_prefix, "../out/bcl/wasm");
+			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
 			bcl_prefix = Path.Combine (tool_prefix, "bcl");
+			sdkdir = tool_prefix;
 		}
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
 
@@ -302,12 +307,9 @@ class Driver {
 				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
 				Environment.Exit (1);
 			}
+			GenDriver (builddir, assembly_names);
 		}
 
-		GenDriver (builddir, assembly_names);
-
-		File.Delete (Path.Combine (builddir, "driver.c"));
-		File.Copy (Path.Combine (tool_prefix, "driver.c"), Path.Combine (builddir, "driver.c"));
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
@@ -323,6 +325,7 @@ class Driver {
 		ninja.WriteLine ($"builddir = .");
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
+		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
@@ -343,44 +346,88 @@ class Driver {
 		ninja.WriteLine ("rule emcc-link");
 		ninja.WriteLine ("  command = $emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
+		ninja.WriteLine ("rule linker");
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out $linker_args");
+		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
-		if (!enable_aot)
-			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
-		ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
-		ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c");
-		if (enable_aot)
+		if (enable_aot) {
+			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
+			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
+
+			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c");
 			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
 
+		} else {
+			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
+			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
+		}
+
 		var ofiles = "";
+		string linker_infiles = "";
+		string linker_ofiles = "";
+		if (enable_linker) {
+			string path = Path.Combine (builddir, "linker-in");
+			if (!Directory.Exists (path))
+				Directory.CreateDirectory (path);
+		}
 		foreach (var assembly in asm_list) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
 
-			File.Copy (assembly, Path.Combine (builddir, filename), true);
-			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff $builddir/{filename}");
+			var source_file_path = Path.GetFullPath (assembly);
+			ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+			string infile = "";
+
+			if (enable_linker) {
+				linker_infiles += $" $builddir/linker-in/{filename}";
+				linker_ofiles += $" $builddir/linker-out/{filename}";
+				infile = $"$builddir/linker-out/{filename}";
+				ninja.WriteLine ($"build $builddir/linker-in/{filename}: cpifdiff {source_file_path}");
+			} else {
+				infile = $"$builddir/{filename}";
+				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+			}
+			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {infile}");
 
 			if (enable_aot) {
-				string destdir = null;
-				string srcfile = null;
-				destdir = "$builddir";
-				srcfile = $"{filename}";
+				string mono_path = enable_linker ? "$builddir/linker-out" : "$builddir";
+				string destdir = "$builddir";
+				string srcfile = infile;
 
 				string outputs = $"{destdir}/{filename}.bc";
 				ninja.WriteLine ($"build {outputs}: aot {srcfile}");
 				ninja.WriteLine ($"  src_file={srcfile}");
 				ninja.WriteLine ($"  outfile={destdir}/{filename}.bc");
-				ninja.WriteLine ($"  mono_path={destdir}");
+				ninja.WriteLine ($"  mono_path={mono_path}");
 
 				ofiles += " " + ($"{destdir}/{filename}.bc");
 			}
 		}
 		if (enable_aot) {
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a {ofiles} | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
+			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a $mono_sdkdir/wasm-runtime/lib/libmono-icall-table.a {ofiles} | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
+		if (enable_linker) {
+			string linker_args = "";
+			foreach (var assembly in root_assemblies) {
+				string filename = Path.GetFileName (assembly);
+				linker_args += $"-a linker-in/{filename} ";
+			}
+			linker_args += " -d $bcl_dir -c link";
+			ninja.WriteLine ("build $builddir/linker-out: mkdir");
+			ninja.WriteLine ($"build {linker_ofiles}: linker");
+			ninja.WriteLine ($"  linker_args={linker_args}");
+		}
+
+		foreach(var asset in assets) {
+			var filename = Path.GetFileName (asset);
+			var abs_path = Path.GetFullPath (asset);
+			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff {abs_path}");
+		}
+
 
 		ninja.Close ();
 	}

@@ -37,6 +37,7 @@ ios-sim64-*/
 ios-simtv-*/
 ios-simwatch-*/
 wasm-runtime/
+wasm-cross/
 bcl/
 desktop-x86/
 desktop-x86_64/
