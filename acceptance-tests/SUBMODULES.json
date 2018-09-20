@@ -2,7 +2,7 @@
   {
     "name": "roslyn", 
     "url": "git://github.com/kg/roslyn.git",
-    "rev": "54cc422bdab372a47b6222bc0a99e6fd2a25489e",
+    "rev": "5487734a50c952ee9422cb0c3ca660be162c4303",
     "remote-branch": "origin/mono-roslyn-semantic-tests-2.8.2",
     "branch": "mono-roslyn-semantic-tests-2.8.2",
     "directory": "roslyn"
