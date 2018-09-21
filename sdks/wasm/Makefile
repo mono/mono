@@ -174,6 +174,9 @@ build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.ex
 build-dbg-proxy:
 	dotnet build ProxyDriver
 
+build-framework-nuget:
+	nuget pack WebAssembly.Framework.nuspec
+
 build: build-native build-managed
 
 CHAKRA=~/.jsvu/ch
@@ -202,7 +205,7 @@ run-all-%:
 
 clean:
 
-package: build build-dbg-proxy
+package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
@@ -228,6 +231,7 @@ package: build build-dbg-proxy
 	cp WasmHttpMessageHandler.cs tmp
 	cp WebAssembly.Net.Http.dll tmp/framework
 	cp WebAssembly.Net.Http.pdb tmp/framework
+	cp WebAssembly.Framework.0.1.0-alpha.nupkg tmp/framework
 	cp sample.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/
