@@ -3,6 +3,8 @@ TOP=$(realpath $(CURDIR)/../..)
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
+UNAME=$(shell uname)
+
 SDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/sdk
 NDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/ndk
 
@@ -35,6 +37,7 @@ BCL_CHECKS= \
 	System.Net.Http \
 	System.Numerics \
 	System.Runtime.Serialization \
+	System.ServiceModel \
 	System.ServiceModel.Web \
 	System.Transactions \
 	System.Xml \
@@ -54,7 +57,7 @@ all: package
 #This is hilarious, but we can't clean unless we got the 2 property files around
 .PHONY: clean
 clean:
-	rm -rf $(APK_DIR)
+	./gradlew clean
 
 .PHONY: check
 check: $(patsubst %,check-%,$(CHECKS))
@@ -77,16 +80,22 @@ logcat:
 shell:
 	$(ADB) shell
 
+## Accept Android License
+
+.PHONY: accept-android-license
+accept-android-license:
+	yes | $(SDK_DIR)/tools/bin/sdkmanager --licenses
+
 ## Check targets
 
 BCL_LIBS=$(subst corlib.dll,mscorlib.dll,$(patsubst %,%.dll,$(BCL_CHECKS)))
 BCL_PDBS=$(subst corlib.pdb,mscorlib.pdb,$(patsubst %,%.pdb,$(BCL_CHECKS)))
-BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/bcl/monodroid/%,$(BCL_LIBS))
+BCL_REFERENCES=$(patsubst %,-r:$(TOP)/mcs/class/lib/monodroid/%,$(BCL_LIBS))
 
 NUNIT_LIBS= \
 	nunitlite.dll
 
-NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/bcl/monodroid/%,$(NUNIT_LIBS))
+NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/mcs/class/lib/monodroid/%,$(NUNIT_LIBS))
 
 local.properties:
 	echo "sdk.dir=$(SDK_DIR)" >  $@
@@ -115,7 +124,6 @@ $$(patsubst %,app/src/main/jniLibs/$(1)/%,$$(MONO_LIBS)): app/src/main/jniLibs/$
 package: $$(patsubst %,app/src/main/jniLibs/$(1)/%,$$(MONO_LIBS))
 endef
 
-$(eval $(call RuntimeTemplate,armeabi))
 $(eval $(call RuntimeTemplate,armeabi-v7a))
 $(eval $(call RuntimeTemplate,arm64-v8a))
 $(eval $(call RuntimeTemplate,x86))
@@ -134,7 +142,7 @@ package: app/assets/asm/main.exe app/assets/asm/Mono.Android.dll
 
 ## Package the BCL assemblies
 
-$(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/sdks/out/bcl/monodroid/% | app/assets/asm
+$(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/mcs/class/lib/monodroid/% | app/assets/asm
 	cp $< $@
 
 .PHONY: package
@@ -148,7 +156,7 @@ package: $(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/
 define BCLTestAssemblyTemplate
 .PHONY: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
 $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll:
-	$$(MAKE) PROFILE='monodroid' -C $$(TOP)/mcs/class/$(1) build-test-lib
+	$$(MAKE) PROFILE='monodroid' -C $$(TOP)/mcs/class/$(1) test-local
 
 app/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
 	cp $$< $$@
