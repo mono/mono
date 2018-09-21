@@ -54,6 +54,7 @@
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
+#include "mono/metadata/custom-attrs-internals.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -350,6 +351,92 @@ domain_dump_native_code (MonoDomain *domain) {
 }
 #endif
 
+static gboolean
+method_should_be_regression_tested (MonoMethod *method, gboolean interp)
+{
+	ERROR_DECL (error);
+
+	if (strncmp (method->name, "test_", 5) != 0)
+		return FALSE;
+
+	if (interp) {
+		static gboolean filter_method_init = FALSE;
+		static const char *filter_method = NULL;
+
+		if (!filter_method_init) {
+			filter_method = g_getenv ("INTERP_FILTER_METHOD");
+			filter_method_init = TRUE;
+		}
+
+		if (filter_method) {
+			const char *name = filter_method;
+
+			if ((strchr (name, '.') > name) || strchr (name, ':')) {
+				MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
+				gboolean res = mono_method_desc_full_match (desc, method);
+				mono_method_desc_free (desc);
+				return res;
+			} else {
+				return strcmp (method->name, name) == 0;
+			}
+		}
+	}
+
+	MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
+	mono_error_cleanup (error);
+	if (!ainfo)
+		return TRUE;
+
+	int j;
+	for (j = 0; j < ainfo->num_attrs; ++j) {
+		MonoCustomAttrEntry *centry = &ainfo->attrs [j];
+		if (centry->ctor == NULL)
+			continue;
+
+		MonoClass *klass = centry->ctor->klass;
+		if (strcmp (m_class_get_name (klass), "CategoryAttribute") || mono_method_signature (centry->ctor)->param_count != 1)
+			continue;
+
+		gpointer *typed_args, *named_args;
+		int num_named_args;
+		CattrNamedArg *arginfo;
+
+		mono_reflection_create_custom_attr_data_args_noalloc (
+			mono_defaults.corlib, centry->ctor, centry->data, centry->data_size,
+			&typed_args, &named_args, &num_named_args, &arginfo, error);
+		if (!is_ok (error))
+			continue;
+
+		char *utf8_str = typed_args[0]; //this points into image memory that is constant
+		g_free (typed_args);
+		g_free (named_args);
+		g_free (arginfo);
+
+		if (interp && !strcmp (utf8_str, "!INTERPRETER")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+
+#if HOST_WASM
+		if (!strcmp (utf8_str, "!WASM")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+#endif
+		if (mono_aot_mode == MONO_AOT_MODE_FULL && !strcmp (utf8_str, "!FULLAOT")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+
+		if ((mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && !strcmp (utf8_str, "!BITCODE")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 static void
 mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		guint32 opt_flags,
@@ -386,18 +473,26 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			continue;
 		}
-		if (strncmp (method->name, "test_", 5) == 0) {
-			MonoCompile *cfg;
+		if (method_should_be_regression_tested (method, FALSE)) {
+			MonoCompile *cfg = NULL;
 
 			expected = atoi (method->name + 5);
 			run++;
+#ifdef DISABLE_JIT
+#ifdef MONO_USE_AOT_COMPILER
+			ERROR_DECL (error);
+			func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
+			mono_error_cleanup (error);
+#else
+			g_error ("No JIT or AOT available, regression testing not possible!")
+#endif
+
+#else
 			start_time = g_timer_elapsed (timer, NULL);
 			comp_time -= start_time;
 			cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, opt_flags), mono_get_root_domain (), JIT_FLAG_RUN_CCTORS, 0, -1);
 			comp_time += g_timer_elapsed (timer, NULL);
 			if (cfg->exception_type == MONO_EXCEPTION_NONE) {
-				if (verbose >= 2)
-					g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
 				ERROR_DECL (error);
 				func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
@@ -408,14 +503,28 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 					func = (TestMethod)(gpointer)cfg->native_code;
 #endif
 				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
+			}
+#endif
+
+			if (func) {
+				if (verbose >= 2)
+					g_print ("Running '%s' ...\n", method->name);
+
+#if HOST_WASM
+				//WASM AOT injects dummy args and we must call with exact signatures
+				int (*func_2)(int) = (void*)func;
+				result = func_2 (-1);
+#else
 				result = func ();
+#endif
 				if (result != expected) {
 					failed++;
 					g_print ("Test '%s' failed result (got %d, expected %d).\n", method->name, result, expected);
 				}
-				code_size += cfg->code_len;
-				mono_destroy_compile (cfg);
-
+				if (cfg) {
+					code_size += cfg->code_len;
+					mono_destroy_compile (cfg);
+				}
 			} else {
 				cfailed++;
 				g_print ("Test '%s' failed compilation.\n", method->name);
@@ -529,6 +638,11 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 				if (!(opt_sets [opt] & MONO_OPT_INTRINS))
 					continue;
 
+			//we running in AOT only, it makes no sense to try multiple flags
+			if ((mono_aot_mode == MONO_AOT_MODE_FULL || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && opt_sets [opt] != DEFAULT_OPTIMIZATIONS) {
+				continue;
+			}
+
 			mini_regression_step (image, verbose, total_run, &total,
 					opt_sets [opt] & ~exclude,
 					timer, domain);
@@ -578,8 +692,6 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	double elapsed, transform_time;
 	int i;
 	MonoObject *result_obj;
-	static gboolean filter_method_init = FALSE;
-	static const char *filter_method = NULL;
 
 	g_print ("Test run: image=%s\n", mono_image_get_filename (image));
 	cfailed = failed = run = 0;
@@ -587,7 +699,6 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 
 	g_timer_start (timer);
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
-		MonoObject *exc = NULL;
 		ERROR_DECL (error);
 		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
@@ -595,59 +706,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 			continue;
 		}
 
-		if (!filter_method_init) {
-			filter_method = g_getenv ("INTERP_FILTER_METHOD");
-			filter_method_init = TRUE;
-		}
-		gboolean filter = FALSE;
-		if (filter_method) {
-			const char *name = filter_method;
-
-			if ((strchr (name, '.') > name) || strchr (name, ':')) {
-				MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
-				filter = mono_method_desc_full_match (desc, method);
-				mono_method_desc_free (desc);
-			} else {
-				filter = strcmp (method->name, name) == 0;
-			}
-		} else { /* no filter, check for `Category' attribute on method */
-			filter = TRUE;
-			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_cleanup (error);
-
-			if (ainfo) {
-				int j;
-				for (j = 0; j < ainfo->num_attrs && filter; ++j) {
-					MonoCustomAttrEntry *centry = &ainfo->attrs [j];
-					if (centry->ctor == NULL)
-						continue;
-
-					MonoClass *klass = centry->ctor->klass;
-					if (strcmp (m_class_get_name (klass), "CategoryAttribute"))
-						continue;
-
-					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, error);
-					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
-					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
-					mono_error_cleanup (error);
-					error_init (error);
-					MonoMethod *getter = mono_class_get_method_from_name_checked (klass, "get_Category", -1, 0, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					if (!strcmp (utf8_str, "!INTERPRETER")) {
-						g_print ("skip %s...\n", method->name);
-						filter = FALSE;
-					}
-				}
-			}
-		}
-		if (strncmp (method->name, "test_", 5) == 0 && filter) {
+		if (method_should_be_regression_tested (method, TRUE)) {
 			ERROR_DECL_VALUE (interp_error);
 			MonoObject *exc = NULL;
 
@@ -1815,6 +1874,24 @@ mono_enable_interp (const char *opts)
 
 }
 
+int
+mono_exec_regression (int verbose_level, int count, char *images [], gboolean single_method)
+{
+	mono_do_single_method_regression = single_method;
+	if (mono_use_interpreter) {
+		if (mono_interp_regression_list (verbose_level, count, images)) {
+			g_print ("Regression ERRORS!\n");
+			return 1;
+		}
+		return 0;
+	}
+	if (mini_regression_list (verbose_level, count, images)) {
+		g_print ("Regression ERRORS!\n");
+		return 1;
+	}
+	return 0;
+}
+
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -2349,24 +2426,9 @@ mono_main (int argc, char* argv[])
 	
 	switch (action) {
 	case DO_SINGLE_METHOD_REGRESSION:
-		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
-		if (mono_use_interpreter) {
-			if (mono_interp_regression_list (2, argc -i, argv + i)) {
-				g_print ("Regression ERRORS!\n");
-				// mini_cleanup (domain);
-				return 1;
-			}
-			// mini_cleanup (domain);
-			return 0;
-		}
-		if (mini_regression_list (mini_verbose, argc -i, argv + i)) {
-			g_print ("Regression ERRORS!\n");
-			mini_cleanup (domain);
-			return 1;
-		}
-		mini_cleanup (domain);
-		return 0;
+		 return mono_exec_regression (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
+
 	case DO_BENCH:
 		if (argc - i != 1 || mname == NULL) {
 			g_print ("Usage: mini --ncompile num --compile method assembly\n");
