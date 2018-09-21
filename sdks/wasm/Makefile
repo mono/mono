@@ -157,7 +157,7 @@ mini_tests_basic.dll: $(MINI_BASIC_TEST_SOURCES)
 
 
 aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll main.exe runtime.g.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests_basic.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests_basic.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
