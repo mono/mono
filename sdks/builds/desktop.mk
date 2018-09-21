@@ -13,7 +13,7 @@ define DesktopTemplate
 _desktop-$(1)_CC=cc
 
 _desktop-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mcs-build \

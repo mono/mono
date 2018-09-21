@@ -64,7 +64,7 @@ _runtime_$(1)_CONFIGURE_ENVIRONMENT = \
 	$$($(1)_CONFIGURE_ENVIRONMENT)
 
 _runtime_$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	$$(if $(2),--host=$(2)) \
 	--cache-file=$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/$(1)-$$(CONFIGURATION) \
@@ -144,7 +144,7 @@ $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offs
 define CrossRuntimeTemplate
 
 _cross-runtime_$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--target=$(3) \
 	--with-cross-offsets=$(3).h \
 	--with-llvm=$$(TOP)/sdks/out/$(5)

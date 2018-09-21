@@ -18,5 +18,5 @@
 #Disables building LLVM toolchain (some targets like ios/android/wasm will still use it)
 #DISABLE_LLVM = 1
 
-#Enables passing -enable-cxx to configure.
+#Enables passing --enable-cxx to configure.
 #ENABLE_CXX = 1

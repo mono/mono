@@ -88,7 +88,7 @@ _ios-$(1)_LDFLAGS= \
 	-lobjc -lc++
 
 _ios-$(1)_CONFIGURE_FLAGS = \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -220,7 +220,7 @@ _ios-$(1)_LDFLAGS= \
 	$$(ios_LDFLAGS)
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-executables \
@@ -329,7 +329,7 @@ _ios-$(1)_LDFLAGS= \
 	-stdlib=libc++
 
 _ios-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),-enable-cxx) \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-btls \
 	--disable-iconv \
