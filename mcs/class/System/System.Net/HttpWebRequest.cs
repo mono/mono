@@ -946,6 +946,11 @@ namespace System.Net
 				} catch {
 					// Ignore; we report the timeout.
 				}
+#pragma warning disable 4014
+				// Make sure the workerTask's Exception is actually observed.
+				// Fixes https://github.com/mono/mono/issues/10488.
+				workerTask.ContinueWith (t => t.Exception?.GetHashCode (), TaskContinuationOptions.OnlyOnFaulted);
+#pragma warning restore 4014
 				throw new WebException (SR.net_timeout, WebExceptionStatus.Timeout);
 			} catch (Exception ex) {
 				throw GetWebException (ex, aborted ());
