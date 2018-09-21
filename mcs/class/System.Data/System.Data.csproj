@@ -39,17 +39,17 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
@@ -69,12 +69,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;NO_CODEDOM;NO_OLEDB;NO_ODBC;NO_CONFIGURATION;MONO_FEATURE_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_APPLETLS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;PLATFORM_UNIX;USEOFFSET;MONO_PARTIAL_DATA_IMPORT;MONO_FEATURE_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
@@ -550,9 +550,9 @@
   <Choose>
     <When Condition="'$(Platform)' == 'xammac'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -577,16 +577,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -611,16 +611,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -645,16 +645,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -679,16 +679,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'orbis'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -713,7 +713,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
@@ -836,9 +836,9 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Interop.Odbc.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -910,7 +910,7 @@
             <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlContext.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlPipe.cs" />
-            <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+            <Compile Include="corefx\Interop.Libraries.cs" />
             <Compile Include="corefx\Odbc\DbConnectionStringCommon.cs" />
             <Compile Include="corefx\Odbc\OdbcFactory.cs" />
             <Compile Include="corefx\OleDbStubs.cs" />
@@ -922,9 +922,9 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Interop.Odbc.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -996,7 +996,7 @@
             <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlContext.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlPipe.cs" />
-            <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+            <Compile Include="corefx\Interop.Libraries.cs" />
             <Compile Include="corefx\Odbc\DbConnectionStringCommon.cs" />
             <Compile Include="corefx\Odbc\OdbcFactory.cs" />
             <Compile Include="corefx\OleDbStubs.cs" />
@@ -1008,9 +1008,9 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Interop.Odbc.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -1082,7 +1082,7 @@
             <Compile Include="..\referencesource\System.Data\System\Data\SQLTypes\SqlTypesSchemaImporter.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlContext.cs" />
             <Compile Include="Microsoft.SqlServer.Server\SqlPipe.cs" />
-            <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+            <Compile Include="corefx\Interop.Libraries.cs" />
             <Compile Include="corefx\Odbc\DbConnectionStringCommon.cs" />
             <Compile Include="corefx\Odbc\OdbcFactory.cs" />
             <Compile Include="corefx\OleDbStubs.cs" />
@@ -1095,9 +1095,9 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -1119,14 +1119,14 @@
         <Compile Include="System.Data.SqlClient\SqlParameter.platformnotsupported.cs" />
         <Compile Include="System.Data.SqlClient\SqlParameterCollection.platformnotsupported.cs" />
         <Compile Include="System.Data.SqlClient\SqlTransaction.platformnotsupported.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -1151,16 +1151,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -1185,16 +1185,16 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
@@ -1219,7 +1219,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlParameterHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\SqlTransaction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Data.SqlClient\src\System\Data\SqlClient\TdsParser.Unix.cs" />
-        <Compile Include="corefx\Interop.NetSecurityNative.cs" />
+        <Compile Include="corefx\Interop.Libraries.cs" />
         <Compile Include="corefx\SqlCommand.cs" />
         <Compile Include="corefx\SqlException.cs" />
       </ItemGroup>

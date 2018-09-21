@@ -4,10 +4,9 @@
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeDeleteContext.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeFreeCredentials.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/GssSafeHandles.cs
-corefx/Interop.NetSecurityNative.cs
-#../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.NetSecurityNative.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.NetSecurityNative.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeFreeNegoCredentials.cs
-../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+corefx/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.GssBuffer.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/Unix/SafeDeleteNegoContext.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Net.Security.Native/Interop.GssApiException.cs

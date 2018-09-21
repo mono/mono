@@ -207,6 +207,13 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	else \
 		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
 	fi
+	if test -d "$(abs_top_builddir)/mono/metadata"; then \
+		sed 's,target="$$mono_libdir/libmono-system-net-security-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-net-security-native.la",' $@ > $@.tmp \
+		 && mv $@.tmp $@ \
+		 ; \
+	else \
+		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+	fi
 	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
 		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \
 		 && mv $@.tmp $@ \
