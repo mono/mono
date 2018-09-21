@@ -322,3 +322,7 @@
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Math.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathF.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
+
+# System.Runtime.InteropServices
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/InteropServices/*.cs:MarshalTests.cs,GCHandleTests.cs,SafeBufferTests.cs,ComEventsHelperTests.cs,RuntimeEnvironmentTests.cs,DispatchWrapperTests.cs,ArrayWithOffsetTests.cs,SetWin32ContextInIDispatchAttributeTests.cs,ComAwareEventInfoTests.cs,IDispatchImplAttributeTests.cs,ComAwareEventInfoTests.Windows.cs,MarshalTests.Windows.cs
