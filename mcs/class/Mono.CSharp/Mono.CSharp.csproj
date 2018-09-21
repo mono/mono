@@ -75,30 +75,10 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;IOS_REFLECTION;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
-    <OutputPath>./../../class/lib/winaot</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM;IOS_REFLECTION;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
-    <OutputPath>./../../class/lib/xammac</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'unreal' ">
-    <OutputPath>./../../class/lib/unreal</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-unreal</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
-    <OutputPath>./../../class/lib/wasm</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;IOS_REFLECTION;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_PROCESS_START</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -143,20 +123,8 @@
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <Compile Include="testing_aot_full-parser.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="winaot-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="xammac-parser.cs" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <Compile Include="xammac_net_4_5-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="unreal-parser.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="wasm-parser.cs" />
   </ItemGroup>
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
