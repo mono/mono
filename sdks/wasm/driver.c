@@ -146,7 +146,7 @@ MonoClass* mono_get_uint32_class (void);
 MonoClass* mono_get_single_class (void);
 MonoClass* mono_get_double_class (void);
 MonoClass* mono_class_get_element_class(MonoClass *klass);
-int mono_exec_regression (int verbose_level, int count, char *images [], int single_method);
+int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
@@ -592,9 +592,5 @@ mono_wasm_array_to_heap (MonoArray *src, char *dest)
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_exec_regression (int verbose_level, char *image)
 {
-	char *images[] = {
-		image,
-		NULL,
-	};
-	return mono_exec_regression (verbose_level, 1, images, 0);
+	return mono_regression_test_step (verbose_level, image, NULL);
 }

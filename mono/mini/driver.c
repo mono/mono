@@ -351,6 +351,10 @@ domain_dump_native_code (MonoDomain *domain) {
 }
 #endif
 
+static gboolean do_regression_retries;
+static int regression_test_skip_index;
+
+
 static gboolean
 method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 {
@@ -454,6 +458,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 	g_free (n);
 	cfailed = failed = run = code_size = 0;
 	comp_time = elapsed = 0.0;
+	int local_skip_index = 0;
 
 	/* fixme: ugly hack - delete all previously compiled methods */
 	if (domain_jit_info (domain)) {
@@ -478,6 +483,8 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 
 			expected = atoi (method->name + 5);
 			run++;
+			start_time = g_timer_elapsed (timer, NULL);
+
 #ifdef DISABLE_JIT
 #ifdef MONO_USE_AOT_COMPILER
 			ERROR_DECL (error);
@@ -488,7 +495,6 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #endif
 
 #else
-			start_time = g_timer_elapsed (timer, NULL);
 			comp_time -= start_time;
 			cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, opt_flags), mono_get_root_domain (), JIT_FLAG_RUN_CCTORS, 0, -1);
 			comp_time += g_timer_elapsed (timer, NULL);
@@ -507,6 +513,14 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #endif
 
 			if (func) {
+				if (do_regression_retries) {
+					++local_skip_index;
+
+					if(local_skip_index <= regression_test_skip_index)
+						continue;
+					++regression_test_skip_index;
+				}
+
 				if (verbose >= 2)
 					g_print ("Running '%s' ...\n", method->name);
 
@@ -692,6 +706,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	double elapsed, transform_time;
 	int i;
 	MonoObject *result_obj;
+	int local_skip_index = 0;
 
 	g_print ("Test run: image=%s\n", mono_image_get_filename (image));
 	cfailed = failed = run = 0;
@@ -709,6 +724,14 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 		if (method_should_be_regression_tested (method, TRUE)) {
 			ERROR_DECL_VALUE (interp_error);
 			MonoObject *exc = NULL;
+
+			if (do_regression_retries) {
+				++local_skip_index;
+
+				if(local_skip_index <= regression_test_skip_index)
+					continue;
+				++regression_test_skip_index;
+			}
 
 			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, &interp_error);
 			if (!mono_error_ok (&interp_error)) {
@@ -1874,8 +1897,8 @@ mono_enable_interp (const char *opts)
 
 }
 
-int
-mono_exec_regression (int verbose_level, int count, char *images [], gboolean single_method)
+static int
+mono_exec_regression_internal (int verbose_level, int count, char *images [], gboolean single_method)
 {
 	mono_do_single_method_regression = single_method;
 	if (mono_use_interpreter) {
@@ -1892,6 +1915,26 @@ mono_exec_regression (int verbose_level, int count, char *images [], gboolean si
 	return 0;
 }
 
+
+/**
+ * Returns TRUE for success, FALSE for failure.
+ */
+gboolean
+mono_regression_test_step (int verbose_level, const char *image, const char *method_name)
+{
+	if (method_name) {
+		//TODO
+	} else {
+		do_regression_retries = TRUE;
+	}
+
+	char *images[] = {
+		(char*)image,
+		NULL
+	};
+
+	return mono_exec_regression_internal (verbose_level, 1, images, FALSE) == 0;
+}
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -2427,7 +2470,7 @@ mono_main (int argc, char* argv[])
 	switch (action) {
 	case DO_SINGLE_METHOD_REGRESSION:
 	case DO_REGRESSION:
-		 return mono_exec_regression (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
+		 return mono_exec_regression_internal (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
 
 	case DO_BENCH:
 		if (argc - i != 1 || mname == NULL) {

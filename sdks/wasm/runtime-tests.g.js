@@ -108,10 +108,21 @@ var App = {
 
 		if (testArguments[0] == "--regression") {
 			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
-			var res = exec_regresion (10, testArguments[1]);
-			print("REGRESSION RESULT: " + res);
+
+			var res = 0;
+			while(true) {
+				try {
+					res = exec_regresion (10, testArguments[1]);
+					Module.print ("REGRESSION RESULT: " + res);
+					break;
+				} catch (e) {
+					Module.print ("ABORT: " + e);
+					res = 1;
+				}
+			}
 			if (res)
 				fail_exec ("REGRESSION TEST FAILED");
+
 			return;
 		}
 		
