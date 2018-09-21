@@ -537,18 +537,17 @@ public class Tests
 				return 174;
 
 			if (TestIfaceNoIcall (itest as ITestPresSig) != 0)
-				return 201;
+				return 175;
 
 			itest = new TestClass ();
 
 			if (TestITest (itest) != 0)
-				return 175;
+				return 176;
 
 			itest = (ITest)System.Activator.CreateInstance (typeof(TestActivatorClass));
 
 			if (TestITest (itest) != 0)
-				return 176;
-
+				return 177;
 
 #endif
 
@@ -742,7 +741,7 @@ public class Tests
 			TestVisible test_vis = new TestVisible();
 			IntPtr pDisp = Marshal.GetIDispatchForObject(test_vis);
 			if (pDisp == IntPtr.Zero)
-				return 200;
+				return 300;
 			#endregion 
 		}
 
