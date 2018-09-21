@@ -3442,6 +3442,12 @@ mono_field_get_value (MonoObject *obj, MonoClassField *field, void *value)
 }
 
 void
+mono_field_get_value_handle (MonoObjectHandle obj, MonoClassField *field, void *value)
+{
+	mono_field_get_value_internal (MONO_HANDLE_RAW (obj), field, value);
+}
+
+void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value)
 {
 	MONO_REQ_GC_UNSAFE_MODE;

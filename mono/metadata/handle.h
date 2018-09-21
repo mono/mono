@@ -367,6 +367,9 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 
 #endif // MONO_TYPE_SAFE_HANDLES
 
+#define MONO_BOOL(x)             (!!MONO_HANDLE_SUPPRESS ((x)))
+#define MONO_HANDLE_BOOL(handle) (MONO_BOOL (!MONO_HANDLE_IS_NULL (handle)))
+
 /*
 WARNING WARNING WARNING
 
@@ -408,12 +411,21 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 
 #endif
 
-// Get ((type)handle)->field as a handle.
+// Get handle->field as a type-handle.
 #define MONO_HANDLE_NEW_GET(TYPE,HANDLE,FIELD) (MONO_HANDLE_NEW(TYPE,MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)))
+
+#define MONO_HANDLE_FIELD_NEW MONO_HANDLE_NEW_GET
 
 // Get handle->field, where field is not a pointer (an integer or non-managed pointer).
 #define MONO_HANDLE_GETVAL(HANDLE, FIELD) MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)
 
+#define MONO_HANDLE_FIELD MONO_HANDLE_GETVAL
+
+// Get handle->field as a boolean, i.e. typically compare managed pointer to NULL,
+// though any type is ok.
+#define MONO_HANDLE_FIELD_BOOL(handle, field) (MONO_BOOL (MONO_HANDLE_GETVAL (handle, field)))
+
+// handle->field = (type)value, for non-managed pointers
 // This would be easier to write with the gcc extension typeof,
 // but it is not widely enough implemented (i.e. Microsoft C).
 #define MONO_HANDLE_SETVAL(HANDLE, FIELD, TYPE, VALUE) do {	\
