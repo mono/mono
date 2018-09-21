@@ -154,7 +154,7 @@ _cross-runtime_$(1)_CONFIGURE_FLAGS= \
 
 .stamp-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_LLVM),,provision-$(5))
 
-$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/$(3).h: .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe | configure-$(4)
+$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/$(3).h: .stamp-$(4)-configure .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe | configure-$(4)
 	cd $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) && \
 		MONO_PATH=$$(TOP)/tools/offsets-tool/CppSharp/$$(if $$(filter $$(UNAME),Darwin),osx_32,$$(if $$(filter $$(UNAME),Linux),linux_64,$$(error "Unknown UNAME='$$(UNAME)'"))) \
 			mono $$(if $$(filter $$(UNAME),Darwin),--arch=32) --debug "$$(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe" \

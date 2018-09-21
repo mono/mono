@@ -110,3 +110,66 @@ clean-wasm-cross:
 	rm -rf .stamp-wasm-aot-toolchain .stamp-wasm-cross-configure $(TOP)/sdks/builds/wasm-cross $(TOP)/sdks/builds/wasm-cross.config.cache $(TOP)/sdks/out/wasm-cross
 
 TARGETS += wasm-cross
+
+
+##
+# Parameters
+#  $(1): target
+#  $(2): host arch
+#  $(3): target arch
+#  $(4): device target
+#  $(5): llvm
+#  $(6): offsets dumper abi
+define WasmCrossMXETemplate
+
+_wasm-$(1)_OFFSETS_DUMPER_ARGS=--emscripten-sdk="$(EMSCRIPTEN_SDK_DIR)/emscripten/$(EMSCRIPTEN_VERSION)"
+
+_wasm-$(1)_PATH=$$(MXE_PREFIX)/bin
+
+_wasm-$(1)_AR=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ar
+_wasm-$(1)_AS=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-as
+_wasm-$(1)_CC=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-gcc
+_wasm-$(1)_CXX=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-g++
+_wasm-$(1)_DLLTOOL=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-dlltool
+_wasm-$(1)_LD=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ld
+_wasm-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-objdump
+_wasm-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-ranlib
+_wasm-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-strip
+
+_wasm-$(1)_CFLAGS= \
+	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
+	-static \
+	-static-libgcc
+
+_wasm-$(1)_CXXFLAGS= \
+	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
+	-static \
+	-static-libgcc
+
+_wasm-$(1)_LDFLAGS= \
+	-static \
+	-static-libgcc \
+	-static-libstdc++
+
+_wasm-$(1)_CONFIGURE_FLAGS= \
+	--disable-nls \
+	--disable-btls \
+	--disable-support-build \
+	--with-llvm=$(TOP)/sdks/out/llvm-llvmwin32 \
+	--enable-minimal=appdomains,com,remoting \
+	--disable-boehm \
+	--disable-mcs-build \
+	--disable-nls \
+	--enable-maintainer-mode \
+	--with-tls=pthread
+
+# .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
+# 	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
+
+$$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
+
+endef
+
+ifeq ($(DISABLE_WASM_CROSS),)
+$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+endif
