@@ -223,15 +223,15 @@ create_domain_objects (MonoDomain *domain)
 	 */
 	arg = mono_string_new_handle (domain, "A null value was found where an object instance was required", error);
 	mono_error_assert_ok (error);
-	MONO_HANDLE_SUPPRESS (domain->null_reference_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL_HANDLE_STRING, error)));
+	domain->null_reference_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL_HANDLE_STRING, error));
 	mono_error_assert_ok (error);
 	arg = mono_string_new_handle (domain, "The requested operation caused a stack overflow.", error);
 	mono_error_assert_ok (error);
-	MONO_HANDLE_SUPPRESS (domain->stack_overflow_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL_HANDLE_STRING, error)));
+	domain->stack_overflow_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL_HANDLE_STRING, error));
 	mono_error_assert_ok (error);
 
 	/*The ephemeron tombstone i*/
-	MONO_HANDLE_SUPPRESS (domain->ephemeron_tombstone = MONO_HANDLE_RAW (mono_object_new_handle (domain, mono_defaults.object_class, error)));
+	domain->ephemeron_tombstone = MONO_HANDLE_RAW (mono_object_new_handle (domain, mono_defaults.object_class, error));
 	mono_error_assert_ok (error);
 
 	if (domain != old_domain) {
@@ -305,8 +305,8 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 		goto_if_nok (error, exit);
 
 		MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
-		MONO_HANDLE_SUPPRESS (domain->domain = MONO_HANDLE_RAW (ad));
-		MONO_HANDLE_SUPPRESS (domain->setup = MONO_HANDLE_RAW (setup));
+		domain->domain = MONO_HANDLE_RAW (ad);
+		domain->setup = MONO_HANDLE_RAW (setup);
 	}
 
 	mono_thread_attach (domain);
@@ -461,7 +461,7 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
 	mono_threads_register_app_context (context, error);
 	mono_error_assert_ok (error);
-	MONO_HANDLE_SUPPRESS (domain->default_context = MONO_HANDLE_RAW (context));
+	domain->default_context = MONO_HANDLE_RAW (context);
 }
 
 /**
@@ -1411,8 +1411,6 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoClass *klass;
-	gpointer load_value;
-	void *params [1];
 	MonoObjectHandle appdomain;
 
 	if (!MONO_BOOL (domain->domain))
@@ -1436,8 +1434,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 		g_assert (assembly_load_field);
 	}
 
-	mono_field_get_value_handle (appdomain, assembly_load_field, &load_value);
-	if (load_value == NULL)
+	if (!MONO_HANDLE_GET_FIELD_BOOL (appdomain, MonoObject*, assembly_load_field))
 		goto leave; // No events waiting to be triggered
 
 	MonoReflectionAssemblyHandle reflection_assembly;
@@ -1449,6 +1446,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 		g_assert (assembly_load_method);
 	}
 
+	void *params [1];
 	params [0] = MONO_HANDLE_RAW (reflection_assembly);
 	mono_runtime_invoke_handle (assembly_load_method, appdomain, params, error);
 leave:
@@ -1504,7 +1502,7 @@ set_domain_search_path (MonoDomain *domain)
 		goto exit; // Must set application base to get private path working
 	
 	if (MONO_HANDLE_FIELD_BOOL (setup, private_bin_path)) {
-		search_path = mono_string_handle_to_utf8 (MONO_HANDLE_FIELD_NEW (MonoString, setup, private_bin_path), error);
+		search_path = mono_string_handle_to_utf8 (MONO_HANDLE_NEW_GET (MonoString, setup, private_bin_path), error);
 		if (!mono_error_ok (error)) { /*FIXME maybe we should bubble up the error.*/
 			g_warning ("Could not decode AppDomain search path since it contains invalid characters");
 			goto exit;
@@ -1546,7 +1544,7 @@ set_domain_search_path (MonoDomain *domain)
 	tmp = g_new (gchar*, npaths + 1);
 	tmp [npaths] = NULL;
 
-	*tmp = mono_string_handle_to_utf8 (MONO_HANDLE_FIELD_NEW (MonoString, setup, application_base), error);
+	*tmp = mono_string_handle_to_utf8 (MONO_HANDLE_NEW_GET (MonoString, setup, application_base), error);
 	if (!mono_error_ok (error)) {
 		g_free (tmp);
 		goto exit;
@@ -2948,11 +2946,11 @@ void
 mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 {
 	ERROR_DECL (error);
-	MonoThreadHandle *thread_handle;
+	MonoThreadHandle *thread_handle = NULL;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
 	unload_data *thread_data = NULL;
-	MonoInternalThreadHandle internal;
+	MonoInternalThread *internal;
 	MonoDomain *caller_domain = mono_domain_get ();
 
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, mono_native_thread_id_get ()); */
@@ -2965,10 +2963,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 		switch (prev_state) {
 		case MONO_APPDOMAIN_UNLOADING_START:
 		case MONO_APPDOMAIN_UNLOADING:
-			mono_error_set_cannot_unload_appdomain (error, "Appdomain is already being unloaded.");
+			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already being unloaded.");
 			goto exit;
 		case MONO_APPDOMAIN_UNLOADED:
-			mono_error_set_cannot_unload_appdomain (error, "Appdomain is already unloaded.");
+			*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain ("Appdomain is already unloaded.");
 			goto exit;
 		default:
 			g_warning ("Invalid appdomain state %d", prev_state);
@@ -2978,13 +2976,19 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 
 	mono_domain_set (domain, FALSE);
 	/* Notify OnDomainUnload listeners */
-	MonoObjectHandle appdomain;
-	appdomain = MONO_HANDLE_NEW (MonoObject, &domain->domain->mbr.obj);
-	method = mono_class_get_method_from_name_checked (mono_handle_class (appdomain), "DoDomainUnload", -1, 0, error);
+	method = mono_class_get_method_from_name_checked (domain->domain->mbr.obj.vtable->klass, "DoDomainUnload", -1, 0, error);
 	g_assert (method);
 
-	mono_runtime_try_invoke_handle (method, appdomain, NULL, error);
-	if (!is_ok (error)) {
+	mono_runtime_try_invoke (method, domain->domain, NULL, exc, error);
+
+	if (!mono_error_ok (error)) {
+		if (*exc)
+			mono_error_cleanup (error);
+		else
+			*exc = (MonoObject*)mono_error_convert_to_exception (error);
+	}
+
+	if (*exc) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
 		mono_domain_set (caller_domain, FALSE);
@@ -3008,35 +3012,33 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	 *
 	 * Force it to be attached to avoid racing during shutdown.
 	 */
-	internal = mono_thread_create_internal_handle (mono_get_root_domain (), unload_thread_main, thread_data, MONO_THREAD_CREATE_FLAGS_FORCE_CREATE, error);
-	if (!mono_error_assert_ok (error))
-		goto exit;
+	internal = mono_thread_create_internal (mono_get_root_domain (), unload_thread_main, thread_data, MONO_THREAD_CREATE_FLAGS_FORCE_CREATE, error);
+	mono_error_assert_ok (error);
 
-	thread_handle = mono_threads_open_thread_handle (MONO_HANDLE_FIELD (internal, handle));
+	thread_handle = mono_threads_open_thread_handle (internal->handle);
 
 	/* Wait for the thread */	
 	while (!thread_data->done && guarded_wait (thread_handle, MONO_INFINITE_WAIT, TRUE) == MONO_THREAD_INFO_WAIT_RET_ALERTED) {
 		if (mono_thread_internal_has_appdomain_ref (mono_thread_internal_current (), domain) && (mono_thread_interruption_requested ())) {
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */
-			mono_threads_close_thread_handle (thread_handle);
 			goto exit;
 		}
 	}
 
-	mono_threads_close_thread_handle (thread_handle);
-
 	if (thread_data->failure_reason) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
+
 		g_warning ("%s", thread_data->failure_reason);
-		mono_error_set_cannot_unload_appdomain (error, thread_data->failure_reason);
+
+		*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain (thread_data->failure_reason);
+
 		g_free (thread_data->failure_reason);
 		thread_data->failure_reason = NULL;
 	}
 
 exit:
-        if (!is_ok (error))
-		*exc = (MonoObject*)mono_error_convert_to_exception (error);
+	mono_threads_close_thread_handle (thread_handle);
 	unload_data_unref (thread_data);
 }
