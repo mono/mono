@@ -4527,7 +4527,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->opcode == OP_LCOMPARE_IMM) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
 				rhs = LLVMConstInt (LLVMInt64Type (), GET_LONG_IMM (ins), FALSE);
-				g_assert (GET_LONG_IMM (ins) == ins->inst_l);
 			}
 			if (ins->opcode == OP_LCOMPARE) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
