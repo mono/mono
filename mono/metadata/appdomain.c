@@ -1475,6 +1475,7 @@ mono_domain_asmctx_from_path (const char *fname, MonoAssembly *requesting_assemb
 static void
 set_domain_search_path (MonoDomain *domain)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoAppDomainSetupHandle setup;
 	gchar **tmp;
@@ -1616,6 +1617,7 @@ exit:
 	mono_error_cleanup (error);
 	g_strfreev (pvt_split);
 	mono_domain_assemblies_unlock (domain);
+	HANDLE_FUNCTION_RETURN ();
 }
 
 #ifdef DISABLE_SHADOW_COPY
