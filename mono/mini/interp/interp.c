@@ -85,6 +85,12 @@
 #endif
 #endif
 
+// This should be portable to all C++11 implementations. It is restricted like this to be a smaller change.
+#if defined (__cplusplus) && defined (HOST_ANDROID)
+#include <cmath>
+using std::isfinite;
+#endif
+
 static inline void
 init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
 {
