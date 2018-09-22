@@ -652,7 +652,35 @@ namespace MonoTests.System.Threading {
 				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
 			}
 		}
+
+		// https://github.com/mono/mono/issues/9089
+		// Duplication is ok for WaitAny, exception for WaitAll.
+		// System.DuplicateWaitObjectException: Duplicate objects in argument.
+		[Test]
+		public static void DuplicateWaitAny ()
+		{
+			using (var a = new ManualResetEvent (true))
+			{
+				var b = new ManualResetEvent [ ] { a, a };
+				Assert.AreEqual (0, WaitHandle.WaitAny (b), "#1");
+			}
+		}
+
+		// https://github.com/mono/mono/issues/9089
+		// Duplication is ok for WaitAny, exception for WaitAll.
+		// System.DuplicateWaitObjectException: Duplicate objects in argument.
+		[Test]
+		public static void DuplicateWaitAll ()
+		{
+			using (var a = new ManualResetEvent (true))
+			{
+				var b = new ManualResetEvent [ ] { a, a };
+				try {
+					WaitHandle.WaitAll (b);
+					Assert.Fail ("Expected System.DuplicateWaitObjectException");
+				} catch (DuplicateWaitObjectException) {
+				}
+			}
+		}
 	}
 }
-
-
