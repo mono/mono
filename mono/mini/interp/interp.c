@@ -89,6 +89,7 @@
 #if defined (__cplusplus) && defined (HOST_ANDROID)
 #include <cmath>
 using std::isfinite;
+using std::isinf;
 using std::isunordered;
 #endif
 
