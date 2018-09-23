@@ -3203,7 +3203,7 @@ needs_extra_arg (EmitContext *ctx, MonoMethod *method)
 	 * that every method which can be called indirectly need an extra arg since the caller
 	 * will call it through an ftnptr and will pass an extra arg.
 	 */
-	if (!ctx->cfg->llvm_only && ctx->emit_dummy_arg)
+	if (!ctx->cfg->llvm_only || !ctx->emit_dummy_arg)
 		return FALSE;
 	if (method->wrapper_type)
 		info = mono_marshal_get_wrapper_info (method);
