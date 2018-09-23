@@ -47,6 +47,11 @@
 #include <utime.h>
 #endif
 
+// For max_fd_count
+#if defined (_AIX)
+#include <procinfo.h>
+#endif
+
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/w32process.h>
 #include <mono/metadata/w32process-internals.h>
@@ -1594,6 +1599,43 @@ leave:
 	return managed;
 }
 
+/**
+ * Gets the biggest numbered file descriptor for the current process; failing
+ * that, the system's file descriptor limit. This is called by the fork child
+ * in process_create.
+ */
+static inline guint32
+max_fd_count (void)
+{
+#if defined (_AIX)
+	struct procentry64 pe;
+	pid_t p;
+	p = getpid (); // will be called by the child in process_create
+	// getprocs 3rd/4th arg is for getting the associated FDs for a proc,
+	// but all we need is just the biggest FD, which is in procentry64
+	if (getprocs64 (&pe, sizeof (pe), NULL, 0, &p, 1) != -1) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS,
+			   "%s: maximum returned fd in child is %u",
+			   __func__, pe.pi_maxofile);
+		return pe.pi_maxofile; // biggest + 1
+	}
+// TODO: Other platforms.
+//       * On Linux, we can just walk /proc/self/fd? Perhaps in that approach,
+//         you can also just enumerate and close FDs that way instead?
+//       * On macOS, use proc_pidinfo + PROC_PIDLISTFDS? See:
+//         http://blog.palominolabs.com/2012/06/19/getting-the-files-being-used-by-a-process-on-mac-os-x/
+//         (I have no idea how this plays out on i/watch/tvOS.)
+//       * On the BSDs, there's likely a sysctl for this.
+//       * On Solaris, there exists posix_spawn_file_actions_addclosefrom_np,
+//         but that assumes we're using posix_spawn; we aren't, as we do some
+//         complex stuff between fork and exec. There's likely a way to get
+//         the FD list/count though (maybe look at addclosefrom source in
+//         illumos?) or just walk /proc/pid/fd like Linux?
+#endif
+	// fallback to user/system limit if unsupported/error
+	return eg_getdtablesize ();
+}
+
 static gboolean
 process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	const gunichar2 *cwd, StartupHandles *startup_handles, MonoW32ProcessInfo *process_info)
@@ -1976,7 +2018,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		dup2 (err_fd, 2);
 
 		/* Close all file descriptors */
-		for (i = eg_getdtablesize() - 1; i > 2; i--)
+		for (i = max_fd_count () - 1; i > 2; i--)
 			close (i);
 
 #ifdef DEBUG_ENABLED
