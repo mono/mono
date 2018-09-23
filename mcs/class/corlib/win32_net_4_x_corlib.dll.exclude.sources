@@ -1,7 +1,5 @@
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Number.Unix.cs
-../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
 
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/Mono.SafePasswordHandle.Unix.cs

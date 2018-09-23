@@ -470,9 +470,9 @@ namespace MonoTests.System
 			list.Add (new Element (-1234d, "0.00", "-1234.00"));
 			list.Add (new Element (-1234d, "00.00", "-1234.00"));
 			list.Add (new Element (-1234d, "#,#", "-1,234"));
-			list.Add (new Element (-1234d, "#,,", ""));
-			list.Add (new Element (-1234d, "#,,,", ""));
-			list.Add (new Element (-1234d, "#,##0,,", "0"));
+			list.Add (new Element (-1234d, "#,,", "-"));
+			list.Add (new Element (-1234d, "#,,,", "-"));
+			list.Add (new Element (-1234d, "#,##0,,", "-0"));
 			list.Add (new Element (-1234d, "#0.##%", "-123400%"));
 			list.Add (new Element (-1234d, "0.###E+0", "-1.234E+3"));
 			list.Add (new Element (-1234d, "0.###E+000", "-1.234E+003"));

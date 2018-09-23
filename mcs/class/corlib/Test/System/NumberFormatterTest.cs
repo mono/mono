@@ -2716,8 +2716,8 @@ namespace MonoTests.System
 		public void Test11008 ()
 		{
 			Assert.AreEqual ("-EF", Double.MinValue.ToString ("EF", _nfi), "#01");
-			Assert.AreEqual ("E0F", Double.MinValue.ToString ("E0F", _nfi), "#02");
-			Assert.AreEqual ("E0xF", Double.MinValue.ToString ("E0xF", _nfi), "#03");
+			Assert.AreEqual ("-E0F", Double.MinValue.ToString ("E0F", _nfi), "#02");
+			Assert.AreEqual ("-E0xF", Double.MinValue.ToString ("E0xF", _nfi), "#03");
 		}
 
 		[Test]
@@ -2781,7 +2781,7 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("E+0", 0.0.ToString ("E+0", _nfi), "#01");
 			Assert.AreEqual ("E+0", Double.MaxValue.ToString ("E+0", _nfi), "#02");
-			Assert.AreEqual ("E+0", Double.MinValue.ToString ("E+0", _nfi), "#03");
+			Assert.AreEqual ("-E+0", Double.MinValue.ToString ("E+0", _nfi), "#03");
 		}
 
 		[Test]
@@ -2805,7 +2805,7 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("E0", 0.0.ToString ("E0,", _nfi), "#01");
 			Assert.AreEqual ("E0", Double.MaxValue.ToString ("E0,", _nfi), "#02");
-			Assert.AreEqual ("E0", Double.MinValue.ToString ("E0,", _nfi), "#03");
+			Assert.AreEqual ("-E0", Double.MinValue.ToString ("E0,", _nfi), "#03");
 		}
 
 		[Test]
@@ -2813,7 +2813,7 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("E0", 0.0.ToString ("E0.", _nfi), "#01");
 			Assert.AreEqual ("E0", Double.MaxValue.ToString ("E0.", _nfi), "#02");
-			Assert.AreEqual ("E0", Double.MinValue.ToString ("E0.", _nfi), "#03");
+			Assert.AreEqual ("-E0", Double.MinValue.ToString ("E0.", _nfi), "#03");
 		}
 
 		[Test]
@@ -2829,7 +2829,7 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("E09", 0.0.ToString ("E0.9", _nfi), "#01");
 			Assert.AreEqual ("E09", Double.MaxValue.ToString ("E0.9", _nfi), "#02");
-			Assert.AreEqual ("E09", Double.MinValue.ToString ("E0.9", _nfi), "#03");
+			Assert.AreEqual ("-E09", Double.MinValue.ToString ("E0.9", _nfi), "#03");
 		}
 
 		[Test]
@@ -3293,7 +3293,7 @@ namespace MonoTests.System
 		public void Test13000 ()
 		{
 			Assert.AreEqual ("0", 0.0.ToString ("G", _nfi), "#01");
-			Assert.AreEqual ("0", (-0.0).ToString ("G", _nfi), "#01.1");
+			Assert.AreEqual ("-0", (-0.0).ToString ("G", _nfi), "#01.1");
 			Assert.AreEqual ("0", 0.0.ToString ("g", _nfi), "#02");
 			Assert.AreEqual ("-1.79769313486232E+308", Double.MinValue.ToString ("G", _nfi), "#03");
 			Assert.AreEqual ("-1.79769313486232e+308", Double.MinValue.ToString ("g", _nfi), "#04");
