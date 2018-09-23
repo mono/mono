@@ -89,6 +89,7 @@
 #if defined (__cplusplus) && defined (HOST_ANDROID)
 #include <cmath>
 using std::isfinite;
+using std::isunordered;
 #endif
 
 static inline void
