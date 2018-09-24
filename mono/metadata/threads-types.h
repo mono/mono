@@ -509,6 +509,8 @@ typedef struct {
 		const char *guid;
 
 #ifndef MONO_PRIVATE_CRASHES
+		// We use ifdef to make it a compile-time error to store this 
+		// symbolicated string on release builds
 		char *name;
 #endif
 
@@ -527,6 +529,9 @@ typedef struct {
 } MonoStackHash;
 
 typedef struct {
+	gboolean done; // Needed because cond wait can have spurious wakeups
+	MonoSemType done_wait; // Readers are finished with this
+
 	gboolean is_managed;
 
 	char name [MONO_MAX_THREAD_NAME_LEN];
