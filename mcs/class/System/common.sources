@@ -896,3 +896,23 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
+
+#
+# System.Security sources
+#
+
+# System.Security.Cryptography.Pkcs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/Asn1V2.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/Asn1V2.Serializer.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/AsnReader.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/AsnWriter.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/Asn1/*.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/*.cs:Rfc3161TimestampToken.cs,Rfc3161TimestampRequest.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/*.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/*.cs
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Internal/Cryptography/Pal/AnyOS/*.cs
+
+../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/System/Security/Cryptography/DataProtectionScope.cs
+
+# System.Security.Cryptography.Xml
+../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs
