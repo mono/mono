@@ -120,7 +120,7 @@ declsec_20_write_value (GString *str, char type, const char *value)
 			g_string_append_printf (str, "0xFF800000"); /* negative infinity */
 		else if (inf == 1)
 			g_string_append_printf (str, "0x7F800000"); /* positive infinity */
-		else if (dis_isnan (val))
+		else if (mono_isnan (val))
 			g_string_append_printf (str, "0xFFC00000"); /* NaN */
 		else
 			g_string_append_printf (str, "%.8g", val);
@@ -135,7 +135,7 @@ declsec_20_write_value (GString *str, char type, const char *value)
 			g_string_append_printf (str, "0xFFF00000000000000"); /* negative infinity */
 		else if (inf == 1)
 			g_string_append_printf (str, "0x7FFF0000000000000"); /* positive infinity */
-		else if (isnan (val))
+		else if (mono_isnan (val))
 			g_string_append_printf (str, "0xFFF80000000000000"); /* NaN */
 		else
 			g_string_append_printf (str, "%.17g", val);

@@ -150,13 +150,3 @@ dis_isinf (double num)
 #error "Don't know how to implement isinf for this platform."
 #endif
 }
-
-int
-dis_isnan (double num)
-{
-#ifdef __MINGW32_VERSION
-return _isnan (num);
-#else
-return mono_isnan (num);
-#endif
-}

@@ -172,7 +172,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContainer *conta
 				fprintf (output, "(00 00 00 00 00 00 f0 ff)"); /* negative infinity */
 			else if (inf == 1)
 				fprintf (output, "(00 00 00 00 00 00 f0 7f)"); /* positive infinity */
-			else if (dis_isnan (r))
+			else if (mono_isnan (r))
 				fprintf (output, "(00 00 00 00 00 00 f8 ff)"); /* NaN */
 			else {
 				char *str = stringify_double (r);
@@ -281,7 +281,7 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContainer *conta
 				fprintf (output, "(00 00 80 ff)"); /* negative infinity */
 			else if (inf == 1)
 				fprintf (output, "(00 00 80 7f)"); /* positive infinity */
-			else if (dis_isnan (f))
+			else if (mono_isnan (f))
 				fprintf (output, "(00 00 c0 ff)"); /* NaN */
 			else {
 				char *str = stringify_double ((double) f);

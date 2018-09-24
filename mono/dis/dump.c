@@ -873,7 +873,7 @@ handle_enum:
 				g_string_append_printf (res, "(00 00 80 ff)"); /* negative infinity */
 			else if (inf == 1)
 				g_string_append_printf (res, "(00 00 80 7f)"); /* positive infinity */
-			else if (dis_isnan (val))
+			else if (mono_isnan (val))
 				g_string_append_printf (res, "(00 00 c0 ff)"); /* NaN */
 			else
 				g_string_append_printf (res, "%g", val);
@@ -890,7 +890,7 @@ handle_enum:
 				g_string_append_printf (res, "(00 00 00 00 00 00 f0 ff)"); /* negative infinity */
 			else if (inf == 1)
 				g_string_append_printf (res, "(00 00 00 00 00 00 f0 7f)"); /* positive infinity */
-			else if (isnan (val))
+			else if (mono_isnan (val))
 				g_string_append_printf (res, "(00 00 00 00 00 00 f8 ff)"); /* NaN */
 			else
 				g_string_append_printf (res, "%g", val);
