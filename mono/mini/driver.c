@@ -526,7 +526,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 
 #if HOST_WASM
 				//WASM AOT injects dummy args and we must call with exact signatures
-				int (*func_2)(int) = (void*)func;
+				int (*func_2)(int) = (int (*)(int))(void*)func;
 				result = func_2 (-1);
 #else
 				result = func ();
