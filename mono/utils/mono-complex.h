@@ -54,8 +54,8 @@ MonoComplex mono_complex_div (MonoComplex left, MonoComplex right)
 static inline
 MonoComplex mono_complex_sub(MonoComplex left, MonoComplex right)
 {
-	return mono_complex_make(creal(left) - mono_creal(right), mono_cimag(left)
-		- mono_cimag(right));
+	return mono_complex_make (mono_creal (left) - mono_creal (right), mono_cimag (left)
+		- mono_cimag (right));
 }
 
 #include "../../support/libm/complex.c"
