@@ -73,7 +73,7 @@ inline gboolean mono_trunc (double a)                   { return mono_trunc_doub
 
 // Direct macros for C.
 #ifdef HAVE_ISFINITE
-#define mono_isfinite(x)        (isfinite ((x))
+#define mono_isfinite(x)        (isfinite ((x)))
 #endif
 #ifdef HAVE_ISINF
 #define mono_isinf(x)           (isinf ((x)))
