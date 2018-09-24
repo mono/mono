@@ -854,7 +854,7 @@ hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble 
 		q1 = q0;
 	}
 
-	return mono_double_complex_scalar_div (mono_double_complex_make (q1 - q2 * cosine, (q2 * sine)), ((gdouble)sample_count));
+	return mono_complex_scalar_div (mono_complex_make (q1 - q2 * cosine, (q2 * sine)), ((gdouble)sample_count));
 }
 
 static gint16
@@ -932,10 +932,10 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 	hc->total_samples ++;
 
 	/* Set up defaults for our metrics. */
-	thread_wave_component = mono_double_complex_make(0, 0);
-	throughput_wave_component = mono_double_complex_make(0, 0);
+	thread_wave_component = mono_complex_make(0, 0);
+	throughput_wave_component = mono_complex_make(0, 0);
 	throughput_error_estimate = 0;
-	ratio = mono_double_complex_make(0, 0);
+	ratio = mono_complex_make(0, 0);
 	confidence = 0;
 
 	transition = TRANSITION_WARMUP;
@@ -973,17 +973,17 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 			/* Get the the three different frequency components of the throughput (scaled by average
 			 * throughput). Our "error" estimate (the amount of noise that might be present in the
 			 * frequency band we're really interested in) is the average of the adjacent bands. */
-			throughput_wave_component = mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, hc->wave_period), average_throughput);
-			throughput_error_estimate = mono_cabs (mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, adjacent_period_1), average_throughput));
+			throughput_wave_component = mono_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, hc->wave_period), average_throughput);
+			throughput_error_estimate = mono_cabs (mono_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, adjacent_period_1), average_throughput));
 
 			if (adjacent_period_2 <= sample_count) {
-				throughput_error_estimate = MAX (throughput_error_estimate, mono_cabs (mono_double_complex_scalar_div (hill_climbing_get_wave_component (
+				throughput_error_estimate = MAX (throughput_error_estimate, mono_cabs (mono_complex_scalar_div (hill_climbing_get_wave_component (
 					hc->samples, sample_count, adjacent_period_2), average_throughput)));
 			}
 
 			/* Do the same for the thread counts, so we have something to compare to. We don't
 			 * measure thread count noise, because there is none; these are exact measurements. */
-			thread_wave_component = mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->thread_counts, sample_count, hc->wave_period), average_thread_count);
+			thread_wave_component = mono_complex_scalar_div (hill_climbing_get_wave_component (hc->thread_counts, sample_count, hc->wave_period), average_thread_count);
 
 			/* Update our moving average of the throughput noise. We'll use this
 			 * later as feedback to determine the new size of the thread wave. */
@@ -997,10 +997,10 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 			if (mono_cabs (thread_wave_component) > 0) {
 				/* Adjust the throughput wave so it's centered around the target wave,
 				 * and then calculate the adjusted throughput/thread ratio. */
-				ratio = mono_double_complex_div (mono_double_complex_sub (throughput_wave_component, mono_double_complex_scalar_mul(thread_wave_component, hc->target_throughput_ratio)), thread_wave_component);
+				ratio = mono_complex_div (mono_complex_sub (throughput_wave_component, mono_complex_scalar_mul(thread_wave_component, hc->target_throughput_ratio)), thread_wave_component);
 				transition = TRANSITION_CLIMBING_MOVE;
 			} else {
-				ratio = mono_double_complex_make (0, 0);
+				ratio = mono_complex_make (0, 0);
 				transition = TRANSITION_STABILIZING;
 			}
 
