@@ -30,6 +30,7 @@ bcl-ios_CONFIGURE_FLAGS = \
        --with-monotouch_watch=yes
 
 bcl_CONFIGURE_FLAGS = \
+       $(if $(ENABLE_CXX),--enable-cxx) \
        $(if $(DISABLE_DESKTOP),--with-profile4_x=no,--with-profile4_x=yes) \
        $(if $(DISABLE_ANDROID),,--with-monodroid=yes) \
        $(if $(DISABLE_IOS),,$(bcl-ios_CONFIGURE_FLAGS)) \

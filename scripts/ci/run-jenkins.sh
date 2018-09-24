@@ -88,10 +88,6 @@ if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
 fi
 
-if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
-	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
-fi
-
 if [[ ${CI_TAGS} == *'win-'* ]];
 then
 	mkdir -p ~/.config/.mono/
@@ -102,6 +98,9 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
+	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
+		   echo "ENABLE_CXX=1" >> sdks/Make.config
+	   fi
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
 	   ${TESTCMD} --label=provision-llvm --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm36-llvm32 provision-llvm-llvm64
@@ -139,6 +138,9 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
         echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
+        fi
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
         # but doesn't get stuck when called via the shell, so let's just call it here now.
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
@@ -175,6 +177,9 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
+	       echo "ENABLE_CXX=1" >> sdks/Make.config
+	   fi
 	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-wasm-runtime package-wasm-cross
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build

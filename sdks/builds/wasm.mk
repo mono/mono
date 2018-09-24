@@ -5,6 +5,7 @@ WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
 WASM_RUNTIME_CONFIGURE_FLAGS = \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--cache-file=$(TOP)/sdks/builds/wasm-runtime.config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-runtime \
 	--disable-mcs-build \
@@ -71,6 +72,7 @@ ifeq ($(UNAME),Darwin)
 endif
 
 WASM_CROSS_CONFIGURE_FLAGS = \
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	--cache-file=$(TOP)/sdks/builds/wasm-cross.config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-cross \
 	--host=$(CROSS_HOST)	\
