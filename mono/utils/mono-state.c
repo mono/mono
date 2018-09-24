@@ -98,11 +98,13 @@ mono_native_state_add_frame (JsonWriter *writer, MonoFrameSummary *frame)
 		mono_json_writer_object_key(writer, "native_offset");
 		mono_json_writer_printf (writer, "\"0x%x\",\n", frame->managed_data.native_offset);
 
+#ifndef MONO_PRIVATE_CRASHES
 		if (frame->managed_data.name != NULL) {
 			mono_json_writer_indent (writer);
 			mono_json_writer_object_key(writer, "method_name");
 			mono_json_writer_printf (writer, "\"%s\",\n", frame->managed_data.name);
 		}
+#endif
 
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "il_offset");

@@ -6092,20 +6092,29 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 
 #define MAX_NUM_THREADS 128
 typedef struct {
-	MonoNativeThreadId thread_array [MAX_NUM_THREADS];
-	MonoThreadSummary *all_threads [MAX_NUM_THREADS];
+	gint32 has_owner; // state of this memory
+
+	MonoSemType update; // notify of addition of threads
+
 	int nthreads;
-	gint32 summary_state;
-	gboolean silent;
+	MonoNativeThreadId thread_array [MAX_NUM_THREADS]; // ids of threads we're dumping
+
+	int nthreads_attached; // Number of threads self-registered
+	MonoThreadSummary *all_threads [MAX_NUM_THREADS];
+
+	gboolean silent; // print to stdout
+
 } SummarizerGlobalState;
 
 static gboolean
 summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
 {
-	gint32 started_state = mono_atomic_cas_i32 (&state->summary_state, 1 /* set */, 0 /* compare */);
+	gint32 started_state = mono_atomic_cas_i32 (&state->has_owner, 1 /* set */, 0 /* compare */);
 	gboolean not_started = started_state == 0;
-	if (not_started)
+	if (not_started) {
 		state->nthreads = collect_thread_ids (state->thread_array, MAX_NUM_THREADS);
+		mono_os_sem_init (&state->update, 0);
+	}
 
 	for (int i = 0; i < state->nthreads; i++) {
 		if (state->thread_array [i] == current) {
@@ -6141,11 +6150,57 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 	}
 }
 
-static void
+// Returns true when there are shared global references to "this_thread"
+static gboolean
 summarizer_post_dump (SummarizerGlobalState *state, MonoThreadSummary *this_thread, int current_idx)
 {
 	mono_memory_barrier ();
-	mono_atomic_store_ptr ((volatile gpointer *)&state->all_threads [current_idx], this_thread);
+
+	gpointer old = mono_atomic_cas_ptr ((volatile gpointer *)&state->all_threads [current_idx], this_thread, NULL);
+
+	if (old == GINT_TO_POINTER (-1)) {
+		MOSTLY_ASYNC_SAFE_PRINTF ("Trying to register response after dumping period ended");
+		return FALSE;
+	} else if (old != NULL) {
+		MOSTLY_ASYNC_SAFE_PRINTF ("Thread dump raced for thread slot.");
+		return FALSE;
+	} 
+
+	// We added our pointer
+	gint32 count = mono_atomic_inc_i32 ((volatile gint32 *) &state->nthreads_attached);
+	if (count == state->nthreads)
+		mono_os_sem_post (&state->update);
+
+	return TRUE;
+}
+
+// A lockless spinwait with a timeout
+// Used in environments where locks are unsafe
+//
+// If set_pos is true, we wait until the expected number of threads have
+// responded and then count that the expected number are set. If it is not true,
+// then we wait for them to be unset.
+static void
+summary_timedwait (SummarizerGlobalState *state, int timeout_seconds)
+{
+	gint64 milliseconds_in_second = 1000;
+	gint64 timeout_total = milliseconds_in_second * timeout_seconds;
+
+	gint64 end = mono_msec_ticks () + timeout_total;
+
+	while (TRUE) {
+		if (mono_atomic_load_i32 ((volatile gint32 *) &state->nthreads_attached) == state->nthreads)
+			break;
+
+		gint64 now = mono_msec_ticks ();
+		gint64 remaining = end - now;
+		if (remaining <= 0)
+			break;
+
+		mono_os_sem_timedwait (&state->update, remaining, MONO_SEM_FLAGS_NONE);
+	}
+
+	return;
 }
 
 static void
@@ -6156,34 +6211,45 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out)
 
 	mono_summarize_native_state_begin ();
 	for (int i=0; i < state->nthreads; i++) {
-		MonoThreadSummary *thread = state->all_threads [i];
+		gpointer old_value = NULL;
+		while (TRUE) {
+			// Lock it out with sentinel and get value set before that
+			gpointer new_old_value = mono_atomic_cas_ptr ((volatile gpointer *) &state->all_threads [i], GINT_TO_POINTER(-1), old_value);
+
+			if (new_old_value != old_value)
+				old_value = new_old_value;
+			else
+				break;
+		}
+
+		MonoThreadSummary *thread = (MonoThreadSummary *) old_value;
 		if (!thread)
 			continue;
 
 		mono_summarize_native_state_add_thread (thread, thread->ctx);
+
+		// Set non-shared state to notify the waiting thread to clean up
+		// without having to keep our shared state alive
+		mono_atomic_store_i32 (&thread->done, 0x1);
+		mono_os_sem_post (&thread->done_wait);
 	}
 	*out = mono_summarize_native_state_end ();
 
-	// Clean up all of our state
-	memset (state, 0, sizeof (*state));
-	mono_atomic_store_i32 ((volatile gint32 *)&state->summary_state, 0);
-	mono_memory_barrier ();
+	mono_os_sem_destroy (&state->update);
 
-	// Wait for other threads to continue
-	sleep (2);
+	memset (state, 0, sizeof (*state));
+	mono_atomic_store_i32 ((volatile gint32 *)&state->has_owner, 0);
 }
 
 static void
-summarizer_state_wait (SummarizerGlobalState *state)
+summarizer_state_wait (MonoThreadSummary *thread)
 {
-	// We saw this was set with a synchronized read
-	// Loop until it's unset
-	guint32 not_done = 1;
-	while (not_done) {
-		sleep (1);
-		mono_memory_barrier ();
-		not_done = mono_atomic_load_i32 (&state->summary_state);
-	}
+	gint64 milliseconds_in_second = 1000;
+
+	// cond_wait can spuriously wake up, so we need to check
+	// done
+	while (!mono_atomic_load_i32 (&thread->done))
+		mono_os_sem_timedwait (&thread->done_wait, milliseconds_in_second, MONO_SEM_FLAGS_NONE);
 }
 
 gboolean
@@ -6201,9 +6267,17 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	}
 
 	MonoThreadSummary this_thread;
+
 	if (mono_threads_summarize_one (&this_thread, ctx)) {
+		// Init the synchronization between the controlling thread and the 
+		// providing thread
+		mono_os_sem_init (&this_thread.done_wait, 0);
+
 		// Store a reference to our stack memory into global state
-		summarizer_post_dump (&state, &this_thread, current_idx);
+		gboolean success = summarizer_post_dump (&state, &this_thread, current_idx);
+		if (!success && !state.silent)
+			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
+
 		// FIXME: How many threads should be counted?
 		if (hashes)
 			*hashes = this_thread.hashes;
@@ -6218,8 +6292,10 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	if (this_thread_controls) {
 		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
-		// Wait 2 seconds for all of the other threads to catch up
-		sleep (2);
+
+		// Wait up to 2 seconds for all of the other threads to catch up
+		summary_timedwait (&state, 2);
+
 		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
@@ -6228,7 +6304,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	} else {
 		// Wait here, keeping our stack memory alive
 		// for the dumper
-		summarizer_state_wait (&state);
+		summarizer_state_wait (&this_thread);
 	}
 
 	return TRUE;
@@ -6256,11 +6332,10 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	// We should simply return so we can die cleanly.
 	//
 	// critical_first should be set only from a handler that expects itself to be the only
-	// entry point, where the runtime already being dumping means we can't dump.
+	// entry point, where the runtime already being dumping means we should just give up
 
 	gboolean success = FALSE;
 
-	// We use exponential backoff
 	while (TRUE) {
 		gint64 next_request_id = mono_atomic_load_i64 ((volatile gint64 *) &request_available_to_run);
 
@@ -6275,6 +6350,8 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 			MOSTLY_ASYNC_SAFE_PRINTF ("Attempted to dump for critical failure when already in dump. Error reporting crashed?");
 			break;
 		} else {
+			if (!silent)
+				MOSTLY_ASYNC_SAFE_PRINTF ("Waiting for in-flight dump to complete.");
 			sleep (2);
 		}
 	}
