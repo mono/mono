@@ -10,19 +10,6 @@
 #error This file should be compiled as C.
 #endif
 
-G_EXTERN_C gboolean mono_isfinite_float (float);
-G_EXTERN_C gboolean mono_isfinite_double (double);
-G_EXTERN_C gboolean mono_isinf_float (float);
-G_EXTERN_C gboolean mono_isinf_double (double);
-G_EXTERN_C gboolean mono_isnan_float (float);
-G_EXTERN_C gboolean mono_isnan_double (double);
-G_EXTERN_C gboolean mono_isnormal_float (float);
-G_EXTERN_C gboolean mono_isnormal_double (double);
-G_EXTERN_C gboolean mono_isunordered_float (float, float);
-G_EXTERN_C gboolean mono_isunordered_double (double, double);
-G_EXTERN_C gboolean mono_trunc_float (float);
-G_EXTERN_C gboolean mono_trunc_double (double);
-
 #ifdef HAVE_ISFINITE
 gboolean mono_isfinite_float (float a)			{ return isfinite (a); }
 gboolean mono_isfinite_double (double a)		{ return isfinite (a); }
