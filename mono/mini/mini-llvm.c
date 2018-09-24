@@ -36,11 +36,6 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
-#if defined (__cplusplus) && defined (TARGET_WASM)
-#include <cmath>
-using std::isnan;
-#endif
-
 #ifndef DISABLE_JIT
 
 #if  defined(__MINGW32__) || defined(_MSC_VER)

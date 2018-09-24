@@ -74,35 +74,6 @@
 #include <mono/mini/mini-arm.h>
 #endif
 
-/* Mingw 2.1 doesnt need this any more, but leave it in for now for older versions */
-#ifdef _WIN32
-#define isnan _isnan
-#endif
-
-// This should be portable to all C++11 implementations. It is restricted like this to be a smaller change.
-#if defined (__cplusplus) && defined (HOST_ANDROID)
-#include <cmath>
-using std::isfinite;
-using std::isunordered;
-
-// Some Android versions have global isinf
-// and using std::isinf errors, some do not.
-inline bool mono_isinf (float a)
-{
-	return std::isinf (a);
-}
-
-inline bool mono_isinf (double a)
-{
-	return std::isinf (a);
-}
-
-#else
-
-#define mono_isinf(x) isinf (x)
-
-#endif
-
 static inline void
 init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
 {
