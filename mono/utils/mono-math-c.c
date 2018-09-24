@@ -6,7 +6,7 @@
 #define MONO_MATH_DECLARE_ALL 1
 #include "mono-math.h"
 
-#ifdef __cplusplus
+#if defined (__cplusplus) && !defined (_MSC_VER)
 #error This file should be compiled as C.
 #endif
 
