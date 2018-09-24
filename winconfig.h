@@ -107,9 +107,6 @@
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
 
-/* Has the 'aintl' function */
-/* #undef HAVE_AINTL */
-
 /* Supports C99 array initialization */
 /* #undef HAVE_ARRAY_ELEM_INIT */
 
@@ -578,9 +575,6 @@
 
 /* Have tm_gmtoff */
 /* #undef HAVE_TM_GMTOFF */
-
-/* Define to 1 if you have the `trunc' function. */
-#define HAVE_TRUNC 1
 
 /* Define to 1 if you have the `ttyname_r' function. */
 /* #undef HAVE_TTYNAME_R */

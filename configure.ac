@@ -3635,21 +3635,6 @@ AC_TRY_COMPILE([#include <sys/socket.h>], [
 	AC_MSG_RESULT(no)
 ])
 
-AC_CHECK_FUNCS(trunc, , AC_MSG_CHECKING(for trunc in math.h)
-	# Simply calling trunc (0.0) is no good since gcc will optimize the call away
-	AC_TRY_LINK([#include <math.h>], 
-	[ static void *p = &trunc; ],
-	[
-		AC_DEFINE(HAVE_TRUNC) 
-		AC_MSG_RESULT(yes)
-		ac_cv_trunc=yes
-	],
-	AC_MSG_RESULT(no)))
-
-if test "x$ac_cv_truncl" != "xyes"; then
-   AC_CHECK_LIB(sunmath, aintl, [ AC_DEFINE(HAVE_AINTL, 1, [Has the 'aintl' function]) LIBS="$LIBS -lsunmath"])
-fi
-
 AC_CHECK_FUNCS(execvp)
 
 dnl ****************************

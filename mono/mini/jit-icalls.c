@@ -999,10 +999,6 @@ mono_fconv_u4 (double v)
 	return (guint32)v;
 }
 
-#ifndef HAVE_TRUNC
-#error C99 trunc is required.
-#endif
-
 gint64
 mono_fconv_ovf_i8 (double v)
 {
