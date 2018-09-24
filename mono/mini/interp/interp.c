@@ -25,6 +25,7 @@
 #include <locale.h>
 
 #include <mono/utils/gc_wrapper.h>
+#include <mono/utils/mono-math.h>
 
 #ifdef HAVE_ALLOCA_H
 #   include <alloca.h>
@@ -76,12 +77,6 @@
 /* Mingw 2.1 doesnt need this any more, but leave it in for now for older versions */
 #ifdef _WIN32
 #define isnan _isnan
-#define finite _finite
-#endif
-#ifndef HAVE_FINITE
-#ifdef HAVE_ISFINITE
-#define finite isfinite
-#endif
 #endif
 
 // This should be portable to all C++11 implementations. It is restricted like this to be a smaller change.
@@ -3224,7 +3219,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, ==)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8_S)
-			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_I4)
 			BRELOP(i, ==)
@@ -3233,7 +3228,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, ==)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8)
-			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_I4_S)
 			BRELOP_S(i, >=)
@@ -3242,7 +3237,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, >=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8_S)
-			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_I4)
 			BRELOP(i, >=)
@@ -3251,7 +3246,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, >=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8)
-			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_I4_S)
 			BRELOP_S(i, >)
@@ -3260,7 +3255,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, >)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8_S)
-			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_I4)
 			BRELOP(i, >)
@@ -3269,7 +3264,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, >)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8)
-			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_I4_S)
 			BRELOP_S(i, <)
@@ -3278,7 +3273,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, <)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8_S)
-			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_I4)
 			BRELOP(i, <)
@@ -3287,7 +3282,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, <)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8)
-			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_I4_S)
 			BRELOP_S(i, <=)
@@ -3296,7 +3291,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, <=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8_S)
-			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_I4)
 			BRELOP(i, <=)
@@ -3305,7 +3300,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, <=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8)
-			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_I4_S)
 			BRELOP_S(i, !=)
@@ -3314,7 +3309,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S(l, !=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8_S)
-			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_I4)
 			BRELOP(i, !=)
@@ -3323,7 +3318,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP(l, !=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8)
-			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
 			MINT_IN_BREAK;
 
 #define BRELOP_S_CAST(datamem, op, type) \
@@ -3347,7 +3342,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8_S)
-			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_I4)
 			BRELOP_CAST(i, >=, guint32);
@@ -3356,7 +3351,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8)
-			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_I4_S)
 			BRELOP_S_CAST(i, >, guint32);
@@ -3365,7 +3360,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S_CAST(l, >, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8_S)
-			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_I4)
 			BRELOP_CAST(i, >, guint32);
@@ -3374,7 +3369,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_CAST(l, >, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8)
-			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_I4_S)
 			BRELOP_S_CAST(i, <=, guint32);
@@ -3383,7 +3378,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S_CAST(l, <=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8_S)
-			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_I4)
 			BRELOP_CAST(i, <=, guint32);
@@ -3392,7 +3387,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_CAST(l, <=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8)
-			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_I4_S)
 			BRELOP_S_CAST(i, <, guint32);
@@ -3401,7 +3396,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_S_CAST(l, <, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8_S)
-			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_I4)
 			BRELOP_CAST(i, <, guint32);
@@ -3410,7 +3405,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			BRELOP_CAST(l, <, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8)
-			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SWITCH) {
 			guint32 n;
@@ -4881,7 +4876,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_UNBOX_ANY) 
 #endif
 		MINT_IN_CASE(MINT_CKFINITE)
-			if (!isfinite(sp [-1].data.f))
+			if (!mono_isfinite (sp [-1].data.f))
 				THROW_EX (mono_get_exception_arithmetic (), ip);
 			++ip;
 			MINT_IN_BREAK;
@@ -5210,7 +5205,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 
 #define RELOP_FP(datamem, op, noorder) \
 	--sp; \
-	if (isunordered (sp [-1].data.datamem, sp [0].data.datamem)) \
+	if (mono_isunordered (sp [-1].data.datamem, sp [0].data.datamem)) \
 		sp [-1].data.i = noorder; \
 	else \
 		sp [-1].data.i = sp [-1].data.datamem op sp [0].data.datamem; \

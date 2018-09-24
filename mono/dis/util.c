@@ -14,6 +14,7 @@
 #include <math.h>
 #include "util.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-math.h"
 
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>
@@ -131,7 +132,7 @@ int
 dis_isinf (double num)
 {
 #ifdef HAVE_ISINF
-	return isinf (num);
+	return mono_isinf (num);
 #elif defined(HAVE_IEEEFP_H)
 	fpclass_t klass;
 
@@ -156,7 +157,6 @@ dis_isnan (double num)
 #ifdef __MINGW32_VERSION
 return _isnan (num);
 #else
-return isnan (num);
+return mono_isnan (num);
 #endif
 }
-

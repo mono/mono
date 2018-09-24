@@ -26,6 +26,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/unlocked.h>
+#include <mono/utils/mono-math.h>
 
 #ifdef ENABLE_LLVM
 #include "mini-llvm-cpp.h"
@@ -667,10 +668,10 @@ mono_fclt_un (double a, double b)
 }
 
 gboolean
-mono_isfinite (double a)
+mono_jit_icall_isfinite (double a)
 {
 #ifdef HAVE_ISFINITE
-	return isfinite (a);
+	return mono_isfinite (a);
 #else
 	g_assert_not_reached ();
 	return TRUE;
@@ -991,7 +992,7 @@ mono_fconv_u4 (double v)
 {
 	/* MS.NET behaves like this for some reason */
 #ifdef HAVE_ISINF
-	if (isinf (v) || isnan (v))
+	if (mono_isinf (v) || mono_isnan (v))
 		return 0;
 #endif
 
@@ -999,22 +1000,15 @@ mono_fconv_u4 (double v)
 }
 
 #ifndef HAVE_TRUNC
-/* Solaris doesn't have trunc */
-#ifdef HAVE_AINTL
-extern long double aintl (long double);
-#define trunc aintl
-#else
-/* FIXME: This means we will never throw overflow exceptions */
-#define trunc(v) res
+#error C99 trunc is required.
 #endif
-#endif /* HAVE_TRUNC */
 
 gint64
 mono_fconv_ovf_i8 (double v)
 {
 	const gint64 res = (gint64)v;
 
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1038,7 +1032,7 @@ mono_fconv_ovf_u8 (double v)
  * To work around this issue we test for value boundaries instead. 
  */
 #if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
-	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
+	if (mono_isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1047,7 +1041,7 @@ mono_fconv_ovf_u8 (double v)
 	res = (guint64)v;
 #else
 	res = (guint64)v;
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1070,7 +1064,7 @@ mono_rconv_ovf_i8 (float v)
 {
 	const gint64 res = (gint64)v;
 
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1085,7 +1079,7 @@ mono_rconv_ovf_u8 (float v)
 	guint64 res;
 
 	res = (guint64)v;
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1963,7 +1957,7 @@ mono_get_method_object (MonoMethod *method)
 double
 mono_ckfinite (double d)
 {
-	if (isinf (d) || isnan (d))
+	if (mono_isinf (d) || mono_isnan (d))
 		mono_set_pending_exception (mono_get_exception_arithmetic ());
 	return d;
 }

@@ -22,6 +22,7 @@
 #include <mono/metadata/class.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/utils/mono-math.h>
 
 extern gboolean substitute_with_mscorlib_p;
 
@@ -2357,7 +2358,7 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 
 		/* Crazy solaris systems doesn't have isnormal */
 #ifdef HAVE_ISFINITE
-		normal = isfinite (r);
+		normal = mono_isfinite (r);
 #else
 		normal = !dis_isinf (r) && !dis_isnan (r);
 #endif
@@ -2377,9 +2378,9 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 
 		/* Crazy solaris systems doesn't have isnormal */
 #ifdef HAVE_ISFINITE
-		normal = isfinite (r);
+		normal = mono_isfinite (r);
 #else
-		normal = isnormal (r);
+		normal = mono_isnormal (r);
 #endif
 		if (!normal) {
 			guint32 low, high;
