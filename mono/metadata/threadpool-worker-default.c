@@ -830,7 +830,7 @@ hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTra
 	}
 }
 
-static double_complex
+static MonoComplex
 hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble period)
 {
 	ThreadPoolHillClimbing *hc;
@@ -871,9 +871,9 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 	gint sample_count;
 	gint new_thread_wave_magnitude;
 	gint new_thread_count;
-	double_complex thread_wave_component;
-	double_complex throughput_wave_component;
-	double_complex ratio;
+	MonoComplex thread_wave_component;
+	MonoComplex throughput_wave_component;
+	MonoComplex ratio;
 
 	g_assert (adjustment_interval);
 

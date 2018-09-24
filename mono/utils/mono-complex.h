@@ -14,45 +14,45 @@
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
 
-typedef struct double_complex {
+typedef struct MonoComplex {
 	double real;
 	double imag;
-} double_complex;
+} MonoComplex;
 
 #define mono_creal(c) ((c).real)
 #define mono_cimag(c) ((c).imag)
 
 static inline
-double_complex mono_complex_make(gdouble re, gdouble im)
+MonoComplex mono_complex_make (double re, double im)
 {
-	double_complex const a = { re, im };
+	MonoComplex const a = { re, im };
 	return a;
 }
 
 static inline
-double_complex mono_complex_scalar_div(double_complex c, gdouble s)
+MonoComplex mono_complex_scalar_div (MonoComplex c, double s)
 {
-	return mono_complex_make(creal(c) / s, mono_cimag(c) / s);
+	return mono_complex_make (mono_creal (c) / s, mono_cimag (c) / s);
 }
 
 static inline
-double_complex mono_complex_scalar_mul(double_complex c, gdouble s)
+MonoComplex mono_complex_scalar_mul (MonoComplex c, double s)
 {
-	return mono_complex_make(creal(c) * s, mono_cimag(c) * s);
+	return mono_complex_make (mono_creal (c) * s, mono_cimag (c) * s);
 }
 
 static inline
-double_complex mono_complex_div(double_complex left, double_complex right)
+MonoComplex mono_complex_div (MonoComplex left, MonoComplex right)
 {
-	double denom = mono_creal(right) * mono_creal(right) + mono_cimag(right) * mono_cimag(right);
+	double denom = mono_creal (right) * mono_creal (right) + mono_cimag (right) * mono_cimag (right);
 
 	return mono_complex_make(
-		(mono_creal(left) * mono_creal(right) + mono_cimag(left) * mono_cimag(right)) / denom,
-		(-mono_creal(left) * mono_cimag(right) + mono_cimag(left) * mono_creal(right)) / denom);
+		(mono_creal (left) * mono_creal (right) + mono_cimag (left) * mono_cimag (right)) / denom,
+		(-mono_creal (left) * mono_cimag (right) + mono_cimag (left) * mono_creal (right)) / denom);
 }
 
 static inline
-double_complex mono_complex_sub(double_complex left, double_complex right)
+MonoComplex mono_complex_sub(MonoComplex left, MonoComplex right)
 {
 	return mono_complex_make(creal(left) - mono_creal(right), mono_cimag(left)
 		- mono_cimag(right));
