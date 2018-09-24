@@ -21,6 +21,7 @@
 #include "mono/metadata/opcodes.h"
 #include "mono/metadata/class-internals.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-math.h"
 
 #define CODE_INDENT g_assert (indent_level < 512); \
 	indent[indent_level*2] = ' ';	\

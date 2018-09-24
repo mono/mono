@@ -16,6 +16,7 @@
 #include "mono/metadata/metadata.h"
 #include "mono/metadata/mono-endian.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-math.h"
 
 #include "declsec.h"
 #include "util.h"

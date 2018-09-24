@@ -21,6 +21,7 @@
 #include "mono/metadata/class-internals.h"
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error-internals.h"
+#include "mono/utils/mono-math.h"
 
 void
 dump_table_assembly (MonoImage *m)
