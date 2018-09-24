@@ -18,6 +18,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/abi-details.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-math.h>
 
 #ifndef DISABLE_JIT
 

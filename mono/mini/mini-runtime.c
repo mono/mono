@@ -70,6 +70,7 @@
 #include <mono/utils/mono-proclib.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
+#include <mono/utils/mono-math.h>
 
 #include "mini.h"
 #include "seq-points.h"
