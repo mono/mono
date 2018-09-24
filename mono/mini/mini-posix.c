@@ -1026,6 +1026,12 @@ dump_native_stacktrace (const char *signal, void *ctx)
 				// Do before forking
 				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE))
 					g_assert_not_reached ();
+
+				// Wait for the other threads to clean up and exit their handlers
+				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
+				// while dumping. 
+				mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
+				sleep (1);
 			}
 
 			// We want our crash, and don't have telemetry
