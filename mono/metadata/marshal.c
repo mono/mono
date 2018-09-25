@@ -1501,7 +1501,7 @@ mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 		return TRUE;
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_CLASS:
-		if (t->data.klass == mono_defaults.stringbuilder_class) {
+		if (t->data.klass == mono_class_try_get_stringbuilder_class ()) {
 			gboolean need_free;
 			mono_marshal_get_ptr_to_stringbuilder_conv (piinfo, spec, &need_free);
 			return need_free;
