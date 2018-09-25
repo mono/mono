@@ -2573,7 +2573,7 @@ typedef struct {
 
 static SgenGcRequest gc_request;
 
-#include <emscripten.h>
+#include <emscripten/emscripten.h>
 
 static void
 gc_pump_callback (void)
