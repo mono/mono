@@ -4659,7 +4659,7 @@ register_icalls (void)
 		register_icall (mono_fload_r4, "mono_fload_r4", "double ptr", FALSE);
 		register_icall (mono_fstore_r4, "mono_fstore_r4", "void double ptr", FALSE);
 		register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", "uint32 double", FALSE);
-		register_icall (mono_isfinite_double, "mono_isfinite_double", "uint32 double", FALSE);
+		register_icall (mono_isfinite_double, "mono_isfinite_double", "int32 double", FALSE);
 	}
 #endif
 	register_icall (mono_ckfinite, "mono_ckfinite", "double double", FALSE);
