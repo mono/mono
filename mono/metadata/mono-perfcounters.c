@@ -51,7 +51,7 @@
 #include "utils/unlocked.h"
 
 /* map of CounterSample.cs */
-struct _MonoCounterSample {
+struct MonoCounterSample {
 	gint64 rawValue;
 	gint64 baseValue;
 	gint64 counterFrequency;
@@ -303,13 +303,13 @@ predef_counters [] = {
  * To easily handle the differences we create a vtable for each class that contains the
  * function pointers with the actual implementation to access the counters.
  */
-typedef struct _ImplVtable ImplVtable;
+typedef struct ImplVtable ImplVtable;
 
 typedef MonoBoolean (*SampleFunc) (ImplVtable *vtable, MonoBoolean only_value, MonoCounterSample* sample);
 typedef gint64 (*UpdateFunc) (ImplVtable *vtable, MonoBoolean do_incr, gint64 value);
 typedef void (*CleanupFunc) (ImplVtable *vtable);
 
-struct _ImplVtable {
+struct ImplVtable {
 	void *arg;
 	SampleFunc sample;
 	UpdateFunc update;

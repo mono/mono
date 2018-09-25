@@ -6,7 +6,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-compiler.h>
 
-struct _MonoDebugMethodInfo {
+struct MonoDebugMethodInfo {
 	MonoMethod *method;
 	MonoDebugHandle *handle;
 	uint32_t index;
@@ -31,7 +31,7 @@ typedef struct {
 /*
  * Information about local variables retrieved from a symbol file.
  */
-struct _MonoDebugLocalsInfo {
+struct MonoDebugLocalsInfo {
 	int num_locals;
 	MonoDebugLocalVar *locals;
 	int num_blocks;
@@ -41,7 +41,7 @@ struct _MonoDebugLocalsInfo {
 /*
 * Information about method await yield and resume offsets retrieved from a symbol file.
 */
-struct _MonoDebugMethodAsyncInfo {
+struct MonoDebugMethodAsyncInfo {
 	uint32_t catch_handler_offset;
 	int num_awaits;
 	uint32_t *yield_offsets;
@@ -49,7 +49,7 @@ struct _MonoDebugMethodAsyncInfo {
 	uint32_t *move_next_method_token;
 };
 
-struct _MonoDebugLineNumberEntry {
+struct MonoDebugLineNumberEntry {
 	uint32_t il_offset;
 	uint32_t native_offset;
 };

@@ -96,8 +96,8 @@ typedef union {
 	} data;
 } Anchor;
 
-typedef struct _MonoLockFreeAllocDescriptor Descriptor;
-struct _MonoLockFreeAllocDescriptor {
+typedef struct MonoLockFreeAllocDescriptor Descriptor;
+struct MonoLockFreeAllocDescriptor {
 	MonoLockFreeQueueNode node;
 	MonoLockFreeAllocator *heap;
 	volatile Anchor anchor;

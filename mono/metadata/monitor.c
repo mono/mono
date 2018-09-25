@@ -72,9 +72,9 @@ enum {
  */
 
 
-typedef struct _MonitorArray MonitorArray;
+typedef struct MonitorArray MonitorArray;
 
-struct _MonitorArray {
+struct MonitorArray {
 	MonitorArray *next;
 	int num_monitors;
 	MonoThreadsSync monitors [MONO_ZERO_LEN_ARRAY];

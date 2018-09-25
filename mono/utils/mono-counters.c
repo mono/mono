@@ -16,7 +16,7 @@
 #include <unistd.h>
 #endif
 
-struct _MonoCounter {
+struct MonoCounter {
 	MonoCounter *next;
 	const char *name;
 	void *addr;

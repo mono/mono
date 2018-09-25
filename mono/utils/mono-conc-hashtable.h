@@ -16,7 +16,7 @@
 #include <mono/utils/mono-os-mutex.h>
 #include <glib.h>
 
-typedef struct _MonoConcurrentHashTable MonoConcurrentHashTable;
+typedef struct MonoConcurrentHashTable MonoConcurrentHashTable;
 
 MONO_API MonoConcurrentHashTable* mono_conc_hashtable_new (GHashFunc hash_func, GEqualFunc key_equal_func);
 MONO_API MonoConcurrentHashTable* mono_conc_hashtable_new_full (GHashFunc hash_func, GEqualFunc key_equal_func, GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func);

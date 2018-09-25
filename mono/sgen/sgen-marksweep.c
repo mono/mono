@@ -97,8 +97,8 @@ enum {
 	BLOCK_STATE_SWEEPING
 };
 
-typedef struct _MSBlockInfo MSBlockInfo;
-struct _MSBlockInfo {
+typedef struct MSBlockInfo MSBlockInfo;
+struct MSBlockInfo {
 	guint16 obj_size;
 	/*
 	 * FIXME: Do we even need this? It's only used during sweep and might be worth

@@ -123,8 +123,8 @@ static gint32 sync_points_ctr,
 
 // Pending data to be written to the log, for a single thread.
 // Threads periodically flush their own LogBuffers by calling safe_send
-typedef struct _LogBuffer LogBuffer;
-struct _LogBuffer {
+typedef struct LogBuffer LogBuffer;
+struct LogBuffer {
 	// Next (older) LogBuffer in processing queue
 	LogBuffer *next;
 
@@ -247,8 +247,8 @@ process_id (void)
 
 #define EXIT_LOG EXIT_LOG_EXPLICIT (DO_SEND)
 
-typedef struct _BinaryObject BinaryObject;
-struct _BinaryObject {
+typedef struct BinaryObject BinaryObject;
+struct BinaryObject {
 	BinaryObject *next;
 	void *addr;
 	char *name;
@@ -264,8 +264,8 @@ typedef struct MonoCounterAgent {
 	struct MonoCounterAgent *next;
 } MonoCounterAgent;
 
-typedef struct _PerfCounterAgent PerfCounterAgent;
-struct _PerfCounterAgent {
+typedef struct PerfCounterAgent PerfCounterAgent;
+struct PerfCounterAgent {
 	PerfCounterAgent *next;
 	guint32 index;
 	char *category_name;
@@ -276,7 +276,7 @@ struct _PerfCounterAgent {
 	gboolean deleted;
 };
 
-struct _MonoProfiler {
+struct MonoProfiler {
 	MonoProfilerHandle handle;
 
 	FILE* file;
@@ -351,7 +351,7 @@ struct _MonoProfiler {
 };
 
 static ProfilerConfig log_config;
-static struct _MonoProfiler log_profiler;
+static struct MonoProfiler log_profiler;
 
 typedef struct {
 	MonoLockFreeQueueNode node;

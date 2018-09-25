@@ -1018,10 +1018,10 @@ typedef enum {
 	MONO_RGCTX_INFO_DELEGATE_TRAMP_INFO           = 32,
 } MonoRgctxInfoType;
 
-typedef struct _MonoRuntimeGenericContextInfoTemplate {
+typedef struct MonoRuntimeGenericContextInfoTemplate {
 	MonoRgctxInfoType info_type;
 	gpointer data;
-	struct _MonoRuntimeGenericContextInfoTemplate *next;
+	struct MonoRuntimeGenericContextInfoTemplate *next;
 } MonoRuntimeGenericContextInfoTemplate;
 
 typedef struct {

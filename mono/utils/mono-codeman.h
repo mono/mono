@@ -7,7 +7,7 @@
 
 #include <mono/utils/mono-publib.h>
 
-typedef struct _MonoCodeManager MonoCodeManager;
+typedef struct MonoCodeManager MonoCodeManager;
 
 typedef struct {
 	void (*chunk_new) (void *chunk, int size);

@@ -824,12 +824,12 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 
 
 #ifdef MONO_JIT_INFO_TABLE_TEST
-typedef struct _JitInfoData
+typedef struct JitInfoData
 {
 	guint start;
 	guint length;
 	MonoJitInfo *ji;
-	struct _JitInfoData *next;
+	struct JitInfoData *next;
 } JitInfoData;
 
 typedef struct

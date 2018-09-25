@@ -31,7 +31,7 @@
 
 #include <mono/utils/lock-free-array-queue.h>
 
-struct _MonoLockFreeArrayChunk {
+struct MonoLockFreeArrayChunk {
 	MonoLockFreeArrayChunk *next;
 	gint32 num_entries;
 	char entries [MONO_ZERO_LEN_ARRAY];

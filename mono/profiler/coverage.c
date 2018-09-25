@@ -84,7 +84,7 @@ static gint32 coverage_methods_ctr,
               coverage_classes_ctr,
               coverage_assemblies_ctr;
 
-struct _MonoProfiler {
+struct MonoProfiler {
 	MonoProfilerHandle handle;
 
 	FILE* file;

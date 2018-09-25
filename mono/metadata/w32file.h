@@ -67,7 +67,7 @@ typedef enum {
 } MonoSeekOrigin;
 
 /* This is a copy of System.IO.MonoIOStat */
-typedef struct _MonoIOStat {
+typedef struct MonoIOStat {
 	gint32 attributes;
 	gint64 length;
 	gint64 creation_time;
@@ -94,7 +94,7 @@ typedef enum {
 	FileAttributes_MonoExecutable= (int) 0x80000000
 } MonoFileAttributes;
 /* This is not used anymore
-typedef struct _MonoFSAsyncResult {
+typedef struct MonoFSAsyncResult {
 	MonoObject obj;
 	MonoObject *state;
 	MonoBoolean completed;

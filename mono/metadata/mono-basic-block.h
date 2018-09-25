@@ -13,9 +13,9 @@
 
 G_BEGIN_DECLS
 
-typedef struct _MonoSimpleBasicBlock MonoSimpleBasicBlock;
+typedef struct MonoSimpleBasicBlock MonoSimpleBasicBlock;
 
-struct _MonoSimpleBasicBlock {
+struct MonoSimpleBasicBlock {
 	MonoSimpleBasicBlock *next, *left, *right, *parent;
 	GSList *out_bb;
 	int start, end;

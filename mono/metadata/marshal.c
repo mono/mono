@@ -2537,19 +2537,19 @@ runtime_invoke_signature_equal (MonoMethodSignature *sig1, MonoMethodSignature *
 		return mono_metadata_signature_equal (sig1, sig2);
 }
 
-struct _MonoWrapperMethodCacheKey {
+struct MonoWrapperMethodCacheKey {
 	MonoMethod *method;
 	gboolean virtual_;
 	gboolean need_direct_wrapper;
 };
 
-struct _MonoWrapperSignatureCacheKey {
+struct MonoWrapperSignatureCacheKey {
 	MonoMethodSignature *signature;
 	gboolean valuetype;
 };
 
-typedef struct _MonoWrapperMethodCacheKey MonoWrapperMethodCacheKey;
-typedef struct _MonoWrapperSignatureCacheKey MonoWrapperSignatureCacheKey;
+typedef struct MonoWrapperMethodCacheKey MonoWrapperMethodCacheKey;
+typedef struct MonoWrapperSignatureCacheKey MonoWrapperSignatureCacheKey;
 
 static guint
 wrapper_cache_method_key_hash (MonoWrapperMethodCacheKey *key)

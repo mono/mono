@@ -108,8 +108,8 @@ typedef union {
 	gdouble fval;
 } LongDoubleUnion;
  
-typedef struct _StaticDataFreeList StaticDataFreeList;
-struct _StaticDataFreeList {
+typedef struct StaticDataFreeList StaticDataFreeList;
+struct StaticDataFreeList {
 	StaticDataFreeList *next;
 	guint32 offset;
 	guint32 size;
@@ -3909,7 +3909,7 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_fi
 static void
 mono_get_time_of_day (struct timeval *tv) {
 #ifdef WIN32
-	struct _timeb time;
+	struct timeb time;
 	_ftime(&time);
 	tv->tv_sec = time.time;
 	tv->tv_usec = time.millitm * 1000;

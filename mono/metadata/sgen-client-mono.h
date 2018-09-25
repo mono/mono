@@ -29,8 +29,8 @@ sgen_vtable_get_descriptor (GCVTable vtable)
 	return (SgenDescriptor)vtable->gc_descr;
 }
 
-typedef struct _SgenClientThreadInfo SgenClientThreadInfo;
-struct _SgenClientThreadInfo {
+typedef struct SgenClientThreadInfo SgenClientThreadInfo;
+struct SgenClientThreadInfo {
 	MonoThreadInfo info;
 
 	/*

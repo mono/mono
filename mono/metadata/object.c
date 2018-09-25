@@ -1689,11 +1689,11 @@ gpointer
 	return mono_domain_code_reserve (domain, size);
 }
 
-typedef struct _GenericVirtualCase {
+typedef struct GenericVirtualCase {
 	MonoMethod *method;
 	gpointer code;
 	int count;
-	struct _GenericVirtualCase *next;
+	struct GenericVirtualCase *next;
 } GenericVirtualCase;
 
 /*

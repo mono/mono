@@ -214,8 +214,8 @@ sgen_dump_pin_queue (void)
 	}
 }
 
-typedef struct _CementHashEntry CementHashEntry;
-struct _CementHashEntry {
+typedef struct CementHashEntry CementHashEntry;
+struct CementHashEntry {
 	GCObject *obj;
 	unsigned int count;
 	gboolean forced; /* if it should stay cemented after the finishing pause */

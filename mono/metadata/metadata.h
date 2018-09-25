@@ -291,14 +291,14 @@ typedef struct {
 	} data;
 } MonoExceptionClause;
 
-typedef struct _MonoType MonoType;
-typedef struct _MonoGenericInst MonoGenericInst;
-typedef struct _MonoGenericClass MonoGenericClass;
-typedef struct _MonoGenericContext MonoGenericContext;
-typedef struct _MonoGenericContainer MonoGenericContainer;
-typedef struct _MonoGenericParam MonoGenericParam;
-typedef struct _MonoArrayType MonoArrayType;
-typedef struct _MonoMethodSignature MonoMethodSignature;
+typedef struct MonoType MonoType;
+typedef struct MonoGenericInst MonoGenericInst;
+typedef struct MonoGenericClass MonoGenericClass;
+typedef struct MonoGenericContext MonoGenericContext;
+typedef struct MonoGenericContainer MonoGenericContainer;
+typedef struct MonoGenericParam MonoGenericParam;
+typedef struct MonoArrayType MonoArrayType;
+typedef struct MonoMethodSignature MonoMethodSignature;
 
 /* FIXME: Keeping this name alive for now, since it is part of the exposed API, even though no entrypoint uses it.  */
 typedef struct invalid_name MonoGenericMethod;
@@ -308,13 +308,13 @@ typedef struct {
 	unsigned int token    : 31;
 } MonoCustomMod;
 
-typedef struct _MonoCustomModContainer {
+typedef struct MonoCustomModContainer {
 	uint8_t count; /* max 64 modifiers follow at the end */
 	MonoImage *image; /* Image containing types in modifiers array */
 	MonoCustomMod modifiers [1]; /* Actual length is count */
 } MonoCustomModContainer;
 
-struct _MonoArrayType {
+struct MonoArrayType {
 	MonoClass *eklass;
 	// Number of dimensions of the array
 	uint8_t rank;
@@ -326,7 +326,7 @@ struct _MonoArrayType {
 	int *lobounds;
 };
 
-typedef struct _MonoMethodHeader MonoMethodHeader;
+typedef struct MonoMethodHeader MonoMethodHeader;
 
 typedef enum {
 	MONO_PARSE_TYPE,

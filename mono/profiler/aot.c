@@ -25,7 +25,7 @@
 #include <glib.h>
 #include <mono/utils/mono-error-internals.h>
 
-struct _MonoProfiler {
+struct MonoProfiler {
 	GHashTable *classes;
 	GHashTable *images;
 	GPtrArray *methods;

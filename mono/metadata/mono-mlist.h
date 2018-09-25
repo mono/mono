@@ -11,7 +11,7 @@
 
 #include <mono/metadata/object.h>
 
-typedef struct _MonoMList MonoMList;
+typedef struct MonoMList MonoMList;
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoMList*  mono_mlist_alloc       (MonoObject *data);
 MONO_API MonoObject* mono_mlist_get_data    (MonoMList* list);

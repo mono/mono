@@ -56,7 +56,7 @@
 
 // A mempool is a linked list of memory blocks, each of which begins with this header structure.
 // The initial block in the linked list is special, and tracks additional information.
-struct _MonoMemPool {
+struct MonoMemPool {
 	// Next block after this one in linked list
 	MonoMemPool *next;
 

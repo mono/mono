@@ -560,9 +560,9 @@ get_assembly_filename (MonoImage *image, int state)
 	}
 }
 
-typedef struct _BundledConfig BundledConfig;
+typedef struct BundledConfig BundledConfig;
 
-struct _BundledConfig {
+struct BundledConfig {
 	BundledConfig *next;
 	const char* aname;
 	const char* config_xml;

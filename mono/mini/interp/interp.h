@@ -14,7 +14,7 @@
 #define INTERP_ICALL_TRAMP_FARGS 4
 #endif
 
-struct _InterpMethodArguments {
+struct InterpMethodArguments {
 	size_t ilen;
 	gpointer *iargs;
 	size_t flen;
@@ -26,7 +26,7 @@ struct _InterpMethodArguments {
 #endif
 };
 
-typedef struct _InterpMethodArguments InterpMethodArguments;
+typedef struct InterpMethodArguments InterpMethodArguments;
 
 /* must be called either
  *  - by mini_init ()

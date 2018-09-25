@@ -24,7 +24,7 @@ typedef enum {
 
 extern gint32 mono_g_hash_table_max_chain_length;
 
-typedef struct _MonoGHashTable MonoGHashTable;
+typedef struct MonoGHashTable MonoGHashTable;
 
 MONO_API MonoGHashTable *mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg);
 MONO_API guint    mono_g_hash_table_size            (MonoGHashTable *hash);

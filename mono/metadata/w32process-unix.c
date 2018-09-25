@@ -136,7 +136,7 @@ typedef struct {
  * It contains a semaphore that can be waited on in order to wait
  * for process termination.
  */
-typedef struct _Process {
+typedef struct Process {
 	pid_t pid; /* the pid of the process. This value is only valid until the process has exited. */
 	MonoCoopSem exit_sem; /* this semaphore will be released when the process exits */
 	int status; /* the exit status */
@@ -146,7 +146,7 @@ typedef struct _Process {
 	 */
 	gpointer handle;
 	gboolean signalled;
-	struct _Process *next;
+	struct Process *next;
 } Process;
 
 /* MonoW32HandleProcess is a structure containing all the required information for process handling. */

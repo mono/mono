@@ -28,7 +28,7 @@ typedef struct {
 	void **values;
 } conc_table;
 
-struct _MonoConcGHashTable {
+struct MonoConcGHashTable {
 	volatile conc_table *table; /* goes to HP0 */
 	GHashFunc hash_func;
 	GEqualFunc equal_func;

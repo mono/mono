@@ -14,9 +14,9 @@
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-membar.h>
 
-typedef struct _MonoLinkedListSetNode MonoLinkedListSetNode;
+typedef struct MonoLinkedListSetNode MonoLinkedListSetNode;
 
-struct _MonoLinkedListSetNode {
+struct MonoLinkedListSetNode {
 	/* next must be the first element in this struct! */
 	MonoLinkedListSetNode *next;
 	uintptr_t key;

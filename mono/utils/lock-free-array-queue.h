@@ -13,7 +13,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-mmap.h>
 
-typedef struct _MonoLockFreeArrayChunk MonoLockFreeArrayChunk;
+typedef struct MonoLockFreeArrayChunk MonoLockFreeArrayChunk;
 
 typedef struct {
 	size_t entry_size;

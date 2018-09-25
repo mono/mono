@@ -15,7 +15,7 @@
 #include <mono/metadata/method-builder.h>
 
 /* ilgen version */
-struct _MonoMethodBuilder {
+struct MonoMethodBuilder {
 	MonoMethod *method;
 	gchar *name;
 	gboolean no_dup_name;

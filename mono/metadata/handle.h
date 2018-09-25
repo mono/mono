@@ -50,7 +50,7 @@ Whether this config needs stack watermark recording to know where to start scann
 #define MONO_NEEDS_STACK_WATERMARK 1
 #endif
 
-typedef struct _HandleChunk HandleChunk;
+typedef struct HandleChunk HandleChunk;
 
 /*
  * Define MONO_HANDLE_TRACK_OWNER to store the file and line number of each call to MONO_HANDLE_NEW
@@ -79,7 +79,7 @@ typedef struct {
 #endif
 } HandleChunkElem;
 
-struct _HandleChunk {
+struct HandleChunk {
 	int size; //number of handles
 	HandleChunk *prev, *next;
 	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
@@ -323,7 +323,7 @@ Handle macros/functions
 // This can be used to simulate gcc typeof extension.
 // Otherwise we are forced to evaluate twice, or use C++.
 #ifdef _MSC_VER
-typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type unrelated to anything else
+typedef struct MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type unrelated to anything else
 #define MONO_TYPEOF_CAST(typeexpr, expr) __pragma(warning(suppress:4133))(0 ? (typeexpr) : (MonoTypeofCastHelper)(expr))
 #else
 #define MONO_TYPEOF_CAST(typeexpr, expr) ((__typeof__ (typeexpr))(expr))

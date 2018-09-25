@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <sys/time.h>
 
-struct _GTimer {
+struct GTimer {
 	struct timeval start;
 	struct timeval stop;
 };

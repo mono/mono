@@ -50,14 +50,14 @@
 
 #define LOS_NUM_FAST_SIZES		32
 
-typedef struct _LOSFreeChunks LOSFreeChunks;
-struct _LOSFreeChunks {
+typedef struct LOSFreeChunks LOSFreeChunks;
+struct LOSFreeChunks {
 	LOSFreeChunks *next_size;
 	size_t size;
 };
 
-typedef struct _LOSSection LOSSection;
-struct _LOSSection {
+typedef struct LOSSection LOSSection;
+struct LOSSection {
 	LOSSection *next;
 	size_t num_free_chunks;
 	unsigned char *free_chunk_map;

@@ -56,7 +56,7 @@ typedef enum {
 	SKIP_XML_DECLARATION
 } MonoGMarkupParseState;
 
-struct _GMarkupParseContext {
+struct GMarkupParseContext {
 	GMarkupParser  parser;
 	gpointer       user_data;
 	GDestroyNotify user_data_dnotify;

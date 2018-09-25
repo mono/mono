@@ -34,9 +34,9 @@
 
 //#define QUEUE_DEBUG	1
 
-typedef struct _MonoLockFreeQueueNode MonoLockFreeQueueNode;
+typedef struct MonoLockFreeQueueNode MonoLockFreeQueueNode;
 
-struct _MonoLockFreeQueueNode {
+struct MonoLockFreeQueueNode {
 	MonoLockFreeQueueNode * volatile next;
 #ifdef QUEUE_DEBUG
 	gint32 in_queue;
