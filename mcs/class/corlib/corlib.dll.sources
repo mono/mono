@@ -1195,6 +1195,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ReflectionTypeLoadException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceLocation.cs
+../../../external/corefx/src/System.Runtime/src/System/Reflection/RuntimeReflectionExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetInvocationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
@@ -1209,7 +1210,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/typedelegator.cs
 ../referencesource/mscorlib/system/reflection/typeinfo.cs
 
