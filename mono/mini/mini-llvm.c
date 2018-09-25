@@ -4712,6 +4712,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_RCEQ:
+		case OP_RCNEQ:
 		case OP_RCLT:
 		case OP_RCLT_UN:
 		case OP_RCGT:
