@@ -417,7 +417,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 
 // Get handle->field as a boolean, i.e. typically compare managed pointer to NULL,
 // though any type is ok.
-#define MONO_HANDLE_FIELD_BOOL(handle, field) (MONO_BOOL (MONO_HANDLE_GETVAL (handle, field)))
+#define MONO_HANDLE_GET_BOOL(handle, field) (MONO_BOOL (MONO_HANDLE_GETVAL (handle, field)))
 
 // handle->field = (type)value, for non-managed pointers
 // This would be easier to write with the gcc extension typeof,

@@ -1500,13 +1500,13 @@ set_domain_search_path (MonoDomain *domain)
 
 	setup = MONO_HANDLE_NEW (MonoAppDomainSetup, domain->setup);
 
-	if (domain->search_path && !MONO_HANDLE_FIELD_BOOL (setup, path_changed))
+	if (domain->search_path && !MONO_HANDLE_GET_BOOL (setup, path_changed))
 		goto exit;
 
-	if (!MONO_HANDLE_FIELD_BOOL (setup, application_base))
+	if (!MONO_HANDLE_GET_BOOL (setup, application_base))
 		goto exit; // Must set application base to get private path working
 	
-	if (MONO_HANDLE_FIELD_BOOL (setup, private_bin_path)) {
+	if (MONO_HANDLE_GET_BOOL (setup, private_bin_path)) {
 		search_path = mono_string_handle_to_utf8 (MONO_HANDLE_NEW_GET (MonoString, setup, private_bin_path), error);
 		if (!mono_error_ok (error)) { /*FIXME maybe we should bubble up the error.*/
 			g_warning ("Could not decode AppDomain search path since it contains invalid characters");
@@ -1611,7 +1611,7 @@ set_domain_search_path (MonoDomain *domain)
 		}
 	}
 	
-	if (MONO_HANDLE_FIELD_BOOL (setup, private_bin_path_probe)) {
+	if (MONO_HANDLE_GET_BOOL (setup, private_bin_path_probe)) {
 		g_free (tmp [0]);
 		tmp [0] = g_strdup ("");
 	}
