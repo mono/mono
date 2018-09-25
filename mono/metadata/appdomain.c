@@ -2816,6 +2816,7 @@ unload_thread_main (void *arg)
 	MonoDomain *domain = data->domain;
 	MonoInternalThread *internal;
 	int i;
+	gsize result = 1; // failure
 
 	internal = mono_thread_internal_current ();
 
@@ -2824,7 +2825,6 @@ unload_thread_main (void *arg)
 		mono_thread_set_name_internal (internal, thread_name_str, TRUE, FALSE, error);
 	if (!is_ok (error)) {
 		data->failure_reason = g_strdup (mono_error_get_message (error));
-		mono_error_cleanup (error);
 		goto failure;
 	}
 
@@ -2887,14 +2887,16 @@ unload_thread_main (void *arg)
 
 	mono_gc_collect (mono_gc_max_generation ());
 
+	result = 0; // success
+exit:
+	mono_error_cleanup (error);
 	mono_atomic_store_release (&data->done, TRUE);
 	unload_data_unref (data);
-	return 0;
+	return result;
 
 failure:
-	mono_atomic_store_release (&data->done, TRUE);
-	unload_data_unref (data);
-	return 1;
+	result = 1;
+	goto exit;
 }
 
 /**
