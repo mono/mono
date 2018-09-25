@@ -105,6 +105,21 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void WriteStateToDisk_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+
+		static void
+		WriteStateToDisk (Exception exc)
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+			using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
+			{
+				WriteStateToDisk_internal (payload_chars.Value, portable_hash, unportable_hash);
+			}
+		}
+
 		static void SendMicrosoftTelemetry (string payload_str, ulong portable_hash, ulong unportable_hash)
 		{
 			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
