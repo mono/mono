@@ -929,7 +929,6 @@ typedef struct {
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *attribute_class;
-	MonoClass *customattribute_data_class;
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
 	MonoClass *generic_ienumerator_class;
