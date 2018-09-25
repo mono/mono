@@ -723,9 +723,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.stringbuilder_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Text", "StringBuilder");
 
-	mono_defaults.math_class = mono_class_load_from_name (
-	        mono_defaults.corlib, "System", "Math");
-
 	mono_defaults.stack_frame_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Diagnostics", "StackFrame");
 

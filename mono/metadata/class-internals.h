@@ -922,7 +922,6 @@ typedef struct {
 	MonoClass *field_info_class;
 	MonoClass *method_info_class;
 	MonoClass *stringbuilder_class;
-	MonoClass *math_class;
 	MonoClass *stack_frame_class;
 	MonoClass *marshal_class;
 	MonoClass *typed_reference_class;
