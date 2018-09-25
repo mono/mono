@@ -166,9 +166,8 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContainer *conta
 			
 		case MonoInlineR: {
 			double r;
-			int inf;
 			readr8 (ptr, &r);
-			inf = dis_isinf (r);
+			const int inf = mono_isinf (r);
 			if (inf == -1) 
 				fprintf (output, "(00 00 00 00 00 00 f0 ff)"); /* negative infinity */
 			else if (inf == 1)
@@ -273,11 +272,8 @@ disassemble_cil (MonoImage *m, MonoMethodHeader *mh, MonoGenericContainer *conta
 
 		case MonoShortInlineR: {
 			float f;
-			int inf;
-			
 			readr4 (ptr, &f);
-
-			inf = dis_isinf (f);
+			const int inf = mono_isinf (f);
 			if (inf == -1) 
 				fprintf (output, "(00 00 80 ff)"); /* negative infinity */
 			else if (inf == 1)

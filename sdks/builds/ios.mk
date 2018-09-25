@@ -49,7 +49,6 @@ _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
-	ac_cv_func_finite=no \
 	ac_cv_func_getpwuid_r=no \
 	ac_cv_func_posix_getpwuid_r=yes \
 	ac_cv_header_curses_h=no \

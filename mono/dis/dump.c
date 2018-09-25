@@ -867,9 +867,8 @@ handle_enum:
 			break;
 		case MONO_TYPE_R4: {
 			float val;
-			int inf;
 			readr4 (p, &val);
-			inf = dis_isinf (val);
+			const int inf = mono_isinf (val);
 			if (inf == -1) 
 				g_string_append_printf (res, "(00 00 80 ff)"); /* negative infinity */
 			else if (inf == 1)
@@ -883,10 +882,8 @@ handle_enum:
 		}
 		case MONO_TYPE_R8: {
 			double val;
-			int inf;
-			
 			readr8 (p, &val);
-			inf = dis_isinf (val);
+			const int inf = mono_isinf (val);
 			if (inf == -1) 
 				g_string_append_printf (res, "(00 00 00 00 00 00 f0 ff)"); /* negative infinity */
 			else if (inf == 1)

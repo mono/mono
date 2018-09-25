@@ -667,17 +667,6 @@ mono_fclt_un (double a, double b)
 	return isunordered (a, b) || a < b;
 }
 
-gboolean
-mono_jit_icall_isfinite (double a)
-{
-#ifdef HAVE_ISFINITE
-	return mono_isfinite (a);
-#else
-	g_assert_not_reached ();
-	return TRUE;
-#endif
-}
-
 double
 mono_fload_r4 (float *ptr)
 {
@@ -991,11 +980,8 @@ guint32
 mono_fconv_u4 (double v)
 {
 	/* MS.NET behaves like this for some reason */
-#ifdef HAVE_ISINF
 	if (mono_isinf (v) || mono_isnan (v))
 		return 0;
-#endif
-
 	return (guint32)v;
 }
 

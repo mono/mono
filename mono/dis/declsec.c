@@ -114,9 +114,8 @@ declsec_20_write_value (GString *str, char type, const char *value)
 		return value + 8;
 	case MONO_TYPE_R4: {
 		float val;
-		int inf;
 		readr4 (value, &val);
-		inf = dis_isinf (val);
+		const int inf = mono_isinf (val);
 		if (inf == -1) 
 			g_string_append_printf (str, "0xFF800000"); /* negative infinity */
 		else if (inf == 1)
@@ -129,9 +128,8 @@ declsec_20_write_value (GString *str, char type, const char *value)
 	}
 	case MONO_TYPE_R8: {
 		double val;
-		int inf;
 		readr8 (value, &val);
-		inf = dis_isinf (val);
+		const int inf = mono_isinf (val);
 		if (inf == -1) 
 			g_string_append_printf (str, "0xFFF00000000000000"); /* negative infinity */
 		else if (inf == 1)
