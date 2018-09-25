@@ -51,6 +51,16 @@ G_EXTERN_C double mono_trunc_double (double);
 
 #ifdef __cplusplus
 
+// There are three or four possible approaches here.
+// 1. C++ mono_foo => foo
+// 2. C++ mono_foo => std::foo
+// 3. C++ mono_foo => C mono_foo_[float,double] => C foo
+// 4. using std::foo -- this works mostly but not quite
+//
+// Approach 1 works on non-wasm, non-android non-Win32/gcc.
+// Approach 2 should work everywhere, but might incur a new dependency, might.
+// Approach 3 should work everywhere, with identical dependencies as mono/C.
+
 inline    int mono_isfinite (float a)               { return mono_isfinite_float (a); }
 inline    int mono_isfinite (double a)              { return mono_isfinite_double (a); }
 inline    int mono_isinf (float a)                  { return mono_isinf_float (a); }
