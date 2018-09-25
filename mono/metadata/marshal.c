@@ -3936,6 +3936,11 @@ get_runtime_invoke_type (MonoType *t, gboolean ret)
 	if (t->byref) {
 		if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
 			return t;
+
+		/* The result needs loaded indirectly */
+		if (ret)
+			return t;
+
 		/* Can't share this with 'I' as that needs another indirection */
 		return &mono_defaults.int_class->this_arg;
 	}
@@ -4143,8 +4148,10 @@ handle_enum:
 	}
 
 	if (sig->ret->byref) {
-		/* fixme: */
-		g_assert_not_reached ();
+		/* perform indirect load and return by value */
+		MonoType* ret_byval = &mono_class_from_mono_type (sig->ret)->byval_arg;
+		g_assert (!ret_byval->byref);
+		mono_mb_emit_byte (mb, mono_type_to_ldind (ret_byval));
 	}
 
 	switch (sig->ret->type) {
