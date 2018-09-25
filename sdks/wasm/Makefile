@@ -160,7 +160,7 @@ aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests_basic.dll main.e
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) aot-driver.js)
+	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests_basic.dll)
 
 build-debug-sample: .stamp-build-debug-sample
 
