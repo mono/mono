@@ -1,5 +1,5 @@
 /* 
- * \file Definitions of getters for the fields of struct _MonoClass
+ * \file Definitions of getters for the fields of struct MonoClass
  *
  * Copyright 2018 Microsoft
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.

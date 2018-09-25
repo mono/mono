@@ -25,8 +25,8 @@
 
 #define HANDLES_PER_SLOT 240
 
-typedef struct _MonoW32HandleSlot MonoW32HandleSlot;
-struct _MonoW32HandleSlot {
+typedef struct MonoW32HandleSlot MonoW32HandleSlot;
+struct MonoW32HandleSlot {
 	MonoW32HandleSlot *next;
 	MonoW32Handle handles[HANDLES_PER_SLOT];
 };

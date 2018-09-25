@@ -189,7 +189,7 @@ done:
  * Example usage:
  *
  * \code
- * struct _MonoProfiler {
+ * struct MonoProfiler {
  * 	int my_stuff;
  * 	// ...
  * };
@@ -208,7 +208,7 @@ done:
 MonoProfilerHandle
 mono_profiler_create (MonoProfiler *prof)
 {
-	MonoProfilerHandle handle = g_new0 (struct _MonoProfilerDesc, 1);
+	MonoProfilerHandle handle = g_new0 (struct MonoProfilerDesc, 1);
 
 	handle->prof = prof;
 	handle->next = mono_profiler_state.profilers;
@@ -983,7 +983,7 @@ typedef void (*MonoLegacyProfileMethodFunc) (MonoLegacyProfiler *prof, MonoMetho
 typedef void (*MonoLegacyProfileExceptionFunc) (MonoLegacyProfiler *prof, MonoObject *object);
 typedef void (*MonoLegacyProfileExceptionClauseFunc) (MonoLegacyProfiler *prof, MonoMethod *method, int clause_type, int clause_num);
 
-struct _MonoProfiler {
+struct MonoProfiler {
 	MonoProfilerHandle handle;
 	MonoLegacyProfiler *profiler;
 	MonoLegacyProfileFunc shutdown_callback;

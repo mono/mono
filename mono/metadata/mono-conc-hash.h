@@ -9,7 +9,7 @@
 #include <mono/metadata/mono-hash.h>
 
 
-typedef struct _MonoConcGHashTable MonoConcGHashTable;
+typedef struct MonoConcGHashTable MonoConcGHashTable;
 
 MonoConcGHashTable * mono_conc_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg);
 gpointer mono_conc_g_hash_table_lookup (MonoConcGHashTable *hash, gconstpointer key);

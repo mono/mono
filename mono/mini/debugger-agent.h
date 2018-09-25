@@ -11,7 +11,7 @@
 #define MONO_DBG_CALLBACKS_VERSION (2)
 // 2. debug_log parameters changed from MonoString* to MonoStringHandle
 
-struct _MonoDebuggerCallbacks {
+struct MonoDebuggerCallbacks {
 	int version;
 	void (*parse_options) (char *options);
 	void (*init) (void);
@@ -30,7 +30,7 @@ struct _MonoDebuggerCallbacks {
 	gboolean (*debug_log_is_enabled) (void);
 };
 
-typedef struct _DebuggerTlsData DebuggerTlsData;
+typedef struct DebuggerTlsData DebuggerTlsData;
 
 MONO_API void
 mono_debugger_agent_init (void);

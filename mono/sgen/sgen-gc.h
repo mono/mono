@@ -58,8 +58,8 @@ NurseryClearPolicy sgen_get_nursery_clear_policy (void);
 /*
  * The nursery section uses this struct.
  */
-typedef struct _GCMemSection GCMemSection;
-struct _GCMemSection {
+typedef struct GCMemSection GCMemSection;
+struct GCMemSection {
 	char *data;
 	char *end_data;
 	/*
@@ -377,8 +377,8 @@ void sgen_init_internal_allocator (void);
  * a pinned root set for conservatively scanned roots and a normal one for
  * precisely scanned roots (currently implemented as a single list).
  */
-typedef struct _RootRecord RootRecord;
-struct _RootRecord {
+typedef struct RootRecord RootRecord;
+struct RootRecord {
 	char *end_root;
 	SgenDescriptor root_desc;
 	int source;
@@ -407,7 +407,7 @@ void sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallback
 /*
  * This structure extends the MonoThreadInfo structure.
  */
-struct _SgenThreadInfo {
+struct SgenThreadInfo {
 	SgenClientThreadInfo client_info;
 
 	char *tlab_start;
@@ -474,9 +474,9 @@ int sgen_get_current_collection_generation (void);
 gboolean sgen_collection_is_concurrent (void);
 gboolean sgen_get_concurrent_collection_in_progress (void);
 
-typedef struct _SgenFragment SgenFragment;
+typedef struct SgenFragment SgenFragment;
 
-struct _SgenFragment {
+struct SgenFragment {
 	SgenFragment *next;
 	char *fragment_start;
 	char *fragment_next; /* the current soft limit for allocation */
@@ -629,8 +629,8 @@ typedef enum {
 	CARDTABLE_SCAN_MOD_UNION_PRECLEAN = CARDTABLE_SCAN_MOD_UNION | 2,
 } CardTableScanType;
 
-typedef struct _SgenMajorCollector SgenMajorCollector;
-struct _SgenMajorCollector {
+typedef struct SgenMajorCollector SgenMajorCollector;
+struct SgenMajorCollector {
 	size_t section_size;
 	gboolean is_concurrent;
 	gboolean is_parallel;
@@ -702,7 +702,7 @@ SgenMajorCollector* sgen_get_major_collector (void);
 SgenMinorCollector* sgen_get_minor_collector (void);
 
 
-typedef struct _SgenRememberedSet {
+typedef struct SgenRememberedSet {
 	void (*wbarrier_set_field) (GCObject *obj, gpointer field_ptr, GCObject* value);
 	void (*wbarrier_arrayref_copy) (gpointer dest_ptr, gpointer src_ptr, int count);
 	void (*wbarrier_value_copy) (gpointer dest, gpointer src, int count, size_t element_size);
@@ -888,8 +888,8 @@ gboolean sgen_set_allow_synchronous_major (gboolean flag);
 
 /* LOS */
 
-typedef struct _LOSObject LOSObject;
-struct _LOSObject {
+typedef struct LOSObject LOSObject;
+struct LOSObject {
 	LOSObject *next;
 	mword size; /* this is the object size, lowest bit used for pin/mark */
 	guint8 * volatile cardtable_mod_union; /* only used by the concurrent collector */

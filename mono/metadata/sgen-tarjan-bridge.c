@@ -131,7 +131,7 @@ typedef struct {
 } ColorData;
 
 // Represents one managed object. Equivalent of new/old bridge "HashEntry"
-typedef struct _ScanData {
+typedef struct ScanData {
 	// FIXME this can be eliminated; if we have a ScanData we generally looked it up from its GCObject
 	GCObject *obj;
 	// We use the sgen lock_word in GCObject to store a pointer to the ScanData. Cache the original here to restore later:
@@ -200,8 +200,8 @@ static SgenBridgeProcessor *bridge_processor;
 //ScanData buckets
 #define NUM_SCAN_ENTRIES ((BUCKET_SIZE - SIZEOF_VOID_P * 2) / sizeof (ScanData))
 
-typedef struct _ObjectBucket ObjectBucket;
-struct _ObjectBucket {
+typedef struct ObjectBucket ObjectBucket;
+struct ObjectBucket {
 	ObjectBucket *next;
 	ScanData *next_data;
 	ScanData data [NUM_SCAN_ENTRIES];
@@ -265,8 +265,8 @@ free_object_buckets (void)
 #define NUM_COLOR_ENTRIES ((BUCKET_SIZE - SIZEOF_VOID_P * 2) / sizeof (ColorData))
 
 // Arenas for ColorDatas, same as ObjectBucket except items-per-bucket differs
-typedef struct _ColorBucket ColorBucket;
-struct _ColorBucket {
+typedef struct ColorBucket ColorBucket;
+struct ColorBucket {
 	ColorBucket *next;
 	ColorData *next_data;
 	ColorData data [NUM_COLOR_ENTRIES];

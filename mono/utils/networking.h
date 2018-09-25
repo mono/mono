@@ -45,9 +45,9 @@ typedef enum {
 	MONO_HINT_CONFIGURED_ONLY	= 8,
 } MonoGetAddressHints;
 
-typedef struct _MonoAddressEntry MonoAddressEntry;
+typedef struct MonoAddressEntry MonoAddressEntry;
 
-struct _MonoAddressEntry {
+struct MonoAddressEntry {
 	int family;
 	int socktype;
 	int protocol;

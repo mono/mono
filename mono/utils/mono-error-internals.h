@@ -37,7 +37,7 @@ typedef struct {
 } MonoErrorInternal;
 
 /* Invariant: the error strings are allocated in the mempool of the given image */
-struct _MonoErrorBoxed {
+struct MonoErrorBoxed {
 	MonoError error;
 	MonoImage *image;
 };

@@ -40,7 +40,7 @@
 #define LIBPREFIX "lib"
 #define LIBSUFFIX ".so"
 
-struct _GModule {
+struct GModule {
 	void *handle;
 };
 
@@ -106,7 +106,7 @@ g_module_close (GModule *module)
 #define LIBSUFFIX ".dll"
 #define LIBPREFIX ""
 
-struct _GModule {
+struct GModule {
 	HMODULE handle;
 	int main_module;
 };

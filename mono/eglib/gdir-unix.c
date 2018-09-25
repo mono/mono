@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
-struct _GDir {
+struct GDir {
 	DIR *dir;
 #ifndef HAVE_REWINDDIR
 	char *path;

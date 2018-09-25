@@ -37,7 +37,7 @@
 #define LIBSUFFIX ".dll"
 #define LIBPREFIX ""
 
-struct _GModule {
+struct GModule {
 	HMODULE handle;
 	int main_module;
 };

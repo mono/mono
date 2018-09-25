@@ -36,7 +36,7 @@
 
 #include <winsock2.h>
 
-struct _GDir {
+struct GDir {
 	HANDLE handle;
 	gchar* current;
 	gchar* next;

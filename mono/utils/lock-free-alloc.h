@@ -37,10 +37,10 @@ typedef struct {
 	unsigned int block_size;
 } MonoLockFreeAllocSizeClass;
 
-struct _MonoLockFreeAllocDescriptor;
+struct MonoLockFreeAllocDescriptor;
 
 typedef struct {
-	struct _MonoLockFreeAllocDescriptor *active;
+	struct MonoLockFreeAllocDescriptor *active;
 	MonoLockFreeAllocSizeClass *sc;
 	MonoMemAccountType account_type;
 } MonoLockFreeAllocator;

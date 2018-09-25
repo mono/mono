@@ -62,7 +62,7 @@ typedef union _MonoError {
 } MonoError;
 
 /* Mempool-allocated MonoError.*/
-typedef struct _MonoErrorBoxed MonoErrorBoxed;
+typedef struct MonoErrorBoxed MonoErrorBoxed;
 
 MONO_BEGIN_DECLS
 

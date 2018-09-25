@@ -58,8 +58,8 @@ typedef enum {
 } GrayQueueSectionState;
 #endif
 
-typedef struct _GrayQueueEntry GrayQueueEntry;
-struct _GrayQueueEntry {
+typedef struct GrayQueueEntry GrayQueueEntry;
+struct GrayQueueEntry {
 	GCObject *obj;
 	SgenDescriptor desc;
 };
@@ -75,8 +75,8 @@ struct _GrayQueueEntry {
  * This is a stack now instead of a queue, so the most recently added items are removed
  * first, improving cache locality, and keeping the stack size manageable.
  */
-typedef struct _GrayQueueSection GrayQueueSection;
-struct _GrayQueueSection {
+typedef struct GrayQueueSection GrayQueueSection;
+struct GrayQueueSection {
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 	/*
 	 * The dummy is here so that the state doesn't get overwritten
@@ -90,12 +90,12 @@ struct _GrayQueueSection {
 	GrayQueueEntry entries [SGEN_GRAY_QUEUE_SECTION_SIZE];
 };
 
-typedef struct _SgenGrayQueue SgenGrayQueue;
+typedef struct SgenGrayQueue SgenGrayQueue;
 
 typedef void (*GrayQueueAllocPrepareFunc) (SgenGrayQueue*);
 typedef void (*GrayQueueEnqueueCheckFunc) (GCObject*);
 
-struct _SgenGrayQueue {
+struct SgenGrayQueue {
 	GrayQueueEntry *cursor;
 	GrayQueueSection *first, *last;
 	GrayQueueSection *free_list;
@@ -106,9 +106,9 @@ struct _SgenGrayQueue {
 #endif
 };
 
-typedef struct _SgenSectionGrayQueue SgenSectionGrayQueue;
+typedef struct SgenSectionGrayQueue SgenSectionGrayQueue;
 
-struct _SgenSectionGrayQueue {
+struct SgenSectionGrayQueue {
 	GrayQueueSection *first;
 	gboolean locked;
 	mono_mutex_t lock;

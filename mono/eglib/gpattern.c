@@ -47,7 +47,7 @@ typedef struct {
 	gchar *str;
 } PData;
 
-struct _GPatternSpec {
+struct GPatternSpec {
 	GSList *pattern;
 };
 

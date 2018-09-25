@@ -145,9 +145,9 @@ typedef struct
 	gboolean has_ctx;
 } StackFrame;
 
-typedef struct _InvokeData InvokeData;
+typedef struct InvokeData InvokeData;
 
-struct _InvokeData
+struct InvokeData
 {
 	int id;
 	int flags;
@@ -167,7 +167,7 @@ struct _InvokeData
 	InvokeData *last_invoke;
 };
 
-struct _DebuggerTlsData {
+struct DebuggerTlsData {
 	MonoThreadUnwindState context;
 
 	/* This is computed on demand when it is requested using the wire protocol */

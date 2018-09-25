@@ -44,8 +44,8 @@ static volatile int binary_protocol_use_count = 0;
 
 #define BINARY_PROTOCOL_BUFFER_SIZE	(65536 - 2 * 8)
 
-typedef struct _BinaryProtocolBuffer BinaryProtocolBuffer;
-struct _BinaryProtocolBuffer {
+typedef struct BinaryProtocolBuffer BinaryProtocolBuffer;
+struct BinaryProtocolBuffer {
 	BinaryProtocolBuffer * volatile next;
 	volatile int index;
 	unsigned char buffer [BINARY_PROTOCOL_BUFFER_SIZE];

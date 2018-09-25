@@ -178,9 +178,9 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (MonoThreadInfoFlags)
 
-typedef struct _MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
+typedef struct MonoThreadInfoInterruptToken MonoThreadInfoInterruptToken;
 
-typedef struct _MonoThreadInfo {
+typedef struct MonoThreadInfo {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
 	MonoNativeThreadHandle native_handle; /* Valid on mach, android and Windows */

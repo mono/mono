@@ -71,7 +71,7 @@ typedef struct {
 #endif
 } stackval;
 
-typedef struct _InterpFrame InterpFrame;
+typedef struct InterpFrame InterpFrame;
 
 typedef void (*MonoFuncV) (void);
 typedef void (*MonoPIFunc) (MonoFuncV callme, void *margs);
@@ -80,14 +80,14 @@ typedef void (*MonoPIFunc) (MonoFuncV callme, void *margs);
  * Structure representing a method transformed for the interpreter 
  * This is domain specific
  */
-typedef struct _InterpMethod
+typedef struct InterpMethod
 {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
 	   same offset as in MonoJitInfo, because of the jit_code_hash
 	   internal hash table in MonoDomain. */
 	MonoMethod *method;
-	struct _InterpMethod *next_jit_code_hash;
+	struct InterpMethod *next_jit_code_hash;
 	guint32 locals_size;
 	guint32 total_locals_size;
 	guint32 args_size;
@@ -120,7 +120,7 @@ typedef struct _InterpMethod
 	MonoProfilerCallInstrumentationFlags prof_flags;
 } InterpMethod;
 
-struct _InterpFrame {
+struct InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
 	stackval       *retval; /* parent */

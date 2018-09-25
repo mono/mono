@@ -6464,7 +6464,7 @@ typedef union _MonoOpcodeParameter {
 	guchar *branch_target;
 } MonoOpcodeParameter;
 
-typedef struct _MonoOpcodeInfo {
+typedef struct MonoOpcodeInfo {
 	guint constant : 4; // private
 	gint  pops     : 3; // public -1 means variable
 	gint  pushes   : 3; // public -1 means variable

@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <glib.h>
 
-typedef struct _GPtrArrayPriv {
+typedef struct GPtrArrayPriv {
 	gpointer *pdata;
 	guint len;
 	guint size;

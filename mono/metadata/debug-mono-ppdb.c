@@ -31,7 +31,7 @@
 
 #include "debug-mono-ppdb.h"
 
-struct _MonoPPDBFile {
+struct MonoPPDBFile {
 	MonoImage *image;
 	GHashTable *doc_hash;
 	GHashTable *method_hash;
