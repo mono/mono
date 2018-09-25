@@ -12,7 +12,9 @@
 
 #ifdef RUNTIME_IL2CPP
 
+#ifndef THREAD_STATIC_FIELD_OFFSET
 #define THREAD_STATIC_FIELD_OFFSET -1
+#endif
 
 #define VM_DOMAIN_GET_AGENT_INFO(domain) il2cpp_domain_get_agent_info(domain)
 #define VM_DOMAIN_SET_AGENT_INFO(domain, value) il2cpp_domain_set_agent_info(domain, value)
