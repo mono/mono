@@ -729,9 +729,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.stack_frame_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Diagnostics", "StackFrame");
 
-	mono_defaults.stack_trace_class = mono_class_load_from_name (
-	        mono_defaults.corlib, "System.Diagnostics", "StackTrace");
-
 	mono_defaults.marshal_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Runtime.InteropServices", "Marshal");
 
