@@ -929,7 +929,6 @@ typedef struct {
 	MonoClass *monitor_class;
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
-	MonoClass *handleref_class;
 	MonoClass *attribute_class;
 	MonoClass *customattribute_data_class;
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
@@ -1002,6 +1001,7 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 
 GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
 
+GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(handleref)
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
 

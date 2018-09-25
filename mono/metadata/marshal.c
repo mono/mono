@@ -3264,7 +3264,7 @@ mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 			
 	switch (t->type) {
 	case MONO_TYPE_VALUETYPE:
-		if (t->data.klass == mono_defaults.handleref_class)
+		if (t->data.klass == mono_class_try_get_handleref_class ())
 			return get_marshal_cb ()->emit_marshal_handleref (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 		
 		return get_marshal_cb ()->emit_marshal_vtype (m, argnum, t, spec, conv_arg, conv_arg_type, action);
