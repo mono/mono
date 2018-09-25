@@ -430,6 +430,7 @@ namespace TestRunner {
 		StreamWriter log_file;
 		StreamWriter result_xml;
 		protected string[] extra_compiler_options;
+		protected string reference_dir;
 		// protected string[] compiler_options;
 		// protected string[] dependencies;
 
@@ -495,6 +496,12 @@ namespace TestRunner {
 			}
 		}
 
+		public string ReferenceDirectory {
+			set {
+				reference_dir = value;
+			}
+		}
+
 		protected virtual bool GetExtraOptions (string file, out string[] compiler_options,
 							out string[] dependencies)
 		{
@@ -532,7 +539,7 @@ namespace TestRunner {
 			if (index != -1) {
 				compiler_options = line.Substring (index + options.Length).Trim().Split (' ');
 				for (int i = 0; i < compiler_options.Length; i++)
-					compiler_options[i] = compiler_options[i].TrimStart ();
+					compiler_options[i] = compiler_options[i].TrimStart ().Replace ("$REF_DIR", reference_dir);
 			}
 			index = line.IndexOf (depends);
 			if (index != -1) {
@@ -1727,6 +1734,8 @@ namespace TestRunner {
 				checker.Verbose = true;
 			if (GetOption ("safe-execution", args, false, out temp))
 				checker.SafeExecution = true;
+			if (GetOption ("reference-dir", args, true, out temp))
+				checker.ReferenceDirectory = temp;
 			if (GetOption ("compiler-options", args, true, out temp)) {
 				string[] extra = temp.Split (' ');
 				checker.ExtraCompilerOptions = extra;
@@ -1826,6 +1835,7 @@ namespace TestRunner {
 				"   \n" +
 				"   -compiler:FILE   The file which will be used to compiler tests\n" +
 				"   -compiler-options:OPTIONS  Add global compiler options\n" +
+				"   -reference-dir:DIRECTORY   Use this directory for $REF_DIR variable in tests\n" + 
 				"   -il:IL-FILE      XML file with expected IL details for each test\n" +
 				"   -issues:FILE     The list of expected failures\n" +
 				"   -log:FILE        Writes any output also to the file\n" +
