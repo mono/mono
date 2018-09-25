@@ -16,8 +16,6 @@ int mono_isinf_float (float a)                   { return isinf (a); }
 int mono_isinf_double (double a)                 { return isinf (a); }
 int mono_isnan_float (float a)                   { return isnan (a); }
 int mono_isnan_double (double a)                 { return isnan (a); }
-int mono_isnormal_float (float a)                { return isnormal (a); }
-int mono_isnormal_double (double a)              { return isnormal (a); }
 int mono_isunordered_float (float a, float b)    { return isunordered (a, b); }
 int mono_isunordered_double (double a, double b) { return isunordered (a, b); }
 float mono_trunc_float (float a)                 { return trunc (a); }

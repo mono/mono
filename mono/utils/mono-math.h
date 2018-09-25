@@ -42,8 +42,6 @@ G_EXTERN_C    int mono_isinf_float (float);
 G_EXTERN_C    int mono_isinf_double (double);
 G_EXTERN_C    int mono_isnan_float (float);
 G_EXTERN_C    int mono_isnan_double (double);
-G_EXTERN_C    int mono_isnormal_float (float);
-G_EXTERN_C    int mono_isnormal_double (double);
 G_EXTERN_C    int mono_isunordered_float (float, float);
 G_EXTERN_C    int mono_isunordered_double (double, double);
 G_EXTERN_C  float mono_trunc_float (float);
@@ -59,8 +57,6 @@ inline    int mono_isinf (float a)                  { return mono_isinf_float (a
 inline    int mono_isinf (double a)                 { return mono_isinf_double (a); }
 inline    int mono_isnan (float a)                  { return mono_isnan_float (a); }
 inline    int mono_isnan (double a)                 { return mono_isnan_double (a); }
-inline    int mono_isnormal (float a)               { return mono_isnormal_float (a); }
-inline    int mono_isnormal (double a)              { return mono_isnormal_double (a); }
 inline    int mono_isunordered (float a, float b)   { return mono_isunordered_float (a, b); }
 inline    int mono_isunordered (double a, double b) { return mono_isunordered_double (a, b); }
 inline  float mono_trunc (float a)                  { return mono_trunc_float (a); }
@@ -73,7 +69,6 @@ inline double mono_trunc (double a)                 { return mono_trunc_double (
 #define mono_isfinite        isfinite
 #define mono_isinf           isinf
 #define mono_isnan           isnan
-#define mono_isnormal        isnormal
 #define mono_isunordered     isunordered
 #define mono_trunc           trunc
 
