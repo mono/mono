@@ -446,22 +446,26 @@ mono_context_init (MonoDomain *domain)
 void
 mono_context_init_checked (MonoDomain *domain, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 	MonoAppContextHandle context;
 
 	error_init (error);
 	if (mono_runtime_get_no_exec ())
-		return;
+		goto exit;
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
 	context = MONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
-	return_if_nok (error);
+	goto_if_nok (error, exit);
 
 	MONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
 	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
 	mono_threads_register_app_context (context, error);
 	mono_error_assert_ok (error);
 	domain->default_context = MONO_HANDLE_RAW (context);
+exit:
+	HANDLE_FUNCTION_RETURN ();
 }
 
 /**
