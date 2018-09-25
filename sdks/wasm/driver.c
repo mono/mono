@@ -592,5 +592,5 @@ mono_wasm_array_to_heap (MonoArray *src, char *dest)
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_exec_regression (int verbose_level, char *image)
 {
-	return mono_regression_test_step (verbose_level, image, NULL);
+	return mono_regression_test_step (verbose_level, image, NULL) ? 0 : 1;
 }
