@@ -52,6 +52,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/monitor.h>
+#define MONO_MATH_DECLARE_ALL 1
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
@@ -70,8 +71,6 @@
 #include <mono/utils/mono-proclib.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/threadpool.h>
-#define MONO_MATH_DECLARE_ALL 1
-#include <mono/utils/mono-math.h>
 
 #include "mini.h"
 #include "seq-points.h"
