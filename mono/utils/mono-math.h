@@ -70,12 +70,12 @@ inline double mono_trunc (double a)                 { return mono_trunc_double (
 
 // Direct macros for C.
 // This will also work for many C++ platforms, i.e. other than Android and WebAssembly and Win32/gcc.
-#define mono_isfinite(x)        (isfinite ((x)))
-#define mono_isinf(x)           (isinf ((x)))
-#define mono_isnan(x)           (isnan ((x)))
-#define mono_isnormal(x)        (isnormal ((x)))
-#define mono_isunordered(x, y)  (isunordered ((x), (y)))
-#define mono_trunc(x)           (trunc ((x)))
+#define mono_isfinite        isfinite
+#define mono_isinf           isinf
+#define mono_isnan           isnan
+#define mono_isnormal        isnormal
+#define mono_isunordered     isunordered
+#define mono_trunc           trunc
 
 #endif
 
