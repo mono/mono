@@ -1938,7 +1938,7 @@ exit:
 	mono_gchandle_free (source.gchandle);
 	mono_gchandle_free (dest.gchandle);
 
-	HANDLE_FUNCTION_RETURN_REF (MonoArray, dest.handle)
+	HANDLE_FUNCTION_RETURN_REF (MonoArray, dest.handle);
 }
 
 MonoArrayHandle

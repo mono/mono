@@ -459,7 +459,7 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 	context = MONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
 
 //experimental Try new ways.
-	context = xMONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
+	//context = xMONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
 	context.new_pinned (domain, klass, error);
 
 	goto_if_nok (error, exit);
@@ -468,7 +468,7 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
 
 //experimental Try new ways.
-	xMONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
+	//xMONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
 	context->context_id = 0;
 
 	mono_threads_register_app_context (context, error);
@@ -476,42 +476,6 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 	domain->default_context = MONO_HANDLE_RAW (context);
 exit:
 	HANDLE_FUNCTION_RETURN ();
-}
-
-//experimental Try new ways.
-void
-xmono_context_init_checked (MonoDomain *domain, MonoError *error)
-{
-	xHANDLE_FUNCTION_ENTER (); // new
-
-	MonoClass *klass;
-	MonoAppContextHandle context;
-
-	error_init (error);
-	if (mono_runtime_get_no_exec ())
-		goto exit;
-
-	klass = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
-	context = MONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
-
-//experimental Try new ways.
-	context = xMONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
-	context.new_pinned (domain, klass, error);
-
-	goto_if_nok (error, exit);
-
-	MONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
-	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
-
-//experimental Try new ways.
-	xMONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
-	context->context_id = 0;
-
-	mono_threads_register_app_context (context, error);
-	mono_error_assert_ok (error);
-	domain->default_context = MONO_HANDLE_RAW (context);
-exit:
-	xHANDLE_FUNCTION_RETURN (); // nop
 }
 
 /**
@@ -1376,6 +1340,8 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 		goto leave;
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
+//experiment new way
+	ret = result ? result->assembly : NULL;
 
 	if (ret && !refonly && mono_asmctx_get_kind (&ret->context) == MONO_ASMCTX_REFONLY) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */

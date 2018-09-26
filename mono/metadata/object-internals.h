@@ -253,7 +253,7 @@ struct _MonoException {
 	MonoPtr(MonoString) class_name;
 	MonoPtr(MonoString) message;
 	MonoPtr(MonoObject) _data;
-	MonoPtr(MonoObject) inner_ex;
+	MonoPtr(MonoException) inner_ex;
 	MonoPtr(MonoString) help_link;
 	/* Stores the IPs and the generic sharing infos
 	   (vtable/MRGCTX) of the frames. */
@@ -335,7 +335,7 @@ typedef struct {
 
 typedef struct {
 	MonoObject  object;
-	MonoReflectionType *class_to_proxy;	
+	MonoPtr(MonoReflectionType) class_to_proxy;	
 	MonoPtr(MonoObject) context;
 	MonoPtr(MonoObject) unwrapped_server;
 	gint32      target_domain_id;
@@ -389,7 +389,7 @@ TYPED_HANDLE_DECL (MonoComInteropProxy);
 
 typedef struct {
 	MonoObject	 object;
-	MonoRealProxy	*rp;	
+	MonoPtr(MonoRealProxy) rp;	
 	MonoRemoteClass *remote_class;
 	MonoBoolean	 custom_type_info;
 } MonoTransparentProxy;
@@ -428,7 +428,7 @@ typedef struct {
 	gint64 method_address;
 	gint32 method_index;
 	MonoReflectionMethod *method;
-	MonoString *filename;
+	MonoPtr(MonoString) filename;
 	gint32 line;
 	gint32 column;
 	MonoString *internal_method_name;
@@ -451,7 +451,7 @@ struct _MonoInternalThread {
 	gunichar2  *name;
 	guint32	    name_len;
 	guint32	    state;
-	MonoException *abort_exc;
+	MonoPtr(MonoException) abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
 	gsize debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
@@ -840,7 +840,7 @@ struct _MonoReflectionMethod {
 	MonoObject object;
 	MonoMethod *method;
 	MonoPtr(MonoString) name;
-	MonoReflectionType *reftype;
+	MonoPtr(MonoReflectionType) reftype;
 };
 
 /* Safely access System.Reflection.MonoMethod from native code */
@@ -852,7 +852,7 @@ struct _MonoDelegate {
 	gpointer method_ptr;
 	/* The invoke code */
 	gpointer invoke_impl;
-	MonoObject *target;
+	MonoPtr(MonoObject) target;
 	MonoMethod *method;
 	gpointer delegate_trampoline;
 	/* Extra argument passed to the target method in llvmonly mode */
@@ -867,7 +867,7 @@ struct _MonoDelegate {
 	gpointer interp_invoke_impl;
 	MonoReflectionMethod *method_info;
 	MonoReflectionMethod *original_method_info;
-	MonoObject *data;
+	MonoPtr(MonoObject) data;
 	MonoBoolean method_is_virtual;
 };
 
@@ -888,7 +888,7 @@ struct _MonoReflectionField {
 	MonoClass *klass;
 	MonoClassField *field;
 	MonoPtr(MonoString) name;
-	MonoReflectionType *type;
+	MonoPtr(MonoReflectionType) type;
 	guint32 attrs;
 };
 
@@ -922,15 +922,17 @@ typedef struct {
 /* Safely access Systme.Reflection.MonoEvent from native code */
 TYPED_HANDLE_DECL (MonoReflectionMonoEvent);
 
+typedef struct _MonoReflectionMarshalAsAttribute MONO_RT_MANAGED_ATTR MonoReflectionMarshalAsAttribute;
+
 typedef struct {
 	MonoObject object;
 	guint32 AttrsImpl;	
-	MonoReflectionType *ClassImpl;
+	MonoPtr(MonoReflectionType) ClassImpl;
 	MonoPtr(MonoObject) DefaultValueImpl;
 	MonoPtr(MonoObject) MemberImpl;
 	MonoPtr(MonoString) NameImpl;
 	gint32 PositionImpl;
-	MonoPtr(MonoObject) MarshalAsImpl;
+	MonoPtr(MonoReflectionMarshalAsAttribute) MarshalAsImpl;
 } MonoReflectionParameter;
 
 /* Safely access System.Reflection.ParameterInfo from native code */
@@ -938,9 +940,9 @@ TYPED_HANDLE_DECL (MonoReflectionParameter);
 
 struct _MonoReflectionMethodBody {
 	MonoObject object;
-	MonoArray *clauses;
-	MonoArray *locals;
-	MonoArray *il;
+	MonoPtr(MonoArray) clauses;
+	MonoPtr(MonoArray) locals;
+	MonoPtr(MonoArray) il;
 	MonoBoolean init_locals;
 	guint32 local_var_sig_token;
 	guint32 max_stack;
@@ -951,7 +953,7 @@ TYPED_HANDLE_DECL (MonoReflectionMethodBody);
 
 struct _MonoReflectionAssembly {
 	MonoObject object;
-	MonoAssembly *assembly;
+	MonoPtr(MonoAssembly) assembly;
 	MonoPtr(MonoObject) resolve_event_holder;
 	/* CAS related */
 	MonoPtr(MonoObject) evidence;	/* Evidence */
@@ -962,7 +964,7 @@ struct _MonoReflectionAssembly {
 	MonoPtr(MonoObject) denied;	/* PermissionSet - for the resolved assembly denied permissions */
 	/* */
 	MonoBoolean from_byte_array;
-	MonoString *name;
+	MonoPtr(MonoString) name;
 };
 
 typedef struct {
@@ -1000,11 +1002,11 @@ typedef struct {
 } MonoEventInfo;
 
 typedef struct {
-	MonoString *name;
-	MonoString *name_space;
-	MonoReflectionType *etype;
-	MonoReflectionType *nested_in;
-	MonoReflectionAssembly *assembly;
+	MonoPtr(MonoString) name;
+	MonoPtr(MonoString) name_space;
+	MonoPtr(MonoReflectionType) etype;
+	MonoPtr(MonoReflectionType) nested_in;
+	MonoPtr(MonoReflectionAssembly) assembly;
 	guint32 rank;
 	MonoBoolean isprimitive;
 } MonoTypeInfo;
@@ -1020,21 +1022,21 @@ typedef struct {
 	gint32 code_len;
 	gint32 max_stack;
 	gint32 cur_stack;
-	MonoArray *locals;
-	MonoArray *ex_handlers;
+	MonoPtr(MonoArray) locals;
+	MonoPtr(MonoArray) ex_handlers;
 	gint32 num_token_fixups;
 	MonoArray *token_fixups;
 } MonoReflectionILGen;
 
 typedef struct {
-	MonoArray *handlers;
+	MonoPtr(MonoArray) handlers;
 	gint32 start;
 	gint32 len;
 	gint32 label;
 } MonoILExceptionInfo;
 
 typedef struct {
-	MonoObject *extype;
+	MonoPtr(MonoReflectionType) extype;
 	gint32 type;
 	gint32 start;
 	gint32 len;
@@ -1043,7 +1045,7 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
-	MonoObject *catch_type;
+	MonoPtr(MonoReflectionType) catch_type;
 	gint32 filter_offset;
 	gint32 flags;
 	gint32 try_offset;
@@ -1058,7 +1060,7 @@ TYPED_HANDLE_DECL (MonoReflectionExceptionHandlingClause);
 
 typedef struct {
 	MonoObject object;
-	MonoReflectionType *local_type;
+	MonoPtr(MonoReflectionType) local_type;
 	MonoBoolean is_pinned;
 	guint16 local_index;
 } MonoReflectionLocalVariableInfo;
@@ -1072,7 +1074,7 @@ typedef struct {
 	 * LocalBuilder inherits from it under net 2.0.
 	 */
 	MonoObject object;
-	MonoObject *type;
+	MonoPtr(MonoReflectionType) type;
 	MonoBoolean is_pinned;
 	guint16 local_index;
 	MonoString *name;
@@ -1083,10 +1085,10 @@ typedef struct {
 	gint32 count;
 	gint32 type;
 	gint32 eltype;
-	MonoString *guid;
-	MonoString *mcookie;
-	MonoString *marshaltype;
-	MonoObject *marshaltyperef;
+	MonoPtr(MonoString) guid;
+	MonoPtr(MonoString) mcookie;
+	MonoPtr(MonoString) marshaltype;
+	MonoPtr(MonoReflectionType) marshaltyperef;
 	gint32 param_num;
 	MonoBoolean has_size;
 } MonoReflectionMarshal;
@@ -1175,7 +1177,7 @@ TYPED_HANDLE_DECL (MonoReflectionArrayMethod);
 typedef struct {
 	MonoArray *data;
 	MonoString *name;
-	MonoString *filename;
+	MonoPtr(MonoString) filename;
 	guint32 attrs;
 	guint32 offset;
 	MonoObject *stream;
@@ -1267,10 +1269,10 @@ typedef struct {
 struct _MonoReflectionModule {
 	MonoObject	obj;
 	MonoImage  *image;
-	MonoReflectionAssembly *assembly;
-	MonoString *fqname;
-	MonoString *name;
-	MonoString *scopename;
+	MonoPtr(MonoReflectionAssembly) assembly;
+	MonoPtr(MonoString) fqname;
+	MonoPtr(MonoString) name;
+	MonoPtr(MonoString) scopename;
 	MonoBoolean is_resource;
 	guint32 token;
 };
@@ -1286,9 +1288,9 @@ typedef struct {
 	MonoArray *cattrs;
 	MonoArray *guid;
 	guint32    table_idx;
-	MonoReflectionAssemblyBuilder *assemblyb;
-	MonoArray *global_methods;
-	MonoArray *global_fields;
+	MonoPtr(MonoReflectionAssemblyBuilder) assemblyb;
+	MonoPtr(MonoArray) global_methods;
+	MonoPtr(MonoArray) global_fields;
 	gboolean is_main;
 	MonoArray *resources;
 	GHashTable *unparented_classes;
@@ -1418,22 +1420,22 @@ typedef struct {
 typedef struct {
 	MonoObject  obj;
 	MonoReflectionMethod *ctor;
-	MonoArray *data;
+	MonoPtr(MonoArray) data;
 } MonoReflectionCustomAttr;
 
-typedef struct {
+struct _MonoReflectionMarshalAsAttribute {
 	MonoObject object;
-	MonoString *marshal_cookie;
-	MonoString *marshal_type;
-	MonoReflectionType *marshal_type_ref;
-	MonoReflectionType *marshal_safe_array_user_defined_subtype;
+	MonoPtr(MonoString) marshal_cookie;
+	MonoPtr(MonoString) marshal_type;
+	MonoPtr(MonoReflectionType) marshal_type_ref;
+	MonoPtr(MonoReflectionType) marshal_safe_array_user_defined_subtype;
 	guint32 utype;
 	guint32 array_subtype;
 	gint32 safe_array_subtype;
 	gint32 size_const;
 	gint32 IidParameterIndex;
 	gint16 size_param_index;
-} MonoReflectionMarshalAsAttribute;
+};
 
 /* Safely access System.Runtime.InteropServices.MarshalAsAttribute */
 TYPED_HANDLE_DECL (MonoReflectionMarshalAsAttribute);
@@ -1501,8 +1503,8 @@ enum {
 
 typedef struct {
 	MonoObject object;
-	MonoReflectionAssembly *assembly;
-	MonoString *filename;
+	MonoPtr(MonoReflectionAssembly) assembly;
+	MonoPtr(MonoString) filename;
 	guint32 location;
 } MonoManifestResourceInfo;
 

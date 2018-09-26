@@ -5483,6 +5483,8 @@ if test x"$GCC" = xyes; then
 	])
 fi
 
+CFLAGS="$CFLAGS -Wno-return-type-c-linkage"
+
 # Update all submodules recursively to ensure everything is checked out
 (cd $srcdir && scripts/update_submodules.sh)
 

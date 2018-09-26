@@ -7160,8 +7160,9 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 		if (!custom_type_info)
 			goto leave;
 		MonoDomain *domain = mono_domain_get ();
-		MonoObjectHandle rp = MONO_HANDLE_NEW (MonoObject, NULL);
-		MONO_HANDLE_GET (rp, MONO_HANDLE_CAST (MonoTransparentProxy, obj), rp);
+		MonoRealProxyHandle realproxy = MONO_HANDLE_NEW (MonoRealProxy, NULL);
+		MONO_HANDLE_GET (realproxy, MONO_HANDLE_CAST (MonoTransparentProxy, obj), rp);
+		MonoObjectHandle rp = MONO_HANDLE_CAST (MonoObject, realproxy);
 		MonoClass *rpklass = mono_defaults.iremotingtypeinfo_class;
 		MonoMethod *im = NULL;
 		gpointer pa [2];
@@ -8160,7 +8161,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 			target = tp->rp->unwrapped_server;
 		} else {
-			return mono_remoting_invoke ((MonoObject *)tp->rp, msg, exc, out_args, error);
+			return mono_remoting_invoke ((MonoObject *)(MonoRealProxy*)tp->rp, msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8313,10 +8314,10 @@ mono_print_unhandled_exception (MonoObject *exc)
 	gboolean free_message = FALSE;
 	ERROR_DECL (error);
 
-	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex) {
+	if (exc == (MonoObject*)(MonoException*)mono_object_domain (exc)->out_of_memory_ex) {
 		message = g_strdup ("OutOfMemoryException");
 		free_message = TRUE;
-	} else if (exc == (MonoObject*)mono_object_domain (exc)->stack_overflow_ex) {
+	} else if (exc == (MonoObject*)(MonoException*)mono_object_domain (exc)->stack_overflow_ex) {
 		message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
 		free_message = TRUE;
 	} else {
@@ -8671,7 +8672,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	return_val_if_nok (error, NULL);
 	mono_array_setref (msg->args, 1, field_name);
 
-	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args, error);
+	mono_remoting_invoke ((MonoObject *)(MonoRealProxy*)tp->rp, msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
