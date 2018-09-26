@@ -12,9 +12,9 @@
 
 #include <mono/utils/mono-compiler.h>
 
-typedef struct MonoPropertyBagItem MonoPropertyBagItem;
+typedef struct _MonoPropertyBagItem MonoPropertyBagItem;
 
-struct MonoPropertyBagItem {
+struct _MonoPropertyBagItem {
 	MonoPropertyBagItem *next;
 	int tag;
 };

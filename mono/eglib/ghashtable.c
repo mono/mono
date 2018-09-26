@@ -31,9 +31,9 @@
 #include <glib.h>
 #include <eglib-remap.h> // Remove the cast macros and restore the rename macros.
 
-typedef struct Slot Slot;
+typedef struct _Slot Slot;
 
-struct Slot {
+struct _Slot {
 	gpointer key;
 	gpointer value;
 	Slot    *next;
@@ -41,7 +41,7 @@ struct Slot {
 
 static gpointer KEYMARKER_REMOVED = &KEYMARKER_REMOVED;
 
-struct GHashTable {
+struct _GHashTable {
 	GHashFunc      hash_func;
 	GEqualFunc     key_equal_func;
 

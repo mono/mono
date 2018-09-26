@@ -12,9 +12,9 @@
 
 MONO_BEGIN_DECLS
 
-typedef struct MonoAssembly MonoAssembly;
-typedef struct MonoAssemblyName MonoAssemblyName;
-typedef struct MonoTableInfo MonoTableInfo;
+typedef struct _MonoAssembly MonoAssembly;
+typedef struct _MonoAssemblyName MonoAssemblyName;
+typedef struct _MonoTableInfo MonoTableInfo;
 
 typedef enum {
 	MONO_IMAGE_OK,

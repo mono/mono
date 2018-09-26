@@ -46,7 +46,7 @@
 #define TYPE_TABLE_PTR_CHUNK_SIZE	256
 #define TYPE_TABLE_CHUNK_SIZE		65536
 
-struct MonoSymbolFile {
+struct _MonoSymbolFile {
 	const uint8_t *raw_contents;
 	int raw_contents_size;
 	void *raw_contents_handle;

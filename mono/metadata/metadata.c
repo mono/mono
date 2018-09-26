@@ -7281,7 +7281,7 @@ mono_sizeof_type_with_mods (uint8_t num_mods)
 	if (num_mods == 0)
 		return accum;
 
-	accum += offsetof (struct MonoCustomModContainer, modifiers);
+	accum += offsetof (struct _MonoCustomModContainer, modifiers);
 	accum += sizeof (MonoCustomMod) * num_mods;
 	return accum;
 }

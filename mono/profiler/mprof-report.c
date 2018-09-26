@@ -106,15 +106,15 @@ pstrdup (const char *s)
 	return p;
 }
 
-typedef struct CounterValue CounterValue;
-struct CounterValue {
+typedef struct _CounterValue CounterValue;
+struct _CounterValue {
 	uint64_t timestamp;
 	unsigned char *buffer;
 	CounterValue *next;
 };
 
-typedef struct Counter Counter;
-struct Counter {
+typedef struct _Counter Counter;
+struct _Counter {
 	int index;
 	const char *section;
 	const char *name;
@@ -125,22 +125,22 @@ struct Counter {
 	CounterValue *values_last;
 };
 
-typedef struct CounterList CounterList;
-struct CounterList {
+typedef struct _CounterList CounterList;
+struct _CounterList {
 	Counter *counter;
 	CounterList *next;
 };
 
-typedef struct CounterSection CounterSection;
-struct CounterSection {
+typedef struct _CounterSection CounterSection;
+struct _CounterSection {
 	const char *value;
 	CounterList *counters;
 	CounterList *counters_last;
 	CounterSection *next;
 };
 
-typedef struct CounterTimestamp CounterTimestamp;
-struct CounterTimestamp {
+typedef struct _CounterTimestamp CounterTimestamp;
+struct _CounterTimestamp {
 	uint64_t value;
 	CounterSection *sections;
 	CounterSection *sections_last;
@@ -520,8 +520,8 @@ dump_counters (void)
 }
 
 static int num_images;
-typedef struct ImageDesc ImageDesc;
-struct ImageDesc {
+typedef struct _ImageDesc ImageDesc;
+struct _ImageDesc {
 	ImageDesc *next;
 	intptr_t image;
 	char *filename;
@@ -543,8 +543,8 @@ add_image (intptr_t image, char *name)
 
 static int num_assemblies;
 
-typedef struct AssemblyDesc AssemblyDesc;
-struct AssemblyDesc {
+typedef struct _AssemblyDesc AssemblyDesc;
+struct _AssemblyDesc {
 	AssemblyDesc *next;
 	intptr_t assembly;
 	char *asmname;
@@ -564,7 +564,7 @@ add_assembly (intptr_t assembly, char *name)
 	num_assemblies++;
 }
 
-typedef struct BackTrace BackTrace;
+typedef struct _BackTrace BackTrace;
 typedef struct {
 	uint64_t count;
 	BackTrace *bt;
@@ -576,8 +576,8 @@ typedef struct {
 	CallContext *traces;
 } TraceDesc;
 
-typedef struct ClassDesc ClassDesc;
-struct ClassDesc {
+typedef struct _ClassDesc ClassDesc;
+struct _ClassDesc {
 	ClassDesc *next;
 	intptr_t klass;
 	char *name;
@@ -633,8 +633,8 @@ lookup_class (intptr_t klass)
 	return cd;
 }
 
-typedef struct VTableDesc VTableDesc;
-struct VTableDesc {
+typedef struct _VTableDesc VTableDesc;
+struct _VTableDesc {
 	VTableDesc *next;
 	intptr_t vtable;
 	ClassDesc *klass;
@@ -681,8 +681,8 @@ lookup_vtable (intptr_t vtable)
 	return vt;
 }
 
-typedef struct MethodDesc MethodDesc;
-struct MethodDesc {
+typedef struct _MethodDesc MethodDesc;
+struct _MethodDesc {
 	MethodDesc *next;
 	intptr_t method;
 	char *name;
@@ -798,8 +798,8 @@ compare_method_samples (const void *a, const void *b)
 	return 1;
 }
 
-typedef struct UnmanagedSymbol UnmanagedSymbol;
-struct UnmanagedSymbol {
+typedef struct _UnmanagedSymbol UnmanagedSymbol;
+struct _UnmanagedSymbol {
 	UnmanagedSymbol *parent;
 	char *name;
 	int is_binary;
@@ -1078,13 +1078,13 @@ dump_samples (void)
 	}
 }
 
-typedef struct HeapClassDesc HeapClassDesc;
+typedef struct _HeapClassDesc HeapClassDesc;
 typedef struct {
 	HeapClassDesc *klass;
 	uint64_t count;
 } HeapClassRevRef;
 
-struct HeapClassDesc {
+struct _HeapClassDesc {
 	ClassDesc *klass;
 	int64_t count;
 	int64_t total_size;
@@ -1155,8 +1155,8 @@ typedef struct {
 	uintptr_t refs [0];
 } HeapObjectDesc;
 
-typedef struct HeapShot HeapShot;
-struct HeapShot {
+typedef struct _HeapShot HeapShot;
+struct _HeapShot {
 	HeapShot *next;
 	uint64_t timestamp;
 	int class_count;
@@ -1478,7 +1478,7 @@ heap_shot_free_objects (HeapShot *hs)
 }
 
 
-struct BackTrace {
+struct _BackTrace {
 	BackTrace *next;
 	unsigned int hash;
 	int count;
@@ -1544,10 +1544,10 @@ add_backtrace (int count, MethodDesc **methods)
 	return bt;
 }
 
-typedef struct MonitorDesc MonitorDesc;
-typedef struct ThreadContext ThreadContext;
-typedef struct DomainContext DomainContext;
-typedef struct RemCtxContext RemCtxContext;
+typedef struct _MonitorDesc MonitorDesc;
+typedef struct _ThreadContext ThreadContext;
+typedef struct _DomainContext DomainContext;
+typedef struct _RemCtxContext RemCtxContext;
 
 typedef struct {
 	FILE *file;
@@ -1574,7 +1574,7 @@ typedef struct {
 	RemCtxContext *current_remctx;
 } ProfContext;
 
-struct ThreadContext {
+struct _ThreadContext {
 	ThreadContext *next;
 	intptr_t thread_id;
 	char *name;
@@ -1596,13 +1596,13 @@ struct ThreadContext {
 	uint64_t gc_start_times [3];
 };
 
-struct DomainContext {
+struct _DomainContext {
 	DomainContext *next;
 	intptr_t domain_id;
 	const char *friendly_name;
 };
 
-struct RemCtxContext {
+struct _RemCtxContext {
 	RemCtxContext *next;
 	intptr_t remctx_id;
 	intptr_t domain_id;
@@ -1952,7 +1952,7 @@ static uint64_t monitor_contention;
 static uint64_t monitor_failed;
 static uint64_t monitor_acquired;
 
-struct MonitorDesc {
+struct _MonitorDesc {
 	MonitorDesc *next;
 	uintptr_t objid;
 	uintptr_t contentions;

@@ -7,7 +7,7 @@
 
 #include <mono/utils/mono-publib.h>
 
-typedef struct MonoMemPool MonoMemPool;
+typedef struct _MonoMemPool MonoMemPool;
 
 MONO_API MonoMemPool *
 mono_mempool_new           (void);

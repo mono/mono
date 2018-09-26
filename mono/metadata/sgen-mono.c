@@ -538,9 +538,9 @@ mono_gc_suspend_finalizers (void)
  * Ephemerons
  */
 
-typedef struct EphemeronLinkNode EphemeronLinkNode;
+typedef struct _EphemeronLinkNode EphemeronLinkNode;
 
-struct EphemeronLinkNode {
+struct _EphemeronLinkNode {
 	EphemeronLinkNode *next;
 	MonoArray *array;
 };

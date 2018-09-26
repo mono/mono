@@ -55,12 +55,12 @@ typedef struct {
 	MonoArray *serialized_non_primitives;
 } MonoAppDomainSetup;
 
-typedef struct MonoJitInfoTable MonoJitInfoTable;
-typedef struct MonoJitInfoTableChunk MonoJitInfoTableChunk;
+typedef struct _MonoJitInfoTable MonoJitInfoTable;
+typedef struct _MonoJitInfoTableChunk MonoJitInfoTableChunk;
 
 #define MONO_JIT_INFO_TABLE_CHUNK_SIZE		64
 
-struct MonoJitInfoTableChunk
+struct _MonoJitInfoTableChunk
 {
 	int		       refcount;
 	volatile int           num_elements;
@@ -69,7 +69,7 @@ struct MonoJitInfoTableChunk
 	MonoJitInfo * volatile data [MONO_JIT_INFO_TABLE_CHUNK_SIZE];
 };
 
-struct MonoJitInfoTable
+struct _MonoJitInfoTable
 {
 	MonoDomain	       *domain;
 	int			num_chunks;
@@ -77,7 +77,7 @@ struct MonoJitInfoTable
 	MonoJitInfoTableChunk  *chunks [MONO_ZERO_LEN_ARRAY];
 };
 
-#define MONO_SIZEOF_JIT_INFO_TABLE (sizeof (struct MonoJitInfoTable) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
+#define MONO_SIZEOF_JIT_INFO_TABLE (sizeof (struct _MonoJitInfoTable) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 typedef GArray MonoAotModuleInfoTable;
 
@@ -209,7 +209,7 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (MonoJitInfoFlags)
 
-struct MonoJitInfo {
+struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
 	   same offset as in RuntimeMethod, because of the jit_code_hash
@@ -261,14 +261,14 @@ struct MonoJitInfo {
 	/* There is an optional MonoThunkJitInfo after MonoArchEHJitInfo */
 };
 
-#define MONO_SIZEOF_JIT_INFO (offsetof (struct MonoJitInfo, clauses))
+#define MONO_SIZEOF_JIT_INFO (offsetof (struct _MonoJitInfo, clauses))
 
 typedef struct {
 	gpointer *static_data; /* Used to free the static data without going through the MonoAppContext object itself. */
 	uint32_t gc_handle;
 } ContextStaticData;
 
-struct MonoAppContext {
+struct _MonoAppContext {
 	MonoObject obj;
 	gint32 domain_id;
 	gint32 context_id;
@@ -301,15 +301,15 @@ typedef enum {
 	MONO_APPDOMAIN_UNLOADED
 } MonoAppDomainState;
 
-typedef struct MonoThunkFreeList {
+typedef struct _MonoThunkFreeList {
 	guint32 size;
 	int length;		/* only valid for the wait list */
-	struct MonoThunkFreeList *next;
+	struct _MonoThunkFreeList *next;
 } MonoThunkFreeList;
 
-typedef struct MonoJitCodeHash MonoJitCodeHash;
+typedef struct _MonoJitCodeHash MonoJitCodeHash;
 
-struct MonoDomain {
+struct _MonoDomain {
 	/*
 	 * This lock must never be taken before the loader lock,
 	 * i.e. if both are taken by the same thread, the loader lock

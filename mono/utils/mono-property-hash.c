@@ -10,7 +10,7 @@
 
 #include "mono-property-hash.h"
 
-struct MonoPropertyHash {
+struct _MonoPropertyHash {
 	/* We use one hash table per property */
 	GHashTable *hashes;
 };

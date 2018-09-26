@@ -20,7 +20,7 @@
 
 #include <mono/utils/mono-compiler.h>
 
-typedef struct MonoImageWriter MonoImageWriter;
+typedef struct _MonoImageWriter MonoImageWriter;
 
 #if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
 #define USE_ELF_WRITER 1

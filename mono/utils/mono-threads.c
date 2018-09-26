@@ -1724,7 +1724,7 @@ mono_threads_signal_thread_handle (MonoThreadHandle* thread_handle)
 
 #define INTERRUPT_STATE ((MonoThreadInfoInterruptToken*) (size_t) -1)
 
-struct MonoThreadInfoInterruptToken {
+struct _MonoThreadInfoInterruptToken {
 	void (*callback) (gpointer data);
 	gpointer data;
 };

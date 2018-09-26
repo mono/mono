@@ -1,17 +1,17 @@
 /**
- * \file Definitions of struct MonoClass members
+ * \file Definitions of struct _MonoClass members
  *
  * NOTE: This file should NOT be included directly.
  */
 
 #if defined(MONO_CLASS_DEF_PRIVATE) && !defined(REALLY_INCLUDE_CLASS_DEF)
-#error struct MonoClass definition should not be accessed directly
+#error struct _MonoClass definition should not be accessed directly
 #endif
 
 #ifndef __MONO_METADATA_CLASS_PRIVATE_DEFINITION_H__
 #define __MONO_METADATA_CLASS_PRIVATE_DEFINITION_H__
 
-struct MonoClass {
+struct _MonoClass {
 	/* element class for arrays and enum basetype for enums */
 	MonoClass *element_class; 
 	/* used for subtype checks */
@@ -127,7 +127,7 @@ struct MonoClass {
 	MonoPropertyBag infrequent_data;
 };
 
-struct MonoClassDef {
+struct _MonoClassDef {
 	MonoClass klass;
 	guint32	flags;
 	/*
@@ -140,7 +140,7 @@ struct MonoClassDef {
 	MonoClass *next_class_cache;
 };
 
-struct MonoClassGtd {
+struct _MonoClassGtd {
 	MonoClassDef klass;
 	MonoGenericContainer *generic_container;
 	/* The canonical GENERICINST where we instantiate a generic type definition with its own generic parameters.*/
@@ -148,21 +148,21 @@ struct MonoClassGtd {
 	MonoType canonical_inst;
 };
 
-struct MonoClassGenericInst {
+struct _MonoClassGenericInst {
 	MonoClass klass;
 	MonoGenericClass *generic_class;
 };
 
-struct MonoClassGenericParam {
+struct _MonoClassGenericParam {
 	MonoClass klass;
 };
 
-struct MonoClassArray {
+struct _MonoClassArray {
 	MonoClass klass;
 	guint32 method_count;
 };
 
-struct MonoClassPointer {
+struct _MonoClassPointer {
 	MonoClass klass;
 };
 

@@ -50,7 +50,7 @@ enum {
 	MONO_COUNTER_VARIABLE       = 1 << 30, /* This counter value can be anything on each sampling. Only interesting when sampling. */
 };
 
-typedef struct MonoCounter MonoCounter;
+typedef struct _MonoCounter MonoCounter;
 
 MONO_API void mono_counters_enable (int section_mask);
 MONO_API void mono_counters_init (void);

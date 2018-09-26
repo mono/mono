@@ -17,16 +17,16 @@
 
 #define MONO_EE_API_VERSION 0x6
 
-typedef struct MonoInterpStackIter MonoInterpStackIter;
+typedef struct _MonoInterpStackIter MonoInterpStackIter;
 
 /* Needed for stack allocation */
-struct MonoInterpStackIter {
+struct _MonoInterpStackIter {
 	gpointer dummy [8];
 };
 
 typedef gpointer MonoInterpFrameHandle;
 
-struct MonoEECallbacks {
+struct _MonoEECallbacks {
 	void (*entry_from_trampoline) (gpointer ccontext, gpointer imethod);
 	gpointer (*create_method_pointer) (MonoMethod *method, gboolean compile, MonoError *error);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
@@ -55,6 +55,6 @@ struct MonoEECallbacks {
 	void (*stop_single_stepping) (void);
 };
 
-typedef struct MonoEECallbacks MonoEECallbacks;
+typedef struct _MonoEECallbacks MonoEECallbacks;
 
 #endif /* __MONO_EE_H__ */

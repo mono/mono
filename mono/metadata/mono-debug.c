@@ -41,13 +41,13 @@
 #endif
 
 /* This contains per-domain info */
-struct MonoDebugDataTable {
+struct _MonoDebugDataTable {
 	MonoMemPool *mp;
 	GHashTable *method_address_hash;
 };
 
 /* This contains JIT debugging information about a method in serialized format */
-struct MonoDebugMethodAddress {
+struct _MonoDebugMethodAddress {
 	const guint8 *code_start;
 	guint32 code_size;
 	guint8 data [MONO_ZERO_LEN_ARRAY];
@@ -1042,9 +1042,9 @@ mono_is_debugger_attached (void)
  * Bundles
  */
 
-typedef struct BundledSymfile BundledSymfile;
+typedef struct _BundledSymfile BundledSymfile;
 
-struct BundledSymfile {
+struct _BundledSymfile {
 	BundledSymfile *next;
 	const char *aname;
 	const mono_byte *raw_contents;

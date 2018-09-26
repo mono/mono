@@ -19,7 +19,7 @@
 
 #include <glib.h>
 
-typedef struct MonoDwarfWriter MonoDwarfWriter;
+typedef struct _MonoDwarfWriter MonoDwarfWriter;
 
 MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean emit_line_numbers);
 

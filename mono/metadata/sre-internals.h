@@ -17,7 +17,7 @@ enum MonoAssemblyBuilderAccess {
 	MonoAssemblyBuilderAccess_RunAndCollect = 9,      /* Collect | Run */
 };
 
-typedef struct ArrayMethod ArrayMethod;
+typedef struct _ArrayMethod ArrayMethod;
 
 typedef struct {
 	guint32 owner;

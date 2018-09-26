@@ -33,12 +33,12 @@
    example.
 */
 
-typedef struct MonoInternalHashTable MonoInternalHashTable;
+typedef struct _MonoInternalHashTable MonoInternalHashTable;
 
 typedef gpointer (*MonoInternalHashKeyExtractFunc) (gpointer value);
 typedef gpointer* (*MonoInternalHashNextValueFunc) (gpointer value);
 
-struct MonoInternalHashTable
+struct _MonoInternalHashTable
 {
 	GHashFunc hash_func;
 	MonoInternalHashKeyExtractFunc key_extract;

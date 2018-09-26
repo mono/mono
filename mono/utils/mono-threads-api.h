@@ -23,7 +23,7 @@ MONO_BEGIN_DECLS
 This API is experimental. It will eventually be required to properly use the rest of the raw-omp embedding API.
 */
 
-typedef struct MonoStackData {
+typedef struct _MonoStackData {
 	gpointer stackpointer;
 	const char *function_name;
 } MonoStackData;

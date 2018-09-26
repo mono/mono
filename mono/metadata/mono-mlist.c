@@ -21,7 +21,7 @@ MonoMList*  mono_mlist_alloc_checked       (MonoObject *data, MonoError *error);
 
 
 /* matches the System.MonoListItem object*/
-struct MonoMList {
+struct _MonoMList {
 	MonoObject object;
 	MonoMList *next;
 	MonoObject *data;

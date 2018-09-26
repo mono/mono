@@ -14,7 +14,7 @@
 #include <mono/utils/mono-os-semaphore.h>
 #include <mono/metadata/icalls.h>
 
-struct MonoProfilerDesc {
+struct _MonoProfilerDesc {
 	MonoProfilerHandle next;
 	MonoProfiler *prof;
 	volatile gpointer cleanup_callback;
@@ -117,7 +117,7 @@ mono_profiler_installed (void)
 gboolean mono_profiler_coverage_instrumentation_enabled (MonoMethod *method);
 MonoProfilerCoverageInfo *mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries);
 
-struct MonoProfilerCallContext {
+struct _MonoProfilerCallContext {
 	/*
 	 * Must be the first field (the JIT relies on it). Only filled out if this
 	 * is a JIT frame; otherwise, zeroed.

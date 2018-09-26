@@ -16,8 +16,8 @@
 #define SGEN_THREADPOOL_MAX_NUM_THREADS 8
 #define SGEN_THREADPOOL_MAX_NUM_CONTEXTS 3
 
-typedef struct SgenThreadPoolJob SgenThreadPoolJob;
-typedef struct SgenThreadPoolContext SgenThreadPoolContext;
+typedef struct _SgenThreadPoolJob SgenThreadPoolJob;
+typedef struct _SgenThreadPoolContext SgenThreadPoolContext;
 
 typedef void (*SgenThreadPoolJobFunc) (void *thread_data, SgenThreadPoolJob *job);
 typedef void (*SgenThreadPoolThreadInitFunc) (void*);
@@ -26,14 +26,14 @@ typedef gboolean (*SgenThreadPoolContinueIdleJobFunc) (void*, int);
 typedef gboolean (*SgenThreadPoolShouldWorkFunc) (void*);
 typedef gboolean (*SgenThreadPoolContinueIdleWaitFunc) (int, int*);
 
-struct SgenThreadPoolJob {
+struct _SgenThreadPoolJob {
 	const char *name;
 	SgenThreadPoolJobFunc func;
 	size_t size;
 	volatile gint32 state;
 };
 
-struct SgenThreadPoolContext {
+struct _SgenThreadPoolContext {
 	/* Only accessed with the lock held. */
 	SgenPointerQueue job_queue;
 

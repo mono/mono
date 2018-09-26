@@ -13,28 +13,28 @@
 
 MONO_BEGIN_DECLS
 
-typedef struct MonoSymbolTable			MonoSymbolTable;
-typedef struct MonoDebugDataTable		MonoDebugDataTable;
+typedef struct _MonoSymbolTable			MonoSymbolTable;
+typedef struct _MonoDebugDataTable		MonoDebugDataTable;
 
-typedef struct MonoSymbolFile			MonoSymbolFile;
-typedef struct MonoPPDBFile			MonoPPDBFile;
+typedef struct _MonoSymbolFile			MonoSymbolFile;
+typedef struct _MonoPPDBFile			MonoPPDBFile;
 
-typedef struct MonoDebugHandle			MonoDebugHandle;
+typedef struct _MonoDebugHandle			MonoDebugHandle;
 
-typedef struct MonoDebugLineNumberEntry	MonoDebugLineNumberEntry;
+typedef struct _MonoDebugLineNumberEntry	MonoDebugLineNumberEntry;
 
-typedef struct MonoDebugVarInfo		MonoDebugVarInfo;
-typedef struct MonoDebugMethodJitInfo		MonoDebugMethodJitInfo;
-typedef struct MonoDebugMethodAddress		MonoDebugMethodAddress;
-typedef struct MonoDebugMethodAddressList	MonoDebugMethodAddressList;
-typedef struct MonoDebugClassEntry		MonoDebugClassEntry;
+typedef struct _MonoDebugVarInfo		MonoDebugVarInfo;
+typedef struct _MonoDebugMethodJitInfo		MonoDebugMethodJitInfo;
+typedef struct _MonoDebugMethodAddress		MonoDebugMethodAddress;
+typedef struct _MonoDebugMethodAddressList	MonoDebugMethodAddressList;
+typedef struct _MonoDebugClassEntry		MonoDebugClassEntry;
 
-typedef struct MonoDebugMethodInfo		MonoDebugMethodInfo;
-typedef struct MonoDebugLocalsInfo		MonoDebugLocalsInfo;
-typedef struct MonoDebugMethodAsyncInfo	MonoDebugMethodAsyncInfo;
-typedef struct MonoDebugSourceLocation		MonoDebugSourceLocation;
+typedef struct _MonoDebugMethodInfo		MonoDebugMethodInfo;
+typedef struct _MonoDebugLocalsInfo		MonoDebugLocalsInfo;
+typedef struct _MonoDebugMethodAsyncInfo	MonoDebugMethodAsyncInfo;
+typedef struct _MonoDebugSourceLocation		MonoDebugSourceLocation;
 
-typedef struct MonoDebugList			MonoDebugList;
+typedef struct _MonoDebugList			MonoDebugList;
 
 typedef enum {
 	MONO_DEBUG_FORMAT_NONE,
@@ -48,12 +48,12 @@ typedef enum {
  * We intentionally do not use GList here since the debugger needs to know about
  * the layout of the fields.
 */
-struct MonoDebugList {
+struct _MonoDebugList {
 	MonoDebugList *next;
 	const void* data;
 };
 
-struct MonoSymbolTable {
+struct _MonoSymbolTable {
 	uint64_t magic;
 	uint32_t version;
 	uint32_t total_size;
@@ -71,7 +71,7 @@ struct MonoSymbolTable {
 	MonoDebugList *symbol_files;
 };
 
-struct MonoDebugHandle {
+struct _MonoDebugHandle {
 	uint32_t index;
 	char *image_file;
 	MonoImage *image;
@@ -80,7 +80,7 @@ struct MonoDebugHandle {
 	MonoPPDBFile *ppdb;
 };
 
-struct MonoDebugMethodJitInfo {
+struct _MonoDebugMethodJitInfo {
 	const mono_byte *code_start;
 	uint32_t code_size;
 	uint32_t prologue_end;
@@ -98,13 +98,13 @@ struct MonoDebugMethodJitInfo {
 	MonoDebugVarInfo *gsharedvt_locals_var;
 };
 
-struct MonoDebugMethodAddressList {
+struct _MonoDebugMethodAddressList {
 	uint32_t size;
 	uint32_t count;
 	mono_byte data [MONO_ZERO_LEN_ARRAY];
 };
 
-struct MonoDebugSourceLocation {
+struct _MonoDebugSourceLocation {
 	char *source_file;
 	uint32_t row, column;
 	uint32_t il_offset;
@@ -141,7 +141,7 @@ MONO_API mono_bool mono_debug_enabled (void);
 /* variable is a vt address */
 #define MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR		0x60000000
 
-struct MonoDebugVarInfo {
+struct _MonoDebugVarInfo {
 	uint32_t index;
 	uint32_t offset;
 	uint32_t size;

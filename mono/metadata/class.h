@@ -14,9 +14,9 @@ MONO_BEGIN_DECLS
 
 typedef struct MonoVTable MonoVTable;
 
-typedef struct MonoClassField MonoClassField;
-typedef struct MonoProperty MonoProperty;
-typedef struct MonoEvent MonoEvent;
+typedef struct _MonoClassField MonoClassField;
+typedef struct _MonoProperty MonoProperty;
+typedef struct _MonoEvent MonoEvent;
 
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoClass *

@@ -16,7 +16,7 @@ typedef enum _FUNCTION_TABLE_TYPE {
     RF_CALLBACK
 } FUNCTION_TABLE_TYPE;
 
-typedef struct DYNAMIC_FUNCTION_TABLE {
+typedef struct _DYNAMIC_FUNCTION_TABLE {
     LIST_ENTRY Links;
     PRUNTIME_FUNCTION FunctionTable;
     LARGE_INTEGER TimeStamp;

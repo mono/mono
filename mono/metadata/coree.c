@@ -495,7 +495,7 @@ CloseFile:
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-typedef struct EXPORT_FIXUP
+typedef struct _EXPORT_FIXUP
 {
 	LPCSTR Name;
 	union

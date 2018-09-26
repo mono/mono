@@ -23,7 +23,7 @@ typedef void (*MonoThreadStartCB) (intptr_t tid, void* stack_start,
 				   void* func);
 typedef void (*MonoThreadAttachCB) (intptr_t tid, void* stack_start);
 
-typedef struct MonoAppDomain MonoAppDomain;
+typedef struct _MonoAppDomain MonoAppDomain;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
 

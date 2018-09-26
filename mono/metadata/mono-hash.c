@@ -38,7 +38,7 @@
 
 gint32 mono_g_hash_table_max_chain_length;
 
-struct MonoGHashTable {
+struct _MonoGHashTable {
 	GHashFunc      hash_func;
 	GEqualFunc     key_equal_func;
 

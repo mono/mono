@@ -959,7 +959,7 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	return method;
 }
 
-struct MonoDllMap {
+struct _MonoDllMap {
 	char *dll;
 	char *target;
 	char *func;

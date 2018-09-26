@@ -13,15 +13,15 @@
 
 #include "mono/sgen/sgen-thread-pool.h"
 
-typedef struct WorkerData WorkerData;
-typedef struct WorkerContext WorkerContext;
+typedef struct _WorkerData WorkerData;
+typedef struct _WorkerContext WorkerContext;
 
 typedef gint32 State;
 
 typedef void (*SgenWorkersFinishCallback) (void);
 typedef void (*SgenWorkerCallback) (WorkerData *data);
 
-struct WorkerData {
+struct _WorkerData {
 	gint32 state;
 	SgenGrayQueue private_gray_queue; /* only read/written by worker thread */
 	/*
@@ -43,7 +43,7 @@ struct WorkerData {
 	gint64 last_start;
 };
 
-struct WorkerContext {
+struct _WorkerContext {
 	int workers_num;
 	int active_workers_num;
 	volatile gboolean started;

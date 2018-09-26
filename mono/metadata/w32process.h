@@ -78,7 +78,7 @@ TYPED_HANDLE_DECL (MonoW32ProcessStartInfo);
 
 typedef uint32_t gchandle_t; // FIXME use this more, make it typesafe.
 
-typedef struct MonoCreateProcessCoop {
+typedef struct _MonoCreateProcessCoop {
 	gunichar2 *filename;
 	gunichar2 *arguments;
 	gunichar2 *working_directory;

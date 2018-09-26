@@ -16,13 +16,13 @@ G_BEGIN_DECLS
 /* We put the OS sync primitives in struct, so the compiler will warn us if
  * we use mono_os_(mutex|cond|sem)_... on MonoCoop(Mutex|Cond|Sem) structures */
 
-typedef struct MonoCoopMutex MonoCoopMutex;
-struct MonoCoopMutex {
+typedef struct _MonoCoopMutex MonoCoopMutex;
+struct _MonoCoopMutex {
 	mono_mutex_t m;
 };
 
-typedef struct MonoCoopCond MonoCoopCond;
-struct MonoCoopCond {
+typedef struct _MonoCoopCond MonoCoopCond;
+struct _MonoCoopCond {
 	mono_cond_t c;
 };
 

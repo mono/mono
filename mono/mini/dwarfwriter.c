@@ -42,7 +42,7 @@ typedef struct {
 	guint32 code_size;
 } MethodLineNumberInfo;
 
-struct MonoDwarfWriter
+struct _MonoDwarfWriter
 {
 	MonoImageWriter *w;
 	GHashTable *class_to_die, *class_to_vtype_die, *class_to_pointer_die;

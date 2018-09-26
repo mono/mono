@@ -21,7 +21,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct MonoMethodBuilder MonoMethodBuilder;
+typedef struct _MonoMethodBuilder MonoMethodBuilder;
 
 #define MONO_METHOD_BUILDER_CALLBACKS_VERSION 1
 

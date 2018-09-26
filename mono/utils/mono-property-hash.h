@@ -23,7 +23,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct MonoPropertyHash MonoPropertyHash;
+typedef struct _MonoPropertyHash MonoPropertyHash;
 
 MONO_API MonoPropertyHash* mono_property_hash_new (void);
 

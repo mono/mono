@@ -10,7 +10,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/metadata/icalls.h>
 
-typedef struct MonoCounterSample MonoCounterSample;
+typedef struct _MonoCounterSample MonoCounterSample;
 
 ICALL_EXPORT
 void* mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString* instance,

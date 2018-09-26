@@ -911,7 +911,7 @@ reflection_cc_to_file (int call_conv) {
 }
 #endif /* !DISABLE_REFLECTION_EMIT */
 
-struct ArrayMethod {
+struct _ArrayMethod {
 	MonoType *parent;
 	MonoMethodSignature *sig;
 	char *name;

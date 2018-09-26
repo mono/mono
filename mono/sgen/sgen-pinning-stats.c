@@ -17,8 +17,8 @@
 #include "mono/sgen/sgen-hash-table.h"
 #include "mono/sgen/sgen-client.h"
 
-typedef struct PinStatAddress PinStatAddress;
-struct PinStatAddress {
+typedef struct _PinStatAddress PinStatAddress;
+struct _PinStatAddress {
 	char *addr;
 	int pin_types;
 	PinStatAddress *left;
