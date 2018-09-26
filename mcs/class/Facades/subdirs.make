@@ -67,6 +67,10 @@ build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS) System.Text.RegularExpression
 monodroid_SUBDIRS = $(monotouch_SUBDIRS)
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
+#fndef EXTERNAL_FACADE_DRAWING_REFERENCE
+monodroid_SUBDIRS += Mono.Android netstandard
+endif
+
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
