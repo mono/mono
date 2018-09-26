@@ -49,7 +49,11 @@ else
 # the product repo like in the XI/XA case we need to pass in a reference
 # to the assembly containing drawing types like Rectangle etc. from there.
 # This needs to be passed in via EXTERNAL_FACADE_DRAWING_REFERENCE.
+ifdef EXTERNAL_FACADE_DRAWING_REFERENCE
 LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
+else ifeq ($(PROFILE),monodroid)
+LIB_REFS += Facades/Mono.Android
+endif
 endif
 
 endif
