@@ -11,7 +11,6 @@
 
 #include <mono/metadata/object.h>
 
-typedef struct _MonoMList MonoMList;
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoMList*  mono_mlist_alloc       (MonoObject *data);
 MONO_API MonoObject* mono_mlist_get_data    (MonoMList* list);
@@ -31,4 +30,3 @@ MonoMList*  mono_mlist_append_checked       (MonoMList* list, MonoObject *data, 
 MONO_API MonoMList*  mono_mlist_remove_item (MonoMList* list, MonoMList *item);
 
 #endif /* __MONO_METADATA_MONO_MLIST_H__ */
-
