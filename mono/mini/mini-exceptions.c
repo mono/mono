@@ -1909,7 +1909,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 
 	g_assert (ctx != NULL);
 
-	if (obj == (MonoObject *)domain->stack_overflow_ex)
+	if (obj == &domain->stack_overflow_ex->object)
 		stack_overflow = TRUE;
 
 	mono_ex = (MonoException*)obj;
@@ -2214,14 +2214,14 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 	/*
 	 * Allocate a new exception object instead of the preconstructed ones.
 	 */
-	if (obj == (MonoObject *)domain->stack_overflow_ex) {
+	if (obj == &domain->stack_overflow_ex->object) {
 		/*
 		 * It is not a good idea to try and put even more pressure on the little stack available.
 		 * obj = mono_get_exception_stack_overflow ();
 		 */
 		stack_overflow = TRUE;
 	}
-	else if (obj == (MonoObject *)domain->null_reference_ex) {
+	else if (obj == &domain->null_reference_ex->object) {
 		obj = (MonoObject *)mono_get_exception_null_reference ();
 	}
 
@@ -2577,7 +2577,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 #ifndef DISABLE_PERFCOUNTERS
 					mono_atomic_fetch_add_i32 (&mono_perfcounters->exceptions_depth, frame_count);
 #endif
-					if (obj == (MonoObject *)domain->stack_overflow_ex)
+					if (obj == &domain->stack_overflow_ex->object)
 						jit_tls->handling_stack_ovf = FALSE;
 
 					return 0;

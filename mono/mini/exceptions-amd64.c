@@ -821,7 +821,7 @@ restore_soft_guard_pages (void)
 	if (jit_tls->stack_ovf_pending) {
 		MonoDomain *domain = mono_domain_get ();
 		jit_tls->stack_ovf_pending = 0;
-		return (MonoObject *) domain->stack_overflow_ex;
+		return &domain->stack_overflow_ex->object;
 	}
 
 	return NULL;
