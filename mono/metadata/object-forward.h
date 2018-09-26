@@ -11,6 +11,7 @@
 #include <mono/utils/mono-publib.h>
 
 typedef struct _MonoClass MonoClass;
+typedef struct _MonoDomain MonoDomain;
 typedef struct _MonoImage MonoImage;
 typedef struct _MonoMethod MonoMethod;
 

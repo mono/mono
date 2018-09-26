@@ -642,11 +642,13 @@ Requires typesafe handles.
 
 #ifdef __cplusplus //experimental
 
+extern "C++" {
+
 inline
 void **MonoHandleFrame::allocate_handle_in_caller (void* value)
 {
 	mono_stack_mark_pop (threadinfo, &stackmark);
-	void ** h = mono_handle_new ((MonoObject*)value);
+	void ** h = (void**)mono_handle_new ((MonoObject*)value);
 	mono_stack_mark_init (threadinfo, &stackmark);
 	return h;
 }
@@ -654,7 +656,7 @@ void **MonoHandleFrame::allocate_handle_in_caller (void* value)
 inline
 MonoHandleFrame::MonoHandleFrame ()
 {
-	threadinfo = mono_thread_info_current ();
+	threadinfo = (MonoThreadInfo*)mono_thread_info_current ();
 	mono_stack_mark_init (threadinfo, &stackmark);
 }
 
@@ -671,11 +673,14 @@ void** MonoHandleFrame::allocate_handle (void* value)
 	return (void**)mono_handle_new ((MonoObject*)value);
 }
 
+// FIXME duplicate declaration
+MonoObjectHandle mono_object_new_pinned_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
 template <typename T>
 inline void
 MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
-	raw = (T**)mono_object_new_pinned_handle (domain, klass, error).raw;
+	__raw = (T**)mono_object_new_pinned_handle (domain, klass, error).__raw;
 }
 
 /*
@@ -687,11 +692,11 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define xHANDLE_FUNCTION_ENTER() MonoHandleFrame local_handle_frame;
 #define xHANDLE_FUNCTION_RETURN() /* nothing */
 #define xHANDLE_FUNCTION_RETURN_VAL(x) return (x)
-#define xHANDLE_FUNCTION_RETURN_OBJ(handle) return *(handle).raw
+#define xHANDLE_FUNCTION_RETURN_OBJ(handle) return *(handle).__raw
 #define xHANDLE_FUNCTION_RETURN_REF(type, handle) return (handle).return_handle (local_handle_frame)
 #define xMONO_HANDLE_IS_NULL(handle) (!(handle))
 #define xMONO_HANDLE_BOOL(handle) (handle)
-#define xMONO_HANDLE_RAW(x) (*((x).raw))
+#define xMONO_HANDLE_RAW(x) (*((x).__raw))
 #define xMONO_HANDLE_NEW(type, value) 		(MonoHandle<type>::static_new (value))
 #define xMONO_HANDLE_GET(result, handle, field)	(result = (handle)->field)
 #define xMONO_HANDLE_GETVAL(handle, field) ((handle)->field)
@@ -699,9 +704,9 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define xMONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
 #define xMONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
 #define xMONO_HANDLE_SET(handle, field, value) ((handle)->field = (value))
-#define xMONO_HANDLE_CAST(type, value) MonoHandle<type>{(type**)(value).raw}
+#define xMONO_HANDLE_CAST(type, value) MonoHandle<type>{(type**)(value).__raw}
 
-}
+} // extern C++
 
 #endif // experimental C++
 

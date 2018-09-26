@@ -19,6 +19,10 @@
 #include <mono/metadata/object-forward.h>
 #include <mono/utils/mono-compiler.h>
 
+// FIXME no duplicate declaration
+typedef union _MonoError MonoError;
+
+
 // Type-safe handles are a struct with a pointer to pointer.
 // The only operations allowed on them are the functions/macros in this file, and assignment
 // from same handle type to same handle type.
@@ -41,11 +45,12 @@
 // NOTE: Running this code depends on the ABI to pass a struct
 // with a pointer the same as a pointer. This is tied in with
 // marshaling. If this is not the case, turn off type-safety, perhaps per-OS per-CPU.
-#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
+// FIXME
+//#if defined (HOST_DARWIN) || defined (HOST_WIN32) || defined (HOST_ARM64) || defined (HOST_ARM) || defined (HOST_AMD64)
 #define MONO_TYPE_SAFE_HANDLES 1
-#else
-#define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
-#endif
+//#else
+//#define MONO_TYPE_SAFE_HANDLES 0 // PowerPC, S390X, SPARC, MIPS, Linux/x86, BSD/x86, etc.
+//#endif
 
 /*
 Handle macros/functions
@@ -87,51 +92,6 @@ Handle macros/functions
  * #endif
  */
 
-#ifdef __cplusplus
-#define MONO_IF_CPLUSPLUS(x) x
-#else
-#define MONO_IF_CPLUSPLUS(x) /* nothing */
-#endif
-
-#if MONO_TYPE_SAFE_HANDLES
-#define TYPED_HANDLE_DECL(TYPE)							\
-	typedef struct {							\
-		MONO_IF_CPLUSPLUS (						\
-			MONO_ALWAYS_INLINE					\
-			TYPE * GetRaw () { return __raw ? *__raw : NULL; }	\
-		)								\
-		TYPE **__raw;							\
-	} TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
-	  TYPED_HANDLE_NAME (TYPE),						\
-	  TYPED_OUT_HANDLE_NAME (TYPE);						\
-/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
-/* Another way to do this involved casting mono_handle_new function to a different type. */ \
-static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
-MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
-{								\
-	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
-	return b;						\
-}								\
-static inline MONO_ALWAYS_INLINE MonoObject* 			\
-MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
-{								\
-	return (MonoObject*)a;					\
-}
-
-#else
-#define TYPED_HANDLE_DECL(TYPE)						\
-	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
-	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE);
-#endif
-
-/*
- * TYPED_VALUE_HANDLE_DECL(SomeType):
- *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
- * It is currently identical to TYPED_HANDLE_DECL (valuetypes vs. referencetypes).
- */
-#define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
-
 #ifdef __cplusplus //experimental
 
 template <typename T> struct MonoPtr;
@@ -139,7 +99,7 @@ template <typename T> struct MonoHandle;
 
 template <typename T> struct MonoPtr
 {
-	MonoPtr& operator = (MonoHandle<T> h) { p = *h.raw; return *this; }
+	MonoPtr& operator = (MonoHandle<T> h) { p = *h.__raw; return *this; }
 	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
 	MonoPtr& operator = (T* q) { p = q; return *this; }
 	operator T * () { return p; }
@@ -262,17 +222,17 @@ struct MonoHandle
 {
 	MonoHandle return_handle (MonoHandleFrame& frame)
 	{
-		return MonoHandle{(T**)frame.allocate_handle_in_caller (*raw)};
+		return MonoHandle{(T**)frame.allocate_handle_in_caller (*__raw)};
 	}
 
 	T* return_ptr ()
 	{
-		return *raw;
+		return *__raw;
 	}
 
 	void New (MonoHandleFrame & frame, T * value = 0)
 	{
-		raw = (T**)frame.allocate_handle (value);
+		__raw = (T**)frame.allocate_handle (value);
 	}
 
 	static MonoHandle static_new (MonoHandleFrame & frame, T * value = 0)
@@ -280,18 +240,77 @@ struct MonoHandle
 		return MonoHandle {(T**)frame.allocate_handle (value)};
 	}
 
-	static void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
+	MONO_ALWAYS_INLINE T * GetRaw () { return __raw ? *__raw : NULL; }
 
-	void operator=(MonoHandle p) { raw = p.raw; }
-	void operator=(MonoPtr<T> p) { *raw = p; }
-	void operator=(T* p) { *raw = p; }
-	T* operator-> () { return *raw; }
+	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+	MonoHandle& operator=(MonoHandle p) { __raw = p.__raw; return *this; }
+	MonoHandle& operator=(MonoPtr<T> p) { *__raw = p; return *this; }
+	MonoHandle& operator=(T* p) { *__raw = p; return *this; }
+	T* operator-> () { return *__raw; }
 
 //private:
-	T ** raw;
+	T ** __raw;
 };
 
+#if MONO_TYPE_SAFE_HANDLES
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef MonoHandle<TYPE> 						\
+	TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
+	  TYPED_HANDLE_NAME (TYPE),						\
+	  TYPED_OUT_HANDLE_NAME (TYPE);						\
+/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
+/* Another way to do this involved casting mono_handle_new function to a different type. */ \
+static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
+{								\
+	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
+	return b;						\
+}								\
+static inline MONO_ALWAYS_INLINE MonoObject* 			\
+MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
+{								\
+	return (MonoObject*)a;					\
+}
+
+#else
+
 } // extern C++
+
 #endif // __cplusplus experimental
+
+#if MONO_TYPE_SAFE_HANDLES
+#define TYPED_HANDLE_DECL(TYPE)							\
+	typedef MonoHandle<TYPE> 						\
+	TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
+	  TYPED_HANDLE_NAME (TYPE),						\
+	  TYPED_OUT_HANDLE_NAME (TYPE);						\
+/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
+/* Another way to do this involved casting mono_handle_new function to a different type. */ \
+static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
+{								\
+	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
+	return b;						\
+}								\
+static inline MONO_ALWAYS_INLINE MonoObject* 			\
+MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
+{								\
+	return (MonoObject*)a;					\
+}
+
+#else
+#define TYPED_HANDLE_DECL(TYPE)						\
+	typedef struct { TYPE *__raw; } TYPED_HANDLE_PAYLOAD_NAME (TYPE) ; \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_HANDLE_NAME (TYPE); \
+	typedef TYPED_HANDLE_PAYLOAD_NAME (TYPE) * TYPED_OUT_HANDLE_NAME (TYPE);
+#endif
+
+/*
+ * TYPED_VALUE_HANDLE_DECL(SomeType):
+ *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort) and to an internal payload struct.
+ * It is currently identical to TYPED_HANDLE_DECL (valuetypes vs. referencetypes).
+ */
+#define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
 
 #endif /* __MONO_HANDLE_DECL_H__ */
