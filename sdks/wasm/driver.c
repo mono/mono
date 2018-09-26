@@ -280,7 +280,6 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();
 #endif
-	mono_icall_table_init ();
 
 	if (assembly_count) {
 		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
