@@ -42,12 +42,6 @@ ifeq (monotouch_runtime, $(PROFILE))
 LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
 endif
 
-ifneq (basic, $(PROFILE))
-ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += Mono.Posix
-endif
-endif
-
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
 ifdef CC_PROFILE
 BUILT_SOURCES = \
