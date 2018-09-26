@@ -132,4 +132,166 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
  */
 #define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
 
+#ifdef __cplusplus //experimental
+
+template <typename T> struct MonoPtr;
+template <typename T> struct MonoHandle;
+
+template <typename T> struct MonoPtr
+{
+	MonoPtr& operator = (MonoHandle<T> h) { p = *h.raw; return *this; }
+	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
+	MonoPtr& operator = (T* q) { p = q; return *this; }
+	operator T * () { return p; }
+	T* operator -> () { return p; }
+
+	struct OperatorAmpersandResult
+	{
+		MonoPtr<T>* p;
+
+		operator T** () { return &p->p; }
+		operator void** () { return (void**)&p->p; }
+		operator void* () { return (void*)&p->p; } // FIXME? MONO_HANDLE_SET MONO_OBJECT_SETREF mono_gc_wbarrier_set_field
+		//operator MonoPtr<T>* () { return p; }
+	};
+
+	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
+
+	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
+	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
+	T* get () { return p; }
+
+//private:
+	T * p;
+};
+
+#define MonoPtr(x) MonoPtr<x>
+
+#else
+
+#define MonoPtr(x) x*
+
+#endif
+
+#ifdef __cplusplus //experimental
+
+struct _MonoThreadInfo;
+typedef struct _MonoThreadInfo MonoThreadInfo;
+
+/*
+Handle stack.
+
+The handle stack is designed so it's efficient to pop a large amount of entries at once.
+The stack is made out of a series of fixed size segments.
+
+To do bulk operations you use a stack mark.
+	
+*/
+
+/*
+3 is the number of fields besides the data in the struct;
+128 words makes each chunk 512 or 1024 bytes each
+*/
+#define OBJECTS_PER_HANDLES_CHUNK (128 - 3)
+
+typedef struct _HandleChunk HandleChunk;
+
+/*
+ * Define MONO_HANDLE_TRACK_OWNER to store the file and line number of each call to MONO_HANDLE_NEW
+ * in the handle stack.  (This doubles the amount of memory used for handles, so it's only useful for debugging).
+ */
+/*#define MONO_HANDLE_TRACK_OWNER*/
+
+/*
+ * Define MONO_HANDLE_TRACK_SP to record the C stack pointer at the time of each HANDLE_FUNCTION_ENTER and
+ * to ensure that when a new handle is allocated the previous newest handle is not lower in the stack.
+ * This is useful to catch missing HANDLE_FUNCTION_ENTER / HANDLE_FUNCTION_RETURN pairs which could cause
+ * handle leaks.
+ *
+ * If defined, keep HandleStackMark in sync in RuntimeStructs.cs
+ */
+/*#define MONO_HANDLE_TRACK_SP*/
+
+typedef struct {
+	gpointer o; /* MonoObject ptr or interior ptr */
+#ifdef MONO_HANDLE_TRACK_OWNER
+	const char *owner;
+	gpointer backtrace_ips[7]; /* result of backtrace () at time of allocation */
+#endif
+#ifdef MONO_HANDLE_TRACK_SP
+	gpointer alloc_sp; /* sp from HandleStack:stackmark_sp at time of allocation */
+#endif
+} HandleChunkElem;
+
+struct _HandleChunk {
+	int size; //number of handles
+	HandleChunk *prev, *next;
+	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
+};
+
+// Keep this in sync with RuntimeStructs.cs
+typedef struct {
+	int size, interior_size;
+	HandleChunk *chunk;
+#ifdef MONO_HANDLE_TRACK_SP
+	gpointer prev_sp; // C stack pointer from prior mono_stack_mark_init
+#endif
+} HandleStackMark;
+
+//void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
+
+extern "C++" {
+
+struct MonoHandleFrame
+{
+	void **allocate_handle_in_caller (void* value = 0);
+
+	MonoHandleFrame ();
+
+	~MonoHandleFrame ();
+
+	void** allocate_handle (void* value = 0);
+
+private:
+	HandleStackMark stackmark;
+	MonoThreadInfo *threadinfo;
+};
+
+template <typename T>
+struct MonoHandle
+{
+	MonoHandle return_handle (MonoHandleFrame& frame)
+	{
+		return MonoHandle{(T**)frame.allocate_handle_in_caller (*raw)};
+	}
+
+	T* return_ptr ()
+	{
+		return *raw;
+	}
+
+	void New (MonoHandleFrame & frame, T * value = 0)
+	{
+		raw = (T**)frame.allocate_handle (value);
+	}
+
+	static MonoHandle static_new (MonoHandleFrame & frame, T * value = 0)
+	{
+		return MonoHandle {(T**)frame.allocate_handle (value)};
+	}
+
+	static void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+	void operator=(MonoHandle p) { raw = p.raw; }
+	void operator=(MonoPtr<T> p) { *raw = p; }
+	void operator=(T* p) { *raw = p; }
+	T* operator-> () { return *raw; }
+
+//private:
+	T ** raw;
+};
+
+} // extern C++
+#endif // __cplusplus experimental
+
 #endif /* __MONO_HANDLE_DECL_H__ */
