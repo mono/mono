@@ -9,5 +9,6 @@
 
 typedef struct _MonoDomain MonoDomain;
 typedef struct _MonoJitInfo MonoJitInfo;
+typedef union _MonoError MonoError;
 
 #endif
