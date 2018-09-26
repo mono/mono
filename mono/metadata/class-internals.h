@@ -94,7 +94,7 @@ struct _MonoMethodWrapper {
 
 struct _MonoDynamicMethod {
 	MonoMethodWrapper method;
-	MonoAssembly *assembly;
+	MonoPtr(MonoAssembly) assembly;
 };
 
 struct _MonoMethodPInvoke {

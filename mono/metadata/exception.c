@@ -296,7 +296,7 @@ mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
 return_null:
 	MONO_HANDLE_ASSIGN (ex, NULL_HANDLE);
 exit:
-	HANDLE_FUNCTION_RETURN_REF (MonoException, ex)
+	HANDLE_FUNCTION_RETURN_REF (MonoException, ex);
 }
 
 /**

@@ -31,28 +31,28 @@ extern gboolean mono_dont_free_domains;
 /* This is a copy of System.AppDomainSetup */
 typedef struct {
 	MonoObject object;
-	MonoString *application_base;
-	MonoString *application_name;
-	MonoString *cache_path;
-	MonoString *configuration_file;
-	MonoString *dynamic_base;
-	MonoString *license_file;
-	MonoString *private_bin_path;
-	MonoString *private_bin_path_probe;
-	MonoString *shadow_copy_directories;
-	MonoString *shadow_copy_files;
+	MonoPtr(MonoString) application_base;
+	MonoPtr(MonoString) application_name;
+	MonoPtr(MonoString) cache_path;
+	MonoPtr(MonoString) configuration_file;
+	MonoPtr(MonoString) dynamic_base;
+	MonoPtr(MonoString) license_file;
+	MonoPtr(MonoString) private_bin_path;
+	MonoPtr(MonoString) private_bin_path_probe;
+	MonoPtr(MonoString) shadow_copy_directories;
+	MonoPtr(MonoString) shadow_copy_files;
 	MonoBoolean publisher_policy;
 	MonoBoolean path_changed;
 	int loader_optimization;
 	MonoBoolean disallow_binding_redirects;
 	MonoBoolean disallow_code_downloads;
-	MonoObject *activation_arguments; /* it is System.Object in 1.x, ActivationArguments in 2.0 */
-	MonoObject *domain_initializer;
-	MonoObject *application_trust; /* it is System.Object in 1.x, ApplicationTrust in 2.0 */
-	MonoArray *domain_initializer_args;
+	MonoPtr(MonoObject) activation_arguments; /* it is System.Object in 1.x, ActivationArguments in 2.0 */
+	MonoPtr(MonoObject) domain_initializer;
+	MonoPtr(MonoObject) application_trust; /* it is System.Object in 1.x, ApplicationTrust in 2.0 */
+	MonoPtr(MonoArray) domain_initializer_args;
 	MonoBoolean disallow_appbase_probe;
-	MonoArray *configuration_bytes;
-	MonoArray *serialized_non_primitives;
+	MonoPtr(MonoArray) configuration_bytes;
+	MonoPtr(MonoArray) serialized_non_primitives;
 } MonoAppDomainSetup;
 
 typedef struct _MonoJitInfoTable MonoJitInfoTable;
@@ -326,16 +326,16 @@ struct _MonoDomain {
 	MonoAppDomainSetup *setup;
 	MonoAppDomain      *domain;
 	MonoAppContext     *default_context;
-	MonoException      *out_of_memory_ex;
-	MonoException      *null_reference_ex;
-	MonoException      *stack_overflow_ex;
+	MonoPtr(MonoException) out_of_memory_ex;
+	MonoPtr(MonoException) null_reference_ex;
+	MonoPtr(MonoException) stack_overflow_ex;
 	/* typeof (void) */
-	MonoObject         *typeof_void;
+	MonoPtr(MonoReflectionType) typeof_void;
 	/* Ephemeron Tombstone*/
-	MonoObject         *ephemeron_tombstone;
+	MonoPtr(MonoObject) ephemeron_tombstone;
 	/* new MonoType [0] */
-	MonoArray          *empty_types;
-	MonoString         *empty_string;
+	MonoPtr(MonoArray) empty_types;
+	MonoPtr(MonoString) empty_string;
 	/* 
 	 * The fields between FIRST_GC_TRACKED and LAST_GC_TRACKED are roots, but
 	 * not object references.
