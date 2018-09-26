@@ -1,4 +1,4 @@
-// Compiler options: -nostdlib -noconfig -r:mscorlib.dll -r:System.Core.dll -lib:../class/lib/net_4_x
+// Compiler options: -nostdlib -noconfig -r:mscorlib.dll -r:System.Core.dll -lib:$REF_DIR
 
 public static class T
 {

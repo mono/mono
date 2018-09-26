@@ -107,7 +107,7 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 
 	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
 	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{cross64,cross32,cross32-64,crosswatch}
 
 	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
@@ -195,6 +195,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
 	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
 	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+	   #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
 fi

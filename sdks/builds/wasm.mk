@@ -30,10 +30,11 @@ EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
-
-.stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
+	-cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && patch -p1 < $(TOP)/sdks/builds/emsdk-eh.diff
+
+.stamp-wasm-toolchain: | $(TOP)/sdks/builds/toolchains/emsdk
 	touch $@
 
 .stamp-wasm-runtime-toolchain: .stamp-wasm-toolchain

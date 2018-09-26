@@ -308,6 +308,7 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit2XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit3XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\OutputWriter.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\XunitXmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultReporter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultSummary.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\TcpWriter.cs" />

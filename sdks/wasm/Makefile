@@ -87,16 +87,10 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
-mono.js: $(DRIVER_CONF)/.stamp-build
-	cp $(DRIVER_CONF)/mono.js $@
-
-mono.wasm: $(DRIVER_CONF)/.stamp-build
-	cp $(DRIVER_CONF)/mono.wasm $@
-
 $(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
 	cp $< $@
 
-build-native: mono.js mono.wasm debug/.stamp-build release/.stamp-build
+build-native: debug/.stamp-build release/.stamp-build
 
 do-runtime:
 	make -j4 -C ../builds package-wasm-runtime
@@ -115,16 +109,16 @@ binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 WebAssembly.Bindings.dll: bindings.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
 
 WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
 
 Simple.Dependency.dll: dependency.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
 
 sample.dll: Simple.Dependency.dll sample.cs
-	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
@@ -148,22 +142,12 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	ninja -v -C obj/test-suite
 	touch $@
 
-MINI_BASIC_TEST_FILES= \
-    basic-calls.cs  \
-    basic-float.cs  \
-    basic-long.cs   \
-    basic-math.cs   \
-    basic.cs        \
-    objects.cs
-
-MINI_BASIC_TEST_SOURCES= $(patsubst %,$(MINI_PATH)/%,$(MINI_BASIC_TEST_FILES))
-
 aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests.dll main.exe runtime.g.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests.dll main.exe
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.g.js mini_tests.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js mini)
+	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
 
 build-debug-sample: .stamp-build-debug-sample
 
@@ -250,3 +234,5 @@ serve:
 
 canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
+
+check-aot: do-aot-sample
