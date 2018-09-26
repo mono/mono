@@ -28,62 +28,11 @@
 G_BEGIN_DECLS
 
 /*
-Handle stack.
-
-The handle stack is designed so it's efficient to pop a large amount of entries at once.
-The stack is made out of a series of fixed size segments.
-
-To do bulk operations you use a stack mark.
-	
-*/
-
-/*
-3 is the number of fields besides the data in the struct;
-128 words makes each chunk 512 or 1024 bytes each
-*/
-#define OBJECTS_PER_HANDLES_CHUNK (128 - 3)
-
-/*
 Whether this config needs stack watermark recording to know where to start scanning from.
 */
 #ifdef HOST_WATCHOS
 #define MONO_NEEDS_STACK_WATERMARK 1
 #endif
-
-typedef struct _HandleChunk HandleChunk;
-
-/*
- * Define MONO_HANDLE_TRACK_OWNER to store the file and line number of each call to MONO_HANDLE_NEW
- * in the handle stack.  (This doubles the amount of memory used for handles, so it's only useful for debugging).
- */
-/*#define MONO_HANDLE_TRACK_OWNER*/
-
-/*
- * Define MONO_HANDLE_TRACK_SP to record the C stack pointer at the time of each HANDLE_FUNCTION_ENTER and
- * to ensure that when a new handle is allocated the previous newest handle is not lower in the stack.
- * This is useful to catch missing HANDLE_FUNCTION_ENTER / HANDLE_FUNCTION_RETURN pairs which could cause
- * handle leaks.
- *
- * If defined, keep HandleStackMark in sync in RuntimeStructs.cs
- */
-/*#define MONO_HANDLE_TRACK_SP*/
-
-typedef struct {
-	gpointer o; /* MonoObject ptr or interior ptr */
-#ifdef MONO_HANDLE_TRACK_OWNER
-	const char *owner;
-	gpointer backtrace_ips[7]; /* result of backtrace () at time of allocation */
-#endif
-#ifdef MONO_HANDLE_TRACK_SP
-	gpointer alloc_sp; /* sp from HandleStack:stackmark_sp at time of allocation */
-#endif
-} HandleChunkElem;
-
-struct _HandleChunk {
-	int size; //number of handles
-	HandleChunk *prev, *next;
-	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
-};
 
 typedef struct MonoHandleStack {
 	HandleChunk *top; //alloc from here
@@ -94,15 +43,6 @@ typedef struct MonoHandleStack {
 	/* Chunk for storing interior pointers. Not extended right now */
 	HandleChunk *interior;
 } HandleStack;
-
-// Keep this in sync with RuntimeStructs.cs
-typedef struct {
-	int size, interior_size;
-	HandleChunk *chunk;
-#ifdef MONO_HANDLE_TRACK_SP
-	gpointer prev_sp; // C stack pointer from prior mono_stack_mark_init
-#endif
-} HandleStackMark;
 
 typedef void *MonoRawHandle;
 
@@ -687,6 +627,83 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 {
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
+
+
+/* experimental C++ coop handles
+
+Goals:
+1. Shared runtime -- handle allocation is the same.
+2. New versions of the macros, to optionally use, with same interface.
+3. Macros are so simple, you can mostly skip them, except for HANDLE_FUNCTION_ENTER. 
+
+Depends on MonoPtr in object-internals.h etc.
+Requires typesafe handles.
+*/
+
+#ifdef __cplusplus //experimental
+
+inline
+void **MonoHandleFrame::allocate_handle_in_caller (void* value)
+{
+	mono_stack_mark_pop (threadinfo, &stackmark);
+	void ** h = mono_handle_new ((MonoObject*)value);
+	mono_stack_mark_init (threadinfo, &stackmark);
+	return h;
+}
+
+inline
+MonoHandleFrame::MonoHandleFrame ()
+{
+	threadinfo = mono_thread_info_current ();
+	mono_stack_mark_init (threadinfo, &stackmark);
+}
+
+inline
+MonoHandleFrame::~MonoHandleFrame ()
+{
+	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);
+	mono_stack_mark_pop (threadinfo, &stackmark);
+}
+
+inline
+void** MonoHandleFrame::allocate_handle (void* value)
+{
+	return (void**)mono_handle_new ((MonoObject*)value);
+}
+
+template <typename T>
+inline void
+MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
+{
+	raw = (T**)mono_object_new_pinned_handle (domain, klass, error).raw;
+}
+
+/*
+1. These should be drop-in replacements for the old macros -- so we only have one system.
+2. They should be trivial enough that there is not really a need for them.
+3. They are not yet complete.
+4. Requires typesafe handles.
+*/
+#define xHANDLE_FUNCTION_ENTER() MonoHandleFrame local_handle_frame;
+#define xHANDLE_FUNCTION_RETURN() /* nothing */
+#define xHANDLE_FUNCTION_RETURN_VAL(x) return (x)
+#define xHANDLE_FUNCTION_RETURN_OBJ(handle) return *(handle).raw
+#define xHANDLE_FUNCTION_RETURN_REF(type, handle) return (handle).return_handle (local_handle_frame)
+#define xMONO_HANDLE_IS_NULL(handle) (!(handle))
+#define xMONO_HANDLE_BOOL(handle) (handle)
+#define xMONO_HANDLE_RAW(x) (*((x).raw))
+#define xMONO_HANDLE_NEW(type, value) 		(MonoHandle<type>::static_new (value))
+#define xMONO_HANDLE_GET(result, handle, field)	(result = (handle)->field)
+#define xMONO_HANDLE_GETVAL(handle, field) ((handle)->field)
+#define xMONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type>::static_new ((handle)->field))
+#define xMONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
+#define xMONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
+#define xMONO_HANDLE_SET(handle, field, value) ((handle)->field = (value))
+#define xMONO_HANDLE_CAST(type, value) MonoHandle<type>{(type**)(value).raw}
+
+}
+
+#endif // experimental C++
 
 G_END_DECLS
 

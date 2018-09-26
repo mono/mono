@@ -26,47 +26,6 @@
 #include "mono/utils/mono-coop-mutex.h"
 #include <mono/metadata/icalls.h>
 
-#ifdef __cplusplus //experimental
-
-template <typename T> struct MonoPtr;
-template <typename T> struct MonoHandle;
-
-template <typename T> struct MonoPtr
-{
-	MonoPtr& operator = (MonoHandle<T> h) { p = *h.raw; return *this; }
-	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
-	MonoPtr& operator = (T* q) { p = q; return *this; }
-	operator T * () { return p; }
-	T* operator -> () { return p; }
-
-	struct OperatorAmpersandResult
-	{
-		MonoPtr<T>* p;
-
-		operator T** () { return &p->p; }
-		operator void** () { return (void**)&p->p; }
-		operator void* () { return (void*)&p->p; } // FIXME? MONO_HANDLE_SET MONO_OBJECT_SETREF mono_gc_wbarrier_set_field
-		//operator MonoPtr<T>* () { return p; }
-	};
-
-	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
-
-	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
-	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
-	T* get () { return p; }
-
-//private:
-	T * p;
-};
-
-#define MonoPtr(x) MonoPtr<x>
-
-#else
-
-#define MonoPtr(x) x*
-
-#endif
-
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
