@@ -46,15 +46,15 @@ typedef enum {
 	MONO_PROCESS_ERROR_OTHER
 } MonoProcessError;
 
-typedef struct MonoCpuUsageState MonoCpuUsageState;
+typedef struct _MonoCpuUsageState MonoCpuUsageState;
 #ifndef HOST_WIN32
-struct MonoCpuUsageState {
+struct _MonoCpuUsageState {
 	gint64 kernel_time;
 	gint64 user_time;
 	gint64 current_time;
 };
 #else
-struct MonoCpuUsageState {
+struct _MonoCpuUsageState {
 	guint64 kernel_time;
 	guint64 user_time;
 	guint64 idle_time;

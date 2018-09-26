@@ -53,14 +53,14 @@
  * Don't allocate a srcs array for just one source.  Most objects have
  * just one source, so use the srcs pointer itself.
  */
-typedef struct HashEntry {
+typedef struct _HashEntry {
 	gboolean is_bridge;
 
 	union {
 		struct {
 			guint32 is_visited : 1;
 			guint32 finishing_time : 31;
-			struct HashEntry *forwarded_to;
+			struct _HashEntry *forwarded_to;
 		} dfs1;
 		struct {
 			// Index in sccs array of SCC this object was folded into
@@ -78,7 +78,7 @@ typedef struct {
 } HashEntryWithAccounting;
 
 // The graph of managed objects/HashEntries is reduced to a graph of strongly connected components
-typedef struct SCC {
+typedef struct _SCC {
 	int index;
 	int api_index;
 

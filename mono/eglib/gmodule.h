@@ -23,7 +23,7 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (GModuleFlags)
 
-typedef struct GModule GModule;
+typedef struct _GModule GModule;
 
 G_EXTERN_C // Used by libtest, at least.
 GModule *g_module_open (const gchar *file, GModuleFlags flags);

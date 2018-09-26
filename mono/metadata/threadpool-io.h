@@ -11,7 +11,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/icalls.h>
 
-typedef struct MonoIOSelectorJob MonoIOSelectorJob;
+typedef struct _MonoIOSelectorJob MonoIOSelectorJob;
 
 ICALL_EXPORT
 void

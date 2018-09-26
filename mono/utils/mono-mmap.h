@@ -46,7 +46,7 @@ typedef enum {
 /*
  * A simple interface to fopen/fstat/fileno
  */
-typedef struct MonoFileMap MonoFileMap;
+typedef struct _MonoFileMap MonoFileMap;
 
 MONO_API MonoFileMap *mono_file_map_open  (const char* name);
 MONO_API guint64      mono_file_map_size  (MonoFileMap *fmap);

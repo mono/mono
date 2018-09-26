@@ -50,7 +50,7 @@ typedef struct {
  * Don't allocate a srcs array for just one source.  Most objects have
  * just one source, so use the srcs pointer itself.
  */
-typedef struct HashEntry {
+typedef struct _HashEntry {
 	GCObject *obj;	/* This is a duplicate - it's already stored in the hash table */
 
 	gboolean is_bridge;
@@ -71,7 +71,7 @@ typedef struct {
 } HashEntryWithAccounting;
 
 // The graph of managed objects/HashEntries is reduced to a graph of strongly connected components
-typedef struct SCC {
+typedef struct _SCC {
 	int index;
 	int api_index;
 

@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <windows.h>
 
-struct GTimer {
+struct _GTimer {
 	guint64 start;
 	guint64 stop;
 };

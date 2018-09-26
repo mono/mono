@@ -33,8 +33,8 @@ MONO_BEGIN_DECLS
  */
 #define MONO_PROFILER_API_VERSION 3
 
-typedef struct MonoProfiler MonoProfiler;
-typedef struct MonoProfilerDesc *MonoProfilerHandle;
+typedef struct _MonoProfiler MonoProfiler;
+typedef struct _MonoProfilerDesc *MonoProfilerHandle;
 
 typedef void (*MonoProfilerCleanupCallback) (MonoProfiler *prof);
 
@@ -83,7 +83,7 @@ MONO_API mono_bool mono_profiler_get_sample_mode (MonoProfilerHandle handle, Mon
 MONO_API mono_bool mono_profiler_enable_allocations (void);
 MONO_API mono_bool mono_profiler_enable_clauses (void);
 
-typedef struct MonoProfilerCallContext MonoProfilerCallContext;
+typedef struct _MonoProfilerCallContext MonoProfilerCallContext;
 
 typedef enum {
 	/**

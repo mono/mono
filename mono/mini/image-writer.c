@@ -120,9 +120,9 @@
 
 #ifdef USE_BIN_WRITER
 
-typedef struct BinSymbol BinSymbol;
-typedef struct BinReloc BinReloc;
-typedef struct BinSection BinSection;
+typedef struct _BinSymbol BinSymbol;
+typedef struct _BinReloc BinReloc;
+typedef struct _BinSection BinSection;
 
 #endif
 
@@ -134,7 +134,7 @@ enum {
 	EMIT_LONG
 };
 
-struct MonoImageWriter {
+struct _MonoImageWriter {
 	MonoMemPool *mempool;
 	char *outfile;
 	gboolean use_bin_writer;
@@ -173,14 +173,14 @@ ilog2(register int value)
 
 #ifdef USE_BIN_WRITER
 
-typedef struct BinLabel BinLabel;
-struct BinLabel {
+typedef struct _BinLabel BinLabel;
+struct _BinLabel {
 	char *name;
 	BinSection *section;
 	int offset;
 };
 
-struct BinReloc {
+struct _BinReloc {
 	BinReloc *next;
 	char *val1;
 	char *val2;
@@ -192,7 +192,7 @@ struct BinReloc {
 	int reloc_type;
 };
 
-struct BinSymbol {
+struct _BinSymbol {
 	BinSymbol *next;
 	char *name;
 	BinSection *section;
@@ -202,7 +202,7 @@ struct BinSymbol {
 	char *end_label;
 };
 
-struct BinSection {
+struct _BinSection {
 	BinSection *next;
 	BinSection *parent;
 	char *name;

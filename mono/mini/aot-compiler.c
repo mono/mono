@@ -157,8 +157,8 @@ typedef struct {
 } ProfileData;
 
 /* predefined values for static readonly fields without needed to run the .cctor */
-typedef struct ReadOnlyValue ReadOnlyValue;
-struct ReadOnlyValue {
+typedef struct _ReadOnlyValue ReadOnlyValue;
+struct _ReadOnlyValue {
 	ReadOnlyValue *next;
 	char *name;
 	int type; /* to be used later for typechecking to prevent user errors */
@@ -259,7 +259,7 @@ typedef struct GotInfo {
 } GotInfo;
 
 #ifdef EMIT_WIN32_UNWIND_INFO
-typedef struct UnwindInfoSectionCacheItem {
+typedef struct _UnwindInfoSectionCacheItem {
 	char *xdata_section_label;
 	PUNWIND_INFO unwind_info;
 	gboolean xdata_section_emitted;
@@ -10699,7 +10699,7 @@ emit_dwarf_info (MonoAotCompile *acfg)
 }
 
 #ifdef EMIT_WIN32_CODEVIEW_INFO
-typedef struct CodeViewSubSectionData
+typedef struct _CodeViewSubSectionData
 {
 	gchar *start_section;
 	gchar *end_section;
@@ -10710,7 +10710,7 @@ typedef struct CodeViewSubSectionData
 	int section_id;
 } CodeViewSubsectionData;
 
-typedef struct CodeViewCompilerVersion
+typedef struct _CodeViewCompilerVersion
 {
 	gint major;
 	gint minor;

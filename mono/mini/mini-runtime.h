@@ -404,7 +404,7 @@ void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (MonoEECallbacks *cbs);
 MonoEECallbacks*       mini_get_interp_callbacks     (void);
 
-typedef struct MonoDebuggerCallbacks MonoDebuggerCallbacks;
+typedef struct _MonoDebuggerCallbacks MonoDebuggerCallbacks;
 
 void                   mini_install_dbg_callbacks (MonoDebuggerCallbacks *cbs);
 MonoDebuggerCallbacks  *mini_get_dbg_callbacks (void);

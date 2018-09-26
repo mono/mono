@@ -35,7 +35,7 @@
 
 #define STACK_SIZE (8 * sizeof (size_t))
 
-typedef struct QSortStack {
+typedef struct _QSortStack {
 	char *array;
 	size_t count;
 } QSortStack;

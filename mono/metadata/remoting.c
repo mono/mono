@@ -43,14 +43,14 @@ enum {
 };
 #undef OPDEF
 
-struct MonoRemotingMethods {
+struct _MonoRemotingMethods {
 	MonoMethod *invoke;
 	MonoMethod *invoke_with_check;
 	MonoMethod *xdomain_invoke;
 	MonoMethod *xdomain_dispatch;
 };
 
-typedef struct MonoRemotingMethods MonoRemotingMethods;
+typedef struct _MonoRemotingMethods MonoRemotingMethods;
 
 static MonoObject *
 mono_remoting_wrapper (MonoMethod *method, gpointer *params);

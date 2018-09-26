@@ -65,14 +65,14 @@ static MonoCodeManagerCallbacks code_manager_callbacks;
 
 #define MONO_PROT_RWX (MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC|MONO_MMAP_JIT)
 
-typedef struct CodeChunck CodeChunk;
+typedef struct _CodeChunck CodeChunk;
 
 enum {
 	CODE_FLAG_MMAP,
 	CODE_FLAG_MALLOC
 };
 
-struct CodeChunck {
+struct _CodeChunck {
 	char *data;
 	int pos;
 	int size;
@@ -82,7 +82,7 @@ struct CodeChunck {
 	unsigned int bsize: 24;
 };
 
-struct MonoCodeManager {
+struct _MonoCodeManager {
 	int dynamic;
 	int read_only;
 	CodeChunk *current;

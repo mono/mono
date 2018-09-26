@@ -23,11 +23,11 @@ typedef enum {
 	MONO_OS_EVENT_WAIT_RET_TIMEOUT   = -2,
 } MonoOSEventWaitRet;
 
-typedef struct MonoOSEvent MonoOSEvent;
+typedef struct _MonoOSEvent MonoOSEvent;
 
 typedef void (*MonoOSEventFreeCb) (MonoOSEvent*);
 
-struct MonoOSEvent {
+struct _MonoOSEvent {
 #ifdef HOST_WIN32
 	gpointer handle;
 #else

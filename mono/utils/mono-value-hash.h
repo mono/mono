@@ -33,7 +33,7 @@ G_BEGIN_DECLS
  *   now.
  */
 
-typedef struct MonoValueHashTable MonoValueHashTable;
+typedef struct _MonoValueHashTable MonoValueHashTable;
 
 typedef gpointer (*MonoValueHashKeyExtractFunc) (gpointer value);
 

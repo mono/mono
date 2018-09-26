@@ -7,7 +7,7 @@
 #ifndef _MONO_UTILS_FORWARD_
 #define _MONO_UTILS_FORWARD_
 
-typedef struct MonoDomain MonoDomain;
-typedef struct MonoJitInfo MonoJitInfo;
+typedef struct _MonoDomain MonoDomain;
+typedef struct _MonoJitInfo MonoJitInfo;
 
 #endif

@@ -401,9 +401,9 @@ pthread_t mono_gc_get_mach_exception_thread (void);
 
 gboolean mono_gc_precise_stack_mark_enabled (void);
 
-typedef struct RefQueueEntry RefQueueEntry;
+typedef struct _RefQueueEntry RefQueueEntry;
 
-struct RefQueueEntry {
+struct _RefQueueEntry {
 	void *dis_link;
 	guint32 gchandle;
 	MonoDomain *domain;
@@ -411,7 +411,7 @@ struct RefQueueEntry {
 	RefQueueEntry *next;
 };
 
-struct MonoReferenceQueue {
+struct _MonoReferenceQueue {
 	RefQueueEntry *queue;
 	mono_reference_queue_callback callback;
 	MonoReferenceQueue *next;

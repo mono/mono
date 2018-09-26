@@ -49,7 +49,7 @@ Experiment with KVM relocation during lookup as would reduce search length. The 
 won a tomstone and which thread won the relation of a given key.
 
 */
-struct MonoConcurrentHashTable {
+struct _MonoConcurrentHashTable {
 	volatile conc_table *table; /* goes to HP0 */
 	GHashFunc hash_func;
 	GEqualFunc equal_func;

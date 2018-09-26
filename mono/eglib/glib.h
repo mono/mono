@@ -299,11 +299,11 @@ typedef struct {
 
 void g_mem_set_vtable (GMemVTable* vtable);
 
-struct GMemChunk {
+struct _GMemChunk {
 	guint alloc_size;
 };
 
-typedef struct GMemChunk GMemChunk;
+typedef struct _GMemChunk GMemChunk;
 /*
  * Misc.
  */
@@ -451,8 +451,8 @@ typedef void     (*GFreeFunc)      (gpointer       data);
 /*
  * Lists
  */
-typedef struct GSList GSList;
-struct GSList {
+typedef struct _GSList GSList;
+struct _GSList {
 	gpointer data;
 	GSList *next;
 };
@@ -504,8 +504,8 @@ gpointer g_slist_nth_data     (GSList	     *list,
 #define g_slist_next(slist) ((slist) ? (((GSList *) (slist))->next) : NULL)
 
 
-typedef struct GList GList;
-struct GList {
+typedef struct _GList GList;
+struct _GList {
   gpointer data;
   GList *next;
   GList *prev;
@@ -562,11 +562,11 @@ GList *g_list_sort          (GList         *sort,
 /*
  * Hashtables
  */
-typedef struct GHashTable GHashTable;
-typedef struct GHashTableIter GHashTableIter;
+typedef struct _GHashTable GHashTable;
+typedef struct _GHashTableIter GHashTableIter;
 
 /* Private, but needed for stack allocation */
-struct GHashTableIter
+struct _GHashTableIter
 {
 	gpointer dummy [8];
 };
@@ -617,8 +617,8 @@ guint    g_str_hash     (gconstpointer v1);
  * ByteArray
  */
 
-typedef struct GByteArray GByteArray;
-struct GByteArray {
+typedef struct _GByteArray GByteArray;
+struct _GByteArray {
 	guint8 *data;
 	gint len;
 };
@@ -632,8 +632,8 @@ void     g_byte_array_set_size  (GByteArray *array, gint length);
  * Array
  */
 
-typedef struct GArray GArray;
-struct GArray {
+typedef struct _GArray GArray;
+struct _GArray {
 	gchar *data;
 	gint len;
 };
@@ -662,8 +662,8 @@ void g_qsort_with_data (gpointer base, size_t nmemb, size_t size, GCompareDataFu
  * Pointer Array
  */
 
-typedef struct GPtrArray GPtrArray;
-struct GPtrArray {
+typedef struct _GPtrArray GPtrArray;
+struct _GPtrArray {
 	gpointer *pdata;
 	guint len;
 };
@@ -999,7 +999,7 @@ int eg_getdtablesize (void);
 /*
  * Timer
  */
-typedef struct GTimer GTimer;
+typedef struct _GTimer GTimer;
 
 GTimer *g_timer_new (void);
 void g_timer_destroy (GTimer *timer);
@@ -1110,7 +1110,7 @@ gchar *g_mkdtemp (gchar *tmpl);
 /*
  * Pattern matching
  */
-typedef struct GPatternSpec GPatternSpec;
+typedef struct _GPatternSpec GPatternSpec;
 GPatternSpec * g_pattern_spec_new (const gchar *pattern);
 void           g_pattern_spec_free (GPatternSpec *pspec);
 gboolean       g_pattern_match_string (GPatternSpec *pspec, const gchar *string);
@@ -1118,7 +1118,7 @@ gboolean       g_pattern_match_string (GPatternSpec *pspec, const gchar *string)
 /*
  * Directory
  */
-typedef struct GDir GDir;
+typedef struct _GDir GDir;
 GDir        *g_dir_open (const gchar *path, guint flags, GError **gerror);
 const gchar *g_dir_read_name (GDir *dir);
 void         g_dir_rewind (GDir *dir);
@@ -1130,7 +1130,7 @@ int          g_mkdir_with_parents (const gchar *pathname, int mode);
 /*
  * GMarkup
  */
-typedef struct GMarkupParseContext GMarkupParseContext;
+typedef struct _GMarkupParseContext GMarkupParseContext;
 
 typedef enum
 {

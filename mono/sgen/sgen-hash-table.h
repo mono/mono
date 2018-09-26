@@ -13,8 +13,8 @@
 
 /* hash tables */
 
-typedef struct SgenHashTableEntry SgenHashTableEntry;
-struct SgenHashTableEntry {
+typedef struct _SgenHashTableEntry SgenHashTableEntry;
+struct _SgenHashTableEntry {
 	SgenHashTableEntry *next;
 	gpointer key;
 	char data [MONO_ZERO_LEN_ARRAY]; /* data is pointer-aligned */

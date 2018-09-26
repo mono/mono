@@ -53,7 +53,7 @@ enum MonoIOOperation {
 #define UPDATES_CAPACITY 128
 
 /* Keep in sync with System.IOSelectorJob in mcs/class/System/System/IOSelector.cs */
-struct MonoIOSelectorJob {
+struct _MonoIOSelectorJob {
 	MonoObject object;
 	gint32 operation;
 	MonoObject *callback;

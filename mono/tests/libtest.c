@@ -3638,7 +3638,7 @@ mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
 
 
 /* thunks.cs:TestStruct */
-typedef struct TestStruct {
+typedef struct _TestStruct {
 	int A;
 	double B;
 } TestStruct;

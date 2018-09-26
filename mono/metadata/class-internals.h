@@ -24,10 +24,10 @@
 extern gboolean mono_print_vtable;
 extern gboolean mono_align_small_structs;
 
-typedef struct MonoMethodWrapper MonoMethodWrapper;
-typedef struct MonoMethodInflated MonoMethodInflated;
-typedef struct MonoMethodPInvoke MonoMethodPInvoke;
-typedef struct MonoDynamicMethod MonoDynamicMethod;
+typedef struct _MonoMethodWrapper MonoMethodWrapper;
+typedef struct _MonoMethodInflated MonoMethodInflated;
+typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
+typedef struct _MonoDynamicMethod MonoDynamicMethod;
 
 /* Properties that applies to a group of structs should better use a higher number
  * to avoid colision with type specific properties.
@@ -58,7 +58,7 @@ typedef enum {
 
 #define MONO_METHOD_PROP_GENERIC_CONTAINER 0
 
-struct MonoMethod {
+struct _MonoMethod {
 	guint16 flags;  /* method flags */
 	guint16 iflags; /* method implementation flags */
 	guint32 token;
@@ -86,18 +86,18 @@ struct MonoMethod {
 	 */
 };
 
-struct MonoMethodWrapper {
+struct _MonoMethodWrapper {
 	MonoMethod method;
 	MonoMethodHeader *header;
 	void *method_data;
 };
 
-struct MonoDynamicMethod {
+struct _MonoDynamicMethod {
 	MonoMethodWrapper method;
 	MonoAssembly *assembly;
 };
 
-struct MonoMethodPInvoke {
+struct _MonoMethodPInvoke {
 	MonoMethod method;
 	gpointer addr;
 	/* add marshal info */
@@ -129,7 +129,7 @@ typedef struct MonoFieldDefaultValue {
  * stored in MonoVTable->data.  Instance fields are allocated in the
  * objects after the object header.
  */
-struct MonoClassField {
+struct _MonoClassField {
 	/* Type of the field */
 	MonoType        *type;
 
@@ -175,7 +175,7 @@ typedef struct {
 
 #define MONO_SIZEOF_MARSHAL_TYPE (offsetof (MonoMarshalType, fields))
 
-struct MonoProperty {
+struct _MonoProperty {
 	MonoClass *parent;
 	const char *name;
 	MonoMethod *get;
@@ -183,7 +183,7 @@ struct MonoProperty {
 	guint32 attrs;
 };
 
-struct MonoEvent {
+struct _MonoEvent {
 	MonoClass *parent;
 	const char *name;
 	MonoMethod *add;
@@ -251,12 +251,12 @@ typedef enum {
 	MONO_CLASS_POINTER, /* pointer of function pointer*/
 } MonoTypeKind;
 
-typedef struct MonoClassDef MonoClassDef;
-typedef struct MonoClassGtd MonoClassGtd;
-typedef struct MonoClassGenericInst MonoClassGenericInst;
-typedef struct MonoClassGenericParam MonoClassGenericParam;
-typedef struct MonoClassArray MonoClassArray;
-typedef struct MonoClassPointer MonoClassPointer;
+typedef struct _MonoClassDef MonoClassDef;
+typedef struct _MonoClassGtd MonoClassGtd;
+typedef struct _MonoClassGenericInst MonoClassGenericInst;
+typedef struct _MonoClassGenericParam MonoClassGenericParam;
+typedef struct _MonoClassArray MonoClassArray;
+typedef struct _MonoClassPointer MonoClassPointer;
 
 union _MonoClassSizes {
 		int class_size; /* size of area for static fields */
@@ -371,7 +371,7 @@ struct MonoVTable {
  * All instantiations are cached and we don't distinguish between class and method
  * instantiations here.
  */
-struct MonoGenericInst {
+struct _MonoGenericInst {
 #ifndef MONO_SMALL_CONFIG
 	gint32 id;			/* unique ID for debugging */
 #endif
@@ -388,7 +388,7 @@ struct MonoGenericInst {
  *	 or embedded within other objects.  Don't store pointers to this, because it may be on the stack.
  *	 If you really have to, ensure you store a pointer to the embedding object along with it.
  */
-struct MonoGenericContext {
+struct _MonoGenericContext {
 	/* The instantiation corresponding to the class generic parameters */
 	MonoGenericInst *class_inst;
 	/* The instantiation corresponding to the method generic parameters */
@@ -398,7 +398,7 @@ struct MonoGenericContext {
 /*
  * Inflated generic method.
  */
-struct MonoMethodInflated {
+struct _MonoMethodInflated {
 	union {
 		MonoMethod method;
 		MonoMethodPInvoke pinvoke;
@@ -411,7 +411,7 @@ struct MonoMethodInflated {
 /*
  * A particular instantiation of a generic type.
  */
-struct MonoGenericClass {
+struct _MonoGenericClass {
 	MonoClass *container_class;	/* the generic type definition */
 	MonoGenericContext context;	/* a context that contains the type instantiation doesn't contain any method instantiation */ /* FIXME: Only the class_inst member of "context" is ever used, so this field could be replaced with just a monogenericinst */
 	guint is_dynamic  : 1;		/* Contains dynamic types */
@@ -445,7 +445,7 @@ typedef struct {
 /*
  * A type parameter.
  */
-struct MonoGenericParam {
+struct _MonoGenericParam {
 	/*
 	 * Type or method this parameter was defined in.
 	 */
@@ -467,7 +467,7 @@ typedef MonoGenericParam MonoGenericParamFull;
  *
  * Stores the type parameters of a generic type definition or a generic method definition.
  */
-struct MonoGenericContainer {
+struct _MonoGenericContainer {
 	MonoGenericContext context;
 	/* If we're a generic method definition in a generic type definition,
 	   the generic container of the containing class. */

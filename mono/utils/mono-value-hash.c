@@ -44,7 +44,7 @@
 
 #define HASH_TABLE_MIN_SHIFT 3  /* 1 << 3 == 8 buckets */
 
-typedef struct Slot Slot;
+typedef struct _Slot Slot;
 
 #define GET_VALUE(slot) ((gpointer)((((gsize)((slot)->value)) >> 2) << 2))
 
@@ -57,7 +57,7 @@ typedef struct Slot Slot;
 
 #define HASH(table, key) ((table)->hash_func ((key)))
 
-struct Slot {
+struct _Slot {
 	/* A NULL value means the slot is empty */
 	/* The tombstone status is stored in the lowest order bit of the value. */
 	gpointer value;
@@ -65,7 +65,7 @@ struct Slot {
 
 static gpointer KEYMARKER_REMOVED = &KEYMARKER_REMOVED;
 
-struct MonoValueHashTable {
+struct _MonoValueHashTable {
 	GHashFunc      hash_func;
 	GEqualFunc     key_equal_func;
 	MonoValueHashKeyExtractFunc key_extract_func;

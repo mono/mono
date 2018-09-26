@@ -51,7 +51,7 @@ typedef enum {
 	PT_SIGNATURE
 } pool_type;
 
-struct MonoGraphDumper {
+struct _MonoGraphDumper {
 	int fd;
 	GHashTable *constant_pool;
 	short next_cp_id;
@@ -59,12 +59,12 @@ struct MonoGraphDumper {
 	int next_insn_id;
 };
 
-typedef struct MonoGraphDumper MonoGraphDumper;
+typedef struct _MonoGraphDumper MonoGraphDumper;
 
-struct ConstantPoolEntry {
+struct _ConstantPoolEntry {
 	pool_type pt;
 	void *data;
 };
 
-typedef struct ConstantPoolEntry ConstantPoolEntry;
+typedef struct _ConstantPoolEntry ConstantPoolEntry;
 #endif /* __MINI_CFGDUMP_H__ */

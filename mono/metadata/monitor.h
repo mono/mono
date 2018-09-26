@@ -25,7 +25,7 @@ G_BEGIN_DECLS
 #define ENTRY_COUNT_ZERO	0x7fff0000
 #define ENTRY_COUNT_SHIFT	16
 
-struct MonoThreadsSync
+struct _MonoThreadsSync
 {
 	/*
 	 * The entry count field can be negative, which would mean that the entry_sem is

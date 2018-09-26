@@ -20,7 +20,7 @@
 #include <mono/utils/mono-error.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
-struct MonoType {
+struct _MonoType {
 	union {
 		MonoClass *klass; /* for VALUETYPE and CLASS */
 		MonoType *type;   /* for PTR */
@@ -72,7 +72,7 @@ mono_sizeof_type (const MonoType *ty);
 #define MONO_PROCESSOR_ARCHITECTURE_AMD64 4
 #define MONO_PROCESSOR_ARCHITECTURE_ARM 5
 
-struct MonoAssemblyName {
+struct _MonoAssemblyName {
 	const char *name;
 	const char *culture;
 	const char *hash_value;
@@ -110,11 +110,11 @@ typedef enum MonoAssemblyContextKind {
 	MONO_ASMCTX_LAST = 3
 } MonoAssemblyContextKind;
 
-typedef struct MonoAssemblyContext {
+typedef struct _MonoAssemblyContext {
 	MonoAssemblyContextKind kind;
 } MonoAssemblyContext;
 
-struct MonoAssembly {
+struct _MonoAssembly {
 	/* 
 	 * The number of appdomains which have this assembly loaded plus the number of 
 	 * assemblies referencing this assembly through an entry in their image->references
@@ -187,7 +187,7 @@ typedef struct {
 	guint32  size;
 } MonoStreamHeader;
 
-struct MonoTableInfo {
+struct _MonoTableInfo {
 	const char *base;
 	guint       rows     : 24;
 	guint       row_size : 8;
@@ -207,7 +207,7 @@ struct MonoTableInfo {
 
 #define REFERENCE_MISSING ((gpointer) -1)
 
-typedef struct MonoDllMap MonoDllMap;
+typedef struct _MonoDllMap MonoDllMap;
 
 typedef struct {
 	gboolean (*match) (MonoImage*);
@@ -216,7 +216,7 @@ typedef struct {
 	gboolean (*load_tables) (MonoImage*);
 } MonoImageLoader;
 
-struct MonoImage {
+struct _MonoImage {
 	/*
 	 * This count is incremented during these situations:
 	 *   - An assembly references this MonoImage though its 'image' field
@@ -515,7 +515,7 @@ typedef struct {
 } MonoDynamicTable;
 
 /* "Dynamic" assemblies and images arise from System.Reflection.Emit */
-struct MonoDynamicAssembly {
+struct _MonoDynamicAssembly {
 	MonoAssembly assembly;
 	char *strong_name;
 	guint32 strong_name_size;
@@ -524,7 +524,7 @@ struct MonoDynamicAssembly {
 	MonoDomain *domain;
 };
 
-struct MonoDynamicImage {
+struct _MonoDynamicImage {
 	MonoImage image;
 	guint32 meta_size;
 	guint32 text_rva;
@@ -581,7 +581,7 @@ struct MonoDynamicImage {
 };
 
 /* Contains information about assembly binding */
-typedef struct MonoAssemblyBindingInfo {
+typedef struct _MonoAssemblyBindingInfo {
 	char *name;
 	char *culture;
 	guchar public_key_token [MONO_PUBLIC_KEY_TOKEN_LENGTH];
@@ -597,7 +597,7 @@ typedef struct MonoAssemblyBindingInfo {
 	gint32 domain_id; /*Needed to unload per-domain binding*/
 } MonoAssemblyBindingInfo;
 
-struct MonoMethodHeader {
+struct _MonoMethodHeader {
 	const unsigned char  *code;
 #ifdef MONO_SMALL_CONFIG
 	guint16      code_size;
@@ -622,9 +622,9 @@ typedef struct {
 	gboolean     has_locals;
 } MonoMethodHeaderSummary;
 
-#define MONO_SIZEOF_METHOD_HEADER (sizeof (struct MonoMethodHeader) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
+#define MONO_SIZEOF_METHOD_HEADER (sizeof (struct _MonoMethodHeader) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
-struct MonoMethodSignature {
+struct _MonoMethodSignature {
 	MonoType     *ret;
 #ifdef MONO_SMALL_CONFIG
 	guint8        param_count;
@@ -658,7 +658,7 @@ typedef struct {
 	char *aot_options;
 } MonoAotCacheConfig;
 
-#define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
+#define MONO_SIZEOF_METHOD_SIGNATURE (sizeof (struct _MonoMethodSignature) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 static inline gboolean
 image_is_dynamic (MonoImage *image)
