@@ -508,7 +508,7 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 #endif
 	}
 
-	ac = (MonoAsyncCall*) ares->object_data;
+	ac = ares->object_data;
 	g_assert (ac);
 
 	*exc = ac->msg->exc; /* FIXME: GC add write barrier */
