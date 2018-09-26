@@ -8013,7 +8013,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 	g_assert (ares);
 	g_assert (ares->async_delegate);
 
-	ac = (MonoAsyncCall*) ares->object_data;
+	ac = ares->object_data;
 	if (!ac) {
 		res = mono_runtime_delegate_invoke_checked (ares->async_delegate, (void**) &ares->async_state, error);
 		if (mono_error_set_pending_exception (error))
@@ -8040,7 +8040,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 		mono_monitor_enter ((MonoObject*) ares);
 		ares->completed = 1;
 		if (ares->handle)
-			wait_event = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle);
+			wait_event = mono_wait_handle_get_handle (ares->handle);
 		mono_monitor_exit ((MonoObject*) ares);
 
 		if (wait_event != NULL)

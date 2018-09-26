@@ -26,6 +26,47 @@
 #include "mono/utils/mono-coop-mutex.h"
 #include <mono/metadata/icalls.h>
 
+#ifdef __cplusplus //experimental
+
+template <typename T> struct MonoPtr;
+template <typename T> struct MonoHandle;
+
+template <typename T> struct MonoPtr
+{
+	MonoPtr& operator = (MonoHandle<T> h) { p = *h.raw; return *this; }
+	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
+	MonoPtr& operator = (T* q) { p = q; return *this; }
+	operator T * () { return p; }
+	T* operator -> () { return p; }
+
+	struct OperatorAmpersandResult
+	{
+		MonoPtr<T>* p;
+
+		operator T** () { return &p->p; }
+		operator void** () { return (void**)&p->p; }
+		operator void* () { return (void*)&p->p; } // FIXME? MONO_HANDLE_SET MONO_OBJECT_SETREF mono_gc_wbarrier_set_field
+		//operator MonoPtr<T>* () { return p; }
+	};
+
+	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
+
+	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
+	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
+	T* get () { return p; }
+
+//private:
+	T * p;
+};
+
+#define MonoPtr(x) MonoPtr<x>
+
+#else
+
+#define MonoPtr(x) x*
+
+#endif
+
 /* Use this as MONO_CHECK_ARG (arg,expr,) in functions returning void */
 #define MONO_CHECK_ARG(arg, expr, retval) do {				\
 	if (G_UNLIKELY (!(expr)))					\
@@ -224,8 +265,8 @@ typedef struct MonoStringBuilder MonoStringBuilder;
 
 struct MonoStringBuilder {
 	MonoObject object;
-	MonoArray  *chunkChars;
-	MonoStringBuilder* chunkPrevious;      // Link to the block logically before this block
+	MonoPtr(MonoArray) chunkChars;
+	MonoPtr(MonoStringBuilder) chunkPrevious;      // Link to the block logically before this block
 	int chunkLength;                  // The index in ChunkChars that represent the end of the block
 	int chunkOffset;                  // The logial offset (sum of all characters in previous blocks)
 	int maxCapacity;
@@ -250,24 +291,24 @@ typedef struct {
 
 struct MonoException {
 	MonoObject object;
-	MonoString *class_name;
-	MonoString *message;
-	MonoObject *_data;
-	MonoObject *inner_ex;
-	MonoString *help_link;
+	MonoPtr(MonoString) class_name;
+	MonoPtr(MonoString) message;
+	MonoPtr(MonoObject) _data;
+	MonoPtr(MonoObject) inner_ex;
+	MonoPtr(MonoString) help_link;
 	/* Stores the IPs and the generic sharing infos
 	   (vtable/MRGCTX) of the frames. */
-	MonoArray  *trace_ips;
-	MonoString *stack_trace;
-	MonoString *remote_stack_trace;
+	MonoPtr(MonoArray)  trace_ips;
+	MonoPtr(MonoString) stack_trace;
+	MonoPtr(MonoString) remote_stack_trace;
 	gint32	    remote_stack_index;
 	/* Dynamic methods referenced by the stack trace */
-	MonoObject *dynamic_methods;
+	MonoPtr(MonoMList) dynamic_methods;
 	gint32	    hresult;
-	MonoString *source;
-	MonoObject *serialization_manager;
-	MonoObject *captured_traces;
-	MonoArray  *native_trace_ips;
+	MonoPtr(MonoString) source;
+	MonoPtr(MonoObject) serialization_manager;
+	MonoPtr(MonoObject) captured_traces;
+	MonoPtr(MonoArray)  native_trace_ips;
 };
 
 typedef struct {
@@ -276,29 +317,35 @@ typedef struct {
 
 typedef struct {
 	MonoSystemException base;
-	MonoString *param_name;
+	MonoPtr(MonoString) param_name;
 } MonoArgumentException;
+
+struct MonoAsyncCall;
+typedef struct MonoAsyncCall MonoAsyncCall;
+
+struct MonoWaitHandle;
+typedef struct MonoWaitHandle MonoWaitHandle;
 
 typedef struct {
 	MonoObject   object;
-	MonoObject  *async_state;
-	MonoObject  *handle;
-	MonoObject  *async_delegate;
+	MonoPtr(MonoObject) async_state;
+	MonoPtr(MonoWaitHandle) handle;
+	MonoPtr(MonoObject) async_delegate;
 	gpointer    *data;
-	MonoObject  *object_data;
+	MonoPtr(MonoAsyncCall) object_data;
 	MonoBoolean  sync_completed;
 	MonoBoolean  completed;
 	MonoBoolean  endinvoke_called;
-	MonoObject  *async_callback;
-	MonoObject  *execution_context;
-	MonoObject  *original_context;
+	MonoPtr(MonoObject) async_callback;
+	MonoPtr(MonoObject) execution_context;
+	MonoPtr(MonoObject) original_context;
 	gint64	     add_time;
 } MonoAsyncResult;
 
-typedef struct {
+struct MonoWaitHandle {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
-} MonoWaitHandle;
+};
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -324,19 +371,19 @@ TYPED_HANDLE_DECL (MonoReflectionType);
 /* This corresponds to System.RuntimeType */
 typedef struct {
 	MonoReflectionType type;
-	MonoObject *type_info;
+	MonoPtr(MonoObject) type_info;
 } MonoReflectionMonoType;
 
 typedef struct {
 	MonoObject  object;
 	MonoReflectionType *class_to_proxy;	
-	MonoObject *context;
-	MonoObject *unwrapped_server;
+	MonoPtr(MonoObject) context;
+	MonoPtr(MonoObject) unwrapped_server;
 	gint32      target_domain_id;
-	MonoString *target_uri;
-	MonoObject *object_identity;
-	MonoObject *obj_TP;
-	MonoObject *stub_data;
+	MonoPtr(MonoString) target_uri;
+	MonoPtr(MonoObject) object_identity;
+	MonoPtr(MonoObject) obj_TP;
+	MonoPtr(MonoObject) stub_data;
 } MonoRealProxy;
 
 /* Safely access System.Runtime.Remoting.Proxies.RealProxy from native code */
@@ -368,7 +415,7 @@ typedef struct {
 	MonoMarshalByRefObject object;
 	MonoIUnknown *iunknown;
 	GHashTable* itf_hash;
-	MonoObject *synchronization_context;
+	MonoPtr(MonoObject) synchronization_context;
 } MonoComObject;
 
 TYPED_HANDLE_DECL (MonoComObject);
@@ -394,26 +441,26 @@ TYPED_HANDLE_DECL (MonoTransparentProxy);
 typedef struct {
 	MonoObject obj;
 	MonoReflectionMethod *method;
-	MonoArray  *args;		
-	MonoArray  *names;		
-	MonoArray  *arg_types;	
-	MonoObject *ctx;
-	MonoObject *rval;
-	MonoObject *exc;
+	MonoPtr(MonoArray)  args;		
+	MonoPtr(MonoArray)  names;		
+	MonoPtr(MonoArray)  arg_types;	
+	MonoPtr(MonoObject) ctx;
+	MonoPtr(MonoObject) rval;
+	MonoPtr(MonoObject) exc;
 	MonoAsyncResult *async_result;
 	guint32	    call_type;
 } MonoMethodMessage;
 
 /* Keep in sync with the System.MonoAsyncCall */
-typedef struct {
+struct MonoAsyncCall {
 	MonoObject object;
 	MonoMethodMessage *msg;
 	MonoMethod *cb_method;
 	MonoDelegate *cb_target;
-	MonoObject *state;
-	MonoObject *res;
+	MonoPtr(MonoObject) state;
+	MonoPtr(MonoObject) res;
 	MonoArray *out_args;
-} MonoAsyncCall;
+};
 
 typedef struct {
 	MonoObject obj;
@@ -453,7 +500,7 @@ struct MonoInternalThread {
 	struct MonoThreadInfo *thread_info;
 	MonoAppContext *current_appcontext;
 	MonoThread *root_domain_thread;
-	MonoObject *_serialized_principal;
+	MonoPtr(MonoObject) _serialized_principal;
 	int _serialized_principal_version;
 	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
@@ -495,7 +542,7 @@ struct MonoInternalThread {
 struct MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
-	MonoObject *start_obj;
+	MonoPtr(MonoObject) start_obj;
 	MonoException *pending_exception;
 };
 
@@ -507,31 +554,31 @@ typedef struct {
 typedef struct {
 	MonoObject obj;
 	MonoBoolean readOnly;
-	MonoString *AMDesignator;
-	MonoString *PMDesignator;
-	MonoString *DateSeparator;
-	MonoString *TimeSeparator;
-	MonoString *ShortDatePattern;
-	MonoString *LongDatePattern;
-	MonoString *ShortTimePattern;
-	MonoString *LongTimePattern;
-	MonoString *MonthDayPattern;
-	MonoString *YearMonthPattern;
+	MonoPtr(MonoString) AMDesignator;
+	MonoPtr(MonoString) PMDesignator;
+	MonoPtr(MonoString) DateSeparator;
+	MonoPtr(MonoString) TimeSeparator;
+	MonoPtr(MonoString) ShortDatePattern;
+	MonoPtr(MonoString) LongDatePattern;
+	MonoPtr(MonoString) ShortTimePattern;
+	MonoPtr(MonoString) LongTimePattern;
+	MonoPtr(MonoString) MonthDayPattern;
+	MonoPtr(MonoString) YearMonthPattern;
 	guint32 FirstDayOfWeek;
 	guint32 CalendarWeekRule;
-	MonoArray *AbbreviatedDayNames;
-	MonoArray *DayNames;
-	MonoArray *MonthNames;
-	MonoArray *GenitiveMonthNames;
-	MonoArray *AbbreviatedMonthNames;
-	MonoArray *GenitiveAbbreviatedMonthNames;
-	MonoArray *ShortDatePatterns;
-	MonoArray *LongDatePatterns;
-	MonoArray *ShortTimePatterns;
-	MonoArray *LongTimePatterns;
-	MonoArray *MonthDayPatterns;
-	MonoArray *YearMonthPatterns;
-	MonoArray *ShortestDayNames;
+	MonoPtr(MonoArray) AbbreviatedDayNames;
+	MonoPtr(MonoArray) DayNames;
+	MonoPtr(MonoArray) MonthNames;
+	MonoPtr(MonoArray) GenitiveMonthNames;
+	MonoPtr(MonoArray) AbbreviatedMonthNames;
+	MonoPtr(MonoArray) GenitiveAbbreviatedMonthNames;
+	MonoPtr(MonoArray) ShortDatePatterns;
+	MonoPtr(MonoArray) LongDatePatterns;
+	MonoPtr(MonoArray) ShortTimePatterns;
+	MonoPtr(MonoArray) LongTimePatterns;
+	MonoPtr(MonoArray) MonthDayPatterns;
+	MonoPtr(MonoArray) YearMonthPatterns;
+	MonoPtr(MonoArray) ShortestDayNames;
 } MonoDateTimeFormatInfo;
 
 typedef struct 
@@ -540,22 +587,22 @@ typedef struct
 	MonoArray *numberGroupSizes;
 	MonoArray *currencyGroupSizes;
 	MonoArray *percentGroupSizes;
-	MonoString *positiveSign;
-	MonoString *negativeSign;
-	MonoString *numberDecimalSeparator;
-	MonoString *numberGroupSeparator;
-	MonoString *currencyGroupSeparator;
-	MonoString *currencyDecimalSeparator;
-	MonoString *currencySymbol;
-	MonoString *ansiCurrencySymbol;	/* unused */
-	MonoString *naNSymbol;
-	MonoString *positiveInfinitySymbol;
-	MonoString *negativeInfinitySymbol;
-	MonoString *percentDecimalSeparator;
-	MonoString *percentGroupSeparator;
-	MonoString *percentSymbol;
-	MonoString *perMilleSymbol;
-	MonoString *nativeDigits; /* unused */
+	MonoPtr(MonoString) positiveSign;
+	MonoPtr(MonoString) negativeSign;
+	MonoPtr(MonoString) numberDecimalSeparator;
+	MonoPtr(MonoString) numberGroupSeparator;
+	MonoPtr(MonoString) currencyGroupSeparator;
+	MonoPtr(MonoString) currencyDecimalSeparator;
+	MonoPtr(MonoString) currencySymbol;
+	MonoPtr(MonoString) ansiCurrencySymbol;	/* unused */
+	MonoPtr(MonoString) naNSymbol;
+	MonoPtr(MonoString) positiveInfinitySymbol;
+	MonoPtr(MonoString) negativeInfinitySymbol;
+	MonoPtr(MonoString) percentDecimalSeparator;
+	MonoPtr(MonoString) percentGroupSeparator;
+	MonoPtr(MonoString) percentSymbol;
+	MonoPtr(MonoString) perMilleSymbol;
+	MonoPtr(MonoString) nativeDigits; /* unused */
 	gint32 dataItem; /* unused */
 	guint32 numberDecimalDigits;
 	gint32 currencyDecimalDigits;
@@ -576,7 +623,7 @@ typedef struct {
 
 typedef struct {
 	MonoObject obj;
-	MonoString *NativeName;
+	MonoPtr(MonoString) NativeName;
 	MonoArray *ShortDatePatterns;
 	MonoArray *YearMonthPatterns;
 	MonoArray *LongDatePatterns;
@@ -616,15 +663,15 @@ typedef struct {
 	MonoBoolean use_user_override;
 	MonoNumberFormatInfo *number_format;
 	MonoDateTimeFormatInfo *datetime_format;
-	MonoObject *textinfo;
-	MonoString *name;
-	MonoString *englishname;
-	MonoString *nativename;
-	MonoString *iso3lang;
-	MonoString *iso2lang;
-	MonoString *win3lang;
-	MonoString *territory;
-	MonoArray *native_calendar_names;
+	MonoPtr(MonoObject) textinfo;
+	MonoPtr(MonoString) name;
+	MonoPtr(MonoString) englishname;
+	MonoPtr(MonoString) nativename;
+	MonoPtr(MonoString) iso3lang;
+	MonoPtr(MonoString) iso2lang;
+	MonoPtr(MonoString) win3lang;
+	MonoPtr(MonoString) territory;
+	MonoPtr(MonoArray) native_calendar_names;
 	MonoCompareInfo *compareinfo;
 	const void* text_info_data;
 } MonoCultureInfo;
@@ -632,20 +679,20 @@ typedef struct {
 typedef struct {
 	MonoObject obj;
 	gint32 geo_id;
-	MonoString *iso2name;
-	MonoString *iso3name;
-	MonoString *win3name;
-	MonoString *english_name;
-	MonoString *native_name;
-	MonoString *currency_symbol;
-	MonoString *iso_currency_symbol;
-	MonoString *currency_english_name;
-	MonoString *currency_native_name;
+	MonoPtr(MonoString) iso2name;
+	MonoPtr(MonoString) iso3name;
+	MonoPtr(MonoString) win3name;
+	MonoPtr(MonoString) english_name;
+	MonoPtr(MonoString) native_name;
+	MonoPtr(MonoString) currency_symbol;
+	MonoPtr(MonoString) iso_currency_symbol;
+	MonoPtr(MonoString) currency_english_name;
+	MonoPtr(MonoString) currency_native_name;
 } MonoRegionInfo;
 
 typedef struct {
 	MonoObject obj;
-	MonoString *str;
+	MonoPtr(MonoString) str;
 	gint32 options;
 	MonoArray *key;
 	gint32 lcid;
@@ -833,7 +880,7 @@ monotype_cast (MonoObject *obj)
 struct MonoReflectionMethod {
 	MonoObject object;
 	MonoMethod *method;
-	MonoString *name;
+	MonoPtr(MonoString) name;
 	MonoReflectionType *reftype;
 };
 
@@ -871,7 +918,7 @@ TYPED_HANDLE_DECL (MonoDelegate);
 typedef struct MonoMulticastDelegate MonoMulticastDelegate;
 struct MonoMulticastDelegate {
 	MonoDelegate delegate;
-	MonoArray *delegates;
+	MonoPtr(MonoArray) delegates;
 };
 
 /* Safely access System.MulticastDelegate from native code */
@@ -881,7 +928,7 @@ struct MonoReflectionField {
 	MonoObject object;
 	MonoClass *klass;
 	MonoClassField *field;
-	MonoString *name;
+	MonoPtr(MonoString) name;
 	MonoReflectionType *type;
 	guint32 attrs;
 };
@@ -901,7 +948,7 @@ TYPED_HANDLE_DECL (MonoReflectionProperty);
 /*This is System.EventInfo*/
 struct MonoReflectionEvent {
 	MonoObject object;
-	MonoObject *cached_add_event;
+	MonoPtr(MonoObject) cached_add_event;
 };
 
 /* Safely access System.Reflection.EventInfo from native code */
@@ -920,11 +967,11 @@ typedef struct {
 	MonoObject object;
 	guint32 AttrsImpl;	
 	MonoReflectionType *ClassImpl;
-	MonoObject *DefaultValueImpl;
-	MonoObject *MemberImpl;
-	MonoString *NameImpl;
+	MonoPtr(MonoObject) DefaultValueImpl;
+	MonoPtr(MonoObject) MemberImpl;
+	MonoPtr(MonoString) NameImpl;
 	gint32 PositionImpl;
-	MonoObject *MarshalAsImpl;
+	MonoPtr(MonoObject) MarshalAsImpl;
 } MonoReflectionParameter;
 
 /* Safely access System.Reflection.ParameterInfo from native code */
@@ -946,14 +993,14 @@ TYPED_HANDLE_DECL (MonoReflectionMethodBody);
 struct MonoReflectionAssembly {
 	MonoObject object;
 	MonoAssembly *assembly;
-	MonoObject *resolve_event_holder;
+	MonoPtr(MonoObject) resolve_event_holder;
 	/* CAS related */
-	MonoObject *evidence;	/* Evidence */
-	MonoObject *minimum;	/* PermissionSet - for SecurityAction.RequestMinimum */
-	MonoObject *optional;	/* PermissionSet - for SecurityAction.RequestOptional */
-	MonoObject *refuse;	/* PermissionSet - for SecurityAction.RequestRefuse */
-	MonoObject *granted;	/* PermissionSet - for the resolved assembly granted permissions */
-	MonoObject *denied;	/* PermissionSet - for the resolved assembly denied permissions */
+	MonoPtr(MonoObject) evidence;	/* Evidence */
+	MonoPtr(MonoObject) minimum;	/* PermissionSet - for SecurityAction.RequestMinimum */
+	MonoPtr(MonoObject) optional;	/* PermissionSet - for SecurityAction.RequestOptional */
+	MonoPtr(MonoObject) refuse;	/* PermissionSet - for SecurityAction.RequestRefuse */
+	MonoPtr(MonoObject) granted;	/* PermissionSet - for the resolved assembly granted permissions */
+	MonoPtr(MonoObject) denied;	/* PermissionSet - for the resolved assembly denied permissions */
 	/* */
 	MonoBoolean from_byte_array;
 	MonoString *name;
