@@ -458,11 +458,21 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 
 #include <mono/utils/mono-context.h>
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#endif
+
 void
 mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
+#elif defined(HOST_WIN32)
+    CONTEXT *context = (CONTEXT*)sigctx;
+
+    mctx->pc = context->Pc;
+    memcpy(&mctx->regs, &context->X0, sizeof(mgreg_t) * 31);
+    memcpy(&mctx->fregs, &context->V, sizeof(MonoContextSimdReg) * 32);
 #else
 	memcpy (mctx->regs, UCONTEXT_GREGS (sigctx), sizeof (mgreg_t) * 31);
 	mctx->pc = UCONTEXT_REG_PC (sigctx);
@@ -484,6 +494,12 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
+#elif defined(HOST_WIN32)
+    CONTEXT *context = (CONTEXT*)sigctx;
+
+    context->Pc = mctx->pc;
+    memcpy(&context->X0, &mctx->regs, sizeof(mgreg_t) * 31);
+    memcpy(&context->V, &mctx->fregs, sizeof(MonoContextSimdReg) * 32);
 #else
 	memcpy (UCONTEXT_GREGS (sigctx), mctx->regs, sizeof (mgreg_t) * 31);
 	UCONTEXT_REG_PC (sigctx) = mctx->pc;

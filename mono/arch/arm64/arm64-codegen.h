@@ -170,7 +170,7 @@ arm_is_bl_disp (void *code, void *target)
 static G_GNUC_UNUSED inline unsigned int
 arm_get_disp (void *p, void *target)
 {
-	unsigned int disp = ((char*)target - (char*)p) / 4;
+	unsigned int disp = (unsigned int)(((char*)target - (char*)p) / 4);
 
 	if (target)
 		g_assert (arm_is_bl_disp (p, target));
@@ -196,7 +196,7 @@ arm_is_disp19 (void *code, void *target)
 static G_GNUC_UNUSED inline unsigned int
 arm_get_disp19 (void *p, void *target)
 {
-	unsigned int disp = ((char*)target - (char*)p) / 4;
+	unsigned int disp = (unsigned int)(((char*)target - (char*)p) / 4);
 
 	if (target)
 		g_assert (arm_is_disp19 (p, target));
@@ -224,7 +224,7 @@ arm_get_disp19 (void *p, void *target)
 static G_GNUC_UNUSED inline unsigned int
 arm_get_disp15 (void *p, void *target)
 {
-	unsigned int disp = ((char*)target - (char*)p) / 4;
+	unsigned int disp = (unsigned int)(((char*)target - (char*)p) / 4);
 	return (disp & 0x7fff);
 }
 

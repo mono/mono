@@ -4178,7 +4178,11 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	tls = g_new0 (DebuggerTlsData, 1);
 #endif
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Reference");
+#ifdef RUNTIME_IL2CPP
+	il2cpp_gc_wbarrier_set_field(tls, (void**)&tls->thread, thread);
+#else
 	tls->thread = thread;
+#endif	
 	mono_native_tls_set_value (debugger_tls_id, tls);
 
 	DEBUG_PRINTF (1, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls);
@@ -4214,10 +4218,12 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 			/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
 #ifndef RUNTIME_IL2CPP
 			MONO_GC_UNREGISTER_ROOT (tls->thread);
-#else
-            callbacks.il2cpp_debugger_free_thread_context(&tls->il2cpp_context);
 #endif
+#ifdef RUNTIME_IL2CPP
+			il2cpp_gc_wbarrier_set_field(tls, (void**)&tls->thread, NULL);
+#else
 			tls->thread = NULL;
+#endif			
 		}
 	}
 	mono_loader_unlock ();
