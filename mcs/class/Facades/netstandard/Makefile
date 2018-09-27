@@ -43,7 +43,7 @@ ifdef EMBEDDED_DRAWING_DEP
 LIB_REFS += Facades/System.Drawing.Primitives
 else 
 ifeq ($(PROFILE),monodroid)
-LIB_REFS += Mono.Android
+API_BIN_REFS += Mono.Android
 else
 # When System.Drawing.dll is not built in the Mono repo but in
 # the product repo like in the XI case we need to pass in a reference
