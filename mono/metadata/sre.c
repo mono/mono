@@ -563,8 +563,8 @@ reflection_methodbuilder_from_dynamic_method (ReflectionMethodBuilder *rmb, Mono
 	memset (rmb, 0, sizeof (ReflectionMethodBuilder));
 
 	rmb->ilgen = mb->ilgen;
-	rmb->rtype = mb->rtype;
-	rmb->parameters = mb->parameters;
+	rmb->rtype = mb->rtype.GetRaw ();
+	rmb->parameters = mb->parameters.GetRaw ();
 	rmb->generic_params = NULL;
 	rmb->generic_container = NULL;
 	rmb->opt_types = NULL;
@@ -573,8 +573,8 @@ reflection_methodbuilder_from_dynamic_method (ReflectionMethodBuilder *rmb, Mono
 	rmb->iattrs = 0;
 	rmb->call_conv = mb->call_conv;
 	rmb->code = NULL;
-	rmb->type = (MonoObject *) mb->owner;
-	rmb->name = mb->name;
+	rmb->type = (MonoObject *) mb->owner.GetRaw ();
+	rmb->name = mb->name.GetRaw ();
 	rmb->table_idx = NULL;
 	rmb->init_locals = mb->init_locals;
 	rmb->skip_visibility = mb->skip_visibility;
@@ -2008,7 +2008,7 @@ get_field_name_and_type (MonoObject *field, char **name, MonoType **type, MonoEr
 		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder *)field;
 		*name = mono_string_to_utf8_checked (fb->name, error);
 		return_if_nok (error);
-		*type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+		*type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type.GetRaw (), error);
 	} else {
 		MonoReflectionField *f = (MonoReflectionField *)field;
 		*name = g_strdup (mono_field_get_name (f->field));
@@ -3149,7 +3149,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 				if (pb->cattrs) {
 					if (!method_aux->param_cattr)
 						method_aux->param_cattr = image_g_new0 (image, MonoCustomAttrInfo*, m->signature->param_count + 1);
-					method_aux->param_cattr [i] = mono_custom_attrs_from_builders (image, klass->image, pb->cattrs);
+					method_aux->param_cattr [i] = mono_custom_attrs_from_builders (image, klass->image, pb->cattrs.GetRaw ());
 				}
 			}
 		}
@@ -3209,7 +3209,7 @@ ctorbuilder_to_mono_method (MonoClass *klass, MonoReflectionCtorBuilder* mb, Mon
 
 	mb->mhandle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
-	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs);
+	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs.GetRaw ());
 
 	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save) {
 		/* ilgen is no longer needed */
@@ -3243,7 +3243,7 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilderHandl
 	MonoMethod *method = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
 	MONO_HANDLE_SETVAL (ref_mb, mhandle, MonoMethod*, method);
-	mono_save_custom_attrs (klass->image, method, mb->cattrs);
+	mono_save_custom_attrs (klass->image, method, mb->cattrs.GetRaw ());
 
 	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save)
 		/* ilgen is no longer needed */
@@ -3428,7 +3428,7 @@ ensure_runtime_vtable (MonoClass *klass, MonoError *error)
 			klass->interface_count = mono_array_length (tb->interfaces);
 			klass->interfaces = (MonoClass **)mono_image_alloc (klass->image, sizeof (MonoClass*) * klass->interface_count);
 			for (i = 0; i < klass->interface_count; ++i) {
-				MonoType *iface = mono_type_array_get_and_resolve_raw (tb->interfaces, i, error); /* FIXME use handles */
+				MonoType *iface = mono_type_array_get_and_resolve_raw (tb->interfaces.GetRaw (), i, error); /* FIXME use handles */
 				return_val_if_nok (error, FALSE);
 				klass->interfaces [i] = mono_class_from_mono_type (iface);
 				if (!ensure_runtime_vtable (klass->interfaces [i], error))
@@ -3599,7 +3599,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	gint32 first_idx = 0;
 	if (tb->num_fields > 0) {
-		first_idx = modulebuilder_get_next_table_index (tb->module, MONO_TABLE_FIELD, (gint32)tb->num_fields, error);
+		first_idx = modulebuilder_get_next_table_index (tb->module.GetRaw (), MONO_TABLE_FIELD, (gint32)tb->num_fields, error);
 		return_if_nok (error);
 	}
 	mono_class_set_first_field_idx (klass, first_idx - 1); /* Why do we subtract 1? because mono_class_create_from_typedef does it, too. */
@@ -3626,16 +3626,16 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		fb = (MonoReflectionFieldBuilder *)mono_array_get (tb->fields, gpointer, i);
 		field = &klass->fields [i];
 		field->parent = klass;
-		field->name = string_to_utf8_image_raw (image, fb->name, error); /* FIXME use handles */
+		field->name = string_to_utf8_image_raw (image, fb->name.GetRaw (), error); /* FIXME use handles */
 		if (!mono_error_ok (error))
 			return;
 		if (fb->attrs) {
-			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type.GetRaw (), error);
 			return_if_nok (error);
 			field->type = mono_metadata_type_dup (klass->image, type);
 			field->type->attrs = fb->attrs;
 		} else {
-			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+			field->type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type.GetRaw (), error);
 			return_if_nok (error);
 		}
 
@@ -3644,7 +3644,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 			continue;
 		}
 
-		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
+		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data.GetRaw ())) {
 			char *base = mono_array_addr (rva_data, char, 0);
 			size_t size = mono_array_length (rva_data);
 			char *data = (char *)mono_image_alloc (klass->image, size);
@@ -3654,12 +3654,12 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		if (fb->offset != -1)
 			field->offset = fb->offset;
 		fb->handle = field;
-		mono_save_custom_attrs (klass->image, field, fb->cattrs);
+		mono_save_custom_attrs (klass->image, field, fb->cattrs.GetRaw ());
 
 		if (fb->def_value) {
 			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
 			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
-			idx = mono_dynimage_encode_constant (assembly, fb->def_value, &def_values [i].def_type);
+			idx = mono_dynimage_encode_constant (assembly, fb->def_value.GetRaw (), &def_values [i].def_type);
 			/* Copy the data from the blob since it might get realloc-ed */
 			p = assembly->blob.data + idx;
 			len = mono_metadata_decode_blob_size (p, &p2);
@@ -3703,7 +3703,7 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 		pb = mono_array_get (tb->properties, MonoReflectionPropertyBuilder*, i);
 		properties [i].parent = klass;
 		properties [i].attrs = pb->attrs;
-		properties [i].name = string_to_utf8_image_raw (image, pb->name, error); /* FIXME use handles */
+		properties [i].name = string_to_utf8_image_raw (image, pb->name.GetRaw (), error); /* FIXME use handles */
 		if (!mono_error_ok (error))
 			return;
 		if (pb->get_method)
@@ -3711,7 +3711,7 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 		if (pb->set_method)
 			properties [i].set = pb->set_method->mhandle;
 
-		mono_save_custom_attrs (klass->image, &properties [i], pb->cattrs);
+		mono_save_custom_attrs (klass->image, &properties [i], pb->cattrs.GetRaw ());
 		if (pb->def_value) {
 			guint32 len, idx;
 			const char *p, *p2;
@@ -3754,7 +3754,7 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 		eb = mono_array_get (tb->events, MonoReflectionEventBuilder*, i);
 		events [i].parent = klass;
 		events [i].attrs = eb->attrs;
-		events [i].name = string_to_utf8_image_raw (image, eb->name, error); /* FIXME use handles */
+		events [i].name = string_to_utf8_image_raw (image, eb->name.GetRaw (), error); /* FIXME use handles */
 		if (!mono_error_ok (error))
 			return;
 		if (eb->add_method)
@@ -3776,7 +3776,7 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 			}
 		}
 #endif
-		mono_save_custom_attrs (klass->image, &events [i], eb->cattrs);
+		mono_save_custom_attrs (klass->image, &events [i], eb->cattrs.GetRaw ());
 	}
 }
 
@@ -4103,7 +4103,7 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 
 	MonoAssembly *ass = NULL;
 	if (mb->owner) {
-		MonoType *owner_type = mono_reflection_type_get_handle ((MonoReflectionType*)mb->owner, error);
+		MonoType *owner_type = mono_reflection_type_get_handle ((MonoReflectionType*)mb->owner.GetRaw (), error);
 		if (!is_ok (error)) {
 			g_free (rmb.refs);
 			return FALSE;
@@ -4332,7 +4332,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		/* TODO: Copy type ? */
 		sig->ret = helper->return_type->type;
 		for (i = 0; i < nargs; ++i) {
-			sig->params [i] = mono_type_array_get_and_resolve_raw (helper->arguments, i, error); /* FIXME use handles */
+			sig->params [i] = mono_type_array_get_and_resolve_raw (helper->arguments.GetRaw (), i, error); /* FIXME use handles */
 			if (!is_ok (error)) {
 				image_g_free (image, sig);
 				goto return_null;

@@ -600,25 +600,17 @@ extern "C++" {
 
 template <typename T>
 inline gpointer
-mono_handle_unbox_unsafe (MonoHandle<T> h) // old name
+mono_handle_unbox_unsafe (MonoHandle<T> h) // unsafe
 {
-	MonoObjectHandle handle = h.AsMonoObjectHandle ();
-	g_assert (m_class_is_valuetype (MONO_HANDLE_GETVAL (handle, vtable)->klass));
-	return MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle) + 1);
-}
-
-template <typename T>
-inline gpointer
-mono_object_unbox_unsafe (MonoHandle<T> handle) // better name -- no need to say "handle" but "unsafe" sounds important
-{
-	return mono_handle_unbox_unsafe (handle);
+	MONO_HANDLE_SUPPRESS (g_assert (m_class_is_valuetype (h.GetRawObj ()->vtable->klass)));
+	return MONO_HANDLE_SUPPRESS (h.GetRawObj () + 1);
 }
 
 template <typename T>
 inline MonoClass*
-mono_object_get_class (MonoHandle<T> obj)
+mono_object_get_class (MonoHandle<T> h)
 {
-	return mono_object_get_class ((MonoObject*)MONO_HANDLE_RAW (obj)); // FIXME?
+	return MONO_HANDLE_SUPPRESS (mono_object_get_class (h.GetRawObj ()));
 }
 }
 #endif
@@ -758,15 +750,25 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define MONO_HANDLE_SET(handle, field, value) 	((handle)->field = (value))
 #define MONO_HANDLE_IS_NULL(handle) 		(!(handle))
 #define MONO_HANDLE_BOOL(handle) 		(handle)
+
+// new names
+#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ()
+#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
+
 // Early/multiple return is ok.
 #define HANDLE_FUNCTION_RETURN() 		/* nothing */
 #define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
-#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 return (handle)
-#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
+#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 MONO_RETURN_RAW (handle)
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
-#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type> ().New (value))
+#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle <type> ().New (value))
 //#define MONO_HANDLE_NEW(type, value) 		 ((value).NewHandle())
-#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type> ().New ((handle)->field))
+#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle <type> ().New ((handle)->field))
+//#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.GetRaw())
+//#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field) // ideal
+//#define MONO_HANDLE_NEW_GET(type, handle, field) (mono_new_handle ((handle)->field.GetRaw ()))
+
+// This is just less punctuation. FIXME mono_new_handle vs. mono_handle_new.
+template <typename T> inline MonoHandle<T> mono_new_handle (T* a) { return MonoHandle <T> ().New (a); }
 
 /*
 template <typename T>

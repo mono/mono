@@ -433,10 +433,10 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 			}
 		}
 
-		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_object_unbox_unsafe (this_obj) : this_obj, mparams, error);
+		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_handle_unbox_unsafe (this_obj) : this_obj.ForInvoke (), mparams, error);
 		goto_if_nok (error, fail);
 
-		return res;
+		return res.GetRaw ();
 	}
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
@@ -455,7 +455,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, error);
 	goto_if_nok (error, fail);
 
-	return res;
+	return res.GetRaw ();
 fail:
 	mono_error_set_pending_exception (error);
 	return NULL;
@@ -484,7 +484,7 @@ mono_remoting_update_exception_handle (MonoExceptionHandle exc)
 	thread.New (mono_thread_internal_current ());
 	if (mono_object_get_class (exc) == mono_defaults.threadabortexception_class &&
 			(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT)) {
-		mono_thread_internal_reset_abort (thread);
+		mono_thread_internal_reset_abort (thread.GetRaw ());
 		return mono_exception_new_appdomain_unloaded (error);
 	}
 
@@ -495,7 +495,7 @@ static MonoException*
 mono_remoting_update_exception (MonoException* exc)
 {
 	HANDLE_FUNCTION_ENTER ();
-	return mono_remoting_update_exception_handle (MonoExceptionHandle (). New (exc));
+	return mono_remoting_update_exception_handle (mono_new_handle (exc)).GetRaw ();
 }
 
 /**

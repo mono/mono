@@ -8030,7 +8030,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 
 		ac->msg->exc = NULL;
 
-		res = mono_message_invoke (ares->async_delegate.GetRaw(), ac->msg, &ac->msg->exc, &ac->out_args, error);
+		res = mono_message_invoke (ares->async_delegate.GetRaw (), ac->msg, &ac->msg->exc, &ac->out_args, error);
 
 		/* The exit side of the invoke must not be aborted as it would leave the runtime in an undefined state */
 		mono_threads_begin_abort_protected_block ();
@@ -8223,7 +8223,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
  * Returns: the ToString override for @obj. If @obj is a valuetype, @target is unboxed otherwise it's @obj.
  */
 static MonoMethod *
-prepare_to_string_method (MonoObject *obj, void **target)
+prepare_to_string_method (MonoObjectHandle obj, void **target)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -8232,7 +8232,7 @@ prepare_to_string_method (MonoObject *obj, void **target)
 	g_assert (target);
 	g_assert (obj);
 
-	*target = obj;
+	*target = obj.GetRaw ();
 
 	if (!to_string) {
 		ERROR_DECL (error);
@@ -8240,11 +8240,11 @@ prepare_to_string_method (MonoObject *obj, void **target)
 		mono_error_assert_ok (error);
 	}
 
-	method = mono_object_get_virtual_method (obj, to_string);
+	method = mono_object_get_virtual_method (obj.GetRaw (), to_string);
 
 	// Unbox value type if needed
 	if (m_class_is_valuetype (mono_method_get_class (method))) {
-		*target = mono_object_unbox (obj);
+		*target = mono_handle_unbox_unsafe (obj);
 	}
 	return method;
 }
@@ -8258,10 +8258,11 @@ prepare_to_string_method (MonoObject *obj, void **target)
 MonoString *
 mono_object_to_string (MonoObject *obj, MonoObject **exc)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoString *s = NULL;
 	void *target;
-	MonoMethod *method = prepare_to_string_method (obj, &target);
+	MonoMethod *method = prepare_to_string_method (mono_new_handle (obj), &target);
 	if (exc) {
 		s = (MonoString *) mono_runtime_try_invoke (method, target, NULL, exc, error);
 		if (*exc == NULL && !mono_error_ok (error))
@@ -8286,20 +8287,20 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
  * and returns NULL.
  */
 MonoStringHandle
-mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error)
+mono_object_try_to_string (MonoObjectHandle obj, MonoObject **exc, MonoError *error)
 {
 	g_assert (exc);
 	error_init (error);
 	void *target;
 	MonoMethod *method = prepare_to_string_method (obj, &target);
-	return MonoStringHandle::static_new ((MonoString*)mono_runtime_try_invoke (method, target, NULL, exc, error));
+	return mono_new_handle ((MonoString*)mono_runtime_try_invoke (method, target, NULL, exc, error));
 }
 
 static char *
 get_native_backtrace (MonoException *exc_raw)
 {
 	HANDLE_FUNCTION_ENTER ();
-	return mono_exception_handle_get_native_backtrace (MonoExceptionHandle::static_new (exc_raw));
+	return mono_exception_handle_get_native_backtrace (mono_new_handle (exc_raw));
 }
 
 /**
@@ -8313,7 +8314,7 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	auto exc = exc_obj.cast<MonoException>();
+	auto exc = exc_obj.cast <MonoException>();
 	auto message = "";
 	g_ptr <char> free_message;
 	ERROR_DECL (error);
@@ -8324,7 +8325,7 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 		message = free_message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
 	} else {		
 		if (exc->native_trace_ips) {
-			message = free_message = get_native_backtrace (exc);
+			message = free_message = mono_exception_handle_get_native_backtrace (exc);
 		} else {
 			MonoObject *other_exc_raw = NULL;
 			MonoStringHandle str = mono_object_try_to_string (exc, &other_exc_raw, error);

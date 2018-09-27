@@ -625,14 +625,14 @@ mono_dynimage_encode_field_signature (MonoDynamicImage *assembly, MonoReflection
 	MonoType *type;
 	MonoClass *klass;
 
-	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type.GetRaw (), error);
 	return_val_if_nok (error, 0);
 	klass = mono_class_from_mono_type (type);
 
 	sigbuffer_init (&buf, 32);
 	
 	sigbuffer_add_value (&buf, 0x06);
-	encode_custom_modifiers_raw (assembly, fb->modreq, fb->modopt, &buf, error);
+	encode_custom_modifiers_raw (assembly, fb->modreq.GetRaw (), fb->modopt.GetRaw (), &buf, error);
 	goto_if_nok (error, fail);
 	/* encode custom attributes before the type */
 
