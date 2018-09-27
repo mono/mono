@@ -43,7 +43,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_tls_x509_lookup_free (handle);
+				mono_uxtls_x509_lookup_free (handle);
 				return true;
 			}
 		}
@@ -53,34 +53,34 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_lookup_new (IntPtr store, MonoBtlsX509LookupType type);
+		extern static IntPtr mono_uxtls_x509_lookup_new (IntPtr store, MonoBtlsX509LookupType type);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_lookup_load_file (IntPtr handle, IntPtr file, MonoBtlsX509FileType type);
+		extern static int mono_uxtls_x509_lookup_load_file (IntPtr handle, IntPtr file, MonoBtlsX509FileType type);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_lookup_add_dir (IntPtr handle, IntPtr dir, MonoBtlsX509FileType type);
+		extern static int mono_uxtls_x509_lookup_add_dir (IntPtr handle, IntPtr dir, MonoBtlsX509FileType type);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_lookup_add_mono (IntPtr handle, IntPtr monoLookup);
+		extern static int mono_uxtls_x509_lookup_add_mono (IntPtr handle, IntPtr monoLookup);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_lookup_init (IntPtr handle);
+		extern static int mono_uxtls_x509_lookup_init (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_lookup_shutdown (IntPtr handle);
+		extern static int mono_uxtls_x509_lookup_shutdown (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_lookup_by_subject (IntPtr handle, IntPtr name);
+		extern static IntPtr mono_uxtls_x509_lookup_by_subject (IntPtr handle, IntPtr name);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_lookup_by_fingerprint (IntPtr handle, IntPtr bytes, int len);
+		extern static IntPtr mono_uxtls_x509_lookup_by_fingerprint (IntPtr handle, IntPtr bytes, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_x509_lookup_free (IntPtr handle);
+		extern static void mono_uxtls_x509_lookup_free (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_lookup_peek_lookup (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_lookup_peek_lookup (IntPtr handle);
 
 		MonoBtlsX509Store store;
 		MonoBtlsX509LookupType type;
@@ -88,7 +88,7 @@ namespace Mono.Btls
 
 		static BoringX509LookupHandle Create_internal (MonoBtlsX509Store store, MonoBtlsX509LookupType type)
 		{
-			var handle = mono_tls_x509_lookup_new (
+			var handle = mono_uxtls_x509_lookup_new (
 				store.Handle.DangerousGetHandle (), type);
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
@@ -104,7 +104,7 @@ namespace Mono.Btls
 
 		internal IntPtr GetNativeLookup ()
 		{
-			return mono_tls_x509_lookup_peek_lookup (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_lookup_peek_lookup (Handle.DangerousGetHandle ());
 		}
 
 		public void LoadFile (string file, MonoBtlsX509FileType type)
@@ -113,7 +113,7 @@ namespace Mono.Btls
 			try {
 				if (file != null)
 					filePtr = Marshal.StringToHGlobalAnsi (file);
-				var ret = mono_tls_x509_lookup_load_file (
+				var ret = mono_uxtls_x509_lookup_load_file (
 					Handle.DangerousGetHandle (), filePtr, type);
 				CheckError (ret);
 			} finally {
@@ -128,7 +128,7 @@ namespace Mono.Btls
 			try {
 				if (dir != null)
 					dirPtr = Marshal.StringToHGlobalAnsi (dir);
-				var ret = mono_tls_x509_lookup_add_dir (
+				var ret = mono_uxtls_x509_lookup_add_dir (
 					Handle.DangerousGetHandle (), dirPtr, type);
 				CheckError (ret);
 			} finally {
@@ -142,7 +142,7 @@ namespace Mono.Btls
 		{
 			if (type != MonoBtlsX509LookupType.MONO)
 				throw new NotSupportedException ();
-			var ret = mono_tls_x509_lookup_add_mono (
+			var ret = mono_uxtls_x509_lookup_add_mono (
 				Handle.DangerousGetHandle (), monoLookup.Handle.DangerousGetHandle ());
 			CheckError (ret);
 			monoLookup.Install (this);
@@ -154,19 +154,19 @@ namespace Mono.Btls
 
 		public void Initialize ()
 		{
-			var ret = mono_tls_x509_lookup_init (Handle.DangerousGetHandle ());
+			var ret = mono_uxtls_x509_lookup_init (Handle.DangerousGetHandle ());
 			CheckError (ret);
 		}
 
 		public void Shutdown ()
 		{
-			var ret = mono_tls_x509_lookup_shutdown (Handle.DangerousGetHandle ());
+			var ret = mono_uxtls_x509_lookup_shutdown (Handle.DangerousGetHandle ());
 			CheckError (ret);
 		}
 
 		public MonoBtlsX509 LookupBySubject (MonoBtlsX509Name name)
 		{
-			var handle = mono_tls_x509_lookup_by_subject (
+			var handle = mono_uxtls_x509_lookup_by_subject (
 				Handle.DangerousGetHandle (),
 				name.Handle.DangerousGetHandle ());
 			if (handle == IntPtr.Zero)
@@ -179,7 +179,7 @@ namespace Mono.Btls
 			var bytes = Marshal.AllocHGlobal (fingerprint.Length);
 			try {
 				Marshal.Copy (fingerprint, 0, bytes, fingerprint.Length);
-				var handle = mono_tls_x509_lookup_by_fingerprint (
+				var handle = mono_uxtls_x509_lookup_by_fingerprint (
 					Handle.DangerousGetHandle (),
 					bytes, fingerprint.Length);
 				if (handle == IntPtr.Zero)

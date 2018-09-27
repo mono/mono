@@ -267,7 +267,7 @@ namespace Mono.Net.Security
 
 			Tuple<Guid,String> btlsEntry = null;
 #if MONO_FEATURE_TLS
-			if (IsTlsSupported ()) {
+			if (IsUnixTlsSupported ()) {
 				btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
 				providerRegistration.Add ("btls", btlsEntry);
 			}
@@ -294,7 +294,7 @@ namespace Mono.Net.Security
 
 #if MONO_FEATURE_TLS
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		internal extern static bool IsTlsSupported ();
+		internal extern static bool IsUnixTlsSupported ();
 #endif
 
 		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
@@ -309,7 +309,7 @@ namespace Mono.Net.Security
 				return new LegacyTlsProvider ();
 #if MONO_FEATURE_TLS
 			case "btls":
-				if (!IsTlsSupported ())
+				if (!IsUnixTlsSupported ())
 					throw new NotSupportedException ("BTLS in not supported!");
 				return new MonoBtlsProvider ();
 #endif
@@ -331,7 +331,7 @@ namespace Mono.Net.Security
 					goto case "apple";
 #endif
 #if MONO_FEATURE_TLS
-				if (IsTlsSupported ())
+				if (IsUnixTlsSupported ())
 					goto case "btls";
 #endif
 				goto case "legacy";

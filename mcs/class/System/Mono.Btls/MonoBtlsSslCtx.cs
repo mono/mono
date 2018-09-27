@@ -42,7 +42,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_tls_ssl_ctx_free (handle);
+				mono_uxtls_ssl_ctx_free (handle);
 				return true;
 			}
 		}
@@ -52,43 +52,43 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_ssl_ctx_new ();
+		extern static IntPtr mono_uxtls_ssl_ctx_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_ssl_ctx_free (IntPtr handle);
+		extern static int mono_uxtls_ssl_ctx_free (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_ssl_ctx_up_ref (IntPtr handle);
+		extern static IntPtr mono_uxtls_ssl_ctx_up_ref (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_initialize (IntPtr handle, IntPtr instance);
+		extern static void mono_uxtls_ssl_ctx_initialize (IntPtr handle, IntPtr instance);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_set_debug_bio (IntPtr handle, IntPtr bio);
+		extern static void mono_uxtls_ssl_ctx_set_debug_bio (IntPtr handle, IntPtr bio);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_set_cert_verify_callback (IntPtr handle, IntPtr func, int cert_required);
+		extern static void mono_uxtls_ssl_ctx_set_cert_verify_callback (IntPtr handle, IntPtr func, int cert_required);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_set_cert_select_callback (IntPtr handle, IntPtr func);
+		extern static void mono_uxtls_ssl_ctx_set_cert_select_callback (IntPtr handle, IntPtr func);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_set_min_version (IntPtr handle, int version);
+		extern static void mono_uxtls_ssl_ctx_set_min_version (IntPtr handle, int version);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_ssl_ctx_set_max_version (IntPtr handle, int version);
+		extern static void mono_uxtls_ssl_ctx_set_max_version (IntPtr handle, int version);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_ssl_ctx_is_cipher_supported (IntPtr handle, short value);
+		extern static int mono_uxtls_ssl_ctx_is_cipher_supported (IntPtr handle, short value);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_ssl_ctx_set_ciphers (IntPtr handle, int count, IntPtr data, int allow_unsupported);
+		extern static int mono_uxtls_ssl_ctx_set_ciphers (IntPtr handle, int count, IntPtr data, int allow_unsupported);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_ssl_ctx_set_verify_param (IntPtr handle, IntPtr param);
+		extern static int mono_uxtls_ssl_ctx_set_verify_param (IntPtr handle, IntPtr param);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_ssl_ctx_set_client_ca_list (IntPtr handle, int count, IntPtr sizes, IntPtr data);
+		extern static int mono_uxtls_ssl_ctx_set_client_ca_list (IntPtr handle, int count, IntPtr sizes, IntPtr data);
 
 		delegate int NativeVerifyFunc (IntPtr instance, int preverify_ok, IntPtr ctx);
 		delegate int NativeSelectFunc (IntPtr instance, int count, IntPtr sizes, IntPtr data);
@@ -104,7 +104,7 @@ namespace Mono.Btls
 		IntPtr instancePtr;
 
 		public MonoBtlsSslCtx ()
-			: this (new BoringSslCtxHandle (mono_tls_ssl_ctx_new ()))
+			: this (new BoringSslCtxHandle (mono_uxtls_ssl_ctx_new ()))
 		{
 		}
 
@@ -113,7 +113,7 @@ namespace Mono.Btls
 		{
 			instance = GCHandle.Alloc (this);
 			instancePtr = GCHandle.ToIntPtr (instance);
-			mono_tls_ssl_ctx_initialize (
+			mono_uxtls_ssl_ctx_initialize (
 				handle.DangerousGetHandle (), instancePtr);
 
 			verifyFunc = NativeVerifyCallback;
@@ -126,7 +126,7 @@ namespace Mono.Btls
 
 		internal MonoBtlsSslCtx Copy ()
 		{
-			var copy = mono_tls_ssl_ctx_up_ref (Handle.DangerousGetHandle ());
+			var copy = mono_uxtls_ssl_ctx_up_ref (Handle.DangerousGetHandle ());
 			return new MonoBtlsSslCtx (new BoringSslCtxHandle (copy));
 		}
 
@@ -194,7 +194,7 @@ namespace Mono.Btls
 		public void SetDebugBio (MonoBtlsBio bio)
 		{
 			CheckThrow ();
-			mono_tls_ssl_ctx_set_debug_bio (Handle.DangerousGetHandle (), bio.Handle.DangerousGetHandle ());
+			mono_uxtls_ssl_ctx_set_debug_bio (Handle.DangerousGetHandle (), bio.Handle.DangerousGetHandle ());
 		}
 
 		public void SetVerifyCallback (MonoBtlsVerifyCallback callback, bool client_cert_required)
@@ -202,7 +202,7 @@ namespace Mono.Btls
 			CheckThrow ();
 
 			verifyCallback = callback;
-			mono_tls_ssl_ctx_set_cert_verify_callback (
+			mono_uxtls_ssl_ctx_set_cert_verify_callback (
 				Handle.DangerousGetHandle (), verifyFuncPtr,
 				client_cert_required ? 1 : 0);
 		}
@@ -212,26 +212,26 @@ namespace Mono.Btls
 			CheckThrow ();
 
 			selectCallback = callback;
-			mono_tls_ssl_ctx_set_cert_select_callback (
+			mono_uxtls_ssl_ctx_set_cert_select_callback (
 				Handle.DangerousGetHandle (), selectFuncPtr);
 		}
 
 		public void SetMinVersion (int version)
 		{
 			CheckThrow ();
-			mono_tls_ssl_ctx_set_min_version (Handle.DangerousGetHandle (), version);
+			mono_uxtls_ssl_ctx_set_min_version (Handle.DangerousGetHandle (), version);
 		}
 
 		public void SetMaxVersion (int version)
 		{
 			CheckThrow ();
-			mono_tls_ssl_ctx_set_max_version (Handle.DangerousGetHandle (), version);
+			mono_uxtls_ssl_ctx_set_max_version (Handle.DangerousGetHandle (), version);
 		}
 
 		public bool IsCipherSupported (short value)
 		{
 			CheckThrow ();
-			return mono_tls_ssl_ctx_is_cipher_supported (Handle.DangerousGetHandle (), value) != 0;
+			return mono_uxtls_ssl_ctx_is_cipher_supported (Handle.DangerousGetHandle (), value) != 0;
 		}
 
 		public void SetCiphers (short[] ciphers, bool allow_unsupported)
@@ -240,7 +240,7 @@ namespace Mono.Btls
 			var data = Marshal.AllocHGlobal (ciphers.Length * 2);
 			try {
 				Marshal.Copy (ciphers, 0, data, ciphers.Length);
-				var ret = mono_tls_ssl_ctx_set_ciphers (
+				var ret = mono_uxtls_ssl_ctx_set_ciphers (
 					Handle.DangerousGetHandle (),
 					ciphers.Length, data, allow_unsupported ? 1 : 0);
 				CheckError (ret > 0);
@@ -252,7 +252,7 @@ namespace Mono.Btls
 		public void SetVerifyParam (MonoBtlsX509VerifyParam param)
 		{
 			CheckThrow ();
-			var ret = mono_tls_ssl_ctx_set_verify_param (
+			var ret = mono_uxtls_ssl_ctx_set_verify_param (
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
@@ -286,7 +286,7 @@ namespace Mono.Btls
 				pointerData = Marshal.AllocHGlobal (count * 8);
 				Marshal.Copy (pointers, 0, pointerData, count);
 
-				var ret = mono_tls_ssl_ctx_set_client_ca_list (Handle.DangerousGetHandle (), count, sizeData, pointerData);
+				var ret = mono_uxtls_ssl_ctx_set_client_ca_list (Handle.DangerousGetHandle (), count, sizeData, pointerData);
 				CheckError (ret);
 			} finally {
 				for (int i = 0; i < count; i++) {

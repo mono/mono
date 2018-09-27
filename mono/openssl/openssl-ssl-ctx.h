@@ -34,55 +34,55 @@ typedef int (* MonoOpenSSLVerifyFunc) (void *instance, int preverify_ok, X509_ST
 typedef int (* MonoOpenSSLSelectFunc) (void *instance, int countIssuers, const int *sizes, void **issuerData);
 
 MonoOpenSSLSslCtx *
-mono_tls_ssl_ctx_new (void);
+mono_uxtls_ssl_ctx_new (void);
 
 MonoOpenSSLSslCtx *
-mono_tls_ssl_ctx_up_ref (MonoOpenSSLSslCtx *ctx);
+mono_uxtls_ssl_ctx_up_ref (MonoOpenSSLSslCtx *ctx);
 
 int
-mono_tls_ssl_ctx_free (MonoOpenSSLSslCtx *ctx);
+mono_uxtls_ssl_ctx_free (MonoOpenSSLSslCtx *ctx);
 
 void
-mono_tls_ssl_ctx_initialize (MonoOpenSSLSslCtx *ctx, void *instance);
+mono_uxtls_ssl_ctx_initialize (MonoOpenSSLSslCtx *ctx, void *instance);
 
 SSL_CTX *
-mono_tls_ssl_ctx_get_ctx (MonoOpenSSLSslCtx *ctx);
+mono_uxtls_ssl_ctx_get_ctx (MonoOpenSSLSslCtx *ctx);
 
 int
-mono_tls_ssl_ctx_debug_printf (MonoOpenSSLSslCtx *ctx, const char *format, ...);
+mono_uxtls_ssl_ctx_debug_printf (MonoOpenSSLSslCtx *ctx, const char *format, ...);
 
 int
-mono_tls_ssl_ctx_is_debug_enabled (MonoOpenSSLSslCtx *ctx);
+mono_uxtls_ssl_ctx_is_debug_enabled (MonoOpenSSLSslCtx *ctx);
 
 void
-mono_tls_ssl_ctx_set_cert_verify_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLVerifyFunc func, int cert_required);
+mono_uxtls_ssl_ctx_set_cert_verify_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLVerifyFunc func, int cert_required);
 
 void
-mono_tls_ssl_ctx_set_cert_select_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLSelectFunc func);
+mono_uxtls_ssl_ctx_set_cert_select_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLSelectFunc func);
 
 void
-mono_tls_ssl_ctx_set_debug_bio (MonoOpenSSLSslCtx *ctx, BIO *debug_bio);
+mono_uxtls_ssl_ctx_set_debug_bio (MonoOpenSSLSslCtx *ctx, BIO *debug_bio);
 
 X509_STORE *
-mono_tls_ssl_ctx_peek_store (MonoOpenSSLSslCtx *ctx);
+mono_uxtls_ssl_ctx_peek_store (MonoOpenSSLSslCtx *ctx);
 
 void
-mono_tls_ssl_ctx_set_min_version (MonoOpenSSLSslCtx *ctx, int version);
+mono_uxtls_ssl_ctx_set_min_version (MonoOpenSSLSslCtx *ctx, int version);
 
 void
-mono_tls_ssl_ctx_set_max_version (MonoOpenSSLSslCtx *ctx, int version);
+mono_uxtls_ssl_ctx_set_max_version (MonoOpenSSLSslCtx *ctx, int version);
 
 int
-mono_tls_ssl_ctx_is_cipher_supported (MonoOpenSSLSslCtx *ctx, uint16_t value);
+mono_uxtls_ssl_ctx_is_cipher_supported (MonoOpenSSLSslCtx *ctx, uint16_t value);
 
 int
-mono_tls_ssl_ctx_set_ciphers (MonoOpenSSLSslCtx *ctx, int count, const uint16_t *data,
+mono_uxtls_ssl_ctx_set_ciphers (MonoOpenSSLSslCtx *ctx, int count, const uint16_t *data,
 				   int allow_unsupported);
 
 int
-mono_tls_ssl_ctx_set_verify_param (MonoOpenSSLSslCtx *ctx, const MonoOpenSSLX509VerifyParam *param);
+mono_uxtls_ssl_ctx_set_verify_param (MonoOpenSSLSslCtx *ctx, const MonoOpenSSLX509VerifyParam *param);
 
 int
-mono_tls_ssl_ctx_set_client_ca_list (MonoOpenSSLSslCtx *ctx, int count, int *sizes, const void **data);
+mono_uxtls_ssl_ctx_set_client_ca_list (MonoOpenSSLSslCtx *ctx, int count, int *sizes, const void **data);
 
 #endif /* __openssl_ssl_ctx__openssl_ssl_ctx__ */

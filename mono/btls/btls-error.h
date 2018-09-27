@@ -15,24 +15,24 @@
 #include <openssl/ssl.h>
 
 int
-mono_tls_error_peek_error (void);
+mono_uxtls_error_peek_error (void);
 
 int
-mono_tls_error_get_error (void);
+mono_uxtls_error_get_error (void);
 
 void
-mono_tls_error_clear_error (void);
+mono_uxtls_error_clear_error (void);
 
 int
-mono_tls_error_peek_error_line (const char **file, int *line);
+mono_uxtls_error_peek_error_line (const char **file, int *line);
 
 int
-mono_tls_error_get_error_line (const char **file, int *line);
+mono_uxtls_error_get_error_line (const char **file, int *line);
 
 void
-mono_tls_error_get_error_string_n (int error, char *buf, int len);
+mono_uxtls_error_get_error_string_n (int error, char *buf, int len);
 
 int
-mono_tls_error_get_reason (int error);
+mono_uxtls_error_get_reason (int error);
 
 #endif /* __btls__btls_error__ */

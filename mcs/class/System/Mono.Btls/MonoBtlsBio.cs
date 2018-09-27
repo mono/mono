@@ -53,7 +53,7 @@ namespace Mono.Btls
 			protected override bool ReleaseHandle ()
 			{
 				if (handle != IntPtr.Zero) {
-					mono_tls_bio_free (handle);
+					mono_uxtls_bio_free (handle);
 					handle = IntPtr.Zero;
 				}
 				return true;
@@ -67,25 +67,25 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_read (IntPtr bio, IntPtr data, int len);
+		extern static int mono_uxtls_bio_read (IntPtr bio, IntPtr data, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_write (IntPtr bio, IntPtr data, int len);
+		extern static int mono_uxtls_bio_write (IntPtr bio, IntPtr data, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_flush (IntPtr bio);
+		extern static int mono_uxtls_bio_flush (IntPtr bio);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_indent (IntPtr bio, uint indent, uint max_indent);
+		extern static int mono_uxtls_bio_indent (IntPtr bio, uint indent, uint max_indent);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_hexdump (IntPtr bio, IntPtr data, int len, uint indent);
+		extern static int mono_uxtls_bio_hexdump (IntPtr bio, IntPtr data, int len, uint indent);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_bio_print_errors (IntPtr bio);
+		extern static void mono_uxtls_bio_print_errors (IntPtr bio);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_bio_free (IntPtr handle);
+		extern static void mono_uxtls_bio_free (IntPtr handle);
 
 		public int Read (byte[] buffer, int offset, int size)
 		{
@@ -97,7 +97,7 @@ namespace Mono.Btls
 			bool release = false;
 			try {
 				Handle.DangerousAddRef (ref release);
-				var ret = mono_tls_bio_read (Handle.DangerousGetHandle (), data, size);
+				var ret = mono_uxtls_bio_read (Handle.DangerousGetHandle (), data, size);
 				if (ret > 0)
 					Marshal.Copy (data, buffer,offset, ret);
 				return ret;
@@ -119,7 +119,7 @@ namespace Mono.Btls
 			try {
 				Handle.DangerousAddRef (ref release);
 				Marshal.Copy (buffer, offset, data, size);
-				return mono_tls_bio_write (Handle.DangerousGetHandle (), data, size);
+				return mono_uxtls_bio_write (Handle.DangerousGetHandle (), data, size);
 			} finally {
 				if (release)
 					Handle.DangerousRelease ();
@@ -133,7 +133,7 @@ namespace Mono.Btls
 			bool release = false;
 			try {
 				Handle.DangerousAddRef (ref release);
-				return mono_tls_bio_flush (Handle.DangerousGetHandle ());
+				return mono_uxtls_bio_flush (Handle.DangerousGetHandle ());
 			} finally {
 				if (release)
 					Handle.DangerousRelease ();
@@ -146,7 +146,7 @@ namespace Mono.Btls
 			bool release = false;
 			try {
 				Handle.DangerousAddRef (ref release);
-				return mono_tls_bio_indent (Handle.DangerousGetHandle (), indent, max_indent);
+				return mono_uxtls_bio_indent (Handle.DangerousGetHandle (), indent, max_indent);
 			} finally {
 				if (release)
 					Handle.DangerousRelease ();
@@ -164,7 +164,7 @@ namespace Mono.Btls
 			try {
 				Handle.DangerousAddRef (ref release);
 				Marshal.Copy (buffer, 0, data, buffer.Length);
-				return mono_tls_bio_hexdump (Handle.DangerousGetHandle (), data, buffer.Length, indent);
+				return mono_uxtls_bio_hexdump (Handle.DangerousGetHandle (), data, buffer.Length, indent);
 			} finally {
 				if (release)
 					Handle.DangerousRelease ();
@@ -178,7 +178,7 @@ namespace Mono.Btls
 			bool release = false;
 			try {
 				Handle.DangerousAddRef (ref release);
-				mono_tls_bio_print_errors (Handle.DangerousGetHandle ());
+				mono_uxtls_bio_print_errors (Handle.DangerousGetHandle ());
 			} finally {
 				if (release)
 					Handle.DangerousRelease ();
@@ -189,13 +189,13 @@ namespace Mono.Btls
 	class MonoBtlsBioMemory : MonoBtlsBio
 	{
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_bio_mem_new ();
+		extern static IntPtr mono_uxtls_bio_mem_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_bio_mem_get_data (IntPtr handle, out IntPtr data);
+		extern static int mono_uxtls_bio_mem_get_data (IntPtr handle, out IntPtr data);
 
 		public MonoBtlsBioMemory ()
-			: base (new BoringBioHandle (mono_tls_bio_mem_new ()))
+			: base (new BoringBioHandle (mono_uxtls_bio_mem_new ()))
 		{
 		}
 
@@ -205,7 +205,7 @@ namespace Mono.Btls
 			bool release = false;
 			try {
 				Handle.DangerousAddRef (ref release);
-				var size = mono_tls_bio_mem_get_data (Handle.DangerousGetHandle (), out data);
+				var size = mono_uxtls_bio_mem_get_data (Handle.DangerousGetHandle (), out data);
 				CheckError (size > 0);
 				var buffer = new byte[size];
 				Marshal.Copy (data, buffer, 0, size);
@@ -241,7 +241,7 @@ namespace Mono.Btls
 		IMonoBtlsBioMono backend;
 
 		public MonoBtlsBioMono (IMonoBtlsBioMono backend)
-			: base (new BoringBioHandle (mono_tls_bio_mono_new ()))
+			: base (new BoringBioHandle (mono_uxtls_bio_mono_new ()))
 		{
 			this.backend = backend;
 			handle = GCHandle.Alloc (this);
@@ -252,7 +252,7 @@ namespace Mono.Btls
 			readFuncPtr = Marshal.GetFunctionPointerForDelegate (readFunc);
 			writeFuncPtr = Marshal.GetFunctionPointerForDelegate (writeFunc);
 			controlFuncPtr = Marshal.GetFunctionPointerForDelegate (controlFunc);
-			mono_tls_bio_mono_initialize (Handle.DangerousGetHandle (), instance, readFuncPtr, writeFuncPtr, controlFuncPtr);
+			mono_uxtls_bio_mono_initialize (Handle.DangerousGetHandle (), instance, readFuncPtr, writeFuncPtr, controlFuncPtr);
 		}
 
 		public static MonoBtlsBioMono CreateStream (Stream stream, bool ownsStream)
@@ -275,10 +275,10 @@ namespace Mono.Btls
 		delegate long BioControlFunc (IntPtr bio, ControlCommand command, long arg);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_bio_mono_new ();
+		extern static IntPtr mono_uxtls_bio_mono_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_bio_mono_initialize (IntPtr handle, IntPtr instance, IntPtr readFunc, IntPtr writeFunc, IntPtr controlFunc);
+		extern static void mono_uxtls_bio_mono_initialize (IntPtr handle, IntPtr instance, IntPtr readFunc, IntPtr writeFunc, IntPtr controlFunc);
 
 		long Control (ControlCommand command, long arg)
 		{

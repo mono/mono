@@ -17,20 +17,20 @@
 typedef int (* MonoBtlsX509LookupMono_BySubject) (const void *instance, MonoBtlsX509Name *name, X509 **ret);
 
 MonoBtlsX509LookupMono *
-mono_tls_x509_lookup_mono_new (void);
+mono_uxtls_x509_lookup_mono_new (void);
 
 int
-mono_tls_x509_lookup_mono_free (MonoBtlsX509LookupMono *mono);
+mono_uxtls_x509_lookup_mono_free (MonoBtlsX509LookupMono *mono);
 
 void
-mono_tls_x509_lookup_mono_init (MonoBtlsX509LookupMono *mono, const void *instance,
+mono_uxtls_x509_lookup_mono_init (MonoBtlsX509LookupMono *mono, const void *instance,
 				 MonoBtlsX509LookupMono_BySubject by_subject_func);
 
 int
-mono_tls_x509_lookup_add_mono (MonoBtlsX509Lookup *lookup, MonoBtlsX509LookupMono *mono);
+mono_uxtls_x509_lookup_add_mono (MonoBtlsX509Lookup *lookup, MonoBtlsX509LookupMono *mono);
 
 X509_LOOKUP_METHOD *
-mono_tls_x509_lookup_mono_method (void);
+mono_uxtls_x509_lookup_mono_method (void);
 
 #endif /* defined(__btls__btls_x509_lookup_mono__) */
 

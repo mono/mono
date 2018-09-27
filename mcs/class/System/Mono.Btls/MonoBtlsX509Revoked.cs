@@ -47,7 +47,7 @@ namespace Mono.Btls
 			protected override bool ReleaseHandle ()
 			{
 				if (handle != IntPtr.Zero)
-					mono_tls_x509_revoked_free (handle);
+					mono_uxtls_x509_revoked_free (handle);
 				return true;
 			}
 
@@ -68,26 +68,26 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_revoked_get_serial_number (IntPtr handle, IntPtr data, int size);
+		extern static int mono_uxtls_x509_revoked_get_serial_number (IntPtr handle, IntPtr data, int size);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static long mono_tls_x509_revoked_get_revocation_date (IntPtr handle);
+		extern static long mono_uxtls_x509_revoked_get_revocation_date (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_revoked_get_reason (IntPtr handle);
+		extern static int mono_uxtls_x509_revoked_get_reason (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_revoked_get_sequence (IntPtr handle);
+		extern static int mono_uxtls_x509_revoked_get_sequence (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_x509_revoked_free (IntPtr handle);
+		extern static void mono_uxtls_x509_revoked_free (IntPtr handle);
 
 		public byte[] GetSerialNumber ()
 		{
 			int size = 256;
 			IntPtr data = Marshal.AllocHGlobal (size);
 			try {
-				var ret = mono_tls_x509_revoked_get_serial_number (
+				var ret = mono_uxtls_x509_revoked_get_serial_number (
 					Handle.DangerousGetHandle (), data, size);
 				CheckError (ret > 0);
 				var buffer = new byte[ret];
@@ -101,19 +101,19 @@ namespace Mono.Btls
 
 		public DateTime GetRevocationDate ()
 		{
-			var ticks = mono_tls_x509_revoked_get_revocation_date (
+			var ticks = mono_uxtls_x509_revoked_get_revocation_date (
 				Handle.DangerousGetHandle ());
 			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
 		public int GetReason ()
 		{
-			return mono_tls_x509_revoked_get_reason (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_revoked_get_reason (Handle.DangerousGetHandle ());
 		}
 
 		public int GetSequence ()
 		{
-			return mono_tls_x509_revoked_get_sequence (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_revoked_get_sequence (Handle.DangerousGetHandle ());
 		}
 	}
 }

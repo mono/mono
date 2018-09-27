@@ -61,7 +61,7 @@ namespace Mono.Btls
 
 		internal MonoBtlsProvider ()
 		{
-			if (!MNS.MonoTlsProviderFactory.IsTlsSupported ())
+			if (!MNS.MonoTlsProviderFactory.IsUnixTlsSupported ())
 				throw new NotSupportedException ("TLS is not supported in this runtime.");
 		}
 

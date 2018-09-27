@@ -14,7 +14,7 @@ struct MonoOpenSSLX509Chain {
 };
 
 MONO_API MonoOpenSSLX509Chain *
-mono_tls_x509_chain_new (void)
+mono_uxtls_x509_chain_new (void)
 {
 	MonoOpenSSLX509Chain *chain = (MonoOpenSSLX509Chain *)OPENSSL_malloc (sizeof (MonoOpenSSLX509Chain));
 	if (chain == NULL)
@@ -27,7 +27,7 @@ mono_tls_x509_chain_new (void)
 }
 
 MONO_API MonoOpenSSLX509Chain *
-mono_tls_x509_chain_from_certs (STACK_OF(X509) *certs)
+mono_uxtls_x509_chain_from_certs (STACK_OF(X509) *certs)
 {
 	MonoOpenSSLX509Chain *chain = (MonoOpenSSLX509Chain *)OPENSSL_malloc (sizeof (MonoOpenSSLX509Chain));
 	if (chain == NULL)
@@ -40,19 +40,19 @@ mono_tls_x509_chain_from_certs (STACK_OF(X509) *certs)
 }
 
 MONO_API STACK_OF(X509) *
-mono_tls_x509_chain_peek_certs (MonoOpenSSLX509Chain *chain)
+mono_uxtls_x509_chain_peek_certs (MonoOpenSSLX509Chain *chain)
 {
 	return chain->certs;
 }
 
 MONO_API int
-mono_tls_x509_chain_get_count (MonoOpenSSLX509Chain *chain)
+mono_uxtls_x509_chain_get_count (MonoOpenSSLX509Chain *chain)
 {
 	return (int)sk_X509_num(chain->certs);
 }
 
 MONO_API X509 *
-mono_tls_x509_chain_get_cert (MonoOpenSSLX509Chain *chain, int index)
+mono_uxtls_x509_chain_get_cert (MonoOpenSSLX509Chain *chain, int index)
 {
 	X509 *cert;
 
@@ -65,13 +65,13 @@ mono_tls_x509_chain_get_cert (MonoOpenSSLX509Chain *chain, int index)
 }
 
 MONO_API STACK_OF(X509) *
-mono_tls_x509_chain_get_certs (MonoOpenSSLX509Chain *chain)
+mono_uxtls_x509_chain_get_certs (MonoOpenSSLX509Chain *chain)
 {
 	return chain->certs;
 }
 
 MONO_API int
-mono_tls_x509_chain_free (MonoOpenSSLX509Chain *chain)
+mono_uxtls_x509_chain_free (MonoOpenSSLX509Chain *chain)
 {
 	if (!CRYPTO_refcount_dec_and_test_zero(&chain->references))
 		return 0;
@@ -82,14 +82,14 @@ mono_tls_x509_chain_free (MonoOpenSSLX509Chain *chain)
 }
 
 MONO_API MonoOpenSSLX509Chain *
-mono_tls_x509_chain_up_ref (MonoOpenSSLX509Chain *chain)
+mono_uxtls_x509_chain_up_ref (MonoOpenSSLX509Chain *chain)
 {
 	CRYPTO_refcount_inc(&chain->references);
 	return chain;
 }
 
 MONO_API void
-mono_tls_x509_chain_add_cert (MonoOpenSSLX509Chain *chain, X509 *x509)
+mono_uxtls_x509_chain_add_cert (MonoOpenSSLX509Chain *chain, X509 *x509)
 {
 	X509_up_ref(x509);
 	sk_X509_push(chain->certs, x509);

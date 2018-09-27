@@ -44,7 +44,7 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_tls_pkcs12_free (handle);
+				mono_uxtls_pkcs12_free (handle);
 				return true;
 			}
 		}
@@ -54,31 +54,31 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_pkcs12_free (IntPtr handle);
+		extern static void mono_uxtls_pkcs12_free (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_pkcs12_new ();
+		extern static IntPtr mono_uxtls_pkcs12_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_pkcs12_get_count (IntPtr handle);
+		extern static int mono_uxtls_pkcs12_get_count (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_pkcs12_get_cert (IntPtr Handle, int index);
+		extern static IntPtr mono_uxtls_pkcs12_get_cert (IntPtr Handle, int index);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_pkcs12_add_cert (IntPtr chain, IntPtr x509);
+		extern static int mono_uxtls_pkcs12_add_cert (IntPtr chain, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern unsafe static int mono_tls_pkcs12_import (IntPtr chain, void* data, int len, SafePasswordHandle password);
+		extern unsafe static int mono_uxtls_pkcs12_import (IntPtr chain, void* data, int len, SafePasswordHandle password);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_pkcs12_has_private_key (IntPtr pkcs12);
+		extern static int mono_uxtls_pkcs12_has_private_key (IntPtr pkcs12);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_pkcs12_get_private_key (IntPtr pkcs12);
+		extern static IntPtr mono_uxtls_pkcs12_get_private_key (IntPtr pkcs12);
 
 		internal MonoBtlsPkcs12 ()
-			: base (new BoringPkcs12Handle (mono_tls_pkcs12_new ()))
+			: base (new BoringPkcs12Handle (mono_uxtls_pkcs12_new ()))
 		{
 		}
 
@@ -90,21 +90,21 @@ namespace Mono.Btls
 		MonoBtlsKey privateKey;
 
 		public int Count {
-			get { return mono_tls_pkcs12_get_count (Handle.DangerousGetHandle ()); }
+			get { return mono_uxtls_pkcs12_get_count (Handle.DangerousGetHandle ()); }
 		}
 
 		public MonoBtlsX509 GetCertificate (int index)
 		{
 			if (index >= Count)
 				throw new IndexOutOfRangeException ();
-			var handle = mono_tls_pkcs12_get_cert (Handle.DangerousGetHandle (), index);
+			var handle = mono_uxtls_pkcs12_get_cert (Handle.DangerousGetHandle (), index);
 			CheckError (handle != IntPtr.Zero);
 			return new MonoBtlsX509 (new MonoBtlsX509.BoringX509Handle (handle));
 		}
 
 		public void AddCertificate (MonoBtlsX509 x509)
 		{
-			mono_tls_pkcs12_add_cert (
+			mono_uxtls_pkcs12_add_cert (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 		}
@@ -112,14 +112,14 @@ namespace Mono.Btls
 		public unsafe void Import (byte[] buffer, SafePasswordHandle password)
 		{
 			fixed (void* ptr = buffer) {
-				var ret = mono_tls_pkcs12_import (
+				var ret = mono_uxtls_pkcs12_import (
 					Handle.DangerousGetHandle (), ptr, buffer.Length, password);
 				CheckError (ret);
 			}
 		}
 
 		public bool HasPrivateKey {
-			get { return mono_tls_pkcs12_has_private_key (Handle.DangerousGetHandle ()) != 0; }
+			get { return mono_uxtls_pkcs12_has_private_key (Handle.DangerousGetHandle ()) != 0; }
 		}
 
 		public MonoBtlsKey GetPrivateKey ()
@@ -127,7 +127,7 @@ namespace Mono.Btls
 			if (!HasPrivateKey)
 				throw new InvalidOperationException ();
 			if (privateKey == null) {
-				var handle = mono_tls_pkcs12_get_private_key (Handle.DangerousGetHandle ());
+				var handle = mono_uxtls_pkcs12_get_private_key (Handle.DangerousGetHandle ());
 				CheckError (handle != IntPtr.Zero);
 				privateKey = new MonoBtlsKey (new MonoBtlsKey.BoringKeyHandle (handle));
 			}

@@ -17,7 +17,7 @@ struct MonoOpenSSLX509StoreCtx {
 };
 
 MONO_API MonoOpenSSLX509StoreCtx *
-mono_tls_x509_store_ctx_from_ptr (X509_STORE_CTX *ptr)
+mono_uxtls_x509_store_ctx_from_ptr (X509_STORE_CTX *ptr)
 {
 	MonoOpenSSLX509StoreCtx *ctx;
 
@@ -32,7 +32,7 @@ mono_tls_x509_store_ctx_from_ptr (X509_STORE_CTX *ptr)
 }
 
 MONO_API MonoOpenSSLX509StoreCtx *
-mono_tls_x509_store_ctx_new (void)
+mono_uxtls_x509_store_ctx_new (void)
 {
 	MonoOpenSSLX509StoreCtx *ctx;
 
@@ -48,13 +48,13 @@ mono_tls_x509_store_ctx_new (void)
 }
 
 MONO_API MonoOpenSSLX509StoreCtx *
-mono_tls_x509_store_ctx_up_ref (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_up_ref (MonoOpenSSLX509StoreCtx *ctx)
 {
 	return ctx;
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_free (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_free (MonoOpenSSLX509StoreCtx *ctx)
 {
 	if (ctx->owns == 0) 
 		return 0;
@@ -68,11 +68,11 @@ mono_tls_x509_store_ctx_free (MonoOpenSSLX509StoreCtx *ctx)
 		ctx->owns = 0;
 	}
 	if (ctx->store) {
-		mono_tls_x509_store_free (ctx->store);
+		mono_uxtls_x509_store_free (ctx->store);
 		ctx->store = NULL;
 	}
 	if (ctx->chain) {
-		mono_tls_x509_chain_free (ctx->chain);
+		mono_uxtls_x509_chain_free (ctx->chain);
 		ctx->chain = NULL;
 	}
 	OPENSSL_free (ctx);
@@ -80,7 +80,7 @@ mono_tls_x509_store_ctx_free (MonoOpenSSLX509StoreCtx *ctx)
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_get_error (MonoOpenSSLX509StoreCtx *ctx, const char **error_string)
+mono_uxtls_x509_store_ctx_get_error (MonoOpenSSLX509StoreCtx *ctx, const char **error_string)
 {
 	int error;
 
@@ -91,13 +91,13 @@ mono_tls_x509_store_ctx_get_error (MonoOpenSSLX509StoreCtx *ctx, const char **er
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_get_error_depth (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_error_depth (MonoOpenSSLX509StoreCtx *ctx)
 {
 	return X509_STORE_CTX_get_error_depth (ctx->ctx);
 }
 
 MONO_API MonoOpenSSLX509Chain *
-mono_tls_x509_store_ctx_get_chain (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_chain (MonoOpenSSLX509StoreCtx *ctx)
 {
 	STACK_OF(X509) *certs;
 
@@ -105,11 +105,11 @@ mono_tls_x509_store_ctx_get_chain (MonoOpenSSLX509StoreCtx *ctx)
 	if (!certs)
 		return NULL;
 
-	return mono_tls_x509_chain_from_certs (certs);
+	return mono_uxtls_x509_chain_from_certs (certs);
 }
 
 MONO_API MonoOpenSSLX509Chain *
-mono_tls_x509_store_ctx_get_untrusted (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_untrusted (MonoOpenSSLX509StoreCtx *ctx)
 {
 	STACK_OF(X509) *untrusted;
 
@@ -123,11 +123,11 @@ mono_tls_x509_store_ctx_get_untrusted (MonoOpenSSLX509StoreCtx *ctx)
 	if (sk_X509_num (untrusted) == 0)
 		return NULL;
 
-	return mono_tls_x509_chain_from_certs (untrusted);
+	return mono_uxtls_x509_chain_from_certs (untrusted);
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_init (MonoOpenSSLX509StoreCtx *ctx,
+mono_uxtls_x509_store_ctx_init (MonoOpenSSLX509StoreCtx *ctx,
 				  MonoOpenSSLX509Store *store, 
 				  MonoOpenSSLX509Chain *chain)
 {
@@ -138,15 +138,15 @@ mono_tls_x509_store_ctx_init (MonoOpenSSLX509StoreCtx *ctx,
 	if (ctx->store)
 		return 0;
 
-	certs = mono_tls_x509_chain_peek_certs (chain);
+	certs = mono_uxtls_x509_chain_peek_certs (chain);
 	if (!certs || !sk_X509_num (certs))
 		return 0;
 
-	ctx->store = mono_tls_x509_store_up_ref(store);
-	ctx->chain = mono_tls_x509_chain_up_ref(chain);
+	ctx->store = mono_uxtls_x509_store_up_ref(store);
+	ctx->chain = mono_uxtls_x509_chain_up_ref(chain);
 
 	leaf = sk_X509_value (certs, 0);
-	ret = X509_STORE_CTX_init (ctx->ctx, mono_tls_x509_store_peek_store (store), leaf, certs);
+	ret = X509_STORE_CTX_init (ctx->ctx, mono_uxtls_x509_store_peek_store (store), leaf, certs);
 	if (ret != 1)
 		return ret;
 
@@ -155,25 +155,25 @@ mono_tls_x509_store_ctx_init (MonoOpenSSLX509StoreCtx *ctx,
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_set_param (MonoOpenSSLX509StoreCtx *ctx, MonoOpenSSLX509VerifyParam *param)
+mono_uxtls_x509_store_ctx_set_param (MonoOpenSSLX509StoreCtx *ctx, MonoOpenSSLX509VerifyParam *param)
 {
-	return X509_VERIFY_PARAM_set1 (X509_STORE_CTX_get0_param (ctx->ctx), mono_tls_x509_verify_param_peek_param (param));
+	return X509_VERIFY_PARAM_set1 (X509_STORE_CTX_get0_param (ctx->ctx), mono_uxtls_x509_verify_param_peek_param (param));
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_verify_cert (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_verify_cert (MonoOpenSSLX509StoreCtx *ctx)
 {
 	return X509_verify_cert (ctx->ctx);
 }
 
 MONO_API X509 *
-mono_tls_x509_store_ctx_get_by_subject (MonoOpenSSLX509StoreCtx *ctx, MonoOpenSSLX509Name *name)
+mono_uxtls_x509_store_ctx_get_by_subject (MonoOpenSSLX509StoreCtx *ctx, MonoOpenSSLX509Name *name)
 {
 	X509_OBJECT obj;
 	X509 *x509;
 	int ret;
 
-	ret = X509_STORE_get_by_subject (ctx->ctx, X509_LU_X509, mono_tls_x509_name_peek_name (name), &obj);
+	ret = X509_STORE_get_by_subject (ctx->ctx, X509_LU_X509, mono_uxtls_x509_name_peek_name (name), &obj);
 	if (ret != X509_LU_X509) {
 		X509_OBJECT_free_contents (&obj);
 		return NULL;
@@ -184,7 +184,7 @@ mono_tls_x509_store_ctx_get_by_subject (MonoOpenSSLX509StoreCtx *ctx, MonoOpenSS
 }
 
 MONO_API X509 *
-mono_tls_x509_store_ctx_get_current_cert (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_current_cert (MonoOpenSSLX509StoreCtx *ctx)
 {
 	X509 *x509 = X509_STORE_CTX_get_current_cert (ctx->ctx);
 	if (!x509)
@@ -193,7 +193,7 @@ mono_tls_x509_store_ctx_get_current_cert (MonoOpenSSLX509StoreCtx *ctx)
 }
 
 MONO_API X509 *
-mono_tls_x509_store_ctx_get_current_issuer (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_current_issuer (MonoOpenSSLX509StoreCtx *ctx)
 {
 	X509 *x509 = X509_STORE_CTX_get0_current_issuer (ctx->ctx);
 	if (!x509)
@@ -202,7 +202,7 @@ mono_tls_x509_store_ctx_get_current_issuer (MonoOpenSSLX509StoreCtx *ctx)
 }
 
 MONO_API MonoOpenSSLX509VerifyParam *
-mono_tls_x509_store_ctx_get_verify_param (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_verify_param (MonoOpenSSLX509StoreCtx *ctx)
 {
 	X509_VERIFY_PARAM *param;
 
@@ -210,11 +210,11 @@ mono_tls_x509_store_ctx_get_verify_param (MonoOpenSSLX509StoreCtx *ctx)
 	if (!param)
 		return NULL;
 
-	return mono_tls_x509_verify_param_from_store_ctx (ctx, param);
+	return mono_uxtls_x509_verify_param_from_store_ctx (ctx, param);
 }
 
 MONO_API int
-mono_tls_x509_store_ctx_get_foo (MonoOpenSSLX509StoreCtx *ctx)
+mono_uxtls_x509_store_ctx_get_foo (MonoOpenSSLX509StoreCtx *ctx)
 {
 	return 0;
 }

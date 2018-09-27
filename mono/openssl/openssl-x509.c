@@ -14,7 +14,7 @@
 #include <openssl/asn1t.h>
 
 MONO_API X509 *
-mono_tls_x509_from_data (const void *buf, int len, MonoOpenSSLX509Format format)
+mono_uxtls_x509_from_data (const void *buf, int len, MonoOpenSSLX509Format format)
 {
 	BIO *bio;
 	X509 *cert = NULL;
@@ -33,52 +33,52 @@ mono_tls_x509_from_data (const void *buf, int len, MonoOpenSSLX509Format format)
 }
 
 MONO_API X509 *
-mono_tls_x509_up_ref (X509 *x509)
+mono_uxtls_x509_up_ref (X509 *x509)
 {
 	X509_up_ref (x509);
 	return x509;
 }
 
 MONO_API void
-mono_tls_x509_free (X509 *x509)
+mono_uxtls_x509_free (X509 *x509)
 {
 	X509_free(x509);
 }
 
 MONO_API X509 *
-mono_tls_x509_dup (X509 *x509)
+mono_uxtls_x509_dup (X509 *x509)
 {
 	return X509_dup (x509);
 }
 
 MONO_API MonoOpenSSLX509Name *
-mono_tls_x509_get_subject_name (X509 *x509)
+mono_uxtls_x509_get_subject_name (X509 *x509)
 {
-	return mono_tls_x509_name_copy (X509_get_subject_name (x509));
+	return mono_uxtls_x509_name_copy (X509_get_subject_name (x509));
 }
 
 MONO_API MonoOpenSSLX509Name *
-mono_tls_x509_get_issuer_name (X509 *x509)
+mono_uxtls_x509_get_issuer_name (X509 *x509)
 {
-	return mono_tls_x509_name_copy (X509_get_issuer_name (x509));
+	return mono_uxtls_x509_name_copy (X509_get_issuer_name (x509));
 }
 
 MONO_API int
-mono_tls_x509_get_subject_name_string (X509 *name, char *buffer, int size)
+mono_uxtls_x509_get_subject_name_string (X509 *name, char *buffer, int size)
 {
 	*buffer = 0;
 	return X509_NAME_oneline (X509_get_subject_name (name), buffer, size) != NULL;
 }
 
 MONO_API int
-mono_tls_x509_get_issuer_name_string (X509 *name, char *buffer, int size)
+mono_uxtls_x509_get_issuer_name_string (X509 *name, char *buffer, int size)
 {
 	*buffer = 0;
 	return X509_NAME_oneline (X509_get_issuer_name (name), buffer, size) != NULL;
 }
 
 MONO_API int
-mono_tls_x509_get_raw_data (X509 *x509, BIO *bio, MonoOpenSSLX509Format format)
+mono_uxtls_x509_get_raw_data (X509 *x509, BIO *bio, MonoOpenSSLX509Format format)
 {
 	switch (format) {
 		case MONO_OPENSSL_X509_FORMAT_DER:
@@ -91,13 +91,13 @@ mono_tls_x509_get_raw_data (X509 *x509, BIO *bio, MonoOpenSSLX509Format format)
 }
 
 MONO_API int
-mono_tls_x509_cmp (const X509 *a, const X509 *b)
+mono_uxtls_x509_cmp (const X509 *a, const X509 *b)
 {
 	return X509_cmp (a, b);
 }
 
 MONO_API int
-mono_tls_x509_get_hash (X509 *x509, const void **data)
+mono_uxtls_x509_get_hash (X509 *x509, const void **data)
 {
 	X509_check_purpose (x509, -1, 0);
 	*data = x509->sha1_hash;
@@ -105,19 +105,19 @@ mono_tls_x509_get_hash (X509 *x509, const void **data)
 }
 
 MONO_API int64_t
-mono_tls_x509_get_not_before (X509 *x509)
+mono_uxtls_x509_get_not_before (X509 *x509)
 {
-	return mono_tls_util_asn1_time_to_ticks (X509_get_notBefore (x509));
+	return mono_uxtls_util_asn1_time_to_ticks (X509_get_notBefore (x509));
 }
 
 MONO_API int64_t
-mono_tls_x509_get_not_after (X509 *x509)
+mono_uxtls_x509_get_not_after (X509 *x509)
 {
-	return mono_tls_util_asn1_time_to_ticks (X509_get_notAfter (x509));
+	return mono_uxtls_util_asn1_time_to_ticks (X509_get_notAfter (x509));
 }
 
 MONO_API int
-mono_tls_x509_get_public_key (X509 *x509, BIO *bio)
+mono_uxtls_x509_get_public_key (X509 *x509, BIO *bio)
 {
 	ASN1_BIT_STRING *pkey;
 	const unsigned char *data;
@@ -138,7 +138,7 @@ mono_tls_x509_get_public_key (X509 *x509, BIO *bio)
 }
 
 MONO_API int
-mono_tls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_style)
+mono_uxtls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_style)
 {
 	ASN1_INTEGER *serial;
 	unsigned char *temp, *p;
@@ -173,7 +173,7 @@ mono_tls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_st
 }
 
 MONO_API int
-mono_tls_x509_get_public_key_algorithm (X509 *x509, char *buffer, int size)
+mono_uxtls_x509_get_public_key_algorithm (X509 *x509, char *buffer, int size)
 {
 	X509_PUBKEY *pkey;
 	ASN1_OBJECT *ppkalg;
@@ -192,13 +192,13 @@ mono_tls_x509_get_public_key_algorithm (X509 *x509, char *buffer, int size)
 }
 
 MONO_API int
-mono_tls_x509_get_version (X509 *x509)
+mono_uxtls_x509_get_version (X509 *x509)
 {
 	return (int)X509_get_version (x509) + 1;
 }
 
 MONO_API int
-mono_tls_x509_get_signature_algorithm (X509 *x509, char *buffer, int size)
+mono_uxtls_x509_get_signature_algorithm (X509 *x509, char *buffer, int size)
 {
 	const ASN1_OBJECT *obj;
 	int nid;
@@ -215,7 +215,7 @@ mono_tls_x509_get_signature_algorithm (X509 *x509, char *buffer, int size)
 }
 
 MONO_API int
-mono_tls_x509_get_public_key_asn1 (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size)
+mono_uxtls_x509_get_public_key_asn1 (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size)
 {
 	X509_PUBKEY *pkey;
 	ASN1_OBJECT *ppkalg;
@@ -252,7 +252,7 @@ mono_tls_x509_get_public_key_asn1 (X509 *x509, char *out_oid, int oid_len, uint8
 }
 
 MONO_API int
-mono_tls_x509_get_public_key_parameters (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size)
+mono_uxtls_x509_get_public_key_parameters (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size)
 {
 	X509_PUBKEY *pkey;
 	X509_ALGOR *algor;
@@ -311,13 +311,13 @@ mono_tls_x509_get_public_key_parameters (X509 *x509, char *out_oid, int oid_len,
 }
 
 MONO_API EVP_PKEY *
-mono_tls_x509_get_pubkey (X509 *x509)
+mono_uxtls_x509_get_pubkey (X509 *x509)
 {
 	return X509_get_pubkey (x509);
 }
 
 MONO_API int
-mono_tls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *size)
+mono_uxtls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *size)
 {
 	ASN1_OCTET_STRING *skid;
 
@@ -341,7 +341,7 @@ mono_tls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *siz
 }
 
 MONO_API int
-mono_tls_x509_print (X509 *x509, BIO *bio)
+mono_uxtls_x509_print (X509 *x509, BIO *bio)
 {
 	return X509_print_ex (bio, x509, XN_FLAG_COMPAT, X509_FLAG_COMPAT);
 }
@@ -360,7 +360,7 @@ get_trust_nid (MonoOpenSSLX509Purpose purpose)
 }
 
 MONO_API int
-mono_tls_x509_add_trust_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
+mono_uxtls_x509_add_trust_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
 {
 	ASN1_OBJECT *trust;
 	int nid;
@@ -378,7 +378,7 @@ mono_tls_x509_add_trust_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
 }
 
 MONO_API int
-mono_tls_x509_add_reject_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
+mono_uxtls_x509_add_reject_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
 {
 	ASN1_OBJECT *reject;
 	int nid;
@@ -396,7 +396,7 @@ mono_tls_x509_add_reject_object (X509 *x509, MonoOpenSSLX509Purpose purpose)
 }
 
 MONO_API int
-mono_tls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind)
+mono_uxtls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind)
 {
 	int ret = 0;
 
@@ -408,13 +408,13 @@ mono_tls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind)
 
 
 	if ((kind & MONO_OPENSSL_X509_TRUST_KIND_REJECT_CLIENT) != 0) {
-		ret = mono_tls_x509_add_reject_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_CLIENT);
+		ret = mono_uxtls_x509_add_reject_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_CLIENT);
 		if (!ret)
 			return ret;
 	}
 
 	if ((kind & MONO_OPENSSL_X509_TRUST_KIND_REJECT_SERVER) != 0) {
-		ret = mono_tls_x509_add_reject_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_SERVER);
+		ret = mono_uxtls_x509_add_reject_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_SERVER);
 		if (!ret)
 			return ret;
 	}
@@ -426,13 +426,13 @@ mono_tls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind)
 	}
 
 	if ((kind & MONO_OPENSSL_X509_TRUST_KIND_TRUST_CLIENT) != 0) {
-		ret = mono_tls_x509_add_trust_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_CLIENT);
+		ret = mono_uxtls_x509_add_trust_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_CLIENT);
 		if (!ret)
 			return ret;
 	}
 
 	if ((kind & MONO_OPENSSL_X509_TRUST_KIND_TRUST_SERVER) != 0) {
-		ret = mono_tls_x509_add_trust_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_SERVER);
+		ret = mono_uxtls_x509_add_trust_object (x509, MONO_OPENSSL_X509_PURPOSE_SSL_SERVER);
 		if (!ret)
 			return ret;
 	}

@@ -55,7 +55,7 @@ namespace Mono.Btls
 			protected override bool ReleaseHandle ()
 			{
 				if (!dontFree)
-					mono_tls_x509_store_ctx_free (handle);
+					mono_uxtls_x509_store_ctx_free (handle);
 				return true;
 			}
 		}
@@ -67,58 +67,58 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_new ();
+		extern static IntPtr mono_uxtls_x509_store_ctx_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_from_ptr (IntPtr ctx);
+		extern static IntPtr mono_uxtls_x509_store_ctx_from_ptr (IntPtr ctx);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static MonoBtlsX509Error mono_tls_x509_store_ctx_get_error (IntPtr handle, out IntPtr error_string);
+		extern static MonoBtlsX509Error mono_uxtls_x509_store_ctx_get_error (IntPtr handle, out IntPtr error_string);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_store_ctx_get_error_depth (IntPtr handle);
+		extern static int mono_uxtls_x509_store_ctx_get_error_depth (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_chain (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_chain (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_store_ctx_init (IntPtr handle, IntPtr store, IntPtr chain);
+		extern static int mono_uxtls_x509_store_ctx_init (IntPtr handle, IntPtr store, IntPtr chain);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_store_ctx_set_param (IntPtr handle, IntPtr param);
+		extern static int mono_uxtls_x509_store_ctx_set_param (IntPtr handle, IntPtr param);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_store_ctx_verify_cert (IntPtr handle);
+		extern static int mono_uxtls_x509_store_ctx_verify_cert (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_by_subject (IntPtr handle, IntPtr name);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_by_subject (IntPtr handle, IntPtr name);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_current_cert (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_current_cert (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_current_issuer (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_current_issuer (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_verify_param (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_verify_param (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_get_untrusted (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_get_untrusted (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_store_ctx_up_ref (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_store_ctx_up_ref (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_x509_store_ctx_free (IntPtr handle);
+		extern static void mono_uxtls_x509_store_ctx_free (IntPtr handle);
 
 		internal MonoBtlsX509StoreCtx ()
-			: base (new BoringX509StoreCtxHandle (mono_tls_x509_store_ctx_new ()))
+			: base (new BoringX509StoreCtxHandle (mono_uxtls_x509_store_ctx_new ()))
 		{
 		}
 
 		static BoringX509StoreCtxHandle Create_internal (IntPtr store_ctx)
 		{
-			var handle = mono_tls_x509_store_ctx_from_ptr (store_ctx);
+			var handle = mono_uxtls_x509_store_ctx_from_ptr (store_ctx);
 			if (handle == IntPtr.Zero)
 				throw new MonoBtlsException ();
 			return new BoringX509StoreCtxHandle (handle);
@@ -139,18 +139,18 @@ namespace Mono.Btls
 		public MonoBtlsX509Error GetError ()
 		{
 			IntPtr error_string_ptr;
-			return mono_tls_x509_store_ctx_get_error (Handle.DangerousGetHandle (), out error_string_ptr);
+			return mono_uxtls_x509_store_ctx_get_error (Handle.DangerousGetHandle (), out error_string_ptr);
 		}
 
 		public int GetErrorDepth ()
 		{
-			return mono_tls_x509_store_ctx_get_error_depth (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_store_ctx_get_error_depth (Handle.DangerousGetHandle ());
 		}
 
 		public MonoBtlsX509Exception GetException ()
 		{
 			IntPtr error_string_ptr;
-			var error = mono_tls_x509_store_ctx_get_error (Handle.DangerousGetHandle (), out error_string_ptr);
+			var error = mono_uxtls_x509_store_ctx_get_error (Handle.DangerousGetHandle (), out error_string_ptr);
 			if (error == 0)
 				return null;
 			if (error_string_ptr != IntPtr.Zero) {
@@ -162,21 +162,21 @@ namespace Mono.Btls
 
 		public MonoBtlsX509Chain GetChain ()
 		{
-			var chain = mono_tls_x509_store_ctx_get_chain (Handle.DangerousGetHandle ());
+			var chain = mono_uxtls_x509_store_ctx_get_chain (Handle.DangerousGetHandle ());
 			CheckError (chain != IntPtr.Zero);
 			return new MonoBtlsX509Chain (new MonoBtlsX509Chain.BoringX509ChainHandle (chain));
 		}
 
 		public MonoBtlsX509Chain GetUntrusted ()
 		{
-			var chain = mono_tls_x509_store_ctx_get_untrusted (Handle.DangerousGetHandle ());
+			var chain = mono_uxtls_x509_store_ctx_get_untrusted (Handle.DangerousGetHandle ());
 			CheckError (chain != IntPtr.Zero);
 			return new MonoBtlsX509Chain (new MonoBtlsX509Chain.BoringX509ChainHandle (chain));
 		}
 
 		public void Initialize (MonoBtlsX509Store store, MonoBtlsX509Chain chain)
 		{
-			var ret = mono_tls_x509_store_ctx_init (
+			var ret = mono_uxtls_x509_store_ctx_init (
 				Handle.DangerousGetHandle (),
 				store.Handle.DangerousGetHandle (),
 				chain.Handle.DangerousGetHandle ());
@@ -185,7 +185,7 @@ namespace Mono.Btls
 
 		public void SetVerifyParam (MonoBtlsX509VerifyParam param)
 		{
-			var ret = mono_tls_x509_store_ctx_set_param (
+			var ret = mono_uxtls_x509_store_ctx_set_param (
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
@@ -201,13 +201,13 @@ namespace Mono.Btls
 
 		public int Verify ()
 		{
-			verifyResult = mono_tls_x509_store_ctx_verify_cert (Handle.DangerousGetHandle ());
+			verifyResult = mono_uxtls_x509_store_ctx_verify_cert (Handle.DangerousGetHandle ());
 			return verifyResult.Value;
 		}
 
 		public MonoBtlsX509 LookupBySubject (MonoBtlsX509Name name)
 		{
-			var handle = mono_tls_x509_store_ctx_get_by_subject (
+			var handle = mono_uxtls_x509_store_ctx_get_by_subject (
 				Handle.DangerousGetHandle (), name.Handle.DangerousGetHandle ());
 			if (handle == IntPtr.Zero)
 				return null;
@@ -216,7 +216,7 @@ namespace Mono.Btls
 
 		public MonoBtlsX509 GetCurrentCertificate ()
 		{
-			var x509 = mono_tls_x509_store_ctx_get_current_cert (Handle.DangerousGetHandle ());
+			var x509 = mono_uxtls_x509_store_ctx_get_current_cert (Handle.DangerousGetHandle ());
 			if (x509 == IntPtr.Zero)
 				return null;
 			return new MonoBtlsX509 (new MonoBtlsX509.BoringX509Handle (x509));
@@ -224,7 +224,7 @@ namespace Mono.Btls
 
 		public MonoBtlsX509 GetCurrentIssuer ()
 		{
-			var x509 = mono_tls_x509_store_ctx_get_current_issuer (Handle.DangerousGetHandle ());
+			var x509 = mono_uxtls_x509_store_ctx_get_current_issuer (Handle.DangerousGetHandle ());
 			if (x509 == IntPtr.Zero)
 				return null;
 			return new MonoBtlsX509 (new MonoBtlsX509.BoringX509Handle (x509));
@@ -232,7 +232,7 @@ namespace Mono.Btls
 
 		public MonoBtlsX509VerifyParam GetVerifyParam ()
 		{
-			var param = mono_tls_x509_store_ctx_get_verify_param (Handle.DangerousGetHandle ());
+			var param = mono_uxtls_x509_store_ctx_get_verify_param (Handle.DangerousGetHandle ());
 			if (param == IntPtr.Zero)
 				return null;
 			return new MonoBtlsX509VerifyParam (new MonoBtlsX509VerifyParam.BoringX509VerifyParamHandle (param));
@@ -240,7 +240,7 @@ namespace Mono.Btls
 
 		public MonoBtlsX509StoreCtx Copy ()
 		{
-			var copy = mono_tls_x509_store_ctx_up_ref (Handle.DangerousGetHandle ());
+			var copy = mono_uxtls_x509_store_ctx_up_ref (Handle.DangerousGetHandle ());
 			CheckError (copy != IntPtr.Zero);
 			return new MonoBtlsX509StoreCtx (new BoringX509StoreCtxHandle (copy), verifyResult);
 		}

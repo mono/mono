@@ -47,82 +47,82 @@ typedef enum {
 } MonoOpenSSLX509TrustKind;
 
 X509 *
-mono_tls_x509_from_data (const void *buf, int len, MonoOpenSSLX509Format format);
+mono_uxtls_x509_from_data (const void *buf, int len, MonoOpenSSLX509Format format);
 
 X509 *
-mono_tls_x509_up_ref (X509 *x509);
+mono_uxtls_x509_up_ref (X509 *x509);
 
 void
-mono_tls_x509_free (X509 *x509);
+mono_uxtls_x509_free (X509 *x509);
 
 X509 *
-mono_tls_x509_dup (X509 *x509);
+mono_uxtls_x509_dup (X509 *x509);
 
 MonoOpenSSLX509Name *
-mono_tls_x509_get_subject_name (X509 *x509);
+mono_uxtls_x509_get_subject_name (X509 *x509);
 
 MonoOpenSSLX509Name *
-mono_tls_x509_get_issuer_name (X509 *x509);
+mono_uxtls_x509_get_issuer_name (X509 *x509);
 
 int
-mono_tls_x509_get_subject_name_string (X509 *name, char *buffer, int size);
+mono_uxtls_x509_get_subject_name_string (X509 *name, char *buffer, int size);
 
 int
-mono_tls_x509_get_issuer_name_string (X509 *name, char *buffer, int size);
+mono_uxtls_x509_get_issuer_name_string (X509 *name, char *buffer, int size);
 
 int
-mono_tls_x509_get_raw_data (X509 *x509, BIO *bio, MonoOpenSSLX509Format format);
+mono_uxtls_x509_get_raw_data (X509 *x509, BIO *bio, MonoOpenSSLX509Format format);
 
 int
-mono_tls_x509_cmp (const X509 *a, const X509 *b);
+mono_uxtls_x509_cmp (const X509 *a, const X509 *b);
 
 int
-mono_tls_x509_get_hash (X509 *x509, const void **data);
+mono_uxtls_x509_get_hash (X509 *x509, const void **data);
 
 int64_t
-mono_tls_x509_get_not_before (X509 *x509);
+mono_uxtls_x509_get_not_before (X509 *x509);
 
 int64_t
-mono_tls_x509_get_not_after (X509 *x509);
+mono_uxtls_x509_get_not_after (X509 *x509);
 
 int
-mono_tls_x509_get_public_key (X509 *x509, BIO *bio);
+mono_uxtls_x509_get_public_key (X509 *x509, BIO *bio);
 
 int
-mono_tls_x509_get_public_key_parameters (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size);
+mono_uxtls_x509_get_public_key_parameters (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size);
 
 int
-mono_tls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_style);
+mono_uxtls_x509_get_serial_number (X509 *x509, char *buffer, int size, int mono_style);
 
 int
-mono_tls_x509_get_public_key_algorithm (X509 *x509, char *buffer, int size);
+mono_uxtls_x509_get_public_key_algorithm (X509 *x509, char *buffer, int size);
 
 int
-mono_tls_x509_get_version (X509 *x509);
+mono_uxtls_x509_get_version (X509 *x509);
 
 int
-mono_tls_x509_get_signature_algorithm (X509 *x509, char *buffer, int size);
+mono_uxtls_x509_get_signature_algorithm (X509 *x509, char *buffer, int size);
 
 int
-mono_tls_x509_get_public_key_asn1 (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size);
+mono_uxtls_x509_get_public_key_asn1 (X509 *x509, char *out_oid, int oid_len, uint8_t **buffer, int *size);
 
 EVP_PKEY *
-mono_tls_x509_get_pubkey (X509 *x509);
+mono_uxtls_x509_get_pubkey (X509 *x509);
 
 int
-mono_tls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *size);
+mono_uxtls_x509_get_subject_key_identifier (X509 *x509, uint8_t **buffer, int *size);
 
 int
-mono_tls_x509_print (X509 *x509, BIO *bio);
+mono_uxtls_x509_print (X509 *x509, BIO *bio);
 
 int
-mono_tls_x509_add_trust_object (X509 *x509, MonoOpenSSLX509Purpose purpose);
+mono_uxtls_x509_add_trust_object (X509 *x509, MonoOpenSSLX509Purpose purpose);
 
 int
-mono_tls_x509_add_reject_object (X509 *x509, MonoOpenSSLX509Purpose purpose);
+mono_uxtls_x509_add_reject_object (X509 *x509, MonoOpenSSLX509Purpose purpose);
 
 int
-mono_tls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind);
+mono_uxtls_x509_add_explicit_trust (X509 *x509, MonoOpenSSLX509TrustKind kind);
 
 
 static __inline__ X509 *

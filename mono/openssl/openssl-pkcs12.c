@@ -17,7 +17,7 @@ struct MonoOpenSSLPkcs12 {
 };
 
 MONO_API MonoOpenSSLPkcs12 *
-mono_tls_pkcs12_new (void)
+mono_uxtls_pkcs12_new (void)
 {
 	MonoOpenSSLPkcs12 *pkcs12 = (MonoOpenSSLPkcs12 *)OPENSSL_malloc (sizeof (MonoOpenSSLPkcs12));
 	if (pkcs12 == NULL)
@@ -30,13 +30,13 @@ mono_tls_pkcs12_new (void)
 }
 
 MONO_API int
-mono_tls_pkcs12_get_count (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_count (MonoOpenSSLPkcs12 *pkcs12)
 {
 	return (int)sk_X509_num (pkcs12->certs);
 }
 
 MONO_API X509 *
-mono_tls_pkcs12_get_cert (MonoOpenSSLPkcs12 *pkcs12, int index)
+mono_uxtls_pkcs12_get_cert (MonoOpenSSLPkcs12 *pkcs12, int index)
 {
 	X509 *cert;
 
@@ -49,13 +49,13 @@ mono_tls_pkcs12_get_cert (MonoOpenSSLPkcs12 *pkcs12, int index)
 }
 
 MONO_API STACK_OF(X509) *
-mono_tls_pkcs12_get_certs (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_certs (MonoOpenSSLPkcs12 *pkcs12)
 {
 	return pkcs12->certs;
 }
 
 MONO_API int
-mono_tls_pkcs12_free (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_free (MonoOpenSSLPkcs12 *pkcs12)
 {
 	if (!CRYPTO_refcount_dec_and_test_zero (&pkcs12->references))
 		return 0;
@@ -66,33 +66,33 @@ mono_tls_pkcs12_free (MonoOpenSSLPkcs12 *pkcs12)
 }
 
 MONO_API MonoOpenSSLPkcs12 *
-mono_tls_pkcs12_up_ref (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_up_ref (MonoOpenSSLPkcs12 *pkcs12)
 {
 	CRYPTO_refcount_inc ((CRYPTO_refcount_t *) &pkcs12->references);
 	return pkcs12;
 }
 
 MONO_API void
-mono_tls_pkcs12_add_cert (MonoOpenSSLPkcs12 *pkcs12, X509 *x509)
+mono_uxtls_pkcs12_add_cert (MonoOpenSSLPkcs12 *pkcs12, X509 *x509)
 {
 	X509_up_ref (x509);
 	sk_X509_push (pkcs12->certs, x509);
 }
 
 MONO_API int
-mono_tls_pkcs12_import (MonoOpenSSLPkcs12 *pkcs12, const void *data, int len, const void *password)
+mono_uxtls_pkcs12_import (MonoOpenSSLPkcs12 *pkcs12, const void *data, int len, const void *password)
 {
 	return 0;
 }
 
 MONO_API int
-mono_tls_pkcs12_has_private_key (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_has_private_key (MonoOpenSSLPkcs12 *pkcs12)
 {
 	return pkcs12->private_key != NULL;
 }
 
 MONO_API EVP_PKEY *
-mono_tls_pkcs12_get_private_key (MonoOpenSSLPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_private_key (MonoOpenSSLPkcs12 *pkcs12)
 {
 	if (!pkcs12->private_key)
 		return NULL;

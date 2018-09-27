@@ -14,36 +14,36 @@
 #include "btls-x509.h"
 
 MonoBtlsX509Crl *
-mono_tls_x509_crl_from_data (const void *buf, int len, MonoBtlsX509Format format);
+mono_uxtls_x509_crl_from_data (const void *buf, int len, MonoBtlsX509Format format);
 
 MonoBtlsX509Crl *
-mono_tls_x509_crl_ref (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_ref (MonoBtlsX509Crl *crl);
 
 int
-mono_tls_x509_crl_free (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_free (MonoBtlsX509Crl *crl);
 
 MonoBtlsX509Revoked *
-mono_tls_x509_crl_get_by_cert (MonoBtlsX509Crl *crl, X509 *x509);
+mono_uxtls_x509_crl_get_by_cert (MonoBtlsX509Crl *crl, X509 *x509);
 
 MonoBtlsX509Revoked *
-mono_tls_x509_crl_get_by_serial (MonoBtlsX509Crl *crl, void *serial, int len);
+mono_uxtls_x509_crl_get_by_serial (MonoBtlsX509Crl *crl, void *serial, int len);
 
 int
-mono_tls_x509_crl_get_revoked_count (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_get_revoked_count (MonoBtlsX509Crl *crl);
 
 MonoBtlsX509Revoked *
-mono_tls_x509_crl_get_revoked (MonoBtlsX509Crl *crl, int index);
+mono_uxtls_x509_crl_get_revoked (MonoBtlsX509Crl *crl, int index);
 
 int64_t
-mono_tls_x509_crl_get_last_update (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_get_last_update (MonoBtlsX509Crl *crl);
 
 int64_t
-mono_tls_x509_crl_get_next_update (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_get_next_update (MonoBtlsX509Crl *crl);
 
 int64_t
-mono_tls_x509_crl_get_version (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_get_version (MonoBtlsX509Crl *crl);
 
 MonoBtlsX509Name *
-mono_tls_x509_crl_get_issuer (MonoBtlsX509Crl *crl);
+mono_uxtls_x509_crl_get_issuer (MonoBtlsX509Crl *crl);
 
 #endif /* __btls__btls_x509_crl__ */

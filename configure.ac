@@ -4764,7 +4764,7 @@ if test "x$with_tls" = "x__thread"; then
 	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
 		], [
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tls_model available])
+			AC_DEFINE(HAVE_UNIX_TLS_MODEL_ATTR, 1, [tls_model available])
 		], [
 			AC_MSG_RESULT(no)
 	])
@@ -5129,6 +5129,8 @@ else
 fi
 AC_SUBST(LIBMONO_LA)
 
+need_cmake=no
+
 dnl **************
 dnl ***  Btls  ***
 dnl **************
@@ -5145,11 +5147,7 @@ AM_CONDITIONAL(BTLS, test x$enable_btls_lib = xyes)
 
 btls_android=no
 if test "x$enable_btls" = "xyes"; then
-	AC_PATH_PROG(CMAKE, [cmake], [no], [$PATH:/Applications/CMake.app/Contents/bin:/usr/local/bin])
-	if test "x$CMAKE" = "xno"; then
-		AC_MSG_ERROR("cmake not found")
-	fi
-
+	need_cmake=yes
 	BTLS_ROOT=`cd $srcdir && pwd`/external/boringssl
 	AC_SUBST(BTLS_ROOT)
 
@@ -5235,7 +5233,7 @@ if test "x$enable_btls" = "xyes"; then
 	AC_SUBST(BTLS_CMAKE_ARGS)
 
 	AC_DEFINE(HAVE_BTLS, 1, [BoringTls is supported])
-	AC_DEFINE(HAVE_TLS, 1, [Unix Tls is supported])
+	AC_DEFINE(HAVE_UNIX_TLS, 1, [Unix Tls is supported])
 else
 	enable_btls=no
 fi
@@ -5251,11 +5249,7 @@ AC_ARG_ENABLE(openssl, [  --disable-openssl             Disable the OpenSSL prov
 AM_CONDITIONAL(OPENSSL, test x$enable_openssl = xyes)
 
 if test "x$enable_openssl" = "xyes"; then
-	AC_PATH_PROG(CMAKE, [cmake], [no], [$PATH:/Applications/CMake.app/Contents/bin:/usr/local/bin])
-	if test "x$CMAKE" = "xno"; then
-		AC_MSG_ERROR("cmake not found")
-	fi
-
+	need_cmake=yes
 	openssl_arch=
 	openssl_cflags=
 	OPENSSL_CMAKE_ARGS=
@@ -5292,10 +5286,17 @@ if test "x$enable_openssl" = "xyes"; then
 
 	AC_DEFINE(HAVE_OPENSSL, 1, [OpenSSL is supported])
 	if test "x$enable_btls" = "xno"; then
-		AC_DEFINE(HAVE_TLS, 1, [Unix TLS is supported])
+		AC_DEFINE(HAVE_UNIX_TLS, 1, [Unix TLS is supported])
 	fi
 else
 	enable_openssl=no
+fi
+
+if test "x$need_cmake" = "xyes"; then
+	AC_PATH_PROG(CMAKE, [cmake], [no], [$PATH:/Applications/CMake.app/Contents/bin:/usr/local/bin])
+	if test "x$CMAKE" = "xno"; then
+		AC_MSG_ERROR("cmake not found")
+	fi
 fi
 
 if test x$DISABLE_MCS_DOCS = xyes; then
@@ -5777,7 +5778,7 @@ fi
     fi
 
     if test "x$enable_btls" = "xyes" -o "x$enable_openssl" = "xyes"; then
-      echo "HAVE_TLS=1" >> $srcdir/$mcsdir/build/config.make
+      echo "HAVE_UNIX_TLS=1" >> $srcdir/$mcsdir/build/config.make
     fi
 
   fi

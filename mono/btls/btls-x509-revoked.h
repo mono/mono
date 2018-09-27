@@ -14,21 +14,21 @@
 #include "btls-x509-crl.h"
 
 MonoBtlsX509Revoked *
-mono_tls_x509_revoked_new (MonoBtlsX509Crl *owner, X509_REVOKED *revoked);
+mono_uxtls_x509_revoked_new (MonoBtlsX509Crl *owner, X509_REVOKED *revoked);
 
 void
-mono_tls_x509_revoked_free (MonoBtlsX509Revoked *revoked);
+mono_uxtls_x509_revoked_free (MonoBtlsX509Revoked *revoked);
 
 int
-mono_tls_x509_revoked_get_serial_number (MonoBtlsX509Revoked *revoked, char *buffer, int size);
+mono_uxtls_x509_revoked_get_serial_number (MonoBtlsX509Revoked *revoked, char *buffer, int size);
 
 int64_t
-mono_tls_x509_revoked_get_revocation_date (MonoBtlsX509Revoked *revoked);
+mono_uxtls_x509_revoked_get_revocation_date (MonoBtlsX509Revoked *revoked);
 
 int
-mono_tls_x509_revoked_get_reason (MonoBtlsX509Revoked *revoked);
+mono_uxtls_x509_revoked_get_reason (MonoBtlsX509Revoked *revoked);
 
 int
-mono_tls_x509_revoked_get_sequence (MonoBtlsX509Revoked *revoked);
+mono_uxtls_x509_revoked_get_sequence (MonoBtlsX509Revoked *revoked);
 
 #endif /* __btls__btls_x509_revoked__ */

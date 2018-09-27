@@ -16,7 +16,7 @@ struct MonoBtlsPkcs12 {
 };
 
 MONO_API MonoBtlsPkcs12 *
-mono_tls_pkcs12_new (void)
+mono_uxtls_pkcs12_new (void)
 {
 	MonoBtlsPkcs12 *pkcs12 = (MonoBtlsPkcs12 *)OPENSSL_malloc (sizeof (MonoBtlsPkcs12));
 	if (pkcs12 == NULL)
@@ -29,13 +29,13 @@ mono_tls_pkcs12_new (void)
 }
 
 MONO_API int
-mono_tls_pkcs12_get_count (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_count (MonoBtlsPkcs12 *pkcs12)
 {
 	return (int)sk_X509_num (pkcs12->certs);
 }
 
 MONO_API X509 *
-mono_tls_pkcs12_get_cert (MonoBtlsPkcs12 *pkcs12, int index)
+mono_uxtls_pkcs12_get_cert (MonoBtlsPkcs12 *pkcs12, int index)
 {
 	X509 *cert;
 
@@ -48,13 +48,13 @@ mono_tls_pkcs12_get_cert (MonoBtlsPkcs12 *pkcs12, int index)
 }
 
 MONO_API STACK_OF(X509) *
-mono_tls_pkcs12_get_certs (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_certs (MonoBtlsPkcs12 *pkcs12)
 {
 	return pkcs12->certs;
 }
 
 MONO_API int
-mono_tls_pkcs12_free (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_free (MonoBtlsPkcs12 *pkcs12)
 {
 	if (!CRYPTO_refcount_dec_and_test_zero (&pkcs12->references))
 		return 0;
@@ -65,21 +65,21 @@ mono_tls_pkcs12_free (MonoBtlsPkcs12 *pkcs12)
 }
 
 MONO_API MonoBtlsPkcs12 *
-mono_tls_pkcs12_up_ref (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_up_ref (MonoBtlsPkcs12 *pkcs12)
 {
 	CRYPTO_refcount_inc (&pkcs12->references);
 	return pkcs12;
 }
 
 MONO_API void
-mono_tls_pkcs12_add_cert (MonoBtlsPkcs12 *pkcs12, X509 *x509)
+mono_uxtls_pkcs12_add_cert (MonoBtlsPkcs12 *pkcs12, X509 *x509)
 {
 	X509_up_ref (x509);
 	sk_X509_push (pkcs12->certs, x509);
 }
 
 MONO_API int
-mono_tls_pkcs12_import (MonoBtlsPkcs12 *pkcs12, const void *data, int len, const void *password)
+mono_uxtls_pkcs12_import (MonoBtlsPkcs12 *pkcs12, const void *data, int len, const void *password)
 {
 	CBS cbs;
 	CBS_init (&cbs, data, len);
@@ -98,13 +98,13 @@ mono_tls_pkcs12_import (MonoBtlsPkcs12 *pkcs12, const void *data, int len, const
 }
 
 MONO_API int
-mono_tls_pkcs12_has_private_key (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_has_private_key (MonoBtlsPkcs12 *pkcs12)
 {
 	return pkcs12->private_key != NULL;
 }
 
 MONO_API EVP_PKEY *
-mono_tls_pkcs12_get_private_key (MonoBtlsPkcs12 *pkcs12)
+mono_uxtls_pkcs12_get_private_key (MonoBtlsPkcs12 *pkcs12)
 {
 	if (!pkcs12->private_key)
 		return NULL;

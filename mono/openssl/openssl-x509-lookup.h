@@ -22,37 +22,37 @@ typedef enum {
 } MonoOpenSSLX509LookupType;
 
 MonoOpenSSLX509Lookup *
-mono_tls_x509_lookup_new (MonoOpenSSLX509Store *store, MonoOpenSSLX509LookupType type);
+mono_uxtls_x509_lookup_new (MonoOpenSSLX509Store *store, MonoOpenSSLX509LookupType type);
 
 int
-mono_tls_x509_lookup_load_file (MonoOpenSSLX509Lookup *lookup, const char *file, MonoOpenSSLX509FileType type);
+mono_uxtls_x509_lookup_load_file (MonoOpenSSLX509Lookup *lookup, const char *file, MonoOpenSSLX509FileType type);
 
 int
-mono_tls_x509_lookup_add_dir (MonoOpenSSLX509Lookup *lookup, const char *dir, MonoOpenSSLX509FileType type);
+mono_uxtls_x509_lookup_add_dir (MonoOpenSSLX509Lookup *lookup, const char *dir, MonoOpenSSLX509FileType type);
 
 MonoOpenSSLX509Lookup *
-mono_tls_x509_lookup_up_ref (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_up_ref (MonoOpenSSLX509Lookup *lookup);
 
 int
-mono_tls_x509_lookup_free (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_free (MonoOpenSSLX509Lookup *lookup);
 
 int
-mono_tls_x509_lookup_init (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_init (MonoOpenSSLX509Lookup *lookup);
 
 MonoOpenSSLX509LookupType
-mono_tls_x509_lookup_get_type (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_get_type (MonoOpenSSLX509Lookup *lookup);
 
 X509_LOOKUP *
-mono_tls_x509_lookup_peek_lookup (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_peek_lookup (MonoOpenSSLX509Lookup *lookup);
 
 int
-mono_tls_x509_lookup_shutdown (MonoOpenSSLX509Lookup *lookup);
+mono_uxtls_x509_lookup_shutdown (MonoOpenSSLX509Lookup *lookup);
 
 X509 *
-mono_tls_x509_lookup_by_subject (MonoOpenSSLX509Lookup *lookup, MonoOpenSSLX509Name *name);
+mono_uxtls_x509_lookup_by_subject (MonoOpenSSLX509Lookup *lookup, MonoOpenSSLX509Name *name);
 
 X509 *
-mono_tls_x509_lookup_by_fingerprint (MonoOpenSSLX509Lookup *lookup, unsigned char *bytes, int len);
+mono_uxtls_x509_lookup_by_fingerprint (MonoOpenSSLX509Lookup *lookup, unsigned char *bytes, int len);
 
 #endif /* defined(__openssl__openssl_x509_lookup__) */
 

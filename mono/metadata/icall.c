@@ -8081,13 +8081,11 @@ ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (MonoError *error)
 }
 
 ICALL_EXPORT MonoBoolean
-ves_icall_Mono_TlsProviderFactory_IsTlsSupported (MonoError *error)
+ves_icall_Mono_TlsProviderFactory_IsUnixTlsSupported (MonoError *error)
 {
-#if HAVE_TLS
-# warning Yay
+#if HAVE_UNIX_TLS
 	return TRUE;
 #else
-# warning Boo
 	return FALSE;
 #endif
 }

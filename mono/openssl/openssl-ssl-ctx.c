@@ -22,23 +22,23 @@ struct MonoOpenSSLSslCtx {
 };
 
 #define debug_print(ptr,message) \
-do { if (mono_tls_ssl_ctx_is_debug_enabled(ptr)) \
-mono_tls_ssl_ctx_debug_printf (ptr, "%s:%d:%s(): " message, __FILE__, __LINE__, \
+do { if (mono_uxtls_ssl_ctx_is_debug_enabled(ptr)) \
+mono_uxtls_ssl_ctx_debug_printf (ptr, "%s:%d:%s(): " message, __FILE__, __LINE__, \
 	__func__); } while (0)
 
 #define debug_printf(ptr,fmt, ...) \
-do { if (mono_tls_ssl_ctx_is_debug_enabled(ptr)) \
-mono_tls_ssl_ctx_debug_printf (ptr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, \
+do { if (mono_uxtls_ssl_ctx_is_debug_enabled(ptr)) \
+mono_uxtls_ssl_ctx_debug_printf (ptr, "%s:%d:%s(): " fmt, __FILE__, __LINE__, \
 	__func__, __VA_ARGS__); } while (0)
 
 MONO_API int
-mono_tls_ssl_ctx_is_debug_enabled (MonoOpenSSLSslCtx *ctx)
+mono_uxtls_ssl_ctx_is_debug_enabled (MonoOpenSSLSslCtx *ctx)
 {
 	return ctx->debug_bio != NULL;
 }
 
 MONO_API int
-mono_tls_ssl_ctx_debug_printf (MonoOpenSSLSslCtx *ctx, const char *format, ...)
+mono_uxtls_ssl_ctx_debug_printf (MonoOpenSSLSslCtx *ctx, const char *format, ...)
 {
 	va_list args;
 	int ret;
@@ -47,13 +47,13 @@ mono_tls_ssl_ctx_debug_printf (MonoOpenSSLSslCtx *ctx, const char *format, ...)
 		return 0;
 
 	va_start (args, format);
-	ret = mono_tls_debug_printf (ctx->debug_bio, format, args);
+	ret = mono_uxtls_debug_printf (ctx->debug_bio, format, args);
 	va_end (args);
 	return ret;
 }
 
 MONO_API MonoOpenSSLSslCtx *
-mono_tls_ssl_ctx_new (void)
+mono_uxtls_ssl_ctx_new (void)
 {
 	MonoOpenSSLSslCtx *ctx;
 	const SSL_METHOD* method = TLSv1_2_method();
@@ -88,14 +88,14 @@ mono_tls_ssl_ctx_new (void)
 }
 
 MONO_API MonoOpenSSLSslCtx *
-mono_tls_ssl_ctx_up_ref (MonoOpenSSLSslCtx *ctx)
+mono_uxtls_ssl_ctx_up_ref (MonoOpenSSLSslCtx *ctx)
 {
 	CRYPTO_refcount_inc (&ctx->references);
 	return ctx;
 }
 
 MONO_API int
-mono_tls_ssl_ctx_free (MonoOpenSSLSslCtx *ctx)
+mono_uxtls_ssl_ctx_free (MonoOpenSSLSslCtx *ctx)
 {
 	if (!CRYPTO_refcount_dec_and_test_zero (&ctx->references))
 		return 0;
@@ -107,13 +107,13 @@ mono_tls_ssl_ctx_free (MonoOpenSSLSslCtx *ctx)
 }
 
 MONO_API SSL_CTX *
-mono_tls_ssl_ctx_get_ctx (MonoOpenSSLSslCtx *ctx)
+mono_uxtls_ssl_ctx_get_ctx (MonoOpenSSLSslCtx *ctx)
 {
 	return ctx->ctx;
 }
 
 MONO_API void
-mono_tls_ssl_ctx_set_debug_bio (MonoOpenSSLSslCtx *ctx, BIO *debug_bio)
+mono_uxtls_ssl_ctx_set_debug_bio (MonoOpenSSLSslCtx *ctx, BIO *debug_bio)
 {
 	if (debug_bio) {
 		ctx->debug_bio = BIO_up_ref(debug_bio);
@@ -122,7 +122,7 @@ mono_tls_ssl_ctx_set_debug_bio (MonoOpenSSLSslCtx *ctx, BIO *debug_bio)
 }
 
 MONO_API void
-mono_tls_ssl_ctx_initialize (MonoOpenSSLSslCtx *ctx, void *instance)
+mono_uxtls_ssl_ctx_initialize (MonoOpenSSLSslCtx *ctx, void *instance)
 {
 	ctx->instance = instance;
 }
@@ -149,7 +149,7 @@ cert_verify_callback (X509_STORE_CTX *storeCtx, void *arg)
 }
 
 MONO_API void
-mono_tls_ssl_ctx_set_cert_verify_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLVerifyFunc func, int cert_required)
+mono_uxtls_ssl_ctx_set_cert_verify_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLVerifyFunc func, int cert_required)
 {
 	int mode;
 
@@ -209,32 +209,32 @@ out:
 }
 
 MONO_API void
-mono_tls_ssl_ctx_set_cert_select_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLSelectFunc func)
+mono_uxtls_ssl_ctx_set_cert_select_callback (MonoOpenSSLSslCtx *ptr, MonoOpenSSLSelectFunc func)
 {
 	ptr->select_func = func;
 	SSL_CTX_set_cert_cb (ptr->ctx, cert_select_callback, ptr);
 }
 
 MONO_API X509_STORE *
-mono_tls_ssl_ctx_peek_store (MonoOpenSSLSslCtx *ctx)
+mono_uxtls_ssl_ctx_peek_store (MonoOpenSSLSslCtx *ctx)
 {
 	return SSL_CTX_get_cert_store (ctx->ctx);
 }
 
 MONO_API void
-mono_tls_ssl_ctx_set_min_version (MonoOpenSSLSslCtx *ctx, int version)
+mono_uxtls_ssl_ctx_set_min_version (MonoOpenSSLSslCtx *ctx, int version)
 {
 
 }
 
 MONO_API void
-mono_tls_ssl_ctx_set_max_version (MonoOpenSSLSslCtx *ctx, int version)
+mono_uxtls_ssl_ctx_set_max_version (MonoOpenSSLSslCtx *ctx, int version)
 {
 
 }
 
 MONO_API int
-mono_tls_ssl_ctx_is_cipher_supported (MonoOpenSSLSslCtx *ctx, uint16_t value)
+mono_uxtls_ssl_ctx_is_cipher_supported (MonoOpenSSLSslCtx *ctx, uint16_t value)
 {
 	STACK_OF(SSL_CIPHER) *sk;
 	SSL_CIPHER *cipher;
@@ -251,7 +251,7 @@ mono_tls_ssl_ctx_is_cipher_supported (MonoOpenSSLSslCtx *ctx, uint16_t value)
 }
 
 MONO_API int
-mono_tls_ssl_ctx_set_ciphers (MonoOpenSSLSslCtx *ctx, int count, const uint16_t *data,
+mono_uxtls_ssl_ctx_set_ciphers (MonoOpenSSLSslCtx *ctx, int count, const uint16_t *data,
 				  int allow_unsupported)
 {
 	STACK_OF(SSL_CIPHER) *sk;
@@ -307,13 +307,13 @@ mono_tls_ssl_ctx_set_ciphers (MonoOpenSSLSslCtx *ctx, int count, const uint16_t 
 }
 
 MONO_API int
-mono_tls_ssl_ctx_set_verify_param (MonoOpenSSLSslCtx *ctx, const MonoOpenSSLX509VerifyParam *param)
+mono_uxtls_ssl_ctx_set_verify_param (MonoOpenSSLSslCtx *ctx, const MonoOpenSSLX509VerifyParam *param)
 {
-	return SSL_CTX_set1_param (ctx->ctx, mono_tls_x509_verify_param_peek_param (param));
+	return SSL_CTX_set1_param (ctx->ctx, mono_uxtls_x509_verify_param_peek_param (param));
 }
 
 MONO_API int
-mono_tls_ssl_ctx_set_client_ca_list (MonoOpenSSLSslCtx *ctx, int count, int *sizes, const void **data)
+mono_uxtls_ssl_ctx_set_client_ca_list (MonoOpenSSLSslCtx *ctx, int count, int *sizes, const void **data)
 {
 	STACK_OF(X509_NAME) *name_list;
 	int i;

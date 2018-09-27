@@ -49,32 +49,32 @@ namespace Mono.Btls
 
 			protected override bool ReleaseHandle ()
 			{
-				mono_tls_key_free (handle);
+				mono_uxtls_key_free (handle);
 				return true;
 			}
 		}
 
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_key_new ();
+		extern static IntPtr mono_uxtls_key_new ();
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_key_free (IntPtr handle);
+		extern static void mono_uxtls_key_free (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_key_up_ref (IntPtr handle);
+		extern static IntPtr mono_uxtls_key_up_ref (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_key_get_bytes (IntPtr handle, out IntPtr data, out int size, int include_private_bits);
+		extern static int mono_uxtls_key_get_bytes (IntPtr handle, out IntPtr data, out int size, int include_private_bits);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_key_get_bits (IntPtr handle);
+		extern static int mono_uxtls_key_get_bits (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_key_is_rsa (IntPtr handle);
+		extern static int mono_uxtls_key_is_rsa (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_key_assign_rsa_private_key (IntPtr handle, byte[] der, int der_length);
+		extern static int mono_uxtls_key_assign_rsa_private_key (IntPtr handle, byte[] der, int der_length);
 
 		new internal BoringKeyHandle Handle {
 			get { return (BoringKeyHandle)base.Handle; }
@@ -90,7 +90,7 @@ namespace Mono.Btls
 			int size;
 			IntPtr data;
 
-			var ret = mono_tls_key_get_bytes (Handle.DangerousGetHandle (), out data, out size, include_private_bits ? 1 : 0);
+			var ret = mono_uxtls_key_get_bytes (Handle.DangerousGetHandle (), out data, out size, include_private_bits ? 1 : 0);
 			CheckError (ret);
 
 			var buffer = new byte [size];
@@ -101,14 +101,14 @@ namespace Mono.Btls
 
 		public bool IsRsa {
 			get {
-				return mono_tls_key_is_rsa (Handle.DangerousGetHandle ()) != 0;
+				return mono_uxtls_key_is_rsa (Handle.DangerousGetHandle ()) != 0;
 			}
 		}
 
 		public MonoBtlsKey Copy ()
 		{
 			CheckThrow ();
-			var copy = mono_tls_key_up_ref (Handle.DangerousGetHandle ());
+			var copy = mono_uxtls_key_up_ref (Handle.DangerousGetHandle ());
 			CheckError (copy != IntPtr.Zero);
 			return new MonoBtlsKey (new BoringKeyHandle (copy));
 		}
@@ -116,9 +116,9 @@ namespace Mono.Btls
 		public static MonoBtlsKey CreateFromRSAPrivateKey (System.Security.Cryptography.RSA privateKey)
 		{
 			var keyData = MX.PKCS8.PrivateKeyInfo.Encode (privateKey);
-			var key = new MonoBtlsKey (new BoringKeyHandle (mono_tls_key_new ()));
+			var key = new MonoBtlsKey (new BoringKeyHandle (mono_uxtls_key_new ()));
 
-			var ret = mono_tls_key_assign_rsa_private_key (key.Handle.DangerousGetHandle (), keyData, keyData.Length);
+			var ret = mono_uxtls_key_assign_rsa_private_key (key.Handle.DangerousGetHandle (), keyData, keyData.Length);
 			if (ret == 0)
 				throw new MonoBtlsException ("Assigning private key failed.");
 

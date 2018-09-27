@@ -21,38 +21,38 @@ typedef int (* MonoBtlsWriteFunc) (const void *instance, const void *buf, int si
 typedef int64_t (* MonoBtlsControlFunc) (const void *instance, MonoBtlsControlCommand command, int64_t arg);
 
 BIO *
-mono_tls_bio_mono_new (void);
+mono_uxtls_bio_mono_new (void);
 
 void
-mono_tls_bio_mono_initialize (BIO *bio, const void *instance,
+mono_uxtls_bio_mono_initialize (BIO *bio, const void *instance,
 			      MonoBtlsReadFunc read_func, MonoBtlsWriteFunc write_func,
 			      MonoBtlsControlFunc control_func);
 
 int
-mono_tls_bio_read (BIO *bio, void *data, int len);
+mono_uxtls_bio_read (BIO *bio, void *data, int len);
 
 int
-mono_tls_bio_write (BIO *bio, const void *data, int len);
+mono_uxtls_bio_write (BIO *bio, const void *data, int len);
 
 int
-mono_tls_bio_flush (BIO *bio);
+mono_uxtls_bio_flush (BIO *bio);
 
 int
-mono_tls_bio_indent (BIO *bio, unsigned indent, unsigned max_indent);
+mono_uxtls_bio_indent (BIO *bio, unsigned indent, unsigned max_indent);
 
 int
-mono_tls_bio_hexdump (BIO *bio, const uint8_t *data, int len, unsigned indent);
+mono_uxtls_bio_hexdump (BIO *bio, const uint8_t *data, int len, unsigned indent);
 
 void
-mono_tls_bio_print_errors (BIO *bio);
+mono_uxtls_bio_print_errors (BIO *bio);
 
 void
-mono_tls_bio_free (BIO *bio);
+mono_uxtls_bio_free (BIO *bio);
 
 BIO *
-mono_tls_bio_mem_new (void);
+mono_uxtls_bio_mem_new (void);
 
 int
-mono_tls_bio_mem_get_data (BIO *bio, void **data);
+mono_uxtls_bio_mem_get_data (BIO *bio, void **data);
 
 #endif /* defined(__btls__btls_bio__) */

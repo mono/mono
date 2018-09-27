@@ -47,7 +47,7 @@ namespace Mono.Btls
 			protected override bool ReleaseHandle ()
 			{
 				if (handle != IntPtr.Zero)
-					mono_tls_x509_crl_free (handle);
+					mono_uxtls_x509_crl_free (handle);
 				return true;
 			}
 
@@ -68,37 +68,37 @@ namespace Mono.Btls
 		}
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_crl_ref (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_crl_ref (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_crl_from_data (IntPtr data, int len, MonoBtlsX509Format format);
+		extern static IntPtr mono_uxtls_x509_crl_from_data (IntPtr data, int len, MonoBtlsX509Format format);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_crl_get_by_cert (IntPtr handle, IntPtr x509);
+		extern static IntPtr mono_uxtls_x509_crl_get_by_cert (IntPtr handle, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		unsafe extern static IntPtr mono_tls_x509_crl_get_by_serial (IntPtr handle, void *serial, int len);
+		unsafe extern static IntPtr mono_uxtls_x509_crl_get_by_serial (IntPtr handle, void *serial, int len);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static int mono_tls_x509_crl_get_revoked_count (IntPtr handle);
+		extern static int mono_uxtls_x509_crl_get_revoked_count (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_crl_get_revoked (IntPtr handle, int index);
+		extern static IntPtr mono_uxtls_x509_crl_get_revoked (IntPtr handle, int index);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static long mono_tls_x509_crl_get_last_update (IntPtr handle);
+		extern static long mono_uxtls_x509_crl_get_last_update (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static long mono_tls_x509_crl_get_next_update (IntPtr handle);
+		extern static long mono_uxtls_x509_crl_get_next_update (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static long mono_tls_x509_crl_get_version (IntPtr handle);
+		extern static long mono_uxtls_x509_crl_get_version (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_tls_x509_crl_get_issuer (IntPtr handle);
+		extern static IntPtr mono_uxtls_x509_crl_get_issuer (IntPtr handle);
 
 		[DllImport (BTLS_DYLIB)]
-		extern static void mono_tls_x509_crl_free (IntPtr handle);
+		extern static void mono_uxtls_x509_crl_free (IntPtr handle);
 
 		public static MonoBtlsX509Crl LoadFromData (byte[] buffer, MonoBtlsX509Format format)
 		{
@@ -108,7 +108,7 @@ namespace Mono.Btls
 
 			try {
 				Marshal.Copy (buffer, 0, data, buffer.Length);
-				var crl = mono_tls_x509_crl_from_data (data, buffer.Length, format);
+				var crl = mono_uxtls_x509_crl_from_data (data, buffer.Length, format);
 				if (crl == IntPtr.Zero)
 					throw new MonoBtlsException ("Failed to read CRL from data.");
 
@@ -120,7 +120,7 @@ namespace Mono.Btls
 
 		public MonoBtlsX509Revoked GetByCert (MonoBtlsX509 x509)
 		{
-			var revoked = mono_tls_x509_crl_get_by_cert (
+			var revoked = mono_uxtls_x509_crl_get_by_cert (
 				Handle.DangerousGetHandle (),
 				x509.Handle.DangerousGetHandle ());
 			if (revoked == IntPtr.Zero)
@@ -132,7 +132,7 @@ namespace Mono.Btls
 		{
 			fixed (void *ptr = serial)
 			{
-				var revoked = mono_tls_x509_crl_get_by_serial (
+				var revoked = mono_uxtls_x509_crl_get_by_serial (
 					Handle.DangerousGetHandle (), ptr, serial.Length);
 				if (revoked == IntPtr.Zero)
 					return null;
@@ -142,7 +142,7 @@ namespace Mono.Btls
 
 		public int GetRevokedCount ()
 		{
-			return mono_tls_x509_crl_get_revoked_count (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_crl_get_revoked_count (Handle.DangerousGetHandle ());
 		}
 
 		public MonoBtlsX509Revoked GetRevoked (int index)
@@ -150,7 +150,7 @@ namespace Mono.Btls
 			if (index >= GetRevokedCount ())
 				throw new ArgumentOutOfRangeException ();
 
-			var revoked = mono_tls_x509_crl_get_revoked (
+			var revoked = mono_uxtls_x509_crl_get_revoked (
 				Handle.DangerousGetHandle (), index);
 			if (revoked == IntPtr.Zero)
 				return null;
@@ -159,24 +159,24 @@ namespace Mono.Btls
 
 		public DateTime GetLastUpdate ()
 		{
-			var ticks = mono_tls_x509_crl_get_last_update (Handle.DangerousGetHandle ());
+			var ticks = mono_uxtls_x509_crl_get_last_update (Handle.DangerousGetHandle ());
 			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
 		public DateTime GetNextUpdate ()
 		{
-			var ticks = mono_tls_x509_crl_get_next_update (Handle.DangerousGetHandle ());
+			var ticks = mono_uxtls_x509_crl_get_next_update (Handle.DangerousGetHandle ());
 			return new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds (ticks);
 		}
 
 		public long GetVersion ()
 		{
-			return mono_tls_x509_crl_get_version (Handle.DangerousGetHandle ());
+			return mono_uxtls_x509_crl_get_version (Handle.DangerousGetHandle ());
 		}
 
 		public MonoBtlsX509Name GetIssuerName ()
 		{
-			var handle = mono_tls_x509_crl_get_issuer (Handle.DangerousGetHandle ());
+			var handle = mono_uxtls_x509_crl_get_issuer (Handle.DangerousGetHandle ());
 			CheckError (handle != IntPtr.Zero);
 			return new MonoBtlsX509Name (new MonoBtlsX509Name.BoringX509NameHandle (handle, false));
 		}

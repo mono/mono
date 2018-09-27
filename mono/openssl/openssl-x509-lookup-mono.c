@@ -30,7 +30,7 @@ struct MonoOpenSSLX509LookupMono {
 };
 
 MONO_API MonoOpenSSLX509LookupMono *
-mono_tls_x509_lookup_mono_new (void)
+mono_uxtls_x509_lookup_mono_new (void)
 {
 	MonoOpenSSLX509LookupMono *mono;
 
@@ -43,7 +43,7 @@ mono_tls_x509_lookup_mono_new (void)
 }
 
 MONO_API void
-mono_tls_x509_lookup_mono_init (MonoOpenSSLX509LookupMono *mono, const void *instance,
+mono_uxtls_x509_lookup_mono_init (MonoOpenSSLX509LookupMono *mono, const void *instance,
 				 MonoOpenSSLX509LookupMono_BySubject by_subject_func)
 {
 	mono->instance = instance;
@@ -86,7 +86,7 @@ mono_lookup_uninstall (MonoOpenSSLX509LookupMono *mono)
 }
 
 MONO_API int
-mono_tls_x509_lookup_mono_free (MonoOpenSSLX509LookupMono *mono)
+mono_uxtls_x509_lookup_mono_free (MonoOpenSSLX509LookupMono *mono)
 {
 	mono->instance = NULL;
 	mono->by_subject_func = NULL;
@@ -174,7 +174,7 @@ mono_lookup_get_by_subject (X509_LOOKUP *ctx, int type, X509_NAME *name, X509_OB
 	if (type != X509_LU_X509)
 		return 0;
 
-	name_obj = mono_tls_x509_name_from_name (name);
+	name_obj = mono_uxtls_x509_name_from_name (name);
 	x509 = NULL;
 
 	for (node = lookup->nodes; node; node = node->next) {
@@ -185,7 +185,7 @@ mono_lookup_get_by_subject (X509_LOOKUP *ctx, int type, X509_NAME *name, X509_OB
 			break;
 	}
 
-	mono_tls_x509_name_free (name_obj);
+	mono_uxtls_x509_name_free (name_obj);
 
 	if (!ret) {
 		if (x509)
@@ -212,17 +212,17 @@ static X509_LOOKUP_METHOD mono_lookup_method = {
 };
 
 MONO_API X509_LOOKUP_METHOD *
-mono_tls_x509_lookup_mono_method (void)
+mono_uxtls_x509_lookup_mono_method (void)
 {
 	return &mono_lookup_method;
 }
 
 MONO_API int
-mono_tls_x509_lookup_add_mono (MonoOpenSSLX509Lookup *lookup, MonoOpenSSLX509LookupMono *mono)
+mono_uxtls_x509_lookup_add_mono (MonoOpenSSLX509Lookup *lookup, MonoOpenSSLX509LookupMono *mono)
 {
-	if (mono_tls_x509_lookup_get_type (lookup) != MONO_OPENSSL_X509_LOOKUP_TYPE_MONO)
+	if (mono_uxtls_x509_lookup_get_type (lookup) != MONO_OPENSSL_X509_LOOKUP_TYPE_MONO)
 		return 0;
-	return X509_LOOKUP_ctrl (mono_tls_x509_lookup_peek_lookup (lookup),
+	return X509_LOOKUP_ctrl (mono_uxtls_x509_lookup_peek_lookup (lookup),
 				 MONO_OPENSSL_X509_L_MONO_ADD,
 				 (void*)mono, 0, NULL);
 }

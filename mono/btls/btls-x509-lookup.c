@@ -26,14 +26,14 @@ get_lookup_method (MonoBtlsX509LookupType type)
 	case MONO_BTLS_X509_LOOKUP_TYPE_HASH_DIR:
 		return X509_LOOKUP_hash_dir ();
 	case MONO_BTLS_X509_LOOKUP_TYPE_MONO:
-		return mono_tls_x509_lookup_mono_method ();
+		return mono_uxtls_x509_lookup_mono_method ();
 	default:
 		return NULL;
 	}
 }
 
 MONO_API MonoBtlsX509Lookup *
-mono_tls_x509_lookup_new (MonoBtlsX509Store *store, MonoBtlsX509LookupType type)
+mono_uxtls_x509_lookup_new (MonoBtlsX509Store *store, MonoBtlsX509LookupType type)
 {
 	MonoBtlsX509Lookup *lookup;
 	X509_LOOKUP *store_lookup;
@@ -47,7 +47,7 @@ mono_tls_x509_lookup_new (MonoBtlsX509Store *store, MonoBtlsX509LookupType type)
 	if (!lookup)
 		return NULL;
 
-	store_lookup = X509_STORE_add_lookup (mono_tls_x509_store_peek_store (store), method);
+	store_lookup = X509_STORE_add_lookup (mono_uxtls_x509_store_peek_store (store), method);
 	if (!store_lookup) {
 		OPENSSL_free (lookup);
 		return NULL;
@@ -55,7 +55,7 @@ mono_tls_x509_lookup_new (MonoBtlsX509Store *store, MonoBtlsX509LookupType type)
 
 	memset (lookup, 0, sizeof(MonoBtlsX509Lookup));
 	// The X509_STORE owns the X509_LOOKUP.
-	lookup->store = mono_tls_x509_store_up_ref (store);
+	lookup->store = mono_uxtls_x509_store_up_ref (store);
 	lookup->lookup = store_lookup;
 	lookup->owns_lookup = 0;
 	lookup->references = 1;
@@ -64,32 +64,32 @@ mono_tls_x509_lookup_new (MonoBtlsX509Store *store, MonoBtlsX509LookupType type)
 }
 
 MONO_API int
-mono_tls_x509_lookup_load_file (MonoBtlsX509Lookup *lookup, const char *file, MonoBtlsX509FileType type)
+mono_uxtls_x509_lookup_load_file (MonoBtlsX509Lookup *lookup, const char *file, MonoBtlsX509FileType type)
 {
 	return X509_LOOKUP_load_file (lookup->lookup, file, type);
 }
 
 MONO_API int
-mono_tls_x509_lookup_add_dir (MonoBtlsX509Lookup *lookup, const char *dir, MonoBtlsX509FileType type)
+mono_uxtls_x509_lookup_add_dir (MonoBtlsX509Lookup *lookup, const char *dir, MonoBtlsX509FileType type)
 {
 	return X509_LOOKUP_add_dir (lookup->lookup, dir, type);
 }
 
 MONO_API MonoBtlsX509Lookup *
-mono_tls_x509_lookup_up_ref (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_up_ref (MonoBtlsX509Lookup *lookup)
 {
 	CRYPTO_refcount_inc (&lookup->references);
 	return lookup;
 }
 
 MONO_API int
-mono_tls_x509_lookup_free (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_free (MonoBtlsX509Lookup *lookup)
 {
 	if (!CRYPTO_refcount_dec_and_test_zero (&lookup->references))
 		return 0;
 
 	if (lookup->store) {
-		mono_tls_x509_store_free (lookup->store);
+		mono_uxtls_x509_store_free (lookup->store);
 		lookup->store = NULL;
 	}
 
@@ -104,37 +104,37 @@ mono_tls_x509_lookup_free (MonoBtlsX509Lookup *lookup)
 }
 
 MONO_API int
-mono_tls_x509_lookup_init (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_init (MonoBtlsX509Lookup *lookup)
 {
 	return X509_LOOKUP_init (lookup->lookup);
 }
 
 MONO_API int
-mono_tls_x509_lookup_shutdown (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_shutdown (MonoBtlsX509Lookup *lookup)
 {
 	return X509_LOOKUP_shutdown (lookup->lookup);
 }
 
 MONO_API MonoBtlsX509LookupType
-mono_tls_x509_lookup_get_type (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_get_type (MonoBtlsX509Lookup *lookup)
 {
 	return lookup->type;
 }
 
 MONO_API X509_LOOKUP *
-mono_tls_x509_lookup_peek_lookup (MonoBtlsX509Lookup *lookup)
+mono_uxtls_x509_lookup_peek_lookup (MonoBtlsX509Lookup *lookup)
 {
 	return lookup->lookup;
 }
 
 MONO_API X509 *
-mono_tls_x509_lookup_by_subject (MonoBtlsX509Lookup *lookup, MonoBtlsX509Name *name)
+mono_uxtls_x509_lookup_by_subject (MonoBtlsX509Lookup *lookup, MonoBtlsX509Name *name)
 {
 	X509_OBJECT obj;
 	X509 *x509;
 	int ret;
 
-	ret = X509_LOOKUP_by_subject (lookup->lookup, X509_LU_X509, mono_tls_x509_name_peek_name (name), &obj);
+	ret = X509_LOOKUP_by_subject (lookup->lookup, X509_LU_X509, mono_uxtls_x509_name_peek_name (name), &obj);
 	if (ret != X509_LU_X509) {
 		X509_OBJECT_free_contents (&obj);
 		return NULL;
@@ -145,7 +145,7 @@ mono_tls_x509_lookup_by_subject (MonoBtlsX509Lookup *lookup, MonoBtlsX509Name *n
 }
 
 MONO_API X509 *
-mono_tls_x509_lookup_by_fingerprint (MonoBtlsX509Lookup *lookup, unsigned char *bytes, int len)
+mono_uxtls_x509_lookup_by_fingerprint (MonoBtlsX509Lookup *lookup, unsigned char *bytes, int len)
 {
 	X509_OBJECT obj;
 	X509 *x509;

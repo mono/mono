@@ -118,7 +118,7 @@ static const BIO_METHOD mono_method = {
 };
 
 MONO_API BIO *
-mono_tls_bio_mono_new (void)
+mono_uxtls_bio_mono_new (void)
 {
 	BIO *bio;
 	MonoOpenSSLBio *monoBio;
@@ -140,7 +140,7 @@ mono_tls_bio_mono_new (void)
 }
 
 MONO_API void
-mono_tls_bio_mono_initialize (BIO *bio, const void *instance,
+mono_uxtls_bio_mono_initialize (BIO *bio, const void *instance,
 			      MonoOpenSSLReadFunc read_func, MonoOpenSSLWriteFunc write_func,
 			      MonoOpenSSLControlFunc control_func)
 {
@@ -155,55 +155,55 @@ mono_tls_bio_mono_initialize (BIO *bio, const void *instance,
 }
 
 MONO_API int
-mono_tls_bio_read (BIO *bio, void *data, int len)
+mono_uxtls_bio_read (BIO *bio, void *data, int len)
 {
 	return BIO_read (bio, data, len);
 }
 
 MONO_API int
-mono_tls_bio_write (BIO *bio, const void *data, int len)
+mono_uxtls_bio_write (BIO *bio, const void *data, int len)
 {
 	return BIO_write (bio, data, len);
 }
 
 MONO_API int
-mono_tls_bio_flush (BIO *bio)
+mono_uxtls_bio_flush (BIO *bio)
 {
 	return BIO_flush (bio);
 }
 
 MONO_API int
-mono_tls_bio_indent (BIO *bio, unsigned indent, unsigned max_indent)
+mono_uxtls_bio_indent (BIO *bio, unsigned indent, unsigned max_indent)
 {
 	return BIO_indent (bio, indent, max_indent);
 }
 
 MONO_API int
-mono_tls_bio_hexdump (BIO *bio, const uint8_t *data, int len, unsigned indent)
+mono_uxtls_bio_hexdump (BIO *bio, const uint8_t *data, int len, unsigned indent)
 {
 	return (int) BIO_dump (bio, (char *) data, len);
 }
 
 MONO_API void
-mono_tls_bio_print_errors (BIO *bio)
+mono_uxtls_bio_print_errors (BIO *bio)
 {
 	ERR_print_errors (bio);
 }
 
 MONO_API void
-mono_tls_bio_free (BIO *bio)
+mono_uxtls_bio_free (BIO *bio)
 {
 	BIO_free (bio);
 }
 
 MONO_API BIO *
-mono_tls_bio_mem_new (void)
+mono_uxtls_bio_mem_new (void)
 {
 	return BIO_new (BIO_s_mem ());
 }
 
 MONO_API int
-mono_tls_bio_mem_get_data (BIO *bio, void **data)
+mono_uxtls_bio_mem_get_data (BIO *bio, void **data)
 {
 	return (int)BIO_get_mem_data (bio, (char**)data);
 }

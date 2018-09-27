@@ -14,36 +14,36 @@
 #include "openssl-x509.h"
 
 MonoOpenSSLX509Crl *
-mono_tls_x509_crl_from_data (const void *buf, int len, MonoOpenSSLX509Format format);
+mono_uxtls_x509_crl_from_data (const void *buf, int len, MonoOpenSSLX509Format format);
 
 MonoOpenSSLX509Crl *
-mono_tls_x509_crl_ref (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_ref (MonoOpenSSLX509Crl *crl);
 
 int
-mono_tls_x509_crl_free (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_free (MonoOpenSSLX509Crl *crl);
 
 MonoOpenSSLX509Revoked *
-mono_tls_x509_crl_get_by_cert (MonoOpenSSLX509Crl *crl, X509 *x509);
+mono_uxtls_x509_crl_get_by_cert (MonoOpenSSLX509Crl *crl, X509 *x509);
 
 MonoOpenSSLX509Revoked *
-mono_tls_x509_crl_get_by_serial (MonoOpenSSLX509Crl *crl, void *serial, int len);
+mono_uxtls_x509_crl_get_by_serial (MonoOpenSSLX509Crl *crl, void *serial, int len);
 
 int
-mono_tls_x509_crl_get_revoked_count (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_get_revoked_count (MonoOpenSSLX509Crl *crl);
 
 MonoOpenSSLX509Revoked *
-mono_tls_x509_crl_get_revoked (MonoOpenSSLX509Crl *crl, int index);
+mono_uxtls_x509_crl_get_revoked (MonoOpenSSLX509Crl *crl, int index);
 
 int64_t
-mono_tls_x509_crl_get_last_update (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_get_last_update (MonoOpenSSLX509Crl *crl);
 
 int64_t
-mono_tls_x509_crl_get_next_update (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_get_next_update (MonoOpenSSLX509Crl *crl);
 
 int64_t
-mono_tls_x509_crl_get_version (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_get_version (MonoOpenSSLX509Crl *crl);
 
 MonoOpenSSLX509Name *
-mono_tls_x509_crl_get_issuer (MonoOpenSSLX509Crl *crl);
+mono_uxtls_x509_crl_get_issuer (MonoOpenSSLX509Crl *crl);
 
 #endif /* __openssl__openssl_x509_crl__ */

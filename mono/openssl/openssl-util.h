@@ -32,13 +32,13 @@
 #endif
 
 void
-mono_tls_free (void *data);
+mono_uxtls_free (void *data);
 
 int64_t
-mono_tls_util_asn1_time_to_ticks (ASN1_TIME *time);
+mono_uxtls_util_asn1_time_to_ticks (ASN1_TIME *time);
 
 int
-mono_tls_debug_printf (BIO *bio, const char *format, va_list args);
+mono_uxtls_debug_printf (BIO *bio, const char *format, va_list args);
 
 typedef int(*ERR_print_errors_callback_t)(const char *, size_t, void *);
 
