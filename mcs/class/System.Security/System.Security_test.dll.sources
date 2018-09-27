@@ -1,4 +1,5 @@
 ../../corlib/corefx/SR.cs
+../../test-helpers/TestResourceHelper.cs
 System.Security.Cryptography/CryptographicAttributeObjectCollectionTest.cs
 System.Security.Cryptography/CryptographicAttributeObjectEnumeratorTest.cs
 System.Security.Cryptography/CryptographicAttributeTest.cs
