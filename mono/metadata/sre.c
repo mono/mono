@@ -3018,7 +3018,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 		header->init_locals = rmb->init_locals;
 		header->num_locals = num_locals;
 
-		auto const rmb_ilgen_locals = rmb->ilgen->locals;
+		auto rmb_ilgen_locals = rmb->ilgen->locals;
 
 		for (i = 0; i < num_locals; ++i) {
 			MonoReflectionLocalBuilder *lb = 
