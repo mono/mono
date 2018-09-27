@@ -423,7 +423,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	MonoDynamicTable *table;
 	guint32 *values;
 	guint32 idx, sig_idx;
-	guint nl = mono_array_length (ilgen->locals);
+	guint nl = mono_array_length (ilgen->locals.GetRaw());
 	SigBuffer buf;
 	int i;
 
@@ -431,12 +431,12 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	sigbuffer_add_value (&buf, 0x07);
 	sigbuffer_add_value (&buf, nl);
 	for (i = 0; i < nl; ++i) {
-		MonoReflectionLocalBuilder *lb = mono_array_get (ilgen->locals, MonoReflectionLocalBuilder*, i);
+		MonoReflectionLocalBuilder *lb = mono_array_get (ilgen->locals.GetRaw(), MonoReflectionLocalBuilder*, i);
 		
 		if (lb->is_pinned)
 			sigbuffer_add_value (&buf, MONO_TYPE_PINNED);
 		
-		encode_reflection_type_raw (assembly, (MonoReflectionType*)lb->type, &buf, error);
+		encode_reflection_type_raw (assembly, (MonoReflectionType*)lb->type.GetRaw(), &buf, error);
 		if (!is_ok (error)) {
 			sigbuffer_free (&buf);
 			return 0;
@@ -625,14 +625,14 @@ mono_dynimage_encode_field_signature (MonoDynamicImage *assembly, MonoReflection
 	MonoType *type;
 	MonoClass *klass;
 
-	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
+	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type.GetRaw (), error);
 	return_val_if_nok (error, 0);
 	klass = mono_class_from_mono_type (type);
 
 	sigbuffer_init (&buf, 32);
 	
 	sigbuffer_add_value (&buf, 0x06);
-	encode_custom_modifiers_raw (assembly, fb->modreq, fb->modopt, &buf, error);
+	encode_custom_modifiers_raw (assembly, fb->modreq.GetRaw (), fb->modopt.GetRaw (), &buf, error);
 	goto_if_nok (error, fail);
 	/* encode custom attributes before the type */
 
@@ -1102,7 +1102,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 		/* custom marshaler type name */
 		if (minfo->marshaltype || minfo->marshaltyperef) {
 			if (minfo->marshaltyperef) {
-				MonoType *marshaltype = mono_reflection_type_get_handle ((MonoReflectionType*)minfo->marshaltyperef, error);
+				MonoType *marshaltype = mono_reflection_type_get_handle ((MonoReflectionType*)minfo->marshaltyperef.GetRaw(), error);
 				if (!is_ok (error)) {
 					sigbuffer_free (&buf);
 					return 0;

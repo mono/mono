@@ -457,10 +457,20 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
 	context = MONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
+
+//experimental Try new ways.
+	//context = xMONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
+	context.new_pinned (domain, klass, error);
+
 	goto_if_nok (error, exit);
 
 	MONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
 	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
+
+//experimental Try new ways.
+	//xMONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
+	context->context_id = 0;
+
 	mono_threads_register_app_context (context, error);
 	mono_error_assert_ok (error);
 	domain->default_context = MONO_HANDLE_RAW (context);
@@ -1330,6 +1340,8 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 		goto leave;
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
+//experiment new way
+	ret = result ? result->assembly : NULL;
 
 	if (ret && !refonly && mono_asmctx_get_kind (&ret->context) == MONO_ASMCTX_REFONLY) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
@@ -1746,7 +1758,7 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 	error_init (error);
 	
 	setup = domain->setup;
-	if (setup->cache_path != NULL && setup->application_name != NULL) {
+	if (setup->cache_path != nullptr && setup->application_name != nullptr) {
 		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
 		return_val_if_nok (error, NULL);
 
@@ -1898,7 +1910,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 		goto exit;
 
 	setup = domain->setup;
-	if (setup == NULL || setup->shadow_copy_files == NULL)
+	if (setup == NULL || setup->shadow_copy_files == nullptr)
 		goto exit;
 
 	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files, error);
@@ -1911,7 +1923,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (!shadow_enabled)
 		goto exit;
 
-	found = (setup->shadow_copy_directories == NULL);
+	found = (setup->shadow_copy_directories == nullptr);
 	if (found)
 		goto exit;
 

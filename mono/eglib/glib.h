@@ -17,6 +17,14 @@
 #endif
 #endif // __cplusplus
 
+#ifdef __GNUC__
+#define G_ALWAYS_INLINE __attribute__ ((__always_inline__))
+#elif defined (_MSC_VER)
+#define G_ALWAYS_INLINE __forceinline
+#else
+#define G_ALWAYS_INLINE
+#endif
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -867,8 +875,8 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #endif
 
 #if defined(__GNUC__) && (__GNUC__ > 2)
-#define G_LIKELY(expr) (__builtin_expect ((expr) != 0, 1))
-#define G_UNLIKELY(expr) (__builtin_expect ((expr) != 0, 0))
+#define G_LIKELY(expr) (__builtin_expect (!!(expr), 1))
+#define G_UNLIKELY(expr) (__builtin_expect (!!(expr), 0))
 #else
 #define G_LIKELY(x) (x)
 #define G_UNLIKELY(x) (x)
@@ -1304,5 +1312,40 @@ G_END_DECLS
 #define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
 #define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
 #define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#ifdef __cplusplus
+
+template <typename T>
+struct g_ptr
+{
+	T* p;
+
+	G_ALWAYS_INLINE
+	T* get () { return p; } // e.g. printf ("%p");
+
+	T* detach () { T* q = p; p = 0; return q; }
+
+	void cleanup () { g_free (detach ()); }
+
+	G_ALWAYS_INLINE
+	g_ptr (T* q = 0) : p (q) { }
+
+	G_ALWAYS_INLINE
+	~g_ptr () { cleanup (); }
+
+	G_ALWAYS_INLINE
+	operator T* () { return get (); }
+
+	g_ptr& operator = (T* q)
+	{
+		if (p != q) {
+			cleanup ();
+			p = q;
+		}
+		return *this;
+	}
+};
+
+#endif
 
 #endif // __GLIB_H

@@ -460,7 +460,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 
 	/* void is very common */
 	if (type->type == MONO_TYPE_VOID && domain->typeof_void)
-		return (MonoReflectionType*)domain->typeof_void;
+		return (MonoReflectionType*)domain->typeof_void.GetRaw();
 
 	/*
 	 * If the vtable of the given class was already created, we can use
@@ -547,7 +547,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_g_hash_table_insert (domain->type_hash, type, res);
 
 	if (type->type == MONO_TYPE_VOID)
-		domain->typeof_void = (MonoObject*)res;
+		domain->typeof_void = res;
 
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();

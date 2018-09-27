@@ -37,9 +37,9 @@ typedef struct
 {
 	gpointer process_handle;
 	guint32 pid; /* Contains mono_w32error_get_last () on failure */
-	MonoArray *env_variables;
-	MonoString *username;
-	MonoString *domain;
+	MonoPtr(MonoArray) env_variables;
+	MonoPtr(MonoString) username;
+	MonoPtr(MonoString) domain;
 	mono_bstr password; /* BSTR from SecureString in 2.0 profile */
 	MonoBoolean load_user_profile;
 } MonoW32ProcessInfo;
@@ -47,10 +47,10 @@ typedef struct
 typedef struct
 {
 	MonoObject object;
-	MonoString *filename;
-	MonoString *arguments;
-	MonoString *working_directory;
-	MonoString *verb;
+	MonoPtr(MonoString) filename;
+	MonoPtr(MonoString) arguments;
+	MonoPtr(MonoString) working_directory;
+	MonoPtr(MonoString) verb;
 	guint32 window_style;
 	MonoBoolean error_dialog;
 	gpointer error_dialog_parent_handle;

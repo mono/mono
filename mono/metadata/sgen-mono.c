@@ -617,7 +617,7 @@ sgen_client_clear_unreachable_ephemerons (ScanCopyContext ctx)
 
 		cur = mono_array_addr (array, Ephemeron, 0);
 		array_end = cur + mono_array_length_fast (array);
-		tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone;
+		tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone.GetRaw();
 
 		for (; cur < array_end; ++cur) {
 			GCObject *key = cur->key;
@@ -669,7 +669,7 @@ sgen_client_mark_ephemerons (ScanCopyContext ctx)
 
 		cur = mono_array_addr (array, Ephemeron, 0);
 		array_end = cur + mono_array_length_fast (array);
-		tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone;
+		tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone.GetRaw();
 
 		for (; cur < array_end; ++cur) {
 			GCObject *key = cur->key;
@@ -745,7 +745,7 @@ process_object_for_domain_clearing (GCObject *start, MonoDomain *domain)
 	   we're deleting. */
 #ifndef DISABLE_REMOTING
 	if (m_class_get_supertypes (mono_defaults.real_proxy_class) && mono_class_has_parent_fast (vt->klass, mono_defaults.real_proxy_class)) {
-		MonoObject *server = ((MonoRealProxy*)start)->unwrapped_server;
+		MonoObject *server = ((MonoRealProxy*)start)->unwrapped_server.GetRaw();
 
 		/* The server could already have been zeroed out, so
 		   we need to check for that, too. */
@@ -1770,7 +1770,7 @@ report_ephemeron_roots (void)
 
                 cur = mono_array_addr (array, Ephemeron, 0);
                 array_end = cur + mono_array_length_fast (array);
-                tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone;
+                tombstone = SGEN_LOAD_VTABLE ((GCObject*)array)->domain->ephemeron_tombstone.GetRaw();
 
                 for (; cur < array_end; ++cur) {
                         GCObject *key = cur->key;

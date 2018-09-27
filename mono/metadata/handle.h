@@ -28,62 +28,11 @@
 G_BEGIN_DECLS
 
 /*
-Handle stack.
-
-The handle stack is designed so it's efficient to pop a large amount of entries at once.
-The stack is made out of a series of fixed size segments.
-
-To do bulk operations you use a stack mark.
-	
-*/
-
-/*
-3 is the number of fields besides the data in the struct;
-128 words makes each chunk 512 or 1024 bytes each
-*/
-#define OBJECTS_PER_HANDLES_CHUNK (128 - 3)
-
-/*
 Whether this config needs stack watermark recording to know where to start scanning from.
 */
 #ifdef HOST_WATCHOS
 #define MONO_NEEDS_STACK_WATERMARK 1
 #endif
-
-typedef struct _HandleChunk HandleChunk;
-
-/*
- * Define MONO_HANDLE_TRACK_OWNER to store the file and line number of each call to MONO_HANDLE_NEW
- * in the handle stack.  (This doubles the amount of memory used for handles, so it's only useful for debugging).
- */
-/*#define MONO_HANDLE_TRACK_OWNER*/
-
-/*
- * Define MONO_HANDLE_TRACK_SP to record the C stack pointer at the time of each HANDLE_FUNCTION_ENTER and
- * to ensure that when a new handle is allocated the previous newest handle is not lower in the stack.
- * This is useful to catch missing HANDLE_FUNCTION_ENTER / HANDLE_FUNCTION_RETURN pairs which could cause
- * handle leaks.
- *
- * If defined, keep HandleStackMark in sync in RuntimeStructs.cs
- */
-/*#define MONO_HANDLE_TRACK_SP*/
-
-typedef struct {
-	gpointer o; /* MonoObject ptr or interior ptr */
-#ifdef MONO_HANDLE_TRACK_OWNER
-	const char *owner;
-	gpointer backtrace_ips[7]; /* result of backtrace () at time of allocation */
-#endif
-#ifdef MONO_HANDLE_TRACK_SP
-	gpointer alloc_sp; /* sp from HandleStack:stackmark_sp at time of allocation */
-#endif
-} HandleChunkElem;
-
-struct _HandleChunk {
-	int size; //number of handles
-	HandleChunk *prev, *next;
-	HandleChunkElem elems [OBJECTS_PER_HANDLES_CHUNK];
-};
 
 typedef struct MonoHandleStack {
 	HandleChunk *top; //alloc from here
@@ -94,15 +43,6 @@ typedef struct MonoHandleStack {
 	/* Chunk for storing interior pointers. Not extended right now */
 	HandleChunk *interior;
 } HandleStack;
-
-// Keep this in sync with RuntimeStructs.cs
-typedef struct {
-	int size, interior_size;
-	HandleChunk *chunk;
-#ifdef MONO_HANDLE_TRACK_SP
-	gpointer prev_sp; // C stack pointer from prior mono_stack_mark_init
-#endif
-} HandleStackMark;
 
 typedef void *MonoRawHandle;
 
@@ -181,26 +121,26 @@ Icall macros
 #define SETUP_ICALL_COMMON	\
 	do { \
 		ERROR_DECL (error);	\
-		MonoThreadInfo *__info = mono_thread_info_current ();	\
+		MonoThreadInfo *threadinfo = mono_thread_info_current ();	\
 		error_init (error);	\
 
 #define CLEAR_ICALL_COMMON	\
 	mono_error_set_pending_exception (error);
 
 #define SETUP_ICALL_FRAME	\
-	HandleStackMark __mark;	\
-	mono_stack_mark_init (__info, &__mark);
+	HandleStackMark stackmark;	\
+	mono_stack_mark_init (threadinfo, &stackmark);
 
 #define CLEAR_ICALL_FRAME	\
-	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
-	mono_stack_mark_pop (__info, &__mark);
+	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);	\
+	mono_stack_mark_pop (threadinfo, &stackmark);
 
 #define CLEAR_ICALL_FRAME_VALUE(RESULT, HANDLE)				\
-	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
-	(RESULT) = g_cast (mono_stack_mark_pop_value (__info, &__mark, (HANDLE)));
+	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);	\
+	(RESULT) = g_cast (mono_stack_mark_pop_value (threadinfo, &stackmark, (HANDLE)));
 
 #define HANDLE_FUNCTION_ENTER() do {				\
-	MonoThreadInfo *__info = mono_thread_info_current ();	\
+	MonoThreadInfo *threadinfo = mono_thread_info_current ();	\
 	SETUP_ICALL_FRAME					\
 
 #define HANDLE_FUNCTION_RETURN()		\
@@ -262,10 +202,10 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 #define SETUP_STACK_WATERMARK	\
 	int __dummy;	\
 	__builtin_unwind_init ();	\
-	void *__old_stack_mark = mono_thread_info_push_stack_mark (__info, &__dummy);
+	void *__old_stack_mark = mono_thread_info_push_stack_mark (threadinfo, &__dummy);
 
 #define CLEAR_STACK_WATERMARK	\
-	mono_thread_info_pop_stack_mark (__info, __old_stack_mark);
+	mono_thread_info_pop_stack_mark (threadinfo, __old_stack_mark);
 
 #else
 #define SETUP_STACK_WATERMARK
@@ -604,6 +544,7 @@ mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintp
 #endif
 }
 
+//FIXME
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
 
 /* Local handles to global GC handles and back */
@@ -654,12 +595,25 @@ mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);
 gpointer
 mono_object_handle_pin_unbox (MonoObjectHandle boxed_valuetype_obj, uint32_t *gchandle_out);
 
-static inline gpointer
-mono_handle_unbox_unsafe (MonoObjectHandle handle)
+#ifdef __cplusplus
+extern "C++" {
+
+template <typename T>
+inline gpointer
+mono_handle_unbox_unsafe (MonoHandle<T> h) // unsafe
 {
-	g_assert (m_class_is_valuetype (MONO_HANDLE_GETVAL (handle, vtable)->klass));
-	return MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle) + 1);
+	MONO_HANDLE_SUPPRESS (g_assert (m_class_is_valuetype (h.GetRawObj ()->vtable->klass)));
+	return MONO_HANDLE_SUPPRESS (h.GetRawObj () + 1);
 }
+
+template <typename T>
+inline MonoClass*
+mono_object_get_class (MonoHandle<T> h)
+{
+	return MONO_HANDLE_SUPPRESS (mono_object_get_class (h.GetRawObj ()));
+}
+}
+#endif
 
 void
 mono_error_set_exception_handle (MonoError *error, MonoExceptionHandle exc);
@@ -687,6 +641,147 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 {
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
+
+
+/* experimental C++ coop handles
+
+Goals:
+1. Shared runtime -- handle allocation is the same.
+2. New versions of the macros, to optionally use, with same interface.
+3. Macros are so simple, you can mostly skip them, except for HANDLE_FUNCTION_ENTER. 
+
+Depends on MonoPtr in object-internals.h etc.
+Requires typesafe handles.
+*/
+
+#ifdef __cplusplus //experimental
+
+extern "C++" {
+
+inline
+void **MonoHandleFrame::allocate_handle_in_caller (void* value)
+{
+	pop();
+	return (void**)mono_handle_new ((MonoObject*)value);
+}
+
+inline
+MonoHandleFrame::MonoHandleFrame () : do_pop(true)
+{
+	threadinfo = (MonoThreadInfo*)mono_thread_info_current ();
+	mono_stack_mark_init (threadinfo, &stackmark);
+}
+
+inline
+MonoHandleFrame::~MonoHandleFrame ()
+{
+	pop();
+}
+
+inline void
+MonoHandleFrame::pop ()
+{
+	if (!do_pop) return;
+	CLEAR_ICALL_FRAME
+	do_pop = false;
+}
+
+template <typename T>
+inline MonoHandle<T>&
+MonoHandle<T>::New (T * value)
+{
+	__raw = (T**)mono_handle_new ((MonoObject*)value);
+	return *this;
+}
+
+template <typename T>
+inline MonoHandle<T>
+MonoHandle<T>::static_new (T * value)
+{
+	return MonoHandle<T> (). New (value);
+}
+
+
+// FIXME duplicate declaration
+MonoObjectHandle mono_object_new_pinned_handle (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+template <typename T>
+inline void
+MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
+{
+	__raw = (T**)mono_object_new_pinned_handle (domain, klass, error).__raw;
+}
+
+/*
+1. These should be drop-in replacements for the old macros -- so we only have one system.
+2. They should be trivial enough that there is not really a need for them, esp.
+   in the most common scenarios.
+3. They are not yet complete. But given drop-in replacement,
+   and the old macros work, the old macros remain for less common scenarios.
+4. Requires typesafe handles.
+*/
+#undef HANDLE_FUNCTION_ENTER
+#undef MONO_HANDLE_CAST
+#undef MONO_HANDLE_GET
+#undef MONO_HANDLE_GETVAL
+#undef MONO_HANDLE_SETVAL
+#undef MONO_HANDLE_SETRAW
+#undef MONO_HANDLE_SET
+#undef MONO_HANDLE_IS_NULL
+#undef MONO_HANDLE_BOOL
+#undef HANDLE_FUNCTION_RETURN
+#undef HANDLE_FUNCTION_RETURN_VAL
+#undef HANDLE_FUNCTION_RETURN_OBJ
+#undef HANDLE_FUNCTION_RETURN_REF
+#undef MONO_HANDLE_NEW
+#undef MONO_HANDLE_NEW_GET
+
+// A macro remains.
+#define HANDLE_FUNCTION_ENTER() MonoHandleFrame local_handle_frame;
+
+// This the point -- these are largely idiomatic
+// and work with preexisting unchanged code, and do not merit macros.
+// Just change the types of things.
+#define MONO_HANDLE_CAST(type, value) 		((value).cast<type>())
+#define MONO_HANDLE_GET(result, handle, field)	(result = (handle)->field)
+#define MONO_HANDLE_GETVAL(handle, field) 	((handle)->field)
+#define MONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
+#define MONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
+#define MONO_HANDLE_SET(handle, field, value) 	((handle)->field = (value))
+#define MONO_HANDLE_IS_NULL(handle) 		(!(handle))
+#define MONO_HANDLE_BOOL(handle) 		(handle)
+
+// new names
+#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ()
+#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
+
+// Early/multiple return is ok.
+#define HANDLE_FUNCTION_RETURN() 		/* nothing */
+#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
+#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 MONO_RETURN_RAW (handle)
+#define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
+#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle <type> ().New (value))
+//#define MONO_HANDLE_NEW(type, value) 		 ((value).NewHandle())
+#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle <type> ().New ((handle)->field))
+//#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.GetRaw())
+//#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field) // ideal
+//#define MONO_HANDLE_NEW_GET(type, handle, field) (mono_new_handle ((handle)->field.GetRaw ()))
+
+// This is just less punctuation. FIXME mono_new_handle vs. mono_handle_new.
+template <typename T> inline MonoHandle<T> mono_new_handle (T* a) { return MonoHandle <T> ().New (a); }
+
+/*
+template <typename T>
+inline
+MonoHandle<T> MonoPtr<T>::NewHandle()
+{
+	return MonoHandle<T> ().New (GetRaw());
+}
+*/
+
+} // extern C++
+
+#endif // experimental C++
 
 G_END_DECLS
 

@@ -1261,7 +1261,7 @@ interp_init_delegate (MonoDelegate *del)
 			method->flags & METHOD_ATTRIBUTE_VIRTUAL &&
 			method->flags & METHOD_ATTRIBUTE_ABSTRACT &&
 			mono_class_is_abstract (method->klass))
-		del->interp_method = get_virtual_method ((InterpMethod*)del->interp_method, del->target);
+		del->interp_method = get_virtual_method ((InterpMethod*)del->interp_method, del->target.GetRaw());
 
 	method = ((InterpMethod*)del->interp_method)->method;
 	if (method && m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {

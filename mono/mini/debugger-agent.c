@@ -96,7 +96,7 @@
 
 #include <mono/utils/mono-os-mutex.h>
 
-#define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
+#define THREAD_TO_INTERNAL(thread) ((thread)->internal_thread.GetRaw ())
 
 typedef struct {
 	gboolean enabled;
