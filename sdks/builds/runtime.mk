@@ -67,6 +67,7 @@ _runtime_$(1)_CONFIGURE_FLAGS= \
 	$$(if $(2),--host=$(2)) \
 	--cache-file=$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/$(1)-$$(CONFIGURATION) \
+	$$(if $$(ENABLE_CXX),--enable-cxx) \
 	$$(_cross-runtime_$(1)_CONFIGURE_FLAGS) \
 	$$(_$(1)_CONFIGURE_FLAGS) \
 	$$($(1)_CONFIGURE_FLAGS)
