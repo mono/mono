@@ -124,8 +124,7 @@ namespace WebAssembly.Net.Http.HttpClient
                 //Console.WriteLine($"type: {status.ResponseType}");
                 //Console.WriteLine($"url: {status.Url}");
                 byte[] buffer = null;
-                if (status.IsOK)
-                    buffer = (byte[])await status.ArrayBuffer();
+                buffer = (byte[])await status.ArrayBuffer();
 
                 HttpResponseMessage httpresponse = new HttpResponseMessage((HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), status.Status.ToString()));
 
