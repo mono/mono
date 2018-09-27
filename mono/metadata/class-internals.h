@@ -94,7 +94,7 @@ struct _MonoMethodWrapper {
 
 struct _MonoDynamicMethod {
 	MonoMethodWrapper method;
-	MonoPtr(MonoAssembly) assembly;
+	MonoAssembly *assembly;
 };
 
 struct _MonoMethodPInvoke {
@@ -951,8 +951,11 @@ typedef struct {
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
 #endif
 
+
 #define mono_object_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_object_class (object)))
 
+//FIXME
+#define mono_handle_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_handle_class (object)))
 
 #define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_get_##shortname##_class (void);

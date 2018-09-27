@@ -875,7 +875,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	MonoContext *copied_ctx;
 
 	if (stack_ovf)
-		exc = mono_domain_get ()->stack_overflow_ex;
+		exc = mono_domain_get ()->stack_overflow_ex.GetRaw();
 
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.

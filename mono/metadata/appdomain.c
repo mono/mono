@@ -1758,7 +1758,7 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 	error_init (error);
 	
 	setup = domain->setup;
-	if (setup->cache_path != NULL && setup->application_name != NULL) {
+	if (setup->cache_path != nullptr && setup->application_name != nullptr) {
 		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
 		return_val_if_nok (error, NULL);
 
@@ -1910,7 +1910,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 		goto exit;
 
 	setup = domain->setup;
-	if (setup == NULL || setup->shadow_copy_files == NULL)
+	if (setup == NULL || setup->shadow_copy_files == nullptr)
 		goto exit;
 
 	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files, error);
@@ -1923,7 +1923,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (!shadow_enabled)
 		goto exit;
 
-	found = (setup->shadow_copy_directories == NULL);
+	found = (setup->shadow_copy_directories == nullptr);
 	if (found)
 		goto exit;
 

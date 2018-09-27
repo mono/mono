@@ -164,17 +164,48 @@ typedef struct {
 template <typename T> struct MonoHandle;
 #endif
 
-#ifdef x__cplusplus //experimental
+#ifdef __cplusplus //experimental
 
 //template <typename T> struct MonoPtr;
 
+#include <type_traits>
+
 template <typename T> struct MonoPtr
 {
-	MonoPtr& operator = (MonoHandle<T> h) { p = *h.__raw; return *this; }
+	bool operator==(std::nullptr_t) { return !p; }
+	bool operator!=(std::nullptr_t) { return !!p; }
+
+	operator MonoHandle<T> () { return NewHandle<T>(); }
+
+	template < typename U,
+	    	   typename = typename std::enable_if<!std::is_same<T, MonoObject>::value &&
+						      std::is_same<U, MonoObject>::value >::type>
+	operator MonoHandle<U> () { return NewHandle<U>(); }
+
+	template <typename U,
+	    	  typename = typename std::enable_if<
+			(!std::is_same<T, MonoObject>::value && std::is_same<U, MonoObject>::value)
+			|| (std::is_same<T, MonoObject>::value && !std::is_same<U, MonoObject>::value)
+			|| std::is_same<T, U>::value>::type>
+	bool operator != (U* q) { return (void*)p == (void*)q; }
+
+	template <typename U> MonoHandle<U> NewHandle () { return MonoHandle<U> ().New ((U*)GetRaw()); }
+
+	MonoPtr& operator = (MonoHandle<T> h) { p = h.__raw ? *h.__raw : 0; return *this; }
+	explicit operator bool () const { return !!p; }
+	MonoHandle<T> operator -> () { return NewHandle<T> (); }
+
+	//MonoPtr& operator = (std::nullptr_t) { p = 0; return *this; }
 	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
 	MonoPtr& operator = (T* q) { p = q; return *this; }
-	operator T * () { return p; }
-	T* operator -> () { return p; }
+
+	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
+	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
+	T* get () { return p; }
+
+	//FIXME
+	T* GetRaw() { return p; }
+
 
 	struct OperatorAmpersandResult
 	{
@@ -186,16 +217,13 @@ template <typename T> struct MonoPtr
 		//operator MonoPtr<T>* () { return p; }
 	};
 
-	explicit operator bool () const { return !!p; }
-
-	MonoHandle<MonoObject> AsMonoObjectHandle();
-
 	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
 
-	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
-	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
-	T* get () { return p; }
+/*
+	operator T * () { return p; }
 
+	MonoHandle<MonoObject> AsMonoObjectHandle();
+*/
 //private:
 	T * p;
 };
@@ -222,8 +250,6 @@ private:
 	MonoThreadInfo *threadinfo;
 };
 
-#include <type_traits>
-
 template <typename T>
 struct MonoHandle
 {
@@ -232,6 +258,11 @@ struct MonoHandle
 
 	G_ALWAYS_INLINE
 	MonoHandle& Init () { __raw = 0; return *this; }
+
+	MonoHandle NewHandle ();
+
+	bool operator==(std::nullptr_t) { return !GetRaw (); }
+	bool operator!=(std::nullptr_t) { return !!GetRaw (); }
 
 	G_ALWAYS_INLINE
 	MonoHandle return_handle (MonoHandleFrame& frame)
@@ -253,15 +284,14 @@ struct MonoHandle
 	G_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
 
 	MonoHandle& New (T* value);
-
+	G_ALWAYS_INLINE MonoHandle& New (MonoPtr<T> value) { return New (value.GetRaw ()); }
 	G_ALWAYS_INLINE MonoHandle& New () { return New ((T*)0); }
 
 	// Some overloads for sloppy code.
 	template < typename U,
 	    	   typename = typename std::enable_if<std::is_same<T, MonoObject>::value &&
 						      std::is_same<U, MonoRealProxy>::value >::type>
-	G_ALWAYS_INLINE
-	MonoHandle& New (U* value)
+	G_ALWAYS_INLINE MonoHandle& New (U* value)
 	{
 		return New ((MonoObject*)value);
 	}

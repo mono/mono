@@ -251,9 +251,9 @@ mono_image_add_cattrs (MonoDynamicImage *assembly, guint32 idx, guint32 type, Mo
 		}
 		values [MONO_CUSTOM_ATTR_TYPE] = type;
 		p = blob_size;
-		mono_metadata_encode_value (mono_array_length (cattr->data), p, &p);
+		mono_metadata_encode_value (mono_array_length (cattr->data.GetRaw()), p, &p);
 		values [MONO_CUSTOM_ATTR_VALUE] = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, p - blob_size,
-			mono_array_addr (cattr->data, char, 0), mono_array_length (cattr->data));
+			mono_array_addr (cattr->data.GetRaw(), char, 0), mono_array_length (cattr->data.GetRaw()));
 		values += MONO_CUSTOM_ATTR_SIZE;
 		++table->next_idx;
 	}
@@ -352,7 +352,7 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb, Mon
 		code = mb->ilgen->code;
 		code_size = mb->ilgen->code_len;
 		max_stack = mb->ilgen->max_stack;
-		num_locals = mb->ilgen->locals ? mono_array_length (mb->ilgen->locals) : 0;
+		num_locals = mb->ilgen->locals ? mono_array_length (mb->ilgen->locals.GetRaw()) : 0;
 		if (mb->ilgen->ex_handlers)
 			num_exception = mono_reflection_method_count_clauses (mb->ilgen);
 	} else {
@@ -437,13 +437,13 @@ fat_header:
 		mono_image_add_stream_data (&assembly->code, (char*)sheader, 4);
 		/* fat header, so we are already aligned */
 		/* reverse order */
-		for (i = mono_array_length (mb->ilgen->ex_handlers) - 1; i >= 0; --i) {
-			ex_info = (MonoILExceptionInfo *)mono_array_addr (mb->ilgen->ex_handlers, MonoILExceptionInfo, i);
+		for (i = mono_array_length (mb->ilgen->ex_handlers.GetRaw()) - 1; i >= 0; --i) {
+			ex_info = (MonoILExceptionInfo *)mono_array_addr (mb->ilgen->ex_handlers.GetRaw(), MonoILExceptionInfo, i);
 			if (ex_info->handlers) {
 				int finally_start = ex_info->start + ex_info->len;
-				for (j = 0; j < mono_array_length (ex_info->handlers); ++j) {
+				for (j = 0; j < mono_array_length (ex_info->handlers.GetRaw()); ++j) {
 					guint32 val;
-					ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers, MonoILExceptionBlock, j);
+					ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers.GetRaw(), MonoILExceptionBlock, j);
 					/* the flags */
 					val = GUINT32_TO_LE (ex_block->type);
 					mono_image_add_stream_data (&assembly->code, (char*)&val, sizeof (guint32));
@@ -464,7 +464,7 @@ fat_header:
 					mono_image_add_stream_data (&assembly->code, (char*)&val, sizeof (guint32));
 					finally_start = ex_block->start + ex_block->len;
 					if (ex_block->extype) {
-						MonoType *extype = mono_reflection_type_get_handle ((MonoReflectionType*)ex_block->extype, error);
+						MonoType *extype = mono_reflection_type_get_handle ((MonoReflectionType*)ex_block->extype.GetRaw(), error);
 						return_val_if_nok (error, 0);
 
 						val = mono_metadata_token_from_dor (mono_image_typedef_or_ref (assembly, extype));
@@ -1131,8 +1131,8 @@ module_add_cattrs (MonoDynamicImage *assembly, MonoReflectionModuleBuilder *modu
 		return FALSE;
 
 	if (moduleb->global_methods) {
-		for (i = 0; i < mono_array_length (moduleb->global_methods); ++i) {
-			MonoReflectionMethodBuilder* mb = mono_array_get (moduleb->global_methods, MonoReflectionMethodBuilder*, i);
+		for (i = 0; i < mono_array_length (moduleb->global_methods.GetRaw()); ++i) {
+			MonoReflectionMethodBuilder* mb = mono_array_get (moduleb->global_methods.GetRaw(), MonoReflectionMethodBuilder*, i);
 			if (!mono_image_add_cattrs (assembly, mb->table_idx, MONO_CUSTOM_ATTR_METHODDEF, mb->cattrs, error) ||
 			    !params_add_cattrs (assembly, mb->pinfo, error))
 				return FALSE;
@@ -1140,8 +1140,8 @@ module_add_cattrs (MonoDynamicImage *assembly, MonoReflectionModuleBuilder *modu
 	}
 
 	if (moduleb->global_fields) {
-		for (i = 0; i < mono_array_length (moduleb->global_fields); ++i) {
-			MonoReflectionFieldBuilder *fb = mono_array_get (moduleb->global_fields, MonoReflectionFieldBuilder*, i);
+		for (i = 0; i < mono_array_length (moduleb->global_fields.GetRaw()); ++i) {
+			MonoReflectionFieldBuilder *fb = mono_array_get (moduleb->global_fields.GetRaw(), MonoReflectionFieldBuilder*, i);
 			if (!mono_image_add_cattrs (assembly, field_builder_table_index (assembly, fb), MONO_CUSTOM_ATTR_FIELDDEF, fb->cattrs, error))
 				return FALSE;
 		}
@@ -1204,7 +1204,7 @@ mono_image_fill_module_table (MonoDomain *domain, MonoReflectionModuleBuilder *m
 
 	table = &assembly->tables [MONO_TABLE_MODULE];
 	mb->table_idx = table->next_idx ++;
-	table->values [mb->table_idx * MONO_MODULE_SIZE + MONO_MODULE_NAME] = string_heap_insert_mstring (&assembly->sheap, mb->module.name, error);
+	table->values [mb->table_idx * MONO_MODULE_SIZE + MONO_MODULE_NAME] = string_heap_insert_mstring (&assembly->sheap, mb->module.name.GetRaw(), error);
 	return_if_nok (error);
 	i = mono_image_add_stream_data (&assembly->guid, mono_array_addr (mb->guid, char, 0), 16);
 	i /= 16;
@@ -2047,7 +2047,7 @@ mono_image_emit_manifest (MonoReflectionModuleBuilder *moduleb, MonoError *error
 
 	error_init (error);
 
-	assemblyb = moduleb->assemblyb;
+	assemblyb = moduleb->assemblyb.GetRaw();
 	assembly = moduleb->dynamic_image;
 	domain = mono_object_domain (assemblyb);
 
@@ -2330,7 +2330,7 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb, MonoError *erro
 
 	error_init (error);
 
-	assemblyb = moduleb->assemblyb;
+	assemblyb = moduleb->assemblyb.GetRaw();
 	assembly = moduleb->dynamic_image;
 	domain = mono_object_domain (assemblyb);
 
@@ -2365,21 +2365,21 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb, MonoError *erro
 	 */
 	if (moduleb->global_methods) {
 		table = &assembly->tables [MONO_TABLE_METHOD];
-		table->rows += mono_array_length (moduleb->global_methods);
+		table->rows += mono_array_length (moduleb->global_methods.GetRaw());
 		alloc_table (table, table->rows);
-		for (i = 0; i < mono_array_length (moduleb->global_methods); ++i) {
+		for (i = 0; i < mono_array_length (moduleb->global_methods.GetRaw()); ++i) {
 			if (!mono_image_get_method_info (
-				    mono_array_get (moduleb->global_methods, MonoReflectionMethodBuilder*, i), assembly, error))
+				    mono_array_get (moduleb->global_methods.GetRaw(), MonoReflectionMethodBuilder*, i), assembly, error))
 				goto leave;
 		}
 	}
 	if (moduleb->global_fields) {
 		table = &assembly->tables [MONO_TABLE_FIELD];
-		table->rows += mono_array_length (moduleb->global_fields);
+		table->rows += mono_array_length (moduleb->global_fields.GetRaw());
 		alloc_table (table, table->rows);
-		for (i = 0; i < mono_array_length (moduleb->global_fields); ++i) {
+		for (i = 0; i < mono_array_length (moduleb->global_fields.GetRaw()); ++i) {
 			mono_image_get_field_info (
-				mono_array_get (moduleb->global_fields, MonoReflectionFieldBuilder*, i), assembly,
+				mono_array_get (moduleb->global_fields.GetRaw(), MonoReflectionFieldBuilder*, i), assembly,
 				error);
 			goto_if_nok (error, leave);
 		}
@@ -2450,9 +2450,9 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb, MonoError *erro
 	 * the final tokens and don't need another fixup pass. */
 
 	if (moduleb->global_methods) {
-		for (i = 0; i < mono_array_length (moduleb->global_methods); ++i) {
+		for (i = 0; i < mono_array_length (moduleb->global_methods.GetRaw()); ++i) {
 			MonoReflectionMethodBuilder *mb = mono_array_get (
-				moduleb->global_methods, MonoReflectionMethodBuilder*, i);
+				moduleb->global_methods.GetRaw(), MonoReflectionMethodBuilder*, i);
 			if (!mono_image_add_methodimpl (assembly, mb, error))
 				goto leave_types;
 		}
@@ -2805,7 +2805,7 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 
 	error_init (error);
 
-	assemblyb = mb->assemblyb;
+	assemblyb = mb->assemblyb.GetRaw();
 
 	mono_reflection_dynimage_basic_init (assemblyb);
 	assembly = mb->dynamic_image;

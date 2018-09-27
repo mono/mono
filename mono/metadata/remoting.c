@@ -408,7 +408,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	/* skip the this pointer */
 	params++;
 
-	if (mono_class_is_contextbound (this_obj->remote_class->proxy_class) && this_obj->rp->context == (MonoObject *) mono_context_get ())
+	if (mono_class_is_contextbound (this_obj->remote_class->proxy_class) && this_obj->rp->context.GetRaw() == (MonoObject *) mono_context_get ())
 	{
 		int i;
 		MonoMethodSignature *sig = mono_method_signature (method);
@@ -442,7 +442,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	goto_if_nok (error, fail);
 
-	res = mono_remoting_invoke (MonoObjectHandle ().New (this_obj->rp), msg, &exc, &out_args, error);
+	res = mono_remoting_invoke (this_obj->rp, msg, &exc, &out_args, error);
 	goto_if_nok (error, fail);
 
 	if (exc) {

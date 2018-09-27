@@ -328,7 +328,7 @@ struct _MonoImage {
 	/*
 	 * The Assembly this image was loaded from.
 	 */
-	MonoPtr(MonoAssembly) assembly;
+	MonoAssembly *assembly;
 
 	/*
 	 * Indexed by method tokens and typedef tokens.

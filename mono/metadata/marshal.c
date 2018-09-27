@@ -1025,7 +1025,8 @@ mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 	if (len == 0)
 		return str;
 
-	MonoStringBuilder* chunk = sb;
+	MonoHandle<MonoStringBuilder> chunk;
+	chunk.New (sb);
 	do {
 		if (chunk->chunkLength > 0) {
 			// Check that we will not overrun our boundaries.
@@ -1275,8 +1276,9 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
-		MonoTransparentProxy* tp = (MonoTransparentProxy *)(MonoObject*)delegate->target;
+	if (delegate->target && mono_handle_is_transparent_proxy (delegate->target)) {
+		MonoTransparentProxyHandle tp;
+		tp.New ((MonoTransparentProxy *)(MonoObject*)delegate->target.get());
 		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
@@ -1301,7 +1303,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke (MonoObjectHandle ().New (tp->rp), msg, &exc, &out_args, error);
+			mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
@@ -2012,14 +2014,14 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	ares = (MonoAsyncResult *)mono_array_get (msg->args, gpointer, sig->param_count - 1);
+	ares = (MonoAsyncResult *)mono_array_get (msg->args.get(), gpointer, sig->param_count - 1);
 	if (ares == NULL) {
 		mono_error_set_remoting (error, "The async result object is null or of an unexpected type.");
 		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
-	if (ares->async_delegate != (MonoObject*)delegate) {
+	if (ares->async_delegate != delegate) {
 		mono_error_set_invalid_operation (error,
 			"%s", "The IAsyncResult object provided does not match this delegate.");
 		mono_error_set_pending_exception (error);
@@ -2027,8 +2029,8 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
-		MonoTransparentProxy* tp = (MonoTransparentProxy *)(MonoObject*)delegate->target;
+	if (delegate->target && mono_object_is_transparent_proxy (delegate->target.get())) {
+		MonoTransparentProxyHandle tp = MONO_HANDLE_NEW (MonoTransparentProxy, (MonoTransparentProxy*)delegate->target.get());
 		msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
@@ -2039,7 +2041,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			return NULL;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke (MonoObjectHandle ().New (tp->rp), msg, &exc, &out_args, error);
+		res = mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
