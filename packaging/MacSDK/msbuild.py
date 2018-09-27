@@ -6,6 +6,7 @@ class MSBuild (GitHubPackage):
 			revision = '300887e680a0cc790476efad9613507ead5957d3')
 
 	def build (self):
+		self.sh ('mono --version')
 		self.sh ('./build.sh -hostType mono -configuration Release -skipTests')
 		self.sh ('zip msbuild-bin-logs.zip artifacts/Release-MONO/log/*')
 
