@@ -1102,7 +1102,7 @@ mono_gc_is_finalizer_internal_thread (MonoInternalThread *thread)
 gboolean
 mono_gc_is_finalizer_thread (MonoThread *thread)
 {
-	return mono_gc_is_finalizer_internal_thread (thread->internal_thread);
+	return mono_gc_is_finalizer_internal_thread (thread->internal_thread.GetRaw ());
 }
 
 #if defined(__MACH__)

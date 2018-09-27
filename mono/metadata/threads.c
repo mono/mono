@@ -801,7 +801,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	info = mono_thread_info_current ();
 	g_assert (info);
 
-	internal = thread->internal_thread;
+	internal = thread->internal_thread.GetRaw ();
 	g_assert (internal);
 
 	/* It is needed to store the MonoInternalThread on the MonoThreadInfo, because of the following case:
@@ -1102,7 +1102,7 @@ static guint32 WINAPI start_wrapper_internal(StartInfo *start_info, gsize *stack
 	MonoObject *start_delegate_arg;
 
 	thread = start_info->thread;
-	internal = thread->internal_thread;
+	internal = thread->internal_thread.GetRaw ();
 
 	THREAD_DEBUG (g_message ("%s: (%" G_GSIZE_FORMAT ") Start wrapper", __func__, mono_native_thread_id_get ()));
 
@@ -1482,7 +1482,7 @@ void
 mono_thread_detach (MonoThread *thread)
 {
 	if (thread)
-		mono_thread_detach_internal (thread->internal_thread);
+		mono_thread_detach_internal (thread->internal_thread.GetRaw ());
 }
 
 /**
@@ -1575,7 +1575,7 @@ ves_icall_System_Threading_Thread_GetCurrentThread (MonoError *error)
 static MonoInternalThread*
 thread_handle_to_internal_ptr (MonoThreadObjectHandle thread_handle)
 {
-	return MONO_HANDLE_GETVAL(thread_handle, internal_thread); // InternalThreads are always pinned.
+	return MONO_HANDLE_GETVAL (thread_handle, internal_thread).GetRaw (); // InternalThreads are always pinned.
 }
 
 static void
@@ -1755,7 +1755,7 @@ mono_thread_get_name_utf8 (MonoThread *thread)
 	if (thread == NULL)
 		return NULL;
 
-	MonoInternalThread *internal = thread->internal_thread;
+	MonoInternalThread *internal = thread->internal_thread.GetRaw ();
 	if (internal == NULL)
 		return NULL;
 
@@ -1779,7 +1779,7 @@ mono_thread_get_managed_id (MonoThread *thread)
 	if (thread == NULL)
 		return -1;
 
-	MonoInternalThread *internal = thread->internal_thread;
+	MonoInternalThread *internal = thread->internal_thread.GetRaw ();
 	if (internal == NULL)
 		return -1;
 
@@ -2821,7 +2821,7 @@ is_running_protected_wrapper (void)
 void
 mono_thread_stop (MonoThread *thread)
 {
-	MonoInternalThread *internal = thread->internal_thread;
+	MonoInternalThread *internal = thread->internal_thread.GetRaw ();
 
 	if (!request_thread_abort (internal, NULL, FALSE))
 		return;
@@ -4207,7 +4207,7 @@ mono_thread_internal_has_appdomain_ref (MonoInternalThread *thread, MonoDomain *
 gboolean
 mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain)
 {
-	return mono_thread_internal_has_appdomain_ref (thread->internal_thread, domain);
+	return mono_thread_internal_has_appdomain_ref (thread->internal_thread.GetRaw (), domain);
 }
 
 typedef struct abort_appdomain_data {

@@ -1278,7 +1278,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 #ifndef DISABLE_REMOTING
 	if (delegate->target && mono_handle_is_transparent_proxy (delegate->target)) {
 		MonoTransparentProxyHandle tp;
-		tp.New ((MonoTransparentProxy *)(MonoObject*)delegate->target.get());
+		tp.New ((MonoTransparentProxy *)(MonoObject*)delegate->target.GetRaw ());
 		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
@@ -2014,7 +2014,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	ares = (MonoAsyncResult *)mono_array_get (msg->args.get(), gpointer, sig->param_count - 1);
+	ares = (MonoAsyncResult *)mono_array_get (msg->args.GetRaw (), gpointer, sig->param_count - 1);
 	if (ares == NULL) {
 		mono_error_set_remoting (error, "The async result object is null or of an unexpected type.");
 		mono_error_set_pending_exception (error);
@@ -2029,8 +2029,8 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_object_is_transparent_proxy (delegate->target.get())) {
-		MonoTransparentProxyHandle tp = MONO_HANDLE_NEW (MonoTransparentProxy, (MonoTransparentProxy*)delegate->target.get());
+	if (delegate->target && mono_object_is_transparent_proxy (delegate->target.GetRaw ())) {
+		MonoTransparentProxyHandle tp = MONO_HANDLE_NEW (MonoTransparentProxy, (MonoTransparentProxy*)delegate->target.GetRaw ());
 		msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
@@ -2075,7 +2075,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
-	return res.AsMonoObjectPtr();
+	return (MonoObject*)res.GetRaw ();
 }
 
 static void
