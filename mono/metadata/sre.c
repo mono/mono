@@ -293,10 +293,10 @@ mono_reflection_method_count_clauses (MonoReflectionILGen *ilgen)
 	int i;
 
 	MonoILExceptionInfo *ex_info;
-	for (i = 0; i < mono_array_length (ilgen->ex_handlers.GetRaw()); ++i) {
-		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers.GetRaw(), MonoILExceptionInfo, i);
+	for (i = 0; i < mono_array_length (ilgen->ex_handlers); ++i) {
+		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers, MonoILExceptionInfo, i);
 		if (ex_info->handlers)
-			num_clauses += mono_array_length (ex_info->handlers.GetRaw());
+			num_clauses += mono_array_length (ex_info->handlers);
 		else
 			num_clauses++;
 	}
@@ -322,13 +322,13 @@ method_encode_clauses (MonoImage *image, MonoDynamicImage *assembly, MonoReflect
 	clauses = image_g_new0 (image, MonoExceptionClause, num_clauses);
 
 	clause_index = 0;
-	for (i = mono_array_length (ilgen->ex_handlers.GetRaw()) - 1; i >= 0; --i) {
-		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers.GetRaw(), MonoILExceptionInfo, i);
+	for (i = mono_array_length (ilgen->ex_handlers) - 1; i >= 0; --i) {
+		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers, MonoILExceptionInfo, i);
 		finally_start = ex_info->start + ex_info->len;
 		if (!ex_info->handlers)
 			continue;
-		for (j = 0; j < mono_array_length (ex_info->handlers.GetRaw()); ++j) {
-			ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers.GetRaw(), MonoILExceptionBlock, j);
+		for (j = 0; j < mono_array_length (ex_info->handlers); ++j) {
+			ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers, MonoILExceptionBlock, j);
 			clause = &(clauses [clause_index]);
 
 			clause->flags = ex_block->type;
@@ -369,8 +369,9 @@ method_encode_clauses (MonoImage *image, MonoDynamicImage *assembly, MonoReflect
  * LOCKING: Acquires the loader lock. 
  */
 static void
-mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
+mono_save_custom_attrs (MonoImage *image, void *obj, MonoPtr<MonoArray>& cattrs_safe)
 {
+	MonoArray *cattrs = cattrs_safe.GetRaw ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoCustomAttrInfo *ainfo, *tmp;
@@ -391,7 +392,7 @@ mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
 #else
 //FIXME some code compiled under DISABLE_REFLECTION_EMIT depends on this function, we should be more aggressively disabling things
 static void
-mono_save_custom_attrs (MonoImage *image, void *obj, MonoArray *cattrs)
+mono_save_custom_attrs (MonoImage *image, void *obj, MonoPtr<MonoArray>& cattrs_safe)
 {
 }
 #endif
@@ -2991,7 +2992,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 			code = mono_array_addr (rmb->ilgen->code, guint8, 0);
 			code_size = rmb->ilgen->code_len;
 			max_stack = rmb->ilgen->max_stack;
-			num_locals = rmb->ilgen->locals ? mono_array_length (rmb->ilgen->locals.GetRaw()) : 0;
+			num_locals = rmb->ilgen->locals ? mono_array_length (rmb->ilgen->locals) : 0;
 			if (rmb->ilgen->ex_handlers)
 				num_clauses = mono_reflection_method_count_clauses (rmb->ilgen);
 		} else {
@@ -3018,7 +3019,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 
 		for (i = 0; i < num_locals; ++i) {
 			MonoReflectionLocalBuilder *lb = 
-				mono_array_get (rmb->ilgen->locals.GetRaw(), MonoReflectionLocalBuilder*, i);
+				mono_array_get (rmb->ilgen->locals, MonoReflectionLocalBuilder*, i);
 
 			header->locals [i] = image_g_new0 (image, MonoType, 1);
 			MonoType *type = mono_reflection_type_get_handle (lb->type.GetRaw(), error);
@@ -3209,7 +3210,7 @@ ctorbuilder_to_mono_method (MonoClass *klass, MonoReflectionCtorBuilder* mb, Mon
 
 	mb->mhandle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
-	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs.GetRaw ());
+	mono_save_custom_attrs (klass->image, mb->mhandle, mb->cattrs);
 
 	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save) {
 		/* ilgen is no longer needed */
@@ -3243,7 +3244,7 @@ methodbuilder_to_mono_method (MonoClass *klass, MonoReflectionMethodBuilderHandl
 	MonoMethod *method = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);
 	return_val_if_nok (error, NULL);
 	MONO_HANDLE_SETVAL (ref_mb, mhandle, MonoMethod*, method);
-	mono_save_custom_attrs (klass->image, method, mb->cattrs.GetRaw ());
+	mono_save_custom_attrs (klass->image, method, mb->cattrs);
 
 	if (!((MonoDynamicImage*)(MonoDynamicImage*)klass->image)->save)
 		/* ilgen is no longer needed */
@@ -3654,7 +3655,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		if (fb->offset != -1)
 			field->offset = fb->offset;
 		fb->handle = field;
-		mono_save_custom_attrs (klass->image, field, fb->cattrs.GetRaw ());
+		mono_save_custom_attrs (klass->image, field, fb->cattrs);
 
 		if (fb->def_value) {
 			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
@@ -3711,7 +3712,7 @@ typebuilder_setup_properties (MonoClass *klass, MonoError *error)
 		if (pb->set_method)
 			properties [i].set = pb->set_method->mhandle;
 
-		mono_save_custom_attrs (klass->image, &properties [i], pb->cattrs.GetRaw ());
+		mono_save_custom_attrs (klass->image, &properties [i], pb->cattrs);
 		if (pb->def_value) {
 			guint32 len, idx;
 			const char *p, *p2;
@@ -3776,7 +3777,7 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 			}
 		}
 #endif
-		mono_save_custom_attrs (klass->image, &events [i], eb->cattrs.GetRaw ());
+		mono_save_custom_attrs (klass->image, &events [i], eb->cattrs);
 	}
 }
 
@@ -3863,8 +3864,7 @@ ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle ref_
 	MonoType *type = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionType, ref_tb), type);
 	MonoClass *klass = mono_class_from_mono_type (type);
 
-	MonoArrayHandle cattrs = MONO_HANDLE_NEW_GET (MonoArray, ref_tb, cattrs);
-	mono_save_custom_attrs (klass->image, klass, MONO_HANDLE_RAW (cattrs)); /* FIXME use handles */
+	mono_save_custom_attrs (klass->image, klass, ref_tb->cattrs);
 
 	/* 
 	 * we need to lock the domain because the lock will be taken inside
@@ -4592,13 +4592,11 @@ ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 void
 ves_icall_AssemblyBuilder_UpdateNativeCustomAttributes (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error)
 {
-	MonoArrayHandle cattrs = MONO_HANDLE_NEW_GET (MonoArray, assemblyb, cattrs);
-
 	MonoReflectionAssemblyHandle assembly_handle = MONO_HANDLE_CAST (MonoReflectionAssembly, assemblyb);
 	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_handle, assembly);
 	g_assert (assembly);
 
-	mono_save_custom_attrs (assembly->image, assembly, MONO_HANDLE_RAW (cattrs));
+	mono_save_custom_attrs (assembly->image, assembly, assemblyb->cattrs);
 }
 
 void

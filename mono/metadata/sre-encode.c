@@ -423,7 +423,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	MonoDynamicTable *table;
 	guint32 *values;
 	guint32 idx, sig_idx;
-	guint nl = mono_array_length (ilgen->locals.GetRaw());
+	guint nl = mono_array_length (ilgen->locals);
 	SigBuffer buf;
 	int i;
 

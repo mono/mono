@@ -2075,7 +2075,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
-	return (MonoObject*)res.GetRaw ();
+	return res.GetRawObj ();
 }
 
 static void
