@@ -495,7 +495,7 @@ static MonoException*
 mono_remoting_update_exception (MonoException* exc)
 {
 	HANDLE_FUNCTION_ENTER ();
-	return mono_remoting_update_exception_handle (MonoExceptionHandle ().New (exc));
+	return mono_remoting_update_exception_handle (MonoExceptionHandle (). New (exc));
 }
 
 /**
