@@ -3732,7 +3732,7 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 			MonoReflectionTypeBuilder *tb = mono_class_get_ref_info_raw (candidate); /* FIXME use handles */
 			int j;
 			if (tb && tb->interfaces) {
-				for (j = mono_array_length_fast (tb->interfaces) - 1; j >= 0; --j) {
+				for (j = mono_array_length (tb->interfaces) - 1; j >= 0; --j) {
 					MonoReflectionType *iface = mono_array_get (tb->interfaces, MonoReflectionType*, j);
 					MonoClass *iface_class;
 
@@ -5468,7 +5468,7 @@ static gboolean
 can_access_member (MonoClass *access_klass, MonoClass *member_klass, MonoClass* context_klass, int access_level)
 {
 	MonoClass *member_generic_def;
-	auto access_klass_assembly = m_class_get_image (access_klass)->assembly;
+	MonoAssembly *access_klass_assembly = m_class_get_image (access_klass)->assembly;
 	if (access_klass_assembly && access_klass_assembly->corlib_internal)
 		return TRUE;
 
