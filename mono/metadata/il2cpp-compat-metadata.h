@@ -25,6 +25,7 @@ SgenDescriptor il2cpp_mono_gc_make_root_descr_all_refs(int numbits);
 MonoGCDescriptor il2cpp_mono_gc_make_vector_descr (void);
 void* il2cpp_mono_gc_alloc_fixed (size_t size, void* descr, MonoGCRootSource source, void *key, const char *msg);
 gboolean il2cpp_mono_gc_is_moving();
+void il2cpp_mono_gc_deregister_root(char* addr);
 
 typedef void* (*MonoGCLockedCallbackFunc) (void *data);
 void* il2cpp_mono_gc_invoke_with_gc_lock (MonoGCLockedCallbackFunc func, void *data);
