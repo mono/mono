@@ -24,6 +24,7 @@
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/assembly.h"
+#include "mono/metadata/exception-internals.h"
 
 typedef enum {
 	MONO_MARSHAL_NONE,			/* No marshalling needed */
@@ -396,10 +397,9 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	MonoMethodMessage *msg;
 	MonoTransparentProxyHandle this_obj;
 	MonoObjectHandle res;
-	MonoExceptionHandle exc;
+	MonoObject *exc = NULL;
 	MonoArray *out_args;
 
-	exc.New();
 	this_obj.New (*((MonoTransparentProxy **)params [0]));
 
 	g_assert (this_obj);
@@ -433,7 +433,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 			}
 		}
 
-		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_object_unbox (this_obj) : this_obj.get (), mparams, error);
+		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_object_unbox_unsafe (this_obj) : this_obj.get (), mparams, error);
 		goto_if_nok (error, fail);
 
 		return MONO_HANDLE_RAW (res);
@@ -447,15 +447,15 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 
 	if (exc) {
 		error_init (error);
-		exc = mono_remoting_update_exception_handle (exc);
-		mono_error_set_exception_instance (error, exc);
+		exc = (MonoObject*)mono_remoting_update_exception ((MonoException*)exc);
+		mono_error_set_exception_instance (error, (MonoException *)exc);
 		goto fail;
 	}
 
 	mono_method_return_message_restore (method, params, out_args, error);
 	goto_if_nok (error, fail);
 
-	return MONO_HANDLE_RAW (res);
+	return res;
 fail:
 	mono_error_set_pending_exception (error);
 	return NULL;
@@ -472,21 +472,20 @@ mono_remoting_update_exception_handle (MonoExceptionHandle exc)
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoInternalThreadHandle thread;
-	MonoClass *klass = mono_object_get_class ((MonoObject*)exc);
+	MonoClass *klass = mono_object_get_class (exc);
 
 	/* Serialization error can only happen when still in the target appdomain */
 	if (!(mono_class_get_flags (klass) & TYPE_ATTRIBUTE_SERIALIZABLE)) {
-		MonoExceptionHandle ret;
 		g_ptr <char> aname = mono_stringify_assembly_name (&m_class_get_image (klass)->assembly->aname);
 		g_ptr <char> message = g_strdup_printf ("Type '%s' in Assembly '%s' is not marked as serializable", m_class_get_name (klass), aname.get ());
 		return mono_exception_new_serialization (message, error);
 	}
 
 	thread.New(mono_thread_internal_current ());
-	if (mono_object_get_class ((MonoObject*)exc) == mono_defaults.threadabortexception_class &&
-			thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT) {
+	if (mono_object_get_class (exc) == mono_defaults.threadabortexception_class &&
+			(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT)) {
 		mono_thread_internal_reset_abort (thread);
-		return mono_exception_new_appdomain_unloaded_handle (error);
+		return mono_exception_new_appdomain_unloaded (error);
 	}
 
 	return exc;
@@ -498,7 +497,7 @@ mono_remoting_update_exception (MonoException* exc)
 	HANDLE_FUNCTION_ENTER ();
 	MonoExceptionHandle h;
 	h.New (exc);
-	HANDLE_FUNCTION_RETURN_OBJ (mono_remoting_update_exception_handle (h));
+	return mono_remoting_update_exception_handle (h);
 }
 
 /**

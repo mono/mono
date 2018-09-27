@@ -85,6 +85,6 @@ MonoExceptionHandle
 mono_exception_new_argument_null (const char *arg, MonoError *error);
 
 MonoExceptionHandle
-mono_exception_new_appdomain_unloaded_handle (MonoError *error);
+mono_exception_new_appdomain_unloaded (MonoError *error);
 
 #endif

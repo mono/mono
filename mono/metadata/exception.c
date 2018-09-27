@@ -879,19 +879,19 @@ mono_get_exception_cannot_unload_appdomain (const char *msg)
  * mono_get_exception_appdomain_unloaded
  * \returns a new instance of the \c System.AppDomainUnloadedException
  */
+MonoExceptionHandle
+mono_exception_new_appdomain_unloaded (MonoError *error)
+{
+	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "AppDomainUnloadedException", NULL, error);
+
+}
+
 MonoException *
 mono_get_exception_appdomain_unloaded (void)
 {
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MONO_RETURN_HANDLE (mono_get_exception_appdomain_unloaded_handle (error));
-}
-
-MonoExceptionHandle
-mono_exception_new_appdomain_unloaded_handle (MonoError *error)
-{
-	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "AppDomainUnloadedException", NULL, NULL);
-
+	return mono_exception_new_appdomain_unloaded (error);
 }
 
 /**

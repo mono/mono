@@ -1312,7 +1312,9 @@ struct g_ptr
 {
 	T* p;
 
-	void detach () { T* q = p; p = 0; return q; }
+	T* get() { return p; } // e.g. printf ("%p");
+
+	T* detach () { T* q = p; p = 0; return q; }
 
 	void cleanup () { g_free (detach ()); }
 
@@ -1320,13 +1322,15 @@ struct g_ptr
 
 	~g_ptr () { cleanup (); }
 
-	operator T* () { return p; }
+	operator T* () { return get (); }
+
+	g_ptr (T* q = 0) : p (q) { }
 
 	g_ptr& operator = (T* q)
 	{
 		if (p == q)
 			return *this;
-		cleanup();
+		cleanup ();
 		p = q;
 		return *this;
 	}

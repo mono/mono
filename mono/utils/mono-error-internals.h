@@ -194,8 +194,12 @@ mono_error_set_invalid_operation (MonoError *error, const char *msg_format, ...)
 void
 mono_error_set_exception_instance (MonoError *error, MonoException *exc);
 
+#ifdef __cplusplus
+extern "C++" {
 void
 mono_error_set_exception_instance (MonoError *error, MonoHandle<MonoException> exc);
+}
+#endif
 
 void
 mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
