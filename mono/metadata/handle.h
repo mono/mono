@@ -76,8 +76,8 @@ void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_da
 gboolean mono_handle_stack_is_empty (HandleStack *stack);
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
-MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
-void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
+MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *__mark, MonoRawHandle value);
+void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *__mark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
 
 #ifdef MONO_HANDLE_TRACK_SP
@@ -85,33 +85,33 @@ void mono_handle_chunk_leak_check (HandleStack *handles);
 #endif
 
 static inline void
-mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
+mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *__mark)
 {
 #ifdef MONO_HANDLE_TRACK_SP
-	gpointer sptop = &stackmark;
+	gpointer sptop = &__mark;
 #endif
 	HandleStack *handles = info->handle_stack;
-	stackmark->size = handles->top->size;
-	stackmark->chunk = handles->top;
-	stackmark->interior_size = handles->interior->size;
+	__mark->size = handles->top->size;
+	__mark->chunk = handles->top;
+	__mark->interior_size = handles->interior->size;
 #ifdef MONO_HANDLE_TRACK_SP
-	stackmark->prev_sp = handles->stackmark_sp;
+	__mark->prev_sp = handles->stackmark_sp;
 	handles->stackmark_sp = sptop;
 #endif
 }
 
 static inline void
-mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
+mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *__mark)
 {
 	HandleStack *handles = info->handle_stack;
-	HandleChunk *old_top = stackmark->chunk;
-	old_top->size = stackmark->size;
+	HandleChunk *old_top = __mark->chunk;
+	old_top->size = __mark->size;
 	mono_memory_write_barrier ();
 	handles->top = old_top;
-	handles->interior->size = stackmark->interior_size;
+	handles->interior->size = __mark->interior_size;
 #ifdef MONO_HANDLE_TRACK_SP
 	mono_memory_write_barrier (); /* write to top before prev_sp */
-	handles->stackmark_sp = stackmark->prev_sp;
+	handles->stackmark_sp = __mark->prev_sp;
 #endif
 }
 
@@ -647,24 +647,29 @@ extern "C++" {
 inline
 void **MonoHandleFrame::allocate_handle_in_caller (void* value)
 {
-	mono_stack_mark_pop (threadinfo, &stackmark);
-	void ** h = (void**)mono_handle_new ((MonoObject*)value);
-	mono_stack_mark_init (threadinfo, &stackmark);
-	return h;
+	pop();
+	return (void**)mono_handle_new ((MonoObject*)value);
 }
 
 inline
-MonoHandleFrame::MonoHandleFrame ()
+MonoHandleFrame::MonoHandleFrame () : do_pop(true)
 {
-	threadinfo = (MonoThreadInfo*)mono_thread_info_current ();
-	mono_stack_mark_init (threadinfo, &stackmark);
+	__info = (MonoThreadInfo*)mono_thread_info_current ();
+	mono_stack_mark_init (__info, &__mark);
 }
 
 inline
 MonoHandleFrame::~MonoHandleFrame ()
 {
-	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);
-	mono_stack_mark_pop (threadinfo, &stackmark);
+	pop();
+}
+
+inline void
+MonoHandleFrame::pop ()
+{
+	if (!do_pop) return;
+	CLEAR_ICALL_FRAME
+	do_pop = false;
 }
 
 template <typename T>
@@ -739,8 +744,16 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define HANDLE_FUNCTION_RETURN_VAL(x) return (x)
 #define HANDLE_FUNCTION_RETURN_OBJ(handle) return (handle).GetRaw()
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) return (handle).return_handle (local_handle_frame)
-#define MONO_HANDLE_NEW(type, value) 		(MonoHandle<type>::static_new (value))
+#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type>::static_new (value))
 #define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type>::static_new ((handle)->field))
+
+template <typename T>
+MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
+{
+	MonoHandle<MonoObject> h;
+	h.New((MonoObject*)get());
+	return h;
+}
 
 } // extern C++
 

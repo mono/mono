@@ -391,7 +391,8 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	ERROR_DECL (error);
 	MonoMethodMessage *msg;
 	MonoTransparentProxy *this_obj;
-	MonoObject *res, *exc;
+	MonoObjectHandle res;
+	MonoObject *exc;
 	MonoArray *out_args;
 
 	this_obj = *((MonoTransparentProxy **)params [0]);
@@ -430,13 +431,13 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass)? mono_object_unbox ((MonoObject*)this_obj): this_obj, mparams, error);
 		goto_if_nok (error, fail);
 
-		return res;
+		return MONO_HANDLE_RAW (res);
 	}
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	goto_if_nok (error, fail);
 
-	res = mono_remoting_invoke (&this_obj->rp->object, msg, &exc, &out_args, error);
+	res = mono_remoting_invoke (this_obj->rp.AsMonoObjectHandle(), msg, &exc, &out_args, error);
 	goto_if_nok (error, fail);
 
 	if (exc) {
@@ -449,7 +450,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, error);
 	goto_if_nok (error, fail);
 
-	return res;
+	return MONO_HANDLE_RAW (res);
 fail:
 	mono_error_set_pending_exception (error);
 	return NULL;

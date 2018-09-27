@@ -1301,7 +1301,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
+			mono_remoting_invoke (tp->rp.AsMonoObjectHandle(), msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
@@ -2039,7 +2039,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			return NULL;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
+		res = mono_remoting_invoke (tp->rp.AsMonoObjectHandle(), msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
@@ -2073,7 +2073,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
-	return res;
+	return res.AsMonoObjectPtr();
 }
 
 static void
