@@ -773,9 +773,7 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 template <typename T>
 MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
 {
-	MonoHandle<MonoObject> h;
-	h.New((MonoObject*)get());
-	return h;
+	return MonoHandle<MonoObject> ().New ((MonoObject*)get());
 }
 
 } // extern C++
