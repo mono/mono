@@ -1664,11 +1664,11 @@ mono_assembly_load_reference (MonoImage *image, int index)
 			mono_assembly_addref (reference);
 			if (image->assembly)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s[%p] -> %s[%p]: %d",
-				    image->assembly->aname.name, image->assembly.get(), reference->aname.name, reference, reference->ref_count);
+				    image->assembly->aname.name, image->assembly, reference->aname.name, reference, reference->ref_count);
 		} else {
 			if (image->assembly)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Failed to load assembly %s[%p].",
-				    image->assembly->aname.name, image->assembly.get());
+				    image->assembly->aname.name, image->assembly);
 		}
 		
 		image->references [index] = reference;

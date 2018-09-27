@@ -18,6 +18,7 @@ typedef struct _MonoMethod MonoMethod;
 typedef struct _MonoObject MONO_RT_MANAGED_ATTR MonoObject;
 typedef struct _MonoException MONO_RT_MANAGED_ATTR MonoException;
 typedef struct _MonoMList MONO_RT_MANAGED_ATTR MonoMList;
+typedef struct _MonoRealProxy MonoRealProxy;
 typedef struct _MonoReflectionAssembly MONO_RT_MANAGED_ATTR MonoReflectionAssembly;
 typedef struct _MonoReflectionTypeBuilder MONO_RT_MANAGED_ATTR MonoReflectionTypeBuilder;
 

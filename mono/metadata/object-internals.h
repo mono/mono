@@ -333,7 +333,7 @@ typedef struct {
 	MonoPtr(MonoObject) type_info;
 } MonoReflectionMonoType;
 
-typedef struct {
+struct _MonoRealProxy {
 	MonoObject  object;
 	MonoPtr(MonoReflectionType) class_to_proxy;	
 	MonoPtr(MonoObject) context;
@@ -343,7 +343,7 @@ typedef struct {
 	MonoPtr(MonoObject) object_identity;
 	MonoPtr(MonoObject) obj_TP;
 	MonoPtr(MonoObject) stub_data;
-} MonoRealProxy;
+};
 
 /* Safely access System.Runtime.Remoting.Proxies.RealProxy from native code */
 TYPED_HANDLE_DECL (MonoRealProxy);

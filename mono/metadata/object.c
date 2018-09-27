@@ -8167,7 +8167,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 			target = tp->rp->unwrapped_server;
 		} else {
-			return mono_remoting_invoke (tp->rp.AsMonoObjectHandle(), msg, exc, out_args, error);
+			return mono_remoting_invoke (MonoObjectHandle (). New((MonoObject*)tp->rp), msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8674,7 +8674,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	return_val_if_nok (error, NULL);
 	mono_array_setref (msg->args, 1, field_name);
 
-	mono_remoting_invoke (tp->rp.AsMonoObjectHandle(), msg, &exc, &out_args, error);
+	mono_remoting_invoke (MonoObjectHandle ().New (tp->rp), msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
