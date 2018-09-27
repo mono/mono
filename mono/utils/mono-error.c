@@ -473,6 +473,13 @@ mono_error_set_exception_handle (MonoError *oerror, MonoExceptionHandle exc)
 }
 
 void
+mono_error_set_exception_instance (MonoError *oerror, MonoExceptionHandle exc)
+// overload for easier conversion
+{
+	mono_error_set_exception_handle (oerror, exc);
+}
+
+void
 mono_error_set_out_of_memory (MonoError *oerror, const char *msg_format, ...)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;

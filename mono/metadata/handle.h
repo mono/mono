@@ -594,29 +594,33 @@ mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);
 gpointer
 mono_object_handle_pin_unbox (MonoObjectHandle boxed_valuetype_obj, uint32_t *gchandle_out);
 
-static inline gpointer
-mono_handle_unbox_unsafe (MonoObjectHandle handle)
+#ifdef __cplusplus
+extern "C++" {
+
+template <typename T>
+inline gpointer
+mono_handle_unbox_unsafe (MonoHandle<T> h) // old name
 {
+	MonoObjectHandle handle = h.AsMonoObjectHandle ();
 	g_assert (m_class_is_valuetype (MONO_HANDLE_GETVAL (handle, vtable)->klass));
 	return MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle) + 1);
 }
 
-extern "C++" {
-
 template <typename T>
-inline void*
-mono_object_unbox (MonoHandle<T> obj)
+inline gpointer
+mono_object_unbox_unsafe (MonoHandle<T> handle) // better name -- no need to say "handle" but "unsafe" sounds important
 {
-	return mono_object_unbox (MONO_HANDLE_RAW (obj));
+	return mono_handle_unbox_unsafe (handle);
 }
 
 template <typename T>
 inline MonoClass*
 mono_object_get_class (MonoHandle<T> obj)
 {
-	return mono_object_get_class (MONO_HANDLE_RAW (obj));
+	return mono_object_get_class ((MonoObject*)MONO_HANDLE_RAW (obj)); // FIXME?
 }
 }
+#endif
 
 void
 mono_error_set_exception_handle (MonoError *error, MonoExceptionHandle exc);

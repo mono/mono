@@ -219,6 +219,8 @@ private:
 	MonoThreadInfo *__info;
 };
 
+#include <type_traits>
+
 template <typename T>
 struct MonoHandle
 {
@@ -247,16 +249,25 @@ struct MonoHandle
 
 	static MonoHandle static_new (T * value = 0);
 
-	// FIXME
+	// FIXME?
 	MONO_ALWAYS_INLINE void* ForInvoke () { return GetRaw(); }
 
-	// FIXME
+	// FIXME?
 	MONO_ALWAYS_INLINE MonoHandle<MonoObject> AsMonoObjectHandle () { return cast <MonoObject>(); }
 
 	MONO_ALWAYS_INLINE MonoObject* AsMonoObjectPtr () { return (MonoObject*)GetRaw();}
 
-	MONO_ALWAYS_INLINE T * GetRaw () { return __raw ? *__raw : NULL; }
+	MONO_ALWAYS_INLINE T * GetRaw () { return get (); }
 
+	MONO_ALWAYS_INLINE operator T * () { return get (); } // FIXME?
+
+	MONO_ALWAYS_INLINE T * get() { return __raw ? *__raw : NULL; } // FIXME?
+
+	// if T != MonoObject, provide operator MonoObject*
+	template < typename U = T,
+	    	   typename = typename std::enable_if< !std::is_same<U, MonoObject>::value >::type>
+	MONO_ALWAYS_INLINE operator MonoObject* () { return (MonoObject*)get (); } // FIXME?
+	
 	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 	MONO_ALWAYS_INLINE
