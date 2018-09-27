@@ -175,23 +175,31 @@ template <typename T> struct MonoPtr
 	bool operator==(std::nullptr_t) { return !p; }
 	bool operator!=(std::nullptr_t) { return !!p; }
 
+	// Allow silent conversion to matching MonoHandle.
 	operator MonoHandle<T> () { return NewHandle<T>(); }
 
+	// Allow silent conversion to MonoObjectHandle, no matter what T is, unless T is
+	// already MonoObject.
 	template < typename U,
 	    	   typename = typename std::enable_if<!std::is_same<T, MonoObject>::value &&
 						      std::is_same<U, MonoObject>::value >::type>
 	operator MonoHandle<U> () { return NewHandle<U>(); }
 
+	// Compare to T* or MonoObject*.
 	template <typename U,
 	    	  typename = typename std::enable_if<
 			(!std::is_same<T, MonoObject>::value && std::is_same<U, MonoObject>::value)
 			|| (std::is_same<T, MonoObject>::value && !std::is_same<U, MonoObject>::value)
 			|| std::is_same<T, U>::value>::type>
-	bool operator != (U* q) { return (void*)p == (void*)q; }
+	bool operator != (U* q) { return (void*)p != (void*)q; }
 
 	template <typename U> MonoHandle<U> NewHandle () { return MonoHandle<U> ().New ((U*)GetRaw()); }
 
 	MonoPtr& operator = (MonoHandle<T> h) { p = h.__raw ? *h.__raw : 0; return *this; }
+
+/******************************************************************************************
+This is important.
+******************************************************************************************/
 	explicit operator bool () const { return !!p; }
 	MonoHandle<T> operator -> () { return NewHandle<T> (); }
 
@@ -203,9 +211,9 @@ template <typename T> struct MonoPtr
 	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
 	T* get () { return p; }
 
-	//FIXME
+	//FIXME This is used in non-coop-converted code.
+	// It might also be a good printf("%p") piece.
 	T* GetRaw() { return p; }
-
 
 	struct OperatorAmpersandResult
 	{
@@ -219,11 +227,15 @@ template <typename T> struct MonoPtr
 
 	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
 
-/*
-	operator T * () { return p; }
+/******************************************************************************************
+This is important, to not have.
+However it is useful to add, if you do not want to sprinkle GetRaw in non-coop code.
+And then remove for crude static analysis.
+******************************************************************************************/
+	//operator T * () { return p; }
 
-	MonoHandle<MonoObject> AsMonoObjectHandle();
-*/
+	//MonoHandle<MonoObject> AsMonoObjectHandle();
+
 //private:
 	T * p;
 };
@@ -342,6 +354,10 @@ struct MonoHandle
 	G_ALWAYS_INLINE
 	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
 
+/******************************************************************************************
+Note. This is both the point and the danger.
+The safety of this, depends on T* itself not having raw pointers, but only MonoPtr().
+******************************************************************************************/
 	G_ALWAYS_INLINE
 	T* operator-> () { g_assert (__raw); return *__raw; }
 
