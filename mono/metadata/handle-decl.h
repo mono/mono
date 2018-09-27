@@ -164,130 +164,6 @@ typedef struct {
 
 template <typename T> struct MonoPtr;
 template <typename T> struct MonoHandle;
-template <typename T> struct MonoHandle;
-
-// Specialize for MonoObject. FIXME Less duplication.
-template <> struct MonoPtr<MonoObject>;
-template <> struct MonoHandle<MonoObject>;
-
-struct MonoHandleFrame
-{
-	MonoHandleFrame ();
-
-	~MonoHandleFrame ();
-
-	void **allocate_handle_in_caller (void* value);
-
-private:
-	HandleStackMark stackmark;
-	MonoThreadInfo *threadinfo;
-};
-
-template <typename T>
-struct MonoHandle
-{
-	MonoHandle return_handle (MonoHandleFrame& frame)
-	{
-		return MonoHandle{(T**)frame.allocate_handle_in_caller (GetRaw ())};
-	}
-
-	template <typename T2>
-	MonoHandle<T2> cast () const
-	{
-		return MonoHandle<T2>{(T2**)__raw};
-	}
-
-	MONO_ALWAYS_INLINE
-	explicit operator bool () const { return __raw && *__raw; }
-
-	void New (T * value);
-
-	static MonoHandle static_new (T * value);
-
-	MONO_ALWAYS_INLINE
-	T * GetRaw () { return __raw ? *__raw : NULL; }
-
-	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
-
-	MONO_ALWAYS_INLINE
-	MonoHandle& operator=(MonoHandle p)
-	{
-		// FIXME *__raw = *p.__raw; ?
-		__raw = p.__raw;
-		return *this;
-	}
-	MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p; return *this; }
-	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
-	T* operator-> () { g_assert (__raw); return *__raw; }
-
-	// If T is not MonoObject, provide conversion to MonoObject*.
-	operator MonoObject * () { return (MonoObject*)GetRaw(); }
-
-	// If T is not MonoObject, provide conversion to MonoHandle<MonoObject>.
-	operator MonoHandle<MonoObject> ();
-	// { MonoHandle<MonoObject> {(MonoObject**)__raw}; }
-//private:
-	T ** __raw;
-};
-
-// FIXME too much duplication
-template <>
-struct MonoHandle<MonoObject>
-{
-	typedef MonoObject T;
-
-	MonoHandle return_handle (MonoHandleFrame& frame)
-	{
-		return MonoHandle{(T**)frame.allocate_handle_in_caller (GetRaw ())};
-	}
-
-	template <typename T2>
-	MonoHandle<T2> cast () const
-	{
-		return MonoHandle<T2>{(T2**)__raw};
-	}
-
-	MONO_ALWAYS_INLINE
-	explicit operator bool () const { return __raw && *__raw; }
-
-	void New (T * value);
-
-	static MonoHandle static_new (T * value);
-
-	MONO_ALWAYS_INLINE
-	T * GetRaw () { return __raw ? *__raw : NULL; }
-
-	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
-
-	MONO_ALWAYS_INLINE
-	MonoHandle& operator=(MonoHandle p)
-	{
-		// FIXME *__raw = *p.__raw; ?
-		__raw = p.__raw;
-		return *this;
-	}
-
-	MonoHandle& operator=(const MonoPtr<T>& p);
-	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
-	T* operator-> () { g_assert (__raw); return *__raw; }
-
-/*
-	// If T is not MonoObject, provide conversion to MonoObject*.
-	template <typename U = T,
-		  typename = typename std::enable_if<!std::is_same<U, MonoObject>::value >::type>
-	operator MonoObject * () { return (MonoObject*)GetRaw(); }
-
-	// If T is not MonoObject, provide conversion to MonoHandle<MonoObject>.
-	template <typename U = T,
-		  typename = typename std::enable_if<!std::is_same<U, MonoObject>::value >::type>
-	operator MonoHandle<MonoObject> () { MonoHandle<MonoObject> {(MonoObject**)__raw}; }
-*/
-//private:
-	T ** __raw;
-};
-
-template <typename T>
-	MonoHandle& operator=(const MonoPtr<T>& p) { g_assert (__raw); *__raw = p.get(); return *this; }
 
 template <typename T> struct MonoPtr
 {
@@ -309,40 +185,7 @@ template <typename T> struct MonoPtr
 
 	explicit operator bool () const { return !!p; }
 
-	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
-
-	// hopefully used sparingly, but e.g. printf ("%p", x.get ());
-	// printf ("%p", x) will work on some ABIs/compilers but probably not all.
-	T* get () { return p; }
-
-	operator MonoObject *();
-
-//private:
-	T * p;
-};
-
-// FIXME too much duplication
-template <> struct MonoPtr<MonoObject>
-{
-	typedef MonoObject T;
-
-	MonoPtr& operator = (MonoHandle<T> h) { p = *h.__raw; return *this; }
-	MonoPtr& operator = (MonoPtr<T> q) { p = q.p; return *this; }
-	MonoPtr& operator = (T* q) { p = q; return *this; }
-	operator T * () { return p; }
-	T* operator -> () { return p; }
-
-	struct OperatorAmpersandResult
-	{
-		MonoPtr<T>* p;
-
-		operator T** () { return &p->p; }
-		operator void** () { return (void**)&p->p; }
-		operator void* () { return (void*)&p->p; } // FIXME? MONO_HANDLE_SET MONO_OBJECT_SETREF mono_gc_wbarrier_set_field
-		//operator MonoPtr<T>* () { return p; }
-	};
-
-	explicit operator bool () const { return !!p; }
+	MonoHandle<MonoObject> AsMonoObjectHandle();
 
 	OperatorAmpersandResult operator & () { return OperatorAmpersandResult {this}; }
 
@@ -355,6 +198,85 @@ template <> struct MonoPtr<MonoObject>
 };
 
 #define MonoPtr(x) MonoPtr<x>
+
+#else
+
+#define MonoPtr(x) x*
+
+#endif
+
+#ifdef __cplusplus //experimental
+
+struct MonoHandleFrame
+{
+	MonoHandleFrame ();
+	~MonoHandleFrame ();
+	void **allocate_handle_in_caller (void* value);
+private:
+	void pop ();
+	bool do_pop;
+	HandleStackMark __mark;
+	MonoThreadInfo *__info;
+};
+
+template <typename T>
+struct MonoHandle
+{
+	MONO_ALWAYS_INLINE
+	MonoHandle return_handle (MonoHandleFrame& frame)
+	{
+		MonoHandle h;
+		h.__raw = (T**)frame.allocate_handle_in_caller (GetRaw ());
+		return h;
+	}
+
+	template <typename T2>
+	MONO_ALWAYS_INLINE
+	MonoHandle<T2> cast () const
+	{
+		MonoHandle<T2> h;
+		h.__raw = (T2**)__raw;
+		return h;
+	}
+
+	MONO_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
+
+	void New (T * value);
+
+	static MonoHandle static_new (T * value);
+
+	// FIXME
+	MONO_ALWAYS_INLINE void* ForInvoke () { return GetRaw(); }
+
+	// FIXME
+	MONO_ALWAYS_INLINE MonoHandle<MonoObject> AsMonoObjectHandle () { return cast <MonoObject>(); }
+
+	MONO_ALWAYS_INLINE MonoObject* AsMonoObjectPtr () { return (MonoObject*)GetRaw();}
+
+	MONO_ALWAYS_INLINE T * GetRaw () { return __raw ? *__raw : NULL; }
+
+	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+	MONO_ALWAYS_INLINE
+	MonoHandle& operator=(MonoHandle p)
+	{
+		// FIXME *__raw = *p.__raw; ?
+		__raw = p.__raw;
+		return *this;
+	}
+
+	MONO_ALWAYS_INLINE
+	MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p; return *this; }
+
+	MONO_ALWAYS_INLINE
+	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
+
+	MONO_ALWAYS_INLINE
+	T* operator-> () { g_assert (__raw); return *__raw; }
+
+//private:
+	T ** __raw;
+};
 
 #define TYPED_HANDLE_DECL(TYPE)							\
 	typedef MonoHandle<TYPE> 						\
@@ -378,13 +300,11 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 
 #else
 
-#define MonoPtr(x) x*
-
 #if MONO_TYPE_SAFE_HANDLES
 #define TYPED_HANDLE_DECL(TYPE)							\
 	typedef struct {							\
 		MONO_IF_CPLUSPLUS (						\
-			MONO_ALWAYS_INLINE					\
+			MONO_ALWAYS_INL130INE					\
 			TYPE * GetRaw () { return __raw ? *__raw : NULL; }	\
 		)								\
 		TYPE **__raw;							\
