@@ -39,6 +39,8 @@ using Mono.Data.Sqlite;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data.Common
 {
 	[TestFixture]
@@ -194,7 +196,7 @@ namespace MonoTests.System.Data.Common
 		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
 		public void XimarinBugzillaBug853Test()
                 {
-                        const string connectionString = "URI = file:./SqliteTest.db; Version = 3";//will be in System.Data directory
+                        string connectionString = "URI = file:" + TestResourceHelper.GetFullPathOfResource ("Test/System.Data.Common/SqliteTest.db") + "; Version = 3";//will be in System.Data directory
                         SqliteConnection dbConnection = new SqliteConnection(connectionString);
                         dbConnection.Open();
 			SqliteCommand ClearTableEntry=new SqliteCommand("DELETE FROM Primus;",dbConnection);
