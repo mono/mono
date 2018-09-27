@@ -141,7 +141,6 @@ _android-$(1)_LDFLAGS= \
 	-L$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-executables \
 	--disable-iconv \
@@ -205,7 +204,6 @@ _android-$(1)_RANLIB=ranlib
 _android-$(1)_STRIP=strip
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mono-debugger \
@@ -259,7 +257,6 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-llvm \
 	--disable-mcs-build \
@@ -315,7 +312,6 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
@@ -374,7 +370,6 @@ _android-$(1)_LDFLAGS= \
 	-static-libstdc++
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
