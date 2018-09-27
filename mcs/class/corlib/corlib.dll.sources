@@ -229,6 +229,7 @@ System.Reflection/CustomAttributeData.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeNamedArgument.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/FieldInfo.cs

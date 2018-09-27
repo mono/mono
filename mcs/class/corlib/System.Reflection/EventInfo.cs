@@ -33,50 +33,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-	[ComVisible (true)]
-	[ComDefaultInterfaceAttribute (typeof (_EventInfo))]
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.None)]
-	[StructLayout (LayoutKind.Sequential)]
-#if MOBILE
-	public abstract class EventInfo : MemberInfo {
-#else
-	public abstract class EventInfo : MemberInfo, _EventInfo {
-#endif
+	public abstract partial class EventInfo : MemberInfo {
 		AddEventAdapter cached_add_event;
-
-		public abstract EventAttributes Attributes {get;}
-
-		public
-		virtual
-		Type EventHandlerType {
-			get {
-				ParameterInfo[] p;
-				MethodInfo add = GetAddMethod (true);
-				p = add.GetParametersInternal ();
-				if (p.Length > 0) {
-					Type t = p [0].ParameterType;
-					/* is it alwasys the first arg?
-					if (!t.IsSubclassOf (typeof (System.Delegate)))
-						throw new Exception ("no delegate in event");*/
-					return t;
-				}
-
-				return null;
-			}
-		}
-
-		public
-		virtual
-		bool IsMulticast {get {return true;}}
-		public bool IsSpecialName {get {return (Attributes & EventAttributes.SpecialName ) != 0;}}
-		public override MemberTypes MemberType {
-			get {return MemberTypes.Event;}
-		}
-
-		protected EventInfo() {
-		}
-
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
@@ -112,97 +71,6 @@ namespace System.Reflection {
 #endif
 		}
 
-		public MethodInfo GetAddMethod() {
-			return GetAddMethod (false);
-		}
-		public abstract MethodInfo GetAddMethod(bool nonPublic);
-		public MethodInfo GetRaiseMethod() {
-			return GetRaiseMethod (false);
-		}
-		public abstract MethodInfo GetRaiseMethod( bool nonPublic);
-		public MethodInfo GetRemoveMethod() {
-			return GetRemoveMethod (false);
-		}
-		public abstract MethodInfo GetRemoveMethod( bool nonPublic);
-
-		public virtual MethodInfo[] GetOtherMethods (bool nonPublic) {
-			// implemented by the derived class
-			return EmptyArray<MethodInfo>.Value;
-		}
-
-		public MethodInfo[] GetOtherMethods () {
-			return GetOtherMethods (false);
-		}
-
-		[DebuggerHidden]
-		[DebuggerStepThrough]
-		public
-		virtual
-		void RemoveEventHandler (object target, Delegate handler)
-		{
-			MethodInfo remove = GetRemoveMethod ();
-			if (remove == null)
-				throw new InvalidOperationException ("Cannot remove a handler to an event that doesn't have a visible remove method");
-
-			remove.Invoke (target, new object [] {handler});
-		}
-
-		public override bool Equals (object obj)
-		{
-			return obj == (object) this;
-		}
-
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-
-		public static bool operator == (EventInfo left, EventInfo right)
-		{
-			if ((object)left == (object)right)
-				return true;
-			if ((object)left == null ^ (object)right == null)
-				return false;
-			return left.Equals (right);
-		}
-
-		public static bool operator != (EventInfo left, EventInfo right)
-		{
-			if ((object)left == (object)right)
-				return false;
-			if ((object)left == null ^ (object)right == null)
-				return true;
-			return !left.Equals (right);
-		}
-
-#if !MOBILE
-		void _EventInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		Type _EventInfo.GetType ()
-		{
-			// Required or object::GetType becomes virtual final
-			return base.GetType ();
-		}
-
-		void _EventInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _EventInfo.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _EventInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		delegate void AddEventAdapter (object _this, Delegate dele);
 
 // this optimization cause problems with full AOT
@@ -220,6 +88,8 @@ namespace System.Reflection {
 				throw new TargetException ("Cannot add a handler to a non static event with a null target");
 			if (!(obj is T))
 				throw new TargetException ("Object doesn't match target");
+			if (!(dele is D))
+				throw new ArgumentException ($"Object of type {dele.GetType ()} cannot be converted to type {typeof (D)}.");
 			addEvent ((T)obj, (D)dele);
 		}
 
@@ -268,16 +138,6 @@ namespace System.Reflection {
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
 		}
 #endif
-
-		public virtual MethodInfo AddMethod {
-			get { return GetAddMethod (true); }
-		}
-		public virtual MethodInfo RaiseMethod {
-			get { return GetRaiseMethod (true); }
-		}
-		public virtual MethodInfo RemoveMethod {
-			get { return GetRemoveMethod (true); }
-		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern EventInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
