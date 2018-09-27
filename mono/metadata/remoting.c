@@ -481,7 +481,7 @@ mono_remoting_update_exception_handle (MonoExceptionHandle exc)
 		return mono_exception_new_serialization (message, error);
 	}
 
-	thread.New(mono_thread_internal_current ());
+	thread.New (mono_thread_internal_current ());
 	if (mono_object_get_class (exc) == mono_defaults.threadabortexception_class &&
 			(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT)) {
 		mono_thread_internal_reset_abort (thread);
@@ -495,9 +495,7 @@ static MonoException*
 mono_remoting_update_exception (MonoException* exc)
 {
 	HANDLE_FUNCTION_ENTER ();
-	MonoExceptionHandle h;
-	h.New (exc);
-	return mono_remoting_update_exception_handle (h);
+	return mono_remoting_update_exception_handle (MonoExceptionHandle ().New (exc));
 }
 
 /**
