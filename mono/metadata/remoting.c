@@ -388,6 +388,7 @@ mono_remoting_mb_create_and_cache (MonoMethod *key, MonoMethodBuilder *mb,
 static MonoObject *
 mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoMethodMessage *msg;
 	MonoTransparentProxy *this_obj;
