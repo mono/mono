@@ -882,7 +882,16 @@ mono_get_exception_cannot_unload_appdomain (const char *msg)
 MonoException *
 mono_get_exception_appdomain_unloaded (void)
 {
-	return mono_exception_from_name (mono_get_corlib (), "System", "AppDomainUnloadedException");
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_RETURN_HANDLE (mono_get_exception_appdomain_unloaded_handle (error));
+}
+
+MonoExceptionHandle
+mono_exception_new_appdomain_unloaded_handle (MonoError *error)
+{
+	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "AppDomainUnloadedException", NULL, NULL);
+
 }
 
 /**

@@ -84,4 +84,7 @@ mono_get_exception_out_of_memory_handle (void);
 MonoExceptionHandle
 mono_exception_new_argument_null (const char *arg, MonoError *error);
 
+MonoExceptionHandle
+mono_exception_new_appdomain_unloaded_handle (MonoError *error);
+
 #endif

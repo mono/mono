@@ -1305,4 +1305,33 @@ G_END_DECLS
 #define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
 #define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
 
+#ifdef __cplusplus
+
+template <typename T>
+struct g_ptr
+{
+	T* p;
+
+	void detach () { T* q = p; p = 0; return q; }
+
+	void cleanup () { g_free (detach ()); }
+
+	g_ptr () : p (0) { }
+
+	~g_ptr () { cleanup (); }
+
+	operator T* () { return p; }
+
+	g_ptr& operator = (T* q)
+	{
+		if (p == q)
+			return *this;
+		cleanup();
+		p = q;
+		return *this;
+	}
+};
+
+#endif
+
 #endif // __GLIB_H

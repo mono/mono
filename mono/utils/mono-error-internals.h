@@ -7,6 +7,7 @@
 
 #include <mono/metadata/object-forward.h>
 #include "mono/utils/mono-compiler.h"
+#include <mono/metadata/handle-decl.h>
 
 /*Keep in sync with MonoError*/
 typedef struct {
@@ -192,6 +193,9 @@ mono_error_set_invalid_operation (MonoError *error, const char *msg_format, ...)
 
 void
 mono_error_set_exception_instance (MonoError *error, MonoException *exc);
+
+void
+mono_error_set_exception_instance (MonoError *error, MonoHandle<MonoException> exc);
 
 void
 mono_error_set_invalid_program (MonoError *oerror, const char *msg_format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);

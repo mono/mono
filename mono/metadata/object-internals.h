@@ -1992,6 +1992,10 @@ mono_runtime_try_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void *
 MonoObject*
 mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoError *error);
 
+template <typename T>
+MonoObjectHandle
+mono_runtime_invoke_checked (MonoMethod *method, MonoHandle<T> obj, void **params, MonoError *error);
+
 MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
 
