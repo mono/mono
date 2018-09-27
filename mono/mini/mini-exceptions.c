@@ -906,7 +906,7 @@ mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk fu
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoDomain *domain = mono_domain_get ();
-	MonoArray *ta = ex->trace_ips;
+	MonoArray *ta = ex->trace_ips.GetRaw();
 	int len, i;
 
 	if (ta == NULL)
@@ -950,7 +950,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoArray *res;
-	MonoArray *ta = exc->trace_ips;
+	MonoArray *ta = exc->trace_ips.GetRaw();
 	MonoDebugSourceLocation *location;
 	int i, len;
 
@@ -1836,7 +1836,7 @@ setup_stack_trace (MonoException *mono_ex, GSList **dynamic_methods, GList *trac
 		if (*dynamic_methods) {
 			/* These methods could go away anytime, so save a reference to them in the exception object */
 			GSList *l;
-			MonoMList *list = (MonoMList*)mono_ex->dynamic_methods;
+			MonoMList *list = (MonoMList*)mono_ex->dynamic_methods.GetRaw();
 
 			for (l = *dynamic_methods; l; l = l->next) {
 				guint32 dis_link;
@@ -1913,7 +1913,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 		stack_overflow = TRUE;
 
 	mono_ex = (MonoException*)obj;
-	MonoArray *initial_trace_ips = mono_ex->trace_ips;
+	MonoArray *initial_trace_ips = mono_ex->trace_ips.GetRaw();
 	if (initial_trace_ips) {
 		int len = mono_array_length (initial_trace_ips) / TRACE_IP_ENTRY_SIZE;
 
@@ -3544,12 +3544,12 @@ mono_llvm_load_exception (void)
 		GList *trace_ips = NULL;
 		gpointer ip = MONO_RETURN_ADDRESS ();
 
-		size_t upper = mono_array_length (mono_ex->trace_ips);
+		size_t upper = mono_array_length (mono_ex->trace_ips.GetRaw());
 
 		for (int i = 0; i < upper; i += TRACE_IP_ENTRY_SIZE) {
-			gpointer curr_ip = mono_array_get (mono_ex->trace_ips, gpointer, i);
+			gpointer curr_ip = mono_array_get (mono_ex->trace_ips.GetRaw(), gpointer, i);
 			for (int j = 0; j < TRACE_IP_ENTRY_SIZE; ++j) {
-				gpointer p = mono_array_get (mono_ex->trace_ips, gpointer, i + j);
+				gpointer p = mono_array_get (mono_ex->trace_ips.GetRaw(), gpointer, i + j);
 				trace_ips = g_list_append (trace_ips, p);
 			}
 			if (ip == curr_ip)

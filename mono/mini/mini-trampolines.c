@@ -1182,12 +1182,12 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 		 * delegate->method).
 		 */
 #ifndef DISABLE_REMOTING
-		if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
+		if (delegate->target && mono_object_is_transparent_proxy (delegate->target.GetRaw())) {
 			is_remote = TRUE;
 			error_init (&err);
 #ifndef DISABLE_COM
-			if (((MonoTransparentProxy*)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
-			   !mono_class_is_com_object (((MonoTransparentProxy*)delegate->target)->remote_class->proxy_class))
+			if (((MonoTransparentProxy*)delegate->target.GetRaw())->remote_class->proxy_class != mono_class_get_com_object_class () &&
+			   !mono_class_is_com_object (((MonoTransparentProxy*)delegate->target.GetRaw())->remote_class->proxy_class))
 #endif
 				method = mono_marshal_get_remoting_invoke (method, &err);
 			if (!is_ok (&err)) {
@@ -1265,7 +1265,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 			method->flags & METHOD_ATTRIBUTE_VIRTUAL && 
 			method->flags & METHOD_ATTRIBUTE_ABSTRACT &&
 			mono_class_is_abstract (method->klass)) {
-			method = mono_object_get_virtual_method (delegate->target, method);
+			method = mono_object_get_virtual_method (delegate->target.GetRaw(), method);
 			enable_caching = FALSE;
 		}
 

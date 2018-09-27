@@ -6394,7 +6394,7 @@ mono_string_empty (MonoDomain *domain)
 {
 	g_assert (domain);
 	g_assert (domain->empty_string);
-	return domain->empty_string;
+	return domain->empty_string.GetRaw();
 }
 
 MonoStringHandle
@@ -8020,9 +8020,9 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 	g_assert (ares);
 	g_assert (ares->async_delegate);
 
-	ac = ares->object_data;
+	ac = ares->object_data.GetRaw();
 	if (!ac) {
-		res = mono_runtime_delegate_invoke_checked (ares->async_delegate, (void**) &ares->async_state, error);
+		res = mono_runtime_delegate_invoke_checked (ares->async_delegate.GetRaw(), (void**) &ares->async_state, error);
 		if (mono_error_set_pending_exception (error))
 			return NULL;
 	} else {
@@ -8030,7 +8030,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 
 		ac->msg->exc = NULL;
 
-		res = mono_message_invoke (ares->async_delegate, ac->msg, &ac->msg->exc, &ac->out_args, error);
+		res = mono_message_invoke (ares->async_delegate.GetRaw(), ac->msg, &ac->msg->exc, &ac->out_args, error);
 
 		/* The exit side of the invoke must not be aborted as it would leave the runtime in an undefined state */
 		mono_threads_begin_abort_protected_block ();
@@ -8047,7 +8047,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 		mono_monitor_enter ((MonoObject*) ares);
 		ares->completed = 1;
 		if (ares->handle)
-			wait_event = mono_wait_handle_get_handle (ares->handle);
+			wait_event = mono_wait_handle_get_handle (ares->handle.GetRaw());
 		mono_monitor_exit ((MonoObject*) ares);
 
 		if (wait_event != NULL)
@@ -8164,10 +8164,10 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 #ifndef DISABLE_REMOTING
 	if (target && mono_object_is_transparent_proxy (target)) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)target;
-		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
-			target = tp->rp->unwrapped_server;
+		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context.GetRaw() == (MonoObject *) mono_context_get ()) {
+			target = tp->rp->unwrapped_server.GetRaw();
 		} else {
-			return mono_remoting_invoke (MonoObjectHandle (). New((MonoObject*)tp->rp), msg, exc, out_args, error);
+			return mono_remoting_invoke (tp->rp, msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8200,13 +8200,13 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 	*exc = NULL;
 
 	MonoObjectHandle ret;
-	ret.New(mono_runtime_try_invoke_array (method, m_class_is_valuetype (method->klass)? mono_object_unbox (target): target, msg->args, exc, error));
+	ret.New(mono_runtime_try_invoke_array (method, m_class_is_valuetype (method->klass)? mono_object_unbox (target): target, msg->args.GetRaw(), exc, error));
 	return_val_if_nok (error, NULL_HANDLE);
 
 	for (i = 0, j = 0; i < sig->param_count; i++) {
 		if (sig->params [i]->byref) {
 			MonoObject* arg;
-			arg = (MonoObject *)mono_array_get (msg->args, gpointer, i);
+			arg = (MonoObject *)mono_array_get (msg->args.GetRaw(), gpointer, i);
 			mono_array_setref (*out_args, j, arg);
 			j++;
 		}
@@ -8318,9 +8318,9 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 	g_ptr <char> free_message;
 	ERROR_DECL (error);
 
-	if (exc == mono_object_domain (exc)->out_of_memory_ex) {
+	if (exc == mono_object_domain (exc)->out_of_memory_ex.GetRaw()) {
 		message = free_message = g_strdup ("OutOfMemoryException");
-	} else if (exc == mono_object_domain (exc)->stack_overflow_ex) {
+	} else if (exc == mono_object_domain (exc)->stack_overflow_ex.GetRaw()) {
 		message = free_message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
 	} else {		
 		if (exc->native_trace_ips) {
@@ -8514,7 +8514,7 @@ mono_method_call_message_new (MonoMethod *method, gpointer *params, MonoMethod *
 		} else 
 			arg = *((MonoObject **)vpos);
 		      
-		mono_array_setref (msg->args, i, arg);
+		mono_array_setref (msg->args.GetRaw(), i, arg);
 	}
 
 	if (cb != NULL && state != NULL) {
@@ -8640,8 +8640,8 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 	g_assert (res != NULL);
 
-	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
-		mono_field_get_value (tp->rp->unwrapped_server, field, res);
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context.GetRaw() == (MonoObject *) mono_context_get ()) {
+		mono_field_get_value (tp->rp->unwrapped_server.GetRaw(), field, res);
 		return res;
 	}
 	
@@ -8669,12 +8669,12 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	MonoString *full_name_str = mono_string_new_checked (domain, full_name, error);
 	g_free (full_name);
 	return_val_if_nok (error, NULL);
-	mono_array_setref (msg->args, 0, full_name_str);
+	mono_array_setref (msg->args.GetRaw(), 0, full_name_str);
 	MonoString *field_name = mono_string_new_checked (domain, mono_field_get_name (field), error);
 	return_val_if_nok (error, NULL);
-	mono_array_setref (msg->args, 1, field_name);
+	mono_array_setref (msg->args.GetRaw(), 1, field_name);
 
-	mono_remoting_invoke (MonoObjectHandle ().New (tp->rp), msg, &exc, &out_args, error);
+	mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {

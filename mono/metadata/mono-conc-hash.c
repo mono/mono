@@ -87,7 +87,7 @@ static gboolean
 key_is_tombstone (MonoConcGHashTable *hash, gpointer ptr)
 {
 	if (hash->gc_type & MONO_HASH_KEY_GC)
-		return ptr == mono_domain_get()->ephemeron_tombstone;
+		return ptr == mono_domain_get()->ephemeron_tombstone.GetRaw();
 	return ptr == PTR_TOMBSTONE;
 }
 
@@ -121,7 +121,7 @@ set_key_to_tombstone (conc_table *table, int slot)
 {
 	gpointer *key_addr = &table->keys [slot];
 	if (table->gc_type & MONO_HASH_KEY_GC)
-		mono_gc_wbarrier_generic_store (key_addr, mono_domain_get()->ephemeron_tombstone);
+		mono_gc_wbarrier_generic_store (key_addr, mono_domain_get()->ephemeron_tombstone.GetRaw());
 	else
 		*key_addr = PTR_TOMBSTONE;
 }

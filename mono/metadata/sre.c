@@ -293,10 +293,10 @@ mono_reflection_method_count_clauses (MonoReflectionILGen *ilgen)
 	int i;
 
 	MonoILExceptionInfo *ex_info;
-	for (i = 0; i < mono_array_length (ilgen->ex_handlers); ++i) {
-		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers, MonoILExceptionInfo, i);
+	for (i = 0; i < mono_array_length (ilgen->ex_handlers.GetRaw()); ++i) {
+		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers.GetRaw(), MonoILExceptionInfo, i);
 		if (ex_info->handlers)
-			num_clauses += mono_array_length (ex_info->handlers);
+			num_clauses += mono_array_length (ex_info->handlers.GetRaw());
 		else
 			num_clauses++;
 	}
@@ -322,13 +322,13 @@ method_encode_clauses (MonoImage *image, MonoDynamicImage *assembly, MonoReflect
 	clauses = image_g_new0 (image, MonoExceptionClause, num_clauses);
 
 	clause_index = 0;
-	for (i = mono_array_length (ilgen->ex_handlers) - 1; i >= 0; --i) {
-		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers, MonoILExceptionInfo, i);
+	for (i = mono_array_length (ilgen->ex_handlers.GetRaw()) - 1; i >= 0; --i) {
+		ex_info = (MonoILExceptionInfo*)mono_array_addr (ilgen->ex_handlers.GetRaw(), MonoILExceptionInfo, i);
 		finally_start = ex_info->start + ex_info->len;
 		if (!ex_info->handlers)
 			continue;
-		for (j = 0; j < mono_array_length (ex_info->handlers); ++j) {
-			ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers, MonoILExceptionBlock, j);
+		for (j = 0; j < mono_array_length (ex_info->handlers.GetRaw()); ++j) {
+			ex_block = (MonoILExceptionBlock*)mono_array_addr (ex_info->handlers.GetRaw(), MonoILExceptionBlock, j);
 			clause = &(clauses [clause_index]);
 
 			clause->flags = ex_block->type;
@@ -341,7 +341,7 @@ method_encode_clauses (MonoImage *image, MonoDynamicImage *assembly, MonoReflect
 			clause->handler_offset = ex_block->start;
 			clause->handler_len = ex_block->len;
 			if (ex_block->extype) {
-				MonoType *extype = mono_reflection_type_get_handle ((MonoReflectionType*)ex_block->extype, error);
+				MonoType *extype = mono_reflection_type_get_handle ((MonoReflectionType*)ex_block->extype.GetRaw(), error);
 
 				if (!is_ok (error)) {
 					image_g_free (image, clauses);
@@ -2824,7 +2824,7 @@ mono_marshal_spec_from_builder (MonoImage *image, MonoAssembly *assembly,
 
 	case MONO_NATIVE_CUSTOM:
 		if (minfo->marshaltyperef) {
-			MonoType *marshaltyperef = mono_reflection_type_get_handle ((MonoReflectionType*)minfo->marshaltyperef, error);
+			MonoType *marshaltyperef = mono_reflection_type_get_handle ((MonoReflectionType*)minfo->marshaltyperef.GetRaw(), error);
 			if (!is_ok (error)) {
 				image_g_free (image, res);
 				return NULL;
@@ -2991,7 +2991,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 			code = mono_array_addr (rmb->ilgen->code, guint8, 0);
 			code_size = rmb->ilgen->code_len;
 			max_stack = rmb->ilgen->max_stack;
-			num_locals = rmb->ilgen->locals ? mono_array_length (rmb->ilgen->locals) : 0;
+			num_locals = rmb->ilgen->locals ? mono_array_length (rmb->ilgen->locals.GetRaw()) : 0;
 			if (rmb->ilgen->ex_handlers)
 				num_clauses = mono_reflection_method_count_clauses (rmb->ilgen);
 		} else {
@@ -3018,10 +3018,10 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 
 		for (i = 0; i < num_locals; ++i) {
 			MonoReflectionLocalBuilder *lb = 
-				mono_array_get (rmb->ilgen->locals, MonoReflectionLocalBuilder*, i);
+				mono_array_get (rmb->ilgen->locals.GetRaw(), MonoReflectionLocalBuilder*, i);
 
 			header->locals [i] = image_g_new0 (image, MonoType, 1);
-			MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)lb->type, error);
+			MonoType *type = mono_reflection_type_get_handle (lb->type.GetRaw(), error);
 			mono_error_assert_ok (error);
 			memcpy (header->locals [i], type, mono_sizeof_type (type));
 		}

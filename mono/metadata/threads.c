@@ -1296,7 +1296,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	start_info->ref = 2;
 	start_info->thread = thread;
 	start_info->start_delegate = start_delegate;
-	start_info->start_delegate_arg = thread->start_obj;
+	start_info->start_delegate_arg = thread->start_obj.GetRaw();
 	start_info->start_func = start_func;
 	start_info->start_func_arg = start_func_arg;
 	start_info->force_attach = flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE;
@@ -4358,7 +4358,7 @@ mono_thread_get_undeniable_exception (void)
 	 */ 
 	thread->abort_exc->trace_ips = NULL;
 	thread->abort_exc->stack_trace = NULL;
-	return thread->abort_exc;
+	return thread->abort_exc.GetRaw();
 }
 
 #if MONO_SMALL_CONFIG
@@ -5052,6 +5052,12 @@ mono_set_pending_exception (MonoException *exc)
 	MONO_OBJECT_SETREF (thread, pending_exception, exc);
 
 	mono_thread_request_interruption_native ();
+}
+
+void
+mono_set_pending_exception (MonoHandle<MonoException> exc)
+{
+	mono_set_pending_exception (exc.GetRaw());
 }
 
 /*

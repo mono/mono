@@ -158,6 +158,7 @@ struct _MonoString {
 
 #define MONO_SIZEOF_MONO_STRING (MONO_STRUCT_OFFSET (MonoString, chars))
 
+//FIXME
 #define mono_object_class(obj) (((MonoObject*)(obj))->vtable->klass)
 #define mono_object_domain(obj) (((MonoObject*)(obj))->vtable->domain)
 
@@ -949,7 +950,7 @@ TYPED_HANDLE_DECL (MonoReflectionMethodBody);
 
 struct _MonoReflectionAssembly {
 	MonoObject object;
-	MonoPtr(MonoAssembly) assembly;
+	MonoAssembly *assembly;
 	MonoPtr(MonoObject) resolve_event_holder;
 	/* CAS related */
 	MonoPtr(MonoObject) evidence;	/* Evidence */

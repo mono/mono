@@ -5468,7 +5468,7 @@ static gboolean
 can_access_member (MonoClass *access_klass, MonoClass *member_klass, MonoClass* context_klass, int access_level)
 {
 	MonoClass *member_generic_def;
-	MonoAssembly *access_klass_assembly = m_class_get_image (access_klass)->assembly;
+	auto access_klass_assembly = m_class_get_image (access_klass)->assembly;
 	if (access_klass_assembly && access_klass_assembly->corlib_internal)
 		return TRUE;
 

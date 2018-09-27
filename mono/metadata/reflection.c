@@ -460,7 +460,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 
 	/* void is very common */
 	if (type->type == MONO_TYPE_VOID && domain->typeof_void)
-		return (MonoReflectionType*)domain->typeof_void;
+		return (MonoReflectionType*)domain->typeof_void.GetRaw();
 
 	/*
 	 * If the vtable of the given class was already created, we can use

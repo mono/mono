@@ -448,7 +448,7 @@ mono_threadpool_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod
 		MONO_OBJECT_SETREF (async_call, cb_target, async_callback);
 	}
 
-	async_result = mono_async_result_new (domain, NULL, async_call->state, NULL, (MonoObject*) async_call, error);
+	async_result = mono_async_result_new (domain, NULL, async_call->state.GetRaw(), NULL, (MonoObject*) async_call, error);
 	return_val_if_nok (error, NULL);
 	MONO_OBJECT_SETREF (async_result, async_delegate, target);
 
@@ -487,7 +487,7 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 	} else {
 		gpointer wait_event;
 		if (ares->handle) {
-			wait_event = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle);
+			wait_event = mono_wait_handle_get_handle ((MonoWaitHandle*) ares->handle.GetRaw());
 		} else {
 			wait_event = mono_w32event_create (TRUE, FALSE);
 			g_assert(wait_event);
@@ -508,12 +508,12 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 #endif
 	}
 
-	ac = ares->object_data;
+	ac = ares->object_data.GetRaw();
 	g_assert (ac);
 
-	*exc = ac->msg->exc; /* FIXME: GC add write barrier */
+	*exc = ac->msg->exc.GetRaw(); /* FIXME: GC add write barrier */
 	*out_args = ac->out_args;
-	return ac->res;
+	return ac->res.GetRaw();
 }
 
 gboolean

@@ -544,6 +544,7 @@ mono_handle_array_getref (MonoObjectHandleOut dest, MonoArrayHandle array, uintp
 #endif
 }
 
+//FIXME
 #define mono_handle_class(o) MONO_HANDLE_SUPPRESS (mono_object_class (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (o))))
 
 /* Local handles to global GC handles and back */
@@ -764,18 +765,17 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
 #define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type> ().New (value))
+//#define MONO_HANDLE_NEW(type, value) 		 ((value).NewHandle())
 #define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type> ().New ((handle)->field))
 
-#if 0
-
+/*
 template <typename T>
 inline
-MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
+MonoHandle<T> MonoPtr<T>::NewHandle()
 {
-	return MonoHandle<MonoObject> ().New ((MonoObject*)get());
+	return MonoHandle<T> ().New (GetRaw());
 }
-
-#endif
+*/
 
 } // extern C++
 
