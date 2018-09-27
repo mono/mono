@@ -746,36 +746,34 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 // A macro remains.
 #define HANDLE_FUNCTION_ENTER() MonoHandleFrame local_handle_frame;
 
-// This the point -- these don't merit macros.
-// Idiomatic old code should be idiomatic new code. Just change types,
-// and "enter", and maybe "new".
-#define MONO_HANDLE_CAST(type, value) ((value).cast<type>())
+// This the point -- these are largely idiomatic
+// and work with preexisting unchanged code, and do not merit macros.
+// Just change the types of things.
+#define MONO_HANDLE_CAST(type, value) 		((value).cast<type>())
 #define MONO_HANDLE_GET(result, handle, field)	(result = (handle)->field)
-#define MONO_HANDLE_GETVAL(handle, field) ((handle)->field)
+#define MONO_HANDLE_GETVAL(handle, field) 	((handle)->field)
 #define MONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
 #define MONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
-#define MONO_HANDLE_SET(handle, field, value) ((handle)->field = (value))
-
-// Ditto.
-#define MONO_HANDLE_IS_NULL(handle) (!(handle))
-#define MONO_HANDLE_BOOL(handle) (handle)
-
-// Mostly ditto.
-#define HANDLE_FUNCTION_RETURN() /* nothing */
-// Note: multiple/early return should now work.
-#define HANDLE_FUNCTION_RETURN_VAL(x) return (x)
-#define HANDLE_FUNCTION_RETURN_OBJ(handle) return (handle).GetRaw()
-#define MONO_RETURN_HANDLE(handle) return (handle).return_handle (local_handle_frame)
+#define MONO_HANDLE_SET(handle, field, value) 	((handle)->field = (value))
+#define MONO_HANDLE_IS_NULL(handle) 		(!(handle))
+#define MONO_HANDLE_BOOL(handle) 		(handle)
+// Early/multiple return is ok.
+#define HANDLE_FUNCTION_RETURN() 		/* nothing */
+#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
+#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 return (handle)
+#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
-#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type>::static_new (value))
-#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type>::static_new ((handle)->field))
+#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type> ().New (value))
+#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type> ().New ((handle)->field))
 
+#if 0
 template <typename T>
 inline
 MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
 {
 	return MonoHandle<MonoObject> ().New ((MonoObject*)get());
 }
+#endif
 
 } // extern C++
 
