@@ -771,6 +771,7 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type>::static_new ((handle)->field))
 
 template <typename T>
+inline
 MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
 {
 	return MonoHandle<MonoObject> ().New ((MonoObject*)get());
