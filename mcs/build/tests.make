@@ -162,14 +162,20 @@ endif
 
 NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
 
-patch-nunitlite-appconfig:
-	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(NUNITLITE_CONFIG_FILE)
+$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL)
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_output).nunitlite.config
 ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
-	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(NUNITLITE_CONFIG_FILE)
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(test_lib_output).nunitlite.config
 endif
 ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
-	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(test_lib_output).nunitlite.config
 endif
+ifdef TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL
+	cp -f $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL) $(test_lib_output).nunitlite.config.$(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL)
+endif
+
+copy-nunitlite-appconfig: $(test_lib_output).nunitlite.config
+	cp -f $(test_lib_output).nunitlite.config $(NUNITLITE_CONFIG_FILE)
 
 ifdef PLATFORM_AOT_SUFFIX
 
@@ -215,7 +221,7 @@ TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $
 endif
 
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
+run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_assemblies))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
@@ -242,7 +248,7 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
-$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir)
+$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir) $(test_lib_output).nunitlite.config
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
