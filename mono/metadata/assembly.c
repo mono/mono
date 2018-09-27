@@ -374,7 +374,7 @@ mono_assembly_invoke_search_hook_internal (MonoAssemblyName *aname, MonoAssembly
 static MonoAssembly*
 mono_assembly_request_byname_nosearch (MonoAssemblyName *aname, const MonoAssemblyByNameRequest *req, MonoImageOpenStatus *status);
 static MonoAssembly*
-mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
+mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname, gboolean want_pinned, const char *basedir, MonoAssemblyContextKind asmctx, MonoImageOpenStatus *status);
 static MonoAssembly*
 chain_redirections_loadfrom (MonoImage *image, MonoImageOpenStatus *status);
 static MonoAssembly*
@@ -1259,6 +1259,7 @@ mono_assembly_addref (MonoAssembly *assembly, gboolean pinning)
 	/* Order matters: increment pincount second */
 	if (pinning)
 		mono_atomic_inc_i32 (&assembly->pin_count);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Addref %s ref_count = %d (pin_count = %d)", assembly->aname.name, assembly->ref_count, assembly->pin_count);
 }
 
 gint32
@@ -1476,6 +1477,13 @@ mono_assembly_get_assemblyref (MonoImage *image, int index, MonoAssemblyName *an
 	}
 }
 
+static void
+mono_assembly_pinref (MonoAssembly *reference)
+{
+	if (reference && reference != (MonoAssembly*)REFERENCE_MISSING)
+		mono_assembly_addref (reference, TRUE);
+}
+
 static MonoAssembly*
 load_reference_by_aname_refonly_asmctx (MonoAssemblyName *aname, MonoAssembly *assm, MonoImageOpenStatus *status)
 {
@@ -1487,14 +1495,18 @@ load_reference_by_aname_refonly_asmctx (MonoAssemblyName *aname, MonoAssembly *a
 		if (!strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME)) {
 			MonoAssemblyByNameRequest req;
 			mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+			req.request.want_pinned = TRUE;
 			req.requesting_assembly = assm;
 			req.basedir = assm->basedir;
 			reference = mono_assembly_request_byname (aname, &req, status);
 		} else {
 			reference = mono_assembly_loaded_full (aname, TRUE);
-			if (!reference)
+			mono_assembly_pinref (reference);
+			if (!reference) {
 				/* Try a postload search hook */
 				reference = mono_assembly_invoke_search_hook_internal (aname, assm, TRUE, TRUE);
+				mono_assembly_pinref (reference);
+			}
 		}
 
 		/*
@@ -1521,11 +1533,13 @@ load_reference_by_aname_default_asmctx (MonoAssemblyName *aname, MonoAssembly *a
 		 */
 		MonoAssemblyByNameRequest req;
 		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		req.request.want_pinned = TRUE;
 		req.requesting_assembly = assm;
 		reference = mono_assembly_request_byname (aname, &req, status);
 		if (!reference && assm) {
 			memset (&req, 0, sizeof (req));
 			req.request.asmctx = MONO_ASMCTX_DEFAULT;
+			req.request.want_pinned = TRUE;
 			req.requesting_assembly = assm;
 			req.basedir = assm->basedir;
 			reference = mono_assembly_request_byname (aname, &req, status);
@@ -1540,6 +1554,7 @@ load_reference_by_aname_loadfrom_asmctx (MonoAssemblyName *aname, MonoAssembly *
 	MonoAssembly *reference = NULL;
 	MonoAssemblyByNameRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_LOADFROM);
+	req.request.want_pinned = TRUE;
 	req.requesting_assembly = requesting;
 	req.basedir = requesting->basedir;
 	/* Just like default search, but look in the requesting assembly basedir right away */
@@ -1565,6 +1580,7 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	aname = mono_assembly_apply_binding (aname, &maped_name_pp);
 
 	reference = mono_assembly_loaded_full (aname, FALSE);
+	mono_assembly_pinref (reference);
 	/* Still try to load from application base directory, MONO_PATH or the
 	 * GAC.  This is consistent with what .NET Framework (4.7) actually
 	 * does, rather than what the documentation implies: If `LoadFile` is
@@ -1577,6 +1593,7 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	if (!reference) {
 		MonoAssemblyByNameRequest req;
 		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		req.request.want_pinned = TRUE;
 		req.requesting_assembly = requesting;
 		reference = mono_assembly_request_byname (aname, &req, status);
 	}
@@ -1725,6 +1742,8 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	if (!image->references [index]) {
 		if (reference != REFERENCE_MISSING){
 			mono_assembly_addref (reference, FALSE);
+			/* decrement pin_count from load_reference_by_aname_xxx, above */
+			mono_assembly_dropref (reference, TRUE);
 			if (image->assembly)
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly Ref addref %s[%p] -> %s[%p]: %d; pin_count = %d",
 					    image->assembly->aname.name, image->assembly, reference->aname.name, reference, m_assembly_get_ref_count (reference), m_assembly_get_pin_count (reference));
@@ -1740,7 +1759,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	if (image->references [index] != reference) {
 		/* Somebody loaded it before us */
-		mono_assembly_close_internal (reference, FALSE);
+		mono_assembly_close_internal (reference, TRUE);
 	}
 }
 
@@ -2390,6 +2409,9 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 			g_free (fname);
 			return NULL;
 		} else {
+			/* FIXME: racing with Assembly GC */
+			if (load_req.want_pinned)
+				mono_assembly_pinref (image->assembly);
 			/* Already loaded by another appdomain */
 			mono_assembly_invoke_load_hook (image->assembly);
 			mono_image_close (image);
@@ -2834,6 +2856,8 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		g_free (base_dir);
 		mono_image_addref (mono_defaults.corlib);
 		*status = MONO_IMAGE_OK;
+		if (req->want_pinned)
+			mono_assembly_addref (mono_defaults.corlib->assembly, TRUE);
 		return mono_defaults.corlib->assembly;
 	}
 
@@ -2855,6 +2879,9 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 			g_free (base_dir);
 			mono_image_close (image);
 			*status = MONO_IMAGE_OK;
+			/* FIXME: this is a race.  Need to ask the search hook to pin for us. */
+			if (req->want_pinned)
+				mono_assembly_addref (ass2, TRUE);
 			return ass2;
 		}
 	}
@@ -2899,8 +2926,11 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		 * This means another thread has already loaded the assembly, but not yet
 		 * called the load hooks so the search hook can't find the assembly.
 		 */
-		mono_assemblies_unlock ();
+		/* Pin ass2 before unlocking so it doesn't get GC'd */
 		ass2 = image->assembly;
+		if (req->want_pinned)
+			mono_assembly_addref (ass2, TRUE);
+		mono_assemblies_unlock ();
 		g_free (ass);
 		g_free (base_dir);
 		mono_image_close (image);
@@ -2916,6 +2946,11 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		image->assembly = ass;
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
+
+	/* Unconditionally pin the new assembly.  We want it to survive the call to mono_assembly_load_hook ().
+	 * If it turns out we didn't want it pinned, we will unpin it after the hooks run.
+	 */
+	mono_assembly_addref (ass, TRUE);
 	mono_assemblies_unlock ();
 
 #ifdef HOST_WIN32
@@ -2927,6 +2962,8 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 
 	MONO_PROFILER_RAISE (assembly_loaded, (ass));
 	
+	if (!req->want_pinned)
+		mono_assembly_dropref (ass, TRUE);
 	return ass;
 }
 
@@ -4298,16 +4335,21 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
 		aname = mono_assembly_apply_binding (aname, &maped_name_pp);
 
 	result = mono_assembly_loaded_full (aname, refonly);
-	if (result)
+	if (result) {
+		if (req->request.want_pinned)
+			mono_assembly_pinref (result);
 		return result;
+	}
 
 	result = refonly ? invoke_assembly_refonly_preload_hook (aname, assemblies_path) : invoke_assembly_preload_hook (aname, assemblies_path);
 	if (result) {
 		result->in_gac = FALSE;
+		if (req->request.want_pinned)
+			mono_assembly_pinref (result);
 		return result;
 	}
 
-	return mono_assembly_load_full_gac_base_default (aname, req->basedir, req->request.asmctx, status);
+	return mono_assembly_load_full_gac_base_default (aname, req->request.want_pinned, req->basedir, req->request.asmctx, status);
 }
 
 /* Like mono_assembly_request_byname_nosearch, but don't ask the preload look (ie,
@@ -4317,6 +4359,7 @@ mono_assembly_request_byname_nosearch (MonoAssemblyName *aname,
  */
 MonoAssembly*
 mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
+					  gboolean want_pinned,
 					  const char *basedir,
 					  MonoAssemblyContextKind asmctx,
 					  MonoImageOpenStatus *status)
@@ -4336,7 +4379,10 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 	 * "mscorlib" (resp "System.Private.CoreLib"). */
 	name_is_corlib = name_is_corlib || strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME ".dll") == 0;
 	if (name_is_corlib) {
-		return mono_assembly_load_corlib (mono_get_runtime_info (), status);
+		result = mono_assembly_load_corlib (mono_get_runtime_info (), status);
+		if (want_pinned)
+			mono_assembly_pinref (result);
+		return result;
 	}
 
 	MonoAssemblyCandidatePredicate predicate = NULL;
@@ -4352,6 +4398,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), asmctx);
+	req.request.want_pinned = want_pinned;
 	req.request.predicate = predicate;
 	req.request.predicate_ud = predicate_ud;
 
@@ -4368,6 +4415,8 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 		result = mono_assembly_load_from_gac (aname, filename, status, refonly);
 		if (result) {
+			if (want_pinned)
+				mono_assembly_pinref (result);
 			g_free (filename);
 			return result;
 		}
@@ -4403,6 +4452,8 @@ mono_assembly_request_byname (MonoAssemblyName *aname, const MonoAssemblyByNameR
 	if (!result && !req->no_postload_search) {
 		/* Try a postload search hook */
 		result = mono_assembly_invoke_search_hook_internal (aname, req->requesting_assembly, refonly, TRUE);
+		if (req->request.want_pinned)
+			mono_assembly_pinref (result);
 		result = prevent_reference_assembly_from_running (result, refonly);
 	}
 	return result;

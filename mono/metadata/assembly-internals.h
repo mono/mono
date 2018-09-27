@@ -60,6 +60,11 @@ typedef struct MonoAssemblyLoadRequest {
 	MonoAssemblyCandidatePredicate predicate;
 	/* user_data for predicate. Optional. */
 	gpointer predicate_ud;
+	/* If TRUE, increment the pin_count of the returned assembly.  Caller
+	 * is responsible for decrementing.  FALSE is the backward-compatible
+	 * behavior; new callers should pass TRUE if possible.
+	 */
+	gboolean want_pinned;
 } MonoAssemblyLoadRequest;
 
 typedef struct MonoAssemblyOpenRequest {
