@@ -28,6 +28,11 @@ else
 LIB_REFS += System.Web
 endif
 
+ifeq ($(PROFILE),monodroid)
+# XA implements System.Drawing API inside Mono.Android
+API_BIN_REFS := Mono.Android
+else
+
 # profiles which build a System.Drawing.dll in the repo
 REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
 
@@ -44,9 +49,6 @@ EMBEDDED_DRAWING_DEP := $(filter xammac_net_4_5 testing_aot_full testing_aot_hyb
 
 ifdef EMBEDDED_DRAWING_DEP
 LIB_REFS += Facades/System.Drawing.Primitives
-else 
-ifeq ($(PROFILE),monodroid)
-API_BIN_REFS += Mono.Android
 else
 # When System.Drawing.dll is not built in the Mono repo but in
 # the product repo like in the XI case we need to pass in a reference
@@ -55,7 +57,6 @@ else
 LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
 endif
 endif
-
 endif
 
 PLATFORM_DEBUG_FLAGS =
