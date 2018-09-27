@@ -766,12 +766,16 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type> ().New (value))
 #define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type> ().New ((handle)->field))
 
+#if 0
+
 template <typename T>
 inline
 MonoHandle<MonoObject> MonoPtr<T>::AsMonoObjectHandle()
 {
 	return MonoHandle<MonoObject> ().New ((MonoObject*)get());
 }
+
+#endif
 
 } // extern C++
 

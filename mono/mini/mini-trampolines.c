@@ -1186,9 +1186,8 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 			is_remote = TRUE;
 			error_init (&err);
 #ifndef DISABLE_COM
-// FIXME? Eliminate .get()? Can C++ do better?
-			if (((MonoTransparentProxy*)delegate->target.get())->remote_class->proxy_class != mono_class_get_com_object_class () &&
-			   !mono_class_is_com_object (((MonoTransparentProxy*)delegate->target.get())->remote_class->proxy_class))
+			if (((MonoTransparentProxy*)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
+			   !mono_class_is_com_object (((MonoTransparentProxy*)delegate->target)->remote_class->proxy_class))
 #endif
 				method = mono_marshal_get_remoting_invoke (method, &err);
 			if (!is_ok (&err)) {

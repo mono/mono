@@ -160,10 +160,13 @@ typedef struct {
  * #endif
  */
 
-#ifdef __cplusplus //experimental
-
-template <typename T> struct MonoPtr;
+#ifdef __cplusplus
 template <typename T> struct MonoHandle;
+#endif
+
+#ifdef x__cplusplus //experimental
+
+//template <typename T> struct MonoPtr;
 
 template <typename T> struct MonoPtr
 {
@@ -247,9 +250,21 @@ struct MonoHandle
 		return h;
 	}
 
-	MONO_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
+	G_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
 
-	MonoHandle& New (T * value = 0);
+	MonoHandle& New (T* value);
+
+	G_ALWAYS_INLINE MonoHandle& New () { return New ((T*)0); }
+
+	// Some overloads for sloppy code.
+	template < typename U,
+	    	   typename = typename std::enable_if<std::is_same<T, MonoObject>::value &&
+						      std::is_same<U, MonoRealProxy>::value >::type>
+	G_ALWAYS_INLINE
+	MonoHandle& New (U* value)
+	{
+		return New ((MonoObject*)value);
+	}
 
 	static MonoHandle static_new (T * value = 0);
 
@@ -289,8 +304,10 @@ struct MonoHandle
 		return *this;
 	}
 
+#if 0
 	G_ALWAYS_INLINE
 	MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p; return *this; }
+#endif
 
 	G_ALWAYS_INLINE
 	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
