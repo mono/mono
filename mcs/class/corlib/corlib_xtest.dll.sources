@@ -324,3 +324,6 @@
 # System.Runtime.InteropServices
 ../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
 ../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/InteropServices/*.cs:MarshalTests.cs,GCHandleTests.cs,SafeBufferTests.cs,ComEventsHelperTests.cs,RuntimeEnvironmentTests.cs,DispatchWrapperTests.cs,ArrayWithOffsetTests.cs,SetWin32ContextInIDispatchAttributeTests.cs,ComAwareEventInfoTests.cs,IDispatchImplAttributeTests.cs,ComAwareEventInfoTests.Windows.cs,MarshalTests.Windows.cs
+
+# System.IO.BinaryWriter
+../../../external/corefx/src/System.IO/tests/BinaryWriter/*.cs:BinaryWriter.WriteByteCharTests.cs,BinaryWriter.WriteByteCharTests.netcoreapp.cs

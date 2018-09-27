@@ -1111,7 +1111,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/__error.cs
 ../referencesource/mscorlib/system/io/__hresults.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
-../referencesource/mscorlib/system/io/binarywriter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/BinaryWriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/EncodingCache.cs
 ../referencesource/mscorlib/system/io/bufferedstream.cs
 ../referencesource/mscorlib/system/io/directory.cs
