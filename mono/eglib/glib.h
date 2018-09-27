@@ -17,6 +17,14 @@
 #endif
 #endif // __cplusplus
 
+#ifdef __GNUC__
+#define G_ALWAYS_INLINE __attribute__ ((__always_inline__))
+#elif defined (_MSC_VER)
+#define G_ALWAYS_INLINE __forceinline
+#else
+#define G_ALWAYS_INLINE
+#endif
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1312,26 +1320,28 @@ struct g_ptr
 {
 	T* p;
 
-	T* get() { return p; } // e.g. printf ("%p");
+	G_ALWAYS_INLINE
+	T* get () { return p; } // e.g. printf ("%p");
 
 	T* detach () { T* q = p; p = 0; return q; }
 
 	void cleanup () { g_free (detach ()); }
 
-	g_ptr () : p (0) { }
+	G_ALWAYS_INLINE
+	g_ptr (T* q = 0) : p (q) { }
 
+	G_ALWAYS_INLINE
 	~g_ptr () { cleanup (); }
 
+	G_ALWAYS_INLINE
 	operator T* () { return get (); }
-
-	g_ptr (T* q = 0) : p (q) { }
 
 	g_ptr& operator = (T* q)
 	{
-		if (p == q)
-			return *this;
-		cleanup ();
-		p = q;
+		if (p != q) {
+			cleanup ();
+			p = q;
+		}
 		return *this;
 	}
 };

@@ -1125,7 +1125,7 @@ append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset
 }
 
 char *
-mono_exception_get_managed_backtrace (MonoException *exc)
+mono_exception_get_managed_backtrace (MonoExceptionHandle exc)
 {
 	GString *text;
 
@@ -1135,6 +1135,13 @@ mono_exception_get_managed_backtrace (MonoException *exc)
 		g_string_append (text, "managed backtrace not available\n");
 
 	return g_string_free (text, FALSE);
+}
+
+char *
+mono_exception_get_managed_backtrace (MonoException *exc)
+{
+	HANDLE_FUNCTION_ENTER ();
+	return mono_exception_get_managed_backtrace (MonoExceptionHandle ().New (exc));
 }
 
 char *
@@ -1258,8 +1265,8 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	} else {
 		ERROR_DECL_VALUE (inner_error);
 		MonoObject *other = NULL;
-		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
-		char *msg = NULL;
+		MonoStringHandle str = mono_object_try_to_string (exc, &other, &inner_error);
+		g_ptr <char> msg;
 		
 		if (str && is_ok (&inner_error)) {
 			msg = mono_string_to_utf8_checked (str, &inner_error);
@@ -1268,19 +1275,15 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 				mono_error_cleanup (&inner_error);
 			}
 		} else if (other) {
-			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
-			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
+			g_ptr <char> original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
+			g_ptr <char> nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
 
 			msg = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
-				original_backtrace, nested_backtrace);
-
-			g_free (original_backtrace);
-			g_free (nested_backtrace);
+				original_backtrace.get(), nested_backtrace.get());
 		} else {
 			msg = g_strdup ("Nested exception trying to figure out what went wrong");
 		}
-		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg);
-		g_free (msg);
+		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg.get());
 #if defined(HOST_IOS)
 		g_assertion_message ("Terminating runtime due to unhandled exception");
 #else

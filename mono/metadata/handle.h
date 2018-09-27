@@ -694,19 +694,18 @@ MonoHandleFrame::pop ()
 }
 
 template <typename T>
-void
+inline MonoHandle<T>&
 MonoHandle<T>::New (T * value)
 {
 	__raw = (T**)mono_handle_new ((MonoObject*)value);
+	return *this;
 }
 
 template <typename T>
-MonoHandle<T>
+inline MonoHandle<T>
 MonoHandle<T>::static_new (T * value)
 {
-	MonoHandle<T> a;
-	a.New (value);
-	return a;
+	return MonoHandle<T> (). New (value);
 }
 
 
