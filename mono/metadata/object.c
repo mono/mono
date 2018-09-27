@@ -258,7 +258,7 @@ mono_thread_set_main (MonoThread *thread)
 	static gboolean registered = FALSE;
 
 	if (!registered) {
-		void *key = thread->internal_thread ? (void *) MONO_UINT_TO_NATIVE_THREAD_ID (thread->internal_thread->tid) : NULL;
+		void *key = thread->internal_thread.GetRaw () ? (void *) MONO_UINT_TO_NATIVE_THREAD_ID (thread->internal_thread.GetRaw ()->tid) : NULL;
 		MONO_GC_REGISTER_ROOT_SINGLE (main_thread, MONO_ROOT_SOURCE_THREADING, key, "Thread Main Object");
 		registered = TRUE;
 	}
@@ -8164,8 +8164,8 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 #ifndef DISABLE_REMOTING
 	if (target && mono_object_is_transparent_proxy (target)) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)target;
-		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context.GetRaw() == (MonoObject *) mono_context_get ()) {
-			target = tp->rp->unwrapped_server.GetRaw();
+		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context.GetRaw() == (MonoObject *) mono_context_get ()) {
+			target = tp->rp.GetRaw ()->unwrapped_server.GetRaw();
 		} else {
 			return mono_remoting_invoke (tp->rp, msg, exc, out_args, error);
 		}
@@ -8641,8 +8641,8 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	g_assert (mono_object_is_transparent_proxy (this_obj));
 	g_assert (res != NULL);
 
-	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context.GetRaw() == (MonoObject *) mono_context_get ()) {
-		mono_field_get_value (tp->rp->unwrapped_server.GetRaw(), field, res);
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context.GetRaw() == (MonoObject *) mono_context_get ()) {
+		mono_field_get_value (tp->rp.GetRaw ()->unwrapped_server.GetRaw(), field, res);
 		return res;
 	}
 	

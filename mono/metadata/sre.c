@@ -2914,6 +2914,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 					 MonoMethodSignature *sig,
 					 MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MonoMethod *m;
 	MonoMethodWrapper *wrapperm;
 	MonoMarshalSpec **specs = NULL;
@@ -3017,9 +3018,11 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 		header->init_locals = rmb->init_locals;
 		header->num_locals = num_locals;
 
+		auto const rmb_ilgen_locals = rmb->ilgen->locals;
+
 		for (i = 0; i < num_locals; ++i) {
 			MonoReflectionLocalBuilder *lb = 
-				mono_array_get (rmb->ilgen->locals, MonoReflectionLocalBuilder*, i);
+				mono_array_get (rmb_ilgen_locals, MonoReflectionLocalBuilder*, i);
 
 			header->locals [i] = image_g_new0 (image, MonoType, 1);
 			MonoType *type = mono_reflection_type_get_handle (lb->type.GetRaw(), error);
@@ -3052,10 +3055,11 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 
 		m->is_generic = TRUE;
 		mono_method_set_generic_container (m, container);
+		auto rmb_generic_params = rmb->generic_params;
 
 		for (i = 0; i < count; i++) {
 			MonoReflectionGenericParam *gp =
-				mono_array_get (rmb->generic_params, MonoReflectionGenericParam*, i);
+				mono_array_get (rmb_generic_params, MonoReflectionGenericParam*, i);
 			MonoType *gp_type = mono_reflection_type_get_handle ((MonoReflectionType*)gp, error);
 			mono_error_assert_ok (error);
 			MonoGenericParamFull *param = (MonoGenericParamFull *) gp_type->data.generic_param;
@@ -3670,7 +3674,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 		}
 
 		MonoObjectHandle field_builder_handle = MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_NEW (MonoReflectionFieldBuilder, fb));
-		mono_dynamic_image_register_token (tb->module->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
+		mono_dynamic_image_register_token (tb->module.GetRaw ()->dynamic_image, mono_metadata_make_token (MONO_TABLE_FIELD, first_idx + i), field_builder_handle, MONO_DYN_IMAGE_TOK_NEW);
 	}
 
 	if (!mono_class_has_failure (klass))
@@ -3759,11 +3763,11 @@ typebuilder_setup_events (MonoClass *klass, MonoError *error)
 		if (!mono_error_ok (error))
 			return;
 		if (eb->add_method)
-			events [i].add = eb->add_method->mhandle;
+			events [i].add = eb->add_method.GetRaw ()->mhandle;
 		if (eb->remove_method)
-			events [i].remove = eb->remove_method->mhandle;
+			events [i].remove = eb->remove_method.GetRaw ()->mhandle;
 		if (eb->raise_method)
-			events [i].raise = eb->raise_method->mhandle;
+			events [i].raise = eb->raise_method.GetRaw ()->mhandle;
 
 #ifndef MONO_SMALL_CONFIG
 		if (eb->other_methods) {
@@ -4080,7 +4084,7 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 			handle_class = mono_defaults.methodhandle_class;
 		} else {
 			MonoException *ex = NULL;
-			ref = mono_reflection_resolve_object (mb->module->image, obj, &handle_class, NULL, error);
+			ref = mono_reflection_resolve_object (mb->module.GetRaw ()->image, obj, &handle_class, NULL, error);
 			if (!is_ok  (error)) {
 				g_free (rmb.refs);
 				return FALSE;
@@ -4112,7 +4116,7 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 		ass = klass->image->assembly;
 	} else {
 		klass = mono_defaults.object_class;
-		ass = (mb->module && mb->module->image) ? mb->module->image->assembly : NULL;
+		ass = (mb->module && mb->module.GetRaw ()->image) ? mb->module.GetRaw ()->image->assembly : NULL;
 	}
 
 	mb->mhandle = handle = reflection_methodbuilder_to_mono_method (klass, &rmb, sig, error);

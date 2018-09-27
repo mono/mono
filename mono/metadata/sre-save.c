@@ -883,21 +883,21 @@ mono_image_get_event_info (MonoReflectionEventBuilder *eb, MonoDynamicImage *ass
 		semaidx = table->next_idx ++;
 		values = table->values + semaidx * MONO_METHOD_SEMA_SIZE;
 		values [MONO_METHOD_SEMA_SEMANTICS] = METHOD_SEMANTIC_ADD_ON;
-		values [MONO_METHOD_SEMA_METHOD] = eb->add_method->table_idx;
+		values [MONO_METHOD_SEMA_METHOD] = eb->add_method.GetRaw ()->table_idx;
 		values [MONO_METHOD_SEMA_ASSOCIATION] = (eb->table_idx << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_EVENT;
 	}
 	if (eb->remove_method) {
 		semaidx = table->next_idx ++;
 		values = table->values + semaidx * MONO_METHOD_SEMA_SIZE;
 		values [MONO_METHOD_SEMA_SEMANTICS] = METHOD_SEMANTIC_REMOVE_ON;
-		values [MONO_METHOD_SEMA_METHOD] = eb->remove_method->table_idx;
+		values [MONO_METHOD_SEMA_METHOD] = eb->remove_method.GetRaw ()->table_idx;
 		values [MONO_METHOD_SEMA_ASSOCIATION] = (eb->table_idx << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_EVENT;
 	}
 	if (eb->raise_method) {
 		semaidx = table->next_idx ++;
 		values = table->values + semaidx * MONO_METHOD_SEMA_SIZE;
 		values [MONO_METHOD_SEMA_SEMANTICS] = METHOD_SEMANTIC_FIRE;
-		values [MONO_METHOD_SEMA_METHOD] = eb->raise_method->table_idx;
+		values [MONO_METHOD_SEMA_METHOD] = eb->raise_method.GetRaw ()->table_idx;
 		values [MONO_METHOD_SEMA_ASSOCIATION] = (eb->table_idx << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_EVENT;
 	}
 }
@@ -1177,7 +1177,7 @@ mono_image_fill_file_table (MonoDomain *domain, MonoReflectionModule *module, Mo
 	values [MONO_FILE_NAME] = string_heap_insert (&assembly->sheap, module->image->module_name);
 	if (image_is_dynamic (module->image)) {
 		/* This depends on the fact that the main module is emitted last */
-		dir = mono_string_to_utf8_checked (((MonoReflectionModuleBuilder*)module)->assemblyb->dir, error);
+		dir = mono_string_to_utf8_checked (((MonoReflectionModuleBuilder*)module)->assemblyb.GetRaw ()->dir, error);
 		return_val_if_nok (error, FALSE);
 		path = g_strdup_printf ("%s%c%s", dir, G_DIR_SEPARATOR, module->image->module_name);
 	} else {
@@ -1776,7 +1776,7 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			obj = &mono_class_get_ref_info_raw (k)->type.object; /* FIXME use handles */
 			g_assert (obj);
 			g_assert (!strcmp (m_class_get_name (mono_object_class (obj)), "TypeBuilder"));
-			g_assert (((MonoReflectionTypeBuilder*)obj)->module->dynamic_image != assembly);
+			g_assert (((MonoReflectionTypeBuilder*)obj)->module.GetRaw ()->dynamic_image != assembly);
 			continue;
 		case MONO_TABLE_MEMBERREF:
 			if (!strcmp (iltoken_member_class_name, "MonoArrayMethod")) {

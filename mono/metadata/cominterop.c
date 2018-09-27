@@ -1812,6 +1812,7 @@ ves_icall_System_ComObject_ReleaseInterfaces (MonoComObjectHandle obj, MonoError
 static gboolean    
 cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 {
+	HANDLE_FUNCTION_ENTER ();
 	guint32 gchandle = 0;
 
 	gchandle = GPOINTER_TO_UINT (value);
@@ -1819,13 +1820,14 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 		MonoComInteropProxy* proxy = (MonoComInteropProxy*)mono_gchandle_get_target (gchandle);
 
 		if (proxy) {
-			if (proxy->com_object->itf_hash) {
-				g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
-				g_hash_table_destroy (proxy->com_object->itf_hash);
+			auto proxy_com_object = mono_new_handle (proxy->com_object);
+			if (proxy_com_object->itf_hash) {
+				g_hash_table_foreach_remove (proxy_com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
+				g_hash_table_destroy (proxy_com_object->itf_hash);
 			}
-			mono_IUnknown_Release (proxy->com_object->iunknown);
-			proxy->com_object->iunknown = NULL;
-			proxy->com_object->itf_hash = NULL;
+			mono_IUnknown_Release (proxy_com_object->iunknown);
+			proxy_com_object->iunknown = NULL;
+			proxy_com_object->itf_hash = NULL;
 		}
 		
 		mono_gchandle_free (gchandle);

@@ -938,9 +938,9 @@ mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exce
 		if (!thread->abort_exc)
 			return;
 
-		g_assert (thread->abort_exc->object.vtable->domain != domain);
+		g_assert (thread->abort_exc.GetRaw ()->object.vtable->domain != domain);
 		MONO_OBJECT_SETREF (thread, abort_exc, mono_get_exception_thread_abort ());
-		g_assert (thread->abort_exc->object.vtable->domain == domain);
+		g_assert (thread->abort_exc.GetRaw ()->object.vtable->domain == domain);
 	}
 }
 

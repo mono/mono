@@ -3486,6 +3486,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 static void
 internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArray *params, MonoArray **outArgs, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoArray *out_args;
 	MonoClass *k = mono_object_class (this_arg);
@@ -3495,7 +3496,8 @@ internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	/* If this is a proxy, then it must be a CBO */
 	if (mono_class_is_transparent_proxy (k)) {
 		MonoTransparentProxy *tp = (MonoTransparentProxy*) this_arg;
-		this_arg = tp->rp->unwrapped_server.GetRaw ();
+		auto tp_rp = mono_new_handle (tp->rp);
+		this_arg = tp_rp->unwrapped_server.GetRaw ();
 		g_assert (this_arg);
 		k = mono_object_class (this_arg);
 	}
@@ -3532,6 +3534,7 @@ internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 static void
 internal_execute_field_setter (MonoDomain *domain, MonoObject *this_arg, MonoArray *params, MonoArray **outArgs, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoArray *out_args;
 	MonoClass *k = mono_object_class (this_arg);
@@ -3543,7 +3546,8 @@ internal_execute_field_setter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	/* If this is a proxy, then it must be a CBO */
 	if (mono_class_is_transparent_proxy (k)) {
 		MonoTransparentProxy *tp = (MonoTransparentProxy*) this_arg;
-		this_arg = tp->rp->unwrapped_server.GetRaw ();
+		auto tp_rp = mono_new_handle (tp->rp);
+		this_arg = tp_rp->unwrapped_server.GetRaw ();
 		g_assert (this_arg);
 		k = mono_object_class (this_arg);
 	}

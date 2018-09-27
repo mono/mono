@@ -69,7 +69,7 @@
 	} 							\
 } while (0)
 
-#define mono_string_builder_capacity(sb) sb->chunkOffset + sb->chunkChars->max_length
+#define mono_string_builder_capacity(sb) ((sb)->chunkOffset + mono_array_length_fast ((sb)->chunkChars))
 #define mono_string_builder_string_length(sb) sb->chunkOffset + sb->chunkLength
 
 /* 

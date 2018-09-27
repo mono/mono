@@ -819,6 +819,8 @@ mono_array_to_byte_byvalarray (gpointer native_arr, MonoArray *arr, guint32 elnu
 static MonoStringBuilder *
 mono_string_builder_new (int starting_string_length)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	static MonoClass *string_builder_class;
 	static MonoMethod *sb_ctor;
 	static void *args [1];
@@ -855,7 +857,7 @@ mono_string_builder_new (int starting_string_length)
 	g_assert (exc == NULL);
 	mono_error_assert_ok (error);
 
-	g_assert (sb->chunkChars->max_length >= initial_len);
+	g_assert (mono_new_handle (sb->chunkChars)->max_length >= initial_len);
 
 	return sb;
 }
@@ -863,7 +865,9 @@ mono_string_builder_new (int starting_string_length)
 static void
 mono_string_utf16_to_builder_copy (MonoStringBuilder *sb, const gunichar2 *text, size_t string_len)
 {
-	gunichar2 *charDst = (gunichar2 *)sb->chunkChars->vector;
+	HANDLE_FUNCTION_ENTER ();
+
+	gunichar2 *charDst = (gunichar2 *)mono_new_handle (sb->chunkChars)->vector;
 	memcpy (charDst, text, sizeof (gunichar2) * string_len);
 
 	sb->chunkLength = string_len;
@@ -1002,6 +1006,7 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 gunichar2*
 mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 
 	if (!sb)
@@ -1030,7 +1035,7 @@ mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 	do {
 		if (chunk->chunkLength > 0) {
 			// Check that we will not overrun our boundaries.
-			gunichar2 *source = (gunichar2 *)chunk->chunkChars->vector;
+			gunichar2 *source = (gunichar2 *)chunk->chunkChars.GetRaw ()->vector;
 
 			g_assertf (chunk->chunkLength <= len, "A chunk in the StringBuilder had a length longer than expected from the offset.");
 			memcpy (str + chunk->chunkOffset, source, chunk->chunkLength * sizeof(gunichar2));
@@ -1279,7 +1284,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	if (delegate->target && mono_handle_is_transparent_proxy (delegate->target)) {
 		MonoTransparentProxyHandle tp;
 		tp.New ((MonoTransparentProxy *)(MonoObject*)delegate->target.GetRaw ());
-		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
+		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp.GetRaw ()->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
 			*/

@@ -770,6 +770,8 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 // This is just less punctuation. FIXME mono_new_handle vs. mono_handle_new.
 template <typename T> inline MonoHandle<T> mono_new_handle (T* a) { return MonoHandle <T> ().New (a); }
 
+template <typename T> inline MonoHandle<T> mono_new_handle (MonoPtr<T> a) { return MonoHandle <T> ().New (a.GetRaw ()); }
+
 /*
 template <typename T>
 inline

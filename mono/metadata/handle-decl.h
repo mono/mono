@@ -207,7 +207,7 @@ It might also help if in
 	auto a = b->c->d
 c was temporary and replaced by d/a.
 ******************************************************************************************/
-	MonoHandle<T> operator -> () { return NewHandle<T> (); }
+	//MonoHandle<T> operator -> () { return NewHandle<T> (); }
 
 	//MonoPtr& operator = (std::nullptr_t) { p = 0; return *this; }
 	MonoPtr& operator = (MonoPtr q) { return operator =(q.p); }

@@ -3359,7 +3359,7 @@ mono_threads_install_cleanup (MonoThreadCleanupFunc func)
 void
 mono_thread_set_manage_callback (MonoThread *thread, MonoThreadManageCallback func)
 {
-	thread->internal_thread->manage_callback = func;
+	thread->internal_thread.GetRaw ()->manage_callback = func;
 }
 
 G_GNUC_UNUSED
@@ -4356,8 +4356,8 @@ mono_thread_get_undeniable_exception (void)
 	 * FIXME: Clear the abort exception and return an AppDomainUnloaded 
 	 * exception if the thread no longer references a dying appdomain.
 	 */ 
-	thread->abort_exc->trace_ips = NULL;
-	thread->abort_exc->stack_trace = NULL;
+	thread->abort_exc.GetRaw ()->trace_ips = NULL;
+	thread->abort_exc.GetRaw ()->stack_trace = NULL;
 	return thread->abort_exc.GetRaw();
 }
 
@@ -5511,7 +5511,7 @@ mono_thread_is_foreign (MonoThread *thread)
 {
 	mono_bool result;
 	MONO_ENTER_GC_UNSAFE;
-	MonoThreadInfo *info = (MonoThreadInfo *)thread->internal_thread->thread_info;
+	MonoThreadInfo *info = (MonoThreadInfo *)thread->internal_thread.GetRaw ()->thread_info;
 	result = (info->runtime_thread == FALSE);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
