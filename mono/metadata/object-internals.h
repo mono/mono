@@ -1670,8 +1670,8 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 gboolean
 mono_remote_class_is_interface_proxy (MonoRemoteClass *remote_class);
 
-MonoObject *
-mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);
+MonoObjectHandle
+mono_remoting_invoke (MonoObjectHandle real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error);
 
 gpointer
 mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRealProxyHandle real_proxy, MonoError *error);

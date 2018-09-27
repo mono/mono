@@ -669,14 +669,14 @@ MonoHandleFrame::~MonoHandleFrame ()
 
 template <typename T>
 void
-MonoHandle<T>::New (T * value)
+MonoHandleBase<T>::New (T * value)
 {
 	__raw = (T**)mono_handle_new ((MonoObject*)value);
 }
 
 template <typename T>
-MonoHandle<T>
-MonoHandle<T>::static_new (T * value)
+MonoHandleBase<T>
+MonoHandleBase<T>::static_new (T * value)
 {
 	MonoHandle<T> a;
 	a.New (value);
@@ -689,7 +689,7 @@ MonoObjectHandle mono_object_new_pinned_handle (MonoDomain *domain, MonoClass *k
 
 template <typename T>
 inline void
-MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
+MonoHandleBase<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	__raw = (T**)mono_object_new_pinned_handle (domain, klass, error).__raw;
 }

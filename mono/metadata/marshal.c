@@ -1259,6 +1259,8 @@ handle_enum:
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
@@ -1299,7 +1301,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke ((MonoObject *)tp->rp.get(), msg, &exc, &out_args, error);
+			mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
@@ -1970,13 +1972,16 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoAsyncResult *ares;
 	MonoMethod *method = NULL;
 	MonoMethodSignature *sig;
 	MonoMethodMessage *msg;
-	MonoObject *res, *exc;
+	MonoObjectHandle res;
+	MonoObject *exc;
 	MonoArray *out_args;
 	MonoClass *klass;
 
@@ -2034,7 +2039,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			return NULL;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke ((MonoObject *)tp->rp.get(), msg, &exc, &out_args, error);
+		res = mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;

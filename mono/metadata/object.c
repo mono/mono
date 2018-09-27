@@ -5745,10 +5745,10 @@ MonoObject *
 ves_icall_object_new_specific (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
-	MonoObject *o = mono_object_new_specific_checked (vtable, error);
+	MonoObjectHandle o = mono_object_new_specific_checked (vtable, error);
 	mono_error_set_pending_exception (error);
 
-	return o;
+	return MONO_HANDLE_RAW (o);
 }
 
 /**
@@ -5768,10 +5768,10 @@ MonoObject *
 mono_object_new_alloc_specific (MonoVTable *vtable)
 {
 	ERROR_DECL (error);
-	MonoObject *o = mono_object_new_alloc_specific_checked (vtable, error);
+	MonoObjectHandle o = mono_object_new_alloc_specific_checked (vtable, error);
 	mono_error_cleanup (error);
 
-	return o;
+	return MONO_HANDLE_RAW (o);
 }
 
 /**
@@ -8104,11 +8104,11 @@ mono_message_init (MonoDomain *domain,
  * \returns the result object.
  */
 MonoObject *
-mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
+mono_remoting_invoke (MonoObjectHandle real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o;
+	MonoObjectHandle o;
 	MonoMethod *im = real_proxy->vtable->domain->private_invoke_method;
 	gpointer pa [4];
 
@@ -8128,7 +8128,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 		real_proxy->vtable->domain->private_invoke_method = im;
 	}
 
-	pa [0] = real_proxy;
+	pa [0] = real_proxy.get();
 	pa [1] = msg;
 	pa [2] = exc;
 	pa [3] = out_args;
@@ -8136,7 +8136,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject
 	o = mono_runtime_try_invoke (im, NULL, pa, exc, error);
 	return_val_if_nok (error, NULL);
 
-	return o;
+	return MONO_HANDLE_RAW (o);
 }
 #endif
 
@@ -8161,7 +8161,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 			target = tp->rp->unwrapped_server;
 		} else {
-			return mono_remoting_invoke ((MonoObject *)(MonoRealProxy*)tp->rp, msg, exc, out_args, error);
+			return mono_remoting_invoke (tp->rp, msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8621,6 +8621,7 @@ mono_load_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField *
 gpointer
 mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, gpointer *res, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	static MonoMethod *getter = NULL;
@@ -8672,7 +8673,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	return_val_if_nok (error, NULL);
 	mono_array_setref (msg->args, 1, field_name);
 
-	mono_remoting_invoke ((MonoObject *)(MonoRealProxy*)tp->rp, msg, &exc, &out_args, error);
+	mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
