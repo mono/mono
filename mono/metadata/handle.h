@@ -601,6 +601,23 @@ mono_handle_unbox_unsafe (MonoObjectHandle handle)
 	return MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle) + 1);
 }
 
+extern "C++" {
+
+template <typename T>
+inline void*
+mono_object_unbox (MonoHandle<T> obj)
+{
+	return mono_object_unbox (MONO_HANDLE_RAW (obj));
+}
+
+template <typename T>
+inline MonoClass*
+mono_object_get_class (MonoHandle<T> obj)
+{
+	return mono_object_get_class (MONO_HANDLE_RAW (obj));
+}
+}
+
 void
 mono_error_set_exception_handle (MonoError *error, MonoExceptionHandle exc);
 
@@ -743,7 +760,8 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 // Note: multiple/early return should now work.
 #define HANDLE_FUNCTION_RETURN_VAL(x) return (x)
 #define HANDLE_FUNCTION_RETURN_OBJ(handle) return (handle).GetRaw()
-#define HANDLE_FUNCTION_RETURN_REF(type, handle) return (handle).return_handle (local_handle_frame)
+#define MONO_RETURN_HANDLE(handle) return (handle).return_handle (local_handle_frame)
+#define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
 #define MONO_HANDLE_NEW(type, value) 		 (MonoHandle<type>::static_new (value))
 #define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle<type>::static_new ((handle)->field))
 

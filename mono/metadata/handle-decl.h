@@ -222,6 +222,8 @@ private:
 template <typename T>
 struct MonoHandle
 {
+	MONO_ALWAYS_INLINE void Init () { __raw = 0; }
+
 	MONO_ALWAYS_INLINE
 	MonoHandle return_handle (MonoHandleFrame& frame)
 	{
@@ -241,9 +243,9 @@ struct MonoHandle
 
 	MONO_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
 
-	void New (T * value);
+	void New (T * value = 0);
 
-	static MonoHandle static_new (T * value);
+	static MonoHandle static_new (T * value = 0);
 
 	// FIXME
 	MONO_ALWAYS_INLINE void* ForInvoke () { return GetRaw(); }

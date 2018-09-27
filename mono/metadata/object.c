@@ -316,15 +316,16 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
  *
  *   Return the stored type initialization exception for VTABLE.
  */
-static MonoException*
+static MonoExceptionHandle
 get_type_init_exception_for_vtable (MonoVTable *vtable)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
 	MonoDomain *domain = vtable->domain;
 	MonoClass *klass = vtable->klass;
-	MonoException *ex;
+	MonoExceptionHandle ex;
 	gchar *full_name;
 
 	if (!vtable->init_failed)
@@ -334,7 +335,7 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 	 * If the initializing thread was rudely aborted, the exception is not stored
 	 * in the hash.
 	 */
-	ex = NULL;
+	ex.New();
 	mono_domain_lock (domain);
 	if (domain->type_init_exception_hash)
 		ex = (MonoException *)mono_g_hash_table_lookup (domain->type_init_exception_hash, klass);
@@ -349,7 +350,9 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 			full_name = g_strdup (klass_name);
 		ex = mono_get_exception_type_initialization_checked (full_name, NULL, error);
 		g_free (full_name);
-		return_val_if_nok (error, NULL);
+		MonoExceptionHandle null;
+		null.Init();
+		return_val_if_nok (error, null);
 	}
 
 	return ex;
