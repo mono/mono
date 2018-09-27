@@ -4764,7 +4764,7 @@ if test "x$with_tls" = "x__thread"; then
 	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
 		], [
 			AC_MSG_RESULT(yes)
-			AC_DEFINE(HAVE_UNIX_TLS_MODEL_ATTR, 1, [tls_model available])
+			AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tls_model available])
 		], [
 			AC_MSG_RESULT(no)
 	])
