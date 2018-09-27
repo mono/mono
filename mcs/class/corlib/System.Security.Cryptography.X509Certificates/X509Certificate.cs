@@ -93,11 +93,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public X509Certificate (byte[] data)
 		{
-			if (data != null && data.Length != 0) {
-				// For compat reasons, this constructor treats passing a null or empty data set as the same as calling the nullary constructor.
-				using (var safePasswordHandle = new SafePasswordHandle ((string)null))
-					impl = X509Helper.Import (data, safePasswordHandle, X509KeyStorageFlags.DefaultKeySet);
-			}
+			if (data != null && data.Length != 0)
+				impl = X509Helper.Import (data);
 		}
 
 		public X509Certificate (byte[] rawData, string password)
