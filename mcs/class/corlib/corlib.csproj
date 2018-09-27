@@ -427,6 +427,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\CustomAttributeFormatException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\DefaultMemberAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\EventAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\EventInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ExceptionHandlingClauseOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\FieldInfo.cs" />
@@ -792,6 +793,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Serialization.Formatters\src\System\Runtime\Serialization\SerializationObjectManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Serialization.Formatters\src\System\Runtime\Serialization\ValueTypeFixupInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\IO\FileAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Runtime\ConstrainedExecution\PrePrepareMethodAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime\src\System\Runtime\NgenServicingAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.AccessControl\src\System\Security\AccessControl\PrivilegeNotHeldException.cs" />
@@ -1013,7 +1015,6 @@
     <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />

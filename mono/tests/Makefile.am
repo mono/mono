@@ -1055,6 +1055,12 @@ PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw
 PLATFORM_DISABLED_TESTS += verbose.exe
 endif
 
+if HOST_DARWIN
+
+# see https://github.com/mono/mono/issues/10845
+PLATFORM_DISABLED_TESTS += bug-80392.2.exe monitor-wait-abort.exe
+endif
+
 if AMD64
 # #651684
 PLATFORM_DISABLED_TESTS += finally_guard.exe
@@ -1500,6 +1506,9 @@ CI_PR_DISABLED_TESTS =
 
 # FIXME Hybrid Suspend - see https://github.com/mono/mono/issues/9959
 # CI_PR_DISABLED_TESTS += sgen-new-threads-collect.exe
+
+# https://github.com/mono/mono/issues/8997
+CI_PR_DISABLED_TESTS += finalizer-thread.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
