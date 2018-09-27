@@ -433,10 +433,10 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 			}
 		}
 
-		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_object_unbox_unsafe (this_obj) : this_obj.get (), mparams, error);
+		res = mono_runtime_invoke_checked (method, m_class_is_valuetype (method->klass) ? mono_object_unbox_unsafe (this_obj) : this_obj, mparams, error);
 		goto_if_nok (error, fail);
 
-		return MONO_HANDLE_RAW (res);
+		return res;
 	}
 
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
