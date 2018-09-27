@@ -215,8 +215,8 @@ struct MonoHandleFrame
 private:
 	void pop ();
 	bool do_pop;
-	HandleStackMark __mark;
-	MonoThreadInfo *__info;
+	HandleStackMark stackmark;
+	MonoThreadInfo *threadinfo;
 };
 
 #include <type_traits>
