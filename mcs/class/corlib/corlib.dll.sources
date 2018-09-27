@@ -1112,6 +1112,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/__hresults.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/EncodingCache.cs
 ../referencesource/mscorlib/system/io/bufferedstream.cs
 ../referencesource/mscorlib/system/io/directory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
@@ -1455,7 +1456,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF8Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
 ../referencesource/mscorlib/system/text/codepageencoding.cs
-../referencesource/mscorlib/system/text/encoding.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/Encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 
@@ -1830,3 +1831,5 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/Error.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamHelpers.CopyValidation.cs
+
+../../../external/corefx/src/Common/src/System/Text/EncodingHelper.Unix.cs
