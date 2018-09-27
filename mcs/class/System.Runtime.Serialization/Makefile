@@ -27,15 +27,15 @@ LIB_MCS_FLAGS += /d:NO_CONFIGURATION
 endif
 
 TEST_RESOURCE_FILES = \
-	Test/Resources/WSDL/collections.wsdl	\
-	Test/Resources/WSDL/custom-collections.wsdl
+	$(wildcard Test/Resources/FrameworkTypes/*.xml) \
+	$(wildcard Test/Resources/Schemas/*.xsd) \
+	Test/Resources/WSDL/collections.wsdl \
+	Test/Resources/WSDL/custom-collections.wsdl \
+	Test/Resources/one.xml
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(TEST_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 TEST_LIB_REFS = System.ServiceModel System.Web.Services
 
-EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
-	Test/Resources/FrameworkTypes/* \
-	Test/Resources/Schemas/*.xsd \
-	Test/System.Runtime.Serialization/one.xml
+EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES)
 
 include ../../build/library.make
