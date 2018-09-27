@@ -721,7 +721,8 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 
 /*
 1. These should be drop-in replacements for the old macros -- so we only have one system.
-2. They should be trivial enough that there is not really a need for them.
+2. They should be trivial enough that there is not really a need for them, esp.
+   in the most common scenarios.
 3. They are not yet complete. But given drop-in replacement,
    and the old macros work, the old macros remain for less common scenarios.
 4. Requires typesafe handles.
