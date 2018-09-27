@@ -224,9 +224,13 @@ private:
 template <typename T>
 struct MonoHandle
 {
-	MONO_ALWAYS_INLINE void Init () { __raw = 0; }
+	// FIXME in future this should have a constructor
+	// It lacks constructor and destructor for JIT interop.
 
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
+	MonoHandle& Init () { __raw = 0; return *this; }
+
+	G_ALWAYS_INLINE
 	MonoHandle return_handle (MonoHandleFrame& frame)
 	{
 		MonoHandle h;
@@ -235,7 +239,7 @@ struct MonoHandle
 	}
 
 	template <typename T2>
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
 	MonoHandle<T2> cast () const
 	{
 		MonoHandle<T2> h;
@@ -245,32 +249,39 @@ struct MonoHandle
 
 	MONO_ALWAYS_INLINE explicit operator bool () const { return __raw && *__raw; }
 
-	void New (T * value = 0);
+	MonoHandle& New (T * value = 0);
 
 	static MonoHandle static_new (T * value = 0);
 
 	// FIXME?
-	MONO_ALWAYS_INLINE void* ForInvoke () { return GetRaw(); }
+	G_ALWAYS_INLINE
+	void* ForInvoke () { return GetRaw(); }
 
 	// FIXME?
-	MONO_ALWAYS_INLINE MonoHandle<MonoObject> AsMonoObjectHandle () { return cast <MonoObject>(); }
+	G_ALWAYS_INLINE
+	MonoHandle<MonoObject> AsMonoObjectHandle () { return cast <MonoObject>(); }
 
-	MONO_ALWAYS_INLINE MonoObject* AsMonoObjectPtr () { return (MonoObject*)GetRaw();}
+	G_ALWAYS_INLINE
+	MonoObject* AsMonoObjectPtr () { return (MonoObject*)GetRaw();}
 
-	MONO_ALWAYS_INLINE T * GetRaw () { return get (); }
+	G_ALWAYS_INLINE
+	T * GetRaw () { return get (); }
 
-	MONO_ALWAYS_INLINE operator T * () { return get (); } // FIXME?
+	G_ALWAYS_INLINE
+	operator T * () { return get (); } // FIXME?
 
-	MONO_ALWAYS_INLINE T * get() { return __raw ? *__raw : NULL; } // FIXME?
+	G_ALWAYS_INLINE
+	T * get() { return __raw ? *__raw : NULL; } // FIXME?
 
 	// if T != MonoObject, provide operator MonoObject*
 	template < typename U = T,
 	    	   typename = typename std::enable_if< !std::is_same<U, MonoObject>::value >::type>
-	MONO_ALWAYS_INLINE operator MonoObject* () { return (MonoObject*)get (); } // FIXME?
+	G_ALWAYS_INLINE
+	operator MonoObject* () { return (MonoObject*)get (); } // FIXME?
 	
 	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
 	MonoHandle& operator=(MonoHandle p)
 	{
 		// FIXME *__raw = *p.__raw; ?
@@ -278,13 +289,13 @@ struct MonoHandle
 		return *this;
 	}
 
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
 	MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p; return *this; }
 
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
 	MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
 
-	MONO_ALWAYS_INLINE
+	G_ALWAYS_INLINE
 	T* operator-> () { g_assert (__raw); return *__raw; }
 
 //private:
@@ -299,13 +310,13 @@ struct MonoHandle
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
 /* FIXME Are these needed in C++? */ \
-static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+static inline G_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
 MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 {								\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
-static inline MONO_ALWAYS_INLINE MonoObject* 			\
+static inline G_ALWAYS_INLINE MonoObject* 			\
 MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
 	return (MonoObject*)a;					\
@@ -326,13 +337,13 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 	  TYPED_OUT_HANDLE_NAME (TYPE);						\
 /* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
 /* Another way to do this involved casting mono_handle_new function to a different type. */ \
-static inline MONO_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
+static inline G_ALWAYS_INLINE TYPED_HANDLE_NAME (TYPE) 	\
 MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
 {								\
 	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
 	return b;						\
 }								\
-static inline MONO_ALWAYS_INLINE MonoObject* 			\
+static inline G_ALWAYS_INLINE MonoObject* 			\
 MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 {								\
 	return (MonoObject*)a;					\

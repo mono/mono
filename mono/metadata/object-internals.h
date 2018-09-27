@@ -1620,8 +1620,17 @@ mono_release_type_locks (MonoInternalThread *thread);
 int
 mono_string_handle_length (MonoStringHandle s);
 
-char *
-mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
+inline char * // old C name
+mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error)
+{
+	return mono_string_to_utf8_checked (MONO_HANDLE_RAW (s), error);
+}
+
+inline char * // C++ overload for easier conversion
+mono_string_to_utf8_checked (MonoStringHandle s, MonoError *error)
+{
+	return mono_string_to_utf8_checked (MONO_HANDLE_RAW (s), error);
+}
 
 char *
 mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error);
@@ -1871,7 +1880,7 @@ mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void *
 MonoObject*
 mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
 
-MonoString*
+MonoStringHandle
 mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error);
 
 char *
@@ -1892,6 +1901,9 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
 
 char *
 mono_exception_get_managed_backtrace (MonoException *exc);
+
+char *
+mono_exception_get_managed_backtrace (MonoExceptionHandle exc);
 
 void
 mono_copy_value (MonoType *type, void *dest, void *value, int deref_pointer);
