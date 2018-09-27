@@ -76,8 +76,8 @@ void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_da
 gboolean mono_handle_stack_is_empty (HandleStack *stack);
 HandleStack* mono_handle_stack_alloc (void);
 void mono_handle_stack_free (HandleStack *handlestack);
-MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *__mark, MonoRawHandle value);
-void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *__mark, const char *func_name);
+MonoRawHandle mono_stack_mark_pop_value (MonoThreadInfo *info, HandleStackMark *stackmark, MonoRawHandle value);
+void mono_stack_mark_record_size (MonoThreadInfo *info, HandleStackMark *stackmark, const char *func_name);
 void mono_handle_stack_free_domain (HandleStack *stack, MonoDomain *domain);
 
 #ifdef MONO_HANDLE_TRACK_SP
@@ -85,33 +85,33 @@ void mono_handle_chunk_leak_check (HandleStack *handles);
 #endif
 
 static inline void
-mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *__mark)
+mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
 #ifdef MONO_HANDLE_TRACK_SP
-	gpointer sptop = &__mark;
+	gpointer sptop = &stackmark;
 #endif
 	HandleStack *handles = info->handle_stack;
-	__mark->size = handles->top->size;
-	__mark->chunk = handles->top;
-	__mark->interior_size = handles->interior->size;
+	stackmark->size = handles->top->size;
+	stackmark->chunk = handles->top;
+	stackmark->interior_size = handles->interior->size;
 #ifdef MONO_HANDLE_TRACK_SP
-	__mark->prev_sp = handles->stackmark_sp;
+	stackmark->prev_sp = handles->stackmark_sp;
 	handles->stackmark_sp = sptop;
 #endif
 }
 
 static inline void
-mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *__mark)
+mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 {
 	HandleStack *handles = info->handle_stack;
-	HandleChunk *old_top = __mark->chunk;
-	old_top->size = __mark->size;
+	HandleChunk *old_top = stackmark->chunk;
+	old_top->size = stackmark->size;
 	mono_memory_write_barrier ();
 	handles->top = old_top;
-	handles->interior->size = __mark->interior_size;
+	handles->interior->size = stackmark->interior_size;
 #ifdef MONO_HANDLE_TRACK_SP
 	mono_memory_write_barrier (); /* write to top before prev_sp */
-	handles->stackmark_sp = __mark->prev_sp;
+	handles->stackmark_sp = stackmark->prev_sp;
 #endif
 }
 
@@ -121,26 +121,26 @@ Icall macros
 #define SETUP_ICALL_COMMON	\
 	do { \
 		ERROR_DECL (error);	\
-		MonoThreadInfo *__info = mono_thread_info_current ();	\
+		MonoThreadInfo *threadinfo = mono_thread_info_current ();	\
 		error_init (error);	\
 
 #define CLEAR_ICALL_COMMON	\
 	mono_error_set_pending_exception (error);
 
 #define SETUP_ICALL_FRAME	\
-	HandleStackMark __mark;	\
-	mono_stack_mark_init (__info, &__mark);
+	HandleStackMark stackmark;	\
+	mono_stack_mark_init (threadinfo, &stackmark);
 
 #define CLEAR_ICALL_FRAME	\
-	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
-	mono_stack_mark_pop (__info, &__mark);
+	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);	\
+	mono_stack_mark_pop (threadinfo, &stackmark);
 
 #define CLEAR_ICALL_FRAME_VALUE(RESULT, HANDLE)				\
-	mono_stack_mark_record_size (__info, &__mark, __FUNCTION__);	\
-	(RESULT) = g_cast (mono_stack_mark_pop_value (__info, &__mark, (HANDLE)));
+	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);	\
+	(RESULT) = g_cast (mono_stack_mark_pop_value (threadinfo, &stackmark, (HANDLE)));
 
 #define HANDLE_FUNCTION_ENTER() do {				\
-	MonoThreadInfo *__info = mono_thread_info_current ();	\
+	MonoThreadInfo *threadinfo = mono_thread_info_current ();	\
 	SETUP_ICALL_FRAME					\
 
 #define HANDLE_FUNCTION_RETURN()		\
@@ -202,10 +202,10 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 #define SETUP_STACK_WATERMARK	\
 	int __dummy;	\
 	__builtin_unwind_init ();	\
-	void *__old_stack_mark = mono_thread_info_push_stack_mark (__info, &__dummy);
+	void *__old_stack_mark = mono_thread_info_push_stack_mark (threadinfo, &__dummy);
 
 #define CLEAR_STACK_WATERMARK	\
-	mono_thread_info_pop_stack_mark (__info, __old_stack_mark);
+	mono_thread_info_pop_stack_mark (threadinfo, __old_stack_mark);
 
 #else
 #define SETUP_STACK_WATERMARK
@@ -675,8 +675,8 @@ void **MonoHandleFrame::allocate_handle_in_caller (void* value)
 inline
 MonoHandleFrame::MonoHandleFrame () : do_pop(true)
 {
-	__info = (MonoThreadInfo*)mono_thread_info_current ();
-	mono_stack_mark_init (__info, &__mark);
+	threadinfo = (MonoThreadInfo*)mono_thread_info_current ();
+	mono_stack_mark_init (threadinfo, &stackmark);
 }
 
 inline
