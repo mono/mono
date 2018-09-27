@@ -16,3 +16,4 @@ System.Security.AccessControl/RegistryAccessRule.cs
 System.Security.AccessControl/RegistryAuditRule.cs
 System.Security.AccessControl/RegistrySecurity.cs
 ../referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
+../../../external/corefx/src/Common/src/System/Text/EncodingHelper.Unix.cs

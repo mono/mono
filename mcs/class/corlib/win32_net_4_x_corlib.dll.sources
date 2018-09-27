@@ -60,3 +60,6 @@ corefx/Registry.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegQueryInfoKey.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegQueryValueEx.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegSetValueEx.cs
+
+
+../../../external/corefx/src/Common/src/System/Text/EncodingHelper.Windows.cs
