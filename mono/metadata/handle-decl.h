@@ -236,9 +236,11 @@ private:
 	MonoThreadInfo *threadinfo;
 };
 
-template <typename T>
+template <typename t>
 struct MonoHandle
 {
+	typedef t T;
+
 	// FIXME in future this should have a constructor
 	// It lacks constructor and destructor for JIT interop.
 	// FIXME? Naming style: Init or init or other?

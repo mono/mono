@@ -139,6 +139,20 @@ Icall macros
 	mono_stack_mark_record_size (threadinfo, &stackmark, __FUNCTION__);	\
 	(RESULT) = g_cast (mono_stack_mark_pop_value (threadinfo, &stackmark, (HANDLE)));
 
+#ifdef __cplusplus
+
+#define MONO_HANDLE_SCOPE MonoHandleFrame local_handle_frame;
+#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ()
+#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
+
+#define HANDLE_FUNCTION_ENTER() 		 MONO_HANDLE_SCOPE
+#define HANDLE_FUNCTION_RETURN() 		 /* nothing */
+#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
+#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 MONO_RETURN_RAW (handle)
+#define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
+
+#else // Keep C working for profiler.
+
 #define HANDLE_FUNCTION_ENTER() do {				\
 	MonoThreadInfo *threadinfo = mono_thread_info_current ();	\
 	SETUP_ICALL_FRAME					\
@@ -168,6 +182,8 @@ Icall macros
 		CLEAR_ICALL_FRAME_VALUE (__result.__raw, (HANDLE).__raw); \
 		return MONO_HANDLE_CAST (TYPE, __result);		\
 	} while (0); } while (0);
+
+#endif
 
 #ifdef MONO_NEEDS_STACK_WATERMARK
 
@@ -244,6 +260,35 @@ Handle macros/functions
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
 
+#define MONO_BOOL(x)             (!!MONO_HANDLE_SUPPRESS (x))
+
+#ifdef __cplusplus
+
+#define MONO_HANDLE_CAST(type, value)   ((value).cast <type> ())
+#define MONO_HANDLE_RAW(handle)         ((handle).GetRaw())
+#define MONO_HANDLE_IS_NULL(handle)     (!(handle))
+#define MONO_HANDLE_BOOL(handle)        (handle)
+
+// FIXME Order of evaluation of handle vs. value/result?
+// handle-> leaves a dangling raw pointer, while value/result is evaluated,
+// but in terms of lifetime, the handle already exists and keeps it alive.
+// It should only be a problem for a moving/compacting GC.
+//
+// To fix that we'd have to give up on a macro-free conversion.
+#define MONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
+#define MONO_HANDLE_SET(handle, field, value) 	 ((handle)->field = (value))
+#ifndef MONO_HANDLE_TRACK_OWNER
+#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New (object))
+#else
+#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New ((object), HANDLE_OWNER))
+#endif
+#define MONO_HANDLE_GET(result, handle, field)	((result) = ((handle)->field))
+#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.NewHandle ())
+#define MONO_HANDLE_GETVAL(handle, field) 	((handle)->field)
+#define MONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
+
+#else // Keep C working for profiler.
+
 // With Visual C++ compiling as C, the type of a ternary expression
 // yielding two unrelated non-void pointers is the type of the first, plus a warning.
 // This can be used to simulate gcc typeof extension.
@@ -256,21 +301,15 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 #endif
 
 #ifndef MONO_HANDLE_TRACK_OWNER
-#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New (object))
+#define MONO_HANDLE_NEW(type, object) \
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object))))
 #else
-#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New ((object), HANDLE_OWNER))
+#define MONO_HANDLE_NEW(type, object) \
+	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object), HANDLE_OWNER)))
 #endif
 
-#define MONO_HANDLE_CAST(type, value) ((value).cast<type>)
-
-#ifdef __cplusplus
-#define MONO_HANDLE_RAW(handle)     ((handle).GetRaw())
-#else
 #define MONO_HANDLE_RAW(handle)     (MONO_TYPEOF_CAST (*(handle).__raw, mono_handle_raw ((handle).__raw)))
-#endif
 #define MONO_HANDLE_IS_NULL(handle) (mono_handle_is_null ((handle).__raw))
-
-#define MONO_BOOL(x)             (!!MONO_HANDLE_SUPPRESS (x))
 #define MONO_HANDLE_BOOL(handle) (MONO_BOOL (!MONO_HANDLE_IS_NULL (handle)))
 
 /*
@@ -308,10 +347,6 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 // Get handle->field, where field is not a pointer (an integer or non-managed pointer).
 #define MONO_HANDLE_GETVAL(HANDLE, FIELD) MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD)
 
-// Get handle->field as a boolean, i.e. typically compare managed pointer to NULL,
-// though any type is ok.
-#define MONO_HANDLE_GET_BOOL(handle, field) (MONO_BOOL (MONO_HANDLE_GETVAL (handle, field)))
-
 // handle->field = (type)value, for non-managed pointers
 // This would be easier to write with the gcc extension typeof,
 // but it is not widely enough implemented (i.e. Microsoft C).
@@ -319,6 +354,13 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		TYPE __val = (VALUE);	\
 		MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD = __val); \
 	 } while (0)
+
+
+#endif
+
+// Get handle->field as a boolean, i.e. typically compare managed pointer to NULL,
+// though any type is ok.
+#define MONO_HANDLE_GET_BOOL(handle, field) (MONO_BOOL (MONO_HANDLE_GETVAL (handle, field)))
 
 #define MONO_HANDLE_ARRAY_SETREF(HANDLE, IDX, VALUE) do {	\
 		uintptr_t __idx = (IDX);	\
@@ -359,8 +401,13 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)); \
 	} while (0)
 
+// Cast because people mix types.
+#ifdef __cplusplus
+#define MONO_HANDLE_ASSIGN(DESTH, SRCH) ((DESTH).assign (SRCH.cast <std::remove_reference <decltype (DESTH)>::type::T> ()))
+#else // Keep C working for profiler.
 #define MONO_HANDLE_ASSIGN(DESTH, SRCH)				\
 	mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH)))
+#endif
 
 #define MONO_HANDLE_DOMAIN(HANDLE) MONO_HANDLE_SUPPRESS (mono_object_domain (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)))))
 
@@ -393,6 +440,8 @@ TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoException);
 TYPED_HANDLE_DECL (MonoAppContext);
 
+#ifndef __cplusplus
+
 // Structs cannot be cast to structs.
 // Therefore, cast the function pointer to change its return type.
 // As well, a function is needed because an anonymous struct cannot be initialized in C.
@@ -417,6 +466,8 @@ mono_handle_raw (MonoRawHandle raw_handle)
 	MonoObjectHandle *handle = (MonoObjectHandle*)&raw_handle;
 	return handle->__raw ? *handle->__raw : NULL;
 }
+
+#endif
 
 /* Unfortunately MonoThreadHandle is already a typedef used for something unrelated.  So
  * the coop handle for MonoThread* is MonoThreadObjectHandle.
@@ -564,17 +615,6 @@ mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handl
 	return mono_gchandle_new_weakref (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (handle)), TRUE);
 }
 
-/* C++ coop handles
-
-Goals:
-1. Shared runtime -- handle allocation is the same.
-2. New versions of the macros, to optionally use, with same interface.
-3. Macros are so simple, you can mostly skip them, except for HANDLE_FUNCTION_ENTER. 
-
-Depends on MonoPtr in object-internals.h etc.
-Requires typesafe handles.
-*/
-
 #ifdef __cplusplus
 extern "C++" {
 
@@ -626,61 +666,9 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 	__raw = (T**)mono_object_new_pinned_handle (domain, klass, error).__raw;
 }
 
-/*
-1. These should be drop-in replacements for the old macros -- so we only have one system.
-2. They should be trivial enough that there is not really a need for them, esp.
-   in the most common scenarios.
-3. They are not yet complete. But given drop-in replacement,
-   and the old macros work, the old macros remain for less common scenarios.
-4. Requires typesafe handles.
-*/
-#undef HANDLE_FUNCTION_ENTER
-#undef MONO_HANDLE_CAST
-#undef MONO_HANDLE_GET
-#undef MONO_HANDLE_GETVAL
-#undef MONO_HANDLE_SETVAL
-#undef MONO_HANDLE_SETRAW
-#undef MONO_HANDLE_SET
-#undef MONO_HANDLE_IS_NULL
-#undef MONO_HANDLE_BOOL
-#undef HANDLE_FUNCTION_RETURN
-#undef HANDLE_FUNCTION_RETURN_VAL
-#undef HANDLE_FUNCTION_RETURN_OBJ
-#undef HANDLE_FUNCTION_RETURN_REF
-#undef MONO_HANDLE_NEW
-#undef MONO_HANDLE_NEW_GET
-
-// Not all of these are worth having macros for.
-// Some of them are just for compatibility with prior model.
-// Really only MONO_HANDLE_SCOPE is worth a macro.
-
-// new names
-#define MONO_HANDLE_SCOPE MonoHandleFrame local_handle_frame;
-#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ()
-#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
-
-// old and new names / compat
-#define MONO_HANDLE_CAST(type, value) 		((value).cast<type>())
-#define MONO_HANDLE_GET(result, handle, field)	((result) = ((handle)->field))
-#define MONO_HANDLE_GETVAL(handle, field) 	((handle)->field)
-#define MONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
-#define MONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
-#define MONO_HANDLE_SET(handle, field, value) 	 ((handle)->field = (value))
-#define MONO_HANDLE_IS_NULL(handle) 		 (!(handle))
-#define MONO_HANDLE_BOOL(handle) 		 (handle)
-#define MONO_HANDLE_NEW(type, value) 		 (MonoHandle <type> ().New (value))
-#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.NewHandle ())
-
-// new functions (there is also mono_handle_new FIXME)
+// There is also mono_handle_new FIXME
 template <typename T> inline MonoHandle<T> mono_new_handle (T* a) { return MonoHandle <T> ().New (a); }
 template <typename T> inline MonoHandle<T> mono_new_handle (MonoPtr<T> a) { return MonoHandle <T> ().New (a.GetRaw ()); }
-
-// old names / compat
-#define HANDLE_FUNCTION_ENTER() 		 MONO_HANDLE_SCOPE
-#define HANDLE_FUNCTION_RETURN() 		 /* nothing */
-#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
-#define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 MONO_RETURN_RAW (handle)
-#define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
 
 } // extern C++
 #endif
