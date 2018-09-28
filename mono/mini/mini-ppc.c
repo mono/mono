@@ -5769,11 +5769,11 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	if (reg == ppc_r1)
-		return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+		return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 
 	return ctx->regs [reg];
 }

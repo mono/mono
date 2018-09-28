@@ -6871,10 +6871,10 @@ mono_arch_get_patch_offset (guint8 *code)
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
-	return ((mgreg_t) ctx->uc_mcontext.gregs[reg]);
+	return (host_mgreg_t) ctx->uc_mcontext.gregs[reg];
 }
 
 /*========================= End of Function ========================*/
@@ -6888,7 +6888,7 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
 	ctx->uc_mcontext.gregs[reg] = val;
 }
