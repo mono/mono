@@ -357,7 +357,7 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb, Mon
 		if (mb->ilgen->ex_handlers)
 			num_exception = mono_reflection_method_count_clauses (mb->ilgen);
 	} else {
-		code = mb->code.NewHandle ();
+		code.New (mb->code);
 		if (code == NULL) {
 			ERROR_DECL (inner_error);
 			char *name = mono_string_to_utf8_checked (mb->name.NewHandle (), inner_error);
