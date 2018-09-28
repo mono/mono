@@ -2418,7 +2418,7 @@ create_map (MonoCompile *cfg)
 		p += encoded_size;
 
 		/* Callsite table */
-		p = (guint8*)ALIGN_TO ((mgreg_t)p, map->callsite_entry_size);
+		p = (guint8*)ALIGN_TO ((gsize)p, map->callsite_entry_size);
 		if (map->callsite_entry_size == 1) {
 			guint8 *offsets = p;
 			for (i = 0; i < ncallsites; ++i)

@@ -179,7 +179,7 @@ memdup_with_type (gpointer data, MonoType *t)
 static guint8 *
 get_int_reg (MonoContext *ctx, guint32 reg)
 {
-	return (guint8 *) mono_arch_context_get_int_reg (ctx, reg);
+	return (guint8 *)(gsize)mono_arch_context_get_int_reg (ctx, reg);
 }
 
 static gpointer

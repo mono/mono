@@ -523,7 +523,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			*((host_mgreg_t*)&new_ctx->fregs [8 + i]) = (regs + MONO_MAX_IREGS) [i];
 
 		new_ctx->pc = regs [ARMREG_LR];
-		new_ctx->regs [ARMREG_SP] = (host_mgreg_t)cfa;
+		new_ctx->regs [ARMREG_SP] = (host_mgreg_t)(gsize)cfa;
 
 		if (*lmf && (*lmf)->gregs [MONO_ARCH_LMF_REG_SP] && (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->gregs [MONO_ARCH_LMF_REG_SP])) {
 			/* remove any unused lmf */
@@ -625,7 +625,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 {
 	mono_cross_compile_assert_not_reached ();
 
-	char* sp = (char*)MONO_CONTEXT_GET_SP (ctx);
+	host_mgreg_t sp = (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 
 	// FIXME:
 	g_assert (!user_data);
