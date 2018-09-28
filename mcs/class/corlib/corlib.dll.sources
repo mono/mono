@@ -1120,7 +1120,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/__hresults.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
-../referencesource/mscorlib/system/io/bufferedstream.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/IO/BufferedStream.cs
 ../referencesource/mscorlib/system/io/directory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveNotFoundException.cs
@@ -1135,7 +1135,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
-../referencesource/mscorlib/system/io/stream.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Stream.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs
 ../referencesource/mscorlib/system/io/streamwriter.cs
 ../referencesource/mscorlib/system/io/stringreader.cs
@@ -1596,7 +1597,6 @@ corert/AddrofIntrinsics.cs
 corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
-corert/Stream.cs
 corert/Task.cs
 corert/ThreadPool.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
