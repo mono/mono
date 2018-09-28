@@ -943,6 +943,9 @@ typedef struct {
 	MonoClass *console_class;
 } MonoDefaults;
 
+/* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
+extern MonoDefaults mono_defaults;
+
 #ifdef DISABLE_REMOTING
 #define mono_class_is_transparent_proxy(klass) (FALSE)
 #define mono_class_is_real_proxy(klass) (FALSE)
@@ -951,11 +954,31 @@ typedef struct {
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
 #endif
 
+#ifdef __cplusplus
+inline bool
+#else
+static inline gboolean
+#endif
+mono_object_is_transparent_proxy (void* obj) // FIXME derived from MonoObject
+{
+	return mono_class_is_transparent_proxy (mono_object_class (obj));
+}
 
-#define mono_object_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_object_class (object)))
+#ifdef __cplusplus
+template <typename T>
+inline bool
+mono_object_is_transparent_proxy (MonoPtr <T> obj)
+{
+	return MONO_HANDLE_SUPPRESS (mono_object_is_transparent_proxy (obj.GetRaw ()));
+}
 
-//FIXME
-#define mono_handle_is_transparent_proxy(object) (mono_class_is_transparent_proxy (mono_handle_class (object)))
+template <typename T>
+inline bool
+mono_object_is_transparent_proxy (MonoHandle <T> obj)
+{
+	return MONO_HANDLE_SUPPRESS (mono_object_is_transparent_proxy (obj.GetRaw ()));
+}
+#endif
 
 #define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_get_##shortname##_class (void);
@@ -1009,9 +1032,6 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (variant)
 GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 
 GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
-
-/* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
-extern MonoDefaults mono_defaults;
 
 void
 mono_loader_init           (void);

@@ -177,7 +177,6 @@ mono_object_class (void* obj) // FIXME derived from MonoObject
 }
 
 #ifdef __cplusplus
-
 template <typename T>
 inline MonoDomain*
 mono_object_domain (MonoHandle <T> obj)
@@ -191,7 +190,6 @@ mono_object_class (MonoHandle <T> obj)
 {
 	return MONO_HANDLE_SUPPRESS (mono_object_class (obj.GetRaw ()));
 }
-
 #endif
 
 #define mono_string_chars_fast(s) ((mono_unichar2*)(s)->chars)
