@@ -8003,19 +8003,18 @@ mono_async_result_new (MonoDomain *domain, HANDLE handle, MonoObject *state, gpo
 }
 
 static
-MonoObjectHandle
+MonoObject*
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
 		     MonoObject **exc, MonoArray **out_args, MonoError *error);
 
 MonoObject *
 ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares)
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
 	MonoAsyncCall *ac;
-	MonoObjectHandle res;
+	MonoObject *res;
 
 	g_assert (ares);
 	g_assert (ares->async_delegate);
@@ -8063,7 +8062,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 			return NULL;
 	}
 
-	return MONO_HANDLE_RAW (res);
+	return res;
 }
 
 gboolean
@@ -8109,12 +8108,12 @@ mono_message_init (MonoDomain *domain,
  * \c RealProxy::Invoke() directly.
  * \returns the result object.
  */
-MonoObjectHandle
-mono_remoting_invoke (MonoObjectHandle real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
+MonoObject*
+mono_remoting_invoke (MonoObject* real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObjectHandle o;
+	MonoObject* o;
 	MonoMethod *im = real_proxy->vtable->domain->private_invoke_method;
 	gpointer pa [4];
 
@@ -8126,31 +8125,30 @@ mono_remoting_invoke (MonoObjectHandle real_proxy, MonoMethodMessage *msg, MonoO
 
 	if (!im) {
 		im = mono_class_get_method_from_name_checked (mono_defaults.real_proxy_class, "PrivateInvoke", 4, 0, error);
-		return_val_if_nok (error, NULL_HANDLE);
+		return_val_if_nok (error, NULL);
 		if (!im) {
 			mono_error_set_not_supported (error, "Linked away.");
-			return NULL_HANDLE;
+			return NULL;
 		}
 		real_proxy->vtable->domain->private_invoke_method = im;
 	}
 
-	pa [0] = real_proxy.ForInvoke();
+	pa [0] = real_proxy;
 	pa [1] = msg;
 	pa [2] = exc;
 	pa [3] = out_args;
 
 	o = mono_runtime_try_invoke (im, NULL, pa, exc, error);
-	return_val_if_nok (error, NULL_HANDLE);
+	return_val_if_nok (error, NULL);
 
 	return o;
 }
 #endif
 
-MonoObjectHandle
+MonoObject*
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
 		     MonoObject **exc, MonoArray **out_args, MonoError *error) 
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	static MonoClass *object_array_klass;
@@ -8168,7 +8166,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context.GetRaw() == (MonoObject *) mono_context_get ()) {
 			target = tp->rp.GetRaw ()->unwrapped_server.GetRaw();
 		} else {
-			MONO_RETURN_HANDLE (mono_remoting_invoke (tp->rp.NewHandle (), msg, exc, out_args, error));
+			return mono_remoting_invoke ((MonoObject*)tp->rp.GetRaw (), msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8193,16 +8191,16 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 	}
 
 	MonoVTable *vt = mono_class_vtable_checked (domain, object_array_klass, error);
-	return_val_if_nok (error, NULL_HANDLE);
+	return_val_if_nok (error, NULL);
 	arr = mono_array_new_specific_checked (vt, outarg_count, error);
-	return_val_if_nok (error, NULL_HANDLE);
+	return_val_if_nok (error, NULL);
 
 	mono_gc_wbarrier_generic_store (out_args, (MonoObject*) arr);
 	*exc = NULL;
 
-	MonoObjectHandle ret;
-	ret.New(mono_runtime_try_invoke_array (method, m_class_is_valuetype (method->klass)? mono_object_unbox (target): target, msg->args.GetRaw(), exc, error));
-	return_val_if_nok (error, NULL_HANDLE);
+	MonoObject* ret;
+	ret = mono_runtime_try_invoke_array (method, m_class_is_valuetype (method->klass)? mono_object_unbox (target): target, msg->args.GetRaw(), exc, error);
+	return_val_if_nok (error, NULL);
 
 	for (i = 0, j = 0; i < sig->param_count; i++) {
 		if (sig->params [i]->byref) {
@@ -8213,7 +8211,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		}
 	}
 
-	MONO_RETURN_HANDLE (ret);
+	return ret;
 }
 
 /**
@@ -8676,7 +8674,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	return_val_if_nok (error, NULL);
 	mono_array_setref (msg->args.GetRaw(), 1, field_name);
 
-	mono_remoting_invoke (tp->rp.NewHandle (), msg, &exc, &out_args, error);
+	mono_remoting_invoke ((MonoObject*)tp->rp.GetRaw (), msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
