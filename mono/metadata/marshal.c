@@ -983,7 +983,6 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 	gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), error);
 	if (!mono_error_ok (error)) {
 		mono_marshal_free (str_utf16);
-		g_free (tmp);
 		mono_error_set_pending_exception (error);
 		return NULL;
 	}
