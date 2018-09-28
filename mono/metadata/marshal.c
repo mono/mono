@@ -819,8 +819,6 @@ mono_array_to_byte_byvalarray (gpointer native_arr, MonoArray *arr, guint32 elnu
 static MonoStringBuilder *
 mono_string_builder_new (int starting_string_length)
 {
-	HANDLE_FUNCTION_ENTER ();
-
 	static MonoClass *string_builder_class;
 	static MonoMethod *sb_ctor;
 	static void *args [1];
@@ -857,17 +855,17 @@ mono_string_builder_new (int starting_string_length)
 	g_assert (exc == NULL);
 	mono_error_assert_ok (error);
 
-	g_assert (mono_new_handle (sb->chunkChars)->max_length >= initial_len);
+	g_assert (sb->chunkChars.GetRaw ()->max_length >= initial_len);
 
 	return sb;
 }
 
-static void
-mono_string_utf16_to_builder_copy (MonoStringBuilder *sb, const gunichar2 *text, size_t string_len)
-{
-	HANDLE_FUNCTION_ENTER ();
+TYPED_HANDLE_DECL (MonoStringBuilder);
 
-	gunichar2 *charDst = (gunichar2 *)mono_new_handle (sb->chunkChars)->vector;
+static void
+mono_string_utf16_to_builder_copy (MonoStringBuilderHandle sb, const gunichar2 *text, size_t string_len)
+{
+	gunichar2 *charDst = (gunichar2 *)sb.GetRaw ()->chunkChars.GetRaw ()->vector;
 	memcpy (charDst, text, sizeof (gunichar2) * string_len);
 
 	sb->chunkLength = string_len;
@@ -882,33 +880,37 @@ mono_string_utf16_to_builder2 (const gunichar2 *text)
 	int len;
 	for (len = 0; text [len] != 0; ++len);
 
-	MonoStringBuilder *sb = mono_string_builder_new (len);
-	mono_string_utf16_to_builder (sb, text);
+	MonoStringBuilder *sb_raw = mono_string_builder_new (len);
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoStringBuilder, sb);
 
-	return sb;
+	mono_string_utf16_to_builder (sb.GetRaw (), text);
+
+	return sb.GetRaw ();
 }
 
 void
-mono_string_utf8_to_builder (MonoStringBuilder *sb, const char *text)
+mono_string_utf8_to_builder (MonoStringBuilder *sb_raw, const char *text)
 {
-	if (!sb || !text)
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoStringBuilder, sb);
+
+	if (!sb_raw || !text)
 		return;
 
 	GError *gerror = NULL;
 	glong copied;
-	gunichar2* ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &gerror);
+	g_ptr <gunichar2> ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &gerror);
 	int capacity = mono_string_builder_capacity (sb);
 
 	if (copied > capacity)
 		copied = capacity;
 
 	if (!gerror) {
-		MONO_OBJECT_SETREF (sb, chunkPrevious, NULL);
+		sb->chunkPrevious = NULL;
 		mono_string_utf16_to_builder_copy (sb, ut, copied);
 	} else
 		g_error_free (gerror);
-
-	g_free (ut);
 }
 
 MonoStringBuilder *
@@ -925,8 +927,11 @@ mono_string_utf8_to_builder2 (const char *text)
 }
 
 void
-mono_string_utf16_to_builder (MonoStringBuilder *sb, const gunichar2 *text)
+mono_string_utf16_to_builder (MonoStringBuilder *sb_raw, const gunichar2 *text)
 {
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoStringBuilder, sb);
+
 	if (!sb || !text)
 		return;
 
@@ -964,7 +969,7 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 
 	guint str_len = mono_string_builder_string_length (sb);
 
-	gchar *tmp = g_utf16_to_utf8 (str_utf16, str_len, NULL, &byte_count, &gerror);
+	g_ptr <char> tmp = g_utf16_to_utf8 (str_utf16, str_len, NULL, &byte_count, &gerror);
 
 	if (gerror) {
 		g_error_free (gerror);
@@ -972,23 +977,22 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 		mono_error_set_execution_engine (error, "Failed to convert StringBuilder from utf16 to utf8");
 		mono_error_set_pending_exception (error);
 		return NULL;
-	} else {
-		guint len = mono_string_builder_capacity (sb) + 1;
-		gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), error);
-		if (!mono_error_ok (error)) {
-			mono_marshal_free (str_utf16);
-			g_free (tmp);
-			mono_error_set_pending_exception (error);
-			return NULL;
-		}
+	}
 
-		memcpy (res, tmp, byte_count);
-		res[byte_count] = '\0';
-
+	guint len = mono_string_builder_capacity (sb) + 1;
+	gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), error);
+	if (!mono_error_ok (error)) {
 		mono_marshal_free (str_utf16);
 		g_free (tmp);
-		return res;
+		mono_error_set_pending_exception (error);
+		return NULL;
 	}
+
+	memcpy (res, tmp, byte_count);
+	res[byte_count] = '\0';
+
+	mono_marshal_free (str_utf16);
+	return res;
 }
 
 /**
