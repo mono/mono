@@ -38,6 +38,8 @@ using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -499,19 +501,19 @@ namespace MonoTests.System.Data
 		public void TestSampleFileNoTables ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test001.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test001.xsd"));
 			AssertDataSet ("001", ds, "NewDataSet", 0, 0);
 
 			ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test002.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test002.xsd"));
 			AssertDataSet ("002", ds, "NewDataSet", 0, 0);
 
 			ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test003.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test003.xsd"));
 			AssertDataSet ("003", ds, "NewDataSet", 0, 0);
 
 			ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test004.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test004.xsd"));
 			AssertDataSet ("004", ds, "NewDataSet", 0, 0);
 		}
 
@@ -519,7 +521,7 @@ namespace MonoTests.System.Data
 		public void TestSampleFileSimpleTables ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test005.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test005.xsd"));
 			AssertDataSet ("005", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("tab", dt, "foo", 2, 0, 0, 0, 0, 0);
@@ -527,7 +529,7 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("text", dt.Columns [1], "foo_text", false, false, 0, 1, "foo_text", MappingType.SimpleContent, typeof (long), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 
 			ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test006.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test006.xsd"));
 			AssertDataSet ("006", ds, "NewDataSet", 1, 0);
 			dt = ds.Tables [0];
 			AssertDataTable ("tab", dt, "foo", 2, 0, 0, 0, 0, 0);
@@ -540,7 +542,7 @@ namespace MonoTests.System.Data
 		{
 			// Nested simple type element
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test007.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test007.xsd"));
 			AssertDataSet ("007", ds, "NewDataSet", 2, 1);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("tab1", dt, "uno", 1, 0, 0, 1, 1, 1);
@@ -553,7 +555,7 @@ namespace MonoTests.System.Data
 
 			// External simple type element
 			ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test008.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test008.xsd"));
 			AssertDataSet ("008", ds, "NewDataSet", 2, 1);
 			dt = ds.Tables [0];
 			AssertDataTable ("tab1", dt, "uno", 1, 0, 0, 1, 1, 1);
@@ -571,7 +573,7 @@ namespace MonoTests.System.Data
 		public void TestSampleFileValueConstraints ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test009.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test009.xsd"));
 			AssertDataSet ("009", ds, "NewDataSet", 2, 1);
 
 			DataTable dt = ds.Tables [0];
@@ -606,7 +608,7 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			XmlTextReader xtr = null;
 			try {
-				xtr = new XmlTextReader ("Test/System.Data/schemas/test010.xsd");
+				xtr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test010.xsd"));
 				xtr.XmlResolver = null;
 				ds.ReadXmlSchema (xtr);
 			} finally {
@@ -625,7 +627,7 @@ namespace MonoTests.System.Data
 		public void TestSampleFileComplexTables2 ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test011.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test011.xsd"));
 			AssertDataSet ("011", ds, "NewDataSet", 2, 1);
 
 			DataTable dt = ds.Tables [0];
@@ -645,7 +647,7 @@ namespace MonoTests.System.Data
 		public void TestSampleFileComplexTables3 ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test013.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test013.xsd"));
 			AssertDataSet ("013", ds, "root", 1, 0);
 
 			DataTable dt = ds.Tables [0];
@@ -659,14 +661,14 @@ namespace MonoTests.System.Data
 		public void TestSampleFileXPath ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test103.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test103.xsd"));
 		}
 
 		[Test]
 		public void TestAnnotatedRelation1 ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test101.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test101.xsd"));
 			AssertDataSet ("101", ds, "root", 2, 1);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("parent_table", dt, "p", 2, 0, 0, 1, 0, 0);
@@ -683,7 +685,7 @@ namespace MonoTests.System.Data
 		public void TestAnnotatedRelation2 ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test102.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test102.xsd"));
 			AssertDataSet ("102", ds, "ds", 2, 1);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("parent_table", dt, "p", 2, 0, 0, 1, 0, 0);
@@ -700,7 +702,7 @@ namespace MonoTests.System.Data
 		public void RepeatableSimpleElement ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test012.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test012.xsd"));
 			AssertDataSet ("012", ds, "NewDataSet", 2, 1);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("parent", dt, "Foo", 1, 0, 0, 1, 1, 1);
@@ -718,7 +720,7 @@ namespace MonoTests.System.Data
 		public void TestMoreThanOneRepeatableColumns ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test014.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test014.xsd"));
 			AssertDataSet ("014", ds, "NewDataSet", 3, 2);
 
 			DataTable dt = ds.Tables [0];
@@ -757,7 +759,7 @@ namespace MonoTests.System.Data
 		public void ReadConstraints ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test015.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test015.xsd"));
 
 			Assert.AreEqual (0, ds.Relations.Count, "#1");
 			Assert.AreEqual (1, ds.Tables [0].Constraints.Count, "#2" );
@@ -769,7 +771,7 @@ namespace MonoTests.System.Data
 		public void ReadAnnotatedRelations_MultipleColumns ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/test016.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/test016.xsd"));
 
 			Assert.AreEqual (1, ds.Relations.Count, "#1");
 			Assert.AreEqual ("rel", ds.Relations [0].RelationName, "#2");

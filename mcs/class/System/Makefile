@@ -32,10 +32,11 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx
 
-TEST_RESOURCES = \
+TEST_RESOURCE_FILES = \
 	Test/System/test-uri-props.txt \
 	Test/System/test-uri-props-manual.txt \
-	Test/System/test-uri-relative-props.txt
+	Test/System/test-uri-relative-props.txt \
+	Test/compressed.bin
 
 USE_XTEST_REMOTE_EXECUTOR = YES
 XTEST_LIB_REFS = System System.Core System.Net Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation System.Net.Http
@@ -63,7 +64,7 @@ TEST_LIB_REFS = $(MONO_SECURITY) System.Data System.Xml System.Core
 endif
 
 TEST_MCS_FLAGS = -nowarn:618,672,219,67,169,612 \
-	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
+	$(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
 TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
 
@@ -124,11 +125,11 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
 	$(RESOURCE_FILES)				\
-	$(TEST_RESOURCES)
+	$(TEST_RESOURCE_FILES)
 
 include ../../build/library.make
 
-$(test_lib_output): $(TEST_RESOURCES) $(test_lib_dir)
+$(test_lib_output): $(TEST_RESOURCE_FILES) $(test_lib_dir)
 
 # Helper target to run the perl regex test suite
 regex-check:

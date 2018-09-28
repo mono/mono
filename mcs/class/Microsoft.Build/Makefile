@@ -12,16 +12,19 @@ KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	/d:MICROSOFT_BUILD_DLL
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_RESOURCE_FILES = \
+	Test/resources/FunctionalTestReferenceProject.csproj	\
+	Test/resources/FunctionalTestReferenceProject3.csproj	\
+	Test/resources/Microsoft.Build.Test.csproj	\
+	Test/resources/Microsoft.Build.csproj
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 TEST_LIB_REFS = $(XBUILD_UTILITIES)
 TEST_NUNITLITE_APP_CONFIG_RUNTIME=Test/test-config-file-$(PROFILE)
 
 EXTRA_DISTFILES = \
 	Microsoft.Build.Internal/ExpressionParser.jay	\
-	Test/FunctionalTestReferenceProject.csproj	\
-	Test/FunctionalTestReferenceProject3.csproj	\
-	Test/Microsoft.Build.Test.csproj	\
-	Test/Microsoft.Build.csproj
+	$(TEST_RESOURCE_FILES)
 
 EXPR_PARSER = Microsoft.Build.Internal/ExpressionParser
 

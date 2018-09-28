@@ -15,6 +15,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO.Compression
 {
 	[TestFixture]
@@ -467,7 +469,7 @@ namespace MonoTests.System.IO.Compression
 		public void Bug44994_InflateByteByByte()
 		{
 			int byteCount = 0;
-			using (var fileStream = File.OpenRead(Path.Combine("Test", "compressed.bin")))
+			using (var fileStream = File.OpenRead(TestResourceHelper.GetFullPathOfResource ("Test/compressed.bin")))
 			{
 				using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress, false))
 				{
