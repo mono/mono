@@ -1245,6 +1245,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				case OP_SIN:
 					result = sin (source);
 					break;
+				case OP_SINH:
+					result = sinh (source);
+					break;
 				case OP_SQRT:
 					result = sqrt (source);
 					break;
