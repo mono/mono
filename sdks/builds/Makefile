@@ -11,6 +11,7 @@ CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
 NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
+
 ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
 DISABLE_IOS=1
