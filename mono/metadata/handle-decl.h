@@ -176,21 +176,21 @@ template <typename T> struct MonoPtr
 	G_ALWAYS_INLINE bool operator!=(std::nullptr_t) { return !!p; }
 
 	// Allow silent conversion to matching MonoHandle.
-	G_ALWAYS_INLINE operator MonoHandle<T> () { return NewHandle<T>(); }
+	//G_ALWAYS_INLINE operator MonoHandle<T> () { return NewHandle<T>(); }
 
 	// Allow silent conversion to MonoObjectHandle, no matter what T is, unless T is
 	// already MonoObject.
-	template < typename U,
-	    	   typename = typename std::enable_if<!std::is_same<T, MonoObject>::value &&
-						      std::is_same<U, MonoObject>::value >::type>
-	G_ALWAYS_INLINE operator MonoHandle<U> () { return NewHandle<U>(); }
+	//template < typename U,
+	//    	   typename = typename std::enable_if<!std::is_same<T, MonoObject>::value &&
+	//					      std::is_same<U, MonoObject>::value >::type>
+	//G_ALWAYS_INLINE operator MonoHandle<U> () { return NewHandle<U>(); }
 
 	G_ALWAYS_INLINE bool operator==(const void* q) const { return p == q; }
 	G_ALWAYS_INLINE bool operator!=(const void* q) const { return p != q; }
 	friend bool operator==(const void* q, const MonoPtr p) { return p.p == q; }
 	friend bool operator!=(const void* q, const MonoPtr p) { return p.p != q; }
 
-	template <typename U> MonoHandle<U> G_ALWAYS_INLINE NewHandle () { return MonoHandle<U> ().New ((U*)GetRaw()); }
+	template <typename U = T> MonoHandle<U> G_ALWAYS_INLINE NewHandle () { return MonoHandle<U> ().New ((U*)GetRaw()); }
 
 	G_ALWAYS_INLINE MonoPtr& operator = (MonoHandle<T> h) { p = h.__raw ? *h.__raw : 0; return *this; }
 
@@ -207,7 +207,7 @@ It might also help if in
 	auto a = b->c->d
 c was temporary and replaced by d/a.
 ******************************************************************************************/
-	//MonoHandle<T> operator -> () { return NewHandle<T> (); }
+	//MonoHandle<T> operator -> () { return NewHandle <T> (); }
 
 	//MonoPtr& operator = (std::nullptr_t) { p = 0; return *this; }
 	MonoPtr& operator = (MonoPtr q) { return operator =(q.p); }
@@ -347,57 +347,34 @@ struct MonoHandle
 	G_ALWAYS_INLINE T* GetRaw () const { return __raw ? *__raw : NULL; }
 	G_ALWAYS_INLINE MonoObject* GetRawObj () const { return (MonoObject*)GetRaw(); }
 
-	// not safe -- use GetRaw and possibly cast.
-	//G_ALWAYS_INLINE MonoObject* AsMonoObjectPtr () { return (MonoObject*)GetRaw();}
-
-	// not safe -- use GetRaw.
-	//G_ALWAYS_INLINE operator T * () { return get (); } // FIXME?
-
-	// not safe -- use GetRaw.
-	//G_ALWAYS_INLINE T * get() { return __raw ? *__raw : NULL; } // FIXME?
-
-	// not safe -- use GetRaw and possibly cast.
-	// if T != MonoObject, provide operator MonoObject*
-	//template < typename U = T,
-	//    	   typename = typename std::enable_if< !std::is_same<U, MonoObject>::value >::type>
-	//G_ALWAYS_INLINE
-	//operator MonoObject* () { return (MonoObject*)get (); } // FIXME?
-
 	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
-	G_ALWAYS_INLINE MonoHandle& cross_frame_assign (MonoHandle p) // i.e. mono_handle_assign
+	G_ALWAYS_INLINE MonoHandle& assign (MonoHandle p)
+	// i.e. mono_handle_assign
+	// Note this is different than operator=
 	{
 		g_assert (__raw);
 		*__raw = p.GetRaw ();
 		return *this;
 	}
-
-	G_ALWAYS_INLINE
-	MonoHandle& operator=(MonoHandle p)
+/*	This is the default behavior and matches the old C.
+	G_ALWAYS_INLINE MonoHandle& operator=(MonoHandle p)
 	{
-		// FIXME *__raw = *p.__raw; ?
-		// This is the old behavior and it is not obvious
-		// which is better. They each have advantages and disadvantages.
-		// *__raw is an extra dereference, and requires New().
-		// __raw is old behaviorr
-		// *__raw moves the handle across frames (if the handles
-		// are in different frames) which can be useful.
-		// *__raw is what mono_handle_assign does.
+		// NOTE: operator= and assign are distinctly different.
 		__raw = p.__raw;
 		return *this;
 	}
-
-	//G_ALWAYS_INLINE MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p; return *this; }
+*/
+	G_ALWAYS_INLINE MonoHandle& operator=(MonoPtr<T> p) { g_assert (__raw); *__raw = p.GetRaw (); return *this; }
 	G_ALWAYS_INLINE MonoHandle& operator=(T* p) { g_assert (__raw); *__raw = p; return *this; }
 
 /******************************************************************************************
 Note. This is both the point and the danger.
 The safety of this, depends on T* itself not having raw pointers, but only MonoPtr().
 ******************************************************************************************/
-	G_ALWAYS_INLINE
-	T* operator-> () { g_assert (__raw); return *__raw; }
+	G_ALWAYS_INLINE T* operator-> () { g_assert (__raw); return *__raw; }
 
-//private:
+//private: // FIXME
 	T ** __raw;
 };
 

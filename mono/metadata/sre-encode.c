@@ -378,7 +378,7 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 	if (ngparams)
 		sigbuffer_add_value (&buf, ngparams);
 	sigbuffer_add_value (&buf, nparams + notypes);
-	encode_custom_modifiers_raw (assembly, mb->return_modreq, mb->return_modopt, &buf, error);
+	encode_custom_modifiers_raw (assembly, mb->return_modreq.GetRaw (), mb->return_modopt.GetRaw (), &buf, error);
 	goto_if_nok (error, leave);
 	encode_reflection_type_raw (assembly, mb->rtype, &buf, error);
 	goto_if_nok (error, leave);
@@ -1050,6 +1050,7 @@ type_get_fully_qualified_name (MonoType *type)
 guint32
 mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflectionMarshal *minfo, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
@@ -1085,7 +1086,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 		break;
 	case MONO_NATIVE_CUSTOM:
 		if (minfo->guid) {
-			str = mono_string_to_utf8_checked (minfo->guid, error);
+			str = mono_string_to_utf8_checked (minfo->guid.NewHandle (), error);
 			if (!is_ok (error)) {
 				sigbuffer_free (&buf);
 				return 0;
@@ -1109,7 +1110,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 				}
 				str = type_get_fully_qualified_name (marshaltype);
 			} else {
-				str = mono_string_to_utf8_checked (minfo->marshaltype, error);
+				str = mono_string_to_utf8_checked (minfo->marshaltype.NewHandle (), error);
 				if (!is_ok (error)) {
 					sigbuffer_free (&buf);
 					return 0;
@@ -1124,7 +1125,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 			sigbuffer_add_value (&buf, 0);
 		}
 		if (minfo->mcookie) {
-			str = mono_string_to_utf8_checked (minfo->mcookie, error);
+			str = mono_string_to_utf8_checked (minfo->mcookie.NewHandle (), error);
 			if (!is_ok (error)) {
 				sigbuffer_free (&buf);
 				return 0;
@@ -1169,7 +1170,7 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 		sigbuffer_add_byte (&buf, 0x08);
 	sigbuffer_add_value (&buf, nparams);
 	if (mb) {
-		encode_reflection_type_raw (assembly, (MonoReflectionType*)mb->rtype, &buf, error);
+		encode_reflection_type_raw (assembly, (MonoReflectionType*)mb->rtype.GetRaw (), &buf, error);
 		if (!is_ok (error))
 			goto fail;
 		for (i = 0; i < nparams; ++i) {
@@ -1191,7 +1192,7 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 				goto fail;
 		}
 	} else {
-		encode_reflection_type_raw (assembly, (MonoReflectionType*)fb->type, &buf, error);
+		encode_reflection_type_raw (assembly, (MonoReflectionType*)fb->type.GetRaw (), &buf, error);
 		if (!is_ok (error))
 			goto fail;
 	}

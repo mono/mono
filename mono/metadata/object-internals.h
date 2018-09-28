@@ -1209,32 +1209,32 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
-	MonoObject* methodb;
-	MonoString *name;
+	MonoPtr (MonoObject) methodb;
+	MonoPtr (MonoString) name;
 	MonoPtr (MonoArray) cattrs;
 	MonoReflectionMarshal *marshal_info;
 	guint32 attrs;
 	int position;
 	guint32 table_idx;
-	MonoObject *def_value;
+	MonoPtr (MonoObject) def_value;
 } MonoReflectionParamBuilder;
 
 typedef struct {
 	MonoObject object;
 	MonoMethod *mhandle;
 	MonoReflectionILGen *ilgen;
-	MonoArray *parameters;
+	MonoPtr (MonoArray) parameters;
 	guint32 attrs;
 	guint32 iattrs;
 	guint32 table_idx;
 	guint32 call_conv;
-	MonoObject *type;
-	MonoArray *pinfo;
+	MonoPtr (MonoObject) type;
+	MonoPtr (MonoArray) pinfo;
 	MonoPtr (MonoArray) cattrs;
 	MonoBoolean init_locals;
-	MonoArray *param_modreq;
-	MonoArray *param_modopt;
-	MonoArray *permissions;
+	MonoPtr (MonoArray) param_modreq;
+	MonoPtr (MonoArray) param_modopt;
+	MonoPtr (MonoArray) permissions;
 } MonoReflectionCtorBuilder;
 
 /* Safely access System.Reflection.Emit.ConstructorBuilder from native code */
@@ -1243,32 +1243,32 @@ TYPED_HANDLE_DECL (MonoReflectionCtorBuilder);
 typedef struct {
 	MonoObject object;
 	MonoMethod *mhandle;
-	MonoObject *rtype;
-	MonoArray *parameters;
+	MonoPtr (MonoObject) rtype;
+	MonoPtr (MonoArray) parameters;
 	guint32 attrs;
 	guint32 iattrs;
-	MonoString *name;
+	MonoPtr (MonoString) name;
 	guint32 table_idx;
-	MonoArray *code;
+	MonoPtr (MonoArray) code;
 	MonoReflectionILGen *ilgen;
-	MonoObject *type;
-	MonoArray *pinfo;
+	MonoPtr (MonoObject) type;
+	MonoPtr (MonoArray) pinfo;
 	MonoPtr (MonoArray) cattrs;
-	MonoArray *override_methods;
-	MonoString *dll;
-	MonoString *dllentry;
+	MonoPtr (MonoArray) override_methods;
+	MonoPtr (MonoString) dll;
+	MonoPtr (MonoString) dllentry;
 	guint32 charset;
 	guint32 extra_flags;
 	guint32 native_cc;
 	guint32 call_conv;
 	MonoBoolean init_locals;
 	MonoGenericContainer *generic_container;
-	MonoArray *generic_params;
-	MonoArray *return_modreq;
-	MonoArray *return_modopt;
-	MonoArray *param_modreq;
-	MonoArray *param_modopt;
-	MonoArray *permissions;
+	MonoPtr (MonoArray) generic_params;
+	MonoPtr (MonoArray) return_modreq;
+	MonoPtr (MonoArray) return_modopt;
+	MonoPtr (MonoArray) param_modreq;
+	MonoPtr (MonoArray) param_modopt;
+	MonoPtr (MonoArray) permissions;
 } MonoReflectionMethodBuilder;
 
 /* Safely access System.Reflection.Emit.MethodBuilder from native code */
@@ -1277,10 +1277,10 @@ TYPED_HANDLE_DECL (MonoReflectionMethodBuilder);
 typedef struct {
 	MonoObject object;
 	MonoMethod *mhandle;
-	MonoReflectionType *parent;
-	MonoReflectionType *ret;
-	MonoArray *parameters;
-	MonoString *name;
+	MonoPtr (MonoReflectionType) parent;
+	MonoPtr (MonoReflectionType) ret;
+	MonoPtr (MonoArray) parameters;
+	MonoPtr (MonoString) name;
 	guint32 table_idx;
 	guint32 call_conv;
 } MonoReflectionArrayMethod;
@@ -1289,54 +1289,54 @@ typedef struct {
 TYPED_HANDLE_DECL (MonoReflectionArrayMethod);
 
 typedef struct {
-	MonoArray *data;
-	MonoString *name;
+	MonoPtr (MonoArray) data;
+	MonoPtr (MonoString) name;
 	MonoPtr (MonoString) filename;
 	guint32 attrs;
 	guint32 offset;
-	MonoObject *stream;
+	MonoPtr (MonoObject) stream;
 } MonoReflectionResource;
 
 typedef struct {
 	guint32 res_type;
 	guint32 res_id;
 	guint32 lang_id;
-	MonoArray *res_data;
+	MonoPtr (MonoArray) res_data;
 } MonoReflectionWin32Resource;
 
 typedef struct {
 	guint32 action;
-	MonoString *pset;
+	MonoPtr (MonoString) pset;
 } MonoReflectionPermissionSet;
 
 typedef struct {
 	MonoReflectionAssembly assembly;
 	MonoDynamicAssembly *dynamic_assembly;
 	MonoReflectionMethod *entry_point;
-	MonoArray *modules;
-	MonoString *name;
-	MonoString *dir;
+	MonoPtr (MonoArray) modules;
+	MonoPtr (MonoString) name;
+	MonoPtr (MonoString) dir;
 	MonoPtr (MonoArray) cattrs;
-	MonoArray *resources;
-	MonoArray *public_key;
-	MonoString *version;
-	MonoString *culture;
+	MonoPtr (MonoArray) resources;
+	MonoPtr (MonoArray) public_key;
+	MonoPtr (MonoString) version;
+	MonoPtr (MonoString) culture;
 	guint32 algid;
 	guint32 flags;
 	guint32 pekind;
 	MonoBoolean delay_sign;
 	guint32 access;
-	MonoArray *loaded_modules;
-	MonoArray *win32_resources;
+	MonoPtr (MonoArray) loaded_modules;
+	MonoPtr (MonoArray) win32_resources;
 	/* CAS related */
-	MonoArray *permissions_minimum;
-	MonoArray *permissions_optional;
-	MonoArray *permissions_refused;
+	MonoPtr (MonoArray) permissions_minimum;
+	MonoPtr (MonoArray) permissions_optional;
+	MonoPtr (MonoArray) permissions_refused;
 	gint32 pe_kind;
 	gint32 machine;
 	MonoBoolean corlib_internal;
-	MonoArray *type_forwarders;
-	MonoArray *pktoken; /* as hexadecimal byte[] */
+	MonoPtr (MonoArray) type_forwarders;
+	MonoPtr (MonoArray) pktoken; /* as hexadecimal byte[] */
 } MonoReflectionAssemblyBuilder;
 
 /* Safely access System.Reflection.Emit.AssemblyBuilder from native code */
@@ -1365,14 +1365,14 @@ typedef struct {
 	MonoObject object;
 	guint32 attrs;
 	MonoPtr (MonoString) name;
-	MonoObject *type;
+	MonoPtr (MonoObject) type;
 	MonoPtr (MonoArray) parameters;
 	MonoPtr (MonoArray) cattrs;
-	MonoObject *def_value;
+	MonoPtr (MonoObject) def_value;
 	MonoReflectionMethodBuilder *set_method;
 	MonoReflectionMethodBuilder *get_method;
 	gint32 table_idx;
-	MonoObject *type_builder;
+	MonoPtr (MonoObject) type_builder;
 	MonoPtr (MonoArray) returnModReq;
 	MonoPtr (MonoArray) returnModOpt;
 	MonoPtr (MonoArray) paramModReq;
@@ -1398,7 +1398,7 @@ typedef struct {
 	MonoReflectionModule module;
 	MonoDynamicImage *dynamic_image;
 	gint32     num_types;
-	MonoArray *types;
+	MonoPtr (MonoArray) types;
 	MonoPtr (MonoArray) cattrs;
 	MonoArray *guid;
 	guint32    table_idx;
@@ -1408,7 +1408,7 @@ typedef struct {
 	gboolean is_main;
 	MonoArray *resources;
 	GHashTable *unparented_classes;
-	MonoArray *table_indexes;
+	MonoPtr (MonoArray) table_indexes;
 } MonoReflectionModuleBuilder;
 
 /* Safely acess System.Reflection.Emit.ModuleBuidler from native code */
@@ -1425,7 +1425,7 @@ struct _MonoReflectionTypeBuilder {
 	MonoPtr (MonoString) name;
 	MonoPtr (MonoString) nspace;
 	MonoPtr (MonoObject) parent;
-	MonoReflectionType *nesting_type;
+	MonoPtr (MonoReflectionType) nesting_type;
 	MonoPtr (MonoArray) interfaces;
 	gint32     num_methods;
 	MonoPtr (MonoArray) methods;
@@ -1468,7 +1468,7 @@ TYPED_HANDLE_DECL (MonoReflectionDerivedType);
 typedef struct {
 	MonoReflectionType type;
 	MonoPtr (MonoReflectionTypeBuilder) tbuilder;
-	MonoReflectionMethodBuilder *mbuilder;
+	MonoPtr (MonoReflectionMethodBuilder) mbuilder;
 	MonoPtr (MonoString) name;
 	guint32 index;
 	MonoReflectionType *base_type;
@@ -1594,7 +1594,7 @@ typedef struct {
 	MonoPtr (MonoReflectionModuleBuilder) module;
 	MonoPtr (MonoArray) arguments;
 	guint32 type;
-	MonoReflectionType *return_type;
+	MonoPtr (MonoReflectionType) return_type;
 	guint32 call_conv;
 	guint32 unmanaged_call_conv;
 	MonoPtr (MonoArray) modreqs;

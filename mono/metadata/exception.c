@@ -1147,7 +1147,7 @@ mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
 {
 #ifdef HAVE_BACKTRACE_SYMBOLS
 	MonoDomain *domain;
-	MonoArrayHandle arr = exc->native_trace_ips;
+	MonoArrayHandle arr = exc->native_trace_ips.NewHandle ();
 	int i, len;
 	GString *text;
 	char **messages;

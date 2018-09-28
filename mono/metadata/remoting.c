@@ -442,7 +442,7 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	goto_if_nok (error, fail);
 
-	res = mono_remoting_invoke (this_obj->rp, msg, &exc, &out_args, error);
+	res = mono_remoting_invoke (this_obj->rp.NewHandle (), msg, &exc, &out_args, error);
 	goto_if_nok (error, fail);
 
 	if (exc) {

@@ -27,31 +27,32 @@ typedef struct {
 typedef struct {
 	MonoReflectionILGen *ilgen;
 	MonoReflectionType *rtype;
-	MonoArray *parameters;
-	MonoArray *generic_params;
+	MonoPtr (MonoArray) parameters;
+	MonoPtr (MonoArray) generic_params;
 	MonoGenericContainer *generic_container;
-	MonoArray *pinfo;
-	MonoArray *opt_types;
+	MonoPtr (MonoArray) pinfo;
+	MonoPtr (MonoArray) opt_types;
 	guint32 attrs;
 	guint32 iattrs;
 	guint32 call_conv;
 	guint32 *table_idx; /* note: it's a pointer */
-	MonoArray *code;
-	MonoObject *type;
-	MonoString *name;
+	MonoPtr (MonoArray) code;
+	MonoPtr (MonoObject) type;
+	MonoPtr (MonoString) name;
 	MonoBoolean init_locals;
 	MonoBoolean skip_visibility;
-	MonoArray *return_modreq;
-	MonoArray *return_modopt;
-	MonoArray *param_modreq;
-	MonoArray *param_modopt;
-	MonoArray *permissions;
+	MonoPtr (MonoArray) return_modreq;
+	MonoPtr (MonoArray) return_modopt;
+	MonoPtr (MonoArray) param_modreq;
+	MonoPtr (MonoArray) param_modopt;
+	MonoPtr (MonoArray) permissions;
 	MonoMethod *mhandle;
 	guint32 nrefs;
 	gpointer *refs;
 	/* for PInvoke */
 	int charset, extra_flags, native_cc;
-	MonoString *dll, *dllentry;
+	MonoPtr (MonoString) dll;
+	MonoPtr (MonoString) dllentry;
 } ReflectionMethodBuilder; /* FIXME raw pointers to managed objects */
 
 void

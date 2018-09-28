@@ -587,7 +587,7 @@ mono_array_handle_memcpy_refs (MonoArrayHandle dest, uintptr_t dest_idx, MonoArr
 gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
 
-#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) ((type*)mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out)))
+#define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) ((type*)mono_array_handle_pin_with_size ((handle), sizeof (type), (index), (gchandle_out)))
 
 gunichar2 *
 mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);
@@ -743,7 +743,7 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 // and work with preexisting unchanged code, and do not merit macros.
 // Just change the types of things.
 #define MONO_HANDLE_CAST(type, value) 		((value).cast<type>())
-#define MONO_HANDLE_GET(result, handle, field)	(result = (handle)->field)
+#define MONO_HANDLE_GET(result, handle, field)	((result) = ((handle)->field))
 #define MONO_HANDLE_GETVAL(handle, field) 	((handle)->field)
 #define MONO_HANDLE_SETVAL(handle, field, type, value) (((handle)->field) = (type)value)
 #define MONO_HANDLE_SETRAW(handle, field, value) ((handle)->field = (value))
@@ -762,7 +762,9 @@ MonoHandle<T>::new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *erro
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
 #define MONO_HANDLE_NEW(type, value) 		 (MonoHandle <type> ().New (value))
 //#define MONO_HANDLE_NEW(type, value) 		 ((value).NewHandle())
-#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle <type> ().New ((handle)->field))
+//#define MONO_HANDLE_NEW_GET(type, handle, field) (MonoHandle <type> ().New ((handle)->field))
+// Field should be a MonoPtr<>.
+#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.NewHandle ())
 //#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field.GetRaw())
 //#define MONO_HANDLE_NEW_GET(type, handle, field) ((handle)->field) // ideal
 //#define MONO_HANDLE_NEW_GET(type, handle, field) (mono_new_handle ((handle)->field.GetRaw ()))

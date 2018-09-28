@@ -8150,6 +8150,7 @@ MonoObjectHandle
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
 		     MonoObject **exc, MonoArray **out_args, MonoError *error) 
 {
+	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	static MonoClass *object_array_klass;
@@ -8167,7 +8168,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context.GetRaw() == (MonoObject *) mono_context_get ()) {
 			target = tp->rp.GetRaw ()->unwrapped_server.GetRaw();
 		} else {
-			return mono_remoting_invoke (tp->rp, msg, exc, out_args, error);
+			MONO_RETURN_HANDLE (mono_remoting_invoke (tp->rp.NewHandle (), msg, exc, out_args, error));
 		}
 	}
 #endif
@@ -8212,7 +8213,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 		}
 	}
 
-	return ret;
+	MONO_RETURN_HANDLE (ret);
 }
 
 /**
@@ -8675,7 +8676,7 @@ mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClas
 	return_val_if_nok (error, NULL);
 	mono_array_setref (msg->args.GetRaw(), 1, field_name);
 
-	mono_remoting_invoke (tp->rp, msg, &exc, &out_args, error);
+	mono_remoting_invoke (tp->rp.NewHandle (), msg, &exc, &out_args, error);
 	return_val_if_nok (error, NULL);
 
 	if (exc) {
