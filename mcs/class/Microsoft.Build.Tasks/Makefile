@@ -38,7 +38,7 @@ ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 TEST_LIB_REFS += Microsoft.Build
 endif
 
-EXTRA_DISTFILES = $(TEST_RESOURCE_FILES)
+EXTRA_DISTFILES = $(filter-out Test/resources/test.dll, $(TEST_RESOURCE_FILES))
 
 Test/resources/test.dll: Test/resources/test.cs
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -target:library /out:$@ $<
