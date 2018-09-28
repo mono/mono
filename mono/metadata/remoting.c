@@ -400,7 +400,8 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	MonoObject *exc = NULL;
 	MonoArray *out_args;
 
-	this_obj.New (*((MonoTransparentProxy **)params [0]));
+	res.New ();
+	this_obj.New (*(MonoTransparentProxy **)params [0]);
 
 	g_assert (this_obj);
 	g_assert (mono_object_is_transparent_proxy (this_obj));
