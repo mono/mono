@@ -350,7 +350,7 @@ method_encode_code (MonoDynamicImage *assembly, ReflectionMethodBuilder *mb, Mon
 	/*if (mb->name)
 		g_print ("Encode method %s\n", mono_string_to_utf8 (mb->name));*/
 	if (mb->ilgen) {
-		code = mb->ilgen->code;
+		code.New (mb->ilgen->code);
 		code_size = mb->ilgen->code_len;
 		max_stack = mb->ilgen->max_stack;
 		num_locals = mb->ilgen->locals ? mono_array_length (mb->ilgen->locals) : 0;
