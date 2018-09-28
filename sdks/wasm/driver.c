@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 
 typedef enum {
 	/* Disables AOT mode */
@@ -126,7 +126,12 @@ MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, 
 
 MonoAssemblyName* mono_assembly_name_new (const char *name);
 void mono_assembly_name_free (MonoAssemblyName *aname);
+
 const char* mono_image_get_name (MonoImage *image);
+uint32_t mono_image_get_entry_point (MonoImage *image);
+
+MonoMethod* mono_get_method (MonoImage *image, uint32_t token, MonoClass *klass);
+
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
@@ -353,6 +358,20 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 	}
 
 	return res;
+}
+
+EMSCRIPTEN_KEEPALIVE MonoMethod*
+mono_wasm_assembly_get_entry_point (MonoAssembly *assembly)
+{
+	MonoImage *image;
+	MonoMethod *method;
+
+	image = mono_assembly_get_image (assembly);
+	uint32_t entry = mono_image_get_entry_point (image);
+	if (!entry)
+		return NULL;
+
+	return mono_get_method (image, entry, NULL);
 }
 
 EMSCRIPTEN_KEEPALIVE char *
