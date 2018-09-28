@@ -2061,14 +2061,12 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			ERROR_DECL_VALUE (inner_error);
 			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace.NewHandle (), &inner_error);
 			if (is_ok (&inner_error)) {
-				char  *tmp;
-				tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
+				g_ptr <char> tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
 				g_free (strace);
 				MonoString *tmp_str = mono_string_new_checked (domain, tmp, &inner_error);
-				g_free (tmp);
 				if (is_ok (&inner_error))
 					MONO_OBJECT_SETREF (((MonoException*)exc), stack_trace, tmp_str);
-			};
+			}
 			if (!is_ok (&inner_error))
 				mono_error_cleanup (&inner_error); /* no stack trace, but at least throw the original exception */
 		}
