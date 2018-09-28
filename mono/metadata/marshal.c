@@ -1992,6 +1992,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	MonoArray *out_args;
 	MonoClass *klass;
 
+	res.New ();
 	g_assert (delegate);
 
 	if (!delegate->method_info) {
