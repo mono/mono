@@ -3496,8 +3496,7 @@ internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	/* If this is a proxy, then it must be a CBO */
 	if (mono_class_is_transparent_proxy (k)) {
 		MonoTransparentProxy *tp = (MonoTransparentProxy*) this_arg;
-		auto tp_rp = mono_new_handle (tp->rp);
-		this_arg = tp_rp->unwrapped_server.GetRaw ();
+		this_arg = tp->rp.GetRaw ()->unwrapped_server.GetRaw ();
 		g_assert (this_arg);
 		k = mono_object_class (this_arg);
 	}
@@ -3546,8 +3545,7 @@ internal_execute_field_setter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 	/* If this is a proxy, then it must be a CBO */
 	if (mono_class_is_transparent_proxy (k)) {
 		MonoTransparentProxy *tp = (MonoTransparentProxy*) this_arg;
-		auto tp_rp = mono_new_handle (tp->rp);
-		this_arg = tp_rp->unwrapped_server.GetRaw ();
+		this_arg = tp->rp.GetRaw ()->unwrapped_server.GetRaw ();
 		g_assert (this_arg);
 		k = mono_object_class (this_arg);
 	}

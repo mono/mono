@@ -1283,7 +1283,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 #ifndef DISABLE_REMOTING
 	if (delegate->target && mono_handle_is_transparent_proxy (delegate->target)) {
 		MonoTransparentProxyHandle tp;
-		tp.New ((MonoTransparentProxy *)(MonoObject*)delegate->target.GetRaw ());
+		tp.New ((MonoTransparentProxy *)delegate->target.GetRaw ());
 		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp.GetRaw ()->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
@@ -1291,7 +1291,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			MonoMethodMessage *msg;
 			MonoDelegate *async_callback;
 			MonoObject *state;
-			MonoAsyncResult *ares;
+			MonoHandle <MonoAsyncResult> ares;
 			MonoObject *exc;
 			MonoArray *out_args;
 			method = delegate->method;
@@ -1299,12 +1299,12 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (method), params, NULL, &async_callback, &state, error);
 			if (mono_error_set_pending_exception (error))
 				return NULL;
-			ares = mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, error);
+			ares.New (mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, error));
 			if (mono_error_set_pending_exception (error))
 				return NULL;
-			MONO_OBJECT_SETREF (ares, async_delegate, (MonoObject *)delegate);
-			MONO_OBJECT_SETREF (ares, async_callback, (MonoObject *)async_callback);
-			MONO_OBJECT_SETREF (msg, async_result, ares);
+			ares->async_delegate = &delegate->object;
+			ares->async_callback = &async_callback->object;
+			msg->async_result = ares;
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
@@ -1315,7 +1315,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			}
 			if (exc)
 				mono_set_pending_exception ((MonoException *) exc);
-			return ares;
+			return ares.GetRaw ();
 		}
 	}
 #endif

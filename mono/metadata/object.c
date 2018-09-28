@@ -8029,7 +8029,7 @@ ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult 
 
 		ac->msg->exc = NULL;
 
-		res = mono_message_invoke (ares->async_delegate.GetRaw (), ac->msg, &ac->msg->exc, &ac->out_args, error);
+		res = mono_message_invoke (ares->async_delegate.GetRawObj (), ac->msg, ac->msg->exc.GetRawAddress (), &ac->out_args, error);
 
 		/* The exit side of the invoke must not be aborted as it would leave the runtime in an undefined state */
 		mono_threads_begin_abort_protected_block ();
@@ -8113,7 +8113,7 @@ mono_remoting_invoke (MonoObject* real_proxy, MonoMethodMessage *msg, MonoObject
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject* o;
+	MonoObject *o;
 	MonoMethod *im = real_proxy->vtable->domain->private_invoke_method;
 	gpointer pa [4];
 
@@ -8145,7 +8145,7 @@ mono_remoting_invoke (MonoObject* real_proxy, MonoMethodMessage *msg, MonoObject
 }
 #endif
 
-MonoObject*
+MonoObject *
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
 		     MonoObject **exc, MonoArray **out_args, MonoError *error) 
 {
@@ -8163,10 +8163,10 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 #ifndef DISABLE_REMOTING
 	if (target && mono_object_is_transparent_proxy (target)) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)target;
-		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context.GetRaw() == (MonoObject *) mono_context_get ()) {
+		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp.GetRaw ()->context == mono_context_get ()) {
 			target = tp->rp.GetRaw ()->unwrapped_server.GetRaw();
 		} else {
-			return mono_remoting_invoke ((MonoObject*)tp->rp.GetRaw (), msg, exc, out_args, error);
+			return mono_remoting_invoke (tp->rp.GetRawObj (), msg, exc, out_args, error);
 		}
 	}
 #endif
@@ -8318,7 +8318,7 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 	g_ptr <char> free_message;
 	ERROR_DECL (error);
 
-	if (exc == mono_object_domain (exc)->out_of_memory_ex.GetRaw()) {
+	if (exc == mono_object_domain (exc)->out_of_memory_ex) {
 		message = free_message = g_strdup ("OutOfMemoryException");
 	} else if (exc == mono_object_domain (exc)->stack_overflow_ex.GetRaw()) {
 		message = free_message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
@@ -8328,7 +8328,8 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 		} else {
 			MonoObject *other_exc_raw = NULL;
 			MonoStringHandle str = mono_object_try_to_string (exc, &other_exc_raw, error);
-			auto other_exc = MonoExceptionHandle::static_new ((MonoException*)other_exc_raw);
+			MonoExceptionHandle other_exc;
+			other_exc.New ((MonoException*)other_exc_raw);
 			if (other_exc == NULL && !is_ok (error))
 				other_exc = mono_error_convert_to_exception (error);
 			else

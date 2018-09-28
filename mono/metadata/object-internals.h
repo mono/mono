@@ -524,7 +524,7 @@ typedef struct {
 	MonoPtr (MonoObject) ctx;
 	MonoPtr (MonoObject) rval;
 	MonoPtr (MonoObject) exc;
-	MonoAsyncResult *async_result;
+	MonoPtr (MonoAsyncResult) async_result;
 	guint32	    call_type;
 } MonoMethodMessage;
 
