@@ -273,17 +273,15 @@ typedef struct _MonoTypeofCastHelper *MonoTypeofCastHelper; // a pointer type un
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 
-#define MONO_HANDLE_NEW(type, object) \
-	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object))))
+#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New (object))
 
 #else
 
-#define MONO_HANDLE_NEW(type, object) \
-	(MONO_HANDLE_CAST_FOR (type) (mono_handle_new (MONO_HANDLE_TYPECHECK_FOR (type) (object), HANDLE_OWNER)))
+#define MONO_HANDLE_NEW(type, object) (MonoHandle<type>().New ((object), HANDLE_OWNER))
 
 #endif
 
-#define MONO_HANDLE_CAST(type, value) (MONO_HANDLE_CAST_FOR (type) ((value).__raw))
+#define MONO_HANDLE_CAST(type, value) ((value).cast<type>)
 #ifdef __cplusplus
 #define MONO_HANDLE_RAW(handle)     ((handle).GetRaw())
 #else

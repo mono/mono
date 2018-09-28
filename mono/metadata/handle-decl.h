@@ -65,10 +65,6 @@ Handle macros/functions
 #define TYPED_HANDLE_NAME(TYPE) TYPE ## Handle
 #define TYPED_OUT_HANDLE_NAME(TYPE) TYPE ## HandleOut
 
-// internal helpers:
-#define MONO_HANDLE_CAST_FOR(type) mono_handle_cast_##type
-#define MONO_HANDLE_TYPECHECK_FOR(type) mono_handle_typecheck_##type
-
 struct _MonoThreadInfo;
 typedef struct _MonoThreadInfo MonoThreadInfo;
 
@@ -269,14 +265,16 @@ struct MonoHandle
 	MonoHandle return_handle (MonoHandleFrame& frame)
 	{
 		// FIXME NULL is NULL or always allocate?
-		return MonoHandle{(T**)frame.allocate_handle_in_caller (GetRaw ())};
+		MonoHandle h;
+		h.__raw = (T G_MAY_ALIAS * G_MAY_ALIAS *)frame.allocate_handle_in_caller (GetRaw ());
+		return h;
 	}
 
 	// FIXME? Naming style: Cast or cast?
 	template <typename T2>
 	MonoHandle<T2> cast () const
 	{
-		return MonoHandle<T2>{(T2**)__raw};
+		return *(MonoHandle<T2> G_MAY_ALIAS *)this;
 	}
 
 	// This enables `if (handle)`, as the universal validity check.
@@ -321,32 +319,19 @@ struct MonoHandle
 /******************************************************************************************
 Note. This is both the point and the danger.
 The safety of this, depends on T* itself not having raw pointers, but only MonoPtr().
+The unsafety shouldn't go unnoticed though, as something will be using raw pointers.
 ******************************************************************************************/
 	T* operator-> () { g_assert (__raw); return *__raw; }
 
 //private: // FIXME
-	T ** __raw;
+	T G_MAY_ALIAS * G_MAY_ALIAS * __raw;
 };
 
 #define TYPED_HANDLE_DECL(TYPE)							\
 	typedef MonoHandle<TYPE> 						\
 	TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
 	  TYPED_HANDLE_NAME (TYPE),						\
-	  TYPED_OUT_HANDLE_NAME (TYPE);						\
-/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
-/* Another way to do this involved casting mono_handle_new function to a different type. */ \
-/* FIXME Are these needed in C++? */ \
-static inline TYPED_HANDLE_NAME (TYPE) 	\
-MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
-{								\
-	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
-	return b;						\
-}								\
-static inline MonoObject* 			\
-MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
-{								\
-	return (MonoObject*)a;					\
-}
+	  TYPED_OUT_HANDLE_NAME (TYPE);
 
 #else
 
@@ -356,20 +341,7 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
 		TYPE **__raw;							\
 	} TYPED_HANDLE_PAYLOAD_NAME (TYPE),					\
 	  TYPED_HANDLE_NAME (TYPE),						\
-	  TYPED_OUT_HANDLE_NAME (TYPE);						\
-/* Do not call these functions directly. Use MONO_HANDLE_NEW and MONO_HANDLE_CAST. */ \
-/* Another way to do this involved casting mono_handle_new function to a different type. */ \
-static inline TYPED_HANDLE_NAME (TYPE) 	\
-MONO_HANDLE_CAST_FOR (TYPE) (gpointer a)			\
-{								\
-	TYPED_HANDLE_NAME (TYPE) b = { (TYPE**)a };		\
-	return b;						\
-}								\
-static inline MonoObject* 			\
-MONO_HANDLE_TYPECHECK_FOR (TYPE) (TYPE *a)			\
-{								\
-	return (MonoObject*)a;					\
-}
+	  TYPED_OUT_HANDLE_NAME (TYPE);
 
 #else
 
