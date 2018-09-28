@@ -5048,7 +5048,7 @@ dnl *** feature experiments ***
 dnl ***************************
 
 dnl When adding experiments, also add to mono/utils/mono-experiments.def
-AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: ],[
+AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null],[
 
 	if test x$enable_experiment != x ; then
 		AC_DEFINE(ENABLE_EXPERIMENTS,1,[Enable feature experiments])
@@ -5058,9 +5058,13 @@ AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental f
 	done
 
 	if test "x$mono_experiment_test_enable_all" = "xyes"; then
+		eval "mono_experiment_test_enable_null='yes'"
 		true
 	fi
 
+	if test "x$mono_experiment_test_enable_null" = "xyes"; then
+		AC_DEFINE(ENABLE_EXPERIMENT_null, 1, [Enable experiment 'null'])
+	fi
 ],[])
 
 dnl **********************
