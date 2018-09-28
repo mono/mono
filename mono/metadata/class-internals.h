@@ -954,6 +954,9 @@ extern MonoDefaults mono_defaults;
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
 #endif
 
+#ifndef __cplusplus
+static
+#endif
 MonoClass*
 mono_object_class (void* obj); // FIXME should be MonoObject
 
