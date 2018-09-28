@@ -2359,8 +2359,8 @@ void     mono_handle_hard_stack_ovf             (MonoJitTlsData *jit_tls, MonoJi
 void     mono_arch_undo_ip_adjustment           (MonoContext *ctx);
 void     mono_arch_do_ip_adjustment             (MonoContext *ctx);
 gpointer mono_arch_ip_from_context              (void *sigctx);
-mgreg_t mono_arch_context_get_int_reg		    (MonoContext *ctx, int reg);
-void     mono_arch_context_set_int_reg		    (MonoContext *ctx, int reg, mgreg_t val);
+host_mgreg_t mono_arch_context_get_int_reg	(MonoContext *ctx, int reg);
+void     mono_arch_context_set_int_reg		(MonoContext *ctx, int reg, host_mgreg_t val);
 void     mono_arch_flush_register_windows       (void);
 gboolean mono_arch_is_inst_imm                  (int opcode, int imm_opcode, gint64 imm);
 gboolean mono_arch_is_int_overflow              (void *sigctx, void *info);

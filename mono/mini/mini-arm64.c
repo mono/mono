@@ -1033,14 +1033,14 @@ mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
 	return (MonoVTable*)regs [MONO_ARCH_RGCTX_REG];
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	return ctx->regs [reg];
 }
 
 void
-mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
 	ctx->regs [reg] = val;
 }

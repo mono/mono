@@ -772,7 +772,7 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 	 * its prolog.
 	 */
 	if (gi->nlocs) {
-		int offset = (mgreg_t)MONO_CONTEXT_GET_IP (ctx) - (mgreg_t)ji->code_start;
+		int offset = (gssize)MONO_CONTEXT_GET_IP (ctx) - (gssize)ji->code_start;
 		int i;
 
 		for (i = 0; i < gi->nlocs; ++i) {

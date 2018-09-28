@@ -20,6 +20,20 @@
 #include "config.h"
 #include <glib.h>
 
+#if defined (__x86_64__) || defined (__arm64__) || defined (__aarch64__)
+// Note: This is independent of __ILP32__ and __LP64__ and is not
+// the same thing as HOST_AMD64 and HOST_ARM64. It is more like
+// defined (HOST_X32) || defined (HOST_ARM6432).
+typedef gint64 host_mgreg_t;
+#else
+typedef gssize host_mgreg_t;
+#endif
+
+// SIZEOF_REGISTER is target. mgreg_t is usually target, sometimes host.
+// There is a mismatch in cross (AOT) compilers, and the
+// never executed JIT and runtime truncate pointers.
+// When casting to/from pointers, use gsize or gssize instead of mgreg_t.
+// When dealing with register context, use host_mgreg_t instead of mgreg_t.
 #if SIZEOF_REGISTER == 4
 typedef gint32 mgreg_t;
 #elif SIZEOF_REGISTER == 8
