@@ -245,10 +245,8 @@ struct MonoHandle
 {
 	// FIXME in future this should have a constructor
 	// It lacks constructor and destructor for JIT interop.
-
+	// FIXME? Naming style: Init or init or other?
 	MonoHandle& Init () { __raw = 0; return *this; }
-
-	MonoHandle NewHandle ();
 
 	template <typename U>
 	bool operator== (MonoHandle <U> q) const { return GetRaw () == q.GetRaw (); }
@@ -267,22 +265,28 @@ struct MonoHandle
 	friend bool operator== (const void* q, const MonoHandle p) { return p.GetRaw () == q; }
 	friend bool operator!= (const void* q, const MonoHandle p) { return p.GetRaw () != q; }
 
+	// FIXME? Naming style: return_handle or ReturnHandle or other?
 	MonoHandle return_handle (MonoHandleFrame& frame)
 	{
 		// FIXME NULL is NULL or always allocate?
 		return MonoHandle{(T**)frame.allocate_handle_in_caller (GetRaw ())};
 	}
 
+	// FIXME? Naming style: Cast or cast?
 	template <typename T2>
 	MonoHandle<T2> cast () const
 	{
 		return MonoHandle<T2>{(T2**)__raw};
 	}
 
+	// This enables `if (handle)`, as the universal validity check.
+	// No need for `if (p != NULL)` or `if (IsValid(p))` or `if (p.IsValid())`
+	// Those are all ok in general, but the goal is uniformity across types, so generally `if (p)`.
+	// The exception is Windows INVALID_HANDLE_VALUE on raw types, but classes can fix that.
 	explicit operator bool () const { return !!GetRaw (); }
 
+	// FIXME? Is this too search? Prefer NewHandle or new_handle for search?
 	MonoHandle& New (T* value = 0);
-
 	MonoHandle& New (MonoPtr<T> value) { return New (value.GetRaw ()); }
 
 	// FIXME? Not safe but has its current uses.
@@ -294,11 +298,14 @@ struct MonoHandle
 						       std::is_same<U, MonoObject>::value >::type>
 	operator MonoHandle<U> () { return cast <MonoObject> (); }
 
+	// FIXME? Naming style: GetRaw or get_raw or getRaw?
 	T* GetRaw () const { return __raw ? *__raw : NULL; }
 	MonoObject* GetRawObj () const { return (MonoObject*)GetRaw(); }
 
+	// FIXME? Naming style: NewPinned or new_pinned or newPinned or other?
 	void new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
+	// FIXME? Naming style: Assign or assign?
 	MonoHandle& assign (MonoHandle p)
 	// i.e. mono_handle_assign
 	// Note this is different than operator =, which is defaulted, same as C.
