@@ -55,6 +55,7 @@ function inspect_object (o){
     return r;
 }
 
+load ("config.js");
 
 var Module = { 
 	print: function(x) { print ("WASM: " + x) },
@@ -62,12 +63,12 @@ var Module = {
 
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl (
-			"@VFS_PREFIX@",
-			"@DEPLOY_PREFIX@",
-			@ENABLE_DEBUGGING@,
-			[ @FILE_LIST@ ],
+			config.vfs_prefix,
+			config.deploy_prefix,
+			config.enable_debugging,
+			config.file_list,
 			function () {
-				@BINDINGS_LOADING@
+				config.add_bindings ();
 				App.init ();
 			},
 			function (asset ) 
@@ -99,7 +100,6 @@ var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['numb
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
 const IGNORE_PARAM_COUNT = -1;
 
-
 var App = {
     init: function () {
 
@@ -110,16 +110,14 @@ var App = {
 			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
 
 			var res = 0;
-			while(true) {
 				try {
 					res = exec_regresion (10, testArguments[1]);
 					Module.print ("REGRESSION RESULT: " + res);
-					break;
 				} catch (e) {
 					Module.print ("ABORT: " + e);
 					res = 1;
 				}
-			}
+
 			if (res)
 				fail_exec ("REGRESSION TEST FAILED");
 

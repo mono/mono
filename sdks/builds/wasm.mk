@@ -23,7 +23,8 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-llvm-runtime \
 	--enable-icall-export \
 	--disable-icall-tables \
-	--with-bitcode=yes
+	--with-bitcode=yes \
+	CFLAGS="-fexceptions"
 
 EMSCRIPTEN_VERSION=1.38.11
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
@@ -86,6 +87,7 @@ WASM_CROSS_CONFIGURE_FLAGS = \
 	--enable-maintainer-mode	\
 	--with-llvm=$(TOP)/sdks/out/llvm-llvm32 \
 	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
 	--with-cross-offsets=wasm-offsets.h
 
 .stamp-wasm-cross-toolchain: .stamp-wasm-toolchain
