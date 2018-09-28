@@ -1985,14 +1985,14 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
-	MonoAsyncResult *ares = NULL;
+	MonoAsyncResult *ares;
 	MonoMethod *method = NULL;
-	MonoMethodSignature *sig = NULL;
+	MonoMethodSignature *sig;
 	MonoMethodMessage *msg;
-	MonoObject *res = NULL;
-	MonoObject *exc = NULL;
-	MonoArray *out_args = NULL;
-	MonoClass *klass = NULL;
+	MonoObject *res;
+	MonoObject *exc;
+	MonoArray *out_args;
+	MonoClass *klass;
 
 	g_assert (delegate);
 
