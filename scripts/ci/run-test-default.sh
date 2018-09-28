@@ -89,7 +89,7 @@ ${TESTCMD} --label=Mono.CodeContracts --timeout=5m make -w -C mcs/class/Mono.Cod
 ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-test
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
 ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
-${TESTCMD} --label=WebMatrix.Data --timeout=5m make -w -C mcs/class/WebMatrix.Data run-test
+if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=WebMatrix.Data --skip; else ${TESTCMD} --label=WebMatrix.Data --timeout=5m make -w -C mcs/class/WebMatrix.Data run-test; fi
 ${TESTCMD} --label=Mono.CSharp --timeout=5m make -w -C mcs/class/Mono.CSharp run-test
 ${TESTCMD} --label=WindowsBase --timeout=5m make -w -C mcs/class/WindowsBase run-test
 ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Numerics run-test
