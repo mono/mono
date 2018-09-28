@@ -283,10 +283,10 @@ namespace MonoTests.System
 			double b = 0.12371341868561381;
 
 			Assert.IsTrue (Math.Abs (a - b) <= 0.0000000000000001, a.ToString ("G99")
-				+ " != " + b.ToString ("G99"));
-			Assert.IsTrue (double.IsNaN (Math.Sinh (Double.NaN)));
-			Assert.IsTrue (double.IsNegativeInfinity (Math.Sinh (Double.NegativeInfinity)));
-			Assert.IsTrue (double.IsPositiveInfinity (Math.Sinh (Double.PositiveInfinity)));
+				       + " != " + b.ToString ("G99"));
+			Assert.IsTrue (double.IsNaN (Math.Sinh (Double.NaN)), "SinH of Nan should be a Nan");
+			Assert.IsTrue (double.IsNegativeInfinity (Math.Sinh (Double.NegativeInfinity)), "SinH of -inf should be -inf");
+			Assert.IsTrue (double.IsPositiveInfinity (Math.Sinh (Double.PositiveInfinity)), "SinH of +inf should be +inf");
 		}
 
 		[Test]
