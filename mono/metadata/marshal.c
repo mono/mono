@@ -1985,14 +1985,9 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
-	MonoAsyncResult *ares;
-	MonoMethod *method = NULL;
-	MonoMethodSignature *sig;
-	MonoMethodMessage *msg;
-	MonoObject *res;
-	MonoObject *exc;
-	MonoArray *out_args;
-	MonoClass *klass;
+	MonoObject *res = NULL;
+	MonoObject *exc = NULL;
+	MonoArray *out_args = NULL;
 
 	g_assert (delegate);
 
@@ -2009,19 +2004,19 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (!delegate->method_info || !delegate->method_info->method)
 		g_assert_not_reached ();
 
-	klass = delegate->object.vtable->klass;
+	MonoClass *klass = delegate->object.vtable->klass;
 
-	method = mono_get_delegate_end_invoke_checked (klass, error);
+	MonoMethod *method = mono_get_delegate_end_invoke_checked (klass, error);
 	mono_error_assert_ok (error);
 	g_assert (method != NULL);
 
-	sig = mono_signature_no_pinvoke (method);
+	MonoMethodSignature *sig = mono_signature_no_pinvoke (method);
 
-	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
+	MonoMethodMessage *msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	ares = (MonoAsyncResult *)mono_array_get (msg->args.GetRaw (), gpointer, sig->param_count - 1);
+	MonoAsyncResult *ares = (MonoAsyncResult *)mono_array_get (msg->args.GetRaw (), gpointer, sig->param_count - 1);
 	if (ares == NULL) {
 		mono_error_set_remoting (error, "The async result object is null or of an unexpected type.");
 		mono_error_set_pending_exception (error);
