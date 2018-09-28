@@ -954,12 +954,15 @@ extern MonoDefaults mono_defaults;
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
 #endif
 
+MonoClass*
+mono_object_class (void* obj); // FIXME should be MonoObject
+
 #ifdef __cplusplus
 inline bool
 #else
 static inline gboolean
 #endif
-mono_object_is_transparent_proxy (void* obj) // FIXME derived from MonoObject
+mono_object_is_transparent_proxy (void* obj) // FIXME should be MonoObject
 {
 	return mono_class_is_transparent_proxy (mono_object_class (obj));
 }
@@ -969,16 +972,26 @@ template <typename T>
 inline bool
 mono_object_is_transparent_proxy (MonoPtr <T> obj)
 {
+#ifdef MONO_HANDLE_SUPPRESS
 	return MONO_HANDLE_SUPPRESS (mono_object_is_transparent_proxy (obj.GetRaw ()));
+#else
+	return mono_object_is_transparent_proxy (obj.GetRaw ());
+#endif
 }
 
 template <typename T>
 inline bool
 mono_object_is_transparent_proxy (MonoHandle <T> obj)
 {
+#ifdef MONO_HANDLE_SUPPRESS
 	return MONO_HANDLE_SUPPRESS (mono_object_is_transparent_proxy (obj.GetRaw ()));
+#else
+	return mono_object_is_transparent_proxy (obj.GetRaw ());
+#endif
 }
 #endif
+
+#define mono_handle_is_transparent_proxy mono_object_is_transparent_proxy
 
 #define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
 MonoClass* mono_class_get_##shortname##_class (void);

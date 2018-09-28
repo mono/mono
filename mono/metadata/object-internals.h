@@ -162,7 +162,7 @@ struct _MonoString {
 static
 #endif
 inline MonoDomain*
-mono_object_domain (void* obj) // FIXME derived from MonoObject
+mono_object_domain (void* obj) // FIXME should be MonoObject
 {
 	return MONO_HANDLE_SUPPRESS (((MonoObject*)obj)->vtable->domain);
 }
@@ -171,7 +171,7 @@ mono_object_domain (void* obj) // FIXME derived from MonoObject
 static
 #endif
 inline MonoClass*
-mono_object_class (void* obj) // FIXME derived from MonoObject
+mono_object_class (void* obj) // FIXME should be MonoObject
 {
 	return MONO_HANDLE_SUPPRESS (((MonoObject*)obj)->vtable->klass);
 }
