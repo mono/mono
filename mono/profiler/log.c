@@ -1015,7 +1015,7 @@ dump_header (void)
 static void
 send_buffer (MonoProfilerThread *thread)
 {
-	WriterQueueEntry *entry = mono_lock_free_alloc (&log_profiler.writer_entry_allocator);
+	WriterQueueEntry *entry = (WriterQueueEntry*)mono_lock_free_alloc (&log_profiler.writer_entry_allocator);
 	entry->methods = thread->methods;
 	entry->buffer = thread->buffer;
 
@@ -1933,10 +1933,10 @@ method_filter (MonoProfiler *prof, MonoMethod *method)
 	    !mono_callspec_eval (method, &log_config.callspec))
 		return MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
-	return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
+	return (MonoProfilerCallInstrumentationFlags)(MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL |
-	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE;
+	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE);
 }
 
 static void
@@ -2311,7 +2311,7 @@ mono_sample_hit (MonoProfiler *profiler, const mono_byte *ip, const void *contex
 		if (mono_atomic_load_i32 (&sample_allocations_ctr) >= log_config.max_allocated_sample_hits)
 			return;
 
-		sample = mono_lock_free_alloc (&profiler->sample_allocator);
+		sample = (SampleHit*)mono_lock_free_alloc (&profiler->sample_allocator);
 		mono_lock_free_queue_node_init (&sample->node, TRUE);
 
 		mono_atomic_inc_i32 (&sample_allocations_ctr);
