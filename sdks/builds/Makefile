@@ -39,6 +39,7 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 TARGETS=
 
 include runtime.mk
+include bcl.mk
 
 ## MXE targets
 ifndef DISABLE_ANDROID
@@ -49,11 +50,6 @@ endif
 ## LLVM targets
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_IOS)),)
 include llvm.mk
-endif
-
-## BCL targets
-ifndef DISABLE_BCL
-include bcl.mk
 endif
 
 ## Android targets

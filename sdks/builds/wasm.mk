@@ -53,5 +53,14 @@ clean-wasm-interp: clean-wasm
 
 TARGETS += wasm-interp
 
+##
+# Parameters
+#  $(1): build profiles
+#  $(2): test profile
+define WasmBclTemplate
 
+$$(eval $$(call BclTemplate,wasm,$(1),$(2)))
 
+endef
+
+$(eval $(call WasmBclTemplate,wasm net_4_x,wasm))

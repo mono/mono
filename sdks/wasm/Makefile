@@ -15,7 +15,7 @@ DRIVER_CONF=release
 
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
-WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
+WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 MINI_PATH=$(TOP)/mono/mini
 CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
@@ -115,7 +115,7 @@ bindings.dll: bindings.cs
 sample.dll:  $(TEST_DEPS) sample.cs
 	$(CSC) /debug:portable /noconfig /nostdlib /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll sample.cs
 
-Mono.Cecil.dll: $(TOP)/sdks/out/bcl/net_4_x/Mono.Cecil.dll
+Mono.Cecil.dll: $(TOP)/sdks/out/wasm-bcl/net_4_x/Mono.Cecil.dll
 	cp $< $@
 
 # We use system csc as this is a desktop program
@@ -172,7 +172,7 @@ package: build
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
-	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/bcl/
 	rm -rf tmp/bcl/bare
 	rm -rf tmp/bcl/secxml
 	rm -rf tmp/bcl/tests
