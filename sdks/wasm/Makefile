@@ -16,6 +16,7 @@ DRIVER_CONF=release
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
+BCL_DIR=$(TOP)/mcs/class/lib/wasm
 WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
 MINI_PATH=$(TOP)/mono/mini
 CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
@@ -150,6 +151,20 @@ do-aot-sample: aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
 
 build-debug-sample: .stamp-build-debug-sample
+
+build-aot-mini: packager.exe runtime-tests.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js $(WASM_BCL_DIR)/nunit-lite-console.exe $(BCL_DIR)/tests/wasm_Mono.Runtime.Tests_test.dll
+	ninja -v -C obj/aot-mini
+
+check-aot-mini: build-aot-mini
+	(cd bin/aot-mini && $(SM) runtime.js --run nunit-lite-console.exe wasm_Mono.Runtime.Tests_test.dll)
+
+build-aot-System.Core: packager.exe runtime-tests.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-System.Core --nobinding --builddir=obj/aot-System.Core --aot --template=runtime-tests.js $(WASM_BCL_DIR)/nunit-lite-console.exe $(BCL_DIR)/tests/wasm_System.Core_test.dll
+	ninja -v -C obj/aot-System.Core
+
+check-aot-System.Core: build-aot-System.Core
+	(cd bin/aot-System.Core && $(SM) runtime.js --run nunit-lite-console.exe wasm_System.Core_test.dll)
 
 build-test-suite: .stamp-build-test-suite
 
