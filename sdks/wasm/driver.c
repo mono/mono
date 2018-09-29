@@ -139,6 +139,7 @@ MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_wasm_enable_debugging (void);
 MonoArray* mono_array_new (MonoDomain *domain, MonoClass *eclass, int n);
 MonoClass* mono_get_object_class (void);
+MonoClass* mono_get_string_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
@@ -386,7 +387,6 @@ mono_wasm_string_from_js (const char *str)
 	return mono_string_new (root_domain, str);
 }
 
-
 static int
 class_is_task (MonoClass *klass)
 {
@@ -555,6 +555,12 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
 {
 	mono_array_setref (array, idx, obj);
+}
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_string_array_new (int size)
+{
+	return mono_array_new (root_domain, mono_get_string_class (), size);
 }
 
 // Int8Array 		| int8_t	| byte or SByte (signed byte)
