@@ -11,6 +11,15 @@ if !HOST_WIN32
 if !DISABLE_LIBRARIES
 if !DISABLE_PROFILER
 
+# mprof-report.c is in a separate library, not compiled as part of building
+# the program, in order to be C++, for two reasons.
+#
+# Linking with:
+#    cc -xc++ 1.c 2.o 3.a
+# complains that 2.o and 3.a are not C++ source.
+# Even if we could control the link command line order, e.g.:
+#    cc 2.o 3.a -xc++ 1.c
+# this runs a risk of a libc++ dependency.
 bin_PROGRAMS = mprof-report
 noinst_LIBRARIES = libmprof-report.a
 
