@@ -35,7 +35,9 @@
 #include <string.h>
 #include <glib.h>
 
+#ifndef __cplusplus
 #define bool char
+#endif
 
 #include <jitprofiling.h>
 

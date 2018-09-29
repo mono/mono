@@ -337,7 +337,9 @@ extern "C" {
          }
 #      else
 #        ifndef inline
-#          define inline __inline
+#          ifndef __cplusplus
+#            define inline __inline
+#          endif
 #        endif
 #        pragma mc_func GC_memsync { \
            "7c0004ac" /* sync (same opcode used for dcs)*/ \
