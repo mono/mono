@@ -98,7 +98,7 @@ load ("mono.js");
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
-var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'array', 'number']);
+var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
 var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
 var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
 var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
@@ -159,8 +159,8 @@ var App = {
 				obj_array_set (app_args, i - 2, string_from_js (args [i]));
 			}
 
-			var invoke_args = [];
-			invoke_args [0] = app_args;
+			var invoke_args = Module._malloc (4);
+			Module.setValue (invoke_args, app_args, "i32");
 			var eh_throw = Module._malloc (4);
 			Module.setValue (eh_throw, 0, "i32");
 			var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
