@@ -154,3 +154,15 @@ endef
 ifeq ($(DISABLE_WASM_CROSS),)
 $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 endif
+
+##
+# Parameters
+#  $(1): build profiles
+#  $(2): test profile
+define WasmBclTemplate
+
+$$(eval $$(call BclTemplate,wasm,$(1),$(2)))
+
+endef
+
+$(eval $(call WasmBclTemplate,wasm,wasm))

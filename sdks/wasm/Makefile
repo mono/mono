@@ -16,7 +16,7 @@ DRIVER_CONF=release
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
-WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
+WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 MINI_PATH=$(TOP)/mono/mini
 CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
@@ -193,7 +193,7 @@ package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
-	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/bcl/
 	rm -rf tmp/bcl/bare
 	rm -rf tmp/bcl/secxml
 	rm -rf tmp/bcl/tests
