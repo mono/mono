@@ -388,3 +388,14 @@ $(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v
 $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
+
+##
+# Parameters
+#  $(1): build profiles
+define AndroidBclTemplate
+
+$$(eval $$(call BclTemplate,android,$(1)))
+
+endef
+
+$(eval $(call AndroidBclTemplate,monodroid monodroid_tools))
