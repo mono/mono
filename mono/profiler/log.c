@@ -1933,7 +1933,8 @@ method_filter (MonoProfiler *prof, MonoMethod *method)
 	    !mono_callspec_eval (method, &log_config.callspec))
 		return MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
-	return (MonoProfilerCallInstrumentationFlags)(MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
+	return (MonoProfilerCallInstrumentationFlags)(
+	       MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE);
