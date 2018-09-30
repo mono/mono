@@ -494,7 +494,7 @@ clear_hazard_pointers (MonoThreadHazardPointers *hp)
 static MonoProfilerThread *
 init_thread (gboolean add_to_lls)
 {
-	MonoProfilerThread *thread = PROF_TLS_GET ();
+	MonoProfilerThread *thread = (MonoProfilerThread*)PROF_TLS_GET ();
 
 	g_assert (thread != MONO_PROFILER_THREAD_DEAD && "Why are we trying to resurrect a stopped thread?");
 
@@ -1015,7 +1015,7 @@ dump_header (void)
 static void
 send_buffer (MonoProfilerThread *thread)
 {
-	WriterQueueEntry *entry = mono_lock_free_alloc (&log_profiler.writer_entry_allocator);
+	WriterQueueEntry *entry = (WriterQueueEntry*)mono_lock_free_alloc (&log_profiler.writer_entry_allocator);
 	entry->methods = thread->methods;
 	entry->buffer = thread->buffer;
 
@@ -1028,7 +1028,7 @@ send_buffer (MonoProfilerThread *thread)
 static void
 free_thread (gpointer p)
 {
-	MonoProfilerThread *thread = p;
+	MonoProfilerThread *thread = (MonoProfilerThread*)p;
 
 	if (!thread->ended) {
 		/*
@@ -1933,10 +1933,11 @@ method_filter (MonoProfiler *prof, MonoMethod *method)
 	    !mono_callspec_eval (method, &log_config.callspec))
 		return MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
-	return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
+	return (MonoProfilerCallInstrumentationFlags)(
+	       MONO_PROFILER_CALL_INSTRUMENTATION_ENTER |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE |
 	       MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL |
-	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE;
+	       MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE);
 }
 
 static void
@@ -2280,7 +2281,7 @@ async_walk_stack (MonoMethod *method, MonoDomain *domain, void *base_address, in
 static void
 enqueue_sample_hit (gpointer p)
 {
-	SampleHit *sample = p;
+	SampleHit *sample = (SampleHit*)p;
 
 	mono_lock_free_queue_node_unpoison (&sample->node);
 	mono_lock_free_queue_enqueue (&log_profiler.dumper_queue, &sample->node);
@@ -2311,7 +2312,7 @@ mono_sample_hit (MonoProfiler *profiler, const mono_byte *ip, const void *contex
 		if (mono_atomic_load_i32 (&sample_allocations_ctr) >= log_config.max_allocated_sample_hits)
 			return;
 
-		sample = mono_lock_free_alloc (&profiler->sample_allocator);
+		sample = (SampleHit*)mono_lock_free_alloc (&profiler->sample_allocator);
 		mono_lock_free_queue_node_init (&sample->node, TRUE);
 
 		mono_atomic_inc_i32 (&sample_allocations_ctr);
@@ -2627,7 +2628,7 @@ counters_sample (uint64_t timestamp)
 			agent->value_size = size;
 		} else {
 			if (type == MONO_COUNTER_STRING) {
-				if (strcmp (agent->value, buffer) == 0)
+				if (strcmp ((const char*)agent->value,  (const char*)buffer) == 0)
 					continue;
 			} else {
 				if (agent->value_size == size && memcmp (agent->value, buffer, size) == 0)
@@ -3302,7 +3303,8 @@ handle_writer_queue_entry (void)
 		if (!entry->methods)
 			goto no_methods;
 
-		gboolean wrote_methods = FALSE;
+		gboolean wrote_methods;
+		wrote_methods = FALSE;
 
 		/*
 		 * Encode the method events in a temporary log buffer that we
@@ -3335,10 +3337,14 @@ handle_writer_queue_entry (void)
 			mono_conc_hashtable_insert (log_profiler.method_table, info->method, info->method);
 			mono_os_mutex_unlock (&log_profiler.method_table_mutex);
 
-			char *name = mono_method_full_name (info->method, 1);
-			int nlen = strlen (name) + 1;
-			void *cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
-			int csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
+			char *name;
+			name = mono_method_full_name (info->method, 1);
+			int nlen;
+			nlen = strlen (name) + 1;
+			void *cstart;
+			cstart = info->ji ? mono_jit_info_get_code_start (info->ji) : NULL;
+			int csize;
+			csize = info->ji ? mono_jit_info_get_code_size (info->ji) : 0;
 
 			ENTER_LOG (&method_jits_ctr, logbuffer,
 				EVENT_SIZE /* event */ +
@@ -3425,7 +3431,7 @@ start_writer_thread (void)
 static void
 reuse_sample_hit (gpointer p)
 {
-	SampleHit *sample = p;
+	SampleHit *sample = (SampleHit*)p;
 
 	mono_lock_free_queue_node_unpoison (&sample->node);
 	mono_lock_free_queue_enqueue (&log_profiler.sample_reuse_queue, &sample->node);
