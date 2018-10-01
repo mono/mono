@@ -603,6 +603,7 @@ again:
 			if (iter == 1000)
 				iter = 10;
 
+			MONO_ENTER_GC_SAFE;
 #ifdef HOST_WIN32
 			SleepEx (iter, TRUE);
 #else
@@ -615,6 +616,7 @@ again:
 			sleepytime.tv_nsec = iter * 1000000;
 			nanosleep (&sleepytime, NULL);
 #endif /* HOST_WIN32 */
+			MONO_EXIT_GC_SAFE;
 
 			goto again;
 		}
