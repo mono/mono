@@ -330,6 +330,7 @@ case "$host" in
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		AC_DEFINE(USE_MACH_SEMA, 1, [...])
+		AC_DEFINE(DISABLE_STACK_OVERFLOW_GUARD, 1, [Mapping of stack guard page is buggy on platform])
 		libdl=
 		libgc_threads=pthreads
 		has_dtrace=yes

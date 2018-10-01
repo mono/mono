@@ -2745,6 +2745,7 @@ mono_setup_altstack (MonoJitTlsData *tls)
 
 	/*g_print ("thread %p, stack_base: %p, stack_size: %d\n", (gpointer)pthread_self (), staddr, stsize);*/
 
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 	tls->stack_ovf_guard_base = staddr + mono_pagesize ();
 	tls->stack_ovf_guard_size = ALIGN_TO (8 * 4096, mono_pagesize ());
 
@@ -2756,6 +2757,7 @@ mono_setup_altstack (MonoJitTlsData *tls)
 		g_assert (gaddr == tls->stack_ovf_guard_base);
 		tls->stack_ovf_valloced = TRUE;
 	}
+#endif
 
 	/* Setup an alternate signal stack */
 	tls->signal_stack = mono_valloc (0, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON, MONO_MEM_ACCOUNT_EXCEPTIONS);
@@ -2768,7 +2770,11 @@ mono_setup_altstack (MonoJitTlsData *tls)
 	sa.ss_flags = 0;
 	g_assert (sigaltstack (&sa, NULL) == 0);
 
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 	mono_gc_register_altstack ((char*)tls->stack_ovf_guard_base + tls->stack_ovf_guard_size, (char*)staddr + stsize - ((char*)tls->stack_ovf_guard_base + tls->stack_ovf_guard_size), tls->signal_stack, tls->signal_stack_size);
+#else
+	mono_gc_register_altstack (staddr, stsize, tls->signal_stack, tls->signal_stack_size);
+#endif
 }
 
 void
@@ -2785,10 +2791,12 @@ mono_free_altstack (MonoJitTlsData *tls)
 
 	if (tls->signal_stack)
 		mono_vfree (tls->signal_stack, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MEM_ACCOUNT_EXCEPTIONS);
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 	if (tls->stack_ovf_valloced)
 		mono_vfree (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MEM_ACCOUNT_EXCEPTIONS);
 	else
 		mono_mprotect (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_READ|MONO_MMAP_WRITE);
+#endif
 }
 
 #else /* !MONO_ARCH_SIGSEGV_ON_ALTSTACK */
@@ -2808,6 +2816,9 @@ mono_free_altstack (MonoJitTlsData *tls)
 gboolean
 mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, guint8* fault_addr)
 {
+#ifdef DISABLE_STACK_OVERFLOW_GUARD
+	return FALSE;
+#else
 	if (mono_llvm_only)
 		return FALSE;
 
@@ -2847,6 +2858,7 @@ mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 		return TRUE;
 	}
 	return FALSE;
+#endif
 }
 
 typedef struct {
