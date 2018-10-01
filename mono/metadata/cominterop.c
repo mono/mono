@@ -1819,13 +1819,13 @@ cominterop_rcw_finalizer (gpointer key, gpointer value, gpointer user_data)
 		MonoComInteropProxy* proxy = (MonoComInteropProxy*)mono_gchandle_get_target (gchandle);
 
 		if (proxy) {
-			if (proxy->com_object->itf_hash) {
-				g_hash_table_foreach_remove (proxy->com_object->itf_hash, cominterop_rcw_interface_finalizer, NULL);
-				g_hash_table_destroy (proxy->com_object->itf_hash);
+			if (proxy->com_object.GetRaw ()->itf_hash) {
+				g_hash_table_foreach_remove (proxy->com_object.GetRaw ()->itf_hash, cominterop_rcw_interface_finalizer, NULL);
+				g_hash_table_destroy (proxy->com_object.GetRaw ()->itf_hash);
 			}
-			mono_IUnknown_Release (proxy->com_object->iunknown);
-			proxy->com_object->iunknown = NULL;
-			proxy->com_object->itf_hash = NULL;
+			mono_IUnknown_Release (proxy->com_object.GetRaw ()->iunknown);
+			proxy->com_object.GetRaw ()->iunknown = NULL;
+			proxy->com_object.GetRaw ()->itf_hash = NULL;
 		}
 		
 		mono_gchandle_free (gchandle);

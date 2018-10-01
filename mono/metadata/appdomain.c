@@ -1173,7 +1173,7 @@ mono_domain_set_options_from_config (MonoDomain *domain)
 	if (!domain || !domain->setup || !domain->setup->configuration_file)
 		return;
 
-	config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file, error);
+	config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file.GetRaw (), error);
 	if (!mono_error_ok (error)) {
 		mono_error_cleanup (error);
 		goto free_and_out;
@@ -1747,7 +1747,7 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 	
 	setup = domain->setup;
 	if (setup->cache_path != NULL && setup->application_name != NULL) {
-		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
+		cache_path = mono_string_to_utf8_checked (setup->cache_path.GetRaw (), error);
 		return_val_if_nok (error, NULL);
 
 #ifndef TARGET_WIN32
@@ -1759,7 +1759,7 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 		}
 #endif
 
-		appname = mono_string_to_utf8_checked (setup->application_name, error);
+		appname = mono_string_to_utf8_checked (setup->application_name.GetRaw (), error);
 		if (!mono_error_ok (error)) {
 			g_free (cache_path);
 			return NULL;
@@ -1901,7 +1901,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (setup == NULL || setup->shadow_copy_files == NULL)
 		goto exit;
 
-	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files, error);
+	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files.GetRaw (), error);
 	if (!mono_error_ok (error))
 		goto exit;
 
@@ -1924,7 +1924,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (found)
 		goto exit;
 
-	all_dirs = mono_string_to_utf8_checked (setup->shadow_copy_directories, error);
+	all_dirs = mono_string_to_utf8_checked (setup->shadow_copy_directories.GetRaw (), error);
 	if (!mono_error_ok (error))
 		goto exit;
 
