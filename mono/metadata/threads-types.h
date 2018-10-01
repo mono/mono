@@ -132,7 +132,9 @@ ICALL_EXPORT
 gint32
 ves_icall_System_Threading_Thread_GetDomainID (MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThreadHandle this_obj, MonoError *error);
 
 ICALL_EXPORT
@@ -156,7 +158,9 @@ MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInt
 ICALL_EXPORT
 void ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThread *this_obj, MonoObject *culture);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoThreadObjectHandle ves_icall_System_Threading_Thread_GetCurrentThread (MonoError *error);
 
 ICALL_EXPORT

@@ -25,7 +25,9 @@ mono_domain_try_type_resolve_name (MonoDomain *domain, MonoStringHandle name, Mo
 MonoReflectionAssemblyHandle
 mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilderHandle typebuilder, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoReflectionTypeHandle
 ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, MonoError *error);
 

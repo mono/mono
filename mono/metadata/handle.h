@@ -25,7 +25,9 @@
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/class-internals.h>
 
+#ifndef _MSC_VER
 G_BEGIN_DECLS
+#endif
 
 /*
 Whether this config needs stack watermark recording to know where to start scanning from.
@@ -673,6 +675,8 @@ template <typename T> inline MonoHandle<T> mono_new_handle (MonoPtr<T> a) { retu
 } // extern C++
 #endif
 
+#ifndef _MSC_VER
 G_END_DECLS
+#endif
 
 #endif /* __MONO_HANDLE_H__ */
