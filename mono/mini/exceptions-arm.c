@@ -144,7 +144,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 }
 
 void
-mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
+mono_arm_throw_exception (MonoObject *exc, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs)
 {
 	ERROR_DECL (error);
 	MonoContext ctx;
@@ -159,7 +159,7 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
 	MONO_CONTEXT_SET_SP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, pc);
-	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
+	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (host_mgreg_t)), int_regs, 8 * sizeof (host_mgreg_t));
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * 16);
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
@@ -176,7 +176,7 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 }
 
 void
-mono_arm_throw_exception_by_token (guint32 ex_token_index, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
+mono_arm_throw_exception_by_token (guint32 ex_token_index, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs)
 {
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	/* Clear thumb bit */
@@ -186,7 +186,7 @@ mono_arm_throw_exception_by_token (guint32 ex_token_index, mgreg_t pc, mgreg_t s
 }
 
 void
-mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs)
+mono_arm_resume_unwind (guint32 dummy1, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs)
 {
 	MonoContext ctx;
 
@@ -197,7 +197,7 @@ mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_reg
 	MONO_CONTEXT_SET_BP (&ctx, int_regs [ARMREG_FP - 4]);
 	MONO_CONTEXT_SET_SP (&ctx, sp);
 	MONO_CONTEXT_SET_IP (&ctx, pc);
-	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (mgreg_t)), int_regs, 8 * sizeof (mgreg_t));
+	memcpy (((guint8*)&ctx.regs) + (ARMREG_R4 * sizeof (host_mgreg_t)), int_regs, 8 * sizeof (host_mgreg_t));
 
 	mono_resume_unwind (&ctx);
 }
@@ -228,9 +228,9 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
 
-	cfa_offset = MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t);
+	cfa_offset = MONO_ARM_NUM_SAVED_REGS * sizeof (host_mgreg_t);
 	mono_add_unwind_op_def_cfa (unwind_ops, code, start, ARMREG_SP, cfa_offset);
-	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, - sizeof (mgreg_t));
+	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, - sizeof (host_mgreg_t));
 
 	/* Save fp regs */
 	if (!mono_arch_is_soft_float ()) {
@@ -270,7 +270,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 		ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_LR); /* caller ip */
 	}
 	/* int regs */
-	ARM_ADD_REG_IMM8 (code, ARMREG_R3, ARMREG_SP, (cfa_offset - (MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t))));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R3, ARMREG_SP, (cfa_offset - (MONO_ARM_NUM_SAVED_REGS * sizeof (host_mgreg_t))));
 	/* fp regs */
 	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_SP, 8);
 	ARM_STR_IMM (code, ARMREG_LR, ARMREG_SP, 0);
@@ -409,7 +409,7 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
@@ -488,7 +488,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		 * produce the register state which existed at the time of the call which
 		 * transitioned to native call, so we save the sp/fp/ip in the LMF.
 		 */
-		memcpy (&new_ctx->regs [0], &(*lmf)->iregs [0], sizeof (mgreg_t) * 13);
+		memcpy (&new_ctx->regs [0], &(*lmf)->iregs [0], sizeof (host_mgreg_t) * 13);
 		new_ctx->pc = (*lmf)->ip;
 		new_ctx->regs [ARMREG_SP] = (*lmf)->sp;
 		new_ctx->regs [ARMREG_FP] = (*lmf)->fp;
