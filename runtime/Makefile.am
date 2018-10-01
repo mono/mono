@@ -1,3 +1,4 @@
+
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
@@ -81,33 +82,48 @@ endif
 
 test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
 
-if BUILD_MCS
-
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
 # The write check is to foil 'make distcheck'
-all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+all-mcs: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	cd $(mcs_topdir) && $(MAKE) $(MAKE_FLAGS) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
-# override automake
-install: install-exec install-data
+install-mcs: install-mcs-exec install-mcs-data
 
 # override automake
-install-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+install-mcs-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
-install-data:
+install-mcs-data:
 	@:
 
 # override automake
-uninstall:
+uninstall-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
-clean-local:
+clean-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' clean-profiles
 	-rm -fr $(etctmp) $(tmpinst)
+
+if BUILD_MCS
+
+all-local: all-mcs
+
+# override automake
+install: install-mcs
+
+# override automake
+install-exec: install-mcs-exec
+
+# override automake
+install-data: install-mcs-data
+
+# override automake
+uninstall: uninstall-mcs
+
+clean-local: clean-mcs
 
 endif BUILD_MCS
 
