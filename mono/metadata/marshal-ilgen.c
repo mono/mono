@@ -80,7 +80,7 @@ get_method_nofail (MonoClass *klass, const char *method_name, int num_params, in
 }
 
 static void
-init_safe_handle ()
+init_safe_handle (void)
 {
 	sh_dangerous_add_ref = get_method_nofail (
 		mono_class_try_get_safehandle_class (), "DangerousAddRef", 1, 0);
