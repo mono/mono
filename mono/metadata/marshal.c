@@ -865,7 +865,7 @@ TYPED_HANDLE_DECL (MonoStringBuilder);
 static void
 mono_string_utf16_to_builder_copy (MonoStringBuilder *sb, const gunichar2 *text, size_t string_len)
 {
-	gunichar2 *charDst = (gunichar2 *)sb.GetRaw ()->chunkChars.GetRaw ()->vector;
+	gunichar2 *charDst = (gunichar2 *)sb->chunkChars.GetRaw ()->vector;
 	memcpy (charDst, text, sizeof (gunichar2) * string_len);
 
 	sb->chunkLength = string_len;
@@ -1031,14 +1031,14 @@ mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 	do {
 		if (chunk->chunkLength > 0) {
 			// Check that we will not overrun our boundaries.
-			gunichar2 *source = (gunichar2 *)chunk->chunkChars->vector;
+			gunichar2 *source = (gunichar2 *)chunk->chunkChars.GetRaw ()->vector;
 
 			g_assertf (chunk->chunkLength <= len, "A chunk in the StringBuilder had a length longer than expected from the offset.");
 			memcpy (str + chunk->chunkOffset, source, chunk->chunkLength * sizeof(gunichar2));
 
 			len -= chunk->chunkLength;
 		}
-		chunk = chunk->chunkPrevious;
+		chunk = chunk->chunkPrevious.GetRaw ();
 	} while (chunk != NULL);
 
 	return str;
@@ -1276,8 +1276,8 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 
 #ifndef DISABLE_REMOTING
 	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
-		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
-		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
+		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target.GetRaw ();
+		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp.GetRaw ()->context.GetRaw () != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
 			*/
@@ -1301,7 +1301,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
+			mono_remoting_invoke ((MonoObject *)tp->rp.GetRaw (), msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
@@ -2025,7 +2025,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 
 #ifndef DISABLE_REMOTING
 	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
-		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
+		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target.GetRaw ();
 		msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
@@ -2036,7 +2036,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			return NULL;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
+		res = mono_remoting_invoke ((MonoObject *)tp->rp.GetRaw (), msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
@@ -2052,7 +2052,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (exc) {
 		if (((MonoException*)exc)->stack_trace) {
 			ERROR_DECL_VALUE (inner_error);
-			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace, &inner_error);
+			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace.GetRaw (), &inner_error);
 			if (is_ok (&inner_error)) {
 				char  *tmp;
 				tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
@@ -5347,7 +5347,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 	res = mono_marshal_alloc_hglobal (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 
 	return res;
 }
@@ -5364,14 +5364,14 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gsize size, MonoError *error)
 {
 	if (ptr == NULL) {
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 		return NULL;
 	}
 
 	gpointer const res = mono_marshal_realloc_hglobal (ptr, size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 
 	return res;
 }
@@ -5396,7 +5396,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoE
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 
 	return res;
 }
@@ -5407,7 +5407,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 
 	return res;
 }
@@ -5432,7 +5432,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr,
 	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
 
 	if (!res) {
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.GetRaw ());
 		return NULL;
 	}
 	return res;

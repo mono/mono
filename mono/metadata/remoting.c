@@ -467,36 +467,31 @@ fail:
  * Note this is called from target appdomain inside xdomain wrapper, but from
  * source domain in the mono_remoting_wrapper slowpath.
  */
-static MonoExceptionHandle
-mono_remoting_update_exception_handle (MonoExceptionHandle exc)
-{
-	HANDLE_FUNCTION_ENTER ();
-	ERROR_DECL (error);
-	MonoInternalThreadHandle thread;
-	MonoClass *klass = mono_object_get_class (exc);
-
-	/* Serialization error can only happen when still in the target appdomain */
-	if (!(mono_class_get_flags (klass) & TYPE_ATTRIBUTE_SERIALIZABLE)) {
-		g_ptr <char> aname = mono_stringify_assembly_name (&m_class_get_image (klass)->assembly->aname);
-		g_ptr <char> message = g_strdup_printf ("Type '%s' in Assembly '%s' is not marked as serializable", m_class_get_name (klass), aname.get ());
-		return mono_exception_new_serialization (message, error);
-	}
-
-	thread.New (mono_thread_internal_current ());
-	if (mono_object_get_class (exc) == mono_defaults.threadabortexception_class &&
-			(thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT)) {
-		mono_thread_internal_reset_abort (thread.GetRaw ());
-		return mono_exception_new_appdomain_unloaded (error);
-	}
-
-	return exc;
-}
-
 static MonoException*
 mono_remoting_update_exception (MonoException* exc)
 {
-	HANDLE_FUNCTION_ENTER ();
-	return mono_remoting_update_exception_handle (mono_new_handle (exc)).GetRaw ();
+	MonoInternalThread *thread;
+	MonoClass *klass = mono_object_get_class ((MonoObject*)exc);
+
+	/* Serialization error can only happen when still in the target appdomain */
+	if (!(mono_class_get_flags (klass) & TYPE_ATTRIBUTE_SERIALIZABLE)) {
+		MonoException *ret;
+		char *aname = mono_stringify_assembly_name (&m_class_get_image (klass)->assembly->aname);
+		char *message = g_strdup_printf ("Type '%s' in Assembly '%s' is not marked as serializable", m_class_get_name (klass), aname);
+		ret =  mono_get_exception_serialization (message);
+		g_free (aname);
+		g_free (message);
+		return ret;
+	}
+
+	thread = mono_thread_internal_current ();
+	if (mono_object_get_class ((MonoObject*)exc) == mono_defaults.threadabortexception_class &&
+			thread->flags & MONO_THREAD_FLAG_APPDOMAIN_ABORT) {
+		mono_thread_internal_reset_abort (thread);
+		return mono_get_exception_appdomain_unloaded ();
+	}
+
+	return exc;
 }
 
 /**

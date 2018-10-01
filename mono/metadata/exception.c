@@ -296,7 +296,7 @@ mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
 return_null:
 	MONO_HANDLE_ASSIGN (ex, NULL_HANDLE);
 exit:
-	HANDLE_FUNCTION_RETURN_REF (MonoException, ex);
+	HANDLE_FUNCTION_RETURN_REF (MonoException, ex)
 }
 
 /**
@@ -879,19 +879,10 @@ mono_get_exception_cannot_unload_appdomain (const char *msg)
  * mono_get_exception_appdomain_unloaded
  * \returns a new instance of the \c System.AppDomainUnloadedException
  */
-MonoExceptionHandle
-mono_exception_new_appdomain_unloaded (MonoError *error)
-{
-	return mono_exception_new_by_name_msg (mono_get_corlib (), "System", "AppDomainUnloadedException", NULL, error);
-
-}
-
 MonoException *
 mono_get_exception_appdomain_unloaded (void)
 {
-	HANDLE_FUNCTION_ENTER ();
-	ERROR_DECL (error);
-	MONO_RETURN_RAW (mono_exception_new_appdomain_unloaded (error));
+	return mono_exception_from_name (mono_get_corlib (), "System", "AppDomainUnloadedException");
 }
 
 /**
@@ -1125,21 +1116,16 @@ append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset
 }
 
 char *
-mono_exception_get_managed_backtrace (MonoExceptionHandle exc)
+mono_exception_get_managed_backtrace (MonoException *exc)
 {
-	GString *text = g_string_new_len (NULL, 20);
+	GString *text;
 
-	if (!mono_get_eh_callbacks ()->mono_exception_walk_trace (exc.GetRaw (), append_frame_and_continue, text))
+	text = g_string_new_len (NULL, 20);
+
+	if (!mono_get_eh_callbacks ()->mono_exception_walk_trace (exc, append_frame_and_continue, text))
 		g_string_append (text, "managed backtrace not available\n");
 
 	return g_string_free (text, FALSE);
-}
-
-char *
-mono_exception_get_managed_backtrace (MonoException *exc)
-{
-	HANDLE_FUNCTION_ENTER ();
-	return mono_exception_get_managed_backtrace (mono_new_handle (exc));
 }
 
 char *
@@ -1147,12 +1133,14 @@ mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
 {
 #ifdef HAVE_BACKTRACE_SYMBOLS
 	MonoDomain *domain;
-	MonoArrayHandle arr = exc->native_trace_ips.NewHandle ();
+	MonoArrayHandle arr = MONO_HANDLE_NEW(MonoArray, NULL);
 	int i, len;
 	GString *text;
 	char **messages;
 
-	if (!arr)
+	MONO_HANDLE_GET (arr, exc, native_trace_ips);
+
+	if (MONO_HANDLE_IS_NULL(arr))
 		return g_strdup ("");
 	domain = mono_domain_get ();
 	len = mono_array_handle_length (arr);
@@ -1259,11 +1247,10 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	if (unhandled_exception_hook) {
 		unhandled_exception_hook (exc, unhandled_exception_hook_data);
 	} else {
-		HANDLE_FUNCTION_ENTER ();
 		ERROR_DECL_VALUE (inner_error);
 		MonoObject *other = NULL;
-		MonoStringHandle str = mono_object_try_to_string (mono_new_handle (exc), &other, &inner_error);
-		g_ptr <char> msg;
+		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
+		char *msg = NULL;
 		
 		if (str && is_ok (&inner_error)) {
 			msg = mono_string_to_utf8_checked (str, &inner_error);
@@ -1272,15 +1259,19 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 				mono_error_cleanup (&inner_error);
 			}
 		} else if (other) {
-			g_ptr <char> original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
-			g_ptr <char> nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
+			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
+			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
 
 			msg = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
-				original_backtrace.get (), nested_backtrace.get ());
+				original_backtrace, nested_backtrace);
+
+			g_free (original_backtrace);
+			g_free (nested_backtrace);
 		} else {
 			msg = g_strdup ("Nested exception trying to figure out what went wrong");
 		}
-		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg.get ());
+		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg);
+		g_free (msg);
 #if defined(HOST_IOS)
 		g_assertion_message ("Terminating runtime due to unhandled exception");
 #else

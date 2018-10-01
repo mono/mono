@@ -2001,8 +2001,8 @@ mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void *
 MonoObject*
 mono_property_get_value_checked (MonoProperty *prop, void *obj, void **params, MonoError *error);
 
-MonoStringHandle
-mono_object_try_to_string (MonoObjectHandle obj, MonoObject **exc, MonoError *error);
+MonoString*
+mono_object_try_to_string (MonoObject* obj, MonoObject **exc, MonoError *error);
 
 char *
 mono_string_to_utf8_ignore (MonoString *s);

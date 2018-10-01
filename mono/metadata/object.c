@@ -85,9 +85,6 @@ static GENERATE_GET_CLASS_WITH_CACHE (activation_services, "System.Runtime.Remot
 #define ldstr_unlock() mono_coop_mutex_unlock (&ldstr_section)
 static MonoCoopMutex ldstr_section;
 
-static void
-mono_print_unhandled_exception (MonoObjectHandle exc);
-
 /**
  * mono_runtime_object_init:
  * \param this_obj the object to initialize
@@ -318,16 +315,16 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
  *
  *   Return the stored type initialization exception for VTABLE.
  */
-static MonoExceptionHandle
+static MonoException*
 get_type_init_exception_for_vtable (MonoVTable *vtable)
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
 	MonoDomain *domain = vtable->domain;
 	MonoClass *klass = vtable->klass;
-	MonoExceptionHandle ex;
+	MonoException *ex;
+	gchar *full_name;
 
 	if (!vtable->init_failed)
 		g_error ("Trying to get the init exception for a non-failed vtable of class %s", mono_type_get_full_name (klass));
@@ -336,24 +333,25 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 	 * If the initializing thread was rudely aborted, the exception is not stored
 	 * in the hash.
 	 */
-	ex.New();
+	ex = NULL;
 	mono_domain_lock (domain);
 	if (domain->type_init_exception_hash)
 		ex = (MonoException *)mono_g_hash_table_lookup (domain->type_init_exception_hash, klass);
 	mono_domain_unlock (domain);
 
-	if (ex)
-		MONO_RETURN_HANDLE (ex);
+	if (!ex) {
+		const char *klass_name_space = m_class_get_name_space (klass);
+		const char *klass_name = m_class_get_name (klass);
+		if (klass_name_space && *klass_name_space)
+			full_name = g_strdup_printf ("%s.%s", klass_name_space, klass_name);
+		else
+			full_name = g_strdup (klass_name);
+		ex = mono_get_exception_type_initialization_checked (full_name, NULL, error);
+		g_free (full_name);
+		return_val_if_nok (error, NULL);
+	}
 
-	const char *klass_name_space = m_class_get_name_space (klass);
-	const char *klass_name = m_class_get_name (klass);
-	g_ptr <char> full_name;
-	if (klass_name_space && *klass_name_space)
-		full_name = g_strdup_printf ("%s.%s", klass_name_space, klass_name);
-	else
-		full_name = g_strdup (klass_name);
-	ex = mono_get_exception_type_initialization_checked (full_name, NULL, error);
-	MONO_RETURN_HANDLE (is_ok (error) ? ex : MonoExceptionHandle ().Init ());
+	return ex;
 }
 
 /**
@@ -398,7 +396,6 @@ unref_type_lock (TypeInitializationLock *lock)
 gboolean
 mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoMethod *method = NULL;
@@ -4853,7 +4850,7 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	}
 
 	if (MONO_HANDLE_IS_NULL (current_appdomain_delegate) && MONO_HANDLE_IS_NULL (root_appdomain_delegate)) {
-		mono_print_unhandled_exception (exc);
+		mono_print_unhandled_exception (MONO_HANDLE_RAW (exc)); /* FIXME use handles for mono_print_unhandled_exception */
 	} else {
 		/* unhandled exception callbacks must not be aborted */
 		mono_threads_begin_abort_protected_block ();
@@ -5746,13 +5743,11 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 MonoObject *
 ves_icall_object_new_specific (MonoVTable *vtable)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoObjectHandle o;
-	o.New(mono_object_new_specific_checked (vtable, error));
+	MonoObject *o = mono_object_new_specific_checked (vtable, error);
 	mono_error_set_pending_exception (error);
 
-	return MONO_HANDLE_RAW (o);
+	return o;
 }
 
 /**
@@ -5771,13 +5766,11 @@ ves_icall_object_new_specific (MonoVTable *vtable)
 MonoObject *
 mono_object_new_alloc_specific (MonoVTable *vtable)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoObjectHandle o;
-	o.New(mono_object_new_alloc_specific_checked (vtable, error));
+	MonoObject *o = mono_object_new_alloc_specific_checked (vtable, error);
 	mono_error_cleanup (error);
 
-	return MONO_HANDLE_RAW (o);
+	return o;
 }
 
 /**
@@ -8108,8 +8101,8 @@ mono_message_init (MonoDomain *domain,
  * \c RealProxy::Invoke() directly.
  * \returns the result object.
  */
-MonoObject*
-mono_remoting_invoke (MonoObject* real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
+MonoObject *
+mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg, MonoObject **exc, MonoArray **out_args, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -8222,7 +8215,7 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
  * Returns: the ToString override for @obj. If @obj is a valuetype, @target is unboxed otherwise it's @obj.
  */
 static MonoMethod *
-prepare_to_string_method (MonoObjectHandle obj, void **target)
+prepare_to_string_method (MonoObject *obj, void **target)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -8231,7 +8224,7 @@ prepare_to_string_method (MonoObjectHandle obj, void **target)
 	g_assert (target);
 	g_assert (obj);
 
-	*target = obj.GetRaw ();
+	*target = obj;
 
 	if (!to_string) {
 		ERROR_DECL (error);
@@ -8239,11 +8232,11 @@ prepare_to_string_method (MonoObjectHandle obj, void **target)
 		mono_error_assert_ok (error);
 	}
 
-	method = mono_object_get_virtual_method (obj.GetRaw (), to_string);
+	method = mono_object_get_virtual_method (obj, to_string);
 
 	// Unbox value type if needed
 	if (m_class_is_valuetype (mono_method_get_class (method))) {
-		*target = mono_handle_unbox_unsafe (obj);
+		*target = mono_object_unbox (obj);
 	}
 	return method;
 }
@@ -8257,11 +8250,10 @@ prepare_to_string_method (MonoObjectHandle obj, void **target)
 MonoString *
 mono_object_to_string (MonoObject *obj, MonoObject **exc)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoString *s = NULL;
 	void *target;
-	MonoMethod *method = prepare_to_string_method (mono_new_handle (obj), &target);
+	MonoMethod *method = prepare_to_string_method (obj, &target);
 	if (exc) {
 		s = (MonoString *) mono_runtime_try_invoke (method, target, NULL, exc, error);
 		if (*exc == NULL && !mono_error_ok (error))
@@ -8285,14 +8277,14 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
  * method cannot be invoked sets \p error, if it raises an exception sets \p exc,
  * and returns NULL.
  */
-MonoStringHandle
-mono_object_try_to_string (MonoObjectHandle obj, MonoObject **exc, MonoError *error)
+MonoString*
+mono_object_try_to_string (MonoObject *obj, MonoObject **exc, MonoError *error)
 {
 	g_assert (exc);
 	error_init (error);
 	void *target;
 	MonoMethod *method = prepare_to_string_method (obj, &target);
-	return mono_new_handle ((MonoString*)mono_runtime_try_invoke (method, target, NULL, exc, error));
+	return (MonoString*)mono_runtime_try_invoke (method, target, NULL, exc, error);
 }
 
 static char *
@@ -8307,46 +8299,51 @@ get_native_backtrace (MonoException *exc_raw)
  * \param exc The exception
  * Prints the unhandled exception.
  */
-static void
-mono_print_unhandled_exception (MonoObjectHandle exc_obj)
+void
+mono_print_unhandled_exception (MonoObject *exc)
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	auto exc = exc_obj.cast <MonoException>();
-	auto message = "";
-	g_ptr <char> free_message;
+	MonoString * str;
+	char *message = (char*)"";
+	gboolean free_message = FALSE;
 	ERROR_DECL (error);
 
-	if (exc == mono_object_domain (exc)->out_of_memory_ex) {
-		message = free_message = g_strdup ("OutOfMemoryException");
-	} else if (exc == mono_object_domain (exc)->stack_overflow_ex.GetRaw()) {
-		message = free_message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
-	} else {		
-		if (exc->native_trace_ips) {
-			message = free_message = mono_exception_handle_get_native_backtrace (exc);
+	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex.GetRaw ()) {
+		message = g_strdup ("OutOfMemoryException");
+		free_message = TRUE;
+	} else if (exc == (MonoObject*)mono_object_domain (exc)->stack_overflow_ex.GetRaw ()) {
+		message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have stack space to JIT Exception::ToString.
+		free_message = TRUE;
+	} else {
+		
+		if (((MonoException*)exc)->native_trace_ips) {
+			message = get_native_backtrace ((MonoException*)exc);
+			free_message = TRUE;
 		} else {
-			MonoObject *other_exc_raw = NULL;
-			MonoStringHandle str = mono_object_try_to_string (exc, &other_exc_raw, error);
-			MonoExceptionHandle other_exc;
-			other_exc.New ((MonoException*)other_exc_raw);
+			MonoObject *other_exc = NULL;
+			str = mono_object_try_to_string (exc, &other_exc, error);
 			if (other_exc == NULL && !is_ok (error))
-				other_exc = mono_error_convert_to_exception (error);
+				other_exc = (MonoObject*)mono_error_convert_to_exception (error);
 			else
 				mono_error_cleanup (error);
 			if (other_exc) {
-				g_ptr <char> original_backtrace = mono_exception_get_managed_backtrace (exc);
-				g_ptr <char> nested_backtrace = mono_exception_get_managed_backtrace (other_exc);
+				char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
+				char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other_exc);
 				
-				message = free_message = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
-					original_backtrace.get(), nested_backtrace.get());
+				message = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
+					original_backtrace, nested_backtrace);
+
+				g_free (original_backtrace);
+				g_free (nested_backtrace);
+				free_message = TRUE;
 			} else if (str) {
-				free_message = mono_string_to_utf8_checked (str, error);
+				message = mono_string_to_utf8_checked (str, error);
 				if (!mono_error_ok (error)) {
 					mono_error_cleanup (error);
-					message = "";
+					message = (char *) "";
 				} else {
-					message = free_message;
+					free_message = TRUE;
 				}
 			}
 		}
@@ -8357,13 +8354,9 @@ mono_print_unhandled_exception (MonoObjectHandle exc_obj)
 	 *	   exc->vtable->klass->name, message);
 	 */
 	g_printerr ("\nUnhandled Exception:\n%s\n", message);
-}
-
-void
-mono_print_unhandled_exception (MonoObject *exc)
-{
-	HANDLE_FUNCTION_ENTER ();
-	mono_print_unhandled_exception (MonoObjectHandle ().New (exc));
+	
+	if (free_message)
+		g_free (message);
 }
 
 /**
@@ -8623,7 +8616,6 @@ mono_load_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField *
 gpointer
 mono_load_remote_field_checked (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, gpointer *res, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	static MonoMethod *getter = NULL;

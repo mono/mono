@@ -142,12 +142,12 @@ Icall macros
 #ifdef __cplusplus
 
 #define MONO_HANDLE_SCOPE MonoHandleFrame local_handle_frame;
-#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ()
-#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame)
+#define MONO_RETURN_RAW(handle) 		 return (handle).GetRaw ();
+#define MONO_RETURN_HANDLE(handle) 		 return (handle).return_handle (local_handle_frame);
 
 #define HANDLE_FUNCTION_ENTER() 		 MONO_HANDLE_SCOPE
 #define HANDLE_FUNCTION_RETURN() 		 /* nothing */
-#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x)
+#define HANDLE_FUNCTION_RETURN_VAL(x) 		 return (x);
 #define HANDLE_FUNCTION_RETURN_OBJ(handle) 	 MONO_RETURN_RAW (handle)
 #define HANDLE_FUNCTION_RETURN_REF(type, handle) MONO_RETURN_HANDLE (handle)
 

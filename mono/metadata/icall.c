@@ -3486,7 +3486,6 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 static void
 internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArray *params, MonoArray **outArgs, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoArray *out_args;
 	MonoClass *k = mono_object_class (this_arg);
@@ -3533,7 +3532,6 @@ internal_execute_field_getter (MonoDomain *domain, MonoObject *this_arg, MonoArr
 static void
 internal_execute_field_setter (MonoDomain *domain, MonoObject *this_arg, MonoArray *params, MonoArray **outArgs, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 	MonoArray *out_args;
 	MonoClass *k = mono_object_class (this_arg);
