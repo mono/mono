@@ -457,20 +457,10 @@ mono_context_init_checked (MonoDomain *domain, MonoError *error)
 
 	klass = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
 	context = MONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
-
-//experimental Try new ways.
-	//context = xMONO_HANDLE_CAST (MonoAppContext, mono_object_new_pinned_handle (domain, klass, error));
-	context.new_pinned (domain, klass, error);
-
 	goto_if_nok (error, exit);
 
 	MONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
 	MONO_HANDLE_SETVAL (context, context_id, gint32, 0);
-
-//experimental Try new ways.
-	//xMONO_HANDLE_SETVAL (context, domain_id, intptr_t, domain->domain_id);
-	context->context_id = 0;
-
 	mono_threads_register_app_context (context, error);
 	mono_error_assert_ok (error);
 	domain->default_context = MONO_HANDLE_RAW (context);
@@ -1173,7 +1163,6 @@ mono_parser = {
 void
 mono_domain_set_options_from_config (MonoDomain *domain)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	gchar *config_file_name = NULL, *text = NULL, *config_file_path = NULL;
 	gsize len;
@@ -1184,7 +1173,7 @@ mono_domain_set_options_from_config (MonoDomain *domain)
 	if (!domain || !domain->setup || !domain->setup->configuration_file)
 		return;
 
-	config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file.NewHandle (), error);
+	config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file, error);
 	if (!mono_error_ok (error)) {
 		mono_error_cleanup (error);
 		goto free_and_out;
@@ -1341,8 +1330,6 @@ mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, Mo
 		goto leave;
 	}
 	ret = !MONO_HANDLE_IS_NULL (result) ? MONO_HANDLE_GETVAL (result, assembly) : NULL;
-//experiment new way
-	ret = result ? result->assembly : NULL;
 
 	if (ret && !refonly && mono_asmctx_get_kind (&ret->context) == MONO_ASMCTX_REFONLY) {
 		/* .NET Framework throws System.IO.FileNotFoundException in this case */
@@ -1750,46 +1737,74 @@ get_cstring_hash (const char *str)
 static char *
 get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 {
-	HANDLE_FUNCTION_ENTER ();
-	
+	MonoAppDomainSetup *setup;
+	char *cache_path = NULL;
+	char *appname = NULL;
+	char *userdir = NULL;
+	char *location;
+
 	error_init (error);
-	MonoAppDomainSetup *setup = domain->setup;
-
+	
+	setup = domain->setup;
 	if (setup->cache_path != NULL && setup->application_name != NULL) {
-		g_ptr <char> cache_path = mono_string_to_utf8_checked (setup->cache_path.NewHandle (), error);
+		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
 		return_val_if_nok (error, NULL);
-#ifndef TARGET_WIN32
-		g_strdelimit (cache_path, '\\', '/');
-#endif
-		g_ptr <char> appname = mono_string_to_utf8_checked (setup->application_name.NewHandle (), error);
-		if (!mono_error_ok (error))
-			return NULL;
 
-		return g_build_filename (cache_path, appname.get (), "assembly", "shadow", NULL);
+#ifndef TARGET_WIN32
+		{
+			gint i;
+			for (i = strlen (cache_path) - 1; i >= 0; i--)
+				if (cache_path [i] == '\\')
+					cache_path [i] = '/';
+		}
+#endif
+
+		appname = mono_string_to_utf8_checked (setup->application_name, error);
+		if (!mono_error_ok (error)) {
+			g_free (cache_path);
+			return NULL;
+		}
+
+		location = g_build_filename (cache_path, appname, "assembly", "shadow", NULL);
+	} else {
+		userdir = g_strdup_printf ("%s-mono-cachepath", g_get_user_name ());
+		location = g_build_filename (g_get_tmp_dir (), userdir, "assembly", "shadow", NULL);
 	}
-	g_ptr <char> userdir = g_strdup_printf ("%s-mono-cachepath", g_get_user_name ());
-	return g_build_filename (g_get_tmp_dir (), userdir.get (), "assembly", "shadow", NULL);
+	g_free (appname);
+	g_free (cache_path);
+	g_free (userdir);
+	return location;
 }
 
 static char *
 get_shadow_assembly_location (const char *filename, MonoError *error)
 {
+	gint32 hash = 0, hash2 = 0;
 	char name_hash [9];
 	char path_hash [30];
-	g_ptr <char> bname = g_path_get_basename (filename);
-	g_ptr <char> dirname = g_path_get_dirname (filename);
+	char *bname = g_path_get_basename (filename);
+	char *dirname = g_path_get_dirname (filename);
+	char *location, *tmploc;
 	MonoDomain *domain = mono_domain_get ();
 
 	error_init (error);
 	
-	gint32 hash = get_cstring_hash (bname);
-	gint32 hash2 = get_cstring_hash (dirname);
+	hash = get_cstring_hash (bname);
+	hash2 = get_cstring_hash (dirname);
 	g_snprintf (name_hash, sizeof (name_hash), "%08x", hash);
 	g_snprintf (path_hash, sizeof (path_hash), "%08x_%08x_%08x", hash ^ hash2, hash2, domain->shadow_serial);
-	g_ptr <char> tmploc = get_shadow_assembly_location_base (domain, error);
-	return_val_if_nok (error, NULL);
+	tmploc = get_shadow_assembly_location_base (domain, error);
+	if (!mono_error_ok (error)) {
+		g_free (bname);
+		g_free (dirname);
+		return NULL;
+	}
 
-	return g_build_filename (tmploc.get (), name_hash, path_hash, bname.get (), NULL);
+	location = g_build_filename (tmploc, name_hash, path_hash, bname, NULL);
+	g_free (tmploc);
+	g_free (bname);
+	g_free (dirname);
+	return location;
 }
 
 static gboolean
@@ -1869,7 +1884,6 @@ exit:
 gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	MonoAppDomainSetup *setup;
 	gchar *all_dirs = NULL;
@@ -1887,7 +1901,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (setup == NULL || setup->shadow_copy_files == NULL)
 		goto exit;
 
-	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files.NewHandle (), error);
+	shadow_status_string = mono_string_to_utf8_checked (setup->shadow_copy_files, error);
 	if (!mono_error_ok (error))
 		goto exit;
 
@@ -1910,7 +1924,7 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 	if (found)
 		goto exit;
 
-	all_dirs = mono_string_to_utf8_checked (setup->shadow_copy_directories.NewHandle (), error);
+	all_dirs = mono_string_to_utf8_checked (setup->shadow_copy_directories, error);
 	if (!mono_error_ok (error))
 		goto exit;
 
