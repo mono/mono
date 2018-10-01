@@ -593,7 +593,7 @@ mono_arch_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr)
 	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_PC, 0);
 	*(guint32*)code = (guint32)(gsize)arg;
 	code += 4;
-	*(guint32*)code = (guint32(gsize))addr;
+	*(guint32*)code = (guint32)(gsize)addr;
 	code += 4;
 
 	g_assert ((code - start) <= buf_len);
