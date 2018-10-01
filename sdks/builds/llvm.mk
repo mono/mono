@@ -1,3 +1,4 @@
+
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
 $(TOP)/sdks/builds/toolchains/llvm:
@@ -14,84 +15,49 @@ $(TOP)/sdks/builds/toolchains/llvm36:
 
 $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 
-.stamp-llvm-download:
-ifeq ($(UNAME),Darwin)
-ifeq ($(DISABLE_DOWNLOAD_LLVM),)
-	mkdir -p $(TOP)/sdks/builds/toolchains/llvm-download
-	-$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
-		LLVM_PREFIX="$(TOP)/sdks/builds/toolchains/llvm-download/usr"
-	touch $@
-endif
-endif
-
-.stamp-llvm36-download:
-ifeq ($(UNAME),Darwin)
-ifeq ($(DISABLE_DOWNLOAD_LLVM),)
-	mkdir -p $(TOP)/sdks/builds/toolchains/llvm36-download
-	-wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/$(LLVM36_JENKINS_LANE)/llvm-osx64-$(LLVM36_HASH).tar.gz | tar -xC $(TOP)/sdks/builds/toolchains/llvm36-download -f -
-	touch $@
-endif
-endif
-
 ##
 # Parameters
 #  $(1): version
 #  $(2): target
-#  $(3): bitness
-#  $(4): src
+#  $(3): src
 define LLVMProvisionTemplate
-ifeq ($(UNAME),Darwin)
-.stamp-$(1)-$(2)-unpack:
-	cp -r $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)/* $$(TOP)/sdks/out/$(1)-$(2)
+ifeq ($$(UNAME),Darwin)
+_$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
+_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH).tar.gz
+_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+
+$$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
+	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(TOP)/sdks/out/$(1)-$(2)
 	touch $$@
 
-.PHONY: unpack-$(1)-$(2)
-unpack-$(1)-$(2): .stamp-$(1)-$(2)-unpack
+.PHONY: download-$(1)-$(2)
+download-$(1)-$(2): | setup-$(1)-$(2)
+	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
+
+.PHONY: pack-$(1)-$(2)
+pack-$(1)-$(2): package-$(1)-$(2)
+	tar -cvzf $$(TOP)/sdks/out/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 
 .PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): .stamp-$(1)-download | setup-$(1)-$(2) $(4)
-	$$(MAKE) $$(if $$(wildcard $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)),unpack,package)-$(1)-$(2)
-
-.PHONY: clean-$(1)-$(2)
-clean-$(1)-$(2)::
-	rm -rf .stamp-$(1)-download .stamp-$(1)-$(2)-unpack $$(TOP)/sdks/builds/toolchains/$(1)-download $$(TOP)/sdks/out/$(1)-$(2)
+provision-$(1)-$(2): | $(3) download-$(1)-$(2)
+	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) pack-$(1)-$(2))
 else
 .PHONY: provision-$(1)-$(2)
 provision-$(1)-$(2): package-$(1)-$(2)
 endif
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
 endef
 
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,32,$(LLVM_SRC)))
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,64,$(LLVM_SRC)))
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,32,$(LLVM36_SRC)))
-
-##
-# Parameters
-#  $(1): version
-#  $(2): target
-#  $(3): bitness
-#  $(4): configure script
-define LLVMMXEProvisionTemplate
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): | package-$(1)-$(2) $(4)
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
-endef
-
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin32,32,$(LLVM_SRC)))
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin64,64,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)))
+ifeq ($(UNAME),Darwin)
+$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
+endif
 
 ##
 # Parameters
 #  $(1): target
-#  $(2): arch
-#  $(3): src dir
-#  $(4): download stamp
-#  $(5): llvm version (llvm/llvm36)
 define LLVMTemplate
 
 _llvm-$(1)_CMAKE_ARGS = \
@@ -119,8 +85,8 @@ clean-llvm-$(1)::
 endef
 
 llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMTemplate,llvm32,i386))
-$(eval $(call LLVMTemplate,llvm64,x86_64))
+$(eval $(call LLVMTemplate,llvm32))
+$(eval $(call LLVMTemplate,llvm64))
 
 ##
 # Parameters
@@ -175,7 +141,9 @@ clean-llvm36-$(1)::
 
 endef
 
+ifeq ($(UNAME),Darwin)
 $(eval $(call LLVM36Template,llvm32,i386))
+endif
 
 ##
 # Parameters
