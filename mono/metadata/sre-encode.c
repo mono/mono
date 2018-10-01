@@ -36,11 +36,13 @@ static guint32 create_typespec (MonoDynamicImage *assembly, MonoType *type);
 static void    encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf);
 static guint32 mono_image_typedef_or_ref (MonoDynamicImage *assembly, MonoType *type);
 
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 static guint32
 mono_image_add_stream_data (MonoDynamicStream *stream, const char *data, guint32 len)
 {
 	return mono_dynstream_add_data (stream, data, len);
 }
+#endif
 
 static void
 alloc_table (MonoDynamicTable *table, guint nrows)
