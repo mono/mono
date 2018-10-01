@@ -994,6 +994,16 @@ namespace MonoTests.System.Reflection
 				Assert.IsTrue (foundExpectedType, "#2-4");
 		}
 #endif
+
+		delegate int D1 ();
+
+		[Test]
+		public void Issue10838 ()
+		{
+			var flags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance;
+			var members = typeof (D1).GetMembers (flags).OrderBy (m => m.MetadataToken);
+			Assert.AreEqual ("Void .ctor(System.Object, IntPtr)", members.First ().ToString ());
+		}		
 	}
 	
 	// Helper class
