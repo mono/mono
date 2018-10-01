@@ -4124,7 +4124,7 @@ arm_patch_general (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guc
 		ARM_BX (emit, ARMREG_IP);
 		if (ins == ccode [2]) {
 			g_assert_not_reached (); // should be -2 ...
-			code32 [-1] = (guint32)target;
+			code32 [-1] = (guint32)(gsize)target;
 			return;
 		}
 		if (ins == ccode [0]) {
@@ -7233,11 +7233,11 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 			}
 
 			if (imt_method)
-				code = arm_emit_value_and_patch_ldr (code, imt_method, (guint32)item->key);
+				code = arm_emit_value_and_patch_ldr (code, imt_method, (guint32)(gsize)item->key);
 
 			/*must emit after unconditional branch*/
 			if (vtable_target) {
-				code = arm_emit_value_and_patch_ldr (code, vtable_target, (guint32)vtable);
+				code = arm_emit_value_and_patch_ldr (code, vtable_target, (guint32)(gsize)vtable);
 				item->chunk_size += 4;
 				vtable_target = NULL;
 			}
@@ -7268,7 +7268,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 			int j;
 			arminstr_t *space_start = constant_pool_starts [i];
 			for (j = i - 1; j >= 0 && !imt_entries [j]->is_equals; --j) {
-				space_start = arm_emit_value_and_patch_ldr (space_start, (arminstr_t*)imt_entries [j]->code_target, (guint32)imt_entries [j]->key);
+				space_start = arm_emit_value_and_patch_ldr (space_start, (arminstr_t*)imt_entries [j]->code_target, (guint32)(gsize)imt_entries [j]->key);
 			}
 		}
 	}
@@ -7351,7 +7351,7 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 		/* Read from another trigger page */
 		ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 		ARM_B (code, 0);
-		*(int*)code = (int)bp_trigger_page;
+		*(int*)code = (int)(gssize)bp_trigger_page;
 		code += 4;
 		ARM_LDR_IMM (code, dreg, dreg, 0);
 
