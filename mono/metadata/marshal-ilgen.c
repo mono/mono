@@ -5823,7 +5823,7 @@ static void
 emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle)
 {
 	MonoMethodSignature *sig, *csig;
-	int i, *tmp_locals, ex_local, e_local, orig_domain, attach_cookie;
+	int i, *tmp_locals, ex_local, orig_domain, attach_cookie;
 	gboolean closed = FALSE;
 
 	sig = m->sig;
@@ -5857,7 +5857,7 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		m->vtaddr_var = mono_mb_add_local (mb, int_type);
 
 	ex_local = mono_mb_add_local (mb, m_class_get_byval_arg (mono_defaults.uint32_class));
-	e_local = mono_mb_add_local (mb, m_class_get_byval_arg (mono_defaults.exception_class));
+	mono_mb_add_local (mb, m_class_get_byval_arg (mono_defaults.exception_class));
 
 	orig_domain = mono_mb_add_local (mb, int_type);
 	attach_cookie = mono_mb_add_local (mb, int_type);
