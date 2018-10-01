@@ -1731,6 +1731,20 @@ mono_class_interface_match (const uint8_t *bitmap, int id)
 }
 #endif
 
+typedef struct {
+	MonoClass *ic;
+	int offset;
+} ClassAndOffset;
+
+static int
+compare_by_interface_id (const void *a, const void *b)
+{
+	const ClassAndOffset *ca = (const ClassAndOffset*)a;
+	const ClassAndOffset *cb = (const ClassAndOffset*)b;
+
+	return ca->ic->interface_id - cb->ic->interface_id;
+}
+
 /*
  * Return -1 on failure and set klass->has_failure and store a MonoErrorBoxed with the details.
  * LOCKING: Acquires the loader lock.
@@ -1747,11 +1761,61 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 	GPtrArray *ifaces;
 	GPtrArray **ifaces_array = NULL;
 	int interface_offsets_count;
+	max_iid = 0;
+	num_ifaces = interface_offsets_count = 0;
 
 	mono_loader_lock ();
 
 	mono_class_setup_supertypes (klass);
 
+	if (mono_class_is_ginst (klass)) {
+		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
+
+		interface_offsets_count = num_ifaces = gklass->interface_offsets_count;
+		interfaces_full = (MonoClass **)g_malloc0 (sizeof (MonoClass*) * num_ifaces);
+		interface_offsets_full = (int *)g_malloc (sizeof (int) * num_ifaces);
+		ClassAndOffset *co_pair = (ClassAndOffset *) g_malloc (sizeof (ClassAndOffset) * num_ifaces);
+
+		cur_slot = 0;
+		for (int i = 0; i < num_ifaces; ++i) {
+			MonoClass *gklass_ic = gklass->interfaces_packed [i];
+			MonoClass *inflated = mono_class_inflate_generic_class_checked (gklass_ic, mono_class_get_context(klass), error);
+			if (!is_ok (error)) {
+				char *name = mono_type_get_full_name (gklass_ic);
+				mono_class_set_type_load_failure (klass, "Error calculating interface offset of %s", name);
+				g_free (name);
+				cur_slot = -1;
+				goto end;
+			}
+
+			if (!inflated->interface_id)
+				mono_class_init (inflated);
+
+			co_pair [i].ic = inflated;
+			co_pair [i].offset = gklass->interface_offsets_packed [i];
+
+			int count = count_virtual_methods (inflated);
+			if (count == -1) {
+				char *name = mono_type_get_full_name (inflated);
+				mono_class_set_type_load_failure (klass, "Error calculating interface offset of %s", name);
+				g_free (name);
+				cur_slot = -1;
+				goto end;
+			}
+
+			cur_slot = MAX (cur_slot, interface_offsets_full [i] + count);
+			max_iid = MAX (max_iid, inflated->interface_id);
+		}
+
+		qsort (co_pair, num_ifaces, sizeof (ClassAndOffset), compare_by_interface_id);
+		for (int i = 0; i < num_ifaces; ++i) {
+			interfaces_full [i] = co_pair [i].ic;
+			interface_offsets_full [i] = co_pair [i].offset;
+		}
+		g_free (co_pair);
+
+		goto publish;
+	}
 	/* compute maximum number of slots and maximum interface id */
 	max_iid = 0;
 	num_ifaces = 0; /* this can include duplicated ones */
@@ -1849,6 +1913,7 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 			interface_offsets_count ++;
 	}
 
+publish:
 	/* Publish the data */
 	klass->max_interface_id = max_iid;
 	/*
@@ -1894,12 +1959,14 @@ end:
 
 	g_free (interfaces_full);
 	g_free (interface_offsets_full);
-	for (i = 0; i < klass->idepth; i++) {
-		ifaces = ifaces_array [i];
-		if (ifaces)
-			g_ptr_array_free (ifaces, TRUE);
+	if (ifaces_array) {
+		for (i = 0; i < klass->idepth; i++) {
+			ifaces = ifaces_array [i];
+			if (ifaces)
+				g_ptr_array_free (ifaces, TRUE);
+		}
+		g_free (ifaces_array);
 	}
-	g_free (ifaces_array);
 	
 	//printf ("JUST DONE: ");
 	//print_implemented_interfaces (klass);
