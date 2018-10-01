@@ -7036,7 +7036,7 @@ mono_arch_get_cie_program (void)
 #define BRANCH_SIZE (1 * 4)
 #define CALL_SIZE (2 * 4)
 #define WMC_SIZE (8 * 4)
-#define DISTANCE(A, B) (((gint32)(gsize)(B)) - ((gint32)(gsize)(A)))
+#define DISTANCE(A, B) (((gint32)(gssize)(B)) - ((gint32)(gssize)(A)))
 
 static arminstr_t *
 arm_emit_value_and_patch_ldr (arminstr_t *code, arminstr_t *target, guint32 value)
