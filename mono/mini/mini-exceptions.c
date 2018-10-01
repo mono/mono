@@ -2910,6 +2910,17 @@ print_overflow_stack_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer da
 void
 mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx, guint8* fault_addr)
 {
+#if defined(DISABLE_STACK_OVERFLOW_GUARD) && defined(MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX)
+	MonoContext mctx;
+
+	/*
+	 * We don't do soft stack overflow handling. Do our best here.
+	 * FIXME Don't do it in signal handler
+	 */
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	mono_handle_exception (&mctx, mono_domain_get ()->stack_overflow_ex);
+	mono_monoctx_to_sigctx (&mctx, ctx);
+#else
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	PrintOverflowUserData ud;
 	MonoContext mctx;
@@ -2934,6 +2945,7 @@ mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 #endif
 
 	_exit (1);
+#endif
 }
 
 static gboolean
