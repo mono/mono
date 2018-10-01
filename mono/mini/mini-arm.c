@@ -775,7 +775,7 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 gpointer
 mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 {
-	return (gpointer)regs [ARMREG_R0];
+	return (gpointer)(host_mgreg_t)regs [ARMREG_R0];
 }
 
 /*
@@ -1757,7 +1757,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		ainfo = &cinfo->ret;
 		if (ainfo->storage == RegTypeStructByAddr) {
-			storage = (gpointer) ccontext->gregs [cinfo->ret.reg];
+			storage = (gpointer)(host_mgreg_t) ccontext->gregs [cinfo->ret.reg];
 			interp_cb->frame_arg_set_storage ((MonoInterpFrameHandle)frame, sig, -1, storage);
 		}
 	}
@@ -2959,13 +2959,13 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	pindex = 0;
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
-		p->regs [greg ++] = (mgreg_t)*(args [arg_index ++]);
+		p->regs [greg ++] = (host_mgreg_t)*(args [arg_index ++]);
 		if (!sig->hasthis)
 			pindex = 1;
 	}
 
 	if (dinfo->cinfo->ret.storage == RegTypeStructByAddr)
-		p->regs [greg ++] = (mgreg_t)ret;
+		p->regs [greg ++] = (host_mgreg_t)ret;
 
 	for (i = pindex; i < sig->param_count; i++) {
 		MonoType *t = dinfo->param_types [i];
@@ -2995,7 +2995,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
-			p->regs [slot] = (mgreg_t)*arg;
+			p->regs [slot] = (host_mgreg_t)*arg;
 			break;
 		case MONO_TYPE_U1:
 			p->regs [slot] = *(guint8*)arg;
@@ -3017,8 +3017,8 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 			break;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
-			p->regs [slot ++] = (mgreg_t)arg [0];
-			p->regs [slot] = (mgreg_t)arg [1];
+			p->regs [slot ++] = (host_mgreg_t)arg [0];
+			p->regs [slot] = (host_mgreg_t)arg [1];
 			break;
 		case MONO_TYPE_R4:
 			if (ainfo->storage == RegTypeFP) {
@@ -3034,13 +3034,13 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				p->fpregs [ainfo->reg / 2] = *(double*)arg;
 				p->has_fpregs = 1;
 			} else {
-				p->regs [slot ++] = (mgreg_t)arg [0];
-				p->regs [slot] = (mgreg_t)arg [1];
+				p->regs [slot ++] = (host_mgreg_t)arg [0];
+				p->regs [slot] = (host_mgreg_t)arg [1];
 			}
 			break;
 		case MONO_TYPE_GENERICINST:
 			if (MONO_TYPE_IS_REFERENCE (t)) {
-				p->regs [slot] = (mgreg_t)*arg;
+				p->regs [slot] = (host_mgreg_t)*arg;
 				break;
 			} else {
 				if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
@@ -3096,7 +3096,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
-		*(gpointer*)ret = (gpointer)res;
+		*(gpointer*)ret = (gpointer)(host_mgreg_t)res;
 		break;
 	case MONO_TYPE_I1:
 		*(gint8*)ret = res;
@@ -3170,9 +3170,9 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 {
 	guchar *code = (guchar*)p;
 
-	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
+	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)(gsize)cfg->method);
 	ARM_MOV_REG_IMM8 (code, ARMREG_R1, 0); /* NULL ebp for now */
-	code = mono_arm_emit_load_imm (code, ARMREG_R2, (guint32)func);
+	code = mono_arm_emit_load_imm (code, ARMREG_R2, (guint32)(gsize)func);
 	code = emit_call_reg (code, ARMREG_R2);
 	return code;
 }
@@ -3278,8 +3278,8 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		break;
 	}
 
-	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
-	code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32)func);
+	code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)(gsize)cfg->method);
+	code = mono_arm_emit_load_imm (code, ARMREG_IP, (guint32)(gsize)func);
 	code = emit_call_reg (code, ARMREG_IP);
 
 	switch (save_mode) {
@@ -3902,7 +3902,7 @@ emit_thunk (guint8 *code, gconstpointer target)
 		ARM_BX (code, ARMREG_IP);
 	else
 		ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
-	*(guint32*)code = (guint32)target;
+	*(guint32*)code = (guint32)(gsize)target;
 	code += 4;
 	mono_arch_flush_icache (p, code - p);
 }
@@ -3966,7 +3966,7 @@ handle_thunk (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guchar *
 					/* Free entry */
 					target_thunk = p;
 					break;
-				} else if (((guint32*)p) [2] == (guint32)target) {
+				} else if (((guint32*)p) [2] == (guint32)(gsize)target) {
 					/* Thunk already points to target */
 					target_thunk = p;
 					break;
@@ -4084,7 +4084,7 @@ arm_patch_general (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guc
 			g_assert (code32 [-4] == ccode [0]);
 			g_assert (code32 [-3] == ccode [1]);
 			g_assert (code32 [-1] == ccode [2]);
-			code32 [-2] = (guint32)target;
+			code32 [-2] = (guint32)(gsize)target;
 			return;
 		}
 		/*patching from JIT*/
@@ -4092,7 +4092,7 @@ arm_patch_general (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guc
 			g_assert (code32 [1] == ccode [1]);
 			g_assert (code32 [3] == ccode [2]);
 			g_assert (code32 [4] == ccode [3]);
-			code32 [2] = (guint32)target;
+			code32 [2] = (guint32)(gsize)target;
 			return;
 		}
 		g_assert_not_reached ();
@@ -4113,7 +4113,7 @@ arm_patch_general (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guc
 		g_assert (code32 [-2] == ccode [1]);
 		g_assert (code32 [0] == ccode [2]);
 
-		code32 [-1] = (guint32)target;
+		code32 [-1] = (guint32)(gsize)target;
 	} else {
 		guint32 ccode [4];
 		guint32 *tmp = ccode;
