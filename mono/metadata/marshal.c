@@ -863,7 +863,7 @@ mono_string_builder_new (int starting_string_length)
 TYPED_HANDLE_DECL (MonoStringBuilder);
 
 static void
-mono_string_utf16_to_builder_copy (MonoStringBuilderHandle sb, const gunichar2 *text, size_t string_len)
+mono_string_utf16_to_builder_copy (MonoStringBuilder *sb, const gunichar2 *text, size_t string_len)
 {
 	gunichar2 *charDst = (gunichar2 *)sb.GetRaw ()->chunkChars.GetRaw ()->vector;
 	memcpy (charDst, text, sizeof (gunichar2) * string_len);
@@ -880,37 +880,33 @@ mono_string_utf16_to_builder2 (const gunichar2 *text)
 	int len;
 	for (len = 0; text [len] != 0; ++len);
 
-	MonoStringBuilder *sb_raw = mono_string_builder_new (len);
-	HANDLE_FUNCTION_ENTER ();
-	MONO_HANDLE_DCL (MonoStringBuilder, sb);
+	MonoStringBuilder *sb = mono_string_builder_new (len);
+	mono_string_utf16_to_builder (sb, text);
 
-	mono_string_utf16_to_builder (sb.GetRaw (), text);
-
-	return sb.GetRaw ();
+	return sb;
 }
 
 void
-mono_string_utf8_to_builder (MonoStringBuilder *sb_raw, const char *text)
+mono_string_utf8_to_builder (MonoStringBuilder *sb, const char *text)
 {
-	HANDLE_FUNCTION_ENTER ();
-	MONO_HANDLE_DCL (MonoStringBuilder, sb);
-
-	if (!sb_raw || !text)
+	if (!sb || !text)
 		return;
 
 	GError *gerror = NULL;
 	glong copied;
-	g_ptr <gunichar2> ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &gerror);
+	gunichar2* ut = g_utf8_to_utf16 (text, strlen (text), NULL, &copied, &gerror);
 	int capacity = mono_string_builder_capacity (sb);
 
 	if (copied > capacity)
 		copied = capacity;
 
 	if (!gerror) {
-		sb->chunkPrevious = NULL;
+		MONO_OBJECT_SETREF (sb, chunkPrevious, NULL);
 		mono_string_utf16_to_builder_copy (sb, ut, copied);
 	} else
 		g_error_free (gerror);
+
+	g_free (ut);
 }
 
 MonoStringBuilder *
@@ -927,11 +923,8 @@ mono_string_utf8_to_builder2 (const char *text)
 }
 
 void
-mono_string_utf16_to_builder (MonoStringBuilder *sb_raw, const gunichar2 *text)
+mono_string_utf16_to_builder (MonoStringBuilder *sb, const gunichar2 *text)
 {
-	HANDLE_FUNCTION_ENTER ();
-	MONO_HANDLE_DCL (MonoStringBuilder, sb);
-
 	if (!sb || !text)
 		return;
 
@@ -969,7 +962,7 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 
 	guint str_len = mono_string_builder_string_length (sb);
 
-	g_ptr <char> tmp = g_utf16_to_utf8 (str_utf16, str_len, NULL, &byte_count, &gerror);
+	gchar *tmp = g_utf16_to_utf8 (str_utf16, str_len, NULL, &byte_count, &gerror);
 
 	if (gerror) {
 		g_error_free (gerror);
@@ -977,21 +970,23 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 		mono_error_set_execution_engine (error, "Failed to convert StringBuilder from utf16 to utf8");
 		mono_error_set_pending_exception (error);
 		return NULL;
-	}
+	} else {
+		guint len = mono_string_builder_capacity (sb) + 1;
+		gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), error);
+		if (!mono_error_ok (error)) {
+			mono_marshal_free (str_utf16);
+			g_free (tmp);
+			mono_error_set_pending_exception (error);
+			return NULL;
+		}
 
-	guint len = mono_string_builder_capacity (sb) + 1;
-	gchar *res = (gchar *)mono_marshal_alloc (MAX (byte_count+1, len * sizeof (gchar)), error);
-	if (!mono_error_ok (error)) {
+		memcpy (res, tmp, byte_count);
+		res[byte_count] = '\0';
+
 		mono_marshal_free (str_utf16);
-		mono_error_set_pending_exception (error);
-		return NULL;
+		g_free (tmp);
+		return res;
 	}
-
-	memcpy (res, tmp, byte_count);
-	res[byte_count] = '\0';
-
-	mono_marshal_free (str_utf16);
-	return res;
 }
 
 /**
@@ -1009,7 +1004,6 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 gunichar2*
 mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 {
-	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 
 	if (!sb)
@@ -1033,12 +1027,11 @@ mono_string_builder_to_utf16 (MonoStringBuilder *sb)
 	if (len == 0)
 		return str;
 
-	MonoHandle<MonoStringBuilder> chunk;
-	chunk.New (sb);
+	MonoStringBuilder* chunk = sb;
 	do {
 		if (chunk->chunkLength > 0) {
 			// Check that we will not overrun our boundaries.
-			gunichar2 *source = (gunichar2 *)chunk->chunkChars.GetRaw ()->vector;
+			gunichar2 *source = (gunichar2 *)chunk->chunkChars->vector;
 
 			g_assertf (chunk->chunkLength <= len, "A chunk in the StringBuilder had a length longer than expected from the offset.");
 			memcpy (str + chunk->chunkOffset, source, chunk->chunkLength * sizeof(gunichar2));
@@ -1268,8 +1261,6 @@ handle_enum:
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
-	HANDLE_FUNCTION_ENTER ();
-
 	ERROR_DECL (error);
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
@@ -1284,17 +1275,16 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_handle_is_transparent_proxy (delegate->target)) {
-		MonoTransparentProxyHandle tp;
-		tp.New ((MonoTransparentProxy *)delegate->target.GetRaw ());
-		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp.GetRaw ()->context != (MonoObject *) mono_context_get ()) {
+	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
+		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
+		if (!mono_class_is_contextbound (tp->remote_class->proxy_class) || tp->rp->context != (MonoObject *) mono_context_get ()) {
 			/* If the target is a proxy, make a direct call. Is proxy's work
 			// to make the call asynchronous.
 			*/
 			MonoMethodMessage *msg;
 			MonoDelegate *async_callback;
 			MonoObject *state;
-			MonoHandle <MonoAsyncResult> ares;
+			MonoAsyncResult *ares;
 			MonoObject *exc;
 			MonoArray *out_args;
 			method = delegate->method;
@@ -1302,23 +1292,23 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 			msg = mono_method_call_message_new (mono_marshal_method_from_wrapper (method), params, NULL, &async_callback, &state, error);
 			if (mono_error_set_pending_exception (error))
 				return NULL;
-			ares.New (mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, error));
+			ares = mono_async_result_new (mono_domain_get (), NULL, state, NULL, NULL, error);
 			if (mono_error_set_pending_exception (error))
 				return NULL;
-			ares->async_delegate = &delegate->object;
-			ares->async_callback = &async_callback->object;
-			msg->async_result = ares;
+			MONO_OBJECT_SETREF (ares, async_delegate, (MonoObject *)delegate);
+			MONO_OBJECT_SETREF (ares, async_callback, (MonoObject *)async_callback);
+			MONO_OBJECT_SETREF (msg, async_result, ares);
 			msg->call_type = CallType_BeginInvoke;
 
 			exc = NULL;
-			mono_remoting_invoke (tp->rp.GetRawObj (), msg, &exc, &out_args, error);
+			mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
 			if (!mono_error_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
 			if (exc)
 				mono_set_pending_exception ((MonoException *) exc);
-			return ares.GetRaw ();
+			return ares;
 		}
 	}
 #endif
@@ -1917,8 +1907,6 @@ emit_delegate_begin_invoke_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 {
-	HANDLE_FUNCTION_ENTER ();
-
 	MonoMethodSignature *sig;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
@@ -1984,13 +1972,15 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
-	HANDLE_FUNCTION_ENTER ();
-
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
-	MonoObject *res = NULL;
-	MonoObject *exc = NULL;
-	MonoArray *out_args = NULL;
+	MonoAsyncResult *ares;
+	MonoMethod *method = NULL;
+	MonoMethodSignature *sig;
+	MonoMethodMessage *msg;
+	MonoObject *res, *exc;
+	MonoArray *out_args;
+	MonoClass *klass;
 
 	g_assert (delegate);
 
@@ -2007,26 +1997,26 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (!delegate->method_info || !delegate->method_info->method)
 		g_assert_not_reached ();
 
-	MonoClass *klass = delegate->object.vtable->klass;
+	klass = delegate->object.vtable->klass;
 
-	MonoMethod *method = mono_get_delegate_end_invoke_checked (klass, error);
+	method = mono_get_delegate_end_invoke_checked (klass, error);
 	mono_error_assert_ok (error);
 	g_assert (method != NULL);
 
-	MonoMethodSignature *sig = mono_signature_no_pinvoke (method);
+	sig = mono_signature_no_pinvoke (method);
 
-	MonoMethodMessage *msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
+	msg = mono_method_call_message_new (method, params, NULL, NULL, NULL, error);
 	if (mono_error_set_pending_exception (error))
 		return NULL;
 
-	MonoAsyncResult *ares = (MonoAsyncResult *)mono_array_get (msg->args.GetRaw (), gpointer, sig->param_count - 1);
+	ares = (MonoAsyncResult *)mono_array_get (msg->args, gpointer, sig->param_count - 1);
 	if (ares == NULL) {
 		mono_error_set_remoting (error, "The async result object is null or of an unexpected type.");
 		mono_error_set_pending_exception (error);
 		return NULL;
 	}
 
-	if (ares->async_delegate != delegate) {
+	if (ares->async_delegate != (MonoObject*)delegate) {
 		mono_error_set_invalid_operation (error,
 			"%s", "The IAsyncResult object provided does not match this delegate.");
 		mono_error_set_pending_exception (error);
@@ -2034,8 +2024,8 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	}
 
 #ifndef DISABLE_REMOTING
-	if (delegate->target && mono_object_is_transparent_proxy (delegate->target.GetRaw ())) {
-		MonoTransparentProxyHandle tp = MONO_HANDLE_NEW (MonoTransparentProxy, (MonoTransparentProxy*)delegate->target.GetRaw ());
+	if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
+		MonoTransparentProxy* tp = (MonoTransparentProxy *)delegate->target;
 		msg = (MonoMethodMessage *)mono_object_new_checked (domain, mono_defaults.mono_method_message_class, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
@@ -2046,7 +2036,7 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 			return NULL;
 		msg->call_type = CallType_EndInvoke;
 		MONO_OBJECT_SETREF (msg, async_result, ares);
-		res = mono_remoting_invoke (tp->rp.GetRawObj (), msg, &exc, &out_args, error);
+		res = mono_remoting_invoke ((MonoObject *)tp->rp, msg, &exc, &out_args, error);
 		if (!mono_error_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
@@ -2062,14 +2052,16 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	if (exc) {
 		if (((MonoException*)exc)->stack_trace) {
 			ERROR_DECL_VALUE (inner_error);
-			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace.NewHandle (), &inner_error);
+			char *strace = mono_string_to_utf8_checked (((MonoException*)exc)->stack_trace, &inner_error);
 			if (is_ok (&inner_error)) {
-				g_ptr <char> tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
+				char  *tmp;
+				tmp = g_strdup_printf ("%s\nException Rethrown at:\n", strace);
 				g_free (strace);
 				MonoString *tmp_str = mono_string_new_checked (domain, tmp, &inner_error);
+				g_free (tmp);
 				if (is_ok (&inner_error))
 					MONO_OBJECT_SETREF (((MonoException*)exc), stack_trace, tmp_str);
-			}
+			};
 			if (!is_ok (&inner_error))
 				mono_error_cleanup (&inner_error); /* no stack trace, but at least throw the original exception */
 		}
@@ -5354,10 +5346,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 
 	res = mono_marshal_alloc_hglobal (size);
 
-	if (!res) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
-	}
+	if (!res)
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 
 	return res;
 }
@@ -5374,17 +5364,14 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gsize size, MonoError *error)
 {
 	if (ptr == NULL) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
 	}
 
 	gpointer const res = mono_marshal_realloc_hglobal (ptr, size);
 
-	if (!res) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
-	}
+	if (!res)
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 
 	return res;
 }
@@ -5408,10 +5395,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoE
 {
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
-	if (!res) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
-	}
+	if (!res)
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 
 	return res;
 }
@@ -5421,10 +5406,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size
 {
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
-	if (!res) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
-	}
+	if (!res)
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 
 	return res;
 }
@@ -5449,8 +5432,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr,
 	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
 
 	if (!res) {
-		HANDLE_FUNCTION_ENTER ();
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex.NewHandle ());
+		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
 		return NULL;
 	}
 	return res;
