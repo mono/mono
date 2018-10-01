@@ -4217,7 +4217,6 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	static MonoMethod *cleanup_native, *cleanup_managed;
 	static MonoMethod *marshal_managed_to_native, *marshal_native_to_managed;
 	MonoMethodBuilder *mb = m->mb;
-	char *exception_msg = NULL;
 	guint32 loc1;
 	int pos2;
 
@@ -4227,8 +4226,25 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	if (!ICustomMarshaler) {
 		MonoClass *klass = mono_class_try_get_icustom_marshaler_class ();
 		if (!klass) {
-			exception_msg = g_strdup ("Current profile doesn't support ICustomMarshaler");
-			goto handle_exception;
+			char *exception_msg = g_strdup ("Current profile doesn't support ICustomMarshaler");
+			/* Throw exception and emit compensation code if neccesary */
+			switch (action) {
+			case MARSHAL_ACTION_CONV_IN:
+			case MARSHAL_ACTION_CONV_RESULT:
+			case MARSHAL_ACTION_MANAGED_CONV_RESULT:
+				if ((action == MARSHAL_ACTION_CONV_RESULT) || (action == MARSHAL_ACTION_MANAGED_CONV_RESULT))
+					mono_mb_emit_byte (mb, CEE_POP);
+
+				mono_mb_emit_exception_full (mb, "System", "ApplicationException", exception_msg);
+
+				break;
+			case MARSHAL_ACTION_PUSH:
+				mono_mb_emit_byte (mb, CEE_LDNULL);
+				break;
+			default:
+				break;
+			}
+			return 0;
 		}
 
 		cleanup_native = get_method_nofail (klass, "CleanUpNativeData", 1, 0);
@@ -4252,28 +4268,6 @@ emit_marshal_custom_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	mono_error_assert_ok (error);
 	mklass = mono_class_from_mono_type (mtype);
 	g_assert (mklass != NULL);
-
-handle_exception:
-	/* Throw exception and emit compensation code if neccesary */
-	if (exception_msg) {
-		switch (action) {
-		case MARSHAL_ACTION_CONV_IN:
-		case MARSHAL_ACTION_CONV_RESULT:
-		case MARSHAL_ACTION_MANAGED_CONV_RESULT:
-			if ((action == MARSHAL_ACTION_CONV_RESULT) || (action == MARSHAL_ACTION_MANAGED_CONV_RESULT))
-				mono_mb_emit_byte (mb, CEE_POP);
-
-			mono_mb_emit_exception_full (mb, "System", "ApplicationException", exception_msg);
-
-			break;
-		case MARSHAL_ACTION_PUSH:
-			mono_mb_emit_byte (mb, CEE_LDNULL);
-			break;
-		default:
-			break;
-		}
-		return 0;
-	}
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
