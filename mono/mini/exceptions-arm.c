@@ -472,7 +472,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
 		
-		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->ip, NULL))) {
+		if ((ji = mini_jit_info_table_find (domain, (gpointer)(gsize)(*lmf)->ip, NULL))) {
 			frame->ji = ji;
 		} else {
 			if (!(*lmf)->method)
