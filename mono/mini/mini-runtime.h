@@ -83,10 +83,12 @@ struct MonoJitTlsData {
 	guint            handling_stack_ovf : 1;
 	gpointer         signal_stack;
 	guint32          signal_stack_size;
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 	gpointer         stack_ovf_guard_base;
 	guint32          stack_ovf_guard_size;
 	guint            stack_ovf_valloced : 1;
 	guint            stack_ovf_pending : 1;
+#endif
 	MonoAbortFunction abort_func;
 	/* Used to implement --debug=casts */
 	MonoClass       *class_cast_from, *class_cast_to;

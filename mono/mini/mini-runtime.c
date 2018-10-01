@@ -3462,7 +3462,6 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		 * Print a hopefully clear message and abort.
 		 */
 		mono_handle_hard_stack_ovf (jit_tls, ji, ctx, (guint8*)info->si_addr);
-		g_assert_not_reached ();
 	} else {
 		/* The original handler might not like that it is executed on an altstack... */
 		if (!ji && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))

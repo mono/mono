@@ -811,6 +811,7 @@ mono_arch_ip_from_context (void *sigctx)
 #endif	
 }
 
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 static MonoObject*
 restore_soft_guard_pages (void)
 {
@@ -844,6 +845,7 @@ prepare_for_guard_pages (MonoContext *mctx)
 	mctx->gregs [AMD64_RIP] = (guint64)restore_soft_guard_pages;
 	mctx->gregs [AMD64_RSP] = (guint64)sp;
 }
+#endif
 
 static void
 altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_ovf)
@@ -858,9 +860,13 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_o
 
 	mono_handle_exception (&mctx, obj);
 	if (stack_ovf) {
+#ifndef DISABLE_STACK_OVERFLOW_GUARD
 		MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 		jit_tls->stack_ovf_pending = 1;
 		prepare_for_guard_pages (&mctx);
+#else
+		g_error ("Soft stack overflow should be disabled");
+#endif
 	}
 	mono_restore_context (&mctx);
 }
