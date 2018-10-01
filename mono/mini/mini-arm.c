@@ -1700,7 +1700,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		ainfo = &cinfo->ret;
 		if (ainfo->storage == RegTypeStructByAddr) {
 			storage = interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, -1);
-			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)storage;
+			ccontext->gregs [cinfo->ret.reg] = (gsize)storage;
 		}
 	}
 
@@ -2986,7 +2986,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		}
 
 		if (t->byref) {
-			p->regs [slot] = (mgreg_t)*arg;
+			p->regs [slot] = (host_mgreg_t)*arg;
 			continue;
 		}
 
@@ -3085,8 +3085,8 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	DynCallArgs *p = (DynCallArgs*)buf;
 	MonoType *ptype = ainfo->rtype;
 	guint8 *ret = p->ret;
-	mgreg_t res = p->res;
-	mgreg_t res2 = p->res2;
+	host_mgreg_t res = p->res;
+	host_mgreg_t res2 = p->res2;
 
 	switch (ptype->type) {
 	case MONO_TYPE_VOID:
@@ -4129,7 +4129,7 @@ arm_patch_general (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guc
 		}
 		if (ins == ccode [0]) {
 			/* handles both thunk jump code and the far call sequence */
-			code32 [2] = (guint32)target;
+			code32 [2] = (guint32)(gsize)target;
 			return;
 		}
 		g_assert_not_reached ();
@@ -4779,7 +4779,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					} else {
 						ARM_LDR_IMM (code, dreg, ARMREG_PC, 0);
 						ARM_B (code, 0);
-						*(int*)code = (int)ss_trigger_page;
+						*(int*)code = (int)(gsize)ss_trigger_page;
 						code += 4;
 					}
 					ARM_LDR_IMM (code, dreg, dreg, 0);
@@ -5676,7 +5676,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				/* FIXME: we can optimize the imm load by dealing with part of 
 				 * the displacement in LDFD (aligning to 512).
 				 */
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)(gsize)ins->inst_p0);
 				ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
 			}
 			break;
@@ -5689,7 +5689,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (!cfg->r4fp)
 					ARM_CVTS (code, ins->dreg, ins->dreg);
 			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)(gsize)ins->inst_p0);
 				ARM_FLDS (code, ins->dreg, ARMREG_LR, 0);
 				if (!cfg->r4fp)
 					ARM_CVTS (code, ins->dreg, ins->dreg);
@@ -6188,8 +6188,8 @@ mono_arch_register_lowlevel_calls (void)
 
 #define patch_lis_ori(ip,val) do {\
 		guint16 *__lis_ori = (guint16*)(ip);	\
-		__lis_ori [1] = (((guint32)(val)) >> 16) & 0xffff;	\
-		__lis_ori [3] = ((guint32)(val)) & 0xffff;	\
+		__lis_ori [1] = (((guint32)(gsize)(val)) >> 16) & 0xffff;	\
+		__lis_ori [3] = ((guint32)(gsize)(val)) & 0xffff;	\
 	} while (0)
 
 void
@@ -6209,7 +6209,7 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		 * otherwise the displacements.
 		 */
 		for (i = 0; i < ji->data.table->table_size; i++)
-			jt [i] = code + (int)ji->data.table->table [i];
+			jt [i] = code + (int)(gsize)ji->data.table->table [i];
 		break;
 	}
 	case MONO_PATCH_INFO_IP:
@@ -7008,15 +7008,15 @@ mono_arch_flush_register_windows (void)
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (mgreg_t *regs, guint8 *code) // FIXME host_mgreg_t
 {
-	return (MonoMethod*)regs [MONO_ARCH_IMT_REG];
+	return (MonoMethod*)(host_mgreg_t)regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code) // FIXME host_mgreg_t
 {
-	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*)(host_mgreg_t)regs [MONO_ARCH_RGCTX_REG];
 }
 
 GSList*
@@ -7036,7 +7036,7 @@ mono_arch_get_cie_program (void)
 #define BRANCH_SIZE (1 * 4)
 #define CALL_SIZE (2 * 4)
 #define WMC_SIZE (8 * 4)
-#define DISTANCE(A, B) (((gint32)(B)) - ((gint32)(A)))
+#define DISTANCE(A, B) (((gint32)(gsize)(B)) - ((gint32)(gsize)(A)))
 
 static arminstr_t *
 arm_emit_value_and_patch_ldr (arminstr_t *code, arminstr_t *target, guint32 value)
