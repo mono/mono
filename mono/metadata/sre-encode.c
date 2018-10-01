@@ -471,10 +471,10 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
  * Copy len * nelem bytes from val to dest, swapping bytes to LE if necessary.
  * dest may be misaligned.
  */
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 static void
 swap_with_size (char *dest, const char* val, int len, int nelem) {
 	MONO_REQ_GC_NEUTRAL_MODE;
-#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	int elem;
 
 	for (elem = 0; elem < nelem; ++elem) {
@@ -508,10 +508,8 @@ swap_with_size (char *dest, const char* val, int len, int nelem) {
 		dest += len;
 		val += len;
 	}
-#else
-	memcpy (dest, val, len * nelem);
-#endif
 }
+#endif
 
 
 guint32
