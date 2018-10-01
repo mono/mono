@@ -602,7 +602,7 @@ mono_arch_ip_from_context (void *sigctx)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
-	mgreg_t sp = (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+	host_mgreg_t sp = (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 
 	// FIXME:
 	g_assert (!user_data);
@@ -623,7 +623,7 @@ void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
 	MONO_CONTEXT_SET_IP (ctx,func);
-	if ((mgreg_t)MONO_CONTEXT_GET_IP (ctx) & 1)
+	if ((host_mgreg_t)MONO_CONTEXT_GET_IP (ctx) & 1)
 		/* Transition to thumb */
 		ctx->cpsr |= (1 << 5);
 	else
