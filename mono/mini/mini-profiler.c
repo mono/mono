@@ -195,7 +195,7 @@ get_variable_buffer (MonoDebugMethodJitInfo *jit, MonoDebugVarInfo *var, MonoCon
 		 * produce an address to where the actual value is located, but this
 		 * address mode gets us the value itself as an mgreg_t value.
 		 */
-		mgreg_t value = (mgreg_t) get_int_reg (ctx, reg);
+		host_mgreg_t value = (host_mgreg_t) get_int_reg (ctx, reg);
 
 		return memdup_with_type (&value, var->type);
 	}
