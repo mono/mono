@@ -1698,9 +1698,9 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 	MonoClass *klass;
 	int i, argnum, *tmp_locals;
 	int type, param_shift = 0;
-	int coop_gc_stack_dummy, coop_gc_var;
+	int coop_gc_stack_dummy = 0, coop_gc_var = 0;
 #ifndef DISABLE_COM
-	int coop_cominterop_fnptr;
+	int coop_cominterop_fnptr = 0;
 #endif
 
 	memset (&m, 0, sizeof (m));
@@ -4074,7 +4074,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	MonoImage *image = get_method_image (method);
 	MonoMethodSignature *sig = mono_method_signature (method);
 	int param_count = sig->param_count + sig->hasthis + 1;
-	int pos_leave, coop_gc_var, coop_gc_stack_dummy;
+	int pos_leave, coop_gc_var = 0, coop_gc_stack_dummy = 0;
 	MonoExceptionClause *clause;
 	MonoType *object_type = mono_get_object_type ();
 
