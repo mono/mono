@@ -1013,7 +1013,8 @@ CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
 
 AC_SUBST(CXXFLAGS_COMMON)
 
-if test "x$enable_cxx" = "xyes"; then
+#if test "x$enable_cxx" = "xyes"; then
+if test "xyes" = "xyes"; then
 
 	CXX_ADD_CFLAGS=" -xc++ $CXXFLAGS_COMMON "
 
