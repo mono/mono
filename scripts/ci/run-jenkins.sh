@@ -87,13 +87,11 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
+	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
-	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-ios NINJA=
 
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
 	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
@@ -112,22 +110,21 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
-	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl ios-llvm64 ios-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
 
 if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
    then
-        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
-        echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
-        echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
+        echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_WASM=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
-        if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
-            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
-        fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j4 -C sdks/builds provision-llvm-llvm{,win}{32,64}
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi,armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+
+        # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
+        # but doesn't get stuck when called via the shell, so let's just call it here now.
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j12 -C sdks/builds provision-android && make -C sdks/android accept-android-license
+        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j12 -C sdks/builds provision-mxe
+        ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
         exit 0
 fi
 
@@ -135,8 +132,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
+	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j4 -C sdks/builds archive-wasm NINJA=
+
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
 	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
 	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
