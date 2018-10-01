@@ -1755,7 +1755,7 @@ mono_string_to_utf8_checked (MonoStringHandle s, MonoError *error)
 #endif
 
 char *
-mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error);
+mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error);
 
 MonoArrayHandle
 mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array, MonoError *error);

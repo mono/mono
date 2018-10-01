@@ -7781,11 +7781,11 @@ mono_string_to_utf8_internal (MonoMemPool *mp, MonoImage *image, MonoString *s, 
  * Same as \c mono_string_to_utf8, but allocate the string from the image mempool.
  */
 char *
-mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error)
+mono_string_to_utf8_image (MonoImage *image, MonoString *s, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return mono_string_to_utf8_internal (NULL, image, MONO_HANDLE_RAW (s), error); /* FIXME pin the string */
+	return mono_string_to_utf8_internal (NULL, image, s, error); /* FIXME pin the string */
 }
 
 /**
