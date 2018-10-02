@@ -16,8 +16,10 @@ TEST_CASES := \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
-#	mscorlib/test-marshaling.cs \
 	System/test-security.cs
+
+# Disabled tests
+#	mscorlib/test-marshaling.cs
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
