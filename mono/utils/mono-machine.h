@@ -34,6 +34,11 @@ typedef gssize host_mgreg_t;
 // never executed JIT and runtime truncate pointers.
 // When casting to/from pointers, use gsize or gssize instead of mgreg_t.
 // When dealing with register context, use host_mgreg_t instead of mgreg_t.
+// Over conversion to host_mgreg_t causes cross compilers to generate incorrect code,
+// i.e. with offsets/sizes in MonoContext.
+// Under conversion to host_mgreg_t causes compiler errors/warnings about truncating pointers
+// in dead code.
+// Therefore under/no conversion is present -- rather, casts in dead code.
 #if SIZEOF_REGISTER == 4
 typedef gint32 mgreg_t;
 #elif SIZEOF_REGISTER == 8
