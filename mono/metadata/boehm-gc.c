@@ -773,10 +773,6 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
 
-	if (strcmp(vtable->klass->name, "RuntimeTestInfo") == 0)
-	{
-		printf("hello");
-	}
 	if (!vtable->klass->has_references) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
