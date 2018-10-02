@@ -13,7 +13,7 @@ DRIVER_CONF=debug
 
 
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
-WASM_BCL_DIR=$(TOP)/sdks/out/bcl/wasm
+WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 MANAGED_DEPLOY_DIR=$(TOP)/sdks/wasm/managed
 MINI_PATH=$(TOP)/mono/mini
 CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
@@ -171,7 +171,7 @@ package: build
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/bcl
-	cp -r $(TOP)/sdks/out/bcl/wasm/* tmp/bcl/
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/bcl/
 	cp driver.c tmp/
 	cp $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a tmp/
 	cp library_mono.js tmp/
