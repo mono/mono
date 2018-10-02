@@ -34,6 +34,7 @@ Copy the sample code from the SDK. We'll assume that the $WASM_SDK variable poin
 ```
 cp $WASM_SDK/sample.html .
 cp $WASM_SDK/sample.cs .
+cp $WASM_SDK/dependency.cs .
 ```
 
 ### Step 3
@@ -41,7 +42,7 @@ cp $WASM_SDK/sample.cs .
 Compile and package your application.
 
 ```
-csc /target:library sample.cs
+csc /target:library -out:sample.dll /r:$(WASM_SDK)/bcl/System.Net.Http.dll /r:$(WASM_SDK)/framework/WebAssembly.Bindings.dll /r:$(WASM_SDK)/framework/WebAssembly.Net.Http.dll dependency.cs sample.cs
 mono $WASM_SDK/packager.exe sample.dll
 ```
 

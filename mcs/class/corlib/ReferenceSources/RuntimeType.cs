@@ -419,6 +419,8 @@ namespace System
 
 		public override Type MakePointerType ()
 		{
+			if (IsByRef)
+				throw new TypeLoadException ($"Could not load type '{GetType()}' from assembly '{AssemblyQualifiedName}");			
 			return MakePointerType (this);
 		}
 
