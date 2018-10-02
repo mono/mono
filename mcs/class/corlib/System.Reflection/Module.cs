@@ -213,7 +213,7 @@ namespace System.Reflection {
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
 			if (s.Length > 0 && s [s.Length - 1] == '*')
-				return m.Name.StartsWithOrdinalUnchecked (s.Substring (0, s.Length - 1));
+				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.Ordinal);
 			
 			return m.Name == s;
 		}
