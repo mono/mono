@@ -453,7 +453,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	const guint kMaxCodeSize = 256;
 
 #ifdef TARGET_WIN32
-	dummy_stack_space = 6 * sizeof(host_mgreg_t);	/* Windows expects stack space allocated for all 6 dummy args. */
+	dummy_stack_space = 6 * sizeof(mgreg_t);	/* Windows expects stack space allocated for all 6 dummy args. */
 #else
 	dummy_stack_space = 0;
 #endif
@@ -484,43 +484,43 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	 */
 
 	arg_offsets [0] = dummy_stack_space + 0;
-	arg_offsets [1] = dummy_stack_space + sizeof(host_mgreg_t);
-	arg_offsets [2] = dummy_stack_space + sizeof(host_mgreg_t) * 2;
-	ctx_offset = dummy_stack_space + sizeof(host_mgreg_t) * 4;
+	arg_offsets [1] = dummy_stack_space + sizeof(mgreg_t);
+	arg_offsets [2] = dummy_stack_space + sizeof(mgreg_t) * 2;
+	ctx_offset = dummy_stack_space + sizeof(mgreg_t) * 4;
 	regs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, gregs);
 
 	/* Save registers */
 	for (i = 0; i < AMD64_NREG; ++i)
 		if (i != AMD64_RSP)
-			amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (i * sizeof(host_mgreg_t)), i, sizeof(host_mgreg_t));
+			amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (i * sizeof(mgreg_t)), i, sizeof(mgreg_t));
 	/* Save RSP */
-	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, stack_size + sizeof(host_mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RSP * sizeof(host_mgreg_t)), X86_EAX, sizeof(host_mgreg_t));
+	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, stack_size + sizeof(mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RSP * sizeof(mgreg_t)), X86_EAX, sizeof(mgreg_t));
 	/* Save IP */
-	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, stack_size, sizeof(host_mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RIP * sizeof(host_mgreg_t)), AMD64_RAX, sizeof(host_mgreg_t));
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, stack_size, sizeof(mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RIP * sizeof(mgreg_t)), AMD64_RAX, sizeof(mgreg_t));
 	/* Set arg1 == ctx */
 	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, ctx_offset);
-	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof(host_mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof(mgreg_t));
 	/* Set arg2 == exc/ex_token_index */
 	if (resume_unwind)
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [1], 0, sizeof(host_mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [1], 0, sizeof(mgreg_t));
 	else
-		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_ARG_REG1, sizeof(host_mgreg_t));
+		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_ARG_REG1, sizeof(mgreg_t));
 	/* Set arg3 == rethrow/pc offset */
 	if (resume_unwind) {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof(host_mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof(mgreg_t));
 	} else if (corlib) {
 		if (llvm_abs)
 			/*
 			 * The caller doesn't pass in a pc/pc offset, instead we simply use the
 			 * caller ip. Negate the pc adjustment done in mono_amd64_throw_corlib_exception ().
 			 */
-			amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 1, sizeof(host_mgreg_t));
+			amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 1, sizeof(mgreg_t));
 		else
-			amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG2, sizeof(host_mgreg_t));
+			amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG2, sizeof(mgreg_t));
 	} else {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], rethrow, sizeof(host_mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], rethrow, sizeof(mgreg_t));
 	}
 
 	if (aot) {
@@ -648,7 +648,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			new_ctx->gregs [i] = regs [i];
  
 		/* The CFA becomes the new SP value */
-		new_ctx->gregs [AMD64_RSP] = (host_mgreg_t)cfa;
+		new_ctx->gregs [AMD64_RSP] = (mgreg_t)(gsize)cfa;
 
 		/* Adjust IP */
 		new_ctx->gregs [AMD64_RIP] --;
@@ -671,7 +671,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			 * The rsp field is set just before the call which transitioned to native 
 			 * code. Obtain the rip from the stack.
 			 */
-			rip = *(guint64*)((*lmf)->rsp - sizeof(host_mgreg_t));
+			rip = *(guint64*)((*lmf)->rsp - sizeof(mgreg_t));
 		}
 
 		ji = mini_jit_info_table_find (domain, (char *)rip, NULL);
@@ -1615,10 +1615,10 @@ mono_arch_unwindinfo_insert_rt_func_in_table (const gpointer code, gsize code_si
 		new_rt_func_data.BeginAddress = code_offset;
 		new_rt_func_data.EndAddress = code_offset + code_size;
 
-		gsize aligned_unwind_data = ALIGN_TO(end_range, sizeof (host_mgreg_t));
+		gsize aligned_unwind_data = ALIGN_TO(end_range, sizeof (mgreg_t));
 		new_rt_func_data.UnwindData = aligned_unwind_data - found_entry->begin_range;
 
-		g_assert_checked (new_rt_func_data.UnwindData == ALIGN_TO(new_rt_func_data.EndAddress, sizeof (host_mgreg_t)));
+		g_assert_checked (new_rt_func_data.UnwindData == ALIGN_TO(new_rt_func_data.EndAddress, sizeof (mgreg_t)));
 
 		PRUNTIME_FUNCTION new_rt_funcs = NULL;
 
@@ -1795,7 +1795,7 @@ mono_arch_unwindinfo_install_method_unwind_info (PUNWIND_INFO *monoui, gpointer 
 
 	unwindinfo = *monoui;
 	targetlocation = (guint64)&(((guchar*)code)[code_size]);
-	targetinfo = (PUNWIND_INFO) ALIGN_TO(targetlocation, sizeof (host_mgreg_t));
+	targetinfo = (PUNWIND_INFO) ALIGN_TO(targetlocation, sizeof (mgreg_t));
 
 	memcpy (targetinfo, unwindinfo, sizeof (UNWIND_INFO) - (sizeof (UNWIND_CODE) * MONO_MAX_UNWIND_CODES));
 
