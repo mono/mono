@@ -384,7 +384,7 @@ void
 mono_ppc_patch (guchar *code, const guchar *target);
 
 void
-mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow);
+mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow);
 
 #ifdef __mono_ppc64__
 #define MONO_PPC_32_64_CASE(c32,c64)	c64
@@ -395,7 +395,7 @@ extern void mono_ppc_emitted (guint8 *code, gint64 length, const char *format, .
 
 gboolean mono_ppc_is_direct_call_sequence (guint32 *code);
 
-void mono_ppc_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr);
+void mono_ppc_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr);
 
 
 // Debugging macros for ELF ABI v2

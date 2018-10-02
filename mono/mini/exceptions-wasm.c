@@ -34,7 +34,7 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 host_mgreg_t **save_locations,
+							 mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	if (ji)
