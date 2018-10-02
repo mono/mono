@@ -1087,6 +1087,15 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 		return res;
 	}
 
+	/* UNITY: wrapper methods are being captured in callstacks, even thought users should not encounter them.
+	 * The logic in param_objects_construct cannot handle this. Just return empty array (case 1073634) */
+	if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+		MonoArrayHandle res = mono_array_new_handle (domain, mono_class_get_mono_parameter_info_class (), 0, error);
+		goto_if_nok (error, fail);
+
+		return res;
+	}
+
 	/* Note: the cache is based on the address of the signature into the method
 	 * since we already cache MethodInfos with the method as keys.
 	 */
