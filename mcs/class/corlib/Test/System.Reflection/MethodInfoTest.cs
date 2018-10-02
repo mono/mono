@@ -993,7 +993,7 @@ namespace MonoTests.System.Reflection
 			else
 				Assert.IsTrue (foundExpectedType, "#2-4");
 		}
-#endif	
+#endif
 	}
 	
 	// Helper class
