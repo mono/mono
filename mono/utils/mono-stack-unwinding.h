@@ -100,7 +100,7 @@ typedef struct {
 	guint32 unwind_info_len;
 	guint8 *unwind_info;
 
-	host_mgreg_t **reg_locations;
+	mgreg_t **reg_locations;
 } MonoStackFrameInfo;
 
 /*Index into MonoThreadState::unwind_data. */

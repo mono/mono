@@ -258,13 +258,13 @@ guint8* mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *code_start, i
 
 void mono_arm_patch (guint8 *code, guint8 *target, int relocation);
 
-void mono_arm_throw_exception (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
+void mono_arm_throw_exception (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
 
 void mono_arm_gsharedvt_init (void);
 
 GSList* mono_arm_get_exception_trampolines (gboolean aot);
 
-void mono_arm_resume_unwind (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
+void mono_arm_resume_unwind (gpointer arg, mgreg_t pc, mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 
