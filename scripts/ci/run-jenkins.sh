@@ -95,9 +95,9 @@ then
 fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
-	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
+	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
 	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
-		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm36-llvm32 NINJA=
+		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
 	fi
 	exit 0
 fi
@@ -112,7 +112,7 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   fi
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-ios NINJA=
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios NINJA=
 
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -149,7 +149,7 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         # but doesn't get stuck when called via the shell, so let's just call it here now.
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
-        ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
         ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
@@ -183,7 +183,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	       echo "ENABLE_CXX=1" >> sdks/Make.config
 	   fi
 
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-wasm NINJA=
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
 
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
 	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
