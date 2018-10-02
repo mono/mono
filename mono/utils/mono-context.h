@@ -748,9 +748,9 @@ typedef struct MonoContext {
 	gpointer *fp;
 } MonoContext;
 
-#define MONO_CONTEXT_SET_IP(ctx,eip) do { (ctx)->ip = (gpointer)(eip); } while (0);
-#define MONO_CONTEXT_SET_BP(ctx,ebp) do { (ctx)->fp = (gpointer*)(ebp); } while (0);
-#define MONO_CONTEXT_SET_SP(ctx,esp) do { (ctx)->sp = (gpointer*)(esp); } while (0);
+#define MONO_CONTEXT_SET_IP(ctx,eip) do { (ctx)->ip = (gpointer)(eip); } while (0); 
+#define MONO_CONTEXT_SET_BP(ctx,ebp) do { (ctx)->fp = (gpointer*)(ebp); } while (0); 
+#define MONO_CONTEXT_SET_SP(ctx,esp) do { (ctx)->sp = (gpointer*)(esp); } while (0); 
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->ip))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->fp))
@@ -811,8 +811,8 @@ typedef struct MonoContext {
 #include <mono/arch/mips/mips-codegen.h>
 
 typedef struct {
-	mgreg_t	sc_pc;
-	mgreg_t	sc_regs [32];
+	mgreg_t	    sc_pc;
+	mgreg_t		sc_regs [32];
 	gfloat		sc_fpregs [32];
 } MonoContext;
 
@@ -872,14 +872,14 @@ typedef struct ucontext MonoContext;
 	do {								\
 		(ctx)->uc_mcontext.gregs[14] = (unsigned long)ip;	\
 		(ctx)->uc_mcontext.psw.addr = (unsigned long)ip;	\
-	} while (0);
+	} while (0); 
 
 #define MONO_CONTEXT_SET_SP(ctx,bp) MONO_CONTEXT_SET_BP((ctx),(bp))
 #define MONO_CONTEXT_SET_BP(ctx,bp) 					\
 	do {		 						\
 		(ctx)->uc_mcontext.gregs[15] = (unsigned long)bp;	\
 		(ctx)->uc_stack.ss_sp	     = (void*)bp;		\
-	} while (0)
+	} while (0) 
 
 #define MONO_CONTEXT_GET_IP(ctx) (gpointer) (ctx)->uc_mcontext.psw.addr
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->uc_mcontext.gregs[15]))
