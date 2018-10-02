@@ -3085,8 +3085,8 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	DynCallArgs *p = (DynCallArgs*)buf;
 	MonoType *ptype = ainfo->rtype;
 	guint8 *ret = p->ret;
-	host_mgreg_t res = p->res;
-	host_mgreg_t res2 = p->res2;
+	mgreg_t res = p->res;
+	mgreg_t res2 = p->res2;
 
 	switch (ptype->type) {
 	case MONO_TYPE_VOID:
@@ -3096,7 +3096,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
-		*(gpointer*)ret = (gpointer)(host_mgreg_t)res;
+		*(gpointer*)ret = (gpointer)(gsize)res;
 		break;
 	case MONO_TYPE_I1:
 		*(gint8*)ret = res;
