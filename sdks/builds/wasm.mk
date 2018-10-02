@@ -66,6 +66,8 @@ clean-wasm-runtime:
 
 TARGETS += wasm-runtime
 
+wasm_TARGETS += wasm-runtime-$(CONFIGURATION)
+
 ##
 # Parameters
 #  $(1): target
@@ -88,6 +90,8 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=appdomains,com,remoting
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
+
+wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
 
 endef
 
@@ -149,8 +153,24 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
+# wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION)
+
 endef
 
 ifeq ($(DISABLE_WASM_CROSS),)
 $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 endif
+
+##
+# Parameters
+#  $(1): build profiles
+#  $(2): test profile
+define WasmBclTemplate
+
+$$(eval $$(call BclTemplate,wasm,$(1),$(2)))
+
+wasm_TARGETS += wasm-bcl
+
+endef
+
+$(eval $(call WasmBclTemplate,wasm,wasm))
