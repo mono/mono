@@ -30,7 +30,7 @@ $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
 	touch $$@
 
 .PHONY: download-$(1)-$(2)
-download-$(1)-$(2): | setup-$(1)-$(2)
+download-$(1)-$(2): $(3) | setup-$(1)-$(2)
 	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
 
 .PHONY: provision-$(1)-$(2)
