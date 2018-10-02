@@ -95,7 +95,10 @@ then
 fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
-	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm36-llvm32 archive-llvm-llvm{,win}{32,64} NINJA=
+	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
+	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
+		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm36-llvm32 NINJA=
+	fi
 	exit 0
 fi
 
