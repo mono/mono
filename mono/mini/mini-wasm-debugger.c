@@ -47,7 +47,7 @@ G_END_DECLS
 static gboolean debugger_enabled;
 
 static int event_request_id;
-#define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
+#define THREAD_TO_INTERNAL(thread) ((thread)->internal_thread.GetRaw ())
 
 static void
 inplace_tolower (char *c)
