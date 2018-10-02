@@ -29,10 +29,6 @@ node ("osx-amd64") {
                 stage('Build') {
                     utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'PENDING', 'Building...')
 
-                    // workaround for libtiff issue
-                    sh 'make -C external/bockbuild/builds/tiff-4.0.8-x86 clean || true'
-                    sh 'make -C external/bockbuild/builds/tiff-4.0.8-x64 clean || true'
-
                     // build the .pkg
                     timeout (time: 420, unit: 'MINUTES') {
                         withEnv (["MONO_BRANCH=${isPr ? '' : monoBranch}", "MONO_BUILD_REVISION=${commitHash}"]) {
