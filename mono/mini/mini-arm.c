@@ -1700,7 +1700,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		ainfo = &cinfo->ret;
 		if (ainfo->storage == RegTypeStructByAddr) {
 			storage = interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, -1);
-			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)storage;
+			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)(gsize)storage;
 		}
 	}
 
