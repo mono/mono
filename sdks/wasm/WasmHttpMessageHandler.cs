@@ -68,9 +68,18 @@ namespace WebAssembly.Net.Http.HttpClient
             {
                 var requestObject = (JSObject)json.Invoke("parse", "{}");
                 requestObject.SetObjectProperty("method", request.Method.Method);
-                requestObject.SetObjectProperty("credentials", GetDefaultCredentialsString());
-                requestObject.SetObjectProperty("cache", GetCacheModeString());
-                requestObject.SetObjectProperty("mode", GetRequestModeString());
+
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
+                // standard values and meanings
+                requestObject.SetObjectProperty("credentials", DefaultCredentials);
+
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
+                // standard values and meanings
+                requestObject.SetObjectProperty("cache", Cache);
+
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
+                // standard values and meanings
+                requestObject.SetObjectProperty("mode", Mode);
 
                 // We need to check for body content
                 if (request.Content != null)
@@ -172,67 +181,7 @@ namespace WebAssembly.Net.Http.HttpClient
 
 
         }
-
-        private static string GetDefaultCredentialsString()
-        {
-            // See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
-            // standard values and meanings
-            switch (DefaultCredentials)
-            {
-                case FetchCredentialsOption.Omit:
-                    return "omit";
-                case FetchCredentialsOption.SameOrigin:
-                    return "same-origin";
-                case FetchCredentialsOption.Include:
-                    return "include";
-                default:
-                    throw new ArgumentException($"Unknown credentials option '{DefaultCredentials}'.");
-            }
-        }
-
-
-        private static string GetCacheModeString()
-        {
-            // See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
-            // standard values and meanings
-            switch (Cache)
-            {
-                case RequestCache.Default:
-                    return "default";
-                case RequestCache.NoStore:
-                    return "no-store";
-                case RequestCache.Reload:
-                    return "reload";
-                case RequestCache.NoCache:
-                    return "no-cache";
-                case RequestCache.ForceCache:
-                    return "force-cache";
-                case RequestCache.OnlyIfCached:
-                    return "only-if-cached";
-                default:
-                    throw new ArgumentException($"Unknown cache option '{Mode}'.");
-            }
-        }
-
-        private static string GetRequestModeString()
-        {
-            // See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
-            // standard values and meanings
-            switch (Mode)
-            {
-                case RequestMode.Cors:
-                    return "cors";
-                case RequestMode.Navigate:
-                    return "navigate";
-                case RequestMode.NoCors:
-                    return "no-cors";
-                case RequestMode.SameOrigin:
-                    return "same-origin";
-                default:
-                    throw new ArgumentException($"Unknown request mode '{Mode}'.");
-            }
-        }
-
+        
         private string[][] GetHeadersAsStringArray(HttpRequestMessage request)
             => (from header in request.Headers.Concat(request.Content?.Headers ?? Enumerable.Empty<KeyValuePair<string, IEnumerable<string>>>())
                     from headerValue in header.Value // There can be more than one value for each name
@@ -300,20 +249,24 @@ namespace WebAssembly.Net.Http.HttpClient
         /// <summary>
         /// Advises the browser never to send credentials (such as cookies or HTTP auth headers).
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Omit,
 
         /// <summary>
         /// Advises the browser to send credentials (such as cookies or HTTP auth headers)
         /// only if the target URL is on the same origin as the calling application.
         /// </summary>
+        [Export("same-origin")]
         SameOrigin,
 
         /// <summary>
         /// Advises the browser to send credentials (such as cookies or HTTP auth headers)
         /// even for cross-origin requests.
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Include,
     }
+
 
     /// <summary>
     /// The cache mode of the request. It controls how the request will interact with the browser's HTTP cache.
@@ -323,34 +276,40 @@ namespace WebAssembly.Net.Http.HttpClient
         /// <summary>
         /// The browser looks for a matching request in its HTTP cache.
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Default,
 
         /// <summary>
         /// The browser fetches the resource from the remote server without first looking in the cache, 
         /// and will not update the cache with the downloaded resource.
         /// </summary>
+        [Export("no-store")]
         NoStore,
 
         /// <summary>
         /// The browser fetches the resource from the remote server without first looking in the cache, 
         /// but then will update the cache with the downloaded resource.
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Reload,
 
         /// <summary>
         /// The browser looks for a matching request in its HTTP cache.
         /// </summary>
+        [Export("no-cache")]
         NoCache,
 
         /// <summary>
         /// The browser looks for a matching request in its HTTP cache.
         /// </summary>
+        [Export("force-cache")]
         ForceCache,
 
         /// <summary>
         /// The browser looks for a matching request in its HTTP cache.
         /// Mode can only be used if the request's mode is "same-origin"
         /// </summary>
+        [Export("only-if-cached")]
         OnlyIfCached,
     }
 
@@ -362,22 +321,26 @@ namespace WebAssembly.Net.Http.HttpClient
         /// <summary>
         /// If a request is made to another origin with this mode set, the result is simply an error
         /// </summary>
+        [Export("same-origin")]
         SameOrigin,
 
         /// <summary>
         /// Prevents the method from being anything other than HEAD, GET or POST, and the headers from 
         /// being anything other than simple headers.
         /// </summary>
+        [Export("no-cors")]
         NoCors,
 
         /// <summary>
         /// Allows cross-origin requests, for example to access various APIs offered by 3rd party vendors. 
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Cors,
 
         /// <summary>
         /// A mode for supporting navigation.
         /// </summary>
+        [Export(EnumValue = ConvertEnum.ToLower)]
         Navigate,
     }
 

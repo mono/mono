@@ -6,6 +6,7 @@ var BindingSupportLib = {
 		mono_wasm_object_registry: [],
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
+		mono_wasm_marshal_enum_as_int: false,	
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -36,6 +37,7 @@ var BindingSupportLib = {
 			this.mono_array_get = Module.cwrap ('mono_wasm_array_get', 'number', ['number', 'number']);
 			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
 			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
+			this.mono_unbox_enum = Module.cwrap ('mono_unbox_enum', 'number', ['number']);
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
@@ -87,6 +89,8 @@ var BindingSupportLib = {
 			this.set_tcs_failure = get_method ("SetTaskSourceFailure");
 			this.tcs_get_task_and_bind = get_method ("GetTaskAndBind");
 			this.get_call_sig = get_method ("GetCallSignature");
+
+			this.object_to_string = get_method ("ObjectToString");
 
 			this.init = true;
 		},		
@@ -172,6 +176,20 @@ var BindingSupportLib = {
 
 			case 8: // bool
 				return this.mono_unbox_int (mono_obj) != 0;
+
+			case 9: // enum
+
+				if(this.mono_wasm_marshal_enum_as_int)
+				{
+					return this.mono_unbox_enum (mono_obj);
+				}
+				else
+				{
+					enumValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				}
+
+				return enumValue;
+
 
 			case 11: 
 			case 12: 
