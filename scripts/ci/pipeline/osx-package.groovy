@@ -29,15 +29,6 @@ node ("osx-amd64") {
                 stage('Build') {
                     utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'PENDING', 'Building...')
 
-                    // install openssl for .net core (remove once msbuild uses a 2.x version which doesn't rely on openssl)
-                    sh 'brew update && brew install openssl'
-                    sh 'mkdir -p /usr/local/lib'
-                    sh 'rm /usr/local/lib/libcrypto.1.0.0.dylib || true'
-                    sh 'rm /usr/local/lib/libssl.1.0.0.dylib || true'
-                    sh 'ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/'
-                    sh 'ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/'
-
-
                     // workaround for libtiff issue
                     sh 'make -C external/bockbuild/builds/tiff-4.0.8-x86 clean || true'
                     sh 'make -C external/bockbuild/builds/tiff-4.0.8-x64 clean || true'
