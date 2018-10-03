@@ -278,7 +278,7 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.Linq.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
+../../../external/corefx-bugfix/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/SparseArrayBuilder.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/Utils/CacheDict.cs
