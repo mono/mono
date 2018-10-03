@@ -331,10 +331,14 @@ public class ModuleTest
 
 		Type[] t;
 
+		t = m.FindTypes (Module.FilterTypeName, "*");
+		Assert.AreNotEqual (0, t.Length, "#A0");
 		t = m.FindTypes (Module.FilterTypeName, "FindTypesTest*");
 		Assert.AreEqual (2, t.Length, "#A1");
 		Assert.AreEqual ("FindTypesTestFirstClass", t [0].Name, "#A2");
 		Assert.AreEqual ("FindTypesTestSecondClass", t [1].Name, "#A3");
+		t = m.FindTypes (Module.FilterTypeNameIgnoreCase, "*");
+		Assert.AreNotEqual (0, t.Length, "#B0");		
 		t = m.FindTypes (Module.FilterTypeNameIgnoreCase, "findtypestest*");
 		Assert.AreEqual (2, t.Length, "#B1");
 		Assert.AreEqual ("FindTypesTestFirstClass", t [0].Name, "#B2");

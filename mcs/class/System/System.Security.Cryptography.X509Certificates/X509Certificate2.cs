@@ -67,8 +67,15 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Certificate2 (byte[] rawData)
-			: base (rawData)
 		{
+			// MONO: temporary hack until `X509CertificateImplApple` derives from
+			//       `X509Certificate2Impl`.
+			if (rawData != null && rawData.Length != 0) {
+				using (var safePasswordHandle = new SafePasswordHandle ((string)null)) {
+					var impl = X509Helper.Import (rawData, safePasswordHandle, X509KeyStorageFlags.DefaultKeySet);
+					ImportHandle (impl);
+				}
+			}
 		}
 
 		public X509Certificate2 (byte[] rawData, string password)
