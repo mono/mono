@@ -10,7 +10,7 @@
 # Where <target> is: target32, target32s, target64, sim32, sim64, cross32, cross64
 #
 
-PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ##
 # Device builds
@@ -34,8 +34,8 @@ PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 #
 define iOSDeviceTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
@@ -186,8 +186,8 @@ $(eval $(call iOSDeviceTemplate,targetwatch64_32,aarch64-apple-darwin10_ilp32,ar
 #
 define iOSSimulatorTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_clock_nanosleep=no \
@@ -232,8 +232,6 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
 	--disable-crash-reporting
-
-# _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
