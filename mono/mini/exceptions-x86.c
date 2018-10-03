@@ -982,13 +982,13 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	 * So put it into a register, and branch to a trampoline which
 	 * pushes it.
 	 */
-	ctx->eax = (mgreg_t)user_data;
+	ctx->eax = (mgreg_t)(gsize)user_data;
 	ctx->ecx = ctx->eip;
-	ctx->edx = (mgreg_t)async_cb;
+	ctx->edx = (mgreg_t)(gsize)async_cb;
 
 	/*align the stack*/
 	ctx->esp = (ctx->esp - 16) & ~15;
-	ctx->eip = (mgreg_t)signal_exception_trampoline;
+	ctx->eip = (mgreg_t)(gsize)signal_exception_trampoline;
 }
 
 gboolean
