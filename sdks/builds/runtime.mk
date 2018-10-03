@@ -25,15 +25,7 @@
 #  _$(1)_PATH
 define RuntimeTemplate
 
-_runtime_$(1)_BITNESS=$$(if $$(findstring i686,$(2)),-m32)
-
-ifeq ($$(_runtime_$(1)_BITNESS),)
-_runtime_$(1)_BITNESS=$$(if $$(findstring i386,$(2)),-m32)
-endif
-
-ifeq ($$(_runtime_$(1)_BITNESS),)
-_runtime_$(1)_BITNESS=$$(if $$(findstring x86_64,$(2)),-m64)
-endif
+_runtime_$(1)_BITNESS=$$(if $$(or $$(findstring i686,$(2)),$$(findstring i386,$(2))),-m32,$$(if $$(findstring x86_64,$(2)),-m64))
 
 _runtime_$(1)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CFLAGS) $$($(1)_CFLAGS) $$(_runtime_$(1)_BITNESS)
 _runtime_$(1)_CXXFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXFLAGS) $$($(1)_CXXFLAGS) $$(_runtime_$(1)_BITNESS)
@@ -64,10 +56,10 @@ _runtime_$(1)_CONFIGURE_ENVIRONMENT = \
 	$$($(1)_CONFIGURE_ENVIRONMENT)
 
 _runtime_$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	$$(if $(2),--host=$(2)) \
 	--cache-file=$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/$(1)-$$(CONFIGURATION) \
+	$$(if $$(ENABLE_CXX),--enable-cxx) \
 	$$(_cross-runtime_$(1)_CONFIGURE_FLAGS) \
 	$$(_$(1)_CONFIGURE_FLAGS) \
 	$$($(1)_CONFIGURE_FLAGS)
@@ -136,7 +128,6 @@ $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offs
 define CrossRuntimeTemplate
 
 _cross-runtime_$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--target=$(3) \
 	--with-cross-offsets=$(3).h \
 	--with-llvm=$$(TOP)/sdks/out/$(5)

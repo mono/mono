@@ -1077,8 +1077,7 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
-	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe \
-	thread-suspend-suspended.exe thread-suspend-selfsuspended.exe
+	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
 # test_virt.exe fails because callee takes more parameters than caller, 1 vs. 0, and
@@ -1482,6 +1481,15 @@ PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMe
 PROFILE_DISABLED_TESTS += tailcall/fsharp-deeptail/TailCallLoopGenericClassAndMethodAbstractInterface_int_.Method1_string_.exe
 
 endif # MONO_ARCH_GSHAREDVT_SUPPORTED
+
+if ARM64
+# Times out on ARM64.
+# https://github.com/mono/mono/issues/10783
+# https://jenkins.mono-project.com/job/test-mono-pull-request-arm64-fullaot+llvm/486/parsed_console/log.html
+# https://jenkins.mono-project.com/job/test-mono-pull-request-arm64-fullaot+llvm/471/parsed_console/log.html
+PLATFORM_DISABLED_TESTS += tailcall/2.exe
+endif # ARM64 FullAOT
+
 endif # FULL_AOT_TESTS
 
 if HYBRID_AOT_TESTS

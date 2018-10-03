@@ -23,30 +23,25 @@ $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 #  $(2): target
 #  $(3): configure script
 define LLVMProvisionTemplate
-ifeq ($$(UNAME),Darwin)
 _$(1)-$(2)_HASH = $$(shell git -C $$(dir $(3)) rev-parse HEAD)
-_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH).tar.gz
+_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
 _$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
 
 $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
-	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(TOP)/sdks/out/$(1)-$(2)
+	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
 	touch $$@
 
 .PHONY: download-$(1)-$(2)
-download-$(1)-$(2): | setup-$(1)-$(2)
+download-$(1)-$(2): $(3) | setup-$(1)-$(2)
 	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
-
-.PHONY: pack-$(1)-$(2)
-pack-$(1)-$(2): package-$(1)-$(2)
-	tar -cvzf $$(TOP)/sdks/out/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 
 .PHONY: provision-$(1)-$(2)
 provision-$(1)-$(2): $(3) | download-$(1)-$(2)
-	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) pack-$(1)-$(2))
-else
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): package-$(1)-$(2)
-endif
+	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) package-$(1)-$(2))
+
+.PHONY: archive-$(1)-$(2)
+archive-$(1)-$(2): package-$(1)-$(2)
+	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
 $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)/CMakeLists.txt))
