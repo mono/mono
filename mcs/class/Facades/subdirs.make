@@ -40,7 +40,7 @@ netstandard_drawing_SUBDIRS = System.Drawing.Primitives netstandard
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-monodroid_SUBDIRS = $(monotouch_SUBDIRS) netstandard
+monodroid_SUBDIRS = $(monotouch_SUBDIRS) $(netstandard_drawing_SUBDIRS)
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 # We don't build netstandard/System.Drawing.Primitives on monotouch etc. profiles by default,
