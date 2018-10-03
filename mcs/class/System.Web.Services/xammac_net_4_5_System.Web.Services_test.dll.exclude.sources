@@ -1,0 +1,14 @@
+System.Web.Services/WebServiceTest.cs
+System.Web.Services.Configuration/DiagnosticsElementTest.cs
+System.Web.Services.Configuration/ProtocolElementTest.cs
+System.Web.Services.Configuration/SoapEnvelopeProcessingElementTest.cs
+System.Web.Services.Configuration/SoapExtensionTypeElementTest.cs
+System.Web.Services.Configuration/TypeElementTest.cs
+System.Web.Services.Configuration/WsdlHelpGeneratorElementTest.cs
+System.Web.Services.Configuration/WsiProfilesElementTest.cs
+System.Web.Services.Description/ServiceDescriptionImporterTest.cs
+System.Web.Services.Description/ServiceDescriptionReflectorTest.cs
+System.Web.Services.Description/WebReferenceOptionsTest.cs
+System.Web.Services.Description/WebServicesInteroperabilityTest.cs
+System.Web.Services.Protocols/LogicalMethodInfoTest.cs
+System.Web.Services.Protocols/SoapServerTypeTest.cs
