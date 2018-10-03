@@ -648,7 +648,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			new_ctx->gregs [i] = regs [i];
  
 		/* The CFA becomes the new SP value */
-		new_ctx->gregs [AMD64_RSP] = (mgreg_t)cfa;
+		new_ctx->gregs [AMD64_RSP] = (mgreg_t)(gsize)cfa;
 
 		/* Adjust IP */
 		new_ctx->gregs [AMD64_RIP] --;

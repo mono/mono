@@ -814,7 +814,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			}
 		}
 
-		g_assert ((mgreg_t)stack_limit % SIZEOF_SLOT == 0);
+		g_assert ((gsize)stack_limit % SIZEOF_SLOT == 0);
 
 		res = mono_find_jit_info_ext (frame.domain ? frame.domain : tls->unwind_state.unwind_data [MONO_UNWIND_DATA_DOMAIN], tls->unwind_state.unwind_data [MONO_UNWIND_DATA_JIT_TLS], NULL, &ctx, &new_ctx, NULL, &lmf, new_reg_locations, &frame);
 		if (!res)
@@ -919,7 +919,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		}
 
 		/* The embedded callsite table requires this */
-		g_assert (((mgreg_t)emap % 4) == 0);
+		g_assert (((gsize)emap % 4) == 0);
 
 		/*
 		 * Debugging aid to control the number of frames scanned precisely
@@ -1231,10 +1231,10 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end, void *gc_dat
 	 * Debugging aid to check for missed refs.
 	 */
 	if (tls->ref_to_track) {
-		mgreg_t *p;
+		gpointer *p;
 
-		for (p = (mgreg_t*)stack_start; p < (mgreg_t*)stack_end; ++p)
-			if (*p == (mgreg_t)tls->ref_to_track)
+		for (p = (gpointer*)stack_start; p < (gpointer*)stack_end; ++p)
+			if (*p == tls->ref_to_track)
 				printf ("REF AT %p.\n", p);
 	}
 }
@@ -2418,7 +2418,7 @@ create_map (MonoCompile *cfg)
 		p += encoded_size;
 
 		/* Callsite table */
-		p = (guint8*)ALIGN_TO ((mgreg_t)p, map->callsite_entry_size);
+		p = (guint8*)ALIGN_TO ((gsize)p, map->callsite_entry_size);
 		if (map->callsite_entry_size == 1) {
 			guint8 *offsets = p;
 			for (i = 0; i < ncallsites; ++i)

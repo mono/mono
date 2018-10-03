@@ -20,6 +20,18 @@
 #include "config.h"
 #include <glib.h>
 
+#ifdef __mono_ilp32__
+typedef gint64 host_mgreg_t;
+#else
+typedef gssize host_mgreg_t;
+#endif
+
+// SIZEOF_REGISTER is target. mgreg_t is usually target, sometimes host.
+// There is a mismatch in cross (AOT) compilers, and the
+// never executed JIT and runtime truncate pointers.
+// When casting to/from pointers, use gsize or gssize.
+// When dealing with register context, use host_mgreg_t.
+// Or ifndef MONO_CROSS_COMPILE out runtime code.
 #if SIZEOF_REGISTER == 4
 typedef gint32 mgreg_t;
 #elif SIZEOF_REGISTER == 8
