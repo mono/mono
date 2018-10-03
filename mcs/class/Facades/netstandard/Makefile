@@ -28,6 +28,11 @@ else
 LIB_REFS += System.Web
 endif
 
+ifeq ($(PROFILE),monodroid)
+# XA implements System.Drawing API inside Mono.Android
+API_BIN_REFS := Mono.Android
+else
+
 # profiles which build a System.Drawing.dll in the repo
 REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
 
@@ -40,7 +45,7 @@ else
 # For now we typeforward the drawing types to the System.Drawing.Primitives.dll
 # facade where they are embedded.
 # TODO: find a better solution.
-EMBEDDED_DRAWING_DEP := $(filter xammac_net_4_5 monodroid testing_aot_full testing_aot_hybrid, $(PROFILE))
+EMBEDDED_DRAWING_DEP := $(filter xammac_net_4_5 testing_aot_full testing_aot_hybrid, $(PROFILE))
 
 ifdef EMBEDDED_DRAWING_DEP
 LIB_REFS += Facades/System.Drawing.Primitives
@@ -51,7 +56,7 @@ else
 # This needs to be passed in via EXTERNAL_FACADE_DRAWING_REFERENCE.
 LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
 endif
-
+endif
 endif
 
 PLATFORM_DEBUG_FLAGS =
