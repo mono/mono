@@ -229,11 +229,19 @@ namespace WebAssembly
                     case TypeCode.Int32:
                     case TypeCode.UInt32:
                     case TypeCode.Boolean:
-                        res += "i";
+                        // Enums types have the same code as their underlying numeric types
+                        if (t.IsEnum)
+                            res += "j";
+                        else
+                            res += "i";
                         break;
                     case TypeCode.Int64:
                     case TypeCode.UInt64:
-                        res += "l";
+                        // Enums types have the same code as their underlying numeric types
+                        if (t.IsEnum)
+                            res += "k";
+                        else
+                            res += "l";
                         break;
                     case TypeCode.Single:
                         res += "f";
@@ -253,6 +261,21 @@ namespace WebAssembly
             }
             return res;
         }
+
+        static object ObjectToEnum(IntPtr method_handle, int parm, object obj)
+        {
+            IntPtrAndHandle tmp = default(IntPtrAndHandle);
+            tmp.ptr = method_handle;
+
+            var mb = MethodBase.GetMethodFromHandle(tmp.handle);
+            var parmType = mb.GetParameters()[parm].ParameterType;
+            if (parmType.IsEnum)
+                return Runtime.EnumFromExportContract(parmType, obj);
+            else
+                return null;
+
+        }
+
 
         static MethodInfo gsjsc;
         static void GenericSetupJSContinuation<T>(Task<T> task, JSObject cont_obj)
@@ -370,7 +393,8 @@ namespace WebAssembly
                     }
 
                 }
-
+                 
+                throw new ArgumentException($"Value is a name, but not one of the named constants defined for the enum of type: {enumType}.", nameof(value));
             }
             else
             {

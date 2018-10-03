@@ -37,7 +37,7 @@ var BindingSupportLib = {
 			this.mono_array_get = Module.cwrap ('mono_wasm_array_get', 'number', ['number', 'number']);
 			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
 			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
-			this.mono_unbox_enum = Module.cwrap ('mono_unbox_enum', 'number', ['number']);
+			this.mono_unbox_enum = Module.cwrap ('mono_wasm_unbox_enum', 'number', ['number']);
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
@@ -91,6 +91,8 @@ var BindingSupportLib = {
 			this.get_call_sig = get_method ("GetCallSignature");
 
 			this.object_to_string = get_method ("ObjectToString");
+
+			this.object_to_enum = get_method ("ObjectToEnum");
 
 			this.init = true;
 		},		
@@ -321,15 +323,15 @@ var BindingSupportLib = {
 
 			if (js_obj == null || js_obj == undefined)
 				return 0;
-			if (typeof js_obj == 'number') {
+			if (typeof js_obj === 'number') {
 				if (parseInt(js_obj) == js_obj)
 					return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
 				return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
 			}
-			if (typeof js_obj == 'string')
+			if (typeof js_obj === 'string')
 				return this.js_string_to_mono_string (js_obj);
 
-			if (typeof js_obj == 'boolean')
+			if (typeof js_obj === 'boolean')
 				return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
 
 			if (Promise.resolve(js_obj) === js_obj) {
@@ -400,7 +402,18 @@ var BindingSupportLib = {
 
 			return this.extract_mono_obj (js_obj);
 		},
+		js_to_mono_enum: function (method, parmIdx, js_obj) {
+			this.bindings_lazy_init ();
+    
+			if (js_obj === null || typeof js_obj === "undefined")
+				return 0;
 
+			var monoObj = this.js_to_mono_obj(js_obj);
+			// Check enum contract
+			var monoEnum = this.call_method(this.object_to_enum, null, "iimm", [ method, parmIdx, monoObj ])
+			// return the unboxed enum value.
+			return this.mono_unbox_enum(monoEnum);
+		},
 		wasm_binding_obj_new: function (js_obj_id)
 		{
 			return this.call_method (this.bind_js_obj, null, "i", [js_obj_id]);
@@ -502,7 +515,9 @@ var BindingSupportLib = {
 		args_marshal is a string with one character per parameter that tells how to marshal it, here are the valid values:
 
 		i: int32
-		l: int64
+		j: int32 - Enum with underlying type of int32
+		l: int64 
+		k: int64 - Enum with underlying type of int64
 		f: float
 		d: double
 		s: string
@@ -517,7 +532,7 @@ var BindingSupportLib = {
 			var extra_args_mem = 0;
 			for (var i = 0; i < args.length; ++i) {
 				//long/double memory must be 8 bytes aligned and I'm being lazy here
-				if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd')
+				if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd' || args_marshal[i] == 'j' || args_marshal[i] == 'k')
 					extra_args_mem += 8;
 			}
 
@@ -532,6 +547,18 @@ var BindingSupportLib = {
 					Module.setValue (args_mem + i * 4, args [i], "i32");
 				} else if (args_marshal[i] == 'o') {
 					Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
+				} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
+					var enumVal = this.js_to_mono_enum(method, i, args[i]);
+		
+					var extra_cell = extra_args_mem + extra_arg_idx;
+					extra_arg_idx += 8;
+
+					if (args_marshal[i] == 'j')
+						Module.setValue (extra_cell, enumVal, "i32");
+					else if (args_marshal[i] == 'k')
+						Module.setValue (extra_cell, enumVal, "i64");
+
+					Module.setValue (args_mem + i * 4, extra_cell, "i32");
 				} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
 					var extra_cell = extra_args_mem + extra_arg_idx;
 					extra_arg_idx += 8;

@@ -601,7 +601,7 @@ mono_wasm_exec_regression (int verbose_level, char *image)
 }
 
 EMSCRIPTEN_KEEPALIVE int
-mono_unbox_enum (MonoObject *obj)
+mono_wasm_unbox_enum (MonoObject *obj)
 {
 	if (!obj)
 		return 0;
