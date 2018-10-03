@@ -62,9 +62,7 @@ namespace System.IO {
 
 		internal static readonly char[] PathSeparatorChars;
 		private static readonly bool dirEqualsVolume;
-#if HAS_VOLUME_PREFIXES
-		internal static readonly bool volumePaths;
-#endif
+
 		// class methods
 		public static string ChangeExtension (string path, string extension)
 		{
@@ -576,7 +574,7 @@ namespace System.IO {
 				c == AltDirectorySeparatorChar 	||
 				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar)
 #if HAS_VOLUME_PREFIXES
-				|| (volumePaths && IsVolumePrefix (path))
+				|| IsVolumePrefix (path)
 #endif
 				);
 		}
