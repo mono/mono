@@ -146,7 +146,11 @@ namespace System.Runtime.Serialization {
             /*out*/ parentTypeCount = 0;
             bool unique = true;
             RuntimeType objectType = (RuntimeType)typeof(object);
-            for (RuntimeType t1 = parentType; t1 != objectType; t1 = (RuntimeType)t1.BaseType)
+            if (parentType == null)
+                throw new ArgumentNullException("parentType");
+            if (parentType == objectType)
+                return true;
+            for (RuntimeType t1 = parentType; (t1 != objectType) && (t1 != null); t1 = (RuntimeType)t1.BaseType)
             {
                 if (t1.IsInterface) continue;
                 string t1Name = t1.Name;
