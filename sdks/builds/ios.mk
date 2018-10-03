@@ -50,6 +50,8 @@ _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
 	ac_cv_func_finite=no \
+	ac_cv_func_fstatat=no \
+	ac_cv_func_readlinkat=no \
 	ac_cv_func_getpwuid_r=no \
 	ac_cv_func_posix_getpwuid_r=yes \
 	ac_cv_header_curses_h=no \
@@ -95,7 +97,6 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--disable-iconv \
 	--disable-mcs-build \
 	--disable-nls \
-	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-dtrace=no \
 	--enable-icall-export \
