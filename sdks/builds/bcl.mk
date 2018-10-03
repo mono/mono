@@ -14,6 +14,7 @@ _bcl_CONFIGURE_FLAGS = \
 .PHONY: build-bcl
 build-bcl: .stamp-bcl-configure
 	$(MAKE) -C bcl -C mono
+	$(MAKE) -C bcl -C runtime all-mcs build_profiles="build"
 
 .PHONY: clean-bcl
 clean-bcl:
@@ -25,29 +26,32 @@ clean-bcl:
 #  $(2): build profiles
 define BclTemplate
 
-.stamp-$(1)-bcl-toolchain:
+.stamp-$(1)-toolchain:
 	touch $$@
 
-.PHONY: .stamp-$(1)-bcl-configure
-.stamp-$(1)-bcl-configure: .stamp-bcl-configure
+.stamp-$(1)-configure: .stamp-bcl-configure
+	touch $$@
 
-.PHONY: setup-custom-$(1)-bcl
-setup-custom-$(1)-bcl:
-	mkdir -p $$(TOP)/sdks/out/$(1)-bcl $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)-bcl/$$(profile))
+.PHONY: setup-custom-$(1)
+setup-custom-$(1):
+	mkdir -p $$(TOP)/sdks/out/$(1) $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)/$$(profile))
 
-.PHONY: build-custom-$(1)-bcl
-build-custom-$(1)-bcl: build-bcl
+.PHONY: build-$(1)
+build-$(1): build-bcl
+
+.PHONY: build-custom-$(1)
+build-custom-$(1):
 	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)"
 
-.PHONY: package-$(1)-bcl
-package-$(1)-bcl:
+.PHONY: package-$(1)
+package-$(1):
 	$$(foreach profile,$(2), \
-		cp -R $$(TOP)/mcs/class/lib/$$(profile)/* $$(TOP)/sdks/out/$(1)-bcl/$$(profile);)
+		cp -R $$(TOP)/mcs/class/lib/$$(profile)/* $$(TOP)/sdks/out/$(1)/$$(profile);)
 
-.PHONY: clean-$(1)-bcl
-clean-$(1)-bcl: clean-bcl
-	rm -rf $$(TOP)/sdks/out/$(1)-bcl $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)-bcl/$$(profile))
+.PHONY: clean-$(1)
+clean-$(1): clean-bcl
+	rm -rf $$(TOP)/sdks/out/$(1) $$(foreach profile,$(2),$$(TOP)/sdks/out/$(1)/$$(profile))
 
-TARGETS += $(1)-bcl
+TARGETS += $(1)
 
 endef
