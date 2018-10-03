@@ -666,23 +666,33 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpointer src, gint32 start_index,
 	MonoArrayHandle dest, gint32 length, gpointer managed_dest_addr, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (const char *ptr, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char *ptr, gint32 len, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunichar2 *ptr, gint32 len, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (mono_bstr_const ptr, MonoError *error);
 
@@ -706,7 +716,9 @@ ICALL_EXPORT
 void
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure (gconstpointer src, MonoObjectHandle dst, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoObjectHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gconstpointer src, MonoReflectionTypeHandle type, MonoError *error);
 
@@ -766,7 +778,9 @@ ICALL_EXPORT
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoDelegateHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error);
 
@@ -790,7 +804,9 @@ ICALL_EXPORT
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObjectHandle object, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoObjectHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk, MonoError *error);
 
@@ -810,7 +826,9 @@ ICALL_EXPORT
 gint32
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObjectHandle object, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoObjectHandle
 ves_icall_System_ComObject_CreateRCW (MonoReflectionTypeHandle ref_type, MonoError *error);
 
@@ -830,7 +848,9 @@ ICALL_EXPORT
 void
 ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxyHandle proxy, MonoError *error);
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoComInteropProxyHandle
 ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoError *error);
 

@@ -144,7 +144,9 @@ icallarray_print (const char *format, ...)
 #define icallarray_print(...) /* nothing */
 #endif
 
+#ifndef _MSC_VER
 ICALL_EXPORT
+#endif
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error);
 
@@ -182,7 +184,10 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 #endif /* HOST_WIN32 */
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Array_GetValueImpl (MonoArrayHandle array, guint32 pos, MonoError *error)
 {
 	MonoClass * const array_class = mono_handle_class (array);
@@ -198,7 +203,10 @@ ves_icall_System_Array_GetValueImpl (MonoArrayHandle array, guint32 pos, MonoErr
 	return result;
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Array_GetValue (MonoArrayHandle arr, MonoArrayHandle indices, MonoError *error)
 {
 	MONO_CHECK_ARG_NULL_HANDLE (indices, NULL_HANDLE);
@@ -614,7 +622,10 @@ ves_icall_System_Array_SetValue (MonoArrayHandle arr, MonoObjectHandle value,
 	array_set_value_impl (arr, value, pos, error);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Array_CreateInstanceImpl (MonoReflectionTypeHandle type, MonoArrayHandle lengths, MonoArrayHandle bounds, MonoError *error)
 {
 	// FIXME? fixed could be used for lengths, bounds.
@@ -1305,7 +1316,10 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 	}
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Object_GetType (MonoObjectHandle obj, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (obj);
@@ -1514,7 +1528,10 @@ fail:
 	return MONO_HANDLE_NEW (MonoReflectionType, NULL);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Type_internal_from_name (MonoStringHandle name,
 					  MonoBoolean throwOnError,
 					  MonoBoolean ignoreCase,
@@ -1568,7 +1585,10 @@ leave:
 }
 
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get (); 
@@ -1832,7 +1852,10 @@ ves_icall_RuntimeTypeHandle_GetAttributes (MonoReflectionTypeHandle ref_type, Mo
 	return mono_class_get_flags (klass);
 }
 
-ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMarshalAsAttributeHandle
 ves_icall_System_Reflection_FieldInfo_get_marshal_info (MonoReflectionFieldHandle field_h, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (field_h);
@@ -1863,7 +1886,10 @@ ves_icall_System_Reflection_FieldInfo_get_marshal_info (MonoReflectionFieldHandl
 	return MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, NULL_HANDLE);
 }
 
-ICALL_EXPORT MonoReflectionFieldHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionFieldHandle
 ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField *handle, MonoType *type, MonoError *error)
 {
 	MonoClass *klass;
@@ -1885,7 +1911,10 @@ ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField 
 	return mono_field_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
-ICALL_EXPORT MonoReflectionEventHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionEventHandle
 ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *handle, MonoType *type, MonoError *error)
 {
 	MonoClass *klass;
@@ -1907,7 +1936,10 @@ ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *hand
 }
 
 
-ICALL_EXPORT MonoReflectionPropertyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionPropertyHandle
 ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty *handle, MonoType *type, MonoError *error)
 {
 	MonoClass *klass;
@@ -1928,7 +1960,10 @@ ves_icall_System_Reflection_PropertyInfo_internal_from_handle_type (MonoProperty
 	return mono_property_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionFieldHandle field_h, MonoBoolean optional, MonoError *error)
 {
 	MonoClassField *field = MONO_HANDLE_GETVAL (field_h, field);
@@ -1979,7 +2014,10 @@ ves_icall_get_method_info (MonoMethod *method, MonoMethodInfo *info, MonoError *
 	info->callconv = callconv;
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info (MonoMethod *method, MonoReflectionMethodHandle member, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get (); 
@@ -1992,7 +2030,10 @@ ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info (MonoMethod *metho
 	return mono_param_get_objects_internal (domain, method, klass, error);
 }
 
-ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMarshalAsAttributeHandle
 ves_icall_System_MonoMethodInfo_get_retval_marshal (MonoMethod *method, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get (); 
@@ -2024,7 +2065,10 @@ ves_icall_MonoField_GetFieldOffset (MonoReflectionFieldHandle field, MonoError *
 	return class_field->offset - MONO_ABI_SIZEOF (MonoObject);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_MonoField_GetParentType (MonoReflectionFieldHandle field, MonoBoolean declaring, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (field);
@@ -2351,7 +2395,10 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 	return o;
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_MonoField_ResolveType (MonoReflectionFieldHandle ref_field, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_field);
@@ -2583,7 +2630,10 @@ get_interfaces_hash (gconstpointer v1)
 	return m_class_get_type_token (k);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_RuntimeType_GetInterfaces (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
@@ -2716,7 +2766,10 @@ ves_icall_RuntimeType_GetPacking (MonoReflectionTypeHandle ref_type, guint32 *pa
 	}
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeTypeHandle_GetElementType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
@@ -2743,7 +2796,10 @@ ves_icall_RuntimeTypeHandle_GetElementType (MonoReflectionTypeHandle ref_type, M
 		return MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeTypeHandle_GetBaseType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
@@ -2810,7 +2866,10 @@ ves_icall_reflection_get_token (MonoObjectHandle obj, MonoError *error)
 	return mono_reflection_get_token_checked (obj, error);
 }
 
-ICALL_EXPORT MonoReflectionModuleHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionModuleHandle
 ves_icall_RuntimeTypeHandle_GetModule (MonoReflectionTypeHandle type, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (type);
@@ -2819,7 +2878,10 @@ ves_icall_RuntimeTypeHandle_GetModule (MonoReflectionTypeHandle type, MonoError 
 	return mono_module_get_object_handle (domain, m_class_get_image (klass), error);
 }
 
-ICALL_EXPORT MonoReflectionAssemblyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionAssemblyHandle
 ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle type, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get (); 
@@ -2828,7 +2890,10 @@ ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle type, MonoErro
 	return mono_assembly_get_object_handle (domain, m_class_get_image (klass)->assembly, error);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeType_get_DeclaringType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
@@ -2853,7 +2918,10 @@ ves_icall_RuntimeType_get_DeclaringType (MonoReflectionTypeHandle ref_type, Mono
 	return mono_type_get_object_handle (domain, m_class_get_byval_arg (klass), error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_RuntimeType_get_Name (MonoReflectionTypeHandle reftype, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
@@ -2872,7 +2940,10 @@ ves_icall_RuntimeType_get_Name (MonoReflectionTypeHandle reftype, MonoError *err
 	}
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_RuntimeType_get_Namespace (MonoReflectionTypeHandle type, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get (); 
@@ -2924,7 +2995,10 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_RuntimeType_GetGenericArguments (MonoReflectionTypeHandle ref_type, MonoBoolean runtimeTypeArray, MonoError *error)
 {
 	error_init (error);
@@ -2975,7 +3049,10 @@ ves_icall_RuntimeTypeHandle_IsGenericTypeDefinition (MonoReflectionTypeHandle re
 	return mono_class_is_gtd (klass);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeTypeHandle_GetGenericTypeDefinition_impl (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -3012,7 +3089,10 @@ leave:
 	return ret;
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeType_MakeGenericType (MonoReflectionTypeHandle reftype, MonoArrayHandle type_array, MonoError *error)
 {
 	error_init (error);
@@ -3095,7 +3175,10 @@ ves_icall_RuntimeTypeHandle_IsGenericVariable (MonoReflectionTypeHandle ref_type
 	return is_generic_parameter (type);
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_RuntimeType_GetCorrespondingInflatedMethod (MonoReflectionTypeHandle ref_type, 
 						      MonoReflectionMethodHandle generic,
 						      MonoError *error)
@@ -3125,7 +3208,10 @@ ves_icall_RuntimeType_GetCorrespondingInflatedMethod (MonoReflectionTypeHandle r
 	return ret;
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_RuntimeType_get_DeclaringMethod (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -3214,7 +3300,10 @@ ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethodHandle ref_method, int* fla
 	MONO_HANDLE_ASSIGN (dll_name, mono_string_new_handle (domain, scope, error));
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *error)
 {
 	error_init (error);
@@ -3300,7 +3389,10 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethodHandle ref_method, MonoError *error)
 {
 	error_init (error);
@@ -3699,7 +3791,10 @@ write_enum_value (void *mem, int type, guint64 value)
 	return;
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Enum_ToObject (MonoReflectionTypeHandle enumType, guint64 value, MonoError *error)
 {
 	MonoDomain *domain; 
@@ -3738,7 +3833,10 @@ ves_icall_System_Enum_InternalHasFlag (MonoObjectHandle a, MonoObjectHandle b, M
 	return (a_val & b_val) == b_val;
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Enum_get_value (MonoObjectHandle ehandle, MonoError *error)
 {
 	MonoObjectHandle resultHandle;
@@ -3762,7 +3860,10 @@ return_null:
 	return MONO_HANDLE_NEW (MonoObject, NULL);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Enum_get_underlying_type (MonoReflectionTypeHandle type, MonoError *error)
 {
 	MonoType *etype;
@@ -4569,7 +4670,10 @@ get_type_from_module_builder_loaded_modules (MonoArrayHandle loaded_modules, int
 	HANDLE_FUNCTION_RETURN_VAL (type);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHandle assembly_h, MonoReflectionModuleHandle module, MonoStringHandle name, MonoBoolean throwOnError, MonoBoolean ignoreCase, MonoError *error)
 {
 	error_init (error);
@@ -4734,7 +4838,10 @@ replace_shadow_path (MonoDomain *domain, gchar *dirname, gchar **filename)
 	return FALSE;
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssemblyHandle assembly, MonoBoolean escaped, MonoError *error)
 {
 	error_init (error);
@@ -4785,7 +4892,10 @@ ves_icall_System_Reflection_Assembly_get_global_assembly_cache (MonoReflectionAs
 	return mass->in_gac;
 }
 
-ICALL_EXPORT MonoReflectionAssemblyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_load_with_partial_name (MonoStringHandle mname, MonoObjectHandle evidence, MonoError *error)
 {
 	gchar *name;
@@ -4806,7 +4916,10 @@ leave:
 	return result;
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Assembly_get_location (MonoReflectionAssemblyHandle refassembly, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refassembly);
@@ -4822,7 +4935,10 @@ ves_icall_System_Reflection_Assembly_get_ReflectionOnly (MonoReflectionAssemblyH
 	return mono_asmctx_get_kind (&assembly->context) == MONO_ASMCTX_REFONLY;
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion (MonoReflectionAssemblyHandle refassembly, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refassembly);
@@ -4831,7 +4947,10 @@ ves_icall_System_Reflection_Assembly_InternalImageRuntimeVersion (MonoReflection
 	return mono_string_new_handle (domain, assembly->image->version, error);
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_System_Reflection_Assembly_get_EntryPoint (MonoReflectionAssemblyHandle assembly_h, MonoError *error) 
 {
 	error_init (error);
@@ -4852,7 +4971,10 @@ leave:
 	return res;
 }
 
-ICALL_EXPORT MonoReflectionModuleHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionModuleHandle
 ves_icall_System_Reflection_Assembly_GetManifestModuleInternal (MonoReflectionAssemblyHandle assembly, MonoError *error) 
 {
 	error_init (error);
@@ -4874,7 +4996,10 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_Assembly_GetManifestResourceNames (MonoReflectionAssemblyHandle assembly_h, MonoError *error) 
 {
 	error_init (error);
@@ -4894,7 +5019,10 @@ fail:
 	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Assembly_GetAotId (MonoError *error)
 {
 	char *guid = mono_runtime_get_aotid ();
@@ -5118,7 +5246,10 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Reflection_Assembly_GetFilesInternal (MonoReflectionAssemblyHandle assembly_h, MonoStringHandle name, MonoBoolean resource_modules, MonoError *error) 
 {
 	error_init (error);
@@ -5216,7 +5347,10 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_Assembly_GetModulesInternal (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
 {
 	error_init (error);
@@ -5268,7 +5402,10 @@ fail:
 	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_GetCurrentMethod (MonoError *error) 
 {
 	error_init (error);
@@ -5326,7 +5463,10 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 	return m_class_get_methods (klass) [offset];
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (MonoMethod *method, MonoType *type, MonoBoolean generic_check, MonoError *error)
 {
 	error_init (error);
@@ -5348,14 +5488,20 @@ ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (M
 	return mono_method_get_object_handle (mono_domain_get (), method, klass, error);
 }
 
-ICALL_EXPORT MonoReflectionMethodBodyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodBodyHandle
 ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal (MonoMethod *method, MonoError *error)
 {
 	error_init (error);
 	return mono_method_body_get_object_handle (mono_domain_get (), method, error);
 }
 
-ICALL_EXPORT MonoReflectionAssemblyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 {
 	error_init (error);
@@ -5367,7 +5513,10 @@ ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 }
 
 
-ICALL_EXPORT MonoReflectionAssemblyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetEntryAssembly (MonoError *error)
 {
 	error_init (error);
@@ -5380,7 +5529,10 @@ ves_icall_System_Reflection_Assembly_GetEntryAssembly (MonoError *error)
 	return mono_assembly_get_object_handle (domain, domain->entry_assembly, error);
 }
 
-ICALL_EXPORT MonoReflectionAssemblyHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error)
 {
 	error_init (error);
@@ -5400,7 +5552,10 @@ ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError *error)
 	return mono_assembly_get_object_handle (mono_domain_get (), m_class_get_image (dest->klass)->assembly, error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, gboolean full_name,
 										  gboolean assembly_qualified, MonoError *error)
 {
@@ -5460,7 +5615,10 @@ ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfi
 	return mono_security_core_clr_method_level (method, TRUE);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Assembly_get_fullName (MonoReflectionAssemblyHandle assembly, MonoError *error)
 {
 	error_init (error);
@@ -5687,7 +5845,10 @@ set_class_failure_in_array (MonoArrayHandle exl, int i, MonoClass *klass)
 	HANDLE_FUNCTION_RETURN ();
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle assembly_handle, MonoBoolean exportedOnly, MonoError *error)
 {
 	MonoArrayHandle exceptions = MONO_HANDLE_NEW(MonoArray, NULL);
@@ -5894,7 +6055,10 @@ ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char *name, Mo
 	return result;
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_System_Reflection_Module_GetGlobalType (MonoReflectionModuleHandle module, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (module);
@@ -5924,7 +6088,10 @@ ves_icall_System_Reflection_Module_Close (MonoReflectionModuleHandle module, Mon
 		mono_image_close (module->image);*/
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Module_GetGuidInternal (MonoReflectionModuleHandle refmodule, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (refmodule);
@@ -5968,7 +6135,10 @@ ves_icall_System_Reflection_Module_GetMDStreamVersion (MonoImage *image, MonoErr
 	return (image->md_version_major << 16) | (image->md_version_minor);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_Module_InternalGetTypes (MonoReflectionModuleHandle module, MonoError *error)
 {
 	error_init (error);
@@ -6185,7 +6355,10 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 	return module_resolve_method_token (image, token, type_args, method_args, resolve_error, error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error, MonoError *error)
 {
 	int index = mono_metadata_token_index (token);
@@ -6277,7 +6450,10 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 	return module_resolve_field_token (image, token, type_args, method_args, resolve_error, error);
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32 token, MonoArrayHandle type_args, MonoArrayHandle method_args, MonoResolveTokenError *error, MonoError *merror)
 {
 	int table = mono_metadata_token_table (token);
@@ -6337,7 +6513,10 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	return NULL_HANDLE;
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 token, MonoResolveTokenError *resolve_error, MonoError *error)
 {
 	error_init (error);
@@ -6399,7 +6578,10 @@ check_for_invalid_type (MonoClass *klass, MonoError *error)
 	mono_error_set_type_load_name (error, name, g_strdup (""), "");
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeType_make_array_type (MonoReflectionTypeHandle ref_type, int rank, MonoError *error)
 {
 	error_init (error);
@@ -6425,7 +6607,10 @@ ves_icall_RuntimeType_make_array_type (MonoReflectionTypeHandle ref_type, int ra
 	return mono_type_get_object_handle (domain, m_class_get_byval_arg (aklass), error);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeType_make_byref_type (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -6444,7 +6629,10 @@ ves_icall_RuntimeType_make_byref_type (MonoReflectionTypeHandle ref_type, MonoEr
 	return mono_type_get_object_handle (domain, m_class_get_this_arg (klass), error);
 }
 
-ICALL_EXPORT MonoReflectionTypeHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionTypeHandle
 ves_icall_RuntimeType_MakePointerType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -6464,7 +6652,10 @@ ves_icall_RuntimeType_MakePointerType (MonoReflectionTypeHandle ref_type, MonoEr
 	return mono_type_get_object_handle (domain, m_class_get_byval_arg (pklass), error);
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_type, MonoObjectHandle target,
 						   MonoReflectionMethodHandle info, MonoBoolean throwOnBindFailure, MonoError *error)
 {
@@ -6525,7 +6716,10 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_
 	return delegate;
 }
 
-ICALL_EXPORT MonoMulticastDelegateHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoMulticastDelegateHandle
 ves_icall_System_Delegate_AllocDelegateLike_internal (MonoDelegateHandle delegate, MonoError *error)
 {
 	error_init (error);
@@ -6541,7 +6735,10 @@ ves_icall_System_Delegate_AllocDelegateLike_internal (MonoDelegateHandle delegat
 	return ret;
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_System_Delegate_GetVirtualMethod_internal (MonoDelegateHandle delegate, MonoError *error)
 {
 	error_init (error);
@@ -6649,7 +6846,10 @@ ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, Mo
 }
 
 #ifndef DISABLE_REMOTING
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObjectHandle this_obj, MonoStringHandle class_name, MonoError *error)
 {
 	error_init (error);
@@ -6752,7 +6952,10 @@ mono_icall_get_machine_name (MonoError *error)
 }
 #endif /* !HOST_WIN32 */
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_get_MachineName (MonoError *error)
 {
 	error_init (error);
@@ -6795,7 +6998,10 @@ mono_icall_get_new_line (MonoError *error)
 }
 #endif /* !HOST_WIN32 */
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_get_NewLine (MonoError *error)
 {
 	return mono_icall_get_new_line (error);
@@ -6826,7 +7032,10 @@ ves_icall_System_Environment_GetIs64BitOperatingSystem (void)
 	return mono_icall_is_64bit_os ();
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_GetEnvironmentVariable_native (const gchar *utf8_name, MonoError *error)
 {
 	gchar *value;
@@ -6872,7 +7081,10 @@ G_END_DECLS
 #endif
 #endif
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_System_Environment_GetCommandLineArgs (MonoError *error)
 {
 	error_init (error);
@@ -6982,7 +7194,10 @@ ves_icall_System_Environment_Exit (int result)
 	exit (result);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_GetGacPath (MonoError *error)
 {
 	return mono_string_new_handle (mono_domain_get (), mono_assembly_getrootdir (), error);
@@ -6998,7 +7213,10 @@ mono_icall_get_windows_folder_path (int folder, MonoError *error)
 }
 #endif /* !HOST_WIN32 */
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 {
 	return mono_icall_get_windows_folder_path (folder, error);
@@ -7085,7 +7303,10 @@ ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString *path)
 	return result;
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_InternalGetHome (MonoError *error)
 {
 	return mono_string_new_handle (mono_domain_get (), g_get_home_dir (), error);
@@ -7118,7 +7339,10 @@ static const char *encodings [] = {
  * 1 at entry, and we can not compute a suitable code page number,
  * returns the code page as a string
  */
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Text_EncodingHelper_InternalCodePage (gint32 *int_code_page, MonoError *error)
 {
 	error_init (error);
@@ -7224,7 +7448,10 @@ ves_icall_IsTransparentProxy (MonoObjectHandle proxy, MonoError *error)
 	return 0;
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 	MonoReflectionTypeHandle rtype, MonoReflectionMethodHandle rmethod, MonoError *error)
 {
@@ -7306,7 +7533,10 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 
 #endif
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClassInstance (MonoReflectionTypeHandle type, MonoError *error)
 {
 	error_init (error);
@@ -7333,7 +7563,10 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 	}
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_IO_get_temp_path (MonoError *error)
 {
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
@@ -7379,7 +7612,10 @@ ves_icall_RuntimeMethodHandle_GetFunctionPointer (MonoMethod *method, MonoError 
 	return mono_compile_method_checked (method, error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError *error)
 {
 	error_init (error);
@@ -7397,7 +7633,10 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError 
 	return mcpath;
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_app_config (MonoError *error)
 {
 	error_init (error);
@@ -7458,27 +7697,37 @@ get_bundled_machine_config (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), machine_config, error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Environment_get_bundled_machine_config (MonoError *error)
 {
 	return get_bundled_machine_config (error);
 }
 
-
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Configuration_DefaultConfig_get_bundled_machine_config (MonoError *error)
 {
 	return get_bundled_machine_config (error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_config (MonoError *error)
 {
 	return get_bundled_machine_config (error);
 }
 
-
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 {
 	error_init (error);
@@ -7559,7 +7808,10 @@ ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const
 }
 
 /* Only used for value types */
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -7578,7 +7830,10 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 	return mono_object_new_handle (domain, klass, error);
 }
 
-ICALL_EXPORT MonoReflectionMethodHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoReflectionMethodHandle
 ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, gboolean definition, MonoError *error)
 {
 	error_init (error);
@@ -7602,7 +7857,10 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, gboolean def
 	return mono_method_get_object_handle (mono_domain_get (), base, NULL, error);
 }
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_MonoMethod_get_name (MonoReflectionMethodHandle m, MonoError *error)
 {
 	error_init (error);
@@ -7715,7 +7973,10 @@ mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter)
 	return iter->sig->params [i];
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 {
 	return typed_reference_to_object (tref, error);
@@ -7802,7 +8063,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
  * used by System.Runtime.InteropServices.RuntimeInformation.(OS|Process)Architecture;
  * which use them in different ways for filling in an enum
  */
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitecture (MonoError *error)
 {
 	error_init (error);
@@ -7896,7 +8160,10 @@ fail:
 	return MONO_HANDLE_NEW (MonoArray, NULL);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameterHandle param, MonoBoolean optional, MonoError *error)
 {
 	error_init (error);
@@ -7950,7 +8217,10 @@ get_property_type (MonoProperty *prop)
 	return NULL;
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_MonoPropertyInfo_GetTypeModifiers (MonoReflectionPropertyHandle property, MonoBoolean optional, MonoError *error)
 {
 	error_init (error);
@@ -8035,7 +8305,10 @@ ves_icall_MonoCustomAttrs_IsDefinedInternal (MonoObjectHandle obj, MonoReflectio
 	return found;
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle obj, MonoReflectionTypeHandle attr_type, mono_bool pseudoattrs, MonoError *error)
 {
 	MonoClass *attr_class;
@@ -8053,7 +8326,10 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle obj, Mon
 	return mono_reflection_get_custom_attrs_by_type_handle (obj, attr_class, error);
 }
 
-ICALL_EXPORT MonoArrayHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoArrayHandle
 ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal (MonoObjectHandle obj, MonoError *error)
 {
 	error_init (error);
@@ -8061,7 +8337,10 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesDataInternal (MonoObjectHandle obj,
 }
 
 
-ICALL_EXPORT MonoStringHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoStringHandle
 ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 {
 	char *info;
@@ -8113,7 +8392,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetHRForException_WinRT(MonoExc
 	return 0;
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetNativeActivationFactory(MonoObjectHandle type, MonoError *error)
 {
 	mono_error_set_not_implemented (error, "System.Runtime.InteropServices.Marshal.GetNativeActivationFactory internal call is not implemented.");
@@ -8127,7 +8409,10 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetRawIUnknownForComObjectNoAdd
 	return NULL;
 }
 
-ICALL_EXPORT MonoObjectHandle
+#ifndef _MSC_VER
+ICALL_EXPORT
+#endif
+MonoObjectHandle
 ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_GetRestrictedErrorInfo(MonoError *error)
 {
 	mono_error_set_not_implemented (error, "System.Runtime.InteropServices.WindowsRuntime.UnsafeNativeMethods.GetRestrictedErrorInfo internal call is not implemented.");
