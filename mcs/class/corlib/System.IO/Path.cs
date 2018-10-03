@@ -62,7 +62,9 @@ namespace System.IO {
 
 		internal static readonly char[] PathSeparatorChars;
 		private static readonly bool dirEqualsVolume;
-
+#if HAS_VOLUME_PREFIXES
+		internal static readonly bool volumePaths;
+#endif
 		// class methods
 		public static string ChangeExtension (string path, string extension)
 		{
@@ -540,6 +542,27 @@ namespace System.IO {
 			return 0 <= pos && pos < path.Length - 1;
 		}
 
+#if HAS_VOLUME_PREFIXES
+		//
+		// Returns true if the path starts with a word, colon and a slash
+		// like "foo:/" for systems that use those styles of paths
+		//
+		static bool IsVolumePrefix (string path)
+		{
+			int len = path.Length;
+			for (int i = 0; i < len; i++){
+				if (i > 0 ? Char.IsLetterOrDigit (path [i]) : Char.IsLetter (path [i]))
+					continue;
+				if (path [i] == ':'){
+					if (i+1 < len && path [i+1] == '/')
+						return true;
+				}
+				return false;
+			}
+			return false;
+		}
+#endif
+
 		public static bool IsPathRooted (string path)
 		{
 			if (path == null || path.Length == 0)
@@ -551,7 +574,11 @@ namespace System.IO {
 			char c = path [0];
 			return (c == DirectorySeparatorChar 	||
 				c == AltDirectorySeparatorChar 	||
-				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar));
+				(!dirEqualsVolume && path.Length > 1 && path [1] == VolumeSeparatorChar)
+#if HAS_VOLUME_PREFIXES
+				|| (volumePaths && IsVolumePrefix (path))
+#endif
+				);
 		}
 
 		public static char[] GetInvalidFileNameChars ()
