@@ -51,7 +51,7 @@ else
 # This needs to be passed in via EXTERNAL_FACADE_DRAWING_REFERENCE.
 LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
 endif
-endif
+
 endif
 
 PLATFORM_DEBUG_FLAGS =
