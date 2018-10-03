@@ -55,16 +55,5 @@ TARGETS += wasm-interp
 
 wasm_TARGETS += wasm-interp
 
-##
-# Parameters
-#  $(1): build profiles
-#  $(2): test profile
-define WasmBclTemplate
-
-$$(eval $$(call BclTemplate,wasm,$(1),$(2)))
-
+$(eval $(call BclTemplate,wasm-bcl,wasm net_4_x,wasm))
 wasm_TARGETS += wasm-bcl
-
-endef
-
-$(eval $(call WasmBclTemplate,wasm net_4_x,wasm))

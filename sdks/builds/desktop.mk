@@ -29,13 +29,4 @@ endef
 
 $(eval $(call DesktopTemplate,x86_64,x86_64-apple-darwin17.2.0))
 
-##
-# Parameters
-#  $(1): build profiles
-define DesktopBclTemplate
-
-$$(eval $$(call BclTemplate,desktop,$(1),))
-
-endef
-
-$(eval $(call DesktopBclTemplate,net_4_x))
+$(eval $(call BclTemplate,desktop-bcl,net_4_x,))

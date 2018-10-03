@@ -69,8 +69,8 @@ _runtime_$(1)_CONFIGURE_FLAGS= \
 	$(if $$(_$(1)_PATH),PATH="$$$$PATH:$$(_$(1)_PATH)") ./wrap-configure.sh $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(abspath $$<) $$(_runtime_$(1)_AC_VARS) $$(_runtime_$(1)_CONFIGURE_ENVIRONMENT) $$(_runtime_$(1)_CONFIGURE_FLAGS)
 	touch $$@
 
-.PHONY: .stamp-$(1)-configure
 .stamp-$(1)-configure: .stamp-$(1)-$$(CONFIGURATION)-configure
+	touch $$@
 
 .PHONY: build-custom-$(1)
 build-custom-$(1):
