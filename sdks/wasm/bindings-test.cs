@@ -334,7 +334,6 @@ public enum RequestCache
 	NoCache,
 	[Export("force-cache")]
 	ForceCache,
-	[Export("only-if-cached")]
 	OnlyIfCached = -3636,
 }
 
