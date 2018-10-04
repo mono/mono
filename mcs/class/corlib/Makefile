@@ -86,6 +86,10 @@ RESOURCE_FILES = \
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
 
+ifndef NO_SRE
+LIB_MCS_FLAGS += -d:MONO_FEATURE_SRE
+endif
+
 ifndef MOBILE_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
 endif
@@ -175,6 +179,13 @@ CommonCrypto/%.g.cs:
 endif
 
 EXTRA_DISTFILES = \
+	Test/resources/culture-*.cs		\
+	$(RESOURCE_FILES) \
+	$(TEST_RESOURCE_FILES) \
+	$(TEST_RESOURCES:.resources=.resx) \
+	LinkerDescriptor/mscorlib_test.xml
+
+TEST_RESOURCE_FILES = \
 	Test/resources/MyResources.resources	\
 	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
@@ -183,20 +194,18 @@ EXTRA_DISTFILES = \
 	Test/resources/StreamTest.ja.resources	\
 	Test/resources/bug81759.resources	\
 	Test/resources/415628.bin		\
-	Test/resources/Fergie.GED		\
-	Test/resources/culture-*.cs		\
-	$(RESOURCE_FILES) \
-	$(TEST_RESOURCES:.resources=.resx) \
-	LinkerDescriptor/mscorlib_test.xml
+	Test/resources/Fergie.GED
+
+TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
 TEST_RESX_RESOURCES = \
 	Test/resources/Resources.resources
 
 TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
-	Test/resources/Resources.nn-NO.resources \
+	Test/resources/Resources.nn-NO.resources
 
-CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
+CLEAN_FILES += $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE) $(IL_REPLACE)
 
 include $(topdir)/build/library.make
 
@@ -205,17 +214,17 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
-satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly1 = $(test_lib_dir)/es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
 $(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
-	@mkdir -p es-ES
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
-	@mkdir -p nn-NO
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization

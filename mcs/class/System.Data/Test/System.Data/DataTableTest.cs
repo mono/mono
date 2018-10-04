@@ -46,6 +46,7 @@ using System.Xml;
 using System.Text;
 
 using MonoTests.System.Data.Utils;
+using MonoTests.Helpers;
 
 using NUnit.Framework;
 
@@ -2916,7 +2917,7 @@ namespace MonoTests.System.Data
 		public void ReadXmlSchema ()
 		{
 			DataTable Table = new DataTable ();
-			Table.ReadXmlSchema ("Test/System.Data/own_schema1.xsd");
+			Table.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/own_schema1.xsd"));
 
 			Assert.AreEqual ("test_table", Table.TableName, "test#02");
 			Assert.AreEqual ("", Table.Namespace, "test#03");
@@ -2970,7 +2971,7 @@ namespace MonoTests.System.Data
 			Assert.IsFalse (column2.Unique, "test#44");
 
 			DataTable Table2 = new DataTable ();
-			Table2.ReadXmlSchema ("Test/System.Data/own_schema2.xsd");
+			Table2.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/own_schema2.xsd"));
 
 			Assert.AreEqual ("second_test_table", Table2.TableName, "test#45");
 			Assert.AreEqual ("", Table2.Namespace, "test#46");
@@ -3229,7 +3230,7 @@ namespace MonoTests.System.Data
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/region.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"));
 			TextWriter writer = new StringWriter ();
 			ds.Tables[0].WriteXmlSchema (writer);
 
@@ -3843,7 +3844,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchema()
 		{
 			DataSet ds = new DataSet();
-			ds.ReadXmlSchema("Test/System.Data/store.xsd");
+			ds.ReadXmlSchema(TestResourceHelper.GetFullPathOfResource ("Test/System.Data/store.xsd"));
 			// check dataset properties before testing write
 			AssertDataSet("ds", ds, "NewDataSet", 3, 2);
 			AssertDataTable("tab1", ds.Tables[0], "bookstore", 1, 0, 0, 1, 1, 1);
@@ -3853,7 +3854,7 @@ namespace MonoTests.System.Data
 			AssertDataRelation("rel1", ds.Relations["book_author"], "book_author", true, new string[] { "book_Id" }, new string[] { "book_Id" }, true, true);
 			AssertDataRelation("rel2", ds.Relations["bookstore_book"], "bookstore_book", true, new string[] { "bookstore_Id" }, new string[] { "bookstore_Id" }, true, true);
 
-			ds.ReadXml("Test/System.Data/region.xml", XmlReadMode.InferSchema);
+			ds.ReadXml(TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.InferSchema);
 			ds.Relations.Clear(); // because can not call WriteXmlSchema with nested relations.
 
 			TextWriter writer1 = new StringWriter();
@@ -3954,7 +3955,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchema_IgnoreSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/store.xsd"));
 			// check dataset properties before testing write
 			AssertDataSet ("ds", ds, "NewDataSet", 3, 2);
 			AssertDataTable ("tab1", ds.Tables[0], "bookstore", 1, 0, 0, 1, 1, 1);
@@ -3964,7 +3965,7 @@ namespace MonoTests.System.Data
 			AssertDataRelation ("rel1", ds.Relations["book_author"], "book_author", true, new string[] { "book_Id" }, new string[] { "book_Id" }, true, true);
 			AssertDataRelation ("rel2", ds.Relations["bookstore_book"], "bookstore_book", true, new string[] { "bookstore_Id" }, new string[] { "bookstore_Id" }, true, true);
 
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.IgnoreSchema);
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.IgnoreSchema);
 			ds.Relations.Clear (); // because can not call WriteXmlSchema with nested relations.
 
 			TextWriter writer1 = new StringWriter ();

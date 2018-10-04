@@ -40,6 +40,8 @@ using NUnit.Framework;
 using Authenticator = System.IdentityModel.Selectors.RsaSecurityTokenAuthenticator;
 using PolicyCollection = System.Collections.ObjectModel.ReadOnlyCollection<System.IdentityModel.Policy.IAuthorizationPolicy>;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Selectors
 {
 	[TestFixture]
@@ -48,7 +50,7 @@ namespace MonoTests.System.IdentityModel.Selectors
 		[Test]
 		public void Validation ()
 		{
-			RSA rsa = (RSA) new X509Certificate2 ("Test/Resources/test.cer").PublicKey.Key;
+			RSA rsa = (RSA) new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer")).PublicKey.Key;
 			Authenticator a = new Authenticator ();
 			PolicyCollection pl = a.ValidateToken (new RsaSecurityToken (rsa));
 			Assert.AreEqual (1, pl.Count, "#1");

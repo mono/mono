@@ -451,6 +451,7 @@ DISTFILES = \
 	test-helpers/RemoteExecutorTestBase.Mobile.cs \
 	test-helpers/RemoteExecutorTestBase.Mono.cs \
 	test-helpers/SocketResponder.cs \
+	test-helpers/TestResourceHelper.cs \
 	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)

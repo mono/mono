@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -44,11 +44,36 @@ using System.Collections.Generic;
 
 namespace System.Reflection.Emit
 {
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_MethodBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class MethodBuilder : _MethodBuilder
+	{
+		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
+	public sealed partial class MethodBuilder : MethodInfo
 	{
 #pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
@@ -695,26 +720,6 @@ namespace System.Reflection.Emit
 			get {
 				return GetModule ();
 			}
-		}
-
-		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public override ParameterInfo ReturnParameter {

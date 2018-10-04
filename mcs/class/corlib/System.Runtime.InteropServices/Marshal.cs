@@ -1908,8 +1908,8 @@ namespace System.Runtime.InteropServices
 			}
 		}
 
-		internal static Dictionary<(Type, string), ICustomMarshaler> MarshalerInstanceCache = null;
-		internal static object MarshalerInstanceCacheLock = new object ();
+		internal static Dictionary<(Type, string), ICustomMarshaler> MarshalerInstanceCache;
+		internal static readonly object MarshalerInstanceCacheLock = new object ();
 
 		internal static ICustomMarshaler GetCustomMarshalerInstance (Type type, string cookie) {
 			var key = (type, cookie);

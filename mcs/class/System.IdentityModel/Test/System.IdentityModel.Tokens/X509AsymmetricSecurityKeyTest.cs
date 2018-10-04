@@ -35,13 +35,15 @@ using System.Security.Cryptography.Xml;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Selectors
 {
 	[TestFixture]
 	public class X509AsymmetricSecurityKeyTest
 	{
-		static readonly X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		static readonly X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test.cer");
+		static readonly X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		static readonly X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 
 		[Test]
 		public void GetAsymmetricAlgorithm ()

@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Resources;
@@ -207,11 +207,37 @@ namespace System.Reflection.Emit
 	}
 
 
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_AssemblyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class AssemblyBuilder :  _AssemblyBuilder
+	{
+		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _AssemblyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
+	public sealed partial class AssemblyBuilder : Assembly
+	{
 #pragma warning disable 169, 414, 649
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_assembly; /* GC-tracked */
@@ -1061,26 +1087,6 @@ namespace System.Reflection.Emit
 		internal Type MakeGenericType (Type gtd, Type[] typeArguments)
 		{
 			return new TypeBuilderInstantiation (gtd, typeArguments);
-		}
-
-		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)

@@ -38,9 +38,10 @@ using System.Collections;
 using System.Drawing;
 using System.Runtime.Serialization.Formatters.Binary;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources {
 	public class ResourcesTestHelper {
-		string tempFileWithIcon = null;
 		string tempFileWithSerializable = null;
 
 		[SetUp]
@@ -82,43 +83,17 @@ namespace MonoTests.System.Resources {
 
 		public ResXDataNode GetNodeEmdeddedIcon ()
 		{
-			Stream input = typeof (ResXDataNodeTest).Assembly.
-				GetManifestResourceStream ("32x32.ico");
-
-			Icon ico = new Icon (input);
+			Icon ico = new Icon (TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico"));
 			ResXDataNode node = new ResXDataNode ("test", ico);
 			return node;
 		}
 
 		public ResXDataNode GetNodeFileRefToIcon ()
 		{
-			tempFileWithIcon = Path.GetTempFileName (); // remember to delete file in teardown
-			Path.ChangeExtension (tempFileWithIcon, "ico");
-
-			WriteEmbeddedResource ("32x32.ico", tempFileWithIcon);
-			ResXFileRef fileRef = new ResXFileRef (tempFileWithIcon, typeof (Icon).AssemblyQualifiedName);
+			ResXFileRef fileRef = new ResXFileRef (TestResourceHelper.GetFullPathOfResource ("Test/resources/32x32.ico"), typeof (Icon).AssemblyQualifiedName);
 			ResXDataNode node = new ResXDataNode ("test", fileRef);
 
 			return node;
-		}
-
-		void WriteEmbeddedResource (string name, string filename)
-		{
-			const int size = 512;
-			byte [] buffer = new byte [size];
-			int count = 0;
-
-			Stream input = typeof (ResXDataNodeTest).Assembly.
-				GetManifestResourceStream (name);
-			Stream output = File.Open (filename, FileMode.Create);
-
-			try {
-				while ((count = input.Read (buffer, 0, size)) > 0) {
-					output.Write (buffer, 0, count);
-				}
-			} finally {
-				output.Close ();
-			}
 		}
 
 		public ResXDataNode GetNodeEmdeddedBytes1To10 ()
@@ -166,11 +141,6 @@ namespace MonoTests.System.Resources {
 		[TearDown]
 		protected virtual void TearDown ()
 		{
-			if (tempFileWithIcon != null) {
-				File.Delete (tempFileWithIcon);
-				tempFileWithIcon = null;
-			}
-
 			if (tempFileWithSerializable != null) {
 				File.Delete (tempFileWithSerializable);
 				tempFileWithSerializable = null;

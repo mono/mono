@@ -17,6 +17,8 @@ using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.Web.Services.Description;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Services.Description
 {
 	[TestFixture]
@@ -68,7 +70,7 @@ namespace MonoTests.System.Web.Services.Description
 		public void GenerateNullableTypes ()
 		{
 			CodeNamespace cns = GenerateCodeFromWsdl (
-				ServiceDescription.Read ("Test/System.Web.Services.Description/test2.wsdl"));
+				ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test2.wsdl")));
 			CodeTypeDeclaration td = FindTypeFrom (cns, "Service");
 			foreach (CodeTypeMember member in td.Members) {
 				CodeMemberMethod method = member as CodeMemberMethod;
@@ -101,7 +103,7 @@ namespace MonoTests.System.Web.Services.Description
 		{
 			ServiceDescriptionImporter imp =
 				new ServiceDescriptionImporter ();
-			imp.AddServiceDescription (ServiceDescription.Read ("Test/System.Web.Services.Description/test3.wsdl"), null, null);
+			imp.AddServiceDescription (ServiceDescription.Read (TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Services.Description/test3.wsdl")), null, null);
 			CodeNamespace cns = new CodeNamespace ();
 			CodeCompileUnit ccu = new CodeCompileUnit ();
 			ccu.Namespaces.Add (cns);

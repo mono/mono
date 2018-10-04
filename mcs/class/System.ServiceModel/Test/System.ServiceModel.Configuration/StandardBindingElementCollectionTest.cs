@@ -35,6 +35,8 @@ using System.ServiceModel.Security;
 using System.ServiceModel;
 using System.Net.Security;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -42,7 +44,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 	{
 		[Test]
 		public void BasicHttpBinding () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/basicHttpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/basicHttpBinding")).GetSectionGroup ("system.serviceModel");
 
 			BasicHttpBindingCollectionElement basicHttpBinding = config.Bindings.BasicHttpBinding;
 			Assert.AreEqual (2, basicHttpBinding.Bindings.Count, "count");
@@ -55,7 +57,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void NetTcpBinding () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/netTcpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/netTcpBinding")).GetSectionGroup ("system.serviceModel");
 
 			NetTcpBindingCollectionElement netTcpBinding = config.Bindings.NetTcpBinding;
 			Assert.AreEqual (1, netTcpBinding.Bindings.Count, "count");
@@ -71,7 +73,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 		[Test]
 		public void WSHttpBinding () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/wsHttpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/wsHttpBinding")).GetSectionGroup ("system.serviceModel");
 
 			WSHttpBindingCollectionElement wsHttpBinding = config.Bindings.WSHttpBinding;
 			Assert.AreEqual (1, wsHttpBinding.Bindings.Count, "count");

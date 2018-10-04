@@ -732,7 +732,7 @@
 		</type>
 
 		<!-- object.c: mono_object_new_specific_checked -->
-		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" >
+		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" feature="remoting">
 			<method name="CreateProxyForType"/>
 		</type>
 

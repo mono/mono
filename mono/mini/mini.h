@@ -679,7 +679,7 @@ struct MonoInst {
 		union {
 			MonoInst *src;
 			MonoMethodVar *var;
-			mgreg_t const_val;
+			target_mgreg_t const_val;
 #if (SIZEOF_REGISTER > TARGET_SIZEOF_VOID_P) && (G_BYTE_ORDER == G_BIG_ENDIAN)
 			struct {
 				gpointer p[SIZEOF_REGISTER/TARGET_SIZEOF_VOID_P];
@@ -2350,6 +2350,7 @@ gpointer mono_arch_get_call_filter              (MonoTrampInfo **info, gboolean 
 gpointer mono_arch_get_restore_context          (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_throw_exception         (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_rethrow_exception       (MonoTrampInfo **info, gboolean aot);
+gpointer  mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_throw_corlib_exception  (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_throw_pending_exception (MonoTrampInfo **info, gboolean aot);
 gboolean mono_arch_handle_exception             (void *sigctx, gpointer obj);
@@ -2461,11 +2462,13 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 gpointer mono_get_throw_exception               (void);
 gpointer mono_get_rethrow_exception             (void);
+gpointer mono_get_rethrow_preserve_exception             (void);
 gpointer mono_get_call_filter                   (void);
 gpointer mono_get_restore_context               (void);
 gpointer mono_get_throw_exception_by_name       (void);
 gpointer mono_get_throw_corlib_exception        (void);
 gpointer mono_get_throw_exception_addr          (void);
+gpointer mono_get_rethrow_preserve_exception_addr          (void);
 ICALL_EXPORT
 MonoArray *ves_icall_get_trace                  (MonoException *exc, gint32 skip, MonoBoolean need_file_info);
 

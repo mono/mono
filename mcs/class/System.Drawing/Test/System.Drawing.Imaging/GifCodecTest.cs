@@ -35,6 +35,7 @@ using System.Security.Permissions;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
@@ -57,17 +58,6 @@ namespace MonoTests.System.Drawing.Imaging {
 				s += "-mono";
 
 			return s;
-		}
-
-		/* Get the input directory depending on the runtime*/
-		internal string getInFile (string file)
-		{
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-
-			if (!File.Exists (sRslt))
-				sRslt = "Test/System.Drawing/" + file;
-
-			return sRslt;
 		}
 
 		/* Checks bitmap features on a know 1bbp bitmap */
@@ -95,13 +85,13 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap8bitsFeatures_Gif89 ()
 		{
-			Bitmap8bitsFeatures (getInFile ("bitmaps/nature24bits.gif"));
+			Bitmap8bitsFeatures (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits.gif"));
 		}
 
 		[Test]
 		public void Bitmap8bitsFeatures_Gif87 ()
 		{
-			Bitmap8bitsFeatures (getInFile ("bitmaps/nature24bits87.gif"));
+			Bitmap8bitsFeatures (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits87.gif"));
 		}
 
 		private void Bitmap8bitsPixels (string filename)
@@ -137,19 +127,19 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap8bitsPixels_Gif89 ()
 		{
-			Bitmap8bitsPixels (getInFile ("bitmaps/nature24bits.gif"));
+			Bitmap8bitsPixels (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits.gif"));
 		}
 
 		[Test]
 		public void Bitmap8bitsPixels_Gif87 ()
 		{
-			Bitmap8bitsPixels (getInFile ("bitmaps/nature24bits87.gif"));
+			Bitmap8bitsPixels (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits87.gif"));
 		}
 
 		[Test]
 		public void Bitmap8bitsData ()
 		{
-			string sInFile = getInFile ("bitmaps/nature24bits.gif");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits.gif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -212,7 +202,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Interlaced ()
 		{
-			string sInFile = getInFile ("bitmaps/81773-interlaced.gif");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/81773-interlaced.gif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				for (int i = 0; i < 255; i++) {
 					Color c = bmp.GetPixel (0, i);
