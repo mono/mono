@@ -36,6 +36,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-icall-tables \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx)
+	CFLAGS="-fexceptions"
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
@@ -147,7 +148,9 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-support-build \
 	--enable-maintainer-mode \
 	--enable-minimal=appdomains,com,remoting \
-	--with-tls=pthread
+	--with-tls=pthread \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm-offsets.h
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
