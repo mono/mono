@@ -214,10 +214,10 @@ class Driver {
 		//are we working from the tree?
 		if (sdkdir != null) {
 			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
-			bcl_prefix = Path.Combine (sdkdir, "bcl/wasm");
-		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
+			bcl_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm");
+		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/wasm-bcl/wasm"))) {
 			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
-			bcl_prefix = Path.Combine (tool_prefix, "../out/bcl/wasm");
+			bcl_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm");
 			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
@@ -257,6 +257,9 @@ class Driver {
 			deploy_prefix = deploy_prefix.Substring (0, deploy_prefix.Length - 1);
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
+
+		var dontlink_assemblies = new Dictionary<string, bool> ();
+		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
 
 		var template = File.ReadAllText (Path.Combine (tool_prefix, runtimeTemplate));
 		
@@ -329,7 +332,7 @@ class Driver {
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ("emcc_flags = -Os -g -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE='clamp'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']\"");
+		ninja.WriteLine ("emcc_flags = -Os -g -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'FS_createPath\', \'FS_createDataFile\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
@@ -341,13 +344,14 @@ class Driver {
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
 		ninja.WriteLine ("rule emcc");
-		ninja.WriteLine ("  command = $emcc $emcc_flags $flags -c -o $out $in");
+		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ("  command = $emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in");
+		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in'");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out $linker_args");
+
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
@@ -379,7 +383,6 @@ class Driver {
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
 
 			var source_file_path = Path.GetFullPath (assembly);
-			ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
 			string infile = "";
 
 			if (enable_linker) {
@@ -415,6 +418,9 @@ class Driver {
 			foreach (var assembly in root_assemblies) {
 				string filename = Path.GetFileName (assembly);
 				linker_args += $"-a linker-in/{filename} ";
+			}
+			foreach (var assembly in dontlink_assemblies.Keys) {
+				linker_args += $"-p copy {assembly} ";
 			}
 			linker_args += " -d $bcl_dir -c link";
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");

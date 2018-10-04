@@ -17,12 +17,10 @@
 ../../../external/corefx/src/System.Reflection.Emit/tests/Utilities.cs
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
-../../../external/corefx/src/System.Reflection/tests/ConstructorInfoTests.cs
-../../../external/corefx/src/System.Reflection/tests/FieldInfoTests.cs
-../../../external/corefx/src/System.Reflection/tests/ManifestResourceInfoTests.cs
-#../../../external/corefx/src/System.Reflection/tests/MemberInfoTests.cs
-../../../external/corefx/src/System.Reflection/tests/ParameterInfoTests.cs
-../../../external/corefx/src/System.Reflection/tests/PropertyInfoTests.cs
+
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,GetTypeTests.cs,MemberInfoTests.cs,MethodInfoTests.cs,ModuleTests.cs
+../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
+../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
 #TODO: audit the commented out tests and fix or disable
 
@@ -256,9 +254,6 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
 
-#../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
-
-
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ApplicationExceptionTests.cs
@@ -323,4 +318,8 @@
 # System.Runtime.Extensions
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,Random.netcoreapp.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,Random.netcoreapp.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
+
+# System.Runtime.InteropServices
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/InteropServices/*.cs:MarshalTests.cs,GCHandleTests.cs,SafeBufferTests.cs,ComEventsHelperTests.cs,RuntimeEnvironmentTests.cs,DispatchWrapperTests.cs,ArrayWithOffsetTests.cs,SetWin32ContextInIDispatchAttributeTests.cs,ComAwareEventInfoTests.cs,IDispatchImplAttributeTests.cs,ComAwareEventInfoTests.Windows.cs,MarshalTests.Windows.cs

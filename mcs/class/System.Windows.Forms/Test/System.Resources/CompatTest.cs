@@ -12,6 +12,8 @@ using System.IO;
 using System.Resources;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
@@ -47,21 +49,13 @@ namespace MonoTests.System.Resources
 		[Test]
 		public void TestReader ()
 		{
-			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_1_1.resx");
-			if (!File.Exists (fileName))
-				fileName = String.Format ("..{0}System.Resources{0}compat_1_1.resx", Path.DirectorySeparatorChar);
-		
-			Helper.TestReader (fileName);
+			Helper.TestReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Resources/compat_1_1.resx"));
 		}
 
 		[Test]
 		public void TestReader_2_0 ()
 		{
-			string fileName = Path.Combine (Path.Combine ("Test", "System.Resources"), "compat_2_0.resx");
-			if (!File.Exists (fileName))
-				fileName = String.Format ("..{0}System.Resources{0}compat_2_0.resx", Path.DirectorySeparatorChar);
-		
-			Helper.TestReader (fileName);
+			Helper.TestReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Resources/compat_2_0.resx"));
 		}
 	}
 }

@@ -37,6 +37,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 using MonoTests.System.IdentityModel.Common;
 
 using Authenticator = System.IdentityModel.Selectors.SamlSecurityTokenAuthenticator;
@@ -101,7 +103,7 @@ namespace MonoTests.System.IdentityModel.Selectors
 			a.Statements.Add (statement);
 			a.Issuer = "my_hero";
 
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			X509AsymmetricSecurityKey key =
 				new X509AsymmetricSecurityKey (cert);
 			a.SigningCredentials =

@@ -2950,7 +2950,7 @@ void
 mini_emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 {
 	int card_table_shift_bits;
-	gpointer card_table_mask;
+	target_mgreg_t card_table_mask;
 	guint8 *card_table;
 	MonoInst *dummy_use;
 	int nursery_shift_bits;
@@ -11737,6 +11737,26 @@ mono_ldptr:
 			sp = stack_start;
 			link_bblock (cfg, cfg->cbb, end_bblock);
 			start_new_bblock = 1;
+			break;
+		}
+		case MONO_CEE_MONO_RETHROW: {
+			if (sp [-1]->type != STACK_OBJ)
+				UNVERIFIED;
+
+			MONO_INST_NEW (cfg, ins, OP_RETHROW);
+			--sp;
+			ins->sreg1 = sp [0]->dreg;
+			cfg->cbb->out_of_line = TRUE;
+			MONO_ADD_INS (cfg->cbb, ins);
+			MONO_INST_NEW (cfg, ins, OP_NOT_REACHED);
+			MONO_ADD_INS (cfg->cbb, ins);
+			sp = stack_start;
+
+			link_bblock (cfg, cfg->cbb, end_bblock);
+			start_new_bblock = 1;
+			/* This can complicate code generation for llvm since the return value might not be defined */
+			if (COMPILE_LLVM (cfg))
+				INLINE_FAILURE ("mono_rethrow");
 			break;
 		}
 		case MONO_CEE_SIZEOF: {

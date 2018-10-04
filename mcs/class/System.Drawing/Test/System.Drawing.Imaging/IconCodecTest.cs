@@ -2,7 +2,7 @@
 // ICO Codec class testing unit
 //
 // Authors:
-// 	Jordi Mas i Hernàndez (jordi@ximian.com)
+// 	Jordi Mas i Hernï¿½ndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
@@ -35,6 +35,8 @@ using System.Security.Permissions;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
@@ -59,21 +61,10 @@ namespace MonoTests.System.Drawing.Imaging {
 			return s;
 		}
 
-		/* Get the input directory depending on the runtime*/
-		internal string getInFile (string file)
-		{
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-
-			if (!File.Exists (sRslt))
-				sRslt = "Test/System.Drawing/" + file;
-
-			return sRslt;
-		}
-
 		[Test]
 		public void Image16 ()
 		{
-			string sInFile = getInFile ("bitmaps/16x16x16.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico");
 			using (Image image = Image.FromFile (sInFile)) {
 				Assert.IsTrue (image.RawFormat.Equals (ImageFormat.Icon), "Icon");
 				// note that image is "promoted" to 32bits
@@ -94,7 +85,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap16Features ()
 		{
-			string sInFile = getInFile ("bitmaps/smiley.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/smiley.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -142,7 +133,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap16Pixels ()
 		{
-			string sInFile = getInFile ("bitmaps/smiley.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/smiley.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 4) {
@@ -174,7 +165,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap16Data ()
 		{
-			string sInFile = getInFile ("bitmaps/smiley.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/smiley.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -264,7 +255,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap32Features ()
 		{
-			string sInFile = getInFile ("bitmaps/VisualPng.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/VisualPng.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -311,7 +302,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap32Pixels ()
 		{
-			string sInFile = getInFile ("bitmaps/VisualPng.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/VisualPng.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 4) {
@@ -391,7 +382,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap32Data ()
 		{
-			string sInFile = getInFile ("bitmaps/VisualPng.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/VisualPng.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -490,7 +481,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap48Features ()
 		{
-			string sInFile = getInFile ("bitmaps/48x48x1.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/48x48x1.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -523,7 +514,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap48Pixels ()
 		{
-			string sInFile = getInFile ("bitmaps/48x48x1.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/48x48x1.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 4) {
@@ -616,7 +607,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap48Data ()
 		{
-			string sInFile = getInFile ("bitmaps/48x48x1.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/48x48x1.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -719,7 +710,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap64Features ()
 		{
-			string sInFile = getInFile ("bitmaps/64x64x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/64x64x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -750,7 +741,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap64Pixels ()
 		{
-			string sInFile = getInFile ("bitmaps/64x64x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/64x64x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 4) {
@@ -825,7 +816,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap64Data ()
 		{
-			string sInFile = getInFile ("bitmaps/64x64x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/64x64x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -982,7 +973,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap96Features ()
 		{
-			string sInFile = getInFile ("bitmaps/96x96x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/96x96x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -1013,7 +1004,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap96Pixels ()
 		{
-			string sInFile = getInFile ("bitmaps/96x96x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/96x96x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 4) {
@@ -1605,7 +1596,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap96Data ()
 		{
-			string sInFile = getInFile ("bitmaps/96x96x256.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/96x96x256.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -1920,7 +1911,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Xp32bppIconFeatures ()
 		{
-			string sInFile = getInFile ("bitmaps/32bpp.ico");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/32bpp.ico");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);

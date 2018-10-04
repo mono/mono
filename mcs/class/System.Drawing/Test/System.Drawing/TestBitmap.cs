@@ -45,6 +45,8 @@ using System.Text;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing {
 
 	[TestFixture]
@@ -501,21 +503,12 @@ namespace MonoTests.System.Drawing {
 			
 			return sRslt;
 		}
-		
-		/* Get the input directory depending on the runtime*/
-		public static string getInFile(string file)
-		{				
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-			if (!File.Exists (sRslt))
-				sRslt = "Test/System.Drawing/" + file;
-			return sRslt;
-		}
 
 		// note: this test fails when saving (for the same reason) on Mono and MS.NET
 		//[Test]
 		public void MakeTransparent() 
 		{
-			string sInFile =   getInFile("bitmaps/maketransparent.bmp");
+			string sInFile =   TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/maketransparent.bmp");
 			string sOutFile =  getOutSubDir() + "transparent.bmp";
 						
 			Bitmap	bmp = new Bitmap(sInFile);
@@ -532,7 +525,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Clone()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");
 			Rectangle rect = new Rectangle(0,0,50,50);						
 			Bitmap	bmp = new Bitmap(sInFile);			
 			
@@ -549,7 +542,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void CloneImage()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");			
 			Bitmap	bmp = new Bitmap(sInFile);			
 			
 			Bitmap bmpNew = (Bitmap) bmp.Clone ();			
@@ -563,7 +556,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Frames()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");			
 			Bitmap	bmp = new Bitmap(sInFile);						
 			int cnt = bmp.GetFrameCount(FrameDimension.Page);			
 			int active = bmp.SelectActiveFrame (FrameDimension.Page, 0);
@@ -670,7 +663,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void Rotate()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");	
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");	
 			Bitmap	bmp = new Bitmap(sInFile);
 			
 			Assert.AreEqual ("312958A3C67402E1299413794988A3", RotateBmp (bmp, RotateFlipType.Rotate90FlipNone));	
@@ -695,8 +688,8 @@ namespace MonoTests.System.Drawing {
 				Assert.Ignore("This does not work with Microsoft's GDIPLUS.DLL due to off-by-1 errors in their GdipBitmapRotateFlip function.");
 
 			string[] files = {
-			                   getInFile ("bitmaps/1bit.png"),
-			                   getInFile ("bitmaps/4bit.png")
+			                   TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/1bit.png"),
+			                   TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/4bit.png")
 			                 };
 
 			StringBuilder md5s = new StringBuilder();
@@ -1081,7 +1074,7 @@ namespace MonoTests.System.Drawing {
 		public void Serialize_Icon ()
 		{
 			// this cause a problem with resgen, see http://bugzilla.ximian.com/show_bug.cgi?id=80565
-			string filename = getInFile ("bitmaps/16x16x16.ico");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico");
 			using (Bitmap icon = new Bitmap (filename)) {
 				using (Stream s = Serialize (icon)) {
 					using (Bitmap copy = (Bitmap)Deserialize (s)) {
@@ -1113,7 +1106,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void SoapSerialize_Icon ()
 		{
-			string filename = getInFile ("bitmaps/16x16x16.ico");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico");
 			using (Bitmap icon = new Bitmap (filename)) {
 				using (Stream s = SoapSerialize (icon)) {
 					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
@@ -1132,7 +1125,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void SoapSerialize_Bitmap8 ()
 		{
-			string filename = getInFile ("bitmaps/almogaver8bits.bmp");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver8bits.bmp");
 			using (Bitmap bmp = new Bitmap (filename)) {
 				using (Stream s = SoapSerialize (bmp)) {
 					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
@@ -1149,7 +1142,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void SoapSerialize_Bitmap24 ()
 		{
-			string filename = getInFile ("bitmaps/almogaver24bits.bmp");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");
 			using (Bitmap bmp = new Bitmap (filename)) {
 				using (Stream s = SoapSerialize (bmp)) {
 					using (Bitmap copy = (Bitmap) SoapDeserialize (s)) {
@@ -1648,7 +1641,7 @@ namespace MonoTests.System.Drawing {
 		{
 			IntPtr hicon;
 			int size;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/16x16x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/16x16x16.ico"))) {
 				size = icon.Width;
 				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
 					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
@@ -1666,7 +1659,7 @@ namespace MonoTests.System.Drawing {
 		{
 			IntPtr hicon;
 			int size;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/32x32x16.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/32x32x16.ico"))) {
 				size = icon.Width;
 				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
 					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
@@ -1683,7 +1676,7 @@ namespace MonoTests.System.Drawing {
 		[Category ("NotWorking")] // libgdiplus has lost track of the original 1bpp state
 		public void Hicon48 ()
 		{
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/48x48x1.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/48x48x1.ico"))) {
 				// looks like 1bbp icons aren't welcome as bitmaps ;-)
 				Assert.Throws<ArgumentException> (() => Bitmap.FromHicon (icon.Handle));
 			}
@@ -1694,7 +1687,7 @@ namespace MonoTests.System.Drawing {
 		{
 			IntPtr hicon;
 			int size;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/64x64x256.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/64x64x256.ico"))) {
 				size = icon.Width;
 				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
 					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
@@ -1712,7 +1705,7 @@ namespace MonoTests.System.Drawing {
 		{
 			IntPtr hicon;
 			int size;
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/96x96x256.ico"))) {
+			using (Icon icon = new Icon (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/96x96x256.ico"))) {
 				size = icon.Width;
 				using (Bitmap bitmap = Bitmap.FromHicon (icon.Handle)) {
 					HiconTest ("Icon.Handle/FromHicon", bitmap, size);
@@ -1729,7 +1722,7 @@ namespace MonoTests.System.Drawing {
 		public void HBitmap ()
 		{
 			IntPtr hbitmap;
-			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver24bits.bmp");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");
 			using (Bitmap bitmap = new Bitmap (sInFile)) {
 				Assert.AreEqual (PixelFormat.Format24bppRgb, bitmap.PixelFormat, "Original.PixelFormat");
 				Assert.AreEqual (0, bitmap.Palette.Entries.Length, "Original.Palette");
@@ -1754,7 +1747,7 @@ namespace MonoTests.System.Drawing {
 		public void CreateMultipleBitmapFromSameHBITMAP ()
 		{
 			IntPtr hbitmap;
-			string sInFile = TestBitmap.getInFile ("bitmaps/almogaver24bits.bmp");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");
 			using (Bitmap bitmap = new Bitmap (sInFile)) {
 				Assert.AreEqual (PixelFormat.Format24bppRgb, bitmap.PixelFormat, "Original.PixelFormat");
 				Assert.AreEqual (0, bitmap.Palette.Entries.Length, "Original.Palette");

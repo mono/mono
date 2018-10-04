@@ -35,6 +35,7 @@
 #include "aot-compiler.h"
 #include "mini-llvm.h"
 #include "mini-runtime.h"
+#include <mono/utils/mono-math.h>
 
 #ifndef DISABLE_JIT
 
@@ -3188,6 +3189,58 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 	ctx->builder = old_builder;
 }
 
+static gboolean
+needs_extra_arg (EmitContext *ctx, MonoMethod *method)
+{
+	WrapperInfo *info = NULL;
+
+	/*
+	 * When targeting wasm, the caller and callee signature has to match exactly. This means
+	 * that every method which can be called indirectly need an extra arg since the caller
+	 * will call it through an ftnptr and will pass an extra arg.
+	 */
+	if (!ctx->cfg->llvm_only || !ctx->emit_dummy_arg)
+		return FALSE;
+	if (method->wrapper_type)
+		info = mono_marshal_get_wrapper_info (method);
+
+	switch (method->wrapper_type) {
+	case MONO_WRAPPER_UNKNOWN:
+		if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			/* Already have an explicit extra arg */
+			return FALSE;
+		break;
+	case MONO_WRAPPER_MANAGED_TO_NATIVE:
+		if (strstr (method->name, "icall_wrapper"))
+			/* These are JIT icall wrappers which are only called from JITted code directly */
+			return FALSE;
+		/* Normal icalls can be virtual methods which need an extra arg */
+		break;
+	case MONO_WRAPPER_RUNTIME_INVOKE:
+	case MONO_WRAPPER_ALLOC:
+	case MONO_WRAPPER_CASTCLASS:
+	case MONO_WRAPPER_WRITE_BARRIER:
+		return FALSE;
+	case MONO_WRAPPER_STELEMREF:
+		if (info->subtype != WRAPPER_SUBTYPE_VIRTUAL_STELEMREF)
+			return FALSE;
+		break;
+	case MONO_WRAPPER_MANAGED_TO_MANAGED:
+		if (info->subtype == WRAPPER_SUBTYPE_STRING_CTOR)
+			return FALSE;
+		break;
+	default:
+		break;
+	}
+	if (method->string_ctor)
+		return FALSE;
+
+	/* These are called from gsharedvt code with an indirect call which doesn't pass an extra arg */
+	if (method->klass == mono_defaults.string_class && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		return FALSE;
+	return TRUE;
+}
+
 static void
 process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, MonoInst *ins)
 {
@@ -3222,7 +3275,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		cinfo->rgctx_arg = TRUE;
 	if (call->imt_arg_reg)
 		cinfo->imt_arg = TRUE;
-	if (cfg->llvm_only && ctx->emit_dummy_arg && call->method && !call->method->wrapper_type)
+	if (call->method && needs_extra_arg (ctx, call->method))
 		cinfo->dummy_arg = TRUE;
 
 	vretaddr = (cinfo->ret.storage == LLVMArgVtypeRetAddr || cinfo->ret.storage == LLVMArgVtypeByRef || cinfo->ret.storage == LLVMArgGsharedvtFixed || cinfo->ret.storage == LLVMArgGsharedvtVariable || cinfo->ret.storage == LLVMArgGsharedvtFixedVtype);
@@ -4186,7 +4239,7 @@ static LLVMValueRef
 get_double_const (MonoCompile *cfg, double val)
 {
 #ifdef TARGET_WASM
-	if (isnan (val))
+	if (mono_isnan (val))
 		*(gint64 *)&val = 0x7FF8000000000000ll;
 #endif
 	return LLVMConstReal (LLVMDoubleType (), val);
@@ -4196,7 +4249,7 @@ static LLVMValueRef
 get_float_const (MonoCompile *cfg, float val)
 {
 #ifdef TARGET_WASM
-	if (isnan (val))
+	if (mono_isnan (val))
 		*(int *)&val = 0x7FC00000;
 #endif
 	if (cfg->r4fp)
@@ -4561,7 +4614,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->opcode == OP_LCOMPARE_IMM) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
 				rhs = LLVMConstInt (LLVMInt64Type (), GET_LONG_IMM (ins), FALSE);
-				g_assert (GET_LONG_IMM (ins) == ins->inst_l);
 			}
 			if (ins->opcode == OP_LCOMPARE) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
@@ -4656,6 +4708,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_RCEQ:
+		case OP_RCNEQ:
 		case OP_RCLT:
 		case OP_RCLT_UN:
 		case OP_RCGT:
@@ -7141,7 +7194,7 @@ emit_method_inner (EmitContext *ctx)
 
 	if (cfg->rgctx_var)
 		linfo->rgctx_arg = TRUE;
-	else if (ctx->emit_dummy_arg && cfg->llvm_only && !cfg->method->wrapper_type)
+	else if (needs_extra_arg (ctx, cfg->method))
 		linfo->dummy_arg = TRUE;
 	ctx->method_type = method_type = sig_to_llvm_sig_full (ctx, sig, linfo);
 	if (!ctx_ok (ctx))

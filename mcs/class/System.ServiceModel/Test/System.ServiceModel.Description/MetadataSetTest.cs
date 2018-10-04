@@ -37,6 +37,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
@@ -52,7 +54,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void ReadFrom ()
 		{
-			XmlReader xr = XmlTextReader.Create ("Test/XmlFiles/one.xml");
+			XmlReader xr = XmlTextReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/Resources/one.xml"));
 			var metadata = MetadataSet.ReadFrom (xr);
 			Assert.AreEqual (5, metadata.MetadataSections.Count, "#1");
 			Assert.AreEqual (2, metadata.MetadataSections.Where (m => m.Dialect == MetadataSection.ServiceDescriptionDialect).Count (), "#2");

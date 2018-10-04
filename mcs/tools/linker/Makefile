@@ -11,11 +11,14 @@ TEST_CASES := \
 	mscorlib/test-exception-01.cs \
 	mscorlib/test-locale-01.cs \
 	mscorlib/test-reflection-01.cs \
+	mscorlib/test-reflection-02.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs
+
+# Disabled tests
 #	mscorlib/test-marshaling.cs
 
 ifdef MOBILE_PROFILE

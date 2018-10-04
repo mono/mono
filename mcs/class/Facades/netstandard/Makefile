@@ -25,6 +25,11 @@ else
 LIB_REFS += System.Web
 endif
 
+ifeq ($(PROFILE),monodroid)
+# XA implements System.Drawing API inside Mono.Android
+API_BIN_REFS := Mono.Android
+else
+
 # profiles which build a System.Drawing.dll in the repo
 REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
 
@@ -48,7 +53,7 @@ else
 # This needs to be passed in via EXTERNAL_FACADE_DRAWING_REFERENCE.
 LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
 endif
-
+endif
 endif
 
 PLATFORM_DEBUG_FLAGS =

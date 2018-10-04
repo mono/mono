@@ -38,6 +38,7 @@
 #include "mono/metadata/threadpool.h"
 #include "mono/metadata/handle.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/icall-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -1171,7 +1172,15 @@ emit_thread_interrupt_checkpoint_call (MonoMethodBuilder *mb, gpointer checkpoin
 	/* Throw the exception returned by the checkpoint function, if any */
 	mono_mb_emit_byte (mb, CEE_DUP);
 	pos_noex = mono_mb_emit_branch (mb, CEE_BRFALSE);
-	mono_mb_emit_byte (mb, CEE_THROW);
+
+	mono_mb_emit_byte (mb, CEE_DUP);
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoException, caught_in_unmanaged));
+	mono_mb_emit_byte (mb, CEE_LDC_I4_1);
+	mono_mb_emit_byte (mb, CEE_STIND_I4);
+
+	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
+	mono_mb_emit_byte (mb, CEE_MONO_RETHROW);
+
 	mono_mb_patch_branch (mb, pos_noex);
 	mono_mb_emit_byte (mb, CEE_POP);
 	
@@ -6224,7 +6233,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	IcallHandlesLocal *handles_locals = NULL;
 	MonoMethodSignature *sig = mono_method_signature (method);
 
-	(void) mono_lookup_internal_call_full (method, &uses_handles);
+	(void) mono_lookup_internal_call_full (method, FALSE, &uses_handles);
 
 	/* If it uses handles and MonoError, it had better check exceptions */
 	g_assert (!uses_handles || check_exceptions);

@@ -83,15 +83,15 @@ IMAGES_RESOURCES = \
 	resources/mono.ico			\
 	resources/errorProvider.ico
 
-
-TEST_DISTFILES = \
-	M.gif \
+TEST_RESOURCE_FILES = \
+	Test/resources/M.gif \
 	Test/resources/a.cur \
 	Test/resources/32x32.ico \
 	Test/System.Resources/compat_1_1.resx \
 	Test/System.Resources/compat_2_0.resx \
-	Test/System.Windows.Forms/bitmaps/a.png \
-	Test/simple/Program.cs \
+	Test/System.Windows.Forms/bitmaps/a.png
+
+DUMMY_ASSEMBLY_SRC = \
 	Test/DummyAssembly/AnotherSerializable.cs \
 	Test/DummyAssembly/Convertable.cs \
 	Test/DummyAssembly/Properties/AssemblyInfo.cs \
@@ -100,19 +100,19 @@ EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
 	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) \
 	$(IMAGES_RESOURCES) \
-	$(TEST_DISTFILES)
+	$(TEST_RESOURCE_FILES) \
+	$(DUMMY_ASSEMBLY_SRC) \
+	Test/simple/Program.cs
 
 TEST_LIB_REFS = System.Data System.Drawing Accessibility System System.Xml System.Runtime.Serialization.Formatters.Soap
 TEST_MCS_FLAGS = \
-	-resource:Test/resources/a.cur,a.cur \
-	-resource:Test/resources/32x32.ico,32x32.ico \
+	$(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r)) \
 	-nowarn:618,612
 
-DummyAssembly.dll:
-	$(CSCOMPILE) /target:library /out:$@ Test/DummyAssembly/AnotherSerializable.cs Test/DummyAssembly/Convertable.cs Test/DummyAssembly/Properties/AssemblyInfo.cs \
-	-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll
+$(topdir)/class/lib/$(PROFILE)/tests/DummyAssembly.dll: $(DUMMY_ASSEMBLY_SRC)
+	$(CSCOMPILE) /target:library /out:$@ $^ -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll
 
-test-local: DummyAssembly.dll
+test-local: $(topdir)/class/lib/$(PROFILE)/tests/DummyAssembly.dll
 
 include ../../build/library.make
 

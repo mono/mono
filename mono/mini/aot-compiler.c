@@ -7056,6 +7056,10 @@ emit_trampolines (MonoAotCompile *acfg)
 		emit_trampoline (acfg, acfg->got_offset, info);
 		mono_tramp_info_free (info);
 
+		mono_arch_get_rethrow_preserve_exception (&info, TRUE);
+		emit_trampoline (acfg, acfg->got_offset, info);
+		mono_tramp_info_free (info);
+
 		mono_arch_get_throw_corlib_exception (&info, TRUE);
 		emit_trampoline (acfg, acfg->got_offset, info);
 		mono_tramp_info_free (info);
@@ -9474,7 +9478,7 @@ emit_info (MonoAotCompile *acfg)
 	b -= a;  b ^= rot(a,19);  a += c; \
 	c -= b;  c ^= rot(b, 4);  b += a; \
 }
-#define final(a,b,c) { \
+#define mono_final(a,b,c) { \
 	c ^= b; c -= rot(b,14); \
 	a ^= c; a -= rot(c,11); \
 	b ^= a; b -= rot(a,25); \
@@ -9597,7 +9601,7 @@ mono_aot_method_hash (MonoMethod *method)
 	case 3 : c += hashes [2];
 	case 2 : b += hashes [1];
 	case 1 : a += hashes [0];
-		final (a,b,c);
+		mono_final (a,b,c);
 	case 0: /* nothing left to add */
 		break;
 	}
@@ -9608,7 +9612,7 @@ mono_aot_method_hash (MonoMethod *method)
 }
 #undef rot
 #undef mix
-#undef final
+#undef mono_final
 
 /*
  * mono_aot_get_array_helper_from_wrapper;
@@ -10401,7 +10405,7 @@ init_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	info->num_rgctx_fetch_trampolines = acfg->aot_opts.nrgctx_fetch_trampolines;
 
 	int card_table_shift_bits = 0;
-	gpointer card_table_mask = NULL;
+	target_mgreg_t card_table_mask = 0;
 
 	mono_gc_get_target_card_table (&card_table_shift_bits, &card_table_mask);
 
@@ -10413,7 +10417,7 @@ init_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	info->long_align = MONO_ABI_ALIGNOF (gint64);
 	info->generic_tramp_num = MONO_TRAMPOLINE_NUM;
 	info->card_table_shift_bits = card_table_shift_bits;
-	info->card_table_mask = GPOINTER_TO_UINT (card_table_mask);
+	info->card_table_mask = card_table_mask;
 
 	info->tramp_page_size = acfg->tramp_page_size;
 	info->nshared_got_entries = acfg->nshared_got_entries;

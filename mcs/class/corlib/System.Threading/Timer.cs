@@ -66,7 +66,7 @@ namespace System.Threading
 	public sealed class Timer
 		: MarshalByRefObject, IDisposable
 	{
-		static readonly Scheduler scheduler = Scheduler.Instance;
+		static Scheduler scheduler => Scheduler.Instance;
 #region Timer instance fields
 		TimerCallback callback;
 		object state;
@@ -223,7 +223,7 @@ namespace System.Threading
 		}
 
 		sealed class Scheduler {
-			static Scheduler instance;
+			static readonly Scheduler instance = new Scheduler ();
 			SortedList list;
 
 #if WASM
@@ -280,12 +280,6 @@ namespace System.Threading
 			}
 
 #endif
-
-			static Scheduler ()
-			{
-				instance = new Scheduler ();
-			}
-
 			public static Scheduler Instance {
 				get { return instance; }
 			}

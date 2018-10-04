@@ -15,6 +15,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {	
 	[TestFixture]
@@ -159,7 +161,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void TestSimpleImport ()
 		{
-			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/3.xsd"), null);
+			XmlSchema schema = XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/3.xsd")), null);
 			Assert.AreEqual ("urn:foo", schema.TargetNamespace);
 			XmlSchemaImport import = schema.Includes [0] as XmlSchemaImport;
 			Assert.IsNotNull (import);
@@ -177,7 +179,7 @@ namespace MonoTests.System.Xml
 		[Category ("MobileNotWorking")]
 		public void TestSimpleMutualImport ()
 		{
-			XmlReader r = new XmlTextReader ("Test/XmlFiles/xsd/inter-inc-1.xsd");
+			XmlReader r = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/inter-inc-1.xsd"));
 			try {
 				XmlSchema.Read (r, null).Compile (null);
 			} finally {
@@ -188,7 +190,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void TestQualification ()
 		{
-			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/5.xsd"), null);
+			XmlSchema schema = XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/5.xsd")), null);
 			schema.Compile (null);
 			XmlSchemaElement el = schema.Elements [QName ("Foo", "urn:bar")] as XmlSchemaElement;
 			Assert.IsNotNull (el);
@@ -197,7 +199,7 @@ namespace MonoTests.System.Xml
 			XmlSchemaElement elp = seq.Items [0] as XmlSchemaElement;
 			Assert.AreEqual (QName ("Bar", ""), elp.QualifiedName);
 
-			schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/6.xsd"), null);
+			schema = XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/6.xsd")), null);
 			schema.Compile (null);
 			el = schema.Elements [QName ("Foo", "urn:bar")] as XmlSchemaElement;
 			Assert.IsNotNull (el);
@@ -385,7 +387,7 @@ namespace MonoTests.System.Xml
 		// bug #77687
 		public void CompileFillsSchemaPropertyInExternal ()
 		{
-			string schemaFileName = "Test/XmlFiles/xsd/77687.xsd";
+			string schemaFileName = TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/77687.xsd");
 			XmlTextReader tr = new XmlTextReader (schemaFileName);
 
 			XmlSchema schema = XmlSchema.Read (tr, null);
@@ -401,8 +403,8 @@ namespace MonoTests.System.Xml
 		// two different keys where one is in scope within another)
 		public void DuplicateKeyFieldAttributePath ()
 		{
-			string schemaFileName = "Test/XmlFiles/xsd/78985.xsd";
-			string xmlFileName = "Test/XmlFiles/xsd/78985.xml";
+			string schemaFileName = TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/78985.xsd");
+			string xmlFileName = TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/78985.xml");
 			XmlTextReader tr = new XmlTextReader (schemaFileName);
 
 			XmlValidatingReader vr = new XmlValidatingReader (
@@ -415,7 +417,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ThreeLevelNestedInclusion ()
 		{
-			XmlTextReader r = new XmlTextReader ("Test/XmlFiles/xsd/361818.xsd");
+			XmlTextReader r = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/361818.xsd"));
 			try {
 				XmlSchema xs = XmlSchema.Read (r, null);
 				xs.Compile (null);
@@ -542,7 +544,7 @@ namespace MonoTests.System.Xml
 		public void TestResolveUri ()
 		{
 			XmlSchemaSet schemaSet = new XmlSchemaSet ();
-			FileStream stream = new FileStream ("Test/XmlFiles/xsd/resolveUriSchema.xsd", FileMode.Open, FileAccess.Read);
+			FileStream stream = new FileStream (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/resolveUriSchema.xsd"), FileMode.Open, FileAccess.Read);
 			schemaSet.Add ("http://tempuri.org/resolveUriSchema.xsd", new XmlTextReader (stream));
 
 			XmlTestResolver resolver = new XmlTestResolver ();		
@@ -578,7 +580,7 @@ namespace MonoTests.System.Xml
 			settings.Schemas.Add (schemaSet);
 			settings.ValidationType = ValidationType.Schema;
 			
-			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsd/xsdimporttest.xml", settings);
+			XmlReader reader = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/xsdimporttest.xml"), settings);
 			
 			// Parse the file. 
 			while (reader.Read()) {}

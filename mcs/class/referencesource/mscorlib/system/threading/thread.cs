@@ -40,8 +40,10 @@ namespace System.Threading {
 
     internal class ThreadHelper
     {
+#if !MONO
         [System.Security.SecuritySafeCritical]
         static ThreadHelper() {}
+#endif
 
         Delegate _start;
         Object _startArg = null;

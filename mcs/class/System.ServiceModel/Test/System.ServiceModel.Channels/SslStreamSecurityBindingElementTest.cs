@@ -37,6 +37,8 @@ using System.ServiceModel.Security;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Channels
 {
 	[TestFixture]
@@ -100,7 +102,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		{
 			ServiceCredentials cred = new ServiceCredentials ();
 			X509Certificate2 cert = 
-				new X509Certificate2 ("Test/Resources/test.cer");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			cred.ServiceCertificate.Certificate = cert;
 			X509CertificateEndpointIdentity ident =
 				new X509CertificateEndpointIdentity (cert);

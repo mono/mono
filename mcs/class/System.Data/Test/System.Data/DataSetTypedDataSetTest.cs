@@ -38,6 +38,8 @@ using System.Xml.Schema;
 using System.IO;
 using System.Globalization;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -57,7 +59,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(typeof(myTypedDataSet), ds.GetType() ,"TDS1" );
 		
 			// fill dataset
-			ds.ReadXml("Test/System.Data/TypedDataSet.xml");
+			ds.ReadXml(TestResourceHelper.GetFullPathOfResource ("Test/System.Data/TypedDataSet.xml"));
 
 			// check DataSet named property "Orders"
 			myTypedDataSet.OrdersDataTable tblOrders = null;

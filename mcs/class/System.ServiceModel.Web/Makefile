@@ -28,11 +28,13 @@ else
 KEYFILE = ../winfx.pub
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
-
-EXTRA_DISTFILES = $(RESOURCE_FILES) \
+TEST_RESOURCE_FILES = \
 	Test/config/webHttpBinding \
 	Test/config/webHttpBinding.config
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES)
 
 VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE
