@@ -17,6 +17,8 @@ using MonoSecurity::Mono.Security.Interface;
 using Mono.Security.Interface;
 #endif
 
+using size_t = System.IntPtr;
+
 namespace Mono.Unity
 {
 	unsafe internal class UnityTlsProvider : MonoTlsProvider
@@ -93,13 +95,13 @@ namespace Mono.Unity
 					var trustCAnativeRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (certificatesNative, &errorState);
 
 					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-						result = UnityTls.NativeInterface.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+						result = UnityTls.NativeInterface.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, null, null, &errorState);
 					}
 
 					UnityTls.NativeInterface.unitytls_x509list_free (trustCAnative);
 				} else {
 					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-						result = UnityTls.NativeInterface.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, targetHostUtf8.Length, null, null, &errorState);
+						result = UnityTls.NativeInterface.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, null, null, &errorState);
 					}
 				}
 			}

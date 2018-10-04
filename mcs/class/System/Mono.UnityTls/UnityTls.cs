@@ -9,23 +9,7 @@ namespace Mono.Unity
     // The aliases here are just there to keep the semantic in the interface and make it more similar to the c original.
     using UInt8 = Byte;
     using Int8 = Byte;
-
-    [StructLayout (LayoutKind.Sequential)]
-    internal struct size_t
-    {
-        public size_t(uint i) {
-            value = new IntPtr(i);
-        }
-
-        public static implicit operator size_t(int d) {
-            return new size_t((uint)d);
-        }
-        public static implicit operator int(size_t s) {
-            return s.value.ToInt32();
-        }
-
-        public IntPtr value;
-    }
+    using size_t = IntPtr;
 
     unsafe internal static partial class UnityTls
     {
