@@ -25,8 +25,10 @@
 // This is for example x32, arm6432, mipsn32, Alpha/NT.
 #ifdef __mono_ilp32__
 typedef gint64 host_mgreg_t;
+typedef guint64 host_umgreg_t;
 #else
 typedef gssize host_mgreg_t;
+typedef gsize host_umgreg_t;
 #endif
 
 // SIZEOF_REGISTER is target. mgreg_t is usually target, sometimes host.

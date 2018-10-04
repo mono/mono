@@ -182,6 +182,8 @@ typedef elf_fpreg_t elf_fpregset_t[ELF_NFPREG];
 guint8*
 mono_ppc_create_pre_code_ftnptr (guint8 *code)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoPPCFunctionDescriptor *ftnptr = (MonoPPCFunctionDescriptor*)code;
 
 	code += sizeof (MonoPPCFunctionDescriptor);
@@ -202,6 +204,8 @@ mono_ppc_create_pre_code_ftnptr (guint8 *code)
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code;
 	int size = MONO_PPC_32_64_CASE (128, 172) + PPC_FTNPTR_SIZE;
 	MonoJumpInfo *ji = NULL;
@@ -239,6 +243,8 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 static guint8*
 emit_save_saved_regs (guint8 *code, int pos)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int i;
 
 	for (i = MONO_MAX_FREGS - 1; i >= MONO_PPC_FIRST_SAVED_FREG; --i) {
@@ -262,6 +268,8 @@ emit_save_saved_regs (guint8 *code, int pos)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code;
 	int alloc_size, pos, i;
 	int size = MONO_PPC_32_64_CASE (320, 500) + PPC_FTNPTR_SIZE;
@@ -322,8 +330,10 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 }
 
 void
-mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow, gboolean preserve_ips)
+mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	ERROR_DECL (error);
 	MonoContext ctx;
 
@@ -335,7 +345,7 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 	/*printf ("stack in throw: %p\n", esp);*/
 	MONO_CONTEXT_SET_BP (&ctx, esp);
 	MONO_CONTEXT_SET_IP (&ctx, eip);
-	memcpy (&ctx.regs, int_regs, sizeof (mgreg_t) * MONO_MAX_IREGS);
+	memcpy (&ctx.regs, int_regs, sizeof (host_mgreg_t) * MONO_MAX_IREGS);
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * MONO_MAX_FREGS);
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
@@ -366,6 +376,8 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 static gpointer
 mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corlib, gboolean rethrow, gboolean aot, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code;
 	int alloc_size, pos;
 	MonoJumpInfo *ji = NULL;
@@ -483,6 +495,8 @@ mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int size = MONO_PPC_32_64_CASE (132, 224) + PPC_FTNPTR_SIZE;
 
 	if (aot)
@@ -505,6 +519,8 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int size = MONO_PPC_32_64_CASE (132, 224) + PPC_FTNPTR_SIZE;
 
 	if (aot)
@@ -522,6 +538,8 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int size = MONO_PPC_32_64_CASE (168, 304) + PPC_FTNPTR_SIZE;
 
 	if (aot)
@@ -538,9 +556,11 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 	MonoPPCStackFrame *sframe;
 
@@ -552,7 +572,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	if (ji != NULL) {
 		int i;
-		mgreg_t regs [ppc_lr + 1];
+		host_mgreg_t regs [ppc_lr + 1];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -570,7 +590,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			/* sframe->sp points just past the end of the LMF */
 			guint8 *lmf_addr = (guint8*)sframe->sp - sizeof (MonoLMF);
 			memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, fregs), sizeof (double) * MONO_SAVED_FREGS);
-			memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (mgreg_t) * MONO_SAVED_GREGS);
+			memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (host_mgreg_t) * MONO_SAVED_GREGS);
 			/* the calling IP is in the parent frame */
 			sframe = (MonoPPCStackFrame*)sframe->sp;
 			/* we substract 4, so that the IP points into the call instruction */
@@ -611,7 +631,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		MONO_CONTEXT_SET_IP (new_ctx, sframe->lr);*/
 		MONO_CONTEXT_SET_BP (new_ctx, (*lmf)->ebp);
 		MONO_CONTEXT_SET_IP (new_ctx, (*lmf)->eip);
-		memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], (*lmf)->iregs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
+		memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], (*lmf)->iregs, sizeof (host_mgreg_t) * MONO_SAVED_GREGS);
 		memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], (*lmf)->fregs, sizeof (double) * MONO_SAVED_FREGS);
 
 		frame->ji = ji;
@@ -630,6 +650,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
 #else
@@ -641,6 +663,8 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 altstack_handle_and_restore (void *sigctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoContext mctx;
 
 	mono_sigctx_to_monoctx (sigctx, &mctx);
@@ -651,6 +675,8 @@ altstack_handle_and_restore (void *sigctx, gpointer obj)
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
 #else
@@ -727,6 +753,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 static void
 handle_signal_exception (gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -740,6 +768,8 @@ handle_signal_exception (gpointer obj)
 static void
 setup_ucontext_return (void *uc, gpointer func)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if !defined(MONO_CROSS_COMPILE)
 	UCONTEXT_REG_LNK(uc) = UCONTEXT_REG_NIP(uc);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
@@ -763,6 +793,8 @@ setup_ucontext_return (void *uc, gpointer func)
 gboolean
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if defined(MONO_ARCH_USE_SIGACTION) && defined(UCONTEXT_REG_Rn)
 	/*
 	 * Handling the exception in the signal handler is problematic, since the original
@@ -770,7 +802,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	 * resume into the normal stack and do most work there if possible.
 	 */
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	mgreg_t sp;
+	host_mgreg_t sp;
 	void *sigctx = ctx;
 	int frame_size;
 	void *uc = sigctx;
@@ -785,9 +817,9 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	frame_size = 224;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (mgreg_t)(UCONTEXT_REG_Rn(uc, 1) & ~15);
-	sp = (mgreg_t)(sp - frame_size);
-	UCONTEXT_REG_Rn(uc, 1) = (mgreg_t)sp;
+	sp = (host_mgreg_t)(UCONTEXT_REG_Rn(uc, 1) & ~15);
+	sp = (host_mgreg_t)(sp - frame_size);
+	UCONTEXT_REG_Rn(uc, 1) = (host_mgreg_t)sp;
 	setup_ucontext_return (uc, handle_signal_exception);
 
 	return TRUE;
@@ -811,6 +843,8 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
 	ctx->regs [PPC_FIRST_ARG_REG] = user_data;
 	sp -= PPC_MINIMAL_STACK_SIZE;
@@ -822,6 +856,8 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 	MonoPPCFunctionDescriptor *handler_ftnptr = (MonoPPCFunctionDescriptor*)func;
 	MONO_CONTEXT_SET_IP(ctx, (gulong)handler_ftnptr->code);

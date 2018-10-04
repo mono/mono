@@ -59,6 +59,8 @@ extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 
 LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #ifndef MONO_CROSS_COMPILE
 	if (mono_old_win_toplevel_exception_filter) {
 		return (*mono_old_win_toplevel_exception_filter)(ep);
@@ -79,6 +81,8 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 static gpointer
 mono_win32_get_handle_stackoverflow (void)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8 *start = NULL;
 	guint8 *code;
 
@@ -137,6 +141,8 @@ mono_win32_get_handle_stackoverflow (void)
 static void 
 win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	SYSTEM_INFO si;
 	DWORD page_size;
 	MonoDomain *domain = mono_domain_get ();
@@ -194,6 +200,8 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, CONTEXT *sctx)
  */
 LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
 	LONG res;
@@ -247,6 +255,8 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 
 void win32_seh_init()
 {
+	mono_cross_compile_assert_not_reached ();
+
 	/* install restore stack helper */
 	if (!restore_stack)
 		restore_stack = (void (*) (void*))mono_win32_get_handle_stackoverflow ();
@@ -257,6 +267,8 @@ void win32_seh_init()
 
 void win32_seh_cleanup()
 {
+	mono_cross_compile_assert_not_reached ();
+
 	if (mono_old_win_toplevel_exception_filter)
 		SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
 	RemoveVectoredExceptionHandler (mono_win_vectored_exception_handle);
@@ -264,6 +276,8 @@ void win32_seh_cleanup()
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	switch (type) {
 	case SIGFPE:
 		fpe_handler = handler;
@@ -289,6 +303,8 @@ void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start = NULL;
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
@@ -377,6 +393,8 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8* start;
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
@@ -453,8 +471,10 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
  */
 void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
-						  mgreg_t eip, gboolean rethrow, gboolean preserve_ips)
+						  host_mgreg_t eip, gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	ERROR_DECL (error);
 	MonoContext ctx;
 
@@ -495,9 +515,11 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 }
 
 void
-mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index, 
-								 mgreg_t eip, gint32 pc_offset)
+mono_x86_throw_corlib_exception (host_mgreg_t *regs, guint32 ex_token_index, 
+								 host_mgreg_t eip, gint32 pc_offset)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
@@ -512,9 +534,11 @@ mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index,
 }
 
 static void
-mono_x86_resume_unwind (mgreg_t *regs, MonoObject *exc, 
-						mgreg_t eip, gboolean rethrow)
+mono_x86_resume_unwind (host_mgreg_t *regs, MonoObject *exc, 
+						host_mgreg_t eip, gboolean rethrow)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoContext ctx;
 
 	ctx.esp = regs [X86_ESP];
@@ -541,6 +565,8 @@ mono_x86_resume_unwind (mgreg_t *regs, MonoObject *exc,
 static guint8*
 get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolean corlib, gboolean llvm_abs, gboolean resume_unwind, MonoTrampInfo **info, gboolean aot, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code, *labels [16];
 	int i, stack_size, stack_offset, arg_offsets [5], regs_offset;
 	MonoJumpInfo *ji = NULL;
@@ -703,18 +729,24 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 gpointer 
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return get_throw_trampoline ("throw_exception", FALSE, FALSE, FALSE, FALSE, FALSE, info, aot, FALSE);
 }
 
 gpointer 
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return get_throw_trampoline ("rethrow_exception", TRUE, FALSE, FALSE, FALSE, FALSE, info, aot, FALSE);
 }
 
 gpointer 
 mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return get_throw_trampoline ("rethrow_preserve_exception", TRUE, FALSE, FALSE, FALSE, FALSE, info, aot, TRUE);
 }
 
@@ -730,12 +762,16 @@ mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 gpointer 
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return get_throw_trampoline ("throw_corlib_exception", FALSE, FALSE, TRUE, FALSE, FALSE, info, aot, FALSE);
 }
 
 void
 mono_arch_exceptions_init (void)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *tramp;
 	MonoTrampInfo *tinfo;
 
@@ -800,9 +836,11 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 
 	memset (frame, 0, sizeof (StackFrameInfo));
@@ -811,7 +849,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	*new_ctx = *ctx;
 
 	if (ji != NULL) {
-		mgreg_t regs [MONO_MAX_IREGS + 1];
+		host_mgreg_t regs [MONO_MAX_IREGS + 1];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -898,6 +936,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if defined(HOST_WATCHOS)
 	printf("WARNING: mono_arch_ip_from_context() called!\n");
 	return (NULL);
@@ -923,6 +963,8 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 handle_signal_exception (gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -941,6 +983,8 @@ handle_signal_exception (gpointer obj)
 gpointer
 mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
@@ -988,24 +1032,28 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	/*
 	 * Can't pass the obj on the stack, since we are executing on the
 	 * same stack. Can't save it into MonoJitTlsData, since it needs GC tracking.
 	 * So put it into a register, and branch to a trampoline which
 	 * pushes it.
 	 */
-	ctx->eax = (mgreg_t)user_data;
+	ctx->eax = (host_mgreg_t)user_data;
 	ctx->ecx = ctx->eip;
-	ctx->edx = (mgreg_t)async_cb;
+	ctx->edx = (host_mgreg_t)async_cb;
 
 	/*align the stack*/
 	ctx->esp = (ctx->esp - 16) & ~15;
-	ctx->eip = (mgreg_t)signal_exception_trampoline;
+	ctx->eip = (host_mgreg_t)signal_exception_trampoline;
 }
 
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoContext mctx;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
@@ -1050,8 +1098,10 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 }
 
 static MonoObject*
-restore_soft_guard_pages ()
+restore_soft_guard_pages (void)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 
 	if (jit_tls->stack_ovf_guard_base)
@@ -1074,6 +1124,8 @@ restore_soft_guard_pages ()
 static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	gpointer *sp;
 	sp = (gpointer*)(mctx->esp);
 	sp -= 1;
@@ -1087,6 +1139,8 @@ prepare_for_guard_pages (MonoContext *mctx)
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoContext mctx;
 
 	mctx = *ctx;
@@ -1103,6 +1157,8 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if defined(MONO_ARCH_USE_SIGACTION) && !defined(MONO_CROSS_COMPILE)
 	MonoException *exc = NULL;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
@@ -1159,6 +1215,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 MonoContinuationRestore
 mono_tasklets_arch_restore (void)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8* saved = NULL;
 	guint8 *code, *start;
 
@@ -1210,6 +1268,8 @@ mono_tasklets_arch_restore (void)
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int align = (((gint32)MONO_CONTEXT_GET_SP (ctx)) % MONO_ARCH_FRAME_ALIGNMENT + 4);
 
 	if (align != 0)

@@ -468,9 +468,9 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *r, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
+	mono_cross_compile_assert_not_reached ();
 
 	return (gpointer)(gsize)r [ppc_r3];
 }
@@ -5745,11 +5745,11 @@ mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
+	mono_cross_compile_assert_not_reached ();
 
-	return (MonoVTable*)(gsize) r [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*)(gsize) regs [MONO_ARCH_RGCTX_REG];
 }
 
 GSList*
@@ -5769,7 +5769,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	if (reg == ppc_r1)

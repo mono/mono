@@ -42,6 +42,8 @@
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int i;
 	guint8 *code;
 	static guint8 start [512];
@@ -100,6 +102,8 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8 start [320];
 	static int inited = 0;
 	guint8 *code;
@@ -179,6 +183,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 static void
 throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	ERROR_DECL (error);
 	MonoContext ctx;
 
@@ -231,6 +237,8 @@ throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean
 static gpointer 
 mono_arch_get_throw_exception_generic (guint8 *start, int size, int corlib, gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *code;
 	int alloc_size, pos, i;
 
@@ -305,6 +313,8 @@ mono_arch_get_throw_exception_generic (guint8 *start, int size, int corlib, gboo
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8 start [GENERIC_EXCEPTION_SIZE];
 	static int inited = 0;
 
@@ -358,6 +368,8 @@ mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8 start [GENERIC_EXCEPTION_SIZE];
 	static int inited = 0;
 
@@ -375,6 +387,8 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 gpointer 
 mono_arch_get_throw_exception_by_name (void)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint8 *start, *code;
 	int size = 64;
 
@@ -396,6 +410,8 @@ mono_arch_get_throw_exception_by_name (void)
 gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint8 start [GENERIC_EXCEPTION_SIZE];
 	static int inited = 0;
 
@@ -422,9 +438,11 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf, 
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
 
@@ -433,7 +451,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (ji != NULL) {
 		int i;
 		gpointer ip = MONO_CONTEXT_GET_IP (ctx);
-		mgreg_t regs [MONO_MAX_IREGS + 1];
+		host_mgreg_t regs [MONO_MAX_IREGS + 1];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -456,7 +474,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		for (i = 0; i < MONO_MAX_IREGS; ++i)
 			new_ctx->sc_regs [i] = regs [i];
 		new_ctx->sc_pc = regs [mips_ra];
-		new_ctx->sc_regs [mips_sp] = (mgreg_t)cfa;
+		new_ctx->sc_regs [mips_sp] = (host_mgreg_t)cfa;
 
 		/* we substract 8, so that the IP points into the call instruction */
 		MONO_CONTEXT_SET_IP (new_ctx, new_ctx->sc_pc - 8);
@@ -501,6 +519,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return (gpointer)(gsize)UCONTEXT_REG_PC (sigctx);
 }
 
@@ -512,6 +532,8 @@ mono_arch_ip_from_context (void *sigctx)
 static void
 handle_signal_exception (gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -528,6 +550,8 @@ handle_signal_exception (gpointer obj)
 gboolean
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 #if defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
 #elif defined(MONO_ARCH_USE_SIGACTION)
@@ -576,5 +600,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MONO_CONTEXT_SET_IP (ctx,func);
 }

@@ -25,20 +25,23 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
+	mono_cross_compile_assert_not_reached ();
 	g_error ("mono_arch_patch_plt_entry");
 }
 
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 {
+	mono_cross_compile_assert_not_reached ();
 	g_error ("mono_arch_patch_callsite");
 }
 
 gpointer
 mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
+	mono_cross_compile_assert_not_reached ();
 	g_error ("mono_arch_get_unbox_trampoline");
 	return NULL;
 }
@@ -89,7 +92,7 @@ mono_arch_get_call_target (guint8 *code)
  *   Return the PLT info offset belonging to the plt entry PLT_ENTRY.
  */
 guint32
-mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
+mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_get_plt_info_offset");
 	return *(guint32*)(plt_entry + 6);

@@ -4305,7 +4305,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 			/* Pass the arguments using a localloc-ed array using the format expected by runtime_invoke () */
 			MONO_INST_NEW (cfg, ins, OP_LOCALLOC_IMM);
 			ins->dreg = alloc_preg (cfg);
-			ins->inst_imm = fsig->param_count * sizeof (mgreg_t);
+			ins->inst_imm = fsig->param_count * sizeof (target_mgreg_t);
 			MONO_ADD_INS (cfg->cbb, ins);
 			args [4] = ins;
 

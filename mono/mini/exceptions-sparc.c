@@ -42,6 +42,8 @@
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint32 *start;
 	static int inited = 0;
 	guint32 *code;
@@ -84,6 +86,8 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint32 *start;
 	static int inited = 0;
 	guint32 *code;
@@ -169,6 +173,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 static void
 throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	ERROR_DECL (error);
 	MonoContext ctx;
 	static void (*restore_context) (MonoContext *);
@@ -201,6 +207,8 @@ throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow, gb
 static gpointer 
 get_throw_exception (gboolean rethrow, gboolean preserve_ips)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	guint32 *start, *code;
 
 	code = start = mono_global_codeman_reserve (16 * sizeof (guint32));
@@ -234,6 +242,8 @@ get_throw_exception (gboolean rethrow, gboolean preserve_ips)
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint32* start;
 	static int inited = 0;
 
@@ -254,6 +264,8 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint32* start;
 	static int inited = 0;
 
@@ -303,6 +315,8 @@ mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	static guint32 *start;
 	static int inited = 0;
 	guint32 *code;
@@ -367,9 +381,11 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	gpointer *window;
 
 	memset (frame, 0, sizeof (StackFrameInfo));
@@ -420,6 +436,8 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
        MonoContext mctx;
        struct sigcontext *sc = sigctx;
        gpointer *window;
@@ -456,6 +474,8 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
        struct sigcontext *sc = sigctx;
        gpointer *ret;
 
@@ -473,6 +493,8 @@ mono_arch_ip_from_context (void *sigctx)
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	MonoContext mctx;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	gpointer *window;
@@ -504,6 +526,8 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	return (gpointer)ctx->uc_mcontext.gregs [REG_PC];
 }

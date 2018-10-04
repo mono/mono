@@ -2272,7 +2272,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	/* Reserve space to save LMF and caller saved registers */
 	/*------------------------------------------------------*/
 	if (cfg->method->save_lmf)
-		offset += sizeof (MonoLMF);
+		offset += MONO_ABI_SIZEOF (MonoLMF);
 
 	/*------------------------------------------------------*/
 	/* align the offset 					*/
@@ -2687,7 +2687,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
 
 	parmOffset = cfg->stack_usage - S390_TRACE_STACK_SIZE - cfg->arch.fpSize;
 	if (cfg->method->save_lmf)
-		parmOffset -= sizeof(MonoLMF);
+		parmOffset -= MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
 	fpOffset   = parmOffset + (5*sizeof(gpointer));
 	baseReg = STK_BASE;
 
@@ -2739,7 +2739,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	saveOffset = cfg->stack_usage - S390_TRACE_STACK_SIZE - cfg->arch.fpSize;
 	if (method->save_lmf)
-		saveOffset -= sizeof(MonoLMF);
+		saveOffset -= MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
 
 handle_enum:
 	switch (rtype) {
@@ -4440,7 +4440,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				/*----------------------------------*/
 				/* we have to adjust lmf ebp value  */
 				/*----------------------------------*/
-				int lmfOffset = cfg->stack_usage - sizeof(MonoLMF);
+				int lmfOffset = cfg->stack_usage - MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
 
 				s390_lgr (code, s390_r13, cfg->frame_reg);
 				if (s390_is_imm16(lmfOffset)) {
@@ -6361,7 +6361,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/*---------------------------------------------------------------*/
 		/* build the MonoLMF structure on the stack - see mini-s390x.h   */
 		/*---------------------------------------------------------------*/
-		lmfOffset = alloc_size - sizeof(MonoLMF);	
+		lmfOffset = alloc_size - MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);	
 											
 		s390_lgr   (code, s390_r13, cfg->frame_reg);		
 		s390_aghi  (code, s390_r13, lmfOffset);					
@@ -6871,10 +6871,10 @@ mono_arch_get_patch_offset (guint8 *code)
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
-	return ((mgreg_t) ctx->uc_mcontext.gregs[reg]);
+	return ctx->uc_mcontext.gregs[reg];
 }
 
 /*========================= End of Function ========================*/
@@ -6888,7 +6888,7 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
 	ctx->uc_mcontext.gregs[reg] = val;
 }
@@ -6904,7 +6904,7 @@ mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
 /*------------------------------------------------------------------*/
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	return (gpointer) regs [s390_r2];
 }
@@ -7268,7 +7268,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain,
 /*------------------------------------------------------------------*/
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	return ((MonoMethod *) regs [MONO_ARCH_IMT_REG]);
 }
@@ -7284,11 +7284,9 @@ mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 /*------------------------------------------------------------------*/
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
-
-	return (MonoVTable*)(gsize) r [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*)(gsize) regs [MONO_ARCH_RGCTX_REG];
 }
 
 /*========================= End of Function ========================*/
