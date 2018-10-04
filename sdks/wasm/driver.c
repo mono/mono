@@ -147,6 +147,8 @@ MonoClass* mono_get_single_class (void);
 MonoClass* mono_get_double_class (void);
 MonoClass* mono_class_get_element_class(MonoClass *klass);
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
+int mono_class_is_enum (MonoClass *klass);
+MonoType* mono_type_get_underlying_type (MonoType *type);
 
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
@@ -377,6 +379,7 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_TASK 6
 #define MARSHAL_TYPE_OBJECT 7
 #define MARSHAL_TYPE_BOOL 8
+#define MARSHAL_TYPE_ENUM 9
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -440,6 +443,8 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		}		
 	}
 	default:
+		if (mono_class_is_enum (klass))
+			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt
 			return MARSHAL_TYPE_VT;
 		if (mono_class_is_delegate (klass))
@@ -594,3 +599,34 @@ mono_wasm_exec_regression (int verbose_level, char *image)
 {
 	return mono_regression_test_step (verbose_level, image, NULL) ? 0 : 1;
 }
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_unbox_enum (MonoObject *obj)
+{
+	if (!obj)
+		return 0;
+	
+	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+
+	void *ptr = mono_object_unbox (obj);
+	switch (mono_type_get_type(mono_type_get_underlying_type (type))) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return *(unsigned char*)ptr;
+	case MONO_TYPE_I2:
+		return *(short*)ptr;
+	case MONO_TYPE_U2:
+		return *(unsigned short*)ptr;
+	case MONO_TYPE_I4:
+		return *(int*)ptr;
+	case MONO_TYPE_U4:
+		return *(unsigned int*)ptr;
+	// WASM doesn't support returning longs to JS
+	// case MONO_TYPE_I8:
+	// case MONO_TYPE_U8:
+	default:
+		printf ("Invalid type %d to mono_unbox_enum\n", mono_type_get_type(mono_type_get_underlying_type (type)));
+		return 0;
+	}
+}
+
