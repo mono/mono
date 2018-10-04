@@ -17,7 +17,11 @@ ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
 endif
 
-TEST_LIB_REFS = System.Drawing System.Runtime.Serialization.Formatters.Soap System.Xml
+TEST_LIB_REFS = System.Drawing System.Xml
+
+ifneq ($(PROFILE),wasm)
+TEST_LIB_REFS += System.Runtime.Serialization.Formatters.Soap
+endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	-nowarn:0618 -nowarn:219 -nowarn:169
