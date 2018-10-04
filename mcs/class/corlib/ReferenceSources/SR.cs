@@ -530,7 +530,7 @@ partial class SR
 	public const string net_auth_noauth = "This operation is only allowed using a successfully authenticated context.";
 	public const string net_auth_client_server = "Once authentication is attempted as the client or server, additional authentication attempts must use the same client or server role.";
 	public const string net_auth_noencryption = "This authenticated context does not support data encryption.";
-	public const string net_auth_SSPI = "A call to SSPI failed, see inner exception.";
+	public const string net_auth_SSPI = "Authentication failed, see inner exception.";
 	public const string net_auth_failure = "Authentication failed, see inner exception.";
 	public const string net_auth_eof = "Authentication failed because the remote party has closed the transport stream.";
 	public const string net_auth_alert = "Authentication failed on the remote side (the stream might still be available for additional authentication attempts).";
