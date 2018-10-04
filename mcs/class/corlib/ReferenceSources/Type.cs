@@ -36,6 +36,11 @@ namespace System
 	{
 		internal RuntimeTypeHandle _impl;
 
+		public virtual bool IsTypeDefinition => throw NotImplemented.ByDesign;
+		public virtual bool IsGenericTypeParameter => IsGenericParameter && DeclaringMethod == null;
+		public virtual bool IsGenericMethodParameter => IsGenericParameter && DeclaringMethod != null;
+		public virtual bool IsByRefLike => throw new NotSupportedException(SR.NotSupported_SubclassOverride);        
+
 		#region Requires stack backtracing fixes in unmanaged type_from_name
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
