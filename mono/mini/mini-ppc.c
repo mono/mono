@@ -5598,6 +5598,8 @@ gpointer
 mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 								gpointer fail_tramp)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int i;
 	int size = 0;
 	guint8 *code, *start;
@@ -5737,9 +5739,11 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
+	mono_cross_compile_assert_not_reached ();
+
+	host_mgreg_t *r = (host_mgreg_t*)regs;
 
 	return (MonoMethod*)(gsize) r [MONO_ARCH_IMT_REG];
 }
@@ -5772,6 +5776,8 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	if (reg == ppc_r1)
 		return (mgreg_t)(gsize)MONO_CONTEXT_GET_SP (ctx);
 

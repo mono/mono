@@ -1675,7 +1675,7 @@ arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
 	int reg_size = ainfo->size * sizeof (host_mgreg_t);
 	g_assert (arg_need_temp (ainfo));
 	memcpy (dest, &ccontext->gregs [ainfo->reg], reg_size);
-	memcpy ((mgreg_t*)dest + ainfo->size, ccontext->stack + ainfo->offset, ainfo->struct_size - reg_size);
+	memcpy ((host_mgreg_t*)dest + ainfo->size, ccontext->stack + ainfo->offset, ainfo->struct_size - reg_size);
 }
 
 static void
@@ -1683,10 +1683,10 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 {
 	mono_cross_compile_assert_not_reached ();
 
-	int reg_size = ainfo->size * sizeof (mgreg_t);
+	int reg_size = ainfo->size * sizeof (host_mgreg_t);
 	g_assert (arg_need_temp (ainfo));
 	memcpy (&ccontext->gregs [ainfo->reg], src, reg_size);
-	memcpy (ccontext->stack + ainfo->offset, (mgreg_t*)src + ainfo->size, ainfo->struct_size - reg_size);
+	memcpy (ccontext->stack + ainfo->offset, (host_mgreg_t*)src + ainfo->size, ainfo->struct_size - reg_size);
 }
 
 /* Set arguments in the ccontext (for i2n entry) */
@@ -2976,20 +2976,20 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	p->res = 0;
 	p->ret = ret;
 	p->has_fpregs = 0;
-	p->n_stackargs = cinfo->stack_usage / sizeof (mgreg_t);
+	p->n_stackargs = cinfo->stack_usage / sizeof (host_mgreg_t);
 
 	arg_index = 0;
 	greg = 0;
 	pindex = 0;
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
-		p->regs [greg ++] = (mgreg_t)(gsize)*(args [arg_index ++]);
+		p->regs [greg ++] = (host_mgreg_t)(gsize)*(args [arg_index ++]);
 		if (!sig->hasthis)
 			pindex = 1;
 	}
 
 	if (dinfo->cinfo->ret.storage == RegTypeStructByAddr)
-		p->regs [greg ++] = (mgreg_t)(gsize)ret;
+		p->regs [greg ++] = (host_mgreg_t)(gsize)ret;
 
 	for (i = pindex; i < sig->param_count; i++) {
 		MonoType *t = dinfo->param_types [i];
@@ -3010,7 +3010,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		}
 
 		if (t->byref) {
-			p->regs [slot] = (mgreg_t)(gsize)*arg;
+			p->regs [slot] = (host_mgreg_t)(gsize)*arg;
 			continue;
 		}
 
@@ -3019,7 +3019,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
-			p->regs [slot] = (mgreg_t)(gsize)*arg;
+			p->regs [slot] = (host_mgreg_t)(gsize)*arg;
 			break;
 		case MONO_TYPE_U1:
 			p->regs [slot] = *(guint8*)arg;
@@ -3041,8 +3041,8 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 			break;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
-			p->regs [slot ++] = (mgreg_t)(gsize)arg [0];
-			p->regs [slot] = (mgreg_t)(gsize)arg [1];
+			p->regs [slot ++] = (host_mgreg_t)(gsize)arg [0];
+			p->regs [slot] = (host_mgreg_t)(gsize)arg [1];
 			break;
 		case MONO_TYPE_R4:
 			if (ainfo->storage == RegTypeFP) {
@@ -3050,7 +3050,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				p->fpregs [ainfo->reg / 2] = *(double*)&f;
 				p->has_fpregs = 1;
 			} else {
-				p->regs [slot] = *(mgreg_t*)arg;
+				p->regs [slot] = *(host_mgreg_t*)arg;
 			}
 			break;
 		case MONO_TYPE_R8:
@@ -3058,13 +3058,13 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				p->fpregs [ainfo->reg / 2] = *(double*)arg;
 				p->has_fpregs = 1;
 			} else {
-				p->regs [slot ++] = (mgreg_t)(gsize)arg [0];
-				p->regs [slot] = (mgreg_t)(gsize)arg [1];
+				p->regs [slot ++] = (host_mgreg_t)(gsize)arg [0];
+				p->regs [slot] = (host_mgreg_t)(gsize)arg [1];
 			}
 			break;
 		case MONO_TYPE_GENERICINST:
 			if (MONO_TYPE_IS_REFERENCE (t)) {
-				p->regs [slot] = (mgreg_t)(gsize)*arg;
+				p->regs [slot] = (host_mgreg_t)(gsize)*arg;
 				break;
 			} else {
 				if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
@@ -3094,7 +3094,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				slot = ainfo->reg;
 
 			for (j = 0; j < ainfo->size + ainfo->vtsize; ++j)
-				p->regs [slot ++] = ((mgreg_t*)arg) [j];
+				p->regs [slot ++] = ((host_mgreg_t*)arg) [j];
 			break;
 		default:
 			g_assert_not_reached ();
@@ -3111,8 +3111,8 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	DynCallArgs *p = (DynCallArgs*)buf;
 	MonoType *ptype = ainfo->rtype;
 	guint8 *ret = p->ret;
-	mgreg_t res = p->res;
-	mgreg_t res2 = p->res2;
+	host_mgreg_t res = p->res;
+	host_mgreg_t res2 = p->res2;
 
 	switch (ptype->type) {
 	case MONO_TYPE_VOID:
@@ -3167,7 +3167,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 			*(float*)ret = *(float*)&res;
 		break;
 	case MONO_TYPE_R8: {
-		mgreg_t regs [2];
+		host_mgreg_t regs [2];
 
 		g_assert (IS_VFP);
 		if (IS_HARD_FLOAT) {
@@ -7034,7 +7034,7 @@ mono_arch_flush_register_windows (void)
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoMethod*)regs [MONO_ARCH_IMT_REG];
 }
@@ -7090,6 +7090,8 @@ gpointer
 mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 	gpointer fail_tramp)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	int size, i;
 	arminstr_t *code, *start;
 	gboolean large_offsets = FALSE;
@@ -7156,10 +7158,10 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	if (large_offsets) {
 		ARM_PUSH4 (code, ARMREG_R0, ARMREG_R1, ARMREG_IP, ARMREG_PC);
-		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 4 * sizeof (mgreg_t));
+		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 4 * sizeof (host_mgreg_t));
 	} else {
 		ARM_PUSH2 (code, ARMREG_R0, ARMREG_R1);
-		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (mgreg_t));
+		mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (host_mgreg_t));
 	}
 	ARM_LDR_IMM (code, ARMREG_R0, ARMREG_LR, -4);
 	vtable_target = code;
@@ -7237,8 +7239,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				} else {
 					ARM_POP2 (code, ARMREG_R0, ARMREG_R1);
 					if (large_offsets) {
-						mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (mgreg_t));
-						ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 2 * sizeof (target_mgreg_t));
+						mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 2 * sizeof (host_mgreg_t));
+						ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 2 * sizeof (host_mgreg_t));
 					}
 					mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, 0);
 					ARM_LDR_IMM (code, ARMREG_PC, ARMREG_IP, vtable_offset);
@@ -7252,7 +7254,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				/* Load target address */
 				ARM_LDR_IMM (code, ARMREG_R1, ARMREG_PC, 0);
 				/* Save it to the fourth slot */
-				ARM_STR_IMM (code, ARMREG_R1, ARMREG_SP, 3 * sizeof (target_mgreg_t));
+				ARM_STR_IMM (code, ARMREG_R1, ARMREG_SP, 3 * sizeof (host_mgreg_t));
 				/* Restore registers and branch */
 				ARM_POP4 (code, ARMREG_R0, ARMREG_R1, ARMREG_IP, ARMREG_PC);
 				
@@ -7325,6 +7327,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
+	mono_cross_compile_assert_not_reached ();
+
 	return ctx->regs [reg];
 }
 
