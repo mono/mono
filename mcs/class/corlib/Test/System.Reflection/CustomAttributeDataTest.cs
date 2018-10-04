@@ -145,8 +145,7 @@ namespace MonoTests.System.Reflection
 		public void ObjectArrays () 
 		{
 			CheckObjectArrayParam (nameof (MethodDecoratedWithAttribute3));
-			CheckObjectArrayParam (nameof (MethodDecoratedWithAttribute4));	
-			CheckObjectArrayParams ();	
+			CheckObjectArrayParam (nameof (MethodDecoratedWithAttribute4));
 		}
 
 		private void CheckObjectArrayParam (string methodName)
@@ -171,7 +170,9 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (int), arr [1].Value.GetType (), $"{methodName}#10");
 		}
 
-		private void CheckObjectArrayParams ()
+		[Test]
+		// https://github.com/mono/mono/issues/10951
+		public void CheckObjectArrayParams ()
 		{
 			string methodName = nameof (MethodDecoratedWithAttribute5);
 			IList<CustomAttributeData> cdata = CustomAttributeData.GetCustomAttributes (typeof (CustomAttributeDataTest).GetMethod (methodName));
