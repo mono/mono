@@ -24,6 +24,7 @@ clean-bcl:
 # Parameters
 #  $(1): target
 #  $(2): build profiles
+#  $(3): test profiles
 define BclTemplate
 
 .stamp-$(1)-toolchain:
@@ -42,6 +43,7 @@ build-$(1): build-bcl
 .PHONY: build-custom-$(1)
 build-custom-$(1):
 	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)"
+	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)")
 
 .PHONY: package-$(1)
 package-$(1):

@@ -394,5 +394,5 @@ $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android
 $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
-$(eval $(call BclTemplate,android-bcl,monodroid monodroid_tools))
+$(eval $(call BclTemplate,android-bcl,monodroid monodroid_tools,monodroid))
 android_TARGETS += android-bcl
