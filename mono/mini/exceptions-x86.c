@@ -470,7 +470,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
  *   C function called from the throw trampolines.
  */
 void
-mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
+mono_x86_throw_exception (host_mgreg_t *regs, MonoObject *exc,
 						  host_mgreg_t eip, gboolean rethrow, gboolean preserve_ips)
 {
 	mono_cross_compile_assert_not_reached ();
