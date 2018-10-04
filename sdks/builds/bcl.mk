@@ -43,11 +43,7 @@ build-$(1): build-bcl
 .PHONY: build-custom-$(1)
 build-custom-$(1):
 	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)"
-	$$(foreach profile,$(3), \
-		$$(MAKE) -C $$(TOP)/mcs/tools/nunit-lite PROFILE=$$(profile); \
-		$$(MAKE) -C $$(TOP)/mcs/class/corlib test-local PROFILE=$$(profile); \
-		$$(MAKE) -C $$(TOP)/mcs/class/System test-local PROFILE=$$(profile); \
-		$$(MAKE) -C $$(TOP)/mcs/class/System.Core test-local PROFILE=$$(profile);)
+	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)")
 
 .PHONY: package-$(1)
 package-$(1):

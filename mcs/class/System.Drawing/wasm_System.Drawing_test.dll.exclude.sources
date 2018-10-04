@@ -1,0 +1,7 @@
+System.Drawing/GDIPlusTest.cs
+System.Drawing/TestBitmap.cs
+System.Drawing/TestGraphics.cs
+System.Drawing/TestIcon.cs
+System.Drawing/TestIconConverter.cs
+System.Drawing/TestImage.cs
+System.Drawing/TestImageConverter.cs
