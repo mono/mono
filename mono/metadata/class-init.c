@@ -1789,7 +1789,7 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 			}
 
 			if (!inflated->interface_id)
-				mono_class_init (inflated);
+				mono_class_setup_interface_id (inflated);
 
 			co_pair [i].ic = inflated;
 			co_pair [i].offset = gklass->interface_offsets_packed [i];
