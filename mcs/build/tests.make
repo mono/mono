@@ -23,7 +23,7 @@ test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 
 test_nunit_lib = nunitlite.dll
 xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
-xunit_deps := netstandard System.Runtime
+xunit_deps := System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
@@ -169,7 +169,7 @@ endif
 
 NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
 
-$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL)
+$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL) | $(test_lib_dir)
 	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_output).nunitlite.config
 ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
 	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(test_lib_output).nunitlite.config
@@ -331,7 +331,7 @@ run-xunit-test-lib: xunit-test-local
 	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
-$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs
+$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
 $(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
