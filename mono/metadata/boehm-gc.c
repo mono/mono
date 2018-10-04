@@ -419,6 +419,18 @@ mono_gc_get_heap_size (void)
 	return GC_get_heap_size ();
 }
 
+int64_t
+mono_get_max_time_slice_ns()
+{
+    return GC_get_time_limit() * 1000000;
+}
+
+void
+mono_set_max_time_slice_ns(int64_t maxTimeSlice)
+{
+	GC_set_time_limit(maxTimeSlice / 1000000);
+}
+
 gboolean
 mono_gc_is_gc_thread (void)
 {
