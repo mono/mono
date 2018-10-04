@@ -2272,7 +2272,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	/* Reserve space to save LMF and caller saved registers */
 	/*------------------------------------------------------*/
 	if (cfg->method->save_lmf)
-		offset += MONO_ABI_SIZEOF (MonoLMF);
+		offset += sizeof (MonoLMF);
 
 	/*------------------------------------------------------*/
 	/* align the offset 					*/
@@ -2687,7 +2687,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
 
 	parmOffset = cfg->stack_usage - S390_TRACE_STACK_SIZE - cfg->arch.fpSize;
 	if (cfg->method->save_lmf)
-		parmOffset -= MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
+		parmOffset -= sizeof(MonoLMF);
 	fpOffset   = parmOffset + (5*sizeof(gpointer));
 	baseReg = STK_BASE;
 
@@ -2739,7 +2739,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	saveOffset = cfg->stack_usage - S390_TRACE_STACK_SIZE - cfg->arch.fpSize;
 	if (method->save_lmf)
-		saveOffset -= MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
+		saveOffset -= sizeof(MonoLMF);
 
 handle_enum:
 	switch (rtype) {
@@ -4440,7 +4440,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				/*----------------------------------*/
 				/* we have to adjust lmf ebp value  */
 				/*----------------------------------*/
-				int lmfOffset = cfg->stack_usage - MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);
+				int lmfOffset = cfg->stack_usage - sizeof(MonoLMF);
 
 				s390_lgr (code, s390_r13, cfg->frame_reg);
 				if (s390_is_imm16(lmfOffset)) {
@@ -6361,7 +6361,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/*---------------------------------------------------------------*/
 		/* build the MonoLMF structure on the stack - see mini-s390x.h   */
 		/*---------------------------------------------------------------*/
-		lmfOffset = alloc_size - MONO_ABI_MONO_ABI_SIZEOF (MonoLMF);	
+		lmfOffset = alloc_size - sizeof(MonoLMF);	
 											
 		s390_lgr   (code, s390_r13, cfg->frame_reg);		
 		s390_aghi  (code, s390_r13, lmfOffset);					
