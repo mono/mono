@@ -90,11 +90,11 @@ node ("osx-amd64") {
 }
 
 if (!isPr || isWindowsPrBuild) {
-    def parameters = null
+    def parameters = [[$class: 'StringParameterValue', name: 'sha1', value: commitHash]]
+
     if (isWindowsPrBuild) {
-        parameters = [[$class: 'StringParameterValue', name: 'sha1', value: commitHash],
-                      [$class: 'StringParameterValue', name: 'ghprbPullId', value: env.ghprbPullId],
-                      [$class: 'StringParameterValue', name: 'ghprbActualCommit', value: env.ghprbActualCommit]]
+        parameters += [$class: 'StringParameterValue', name: 'ghprbPullId', value: env.ghprbPullId]
+        parameters += [$class: 'StringParameterValue', name: 'ghprbActualCommit', value: env.ghprbActualCommit]
     }
 
     // trigger the Windows build
