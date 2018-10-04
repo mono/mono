@@ -80,11 +80,11 @@ setup-llvm-$(1):
 
 .PHONY: build-llvm-$(1)
 build-llvm-$(1): .stamp-llvm-$(1)-configure
-	cmake --build $$(TOP)/sdks/builds/llvm-$(1)
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
 package-llvm-$(1): setup-llvm-$(1) build-llvm-$(1)
-	cmake --build $$(TOP)/sdks/builds/llvm-$(1) --target install
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1) install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
@@ -186,10 +186,10 @@ setup-llvm-$(1):
 
 .PHONY: build-llvm-$(1)
 build-llvm-$(1): .stamp-llvm-$(1)-configure
-	$$(_llvm-$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1)
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1)
 
 package-llvm-$(1): setup-llvm-$(1) build-llvm-$(1)
-	$$(_llvm-$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1) --target install
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1) install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
