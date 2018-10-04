@@ -112,12 +112,16 @@ typedef enum {
 } MonoGCHandleType;
 
 MONO_API void   mono_gc_collect         (int generation);
+MONO_API int    mono_gc_collect_a_little ();
 MONO_API int    mono_gc_max_generation  (void);
 MONO_API int    mono_gc_get_generation  (MonoObject *object);
 MONO_API int    mono_gc_collection_count (int generation);
 MONO_API int64_t mono_gc_get_used_size   (void);
 MONO_API int64_t mono_gc_get_heap_size   (void);
+MONO_API int64_t mono_gc_get_max_time_slice_ns ();
+MONO_API void   mono_gc_set_max_time_slice_ns (int64_t maxTimeSlice);
 MONO_API MonoBoolean mono_gc_pending_finalizers (void);
+MONO_API MonoBoolean mono_gc_is_incremental (void);
 MONO_API void     mono_gc_finalize_notify    (void);
 MONO_API int    mono_gc_invoke_finalizers (void);
 /* heap walking is only valid in the pre-stop-world event callback */

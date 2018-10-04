@@ -281,6 +281,13 @@ mono_gc_collect (int generation)
 	GC_gcollect ();
 }
 
+
+int
+mono_gc_collect_a_little()
+{
+	return GC_collect_a_little();
+}
+
 /**
  * mono_gc_max_generation:
  *
@@ -384,6 +391,24 @@ int64_t
 mono_gc_get_heap_size (void)
 {
 	return GC_get_heap_size ();
+}
+
+int64_t
+mono_gc_get_max_time_slice_ns()
+{
+	return GC_get_time_limit_ns();
+}
+
+void
+mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
+{
+	GC_set_time_limit_ns(maxTimeSlice);
+}
+
+MonoBoolean 
+mono_gc_is_incremental()
+{
+    return GC_is_incremental_mode();
 }
 
 gboolean
