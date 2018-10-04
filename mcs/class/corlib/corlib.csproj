@@ -339,13 +339,16 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IFormattable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\DirectoryNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\EndOfStreamException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Error.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileAccess.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileShare.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\MemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathTooLongException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\SeekOrigin.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamHelpers.CopyValidation.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStreamWrapper.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObservable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObserver.cs" />
@@ -1002,7 +1005,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\filesystemenumerable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesysteminfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\ioexception.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\memorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\pinnedbuffermemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamreader.cs" />
