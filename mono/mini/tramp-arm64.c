@@ -26,7 +26,6 @@
 #include "interp/interp.h"
 #endif
 
-#define CallContext Arm64CallContext
 
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
