@@ -127,7 +127,8 @@ static gboolean mono_install_handler_block_guard (MonoThreadUnwindState *ctx);
 static void mono_uninstall_current_handler_block_guard (void);
 static gboolean mono_exception_walk_trace_internal (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data);
 
-static void mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx);
+static void mono_summarize_managed_stack (MonoThreadSummary *out);
+static void mono_summarize_unmanaged_stack (MonoThreadSummary *out);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
 static void mono_crash_reporting_register_native_library (const char *module_path, const char *module_name);
 
@@ -234,7 +235,8 @@ mono_exceptions_init (void)
 
 	cbs.mono_walk_stack_with_ctx = mono_runtime_walk_stack_with_ctx;
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
-	cbs.mono_summarize_stack = mono_summarize_stack;
+	cbs.mono_summarize_managed_stack = mono_summarize_managed_stack;
+	cbs.mono_summarize_unmanaged_stack = mono_summarize_unmanaged_stack;
 	cbs.mono_summarize_exception = mono_summarize_exception;
 	cbs.mono_register_native_library = mono_crash_reporting_register_native_library;
 
@@ -1282,8 +1284,15 @@ next:
 }
 
 #ifdef DISABLE_CRASH_REPORTING
-static void
-mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
+
+static void 
+mono_summarize_managed_stack (MonoThreadSummary *out)
+{
+	return;
+}
+
+static void 
+mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 {
 	return;
 }
@@ -1555,7 +1564,7 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 
 
 static void 
-mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
+mono_summarize_managed_stack (MonoThreadSummary *out)
 {
 	MonoSummarizeUserData data;
 	memset (&data, 0, sizeof (MonoSummarizeUserData));
@@ -1577,6 +1586,11 @@ mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 		out->error_msg = data.error;
 }
 
+// Always runs on the dumped thread
+static void 
+mono_summarize_unmanaged_stack (MonoThreadSummary *out)
+{
+	MONO_ARCH_CONTEXT_DEF
 	// 
 	// Summarize unmanaged stack
 	// 
@@ -1597,6 +1611,18 @@ mono_summarize_stack (MonoThreadSummary *out, MonoContext *crash_ctx)
 			out->unmanaged_frames [i].unmanaged_data.has_name = TRUE;
 	}
 #endif
+
+	out->lmf = mono_get_lmf ();
+
+	MonoThreadInfo *thread = mono_thread_info_current_unchecked ();
+	out->jit_tls = thread->jit_data;
+	out->domain = mono_domain_get ();
+
+	if (!out->ctx) {
+		out->ctx = &out->ctx_mem;
+		mono_arch_flush_register_windows ();
+		MONO_INIT_CONTEXT_FROM_FUNC (out->ctx, mono_summarize_unmanaged_stack);
+	}
 
 	return;
 }
