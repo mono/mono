@@ -28,9 +28,9 @@ llvm_CMAKE_FLAGS = \
 # Parameters
 #  $(1): version
 #  $(2): target
-#  $(3): configure script
+#  $(3): src
 define LLVMProvisionTemplate
-_$(1)-$(2)_HASH = $$(shell git -C $$(dir $(3)) rev-parse HEAD)
+_$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
 _$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
 _$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
 
@@ -39,11 +39,11 @@ $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
 	touch $$@
 
 .PHONY: download-$(1)-$(2)
-download-$(1)-$(2): $(3) | setup-$(1)-$(2)
+download-$(1)-$(2): | $(3) setup-$(1)-$(2)
 	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
 
 .PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): $(3) | download-$(1)-$(2)
+provision-$(1)-$(2): | $(3) download-$(1)-$(2)
 	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) package-$(1)-$(2))
 
 .PHONY: archive-$(1)-$(2)
@@ -51,12 +51,12 @@ archive-$(1)-$(2): package-$(1)-$(2)
 	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)/CMakeLists.txt))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)))
 ifeq ($(UNAME),Darwin)
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)/configure))
+$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
 endif
 
 ##
@@ -157,12 +157,8 @@ endif
 # Parameters
 #  $(1): target
 #  $(2): arch
-#
-# Flags
-#  llvm-$(1)_CONFIGURE_ENVIRONMENT
+#  $(3): mxe
 define LLVMMxeTemplate
-
-_llvm-$(1)_CMAKE=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-cmake
 
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
@@ -172,12 +168,16 @@ _llvm-$(1)_CMAKE_FLAGS = \
 	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
 	-DLLVM_ENABLE_THREADS=OFF \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/$(3).cmake \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
 	$$(llvm-$(1)_CMAKE_FLAGS)
 
-.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/CMakeLists.txt
+$$(LLVM_SRC)/cmake/modules/$(3).cmake: $(3).cmake.in | $$(LLVM_SRC)
+	sed -e 's,@MXE_PATH@,$$(MXE_PREFIX),' -e 's,@MXE_SUFFIX@,$$(if $$(filter $(UNAME),Darwin),.static),' < $$< > $$@
+
+.stamp-llvm-$(1)-configure: $$(LLVM_SRC)/CMakeLists.txt $$(LLVM_SRC)/cmake/modules/$(3).cmake
 	mkdir -p $$(TOP)/sdks/builds/llvm-$(1)
-	cd $$(TOP)/sdks/builds/llvm-$(1) && $$(_llvm-$(1)_CMAKE) $$(_llvm-$(1)_CMAKE_FLAGS) $$(LLVM_SRC)
+	cd $$(TOP)/sdks/builds/llvm-$(1) && cmake $$(_llvm-$(1)_CMAKE_FLAGS) $$(LLVM_SRC)
 	touch $$@
 
 .PHONY: setup-llvm-$(1)
@@ -199,6 +199,6 @@ endef
 
 ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_FLAGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMMxeTemplate,llvmwin32,i686))
-$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
+$(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
+$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
 endif
