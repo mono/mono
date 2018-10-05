@@ -92,14 +92,20 @@ mono_gc_get_heap_size (void)
 }
 
 int64_t
-mono_get_max_time_slice_ns()
+mono_gc_get_max_time_slice_ns()
 {
 	return 0;
 }
 
 void
-mono_set_max_time_slice_ns(int64_t maxTimeSlice)
+mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
 {
+}
+
+MonoBoolean 
+mono_gc_is_incremental()
+{
+    return FALSE;
 }
 
 gboolean
