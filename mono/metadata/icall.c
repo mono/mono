@@ -5894,7 +5894,10 @@ ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, c
 #endif
 }
 
-#define MONO_MAX_SUMMARY_LEN_ICALL 1100
+// Number derived from trials on relevant hardware.
+// If it seems large, please confirm it's safe to shrink
+// before doing so.
+#define MONO_MAX_SUMMARY_LEN_ICALL 500000
 
 ICALL_EXPORT MonoStringHandle
 ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportable_hash, MonoError *error)
@@ -5902,7 +5905,7 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	MonoStringHandle result;
 
 #ifndef DISABLE_CRASH_REPORTING
-	char scratch [MONO_MAX_SUMMARY_LEN_ICALL];
+	char *scratch = g_malloc0 (MONO_MAX_SUMMARY_LEN_ICALL * sizeof (gchar));
 
 	char *out;
 	MonoStackHash hashes;
@@ -5923,6 +5926,9 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	*portable_hash = (guint64) hashes.offset_free_hash;
 	*unportable_hash = (guint64) hashes.offset_rich_hash;
 	result = mono_string_new_handle (mono_domain_get (), out, error);
+
+	// out is now a pointer into garbage memory
+	g_free (scratch);
 #else
 	*portable_hash = 0;
 	*unportable_hash = 0;
