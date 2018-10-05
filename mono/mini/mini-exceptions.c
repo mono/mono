@@ -119,7 +119,7 @@ static gpointer throw_corlib_exception_func;
 
 static MonoFtnPtrEHCallback ftnptr_eh_callback;
 
-static void mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data);
+static void mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data, gboolean crash_context);
 static void mono_raise_exception_with_ctx (MonoException *exc, MonoContext *ctx);
 static void mono_runtime_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnwindOptions unwind_options, void *user_data);
 static gboolean mono_current_thread_has_handle_block_guard (void);
@@ -1098,7 +1098,7 @@ mono_walk_stack_with_ctx (MonoJitStackWalk func, MonoContext *start_ctx, MonoUnw
 		start_ctx = &extra_ctx;
 	}
 
-	mono_walk_stack_full (func, start_ctx, mono_domain_get (), thread->jit_data, mono_get_lmf (), unwind_options, user_data);
+	mono_walk_stack_full (func, start_ctx, mono_domain_get (), thread->jit_data, mono_get_lmf (), unwind_options, user_data, FALSE);
 }
 
 /**
@@ -1133,7 +1133,7 @@ mono_walk_stack_with_state (MonoJitStackWalk func, MonoThreadUnwindState *state,
 		(MonoDomain *)state->unwind_data [MONO_UNWIND_DATA_DOMAIN],
 		(MonoJitTlsData *)state->unwind_data [MONO_UNWIND_DATA_JIT_TLS],
 		(MonoLMF *)state->unwind_data [MONO_UNWIND_DATA_LMF],
-		unwind_options, user_data);
+		unwind_options, user_data, FALSE);
 }
 
 void
@@ -1154,13 +1154,14 @@ mono_walk_stack (MonoJitStackWalk func, MonoUnwindOptions options, void *user_da
  * \param thread the thread whose stack to walk, can be NULL to use the current thread
  * \param lmf the LMF of \p thread, can be NULL to use the LMF of the current thread
  * \param user_data data passed to the callback
+ * \param crash_context tells us that we're in a context where it's not safe to lock or allocate
  * This function walks the stack of a thread, starting from the state
  * represented by \p start_ctx. For each frame the callback
  * function is called with the relevant info. The walk ends when no more
  * managed stack frames are found or when the callback returns a TRUE value.
  */
 static void
-mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data)
+mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain *domain, MonoJitTlsData *jit_tls, MonoLMF *lmf, MonoUnwindOptions unwind_options, gpointer user_data, gboolean crash_context)
 {
 	gint il_offset;
 	MonoContext ctx, new_ctx;
@@ -1242,14 +1243,24 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 			goto next;
 
 		if ((unwind_options & MONO_UNWIND_LOOKUP_IL_OFFSET) && frame.ji) {
-			MonoDebugSourceLocation *source;
+			MonoDebugSourceLocation *source = NULL;
 
-			source = mono_debug_lookup_source_location (jinfo_get_method (frame.ji), frame.native_offset, domain);
+			// Don't do this when we can be in a signal handler
+			if (!crash_context)
+				source = mono_debug_lookup_source_location (jinfo_get_method (frame.ji), frame.native_offset, domain);
 			if (source) {
 				il_offset = source->il_offset;
 			} else {
+				MonoSeqPointInfo *seq_points = NULL;
+
+				// It's more reliable to look into the global cache if possible
+				if (crash_context)
+					seq_points = (MonoSeqPointInfo *) frame.ji->seq_points;
+				else
+					seq_points = mono_get_seq_points (domain, jinfo_get_method (frame.ji));
+
 				SeqPoint sp;
-				if (mono_find_prev_seq_point_for_native_offset (domain, jinfo_get_method (frame.ji), frame.native_offset, NULL, &sp))
+				if (seq_points && mono_seq_point_find_prev_by_native_offset (seq_points, frame.native_offset, &sp))
 					il_offset = sp.il_offset;
 				else
 					il_offset = -1;
@@ -1457,7 +1468,7 @@ summarize_offset_rich_hash (guint64 accum, MonoFrameSummary *frame)
 }
 
 static gboolean
-summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
+summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset, int il_offset, gboolean managed, gpointer user_data)
 {
 	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) user_data;
 
@@ -1483,8 +1494,6 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 		dest->managed_data.name = (char *) method->name;
 #endif
 
-	MonoDebugSourceLocation *location = NULL;
-
 	if (managed) {
 		if (!method) {
 			ud->error = "Managed method frame, but no provided managed method";
@@ -1499,16 +1508,11 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 
 		dest->managed_data.native_offset = native_offset;
 		dest->managed_data.token = method->token;
-		location = mono_debug_lookup_source_location (method, native_offset, mono_domain_get ());
+		dest->managed_data.il_offset = il_offset;
 	} else {
 		dest->managed_data.token = -1;
 	}
 
-	if (location) {
-		dest->managed_data.il_offset = location->il_offset;
-
-		mono_debug_free_source_location (location);
-	}
 
 	ud->hashes->offset_free_hash = summarize_offset_free_hash (ud->hashes->offset_free_hash, dest);
 	ud->hashes->offset_rich_hash = summarize_offset_rich_hash (ud->hashes->offset_rich_hash, dest);
@@ -1518,6 +1522,23 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	ud->num_frames++;
 	return FALSE;
 }
+
+static gboolean
+summarize_frame_managed_walk (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
+{
+	int il_offset = -1;
+
+	if (managed && method) {
+		MonoDebugSourceLocation *location = mono_debug_lookup_source_location (method, native_offset, mono_domain_get ());
+		if (location) {
+			il_offset = location->il_offset;
+			mono_debug_free_source_location (location);
+		}
+	}
+
+	return summarize_frame_internal (method, ip, native_offset, il_offset, managed, user_data);
+}
+
 
 static gboolean
 summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
@@ -1542,7 +1563,7 @@ summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	if (is_managed)
 		method = jinfo_get_method (frame->ji);
 
-	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, is_managed, data);
+	return summarize_frame_internal (method, (gpointer) ip, frame->native_offset, frame->il_offset, is_managed, data);
 }
 
 static void
@@ -1557,7 +1578,7 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 	data.frames = out->managed_frames;
 	data.hashes = &out->hashes;
 
-	mono_exception_walk_trace (exc, summarize_frame_internal, &data);
+	mono_exception_walk_trace (exc, summarize_frame_managed_walk, &data);
 	out->num_managed_frames = data.num_frames;
 }
 
@@ -1578,7 +1599,7 @@ mono_summarize_managed_stack (MonoThreadSummary *out)
 	// 
 	// Summarize managed stack
 	// 
-	mono_walk_stack_full (summarize_frame, out->ctx, out->domain, out->jit_tls, out->lmf, MONO_UNWIND_LOOKUP_IL_OFFSET, &data);
+	mono_walk_stack_full (summarize_frame, out->ctx, out->domain, out->jit_tls, out->lmf, MONO_UNWIND_LOOKUP_IL_OFFSET, &data, TRUE);
 	out->num_managed_frames = data.num_frames;
 
 	if (data.error != NULL)
