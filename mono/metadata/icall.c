@@ -5967,21 +5967,29 @@ ves_icall_Mono_Runtime_DumpStateSingle (guint64 *portable_hash, guint64 *unporta
 	return result;
 }
 
+#define MONO_MAX_SUMMARY_LEN_ICALL 1100
+
 ICALL_EXPORT MonoStringHandle
 ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportable_hash, MonoError *error)
 {
 	MonoStringHandle result;
 
 #ifdef TARGET_OSX
-	gchar *out;
+	char scratch [MONO_MAX_SUMMARY_LEN_ICALL];
 
+	char *out;
 	MonoStackHash hashes;
 	memset (&hashes, 0, sizeof (MonoStackHash));
 	MonoContext *ctx = NULL;
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 
-	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE, FALSE);
+	// if this works
+	// - give back loader lock during stop
+	mono_thread_info_set_is_async_context (TRUE);
+	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE, FALSE, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
+	mono_thread_info_set_is_async_context (FALSE);
+
 	if (!success)
 		return mono_string_new_handle (mono_domain_get (), "", error);
 

@@ -25,19 +25,25 @@ extern GCStats mono_gc_stats;
 #include <mach/task_info.h>
 #endif
 
-#define MONO_MAX_SUMMARY_LEN 900
+#define MONO_MAX_SUMMARY_LEN 1100
 static JsonWriter writer;
 static GString static_gstr;
-static char output_dump_str [MONO_MAX_SUMMARY_LEN];
+static gchar output_dump_str [MONO_MAX_SUMMARY_LEN];
 
-static void mono_json_writer_init_static (void) {
+static void mono_json_writer_init_memory (gchar *output_dump_str, size_t len)
+{
 	static_gstr.len = 0;
-	static_gstr.allocated_len = MONO_MAX_SUMMARY_LEN;
+	static_gstr.allocated_len = len;
 	static_gstr.str = output_dump_str;
-	memset (output_dump_str, 0, sizeof (output_dump_str));
+	memset (output_dump_str, 0, len * sizeof (gchar));
 
 	writer.indent = 0;
 	writer.text = &static_gstr;
+}
+
+static void mono_json_writer_init_with_static (void) 
+{
+	return mono_json_writer_init_memory (output_dump_str, MONO_MAX_SUMMARY_LEN);
 }
 
 static void
@@ -486,9 +492,14 @@ mono_native_state_free (JsonWriter *writer, gboolean free_data)
 }
 
 void
-mono_summarize_native_state_begin (void)
+mono_summarize_native_state_begin (gchar *mem, size_t size)
 {
-	mono_json_writer_init_static ();
+	// Shared global mutable memory, only use when VM crashing
+	if (!mem)
+		mono_json_writer_init_with_static ();
+	else
+		mono_json_writer_init_memory (mem, size);
+
 	mono_native_state_init (&writer);
 }
 

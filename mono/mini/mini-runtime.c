@@ -4230,7 +4230,7 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
-#ifndef DISABLE_CRASH_REPORTING
+#ifdef TARGET_OSX
 	callbacks.install_state_summarizer = mini_register_sigterm_handler;
 #endif
 

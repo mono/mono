@@ -372,8 +372,8 @@ typedef struct {
 	// For managed stack walking
 
 	MonoDomain *domain;
-	MonoJitTlsData *jit_tls;
-	MonoLMF *lmf;
+	gpointer *jit_tls;
+	gpointer *lmf;
 
 	// Emitted attributes
 
@@ -402,12 +402,13 @@ typedef struct {
 } MonoThreadSummary;
 
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first);
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size);
 
 gboolean
-mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent);
+mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gchar *mem, size_t provided_size);
 
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
+#endif // TARGET_OSX
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */
