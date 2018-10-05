@@ -646,12 +646,12 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 
 	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
 
-	ctx->uc_mcontext.gregs[2] = (unsigned long) user_data;
+	ctx->uc_mcontext.gregs[2] = (gsize)user_data;
 
 	sp -= S390_MINIMAL_STACK_SIZE;
 	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
 	MONO_CONTEXT_SET_BP(ctx, sp);
-	MONO_CONTEXT_SET_IP(ctx, (unsigned long) async_cb);
+	MONO_CONTEXT_SET_IP(ctx, (gsize)async_cb);
 }
 
 /*========================= End of Function ========================*/
