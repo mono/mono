@@ -5632,8 +5632,6 @@ gpointer
 mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 	gpointer fail_tramp)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int i;
 	int size = 0;
 	guint8 *code, *start;
@@ -5763,16 +5761,12 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 MonoMethod*
 mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
 mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
 }
 
@@ -6177,8 +6171,6 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	switch (reg) {
 	case X86_EAX: return ctx->eax;
 	case X86_EBX: return ctx->ebx;
@@ -6197,8 +6189,6 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 void
 mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	switch (reg) {
 	case X86_EAX:
 		ctx->eax = val;

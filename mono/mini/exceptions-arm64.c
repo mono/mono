@@ -26,8 +26,6 @@
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *start, *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
@@ -76,8 +74,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *code;
 	guint8* start;
 	int i, size, offset, gregs_offset, fregs_offset, ctx_offset, num_fregs, frame_size;
@@ -167,8 +163,6 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 static gpointer 
 get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm, gboolean resume_unwind, const char *tramp_name, MonoTrampInfo **info, gboolean aot, gboolean preserve_ips)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *start, *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
@@ -271,40 +265,30 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 gpointer 
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return get_throw_trampoline (256, FALSE, FALSE, FALSE, FALSE, "throw_exception", info, aot, FALSE);
 }
 
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return get_throw_trampoline (256, FALSE, TRUE, FALSE, FALSE, "rethrow_exception", info, aot, FALSE);
 }
 
 gpointer
 mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return get_throw_trampoline (256, FALSE, TRUE, FALSE, FALSE, "rethrow_preserve_exception", info, aot, TRUE);
 }
 
 gpointer 
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return get_throw_trampoline (256, TRUE, FALSE, FALSE, FALSE, "throw_corlib_exception", info, aot, FALSE);
 }
 
 GSList*
 mono_arm_get_exception_trampolines (gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
 
@@ -377,8 +361,6 @@ mono_arm_get_exception_trampolines (gboolean aot)
 void
 mono_arch_exceptions_init (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gpointer tramp;
 	GSList *tramps, *l;
 
@@ -410,8 +392,6 @@ mono_arch_exceptions_init (void)
 void
 mono_arm_throw_exception (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow, gboolean preserve_ips)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ERROR_DECL (error);
 	MonoContext ctx;
 	MonoObject *exc = NULL;
@@ -455,8 +435,6 @@ mono_arm_throw_exception (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs,
 void
 mono_arm_resume_unwind (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoContext ctx;
 
 	/* Adjust pc so it points into the call instruction */
@@ -485,8 +463,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 
 	memset (frame, 0, sizeof (StackFrameInfo));
@@ -568,8 +544,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -623,8 +597,6 @@ mono_arch_ip_from_context (void *sigctx)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	host_mgreg_t sp = (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 
 	// FIXME:
@@ -645,23 +617,17 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MONO_CONTEXT_SET_IP (ctx,func);
 }
 
 void
 mono_arch_undo_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->pc++;
 }
 
 void
 mono_arch_do_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->pc--;
 }

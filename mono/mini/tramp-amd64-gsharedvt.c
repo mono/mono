@@ -43,8 +43,6 @@
 gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int i;
 
 #ifdef DEBUG_AMD64_GSHAREDVT
@@ -150,8 +148,6 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 gpointer
 mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *code, *start;
 	int buf_len;
 
@@ -174,8 +170,6 @@ mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpoint
 gpointer
 mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *code, *buf;
 	int buf_len, cfa_offset;
 	GSList *unwind_ops = NULL;

@@ -205,8 +205,6 @@ mono_arch_create_llvm_native_thunk (MonoDomain *domain, guint8 *addr)
 void
 mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gint32 disp;
 	gpointer *plt_jump_table_entry;
 
@@ -814,8 +812,6 @@ mono_arch_get_call_target (guint8 *code)
 guint32
 mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return *(guint32*)(plt_entry + 6);
 }
 

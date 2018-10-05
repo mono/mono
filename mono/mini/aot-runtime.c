@@ -5133,8 +5133,6 @@ init_plt (MonoAotModule *amodule)
 guint8*
 mono_aot_get_plt_entry (guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoAotModule *amodule = find_aot_module (code);
 	guint8 *target = NULL;
 

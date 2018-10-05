@@ -239,8 +239,6 @@ void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *start = NULL;
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
@@ -294,8 +292,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *start;
 	int i, gregs_offset;
 	guint8 *code;
@@ -384,8 +380,6 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 							guint64 dummy5, guint64 dummy6,
 							MonoContext *mctx, MonoObject *exc, gboolean rethrow, gboolean preserve_ips)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ERROR_DECL (error);
 	MonoContext ctx;
 
@@ -416,8 +410,6 @@ mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy
 								   guint64 dummy5, guint64 dummy6,
 								   MonoContext *mctx, guint32 ex_token_index, gint64 pc_offset)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
@@ -436,8 +428,6 @@ mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint6
 						  guint64 dummy5, guint64 dummy6,
 						  MonoContext *mctx, guint32 dummy7, gint64 dummy8)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	/* Only the register parameters are valid */
 	MonoContext ctx;
 
@@ -457,8 +447,6 @@ mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint6
 static gpointer
 get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, gboolean llvm_abs, gboolean resume_unwind, const char *tramp_name, gboolean aot, gboolean preserve_ips)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8* start;
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
@@ -627,8 +615,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 	int i;
 
@@ -753,8 +739,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -768,8 +752,6 @@ handle_signal_exception (gpointer obj)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint64 sp = ctx->gregs [AMD64_RSP];
 
 	ctx->gregs [AMD64_RDI] = (gsize)user_data;
@@ -795,8 +777,6 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
-	mono_cross_compile_assert_not_reached ();
-
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoContext mctx;
 
@@ -831,8 +811,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 #if defined(MONO_ARCH_USE_SIGACTION)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
@@ -848,8 +826,6 @@ mono_arch_ip_from_context (void *sigctx)
 static MonoObject*
 restore_soft_guard_pages (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	if (jit_tls->stack_ovf_guard_base)
 		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
@@ -872,8 +848,6 @@ restore_soft_guard_pages (void)
 static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gpointer *sp;
 	sp = (gpointer *)(mctx->gregs [AMD64_RSP]);
 	sp -= 1;
@@ -886,8 +860,6 @@ prepare_for_guard_pages (MonoContext *mctx)
 static void
 altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_ovf)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoContext mctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
 
@@ -908,8 +880,6 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_o
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
-	mono_cross_compile_assert_not_reached ();
-
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
 	gpointer *sp;
@@ -949,8 +919,6 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
 
@@ -971,8 +939,6 @@ mono_amd64_get_exception_trampolines (gboolean aot)
 void
 mono_arch_exceptions_init (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GSList *tramps, *l;
 	gpointer tramp;
 
@@ -1002,8 +968,6 @@ mono_arch_exceptions_init (void)
 static void
 mono_arch_unwindinfo_create (gpointer* monoui)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_INFO newunwindinfo;
 	*monoui = newunwindinfo = g_new0 (UNWIND_INFO, 1);
 	newunwindinfo->Version = 1;
@@ -1012,8 +976,6 @@ mono_arch_unwindinfo_create (gpointer* monoui)
 void
 mono_arch_unwindinfo_add_push_nonvol (PUNWIND_INFO unwindinfo, MonoUnwindOp *unwind_op)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_CODE unwindcode;
 	guchar codeindex;
 
@@ -1037,8 +999,6 @@ mono_arch_unwindinfo_add_push_nonvol (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 void
 mono_arch_unwindinfo_add_set_fpreg (PUNWIND_INFO unwindinfo, MonoUnwindOp *unwind_op)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_CODE unwindcode;
 	guchar codeindex;
 
@@ -1065,8 +1025,6 @@ mono_arch_unwindinfo_add_set_fpreg (PUNWIND_INFO unwindinfo, MonoUnwindOp *unwin
 void
 mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unwind_op)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_CODE unwindcode;
 	guchar codeindex;
 	guchar codesneeded;
@@ -1160,8 +1118,6 @@ static RtlDeleteGrowableFunctionTablePtr g_rtl_delete_growable_function_table;
 static void
 init_table_no_lock (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (g_dyn_func_table_inited == FALSE) {
 		g_assert_checked (g_dynamic_function_table_begin == NULL);
 		g_assert_checked (g_dynamic_function_table_end == NULL);
@@ -1196,8 +1152,6 @@ init_table_no_lock (void)
 void
 mono_arch_unwindinfo_init_table (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (g_dyn_func_table_inited == FALSE) {
 
 		AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
@@ -1211,8 +1165,6 @@ mono_arch_unwindinfo_init_table (void)
 static void
 terminate_table_no_lock (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (g_dyn_func_table_inited == TRUE) {
 		if (g_dynamic_function_table_begin != NULL) {
 			// Free all list elements.
@@ -1243,8 +1195,6 @@ terminate_table_no_lock (void)
 void
 mono_arch_unwindinfo_terminate_table (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (g_dyn_func_table_inited == TRUE) {
 
 		AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
@@ -1258,8 +1208,6 @@ mono_arch_unwindinfo_terminate_table (void)
 static GList *
 fast_find_range_in_table_no_lock_ex (gsize begin_range, gsize end_range, gboolean *continue_search)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = NULL;
 
 	// Fast path, look at boundaries.
@@ -1288,8 +1236,6 @@ fast_find_range_in_table_no_lock_ex (gsize begin_range, gsize end_range, gboolea
 static inline DynamicFunctionTableEntry *
 fast_find_range_in_table_no_lock (gsize begin_range, gsize end_range, gboolean *continue_search)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = fast_find_range_in_table_no_lock_ex (begin_range, end_range, continue_search);
 	return (found_entry != NULL) ? (DynamicFunctionTableEntry *)found_entry->data : NULL;
 }
@@ -1297,8 +1243,6 @@ fast_find_range_in_table_no_lock (gsize begin_range, gsize end_range, gboolean *
 static GList *
 find_range_in_table_no_lock_ex (const gpointer code_block, gsize block_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = NULL;
 	gboolean continue_search = FALSE;
 
@@ -1328,8 +1272,6 @@ find_range_in_table_no_lock_ex (const gpointer code_block, gsize block_size)
 static inline DynamicFunctionTableEntry *
 find_range_in_table_no_lock (const gpointer code_block, gsize block_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = find_range_in_table_no_lock_ex (code_block, block_size);
 	return (found_entry != NULL) ? (DynamicFunctionTableEntry *)found_entry->data : NULL;
 }
@@ -1337,8 +1279,6 @@ find_range_in_table_no_lock (const gpointer code_block, gsize block_size)
 static GList *
 find_pc_in_table_no_lock_ex (const gpointer pc)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = NULL;
 	gboolean continue_search = FALSE;
 
@@ -1368,8 +1308,6 @@ find_pc_in_table_no_lock_ex (const gpointer pc)
 static inline DynamicFunctionTableEntry *
 find_pc_in_table_no_lock (const gpointer pc)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GList *found_entry = find_pc_in_table_no_lock_ex (pc);
 	return (found_entry != NULL) ? (DynamicFunctionTableEntry *)found_entry->data : NULL;
 }
@@ -1378,8 +1316,6 @@ find_pc_in_table_no_lock (const gpointer pc)
 static void
 validate_table_no_lock (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	// Validation method checking that table is sorted as expected and don't include overlapped regions.
 	// Method will assert on failure to explicitly indicate what check failed.
 	if (g_dynamic_function_table_begin != NULL) {
@@ -1411,7 +1347,6 @@ validate_table_no_lock (void)
 static inline void
 validate_table_no_lock (void)
 {
-	mono_cross_compile_assert_not_reached ();
 }
 #endif /* ENABLE_CHECKED_BUILD_UNWINDINFO */
 
@@ -1421,8 +1356,6 @@ static PRUNTIME_FUNCTION MONO_GET_RUNTIME_FUNCTION_CALLBACK (DWORD64 ControlPc, 
 DynamicFunctionTableEntry *
 mono_arch_unwindinfo_insert_range_in_table (const gpointer code_block, gsize block_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	DynamicFunctionTableEntry *new_entry = NULL;
 
 	gsize begin_range = (gsize)code_block;
@@ -1522,8 +1455,6 @@ mono_arch_unwindinfo_insert_range_in_table (const gpointer code_block, gsize blo
 static void
 remove_range_in_table_no_lock (GList *entry)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (entry != NULL) {
 		if (entry == g_dynamic_function_table_end)
 			g_dynamic_function_table_end = entry->prev;
@@ -1558,8 +1489,6 @@ remove_range_in_table_no_lock (GList *entry)
 void
 mono_arch_unwindinfo_remove_pc_range_in_table (const gpointer code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
 
 	GList *found_entry = find_pc_in_table_no_lock_ex (code);
@@ -1573,8 +1502,6 @@ mono_arch_unwindinfo_remove_pc_range_in_table (const gpointer code)
 void
 mono_arch_unwindinfo_remove_range_in_table (const gpointer code_block, gsize block_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
 
 	GList *found_entry = find_range_in_table_no_lock_ex (code_block, block_size);
@@ -1588,8 +1515,6 @@ mono_arch_unwindinfo_remove_range_in_table (const gpointer code_block, gsize blo
 PRUNTIME_FUNCTION
 mono_arch_unwindinfo_find_rt_func_in_table (const gpointer code, gsize code_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PRUNTIME_FUNCTION found_rt_func = NULL;
 
 	gsize begin_range = (gsize)code;
@@ -1629,8 +1554,6 @@ mono_arch_unwindinfo_find_rt_func_in_table (const gpointer code, gsize code_size
 static inline PRUNTIME_FUNCTION
 mono_arch_unwindinfo_find_pc_rt_func_in_table (const gpointer pc)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return mono_arch_unwindinfo_find_rt_func_in_table (pc, 0);
 }
 
@@ -1638,8 +1561,6 @@ mono_arch_unwindinfo_find_pc_rt_func_in_table (const gpointer pc)
 static void
 validate_rt_funcs_in_table_no_lock (DynamicFunctionTableEntry *entry)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	// Validation method checking that runtime function table is sorted as expected and don't include overlapped regions.
 	// Method will assert on failure to explicitly indicate what check failed.
 	g_assert_checked (entry != NULL);
@@ -1671,15 +1592,12 @@ validate_rt_funcs_in_table_no_lock (DynamicFunctionTableEntry *entry)
 static inline void
 validate_rt_funcs_in_table_no_lock (DynamicFunctionTableEntry *entry)
 {
-	mono_cross_compile_assert_not_reached ();
 }
 #endif /* ENABLE_CHECKED_BUILD_UNWINDINFO */
 
 PRUNTIME_FUNCTION
 mono_arch_unwindinfo_insert_rt_func_in_table (const gpointer code, gsize code_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PRUNTIME_FUNCTION new_rt_func = NULL;
 
 	gsize begin_range = (gsize)code;
@@ -1794,16 +1712,12 @@ mono_arch_unwindinfo_insert_rt_func_in_table (const gpointer code, gsize code_si
 static PRUNTIME_FUNCTION
 MONO_GET_RUNTIME_FUNCTION_CALLBACK ( DWORD64 ControlPc, IN PVOID Context )
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return mono_arch_unwindinfo_find_pc_rt_func_in_table ((gpointer)ControlPc);
 }
 
 static void
 initialize_unwind_info_internal_ex (GSList *unwind_ops, PUNWIND_INFO unwindinfo)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (unwind_ops != NULL && unwindinfo != NULL) {
 		MonoUnwindOp *unwind_op_data;
 		gboolean sp_alloced = FALSE;
@@ -1840,8 +1754,6 @@ initialize_unwind_info_internal_ex (GSList *unwind_ops, PUNWIND_INFO unwindinfo)
 static PUNWIND_INFO
 initialize_unwind_info_internal (GSList *unwind_ops)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_INFO unwindinfo;
 
 	mono_arch_unwindinfo_create ((gpointer*)&unwindinfo);
@@ -1853,8 +1765,6 @@ initialize_unwind_info_internal (GSList *unwind_ops)
 guchar
 mono_arch_unwindinfo_get_code_count (GSList *unwind_ops)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	UNWIND_INFO unwindinfo = {0};
 	initialize_unwind_info_internal_ex (unwind_ops, &unwindinfo);
 	return unwindinfo.CountOfCodes;
@@ -1863,8 +1773,6 @@ mono_arch_unwindinfo_get_code_count (GSList *unwind_ops)
 PUNWIND_INFO
 mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (!unwind_ops)
 		return NULL;
 
@@ -1874,16 +1782,12 @@ mono_arch_unwindinfo_alloc_unwind_info (GSList *unwind_ops)
 void
 mono_arch_unwindinfo_free_unwind_info (PUNWIND_INFO unwind_info)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	g_free (unwind_info);
 }
 
 guint
 mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoCompile * current_cfg = (MonoCompile *)cfg;
 	g_assert (current_cfg->arch.unwindinfo == NULL);
 	current_cfg->arch.unwindinfo = initialize_unwind_info_internal (current_cfg->unwind_ops);
@@ -1893,8 +1797,6 @@ mono_arch_unwindinfo_init_method_unwind_info (gpointer cfg)
 void
 mono_arch_unwindinfo_install_method_unwind_info (PUNWIND_INFO *monoui, gpointer code, guint code_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_INFO unwindinfo, targetinfo;
 	guchar codecount;
 	guint64 targetlocation;
@@ -1942,8 +1844,6 @@ mono_arch_unwindinfo_install_method_unwind_info (PUNWIND_INFO *monoui, gpointer 
 void
 mono_arch_unwindinfo_install_tramp_unwind_info (GSList *unwind_ops, gpointer code, guint code_size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	PUNWIND_INFO unwindinfo = initialize_unwind_info_internal (unwind_ops);
 	if (unwindinfo != NULL) {
 		mono_arch_unwindinfo_install_method_unwind_info (&unwindinfo, code, code_size);
@@ -1953,15 +1853,11 @@ mono_arch_unwindinfo_install_tramp_unwind_info (GSList *unwind_ops, gpointer cod
 void
 mono_arch_code_chunk_new (void *chunk, int size)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	mono_arch_unwindinfo_insert_range_in_table (chunk, size);
 }
 
 void mono_arch_code_chunk_destroy (void *chunk)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	mono_arch_unwindinfo_remove_pc_range_in_table (chunk);
 }
 #endif /* MONO_ARCH_HAVE_UNWIND_TABLE */
@@ -1970,8 +1866,6 @@ void mono_arch_code_chunk_destroy (void *chunk)
 MonoContinuationRestore
 mono_tasklets_arch_restore (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	static guint8* saved = NULL;
 	guint8 *code, *start;
 	int cont_reg = AMD64_R9; /* register usable on both call conventions */
@@ -2030,8 +1924,6 @@ mono_tasklets_arch_restore (void)
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	/* 
 	 * When resuming from a signal handler, the stack should be misaligned, just like right after
 	 * a call.
@@ -2104,15 +1996,11 @@ mono_tasklets_arch_restore (void)
 void
 mono_arch_undo_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->gregs [AMD64_RIP]++;
 }
 
 void
 mono_arch_do_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->gregs [AMD64_RIP]--;
 }

@@ -775,8 +775,6 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 gpointer
 mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return (gpointer)regs [ARMREG_R0];
 }
 
@@ -1650,8 +1648,6 @@ arg_need_temp (ArgInfo *ainfo)
 static gpointer
 arg_get_storage (CallContext *ccontext, ArgInfo *ainfo)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	switch (ainfo->storage) {
 		case RegTypeIRegPair:
 		case RegTypeGeneral:
@@ -1670,8 +1666,6 @@ arg_get_storage (CallContext *ccontext, ArgInfo *ainfo)
 static void
 arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int reg_size = ainfo->size * sizeof (host_mgreg_t);
 	g_assert (arg_need_temp (ainfo));
 	memcpy (dest, &ccontext->gregs [ainfo->reg], reg_size);
@@ -1681,8 +1675,6 @@ arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
 static void
 arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int reg_size = ainfo->size * sizeof (host_mgreg_t);
 	g_assert (arg_need_temp (ainfo));
 	memcpy (&ccontext->gregs [ainfo->reg], src, reg_size);
@@ -1693,8 +1685,6 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 void
 mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
@@ -1737,8 +1727,6 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
@@ -1761,8 +1749,6 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 void
 mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
@@ -1796,8 +1782,6 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	ArgInfo *ainfo;
@@ -2915,8 +2899,6 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 MonoDynCallInfo*
 mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
 	int i;
@@ -2943,8 +2925,6 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 void
 mono_arch_dyn_call_free (MonoDynCallInfo *info)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 
 	g_free (ainfo->cinfo);
@@ -2954,8 +2934,6 @@ mono_arch_dyn_call_free (MonoDynCallInfo *info)
 int
 mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 
 	g_assert (ainfo->cinfo->stack_usage % MONO_ARCH_FRAME_ALIGNMENT == 0);
@@ -2965,8 +2943,6 @@ mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
 void
 mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, guint8 *buf)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ArchDynCallInfo *dinfo = (ArchDynCallInfo*)info;
 	CallInfo *cinfo = dinfo->cinfo;
 	DynCallArgs *p = (DynCallArgs*)buf;
@@ -3105,8 +3081,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 void
 mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 	DynCallArgs *p = (DynCallArgs*)buf;
 	MonoType *ptype = ainfo->rtype;
@@ -7042,8 +7016,6 @@ mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 MonoVTable*
 mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return (MonoVTable*)(gsize)regs [MONO_ARCH_RGCTX_REG];
 }
 
@@ -7090,8 +7062,6 @@ gpointer
 mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 	gpointer fail_tramp)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int size, i;
 	arminstr_t *code, *start;
 	gboolean large_offsets = FALSE;
@@ -7327,16 +7297,12 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return ctx->regs [reg];
 }
 
 void
 mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->regs [reg] = val;
 }
 

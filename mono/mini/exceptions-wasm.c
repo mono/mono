@@ -43,8 +43,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (ji)
 		g_error ("Can't unwind compiled code");
 
@@ -60,8 +58,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", (guint8*)wasm_call_filter, 1, NULL, NULL);
 	return (gpointer)wasm_call_filter;
@@ -70,8 +66,6 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", (guint8*)wasm_restore_context, 1, NULL, NULL);
 	return (gpointer)wasm_restore_context;
@@ -79,8 +73,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer 
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (info)
 		*info = mono_tramp_info_create ("throw_corlib_exception", (guint8*)wasm_throw_corlib_exception, 1, NULL, NULL);
 	return (gpointer)wasm_throw_corlib_exception;
@@ -89,8 +81,6 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (info)
 		*info = mono_tramp_info_create ("rethrow_exception", (guint8*)wasm_rethrow_exception, 1, NULL, NULL);
 	return (gpointer)wasm_rethrow_exception;
@@ -107,8 +97,6 @@ mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	if (info)
 		*info = mono_tramp_info_create ("throw_exception", (guint8*)wasm_throw_exception, 1, NULL, NULL);
 	return (gpointer)wasm_throw_exception;

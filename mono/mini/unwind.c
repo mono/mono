@@ -523,8 +523,6 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 				   host_mgreg_t **save_locations, int save_locations_len,
 				   guint8 **out_cfa)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	Loc locations [NUM_HW_REGS];
 	guint8 reg_saved [NUM_HW_REGS];
 	int pos, reg, hwreg, cfa_reg = -1, cfa_offset = 0, offset;

@@ -262,8 +262,6 @@ handle_map_when_gsharedvt_on_stack (ArgInfo *reg_info, int *n, int **map, gboole
 gpointer
 mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	GSharedVtCallInfo *info;
 	CallInfo *caller_cinfo, *callee_cinfo;
 	MonoMethodSignature *caller_sig, *callee_sig;

@@ -63,8 +63,6 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 void
 mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *jump_entry;
 
 	/* Patch the jump table entry used by the plt entry */
@@ -1107,7 +1105,6 @@ mono_arch_get_call_target (guint8 *code)
 guint32
 mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
 	/* The offset is stored as the 4th word of the plt entry */
 	return ((guint32*)plt_entry) [3];
 }
@@ -1118,8 +1115,6 @@ mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *co
 guint8*
 mono_arm_get_thumb_plt_entry (guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int s, j1, j2, imm10, imm11, i1, i2, imm32;
 	guint8 *bl, *base;
 	guint16 t1, t2;

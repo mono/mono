@@ -191,8 +191,6 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 void
 mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint32 ins1, ins2, offset;
 
 	/* Patch the jump table entry used by the plt entry */
@@ -686,7 +684,6 @@ mono_arch_get_call_target (guint8 *code)
 guint32
 mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
-	mono_cross_compile_assert_not_reached ();
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 	return ((guint32*)plt_entry) [8];
 #else

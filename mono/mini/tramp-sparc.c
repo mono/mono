@@ -70,7 +70,6 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code, guint8 *addr)
 void
 mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
-	mono_cross_compile_assert_not_reached ();
 	g_assert_not_reached ();
 }
 

@@ -16,8 +16,6 @@
 gpointer
 mono_x86_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int i;
 	int *map = info->map;
 

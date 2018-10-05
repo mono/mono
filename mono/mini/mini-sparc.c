@@ -2265,8 +2265,6 @@ gpointer
 mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count,
 								gpointer fail_tramp)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	int i;
 	int size = 0;
 	guint32 *code, *start;

@@ -2763,10 +2763,4 @@ MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 MonoMethod*
 mini_method_to_shared (MonoMethod *method); // null if not shared
 
-#ifdef MONO_CROSS_COMPILE
-#define mono_cross_compile_assert_not_reached() g_error ("%s cross compiled run?", __func__);
-#else
-#define mono_cross_compile_assert_not_reached() /* nothing */
-#endif
-
 #endif /* __MONO_MINI_H__ */

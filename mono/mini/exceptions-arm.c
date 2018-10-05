@@ -102,8 +102,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	guint8 *code;
 	guint8* start;
 	int ctx_reg;
@@ -148,8 +146,6 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_arm_throw_exception (MonoObject *exc, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean preserve_ips)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ERROR_DECL (error);
 	MonoContext ctx;
 	gboolean rethrow = sp & 1;
@@ -194,8 +190,6 @@ mono_arm_throw_exception_by_token (guint32 ex_token_index, host_mgreg_t pc, host
 void
 mono_arm_resume_unwind (guint32 dummy1, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoContext ctx;
 
 	pc &= ~1; /* clear the optional rethrow bit */
@@ -439,8 +433,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 
 	memset (frame, 0, sizeof (StackFrameInfo));
@@ -544,8 +536,6 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 handle_signal_exception (gpointer obj)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoContext ctx;
 
@@ -563,8 +553,6 @@ handle_signal_exception (gpointer obj)
 static MONO_NEVER_INLINE gpointer
 get_handle_signal_exception_addr (void)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	return (gpointer)handle_signal_exception;
 }
 
@@ -635,8 +623,6 @@ mono_arch_ip_from_context (void *sigctx)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	host_mgreg_t sp = (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 
 	// FIXME:
@@ -657,8 +643,6 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 void
 mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	MONO_CONTEXT_SET_IP (ctx,func);
 	if ((host_mgreg_t)MONO_CONTEXT_GET_IP (ctx) & 1)
 		/* Transition to thumb */
@@ -671,8 +655,6 @@ mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 void
 mono_arch_undo_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	ctx->pc++;
 
 	if (mono_arm_thumb_supported ())
@@ -682,8 +664,6 @@ mono_arch_undo_ip_adjustment (MonoContext *ctx)
 void
 mono_arch_do_ip_adjustment (MonoContext *ctx)
 {
-	mono_cross_compile_assert_not_reached ();
-
 	/* Clear thumb bit */
 	ctx->pc &= ~1;
 
