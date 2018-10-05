@@ -149,7 +149,7 @@ MonoClass* mono_class_get_element_class(MonoClass *klass);
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 int mono_class_is_enum (MonoClass *klass);
 MonoType* mono_type_get_underlying_type (MonoType *type);
-
+void mono_register_symfile_for_assembly (const char *assembly_name, const unsigned char *raw_contents, int size);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -241,6 +241,14 @@ static int assembly_count;
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
 {
+	int len = strlen (name);
+	if (!strcasecmp (".pdb", &name [len - 4])) {
+		name = m_strdup (name);
+		//FIXME handle debugging assemblies with .exe extension
+		strcpy (&name [len - 3], "dll");
+		mono_register_symfile_for_assembly (name, data, size);
+		return;
+	}
 	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
