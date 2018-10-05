@@ -4,7 +4,7 @@ namespace Simple {
 	public class Complex {
 		public int A { get; set; }
 		public string B { get; set; }
-		object c;
+		public object c;
 
 		public Complex (int a, string b) {
 			A = a;

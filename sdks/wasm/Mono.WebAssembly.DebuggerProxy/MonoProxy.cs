@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace WsProxy {
+namespace Mono.WebAssembly {
 
 	internal class MonoCommands {
 		public const string GET_CALL_STACK = "MONO.mono_wasm_get_call_stack()";
@@ -253,6 +253,10 @@ namespace WsProxy {
 				return;
 			}
 			var bp = this.breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
+			Console.WriteLine ($"bp is {bp} bp_id is {bp_id.Value}");
+			foreach (var b in this.breakpoints) {
+				Console.WriteLine ($"\tddd {b.RemoteId}");
+			}
 
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
@@ -269,6 +273,7 @@ namespace WsProxy {
 						var method_token = mono_frame ["method_token"].Value<int> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
+						Console.WriteLine ($"frame pos {il_pos} method_token {method_token} asm {assembly_name}");
 						var asm = store.GetAssemblyByName (assembly_name);
 						var method = asm.GetMethodByToken (method_token);
 						var location = method.GetLocationByIl (il_pos);
@@ -332,6 +337,7 @@ namespace WsProxy {
 				hitBreakpoints = bp_list,
 			});
 
+			// Console.WriteLine ($"XXXXXXXXX {o}");
 			SendEvent ("Debugger.paused", o, token);
 		}
 
@@ -454,6 +460,7 @@ namespace WsProxy {
 
 			var res = await SendCommand ("Runtime.evaluate", o, token);
 			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
+			Console.WriteLine ("XXXXX " + res.ToJObject(8888));
 
 			if (ret_code.HasValue) {
 				bp.RemoteId = ret_code.Value;
@@ -477,6 +484,8 @@ namespace WsProxy {
 			var loaded_pdbs = await SendCommand ("Runtime.evaluate", o, token);
 			var the_value = loaded_pdbs.Value? ["result"]? ["value"];
 			var the_pdbs = the_value?.ToObject<string[]> ();
+			Console.WriteLine ("pdbs {0}", string.Join(",", the_pdbs));
+
 			this.store = new DebugStore (the_pdbs);
 
 			foreach (var s in store.AllSources ()) {
@@ -520,6 +529,8 @@ namespace WsProxy {
 					bp.State = BreakPointState.Disabled;
 				}
 			}
+
+			SendEvent ("Mono.runtimeReady", new JObject (), token);
 		}
 
 		async Task<bool> RemoveBreakpoint(int msg_id, JObject args, CancellationToken token) {

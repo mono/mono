@@ -9,6 +9,8 @@ class Driver {
 	static bool enable_debug, enable_linker;
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_map = new HashSet<string> ();
+	static HashSet<string> asm_list = new HashSet<string> ();
+	static HashSet<string> assemblies_with_dbg_info = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
@@ -132,9 +134,13 @@ class Driver {
 		throw new Exception ($"Could not resolve {asm_name}");
 	}
 
+<<<<<<< HEAD
 	static void Import (string ra, AssemblyKind kind) {
 		if (!asm_map.Add (ra))
 			return;
+=======
+	void Import (string ra, AssemblyKind kind) {
+>>>>>>> [wasm] Add test suite.
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
 		if (add_pdb) {
@@ -146,11 +152,17 @@ class Driver {
 		file_list.Add (ra);
 		Debug ($"Processing {ra} debug {add_pdb}");
 
+<<<<<<< HEAD
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
 
 		if (add_pdb && kind == AssemblyKind.User)
+=======
+		if (add_pdb && kind == AssemblyKind.User) {
+>>>>>>> [wasm] Add test suite.
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
+			assemblies_with_dbg_info.Add (ra);
+		}
 
 		foreach (var ar in image.AssemblyReferences) {
 			var resolve = Resolve (ar.Name, out kind);
@@ -475,22 +487,43 @@ class Driver {
 				continue;
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
+			string filename_pdb = Path.ChangeExtension (filename, "pdb");
+
 
 			var source_file_path = Path.GetFullPath (assembly);
+			var source_file_path_pdb = Path.ChangeExtension (source_file_path, "pdb");
 			string infile = "";
+			string infile_pdb = "";
+			bool emit_pdb = assemblies_with_dbg_info.Contains (source_file_path);
 
 			if (enable_linker) {
+<<<<<<< HEAD
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
 				linker_infiles += $" {a.linkin_path}";
 				linker_ofiles += $" {a.linkout_path}";
 				infile = $"{a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
+=======
+				linker_infiles += $" $builddir/linker-in/{filename}";
+				linker_ofiles += $" $builddir/linker-out/{filename}";
+				infile = $"$builddir/linker-out/{filename}";
+				ninja.WriteLine ($"build $builddir/linker-in/{filename}: cpifdiff {source_file_path}");
+				if (emit_pdb)
+					throw new Exception ("TODO");
+>>>>>>> [wasm] Add test suite.
 			} else {
 				infile = $"$builddir/{filename}";
+
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+				if (emit_pdb) {
+					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
+					infile_pdb = $"$builddir/{filename_pdb}";
+				}
 			}
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {infile}");
+			if (emit_pdb)
+				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 
 			if (enable_aot) {
 				a.bc_path = $"$builddir/{filename}.bc";

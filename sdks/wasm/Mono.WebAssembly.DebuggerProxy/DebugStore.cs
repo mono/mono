@@ -7,7 +7,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 
-namespace WsProxy {
+namespace Mono.WebAssembly {
 	internal class BreakPointRequest {
 		public string Assembly { get; private set; }
 		public string File { get; private set; }
@@ -507,7 +507,12 @@ namespace WsProxy {
 		public SourceLocation FindBestBreakpoint (BreakPointRequest req)
 		{
 			var asm = this.assemblies.FirstOrDefault (a => a.Name == req.Assembly);
+			if (asm == null)
+				return null;
+
 			var src = asm.Sources.FirstOrDefault (s => s.FileName == req.File);
+			if (src == null)
+				return null;
 
 			foreach (var m in src.Methods) {
 				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
