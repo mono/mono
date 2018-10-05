@@ -75,8 +75,8 @@ wrapper_type_names [MONO_WRAPPER_NUM + 1] = {
 	NULL
 };
 
-static const char*
-wrapper_type_to_str (guint32 wrapper_type)
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type)
 {
 	g_assert (wrapper_type < MONO_WRAPPER_NUM);
 
