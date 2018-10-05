@@ -5,4 +5,6 @@
     <PackageOutputPath>$(MSBuildThisFileDirectory)packages</PackageOutputPath>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
+  
+  <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
 </Project>

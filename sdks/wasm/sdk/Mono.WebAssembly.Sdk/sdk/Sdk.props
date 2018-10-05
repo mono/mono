@@ -1,11 +1,32 @@
 <Project>
-  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>
-    <MonoWasmDevTargets
+    <MonoWebAssemblyBuildPackageVersion>0.1</MonoWebAssemblyBuildPackageVersion>
+    <MonoWebAssemblyFrameworkPackageVersion>0.1</MonoWebAssemblyFrameworkPackageVersion>
+    <_IsMonoWasmProject>True</_IsMonoWasmProject>
   </PropertyGroup>
-  <ItemGroup Condition="'$(MonoWebAssemblySdkPath)'==''">
-    <PackageReference Include="Mono.WebAssembly.Build" Version="$(MonoWebAssemblyBuildPackageVersion)" />
-    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(MonoWebAssemblyFrameworkPackageVersion)" />
+
+  <!-- import SDK first so MonoWasm*Path values can come from Directory.props -->
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+
+  <!-- derive other values from MonoWasmSdkPath -->
+  <PropertyGroup Condition="'$(MonoWasmSdkPath)' != ''">
+    <MonoWasmSdkPath Condition="'$(MonoWasmSdkPath)'!='' And !HasTrailingSlash('$(MonoWasmSdkPath)')">$(MonoWasmSdkPath)\</MonoWasmSdkPath>
+    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'==''">$(MonoWasmSdkPath)out\bcl\wasm</MonoWasmFrameworkPath>
+    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0</MonoWasmTargetsPath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\debug</MonoWasmRuntimePath>
+  </PropertyGroup>
+
+  <!-- ensure these paths have consistent trailing slashes -->
+  <PropertyGroup>
+    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'!='' And !HasTrailingSlash('$(MonoWasmTargetsPath)')">$(MonoWasmTargetsPath)\</MonoWasmTargetsPath>
+    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'!='' And !HasTrailingSlash('$(MonoWasmFrameworkPath)')">$(MonoWasmFrameworkPath)\</MonoWasmFrameworkPath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'!='' And !HasTrailingSlash('$(MonoWasmRuntimePath)')">$(MonoWasmRuntimePath)\</MonoWasmRuntimePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mono.WebAssembly.Build" Version="$(MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'!='True'" />
   </ItemGroup>
-  <Import Project="$(MonoWasmSdkDevPath)\Mono.WebAssembly.Build\build\netstandard2.0\Mono.WebAssembly.Build.props" Condition="'$(MonoWasmSdkDevPath)'!=''" />
+
+  <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.props" Condition="'$(MonoWasmTargetsPath)'!=''" />
 </Project>
