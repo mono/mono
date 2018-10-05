@@ -555,7 +555,7 @@ typedef struct {
 #ifndef MONO_PRIVATE_CRASHES
 		// We use ifdef to make it a compile-time error to store this 
 		// symbolicated string on release builds
-		char *name;
+		const char *name;
 #endif
 
 	} managed_data;
@@ -609,10 +609,10 @@ typedef struct {
 } MonoThreadSummary;
 
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first);
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size);
 
 gboolean
-mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent);
+mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gchar *mem, size_t provided_size);
 
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
