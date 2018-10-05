@@ -150,6 +150,9 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
         ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        if [[ ${CI_TAGS} != *'pull-request'* ]]; then
+            ${TESTCMD} --label=archive-debug --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
+        fi
 
         ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
         ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
