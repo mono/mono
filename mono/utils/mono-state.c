@@ -25,17 +25,21 @@ extern GCStats mono_gc_stats;
 #include <mach/task_info.h>
 #endif
 
-#define MONO_MAX_SUMMARY_LEN 1100
-static JsonWriter writer;
-static GString static_gstr;
+#define MONO_MAX_SUMMARY_LEN 2500
 static gchar output_dump_str [MONO_MAX_SUMMARY_LEN];
 
-static void mono_json_writer_init_memory (gchar *output_dump_str, size_t len)
+static JsonWriter writer;
+static GString static_gstr;
+
+static void mono_json_writer_init_memory (gchar *output_dump_str, int len)
 {
+	memset (&static_gstr, 0, sizeof (static_gstr));
+	memset (&writer, 0, sizeof (writer));
+	memset (output_dump_str, 0, len * sizeof (gchar));
+
 	static_gstr.len = 0;
 	static_gstr.allocated_len = len;
 	static_gstr.str = output_dump_str;
-	memset (output_dump_str, 0, len * sizeof (gchar));
 
 	writer.indent = 0;
 	writer.text = &static_gstr;
@@ -46,6 +50,19 @@ static void mono_json_writer_init_with_static (void)
 	return mono_json_writer_init_memory (output_dump_str, MONO_MAX_SUMMARY_LEN);
 }
 
+static void assert_has_space (void)
+{
+	// Each individual key/value append should be roughly less than this many characters
+	const int margin = 35;
+
+	// Not using static, exit
+	if (static_gstr.allocated_len == 0)
+		return;
+
+	if (static_gstr.allocated_len - static_gstr.len < margin)
+		g_error ("Ran out of space to create crash dump json blob.");
+}
+
 static void
 mono_native_state_add_ctx (JsonWriter *writer, MonoContext *ctx)
 {
@@ -54,14 +71,17 @@ mono_native_state_add_ctx (JsonWriter *writer, MonoContext *ctx)
 	mono_json_writer_object_key(writer, "ctx");
 	mono_json_writer_object_begin(writer);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "IP");
 	mono_json_writer_printf (writer, "\"%p\",\n", (gpointer) MONO_CONTEXT_GET_IP (ctx));
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "SP");
 	mono_json_writer_printf (writer, "\"%p\",\n", (gpointer) MONO_CONTEXT_GET_SP (ctx));
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "BP");
 	mono_json_writer_printf (writer, "\"%p\"\n", (gpointer) MONO_CONTEXT_GET_BP (ctx));
@@ -79,37 +99,44 @@ mono_native_state_add_frame (JsonWriter *writer, MonoFrameSummary *frame)
 	mono_json_writer_object_begin(writer);
 
 	if (frame->is_managed) {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "is_managed");
 		mono_json_writer_printf (writer, "\"%s\",\n", frame->is_managed ? "true" : "false");
 	}
 
 	if (frame->unmanaged_data.is_trampoline) {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "is_trampoline");
 		mono_json_writer_printf (writer, "\"true\",");
 	}
 
 	if (frame->is_managed) {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "guid");
 		mono_json_writer_printf (writer, "\"%s\",\n", frame->managed_data.guid);
 
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "token");
 		mono_json_writer_printf (writer, "\"0x%05x\",\n", frame->managed_data.token);
 
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "native_offset");
 		mono_json_writer_printf (writer, "\"0x%x\",\n", frame->managed_data.native_offset);
 
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "il_offset");
 		mono_json_writer_printf (writer, "\"0x%05x\"\n", frame->managed_data.il_offset);
 
 	} else {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
-		mono_json_writer_object_key(writer, "native_address");
+		mono_json_writer_object_key (writer, "native_address");
 		if (frame->unmanaged_data.ip)
 			mono_json_writer_printf (writer, "\"%p\"", (void *) frame->unmanaged_data.ip);
 		else
@@ -118,6 +145,7 @@ mono_native_state_add_frame (JsonWriter *writer, MonoFrameSummary *frame)
 		if (frame->unmanaged_data.has_name) {
 			mono_json_writer_printf (writer, ",\n");
 
+			assert_has_space ();
 			mono_json_writer_indent (writer);
 			mono_json_writer_object_key(writer, "unmanaged_name");
 			mono_json_writer_printf (writer, "\"%s\"\n", frame->str_descr);
@@ -154,6 +182,8 @@ mono_native_state_add_frames (JsonWriter *writer, int num_frames, MonoFrameSumma
 void
 mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean first_thread)
 {
+	assert_has_space ();
+
 	if (!first_thread) {
 		mono_json_writer_printf (writer, ",\n");
 	}
@@ -161,30 +191,36 @@ mono_native_state_add_thread (JsonWriter *writer, MonoThreadSummary *thread, Mon
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_begin(writer);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "is_managed");
 	mono_json_writer_printf (writer, "%s,\n", thread->is_managed ? "true" : "false");
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "managed_thread_ptr");
 	mono_json_writer_printf (writer, "\"0x%x\",\n", (gpointer) thread->managed_thread_ptr);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "thread_info_addr");
 	mono_json_writer_printf (writer, "\"0x%x\",\n", (gpointer) thread->info_addr);
 
 	if (thread->error_msg != NULL) {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "dumping_error");
 		mono_json_writer_printf (writer, "\"%s\",\n", thread->error_msg);
 	}
 
 	if (thread->name [0] != '\0') {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "thread_name");
 		mono_json_writer_printf (writer, "\"%s\",\n", thread->name);
 	}
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "native_thread_id");
 	mono_json_writer_printf (writer, "\"0x%x\",\n", (gpointer) thread->native_thread_id);
@@ -238,6 +274,7 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 			/*aot_mode = "error";*/
 	/*}*/
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "execution_context");
 	mono_json_writer_object_begin(writer);
@@ -250,6 +287,7 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 	/*mono_json_writer_object_key(writer, "mono_use_llvm");*/
 	/*mono_json_writer_printf (writer, "\"%s\",\n", mono_use_llvm ? "true" : "false");*/
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "coop-enabled");
 	mono_json_writer_printf (writer, "\"%s\"\n", mono_threads_is_cooperative_suspension_enabled () ? "true" : "false");
@@ -270,10 +308,12 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 static void
 mono_native_state_add_version (JsonWriter *writer)
 {
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "configuration");
 	mono_json_writer_object_begin(writer);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "version");
 
@@ -281,6 +321,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"%s\",\n", build);
 	g_free (build);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "tlc");
 #ifdef HAVE_KW_THREAD
@@ -289,6 +330,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"normal\",\n");
 #endif /* HAVE_KW_THREAD */
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "sigsgev");
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
@@ -297,6 +339,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"normal\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "notifications");
 #ifdef HAVE_EPOLL
@@ -307,14 +350,17 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"thread+polling\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "architecture");
 	mono_json_writer_printf (writer, "\"%s\",\n", MONO_ARCHITECTURE);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "disabled_features");
 	mono_json_writer_printf (writer, "\"%s\",\n", DISABLED_FEATURES);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "smallconfig");
 #ifdef MONO_SMALL_CONFIG
@@ -323,6 +369,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"disabled\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "bigarrays");
 #ifdef MONO_BIG_ARRAYS
@@ -331,6 +378,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"disabled\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "softdebug");
 #if !defined(DISABLE_SDB)
@@ -339,6 +387,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"disabled\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "interpreter");
 #ifndef DISABLE_INTERPRETER
@@ -347,6 +396,7 @@ mono_native_state_add_version (JsonWriter *writer)
 	mono_json_writer_printf (writer, "\"disabled\",\n");
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "llvm_support");
 #ifdef MONO_ARCH_LLVM_SUPPORTED
@@ -357,6 +407,7 @@ mono_native_state_add_version (JsonWriter *writer)
 #endif
 #endif
 
+	assert_has_space ();
 	mono_json_writer_indent_pop (writer);
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_end (writer);
@@ -366,6 +417,7 @@ mono_native_state_add_version (JsonWriter *writer)
 static void
 mono_native_state_add_memory (JsonWriter *writer)
 {
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "memory");
 	mono_json_writer_object_begin(writer);
@@ -377,10 +429,12 @@ mono_native_state_add_memory (JsonWriter *writer)
 	task_name_t task = mach_task_self ();
 	task_info(task, TASK_BASIC_INFO, (task_info_t) &t_info, &t_info_count);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "Resident Size");
 	mono_json_writer_printf (writer, "\"%lu\",\n", t_info.resident_size);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "Virtual Size");
 	mono_json_writer_printf (writer, "\"%lu\",\n", t_info.virtual_size);
@@ -389,22 +443,27 @@ mono_native_state_add_memory (JsonWriter *writer)
 	GCStats stats;
 	memcpy (&stats, &mono_gc_stats, sizeof (GCStats));
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "minor_gc_time");
 	mono_json_writer_printf (writer, "\"%lu\",\n", stats.minor_gc_time);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "major_gc_time");
 	mono_json_writer_printf (writer, "\"%lu\",\n", stats.major_gc_time);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "minor_gc_count");
 	mono_json_writer_printf (writer, "\"%lu\",\n", stats.minor_gc_count);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "major_gc_count");
 	mono_json_writer_printf (writer, "\"%lu\",\n", stats.major_gc_count);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "major_gc_time_concurrent");
 	mono_json_writer_printf (writer, "\"%lu\"\n", stats.major_gc_time_concurrent);
@@ -418,9 +477,9 @@ mono_native_state_add_memory (JsonWriter *writer)
 static void
 mono_native_state_add_prologue (JsonWriter *writer)
 {
-	mono_json_writer_init (writer);
 	mono_json_writer_object_begin(writer);
 
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "protocol_version");
 	mono_json_writer_printf (writer, "\"%s\",\n", MONO_NATIVE_STATE_PROTOCOL_VERSION);
@@ -435,6 +494,7 @@ mono_native_state_add_prologue (JsonWriter *writer)
 
 	const char *assertion_msg = g_get_assertion_message ();
 	if (assertion_msg != NULL) {
+		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key(writer, "assertion_message");
 
@@ -446,6 +506,7 @@ mono_native_state_add_prologue (JsonWriter *writer)
 	}
 
 	// Start threads array
+	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "threads");
 	mono_json_writer_array_begin (writer);
@@ -492,7 +553,7 @@ mono_native_state_free (JsonWriter *writer, gboolean free_data)
 }
 
 void
-mono_summarize_native_state_begin (gchar *mem, size_t size)
+mono_summarize_native_state_begin (gchar *mem, int size)
 {
 	// Shared global mutable memory, only use when VM crashing
 	if (!mem)
