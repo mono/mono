@@ -9,9 +9,8 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace WsProxy {
-
-	internal struct Result {
+namespace Mono.WebAssembly {
+	public struct Result {
 		public JObject Value { get; private set; }
 		public JObject Error { get; private set; }
 
@@ -52,9 +51,13 @@ namespace WsProxy {
 				});
 			}
 		}
+
+		public override string ToString () {
+			return ToJObject (-1).ToString ();
+		}
 	}
 
-	class WsQueue {
+	internal class WsQueue {
 		Task current_send;
 		List<byte []> pending;
 
@@ -119,16 +122,23 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-				if (result.MessageType == WebSocketMessageType.Close) {
-					return null;
-				}
+				try {
+					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+					if (result.MessageType == WebSocketMessageType.Close) {
+						return null;
+					}
 
-				if (result.EndOfMessage) {
-					mem.Write (buff, 0, result.Count);
-					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-				} else {
-					mem.Write (buff, 0, result.Count);
+					if (result.EndOfMessage) {
+						mem.Write (buff, 0, result.Count);
+						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+					} else {
+						mem.Write (buff, 0, result.Count);
+					}
+				} catch (WebSocketException e) {
+					//target just disconnected, meh
+					if (e.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
+						return null;
+					throw;
 				}
 			}
 		}
@@ -190,6 +200,11 @@ namespace WsProxy {
 		{
 			// Debug ($"browser: {msg}");
 			var res = JObject.Parse (msg);
+			if (res ["id"] == null) {
+				Dump (string.Format("BROWSER: event method: {0}", res ["method"]));
+			} else {
+				Dump (string.Format ("BROWSER: response id: {0} data {1}", res ["id"], res));
+			}
 
 			if (res ["id"] == null)
 				pending_ops.Add (OnEvent (res ["method"].Value<string> (), res ["params"] as JObject, token));
@@ -201,6 +216,7 @@ namespace WsProxy {
 		{
 			var res = JObject.Parse (msg);
 
+			Dump (string.Format ("IDE: id: {0} method: {1}", res ["id"], res ["method"]));
 			pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
 		}
 
@@ -222,6 +238,7 @@ namespace WsProxy {
 			//Console.WriteLine ("add cmd id {0}", id);
 			pending_cmds.Add ((id, tcs));
 
+			Dump($"->BROWSER cmd id: {id} method: {method}");
 			Send (this.browser, o, token);
 			return tcs.Task;
 		}
@@ -239,6 +256,7 @@ namespace WsProxy {
 				@params = args
 			});
 
+			Dump($"->IDE cmd method: {method}");
 			Send (this.ide, o, token);
 		}
 
@@ -252,6 +270,7 @@ namespace WsProxy {
 		{
 			JObject o = result.ToJObject (id);
 
+			Dump($"->IDE reply id {id}");
 			Send (this.ide, o, token);
 		}
 
@@ -280,10 +299,14 @@ namespace WsProxy {
 							//Console.WriteLine ("pump {0} {1}", task, pending_ops.IndexOf (task));
 							if (task == pending_ops [0]) {
 								var msg = ((Task<string>)task).Result;
+								if (msg == null)
+									break;
 								pending_ops [0] = ReadOne (browser, x.Token); //queue next read
 								ProcessBrowserMessage (msg, x.Token);
 							} else if (task == pending_ops [1]) {
 								var msg = ((Task<string>)task).Result;
+								if (msg == null)
+									break;
 								pending_ops [1] = ReadOne (ide, x.Token); //queue next read
 								ProcessIdeMessage (msg, x.Token);
 							} else if (task == pending_ops [2]) {
@@ -312,12 +335,17 @@ namespace WsProxy {
 
 		protected void Debug (string msg)
 		{
-			Console.WriteLine (msg);
+			// Console.WriteLine (msg);
 		}
 
 		protected void Info (string msg)
 		{
-			Console.WriteLine (msg);
+			// Console.WriteLine (msg);
+		}
+
+		protected void Dump (string msg)
+		{
+			// Console.WriteLine (msg);
 		}
 	}
 }

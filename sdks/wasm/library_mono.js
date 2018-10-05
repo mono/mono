@@ -1,11 +1,17 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message',
+	$MONO__postset: 'MONO.export_functions (Module);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
 		mono_wasm_runtime_is_ready : false,
-		pump_message: function () {
+
+		export_functions: function (module) {
+			module ["mono_pump_message"] = MONO.mono_pump_message.bind(MONO);
+			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl.bind(MONO);
+		},
+
+		mono_pump_message: function () {
 			if (!this.mono_background_exec)
 				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
 			while (MONO.timeout_queue.length > 0) {
@@ -19,6 +25,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_get_call_stack: function() {
+			console.log(">>>mono_wasm_get_call_stack");
 			if (!this.mono_wasm_current_bp_id)
 				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number', [ ]);
 			if (!this.mono_wasm_enum_frames)
@@ -37,6 +44,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_get_variables: function(scope, var_list) {
+			console.log(">>>mono_wasm_get_variables " + scope);
 			if (!this.mono_wasm_get_var_info)
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", 'void', [ 'number', 'number']);
 
@@ -66,6 +74,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
+			console.log(">>>mono_wasm_set_breakpoint " + assembly + "::" + method_token + ":" + il_offset);
 			if (!this.mono_wasm_set_bp)
 				this.mono_wasm_set_bp = Module.cwrap ('mono_wasm_set_breakpoint', 'number', ['string', 'number', 'number']);
 
@@ -73,6 +82,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_remove_breakpoint: function (breakpoint_id) {
+			console.log(">>>mono_wasm_remove_breakpoint " + breakpoint_id);
 			if (!this.mono_wasm_del_bp)
 				this.mono_wasm_del_bp = Module.cwrap ('mono_wasm_remove_breakpoint', 'number', ['number']);
 
@@ -179,7 +189,8 @@ var MonoSupportLib = {
 		},
 		
 		mono_wasm_clear_all_breakpoints: function() {
-			if (this.mono_clear_bps)
+			console.log(">>>mono_wasm_clear_all_breakpoints");
+			if (!this.mono_clear_bps)
 				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
 			this.mono_clear_bps ();
 		},
