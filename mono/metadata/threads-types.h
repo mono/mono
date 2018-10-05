@@ -369,6 +369,14 @@ typedef struct {
 	gboolean done; // Needed because cond wait can have spurious wakeups
 	MonoSemType done_wait; // Readers are finished with this
 
+	// For managed stack walking
+
+	MonoDomain *domain;
+	MonoJitTlsData *jit_tls;
+	MonoLMF *lmf;
+
+	// Emitted attributes
+
 	gboolean is_managed;
 
 	char name [MONO_MAX_THREAD_NAME_LEN];
@@ -388,7 +396,9 @@ typedef struct {
 	MonoFrameSummary unmanaged_frames [MONO_MAX_SUMMARY_FRAMES];
 
 	MonoStackHash hashes;
+
 	MonoContext *ctx;
+	MonoContext ctx_mem;
 } MonoThreadSummary;
 
 gboolean
