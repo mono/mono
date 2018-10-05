@@ -5964,7 +5964,7 @@ mono_set_thread_dump_dir (gchar* dir) {
 
 #ifdef DISABLE_CRASH_REPORTING
 gboolean
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first)
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
 	return FALSE;
 }
@@ -6124,12 +6124,12 @@ summary_timedwait (SummarizerGlobalState *state, int timeout_seconds)
 }
 
 static void
-summarizer_state_term (SummarizerGlobalState *state, gchar **out)
+summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, size_t provided_size)
 {
 	// See the array writes
 	mono_memory_barrier ();
 
-	mono_summarize_native_state_begin ();
+	mono_summarize_native_state_begin (mem, provided_size);
 	for (int i=0; i < state->nthreads; i++) {
 		gpointer old_value = NULL;
 		while (TRUE) {
@@ -6179,7 +6179,7 @@ summarizer_state_wait (MonoThreadSummary *thread)
 }
 
 gboolean
-mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent)
+mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gchar *mem, size_t provided_size)
 {
 	static SummarizerGlobalState state;
 
@@ -6219,7 +6219,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
 		// Dump and cleanup all the stack memory
-		summarizer_state_term (&state, out);
+		summarizer_state_term (&state, out, mem, provided_size);
 	} else {
 		// Wait here, keeping our stack memory alive
 		// for the dumper
@@ -6234,7 +6234,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 }
 
 gboolean 
-mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean critical_first)
+mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
 	// The staggered values are due to the need to use inc_i64 for the first value
 	static gint64 next_pending_request_id = 0;
@@ -6254,7 +6254,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	// wait for an in-flight dump to finish. If we crashed while dumping, we cannot dump.
 	// We should simply return so we can die cleanly.
 	//
-	// critical_first should be set only from a handler that expects itself to be the only
+	// signal_handler_controller should be set only from a handler that expects itself to be the only
 	// entry point, where the runtime already being dumping means we should just give up
 
 	gboolean success = FALSE;
@@ -6263,12 +6263,12 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 		gint64 next_request_id = mono_atomic_load_i64 ((volatile gint64 *) &request_available_to_run);
 
 		if (next_request_id == this_request_id) {
-			success = mono_threads_summarize_execute (ctx, out, hashes, silent);
+			success = mono_threads_summarize_execute (ctx, out, hashes, silent, mem, provided_size);
 
 			// Only the thread that gets the ticket can unblock future dumpers.
 			mono_atomic_inc_i64 ((volatile gint64 *) &request_available_to_run);
 			break;
-		} else if (critical_first) {
+		} else if (signal_handler_controller) {
 			// We're done. We can't do anything.
 			MOSTLY_ASYNC_SAFE_PRINTF ("Attempted to dump for critical failure when already in dump. Error reporting crashed?");
 			break;

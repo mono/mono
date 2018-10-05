@@ -234,7 +234,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	gchar *output = NULL;
 	MonoStackHash hashes;
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE))
+	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
 		g_assert_not_reached ();
 
 #ifdef TARGET_OSX
@@ -1020,7 +1020,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
 				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE))
+				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
 					g_assert_not_reached ();
 
 				// Wait for the other threads to clean up and exit their handlers
