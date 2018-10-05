@@ -135,27 +135,29 @@ endif
 # Parameters
 #  $(1): target
 #  $(2): arch
+#  $(3): mxe
 define LLVMMxeTemplate
-
-_llvm-$(1)_CMAKE=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-cmake
 
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
 _llvm-$(1)_CMAKE_ARGS = \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/NATIVE.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/$(3).cmake \
 	-DLLVM_ENABLE_THREADS=Off \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
 	$$(llvm-$(1)_CMAKE_ARGS)
+
+$$(TOP)/external/llvm/cmake/modules/$(3).cmake: $(3).cmake.in
+	sed -e 's,@MXE_PATH@,$$(MXE_PREFIX),' -e 's,@MXE_SUFFIX@,$$(if $$(filter $(UNAME),Darwin),.static),' < $$< > $$@
 
 .PHONY: setup-llvm-$(1)
 setup-llvm-$(1):
 	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1): setup-llvm-$(1)
+package-llvm-$(1): $$(TOP)/external/llvm/cmake/modules/$(3).cmake setup-llvm-$(1)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
-		CMAKE=$$(_llvm-$(1)_CMAKE) \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
@@ -163,7 +165,6 @@ package-llvm-$(1): setup-llvm-$(1)
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
-		CMAKE=$$(_llvm-$(1)_CMAKE) \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)"
 
@@ -171,6 +172,6 @@ endef
 
 ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMMxeTemplate,llvmwin32,i686))
-$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
+$(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
+$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
 endif
