@@ -1472,16 +1472,15 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	dest->unmanaged_data.ip = (intptr_t) ip;
 	dest->is_managed = managed;
 
-	if (method && method->wrapper_type != MONO_WRAPPER_NONE) {
+	if (method && method->wrapper_type != MONO_WRAPPER_NONE && method->wrapper_type < MONO_WRAPPER_NUM) {
 		dest->is_managed = FALSE;
 		dest->unmanaged_data.has_name = TRUE;
-		char *name = mono_method_get_name_full (method, TRUE, FALSE, MONO_TYPE_NAME_FORMAT_IL);
-		copy_summary_string_safe (dest->str_descr, name);
+		copy_summary_string_safe (dest->str_descr, mono_wrapper_type_to_str (method->wrapper_type));
 	}
 	
 #ifndef MONO_PRIVATE_CRASHES
 	if (method)
-		dest->managed_data.name = method->name;
+		dest->managed_data.name = (char *) method->name;
 #endif
 
 	MonoDebugSourceLocation *location = NULL;
