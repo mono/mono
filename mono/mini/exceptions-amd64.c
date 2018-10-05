@@ -772,7 +772,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 
 	guint64 sp = ctx->gregs [AMD64_RSP];
 
-	ctx->gregs [AMD64_RDI] = (guint64)user_data;
+	ctx->gregs [AMD64_RDI] = (gsize)user_data;
 
 	/* Allocate a stack frame below the red zone */
 	sp -= 128;
@@ -784,7 +784,7 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	*(guint64*)sp = ctx->gregs [AMD64_RIP];
 #endif
 	ctx->gregs [AMD64_RSP] = sp;
-	ctx->gregs [AMD64_RIP] = (guint64)async_cb;
+	ctx->gregs [AMD64_RIP] = (gsize)async_cb;
 }
 
 /**
