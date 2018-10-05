@@ -5977,23 +5977,38 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 
 #else
 
-gboolean
-mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
+static gboolean
+mono_threads_summarize_native_self (MonoThreadSummary *out, MonoContext *ctx)
 {
 	memset (out, 0, sizeof (MonoThreadSummary));
+	out->ctx = ctx;
 
 	MonoNativeThreadId current = mono_native_thread_id_get();
 	out->native_thread_id = (intptr_t) current;
+
+	mono_get_eh_callbacks ()->mono_summarize_unmanaged_stack (out);
+
 	mono_native_thread_get_name (current, out->name, MONO_MAX_SUMMARY_NAME_LEN);
-	mono_get_eh_callbacks ()->mono_summarize_stack (out, ctx);
-	out->ctx = ctx;
 
 	// FIXME: Figure out how to store and look these up?
 	/*MonoDomain *domain = thread->obj.vtable->domain;*/
 	/*out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);*/
 	/*out->info_addr = (intptr_t) thread->thread_info;*/
-
 	return TRUE;
+}
+
+// Not safe to call from signal handler
+gboolean
+mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
+{
+	gboolean success = mono_threads_summarize_native_self (out, ctx);
+
+	// Finish this on the same thread
+
+	if (success)
+		mono_get_eh_callbacks ()->mono_summarize_managed_stack (out);
+
+	return success;
 }
 
 #define MAX_NUM_THREADS 128
@@ -6009,7 +6024,6 @@ typedef struct {
 	MonoThreadSummary *all_threads [MAX_NUM_THREADS];
 
 	gboolean silent; // print to stdout
-
 } SummarizerGlobalState;
 
 static gboolean
@@ -6119,7 +6133,8 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out)
 	for (int i=0; i < state->nthreads; i++) {
 		gpointer old_value = NULL;
 		while (TRUE) {
-			// Lock it out with sentinel and get value set before that
+			// Lock array slot with sentinel and get value set previously
+			// This lets late dumpers know that they're late.
 			gpointer new_old_value = mono_atomic_cas_ptr ((volatile gpointer *) &state->all_threads [i], GINT_TO_POINTER(-1), old_value);
 
 			if (new_old_value != old_value)
@@ -6131,6 +6146,11 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out)
 		MonoThreadSummary *thread = (MonoThreadSummary *) old_value;
 		if (!thread)
 			continue;
+
+		// We are doing this dump on the controlling thread because this isn't
+		// an async context. There's still some reliance on malloc here, but it's
+		// much more stable to do it all from the controlling thread.
+		mono_get_eh_callbacks ()->mono_summarize_managed_stack (thread);
 
 		mono_summarize_native_state_add_thread (thread, thread->ctx);
 
@@ -6174,7 +6194,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 
 	MonoThreadSummary this_thread;
 
-	if (mono_threads_summarize_one (&this_thread, ctx)) {
+	if (mono_threads_summarize_native_self (&this_thread, ctx)) {
 		// Init the synchronization between the controlling thread and the 
 		// providing thread
 		mono_os_sem_init (&this_thread.done_wait, 0);
@@ -6182,13 +6202,6 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 		// Store a reference to our stack memory into global state
 		gboolean success = summarizer_post_dump (&state, &this_thread, current_idx);
 		if (!success && !state.silent)
-			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
-
-		// FIXME: How many threads should be counted?
-		if (hashes)
-			*hashes = this_thread.hashes;
-
-		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx reported itself.\n", current);
 	} else if (!state.silent) {
 			MOSTLY_ASYNC_SAFE_PRINTF("Thread 0x%zx couldn't report itself.\n", current);
@@ -6212,6 +6225,10 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 		// for the dumper
 		summarizer_state_wait (&this_thread);
 	}
+
+	// FIXME: How many threads should be counted?
+	if (hashes)
+		*hashes = this_thread.hashes;
 
 	return TRUE;
 }
