@@ -1486,7 +1486,7 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 	
 #ifndef MONO_PRIVATE_CRASHES
 	if (method)
-		dest->managed_data.name = mono_method_get_name_full (method, TRUE, FALSE, MONO_TYPE_NAME_FORMAT_IL);
+		dest->managed_data.name = method->name;
 #endif
 
 	MonoDebugSourceLocation *location = NULL;
