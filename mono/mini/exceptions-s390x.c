@@ -242,7 +242,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 static void
 throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp, 
-		 gulong *int_regs, gdouble *fp_regs, gint32 *acc_regs, 
+		 host_mgreg_t *int_regs, gdouble *fp_regs, gint32 *acc_regs,
 		 guint fpc, gboolean rethrow, gboolean preserve_ips)
 {
 	mono_cross_compile_assert_not_reached ();
