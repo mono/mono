@@ -468,8 +468,32 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			}
 
 			return ins;
-		} else
+		} else if (!strcmp (cmethod->name, "SufficientExecutionStack") && cfg->backend->have_sufficient_stack_intrins) {
+			MonoInst *tls_ins;
+			int stack_bottom_reg, stack_end_reg, stack_size_reg, sp_reg, diff_reg, res_reg;
+
+			tls_ins = mono_create_tls_get (cfg, TLS_KEY_JIT_TLS);
+			stack_end_reg = alloc_preg (cfg);
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, stack_end_reg, tls_ins->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, end_of_stack));
+			stack_size_reg = alloc_preg (cfg);
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADI4_MEMBASE, stack_size_reg, tls_ins->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, stack_size));
+			EMIT_NEW_UNALU (cfg, ins, OP_ZEXT_I4_TO_P, stack_size_reg, stack_size_reg);
+			stack_bottom_reg = alloc_preg (cfg);
+			EMIT_NEW_BIALU (cfg, ins, OP_PSUB, stack_bottom_reg, stack_end_reg, stack_size_reg);
+			sp_reg = alloc_preg (cfg);
+			MONO_INST_NEW (cfg, ins, OP_GET_SP);
+			ins->dreg = sp_reg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			diff_reg = alloc_preg (cfg);
+			EMIT_NEW_BIALU (cfg, ins, OP_PSUB, diff_reg, sp_reg, stack_bottom_reg);
+			EMIT_NEW_UNALU (cfg, ins, OP_PCONV_TO_I4, diff_reg, diff_reg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, diff_reg, 131072);
+			res_reg = alloc_ireg (cfg);
+			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, res_reg, -1);
+			return ins;
+		} else {
 			return NULL;
+		}
 	} else if (cmethod->klass == mono_defaults.monitor_class) {
 		gboolean is_enter = FALSE;
 		gboolean is_v4 = FALSE;

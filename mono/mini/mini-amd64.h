@@ -468,6 +468,7 @@ typedef struct {
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
+#define MONO_ARCH_HAVE_SUFFICIENT_STACK_INTRINS 1
 #endif
 
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1

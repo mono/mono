@@ -692,7 +692,8 @@ TESTS_CS_SRC=		\
 	dynamic-method-churn.cs	\
 	verbose.cs \
 	generic-unmanaged-constraint.cs	\
-	bug-10834.cs
+	bug-10834.cs \
+	sufficient-stack-intrins.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1071,6 +1072,10 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += w32message.exe
 endif
 
+endif
+
+if !AMD64
+PLATFORM_DISABLED_TESTS += sufficient-stack-intrins.exe
 endif
 
 if X86

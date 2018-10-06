@@ -1137,7 +1137,8 @@ typedef struct {
 	guint            have_generalized_imt_trampoline : 1;
 	gboolean         have_op_tailcall_membase : 1;
 	gboolean         have_op_tailcall_reg : 1;
-	gboolean	 have_volatile_non_param_register : 1;
+	gboolean	     have_volatile_non_param_register : 1;
+	guint            have_sufficient_stack_intrins : 1;
 	guint            gshared_supported : 1;
 	guint            use_fpstack : 1;
 	guint            ilp32 : 1;
@@ -1670,6 +1671,7 @@ enum {
 #define OP_PCONV_TO_U1 OP_LCONV_TO_U1
 #define OP_PCONV_TO_I2 OP_LCONV_TO_I2
 #define OP_PCONV_TO_U2 OP_LCONV_TO_U2
+#define OP_PCONV_TO_I4 OP_SEXT_I4
 #define OP_PCONV_TO_OVF_I1_UN OP_LCONV_TO_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 OP_LCONV_TO_OVF_I1
 #define OP_PBEQ OP_LBEQ
@@ -1680,6 +1682,7 @@ enum {
 #define OP_PBGE OP_LBGE
 #define OP_STOREP_MEMBASE_REG OP_STOREI8_MEMBASE_REG
 #define OP_STOREP_MEMBASE_IMM OP_STOREI8_MEMBASE_IMM
+#define OP_ZEXT_I4_TO_P OP_ZEXT_I4
 #else
 #define OP_PCONST OP_ICONST
 #define OP_DUMMY_PCONST OP_DUMMY_ICONST
@@ -1696,6 +1699,7 @@ enum {
 #define OP_PCONV_TO_U1 OP_ICONV_TO_U1
 #define OP_PCONV_TO_I2 OP_ICONV_TO_I2
 #define OP_PCONV_TO_U2 OP_ICONV_TO_U2
+#define OP_PCONV_TO_I4 OP_MOVE
 #define OP_PCONV_TO_OVF_I1_UN OP_ICONV_TO_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 OP_ICONV_TO_OVF_I1
 #define OP_PBEQ OP_IBEQ
@@ -1706,6 +1710,7 @@ enum {
 #define OP_PBGE OP_IBGE
 #define OP_STOREP_MEMBASE_REG OP_STOREI4_MEMBASE_REG
 #define OP_STOREP_MEMBASE_IMM OP_STOREI4_MEMBASE_IMM
+#define OP_ZEXT_I4_TO_P OP_MOVE
 #endif
 
 /* Opcodes to load/store regsize quantities */
@@ -2187,6 +2192,7 @@ MonoInst*         mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod
 MonoInst*         mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 MonoInst*         mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field);
 MonoInst*         mini_handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_this, int enum_val_reg, MonoInst *enum_flag);
+MonoInst*         mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key);
 
 MonoMethod*       mini_get_memcpy_method (void);
 MonoMethod*       mini_get_memset_method (void);

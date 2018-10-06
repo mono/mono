@@ -3059,6 +3059,9 @@ init_backend (MonoBackend *backend)
 #ifdef MONO_ARCH_HAVE_OPTIMIZED_DIV
 	backend->optimized_div = 1;
 #endif
+#ifdef MONO_ARCH_HAVE_SUFFICIENT_STACK_INTRINS
+	backend->have_sufficient_stack_intrins = 1;
+#endif
 }
 
 /*

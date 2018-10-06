@@ -6661,6 +6661,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GET_LAST_ERROR:
 			emit_get_last_error(code, ins->dreg);
 			break;
+		case OP_GET_SP:
+			amd64_mov_reg_reg (code, ins->dreg, X86_ESP, 8);
+			break;
+		case OP_SET_SP:
+			amd64_mov_reg_reg (code, X86_ESP, ins->sreg1, 8);
+			break;
 		case OP_FILL_PROF_CALL_CTX:
 			for (int i = 0; i < AMD64_NREG; i++)
 				if (AMD64_IS_CALLEE_SAVED_REG (i) || i == AMD64_RSP)

@@ -824,5 +824,7 @@ gc_param_slot_liveness_def: len:0
 
 generic_class_init: src1:A len:32 clob:c
 get_last_error: dest:i len:32
+get_sp: dest:i len:6
+set_sp: src1:i len:6
 
 fill_prof_call_ctx: src1:i len:128
