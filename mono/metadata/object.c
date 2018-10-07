@@ -5880,20 +5880,20 @@ mono_object_new_from_token  (MonoDomain *domain, MonoImage *image, guint32 token
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
-	MonoObject *result;
 	MonoClass *klass;
 
 	klass = mono_class_get_checked (image, token, error);
 	mono_error_assert_ok (error);
 	
-	result = mono_object_new_checked (domain, klass, error);
+	MonoObjectHandle result = mono_object_new_handle (domain, klass, error);
 
 	mono_error_cleanup (error);
-	return result;
-	
-}
 
+	HANDLE_FUNCTION_RETURN_OBJ (result);
+}
 
 /**
  * mono_object_clone:
