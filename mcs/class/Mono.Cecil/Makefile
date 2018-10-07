@@ -10,6 +10,7 @@ API_BUILD := $(filter basic build, $(PROFILE))
 ifdef API_BUILD
 DEFAULT_REFERENCES =
 API_BIN_REFS = System.Core System mscorlib
+LIBRARY_USE_INTERMEDIATE_FILE = 1
 else
 LIB_REFS = System.Core System
 endif
