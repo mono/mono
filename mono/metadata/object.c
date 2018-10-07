@@ -142,23 +142,11 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
  * on error and sets \p error.
  */
 gboolean
-mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error)
+mono_runtime_object_init_checked (MonoObject *this_obj_raw, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoMethod *method = NULL;
-	MonoClass *klass = this_obj->vtable->klass;
-
-	error_init (error);
-	method = mono_class_get_method_from_name_checked (klass, ".ctor", 0, 0, error);
-	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
-	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
-
-	if (m_class_is_valuetype (method->klass))
-		this_obj = (MonoObject *)mono_object_unbox (this_obj);
-
-	mono_runtime_invoke_checked (method, this_obj, NULL, error);
-	return is_ok (error);
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoObject, this_obj);
+	HANDLE_FUNCTION_RETURN_VAL (mono_runtime_object_init_handle (this_obj, error));
 }
 
 /* The pseudo algorithm for type initialization from the spec
