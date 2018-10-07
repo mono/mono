@@ -72,6 +72,7 @@ static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
 static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
+GENERATE_TRY_GET_CLASS_WITH_CACHE (handleref, "System.Runtime.InteropServices", "HandleRef")
 
 static
 MonoImage *
@@ -644,7 +645,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		 * while the VAR/MVAR duplicates a type from the context.  So, we need to ensure that the
 		 * ->byref and ->attrs from @type are propagated to the returned type.
 		 */
-		nt = mono_metadata_type_dup (image, inst->type_argv [num]);
+		nt = mono_metadata_type_dup_with_cmods (image, inst->type_argv [num], type);
 		nt->byref = type->byref;
 		nt->attrs = type->attrs;
 		return nt;
@@ -667,7 +668,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 				num, pname ? pname : "", inst->type_argv [num]->type);
 			return NULL;			
 		}
-		nt = mono_metadata_type_dup (image, inst->type_argv [num]);
+		nt = mono_metadata_type_dup_with_cmods (image, inst->type_argv [num], type);
 		nt->byref = type->byref;
 		nt->attrs = type->attrs;
 		return nt;
@@ -790,7 +791,7 @@ mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type, 
 	if (!inflated) {
 		MonoType *shared = mono_metadata_get_shared_type (type);
 
-		if (shared) {
+		if (shared && !type->has_cmods) {
 			return shared;
 		} else {
 			return mono_metadata_type_dup (image, type);

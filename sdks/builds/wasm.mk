@@ -40,7 +40,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 .stamp-wasm-runtime-toolchain:
 	touch $@
 
-.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
+.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
 	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
 	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@

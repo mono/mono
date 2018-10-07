@@ -16,6 +16,9 @@ node ("w64") {
                 // clone and checkout repo
                 checkout scm
 
+                // we need to reset to the commit sha passed to us by the upstream Mac build
+                sh (script: "git reset --hard ${env.sha1} && git submodule update --recursive")
+
                 // get current commit sha
                 commitHash = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
                 currentBuild.displayName = "${commitHash.substring(0,7)}"
