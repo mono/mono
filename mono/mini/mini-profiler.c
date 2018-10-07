@@ -29,32 +29,25 @@ emit_fill_call_ctx (MonoCompile *cfg, MonoInst *method, MonoInst *ret)
 	alloc->flags |= MONO_INST_INIT;
 	MONO_ADD_INS (cfg->cbb, alloc);
 
-	if (cfg->llvm_only) {
-		MonoInst *args_alloc, *ins;
-		MonoMethodSignature *sig;
+	MonoInst *args_alloc, *ins;
+	MonoMethodSignature *sig;
 
-		sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature (cfg->method);
 
-		MONO_INST_NEW (cfg, args_alloc, OP_LOCALLOC_IMM);
-		args_alloc->dreg = alloc_preg (cfg);
-		args_alloc->inst_imm = (sig->param_count + sig->hasthis) * TARGET_SIZEOF_VOID_P;
-		args_alloc->flags |= MONO_INST_INIT;
-		MONO_ADD_INS (cfg->cbb, args_alloc);
-		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, alloc->dreg, MONO_STRUCT_OFFSET (MonoProfilerCallContext, args), args_alloc->dreg);
+	MONO_INST_NEW (cfg, args_alloc, OP_LOCALLOC_IMM);
+	args_alloc->dreg = alloc_preg (cfg);
+	args_alloc->inst_imm = (sig->param_count + sig->hasthis) * TARGET_SIZEOF_VOID_P;
+	args_alloc->flags |= MONO_INST_INIT;
+	MONO_ADD_INS (cfg->cbb, args_alloc);
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, alloc->dreg, MONO_STRUCT_OFFSET (MonoProfilerCallContext, args), args_alloc->dreg);
 
-		for (int i = 0; i < sig->hasthis + sig->param_count; ++i) {
-			NEW_VARLOADA (cfg, ins, cfg->args [i], cfg->args [i]->inst_vtype);
-			MONO_ADD_INS (cfg->cbb, ins);
+	for (int i = 0; i < sig->hasthis + sig->param_count; ++i) {
+		NEW_VARLOADA (cfg, ins, cfg->args [i], cfg->args [i]->inst_vtype);
+		MONO_ADD_INS (cfg->cbb, ins);
 
-			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, args_alloc->dreg, i * TARGET_SIZEOF_VOID_P, ins->dreg);
-		}
-
-		return alloc;
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, args_alloc->dreg, i * TARGET_SIZEOF_VOID_P, ins->dreg);
 	}
 
-	MONO_INST_NEW (cfg, fill_ctx, OP_FILL_PROF_CALL_CTX);
-	fill_ctx->sreg1 = alloc->dreg;
-	MONO_ADD_INS (cfg->cbb, fill_ctx);
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, alloc->dreg, MONO_STRUCT_OFFSET (MonoProfilerCallContext, method), method->dreg);
 
 	if (ret) {
@@ -296,12 +289,7 @@ mini_profiler_context_get_this (MonoProfilerCallContext *ctx)
 	if (ctx->interp_frame)
 		return memdup_with_type (mini_get_interp_callbacks ()->frame_get_this (ctx->interp_frame), m_class_get_this_arg (ctx->method->klass));
 
-	MonoDebugMethodJitInfo *info = mono_debug_find_method (ctx->method, mono_domain_get ());
-
-	if (!info)
-		return NULL;
-
-	return get_variable_buffer (info, info->this_var, &ctx->context);
+	return ctx->args [0];
 }
 
 gpointer
@@ -315,12 +303,7 @@ mini_profiler_context_get_argument (MonoProfilerCallContext *ctx, guint32 pos)
 	if (ctx->interp_frame)
 		return memdup_with_type (mini_get_interp_callbacks ()->frame_get_arg (ctx->interp_frame, pos), sig->params [pos]);
 
-	MonoDebugMethodJitInfo *info = mono_debug_find_method (ctx->method, mono_domain_get ());
-
-	if (!info)
-		return NULL;
-
-	return get_variable_buffer (info, &info->params [pos], &ctx->context);
+	return ctx->args [sig->hasthis + pos];
 }
 
 gpointer
