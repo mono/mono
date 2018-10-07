@@ -73,8 +73,8 @@ struct MonoLMF {
 	 */
 	gpointer    previous_lmf;
 	gpointer    lmf_addr;
-	mgreg_t    pc;
-	mgreg_t    gregs [MONO_ARCH_NUM_LMF_REGS];
+	host_mgreg_t pc;
+	host_mgreg_t gregs [MONO_ARCH_NUM_LMF_REGS];
 };
 
 /* Structure used by the sequence points in AOTed code */
