@@ -121,19 +121,14 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
 	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
-	guint gchandle = 0;
-	gpointer raw;
-
 	if (m_class_is_valuetype (method->klass)) {
-		raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
+		guint gchandle = 0;
+		gpointer raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
+		mono_runtime_invoke_checked (method, raw, NULL, error);
+		mono_gchandle_free (gchandle);
 	} else {
-		gchandle = mono_gchandle_from_handle (this_obj, TRUE);
-		raw = MONO_HANDLE_RAW (this_obj);
+		mono_runtime_invoke_handle (method, this_obj, NULL, error);
 	}
-
-	mono_runtime_invoke_checked (method, raw, NULL, error);
-
-	mono_gchandle_free (gchandle);
 
 	return is_ok (error);
 }
