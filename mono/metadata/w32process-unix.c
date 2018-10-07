@@ -54,6 +54,8 @@
 #include <sys/sysctl.h>
 #include <sys/user.h>
 #include <libutil.h>
+#elif defined(__linux__)
+#include <dirent.h>
 #endif
 
 #include <mono/metadata/object-internals.h>
@@ -1635,8 +1637,6 @@ static void
 close_my_fds (void)
 {
 // TODO: Other platforms.
-//       * On Linux, we can just walk /proc/self/fd? Perhaps in that approach,
-//         you can also just enumerate and close FDs that way instead?
 //       * On macOS, use proc_pidinfo + PROC_PIDLISTFDS? See:
 //         http://blog.palominolabs.com/2012/06/19/getting-the-files-being-used-by-a-process-on-mac-os-x/
 //         (I have no idea how this plays out on i/watch/tvOS.)
@@ -1646,7 +1646,29 @@ close_my_fds (void)
 //         complex stuff between fork and exec. There's likely a way to get
 //         the FD list/count though (maybe look at addclosefrom source in
 //         illumos?) or just walk /proc/pid/fd like Linux?
-#if defined (__FreeBSD__)
+#if defined (__linux__)
+	/* Walk the file descriptors in /proc/self/fd/. Linux has no other API,
+	 * as far as I'm aware. Opening a directory won't create an FD. */
+	struct dirent *dp;
+	DIR *d;
+	int fd;
+	d = opendir ("/proc/self/fd/");
+	if (d) {
+		while ((dp = readdir (d)) != NULL) {
+			if (dp->d_name [0] == '.')
+				continue;
+			fd = atoi (dp->d_name);
+			if (fd > 2)
+				close (fd);
+		}
+		closedir (d);
+		return;
+	} else {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS,
+			   "%s: opening fd dir failed, using fallback",
+			   __func__);
+	}
+#elif defined (__FreeBSD__)
 	/* FreeBSD lets us get a list of FDs. There's a MIB to access them
 	 * directly, but it uses a lot of nasty variable length structures. The
 	 * system library libutil provides a nicer way to get a fixed length
@@ -1689,6 +1711,7 @@ close_my_fds (void)
 			if (fds->pi_ufd [i].fp != 0)
 				close (fds->pi_ufd [i].fp);
 		}
+		return;
 	} else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS,
 			   "%s: getprocs64 failed, using fallback",
