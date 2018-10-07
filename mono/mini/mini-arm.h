@@ -280,9 +280,9 @@ struct MonoLMF {
 	gpointer    lmf_addr;
 	/* This is only set in trampoline LMF frames */
 	MonoMethod *method;
-	mgreg_t    sp;
-	mgreg_t    ip;
-	mgreg_t    fp;
+	host_mgreg_t sp;
+	host_mgreg_t ip;
+	host_mgreg_t fp;
 	/* Currently only used in trampolines on armhf to hold d0-d15. We don't really
 	 * need to put d0-d7 in the LMF, but it simplifies the trampoline code.
 	 */
@@ -291,7 +291,7 @@ struct MonoLMF {
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
 	 */
-	mgreg_t    iregs [14];
+	host_mgreg_t iregs [14];
 };
 
 typedef struct MonoCompileArch {
