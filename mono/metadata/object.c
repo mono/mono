@@ -5911,24 +5911,12 @@ mono_object_clone (MonoObject *obj)
 }
 
 MonoObject *
-mono_object_clone_checked (MonoObject *obj, MonoError *error)
+mono_object_clone_checked (MonoObject *obj_raw, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoClass *klass = mono_object_class (obj);
-
-	int size = m_class_get_instance_size (klass);
-
-	if (m_class_get_rank (klass))
-		return (MonoObject*)mono_array_clone_checked ((MonoArray*)obj, error);
-
-	MonoObject *o = mono_gc_alloc_obj (obj->vtable, size);
-
-	/* If the object doesn't contain references this will do a simple memmove. */
-	if (G_LIKELY (o))
-		mono_gc_wbarrier_object_copy (o, obj);
-
-	return object_new_common_tail (o, klass, error);
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoObject, obj);
+	HANDLE_FUNCTION_RETURN_OBJ (mono_object_clone_handle (obj, error));
 }
 
 MonoObjectHandle
