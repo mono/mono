@@ -52,7 +52,7 @@ struct MonoLMF {
 	gulong     eip;
 	/* Add a dummy field to force iregs to be aligned when cross compiling from x86 */
 	gulong     dummy;
-	mgreg_t    iregs [MONO_SAVED_GREGS]; /* 13..31 */
+	host_mgreg_t iregs [MONO_SAVED_GREGS]; /* 13..31 */
 	gdouble    fregs [MONO_SAVED_FREGS]; /* 14..31 */
 };
 
