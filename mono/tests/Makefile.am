@@ -1752,6 +1752,7 @@ INTERP_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 
+INTERP_DISABLED_TESTS += sufficient-stack-intrins.exe
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
