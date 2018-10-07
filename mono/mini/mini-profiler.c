@@ -20,7 +20,7 @@ emit_fill_call_ctx (MonoCompile *cfg, MonoInst *method, MonoInst *ret)
 {
 	cfg->flags |= MONO_CFG_HAS_ALLOCA;
 
-	MonoInst *alloc, *size, *fill_ctx;
+	MonoInst *alloc, *size;
 
 	EMIT_NEW_ICONST (cfg, size, sizeof (MonoProfilerCallContext));
 	MONO_INST_NEW (cfg, alloc, OP_LOCALLOC);
@@ -288,8 +288,8 @@ mini_profiler_context_get_this (MonoProfilerCallContext *ctx)
 
 	if (ctx->interp_frame)
 		return memdup_with_type (mini_get_interp_callbacks ()->frame_get_this (ctx->interp_frame), m_class_get_this_arg (ctx->method->klass));
-
-	return ctx->args [0];
+	else
+		return memdup_with_type (ctx->args [0], m_class_get_this_arg (ctx->method->klass));
 }
 
 gpointer
@@ -303,7 +303,7 @@ mini_profiler_context_get_argument (MonoProfilerCallContext *ctx, guint32 pos)
 	if (ctx->interp_frame)
 		return memdup_with_type (mini_get_interp_callbacks ()->frame_get_arg (ctx->interp_frame, pos), sig->params [pos]);
 
-	return ctx->args [sig->hasthis + pos];
+	return memdup_with_type (ctx->args [sig->hasthis + pos], sig->params [pos]);
 }
 
 gpointer
