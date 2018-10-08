@@ -109,7 +109,7 @@
 #include <sys/utsname.h>
 #endif
 
-#include "icall.h"
+#include "icall-decl.h"
 
 //#define MONO_DEBUG_ICALLARRAY
 

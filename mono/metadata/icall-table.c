@@ -36,7 +36,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/bsearch.h>
 #include <mono/metadata/icalls.h>
-#include "icall.h"
+#include "icall-decl.h"
 
 // Generate Icall_ constants
 enum {
