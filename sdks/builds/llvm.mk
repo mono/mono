@@ -1,13 +1,4 @@
 
-LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
-
-$(TOP)/sdks/builds/toolchains/llvm:
-	mkdir -p $(dir $@)
-	$(MAKE) -C $(TOP)/llvm -f build.mk $@/CMakeLists.txt \
-		LLVM_PATH="$@"
-
-$(LLVM_SRC)/CMakeLists.txt: | $(LLVM_SRC)
-
 LLVM36_SRC?=$(TOP)/sdks/builds/toolchains/llvm36
 
 $(TOP)/sdks/builds/toolchains/llvm36:
@@ -21,9 +12,9 @@ $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 # Parameters
 #  $(1): version
 #  $(2): target
-#  $(3): configure script
+#  $(3): src
 define LLVMProvisionTemplate
-_$(1)-$(2)_HASH = $$(shell git -C $$(dir $(3)) rev-parse HEAD)
+_$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
 _$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
 _$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
 
@@ -32,11 +23,11 @@ $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
 	touch $$@
 
 .PHONY: download-$(1)-$(2)
-download-$(1)-$(2): $(3) | setup-$(1)-$(2)
+download-$(1)-$(2): | $(3) setup-$(1)-$(2)
 	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
 
 .PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): $(3) | download-$(1)-$(2)
+provision-$(1)-$(2): | $(3) download-$(1)-$(2)
 	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) package-$(1)-$(2))
 
 .PHONY: archive-$(1)-$(2)
@@ -44,12 +35,12 @@ archive-$(1)-$(2): package-$(1)-$(2)
 	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)/CMakeLists.txt))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
 ifeq ($(UNAME),Darwin)
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)/configure))
+$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
 endif
 
 ##
@@ -65,9 +56,8 @@ setup-llvm-$(1):
 	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
+package-llvm-$(1): setup-llvm-$(1)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
-		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
@@ -75,7 +65,6 @@ package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
-		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)"
 
@@ -154,7 +143,7 @@ _llvm-$(1)_CMAKE=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Da
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
 _llvm-$(1)_CMAKE_ARGS = \
-	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/NATIVE.cmake \
 	-DLLVM_ENABLE_THREADS=Off \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
 	$$(llvm-$(1)_CMAKE_ARGS)
@@ -164,10 +153,9 @@ setup-llvm-$(1):
 	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
+package-llvm-$(1): setup-llvm-$(1)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
 		CMAKE=$$(_llvm-$(1)_CMAKE) \
-		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
@@ -176,7 +164,6 @@ package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
 clean-llvm-$(1)::
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
 		CMAKE=$$(_llvm-$(1)_CMAKE) \
-		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)"
 
