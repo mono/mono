@@ -51,11 +51,6 @@
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <OutputPath>./../../../class/lib/testing_aot_full/Facades</OutputPath>
-    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../../class/lib/winaot/Facades</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
@@ -146,12 +141,6 @@
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Reference Include="nunitlite">
-      <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->

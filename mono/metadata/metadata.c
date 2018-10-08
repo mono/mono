@@ -497,7 +497,7 @@ table_description [] = {
 	CUSTOMDEBUGINFORMATION_SCHEMA_OFFSET
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -514,16 +514,6 @@ static const gint16 tableidx [] = {
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 };
-
-#else
-#define TABLEDEF(a,b) b,
-static const char* const
-mono_tables_names [] = {
-#include "mono/cil/tables.def"
-	NULL
-};
-
-#endif
 
 /* If TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
  * that the public key token, culture and version of a candidate assembly matches
@@ -551,11 +541,7 @@ mono_meta_table_name (int table)
 	if ((table < 0) || (table > MONO_TABLE_LAST))
 		return "";
 
-#ifdef HAVE_ARRAY_ELEM_INIT
 	return (const char*)&tablestr + tableidx [table];
-#else
-	return mono_tables_names [table];
-#endif
 }
 
 /* The guy who wrote the spec for this should not be allowed near a
@@ -5699,12 +5685,27 @@ mono_metadata_signature_equal (MonoMethodSignature *sig1, MonoMethodSignature *s
 MonoType *
 mono_metadata_type_dup (MonoImage *image, const MonoType *o)
 {
+	return mono_metadata_type_dup_with_cmods (image, o, o);
+}
+
+/**
+ * Works the same way as mono_metadata_type_dup but pick cmods from @cmods_source
+ */
+MonoType *
+mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const MonoType *cmods_source)
+{
 	MonoType *r = NULL;
-	size_t sizeof_o = mono_sizeof_type (o);
+	size_t sizeof_o = mono_sizeof_type (cmods_source);
 
 	r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_o) : (MonoType *)g_malloc (sizeof_o);
 
-	memcpy (r, o, sizeof_o);
+	if (cmods_source->has_cmods) {
+		g_assert (!image || image == mono_type_get_cmods (cmods_source)->image);
+		memcpy (r, cmods_source, sizeof_o);
+	}
+
+	memcpy (r, o, sizeof (MonoType));
+	r->has_cmods = cmods_source->has_cmods;
 
 	if (o->type == MONO_TYPE_PTR) {
 		r->data.type = mono_metadata_type_dup (image, o->data.type);
