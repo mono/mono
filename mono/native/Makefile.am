@@ -5,6 +5,7 @@ lib_LTLIBRARIES = libmono-native.la
 endif
 
 CC = $(MONO_NATIVE_CC)
+CCLD = $(MONO_NATIVE_CC)
 CCAS = $(MONO_NATIVE_CC)
 CPP = $(MONO_NATIVE_CC) -E
 CXX = $(MONO_NATIVE_CXX)

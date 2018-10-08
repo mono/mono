@@ -5538,6 +5538,8 @@ AC_MSG_CHECKING([Mono.Native support])
 sed_version_pattern='[[0-9]]\{1,2\}\(\.[[0-9]]\{1,2\}\)'
 if test x$target_osx = xyes; then
 	sed_remove_mac_version_pattern="s/-mmacosx-version-min=$sed_version_pattern//g"
+	sed_find_mac_version_pattern="s/.*\(-mmacosx-version-min=$sed_version_pattern\).*/\1/g"
+	mono_native_compat_version=`echo $CC | sed -e $sed_find_mac_version_pattern`
 	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_mac_version_pattern`
 	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_mac_version_pattern`
 	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_mac_version_pattern`
@@ -5564,9 +5566,9 @@ if test x$target_osx = xyes; then
 	], [
 		mono_native_compat=yes
 		mono_native_text="Mac OSX (compat+unified)"
-		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS"
+		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS $mono_native_compat_version"
+		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS $mono_native_compat_version"
 		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -mmacosx-version-min=10.12"
-		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS"
 		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -mmacosx-version-min=10.12"
 	])
 
@@ -5575,10 +5577,13 @@ elif test x$target_ios = xyes; then
 	if test x$target_ios_sim = xyes; then
 		mono_native_text="iOS Simulator"
 		sed_remove_ios_version_pattern="s/-mios-simulator-version-min=$sed_version_pattern//g"
+		sed_find_ios_version_pattern="s/.*\(-mios-simulator-version-min=$sed_version_pattern\).*/\1/g"
 	else
 		mono_native_text="iOS Device"
 		sed_remove_ios_version_pattern="s/-miphoneos-version-min=$sed_version_pattern//g"
+		sed_find_ios_version_pattern="s/.*\(-miphoneos-version-min=$sed_version_pattern\).*/\1/g"
 	fi
+	mono_native_compat_version=`echo $CC | sed -e $sed_find_ios_version_pattern`
 	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_ios_version_pattern`
 	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_ios_version_pattern`
 	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_ios_version_pattern`
@@ -5609,9 +5614,9 @@ elif test x$target_ios = xyes; then
 	], [
 		mono_native_compat=yes
 		mono_native_text="$mono_native_text (compat+unified)"
-		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS"
+		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS $mono_native_compat_version"
+		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS $mono_native_compat_version -no-undefined -fatal_warnings"
 		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -iphoneos-version-min=10"
-		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS -no-undefined -fatal_warnings"
 		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -no-undefined -fatal_warnings -iphoneos-version-min=10"
 	])
 
