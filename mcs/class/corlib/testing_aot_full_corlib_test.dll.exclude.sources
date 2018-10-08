@@ -1,3 +1,5 @@
+../../../build/common/MonoNativeConfig.cs
+Mono/NativePlatformTest.cs
 Microsoft.Win32/RegistryKeyTest.cs
 System.Diagnostics.Contracts/ContractAssertTest.cs
 System.Diagnostics.Contracts/ContractAssumeTest.cs
