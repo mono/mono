@@ -487,7 +487,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			diff_reg = alloc_preg (cfg);
 			EMIT_NEW_BIALU (cfg, ins, OP_PSUB, diff_reg, sp_reg, stack_bottom_reg);
 			EMIT_NEW_UNALU (cfg, ins, OP_PCONV_TO_I4, diff_reg, diff_reg);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, diff_reg, 131072);
+			/* Has to be at least 64kb to avoid hitting the guard page */
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, diff_reg, 128 * 1024);
 			res_reg = alloc_ireg (cfg);
 			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, res_reg, -1);
 			return ins;
