@@ -1,0 +1,21 @@
+<Project>
+  <!--
+  note: this project currently imports the sdk targets directly
+  instead of importing the sdk, as otherwise it cannot override
+  the MonoWasmSdkPath property
+  -->
+  <PropertyGroup>
+    <MonoWasmSdkPath>..\..\..\..\</MonoWasmSdkPath>
+  </PropertyGroup>
+  <Import Project="..\Mono.WebAssembly.Sdk\sdk\Sdk.props" />
+  <PropertyGroup>
+    <TargetFramework>netstandard20</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\sample.cs" />
+    <Reference Include="..\..\WebAssembly.Bindings.dll" />
+    <Reference Include="..\..\WebAssembly.Net.Http.dll" />
+    <Reference Include="..\..\Simple.Dependency.dll" />
+  </ItemGroup>
+  <Import Project="..\Mono.WebAssembly.Sdk\sdk\Sdk.targets" />
+</Project>
