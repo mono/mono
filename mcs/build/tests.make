@@ -272,7 +272,7 @@ endif
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(GENSOURCES_CS)
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(GENSOURCES_CS)
 	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --basedir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
