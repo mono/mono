@@ -17,10 +17,16 @@ LDFLAGS = $(MONO_NATIVE_LDFLAGS)
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
+monodir=$(top_builddir)
+
+mono_libs = \
+	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
+	$(monodir)/mono/sgen/libmonosgen.la	\
+	$(monodir)/mono/utils/libmonoutils.la \
+    $(monodir)/mono/eglib/libeglib.la
+
 common_sources = \
 	pal_config.h \
-	pal-icalls.h \
-	pal-icalls.c \
 	mono-native-platform.h \
 	mono-native-platform.c \
 	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
@@ -41,6 +47,8 @@ ios_sources =
 linux_sources = $(unix_sources)
 
 unix_sources = \
+	pal-icalls.h \
+	pal-icalls.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
@@ -92,17 +100,23 @@ libmono_native_la_CFLAGS = $(MONO_NATIVE_CFLAGS) $(common_cflags)
 
 libmono_native_la_LDFLAGS = $(MONO_NATIVE_LDFLAGS)
 
+libmono_native_la_LIBADD = $(mono_libs)
+
 libmono_native_compat_la_SOURCES = $(common_sources) $(platform_sources) platform-type-compat.c
 
 libmono_native_compat_la_CFLAGS = $(MONO_NATIVE_COMPAT_CFLAGS) $(common_cflags)
 
 libmono_native_compat_la_LDFLAGS = $(MONO_NATIVE_COMPAT_LDFLAGS)
 
+libmono_native_compat_la_LIBADD = $(mono_libs)
+
 libmono_native_unified_la_SOURCES = $(common_sources) $(platform_sources) platform-type-unified.c
 
 libmono_native_unified_la_CFLAGS = $(MONO_NATIVE_UNIFIED_CFLAGS) $(common_cflags)
 
 libmono_native_unified_la_LDFLAGS = $(MONO_NATIVE_UNIFIED_LDFLAGS)
+
+libmono_native_unified_la_LIBADD = $(mono_libs)
 
 MONO = ../../runtime/mono-wrapper
 BCL_BUILD_DIR = ../../mcs/class
