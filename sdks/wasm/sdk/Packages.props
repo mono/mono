@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Update="Microsoft.Build" Version="15.8.166" />
     <PackageReference Update="Microsoft.Build.Framework" Version="15.8.166" />
+    <PackageReference Update="Microsoft.Build.Utilities.Core" Version="15.8.166" />
     <PackageReference Update="Microsoft.Build.Locator" Version="1.0.18" />
     <PackageReference Update="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <PackageReference Update="MSBuild.ProjectCreation" Version="1.2.5" />
