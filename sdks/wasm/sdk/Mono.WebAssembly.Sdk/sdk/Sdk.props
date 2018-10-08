@@ -23,7 +23,12 @@
     <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'!='' And !HasTrailingSlash('$(MonoWasmRuntimePath)')">$(MonoWasmRuntimePath)\</MonoWasmRuntimePath>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(CentralPackagesFile)'!='' And '$(EnableCentralPackageVersions)'!='false'">
+    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(CentralPackagesFile)'=='' Or '$(EnableCentralPackageVersions)'=='false'">
     <PackageReference Include="Mono.WebAssembly.Build" Version="$(MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
     <PackageReference Include="Mono.WebAssembly.Framework" Version="$(MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
   </ItemGroup>
