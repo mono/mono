@@ -615,9 +615,7 @@ static void CollectMonoImageFromAssembly(MonoAssembly *assembly, void *user_data
 MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 {
 	GC_disable();
-
-	if (GC_collection_in_progress() == TRUE)
-		GC_wait_for_gc_completion();
+	GC_wait_for_gc_completion(TRUE);
 
 	GC_stop_world_external();
 
