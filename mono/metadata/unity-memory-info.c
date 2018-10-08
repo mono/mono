@@ -305,9 +305,7 @@ static void AllocateMemoryForMemPool(MonoMemPool* pool, void *user_data)
 
 static void AllocateMemoryForImageMemPool(MonoImage *image, gpointer value, void *user_data)
 {
-	mono_image_lock(image);
 	AllocateMemoryForMemPool(image->mempool, user_data);
-	mono_image_unlock(image);
 }
 
 static void CopyMemPool(MonoMemPool *pool, SectionIterationContext *context)
@@ -317,26 +315,17 @@ static void CopyMemPool(MonoMemPool *pool, SectionIterationContext *context)
 
 static void CopyImageMemPool(MonoImage *image, gpointer value, SectionIterationContext *context)
 {
-	mono_image_lock(image);
 	CopyMemPool(image->mempool, context);
-	mono_image_unlock(image);
 }
 
 static void AllocateMemoryForImageClassCache(MonoImage *image, gpointer *value, void *user_data)
 {
-	mono_image_lock(image);
-
 	AllocateMemoryForSection(user_data, image->class_cache.table, ((uint8_t*)image->class_cache.table) + image->class_cache.size);
-	mono_image_unlock(image);
 }
 
 static void CopyImageClassCache(MonoImage *image, gpointer value, SectionIterationContext *context)
 {
-	mono_image_lock(image);
-
 	CopyHeapSection(context, image->class_cache.table, ((uint8_t*)image->class_cache.table) + image->class_cache.size);
-
-	mono_image_unlock(image);
 }
 
 static void IncrementCountForImageSetMemPoolNumChunks(MonoImageSet *imageSet, void *user_data)
@@ -491,18 +480,7 @@ static void CaptureManagedHeap(MonoManagedHeap* heap, GHashTable* monoImages)
 	data.heap = heap;
 	data.monoImages = monoImages;
 
-	while (TRUE)
-	{
-		GC_call_with_alloc_lock(CaptureHeapInfo, &data);
-		GC_stop_world_external();
-
-		if (MonoManagedHeapStillValid(heap, monoImages))
-			break;
-
-		GC_start_world_external();
-
-		FreeMonoManagedHeap(heap);
-	}
+	CaptureHeapInfo(&data);
 
 	iterationContext.currentSection = heap->sections;
 
@@ -512,8 +490,6 @@ static void CaptureManagedHeap(MonoManagedHeap* heap, GHashTable* monoImages)
 	g_hash_table_foreach(monoImages, (GHFunc)CopyImageMemPool, &iterationContext);
 	g_hash_table_foreach(monoImages, (GHFunc)CopyImageClassCache, &iterationContext);
 	mono_metadata_image_set_foreach(CopyImageSetMemPool, &iterationContext);
-
-	GC_start_world_external();
 }
 
 static void GCHandleIterationCallback(MonoObject* managedObject, GList** managedObjects)
@@ -638,6 +614,15 @@ static void CollectMonoImageFromAssembly(MonoAssembly *assembly, void *user_data
 
 MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 {
+	int wasDisabled = GC_is_disabled();
+	if (!wasDisabled)
+		GC_disable();
+
+	if (GC_collection_in_progress() == TRUE)
+		GC_wait_for_gc_completion();
+
+	GC_stop_world_external();
+
 	MonoManagedMemorySnapshot* snapshot;
 	snapshot = g_new0(MonoManagedMemorySnapshot, 1);
 
@@ -656,6 +641,10 @@ MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 
 	g_hash_table_destroy(monoImages);
 
+	if (!wasDisabled)
+		GC_enable();
+
+	GC_start_world_external();
 	return snapshot;
 }
 
