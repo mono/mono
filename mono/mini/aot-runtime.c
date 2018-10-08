@@ -2905,7 +2905,7 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitIn
 
 	if (is_thumb_code (amodule, code_start))
 		/* Clear thumb flag */
-		code_start = (guint8*)(((mgreg_t)code_start) & ~1);
+		code_start = (guint8*)(((gssize)code_start) & ~1);
 
 	fde = amodule->mono_eh_frame + table [(pos * 2) + 1];	
 	/* This won't overflow because there is +1 entry in the table */
@@ -2976,10 +2976,10 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitIn
 		jei->clause_index = clause_index;
 
 		if (is_thumb_code (amodule, (guint8 *)jei->try_start)) {
-			jei->try_start = (void*)((mgreg_t)jei->try_start & ~1);
-			jei->try_end = (void*)((mgreg_t)jei->try_end & ~1);
+			jei->try_start = (void*)((gssize)jei->try_start & ~1);
+			jei->try_end = (void*)((gssize)jei->try_end & ~1);
 			/* Make sure we transition to thumb when a handler starts */
-			jei->handler_start = (void*)((mgreg_t)jei->handler_start + 1);
+			jei->handler_start = (void*)((gssize)jei->handler_start + 1);
 		}
 	}
 
