@@ -289,15 +289,9 @@ endif
 # TODO: depend on all *.sources for now and figure out how to list only needed files later
 PROFILE_sources = $(wildcard *.sources)
 
-ifneq "x" "x$(PROFILE_RUNTIME)"
-GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
-else
-GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
-endif
-
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp $(GENSOURCES_CS)
-	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 

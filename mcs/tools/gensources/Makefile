@@ -1,17 +1,12 @@
-thisdir = tools/cil-stringreplacer
+thisdir = tools/gensources
 SUBDIRS =
 include ../../build/rules.make
 
-PROGRAM = cil-stringreplacer.exe
+PROGRAM = gensources.exe
 NO_INSTALL = yes
 
 TARGET_NET_REFERENCE = $(BOOTSTRAP_BIN_PROFILE)
 PROGRAM_USE_INTERMEDIATE_FILE = 1
-
-LIB_REFS = System Mono.Cecil
-
-ifdef MCS_MODE
-LIB_REFS += Mono.Cecil.Mdb
-endif
+LIB_REFS = System System.Core
 
 include ../../build/executable.make
