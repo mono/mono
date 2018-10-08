@@ -5611,8 +5611,8 @@ elif test x$target_ios = xyes; then
 		mono_native_text="$mono_native_text (compat+unified)"
 		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS"
 		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -iphoneos-version-min=10"
-		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS"
-		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -iphoneos-version-min=10"
+		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS -no-undefined -fatal_warnings"
+		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -no-undefined -fatal_warnings -iphoneos-version-min=10"
 	])
 
 	AC_MSG_RESULT($mono_native_compat)

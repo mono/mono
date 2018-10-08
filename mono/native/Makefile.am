@@ -16,8 +16,6 @@ LDFLAGS = $(MONO_NATIVE_LDFLAGS)
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
-AM_LDFLAGS = -fatal_warnings
-
 common_sources = \
 	pal_config.h \
 	pal-icalls.h \
@@ -103,7 +101,7 @@ libmono_native_unified_la_SOURCES = $(common_sources) $(platform_sources) platfo
 
 libmono_native_unified_la_CFLAGS = $(MONO_NATIVE_UNIFIED_CFLAGS) $(common_cflags)
 
-libmono_native_unified_la_LDFLAGS = $(MONO_NATIVE_UNIFIED_LDFLAGS) -fatal_warnings
+libmono_native_unified_la_LDFLAGS = $(MONO_NATIVE_UNIFIED_LDFLAGS)
 
 MONO = ../../runtime/mono-wrapper
 BCL_BUILD_DIR = ../../mcs/class
