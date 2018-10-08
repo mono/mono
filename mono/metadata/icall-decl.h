@@ -46,8 +46,9 @@ typedef enum {
 	PInfo_Name = 1 << 5
 } PInfo;
 
-MONO_API int mono_cpu_count (void);
 
+// This is sorted.
+// grep ICALL_EXPORT | sort | uniq
 ICALL_EXPORT GPtrArray* ves_icall_RuntimeType_GetConstructors_native (MonoReflectionTypeHandle, guint32, MonoError*);
 ICALL_EXPORT GPtrArray* ves_icall_RuntimeType_GetEvents_native (MonoReflectionTypeHandle, char*, guint32, guint32, MonoError*);
 ICALL_EXPORT GPtrArray* ves_icall_RuntimeType_GetFields_native (MonoReflectionTypeHandle, char*, guint32, guint32, MonoError*);
@@ -80,15 +81,20 @@ ICALL_EXPORT MonoArrayHandle ves_icall_System_Reflection_MonoMethodInfo_get_para
 ICALL_EXPORT MonoAssemblyName* ves_icall_System_Reflection_AssemblyName_GetNativeName (MonoAssembly*);
 ICALL_EXPORT MonoBoolean ves_icall_IsTransparentProxy (MonoObjectHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_MonoCustomAttrs_IsDefinedInternal (MonoObjectHandle, MonoReflectionTypeHandle, MonoError*);
+ICALL_EXPORT MonoBoolean ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethodHandle, MonoError*);
+ICALL_EXPORT MonoBoolean ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethodHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_Mono_TlsProviderFactory_IsBtlsSupported (MonoError*);
+ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_HasInstantiation (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_HasReferences (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsArray (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsByRef (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsComObject (MonoReflectionTypeHandle, MonoError*);
+ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsGenericTypeDefinition (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsGenericVariable (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsPointer (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsPrimitive (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_is_subclass_of (MonoType* childType, MonoType* baseType);
+ICALL_EXPORT MonoBoolean ves_icall_System_Array_FastCopy (MonoArray* source, int source_idx, MonoArray* dest, int dest_idx, int length);
 ICALL_EXPORT MonoBoolean ves_icall_System_Buffer_BlockCopyInternal (MonoArray* src, gint32 src_offset, MonoArray* dest, gint32 dest_offset, gint32 count);
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsAttached_internal (MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_System_Diagnostics_Debugger_IsLogging (MonoError*);
@@ -113,7 +119,9 @@ ICALL_EXPORT MonoBoolean ves_icall_System_RuntimeType_IsWindowsRuntimeObjectType
 ICALL_EXPORT MonoBoolean ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObjectHandle, MonoError*);
 ICALL_EXPORT MonoBoolean ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_RoOriginateLanguageException (int, MonoStringHandle, gpointer, MonoError*);
+ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Thread_YieldInternal (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_ValueType_Equals (MonoObject* this_obj, MonoObject* that, MonoArray** fields);
+ICALL_EXPORT MonoBoolean ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer* result, gint32* size, MonoError*);
 ICALL_EXPORT MonoClassField* ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage* image, guint32 token, MonoArrayHandle type_args, MonoArrayHandle, MonoResolveTokenError* resolve_error, MonoError*);
 ICALL_EXPORT MonoComInteropProxyHandle ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer, MonoError*);
 ICALL_EXPORT MonoDelegateHandle ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (gpointer, MonoReflectionTypeHandle, MonoError*);
@@ -276,13 +284,6 @@ ICALL_EXPORT float ves_icall_System_MathF_Sqrt (float);
 ICALL_EXPORT float ves_icall_System_MathF_Tan (float);
 ICALL_EXPORT float ves_icall_System_MathF_Tanh (float);
 ICALL_EXPORT float ves_icall_System_Math_Abs_single (float);
-ICALL_EXPORT MonoBoolean ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethodHandle, MonoError*);
-ICALL_EXPORT MonoBoolean ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethodHandle, MonoError*);
-ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_HasInstantiation (MonoReflectionTypeHandle, MonoError*);
-ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_IsGenericTypeDefinition (MonoReflectionTypeHandle, MonoError*);
-ICALL_EXPORT MonoBoolean ves_icall_System_Array_FastCopy (MonoArray* source, int source_idx, MonoArray* dest, int dest_idx, int length);
-ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Thread_YieldInternal (void);
-ICALL_EXPORT MonoBoolean ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer* result, gint32* size, MonoError*);
 ICALL_EXPORT gint ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetOffsetToStringData (void);
 ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcessId (MonoError*);
 ICALL_EXPORT gint32 ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer, gint32, MonoError*);
@@ -293,6 +294,7 @@ ICALL_EXPORT gint32 ves_icall_System_Array_GetLength (MonoArrayHandle, gint32, M
 ICALL_EXPORT gint32 ves_icall_System_Array_GetLowerBound (MonoArrayHandle, gint32, MonoError*);
 ICALL_EXPORT gint32 ves_icall_System_Array_GetRank (MonoObjectHandle, MonoError*);
 ICALL_EXPORT gint32 ves_icall_System_Buffer_ByteLengthInternal (MonoArray*);
+ICALL_EXPORT gint32 ves_icall_System_Environment_get_ProcessorCount (void);
 ICALL_EXPORT gint32 ves_icall_System_Environment_get_TickCount (void);
 ICALL_EXPORT gint32 ves_icall_System_Reflection_Module_GetMDStreamVersion (MonoImage* image, MonoError*);
 ICALL_EXPORT gint32 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObjectHandle, MonoError*);
