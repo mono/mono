@@ -314,8 +314,11 @@ move_subclasses_not_in_image_foreach_func (MonoClass *klass, MonoClass *subclass
 		   we're removing an image containing a class which
 		   still has a subclass in another image. */
 
+		/* If the image is corlib, the subclasses may be from other
+		 * assemblies since corlib is unloaded last. */
+
 		while (subclass) {
-			g_assert (m_class_get_image (subclass) == image);
+			g_assert (image == mono_defaults.corlib || m_class_get_image (subclass) == image);
 			subclass = class_lookup_rgctx_template (subclass)->next_subclass;
 		}
 
