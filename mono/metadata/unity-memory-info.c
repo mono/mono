@@ -614,9 +614,7 @@ static void CollectMonoImageFromAssembly(MonoAssembly *assembly, void *user_data
 
 MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 {
-	int wasDisabled = GC_is_disabled();
-	if (!wasDisabled)
-		GC_disable();
+	GC_disable();
 
 	if (GC_collection_in_progress() == TRUE)
 		GC_wait_for_gc_completion();
@@ -641,10 +639,9 @@ MonoManagedMemorySnapshot* mono_unity_capture_memory_snapshot()
 
 	g_hash_table_destroy(monoImages);
 
-	if (!wasDisabled)
-		GC_enable();
-
 	GC_start_world_external();
+	GC_enable();
+
 	return snapshot;
 }
 
