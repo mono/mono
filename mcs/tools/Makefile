@@ -51,7 +51,7 @@ net_4_5_dirs := \
 	gacutil
 
 build_SUBDIRS =
-build_PARALLEL_SUBDIRS := resgen gacutil security culevel cil-stringreplacer commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
+build_PARALLEL_SUBDIRS := resgen gacutil security culevel commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
 monodroid_tools_SUBDIRS =
 monodroid_tools_PARALLEL_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate
 monodroid_SUBDIRS = nunit-lite
