@@ -62,7 +62,6 @@ ICALL_EXPORT MonoArrayHandle ves_icall_MonoCustomAttrs_GetCustomAttributesDataIn
 ICALL_EXPORT MonoArrayHandle ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle, MonoReflectionTypeHandle, MonoBoolean, MonoError*);
 ICALL_EXPORT MonoArrayHandle ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethodHandle, MonoError*);
 ICALL_EXPORT MonoArrayHandle ves_icall_MonoPropertyInfo_GetTypeModifiers (MonoReflectionPropertyHandle, MonoBoolean, MonoError*);
-ICALL_EXPORT MonoArrayHandle ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameterHandle param, MonoBoolean optional, MonoError*);
 ICALL_EXPORT MonoArrayHandle ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameterHandle, MonoBoolean, MonoError*);
 ICALL_EXPORT MonoArrayHandle ves_icall_RuntimeType_GetGenericArguments (MonoReflectionTypeHandle, MonoBoolean, MonoError*);
 ICALL_EXPORT MonoArrayHandle ves_icall_RuntimeType_GetInterfaces (MonoReflectionTypeHandle, MonoError*);
@@ -143,13 +142,11 @@ ICALL_EXPORT MonoObjectHandle ves_icall_System_Runtime_Activation_ActivationServ
 ICALL_EXPORT MonoObjectHandle ves_icall_System_Runtime_InteropServices_Marshal_GetNativeActivationFactory (MonoObjectHandle, MonoError*);
 ICALL_EXPORT MonoObjectHandle ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (gpointer, MonoError*);
 ICALL_EXPORT MonoObjectHandle ves_icall_System_Runtime_InteropServices_WindowsRuntime_UnsafeNativeMethods_GetRestrictedErrorInfo (MonoError*);
-ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle type, MonoError*); 
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_RuntimeTypeHandle_GetAssembly (MonoReflectionTypeHandle, MonoError*);
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetCallingAssembly (MonoError*);
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetEntryAssembly (MonoError*);
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError*);
 ICALL_EXPORT MonoReflectionAssemblyHandle ves_icall_System_Reflection_Assembly_load_with_partial_name (MonoStringHandle mname, MonoObjectHandle evidence, MonoError*);
-ICALL_EXPORT MonoReflectionEventHandle ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent* handle, MonoType* type, MonoError*);
 ICALL_EXPORT MonoReflectionFieldHandle ves_icall_System_Reflection_FieldInfo_internal_from_handle_type (MonoClassField* handle, MonoType* type, MonoError*);
 ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle ves_icall_System_MonoMethodInfo_get_retval_marshal (MonoMethod*, MonoError*);
 ICALL_EXPORT MonoReflectionMarshalAsAttributeHandle ves_icall_System_Reflection_FieldInfo_get_marshal_info (MonoReflectionFieldHandle field_h, MonoError*);
@@ -226,7 +223,7 @@ ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator* iter
 ICALL_EXPORT MonoType* ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass*, MonoError*);
 ICALL_EXPORT MonoType* ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage* image, guint32 token, MonoArrayHandle type_args, MonoArrayHandle method_args, MonoResolveTokenError* resolve_error, MonoError*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator* iter);
-ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator* iter, MonoType* type);
+ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
 ICALL_EXPORT MonoTypedRef mono_TypedReference_MakeTypedReferenceInternal (MonoObject* target, MonoArray* fields);
 ICALL_EXPORT char* ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoStringHandle, MonoError*);
 ICALL_EXPORT char* ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2*, int, MonoError*);
