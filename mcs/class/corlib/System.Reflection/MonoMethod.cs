@@ -325,11 +325,11 @@ namespace System.Reflection {
 				} catch (ThreadAbortException) {
 					throw;
 #if MOBILE
-				} catch (OverflowException) {
-					throw;
 				} catch (MethodAccessException) {
 					throw;
 #endif
+				} catch (OverflowException) {
+					throw;
 				} catch (Exception e) {
 					throw new TargetInvocationException (e);
 				}
