@@ -5933,7 +5933,7 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	MonoStringHandle result;
 
 #ifndef DISABLE_CRASH_REPORTING
-	char *scratch = g_malloc0 (MONO_MAX_SUMMARY_LEN_ICALL * sizeof (gchar));
+	char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 
 	char *out;
 	MonoStackHash hashes;
