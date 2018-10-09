@@ -9,7 +9,6 @@
 #include <config.h>
 #include <glib.h>
 #include <mono/utils/mono-publib.h>
-#include "icall-decl.h"
 
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 1
 

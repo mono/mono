@@ -36,21 +36,10 @@
 #include <mono/utils/bsearch.h>
 #include <mono/metadata/icalls.h>
 #include "handle-decl.h"
-#include <mono/metadata/icall-table.h>
 #include "icall-decl.h"
 
 #define NOHANDLES(inner) inner
 #define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
-
-// Generate prototypes for coop icall wrappers.
-#define ICALL_TYPE(id,name,first)	/* nothing */
-#define ICALL(id,name,func) 		/* nothing */
-#define HANDLES(	    id,	name, func, ret, nargs, argtypes) MONO_HANDLE_DECLARE_RAW (id, name, func, ret, nargs, argtypes);
-#include "metadata/icall-def.h"
-#undef ICALL_TYPE
-#undef ICALL
-
-#undef HANDLES
 #define HANDLES(id, name, func, ...)	ICALL (id, name, func ## _raw)
 
 // Generate Icall_ constants

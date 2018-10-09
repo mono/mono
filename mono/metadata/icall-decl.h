@@ -49,6 +49,22 @@ typedef enum {
 	PInfo_Name = 1 << 5
 } PInfo;
 
+#include "icall-table.h"
+
+#define NOHANDLES(inner) inner
+#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
+
+// Generate prototypes for coop icall wrappers.
+#define ICALL_TYPE(id, name, first)	/* nothing */
+#define ICALL(id, name, func) 		/* nothing */
+#define HANDLES(id, name, func, ret, nargs, argtypes) MONO_HANDLE_DECLARE_RAW (id, name, func, ret, nargs, argtypes);
+#include "icall-def.h"
+#undef ICALL_TYPE
+#undef ICALL
+#undef HANDLES_MAYBE
+#undef HANDLES
+#undef NOHANDLES
+
 // This is sorted.
 // grep ICALL_EXPORT | sort | uniq
 ICALL_EXPORT MonoArray* ves_icall_System_Environment_GetEnvironmentVariableNames (void);

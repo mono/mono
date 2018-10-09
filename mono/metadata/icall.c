@@ -8897,7 +8897,6 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 
 #define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) \
 	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
-	MONO_HANDLE_DECLARE_RAW (id, name, func, ret, nargs, argtypes); \
 	MONO_HANDLE_IMPLEMENT_MAYBE (cond, id, name, func, ret, nargs, argtypes)
 
 #define HANDLES(id, name, func, ret, nargs, argtypes) \
