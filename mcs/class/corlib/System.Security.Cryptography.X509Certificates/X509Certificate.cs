@@ -608,10 +608,13 @@ namespace System.Security.Cryptography.X509Certificates
 			if (!culture.DateTimeFormat.Calendar.IsValidDay (date.Year, date.Month, date.Day, 0)) {
 				// The most common case of culture failing to work is in the Um-AlQuara calendar. In this case,
 				// we can fall back to the Hijri calendar, otherwise fall back to the invariant culture.
+#if !MOBILE
 				if (culture.DateTimeFormat.Calendar is UmAlQuraCalendar) {
 					culture = culture.Clone () as CultureInfo;
 					culture.DateTimeFormat.Calendar = new HijriCalendar ();
-				} else {
+				} else
+#endif
+				{
 					culture = CultureInfo.InvariantCulture;
 				}
 			}
