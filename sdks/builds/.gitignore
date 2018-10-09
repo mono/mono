@@ -43,3 +43,5 @@ bcl/
 desktop-x86/
 desktop-x86_64/
 toolchains/
+mxe-Win32.cmake
+mxe-Win64.cmake

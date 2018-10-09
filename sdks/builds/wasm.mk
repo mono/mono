@@ -153,7 +153,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
-# wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION)
+wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
 
 endef
 
