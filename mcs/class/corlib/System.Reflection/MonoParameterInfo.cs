@@ -128,7 +128,7 @@ namespace System.Reflection
 		internal MonoParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
-			this.NameImpl = "";
+			this.NameImpl = null;
 			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
 			this.AttrsImpl = ParameterAttributes.Retval;
 			this.marshalAs = marshalAs;
@@ -155,6 +155,8 @@ namespace System.Reflection
 		public override
 		object RawDefaultValue {
 			get {
+				if (DefaultValue.GetType ().IsEnum)
+					return ((Enum)DefaultValue).GetValue ();
 				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
 				return DefaultValue;
 			}
