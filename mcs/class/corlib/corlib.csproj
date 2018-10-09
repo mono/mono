@@ -468,6 +468,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetInvocationException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetParameterCountException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeDelegator.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeFilter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ResolveEventArgs.cs" />
@@ -1024,7 +1025,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\typedelegator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__fastresourcecomparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__hresults.cs" />
