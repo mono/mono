@@ -286,8 +286,8 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-# TODO: depend on all *.sources for now and figure out how to list only needed files later
-PROFILE_sources = $(wildcard *.sources)
+# TODO: depend on all *.sources (except tests) for now and figure out how to list only needed files later
+PROFILE_sources = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.sources))
 
 ifneq "x" "x$(PROFILE_RUNTIME)"
 GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
