@@ -223,7 +223,7 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	return (gpointer)regs [ARMREG_R0];
 }
@@ -1022,25 +1022,25 @@ mono_arch_flush_register_windows (void)
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoMethod*)regs [MONO_ARCH_RGCTX_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoVTable*)regs [MONO_ARCH_RGCTX_REG];
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	return ctx->regs [reg];
 }
 
 void
-mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
 	ctx->regs [reg] = val;
 }
@@ -1066,18 +1066,16 @@ add_general (CallInfo *cinfo, ArgInfo *ainfo, int size, gboolean sign)
 		ainfo->storage = ArgOnStack;
 		if (ios_abi) {
 			/* Assume size == align */
-			cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, size);
-			ainfo->offset = cinfo->stack_usage;
-			ainfo->slot_size = size;
-			ainfo->sign = sign;
-			cinfo->stack_usage += size;
 		} else {
-			ainfo->offset = cinfo->stack_usage;
-			ainfo->slot_size = 8;
-			ainfo->sign = FALSE;
 			/* Put arguments into 8 byte aligned stack slots */
-			cinfo->stack_usage += 8;
+			size = 8;
+			sign = FALSE;
 		}
+		cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, size);
+		ainfo->offset = cinfo->stack_usage;
+		ainfo->slot_size = size;
+		ainfo->sign = sign;
+		cinfo->stack_usage += size;
 	} else {
 		ainfo->storage = ArgInIReg;
 		ainfo->reg = cinfo->gr;
@@ -1453,7 +1451,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		ainfo = &cinfo->ret;
 		if (ainfo->storage == ArgVtypeByRef) {
 			storage = interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, -1);
-			ccontext->gregs [cinfo->ret.reg] = (mgreg_t)storage;
+			ccontext->gregs [cinfo->ret.reg] = (gsize)storage;
 		}
 	}
 
@@ -5544,4 +5542,3 @@ mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 {
 	return get_call_info (mp, sig);
 }
-

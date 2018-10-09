@@ -183,6 +183,8 @@ case "$host" in
 		with_sgen_default_concurrent=yes
 		;;
 	*-*-*freebsd*)
+		dnl For close_my_fds
+		LDFLAGS="$LDFLAGS -lutil"
 		if test "x$PTHREAD_CFLAGS" = "x"; then
 			CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS"
 			libmono_cflags=
@@ -197,7 +199,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS -L/usr/local/lib"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
-		CPPFLAGS="$CPPFLAGS -DHOST_BSD"
+		CPPFLAGS="$CPPFLAGS -DHOST_BSD -D_WITH_GETLINE"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
@@ -3578,18 +3580,6 @@ ac_cv_c_socklen_t=yes
 	AC_DEFINE(HAVE_SOCKLEN_T, 1, [Have socklen_t])
 	AC_MSG_RESULT(yes)
 ],[
-	AC_MSG_RESULT(no)
-])
-
-AC_MSG_CHECKING(for array element initializer support)
-AC_TRY_COMPILE([#include <sys/socket.h>], [
-	const int array[] = {[1] = 2,};
-], [
-	# Yes, we have it...
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_ARRAY_ELEM_INIT,1,[Supports C99 array initialization])
-], [
-	# We'll have to use signals
 	AC_MSG_RESULT(no)
 ])
 

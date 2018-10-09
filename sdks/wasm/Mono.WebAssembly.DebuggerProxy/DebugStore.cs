@@ -14,6 +14,10 @@ namespace WsProxy {
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
+		public override string ToString () {
+			return $"BreakPointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
+		}
+
 		public static BreakPointRequest Parse (JObject args)
 		{
 			if (args == null)

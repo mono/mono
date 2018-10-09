@@ -31,6 +31,9 @@ basic_SUBDIRS := \
 	../ilasm \
 	corlib/il
 
+# Tooling dependencies of mscorlib, we build them to /tmp folder for MONO_PATH to work
+# reliably for clean and update builds. All deps are built against stable API to run with
+# range of boostrap versions and .NET at the same time
 build_SUBDIRS = \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \

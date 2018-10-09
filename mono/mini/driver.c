@@ -88,7 +88,8 @@ int _CRT_glob = 0;
 typedef void (*OptFunc) (const char *p);
 
 #undef OPTFLAG
-#ifdef HAVE_ARRAY_ELEM_INIT
+
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 
@@ -109,23 +110,6 @@ static const gint16 opt_names [] = {
 
 #define optflag_get_name(id) ((const char*)&opstr + opt_names [(id)])
 #define optflag_get_desc(id) (optflag_get_name(id) + 1 + strlen (optflag_get_name(id)))
-
-#else /* !HAVE_ARRAY_ELEM_INIT */
-typedef struct {
-	const char* name;
-	const char* desc;
-} OptName;
-
-#define OPTFLAG(id,shift,name,desc) {name,desc},
-static const OptName 
-opt_names [] = {
-#include "optflags-def.h"
-	{NULL, NULL}
-};
-#define optflag_get_name(id) (opt_names [(id)].name)
-#define optflag_get_desc(id) (opt_names [(id)].desc)
-
-#endif
 
 #define DEFAULT_OPTIMIZATIONS (	\
 	MONO_OPT_PEEPHOLE |	\
@@ -2164,7 +2148,13 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--aot=", 6) == 0) {
 			error_if_aot_unsupported ();
 			mono_compile_aot = TRUE;
-			aot_options = &argv [i][6];
+			if (aot_options) {
+				char *tmp = g_strdup_printf ("%s,%s", aot_options, &argv [i][6]);
+				g_free (aot_options);
+				aot_options = tmp;
+			} else {
+				aot_options = g_strdup (&argv [i][6]);
+			}
 #endif
 		} else if (strncmp (argv [i], "--apply-bindings=", 17) == 0) {
 			extra_bindings_config_file = &argv[i][17];

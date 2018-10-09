@@ -36,11 +36,12 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-icall-tables \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx)
+	CFLAGS="-fexceptions"
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
 
-.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
+.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
 	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
 	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@
@@ -147,13 +148,15 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-support-build \
 	--enable-maintainer-mode \
 	--enable-minimal=appdomains,com,remoting \
-	--with-tls=pthread
+	--with-tls=pthread \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm-offsets.h
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
-# wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION)
+wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
 
 endef
 

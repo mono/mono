@@ -38,3 +38,4 @@
 ../../../external/linker/linker/Linker.Steps/IStep.cs
 ../../../external/linker/linker/Linker.Steps/AddBypassNGenStep.cs
 ../../../external/linker/linker/Linker.Steps/PreserveDependencyLookupStep.cs
+../../../external/linker/linker/Linker.Steps/PreserveCalendarsStep.cs

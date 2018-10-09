@@ -55,6 +55,28 @@ namespace MonoTests.System.Reflection
 		public TestAttrWithEnumCtorParam (Levels level) => this.level = level;
 	}
 
+	[AttributeUsage (AttributeTargets.Method)]
+	class TestAttrWithObjectArrayCtorParam : Attribute {
+		object[] o;
+		public TestAttrWithObjectArrayCtorParam (object[] o) => this.o = o;
+	}
+
+	[AttributeUsage (AttributeTargets.Method)]
+	class TestAttrWithObjectArrayCtorParamAndParamsKeyword : Attribute {
+		object[] o;
+		public TestAttrWithObjectArrayCtorParamAndParamsKeyword (params object[] o) => this.o = o;
+	}
+
+	[AttributeUsage (AttributeTargets.Method)]
+	class TestAttrWithObjectArrayCtorParams : Attribute {
+		object[] o1;
+		object[] o2;
+		public TestAttrWithObjectArrayCtorParams (object[] o1, params object[] o2) {
+			this.o1 = o1;
+			this.o2 = o2;
+		}
+	}
+
 	[TestFixture]
 	public class CustomAttributeDataTest
 	{
@@ -76,6 +98,21 @@ namespace MonoTests.System.Reflection
 
 		[TestAttrWithEnumCtorParam (Levels.two)]
 		public void MethodDecoratedWithAttribute2 ()
+		{
+		}
+
+		[TestAttrWithObjectArrayCtorParam (new object[] { Levels.one, Levels.two})]
+		public void MethodDecoratedWithAttribute3 ()
+		{
+		}		
+
+		[TestAttrWithObjectArrayCtorParamAndParamsKeyword (Levels.one, Levels.two)]
+		public void MethodDecoratedWithAttribute4 ()
+		{
+		}
+
+		[TestAttrWithObjectArrayCtorParams (new object[] { Levels.one, Levels.two}, Levels.three, Levels.two)]
+		public void MethodDecoratedWithAttribute5 ()
 		{
 		}
 
@@ -102,6 +139,78 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (byte), arr [1].ArgumentType);
 			Assert.AreEqual (2, arr [1].Value);
 		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/10951
+		public void ObjectArrays () 
+		{
+			CheckObjectArrayParam (nameof (MethodDecoratedWithAttribute3));
+			CheckObjectArrayParam (nameof (MethodDecoratedWithAttribute4));
+		}
+
+		private void CheckObjectArrayParam (string methodName)
+		{
+			IList<CustomAttributeData> cdata = CustomAttributeData.GetCustomAttributes (typeof (CustomAttributeDataTest).GetMethod (methodName));
+			Assert.AreEqual (1, cdata.Count, $"{methodName}#0");
+			
+			CustomAttributeTypedArgument arg = cdata [0].ConstructorArguments [0];
+			Assert.IsTrue (typeof (IList<CustomAttributeTypedArgument>).IsAssignableFrom (arg.Value.GetType ()), $"{methodName}#1");
+			
+			IList<CustomAttributeTypedArgument> arr = (IList<CustomAttributeTypedArgument>)arg.Value;
+			Assert.AreEqual (2, arr.Count, $"{methodName}#2");
+			
+			Assert.AreEqual (typeof (Levels), arr [0].ArgumentType, $"{methodName}#3");
+			Assert.IsTrue (arr [0].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#4");
+			Assert.AreEqual (0, arr [0].Value, $"{methodName}#5");
+			Assert.AreEqual (typeof (int), arr [0].Value.GetType (), $"{methodName}#6");
+			
+			Assert.AreEqual (typeof (Levels), arr [1].ArgumentType, $"{methodName}#7");
+			Assert.IsTrue (arr [1].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#8");
+			Assert.AreEqual (1, arr [1].Value, $"{methodName}#9");
+			Assert.AreEqual (typeof (int), arr [1].Value.GetType (), $"{methodName}#10");
+		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/10951
+		public void CheckObjectArrayParams ()
+		{
+			string methodName = nameof (MethodDecoratedWithAttribute5);
+			IList<CustomAttributeData> cdata = CustomAttributeData.GetCustomAttributes (typeof (CustomAttributeDataTest).GetMethod (methodName));
+			Assert.AreEqual (1, cdata.Count, $"{methodName}#0");
+			Assert.AreEqual (2, cdata [0].ConstructorArguments.Count, $"{methodName}#00");
+
+			CustomAttributeTypedArgument arg = cdata [0].ConstructorArguments [0];
+			Assert.IsTrue (typeof (IList<CustomAttributeTypedArgument>).IsAssignableFrom (arg.Value.GetType ()), $"{methodName}#1");
+			
+			IList<CustomAttributeTypedArgument> arr = (IList<CustomAttributeTypedArgument>)arg.Value;
+			Assert.AreEqual (2, arr.Count, $"{methodName}#2");
+			
+			Assert.AreEqual (typeof (Levels), arr [0].ArgumentType, $"{methodName}#3");
+			Assert.IsTrue (arr [0].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#4");
+			Assert.AreEqual (0, arr [0].Value, $"{methodName}#5");
+			Assert.AreEqual (typeof (int), arr [0].Value.GetType (), $"{methodName}#6");
+			
+			Assert.AreEqual (typeof (Levels), arr [1].ArgumentType, $"{methodName}#7");
+			Assert.IsTrue (arr [1].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#8");
+			Assert.AreEqual (1, arr [1].Value, $"{methodName}#9");
+			Assert.AreEqual (typeof (int), arr [1].Value.GetType (), $"{methodName}#10");
+
+			arg = cdata [0].ConstructorArguments [1];
+			Assert.IsTrue (typeof (IList<CustomAttributeTypedArgument>).IsAssignableFrom (arg.Value.GetType ()), $"{methodName}#11");
+			
+			arr = (IList<CustomAttributeTypedArgument>)arg.Value;
+			Assert.AreEqual (2, arr.Count, $"{methodName}#12");
+			
+			Assert.AreEqual (typeof (Levels), arr [0].ArgumentType, $"{methodName}#13");
+			Assert.IsTrue (arr [0].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#14");
+			Assert.AreEqual (2, arr [0].Value, $"{methodName}#15");
+			Assert.AreEqual (typeof (int), arr [0].Value.GetType (), $"{methodName}#16");
+			
+			Assert.AreEqual (typeof (Levels), arr [1].ArgumentType, $"{methodName}#17");
+			Assert.IsTrue (arr [1].ArgumentType.GetTypeInfo().IsEnum, $"{methodName}#18");
+			Assert.AreEqual (1, arr [1].Value, $"{methodName}#19");
+			Assert.AreEqual (typeof (int), arr [1].Value.GetType (), $"{methodName}#20");			
+		}		
         
 		[Test]
 		public void ParameterIncludesPseudoCustomAttributesData ()

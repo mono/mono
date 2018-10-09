@@ -231,6 +231,7 @@ typedef struct MonoAotOptions {
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
+	char *clangxx;
 } MonoAotOptions;
 
 typedef enum {
@@ -391,7 +392,7 @@ typedef struct {
 /* This points to the current acfg in LLVM mode */
 static MonoAotCompile *llvm_acfg;
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -414,22 +415,6 @@ get_patch_name (int info)
 {
 	return (const char*)&opstr + opidx [info];
 }
-
-#else
-#define PATCH_INFO(a,b) b,
-static const char* const
-patch_types [MONO_PATCH_INFO_NUM + 1] = {
-#include "patch-info.h"
-	NULL
-};
-
-static G_GNUC_UNUSED const char*
-get_patch_name (int info)
-{
-	return patch_types [info];
-}
-
-#endif
 
 static void 
 mono_flush_method_cache (MonoAotCompile *acfg);
@@ -7605,6 +7590,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->deterministic = TRUE;
 		} else if (!strcmp (arg, "no-opt")) {
 			opts->no_opt = TRUE;
+		} else if (str_begins_with (arg, "clangxx=")) {
+			opts->clangxx = g_strdup (arg + strlen ("clangxx="));;
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -7649,6 +7636,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			printf ("    no-opt\n");
 			printf ("    llvmopts=\n");
 			printf ("    llvmllc=\n");
+			printf ("    clangxx=\n");
 			printf ("    help/?\n");
 			exit (0);
 		} else {
@@ -9127,7 +9115,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (acfg->aot_opts.llvm_only) {
 		/* Use the stock clang from xcode */
 		// FIXME: arch
-		command = g_strdup_printf ("clang++ -fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->llvm_ofile, acfg->tmpbasename);
+		command = g_strdup_printf ("%s -fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.clangxx, acfg->llvm_ofile, acfg->tmpbasename);
 
 		aot_printf (acfg, "Executing clang: %s\n", command);
 		if (execute_system (command) != 0)
@@ -11281,6 +11269,8 @@ compile_asm (MonoAotCompile *acfg)
 #define AS_OPTIONS "-xarch=v9"
 #elif defined(TARGET_X86) && defined(TARGET_MACH)
 #define AS_OPTIONS "-arch i386"
+#elif defined(TARGET_X86) && !defined(TARGET_MACH)
+#define AS_OPTIONS "--32"
 #else
 #define AS_OPTIONS ""
 #endif
@@ -11318,6 +11308,8 @@ compile_asm (MonoAotCompile *acfg)
 #elif defined(TARGET_X86) && defined(TARGET_MACH)
 #define LD_NAME "clang"
 #define LD_OPTIONS "-m32 -dynamiclib"
+#elif defined(TARGET_X86) && !defined(TARGET_MACH)
+#define LD_OPTIONS "-m elf_i386"
 #elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
 #define LD_NAME "gcc"
 #define LD_OPTIONS "--shared"
@@ -11423,7 +11415,7 @@ compile_asm (MonoAotCompile *acfg)
 									  wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
 
 		if (acfg->aot_opts.llvm_only) {
-			command = g_strdup_printf ("clang++ %s", args);
+			command = g_strdup_printf ("%s %s", acfg->aot_opts.clangxx, args);
 		} else {
 			command = g_strdup_printf ("\"%sld\" %s", tool_prefix, args);
 		}
@@ -12621,6 +12613,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef MONOTOUCH
 	acfg->aot_opts.use_trampolines_page = TRUE;
 #endif
+	acfg->aot_opts.clangxx = g_strdup ("clang++");
 
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
 

@@ -35,8 +35,9 @@ class Driver {
 		Console.WriteLine ("\t--mono-sdkdir=x Set the mono sdk directory to 'x'");
 		Console.WriteLine ("\t--deploy=x      Set the deploy prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
-		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.g.js')");
+		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.js')");
 		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
+		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 	}
@@ -135,13 +136,13 @@ class Driver {
 		}
 	}
 
-	void GenDriver (string builddir, List<string> assembly_names) {
+	void GenDriver (string builddir, List<string> assembly_names, List<string> profilers) {
 		var symbols = new List<string> ();
 		foreach (var img in assembly_names) {
 			symbols.Add (String.Format ("mono_aot_module_{0}_info", img.Replace ('.', '_').Replace ('-', '_')));
 		}
 
-		var w = File.CreateText (Path.Combine (builddir, "driver-gen.c"));
+		var w = File.CreateText (Path.Combine (builddir, "driver-gen.c.in"));
 
 		foreach (var symbol in symbols) {
 			w.WriteLine ($"extern void *{symbol};");
@@ -152,6 +153,11 @@ class Driver {
 		foreach (var symbol in symbols)
 			w.WriteLine ($"\tmono_aot_register_module ({symbol});");
 		w.WriteLine ("}");
+
+		foreach (var profiler in profilers) {
+			w.WriteLine ($"void mono_profiler_init_{profiler} (const char *desc);");
+			w.WriteLine ("EMSCRIPTEN_KEEPALIVE void mono_wasm_load_profiler_" + profiler + " (const char *desc) { mono_profiler_init_" + profiler + " (desc); }");
+		}
 
 		w.Close ();
 	}
@@ -175,8 +181,9 @@ class Driver {
 		var enable_aot = false;
 		var print_usage = false;
 		var emit_ninja = false;
-		var runtimeTemplate = "runtime.g.js";
+		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
+		var profilers = new List<string> ();
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -193,6 +200,7 @@ class Driver {
 				{ "aot", s => enable_aot = true },
 				{ "template=", s => runtimeTemplate = s },
 				{ "asset=", s => assets.Add(s) },
+				{ "profile=", s => profilers.Add (s) },
 				{ "help", s => print_usage = true },
 					};
 
@@ -261,22 +269,18 @@ class Driver {
 		var dontlink_assemblies = new Dictionary<string, bool> ();
 		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
 
-		var template = File.ReadAllText (Path.Combine (tool_prefix, runtimeTemplate));
-		
-		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\""));
-		template = template.Replace ("@FILE_LIST@", file_list_str);
-		template = template.Replace ("@VFS_PREFIX@", vfs_prefix);
-		template = template.Replace ("@DEPLOY_PREFIX@", deploy_prefix);
-		template = template.Replace ("@ENABLE_DEBUGGING@", enable_debug ? "1" : "0");
-		if (add_binding)
-			template = template.Replace ("@BINDINGS_LOADING@", $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");");
-		else
-			template = template.Replace ("@BINDINGS_LOADING@", "");
-
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
-		Debug ($"create {runtime_js}");
 		File.Delete (runtime_js);
-		File.WriteAllText (runtime_js, template);
+		File.Copy (runtimeTemplate, runtime_js);
+
+		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\""));
+		var config = String.Format ("config = {{\n \tvfs_prefix: \"{0}\",\n \tdeploy_prefix: \"{1}\",\n \tenable_debugging: {2},\n \tfile_list: [ {3} ],\n", vfs_prefix, deploy_prefix, enable_debug ? "1" : "0", file_list_str);
+		if (add_binding || true)
+			config += "\tadd_bindings: function() { " + $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");" + " }\n";
+		config += "}\n";
+		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "config.js");
+		File.Delete (config_js);
+		File.WriteAllText (config_js, config);
 
 		string runtime_dir = Path.Combine (tool_prefix, use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
@@ -310,9 +314,17 @@ class Driver {
 				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
 				Environment.Exit (1);
 			}
-			GenDriver (builddir, assembly_names);
+			GenDriver (builddir, assembly_names, profilers);
 		}
 
+		string profiler_libs = "";
+		string profiler_aot_args = "";
+		foreach (var profiler in profilers) {
+			profiler_libs += $"$mono_sdkdir/wasm-runtime/lib/libmono-profiler-{profiler}-static.a ";
+			if (profiler_aot_args != "")
+				profiler_aot_args += " ";
+			profiler_aot_args += $"--profile={profiler}";
+		}
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
@@ -332,11 +344,11 @@ class Driver {
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ("emcc_flags = -Os -g -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'FS_createPath\', \'FS_createDataFile\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\"");
+		ninja.WriteLine ("emcc_flags = -Os -g -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'FS_createPath\', \'FS_createDataFile\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug --aot=llvmonly,asmonly,no-opt,static,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
@@ -351,18 +363,20 @@ class Driver {
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
 
-		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
+		ninja.WriteLine ("build $appdir/config.js: cpifdiff $builddir/config.js");
 		if (enable_aot) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
+			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
-			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c");
+			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
 			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
 
 		} else {
@@ -411,7 +425,7 @@ class Driver {
 			}
 		}
 		if (enable_aot) {
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a $mono_sdkdir/wasm-runtime/lib/libmono-icall-table.a {ofiles} | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
+			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
 			string linker_args = "";
