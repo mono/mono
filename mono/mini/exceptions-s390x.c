@@ -71,7 +71,7 @@
 /*------------------------------------------------------------------*/
 
 static void throw_exception (MonoObject *, unsigned long, unsigned long, 
-		 gulong *, gdouble *, gint32 *, guint, gboolean);
+		 gulong *, gdouble *, gint32 *, guint, gboolean, gboolean);
 static gpointer mono_arch_get_throw_exception_generic (int, MonoTrampInfo **, 
 				int, gboolean, gboolean, gboolean);
 static void handle_signal_exception (gpointer);
