@@ -2774,7 +2774,7 @@ namespace MonoTests.System.IO
 		public static extern int symlink (string oldpath, string newpath);
 
 		[Test]
-#if __TVOS__
+#if MONOTOUCH_TV
 		[Ignore ("See bug #59239")]
 #endif
 		public void SymLinkLoop ()
