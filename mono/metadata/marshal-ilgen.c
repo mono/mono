@@ -6221,6 +6221,26 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 }
 
 static void
+mono_emit_handle_raw (MonoMethodBuilder *mb)
+{
+	// MONO_HANDLE_RAW()
+	//
+	// This is playing a bit loose with the types.
+	// For most of the C code, there is a struct passed by value,
+	// with a pointer to a pointer. For this code, in order to ease
+	// ABI concerns, it is a pointer to a struct containing a pointer.
+	//
+	// The same level of indirection either way.
+	//
+	// Generated C code converts between the types. The JIT doesn't
+	// have to pass/accept structs by value.
+	//
+	// In either case, we dereference twice and both offsets are 0.
+	mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
+	mono_mb_emit_byte (mb, CEE_LDIND_REF);
+}
+
+static void
 emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *piinfo)
 {
 	// FIXME:
@@ -6405,8 +6425,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			// }
 			mono_mb_emit_byte (mb, CEE_DUP);
 			int pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
-			mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
-			mono_mb_emit_byte (mb, CEE_LDIND_REF);
+			mono_emit_handle_raw (mb);
 			mono_mb_patch_branch (mb, pos);
 		}
 		if (save_handles_to_locals) {
@@ -6426,8 +6445,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 						/* handleI */
 						mono_mb_emit_ldloc (mb, handles_locals [j].handle);
 						/* MONO_HANDLE_RAW(handleI) */
-						mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
-						mono_mb_emit_byte (mb, CEE_LDIND_REF);
+						mono_emit_handle_raw (mb);
 						/* *argI_raw = MONO_HANDLE_RAW(handleI) */
 						mono_mb_emit_byte (mb, CEE_STIND_REF);
 						break;

@@ -23,20 +23,6 @@
 // The only operations allowed on them are the functions/macros in this file, and assignment
 // from same handle type to same handle type.
 //
-// Type-unsafe handles formerly were a pointer to a struct with a pointer.
-// The same level of indirection either way.
-// Besides the type-safe operations, they can also:
-//  1. compared to NULL, instead of only MONO_HANDLE_IS_NULL
-//  2. assigned from NULL, instead of only a handle
-//  3. MONO_HANDLE_NEW (T) from anything, instead of only a T*
-//  4. MONO_HANDLE_CAST from anything, instead of only another handle type
-//  5. assigned from any void*, at least in C
-//  6. Cast from any handle type to any handle type, without using MONO_HANDLE_CAST.
-//  7. Cast from any handle type to any pointer type and vice versa, such as incorrect unboxing.
-//  8. mono_object_class (handle), instead of mono_handle_class
-//
-// None of those operations were likely intended.
-//
 // Raw handles are void* but still same underlying representation, really void**.
 //
 // marshal-ilgen.c does not know how to marshal type safe handles.
