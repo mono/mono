@@ -5521,8 +5521,8 @@ AC_MONO_APPLE_TARGET(TARGET_OS_IPHONE, [mono_native_platform_ios=yes])
 sed_version_pattern='[[0-9]]\{1,2\}\(\.[[0-9]]\{1,2\}\)'
 if test x$target_osx = xyes; then
 	sed_remove_mac_version_pattern="s/-mmacosx-version-min=$sed_version_pattern//g"
-	sed_find_mac_version_pattern="s/.*\(-mmacosx-version-min=$sed_version_pattern\).*/\1/g"
-	mono_native_compat_version=`echo $CC | sed -e $sed_find_mac_version_pattern`
+	grep_find_mac_version_pattern="-mmacosx-version-min=$sed_version_pattern"
+	mono_native_compat_version=`echo $CC | grep -o -e $grep_find_mac_version_pattern`
 	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_mac_version_pattern`
 	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_mac_version_pattern`
 	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_mac_version_pattern`
@@ -5603,9 +5603,9 @@ elif test x$mono_native_platform_ios = xyes; then
 	AC_MONO_APPLE_AVAILABLE(mono_native_compat, [whether we need the compatibility layer], [!($mono_native_compat_check)])
 
 	sed_remove_ios_version_pattern="s/-m\(.*\)-version-min=$sed_version_pattern//g"
-	sed_find_ios_version_pattern="s/.*\(-m$mono_native_ios_target-version-min=$sed_version_pattern\).*/\1/g"
+	grep_find_ios_version_pattern="-m$mono_native_ios_target-version-min=$sed_version_pattern"
 
-	mono_native_compat_version=`echo $CC | sed -e $sed_find_ios_version_pattern`
+	mono_native_compat_version=`echo $CC | grep -o -e $grep_find_ios_version_pattern`
 
 	mono_native_ldflags="-framework CoreFoundation -framework Foundation -no-undefined -fatal_warnings"
 	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_ios_version_pattern`
