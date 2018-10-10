@@ -26,81 +26,42 @@ llvm_CMAKE_FLAGS = \
 
 ##
 # Parameters
-#  $(1): target
-#  $(2): jenkins lane
-#  $(3): revision hash
-define LLVMDownloadTemplate
-# The rule suceed even if we fail to download. This makes the caller have to check for the precense of the output file,
-# but you should use the `provision-llvm-*` in any case.
-.stamp-$(1)-download:
-ifeq ($(UNAME),Darwin)
-ifeq ($(DISABLE_DOWNLOAD_LLVM),)
-	mkdir -p $$(TOP)/sdks/builds/toolchains/$(1)-download
-	-wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/$(2)/llvm-osx64-$(3).tar.gz | tar -xC $$(TOP)/sdks/builds/toolchains/$(1)-download -f -
-	touch $$@
-endif
-endif
-endef
-
-$(eval $(call LLVMDownloadTemplate,llvm,$(LLVM_JENKINS_LANE),$(LLVM_HASH)))
-$(eval $(call LLVMDownloadTemplate,llvm36,$(LLVM36_JENKINS_LANE),$(LLVM36_HASH)))
-
-##
-# Parameters
 #  $(1): version
 #  $(2): target
-#  $(3): bitness
-#  $(4): configure script
+#  $(3): configure script
 define LLVMProvisionTemplate
-ifeq ($(UNAME),Darwin)
-.stamp-$(1)-$(2)-unpack:
-	cp -r $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)/* $$(TOP)/sdks/out/$(1)-$(2)
+_$(1)-$(2)_HASH = $$(shell git -C $$(dir $(3)) rev-parse HEAD)
+_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
+_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+
+$$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
+	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
 	touch $$@
 
-.PHONY: unpack-$(1)-$(2)
-unpack-$(1)-$(2): .stamp-$(1)-$(2)-unpack
+.PHONY: download-$(1)-$(2)
+download-$(1)-$(2): $(3) | setup-$(1)-$(2)
+	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
 
 .PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): .stamp-$(1)-download | setup-$(1)-$(2) $(4)
-	$$(MAKE) $$(if $$(wildcard $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)),unpack,package)-$(1)-$(2)
+provision-$(1)-$(2): $(3) | download-$(1)-$(2)
+	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) package-$(1)-$(2))
 
-.PHONY: clean-$(1)-$(2)
-clean-$(1)-$(2)::
-	rm -rf .stamp-$(1)-download .stamp-$(1)-$(2)-unpack $$(TOP)/sdks/builds/toolchains/$(1)-download $$(TOP)/sdks/out/$(1)-$(2)
-else
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): package-$(1)-$(2)
+.PHONY: archive-$(1)-$(2)
+archive-$(1)-$(2): package-$(1)-$(2)
+	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
+endef
+
+$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)/CMakeLists.txt))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)/CMakeLists.txt))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)/CMakeLists.txt))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)/CMakeLists.txt))
+ifeq ($(UNAME),Darwin)
+$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)/configure))
 endif
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
-endef
-
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,64,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,32,$(LLVM36_SRC)/configure))
-
-##
-# Parameters
-#  $(1): version
-#  $(2): target
-#  $(3): bitness
-#  $(4): configure script
-define LLVMMXEProvisionTemplate
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): | package-$(1)-$(2) $(4)
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
-endef
-
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin32,32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin64,64,$(LLVM_SRC)/CMakeLists.txt))
 
 ##
 # Parameters
 #  $(1): target
-#  $(2): arch
 define LLVMTemplate
 
 _llvm-$(1)_CMAKE_FLAGS = \
@@ -119,11 +80,11 @@ setup-llvm-$(1):
 
 .PHONY: build-llvm-$(1)
 build-llvm-$(1): .stamp-llvm-$(1)-configure
-	cmake --build $$(TOP)/sdks/builds/llvm-$(1)
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
 package-llvm-$(1): setup-llvm-$(1) build-llvm-$(1)
-	cmake --build $$(TOP)/sdks/builds/llvm-$(1) --target install
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1) install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
@@ -132,8 +93,8 @@ clean-llvm-$(1)::
 endef
 
 llvm-llvm32_CMAKE_FLAGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMTemplate,llvm32,i386))
-$(eval $(call LLVMTemplate,llvm64,x86_64))
+$(eval $(call LLVMTemplate,llvm32))
+$(eval $(call LLVMTemplate,llvm64))
 
 ##
 # Parameters
@@ -188,7 +149,9 @@ clean-llvm36-$(1)::
 
 endef
 
+ifeq ($(UNAME),Darwin)
 $(eval $(call LLVM36Template,llvm32,i386))
+endif
 
 ##
 # Parameters
@@ -223,10 +186,10 @@ setup-llvm-$(1):
 
 .PHONY: build-llvm-$(1)
 build-llvm-$(1): .stamp-llvm-$(1)-configure
-	$$(_llvm-$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1)
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1)
 
 package-llvm-$(1): setup-llvm-$(1) build-llvm-$(1)
-	$$(_llvm-$(1)_CMAKE) --build $$(TOP)/sdks/builds/llvm-$(1) --target install
+	$$(or $$(NINJA),$$(MAKE)) -C $$(TOP)/sdks/builds/llvm-$(1) install
 
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
