@@ -17,10 +17,6 @@ ifneq ($(UNAME),Darwin)
 DISABLE_IOS=1
 endif
 
-ifndef ENABLE_WASM_CROSS
-DISABLE_WASM_CROSS=1
-endif
-
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
