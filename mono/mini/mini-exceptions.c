@@ -2791,7 +2791,7 @@ mono_setup_altstack (MonoJitTlsData *tls)
 				g_assert (gaddr == tls->stack_ovf_guard_base);
 				tls->stack_ovf_valloced = TRUE;
 			} else {
-				/* couldn't allocate guard page, continue without it */
+				g_warning ("couldn't allocate guard page, continue without it");
 				tls->stack_ovf_guard_base = NULL;
 				tls->stack_ovf_guard_size = 0;
 			}
