@@ -104,6 +104,7 @@ typedef enum {
 } MonoGCHandleType;
 
 MONO_API void   mono_gc_collect         (int generation);
+MONO_API int    mono_gc_collect_a_little ();
 MONO_API int    mono_gc_max_generation  (void);
 MONO_API int    mono_gc_get_generation  (MonoObject *object);
 MONO_API int    mono_gc_collection_count (int generation);

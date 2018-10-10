@@ -332,6 +332,13 @@ mono_gc_collect (int generation)
 	GC_gcollect ();
 }
 
+
+int
+mono_gc_collect_a_little()
+{
+	return GC_collect_a_little();
+}
+
 /**
  * mono_gc_max_generation:
  *
