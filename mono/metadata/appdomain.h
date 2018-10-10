@@ -86,6 +86,9 @@ mono_domain_get_id         (MonoDomain *domain);
 MONO_API const char *
 mono_domain_get_friendly_name (MonoDomain *domain);
 
+MonoAssembly*
+m_domain_get_corlib (MonoDomain *domain);
+
 MONO_API mono_bool
 mono_domain_set            (MonoDomain *domain, mono_bool force);
 

@@ -93,4 +93,10 @@ mono_class_has_static_metadata (MonoClass *klass)
 	return klass->type_token && !klass->image->dynamic && !mono_class_is_ginst (klass);
 }
 
+static inline gboolean
+m_class_is_initialized (MonoClass* klass)
+{
+    return klass->inited;
+}
+
 #endif

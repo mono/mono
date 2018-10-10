@@ -6720,6 +6720,13 @@ mono_type_get_class (MonoType *type)
 	return type->data.klass;
 }
 
+MonoGenericClass*
+m_type_get_generic_class (MonoType *type)
+{
+    /* FIXME: review the runtime users before adding the assert here */
+    return type->data.generic_class;
+}
+
 /**
  * mono_type_get_array_type:
  * \param type the \c MonoType operated on
