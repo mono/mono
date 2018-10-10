@@ -375,7 +375,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" 
                                                       : (rethrow ? "rethrow_exception" 
                                                       : (preserve_ips ? "rethrow_preserve_exception" 
-                                                      : "throw_exception"), 
+                                                      : "throw_exception")),
 						start, code - start, ji, unwind_ops);
 
 	return start;
