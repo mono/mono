@@ -1215,6 +1215,9 @@ gboolean mono_is_corlib_image (MonoImage *image);
 MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error);
 
+MonoType*
+mono_field_get_type_internal (MonoClassField *field);
+
 MonoClassField*
 mono_class_get_fields_internal (MonoClass* klass, gpointer *iter);
 
