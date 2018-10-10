@@ -294,6 +294,7 @@ public class AppBuilder
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-icall-table.a";
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
 			}
+			libs += " $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.dylib";
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o " + libs + " $monoios_dir/libmonoios.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
