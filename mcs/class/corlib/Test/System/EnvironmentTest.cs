@@ -156,7 +156,7 @@ namespace MonoTests.System
 		public void GetCommandLineArgs ()
 		{
 			string[] args = Environment.GetCommandLineArgs ();
-#if !__WATCHOS__
+#if !MONOTOUCH_WATCH
 			Assert.IsNotNull (args, "not null");
 			Assert.IsTrue (((args.Length > 0) && (args.Length < 256)), "reasonable");
 			Assert.IsNotNull (args [0], "application");

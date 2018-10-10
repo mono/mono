@@ -44,8 +44,15 @@ $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
 ifeq ($(PROFILE),monodroid)
 xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
 else
-xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
-$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+ifeq ($(PROFILE),monotouch_tv)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+ifeq ($(PROFILE),monotouch_watch)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+endif
+endif
 endif
 endif
 

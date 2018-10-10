@@ -17,7 +17,11 @@ XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Th
 
 ifneq ($(PROFILE),monodroid)
 ifneq ($(PROFILE),monotouch)
+ifneq ($(PROFILE),monotouch_tv)
+ifneq ($(PROFILE),monotouch_watch)
 XTEST_LIB_REFS += System.Drawing
+endif
+endif
 endif
 endif
 
