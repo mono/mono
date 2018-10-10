@@ -1,10 +1,10 @@
-top_srcdir ?= $(abspath $(CURDIR)/..)
+abs_top_srcdir ?= $(abspath $(CURDIR)/..)
 
-LLVM_BUILD ?= $(abspath $(top_srcdir)/llvm/build)
-LLVM_PREFIX ?= $(abspath $(top_srcdir)/llvm/usr)
+LLVM_BUILD ?= $(abspath $(abs_top_srcdir)/llvm/build)
+LLVM_PREFIX ?= $(abspath $(abs_top_srcdir)/llvm/usr)
 
-# LLVM_BRANCH  := $(shell git -C "$(top_srcdir)/external/llvm" rev-parse --abbrev-ref HEAD)
-LLVM_VERSION := $(shell git -C "$(top_srcdir)/external/llvm" rev-parse HEAD)
+# LLVM_BRANCH  := $(shell git -C "$(abs_top_srcdir)/external/llvm" rev-parse --abbrev-ref HEAD)
+LLVM_VERSION := $(shell git -C "$(abs_top_srcdir)/external/llvm" rev-parse HEAD)
 
 # FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
 LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
@@ -17,7 +17,7 @@ $(LLVM_BUILD) $(LLVM_PREFIX):
 
 EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",)
 
-$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(top_srcdir)/external/llvm/CMakeLists.txt | $(LLVM_BUILD) $(LLVM_PREFIX)
+$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/llvm/CMakeLists.txt | $(LLVM_BUILD) $(LLVM_PREFIX)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
 		-DCMAKE_INSTALL_PREFIX="$(LLVM_PREFIX)" \
@@ -31,7 +31,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(top_srcdir)/external/llvm/C
 		$(EXTRA_LLVM_ARGS)	\
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
 		$(LLVM_CMAKE_ARGS) \
-		$(dir $<)
+		$(abs_top_srcdir)/external/llvm
 
 .PHONY: configure-llvm
 configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
