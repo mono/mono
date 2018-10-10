@@ -22,7 +22,7 @@ ifndef NO_TEST
 test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
 
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.execution.desktop xunit.abstractions xunit.assert Xunit.NetCore.Extensions
+xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
 xunit_deps := System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
@@ -305,17 +305,17 @@ check: run-xunit-test-local
 xunit-test-local: $(xtest_lib_output)
 run-xunit-test-local: run-xunit-test-lib
 
-# cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
+# cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll $(test_lib_dir)/xunit.execution.desktop.dll
+	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.dotnet.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
-	@rm -f $(test_lib_dir)/xunit.execution.desktop.dll
+	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
-$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs
+$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
 $(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
