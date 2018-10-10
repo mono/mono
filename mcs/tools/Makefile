@@ -59,7 +59,7 @@ monotouch_SUBDIRS = nunit-lite
 net_4_x_SUBDIRS =
 net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 
-DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr
+DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources
 
 include ../build/rules.make
 
