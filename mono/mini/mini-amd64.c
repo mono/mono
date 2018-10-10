@@ -1446,7 +1446,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 
 	header = cfg->header;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1557,7 +1557,7 @@ mono_arch_fill_argument_info (MonoCompile *cfg)
 	int i;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = cfg->arch.cinfo;
 
@@ -1623,7 +1623,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	gint32 *offsets;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = cfg->arch.cinfo;
 	sig_ret = mini_get_underlying_type (sig->ret);
@@ -1845,7 +1845,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -2419,7 +2419,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	if (ret->type == MONO_TYPE_R4) {
 		if (COMPILE_LLVM (cfg))
@@ -7065,7 +7065,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	pos = 0;
 
 	cinfo = cfg->arch.cinfo;
@@ -7575,7 +7575,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	if (enable_arguments) {
 		/* Allocate a new area on the stack and save arguments there */
-		sig = mono_method_signature (cfg->method);
+		sig = mono_method_signature_internal (cfg->method);
 
 		n = sig->param_count + sig->hasthis;
 
@@ -7624,7 +7624,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	guchar *code = (guchar *)p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
-	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret_type = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 	
 	switch (ret_type->type) {
 	case MONO_TYPE_VOID:
