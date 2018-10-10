@@ -5515,26 +5515,9 @@ fi
 # to verify that it's the correct version of it.
 #
 
-if test x$target_ios = xyes; then
-	AC_MSG_CHECKING([whether we are using the iOS Simulator])
-	AC_TRY_COMPILE([
-		#include "TargetConditionals.h"
-		#include "AvailabilityMacros.h"
-	],[
-		#if TARGET_IPHONE_SIMULATOR == 1
-		#error using simulator
-		#endif
-	], [
-		target_ios_sim=no
-	], [
-		target_ios_sim=yes
-	])
-	AC_MSG_RESULT($target_ios_sim)
-else
-	target_ios_sim=no
-fi
+# `target_ios=yes` does not detect watch devices and fails when cross-compiling
+AC_MONO_APPLE_TARGET(TARGET_OS_IPHONE, [mono_native_platform_ios=yes])
 
-AC_MSG_CHECKING([Mono.Native support])
 sed_version_pattern='[[0-9]]\{1,2\}\(\.[[0-9]]\{1,2\}\)'
 if test x$target_osx = xyes; then
 	sed_remove_mac_version_pattern="s/-mmacosx-version-min=$sed_version_pattern//g"
@@ -5550,42 +5533,81 @@ if test x$target_osx = xyes; then
 	mono_native=yes
 	MONO_NATIVE_PLATFORM=macos
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_MACOS"
+	AC_MSG_CHECKING([Mono.Native support])
 	AC_MSG_RESULT(macos)
 
-	AC_MSG_CHECKING([whether we need the compatibility layer])
-	AC_TRY_COMPILE([
-		#include "TargetConditionals.h"
-		#include "AvailabilityMacros.h"
-	],[
-		#if !(TARGET_OS_MAC && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_12))
-		#error fail
-		#endif
-	], [
-		mono_native_compat=no
-		mono_native_text="Mac OSX"
-	], [
+	AC_MONO_APPLE_AVAILABLE(mono_native_compat, [whether we need the compatibility layer],
+		[!(MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_12)])
+
+	if test x$mono_native_compat = xyes; then
 		mono_native_compat=yes
 		mono_native_text="Mac OSX (compat+unified)"
 		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS $mono_native_compat_version"
 		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS $mono_native_compat_version"
 		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -mmacosx-version-min=10.12"
 		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -mmacosx-version-min=10.12"
+	else
+		mono_native_compat=no
+		mono_native_text="Mac OSX"
+	fi
+elif test x$mono_native_platform_ios = xyes; then
+	AC_MONO_APPLE_TARGET(TARGET_OS_SIMULATOR, [mono_native_ios_sim=yes], [mono_native_ios_sim=no])
+
+	AC_MONO_APPLE_TARGET(TARGET_OS_IOS, [
+		if test x$mono_native_ios_sim = xyes; then
+			mono_native_ios_target=ios-simulator
+			mono_native_text="iOS Simulator"
+			MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_IPHONE | MONO_NATIVE_PLATFORM_TYPE_SIMULATOR"
+		else
+			mono_native_ios_target=iphoneos
+			mono_native_text="iOS Device"
+			MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_IPHONE | MONO_NATIVE_PLATFORM_TYPE_DEVICE"
+		fi
+		mono_native_unified_version="10.0"
+		mono_native_compat_check="__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0"
+	], [
+		AC_MONO_APPLE_TARGET(TARGET_OS_TV, [
+			if test x$mono_native_ios_sim = xyes; then
+				mono_native_ios_target=tvos-simulator
+				mono_native_text="AppleTV Simulator"
+				MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_TV | MONO_NATIVE_PLATFORM_TYPE_SIMULATOR"
+			else
+				mono_native_ios_target=tvos
+				mono_native_text="AppleTV Device"
+				MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_TV | MONO_NATIVE_PLATFORM_TYPE_DEVICE"
+			fi
+			mono_native_unified_version="10.0"
+			mono_native_compat_check="__TV_OS_VERSION_MIN_REQUIRED >= __TVOS_10_0"
+		], [
+			AC_MONO_APPLE_TARGET(TARGET_OS_WATCH, [
+				if test x$mono_native_ios_sim = xyes; then
+					mono_native_ios_target=watchos-simulator
+					mono_native_text="Apple Watch Simulator"
+					MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_WATCH | MONO_NATIVE_PLATFORM_TYPE_SIMULATOR"
+				else
+					mono_native_ios_target=watchos
+					mono_native_text="Apple Watch Device"
+					MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_WATCH | MONO_NATIVE_PLATFORM_TYPE_DEVICE"
+				fi
+				mono_native_unified_version="5.0"
+				mono_native_compat_check="__WATCH_OS_VERSION_MIN_REQUIRED >= __WATCHOS_5_0"
+			], [
+				AC_MSG_ERROR([Unknown iOS Target])
+			])
+		])
 	])
 
-	AC_MSG_RESULT($mono_native_compat)
-elif test x$target_ios = xyes; then
-	if test x$target_ios_sim = xyes; then
-		mono_native_text="iOS Simulator"
-		sed_remove_ios_version_pattern="s/-mios-simulator-version-min=$sed_version_pattern//g"
-		sed_find_ios_version_pattern="s/.*\(-mios-simulator-version-min=$sed_version_pattern\).*/\1/g"
-	else
-		mono_native_text="iOS Device"
-		sed_remove_ios_version_pattern="s/-miphoneos-version-min=$sed_version_pattern//g"
-		sed_find_ios_version_pattern="s/.*\(-miphoneos-version-min=$sed_version_pattern\).*/\1/g"
-	fi
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT([$mono_native_ios_target])
+
+	AC_MONO_APPLE_AVAILABLE(mono_native_compat, [whether we need the compatibility layer], [!($mono_native_compat_check)])
+
+	sed_remove_ios_version_pattern="s/-m\(.*\)-version-min=$sed_version_pattern//g"
+	sed_find_ios_version_pattern="s/.*\(-m$mono_native_ios_target-version-min=$sed_version_pattern\).*/\1/g"
+
 	mono_native_compat_version=`echo $CC | sed -e $sed_find_ios_version_pattern`
 
-	mono_native_ldflags="-framework CoreFoundation -no-undefined -fatal_warnings"
+	mono_native_ldflags="-framework CoreFoundation -framework Foundation -no-undefined -fatal_warnings"
 	MONO_NATIVE_CC=`echo $CC | sed -e $sed_remove_ios_version_pattern`
 	MONO_NATIVE_CXX=`echo $CXX | sed -e $sed_remove_ios_version_pattern`
 	MONO_NATIVE_CPPFLAGS=`echo $CPPFLAGS | sed -e $sed_remove_ios_version_pattern`
@@ -5593,36 +5615,16 @@ elif test x$target_ios = xyes; then
 	MONO_NATIVE_CFLAGS=`echo $CFLAGS | sed -e $sed_remove_ios_version_pattern`
 	MONO_NATIVE_LDFLAGS=`echo $LDFLAGS $mono_native_ldflags | sed -e $sed_remove_ios_version_pattern`
 
-	mono_native=yes
-	MONO_NATIVE_PLATFORM=ios
-	AC_MSG_RESULT(ios)
-
-	if test x$target_ios_sim=xyes; then
-		MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS | MONO_NATIVE_PLATFORM_TYPE_SIMULATOR"
-	else
-		MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_IOS"
-	fi
-
-	AC_MSG_CHECKING([whether we need the compatibility layer])
-	AC_TRY_COMPILE([
-		#include "TargetConditionals.h"
-		#include "AvailabilityMacros.h"
-	],[
-		#if !((TARGET_IPHONE_SIMULATOR == 1 || TARGET_OS_IPHONE == 1) && (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_10_0))
-		#error fail
-		#endif
-	], [
-		mono_native_compat=no
-	], [
-		mono_native_compat=yes
+	if test x$mono_native_compat = xyes; then
 		mono_native_text="$mono_native_text (compat+unified)"
 		MONO_NATIVE_COMPAT_CFLAGS="$CFLAGS $mono_native_compat_version"
 		MONO_NATIVE_COMPAT_LDFLAGS="$LDFLAGS $mono_native_compat_version"
-		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -iphoneos-version-min=10"
-		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -iphoneos-version-min=10"
-	])
+		MONO_NATIVE_UNIFIED_CFLAGS="$MONO_NATIVE_CFLAGS -m$mono_native_ios_target-version-min=$mono_native_unified_version"
+		MONO_NATIVE_UNIFIED_LDFLAGS="$MONO_NATIVE_LDFLAGS -m$mono_native_ios_target-version-min=$mono_native_unified_version"
+	fi
 
-	AC_MSG_RESULT($mono_native_compat)
+	mono_native=yes
+	MONO_NATIVE_PLATFORM=ios
 elif test x$host_linux = xyes; then
 	mono_native_text="Linux"
 	MONO_NATIVE_CC=$CC
@@ -5635,12 +5637,14 @@ elif test x$host_linux = xyes; then
 	mono_native=yes
 	mono_native_compat=no
 	MONO_NATIVE_PLATFORM=linux
+	AC_MSG_CHECKING([Mono.Native support])
 	AC_MSG_RESULT(linux)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
 else
 	mono_native=no
 	mono_native_text="no"
+	AC_MSG_CHECKING([Mono.Native support])
 	AC_MSG_RESULT(no)
 fi
 

@@ -23,7 +23,7 @@ mono_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen.la	\
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-    $(monodir)/mono/eglib/libeglib.la
+	$(monodir)/mono/eglib/libeglib.la
 
 common_sources = \
 	pal_config.h \
