@@ -36,7 +36,7 @@ define LLVMDownloadTemplate
 ifeq ($(UNAME),Darwin)
 ifeq ($(DISABLE_DOWNLOAD_LLVM),)
 	mkdir -p $$(TOP)/sdks/builds/toolchains/$(1)-download
-	-wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/$(2)/llvm-osx64-$(3).tar.gz | tar -xC $$(TOP)/sdks/builds/toolchains/$(1)-download -f -
+	-curl -sSL https://xamjenkinsartifact.blob.core.windows.net/$(2)/llvm-osx64-$(3).tar.gz | tar -xC $$(TOP)/sdks/builds/toolchains/$(1)-download -f -
 	touch $$@
 endif
 endif
