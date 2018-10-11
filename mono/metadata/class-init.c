@@ -789,6 +789,10 @@ mono_class_create_generic_inst (MonoGenericClass *gclass)
 
 	klass->cast_class = klass->element_class = klass;
 
+	if (m_class_is_valuetype (klass)) {
+		klass->is_byreflike = gklass->is_byreflike;
+	}
+
 	if (gclass->is_dynamic) {
 		/*
 		 * We don't need to do any init workf with unbaked typebuilders. Generic instances created at this point will be later unregistered and/or fixed.
