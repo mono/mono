@@ -7888,11 +7888,13 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 		wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
 		add_extra_method (acfg, wrapper);
 	}
+#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	if (interp_in) {
 		wrapper = mini_get_interp_in_wrapper (sig);
 		add_extra_method (acfg, wrapper);
 		//printf ("X: %s\n", mono_method_full_name (wrapper, 1));
 	}
+#endif
 }
 
 /*
@@ -12864,6 +12866,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ();
 		add_method (acfg, wrapper);
 
+#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
 			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
 			sig = mono_metadata_signature_dup_full (mono_get_corlib (), sig);
@@ -12871,6 +12874,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			wrapper = mini_get_interp_in_wrapper (sig);
 			add_method (acfg, wrapper);
 		}
+#endif
 	}
 
 	TV_GETTIME (atv);
