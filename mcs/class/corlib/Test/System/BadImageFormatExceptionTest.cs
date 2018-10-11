@@ -88,7 +88,6 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
-			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#5");
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#6");
 			Assert.IsTrue (bif.ToString ().IndexOf ("''") != -1, "#7");
@@ -140,7 +139,6 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.InnerException, "#3");
 			Assert.AreSame (ame, bif.InnerException, "#4");
 			Assert.IsNotNull (bif.Message, "#5"); // Could not load file or assembly '' ...
-			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#6");
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#8");
 			Assert.IsTrue (bif.ToString ().IndexOf ("---> " + ame.GetType ().FullName) != -1, "#9");
@@ -252,7 +250,6 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
-			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#5");
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": "), "#6");
