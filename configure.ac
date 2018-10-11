@@ -3905,7 +3905,7 @@ case "$host" in
 			;;
 		  mingw*|cygwin*)
 			have_visibility_hidden=no
-			BTLS_SUPPORTED=yes
+			BTLS_SUPPORTED=no
 			BTLS_PLATFORM=i386
 			;;
 		  haiku*)
@@ -3955,7 +3955,7 @@ case "$host" in
 			BTLS_PLATFORM=x86_64
 			;;
 		  mingw*|cygwin*)
-			BTLS_SUPPORTED=yes
+			BTLS_SUPPORTED=no
 			BTLS_PLATFORM=x86_64
 			;;
 		esac
