@@ -6405,7 +6405,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			// }
 			mono_mb_emit_byte (mb, CEE_DUP);
 			int pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
-			mono_mb_emit_ldflda (mb, MONO_HANDLE_PAYLOAD_OFFSET (MonoObject));
+			mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
 			mono_mb_emit_byte (mb, CEE_LDIND_REF);
 			mono_mb_patch_branch (mb, pos);
 		}
@@ -6426,7 +6426,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 						/* handleI */
 						mono_mb_emit_ldloc (mb, handles_locals [j].handle);
 						/* MONO_HANDLE_RAW(handleI) */
-						mono_mb_emit_ldflda (mb, MONO_HANDLE_PAYLOAD_OFFSET (MonoObject));
+						mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
 						mono_mb_emit_byte (mb, CEE_LDIND_REF);
 						/* *argI_raw = MONO_HANDLE_RAW(handleI) */
 						mono_mb_emit_byte (mb, CEE_STIND_REF);

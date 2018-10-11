@@ -834,7 +834,7 @@ namespace CppSharp
             var types = new List<string>
             {
                 "MonoObject",
-                "MonoObjectHandlePayload",
+                "MonoObjectHandle",
                 "MonoClass",
                 "MonoVTable",
                 "MonoDelegate",
