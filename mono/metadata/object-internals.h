@@ -228,6 +228,37 @@ mono_array_addr_with_size_internal (MonoArray *array, int size, uintptr_t idx)
 		mono_gc_wbarrier_arrayref_copy_internal (__p, __s, (count));	\
 	} while (0)
 
+// _internal is like _fast, but preserves the preexisting subtlety of the closed types of things:
+//  	int size
+//	uintptr_t idx
+// in order to mimic non-_internal but without the GC mode transitions, or at least,
+// to avoid the runtime using the embedding API, whether or not it has GC mode transitions.
+static inline char*
+mono_array_addr_with_size_internal (MonoArray *array, int size, uintptr_t idx)
+{
+	return mono_array_addr_with_size_fast (array, size, idx);
+}
+
+#define mono_array_addr_internal(array,type,index) ((type*)(void*) mono_array_addr_with_size_internal (array, sizeof (type), index))
+#define mono_array_get_internal(array,type,index) ( *(type*)mono_array_addr_internal ((array), type, (index)) )
+#define mono_array_set_internal(array,type,index,value)	\
+	do {	\
+		type *__p = (type *) mono_array_addr_internal ((array), type, (index));	\
+		*__p = (value);	\
+	} while (0)
+#define mono_array_setref_internal(array,index,value)	\
+	do {	\
+		void **__p = (void **) mono_array_addr_internal ((array), void*, (index));	\
+		mono_gc_wbarrier_set_arrayref ((array), __p, (MonoObject*)(value));	\
+		/* *__p = (value);*/	\
+	} while (0)
+#define mono_array_memcpy_refs_internal(dest,destidx,src,srcidx,count)	\
+	do {	\
+		void **__p = (void **) mono_array_addr_internal ((dest), void*, (destidx));	\
+		void **__s = mono_array_addr_internal ((src), void*, (srcidx));	\
+		mono_gc_wbarrier_arrayref_copy (__p, __s, (count));	\
+	} while (0)
+
 static inline gboolean
 mono_handle_array_has_bounds (MonoArrayHandle arr)
 {
