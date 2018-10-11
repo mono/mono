@@ -1999,7 +1999,7 @@ cominterop_get_ccw_checked (MonoObject* object, MonoClass* itf, MonoError *error
 	if (!object)
 		return NULL;
 
-	klass = mono_object_get_class (object);
+	klass = mono_object_class (object);
 
 	mono_cominterop_lock ();
 	if (!ccw_hash)
