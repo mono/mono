@@ -6037,8 +6037,7 @@ array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klas
 			else
 				mono_gc_memmove_atomic (&dest->vector, &src->vector, size);
 		} else {
-			mono_array_memcpy_refs_internal
- (dest, 0, src, 0, mono_array_length_internal (src));
+			mono_array_memcpy_refs_internal (dest, 0, src, 0, mono_array_length_internal (src));
 		}
 	} else {
 		mono_gc_memmove_atomic (&dest->vector, &src->vector, size);
