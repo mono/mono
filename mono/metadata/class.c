@@ -4405,11 +4405,7 @@ mono_class_get_namespace (MonoClass *klass)
 MonoType*
 mono_class_get_type (MonoClass *klass)
 {
-	MonoType *result;
-	MONO_ENTER_GC_UNSAFE;
-	result = m_class_get_byval_arg (klass);
-	MONO_EXIT_GC_UNSAFE;
-	return result;
+	return m_class_get_byval_arg (klass);
 }
 
 /**
