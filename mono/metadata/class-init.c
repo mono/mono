@@ -52,6 +52,7 @@ static void mono_class_setup_vtable_full (MonoClass *klass, GList *in_setup);
 static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gtd);
 static int generic_array_methods (MonoClass *klass);
 static void setup_generic_array_ifaces (MonoClass *klass, MonoClass *iface, MonoMethod **methods, int pos, GHashTable *cache);
+static gboolean class_has_isbyreflike_attribute (MonoClass *klass);
 
 /* This TLS variable points to a GSList of classes which have setup_fields () executing */
 static MonoNativeTlsKey setup_fields_tls_id;
@@ -658,6 +659,20 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 			klass->simd_type = 1;
 	}
 
+	// compute is_byreflike
+	if (m_class_is_valuetype (klass)) {
+		/* TypedReference and RuntimeArgumentHandle are byreflike by
+		 * definition. Otherwise, look for IsByRefLikeAttribute.
+		 */
+		if (mono_is_corlib_image (image) &&
+		    ((m_class_get_byval_arg (klass)->type == MONO_TYPE_TYPEDBYREF) ||
+		     (!strcmp (m_class_get_name_space (klass), "System") &&
+		      !strcmp (m_class_get_name (klass), "RuntimeArgumentHandle"))))
+			klass->is_byreflike = 1; 
+		else if (class_has_isbyreflike_attribute (klass))
+			klass->is_byreflike = 1;
+	}
+
 	mono_loader_unlock ();
 
 	MONO_PROFILER_RAISE (class_loaded, (klass));
@@ -699,6 +714,30 @@ mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gtd)
 		klass->element_class = gtd->element_class;
 	}
 	mono_loader_unlock ();
+}
+
+struct HasIsByrefLikeUD {
+	gboolean has_isbyreflike;
+};
+
+static gboolean
+has_isbyreflike_attribute_func (MonoImage *image, guint32 typeref_scope_token, const char *nspace, const char *name, guint32 method_token, gpointer user_data)
+{
+	struct HasIsByrefLikeUD *has_isbyreflike = (struct HasIsByrefLikeUD *)user_data;
+	if (!strcmp (name, "IsByRefLikeAttribute") && !strcmp (nspace, "System.Runtime.CompilerServices")) {
+		has_isbyreflike->has_isbyreflike = TRUE;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+class_has_isbyreflike_attribute (MonoClass *klass)
+{
+	struct HasIsByrefLikeUD has_isbyreflike;
+	has_isbyreflike.has_isbyreflike = FALSE;
+	mono_class_metadata_foreach_custom_attr (klass, has_isbyreflike_attribute_func, &has_isbyreflike);
+	return has_isbyreflike.has_isbyreflike;
 }
 
 /*
