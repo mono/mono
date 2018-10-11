@@ -71,6 +71,9 @@ typedef enum {
 	MONO_IMAGE_IMAGE_INVALID
 } MonoImageOpenStatus;
 
+typedef int32_t		mono_bool;
+typedef void (*MonoLogCallback) (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data);
+
 typedef struct MonoType_ MonoType;
 typedef struct MonoDomain_ MonoDomain;
 typedef struct MonoAssembly_ MonoAssembly;
@@ -83,7 +86,6 @@ typedef struct MonoObject_ MonoObject;
 typedef struct MonoArray_ MonoArray;
 typedef struct MonoThread_ MonoThread;
 typedef struct _MonoAssemblyName MonoAssemblyName;
-
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
@@ -156,6 +158,8 @@ int mono_regression_test_step (int verbose_level, char *image, char *method_name
 int mono_class_is_enum (MonoClass *klass);
 MonoType* mono_type_get_underlying_type (MonoType *type);
 void mono_register_symfile_for_assembly (const char *assembly_name, const unsigned char *raw_contents, int size);
+void mono_trace_init (void);
+void mono_trace_set_log_handler (MonoLogCallback callback, void *user_data);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -230,6 +234,24 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
+static void
+wasm_logger (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
+{
+	if (fatal) {
+		EM_ASM(
+			   var err = new Error();
+			   print ("Stacktrace: \n");
+			   print (err.stack);
+			   );
+
+		fprintf (stderr, "%s", message);
+
+		abort ();
+	} else {
+		fprintf (stdout, "%s\n", message);
+	}
+}
+
 #ifdef ENABLE_AOT
 #include "driver-gen.c"
 #endif
@@ -249,10 +271,10 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 {
 	int len = strlen (name);
 	if (!strcasecmp (".pdb", &name [len - 4])) {
-		name = m_strdup (name);
+		char *new_name = m_strdup (name);
 		//FIXME handle debugging assemblies with .exe extension
-		strcpy (&name [len - 3], "dll");
-		mono_register_symfile_for_assembly (name, data, size);
+		strcpy (&new_name [len - 3], "dll");
+		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
 	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
@@ -302,6 +324,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
 	}
 
+	mono_trace_init ();
+	mono_trace_set_log_handler (wasm_logger, NULL);
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
