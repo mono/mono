@@ -117,7 +117,8 @@ var MonoSupportLib = {
 			}
 
 			file_list.forEach (function(file_name) {
-				var fetch_promise = fetch_file_cb (deploy_prefix + "/" + file_name);
+				
+				var fetch_promise = fetch_file_cb (locateFile(deploy_prefix + "/" + file_name));
 
 				fetch_promise.then (function (response) {
 					if (!response.ok)
