@@ -1,6 +1,10 @@
 #!/bin/bash -e
 
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
+if [[ ${CI_TAGS} == *'win-'* ]]
+then ${TESTCMD} --label=mini-aotcheck --skip;
+else ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono/mini -k aotcheck
+fi
 if [[ ${CI_TAGS} == *'win-'* ]] || [[ ${CI_TAGS} == *'ppc64'* ]]
 then ${TESTCMD} --label=aot-test --skip;
 else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j ${CI_CPU_COUNT} -k test-aot
