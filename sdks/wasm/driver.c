@@ -39,8 +39,8 @@ m_strdup (const char *str)
 	if (!str)
 		return NULL;
 
-	int len = strlen (str) + 1;
-	char *res = malloc (len);
+	size_t len = strlen (str) + 1;
+	char *res = (char*)malloc (len);
 	memcpy (res, str, len);
 	return res;
 }
@@ -116,18 +116,18 @@ static WasmAssembly *assemblies;
 static int assembly_count;
 
 EMSCRIPTEN_KEEPALIVE void
-mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
+mono_wasm_add_assembly (const char *const_name, const unsigned char *data, unsigned int size)
 {
-	int len = strlen (name);
-	if (!strcasecmp (".pdb", &name [len - 4])) {
-		char *new_name = m_strdup (name);
+	char *name = m_strdup (const_name);
+	size_t len = strlen (name);
+	if (len >= 4 && !strcasecmp (".pdb", &name [len - 4])) {
 		//FIXME handle debugging assemblies with .exe extension
-		strcpy (&new_name [len - 3], "dll");
-		mono_register_symfile_for_assembly (new_name, data, size);
+		memcpy (&name [len - 3], "dll", 3);
+		mono_register_symfile_for_assembly (name, data, size);
 		return;
 	}
 	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
-	entry->assembly.name = m_strdup (name);
+	entry->assembly.name = name;
 	entry->assembly.data = data;
 	entry->assembly.size = size;
 	entry->next = assemblies;
