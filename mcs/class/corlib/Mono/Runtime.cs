@@ -106,17 +106,17 @@ namespace Mono {
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void WriteStateToDisk_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+		static extern void WriteStateToFile_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
 
 		static void
-		WriteStateToDisk (Exception exc)
+		WriteStateToFile (Exception exc)
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
 			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
 			using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
 			{
-				WriteStateToDisk_internal (payload_chars.Value, portable_hash, unportable_hash);
+				WriteStateToFile_internal (payload_chars.Value, portable_hash, unportable_hash);
 			}
 		}
 
