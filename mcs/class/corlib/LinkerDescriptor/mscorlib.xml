@@ -488,6 +488,11 @@
 		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
 		<type fullname="System.Reflection.ConstructorInfo" preserve="fields" />
 
+		<!-- custom-attr.c: create_custom_attr_data -->
+		<type fullname="System.Reflection.CustomAttributeData">
+			<method signature="System.Void .ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)" />
+		</type>
+
 		<!-- reflection.c: create_cattr_named_arg - create an instance with the ctor using 2 parameters -->
 		<type fullname="System.Reflection.CustomAttributeNamedArgument">
 			<method signature="System.Void .ctor(System.Reflection.MemberInfo,System.Object)" />
