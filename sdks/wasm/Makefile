@@ -142,12 +142,40 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	ninja -v -C obj/test-suite
 	touch $@
 
-aot-sample: $(DRIVER_CONF)/.stamp-build packager.exe mini_tests.dll main.exe runtime.js
+aot-sample: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(PWD)/../out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
+
+##
+# Parameters:
+# $(1) - make target suffix
+# $(2) - test assembly filename
+# $(3) - main.exe argument
+define AotTestTemplate
+
+build-aot-$(1): packager.exe runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
+	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(PWD)/../out -appdir=bin/aot-$(1) --nobinding --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
+	ninja -v -C obj/aot-$(1)
+
+clean-aot-$(1):
+	$(RM) -r obj/aot-$(1) bin/aot-$(1)
+
+check-aot-$(1): build-aot-$(1)
+	(cd bin/aot-$(1) && $$(SM) runtime.js $(3))
+
+endef
+
+$(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
+$(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
+$(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+
+AOT_TEST_SUITES=corlib System.Core
+
+build-aot-all:
+	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
 build-debug-sample: .stamp-build-debug-sample
 
