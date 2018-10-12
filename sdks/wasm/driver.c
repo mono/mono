@@ -688,3 +688,8 @@ mono_wasm_unbox_enum (MonoObject *obj)
 	}
 }
 
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_exit (int exit_code)
+{
+	exit (exit_code);
+}

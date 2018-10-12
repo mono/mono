@@ -24,7 +24,7 @@ if (typeof console !== "undefined") {
 
 fail_exec = function(reason) {
 	print (reason);
-	throw "FAIL";
+	wasm_exit (1);
 }
 
 try {
@@ -33,7 +33,7 @@ try {
 	read = WScript.LoadBinaryFile;
 	fail_exec = function(reason) {
 		print (reason);
-		WScript.Quit(1);
+		wasm_exit (1);
 	}
 } catch(e) {}
 
@@ -104,6 +104,7 @@ var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point
 var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
 var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
 var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
+var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 
 const IGNORE_PARAM_COUNT = -1;
 
