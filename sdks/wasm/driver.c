@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdint.h>
 
 typedef enum {
 	/* Disables AOT mode */
@@ -126,7 +126,12 @@ MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, 
 
 MonoAssemblyName* mono_assembly_name_new (const char *name);
 void mono_assembly_name_free (MonoAssemblyName *aname);
+
 const char* mono_image_get_name (MonoImage *image);
+uint32_t mono_image_get_entry_point (MonoImage *image);
+
+MonoMethod* mono_get_method (MonoImage *image, uint32_t token, MonoClass *klass);
+
 MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_add_internal_call (const char *name, const void* method);
 MonoString * mono_string_from_utf16 (char *data);
@@ -134,6 +139,7 @@ MonoString* mono_string_new (MonoDomain *domain, const char *text);
 void mono_wasm_enable_debugging (void);
 MonoArray* mono_array_new (MonoDomain *domain, MonoClass *eclass, int n);
 MonoClass* mono_get_object_class (void);
+MonoClass* mono_get_string_class (void);
 int mono_class_is_delegate (MonoClass* klass);
 const char* mono_class_get_name (MonoClass *klass);
 const char* mono_class_get_namespace (MonoClass *klass);
@@ -149,7 +155,7 @@ MonoClass* mono_class_get_element_class(MonoClass *klass);
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 int mono_class_is_enum (MonoClass *klass);
 MonoType* mono_type_get_underlying_type (MonoType *type);
-
+void mono_register_symfile_for_assembly (const char *assembly_name, const unsigned char *raw_contents, int size);
 
 #define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
 #define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
@@ -241,6 +247,14 @@ static int assembly_count;
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
 {
+	int len = strlen (name);
+	if (!strcasecmp (".pdb", &name [len - 4])) {
+		name = m_strdup (name);
+		//FIXME handle debugging assemblies with .exe extension
+		strcpy (&name [len - 3], "dll");
+		mono_register_symfile_for_assembly (name, data, size);
+		return;
+	}
 	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
@@ -266,13 +280,14 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_wasm_enable_debugging ();
 #endif
 
+	mono_icall_table_init ();
+
 #ifndef ENABLE_AOT
 	mono_ee_interp_init ("");
 	mono_marshal_ilgen_init ();
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();
 #endif
-	mono_icall_table_init ();
 
 	if (assembly_count) {
 		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
@@ -348,6 +363,20 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 	return res;
 }
 
+EMSCRIPTEN_KEEPALIVE MonoMethod*
+mono_wasm_assembly_get_entry_point (MonoAssembly *assembly)
+{
+	MonoImage *image;
+	MonoMethod *method;
+
+	image = mono_assembly_get_image (assembly);
+	uint32_t entry = mono_image_get_entry_point (image);
+	if (!entry)
+		return NULL;
+
+	return mono_get_method (image, entry, NULL);
+}
+
 EMSCRIPTEN_KEEPALIVE char *
 mono_wasm_string_get_utf8 (MonoString *str)
 {
@@ -359,7 +388,6 @@ mono_wasm_string_from_js (const char *str)
 {
 	return mono_string_new (root_domain, str);
 }
-
 
 static int
 class_is_task (MonoClass *klass)
@@ -529,6 +557,12 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
 {
 	mono_array_setref (array, idx, obj);
+}
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_string_array_new (int size)
+{
+	return mono_array_new (root_domain, mono_get_string_class (), size);
 }
 
 // Int8Array 		| int8_t	| byte or SByte (signed byte)

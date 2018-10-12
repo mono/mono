@@ -35,12 +35,13 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-icall-export \
 	--disable-icall-tables \
 	--with-bitcode=yes \
-	$(if $(ENABLE_CXX),--enable-cxx)
+	$(if $(ENABLE_CXX),--enable-cxx) \
+	CFLAGS="-fexceptions"
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
 
-.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
+.stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
 	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
 	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@
@@ -87,17 +88,19 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--disable-support-build \
 	--enable-maintainer-mode \
-	--enable-minimal=appdomains,com,remoting
+	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm32-unknown-none.h
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
+ifdef ENABLE_WASM_CROSS
 wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+endif
 
 endef
 
-ifeq ($(DISABLE_WASM_CROSS),)
 $(eval $(call WasmCrossTemplate,cross,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
-endif
 
 ##
 # Parameters
@@ -147,19 +150,21 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-support-build \
 	--enable-maintainer-mode \
 	--enable-minimal=appdomains,com,remoting \
-	--with-tls=pthread
+	--with-tls=pthread \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm32-unknown-none.h
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
-# wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION)
+ifdef ENABLE_WASM_CROSS
+wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+endif
 
 endef
 
-ifeq ($(DISABLE_WASM_CROSS),)
 $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
-endif
 
 ##
 # Parameters

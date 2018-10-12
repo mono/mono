@@ -205,7 +205,7 @@ namespace WsProxy {
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
-			Debug ($"sending command {method}: {args}");
+			// Debug ($"sending command {method}: {args}");
 			return await SendCommandInternal (method, args, token);
 		}
 

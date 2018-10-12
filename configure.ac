@@ -46,7 +46,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=E06DCE2D-7852-4BBA-AD9F-54D67EEF1FF9
+MONO_CORLIB_VERSION=5F2CEB7B-13B1-4694-A0D5-3DD7EDE81388
 
 #
 # Put a quoted #define in config.h.
@@ -144,9 +144,12 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
+
 		# Windows 7 or later is required
-		CPPFLAGS="$CPPFLAGS -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
-		LDFLAGS="$LDFLAGS -lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		WIN32_CPPFLAGS="-DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
+		CPPFLAGS="$CPPFLAGS $WIN32_CPPFLAGS"
+		WIN32_LDFLAGS="-lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
+		LDFLAGS="$LDFLAGS $WIN32_LDFLAGS"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
@@ -183,6 +186,8 @@ case "$host" in
 		with_sgen_default_concurrent=yes
 		;;
 	*-*-*freebsd*)
+		dnl For close_my_fds
+		LDFLAGS="$LDFLAGS -lutil"
 		if test "x$PTHREAD_CFLAGS" = "x"; then
 			CPPFLAGS="$CPPFLAGS -DGC_FREEBSD_THREADS"
 			libmono_cflags=
@@ -197,7 +202,7 @@ case "$host" in
 			LDFLAGS="$LDFLAGS $PTHREAD_LIBS -L/usr/local/lib"
 			libmono_ldflags="$PTHREAD_LIBS"
 		fi
-		CPPFLAGS="$CPPFLAGS -DHOST_BSD"
+		CPPFLAGS="$CPPFLAGS -DHOST_BSD -D_WITH_GETLINE"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
@@ -2423,7 +2428,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_HEADERS(pthread.h)
 	AC_CHECK_HEADERS(pthread_np.h)
 	AC_CHECK_FUNCS(pthread_mutex_timedlock)
-	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np pthread_setname_np pthread_cond_timedwait_relative_np)
+	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np pthread_getname_np pthread_setname_np pthread_cond_timedwait_relative_np)
 	AC_CHECK_FUNCS(pthread_kill)
 	AC_MSG_CHECKING(for PTHREAD_MUTEX_RECURSIVE)
 	AC_TRY_COMPILE([ #include <pthread.h>], [
@@ -3581,18 +3586,6 @@ ac_cv_c_socklen_t=yes
 	AC_MSG_RESULT(no)
 ])
 
-AC_MSG_CHECKING(for array element initializer support)
-AC_TRY_COMPILE([#include <sys/socket.h>], [
-	const int array[] = {[1] = 2,};
-], [
-	# Yes, we have it...
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_ARRAY_ELEM_INIT,1,[Supports C99 array initialization])
-], [
-	# We'll have to use signals
-	AC_MSG_RESULT(no)
-])
-
 AC_CHECK_FUNCS(execvp)
 
 dnl ****************************
@@ -3901,7 +3894,9 @@ case "$host" in
 			have_visibility_hidden=no
 			;;
 		  mingw*|cygwin*)
-			have_visibility_hidden=no		  
+			have_visibility_hidden=no
+			BTLS_SUPPORTED=no
+			BTLS_PLATFORM=i386
 			;;
 		  haiku*)
 			LIBC=libroot.so
@@ -3949,7 +3944,9 @@ case "$host" in
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=x86_64
 			;;
-		  mingw*)
+		  mingw*|cygwin*)
+			BTLS_SUPPORTED=no
+			BTLS_PLATFORM=x86_64
 			;;
 		esac
 		;;
@@ -5043,6 +5040,30 @@ AM_CONDITIONAL([ENABLE_HYBRID_SUSPEND], [test x$enable_hybrid_suspend != xno])
 
 dnl End of thread suspend policy
 
+dnl ***************************
+dnl *** feature experiments ***
+dnl ***************************
+
+dnl When adding experiments, also add to mono/utils/mono-experiments.def
+AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null],[
+
+	if test x$enable_experiment != x ; then
+		AC_DEFINE(ENABLE_EXPERIMENTS,1,[Enable feature experiments])
+	fi
+	for feature in `echo "$enable_experiment" | sed -e "s/,/ /g"`; do
+		eval "mono_experiment_test_enable_$feature='yes'"
+	done
+
+	if test "x$mono_experiment_test_enable_all" = "xyes"; then
+		eval "mono_experiment_test_enable_null='yes'"
+		true
+	fi
+
+	if test "x$mono_experiment_test_enable_null" = "xyes"; then
+		AC_DEFINE(ENABLE_EXPERIMENT_null, 1, [Enable experiment 'null'])
+	fi
+],[])
+
 dnl **********************
 dnl *** checked builds ***
 dnl **********************
@@ -5142,10 +5163,21 @@ if test "x$enable_btls" = "xyes"; then
 		case $host_os in
 			darwin*)
 				btls_cflags="$btls_cflags -arch i386"
+				;;
+			mingw*|cygwin*)
+				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
+				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				;;
 		esac
 		;;
 	x86_64)
 		btls_arch=x86_64
+		case $host_os in
+			mingw*|cygwin*)
+				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
+				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				;;
+		esac
 		;;
 	arm)
 		btls_arch=arm
@@ -5752,7 +5784,7 @@ echo "
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
-	crash reporting: $crash_reporting
+	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

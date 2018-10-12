@@ -64,7 +64,7 @@ elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
 elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=aot";
-elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode";
+elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS --aot=clangxx=clang++-6.0";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
     # only enable build of the additional profiles on one config to save time
@@ -102,7 +102,7 @@ if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
+if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
@@ -135,7 +135,7 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
@@ -150,6 +150,9 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
         ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        if [[ ${CI_TAGS} != *'pull-request'* ]]; then
+            ${TESTCMD} --label=archive-debug --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
+        fi
 
         ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
         ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
