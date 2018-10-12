@@ -812,5 +812,7 @@
 		<type fullname="Mono.RuntimeStructs/HandleStackMark" />
 		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
+
+		<type fullname="System.Threading.WasmRuntime"/>
 	</assembly>
 </linker>
