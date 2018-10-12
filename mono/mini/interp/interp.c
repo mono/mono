@@ -517,7 +517,7 @@ stackval_from_data (MonoType *type_, stackval *result, void *data, gboolean pinv
 		return;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			stackval_from_data (mono_class_enum_basetype (type->data.klass), result, data, pinvoke);
+			stackval_from_data (mono_class_enum_basetype_internal (type->data.klass), result, data, pinvoke);
 			return;
 		} else if (pinvoke) {
 			memcpy (result->data.vt, data, mono_class_native_size (type->data.klass, NULL));
@@ -618,7 +618,7 @@ stackval_to_data (MonoType *type_, stackval *val, void *data, gboolean pinvoke)
 	}
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			stackval_to_data (mono_class_enum_basetype (type->data.klass), val, data, pinvoke);
+			stackval_to_data (mono_class_enum_basetype_internal (type->data.klass), val, data, pinvoke);
 			return;
 		} else if (pinvoke) {
 			memcpy (data, val->data.vt, mono_class_native_size (type->data.klass, NULL));
@@ -681,7 +681,7 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
 		return &val->data.p;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass))
-			return stackval_to_data_addr (mono_class_enum_basetype (type->data.klass), val);
+			return stackval_to_data_addr (mono_class_enum_basetype_internal (type->data.klass), val);
 		else
 			return val->data.vt;
 	case MONO_TYPE_TYPEDBYREF:
@@ -905,7 +905,7 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 	if (frame->ex)
 		return NULL;
 
-	if (needs_typecheck && !mono_class_is_assignable_from (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), m_class_get_element_class (required_type))) {
+	if (needs_typecheck && !mono_class_is_assignable_from_internal (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), m_class_get_element_class (required_type))) {
 		frame->ex = mono_get_exception_array_type_mismatch ();
 		FILL_IN_TRACE (frame->ex, frame);
 		return NULL;

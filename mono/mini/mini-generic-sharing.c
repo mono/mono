@@ -3022,7 +3022,7 @@ is_async_state_machine_class (MonoClass *klass)
 
 	iclass = mono_class_try_get_iasync_state_machine_class ();
 
-	if (iclass && m_class_is_valuetype (klass) && mono_class_is_assignable_from (iclass, klass))
+	if (iclass && m_class_is_valuetype (klass) && mono_class_is_assignable_from_internal (iclass, klass))
 		return TRUE;
 	return FALSE;
 }
@@ -3738,7 +3738,7 @@ get_shared_type (MonoType *t, MonoType *type)
 	/* Create a type variable with a constraint which encodes which types can match it */
 	ttype = type->type;
 	if (type->type == MONO_TYPE_VALUETYPE) {
-		ttype = mono_class_enum_basetype (type->data.klass)->type;
+		ttype = mono_class_enum_basetype_internal (type->data.klass)->type;
 	} else if (MONO_TYPE_IS_REFERENCE (type)) {
 		ttype = MONO_TYPE_OBJECT;
 	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {

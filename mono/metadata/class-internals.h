@@ -1109,6 +1109,9 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 char *
 mono_method_get_full_name (MonoMethod *method);
 
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type);
+
 MonoArrayType *mono_dup_array_type (MonoImage *image, MonoArrayType *a);
 MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMethodSignature *sig);
 
@@ -1209,6 +1212,9 @@ mono_class_has_variant_generic_params (MonoClass *klass);
 
 gboolean
 mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv);
+
+mono_bool
+mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass);
 
 gboolean mono_is_corlib_image (MonoImage *image);
 
@@ -1440,6 +1446,9 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
+
+MonoType*
+mono_class_enum_basetype_internal (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

@@ -359,7 +359,7 @@ handle_enum:
 		return OP_STORER8_MEMBASE_REG;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			type = mono_class_enum_basetype (type->data.klass);
+			type = mono_class_enum_basetype_internal (type->data.klass);
 			goto handle_enum;
 		}
 		if (MONO_CLASS_IS_SIMD (cfg, mono_class_from_mono_type (type)))
@@ -3874,7 +3874,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 
 	MONO_TIME_TRACK (mono_jit_stats.jit_gc_create_gc_map, mini_gc_create_gc_map (cfg));
-	MONO_TIME_TRACK (mono_jit_stats.jit_save_seq_point_info, mono_save_seq_point_info (cfg));
+	MONO_TIME_TRACK (mono_jit_stats.jit_save_seq_point_info, mono_save_seq_point_info (cfg, cfg->jit_info));
 
 	if (!cfg->compile_aot) {
 		mono_save_xdebug_info (cfg);

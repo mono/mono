@@ -1410,7 +1410,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	if (constrained_class) {
 		if (m_class_is_enumtype (constrained_class) && !strcmp (target_method->name, "GetHashCode")) {
 			/* Use the corresponding method from the base type to avoid boxing */
-			MonoType *base_type = mono_class_enum_basetype (constrained_class);
+			MonoType *base_type = mono_class_enum_basetype_internal (constrained_class);
 			g_assert (base_type);
 			constrained_class = mono_class_from_mono_type (base_type);
 			target_method = mono_class_get_method_from_name_checked (constrained_class, target_method->name, 0, 0, error);
@@ -1932,7 +1932,7 @@ collect_pred_seq_points (TransformData *td, InterpBasicBlock *bb, SeqPoint *seqp
 }
 
 static void
-save_seq_points (TransformData *td)
+save_seq_points (TransformData *td, MonoJitInfo *jinfo)
 {
 	InterpMethod *rtm = td->rtm;
 	GByteArray *array;
@@ -2019,6 +2019,8 @@ save_seq_points (TransformData *td)
 	mono_domain_lock (domain);
 	g_hash_table_insert (domain_jit_info (domain)->seq_points, rtm->method, info);
 	mono_domain_unlock (domain);
+
+	jinfo->seq_points = info;
 }
 
 static void
@@ -5017,7 +5019,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		}
 	}
 
-	save_seq_points (td);
+	save_seq_points (td, jinfo);
 
 exit:
 	mono_basic_block_free (original_bb);
