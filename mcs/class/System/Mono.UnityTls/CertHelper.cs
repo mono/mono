@@ -1,6 +1,8 @@
 #if SECURITY_DEP
 using System.Security.Cryptography.X509Certificates;
 
+using size_t = System.IntPtr;
+
 namespace Mono.Unity
 {
 	internal unsafe static class CertHelper
@@ -16,7 +18,7 @@ namespace Mono.Unity
 		{
 			byte[] certDer = certificate.GetRawCertData ();
 			fixed(byte* certDerPtr = certDer) {
-				UnityTls.NativeInterface.unitytls_x509list_append_der (nativeCertificateChain, certDerPtr, certDer.Length, errorState);
+				UnityTls.NativeInterface.unitytls_x509list_append_der (nativeCertificateChain, certDerPtr, (size_t)certDer.Length, errorState);
 			}
 
 			var certificateImpl2 = certificate.Impl as X509Certificate2Impl;
@@ -34,16 +36,16 @@ namespace Mono.Unity
 		{
 			X509CertificateCollection certificates = new X509CertificateCollection ();
 
-			var cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, 0, errorState);
+			var cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, (size_t)0, errorState);
 			for (int i = 0; cert.handle != UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE; ++i) {
-				size_t certBufferSize = UnityTls.NativeInterface.unitytls_x509_export_der (cert, null, 0, errorState);
-				var certBuffer = new byte[certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
+				size_t certBufferSize = UnityTls.NativeInterface.unitytls_x509_export_der (cert, null, (size_t)0, errorState);
+				var certBuffer = new byte[(int)certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
 				fixed(byte* certBufferPtr = certBuffer) {
 					UnityTls.NativeInterface.unitytls_x509_export_der (cert, certBufferPtr, certBufferSize, errorState);
 				}
 				certificates.Add (new X509Certificate (certBuffer));
 
-				cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, i, errorState);
+				cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, (size_t)i, errorState);
 			}
 
 			return certificates;
