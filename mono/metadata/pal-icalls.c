@@ -11,6 +11,7 @@
 #include "pal_io.h"
 #include "mono/utils/mono-threads-api.h"
 #include "mono/utils/atomic.h"
+#include "mono/metadata/icall-internals.h"
 
 #include "pal-icalls.h"
 
@@ -27,10 +28,10 @@ mono_pal_init (void)
 {
 	volatile static gboolean module_initialized = FALSE;
 	if (mono_atomic_cas_i32 (&module_initialized, TRUE, FALSE) == FALSE) {
-		mono_add_internal_call ("Interop/Sys::Read", ves_icall_Interop_Sys_Read);
+		mono_add_internal_call_with_flags ("Interop/Sys::Read", ves_icall_Interop_Sys_Read, TRUE);
 
 #if defined(__APPLE__)
-		mono_add_internal_call ("Interop/RunLoop::CFRunLoopRun", ves_icall_Interop_RunLoop_CFRunLoopRun);
+		mono_add_internal_call_with_flags ("Interop/RunLoop::CFRunLoopRun", ves_icall_Interop_RunLoop_CFRunLoopRun, TRUE);
 #endif
 	}
 

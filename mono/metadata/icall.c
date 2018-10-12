@@ -8223,6 +8223,7 @@ ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, con
 static MonoIcallTableCallbacks icall_table;
 static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
+static GHashTable *icall_hash_foreign = NULL;
 static GHashTable *jit_icall_hash_name = NULL;
 static GHashTable *jit_icall_hash_addr = NULL;
 
@@ -8240,6 +8241,7 @@ mono_icall_init (void)
 	mono_icall_table_init ();
 #endif
 	icall_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	icall_hash_foreign = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	mono_os_mutex_init (&icall_mutex);
 }
 
@@ -8259,6 +8261,7 @@ void
 mono_icall_cleanup (void)
 {
 	g_hash_table_destroy (icall_hash);
+	g_hash_table_destroy (icall_hash_foreign);
 	g_hash_table_destroy (jit_icall_hash_name);
 	g_hash_table_destroy (jit_icall_hash_addr);
 	mono_os_mutex_destroy (&icall_mutex);
@@ -8304,11 +8307,41 @@ mono_icall_cleanup (void)
 void
 mono_add_internal_call (const char *name, gconstpointer method)
 {
+	mono_add_internal_call_with_flags (name, method, FALSE);
+}
+
+/**
+ * mono_add_internal_call_with_flags:
+ * \param name method specification to surface to the managed world
+ * \param method pointer to a C method to invoke when the method is called
+ * \param cooperative if \c TRUE, run icall in GC Unsafe (cooperatively suspended) mode,
+ *        otherwise GC Safe (blocking)
+ *
+ * Like \c mono_add_internal_call, but if \p cooperative is \c TRUE the added
+ * icall promises that it will use the coopertive API to inform the runtime
+ * when it is running blocking operations, that it will not run for unbounded
+ * amounts of time without safepointing, and that it will not hold managed
+ * object references across suspend safepoints.
+ *
+ * If \p cooperative is \c FALSE, run the icall in GC Safe mode - the icall may
+ * block. The icall must obey the GC Safe rules, e.g. it must not touch
+ * unpinned managed memory.
+ *
+ */
+void
+mono_add_internal_call_with_flags (const char *name, gconstpointer method, gboolean cooperative)
+{
 	mono_icall_lock ();
 
-	g_hash_table_insert (icall_hash, g_strdup (name), (gpointer) method);
+	g_hash_table_insert (cooperative ? icall_hash : icall_hash_foreign , g_strdup (name), (gpointer) method);
 
 	mono_icall_unlock ();
+}
+
+void
+mono_add_internal_call_internal (const char *name, gconstpointer method)
+{
+	mono_add_internal_call_with_flags (name, method, TRUE);
 }
 
 /* 
@@ -8349,7 +8382,7 @@ no_icall_table (void)
  * If the method is not found, warns and returns NULL.
  */
 gpointer
-mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
+mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles, mono_bool *foreign)
 {
 	char *sigstart;
 	char *tmpsig;
@@ -8360,6 +8393,8 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 
 	if (uses_handles)
 		*uses_handles = FALSE;
+	if (foreign)
+		*foreign = FALSE;
 
 	g_assert (method != NULL);
 
@@ -8415,6 +8450,15 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 		mono_icall_unlock ();
 		return res;
 	}
+	res = g_hash_table_lookup (icall_hash_foreign, mname);
+	if (res) {
+		if (foreign)
+			*foreign = TRUE;
+		g_free (classname);
+		mono_icall_unlock ();
+		return res;
+	}
+
 	/* try without signature */
 	*sigstart = 0;
 	res = g_hash_table_lookup (icall_hash, mname);
@@ -8423,6 +8467,15 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 		mono_icall_unlock ();
 		return res;
 	}
+	res = g_hash_table_lookup (icall_hash_foreign, mname);
+	if (res) {
+		if (foreign)
+			*foreign = TRUE;
+		g_free (classname);
+		mono_icall_unlock ();
+		return res;
+	}
+
 
 	if (!icall_table.lookup) {
 		mono_icall_unlock ();
@@ -8460,7 +8513,7 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 gpointer
 mono_lookup_internal_call (MonoMethod *method)
 {
-	return mono_lookup_internal_call_full (method, NULL);
+	return mono_lookup_internal_call_full (method, NULL, NULL);
 }
 
 /*
