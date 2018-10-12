@@ -37,6 +37,9 @@ class Driver {
 		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.js')");
 		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
+		Console.WriteLine ("\t--copy=always|ifnewer        Set the type of copy to perform.");
+		Console.WriteLine ("\t\t              'always' overwrites the file if it exists.");
+		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
@@ -166,10 +169,17 @@ class Driver {
 		new Driver ().Run (args);
 	}
 
+	enum CopyType
+	{
+		Default,
+		Always,
+		IfNewer		
+	}
+
 	void Run (string[] args) {
+		var add_binding = true;
 		var root_assemblies = new List<string> ();
 		enable_debug = false;
-		var add_binding = true;
 		string builddir = null;
 		string sdkdir = null;
 		string emscripten_sdkdir = null;
@@ -184,6 +194,8 @@ class Driver {
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
+		var copyTypeParm = "default";
+		var copyType = CopyType.Default;
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -201,6 +213,7 @@ class Driver {
 				{ "template=", s => runtimeTemplate = s },
 				{ "asset=", s => assets.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
+				{ "copy=", s => copyTypeParm = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -210,6 +223,12 @@ class Driver {
 		}
 
 		if (print_usage) {
+			Usage ();
+			return;
+		}
+
+		if (!Enum.TryParse(copyTypeParm, true, out copyType)) {
+			Console.WriteLine("Invalid copy value");
 			Usage ();
 			return;
 		}
@@ -256,8 +275,7 @@ class Driver {
 				Directory.Delete (bcl_dir, true);
 			Directory.CreateDirectory (bcl_dir);
 			foreach (var f in file_list) {
-				Console.WriteLine ($"cp {f} -> {Path.Combine (bcl_dir, Path.GetFileName (f))}");
-				File.Copy (f, Path.Combine (bcl_dir, Path.GetFileName (f)));
+				CopyFile(f, Path.Combine (bcl_dir, Path.GetFileName (f)), copyType);
 			}
 		}
 
@@ -296,9 +314,8 @@ class Driver {
 
 			foreach(var asset in assets)
 			{
-				Console.WriteLine ($"Asset: cp {asset} -> {Path.Combine (out_prefix, Path.GetFileName (asset))}");
-				File.Copy (asset, 
-						Path.Combine (out_prefix, asset));
+				CopyFile (asset, 
+						Path.Combine (out_prefix, asset), copyType, "Asset: ");
 			}
 		}
 
@@ -451,5 +468,37 @@ class Driver {
 
 		ninja.Close ();
 	}
+
+	static void CopyFile(string sourceFileName, string destFileName, CopyType copyType, string typeFile = "")
+	{
+		Console.WriteLine($"{typeFile}cp: {copyType} - {sourceFileName} -> {destFileName}");
+		switch (copyType)
+		{
+			case CopyType.Always:
+				File.Copy(sourceFileName, destFileName, true);
+				break;
+			case CopyType.IfNewer:
+				if (!File.Exists(destFileName))
+				{
+					File.Copy(sourceFileName, destFileName);
+				}
+				else
+				{
+					var srcInfo = new FileInfo (sourceFileName);
+					var dstInfo = new FileInfo (destFileName);
+					
+					if (srcInfo.LastWriteTime.Ticks > dstInfo.LastWriteTime.Ticks || srcInfo.Length > dstInfo.Length)
+						File.Copy(sourceFileName, destFileName, true);
+					else
+						Console.WriteLine($"    skipping: {sourceFileName}");
+				}
+				break;
+			default:
+				File.Copy(sourceFileName, destFileName);
+				break;
+		}
+
+	}
+
 
 }

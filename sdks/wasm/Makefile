@@ -94,7 +94,7 @@ build-native: debug/.stamp-build release/.stamp-build
 
 do-runtime:
 	make -j4 -C ../builds package-wasm-runtime
-	make -j4 -C ../builds package-bcl
+	make -j4 -C ../builds package-wasm-bcl
 	make build-native
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
