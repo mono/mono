@@ -296,7 +296,7 @@ class Driver {
 		if (add_binding || true)
 			config += "\tadd_bindings: function() { " + $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");" + " }\n";
 		config += "}\n";
-		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "config.js");
+		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "mono-config.js");
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
@@ -387,7 +387,7 @@ class Driver {
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
-		ninja.WriteLine ("build $appdir/config.js: cpifdiff $builddir/config.js");
+		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (enable_aot) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");

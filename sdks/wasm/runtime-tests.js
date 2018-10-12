@@ -55,7 +55,7 @@ function inspect_object (o){
     return r;
 }
 
-load ("config.js");
+load ("mono-config.js");
 
 var Module = { 
 	print: function(x) { print ("WASM: " + x) },
