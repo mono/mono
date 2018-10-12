@@ -6229,11 +6229,12 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	int thread_info_var = -1, stack_mark_var = -1, error_var = -1;
 	MonoMethodSignature *call_sig = csig;
 	gboolean uses_handles = FALSE;
+	gboolean foreign_icall = FALSE;
 	gboolean save_handles_to_locals = FALSE;
 	IcallHandlesLocal *handles_locals = NULL;
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 
-	(void) mono_lookup_internal_call_full (method, FALSE, &uses_handles);
+	(void) mono_lookup_internal_call_full (method, FALSE, &uses_handles, &foreign_icall);
 
 	/* If it uses handles and MonoError, it had better check exceptions */
 	g_assert (!uses_handles || check_exceptions);

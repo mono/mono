@@ -56,7 +56,7 @@ mono_method_get_flags      (MonoMethod *method, uint32_t *iflags);
 MONO_API uint32_t
 mono_method_get_index      (MonoMethod *method);
 
-MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_add_internal_call     (const char *name, const void* method);
 
 MONO_API void*
