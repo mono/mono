@@ -944,7 +944,6 @@ partial class SR
 	public const string ArgumentOutOfRange_Year = "Year must be between 1 and 9999.";
 	public const string Arithmetic_NaN = "Function does not accept floating point Not-a-Number values.";
 	public const string ArrayTypeMismatch_CantAssignType = "Source array type cannot be assigned to destination array type.";
-	public const string BadImageFormatException_CouldNotLoadFileOrAssembly = "Could not load file or assembly '{0}'. An attempt was made to load a program with an incorrect format.";
 	public const string CollectionCorrupted = "A prior operation on this collection was interrupted by an exception. Collection's state is no longer trusted.";
 	public const string Exception_EndOfInnerExceptionStack = "--- End of inner exception stack trace ---";
 	public const string Exception_WasThrown = "Exception of type '{0}' was thrown.";
