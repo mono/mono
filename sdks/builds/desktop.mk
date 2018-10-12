@@ -28,3 +28,5 @@ $$(eval $$(call RuntimeTemplate,desktop-$(1),$(2)))
 endef
 
 $(eval $(call DesktopTemplate,x86_64,x86_64-apple-darwin17.2.0))
+
+$(eval $(call BclTemplate,desktop-bcl,net_4_x,))

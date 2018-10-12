@@ -133,9 +133,9 @@ class Driver {
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
-		if (Directory.Exists (Path.Combine (tool_prefix, "../out/bcl/wasm"))) {
+		if (Directory.Exists (Path.Combine (tool_prefix, "../out/wasm-bcl/wasm"))) {
 			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packaker.exe
-			bcl_prefix = Path.Combine (tool_prefix, "../out/bcl/wasm");
+			bcl_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
 			bcl_prefix = Path.Combine (tool_prefix, "bcl");

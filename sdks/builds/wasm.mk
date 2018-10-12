@@ -53,5 +53,7 @@ clean-wasm-interp: clean-wasm
 
 TARGETS += wasm-interp
 
+wasm_TARGETS += wasm-interp
 
-
+$(eval $(call BclTemplate,wasm-bcl,wasm net_4_x,wasm))
+wasm_TARGETS += wasm-bcl
