@@ -1345,28 +1345,49 @@ copy_summary_string_safe (char *in, const char *out)
 	return;
 }
 
-static GHashTable *native_library_whitelist;
+typedef struct {
+	char *suffix;
+	char *exported_name;
+} MonoLibWhitelistEntry;
+
+static GList *native_library_whitelist;
 
 static void
 mono_crash_reporting_register_native_library (const char *module_path, const char *module_name)
 {
-	Dl_info info;
-	if (!native_library_whitelist) {
-		native_library_whitelist = g_hash_table_new_full (NULL, NULL, NULL, g_free);
-
-		dladdr ((void*) mono_crash_reporting_register_native_library, &info);
-
-		if (info.dli_fname && strlen(info.dli_fname) > 0)
-			g_hash_table_insert (native_library_whitelist, g_strdup (info.dli_fname), g_strdup ("mono"));
-	}
-
 	// Examples: libsystem_pthread.dylib -> "pthread"
 	// Examples: libsystem_platform.dylib -> "platform"
 	// Examples: mono-sgen -> "mono" from above line
-	g_hash_table_insert (native_library_whitelist, g_strdup (module_path), g_strdup (module_name));
+	MonoLibWhitelistEntry *entry = g_new0 (MonoLibWhitelistEntry, 1);
+	entry->suffix = g_strdup (module_path);
+	entry->exported_name = g_strdup (module_name);
+	native_library_whitelist = g_list_append (native_library_whitelist, entry);
 }
 
 static gboolean
+check_whitelisted_module (const char *in_name, const char **out_module)
+{
+	if (g_str_has_suffix (in_name, "mono-sgen")) {
+		if (out_module)
+			*out_module = "mono";
+		return TRUE;
+	}
+
+	for (GList *cursor = native_library_whitelist; cursor; cursor = cursor->next) {
+		MonoLibWhitelistEntry *iter = (MonoLibWhitelistEntry *) cursor->data;
+		if (!g_str_has_suffix (in_name, iter->suffix))
+			continue;
+		if (out_module)
+			*out_module = iter->exported_name;
+		return TRUE;
+	}
+
+	/*fprintf (stderr, "%s == %s\n", info.dli_fname, *out_module);*/
+
+	return FALSE;
+}
+
+static intptr_t
 mono_make_portable_ip (intptr_t in_ip, intptr_t module_base)
 {
 	// FIXME: Make generalize away from llvm tools?
@@ -1378,21 +1399,6 @@ mono_make_portable_ip (intptr_t in_ip, intptr_t module_base)
 	// *CoreSymbolicationDT.framework version:	63750*/
 	intptr_t offset = in_ip - module_base;
 	intptr_t magic_value = offset + 0x100000000;
-	return magic_value;
-}
-
-static gboolean
-check_whitelisted_module (const char *in_name, const char **out_module)
-{
-	if (!native_library_whitelist) {
-		if (g_str_has_suffix (in_name, "mono-sgen")) {
-			if (out_module)
-				*out_module = "mono";
-			return TRUE;
-		}
-
-		return FALSE;
-	}
 
 	GHashTableIter iter;
 	char *file_suffix;
