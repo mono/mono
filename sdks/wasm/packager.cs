@@ -39,7 +39,7 @@ class Driver {
 		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
 		Console.WriteLine ("\t--copy=always|ifnewer        Set the type of copy to perform.");
 		Console.WriteLine ("\t\t              'always' overwrites the file if it exists.");
-		Console.WriteLine ("\t\t              'ifnew' copies or overwrites the file if modified or size is different.");
+		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
