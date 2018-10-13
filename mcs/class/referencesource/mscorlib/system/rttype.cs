@@ -1972,7 +1972,7 @@ namespace System
         #region Static Members
 
         #region Internal
-#if !MONO
+
         internal static RuntimeType GetType(String typeName, bool throwOnError, bool ignoreCase, bool reflectionOnly,
             ref StackCrawlMark stackMark)
         {
@@ -1989,6 +1989,7 @@ namespace System
                 typeName, throwOnError, ignoreCase, reflectionOnly, ref stackMark, false);
         }
 
+#if !MONO
         internal static MethodBase GetMethodBase(RuntimeModule scope, int typeMetadataToken)
         {
             return GetMethodBase(ModuleHandle.ResolveMethodHandleInternal(scope, typeMetadataToken));
