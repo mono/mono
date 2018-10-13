@@ -966,6 +966,11 @@ mono_class_create_bounded_array (MonoClass *eclass, guint32 rank, gboolean bound
 		mono_error_set_invalid_program (&prepared_error, "Arrays of System.TypedReference types are invalid.");
 		mono_class_set_failure (klass, mono_error_box (&prepared_error, klass->image));
 		mono_error_cleanup (&prepared_error);
+	} else if (m_class_is_byreflike (eclass)) {
+		/* .NET Core throws a type load exception: "Could not create array type 'fullname[]'" */
+		char *full_name = mono_type_get_full_name (eclass);
+		mono_class_set_type_load_failure (klass, "Could not create array type '%s[]'", full_name);
+		g_free (full_name);
 	} else if (eclass->enumtype && !mono_class_enum_basetype_internal (eclass)) {
 		guint32 ref_info_handle = mono_class_get_ref_info_handle (eclass);
 		if (!ref_info_handle || eclass->wastypebuilder) {
