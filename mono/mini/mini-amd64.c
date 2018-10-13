@@ -372,7 +372,7 @@ collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, g
 		g_assert(info);
 		for (i = 0; i < info->num_fields; ++i) {
 			if (MONO_TYPE_ISSTRUCT (info->fields [i].field->type)) {
-				collect_field_info_nested (mono_class_from_mono_type (info->fields [i].field->type), fields_array, info->fields [i].offset, pinvoke, unicode);
+				collect_field_info_nested (mono_class_from_mono_type_internal (info->fields [i].field->type), fields_array, info->fields [i].offset, pinvoke, unicode);
 			} else {
 				guint32 align;
 				StructFieldInfo f;
@@ -409,7 +409,7 @@ collect_field_info_nested (MonoClass *klass, GArray *fields_array, int offset, g
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
 			if (MONO_TYPE_ISSTRUCT (field->type)) {
-				collect_field_info_nested (mono_class_from_mono_type (field->type), fields_array, field->offset - MONO_ABI_SIZEOF (MonoObject), pinvoke, unicode);
+				collect_field_info_nested (mono_class_from_mono_type_internal (field->type), fields_array, field->offset - MONO_ABI_SIZEOF (MonoObject), pinvoke, unicode);
 			} else {
 				int align;
 				StructFieldInfo f;
@@ -613,7 +613,7 @@ add_valuetype_win64 (MonoMethodSignature *signature, ArgInfo *arg_info, MonoType
 	
 	assert (signature != NULL && arg_info != NULL && type != NULL && current_int_reg != NULL && current_float_reg != NULL && stack_size != NULL);
 
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 	get_valuetype_size_win64 (klass, signature->pinvoke, arg_info, type, &arg_class, &arg_size);
 
 	/* Only drop value type if its not an empty struct as input that must be represented in call */
@@ -647,7 +647,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	gboolean pass_on_stack = FALSE;
 	int struct_size;
 
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 	size = mini_type_stack_size_full (m_class_get_byval_arg (klass), NULL, sig->pinvoke);
 
 	if (!sig->pinvoke && ((is_return && (size == 8)) || (!is_return && (size <= 16)))) {
@@ -1525,7 +1525,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 
 	header = cfg->header;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1636,7 +1636,7 @@ mono_arch_fill_argument_info (MonoCompile *cfg)
 	int i;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = cfg->arch.cinfo;
 
@@ -1702,7 +1702,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	gint32 *offsets;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = cfg->arch.cinfo;
 	sig_ret = mini_get_underlying_type (sig->ret);
@@ -1924,7 +1924,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -2302,7 +2302,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 				 * the source, leading to reads of invalid memory if the
 				 * source is at the end of address space.
 				 */
-				size = mono_class_value_size (mono_class_from_mono_type (t), &align);
+				size = mono_class_value_size (mono_class_from_mono_type_internal (t), &align);
 			}
 
 			if (size >= 10000) {
@@ -2314,7 +2314,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			if (size > 0 || ainfo->pass_empty_struct) {
 				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 				arg->sreg1 = in->dreg;
-				arg->klass = mono_class_from_mono_type (t);
+				arg->klass = mono_class_from_mono_type_internal (t);
 				arg->backend.size = size;
 				arg->inst_p0 = call;
 				arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
@@ -2498,7 +2498,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	if (ret->type == MONO_TYPE_R4) {
 		if (COMPILE_LLVM (cfg))
@@ -2778,8 +2778,8 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 		    if (MONO_TYPE_IS_REFERENCE (t)) {
 				p->regs [slot] = PTR_TO_GREG(*(arg));
 				break;
-			} else if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
-					MonoClass *klass = mono_class_from_mono_type (t);
+			} else if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type_internal (t))) {
+					MonoClass *klass = mono_class_from_mono_type_internal (t);
 					guint8 *nullable_buf;
 					int size;
 
@@ -7144,7 +7144,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	pos = 0;
 
 	cinfo = cfg->arch.cinfo;
@@ -7654,7 +7654,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	if (enable_arguments) {
 		/* Allocate a new area on the stack and save arguments there */
-		sig = mono_method_signature (cfg->method);
+		sig = mono_method_signature_internal (cfg->method);
 
 		n = sig->param_count + sig->hasthis;
 
@@ -7703,7 +7703,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	guchar *code = (guchar *)p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
-	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret_type = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 	
 	switch (ret_type->type) {
 	case MONO_TYPE_VOID:

@@ -116,7 +116,7 @@ mono_class_value_size      (MonoClass *klass, uint32_t *align);
 MONO_API int32_t
 mono_class_min_align       (MonoClass *klass);
 
-MONO_API MonoClass *
+MONO_API MONO_RT_EXTERNAL_ONLY MonoClass *
 mono_class_from_mono_type  (MonoType *type);
 
 MONO_API mono_bool
@@ -176,7 +176,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 const char*
 mono_class_get_namespace     (MonoClass *klass);
 
-MONO_API MonoType*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoType*
 mono_class_get_type          (MonoClass *klass);
 
 MONO_API uint32_t

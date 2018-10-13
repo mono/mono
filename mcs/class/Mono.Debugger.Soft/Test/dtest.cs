@@ -2153,6 +2153,8 @@ public class DebuggerTests
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly, m.Assembly);
 		Assert.AreEqual (frame.Method.DeclaringType.Assembly.ManifestModule, m);
 
+		Assert.AreEqual ("{}\n", m.SourceLink.Replace ("\r\n", "\n"));
+
 		// This is no longer true on 4.0
 		//Assert.AreEqual ("Assembly", frame.Method.DeclaringType.Assembly.GetAssemblyObject ().Type.Name);
 

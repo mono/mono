@@ -515,7 +515,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 		type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (gclass), &ctx, error);
 		if (!type)
 			return NULL;
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		mono_metadata_free_type (type);
 		break;
 	}
@@ -538,7 +538,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 
 			t = mini_get_shared_gparam (m_class_get_byval_arg (par_klass), gshared_constraint);
 			mono_metadata_free_type (gshared_constraint);
-			klass = mono_class_from_mono_type (t);
+			klass = mono_class_from_mono_type_internal (t);
 		} else {
 			int type = decode_value (p, &p);
 			int num = decode_value (p, &p);
@@ -582,7 +582,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 			}
 			// FIXME: Maybe use types directly to avoid
 			// the overhead of creating MonoClass-es
-			klass = mono_class_from_mono_type (t);
+			klass = mono_class_from_mono_type_internal (t);
 
 			g_free (t);
 		}
@@ -602,7 +602,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 		t = decode_type (module, p, &p, error);
 		if (!t)
 			return NULL;
-		klass = mono_class_from_mono_type (t);
+		klass = mono_class_from_mono_type_internal (t);
 		g_free (t);
 		break;
 	}
@@ -747,7 +747,7 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 		type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (gclass), &ctx, error);
 		if (!type)
 			goto fail;
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		t->data.generic_class = mono_class_get_generic_class (klass);
 		break;
 	}
@@ -867,8 +867,8 @@ sig_matches_target (MonoAotModule *module, MonoMethod *target, guint8 *buf, guin
 	gboolean res;
 	guint8 *p = buf;
 	
-	sig = decode_signature_with_target (module, mono_method_signature (target), p, &p);
-	res = sig && mono_metadata_signature_equal (mono_method_signature (target), sig);
+	sig = decode_signature_with_target (module, mono_method_signature_internal (target), p, &p);
+	res = sig && mono_metadata_signature_equal (mono_method_signature_internal (target), sig);
 	g_free (sig);
 	*endbuf = p;
 	return res;
@@ -2537,7 +2537,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 
 	error_init (error);
 
-	if (MONO_CLASS_IS_INTERFACE (klass) || m_class_get_rank (klass) || !amodule)
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || m_class_get_rank (klass) || !amodule)
 		return NULL;
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->class_info_offsets, mono_metadata_token_index (m_class_get_type_token (klass)) - 1)];
@@ -4720,7 +4720,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			MonoGenericContext ctx;
 			MonoType *args [16];
 
-			if (mono_method_signature (method)->params [1]->type == MONO_TYPE_OBJECT)
+			if (mono_method_signature_internal (method)->params [1]->type == MONO_TYPE_OBJECT)
 				/* Avoid recursion */
 				return NULL;
 
@@ -4751,16 +4751,16 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		/* Same for CompareExchange<T> and Exchange<T> */
 		/* Same for Volatile.Read<T>/Write<T> */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && m_class_get_image (method->klass) == mono_defaults.corlib && 
-			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1]))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->ret)))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1])))))) {
+			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1]))) ||
+			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->ret)))) ||
+			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1])))))) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];
 			gpointer iter = NULL;
 
 			while ((m = mono_class_get_methods (method->klass, &iter))) {
-				if (mono_method_signature (m)->generic_param_count && !strcmp (m->name, method->name))
+				if (mono_method_signature_internal (m)->generic_param_count && !strcmp (m->name, method->name))
 					break;
 			}
 			g_assert (m);
@@ -4797,13 +4797,13 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 					int rank;
 
 					if (!strcmp (array_method->name, "Set"))
-						rank = mono_method_signature (array_method)->param_count - 1;
+						rank = mono_method_signature_internal (array_method)->param_count - 1;
 					else if (!strcmp (array_method->name, "Get") || !strcmp (array_method->name, "Address"))
-						rank = mono_method_signature (array_method)->param_count;
+						rank = mono_method_signature_internal (array_method)->param_count;
 					else
 						g_assert_not_reached ();
 					MonoClass *obj_array_class = mono_class_create_array (mono_defaults.object_class, rank);
-					MonoMethod *m = mono_class_get_method_from_name_checked (obj_array_class, array_method->name, mono_method_signature (array_method)->param_count, 0, error);
+					MonoMethod *m = mono_class_get_method_from_name_checked (obj_array_class, array_method->name, mono_method_signature_internal (array_method)->param_count, 0, error);
 					mono_error_assert_ok (error);
 					g_assert (m);
 

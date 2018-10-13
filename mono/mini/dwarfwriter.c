@@ -967,7 +967,7 @@ emit_class_dwarf_info (MonoDwarfWriter *w, MonoClass *klass, gboolean vtype)
 	g_hash_table_insert (cache, klass, die);
 
 	if (m_class_is_enumtype (klass)) {
-		int size = mono_class_value_size (mono_class_from_mono_type (mono_class_enum_basetype_internal (klass)), NULL);
+		int size = mono_class_value_size (mono_class_from_mono_type_internal (mono_class_enum_basetype_internal (klass)), NULL);
 
 		emit_label (w, die);
 
@@ -1129,7 +1129,7 @@ static gboolean base_types_emitted [64];
 static const char*
 get_type_die (MonoDwarfWriter *w, MonoType *t)
 {
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 	int j;
 	const char *tdie;
 
@@ -1188,7 +1188,7 @@ get_type_die (MonoDwarfWriter *w, MonoType *t)
 static void
 emit_type (MonoDwarfWriter *w, MonoType *t)
 {
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 	int j;
 	const char *tdie;
 
@@ -1770,7 +1770,7 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 
 	emit_section_change (w, ".debug_info", 0);
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	header = mono_method_get_header_checked (method, error);
 	mono_error_assert_ok (error); /* FIXME don't swallow the error */
 

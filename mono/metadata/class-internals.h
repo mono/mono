@@ -832,6 +832,9 @@ mono_class_get_context (MonoClass *klass);
 MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
+MONO_PROFILER_API MonoMethodSignature*
+mono_method_signature_internal (MonoMethod *m);
+
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
@@ -1256,6 +1259,9 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 
 MonoClass *
 mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
+
+MONO_PROFILER_API MonoClass *
+mono_class_from_mono_type_internal (MonoType *type);
 
 MonoClassField*
 mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context, MonoError *error);

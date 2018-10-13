@@ -45,16 +45,19 @@ $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(dtest_profile)/mscorlib.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.Core.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.dll -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(dtest_profile)/mscorlib.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.Core.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \
 	Test/TypeLoadClass.cs
 
+CLEAN_FILES = dtest-app.exe dtest-app.exe.mdb dtest-app.pdb dtest-excfilter.exe dtest-excfilter.exe.mdb dtest-excfilter.pdb
+
 EXTRA_DISTFILES = \
 	Test/dtest-app.cs \
 	Test/dtest.cs \
 	Test/dtest-excfilter.il \
+  Test/sourcelink.json \
 	$(TEST_HELPERS_SOURCES)
 
 CLEAN_FILES = $(addprefix $(test_output_dir)/, dtest-app.exe dtest-app.exe.mdb dtest-app.pdb dtest-excfilter.exe dtest-excfilter.exe.mdb dtest-excfilter.pdb)
