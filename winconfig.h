@@ -107,12 +107,6 @@
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
 
-/* Has the 'aintl' function */
-/* #undef HAVE_AINTL */
-
-/* Supports C99 array initialization */
-/* #undef HAVE_ARRAY_ELEM_INIT */
-
 /* Define to 1 if you have the <attr/xattr.h> header file. */
 /* #undef HAVE_ATTR_XATTR_H */
 
@@ -201,9 +195,6 @@
 /* Define to 1 if you have the `fgetpwent' function. */
 /* #undef HAVE_FGETPWENT */
 
-/* Define to 1 if you have the `finite' function. */
-/* #undef HAVE_FINITE */
-
 /* Define to 1 if you have the <fstab.h> header file. */
 /* #undef HAVE_FSTAB_H */
 
@@ -258,9 +249,6 @@
 /* Define to 1 if you have the <grp.h> header file. */
 /* #undef HAVE_GRP_H */
 
-/* Define to 1 if you have the <ieeefp.h> header file. */
-/* #undef HAVE_IEEEFP_H */
-
 /* Define to 1 if you have the `inet_aton' function. */
 /* #undef HAVE_INET_ATON */
 
@@ -281,12 +269,6 @@
 
 /* Have IP_PKTINFO */
 /* #undef HAVE_IP_PKTINFO */
-
-/* Define to 1 if you have the `isfinite' function. */
-/* #undef HAVE_ISFINITE */
-
-/* isinf available */
-#define HAVE_ISINF 1
 
 /* Define to 1 if you have the `kqueue' function. */
 /* #undef HAVE_KQUEUE */
@@ -412,9 +394,6 @@
 
  /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
-
-/* Have signbit */
-/* #undef HAVE_SIGNBIT */
 
 /* Can get interface list */
 /* #undef HAVE_SIOCGIFCONF */
@@ -574,9 +553,6 @@
 
 /* Have tm_gmtoff */
 /* #undef HAVE_TM_GMTOFF */
-
-/* Define to 1 if you have the `trunc' function. */
-#define HAVE_TRUNC 1
 
 /* Define to 1 if you have the `ttyname_r' function. */
 /* #undef HAVE_TTYNAME_R */

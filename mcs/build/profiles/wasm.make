@@ -39,3 +39,4 @@ ALWAYS_AOT = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
 NO_CONSOLE = yes
+NO_SRE=1

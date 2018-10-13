@@ -26,6 +26,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/unlocked.h>
+#include <mono/utils/mono-math.h>
 
 #ifdef ENABLE_LLVM
 #include "mini-llvm-cpp.h"
@@ -666,17 +667,6 @@ mono_fclt_un (double a, double b)
 	return isunordered (a, b) || a < b;
 }
 
-gboolean
-mono_isfinite (double a)
-{
-#ifdef HAVE_ISFINITE
-	return isfinite (a);
-#else
-	g_assert_not_reached ();
-	return TRUE;
-#endif
-}
-
 double
 mono_fload_r4 (float *ptr)
 {
@@ -712,7 +702,7 @@ mono_array_new_va (MonoMethod *cm, ...)
 	int rank;
 	int i, d;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	va_start (ap, cm);
@@ -759,7 +749,7 @@ mono_array_new_1 (MonoMethod *cm, guint32 length)
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length;
@@ -794,7 +784,7 @@ mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -830,7 +820,7 @@ mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -867,7 +857,7 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -952,7 +942,7 @@ mono_ldtoken_wrapper (MonoImage *image, int token, MonoGenericContext *context)
 gpointer
 mono_ldtoken_wrapper_generic_shared (MonoImage *image, int token, MonoMethod *method)
 {
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	MonoGenericContext *generic_context;
 
 	if (sig->is_inflated) {
@@ -990,31 +980,17 @@ guint32
 mono_fconv_u4 (double v)
 {
 	/* MS.NET behaves like this for some reason */
-#ifdef HAVE_ISINF
-	if (isinf (v) || isnan (v))
+	if (mono_isinf (v) || mono_isnan (v))
 		return 0;
-#endif
-
 	return (guint32)v;
 }
-
-#ifndef HAVE_TRUNC
-/* Solaris doesn't have trunc */
-#ifdef HAVE_AINTL
-extern long double aintl (long double);
-#define trunc aintl
-#else
-/* FIXME: This means we will never throw overflow exceptions */
-#define trunc(v) res
-#endif
-#endif /* HAVE_TRUNC */
 
 gint64
 mono_fconv_ovf_i8 (double v)
 {
 	const gint64 res = (gint64)v;
 
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1038,7 +1014,7 @@ mono_fconv_ovf_u8 (double v)
  * To work around this issue we test for value boundaries instead. 
  */
 #if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
-	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
+	if (mono_isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1047,7 +1023,7 @@ mono_fconv_ovf_u8 (double v)
 	res = (guint64)v;
 #else
 	res = (guint64)v;
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1070,7 +1046,7 @@ mono_rconv_ovf_i8 (float v)
 {
 	const gint64 res = (gint64)v;
 
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1085,7 +1061,7 @@ mono_rconv_ovf_u8 (float v)
 	guint64 res;
 
 	res = (guint64)v;
-	if (isnan(v) || trunc (v) != res) {
+	if (mono_isnan (v) || mono_trunc (v) != res) {
 		ERROR_DECL (error);
 		mono_error_set_overflow (error);
 		mono_error_set_pending_exception (error);
@@ -1391,7 +1367,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		klass = this_obj->vtable->klass;
 	}
 
-	if (mono_method_signature (cmethod)->pinvoke) {
+	if (mono_method_signature_internal (cmethod)->pinvoke) {
 		/* Object.GetType () */
 		m = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
 	} else {
@@ -1908,7 +1884,7 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 		if (mono_error_set_pending_exception (error))
 			return;
 
-		if (m_class_is_valuetype (m->klass) && mono_method_signature (m)->hasthis)
+		if (m_class_is_valuetype (m->klass) && mono_method_signature_internal (m)->hasthis)
 		    addr = mono_aot_get_unbox_trampoline (m);
 
 		gpointer arg = mini_get_delegate_arg (del->method, addr);
@@ -1963,7 +1939,7 @@ mono_get_method_object (MonoMethod *method)
 double
 mono_ckfinite (double d)
 {
-	if (isinf (d) || isnan (d))
+	if (mono_isinf (d) || mono_isnan (d))
 		mono_set_pending_exception (mono_get_exception_arithmetic ());
 	return d;
 }

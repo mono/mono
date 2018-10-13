@@ -378,11 +378,11 @@ dump_verify_info (MonoImage *image, int flags, gboolean valid_only)
 			if (errors) {
 				MonoClass *klass = mono_method_get_class (method);
 				char *name = mono_type_full_name (m_class_get_byval_arg (klass));
-				if (mono_method_signature (method) == NULL) {
+				if (mono_method_signature_internal (method) == NULL) {
 					g_print ("In method: %s::%s(ERROR)\n", name, mono_method_get_name (method));
 				} else {
 					char *sig;
-					sig = mono_signature_get_desc (mono_method_signature (method), FALSE);	
+					sig = mono_signature_get_desc (mono_method_signature_internal (method), FALSE);	
 					g_print ("In method: %s::%s(%s)\n", name, mono_method_get_name (method), sig);
 					g_free (sig);
 				}

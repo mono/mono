@@ -1,4 +1,4 @@
-// Compiler options: -r:../class/lib/net_4_x/Mono.Cecil.dll
+// Compiler options: -r:$REF_DIR/Mono.Cecil.dll
 
 using System;
 using System.Threading.Tasks;

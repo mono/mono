@@ -86,7 +86,6 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
 	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
-	if test "x$($*_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-sim/test-$*.app/; fi
 	ninja -C obj/ios-sim/test-$*.app -v
 
 ifdef LLVM
@@ -119,7 +118,6 @@ build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMB
 	mkdir -p $(PWD)/aot-cache
 	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
 	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
-	if test "x$($_EXTRA_FILES)" != "x"; then cp -r $($*_EXTRA_FILES) $(PWD)/bin/ios-dev/test-$*.app/; fi
 	ninja -C obj/ios-dev/test-$*.app -v
 
 # Clean %
@@ -197,14 +195,12 @@ TESTDIR = $(BCL_DIR)/tests
 Mono.Runtime.Tests_ASSEMBLIES = $(TESTDIR)/monotouch_Mono.Runtime.Tests_test.dll
 Mono.Runtime.Tests_ARGS = $(NUNIT) monotouch_Mono.Runtime.Tests_test.dll
 corlib_ASSEMBLIES = $(TESTDIR)/monotouch_corlib_test.dll
-corlib_EXTRA_FILES = ../../mcs/class/corlib/{es-ES,nn-NO}
 corlib_ARGS = $(NUNIT) monotouch_corlib_test.dll
 System.Core_ASSEMBLIES = $(TESTDIR)/monotouch_System.Core_test.dll
 System.Core_ARGS = $(NUNIT) monotouch_System.Core_test.dll
 System_ASSEMBLIES = $(TESTDIR)/monotouch_System_test.dll $(BCL_DIR)/Mono.Security.dll
 System_ARGS = $(NUNIT) monotouch_System_test.dll
 System.Data_ASSEMBLIES = $(BCL_DIR)/System.Data.dll $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/monotouch_System.Data_test.dll
-System.Data_EXTRA_FILES = ../../mcs/class/System.Data/Test
 System.Data_ARGS = $(NUNIT) monotouch_System.Data_test.dll
 System.Net.Http_ASSEMBLIES = $(BCL_DIR)/System.Net.Http.dll $(TESTDIR)/monotouch_System.Net.Http_test.dll
 System.Net.Http_ARGS = $(NUNIT) monotouch_System.Net.Http_test.dll
@@ -216,10 +212,8 @@ System.Transactions_ASSEMBLIES = $(BCL_DIR)/System.Transactions.dll $(TESTDIR)/m
 System.Transactions_ARGS = $(NUNIT) monotouch_System.Transactions_test.dll
 System.IO.Compression_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression_test.dll
 System.IO.Compression_ARGS = $(NUNIT) monotouch_System.IO.Compression_test.dll
-System.IO.Compression_EXTRA_FILES = ../../mcs/class/System.IO.Compression/{archive.zip,test.nupkg}
 System.IO.Compression.FileSystem_ASSEMBLIES = $(BCL_DIR)/System.IO.Compression.FileSystem.dll $(BCL_DIR)/System.IO.Compression.dll $(TESTDIR)/monotouch_System.IO.Compression.FileSystem_test.dll
 System.IO.Compression.FileSystem_ARGS = $(NUNIT) monotouch_System.IO.Compression.FileSystem_test.dll
-System.IO.Compression.FileSystem_EXTRA_FILES = ../../mcs/class/System.IO.Compression.FileSystem/foo
 Mono.CSharp_ASSEMBLIES = $(BCL_DIR)/Mono.CSharp.dll $(TESTDIR)/monotouch_Mono.CSharp_test.dll
 Mono.CSharp_ARGS = $(NUNIT) monotouch_Mono.CSharp_test.dll
 System.Json_ASSEMBLIES = $(BCL_DIR)/System.Json.dll $(TESTDIR)/monotouch_System.Json_test.dll

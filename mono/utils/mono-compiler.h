@@ -30,42 +30,22 @@
 #ifdef _MSC_VER
 
 #include <math.h>
-
-#if _MSC_VER < 1800 /* VS 2013 */
-#define strtoull _strtoui64
-#endif
-
 #include <float.h>
-#define trunc(x)	(((x) < 0) ? ceil((x)) : floor((x)))
-#if _MSC_VER < 1800 /* VS 2013 */
-#define isnan(x)	_isnan(x)
-#define isinf(x)	(_isnan(x) ? 0 : (_fpclass(x) == _FPCLASS_NINF) ? -1 : (_fpclass(x) == _FPCLASS_PINF) ? 1 : 0)
-#define isnormal(x)	_finite(x)
-#endif
 
 #define popen		_popen
 #define pclose		_pclose
-
 #include <direct.h>
 #define mkdir(x)	_mkdir(x)
 
 #define __func__ __FUNCTION__
 
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
+#include <stddef.h>
+#include <stdint.h>
 
-/*
- * SSIZE_MAX is not defined in MSVC, so define it here.
- *
- * These values come from MinGW64, and are public domain.
- *
- */
+// ssize_t and SSIZE_MAX are Posix, define for Windows.
+typedef ptrdiff_t ssize_t;
 #ifndef SSIZE_MAX
-#ifdef _WIN64
-#define SSIZE_MAX _I64_MAX
-#else
-#define SSIZE_MAX INT_MAX
-#endif
+#define SSIZE_MAX INTPTR_MAX
 #endif
 
 #endif /* _MSC_VER */
@@ -125,10 +105,12 @@ typedef SSIZE_T ssize_t;
 #define MONO_COLD
 #endif
 
-#ifdef __GNUC__
+#if defined (__clang__)
+#define MONO_NO_OPTIMIZATION __attribute__ ((optnone))
+#elif __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
 #define MONO_NO_OPTIMIZATION __attribute__ ((optimize("O0")))
 #else
-#define MONO_NO_OPTIMIZATION
+#define MONO_NO_OPTIMIZATION /* nothing */
 #endif
 
 #if defined (__GNUC__) && defined (__GNUC_MINOR__) && defined (__GNUC_PATCHLEVEL__)
@@ -221,4 +203,3 @@ ssize_t sendfile (int out_fd, int in_fd, __mono_off32_t* offset, size_t count);
 #endif /* HOST_ANDROID && ANDROID_UNIFIED_HEADERS */
 
 #endif /* __UTILS_MONO_COMPILER_H__*/
-

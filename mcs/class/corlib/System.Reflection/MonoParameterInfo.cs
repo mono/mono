@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.CompilerServices;
@@ -79,7 +79,7 @@ namespace System.Reflection
 			}
 		}
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
@@ -93,6 +93,11 @@ namespace System.Reflection
 				this.AttrsImpl = ParameterAttributes.None;
 			}
 		}
+
+		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
+		{
+			return new MonoParameterInfo (pb, type, member, position);
+		}		
 #endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
@@ -123,7 +128,7 @@ namespace System.Reflection
 		internal MonoParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
-			this.NameImpl = "";
+			this.NameImpl = null;
 			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
 			this.AttrsImpl = ParameterAttributes.Retval;
 			this.marshalAs = marshalAs;
@@ -150,6 +155,8 @@ namespace System.Reflection
 		public override
 		object RawDefaultValue {
 			get {
+				if (DefaultValue != null && DefaultValue.GetType ().IsEnum)
+					return ((Enum)DefaultValue).GetValue ();
 				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
 				return DefaultValue;
 			}
@@ -306,13 +313,6 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type[] GetTypeModifiers (bool optional);		
-
-#if !FULL_AOT_RUNTIME
-		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
-		{
-			return new MonoParameterInfo (pb, type, member, position);
-		}
-#endif
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{

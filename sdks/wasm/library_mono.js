@@ -85,12 +85,40 @@ var MonoSupportLib = {
 			var pending = file_list.length;
 			var loaded_files = [];
 			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
+
+			if (!fetch_file_cb) {
+				if (ENVIRONMENT_IS_NODE) {
+					var fs = require('fs');
+					fetch_file_cb = function (asset) {
+						console.log("Loading... " + asset);
+						var binary = fs.readFileSync (asset);
+						var resolve_func2 = function(resolve, reject) {
+							resolve(new Uint8Array (binary));
+						};
+
+						var resolve_func1 = function(resolve, reject) {
+							var response = {
+								ok: true,
+								url: asset,
+								arrayBuffer: function() {
+									return new Promise(resolve_func2);
+								}
+							};
+							resolve(response);
+						};
+
+						return new Promise(resolve_func1);
+					};
+				} else {
+					fetch_file_cb = function (asset) {
+						return fetch (asset, { credentials: 'same-origin' });
+					}
+				}
+			}
+
 			file_list.forEach (function(file_name) {
-				var fetch_promise = null;
-				if (fetch_file_cb)
-					fetch_promise = fetch_file_cb (deploy_prefix + "/" + file_name);
-				else
-					fetch_promise = fetch (deploy_prefix + "/" + file_name, { credentials: 'same-origin' });
+				
+				var fetch_promise = fetch_file_cb (locateFile(deploy_prefix + "/" + file_name));
 
 				fetch_promise.then (function (response) {
 					if (!response.ok)

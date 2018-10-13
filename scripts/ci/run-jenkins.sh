@@ -64,7 +64,7 @@ elif [[ ${CI_TAGS} == *'fullaot'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'hybridaot'* ]];          then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=hybridaot";
 elif [[ ${CI_TAGS} == *'winaot'* ]];             then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=winaot";
 elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=aot";
-elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode";
+elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS --aot=clangxx=clang++-6.0";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
     # only enable build of the additional profiles on one config to save time
@@ -88,29 +88,32 @@ if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
 fi
 
-if [[ ${CI_TAGS} == *'cplusplus'* ]]; then
-	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
-fi
-
 if [[ ${CI_TAGS} == *'win-'* ]];
 then
 	mkdir -p ~/.config/.mono/
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
+if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
+	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
+	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
+		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
+	fi
+	exit 0
+fi
+
+if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
+	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
+		   echo "ENABLE_CXX=1" >> sdks/Make.config
+	   fi
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=provision-llvm --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm36-llvm32 provision-llvm-llvm64
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios NINJA=
 
-	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
-	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-ios-{cross64,cross32,crosswatch}
-
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
 	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
 	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
 	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
@@ -129,22 +132,47 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
 		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
 	   fi
-	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl llvm-llvm64 llvm36-llvm32 ios-cross32-release ios-cross64-release
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
-        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
-        echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
-        echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
+        echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_WASM=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android
-        if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
-            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-llvm-llvm{,win}{32,64}
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-android-{armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
+
+        # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
+        # but doesn't get stuck when called via the shell, so let's just call it here now.
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
+        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
+        ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        if [[ ${CI_TAGS} != *'pull-request'* ]]; then
+            ${TESTCMD} --label=archive-debug --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
+        fi
+
+        ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
+        ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
+        ${TESTCMD} --label=System --timeout=60m make -C sdks/android check-System
+        ${TESTCMD} --label=System.Core --timeout=60m make -C sdks/android check-System.Core
+        ${TESTCMD} --label=System.Data --timeout=60m make -C sdks/android check-System.Data
+        ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=60m make -C sdks/android check-System.IO.Compression.FileSystem
+        ${TESTCMD} --label=System.IO.Compression --timeout=60m make -C sdks/android check-System.IO.Compression
+        ${TESTCMD} --label=System.Json --timeout=60m make -C sdks/android check-System.Json
+        ${TESTCMD} --label=System.Net.Http --timeout=60m make -C sdks/android check-System.Net.Http
+        ${TESTCMD} --label=System.Numerics --timeout=60m make -C sdks/android check-System.Numerics
+        ${TESTCMD} --label=System.Runtime.Serialization --timeout=60m make -C sdks/android check-System.Runtime.Serialization
+        ${TESTCMD} --label=System.ServiceModel.Web --timeout=60m make -C sdks/android check-System.ServiceModel.Web
+        ${TESTCMD} --label=System.Transactions --timeout=60m make -C sdks/android check-System.Transactions
+        ${TESTCMD} --label=System.Xml --timeout=60m make -C sdks/android check-System.Xml
+        ${TESTCMD} --label=System.Xml.Linq --timeout=60m make -C sdks/android check-System.Xml.Linq
+        ${TESTCMD} --label=Mono.CSharp --timeout=60m make -C sdks/android check-Mono.CSharp
+        ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m make -C sdks/android check-Mono.Data.Sqlite
+        ${TESTCMD} --label=Mono.Data.Tds --timeout=60m make -C sdks/android check-Mono.Data.Tds
+        ${TESTCMD} --label=Mono.Security --timeout=60m make -C sdks/android check-Mono.Security
         exit 0
 fi
 
@@ -153,8 +181,13 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-wasm-runtime package-wasm-cross
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds package-bcl
+	   echo "ENABLE_WASM_CROSS=1" >> sdks/Make.config
+	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
+	       echo "ENABLE_CXX=1" >> sdks/Make.config
+	   fi
+
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
+
 	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
 	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
 	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
@@ -168,6 +201,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
 	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
 	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+	   #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
 fi

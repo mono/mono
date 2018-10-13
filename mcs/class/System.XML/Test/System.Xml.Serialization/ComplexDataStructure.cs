@@ -17,6 +17,8 @@ using System.ComponentModel;
 using NUnit.Framework;
 using System.Linq;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
@@ -35,7 +37,7 @@ namespace MonoTests.System.XmlSerialization
 			string serialized = sw.ToString ();
 			serialized = XmlSerializerTests.Infoset (serialized);
 
-			StreamReader sr = new StreamReader ("Test/XmlFiles/literal-data.xml");
+			StreamReader sr = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/literal-data.xml"));
 			string expected = sr.ReadToEnd ();
 			sr.Close ();
 			
@@ -51,7 +53,7 @@ namespace MonoTests.System.XmlSerialization
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());
 			XmlSerializerNamespaces nams = new XmlSerializerNamespaces ();
 			
-			StreamReader sr = new StreamReader ("Test/XmlFiles/literal-data.xml");
+			StreamReader sr = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/literal-data.xml"));
 			Test data = (Test) ss.Deserialize (sr);
 			sr.Close ();
 			

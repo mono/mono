@@ -31,12 +31,8 @@ namespace MonoTests.Microsoft.Build.Construction
 			// This creator does not fill FullPath...
 			var root = ProjectRootElement.Create (xml);
 
-			// Expected to run from mcs/class/lib/profile/tests
-			var dir_name = Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath);
-			var namespace_path = Path.Combine (Directory.GetParent (dir_name).Parent.Parent.FullName, "Microsoft.Build");
-
 			Assert.IsNull (root.FullPath, "#2");
-			Assert.AreEqual (namespace_path, root.DirectoryPath, "#3");
+			Assert.AreEqual (Environment.CurrentDirectory, root.DirectoryPath, "#3");
 		}
 
 		[Test]
@@ -45,10 +41,7 @@ namespace MonoTests.Microsoft.Build.Construction
 			var root = ProjectRootElement.Create ();
 			root.FullPath = "test" + Path.DirectorySeparatorChar + "foo.xml";
 
-			// Expected to run from mcs/class/lib/profile/tests
-			var dir_name = Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath);
-			var namespace_path = Path.Combine (Directory.GetParent (dir_name).Parent.Parent.FullName, "Microsoft.Build");
-			var full = Path.Combine (namespace_path, "test", "foo.xml");
+			var full = Path.Combine (Environment.CurrentDirectory, "test", "foo.xml");
 			Assert.AreEqual (full, root.FullPath, "#1");
 			Assert.AreEqual (Path.GetDirectoryName (full), root.DirectoryPath, "#1");
 		}

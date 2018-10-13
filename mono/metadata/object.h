@@ -17,7 +17,6 @@ typedef mono_byte MonoBoolean;
 typedef struct _MonoString MONO_RT_MANAGED_ATTR MonoString;
 typedef struct _MonoArray MONO_RT_MANAGED_ATTR MonoArray;
 typedef struct _MonoReflectionMethod MONO_RT_MANAGED_ATTR MonoReflectionMethod;
-typedef struct _MonoReflectionAssembly MONO_RT_MANAGED_ATTR MonoReflectionAssembly;
 typedef struct _MonoReflectionModule MONO_RT_MANAGED_ATTR MonoReflectionModule;
 typedef struct _MonoReflectionField MONO_RT_MANAGED_ATTR MonoReflectionField;
 typedef struct _MonoReflectionProperty MONO_RT_MANAGED_ATTR MonoReflectionProperty;
@@ -31,10 +30,10 @@ typedef struct _MonoDynamicImage MonoDynamicImage;
 typedef struct _MonoReflectionMethodBody MONO_RT_MANAGED_ATTR MonoReflectionMethodBody;
 typedef struct _MonoAppContext MONO_RT_MANAGED_ATTR MonoAppContext;
 
-typedef struct MONO_RT_MANAGED_ATTR _MonoObject {
+struct _MonoObject {
 	MonoVTable *vtable;
 	MonoThreadsSync *synchronisation;
-} MonoObject;
+};
 
 typedef MonoObject* (*MonoInvokeFunc)	     (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 typedef void*    (*MonoCompileFunc)	     (MonoMethod *method);
@@ -204,7 +203,7 @@ mono_object_get_vtable      (MonoObject *obj);
 MONO_API MonoDomain*
 mono_object_get_domain      (MonoObject *obj);
 
-MONO_API MonoClass*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoClass*
 mono_object_get_class       (MonoObject *obj);
 
 MONO_API void*
@@ -387,6 +386,8 @@ MONO_API MonoReferenceQueue* mono_gc_reference_queue_new (mono_reference_queue_c
 MONO_API void mono_gc_reference_queue_free (MonoReferenceQueue *queue);
 MONO_API mono_bool mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *user_data);
 
+#define mono_gc_reference_queue_add_handle(queue, obj, user_data) \
+	(mono_gc_reference_queue_add ((queue), MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, obj)), (user_data)))
 
 
 /* GC write barriers support */

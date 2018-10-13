@@ -18,6 +18,8 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/abi-details.h>
 #include <mono/utils/mono-compiler.h>
+#define MONO_MATH_DECLARE_ALL 1
+#include <mono/utils/mono-math.h>
 
 #ifndef DISABLE_JIT
 
@@ -1369,7 +1371,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 						/* Save the result */
 						if (dest_var->backend.is_pinvoke)
-							size = mono_class_native_size (mono_class_from_mono_type (dest_var->inst_vtype), NULL);
+							size = mono_class_native_size (mono_class_from_mono_type_internal (dest_var->inst_vtype), NULL);
 						else
 							size = mono_type_size (dest_var->inst_vtype, NULL);
 						switch (size) {
@@ -1868,7 +1870,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					MONO_INST_NEW (cfg, iargs [0], OP_ARG);
 					iargs [0]->dreg = ins->sreg1;
 
-					call = mono_emit_jit_icall (cfg, mono_isfinite, iargs);
+					call = mono_emit_jit_icall (cfg, mono_isfinite_double, iargs);
 
 					MONO_INST_NEW (cfg, cmp, OP_ICOMPARE_IMM);
 					cmp->sreg1 = call->dreg;

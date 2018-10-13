@@ -35,7 +35,7 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, uint32_t t
 MONO_API MONO_RT_EXTERNAL_ONLY MonoMethodSignature*
 mono_method_get_signature  (MonoMethod *method, MonoImage *image, uint32_t token);
 
-MONO_API MonoMethodSignature*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoMethodSignature*
 mono_method_signature      (MonoMethod *method);
 
 MONO_API MONO_RT_EXTERNAL_ONLY MonoMethodHeader*
@@ -61,9 +61,6 @@ mono_add_internal_call     (const char *name, const void* method);
 
 MONO_API void*
 mono_lookup_internal_call (MonoMethod *method);
-
-void*
-mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles);
 
 MONO_API const char*
 mono_lookup_icall_symbol (MonoMethod *m);

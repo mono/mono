@@ -35,6 +35,7 @@
 #include "aot-compiler.h"
 #include "mini-llvm.h"
 #include "mini-runtime.h"
+#include <mono/utils/mono-math.h>
 
 #ifndef DISABLE_JIT
 
@@ -322,7 +323,7 @@ get_vtype_size (MonoType *t)
 {
 	int size;
 
-	size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
+	size = mono_class_value_size (mono_class_from_mono_type_internal (t), NULL);
 
 	/* LLVMArgAsIArgs depends on this since it stores whole words */
 	while (size < 2 * sizeof (gpointer) && mono_is_power_of_two (size) == -1)
@@ -514,13 +515,13 @@ type_to_llvm_type (EmitContext *ctx, MonoType *t)
 		MonoClass *klass;
 		LLVMTypeRef ltype;
 
-		klass = mono_class_from_mono_type (t);
+		klass = mono_class_from_mono_type_internal (t);
 
 		if (MONO_CLASS_IS_SIMD (ctx->cfg, klass))
 			return simd_class_to_llvm_type (ctx, klass);
 
 		if (m_class_is_enumtype (klass))
-			return type_to_llvm_type (ctx, mono_class_enum_basetype (klass));
+			return type_to_llvm_type (ctx, mono_class_enum_basetype_internal (klass));
 
 		ltype = (LLVMTypeRef)g_hash_table_lookup (ctx->module->llvm_types, klass);
 		if (!ltype) {
@@ -1317,7 +1318,7 @@ sig_to_llvm_sig_full (EmitContext *ctx, MonoMethodSignature *sig, LLVMCallInfo *
 		/* Vtype returned normally by val */
 		break;
 	case LLVMArgVtypeAsScalar: {
-		int size = mono_class_value_size (mono_class_from_mono_type (rtype), NULL);
+		int size = mono_class_value_size (mono_class_from_mono_type_internal (rtype), NULL);
 		/* LLVM models this by returning an int */
 		if (size < TARGET_SIZEOF_VOID_P) {
 			g_assert (cinfo->ret.nslots == 1);
@@ -2243,9 +2244,9 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 {
 	int j, size, nslots;
 
-	size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
+	size = mono_class_value_size (mono_class_from_mono_type_internal (t), NULL);
 
-	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t))) {
+	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t))) {
 		address = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (LLVMInt8Type (), 0), "");
 	}
 
@@ -2268,7 +2269,7 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		switch (ainfo->pair_storage [j]) {
 		case LLVMArgInIReg: {
 			part_type = LLVMIntType (part_size * 8);
-			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t))) {
+			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t))) {
 				index [0] = LLVMConstInt (LLVMInt32Type (), j * sizeof (gpointer), FALSE);
 				addr = LLVMBuildGEP (builder, address, index, 1, "");
 			} else {
@@ -2318,7 +2319,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 
 	size = get_vtype_size (t);
 
-	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t)))
+	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t)))
 		address = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (LLVMInt8Type (), 0), "");
 
 	if (ainfo->storage == LLVMArgAsFpArgs)
@@ -2334,7 +2335,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 
 		switch (ainfo->pair_storage [j]) {
 		case LLVMArgInIReg:
-			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t))) {
+			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t))) {
 				index [0] = LLVMConstInt (LLVMInt32Type (), j * sizeof (gpointer), FALSE);
 				addr = LLVMBuildGEP (builder, address, index, 1, "");
 			} else {
@@ -2387,7 +2388,7 @@ build_alloca_llvm_type (EmitContext *ctx, LLVMTypeRef t, int align)
 static LLVMValueRef
 build_alloca (EmitContext *ctx, MonoType *t)
 {
-	MonoClass *k = mono_class_from_mono_type (t);
+	MonoClass *k = mono_class_from_mono_type_internal (t);
 	int align;
 
 	g_assert (!mini_is_gsharedvt_variable_type (t));
@@ -3007,7 +3008,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 
 			emit_args_to_vtype (ctx, builder, ainfo->type, ctx->addresses [reg], ainfo, args);
 
-			if (ainfo->storage == LLVMArgVtypeInReg && MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (ainfo->type))) {
+			if (ainfo->storage == LLVMArgVtypeInReg && MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (ainfo->type))) {
 				/* Treat these as normal values */
 				ctx->values [reg] = LLVMBuildLoad (builder, ctx->addresses [reg], "");
 			}
@@ -3016,7 +3017,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 		case LLVMArgVtypeByVal: {
 			ctx->addresses [reg] = LLVMGetParam (ctx->lmethod, pindex);
 
-			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (ainfo->type))) {
+			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (ainfo->type))) {
 				/* Treat these as normal values */
 				ctx->values [reg] = LLVMBuildLoad (builder, ctx->addresses [reg], "");
 			}
@@ -3034,7 +3035,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 			/* The argument is received as an array of ints, store it into the real argument */
 			ctx->addresses [reg] = build_alloca (ctx, ainfo->type);
 
-			size = mono_class_value_size (mono_class_from_mono_type (ainfo->type), NULL);
+			size = mono_class_value_size (mono_class_from_mono_type_internal (ainfo->type), NULL);
 			if (size == 0) {
 			} else if (size < TARGET_SIZEOF_VOID_P) {
 				/* The upper bits of the registers might not be valid */
@@ -3188,6 +3189,58 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 	ctx->builder = old_builder;
 }
 
+static gboolean
+needs_extra_arg (EmitContext *ctx, MonoMethod *method)
+{
+	WrapperInfo *info = NULL;
+
+	/*
+	 * When targeting wasm, the caller and callee signature has to match exactly. This means
+	 * that every method which can be called indirectly need an extra arg since the caller
+	 * will call it through an ftnptr and will pass an extra arg.
+	 */
+	if (!ctx->cfg->llvm_only || !ctx->emit_dummy_arg)
+		return FALSE;
+	if (method->wrapper_type)
+		info = mono_marshal_get_wrapper_info (method);
+
+	switch (method->wrapper_type) {
+	case MONO_WRAPPER_UNKNOWN:
+		if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			/* Already have an explicit extra arg */
+			return FALSE;
+		break;
+	case MONO_WRAPPER_MANAGED_TO_NATIVE:
+		if (strstr (method->name, "icall_wrapper"))
+			/* These are JIT icall wrappers which are only called from JITted code directly */
+			return FALSE;
+		/* Normal icalls can be virtual methods which need an extra arg */
+		break;
+	case MONO_WRAPPER_RUNTIME_INVOKE:
+	case MONO_WRAPPER_ALLOC:
+	case MONO_WRAPPER_CASTCLASS:
+	case MONO_WRAPPER_WRITE_BARRIER:
+		return FALSE;
+	case MONO_WRAPPER_STELEMREF:
+		if (info->subtype != WRAPPER_SUBTYPE_VIRTUAL_STELEMREF)
+			return FALSE;
+		break;
+	case MONO_WRAPPER_MANAGED_TO_MANAGED:
+		if (info->subtype == WRAPPER_SUBTYPE_STRING_CTOR)
+			return FALSE;
+		break;
+	default:
+		break;
+	}
+	if (method->string_ctor)
+		return FALSE;
+
+	/* These are called from gsharedvt code with an indirect call which doesn't pass an extra arg */
+	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		return FALSE;
+	return TRUE;
+}
+
 static void
 process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, MonoInst *ins)
 {
@@ -3222,7 +3275,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		cinfo->rgctx_arg = TRUE;
 	if (call->imt_arg_reg)
 		cinfo->imt_arg = TRUE;
-	if (cfg->llvm_only && ctx->emit_dummy_arg && call->method && !call->method->wrapper_type)
+	if (call->method && needs_extra_arg (ctx, call->method))
 		cinfo->dummy_arg = TRUE;
 
 	vretaddr = (cinfo->ret.storage == LLVMArgVtypeRetAddr || cinfo->ret.storage == LLVMArgVtypeByRef || cinfo->ret.storage == LLVMArgGsharedvtFixed || cinfo->ret.storage == LLVMArgGsharedvtVariable || cinfo->ret.storage == LLVMArgGsharedvtFixedVtype);
@@ -3637,7 +3690,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		break;
 	case LLVMArgVtypeRetAddr:
 	case LLVMArgVtypeByRef:
-		if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (sig->ret))) {
+		if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (sig->ret))) {
 			/* Some opcodes like STOREX_MEMBASE access these by value */
 			g_assert (addresses [call->inst.dreg]);
 			values [ins->dreg] = LLVMBuildLoad (builder, convert_full (ctx, addresses [call->inst.dreg], LLVMPointerType (type_to_llvm_type (ctx, sig->ret), 0), FALSE), "");
@@ -4186,7 +4239,7 @@ static LLVMValueRef
 get_double_const (MonoCompile *cfg, double val)
 {
 #ifdef TARGET_WASM
-	if (isnan (val))
+	if (mono_isnan (val))
 		*(gint64 *)&val = 0x7FF8000000000000ll;
 #endif
 	return LLVMConstReal (LLVMDoubleType (), val);
@@ -4196,7 +4249,7 @@ static LLVMValueRef
 get_float_const (MonoCompile *cfg, float val)
 {
 #ifdef TARGET_WASM
-	if (isnan (val))
+	if (mono_isnan (val))
 		*(int *)&val = 0x7FC00000;
 #endif
 	if (cfg->r4fp)
@@ -4423,7 +4476,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 					 * The return type is an LLVM vector type, have to convert between it and the
 					 * real return type which is a struct type.
 					 */
-					g_assert (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (sig->ret)));
+					g_assert (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (sig->ret)));
 					/* Convert to 2xi64 first */
 					val = LLVMBuildBitCast (builder, values [ins->sreg1], LLVMVectorType (IntPtrType (), 2), "");
 
@@ -4561,7 +4614,6 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (ins->opcode == OP_LCOMPARE_IMM) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
 				rhs = LLVMConstInt (LLVMInt64Type (), GET_LONG_IMM (ins), FALSE);
-				g_assert (GET_LONG_IMM (ins) == ins->inst_l);
 			}
 			if (ins->opcode == OP_LCOMPARE) {
 				lhs = convert (ctx, lhs, LLVMInt64Type ());
@@ -4656,6 +4708,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_RCEQ:
+		case OP_RCNEQ:
 		case OP_RCLT:
 		case OP_RCLT_UN:
 		case OP_RCGT:
@@ -6814,7 +6867,7 @@ mono_llvm_check_method_supported (MonoCompile *cfg)
 	int i, j;
 
 #ifdef TARGET_WASM
-	if (mono_method_signature (cfg->method)->call_convention == MONO_CALL_VARARG) {
+	if (mono_method_signature_internal (cfg->method)->call_convention == MONO_CALL_VARARG) {
 		cfg->exception_message = g_strdup ("vararg callconv");
 		cfg->disable_llvm = TRUE;
 		return;
@@ -7131,7 +7184,7 @@ emit_method_inner (EmitContext *ctx)
 	}
 #endif
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 	ctx->sig = sig;
 
 	linfo = get_llvm_call_info (cfg, sig);
@@ -7141,7 +7194,7 @@ emit_method_inner (EmitContext *ctx)
 
 	if (cfg->rgctx_var)
 		linfo->rgctx_arg = TRUE;
-	else if (ctx->emit_dummy_arg && cfg->llvm_only && !cfg->method->wrapper_type)
+	else if (needs_extra_arg (ctx, cfg->method))
 		linfo->dummy_arg = TRUE;
 	ctx->method_type = method_type = sig_to_llvm_sig_full (ctx, sig, linfo);
 	if (!ctx_ok (ctx))
@@ -7656,14 +7709,14 @@ mono_llvm_create_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 	if (cfg->gsharedvt && cfg->llvm_only) {
 		gboolean vretaddr = FALSE;
 
 		if (mini_is_gsharedvt_variable_signature (sig) && sig->ret->type != MONO_TYPE_VOID) {
 			vretaddr = TRUE;
 		} else {
-			MonoMethodSignature *sig = mono_method_signature (cfg->method);
+			MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 			LLVMCallInfo *linfo;
 
 			linfo = get_llvm_call_info (cfg, sig);
@@ -7758,7 +7811,7 @@ mono_llvm_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			ins->inst_p0 = mono_mempool_alloc0 (cfg->mempool, sizeof (LLVMArgInfo));
 			memcpy (ins->inst_p0, ainfo, sizeof (LLVMArgInfo));
 			ins->inst_vtype = ainfo->type;
-			ins->klass = mono_class_from_mono_type (ainfo->type);
+			ins->klass = mono_class_from_mono_type_internal (ainfo->type);
 			break;
 		default:
 			cfg->exception_message = g_strdup ("ainfo->storage");

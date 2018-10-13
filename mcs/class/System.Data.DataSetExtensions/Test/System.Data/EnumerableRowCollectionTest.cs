@@ -33,6 +33,8 @@ using System.Collections.Generic;
 using System.Data;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -42,7 +44,7 @@ namespace MonoTests.System.Data
 		public void QueryWhere ()
 		{
 			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			var table = ds.Tables [0];
 			/* schema generated as ...
 			var table = ds.Tables.Add ("ScoreList");
@@ -64,12 +66,11 @@ namespace MonoTests.System.Data
 			}
 		}
 
-		/* FIXME: enable it when it gets fixed: https://bugzilla.novell.com/show_bug.cgi?id=389795
 		[Test]
 		public void QueryWhereSelect ()
 		{
 			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			var table = ds.Tables [0];
 			var q = from line in table.AsEnumerable ()
 				where line.Field<int> ("Score") > 80
@@ -90,7 +91,7 @@ namespace MonoTests.System.Data
 		public void QueryWhereSelectOrderBy ()
 		{
 			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			var table = ds.Tables [0];
 			var q = from line in table.AsEnumerable ()
 				where line.Field<int> ("Score") >= 80
@@ -103,13 +104,14 @@ namespace MonoTests.System.Data
 			foreach (var ql in q) {
 				switch (prevID) {
 				case -1:
-					Assert.AreEqual (4, ql.StudentID, "#1");
+					Assert.AreEqual (1, ql.StudentID, "#1");
 					break;
-				case 4:
-					Assert.AreEqual (1, ql.StudentID, "#2");
+				case 1:
+					Assert.AreEqual (4, ql.StudentID, "#2");
 					break;
 				default:
 					Assert.Fail ("should match only one raw");
+					break;
 				}
 				prevID = ql.StudentID;
 			}
@@ -119,7 +121,7 @@ namespace MonoTests.System.Data
 		public void QueryWhereSelectOrderByDescending ()
 		{
 			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			var table = ds.Tables [0];
 			var q = from line in table.AsEnumerable ()
 				where line.Field<int> ("Score") >= 80
@@ -132,13 +134,14 @@ namespace MonoTests.System.Data
 			foreach (var ql in q) {
 				switch (prevID) {
 				case -1:
-					Assert.AreEqual (1, ql.StudentID, "#1");
+					Assert.AreEqual (4, ql.StudentID, "#1");
 					break;
 				case 4:
-					Assert.AreEqual (4, ql.StudentID, "#2");
+					Assert.AreEqual (1, ql.StudentID, "#2");
 					break;
 				default:
-					Assert.Fail ("should match only one raw");
+					Assert.Fail ("should match only one raw, ID: " + ql.StudentID);
+					break;
 				}
 				prevID = ql.StudentID;
 			}
@@ -148,11 +151,41 @@ namespace MonoTests.System.Data
 		public void ThenBy ()
 		{
 			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
 			var table = ds.Tables [0];
 			var q = from line in table.AsEnumerable ()
 				where line.Field<int> ("Score") >= 80
 				orderby line.Field<bool> ("Gender"), line.Field<int> ("ID")
+				select new {
+					StudentID = line.Field<int> ("ID"),
+					StudentName = line.Field<string> ("Name"),
+					StudentScore = line.Field<int> ("Score") };
+			int prevID = -1;
+			foreach (var ql in q) {
+				switch (prevID) {
+				case -1:
+					Assert.AreEqual (1, ql.StudentID, "#1");
+					break;
+				case 1:
+					Assert.AreEqual (4, ql.StudentID, "#2");
+					break;
+				default:
+					Assert.Fail ("should match only one raw, ID: " + ql.StudentID);
+					break;
+				}
+				prevID = ql.StudentID;
+			}
+		}
+
+		[Test]
+		public void ThenByDescending ()
+		{
+			var ds = new DataSet ();
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/testdataset1.xml"));
+			var table = ds.Tables [0];
+			var q = from line in table.AsEnumerable ()
+				where line.Field<int> ("Score") >= 80
+				orderby line.Field<bool> ("Gender"), line.Field<int> ("ID") descending
 				select new {
 					StudentID = line.Field<int> ("ID"),
 					StudentName = line.Field<string> ("Name"),
@@ -167,40 +200,11 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (1, ql.StudentID, "#2");
 					break;
 				default:
-					Assert.Fail ("should match only one raw");
+					Assert.Fail ("should match only one raw, ID: " + ql.StudentID);
+					break;
 				}
 				prevID = ql.StudentID;
 			}
 		}
-
-		[Test]
-		public void ThenByDescending ()
-		{
-			var ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/testdataset1.xml");
-			var table = ds.Tables [0];
-			var q = from line in table.AsEnumerable ()
-				where line.Field<int> ("Score") >= 80
-				orderby line.Field<bool> ("Gender"), line.Field<int> ("ID") descending
-				select new {
-					StudentID = line.Field<int> ("ID"),
-					StudentName = line.Field<string> ("Name"),
-					StudentScore = line.Field<int> ("Score") };
-			int prevID = -1;
-			foreach (var ql in q) {
-				switch (prevID) {
-				case -1:
-					Assert.AreEqual (1, ql.StudentID, "#1");
-					break;
-				case 4:
-					Assert.AreEqual (4, ql.StudentID, "#2");
-					break;
-				default:
-					Assert.Fail ("should match only one raw");
-				}
-				prevID = ql.StudentID;
-			}
-		}
-		*/
 	}
 }

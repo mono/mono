@@ -655,7 +655,7 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	g_assert(regs);
 	return (gpointer)regs [mips_a0];
@@ -1169,7 +1169,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 				size = sizeof (MonoTypedRef);
 				alignment = sizeof (gpointer);
 			} else {
-				klass = mono_class_from_mono_type (sig->params [i]);
+				klass = mono_class_from_mono_type_internal (sig->params [i]);
 				if (is_pinvoke)
 					size = mono_class_native_size (klass, NULL);
 				else
@@ -1331,7 +1331,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 
 	header = cfg->header;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1395,7 +1395,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 #endif
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1474,7 +1474,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		 * pinvoke wrappers when they call functions returning structure
 		 */
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
-			size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), (unsigned int *) &align);
+			size = mono_class_native_size (mono_class_from_mono_type_internal (inst->inst_vtype), (unsigned int *) &align);
 		else
 			size = mono_type_size (inst->inst_vtype, &align);
 
@@ -1611,7 +1611,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
@@ -1924,7 +1924,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	if (!ret->byref) {
 #if (SIZEOF_REGISTER == 4)
@@ -3074,7 +3074,7 @@ emit_load_volatile_arguments(MonoCompile *cfg, guint8 *code)
 	CallInfo *cinfo;
 	int i;
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -4647,7 +4647,7 @@ mips_adjust_stackframe(MonoCompile *cfg)
 		g_print ("\tra_offset %d/0x%x delta %d/0x%x\n", ra_offset, ra_offset, delta, delta);
 	}
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 	if (sig && sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr->inst_offset += delta;
 	}
@@ -4798,7 +4798,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (tracing)
 		cfg->flags |= MONO_CFG_HAS_CALLS;
 	
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	cfg->code_size = 768 + sig->param_count * 20;
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
@@ -5167,7 +5167,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
-	int rtype = mini_get_underlying_type (mono_method_signature (method)->ret)->type;
+	int rtype = mini_get_underlying_type (mono_method_signature_internal (method)->ret)->type;
 	int save_offset = MIPS_STACK_PARAM_OFFSET;
 
 	g_assert ((save_offset & (MIPS_STACK_ALIGNMENT-1)) == 0);
@@ -5525,7 +5525,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	return ctx->sc_regs [reg];
@@ -5684,13 +5684,13 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
 }

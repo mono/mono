@@ -9,9 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/appdomain.h>
@@ -21,9 +19,9 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
 #include <mono/utils/strenc.h>
+#include "reflection-internals.h"
 
 #ifndef HOST_WIN32
-#include <config.h>
 #ifdef HAVE_GRP_H
 #include <grp.h>
 #endif
@@ -347,7 +345,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 /* System.Security.Principal.WindowsImpersonationContext */
 
 #ifndef HOST_WIN32
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token, MonoError *error)
 {
 	return TRUE;
@@ -363,7 +361,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (
 #endif /* !HOST_WIN32 */
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error)
 {
 #ifdef HOST_WIN32
@@ -378,7 +376,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken 
 #endif
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (MonoError *error)
 {
 #ifdef HOST_WIN32
@@ -407,7 +405,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (Mo
 /* System.Security.Principal.WindowsPrincipal */
 
 #ifndef HOST_WIN32
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error)
 {
 	gboolean result = FALSE;
@@ -449,7 +447,7 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer
 	return result;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *utf8_groupname, MonoError *error)
 {
 	gboolean result = FALSE;

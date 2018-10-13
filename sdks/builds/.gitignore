@@ -36,9 +36,12 @@ ios-sim32-*/
 ios-sim64-*/
 ios-simtv-*/
 ios-simwatch-*/
-wasm-runtime/
-wasm-cross/
+wasm-runtime-*/
+wasm-cross-*/
+wasm-cross-win-*/
 bcl/
 desktop-x86/
 desktop-x86_64/
 toolchains/
+mxe-Win32.cmake
+mxe-Win64.cmake

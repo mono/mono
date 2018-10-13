@@ -159,7 +159,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 /*------------------------------------------------------------------*/
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	g_assert_not_reached ();
 }
@@ -289,7 +289,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 				
 	/* Set arguments */
 
-	/* Arg 1: mgreg_t *regs */
+	/* Arg 1: host_mgreg_t *regs */
 	s390_la  (buf, s390_r2, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[0]));
 		
 	/* Arg 2: code (next address to the instruction that called us) */
@@ -328,9 +328,9 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/*
 	 * Exception case:
 	 * We have an exception we want to throw in the caller's frame, so pop
-	 * the trampoline frame and throw from the caller.
+	 * the trampoline frame and throw from the caller. 
 	 */
-	S390_SET  (buf, s390_r1, (guint *)mono_get_throw_exception_addr ());
+	S390_SET  (buf, s390_r1, (guint *)mono_get_rethrow_preserve_exception_addr ());
 	s390_aghi (buf, STK_BASE, sizeof(trampStack_t));
 	s390_lg   (buf, s390_r1, 0, s390_r1, 0); 
 	s390_lmg  (buf, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);

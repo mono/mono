@@ -48,6 +48,7 @@ static gboolean type_is_reference (MonoType *type);
 
 static GENERATE_GET_CLASS_WITH_CACHE (custom_attribute_typed_argument, "System.Reflection", "CustomAttributeTypedArgument");
 static GENERATE_GET_CLASS_WITH_CACHE (custom_attribute_named_argument, "System.Reflection", "CustomAttributeNamedArgument");
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (customattribute_data, "System.Reflection", "CustomAttributeData");
 
 static MonoCustomAttrInfo*
 mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, MonoArrayHandle cattrs);
@@ -216,7 +217,7 @@ load_cattr_enum_type (MonoImage *image, const char *p, const char *boundp, const
 	return_val_if_nok (error, NULL);
 	p += slen;
 	*end = p;
-	return mono_class_from_mono_type (t);
+	return mono_class_from_mono_type_internal (t);
 }
 
 static MonoType*
@@ -347,7 +348,7 @@ handle_enum:
 	}
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (t->data.klass)) {
-			type = mono_class_enum_basetype (t->data.klass)->type;
+			type = mono_class_enum_basetype_internal (t->data.klass)->type;
 			goto handle_enum;
 		} else {
 			MonoClass *k =  t->data.klass;
@@ -376,13 +377,14 @@ handle_enum:
 		if (slen > 0 && !bcheck_blob (p, slen - 1, boundp, error))
 			return NULL;
 		*end = p + slen;
+		if (!out_obj)
+			return (void*)p;
 		// https://bugzilla.xamarin.com/show_bug.cgi?id=60848
 		// Custom attribute strings are encoded as wtf-8 instead of utf-8.
 		// If we decode using utf-8 like the spec says, we will silently fail
 		//  to decode some attributes in assemblies that Windows .NET Framework
 		//  and CoreCLR both manage to decode.
 		// See https://simonsapin.github.io/wtf-8/ for a description of wtf-8.
-		g_assert (out_obj);
 		*out_obj = (MonoObject*)mono_string_new_wtf8_len_checked (mono_domain_get (), p, slen, error);
 		return NULL;
 	case MONO_TYPE_CLASS: {
@@ -436,7 +438,7 @@ handle_enum:
 					/* See Partition II, Appendix B3 */
 					etype = MONO_TYPE_OBJECT;
 				simple_type.type = (MonoTypeEnum)etype;
-				tklass = mono_class_from_mono_type (&simple_type);
+				tklass = mono_class_from_mono_type_internal (&simple_type);
 			}
 			goto handle_enum;
 		} else if (subt == MONO_TYPE_ENUM) {
@@ -452,11 +454,11 @@ handle_enum:
 			g_free (n);
 			return_val_if_nok (error, NULL);
 			p += slen;
-			subc = mono_class_from_mono_type (t);
+			subc = mono_class_from_mono_type_internal (t);
 		} else if (subt >= MONO_TYPE_BOOLEAN && subt <= MONO_TYPE_R8) {
 			MonoType simple_type = {{0}};
 			simple_type.type = (MonoTypeEnum)subt;
-			subc = mono_class_from_mono_type (&simple_type);
+			subc = mono_class_from_mono_type_internal (&simple_type);
 		} else {
 			g_error ("Unknown type 0x%02x for object type encoding in custom attr", subt);
 		}
@@ -488,7 +490,7 @@ handle_enum:
 		return_val_if_nok (error, NULL);
 		basetype = m_class_get_byval_arg (tklass)->type;
 		if (basetype == MONO_TYPE_VALUETYPE && m_class_is_enumtype (tklass))
-			basetype = mono_class_enum_basetype (tklass)->type;
+			basetype = mono_class_enum_basetype_internal (tklass)->type;
 
 		if (basetype == MONO_TYPE_GENERICINST) {
 			MonoGenericClass * mgc = m_class_get_byval_arg (tklass)->data.generic_class;
@@ -598,7 +600,7 @@ load_cattr_value_boxed (MonoDomain *domain, MonoImage *image, MonoType *t, const
 		if (!is_ok (error))
 			return NULL;
 
-		MonoObject *boxed = mono_value_box_checked (domain, mono_class_from_mono_type (t), val, error);
+		MonoObject *boxed = mono_value_box_checked (domain, mono_class_from_mono_type_internal (t), val, error);
 		g_free (val);
 		return boxed;
 	}
@@ -844,7 +846,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 
 	/*g_print ("got attr %s\n", method->klass->name);*/
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	if (sig->param_count < 32) {
 		params = params_buf;
 		memset (params, 0, sizeof (void*) * sig->param_count);
@@ -855,9 +857,9 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 
 	/* skip prolog */
 	p += 2;
-	for (i = 0; i < mono_method_signature (method)->param_count; ++i) {
+	for (i = 0; i < mono_method_signature_internal (method)->param_count; ++i) {
 		MonoObject *param_obj;
-		params [i] = load_cattr_value (image, mono_method_signature (method)->params [i], &param_obj, p, data_end, &p, error);
+		params [i] = load_cattr_value (image, mono_method_signature_internal (method)->params [i], &param_obj, p, data_end, &p, error);
 		if (param_obj)
 			params [i] = param_obj;
 		goto_if_nok (error, fail);
@@ -945,8 +947,8 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 			}
 
 			/* can we have more that 1 arg in a custom attr named property? */
-			prop_type = prop->get? mono_method_signature (prop->get)->ret :
-			     mono_method_signature (prop->set)->params [mono_method_signature (prop->set)->param_count - 1];
+			prop_type = prop->get? mono_method_signature_internal (prop->get)->ret :
+			     mono_method_signature_internal (prop->set)->params [mono_method_signature_internal (prop->set)->param_count - 1];
 
 			MonoObject *param_obj;
 			pparams [0] = load_cattr_value (image, prop_type, &param_obj, named, data_end, &named, error);
@@ -1028,13 +1030,13 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 	/* Parse each argument corresponding to the signature's parameters from
 	 * the blob and store in typedargs.
 	 */
-	typedargs = mono_array_new_checked (domain, mono_get_object_class (), mono_method_signature (method)->param_count, error);
+	typedargs = mono_array_new_checked (domain, mono_get_object_class (), mono_method_signature_internal (method)->param_count, error);
 	return_if_nok (error);
 
-	for (i = 0; i < mono_method_signature (method)->param_count; ++i) {
+	for (i = 0; i < mono_method_signature_internal (method)->param_count; ++i) {
 		MonoObject *obj;
 
-		obj = load_cattr_value_boxed (domain, image, mono_method_signature (method)->params [i], p, data_end, &p, error);
+		obj = load_cattr_value_boxed (domain, image, mono_method_signature_internal (method)->params [i], p, data_end, &p, error);
 		return_if_nok (error);
 		mono_array_setref (typedargs, i, obj);
 	}
@@ -1122,8 +1124,8 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 				goto fail;
 			}
 
-			prop_type = prop->get? mono_method_signature (prop->get)->ret :
-			     mono_method_signature (prop->set)->params [mono_method_signature (prop->set)->param_count - 1];
+			prop_type = prop->get? mono_method_signature_internal (prop->get)->ret :
+			     mono_method_signature_internal (prop->set)->params [mono_method_signature_internal (prop->set)->param_count - 1];
 
 			arginfo [j].type = prop_type;
 			arginfo [j].prop = prop;
@@ -1166,7 +1168,7 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 	const char *named;
 	guint32 i, j, num_named;
 	CattrNamedArg *arginfo = NULL;
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
 
 	*typed_args = NULL;
 	*named_args = NULL;
@@ -1272,8 +1274,8 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 				goto fail;
 			}
 
-			prop_type = prop->get? mono_method_signature (prop->get)->ret :
-			     mono_method_signature (prop->set)->params [mono_method_signature (prop->set)->param_count - 1];
+			prop_type = prop->get? mono_method_signature_internal (prop->get)->ret :
+			     mono_method_signature_internal (prop->set)->params [mono_method_signature_internal (prop->set)->param_count - 1];
 
 			arginfo [j].type = prop_type;
 			arginfo [j].prop = prop;
@@ -1329,12 +1331,12 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 	if (!typedargs || !namedargs)
 		goto leave;
 
-	for (i = 0; i < mono_method_signature (method)->param_count; ++i) {
+	for (i = 0; i < mono_method_signature_internal (method)->param_count; ++i) {
 		MonoObject *obj = mono_array_get (typedargs, MonoObject*, i);
 		MonoObject *typedarg;
 		MonoType *t;
 
-		t = mono_method_signature (method)->params [i];
+		t = mono_method_signature_internal (method)->params [i];
 		if (t->type == MONO_TYPE_OBJECT && obj)
 			t = m_class_get_byval_arg (obj->vtable->klass);
 		typedarg = create_cattr_typed_arg (t, obj, error);
@@ -1380,6 +1382,16 @@ ves_icall_System_Reflection_CustomAttributeData_ResolveArgumentsInternal (MonoRe
 	mono_error_set_pending_exception (error);
 }
 
+static MonoClass*
+try_get_cattr_data_class (MonoError* error)
+{
+	error_init (error);
+	MonoClass *res = mono_class_try_get_customattribute_data_class ();
+	if (!res)
+		mono_error_set_execution_engine (error, "Class System.Reflection.CustomAttributeData not found, probably removed by the linker");
+	return res;
+}
+
 static MonoObjectHandle
 create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError *error)
 {
@@ -1393,15 +1405,22 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	error_init (error);
 
 	g_assert (image->assembly);
+	MonoObjectHandle attr;
+
+	MonoClass *cattr_data = try_get_cattr_data_class (error);
+	goto_if_nok (error, result_null);
 
 	if (!ctor) {
-		ctor = mono_class_get_method_from_name_checked (mono_defaults.customattribute_data_class, ".ctor", 4, 0, error);
+		MonoMethod *tmp = mono_class_get_method_from_name_checked (cattr_data, ".ctor", 4, 0, error);
 		mono_error_assert_ok (error);
+
+		mono_memory_barrier (); //safe publish!
+		ctor = tmp;
 	}
 
 	domain = mono_domain_get ();
 
-	MonoObjectHandle attr = mono_object_new_handle (domain, mono_defaults.customattribute_data_class, error);
+	attr = mono_object_new_handle (domain, cattr_data, error);
 	goto_if_nok (error, fail);
 
 	MonoReflectionMethodHandle ctor_obj;
@@ -1416,8 +1435,13 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	params [3] = &cattr->data_size;
 
 	mono_runtime_invoke_handle (ctor, attr, params, error);
+	goto fail;
+result_null:
+	attr = MONO_HANDLE_CAST (MonoObject, mono_new_null ());
 fail:
 	HANDLE_FUNCTION_RETURN_REF (MonoObject, attr);
+
+
 }
 
 static void
@@ -1457,7 +1481,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 		for (i = 0; i < cinfo->num_attrs; ++i) {
 			MonoMethod *ctor = cinfo->attrs[i].ctor;
 			g_assert (ctor);
-			if (mono_class_is_assignable_from (attr_klass, ctor->klass))
+			if (mono_class_is_assignable_from_internal (attr_klass, ctor->klass))
 				n++;
 		}
 	} else {
@@ -1469,7 +1493,7 @@ mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_
 	n = 0;
 	for (i = 0; i < cinfo->num_attrs; ++i) {
 		MonoCustomAttrEntry *centry = &cinfo->attrs [i];
-		if (!attr_klass || mono_class_is_assignable_from (attr_klass, centry->ctor->klass)) {
+		if (!attr_klass || mono_class_is_assignable_from_internal (attr_klass, centry->ctor->klass)) {
 			create_custom_attr_into_array (cinfo->image, centry->ctor, centry->data,
 				centry->data_size, result, n, error);
 			goto_if_nok (error, exit);
@@ -1501,8 +1525,11 @@ mono_custom_attrs_data_construct (MonoCustomAttrInfo *cinfo, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 
-	error_init (error);
-	MonoArrayHandle result = mono_array_new_handle (mono_domain_get (), mono_defaults.customattribute_data_class, cinfo->num_attrs, error);
+	MonoArrayHandle result;
+	MonoClass *cattr_data = try_get_cattr_data_class (error);
+	goto_if_nok (error, return_null);
+
+	result = mono_array_new_handle (mono_domain_get (), cattr_data, cinfo->num_attrs, error);
 	goto_if_nok (error, return_null);
 	for (int i = 0; i < cinfo->num_attrs; ++i) {
 		create_custom_attr_data_into_array (cinfo->image, &cinfo->attrs [i], result, i, error);
@@ -1919,7 +1946,7 @@ mono_custom_attrs_has_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
 		if (centry->ctor == NULL)
 			continue;
 		MonoClass *klass = centry->ctor->klass;
-		if (klass == attr_klass || mono_class_has_parent (klass, attr_klass) || (MONO_CLASS_IS_INTERFACE (attr_klass) && mono_class_is_assignable_from (attr_klass, klass)))
+		if (klass == attr_klass || mono_class_has_parent (klass, attr_klass) || (MONO_CLASS_IS_INTERFACE_INTERNAL (attr_klass) && mono_class_is_assignable_from_internal (attr_klass, klass)))
 			return TRUE;
 	}
 	return FALSE;
@@ -1952,7 +1979,7 @@ mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_k
 		if (centry->ctor == NULL)
 			continue;
 		MonoClass *klass = centry->ctor->klass;
-		if (attr_klass == klass || mono_class_is_assignable_from (attr_klass, klass)) {
+		if (attr_klass == klass || mono_class_is_assignable_from_internal (attr_klass, klass)) {
 			HANDLE_FUNCTION_ENTER ();
 			MonoObjectHandle result = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error);
 			HANDLE_FUNCTION_RETURN_OBJ (result);
@@ -2006,7 +2033,7 @@ mono_reflection_get_custom_attrs_info_checked (MonoObjectHandle obj, MonoError *
 	if (klass == mono_defaults.runtimetype_class) {
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST(MonoReflectionType, obj), error);
 		goto_if_nok (error, leave);
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		/*We cannot mono_class_init the class from which we'll load the custom attributes since this must work with broken types.*/
 		cinfo = mono_custom_attrs_from_class_checked (klass, error);
 		goto_if_nok (error, leave);
@@ -2220,9 +2247,15 @@ mono_reflection_get_custom_attrs_data_checked (MonoObjectHandle obj, MonoError *
 		if (!cinfo->cached)
 			mono_custom_attrs_free (cinfo);
 		goto_if_nok (error, leave);
-	} else 
-		MONO_HANDLE_ASSIGN (result, mono_array_new_handle (mono_domain_get (), mono_defaults.customattribute_data_class, 0, error));
+	} else  {
+		MonoClass *cattr_data = try_get_cattr_data_class (error);
+		goto_if_nok (error, return_null);
 
+		MONO_HANDLE_ASSIGN (result, mono_array_new_handle (mono_domain_get (), cattr_data, 0, error));
+	}
+	goto leave;
+return_null:
+	result = MONO_HANDLE_CAST (MonoArray, mono_new_null ());
 leave:
 	return result;
 }

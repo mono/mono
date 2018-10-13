@@ -14,6 +14,8 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -234,7 +236,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void MultipleSchemaInSchemaLocation ()
 		{
-			XmlTextReader xtr = new XmlTextReader ("Test/XmlFiles/xsd/multi-schemaLocation.xml");
+			XmlTextReader xtr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/multi-schemaLocation.xml"));
 			XmlValidatingReader vr = new XmlValidatingReader (xtr);
 			while (!vr.EOF)
 				vr.Read ();
@@ -327,7 +329,7 @@ namespace MonoTests.System.Xml
 		public void EnumerationFacetOnAttribute ()
 		{
 			string xml = "<test mode='NOT AN ENUMERATION VALUE' />";
-			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/79650.xsd"), null);
+			XmlSchema schema = XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/79650.xsd")), null);
 			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			xvr.ValidationType = ValidationType.Schema;
 			xvr.Schemas.Add (schema);
@@ -373,8 +375,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug81360 ()
 		{
-			string schemaFile = "Test/XmlFiles/xsd/81360.xsd";
-			XmlTextReader treader = new XmlTextReader (schemaFile);
+			string schemaResource = "Test/XmlFiles/xsd/81360.xsd";
+			XmlTextReader treader = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (schemaResource));
 			XmlSchema sc = XmlSchema.Read (treader, null);
 			sc.Compile (null);
 			string xml = @"<body xmlns='" + sc.TargetNamespace + "'><div></div></body>";
@@ -430,12 +432,12 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug82010 ()
 		{
-			string xmlfile = "Test/XmlFiles/xsd/82010.xml";
-			string xsdfile = "Test/XmlFiles/xsd/82010.xsd";
+			string xmlresource = "Test/XmlFiles/xsd/82010.xml";
+			string xsdresource = "Test/XmlFiles/xsd/82010.xsd";
 			XmlTextReader xr = null, xr2 = null;
 			try {
-				xr = new XmlTextReader (xsdfile);
-				xr2 = new XmlTextReader (xmlfile);
+				xr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (xsdresource));
+				xr2 = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (xmlresource));
 				XmlValidatingReader xvr = new XmlValidatingReader (xr2);
 				xvr.Schemas.Add (XmlSchema.Read (xr, null));
 				while (!xvr.EOF)
@@ -451,12 +453,12 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug376395 ()
 		{
-			string xmlfile = "Test/XmlFiles/xsd/376395.xml";
-			string xsdfile = "Test/XmlFiles/xsd/376395.xsd";
+			string xmlresource = "Test/XmlFiles/xsd/376395.xml";
+			string xsdresource = "Test/XmlFiles/xsd/376395.xsd";
 			XmlTextReader xr = null, xr2 = null;
 			try {
-				xr = new XmlTextReader (xsdfile);
-				xr2 = new XmlTextReader (xmlfile);
+				xr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (xsdresource));
+				xr2 = new XmlTextReader (TestResourceHelper.GetFullPathOfResource (xmlresource));
 				XmlValidatingReader xvr = new XmlValidatingReader (xr2);
 				xvr.Schemas.Add (XmlSchema.Read (xr, null));
 				while (!xvr.EOF)

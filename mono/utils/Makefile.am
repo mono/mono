@@ -1,6 +1,8 @@
 include $(top_srcdir)/mk/common.mk
 
-noinst_LTLIBRARIES = libmonoutils.la
+noinst_LTLIBRARIES = \
+	libmonomath.la \
+	libmonoutils.la
 
 if ENABLE_LLVM
 	if INTERNAL_LLVM 
@@ -69,6 +71,8 @@ monoutils_sources = \
 	mono-dl-wasm.c	\
 	mono-dl.h		\
 	mono-dl-windows-internals.h	\
+	mono-experiments.h	\
+	mono-experiments.c	\
 	mono-log-windows.c	\
 	mono-log-common.c	\
 	mono-log-posix.c	\
@@ -85,7 +89,6 @@ monoutils_sources = \
 	mono-io-portability.h	\
 	monobitset.c		\
 	mono-filemap.c		\
-	mono-math.c  		\
 	mono-mmap.c  		\
 	mono-mmap-windows.c  		\
 	mono-mmap.h  		\
@@ -303,6 +306,10 @@ libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
 libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS) @CXX_ADD_CFLAGS@
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
+libmonoutils_la_LIBADD = mono-math-c.lo
+
+libmonomath_la_SOURCES = mono-math-c.c
+libmonomath_la_CFLAGS = @CXX_REMOVE_CFLAGS@
 
 # These are public headers.
 # They should not use glib.h, G_BEGIN_DECLS, guint, etc.
@@ -316,7 +323,7 @@ libmonoutilsinclude_HEADERS = 	\
 	mono-dl-fallback.h	\
 	mono-counters.h
 
-EXTRA_DIST = mono-embed.h mono-embed.c ../../support/libm/complex.c
+EXTRA_DIST = mono-embed.h mono-embed.c ../../support/libm/complex.c mono-experiments.def
 
 DIST_SUBDIRS = jemalloc
 
@@ -324,4 +331,4 @@ if MONO_JEMALLOC_ENABLED
 SUBDIRS = jemalloc
 endif
 
-CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)

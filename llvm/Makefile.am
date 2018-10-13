@@ -1,5 +1,5 @@
 
-EXTRA_DIST=SUBMODULES.json build.mk build_llvm_config.sh
+EXTRA_DIST=build.mk build_llvm_config.sh
 
 if ENABLE_LLVM
 

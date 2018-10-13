@@ -229,6 +229,7 @@ System.Reflection/CustomAttributeData.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeNamedArgument.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
 System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/FieldInfo.cs
@@ -1122,7 +1123,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileNotFoundException.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
 ../referencesource/mscorlib/system/io/filesystemenumerable.cs
-../referencesource/mscorlib/system/io/memorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
 ../referencesource/mscorlib/system/io/stream.cs
@@ -1195,11 +1196,14 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ReflectionTypeLoadException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceLocation.cs
+../../../external/corefx/src/System.Runtime/src/System/Reflection/RuntimeReflectionExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetInvocationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeDelegator.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeInfo.cs
 
 ../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/TypeExtensions.cs
 ../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
@@ -1209,9 +1213,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
-../referencesource/mscorlib/system/reflection/typedelegator.cs
-../referencesource/mscorlib/system/reflection/typeinfo.cs
 
 ../referencesource/mscorlib/system/reflection/emit/methodbuilder.cs
 ../referencesource/mscorlib/system/reflection/emit/symboltype.cs
@@ -1826,3 +1827,5 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
 
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/Error.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamHelpers.CopyValidation.cs

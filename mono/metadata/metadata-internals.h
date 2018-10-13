@@ -893,6 +893,8 @@ void mono_unload_interface_ids (MonoBitSet *bitset);
 
 
 MonoType *mono_metadata_type_dup (MonoImage *image, const MonoType *original);
+MonoType *mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *original, const MonoType *cmods_source);
+
 MonoMethodSignature  *mono_metadata_signature_dup_full (MonoImage *image,MonoMethodSignature *sig);
 MonoMethodSignature  *mono_metadata_signature_dup_mempool (MonoMemPool *mp, MonoMethodSignature *sig);
 MonoMethodSignature  *mono_metadata_signature_dup_add_this (MonoImage *image, MonoMethodSignature *sig, MonoClass *klass);
@@ -1017,5 +1019,6 @@ mono_type_in_image (MonoType *type, MonoImage *image);
 MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
 
-#endif /* __MONO_METADATA_INTERNALS_H__ */
+#define MONO_CLASS_IS_INTERFACE_INTERNAL(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || mono_type_is_generic_parameter (m_class_get_byval_arg (c)))
 
+#endif /* __MONO_METADATA_INTERNALS_H__ */

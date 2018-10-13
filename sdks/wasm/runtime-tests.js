@@ -55,34 +55,20 @@ function inspect_object (o){
     return r;
 }
 
+load ("config.js");
 
 var Module = { 
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
-	instantiateWasm: function (env, receiveInstance) {
-		//merge Module's env with emcc's env
-		env.env = Object.assign({}, env.env, this.env);
-		var module = new WebAssembly.Module (read ('mono.wasm', 'binary'))
-		this.wasm_instance = new WebAssembly.Instance (module, env);
-		this.em_cb = receiveInstance;
-		return this
-	},
-
-	finish_loading: function () {
-		this.em_cb (this.wasm_instance);
-	},
-
-	env: {
-	},
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl (
-			"@VFS_PREFIX@",
-			"@DEPLOY_PREFIX@",
-			@ENABLE_DEBUGGING@,
-			[ @FILE_LIST@ ],
+			config.vfs_prefix,
+			config.deploy_prefix,
+			config.enable_debugging,
+			config.file_list,
 			function () {
-				@BINDINGS_LOADING@
+				config.add_bindings ();
 				App.init ();
 			},
 			function (asset ) 
@@ -105,24 +91,86 @@ var Module = {
 			}
 		);
 	},
-
 };
 
 load ("mono.js");
-Module.finish_loading ();
 
 var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
 var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
 var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
-const IGNORE_PARAM_COUNT = -1;
+var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
+var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
+var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
+var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
+var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
+var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 
+const IGNORE_PARAM_COUNT = -1;
 
 var App = {
     init: function () {
 
 		Module.print("Initializing.....");
 		Module.print("Arguments: " + testArguments);
-		
+
+		var args = testArguments;
+
+		if (args [0].startsWith ("--profile=")) {
+			var arg = args [0].substring ("--profile=".length);
+
+			var init = Module.cwrap ('mono_wasm_load_profiler_' + arg, 'void', ['string'])
+
+			init ("");
+
+			args = args.slice (1);
+		}
+
+		if (args[0] == "--regression") {
+			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
+
+			var res = 0;
+				try {
+					res = exec_regresion (10, args[1]);
+					Module.print ("REGRESSION RESULT: " + res);
+				} catch (e) {
+					Module.print ("ABORT: " + e);
+					res = 1;
+				}
+
+			if (res)
+				fail_exec ("REGRESSION TEST FAILED");
+
+			return;
+		}
+
+		if (args[0] == "--run") {
+			// Run an exe
+			if (args.length == 1)
+				fail_exec ("Error: Missing main executable argument.");
+			main_assembly = assembly_load (args[1]);
+			if (main_assembly == 0)
+				fail_exec ("Error: Unable to load main executable '" + args[1] + "'");
+			main_method = assembly_get_entry_point (main_assembly);
+			if (main_method == 0)
+				fail_exec ("Error: Main (string[]) method not found.");
+
+			var app_args = string_array_new (args.length - 2);
+			for (var i = 2; i < args.length; ++i) {
+				obj_array_set (app_args, i - 2, string_from_js (args [i]));
+			}
+
+			var invoke_args = Module._malloc (4);
+			Module.setValue (invoke_args, app_args, "i32");
+			var eh_throw = Module._malloc (4);
+			Module.setValue (eh_throw, 0, "i32");
+			var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
+			var eh_res = Module.getValue (eh_throw, "i32");
+			if (eh_res == 1) {
+				print ("Exception:" + string_get_utf8 (res));
+			}
+			return;
+		}
+
 		Module.print("Initializing Binding Test Suite support.....");
 
 		//binding test suite support code

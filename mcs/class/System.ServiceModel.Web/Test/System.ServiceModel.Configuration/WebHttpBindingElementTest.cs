@@ -6,6 +6,8 @@ using System.ServiceModel;
 using System.Text;
 using System.Configuration;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -53,7 +55,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		
 		private WebHttpBinding CreateBindingFromConfig ()
 		{
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/webHttpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/webHttpBinding")).GetSectionGroup ("system.serviceModel");
 			WebHttpBindingCollectionElement collectionElement = (WebHttpBindingCollectionElement) config.Bindings ["webHttpBinding"];
 			
 			WebHttpBindingElement el = collectionElement.Bindings ["WebHttpBinding1_Service"];

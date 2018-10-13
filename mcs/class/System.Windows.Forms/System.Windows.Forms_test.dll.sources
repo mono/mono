@@ -1,4 +1,5 @@
 ../../test-helpers/NunitHelpers.cs
+../../test-helpers/TestResourceHelper.cs
 ../../../build/common/Consts.cs
 System.Windows.Forms/ApplicationTest.cs
 System.Windows.Forms/AutoCompleteStringCollectionTest.cs

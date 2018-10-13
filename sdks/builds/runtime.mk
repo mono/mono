@@ -25,10 +25,12 @@
 #  _$(1)_PATH
 define RuntimeTemplate
 
-_runtime_$(1)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CFLAGS) $$($(1)_CFLAGS)
-_runtime_$(1)_CXXFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXFLAGS) $$($(1)_CXXFLAGS)
-_runtime_$(1)_CPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CPPFLAGS) $$($(1)_CPPFLAGS)
-_runtime_$(1)_CXXCPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXCPPFLAGS) $$($(1)_CXXCPPFLAGS)
+_runtime_$(1)_BITNESS=$$(if $$(or $$(findstring i686,$(2)),$$(findstring i386,$(2))),-m32,$$(if $$(findstring x86_64,$(2)),-m64))
+
+_runtime_$(1)_CFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CFLAGS) $$($(1)_CFLAGS) $$(_runtime_$(1)_BITNESS)
+_runtime_$(1)_CXXFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXFLAGS) $$($(1)_CXXFLAGS) $$(_runtime_$(1)_BITNESS)
+_runtime_$(1)_CPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CPPFLAGS) $$($(1)_CPPFLAGS) $$(_runtime_$(1)_BITNESS)
+_runtime_$(1)_CXXCPPFLAGS=$(if $(RELEASE),-O2 -g,-O0 -ggdb3 -fno-omit-frame-pointer) $$(_$(1)_CXXCPPFLAGS) $$($(1)_CXXCPPFLAGS) $$(_runtime_$(1)_BITNESS)
 _runtime_$(1)_LDFLAGS=$$(_$(1)_LDFLAGS) $$($(1)_LDFLAGS)
 
 _runtime_$(1)_AC_VARS=$$(_$(1)_AC_VARS) $$($(1)_AC_VARS)
@@ -57,6 +59,7 @@ _runtime_$(1)_CONFIGURE_FLAGS= \
 	$$(if $(2),--host=$(2)) \
 	--cache-file=$$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache \
 	--prefix=$$(TOP)/sdks/out/$(1)-$$(CONFIGURATION) \
+	$$(if $$(ENABLE_CXX),--enable-cxx) \
 	$$(_cross-runtime_$(1)_CONFIGURE_FLAGS) \
 	$$(_$(1)_CONFIGURE_FLAGS) \
 	$$($(1)_CONFIGURE_FLAGS)
@@ -77,22 +80,14 @@ build-custom-$(1):
 setup-custom-$(1):
 	mkdir -p $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
-.PHONY: package-$(1)-$$(CONFIGURATION)
-package-$(1)-$$(CONFIGURATION):
+.PHONY: package-$(1)
+package-$(1):
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/mono install
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION)/support install
 
-.PHONY: package-$(1)
-package-$(1):
-	$$(MAKE) package-$(1)-$$(CONFIGURATION)
-
-.PHONY: clean-$(1)-$$(CONFIGURATION)
-clean-$(1)-$$(CONFIGURATION):
-	rm -rf .stamp-$(1)-toolchain .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
-
 .PHONY: clean-$(1)
 clean-$(1):
-	$$(MAKE) clean-$(1)-$$(CONFIGURATION)
+	rm -rf .stamp-$(1)-toolchain .stamp-$(1)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$$(CONFIGURATION)
 
 TARGETS += $(1)
 

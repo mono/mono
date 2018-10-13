@@ -12,6 +12,7 @@
 #include <mono/metadata/handle.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/icalls.h>
+#include "reflection-internals.h"
 
 ICALL_EXPORT
 MonoAppDomainHandle
@@ -75,7 +76,7 @@ ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomainHandle ad,
 						    MonoBoolean refonly,
 						    MonoError *error);
 ICALL_EXPORT
-gboolean
+MonoBoolean
 ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id, MonoError *error);
 
 ICALL_EXPORT

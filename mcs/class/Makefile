@@ -12,29 +12,15 @@ ifdef MCS_MODE
 MCS_MODE_dirs := Mono.Cecil.Mdb
 endif
 
-# The minimal set of csc dependencies
-basic_SUBDIRS := \
-	Mono.Cecil \
-	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer \
-	corlib \
-	Mono.Security \
-	System \
-	System.XML \
-	System.Security \
-	System.Core \
-	System.ComponentModel.Composition.4.5 \
-	System.Numerics \
-	System.Xml.Linq \
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI \
-	../ilasm \
-	corlib/il
-
+# Tooling dependencies of mscorlib, we build them to /tmp folder for MONO_PATH to work
+# reliably for clean and update builds. All deps are built against stable API to run with
+# range of boostrap versions and .NET at the same time
 build_SUBDIRS = \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
+	PEAPI \
+	../ilasm \
 	corlib
 
 build_PARALLEL_SUBDIRS = \
@@ -49,9 +35,7 @@ build_PARALLEL_SUBDIRS = \
 	System.Numerics \
 	System.Xml.Linq \
 	System.IO.Compression \
-	System.Drawing			\
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI
+	System.Drawing
 
 ifdef MCS_MODE
 basic_PARALLEL_SUBDIRS := ../mcs
@@ -62,7 +46,8 @@ build_SUBDIRS += \
 	System.XML \
 	System.Security \
 	Mono.Posix \
-	System.Core
+	System.Core \
+	Mono.CompilerServices.SymbolWriter
 
 build_PARALLEL_SUBDIRS += ../mcs
 endif
@@ -451,6 +436,7 @@ DISTFILES = \
 	test-helpers/RemoteExecutorTestBase.Mobile.cs \
 	test-helpers/RemoteExecutorTestBase.Mono.cs \
 	test-helpers/SocketResponder.cs \
+	test-helpers/TestResourceHelper.cs \
 	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)

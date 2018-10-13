@@ -10,6 +10,7 @@ public static class Program {
         var args = new List<string> (_args);
         bool useStdout = false, showHelp = false, strictMode = false;
         string baseDir = null;
+        string platformsDir = null;
 
         for (int i = 0; i < args.Count; i++) {
             var arg = args[i];
@@ -44,6 +45,9 @@ public static class Program {
                 case "--basedir":
                     baseDir = argValue;
                     break;
+                case "--platformsdir":
+                    platformsDir = argValue;
+                    break;
                 default:
                     Console.Error.WriteLine ($"// Unrecognized switch {arg}. Aborting.");
                     return 1;
@@ -71,6 +75,9 @@ public static class Program {
             Console.Error.WriteLine ("  Produces an error exit code if files or directories are invalid/missing or other warnings occur");
             Console.Error.WriteLine ("--basedir:<dir>");
             Console.Error.WriteLine ("  Sets the base directory when reading a single sources/exclusions pair (default is the directory containing the sources file)");
+            Console.Error.WriteLine ("--platformsdir:<dir>");
+            Console.Error.WriteLine ("  Location of platforms directory with configurations");
+
             return 1;
         }
 
@@ -81,8 +88,8 @@ public static class Program {
 
         var outFile = Path.GetFullPath (args[0]);
 
-        var platformsFolder = Path.Combine (executableDirectory, "platforms");
-        var profilesFolder = Path.Combine (executableDirectory, "profiles");
+        var platformsFolder = Path.Combine (platformsDir ?? executableDirectory, "platforms");
+        var profilesFolder = Path.Combine (platformsDir ?? executableDirectory, "profiles");
         if (!Directory.Exists (platformsFolder) || !Directory.Exists (profilesFolder)) {
             Console.Error.WriteLine ($"// Platforms and/or profiles folders are missing: '{platformsFolder}' '{profilesFolder}'. Aborting.");
             return 1;

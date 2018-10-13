@@ -16,7 +16,7 @@ MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -
 
 MSYM_DIR = $(OUT_DIR)/msymdir
 TEST_CS = Test/StackTraceDumper.cs
-TEST_EXE = $(OUT_DIR)/StackTraceDumper.exe
+TEST_EXE = StackTraceDumper.exe
 STACKTRACE_FILE = $(OUT_DIR)/stacktrace.out
 SYMBOLICATE_RAW_FILE = $(OUT_DIR)/symbolicate_raw.out
 SYMBOLICATE_RESULT_FILE = $(OUT_DIR)/symbolicate.result
@@ -44,14 +44,22 @@ PREPARE_OUTDIR = @\
 	mkdir -p $(OUT_DIR); \
 	mkdir -p $(MSYM_DIR);
 
-COMPILE = \
-	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -r:$(LIB_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE); \
+STORE_SYMBOLS = \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(OUT_DIR); \
 	$(MONO) $(LIB_PATH)/$(PROGRAM) store-symbols $(MSYM_DIR) $(LIB_PATH);
+
+COPY_TEST = @\
+	cp $(TEST_EXE) $(OUT_DIR); \
+	cp $(TEST_EXE:.exe=.pdb) $(OUT_DIR);
 
 check: run-test
 
 AOT_SUPPORTED = $(shell $(MONO) --aot 2>&1 | grep -q "AOT compilation is not supported" && echo 0 || echo 1)
+
+test-local: $(TEST_EXE)
+
+$(TEST_EXE): $(TEST_CS)
+	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -r:$(LIB_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE)
 
 run-test-local: run-test-without-aot run-test-with-aot run-test-with-aot-msym
 
@@ -59,7 +67,8 @@ run-test-without-aot: OUT_DIR = Test/without_aot
 run-test-without-aot: all
 	@echo "Checking $(TEST_EXE) without AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
-	$(COMPILE)
+	$(COPY_TEST)
+	$(STORE_SYMBOLS)
 	$(CHECK_DIFF)
 
 run-test-with-aot: OUT_DIR = Test/with_aot
@@ -67,8 +76,9 @@ run-test-with-aot: all
 ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
-	$(COMPILE)
-	@$(MONO) --aot $(TEST_EXE) > /dev/null
+	$(COPY_TEST)
+	$(STORE_SYMBOLS)
+	@$(MONO) --aot $(OUT_DIR)/$(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
 
@@ -77,7 +87,8 @@ run-test-with-aot-msym: all
 ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(TEST_EXE) with AOT (using .msym) in $(OUT_DIR)"
 	$(PREPARE_OUTDIR)
-	$(COMPILE)
-	@$(MONO) --aot=msym-dir=$(MSYM_DIR) $(TEST_EXE) > /dev/null
+	$(COPY_TEST)
+	$(STORE_SYMBOLS)
+	@$(MONO) --aot=msym-dir=$(MSYM_DIR) $(OUT_DIR)/$(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
 endif
