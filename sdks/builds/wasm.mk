@@ -34,6 +34,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-llvm-runtime \
 	--enable-icall-export \
 	--disable-icall-tables \
+	--disable-crash-reporting \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx) \
 	CFLAGS="-fexceptions"
