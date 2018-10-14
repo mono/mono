@@ -201,6 +201,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
 	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
 	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
 	   #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
 	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
 	   exit 0
