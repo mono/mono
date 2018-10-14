@@ -2455,6 +2455,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category("NotOnWindows")]
 	public void Crash () {
 		bool success = false;
 

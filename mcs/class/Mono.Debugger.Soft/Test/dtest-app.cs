@@ -16,7 +16,6 @@ using System.Net.Sockets;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
-using Mono.Posix;
 
 public class TestsBase
 {
