@@ -2455,6 +2455,38 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void Crash () {
+		bool success = false;
+
+		try {
+			vm.Detach ();
+			Start (new string [] { dtest_app_path, "crash-vm" });
+			Event e = run_until ("crash");
+			while (!success) {
+				vm.Resume ();
+				e = GetNextEvent ();
+				var crash = e as CrashEvent;
+				if (crash == null)
+					continue;
+
+				success = true;
+				Assert.AreNotEqual (0, crash.Dump.Length);
+
+				break;
+			}
+		} finally {
+			try {
+				vm.Detach ();
+			} finally {
+				vm = null;
+			}
+		}
+
+		if (!success)
+			Assert.Fail ("Didn't get crash event");
+	}
+
+	[Test]
 	public void Dispose () {
 		run_until ("Main");
 
