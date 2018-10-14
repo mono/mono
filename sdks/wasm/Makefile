@@ -164,7 +164,7 @@ build-aot-$(1): packager.exe runtime-tests.js main.exe WebAssembly.Bindings.dll 
 clean-aot-$(1):
 	$(RM) -r obj/aot-$(1) bin/aot-$(1)
 
-check-aot-$(1): build-aot-$(1)
+check-aot-$(1) run-aot-$(1): build-aot-$(1)
 	(cd bin/aot-$(1) && $$(SM) runtime.js $(3))
 
 endef
@@ -177,6 +177,9 @@ AOT_TEST_SUITES=corlib System.Core
 
 build-aot-all:
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
+
+run-aot-all:
+	for suite in System.Core; do make run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
 
