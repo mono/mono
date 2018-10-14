@@ -17,6 +17,7 @@ DRIVER_CONF=release
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
+WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
 MINI_PATH=$(TOP)/mono/mini
 CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
@@ -69,7 +70,7 @@ jsup:
 toolchain: .stamp-jsvu
 
 driver.o: driver.c
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 driver.c -c -o driver.o
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
 
 debug/:
 	mkdir -p $@

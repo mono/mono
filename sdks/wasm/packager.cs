@@ -394,7 +394,7 @@ class Driver {
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
 			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
-			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
+			ninja.WriteLine ("  flags = -DENABLE_AOT=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
