@@ -26,6 +26,7 @@ void mono_method_builder_ilgen_init (void);
 void mono_sgen_mono_ilgen_init (void);
 void mono_icall_table_init (void);
 void mono_aot_register_module (void **aot_info);
+char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
 
@@ -135,10 +136,16 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 }
 
 EMSCRIPTEN_KEEPALIVE void
+mono_wasm_setenv (const char *name, const char *value)
+{
+	monoeg_g_setenv (strdup (name), strdup (value), 1);
+}
+
+EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
-	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
-	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
+	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
+	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
 
 #ifdef ENABLE_AOT
 	// Defined in driver-gen.c
