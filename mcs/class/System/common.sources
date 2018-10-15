@@ -191,6 +191,7 @@ System.Timers/ElapsedEventArgs.cs
 
 System.Windows.Input/ICommand.cs
 
+Mono/AppleTypes.cs
 Mono/SystemCertificateProvider.cs
 Mono/SystemDependencyProvider.cs
 Mono/X509Pal.cs
