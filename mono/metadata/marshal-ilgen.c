@@ -6305,11 +6305,18 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	gboolean save_handles_to_locals = FALSE;
 	IcallHandlesLocal *handles_locals = NULL;
 	MonoMethodSignature *sig = mono_method_signature (method);
+	gboolean need_gc_safe = FALSE;
+	GCSafeTransitionBuilder gc_safe_transition_builder;
 
 	(void) mono_lookup_internal_call_full (method, &uses_handles, &foreign_icall);
 
 	/* If it uses handles and MonoError, it had better check exceptions */
 	g_assert (!uses_handles || check_exceptions);
+
+	if (G_UNLIKELY (foreign_icall)) {
+		/* FIXME: we only want the transitions for hybrid suspend.  Q: What to do about AOT? */
+		need_gc_safe = gc_safe_transition_builder_init (&gc_safe_transition_builder, mb, FALSE);
+	}
 
 	if (uses_handles) {
 		MonoMethodSignature *ret;
@@ -6354,6 +6361,10 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		ret->pinvoke = csig->pinvoke;
 
 		call_sig = ret;
+	}
+
+	if (G_UNLIKELY (need_gc_safe)) {
+		gc_safe_transition_builder_add_locals (&gc_safe_transition_builder);
 	}
 
 	if (uses_handles) {
@@ -6462,6 +6473,9 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			mono_mb_emit_ldarg (mb, i + sig->hasthis);
 	}
 
+	if (G_UNLIKELY (need_gc_safe))
+		gc_safe_transition_builder_emit_enter (&gc_safe_transition_builder, &piinfo->method, aot);
+
 	if (aot) {
 		mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_op (mb, CEE_MONO_ICALL_ADDR, &piinfo->method);
@@ -6470,6 +6484,9 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		g_assert (piinfo->addr);
 		mono_mb_emit_native_call (mb, call_sig, piinfo->addr);
 	}
+
+	if (G_UNLIKELY (need_gc_safe))
+		gc_safe_transition_builder_emit_exit (&gc_safe_transition_builder);
 
 	if (uses_handles) {
 		if (MONO_TYPE_IS_REFERENCE (sig->ret)) {
@@ -6516,6 +6533,9 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		mono_mb_emit_ldloc_addr (mb, error_var);
 		mono_mb_emit_icall (mb, mono_icall_end);
 	}
+
+	if (G_UNLIKELY (need_gc_safe))
+		gc_safe_transition_builder_cleanup (&gc_safe_transition_builder);
 
 	if (check_exceptions)
 		emit_thread_interrupt_checkpoint (mb);
