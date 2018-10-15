@@ -67,6 +67,7 @@ define LLVMTemplate
 _llvm-$(1)_CMAKE_FLAGS = \
 	$$(llvm_CMAKE_FLAGS) \
 	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
+	-DHAVE_FUTIMENS=0 \
 	$$(llvm-$(1)_CMAKE_FLAGS)
 
 .stamp-llvm-$(1)-configure: $$(LLVM_SRC)/CMakeLists.txt
