@@ -5998,7 +5998,7 @@ summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current,
 }
 
 static void
-summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx, gboolean silent)
+summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadId current, int current_idx)
 {
 	sigset_t sigset, old_sigset;
 	sigemptyset(&sigset);
@@ -6013,7 +6013,7 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 	#ifdef HAVE_PTHREAD_KILL
 		pthread_kill (state->thread_array [i], SIGTERM);
 
-		if (!silent)
+		if (!state->silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Pkilling 0x%zx from 0x%zx\n", state->thread_array [i], current);
 	#else
 		g_error ("pthread_kill () is not supported by this platform");
@@ -6138,8 +6138,10 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	MonoNativeThreadId current = mono_native_thread_id_get ();
 	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
 
-	if (this_thread_controls)
-		summarizer_signal_other_threads (&state, current, current_idx, silent);
+	if (this_thread_controls) {
+		state.silent = silent;
+		summarizer_signal_other_threads (&state, current, current_idx);
+	}
 
 	MonoThreadSummary this_thread;
 
@@ -6158,7 +6160,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 
 	// From summarizer, wait and dump.
 	if (this_thread_controls) {
-		if (!silent)
+		if (!state.silent)
 			MOSTLY_ASYNC_SAFE_PRINTF("Entering thread summarizer pause from 0x%zx\n", current);
 
 		// Wait up to 2 seconds for all of the other threads to catch up
