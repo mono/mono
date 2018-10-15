@@ -1,0 +1,49 @@
+# This is a minimal clang-format file for Mono code. The code is not consistent
+# in its formatting, so this file is most often useful with git-clang-format [1],
+# which formats only changed lines.
+#
+# Usage:
+#  * Make some changes to Mono C code or headers
+#  * Run `git clang-format` (maybe add -f if there are line ending issues from git)
+#  * Your changed code should meet the formatting guidelines for Mono
+#
+# Installation:
+#  * Install LLVM tools (including clang-format) for your OS [2]
+#  * Install Pythong on your OS
+#
+# Code style:
+#  Our goal is to match the Mono code style, not define a new one. The style
+#  options [3] are many. Here we try to capture only a few. If you find something
+#  is missing, feel free to add configuration options.
+#
+# [1] https://github.com/llvm-mirror/clang/blob/master/tools/clang-format/git-clang-format
+# [2] http://releases.llvm.org/
+# [3] https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+# All function declarations and calls should have a space after the name
+SpaceBeforeParens: Always
+
+# Use four space tabs
+UseTab: Always
+TabWidth: 4
+IndentWidth: 4
+
+# Handle curly braces, basically: functions get a line break, nothing else does
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterControlStatement: false
+  AfterStruct: false
+  AfterFunction: true
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeElse: false
+
+# Keep function return types on a different line from the function name
+# Note that often static function forward declarations don't follow this
+# approach, and have the return type on the same line. I'm not sure
+# clang-format can handle these two cases differently.
+AlwaysBreakAfterReturnType: TopLevel
+
+# Don't warp any long lines
+ColumnLimit: 0
