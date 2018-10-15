@@ -91,6 +91,9 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 $(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
 	cp $< $@
 
+$(WASM_BCL_DIR)/Mono.Cecil.dll: $(TOP)/mcs/class/lib/build/Mono.Cecil.dll
+	cp $< $@
+
 build-native: debug/.stamp-build release/.stamp-build
 
 do-runtime:
@@ -193,7 +196,7 @@ build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe
+build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
