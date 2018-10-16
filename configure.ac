@@ -5157,6 +5157,10 @@ if test "x$enable_btls" = "xyes"; then
 	btls_cflags=
 	BTLS_CMAKE_ARGS=
 
+	if test "x$host_win32" = "xyes"; then
+		AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
+	fi
+
 	case "$BTLS_PLATFORM" in
 	i386)
 		btls_arch=i386
@@ -5166,8 +5170,10 @@ if test "x$enable_btls" = "xyes"; then
 				btls_cflags="$btls_cflags -arch i386"
 				;;
 			mingw*|cygwin*)
-				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
-				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				btls_cflags="-DNOCRYPT $WIN32_CPPFLAGS"
+				if test "x$HAVE_YASM" != "xyes"; then
+					BTLS_CMAKE_ARGS="-DOPENSSL_NO_ASM=1"
+				fi
 				;;
 		esac
 		;;
@@ -5175,8 +5181,10 @@ if test "x$enable_btls" = "xyes"; then
 		btls_arch=x86_64
 		case $host_os in
 			mingw*|cygwin*)
-				btls_cflags="$btls_cflags -DNOCRYPT $WIN32_CPPFLAGS"
-				BTLS_CMAKE_ARGS="-D OPENSSL_NO_ASM=1"
+				btls_cflags="-DNOCRYPT $WIN32_CPPFLAGS"
+				if test "x$HAVE_YASM" != "xyes"; then
+					BTLS_CMAKE_ARGS="-DOPENSSL_NO_ASM=1"
+				fi
 				;;
 		esac
 		;;
