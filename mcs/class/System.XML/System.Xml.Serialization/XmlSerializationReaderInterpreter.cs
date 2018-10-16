@@ -204,41 +204,41 @@ namespace System.Xml.Serialization
 		{
 			if (isNullable && ReadNull()) return null;
 
-            if (checkType)
-            {
-                System.Xml.XmlQualifiedName t = GetXsiType();
-                if (t != null) {
-                    XmlTypeMapping realMap = typeMap.GetRealElementMap(t.Name, t.Namespace);
-                    if (realMap == null) {
-                        if (typeMap.TypeData.Type == typeof(object))
-                            return ReadTypedPrimitive(t);
-                        else
-                            throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
+                    if (checkType)
+                    {
+                        System.Xml.XmlQualifiedName t = GetXsiType();
+                        if (t != null) {
+                            XmlTypeMapping realMap = typeMap.GetRealElementMap(t.Name, t.Namespace);
+                            if (realMap == null) {
+                                if (typeMap.TypeData.Type == typeof(object))
+                                    return ReadTypedPrimitive(t);
+                                else
+                                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
+                            }
+                            if (realMap != typeMap)
+                                return ReadObject(realMap, false, false);
+                        }
+                        else if (typeMap.TypeData.Type == typeof(object))
+                            return ReadTypedPrimitive(AnyType);
+                        else {
+                            XmlTypeMapping realMap = typeMap.GetRealElementMap(Reader.LocalName, Reader.NamespaceURI);
+                            if (realMap == null)
+                                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
+                            if (realMap != typeMap)
+                                return ReadObject(realMap, false, false);
+                        }
                     }
-                    if (realMap != typeMap)
-                        return ReadObject(realMap, false, false);
-                }
-                else if (typeMap.TypeData.Type == typeof(object))
-                    return ReadTypedPrimitive(AnyType);
-                else {
-                    XmlTypeMapping realMap = typeMap.GetRealElementMap(Reader.LocalName, Reader.NamespaceURI);
-                    if (realMap == null)
-                        throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
-                    if (realMap != typeMap)
-                        return ReadObject(realMap, false, false);
-                }
-            }
 
-            object ob = CreateInstance (typeMap.TypeData.Type, true);
+                    object ob = CreateInstance (typeMap.TypeData.Type, true);
             
-            Reader.MoveToElement();
-            bool isEmpty = Reader.IsEmptyElement;
-            ReadClassInstanceMembers (typeMap, ob);
+                    Reader.MoveToElement();
+                    bool isEmpty = Reader.IsEmptyElement;
+                    ReadClassInstanceMembers (typeMap, ob);
             
-            if (isEmpty) Reader.Skip();
-            else ReadEndElement();
+                    if (isEmpty) Reader.Skip();
+                    else ReadEndElement();
             
-            return ob;
+                    return ob;
 		}
 
 		protected virtual void ReadClassInstanceMembers (XmlTypeMapping typeMap, object ob)
