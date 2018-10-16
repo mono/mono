@@ -469,14 +469,14 @@ lib/$(monolite_dir)/Facades:
 
 $(monolite_files): | lib/$(monolite_dir)
 $(monolite_files): | lib/$(monolite_dir)/Facades
-$(monolite_files): lib/$(monolite_dir)/%: lib/build-$(HOST_PLATFORM)/%
+$(monolite_files): lib/$(monolite_dir)/%: lib/build/%
 	cp -p $< $@
 
 lib/$(monolite_dir)/mcs.exe:
 	$(MAKE) -C ../mcs PROFILE=build
-	cp -p lib/build-$(HOST_PLATFORM)/mcs.exe lib/$(monolite_dir)
+	cp -p lib/build/mcs.exe lib/$(monolite_dir)
 
-$(build_files:%=lib/build-$(HOST_PLATFORM)/%):
+$(build_files:%=lib/build/%):
 	cd $(topdir) && $(MAKE) profile-do--build--all NO_DIR_CHECK=1 SKIP_AOT=1
 
 dist-monolite: $(monolite_files) lib/$(monolite_dir)/mcs.exe
