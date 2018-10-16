@@ -3889,6 +3889,49 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		}
 	}
 
+	/*
+	 * Check that any fields of IsByRefLike type are instance
+	 * fields and only inside other IsByRefLike structs.
+	 *
+	 * (Has to be done late because we call
+	 * mono_class_from_mono_type_internal which may recursively
+	 * refer to the current class)
+	 */
+	gboolean allow_isbyreflike_fields = m_class_is_byreflike (klass);
+	for (i = 0; i < top; i++) {
+		field = &klass->fields [i];
+
+		if (mono_field_is_deleted (field))
+			continue;
+		if ((field->type->attrs & FIELD_ATTRIBUTE_LITERAL))
+			continue;
+		MonoClass *field_class = NULL;
+		/* have to be careful not to recursively invoke mono_class_init on a static field.
+		 * for example - if the field is an array of a subclass of klass, we can loop.
+		 */
+		switch (field->type->type) {
+		case MONO_TYPE_TYPEDBYREF:
+		case MONO_TYPE_VALUETYPE:
+		case MONO_TYPE_GENERICINST:
+			field_class = mono_class_from_mono_type_internal (field->type);
+			break;
+		default:
+			break;
+		}
+		if (!field_class || !m_class_is_byreflike (field_class))
+			continue;
+		if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
+			mono_class_set_type_load_failure (klass, "Static ByRefLike field '%s' is not allowed", field->name);
+			return;
+		} else {
+			/* instance field */
+			if (allow_isbyreflike_fields)
+				continue;
+			mono_class_set_type_load_failure (klass, "Instance ByRefLike field '%s' not in a ref struct", field->name);
+			return;
+		}
+	}
+
 	/* Publish the data */
 	mono_loader_lock ();
 	if (!klass->rank)
@@ -4187,7 +4230,7 @@ mono_class_init (MonoClass *klass)
 	 */
 	GSList *init_list = (GSList *)mono_native_tls_get_value (init_pending_tls_id);
 	if (g_slist_find (init_list, klass)) {
-		mono_class_set_type_load_failure (klass, "Recursive type definition detected");
+		mono_class_set_type_load_failure (klass, "Recursive type definition detected %s.%s", klass->name_space, klass->name);
 		goto leave_no_init_pending;
 	}
 	init_list = g_slist_prepend (init_list, klass);
