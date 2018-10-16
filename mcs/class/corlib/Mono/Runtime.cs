@@ -106,17 +106,17 @@ namespace Mono {
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void WriteStateToDisk_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+		static extern void WriteStateToFile_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
 
 		static void
-		WriteStateToDisk (Exception exc)
+		WriteStateToFile (Exception exc)
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
 			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
 			using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
 			{
-				WriteStateToDisk_internal (payload_chars.Value, portable_hash, unportable_hash);
+				WriteStateToFile_internal (payload_chars.Value, portable_hash, unportable_hash);
 			}
 		}
 
@@ -164,6 +164,44 @@ namespace Mono {
 			}
 		}
 #endif
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateTotal_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		static Tuple<String, ulong, ulong>
+		DumpStateSingle ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		static Tuple<String, ulong, ulong>
+		DumpStateTotal ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
 
 	}
 }

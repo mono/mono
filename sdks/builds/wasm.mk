@@ -34,8 +34,9 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--enable-llvm-runtime \
 	--enable-icall-export \
 	--disable-icall-tables \
+	--disable-crash-reporting \
 	--with-bitcode=yes \
-	$(if $(ENABLE_CXX),--enable-cxx)
+	$(if $(ENABLE_CXX),--enable-cxx) \
 	CFLAGS="-fexceptions"
 
 .stamp-wasm-runtime-toolchain:
@@ -88,17 +89,19 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--disable-support-build \
 	--enable-maintainer-mode \
-	--enable-minimal=appdomains,com,remoting
+	--enable-minimal=appdomains,com,remoting \
+	--enable-icall-symbol-map \
+	--with-cross-offsets=wasm32-unknown-none.h
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
+ifdef ENABLE_WASM_CROSS
 wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+endif
 
 endef
 
-ifeq ($(DISABLE_WASM_CROSS),)
 $(eval $(call WasmCrossTemplate,cross,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
-endif
 
 ##
 # Parameters
@@ -150,30 +153,19 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=appdomains,com,remoting \
 	--with-tls=pthread \
 	--enable-icall-symbol-map \
-	--with-cross-offsets=wasm-offsets.h
+	--with-cross-offsets=wasm32-unknown-none.h
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
+ifdef ENABLE_WASM_CROSS
 wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
-
-endef
-
-ifeq ($(DISABLE_WASM_CROSS),)
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 endif
 
-##
-# Parameters
-#  $(1): build profiles
-#  $(2): test profile
-define WasmBclTemplate
-
-$$(eval $$(call BclTemplate,wasm,$(1),$(2)))
-
-wasm_TARGETS += wasm-bcl
-
 endef
 
-$(eval $(call WasmBclTemplate,wasm,wasm))
+$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+
+$(eval $(call BclTemplate,wasm-bcl,wasm,wasm))
+wasm_TARGETS += wasm-bcl

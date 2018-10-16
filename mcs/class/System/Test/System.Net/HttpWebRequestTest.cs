@@ -26,7 +26,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Reflection;
-using Mono.Security.Authenticode;
 using System.Runtime.ExceptionServices;
 
 using MonoTests.Helpers;

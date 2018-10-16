@@ -832,6 +832,9 @@ mono_class_get_context (MonoClass *klass);
 MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
+MONO_PROFILER_API MonoMethodSignature*
+mono_method_signature_internal (MonoMethod *m);
+
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
@@ -1109,6 +1112,9 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 char *
 mono_method_get_full_name (MonoMethod *method);
 
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type);
+
 MonoArrayType *mono_dup_array_type (MonoImage *image, MonoArrayType *a);
 MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMethodSignature *sig);
 
@@ -1218,6 +1224,9 @@ gboolean mono_is_corlib_image (MonoImage *image);
 MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error);
 
+MonoType*
+mono_field_get_type_internal (MonoClassField *field);
+
 MonoClassField*
 mono_class_get_fields_internal (MonoClass* klass, gpointer *iter);
 
@@ -1253,6 +1262,9 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 
 MonoClass *
 mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
+
+MONO_PROFILER_API MonoClass *
+mono_class_from_mono_type_internal (MonoType *type);
 
 MonoClassField*
 mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context, MonoError *error);
@@ -1443,6 +1455,9 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
+
+MonoType*
+mono_class_enum_basetype_internal (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

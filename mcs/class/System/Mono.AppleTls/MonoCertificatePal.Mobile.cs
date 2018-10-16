@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.Apple;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
-using Mono.Net;
 
 namespace Mono.AppleTls
 {
@@ -56,7 +55,7 @@ namespace Mono.AppleTls
 			if (Interlocked.CompareExchange (ref initialized, 1, 0) != 0)
 				return;
 
-			var handle = CFObject.dlopen (AppleTlsContext.SecurityLibrary, 0);
+			var handle = CFObject.dlopen (SecurityLibrary, 0);
 			if (handle == IntPtr.Zero)
 				return;
 
@@ -93,7 +92,7 @@ namespace Mono.AppleTls
 			}
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static SecStatusCode SecPKCS12Import (IntPtr pkcs12_data, IntPtr options, out IntPtr items);
 
 		static SecStatusCode ImportPkcs12 (byte[] buffer, CFDictionary options, out CFDictionary[] array)
@@ -134,7 +133,7 @@ namespace Mono.AppleTls
 			return identity ?? new SafeSecIdentityHandle ();
 		}
 
-		[DllImport (AppleTlsContext.SecurityLibrary)]
+		[DllImport (SecurityLibrary)]
 		extern static SecStatusCode SecItemCopyMatching (/* CFDictionaryRef */ IntPtr query, /* CFTypeRef* */ out IntPtr result);
 
 		public static SafeSecIdentityHandle FindIdentity (SafeSecCertificateHandle certificate, bool throwOnError = false)

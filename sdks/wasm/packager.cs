@@ -37,6 +37,9 @@ class Driver {
 		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.js')");
 		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
+		Console.WriteLine ("\t--copy=always|ifnewer        Set the type of copy to perform.");
+		Console.WriteLine ("\t\t              'always' overwrites the file if it exists.");
+		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
@@ -166,10 +169,17 @@ class Driver {
 		new Driver ().Run (args);
 	}
 
+	enum CopyType
+	{
+		Default,
+		Always,
+		IfNewer		
+	}
+
 	void Run (string[] args) {
+		var add_binding = true;
 		var root_assemblies = new List<string> ();
 		enable_debug = false;
-		var add_binding = true;
 		string builddir = null;
 		string sdkdir = null;
 		string emscripten_sdkdir = null;
@@ -184,6 +194,8 @@ class Driver {
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
+		var copyTypeParm = "default";
+		var copyType = CopyType.Default;
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -201,6 +213,7 @@ class Driver {
 				{ "template=", s => runtimeTemplate = s },
 				{ "asset=", s => assets.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
+				{ "copy=", s => copyTypeParm = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -210,6 +223,12 @@ class Driver {
 		}
 
 		if (print_usage) {
+			Usage ();
+			return;
+		}
+
+		if (!Enum.TryParse(copyTypeParm, true, out copyType)) {
+			Console.WriteLine("Invalid copy value");
 			Usage ();
 			return;
 		}
@@ -229,7 +248,7 @@ class Driver {
 			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
-			bcl_prefix = Path.Combine (tool_prefix, "bcl");
+			bcl_prefix = Path.Combine (tool_prefix, "wasm-bcl/wasm");
 			sdkdir = tool_prefix;
 		}
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
@@ -256,8 +275,7 @@ class Driver {
 				Directory.Delete (bcl_dir, true);
 			Directory.CreateDirectory (bcl_dir);
 			foreach (var f in file_list) {
-				Console.WriteLine ($"cp {f} -> {Path.Combine (bcl_dir, Path.GetFileName (f))}");
-				File.Copy (f, Path.Combine (bcl_dir, Path.GetFileName (f)));
+				CopyFile(f, Path.Combine (bcl_dir, Path.GetFileName (f)), copyType);
 			}
 		}
 
@@ -278,7 +296,7 @@ class Driver {
 		if (add_binding || true)
 			config += "\tadd_bindings: function() { " + $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");" + " }\n";
 		config += "}\n";
-		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "config.js");
+		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "mono-config.js");
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
@@ -296,9 +314,8 @@ class Driver {
 
 			foreach(var asset in assets)
 			{
-				Console.WriteLine ($"Asset: cp {asset} -> {Path.Combine (out_prefix, Path.GetFileName (asset))}");
-				File.Copy (asset, 
-						Path.Combine (out_prefix, asset));
+				CopyFile (asset, 
+						Path.Combine (out_prefix, asset), copyType, "Asset: ");
 			}
 		}
 
@@ -320,7 +337,7 @@ class Driver {
 		string profiler_libs = "";
 		string profiler_aot_args = "";
 		foreach (var profiler in profilers) {
-			profiler_libs += $"$mono_sdkdir/wasm-runtime/lib/libmono-profiler-{profiler}-static.a ";
+			profiler_libs += $"$mono_sdkdir/wasm-runtime-release/lib/libmono-profiler-{profiler}-static.a ";
 			if (profiler_aot_args != "")
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
@@ -341,7 +358,7 @@ class Driver {
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
-		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross/bin/wasm32-mono-sgen");
+		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
 		ninja.WriteLine ("emcc_flags = -Os -g -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'FS_createPath\', \'FS_createDataFile\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\"");
@@ -363,21 +380,21 @@ class Driver {
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
 
-		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
-		ninja.WriteLine ("build $appdir/config.js: cpifdiff $builddir/config.js");
+		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (enable_aot) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
 			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
-			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
+			ninja.WriteLine ("  flags = -DENABLE_AOT=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
@@ -425,7 +442,7 @@ class Driver {
 			}
 		}
 		if (enable_aot) {
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} $mono_sdkdir/wasm-runtime/lib/libmonosgen-2.0.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
+			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} $mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
 			string linker_args = "";
@@ -451,5 +468,37 @@ class Driver {
 
 		ninja.Close ();
 	}
+
+	static void CopyFile(string sourceFileName, string destFileName, CopyType copyType, string typeFile = "")
+	{
+		Console.WriteLine($"{typeFile}cp: {copyType} - {sourceFileName} -> {destFileName}");
+		switch (copyType)
+		{
+			case CopyType.Always:
+				File.Copy(sourceFileName, destFileName, true);
+				break;
+			case CopyType.IfNewer:
+				if (!File.Exists(destFileName))
+				{
+					File.Copy(sourceFileName, destFileName);
+				}
+				else
+				{
+					var srcInfo = new FileInfo (sourceFileName);
+					var dstInfo = new FileInfo (destFileName);
+					
+					if (srcInfo.LastWriteTime.Ticks > dstInfo.LastWriteTime.Ticks || srcInfo.Length > dstInfo.Length)
+						File.Copy(sourceFileName, destFileName, true);
+					else
+						Console.WriteLine($"    skipping: {sourceFileName}");
+				}
+				break;
+			default:
+				File.Copy(sourceFileName, destFileName);
+				break;
+		}
+
+	}
+
 
 }

@@ -2849,7 +2849,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            if (name != null && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
+            if (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
                 return new ListBuilder<ConstructorInfo> (0);
             RuntimeConstructorInfo[] cache = GetConstructors_internal (bindingAttr, this);
 #else

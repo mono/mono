@@ -1597,7 +1597,7 @@ process_other_slots (MonoCompile *cfg)
 static gsize*
 get_vtype_bitmap (MonoType *t, int *numbits)
 {
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 
 	if (klass->generic_container || mono_class_is_open_constructed_type (t)) {
 		/* FIXME: Generic sharing */
@@ -1625,7 +1625,7 @@ static void
 process_variables (MonoCompile *cfg)
 {
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	int i, locals_min_slot, locals_max_slot, cindex;
 	MonoBasicBlock *bb;
 	MonoInst *tmp;
@@ -2036,7 +2036,7 @@ compute_frame_size (MonoCompile *cfg)
 	int i, locals_min_offset, locals_max_offset, cfa_min_offset, cfa_max_offset;
 	int min_offset, max_offset;
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	GSList *l;
 
 	/* Compute min/max offsets from the fp */

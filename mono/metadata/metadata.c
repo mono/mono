@@ -1505,7 +1505,7 @@ mono_metadata_parse_array_internal (MonoImage *m, MonoGenericContainer *containe
 		return NULL;
 
 	array = transient ? (MonoArrayType *)g_malloc0 (sizeof (MonoArrayType)) : (MonoArrayType *)mono_image_alloc0 (m, sizeof (MonoArrayType));
-	array->eklass = mono_class_from_mono_type (etype);
+	array->eklass = mono_class_from_mono_type_internal (etype);
 	array->rank = mono_metadata_decode_value (ptr, &ptr);
 
 	array->numsizes = mono_metadata_decode_value (ptr, &ptr);
@@ -2487,8 +2487,8 @@ retry:
 	case MONO_TYPE_MVAR:
 		return image == mono_get_image_for_generic_param (type->data.generic_param);
 	default:
-		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type () */
-		return image == m_class_get_image (mono_class_from_mono_type (type));
+		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type_internal () */
+		return image == m_class_get_image (mono_class_from_mono_type_internal (type));
 	}
 }
 
@@ -2918,7 +2918,7 @@ collect_method_images (MonoMethodInflated *method, CollectData *data)
 	 * Dynamic assemblies have no references, so the images they depend on can be unloaded before them.
 	 */
 	if (image_is_dynamic (m_class_get_image (m->klass)))
-		collect_signature_images (mono_method_signature (m), data);
+		collect_signature_images (mono_method_signature_internal (m), data);
 }
 
 static void
@@ -2950,7 +2950,7 @@ retry:
 	}
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE:
-		add_image (m_class_get_image (mono_class_from_mono_type (type)), data);
+		add_image (m_class_get_image (mono_class_from_mono_type_internal (type)), data);
 		break;
 	default:
 		add_image (mono_defaults.corlib, data);
@@ -2997,7 +2997,7 @@ inflated_method_in_image (gpointer key, gpointer value, gpointer data)
 	// https://bugzilla.novell.com/show_bug.cgi?id=458168
 	g_assert (m_class_get_image (method->declaring->klass) == image ||
 		(method->context.class_inst && ginst_in_image (method->context.class_inst, image)) ||
-			  (method->context.method_inst && ginst_in_image (method->context.method_inst, image)) || (((MonoMethod*)method)->signature && signature_in_image (mono_method_signature ((MonoMethod*)method), image)));
+			  (method->context.method_inst && ginst_in_image (method->context.method_inst, image)) || (((MonoMethod*)method)->signature && signature_in_image (mono_method_signature_internal ((MonoMethod*)method), image)));
 
 	return TRUE;
 }
@@ -3035,7 +3035,7 @@ check_gmethod (gpointer key, gpointer value, gpointer data)
 	if (method->context.method_inst)
 		g_assert (!ginst_in_image (method->context.method_inst, image));
 	if (((MonoMethod*)method)->signature)
-		g_assert (!signature_in_image (mono_method_signature ((MonoMethod*)method), image));
+		g_assert (!signature_in_image (mono_method_signature_internal ((MonoMethod*)method), image));
 }
 
 /*
@@ -3485,7 +3485,7 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 	if (gtype == NULL)
 		return FALSE;
 
-	gklass = mono_class_from_mono_type (gtype);
+	gklass = mono_class_from_mono_type_internal (gtype);
 	if (!mono_class_is_gtd (gklass)) {
 		mono_error_set_bad_image (error, m, "Generic instance with non-generic definition");
 		return FALSE;
@@ -3874,7 +3874,7 @@ do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoGenericContainer 
 		if (!etype)
 			return FALSE;
 
-		type->data.klass = mono_class_from_mono_type (etype);
+		type->data.klass = mono_class_from_mono_type_internal (etype);
 
 		if (transient)
 			mono_metadata_free_type (etype);
@@ -5090,7 +5090,7 @@ mono_type_size (MonoType *t, int *align)
 		return MONO_ABI_SIZEOF (gpointer);
 	case MONO_TYPE_VALUETYPE: {
 		if (m_class_is_enumtype (t->data.klass))
-			return mono_type_size (mono_class_enum_basetype (t->data.klass), align);
+			return mono_type_size (mono_class_enum_basetype_internal (t->data.klass), align);
 		else
 			return mono_class_value_size (t->data.klass, (guint32*)align);
 	}
@@ -5113,9 +5113,9 @@ mono_type_size (MonoType *t, int *align)
 
 		if (m_class_is_valuetype (container_class)) {
 			if (m_class_is_enumtype (container_class))
-				return mono_type_size (mono_class_enum_basetype (container_class), align);
+				return mono_type_size (mono_class_enum_basetype_internal (container_class), align);
 			else
-				return mono_class_value_size (mono_class_from_mono_type (t), (guint32*)align);
+				return mono_class_value_size (mono_class_from_mono_type_internal (t), (guint32*)align);
 		} else {
 			*align = MONO_ABI_ALIGNOF (gpointer);
 			return MONO_ABI_SIZEOF (gpointer);
@@ -5220,7 +5220,7 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open)
 		guint32 size;
 
 		if (m_class_is_enumtype (t->data.klass))
-			return mono_type_stack_size_internal (mono_class_enum_basetype (t->data.klass), align, allow_open);
+			return mono_type_stack_size_internal (mono_class_enum_basetype_internal (t->data.klass), align, allow_open);
 		else {
 			size = mono_class_value_size (t->data.klass, (guint32*)align);
 
@@ -5242,9 +5242,9 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open)
 
 		if (m_class_is_valuetype (container_class)) {
 			if (m_class_is_enumtype (container_class))
-				return mono_type_stack_size_internal (mono_class_enum_basetype (container_class), align, allow_open);
+				return mono_type_stack_size_internal (mono_class_enum_basetype_internal (container_class), align, allow_open);
 			else {
-				guint32 size = mono_class_value_size (mono_class_from_mono_type (t), (guint32*)align);
+				guint32 size = mono_class_value_size (mono_class_from_mono_type_internal (t), (guint32*)align);
 
 				*align = *align + stack_slot_align - 1;
 				*align &= ~(stack_slot_align - 1);
@@ -6383,7 +6383,7 @@ handle_enum:
 	case MONO_TYPE_PTR: return MONO_NATIVE_UINT;
 	case MONO_TYPE_VALUETYPE: /*FIXME*/
 		if (m_class_is_enumtype (type->data.klass)) {
-			t = mono_class_enum_basetype (type->data.klass)->type;
+			t = mono_class_enum_basetype_internal (type->data.klass)->type;
 			goto handle_enum;
 		}
 		if (type->data.klass == mono_class_try_get_handleref_class ()){
@@ -6901,7 +6901,7 @@ mono_type_get_signature (MonoType *type)
  * mono_type_get_class:
  * \param type the \c MonoType operated on
  * It is only valid to call this function if \p type is a \c MONO_TYPE_CLASS or a
- * \c MONO_TYPE_VALUETYPE . For more general functionality, use \c mono_class_from_mono_type,
+ * \c MONO_TYPE_VALUETYPE . For more general functionality, use \c mono_class_from_mono_type_internal,
  * instead.
  * \returns the \c MonoClass pointer that describes the class that \p type represents.
  */
