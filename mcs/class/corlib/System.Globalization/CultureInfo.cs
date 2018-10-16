@@ -551,7 +551,7 @@ namespace System.Globalization
 				CheckNeutral ();
 
 				var temp = new DateTimeFormatInfo (m_cultureData, Calendar);
-				temp.m_isReadOnly = m_isReadOnly;
+				temp._isReadOnly = m_isReadOnly;
 				System.Threading.Thread.MemoryBarrier();
 				dateTimeInfo = temp;
 				return dateTimeInfo;
