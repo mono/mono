@@ -87,10 +87,9 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Data, "#1");
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
-			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
+			Assert.IsNotNull (bif.Message, "#4");
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#6");
-			Assert.IsTrue (bif.ToString ().IndexOf ("''") != -1, "#7");
 		}
 
 		[Test]
@@ -138,7 +137,7 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNotNull (bif.InnerException, "#3");
 			Assert.AreSame (ame, bif.InnerException, "#4");
-			Assert.IsNotNull (bif.Message, "#5"); // Could not load file or assembly '' ...
+			Assert.IsNotNull (bif.Message, "#5");
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#8");
 			Assert.IsTrue (bif.ToString ().IndexOf ("---> " + ame.GetType ().FullName) != -1, "#9");
@@ -249,7 +248,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (bif.Data, "#1");
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
-			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
+			Assert.IsNotNull (bif.Message, "#4");
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": "), "#6");
@@ -302,6 +301,7 @@ namespace MonoTests.System
 			Assert.IsNull (bif.InnerException, "#B4");
 			// .NET 1.1: The format of the file 'file.txt' is invalid
 			// .NET 2.0: Could not load file or assembly 'file.txt' or one of its ...
+			// .NET Core: Format of the executable (.exe) or library (.dll) is invalid.
 			Assert.IsNotNull (bif.Message, "#B5");
 			Assert.IsNull (bif.FusionLog, "#B6");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
