@@ -248,7 +248,7 @@ class Driver {
 			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
-			bcl_prefix = Path.Combine (tool_prefix, "bcl");
+			bcl_prefix = Path.Combine (tool_prefix, "wasm-bcl/wasm");
 			sdkdir = tool_prefix;
 		}
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
