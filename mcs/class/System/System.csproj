@@ -47,12 +47,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;INSIDE_SYSTEM</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;INSIDE_SYSTEM;MONO_FEATURE_APPLE_X509</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <OutputPath>./../../class/lib/monotouch_watch_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_MULTIPLE_APPDOMAINS;INSIDE_SYSTEM</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;COREFX;CONFIGURATION_2_0;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_MULTIPLE_APPDOMAINS;INSIDE_SYSTEM;MONO_FEATURE_APPLE_X509</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
@@ -803,6 +803,7 @@
     <Compile Include="Mono.Btls\X509PalImpl.Btls.cs" />
     <Compile Include="Mono.Util\MonoPInvokeCallbackAttribute.cs" />
     <Compile Include="MonoTouch\Dummy.cs" />
+    <Compile Include="Mono\AppleTypes.cs" />
     <Compile Include="Mono\SystemCertificateProvider.cs" />
     <Compile Include="Mono\SystemDependencyProvider.cs" />
     <Compile Include="Mono\X509Pal.cs" />
@@ -3455,6 +3456,13 @@
         <Compile Include="..\Mono.Security\Mono.Security.X509\X520Attributes.cs" />
         <Compile Include="..\Mono.Security\Mono.Security\PKCS7.cs" />
         <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+        <Compile Include="Mono.AppleTls\Enums.cs" />
+        <Compile Include="Mono.AppleTls\MonoCertificatePal.Mobile.cs" />
+        <Compile Include="Mono.AppleTls\MonoCertificatePal.cs" />
+        <Compile Include="Mono.AppleTls\SafeHandles.Mono.cs" />
+        <Compile Include="Mono.AppleTls\SafeHandles.cs" />
+        <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
+        <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
