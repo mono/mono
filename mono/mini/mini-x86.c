@@ -50,6 +50,9 @@ static gboolean optimize_for_xen = TRUE;
 #endif
 #endif
 
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
+
+
 /* The single step trampoline */
 static gpointer ss_trampoline;
 
@@ -227,7 +230,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	guint32 size;
 	MonoClass *klass;
 
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 	size = mini_type_stack_size_full (m_class_get_byval_arg (klass), NULL, sig->pinvoke);
 
 #if defined(TARGET_WIN32)
@@ -978,7 +981,7 @@ needs_stack_frame (MonoCompile *cfg)
 		return cfg->arch.need_stack_frame;
 
 	header = cfg->header;
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (cfg->disable_omit_fp)
 		result = TRUE;
@@ -1022,7 +1025,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	CallInfo *cinfo;
 
 	header = cfg->header;
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1189,7 +1192,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -1347,7 +1350,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 			break;
 		case ArgOnStack:
 			if (mini_type_is_vtype (t)) {
-				if (mono_class_value_size (mono_class_from_mono_type (t), NULL) == 0)
+				if (mono_class_value_size (mono_class_from_mono_type_internal (t), NULL) == 0)
 				/* LLVM seems to allocate argument space for empty structures too */
 					linfo->args [i].storage = LLVMArgNone;
 				else
@@ -1654,7 +1657,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	if (!ret->byref) {
 		if (ret->type == MONO_TYPE_R4) {
@@ -1688,7 +1691,7 @@ void*
 mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
 {
 	guchar *code = (guchar*)p;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	int argument_copy_size = 0;
 	const guint32* param_regs;
 	int stack_size;
@@ -1771,7 +1774,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	guchar *code = (guchar*)p;
 	int arg_size = 0, stack_usage = 0, save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
-	MonoType *ret_type = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret_type = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	switch (ret_type->type) {
 	case MONO_TYPE_VOID:
@@ -5327,7 +5330,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	}
 
 	/* load arguments allocated to register from the stack */
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	pos = 0;
 
 	cinfo = cfg->arch.cinfo;
@@ -5361,7 +5364,7 @@ void
 mono_arch_emit_epilog (MonoCompile *cfg)
 {
 	MonoMethod *method = cfg->method;
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	int i, quad, pos;
 	guint32 stack_to_pop;
 	guint8 *code;
@@ -5756,13 +5759,13 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
 	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
 }
@@ -5784,7 +5787,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	MonoInst *ins = NULL;
 	int opcode = 0;
 
-	if (cmethod->klass == mono_defaults.math_class) {
+	if (cmethod->klass == mono_class_try_get_math_class ()) {
 		if (strcmp (cmethod->name, "Sin") == 0) {
 			opcode = OP_SIN;
 		} else if (strcmp (cmethod->name, "Cos") == 0) {
@@ -5871,10 +5874,11 @@ mono_arch_get_patch_offset (guint8 *code)
 	else if ((code [0] >= 0xb8) && (code [0] < 0xb8 + 8))
 		/* mov <REG>, imm */
 		return 1;
-	else {
-		g_assert_not_reached ();
-		return -1;
-	}
+	else if (code [0] == 0xE9)
+		/* jmp eip+32b */
+		return 1;
+	g_assert_not_reached ();
+	return -1;
 }
 
 /**
@@ -6165,7 +6169,7 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 	return code;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	switch (reg) {
@@ -6184,7 +6188,7 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 }
 
 void
-mono_arch_context_set_int_reg (MonoContext *ctx, int reg, mgreg_t val)
+mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
 	switch (reg) {
 	case X86_EAX:

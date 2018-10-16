@@ -2,7 +2,7 @@ thisdir = build
 SUBDIRS = 
 include ../build/rules.make
 
-BUILT_FILES = common/Consts.cs
+BUILT_FILES = common/Consts.cs common/MonoNativeConfig.cs
 
 all-local install-local test-local run-test-local csproj-local run-test-ondotnet-local uninstall-local doc-update-local: $(BUILT_FILES)
 	@:
@@ -15,9 +15,20 @@ common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 	test -n '$(MONO_CORLIB_VERSION)'
 	sed -e 's,@''MONO_VERSION@,$(MONO_VERSION),' -e 's,@''MONO_CORLIB_VERSION@,$(MONO_CORLIB_VERSION),' $< > $@
 
+#
+# This is only used by corlib/Test/Mono/NativePlatformTest.cs, to ensure that we're using the correct native library.
+# The test is disabled on all Windows platforms.
+#
+common/MonoNativeConfig.cs: common/MonoNativeConfig.cs.in $(wildcard config.make)
+	test -n '$(MONO_NATIVE_SUPPORTED)'
+	sed -e 's,@''MONO_NATIVE_SUPPORTED@,$(MONO_NATIVE_SUPPORTED),' \
+		-e 's,@''MONO_NATIVE_USING_COMPAT@,$(MONO_NATIVE_USING_COMPAT),' \
+		-e 's,@''MONO_NATIVE_PLATFORM_TYPE@,$(MONO_NATIVE_PLATFORM_TYPE),' \
+		-e 's,@''MONO_NATIVE_PLATFORM@,$(MONO_NATIVE_PLATFORM),' \
+		$< > $@
+
 PLATFORMS = macos linux win32 unix
 PROFILES = \
-	basic \
 	build \
 	binary_reference_assemblies \
 	net_4_x \
@@ -26,6 +37,7 @@ PROFILES = \
 
 COMMON_SRCS = \
 	Consts.cs.in			\
+	MonoNativeConfig.cs.in	\
 	Locale.cs			\
 	MonoTODOAttribute.cs \
 	basic-profile-check.cs		\
@@ -40,7 +52,6 @@ DISTFILES = \
 	corcompare.make			\
 	corcompare-api.xsl		\
 	executable.make			\
-	gensources.cs			\
 	library.make			\
 	rules.make			\
 	tests.make			\

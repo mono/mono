@@ -84,3 +84,9 @@ scanner/NumberHelper.cs
 scanner/StringHelperBase.cs
 scanner/StringHelper.cs
 ../build/common/Consts.cs
+
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
+../class/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
+../class/Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs

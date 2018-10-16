@@ -164,7 +164,13 @@ struct _MonoString {
 #define mono_string_chars_fast(s) ((mono_unichar2*)(s)->chars)
 #define mono_string_length_fast(s) ((s)->length)
 
-#define mono_array_length_fast(array) ((array)->max_length)
+/**
+ * mono_array_length_internal:
+ * \param array a \c MonoArray*
+ * \returns the total number of elements in the array. This works for
+ * both vectors and multidimensional arrays.
+ */
+#define mono_array_length_internal(array) ((array)->max_length)
 
 // Equivalent to mono_array_addr_with_size, except:
 // 1. A macro instead of a function.
@@ -701,8 +707,10 @@ typedef struct {
 	gboolean (*mono_above_abort_threshold) (void);
 	void (*mono_clear_abort_threshold) (void);
 	void (*mono_reraise_exception) (MonoException *ex);
-	void (*mono_summarize_stack) (MonoDomain *domain, MonoThreadSummary *out, MonoContext *crash_ctx);
+	void (*mono_summarize_managed_stack) (MonoThreadSummary *out);
+	void (*mono_summarize_unmanaged_stack) (MonoThreadSummary *out);
 	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
+	void (*mono_register_native_library) (const char *module_path, const char *module_name);
 } MonoRuntimeExceptionHandlingCallbacks;
 
 MONO_COLD void mono_set_pending_exception (MonoException *exc);
@@ -2034,7 +2042,7 @@ ves_icall_MonoMethod_MakeGenericMethod_impl (MonoReflectionMethodHandle rmethod,
 
 ICALL_EXPORT
 gint32
-ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, gboolean create_open_instance, MonoError *error);
+ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, MonoBoolean create_open_instance, MonoError *error);
 
 ICALL_EXPORT
 gint32

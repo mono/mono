@@ -95,7 +95,7 @@ enum {
 	SIMD_EMIT_PREFETCH
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -113,23 +113,6 @@ enum {
 #include "simd-methods.h"
 };
 #define method_name(idx) ((const char*)&method_names + (idx))
-
-#else
-#define SIMD_METHOD(str,name) str,
-static const char * const method_names [] = {
-#include "simd-methods.h"
-	NULL
-};
-#undef SIMD_METHOD
-#define SIMD_METHOD(str,name) name,
-enum {
-#include "simd-methods.h"
-	SN_LAST
-};
-
-#define method_name(idx) (method_names [(idx)])
-
-#endif
 
 typedef struct {
 	guint16 name;
@@ -1248,7 +1231,7 @@ get_simd_vreg_or_expanded_scalar (MonoCompile *cfg, MonoClass *klass, MonoType *
 	MonoInst *ins;
 	int expand_op;
 
-	if (m_class_is_simd_type (mono_class_from_mono_type (param_type)))
+	if (m_class_is_simd_type (mono_class_from_mono_type_internal (param_type)))
 		return get_simd_vreg (cfg, NULL, src);
 
 	expand_op = mono_type_to_expand_op (param_type);
@@ -1297,7 +1280,7 @@ simd_intrinsic_emit_binary_op (MonoCompile *cfg, int opcode, int flags, MonoClas
 static MonoInst*
 simd_intrinsic_emit_binary (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 
 	g_assert (sig->param_count == 2);
 
@@ -1416,7 +1399,7 @@ static MonoInst*
 simd_intrinsic_emit_setter (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
 	MonoInst *ins;
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 	int size, align;
 	gboolean indirect;
 	int dreg;
@@ -1545,7 +1528,7 @@ simd_intrinsic_emit_getter_op (MonoCompile *cfg, int index, MonoClass *klass, Mo
 static MonoInst*
 simd_intrinsic_emit_getter (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 
 	return simd_intrinsic_emit_getter_op (cfg, intrinsic->opcode, cmethod->klass, sig->ret, args [0]);
 }
@@ -1555,7 +1538,7 @@ simd_intrinsic_emit_long_getter (const SimdIntrinsic *intrinsic, MonoCompile *cf
 {
 	MonoInst *ins;
 	int vreg;
-	gboolean is_r8 = mono_method_signature (cmethod)->ret->type == MONO_TYPE_R8;
+	gboolean is_r8 = mono_method_signature_internal (cmethod)->ret->type == MONO_TYPE_R8;
 
 	vreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
 
@@ -1582,7 +1565,7 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 	MonoInst *ins = NULL;
 	int i, addr_reg;
 	gboolean is_ldaddr = (args [0]->opcode == OP_LDADDR && args [0]->inst_left->opcode != OP_ARG);
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 	int store_op = mono_type_to_store_membase (cfg, sig->params [0]);
 	int arg_size = mono_type_size (sig->params [0], &i);
 	int opcode;
@@ -1674,7 +1657,7 @@ simd_intrinsic_emit_cast (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 
 	if (cmethod->is_inflated)
 		/* Vector<T> */
-		klass = mono_class_from_mono_type (mono_method_signature (cmethod)->ret);
+		klass = mono_class_from_mono_type_internal (mono_method_signature_internal (cmethod)->ret);
 	else
 		klass = cmethod->klass;
 
@@ -1778,7 +1761,7 @@ simd_intrinsic_emit_shuffle (const SimdIntrinsic *intrinsic, MonoCompile *cfg, M
 {
 	MonoInst *ins;
 	int vreg, vreg2 = -1;
-	int param_count = mono_method_signature (cmethod)->param_count;
+	int param_count = mono_method_signature_internal (cmethod)->param_count;
 
 	if (args [param_count - 1]->opcode != OP_ICONST) {
 		/*TODO Shuffle with non literals is not yet supported */
@@ -1973,7 +1956,7 @@ mono_emit_vector_ldelema (MonoCompile *cfg, MonoType *array_type, MonoInst *arr,
 	guint32 size;
 	int mult_reg, add_reg, array_reg, index_reg, index2_reg, index3_reg;
 
-	size = mono_array_element_size (mono_class_from_mono_type (array_type));
+	size = mono_array_element_size (mono_class_from_mono_type_internal (array_type));
 	mult_reg = alloc_preg (cfg);
 	array_reg = arr->dreg;
 	index_reg = index->dreg;
@@ -2105,7 +2088,7 @@ mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	if (!strcmp ("VectorOperations", class_name)) {
 		if (!(cmethod->flags & METHOD_ATTRIBUTE_STATIC))
 			goto on_exit;
-		class_name = m_class_get_name (mono_class_from_mono_type (mono_method_signature (cmethod)->params [0]));
+		class_name = m_class_get_name (mono_class_from_mono_type_internal (mono_method_signature_internal (cmethod)->params [0]));
 	} else if (!m_class_is_simd_type (cmethod->klass))
 		goto on_exit;
 
@@ -2204,7 +2187,7 @@ static MonoInst*
 emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const SimdIntrinsic *intrins;
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 	MonoType *type = m_class_get_byval_arg (cmethod->klass);
 
 	if (!m_class_is_simd_type (cmethod->klass))
@@ -2251,7 +2234,7 @@ emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 
 			ins = simd_intrinsic_emit_binary (intrins, cfg, cmethod, args);
 			/* The end result is in the lowest element */
-			return simd_intrinsic_emit_getter_op (cfg, 0, cmethod->klass, mono_method_signature (cmethod)->ret, ins);
+			return simd_intrinsic_emit_getter_op (cfg, 0, cmethod->klass, mono_method_signature_internal (cmethod)->ret, ins);
 		}
 		break;
 	case SN_Abs: {
@@ -2348,7 +2331,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 
 	type = m_class_get_byval_arg (cmethod->klass);
 	etype = mono_class_get_context (cmethod->klass)->class_inst->type_argv [0];
-	size = mono_class_value_size (mono_class_from_mono_type (etype), NULL);
+	size = mono_class_value_size (mono_class_from_mono_type_internal (etype), NULL);
 	g_assert (size);
 	len = 16 / size;
 
@@ -2407,7 +2390,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			MONO_EMIT_BOUNDS_CHECK (cfg, array_ins->dreg, MonoArray, max_length, end_index_reg);
 
 			/* Load the array slice into the simd reg */
-			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
+			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
 			g_assert (args [0]->opcode == OP_LDADDR);
 			var = (MonoInst*)args [0]->inst_p0;
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
@@ -2551,7 +2534,7 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "ArgumentException");
 
 		/* Load the simd reg into the array slice */
-		ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
+		ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
 		g_assert (args [0]->opcode == OP_LDADDR);
 		var = (MonoInst*)args [0]->inst_p0;
 		EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREX_MEMBASE, ldelema_ins->dreg, 0, var->dreg);
@@ -2639,7 +2622,7 @@ mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *ad
 			if (cfg->verbose_level > 1)
 				printf ("  SIMD intrinsic field access: %s\n", field->name);
 
-			simd_inst = simd_intrinsic_emit_getter_op (cfg, index, field->parent, mono_field_get_type (field), addr);
+			simd_inst = simd_intrinsic_emit_getter_op (cfg, index, field->parent, mono_field_get_type_internal (field), addr);
 			goto on_exit;
 		}
 	}

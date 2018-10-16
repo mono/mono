@@ -17,10 +17,6 @@ ifneq ($(UNAME),Darwin)
 DISABLE_IOS=1
 endif
 
-ifndef ENABLE_WASM_CROSS
-DISABLE_WASM_CROSS=1
-endif
-
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
@@ -94,11 +90,11 @@ endif
 #  $(1): target (android, ios, wasm)
 define ArchiveTemplate
 _$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
-_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(_$(1)_HASH)-$$(UNAME).tar.gz
+_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).zip
 
 .PHONY: archive-$(1)
 archive-$(1): $$(foreach target,$$(filter $(1)-%,$$(patsubst %-$$(CONFIGURATION),%,$$($(1)_TARGETS))),package-$$(target))
-	tar -cvzf $$(TOP)/$$(_$(1)_PACKAGE) -C $$(TOP)/sdks/out $$(sort $$(foreach target,$$($(1)_TARGETS),$$(or $$(wildcard $$(target)-$$(CONFIGURATION)),$$(target))))
+	cd $$(TOP)/sdks/out && 7z a $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$(foreach target,$$($(1)_TARGETS),$$(or $$(wildcard $$(target)-$$(CONFIGURATION)),$$(target))))
 endef
 
 ifndef DISABLE_ANDROID

@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>HAS_MONO_SECURITY;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -48,6 +48,11 @@
   <!--Common files-->
   <ItemGroup>
     <Compile Include="..\build\common\Consts.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="Report.cs" />
@@ -153,7 +158,7 @@
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../class/PEAPI/PEAPI.csproj" />
-    <ProjectReference Include="../class/Mono.CompilerServices.SymbolWriter/Mono.CompilerServices.SymbolWriter.csproj" />
+    <ProjectReference Include="../class/System/System.csproj" />
     <ProjectReference Include="../class/Mono.Security/Mono.Security.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->

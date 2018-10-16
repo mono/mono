@@ -193,7 +193,7 @@ encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf)
 		break;
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_CLASS: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 
 		if (mono_class_is_gtd (k)) {
 			MonoGenericClass *gclass = mono_metadata_lookup_generic_class (k, mono_class_get_generic_container (k)->context.class_inst, TRUE);
@@ -360,9 +360,9 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 	 */
 	SigBuffer buf;
 	int i;
-	guint32 nparams =  mb->parameters ? mono_array_length (mb->parameters): 0;
-	guint32 ngparams = mb->generic_params ? mono_array_length (mb->generic_params): 0;
-	guint32 notypes = mb->opt_types ? mono_array_length (mb->opt_types): 0;
+	guint32 nparams =  mb->parameters ? mono_array_length_internal (mb->parameters): 0;
+	guint32 ngparams = mb->generic_params ? mono_array_length_internal (mb->generic_params): 0;
+	guint32 notypes = mb->opt_types ? mono_array_length_internal (mb->opt_types): 0;
 	guint32 idx;
 
 	sigbuffer_init (&buf, 32);
@@ -387,9 +387,9 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 		MonoArray *modopt = NULL;
 		MonoReflectionType *pt;
 
-		if (mb->param_modreq && (i < mono_array_length (mb->param_modreq)))
+		if (mb->param_modreq && (i < mono_array_length_internal (mb->param_modreq)))
 			modreq = mono_array_get (mb->param_modreq, MonoArray*, i);
-		if (mb->param_modopt && (i < mono_array_length (mb->param_modopt)))
+		if (mb->param_modopt && (i < mono_array_length_internal (mb->param_modopt)))
 			modopt = mono_array_get (mb->param_modopt, MonoArray*, i);
 		encode_custom_modifiers_raw (assembly, modreq, modopt, &buf, error);
 		goto_if_nok (error, leave);
@@ -423,7 +423,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	MonoDynamicTable *table;
 	guint32 *values;
 	guint32 idx, sig_idx;
-	guint nl = mono_array_length (ilgen->locals);
+	guint nl = mono_array_length_internal (ilgen->locals);
 	SigBuffer buf;
 	int i;
 
@@ -560,7 +560,7 @@ handle_enum:
 		MonoClass *klass = val->vtable->klass;
 		
 		if (m_class_is_enumtype (klass)) {
-			*ret_type = mono_class_enum_basetype (klass)->type;
+			*ret_type = mono_class_enum_basetype_internal (klass)->type;
 			goto handle_enum;
 		} else if (mono_is_corlib_image (m_class_get_image (klass)) && strcmp (m_class_get_name_space (klass), "System") == 0 && strcmp (m_class_get_name (klass), "DateTime") == 0) {
 			len = 8;
@@ -627,7 +627,7 @@ mono_dynimage_encode_field_signature (MonoDynamicImage *assembly, MonoReflection
 
 	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
 	return_val_if_nok (error, 0);
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 
 	sigbuffer_init (&buf, 32);
 	
@@ -732,7 +732,7 @@ create_typespec (MonoDynamicImage *assembly, MonoType *type)
 		break;
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 		if (!k || !mono_class_is_gtd (k)) {
 			sigbuffer_free (&buf);
 			return 0;
@@ -777,7 +777,7 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 	token = GPOINTER_TO_UINT (g_hash_table_lookup (assembly->typeref, type));
 	if (token)
 		goto leave;
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 
 	MonoReflectionTypeBuilderHandle tb;
 	tb = MONO_HANDLE_CAST (MonoReflectionTypeBuilder, mono_class_get_ref_info (klass));
@@ -1159,9 +1159,9 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 	guint32 idx, i;
 
 	if (mb && mb->parameters)
-		nparams = mono_array_length (mb->parameters);
+		nparams = mono_array_length_internal (mb->parameters);
 	if (!mb && smb && smb->parameters)
-		nparams = mono_array_length (smb->parameters) - 1;
+		nparams = mono_array_length_internal (smb->parameters) - 1;
 	sigbuffer_init (&buf, 32);
 	if (fb->call_conv & 0x20)
 		sigbuffer_add_byte (&buf, 0x28);

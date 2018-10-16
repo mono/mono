@@ -515,7 +515,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 		type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (gclass), &ctx, error);
 		if (!type)
 			return NULL;
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		mono_metadata_free_type (type);
 		break;
 	}
@@ -538,7 +538,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 
 			t = mini_get_shared_gparam (m_class_get_byval_arg (par_klass), gshared_constraint);
 			mono_metadata_free_type (gshared_constraint);
-			klass = mono_class_from_mono_type (t);
+			klass = mono_class_from_mono_type_internal (t);
 		} else {
 			int type = decode_value (p, &p);
 			int num = decode_value (p, &p);
@@ -582,7 +582,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 			}
 			// FIXME: Maybe use types directly to avoid
 			// the overhead of creating MonoClass-es
-			klass = mono_class_from_mono_type (t);
+			klass = mono_class_from_mono_type_internal (t);
 
 			g_free (t);
 		}
@@ -602,7 +602,7 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError
 		t = decode_type (module, p, &p, error);
 		if (!t)
 			return NULL;
-		klass = mono_class_from_mono_type (t);
+		klass = mono_class_from_mono_type_internal (t);
 		g_free (t);
 		break;
 	}
@@ -747,7 +747,7 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 		type = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (gclass), &ctx, error);
 		if (!type)
 			goto fail;
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		t->data.generic_class = mono_class_get_generic_class (klass);
 		break;
 	}
@@ -867,8 +867,8 @@ sig_matches_target (MonoAotModule *module, MonoMethod *target, guint8 *buf, guin
 	gboolean res;
 	guint8 *p = buf;
 	
-	sig = decode_signature_with_target (module, mono_method_signature (target), p, &p);
-	res = sig && mono_metadata_signature_equal (mono_method_signature (target), sig);
+	sig = decode_signature_with_target (module, mono_method_signature_internal (target), p, &p);
+	res = sig && mono_metadata_signature_equal (mono_method_signature_internal (target), sig);
 	g_free (sig);
 	*endbuf = p;
 	return res;
@@ -2537,7 +2537,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 
 	error_init (error);
 
-	if (MONO_CLASS_IS_INTERFACE (klass) || m_class_get_rank (klass) || !amodule)
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || m_class_get_rank (klass) || !amodule)
 		return NULL;
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->class_info_offsets, mono_metadata_token_index (m_class_get_type_token (klass)) - 1)];
@@ -2905,7 +2905,7 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitIn
 
 	if (is_thumb_code (amodule, code_start))
 		/* Clear thumb flag */
-		code_start = (guint8*)(((mgreg_t)code_start) & ~1);
+		code_start = (guint8*)(((gsize)code_start) & ~1);
 
 	fde = amodule->mono_eh_frame + table [(pos * 2) + 1];	
 	/* This won't overflow because there is +1 entry in the table */
@@ -2976,10 +2976,10 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain, MonoJitIn
 		jei->clause_index = clause_index;
 
 		if (is_thumb_code (amodule, (guint8 *)jei->try_start)) {
-			jei->try_start = (void*)((mgreg_t)jei->try_start & ~1);
-			jei->try_end = (void*)((mgreg_t)jei->try_end & ~1);
+			jei->try_start = (void*)((gsize)jei->try_start & ~1);
+			jei->try_end = (void*)((gsize)jei->try_end & ~1);
 			/* Make sure we transition to thumb when a handler starts */
-			jei->handler_start = (void*)((mgreg_t)jei->handler_start + 1);
+			jei->handler_start = (void*)((gsize)jei->handler_start + 1);
 		}
 	}
 
@@ -3307,6 +3307,8 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 		else
 			mono_seq_point_info_free (seq_points);
 		mono_domain_unlock (domain);
+
+		jinfo->seq_points = seq_points;
 	}
 
 	/* Load debug info */
@@ -4718,7 +4720,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			MonoGenericContext ctx;
 			MonoType *args [16];
 
-			if (mono_method_signature (method)->params [1]->type == MONO_TYPE_OBJECT)
+			if (mono_method_signature_internal (method)->params [1]->type == MONO_TYPE_OBJECT)
 				/* Avoid recursion */
 				return NULL;
 
@@ -4749,16 +4751,16 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		/* Same for CompareExchange<T> and Exchange<T> */
 		/* Same for Volatile.Read<T>/Write<T> */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && m_class_get_image (method->klass) == mono_defaults.corlib && 
-			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1]))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->ret)))) ||
-			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature (method)->params [1])))))) {
+			((!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1]))) ||
+			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->ret)))) ||
+			 (!strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mini_type_get_underlying_type (mono_method_signature_internal (method)->params [1])))))) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];
 			gpointer iter = NULL;
 
 			while ((m = mono_class_get_methods (method->klass, &iter))) {
-				if (mono_method_signature (m)->generic_param_count && !strcmp (m->name, method->name))
+				if (mono_method_signature_internal (m)->generic_param_count && !strcmp (m->name, method->name))
 					break;
 			}
 			g_assert (m);
@@ -4795,13 +4797,13 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 					int rank;
 
 					if (!strcmp (array_method->name, "Set"))
-						rank = mono_method_signature (array_method)->param_count - 1;
+						rank = mono_method_signature_internal (array_method)->param_count - 1;
 					else if (!strcmp (array_method->name, "Get") || !strcmp (array_method->name, "Address"))
-						rank = mono_method_signature (array_method)->param_count;
+						rank = mono_method_signature_internal (array_method)->param_count;
 					else
 						g_assert_not_reached ();
 					MonoClass *obj_array_class = mono_class_create_array (mono_defaults.object_class, rank);
-					MonoMethod *m = mono_class_get_method_from_name_checked (obj_array_class, array_method->name, mono_method_signature (array_method)->param_count, 0, error);
+					MonoMethod *m = mono_class_get_method_from_name_checked (obj_array_class, array_method->name, mono_method_signature_internal (array_method)->param_count, 0, error);
 					mono_error_assert_ok (error);
 					g_assert (m);
 
@@ -4975,7 +4977,7 @@ find_aot_module (guint8 *code)
 }
 
 void
-mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	MonoAotModule *amodule;
 
@@ -5175,7 +5177,7 @@ mono_aot_get_plt_entry (guint8 *code)
  *   Return the PLT info offset belonging to the plt entry called by CODE.
  */
 guint32
-mono_aot_get_plt_info_offset (mgreg_t *regs, guint8 *code)
+mono_aot_get_plt_info_offset (host_mgreg_t *regs, guint8 *code)
 {
 	guint8 *plt_entry = mono_aot_get_plt_entry (code);
 
@@ -6182,7 +6184,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 }
 
 void
-mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_aot_patch_plt_entry (guint8 *code, guint8 *plt_entry, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 }
 
@@ -6195,7 +6197,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 }
 
 guint32
-mono_aot_get_plt_info_offset (mgreg_t *regs, guint8 *code)
+mono_aot_get_plt_info_offset (host_mgreg_t *regs, guint8 *code)
 {
 	g_assert_not_reached ();
 

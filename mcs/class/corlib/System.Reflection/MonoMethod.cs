@@ -328,6 +328,8 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+				} catch (OverflowException) {
+					throw;
 				} catch (Exception e) {
 					throw new TargetInvocationException (e);
 				}
@@ -799,6 +801,8 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+				} catch (OverflowException) {
+					throw;
 				} catch (Exception e) {
 					throw new TargetInvocationException (e);
 				}

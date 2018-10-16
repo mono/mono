@@ -143,11 +143,11 @@ TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PRO
 NOSHADOW_FLAG =
 
 ifdef FIXTURE
-FIXTURE_ARG = -test=MonoTests.$(FIXTURE)
+FIXTURE_ARG = -test=$(FIXTURE)
 endif
 
 ifdef TESTNAME
-TESTNAME_ARG = -test=MonoTests.$(TESTNAME)
+TESTNAME_ARG = -test=$(TESTNAME)
 endif
 
 ifdef TEST_HARNESS_VERBOSE
@@ -169,7 +169,7 @@ endif
 
 NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
 
-$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL)
+$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL) | $(test_lib_dir)
 	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_output).nunitlite.config
 ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
 	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(test_lib_output).nunitlite.config
@@ -255,25 +255,15 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
-$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir) $(test_lib_output).nunitlite.config
+$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
 
-ifneq "x" "x$(PROFILE_RUNTIME)"
-GENSOURCES_RUNTIME=$(PROFILE_RUNTIME)
-else
-ifneq "x" "x$(TEST_RUNTIME)"
-GENSOURCES_RUNTIME=$(TEST_RUNTIME)
-else
-GENSOURCES_RUNTIME=MONO_PATH="$(GENSOURCES_LIBDIR)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME)
-endif
-endif
-
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes)) $(GENSOURCES_CS)
-	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --basedir:./Test --strict "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources)
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
@@ -331,18 +321,18 @@ run-xunit-test-lib: xunit-test-local
 	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
-$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs
+$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
-$(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(test_lib_dir) $(XTEST_REMOTE_EXECUTOR)
+$(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
 xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_excludes)) $(GENSOURCES_CS)
-	$(GENSOURCES_RUNTIME) --debug $(GENSOURCES_EXE) --strict "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
+$(xtest_response): $(xtest_sourcefile) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_excludes))
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...

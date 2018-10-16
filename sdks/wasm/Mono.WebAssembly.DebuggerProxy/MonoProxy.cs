@@ -22,6 +22,11 @@ namespace WsProxy {
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
 	}
 
+	internal enum MonoErrorCodes {
+		BpNotFound = 100000,
+	}
+
+
 	internal class MonoConstants {
 		public const string RUNTIME_IS_READY = "mono_wasm_runtime_ready";
 	}
@@ -562,7 +567,16 @@ namespace WsProxy {
 		async Task SetBreakPoint (int msg_id, BreakPointRequest req, CancellationToken token)
 		{
 			var bp_loc = store.FindBestBreakpoint (req);
-			Info ($"BP request for '{req}' runtime ready {runtime_ready}");
+			Info ($"BP request for '{req}' runtime ready {runtime_ready} location '{bp_loc}'");
+			if (bp_loc == null) {
+
+				Info ($"Could not resolve breakpoint request: {req}");
+				SendResponse (msg_id, Result.Err(JObject.FromObject (new {
+					code = (int)MonoErrorCodes.BpNotFound,
+					message = $"C# Breakpoint at {req} not found."
+				})), token);
+				return;
+			}
 
 			Breakpoint bp = null;
 			if (!runtime_ready) {

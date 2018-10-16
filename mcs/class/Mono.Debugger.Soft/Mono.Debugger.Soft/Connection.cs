@@ -219,7 +219,7 @@ namespace Mono.Debugger.Soft
 	}
 
 	class ModuleInfo {
-		public string Name, ScopeName, FQName, Guid;
+		public string Name, ScopeName, FQName, Guid, SourceLink;
 		public long Assembly;
 	}		
 
@@ -2131,6 +2131,8 @@ namespace Mono.Debugger.Soft
 		internal ModuleInfo Module_GetInfo (long id) {
 			PacketReader r = SendReceive (CommandSet.MODULE, (int)CmdModule.GET_INFO, new PacketWriter ().WriteId (id));
 			ModuleInfo info = new ModuleInfo { Name = r.ReadString (), ScopeName = r.ReadString (), FQName = r.ReadString (), Guid = r.ReadString (), Assembly = r.ReadId () };
+			if (Version.AtLeast (2, 48))
+				info.SourceLink = r.ReadString ();
 			return info;
 		}
 

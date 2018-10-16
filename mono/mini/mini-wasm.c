@@ -203,7 +203,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	CallInfo *cinfo;
 	MonoType *sig_ret;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (!cfg->arch.cinfo)
 		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
@@ -270,7 +270,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	if (!ret->byref) {
 		if (ret->type == MONO_TYPE_R4) {
@@ -395,7 +395,7 @@ G_END_DECLS
 #endif // HOST_WASM
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_get_this_arg_from_call");
 }
@@ -447,14 +447,14 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_find_static_call_vtable");
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_find_static_call_vtable");
 	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
@@ -480,7 +480,7 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	return 0;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	g_error ("mono_arch_context_get_int_reg");
@@ -552,7 +552,7 @@ mono_set_timeout_exec (int id)
 	}
 
 	if (exc) {
-		char *type_name = mono_type_get_full_name (mono_object_get_class (exc));
+		char *type_name = mono_type_get_full_name (mono_object_class (exc));
 		printf ("timeout callback threw a %s\n", type_name);
 		g_free (type_name);
 	}

@@ -41,7 +41,7 @@ struct MonoMethodDesc {
 	gboolean include_namespace, klass_glob, name_glob;
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -59,31 +59,13 @@ static const gint16 opidx [] = {
 #undef WRAPPER
 };
 
-static const char*
-wrapper_type_to_str (guint32 wrapper_type)
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type)
 {
 	g_assert (wrapper_type < MONO_WRAPPER_NUM);
 
 	return (const char*)&opstr + opidx [wrapper_type];
 }
-
-#else
-#define WRAPPER(a,b) b,
-static const char* const
-wrapper_type_names [MONO_WRAPPER_NUM + 1] = {
-#include "wrapper-types.h"
-	NULL
-};
-
-static const char*
-wrapper_type_to_str (guint32 wrapper_type)
-{
-	g_assert (wrapper_type < MONO_WRAPPER_NUM);
-
-	return wrapper_type_names [wrapper_type];
-}
-
-#endif
 
 static void
 append_class_name (GString *res, MonoClass *klass, gboolean include_namespace)
@@ -472,9 +454,9 @@ mono_method_desc_match (MonoMethodDesc *desc, MonoMethod *method)
 		return FALSE;
 	if (!desc->args)
 		return TRUE;
-	if (desc->num_args != mono_method_signature (method)->param_count)
+	if (desc->num_args != mono_method_signature_internal (method)->param_count)
 		return FALSE;
-	sig = mono_signature_get_desc (mono_method_signature (method), desc->include_namespace);
+	sig = mono_signature_get_desc (mono_method_signature_internal (method), desc->include_namespace);
 	if (strcmp (sig, desc->args)) {
 		g_free (sig);
 		return FALSE;
@@ -920,7 +902,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE)
-		sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
+		sprintf (wrapper, "(wrapper %s) ", mono_wrapper_type_to_str (method->wrapper_type));
 	else
 		strcpy (wrapper, "");
 
@@ -936,7 +918,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 		}
 
 		if (method->wrapper_type != MONO_WRAPPER_NONE)
-			sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
+			sprintf (wrapper, "(wrapper %s) ", mono_wrapper_type_to_str (method->wrapper_type));
 		else
 			strcpy (wrapper, "");
 		if (ret && sig) {
@@ -1044,7 +1026,7 @@ mono_object_describe (MonoObject *obj)
 		MonoArray *array = (MonoArray*)obj;
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);
-		g_print (" at %p, rank: %d, length: %d\n", obj, klass->rank, (int)mono_array_length (array));
+		g_print (" at %p, rank: %d, length: %d\n", obj, klass->rank, (int)mono_array_length_internal (array));
 	} else {
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);
@@ -1082,7 +1064,7 @@ print_field_value (const char *field_ptr, MonoClassField *field, int type_offset
 			/* fall through */
 		}
 	case MONO_TYPE_VALUETYPE: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 		g_print ("%s ValueType (type: %p) at %p\n", k->name, k, field_ptr);
 		break;
 	}

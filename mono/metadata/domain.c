@@ -49,6 +49,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
+#include <mono/utils/mono-experiments.h>
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -535,7 +536,12 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_root_domain = domain;
 
 	SET_APPDOMAIN (domain);
-	
+
+#if defined(ENABLE_EXPERIMENT_null)
+	if (mono_experiment_enabled (MONO_EXPERIMENT_null))
+		g_warning ("null experiment enabled");
+#endif
+
 	/* Get a list of runtimes supported by the exe */
 	if (exe_filename != NULL) {
 		/*
@@ -663,10 +669,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.multicastdelegate_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "MulticastDelegate");
 
-	mono_defaults.asyncresult_class = mono_class_load_from_name (
-		mono_defaults.corlib, "System.Runtime.Remoting.Messaging", 
-		"AsyncResult");
-
 	mono_defaults.manualresetevent_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "ManualResetEvent");
 
@@ -724,17 +726,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.method_info_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Reflection", "MethodInfo");
 
-	mono_defaults.stringbuilder_class = mono_class_load_from_name (
-		mono_defaults.corlib, "System.Text", "StringBuilder");
-
-	mono_defaults.math_class = mono_class_load_from_name (
-	        mono_defaults.corlib, "System", "Math");
-
 	mono_defaults.stack_frame_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Diagnostics", "StackFrame");
-
-	mono_defaults.stack_trace_class = mono_class_load_from_name (
-	        mono_defaults.corlib, "System.Diagnostics", "StackTrace");
 
 	mono_defaults.marshal_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Runtime.InteropServices", "Marshal");
@@ -755,14 +748,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_assembly_load_friends (ass);
 
-	mono_defaults.handleref_class = mono_class_try_load_from_name (
-		mono_defaults.corlib, "System.Runtime.InteropServices", "HandleRef");
-
 	mono_defaults.attribute_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "Attribute");
-
-	mono_defaults.customattribute_data_class = mono_class_load_from_name (
-		mono_defaults.corlib, "System.Reflection", "CustomAttributeData");
 
 	mono_class_init (mono_defaults.array_class);
 	mono_defaults.generic_nullable_class = mono_class_load_from_name (
@@ -774,15 +761,12 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.generic_ienumerator_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Collections.Generic", "IEnumerator`1");
 
-	mono_defaults.threadpool_wait_callback_class = mono_class_load_from_name (
+	MonoClass *threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
-		mono_defaults.threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
+		threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
 	mono_error_assert_ok (error);
-
-	mono_defaults.console_class = mono_class_try_load_from_name (
-		mono_defaults.corlib, "System", "Console");
 
 	domain->friendly_name = g_path_get_basename (filename);
 
