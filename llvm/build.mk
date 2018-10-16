@@ -60,6 +60,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt |
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(EXTRA_LLVM_ARGS)	\
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
+		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \
 		$(dir $<)
 
