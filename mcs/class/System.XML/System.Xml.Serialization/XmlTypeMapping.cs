@@ -404,18 +404,18 @@ namespace System.Xml.Serialization
 						selected = info;
 					}
 				}
-                else if (info.MappedType.DerivedTypes.Count > 0) {
-                    foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes) {
-                        if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
-                            if (info.ExplicitOrder < minimalOrder)
-                                continue;
+                    else if (info.MappedType.DerivedTypes.Count > 0) {
+                        foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes) {
+                            if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
+                                if (info.ExplicitOrder < minimalOrder)
+                                    continue;
 
-                        if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
-                            selected = info;
+                            if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
+                                selected = info;
+                            }
                         }
                     }
                 }
-            }
 
 			return selected;
 		}
@@ -424,15 +424,15 @@ namespace System.Xml.Serialization
 		{
 			if (_elements == null) return null;
 
-            foreach (XmlTypeMapElementInfo info in _elements.Values)
-                if (info.ElementName == name && info.Namespace == ns)
-                    return info;
-                else if (info.MappedType.DerivedTypes.Count > 0) {
-                    foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes)
-                        if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
-                            return info;
-                }
-            return null;
+                foreach (XmlTypeMapElementInfo info in _elements.Values)
+                    if (info.ElementName == name && info.Namespace == ns)
+                        return info;
+                    else if (info.MappedType.DerivedTypes.Count > 0) {
+                        foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes)
+                            if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
+                                return info;
+                    }
+                return null;
 		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)
