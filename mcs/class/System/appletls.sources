@@ -2,13 +2,7 @@ Mono.AppleTls/AppleCertificateHelper.cs
 Mono.AppleTls/AppleTlsContext.cs
 Mono.AppleTls/AppleTlsProvider.cs
 Mono.AppleTls/AppleTlsStream.cs
-Mono.AppleTls/Enums.cs
 Mono.AppleTls/SecureTransport.cs
 Mono.AppleTls/Policy.cs
 Mono.AppleTls/Trust.cs
 Mono.AppleTls/SslConnection.cs
-Mono.AppleTls/X509CertificateImplApple.cs
-Mono.AppleTls/X509PalImpl.Apple.cs
-
-Mono.AppleTls/MonoCertificatePal.cs
-Mono.AppleTls/SafeHandles.Mono.cs
