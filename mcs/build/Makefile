@@ -29,7 +29,6 @@ common/MonoNativeConfig.cs: common/MonoNativeConfig.cs.in $(wildcard config.make
 
 PLATFORMS = macos linux win32 unix
 PROFILES = \
-	basic \
 	build \
 	binary_reference_assemblies \
 	net_4_x \
@@ -38,6 +37,7 @@ PROFILES = \
 
 COMMON_SRCS = \
 	Consts.cs.in			\
+	MonoNativeConfig.cs.in	\
 	Locale.cs			\
 	MonoTODOAttribute.cs \
 	basic-profile-check.cs		\
@@ -52,7 +52,6 @@ DISTFILES = \
 	corcompare.make			\
 	corcompare-api.xsl		\
 	executable.make			\
-	gensources.cs			\
 	library.make			\
 	rules.make			\
 	tests.make			\

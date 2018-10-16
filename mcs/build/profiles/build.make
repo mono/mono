@@ -36,6 +36,8 @@ GENSOURCES =$(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOL
 
 MCS = $(BOOTSTRAP_MCS)
 
+PLATFORMS = macos linux win32 unix
+
 DEFAULT_REFERENCES = mscorlib
 
 PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:WIN_PLATFORM -d:BOOTSTRAP_BASIC -nowarn:1699 -nostdlib
