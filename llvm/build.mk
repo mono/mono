@@ -30,6 +30,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/ll
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(EXTRA_LLVM_ARGS)	\
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
+		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \
 		$(abs_top_srcdir)/external/llvm
 

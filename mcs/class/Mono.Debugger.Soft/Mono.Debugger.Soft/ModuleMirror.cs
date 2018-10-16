@@ -62,5 +62,14 @@ namespace Mono.Debugger.Soft
 		}
 
 		// FIXME: Add function to query the guid, check in Metadata
+
+		// Since protocol version 2.48
+		public string SourceLink {
+			get {
+				vm.CheckProtocolVersion (2, 48);
+				ReadInfo ();
+				return info.SourceLink;
+			}
+		}
     }
 }

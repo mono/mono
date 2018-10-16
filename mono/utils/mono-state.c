@@ -26,7 +26,7 @@ extern GCStats mono_gc_stats;
 #include <mach/task_info.h>
 #endif
 
-#define MONO_MAX_SUMMARY_LEN 2500
+#define MONO_MAX_SUMMARY_LEN 500000
 static gchar output_dump_str [MONO_MAX_SUMMARY_LEN];
 
 static JsonWriter writer;
@@ -61,7 +61,7 @@ static void assert_has_space (void)
 		return;
 
 	if (static_gstr.allocated_len - static_gstr.len < margin)
-		g_error ("Ran out of space to create crash dump json blob.");
+		g_error ("Ran out of memory to create crash dump json blob. Current state:\n%s\n", static_gstr.str);
 }
 
 static void
@@ -143,14 +143,37 @@ mono_native_state_add_frame (JsonWriter *writer, MonoFrameSummary *frame)
 		mono_json_writer_object_key(writer, "il_offset");
 		mono_json_writer_printf (writer, "\"0x%05x\"\n", frame->managed_data.il_offset);
 
+		assert_has_space ();
+		mono_json_writer_indent (writer);
+		mono_json_writer_object_key(writer, "il_offset");
+		mono_json_writer_printf (writer, "\"0x%05x\"\n", frame->managed_data.il_offset);
+
 	} else {
 		assert_has_space ();
 		mono_json_writer_indent (writer);
 		mono_json_writer_object_key (writer, "native_address");
-		if (frame->unmanaged_data.ip)
-			mono_json_writer_printf (writer, "\"%p\"", (void *) frame->unmanaged_data.ip);
-		else
-			mono_json_writer_printf (writer, "\"outside mono-sgen\"");
+		if (frame->unmanaged_data.ip) {
+			mono_json_writer_printf (writer, "\"0x%" PRIx64 "\"", frame->unmanaged_data.ip);
+		} else
+			mono_json_writer_printf (writer, "\"unregistered\"");
+
+		if (frame->unmanaged_data.ip) {
+			mono_json_writer_printf (writer, ",\n");
+
+			assert_has_space ();
+			mono_json_writer_indent (writer);
+			mono_json_writer_object_key (writer, "native_offset");
+			mono_json_writer_printf (writer, "\"0x%05x\"", frame->unmanaged_data.offset);
+		}
+
+		if (frame->unmanaged_data.module) {
+			mono_json_writer_printf (writer, ",\n");
+
+			assert_has_space ();
+			mono_json_writer_indent (writer);
+			mono_json_writer_object_key (writer, "native_module");
+			mono_json_writer_printf (writer, "\"%s\"", frame->unmanaged_data.module);
+		}
 
 		if (frame->unmanaged_data.has_name) {
 			mono_json_writer_printf (writer, ",\n");

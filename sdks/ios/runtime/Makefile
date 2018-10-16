@@ -34,6 +34,7 @@ SIM_LDFLAGS = \
 	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
 	$(SIM_SDK_DIR)/lib/libmonosgen-2.0.a \
 	$(SIM_SDK_DIR)/lib/libMonoPosixHelper.a \
+	-force_load $(SIM_SDK_DIR)/lib/libmono-native-unified.a \
 	-liconv -lz
 
 sim-%.o: %.m
