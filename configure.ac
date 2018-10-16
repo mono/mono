@@ -1075,6 +1075,8 @@ AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no 
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
 
+AC_ARG_WITH(aot-clang-path, [  --with-aot-clang-path=/usr/bin/clang-X.Y  The location of the clang binary to use for aot],  [], [with_aot_clang_path=default])
+
 dnl
 dnl Spectre compiler mitigation flag checks
 dnl
@@ -1142,6 +1144,10 @@ enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
 
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+
+if test "x$with_aot_clang_path" != "xdefault"; then
+INVARIANT_AOT_OPTIONS=$INVARIANT_AOT_OPTIONS,clangxx=$with_aot_clang_path
+fi
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
