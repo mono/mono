@@ -9039,6 +9039,18 @@ execute_system (const char * command)
 
 #ifdef ENABLE_LLVM
 
+#if defined(TARGET_X86)
+#define CLANG_ARCH_ARGS " -march=x86 -msse -msse2 -msse3 -msse4 "
+#elif defined(TARGET_AMD64)
+#define CLANG_ARCH_ARGS " -march=x86-64 -msse -msse2 -msse3 -msse4"
+#elif defined(TARGET_ARM) && defined (HAVE_ARMV7)
+#define CLANG_ARCH_ARGS " -march=armv7 "
+#elif defined(TARGET_ARM) 
+#define CLANG_ARCH_ARGS " -march=armv5 "
+#elif defined(TARGET_ARM64)
+#define CLANG_ARCH_ARGS " -march=aarch64 "
+#endif
+
 /*
  * emit_llvm_file:
  *
@@ -9117,7 +9129,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (acfg->aot_opts.llvm_only) {
 		/* Use the stock clang from xcode */
 		// FIXME: arch
-		command = g_strdup_printf ("%s -fexceptions -march=x86-64 -fpic -msse -msse2 -msse3 -msse4 -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.clangxx, acfg->llvm_ofile, acfg->tmpbasename);
+		command = g_strdup_printf ("%s -fexceptions %s -fpic -O2 -fno-optimize-sibling-calls -Wno-override-module -c -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.clangxx, CLANG_ARCH_ARGS, acfg->llvm_ofile, acfg->tmpbasename);
 
 		aot_printf (acfg, "Executing clang: %s\n", command);
 		if (execute_system (command) != 0)
