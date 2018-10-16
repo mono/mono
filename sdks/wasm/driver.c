@@ -4,86 +4,9 @@
 #include <string.h>
 #include <stdint.h>
 
-typedef enum {
-	/* Disables AOT mode */
-	MONO_AOT_MODE_NONE,
-	/* Enables normal AOT mode, equivalent to mono_jit_set_aot_only (false) */
-	MONO_AOT_MODE_NORMAL,
-	/* Enables hybrid AOT mode, JIT can still be used for wrappers */
-	MONO_AOT_MODE_HYBRID,
-	/* Enables full AOT mode, JIT is disabled and not allowed,
-	 * equivalent to mono_jit_set_aot_only (true) */
-	MONO_AOT_MODE_FULL,
-	/* Same as full, but use only llvm compiled code */
-	MONO_AOT_MODE_LLVMONLY,
-	/* Uses Interpreter, JIT is disabled and not allowed,
-	 * equivalent to "--full-aot --interpreter" */
-	MONO_AOT_MODE_INTERP,
-	/* Same as INTERP, but use only llvm compiled code */
-	MONO_AOT_MODE_INTERP_LLVMONLY,
-} MonoAotMode;
-
-typedef enum {
-	MONO_TYPE_END        = 0x00,       /* End of List */
-	MONO_TYPE_VOID       = 0x01,
-	MONO_TYPE_BOOLEAN    = 0x02,
-	MONO_TYPE_CHAR       = 0x03,
-	MONO_TYPE_I1         = 0x04,
-	MONO_TYPE_U1         = 0x05,
-	MONO_TYPE_I2         = 0x06,
-	MONO_TYPE_U2         = 0x07,
-	MONO_TYPE_I4         = 0x08,
-	MONO_TYPE_U4         = 0x09,
-	MONO_TYPE_I8         = 0x0a,
-	MONO_TYPE_U8         = 0x0b,
-	MONO_TYPE_R4         = 0x0c,
-	MONO_TYPE_R8         = 0x0d,
-	MONO_TYPE_STRING     = 0x0e,
-	MONO_TYPE_PTR        = 0x0f,       /* arg: <type> token */
-	MONO_TYPE_BYREF      = 0x10,       /* arg: <type> token */
-	MONO_TYPE_VALUETYPE  = 0x11,       /* arg: <type> token */
-	MONO_TYPE_CLASS      = 0x12,       /* arg: <type> token */
-	MONO_TYPE_VAR	     = 0x13,	   /* number */
-	MONO_TYPE_ARRAY      = 0x14,       /* type, rank, boundsCount, bound1, loCount, lo1 */
-	MONO_TYPE_GENERICINST= 0x15,	   /* <type> <type-arg-count> <type-1> \x{2026} <type-n> */
-	MONO_TYPE_TYPEDBYREF = 0x16,
-	MONO_TYPE_I          = 0x18,
-	MONO_TYPE_U          = 0x19,
-	MONO_TYPE_FNPTR      = 0x1b,	      /* arg: full method signature */
-	MONO_TYPE_OBJECT     = 0x1c,
-	MONO_TYPE_SZARRAY    = 0x1d,       /* 0-based one-dim-array */
-	MONO_TYPE_MVAR	     = 0x1e,       /* number */
-	MONO_TYPE_CMOD_REQD  = 0x1f,       /* arg: typedef or typeref token */
-	MONO_TYPE_CMOD_OPT   = 0x20,       /* optional arg: typedef or typref token */
-	MONO_TYPE_INTERNAL   = 0x21,       /* CLR internal type */
-
-	MONO_TYPE_MODIFIER   = 0x40,       /* Or with the following types */
-	MONO_TYPE_SENTINEL   = 0x41,       /* Sentinel for varargs method signature */
-	MONO_TYPE_PINNED     = 0x45,       /* Local var that points to pinned object */
-
-	MONO_TYPE_ENUM       = 0x55        /* an enumeration */
-} MonoTypeEnum;
-
-typedef enum {
-	MONO_IMAGE_OK,
-	MONO_IMAGE_ERROR_ERRNO,
-	MONO_IMAGE_MISSING_ASSEMBLYREF,
-	MONO_IMAGE_IMAGE_INVALID
-} MonoImageOpenStatus;
-
-typedef struct MonoType_ MonoType;
-typedef struct MonoDomain_ MonoDomain;
-typedef struct MonoAssembly_ MonoAssembly;
-typedef struct MonoMethod_ MonoMethod;
-typedef struct MonoException_ MonoException;
-typedef struct MonoString_ MonoString;
-typedef struct MonoClass_ MonoClass;
-typedef struct MonoImage_ MonoImage;
-typedef struct MonoObject_ MonoObject;
-typedef struct MonoArray_ MonoArray;
-typedef struct MonoThread_ MonoThread;
-typedef struct _MonoAssemblyName MonoAssemblyName;
-
+#include <mono/metadata/assembly.h>
+#include <mono/jit/jit.h>
+#include <mono/utils/mono-logger.h>
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
@@ -94,91 +17,21 @@ extern MonoObject* mono_wasm_get_global_object (MonoString *globalName, int *is_
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
 extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
-void mono_aot_register_module (void **aot_info);
-void mono_jit_set_aot_mode (MonoAotMode mode);
-MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
+
+void mono_wasm_enable_debugging (void);
+
 void mono_ee_interp_init (const char *opts);
 void mono_marshal_ilgen_init (void);
 void mono_method_builder_ilgen_init (void);
 void mono_sgen_mono_ilgen_init (void);
 void mono_icall_table_init (void);
-MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
-int mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
-void mono_set_assemblies_path (const char* path);
+void mono_aot_register_module (void **aot_info);
+char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-MonoDomain* mono_domain_get (void);
-MonoClass* mono_class_from_name (MonoImage *image, const char* name_space, const char *name);
-MonoMethod* mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count);
-MonoType* mono_class_get_type (MonoClass *klass);
-MonoClass* mono_object_get_class (MonoObject *obj);
-int mono_type_get_type (MonoType *type);
-int mono_type_is_reference (MonoType *type);
 
-MonoString* mono_object_to_string (MonoObject *obj, MonoObject **exc);//FIXME Use MonoError variant
-char* mono_string_to_utf8 (MonoString *string_obj);
-MonoObject* mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc);
-void* mono_object_unbox (MonoObject *obj);
-
-MonoImage* mono_assembly_get_image (MonoAssembly *assembly);
-MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status);
-
-MonoAssemblyName* mono_assembly_name_new (const char *name);
-void mono_assembly_name_free (MonoAssemblyName *aname);
-
-const char* mono_image_get_name (MonoImage *image);
-uint32_t mono_image_get_entry_point (MonoImage *image);
-
-MonoMethod* mono_get_method (MonoImage *image, uint32_t token, MonoClass *klass);
-
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-void mono_add_internal_call (const char *name, const void* method);
-MonoString * mono_string_from_utf16 (char *data);
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-void mono_wasm_enable_debugging (void);
-MonoArray* mono_array_new (MonoDomain *domain, MonoClass *eclass, int n);
-MonoClass* mono_get_object_class (void);
-MonoClass* mono_get_string_class (void);
-int mono_class_is_delegate (MonoClass* klass);
-const char* mono_class_get_name (MonoClass *klass);
-const char* mono_class_get_namespace (MonoClass *klass);
-MonoClass* mono_get_byte_class (void);
-MonoClass* mono_get_sbyte_class (void);
-MonoClass* mono_get_int16_class (void);
-MonoClass* mono_get_uint16_class (void);
-MonoClass* mono_get_int32_class (void);
-MonoClass* mono_get_uint32_class (void);
-MonoClass* mono_get_single_class (void);
-MonoClass* mono_get_double_class (void);
-MonoClass* mono_class_get_element_class(MonoClass *klass);
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
-int mono_class_is_enum (MonoClass *klass);
-MonoType* mono_type_get_underlying_type (MonoType *type);
-void mono_register_symfile_for_assembly (const char *assembly_name, const unsigned char *raw_contents, int size);
-
-#define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
-#define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
-#define mono_array_setref(array,index,value)	\
-	do {	\
-		void **__p = (void **) mono_array_addr ((array), void*, (index));	\
-		mono_gc_wbarrier_set_arrayref ((array), __p, (MonoObject*)(value));	\
-		/* *__p = (value);*/	\
-	} while (0)
-
-
-char* mono_array_addr_with_size (MonoArray *array, int size, int idx);
-int mono_array_length (MonoArray *array);
-int mono_array_element_size(MonoClass *klass);
-void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
-
-typedef struct {
-	const char *name;
-	const unsigned char *data;
-	unsigned int size;
-} MonoBundledAssembly;
-
-void mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
+void mono_trace_init (void);
 
 static char*
 m_strdup (const char *str)
@@ -201,7 +54,7 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 		return NULL;
 
 	char *native_val = mono_string_to_utf8 (str);
-	char *native_res = (char*)EM_ASM_INT ({
+	mono_unichar2 *native_res = (mono_unichar2*)EM_ASM_INT ({
 		var str = UTF8ToString ($0);
 		try {
 			var res = eval (str);
@@ -230,6 +83,24 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
+static void
+wasm_logger (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
+{
+	if (fatal) {
+		EM_ASM(
+			   var err = new Error();
+			   print ("Stacktrace: \n");
+			   print (err.stack);
+			   );
+
+		fprintf (stderr, "%s", message);
+
+		abort ();
+	} else {
+		fprintf (stdout, "%s\n", message);
+	}
+}
+
 #ifdef ENABLE_AOT
 #include "driver-gen.c"
 #endif
@@ -249,10 +120,10 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 {
 	int len = strlen (name);
 	if (!strcasecmp (".pdb", &name [len - 4])) {
-		name = m_strdup (name);
+		char *new_name = m_strdup (name);
 		//FIXME handle debugging assemblies with .exe extension
-		strcpy (&name [len - 3], "dll");
-		mono_register_symfile_for_assembly (name, data, size);
+		strcpy (&new_name [len - 3], "dll");
+		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
 	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
@@ -265,10 +136,16 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 }
 
 EMSCRIPTEN_KEEPALIVE void
+mono_wasm_setenv (const char *name, const char *value)
+{
+	monoeg_g_setenv (strdup (name), strdup (value), 1);
+}
+
+EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
-	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
-	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
+	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
+	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
 
 #ifdef ENABLE_AOT
 	// Defined in driver-gen.c
@@ -302,6 +179,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
 	}
 
+	mono_trace_init ();
+	mono_trace_set_log_handler (wasm_logger, NULL);
 	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
@@ -664,3 +543,8 @@ mono_wasm_unbox_enum (MonoObject *obj)
 	}
 }
 
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_exit (int exit_code)
+{
+	exit (exit_code);
+}

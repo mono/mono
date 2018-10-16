@@ -110,6 +110,12 @@ make -C sdks/wasm aot-sample
 make -C sdks/wasm link-sample
 ```
 
+To build and run AOT test suites:
+```
+make -C sdks/wasm build-aot-<suite name>
+make -C sdks/wasm check-aot-<suite name>
+```
+
 # Notes
 
 [1]: https://github.com/kripken/emscripten
