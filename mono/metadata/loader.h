@@ -58,6 +58,9 @@ mono_method_get_index      (MonoMethod *method);
 MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_add_internal_call     (const char *name, const void* method);
 
+MONO_API MONO_RT_EXTERNAL_ONLY void
+mono_dangerous_add_raw_internal_call (const char *name, const void* method);
+
 MONO_API void*
 mono_lookup_internal_call (MonoMethod *method);
 

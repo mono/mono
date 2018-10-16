@@ -8311,6 +8311,31 @@ mono_add_internal_call (const char *name, gconstpointer method)
 }
 
 /**
+ * mono_dangerous_add_raw_internal_call:
+ * \param name method specification to surface to the managed world
+ * \param method pointer to a C method to invoke when the method is called
+ *
+ * Similar to \c mono_add_internal_call but with more requirements for correct
+ * operation.
+ *
+ * A thread running a dangerous raw internal call will avoid a thread state
+ * transition on entry and exit, but it must take responsiblity for cooperating
+ * with the Mono runtime.
+ *
+ * The \p method must NOT:
+ *
+ * Run for an unbounded amount of time without calling the mono runtime.
+ * Additionally, the method must switch to GC Safe mode to perform all blocking
+ * operations: performing blocking I/O, taking locks, etc.
+ *
+ */
+void
+mono_dangerous_add_raw_internal_call (const char *name, gconstpointer method)
+{
+	mono_add_internal_call_with_flags (name, method, TRUE);
+}
+
+/**
  * mono_add_internal_call_with_flags:
  * \param name method specification to surface to the managed world
  * \param method pointer to a C method to invoke when the method is called
