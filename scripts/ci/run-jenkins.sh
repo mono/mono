@@ -107,24 +107,26 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 
 	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-ios NINJA=
 
-	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
-	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
-	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
+        if [[ ${CI_TAGS} != *'no-tests'* ]]; then
+            ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
+            ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
+            ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+        fi
 	   exit 0
 fi
 
@@ -137,11 +139,15 @@ if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
 
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j12 -C sdks/builds provision-android
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j12 -C sdks/builds provision-mxe
-        ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        if [[ ${CI_TAGS} != *'debug'* ]]; then
+            ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        else
+            ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
+        fi
         exit 0
 fi
 
-if [[ ${CI_TAGS} == *'webassembly'* ]];
+if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
@@ -149,20 +155,22 @@ if [[ ${CI_TAGS} == *'webassembly'* ]];
 
 	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j4 -C sdks/builds archive-wasm NINJA=
 
-	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
-	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
-	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
-	   ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
-	   ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
-	   #The following tests are not passing yet, so enabling them would make us perma-red
-	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
-	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-	   # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
-	   ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
-	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
-	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
-	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
-	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+        if [[ ${CI_TAGS} != *'no-tests'* ]]; then
+            ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
+            ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
+            ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
+            ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
+            #The following tests are not passing yet, so enabling them would make us perma-red
+            #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
+            #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
+            # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
+            ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
+            ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
+            ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+        fi
 	   exit 0
 fi
 
