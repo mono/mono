@@ -6922,6 +6922,22 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 	}
 
+	// temporary
+	const char* method_klass_name_space;
+	method_klass_name_space = m_class_get_name_space (method->klass);
+	const char* method_klass_name;
+	method_klass_name = m_class_get_name (method->klass);
+
+	if (cfg->method == method &&
+			method_klass_name_space [0] == 'S' &&
+			method_klass_name [0] == 'B' &&
+			strcmp (method_klass_name_space, "System.Reflection.Metadata") == 0 &&
+			strcmp (method_klass_name, "BlobBuilder") == 0  &&
+			strcmp (method->name, ".ctor") == 0) {
+		EMIT_NEW_ARGLOAD (cfg, ins, 0);
+		MONO_EMIT_NULL_CHECK (cfg, ins->dreg, TRUE);
+	}
+
 	/* we use a separate basic block for the initialization code */
 	NEW_BBLOCK (cfg, init_localsbb);
 	if (cfg->method == method)
