@@ -3621,7 +3621,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (mono_bstr_cons
 }
 
 mono_bstr
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len)
 {
 	return mono_ptr_to_bstr (ptr, len);
 }
