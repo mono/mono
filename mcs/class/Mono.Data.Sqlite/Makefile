@@ -17,6 +17,8 @@ LIB_MCS_FLAGS = /unsafe \
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 
+TEST_RESOURCE_FILES = test.db
+
 EXTRA_DISTFILES = Test/SqliteTest.cs \
 	Test/test.sql \
 	resources/SR.resx	\
