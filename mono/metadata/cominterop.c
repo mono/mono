@@ -3627,7 +3627,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* 
 }
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr)
 {
 	mono_free_bstr ((gpointer)ptr);
 }

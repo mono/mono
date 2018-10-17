@@ -762,7 +762,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr, MonoErr
 
 ICALL_EXPORT
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr);
 
 ICALL_EXPORT
 void*
