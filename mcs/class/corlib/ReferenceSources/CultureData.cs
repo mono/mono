@@ -249,6 +249,14 @@ namespace System.Globalization
 			}
 		}
 
+		internal CalendarId[] GetCalendarIds() 
+		{
+			var items = new CalendarId[CalendarIds.Length];
+			for	(int i = 0; i < CalendarIds.Length; i++)
+				items[i] = (CalendarId)CalendarIds[i];
+			return items;
+		}
+
 		internal bool IsInvariantCulture {
 			get {
 				return string.IsNullOrEmpty (sRealName);

@@ -125,7 +125,10 @@ System/TermInfoDriver.cs
 System/TermInfoNumbers.cs
 System/TermInfoReader.cs
 System/TermInfoStrings.cs
-System/TimeZone.cs
+corefx/TimeZone.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZone.cs
+../../../external/corefx/src/Common/src/CoreLib/System/CurrentSystemTimeZone.cs
+corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
@@ -1009,7 +1012,7 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/StringFreezingAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SystemException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeoutException.cs
-../referencesource/mscorlib/system/timespan.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeSpan.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ThreadAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ThreadStaticAttribute.cs
 ../referencesource/mscorlib/system/throwhelper.cs

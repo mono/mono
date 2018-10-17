@@ -112,6 +112,10 @@ namespace System.Globalization
 		[NonSerialized]internal CultureData m_cultureData;
  		[NonSerialized]internal bool m_isInherited;
 		
+		// adapters for .NET Core sources (DateTimeFormatInfo) to reduce diff in mono/corefx repository
+		internal CultureData _cultureData => m_cultureData;
+		internal bool _isInherited => m_isInherited;
+
 		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
