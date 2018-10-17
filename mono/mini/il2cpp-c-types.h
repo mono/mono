@@ -107,6 +107,10 @@ typedef void (*Il2CppDomainFunc) (MonoDomain *domain, void* user_data);
 typedef void (*emit_assembly_load_callback)(void*, void*);
 typedef void(*emit_type_load_callback)(void*, void*, void*);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void il2cpp_set_thread_state_background(MonoThread* thread);
 void* il2cpp_domain_get_agent_info(MonoAppDomain* domain);
 void il2cpp_domain_set_agent_info(MonoAppDomain* domain, void* agentInfo);
@@ -114,5 +118,9 @@ void il2cpp_start_debugger_thread();
 void* il2cpp_gc_alloc_fixed(size_t size);
 void il2cpp_gc_free_fixed(void* address);
 const char* il2cpp_domain_get_name(MonoDomain* domain);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

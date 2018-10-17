@@ -58,7 +58,9 @@
 #define mono_image_get_entry_point il2cpp_mono_image_get_entry_point
 #define mono_image_get_filename il2cpp_mono_image_get_filename
 #define mono_image_get_guid il2cpp_mono_image_get_guid
+#define mono_image_is_dynamic il2cpp_mono_image_is_dynamic
 #define mono_type_get_class il2cpp_mono_type_get_class
+#define m_type_get_generic_class il2cpp_m_type_get_generic_class
 #define mono_type_is_struct il2cpp_mono_type_is_struct
 #define mono_type_is_reference il2cpp_mono_type_is_reference
 #define mono_metadata_free_mh il2cpp_mono_metadata_free_mh
@@ -147,7 +149,8 @@
 #define mono_class_is_nullable il2cpp_mono_class_is_nullable
 #define mono_class_get_generic_container il2cpp_mono_class_get_generic_container
 #define mono_class_setup_interfaces il2cpp_mono_class_setup_interfaces
-#define mono_class_get_methods_by_name il2cpp_mono_class_get_methods_by_name
+#define mono_class_get_methods_by_name  il2cpp_mono_class_get_methods_by_name
+#define mono_class_is_valuetype il2cpp_class_is_valuetype
 #define mono_ldtoken_checked il2cpp_mono_ldtoken_checked
 #define mono_class_from_generic_parameter_internal il2cpp_mono_class_from_generic_parameter_internal
 #define mono_class_load_from_name il2cpp_mono_class_load_from_name
@@ -167,6 +170,7 @@
 #define mono_field_static_get_value_checked il2cpp_mono_field_static_get_value_checked
 #define mono_field_static_get_value_for_thread il2cpp_mono_field_static_get_value_for_thread
 #define mono_field_get_value_object_checked il2cpp_mono_field_get_value_object_checked
+#define mono_field_get_offset il2cpp_field_get_offset
 #define mono_object_new_checked il2cpp_mono_object_new_checked
 #define mono_ldstr_checked il2cpp_mono_ldstr_checked
 #define mono_runtime_try_invoke il2cpp_mono_runtime_try_invoke
@@ -238,6 +242,7 @@
 #define mono_field_get_type il2cpp_field_get_type
 #define mono_method_get_name il2cpp_method_get_name
 #define mono_class_get_type il2cpp_class_get_type
+#define mono_class_get_byref_type il2cpp_mono_class_get_byref_type
 #define mono_method_get_class il2cpp_method_get_class
 #define mono_class_get_image il2cpp_class_get_image
 #define mono_class_get_interfaces il2cpp_class_get_interfaces
@@ -259,6 +264,14 @@
 #undef mono_field_is_deleted
 #define mono_field_is_deleted il2cpp_field_is_deleted
 #define mono_domain_get_assemblies_iter il2cpp_domain_get_assemblies_iter
+#define mono_property_get_name il2cpp_property_get_name
+#define mono_property_get_set_method il2cpp_property_get_set_method
+#define mono_property_get_get_method il2cpp_property_get_get_method
+#define mono_property_get_parent il2cpp_property_get_parent
+#define m_domain_get_corlib il2cpp_m_domain_get_corlib
+#define mono_generic_class_get_context il2cpp_mono_generic_class_get_context
+
+#define m_class_is_initialized il2cpp_m_class_is_initialized
 
 #undef mono_domain_assemblies_lock
 #define mono_domain_assemblies_lock
@@ -464,5 +477,12 @@ const MonoType* il2cpp_get_type_from_index(int index);
 const MonoType* il2cpp_get_type_from_method_context(MonoType* type, const MonoMethod* method);
 const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* context);
 void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes);
-
+Il2CppThreadUnwindState* il2cpp_debugger_get_thread_context ();
+MonoGenericContext* il2cpp_mono_generic_class_get_context (MonoGenericClass *gclass);
+MonoType* il2cpp_mono_class_get_byref_type (MonoClass *klass);
+mono_bool il2cpp_mono_image_is_dynamic(MonoImage *image);
+MonoGenericClass* il2cpp_m_type_get_generic_class(MonoType* type);
+const MonoAssembly* il2cpp_m_method_get_assembly(MonoMethod* method);
+const MonoAssembly* il2cpp_m_domain_get_corlib (MonoDomain *domain);
+mono_bool il2cpp_m_class_is_initialized (MonoClass* klass);
 #endif // RUNTIME_IL2CPP

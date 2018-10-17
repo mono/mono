@@ -203,7 +203,7 @@ typedef struct {
 	MonoThreadUnwindState context;
 
 #ifdef RUNTIME_IL2CPP
-	Il2CppThreadUnwindState il2cpp_context;
+	Il2CppThreadUnwindState* il2cpp_context;
 #endif
 
 	/* This is computed on demand when it is requested using the wire protocol */
@@ -2680,7 +2680,7 @@ save_thread_context (MonoContext *ctx)
 	else
 		mono_thread_state_init_from_current (&tls->context);
 #else
-	callbacks.il2cpp_debugger_save_thread_context(&tls->il2cpp_context, 0);
+	callbacks.il2cpp_debugger_save_thread_context(tls->il2cpp_context, 0);
 #endif // !RUNTIME_IL2CPP
 }
 
@@ -3427,15 +3427,15 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		mono_walk_stack_with_state (process_frame, &tls->context, opts, &user_data);
 #endif // RUNTIME_IL2CPP
 #ifdef RUNTIME_IL2CPP
-	} else if (tls->il2cpp_context.frameCount > 0) {
-		for (int frame_index = tls->il2cpp_context.frameCount - 1; frame_index >= 0; --frame_index)
+	} else if (tls->il2cpp_context->frameCount > 0) {
+		for (int frame_index = tls->il2cpp_context->frameCount - 1; frame_index >= 0; --frame_index)
 		{
-			Il2CppSequencePoint* seq_point = tls->il2cpp_context.sequencePoints[frame_index];
+			Il2CppSequencePoint* seq_point = tls->il2cpp_context->executionContexts[frame_index]->currentSequencePoint;
 			StackFrame* frame = g_new0(StackFrame, 1);
             MonoMethod *sp_method = il2cpp_get_seq_point_method(seq_point);
 			frame->method = sp_method;
-			frame->actual_method = tls->il2cpp_context.executionContexts[frame_index]->method;
-			frame->frame_context = tls->il2cpp_context.executionContexts[frame_index];
+			frame->actual_method = tls->il2cpp_context->executionContexts[frame_index]->method;
+			frame->frame_context = tls->il2cpp_context->executionContexts[frame_index];
 			frame->api_method = sp_method;
 			frame->il_offset = seq_point->ilOffset;
 			frame->native_offset = 0;
@@ -3704,9 +3704,9 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 					if (mod->data.thread != mono_thread_internal_current ())
 						filtered = TRUE;
 				} else if (mod->kind == MOD_KIND_EXCEPTION_ONLY && ei) {
-					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from (mod->data.exc_class, ei->exc->vtable->klass))
+					if (mod->data.exc_class && mod->subclasses && !mono_class_is_assignable_from (mod->data.exc_class, mono_object_get_class (ei->exc)))
 						filtered = TRUE;
-					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class !=  ei->exc->vtable->klass)
+					if (mod->data.exc_class && !mod->subclasses && mod->data.exc_class !=  mono_object_get_class (ei->exc))
 						filtered = TRUE;
 					if (ei->caught && !mod->caught)
 						filtered = TRUE;
@@ -3721,7 +3721,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 						for (k = 0; assemblies [k]; ++k)
 #ifdef RUNTIME_IL2CPP
 						{
-							if (assemblies[k] == sp_method->klass->image->assembly)
+							if (assemblies[k] == mono_image_get_assembly (mono_class_get_image (mono_method_get_class (sp_method))))
 								found = TRUE;
 						}
 #else
@@ -3777,7 +3777,7 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, DebuggerEv
 				} else if (mod->kind == MOD_KIND_TYPE_NAME_ONLY && ei && ei->klass) {
 					char *s;
 
-					s = mono_type_full_name (&ei->klass->byval_arg);
+					s = mono_type_full_name (mono_class_get_type(ei->klass));
 					if (!g_hash_table_lookup (mod->data.type_names, s))
 						filtered = TRUE;
 					g_free (s);
@@ -4180,6 +4180,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Reference");
 #ifdef RUNTIME_IL2CPP
 	il2cpp_gc_wbarrier_set_field(tls, (void**)&tls->thread, thread);
+	tls->il2cpp_context = il2cpp_debugger_get_thread_context ();
 #else
 	tls->thread = thread;
 #endif	
@@ -4628,6 +4629,14 @@ remove_breakpoint (BreakpointInstance *inst)
 }
 
 #endif // !RUNTIME_IL2CPP
+
+#if RUNTIME_IL2CPP
+
+int32_t il2cpp_mono_methods_match(const MethodInfo* left, const MethodInfo* right);
+MonoImage* il2cpp_mono_assembly_get_image(MonoAssembly* assembly);
+void il2cpp_mono_free_method_signatures(void);
+
+#endif // RUNTIME_IL2CPP
 
 /*
  * This doesn't take any locks.
@@ -5205,7 +5214,7 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 		// Because functions can call themselves recursively, we need to make sure we're stopping at the right stack depth.
 		// In case of step out, the target is the frame *enclosing* the one where the request was made.
 		int target_frames = req->nframes + (is_step_out ? -1 : 0);
-		if (req->nframes > 0 && tls->il2cpp_context.frameCount > 0 && tls->il2cpp_context.frameCount > target_frames)
+		if (req->nframes > 0 && tls->il2cpp_context->frameCount > 0 && tls->il2cpp_context->frameCount > target_frames)
 		{
 			/* Hit the breakpoint in a recursive call, don't halt */
 			DEBUG_PRINTF(1, "[%p] Breakpoint at lower frame while stepping %s, continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), is_step_out ? "out" : "over");
@@ -5226,7 +5235,7 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 	}
 	else if (sequencePoint->lineEnd >= 0 && sp_method == ss_req->last_method && sequencePoint->lineEnd == ss_req->last_line)
 	{
-		if (tls->il2cpp_context.frameCount == req->nframes)
+		if (tls->il2cpp_context->frameCount == req->nframes)
 		{ // If the frame has changed we're clearly not on the same source line.
 			DEBUG_PRINTF(1, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer)(gsize)mono_native_thread_id_get(), sequencePoint->lineEnd);
 			hit = FALSE;
@@ -5246,7 +5255,7 @@ ss_update_il2cpp(SingleStepReq *req, DebuggerTlsData *tls, MonoContext *ctx, Il2
 static gboolean
 breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 {
-	return bp->method && bp->method->klass->image->assembly == assembly;
+	return bp->method && mono_image_get_assembly (mono_class_get_image (mono_method_get_class (bp->method))) == assembly;
 }
 
 static gpointer
@@ -5309,12 +5318,12 @@ get_async_method_builder (StackFrame *frame)
 	if (!this_addr)
 		return NULL;
 
-	if (frame->method->klass->valuetype) {
+	if (mono_class_is_valuetype (frame->method->klass)) {
 		guint8 *vtaddr = *(guint8**)this_addr;
-		builder = (char*)vtaddr + builder_field->offset - sizeof (MonoObject);
+		builder = (char*)vtaddr + mono_field_get_offset (builder_field) - sizeof (MonoObject);
 	} else {
 		this_obj = *(MonoObject**)this_addr;
-		builder = (char*)this_obj + builder_field->offset;
+		builder = (char*)this_obj + mono_field_get_offset (builder_field);
 	}
 
 	return builder;
@@ -5351,7 +5360,7 @@ get_this_async_id (StackFrame *frame)
 		tls->disable_breakpoints = TRUE;
 	}
 
-	method = get_object_id_for_debugger_method (mono_class_from_mono_type (builder_field->type));
+	method = get_object_id_for_debugger_method (mono_class_from_mono_type (mono_field_get_type (builder_field)));
 	obj = mono_runtime_try_invoke (method, builder, NULL, &ex, &error);
 	mono_error_assert_ok (&error);
 
@@ -5373,7 +5382,7 @@ set_set_notification_for_wait_completion_flag (StackFrame *frame)
 	gboolean arg = TRUE;
 	MonoError error;
 	args [0] = &arg;
-	mono_runtime_invoke_checked (get_set_notification_method (mono_class_from_mono_type (builder_field->type)), builder, args, &error);
+	mono_runtime_invoke_checked (get_set_notification_method (mono_class_from_mono_type (mono_field_get_type (builder_field))), builder, args, &error);
 	mono_error_assert_ok (&error);
 }
 
@@ -5382,6 +5391,9 @@ static MonoMethod* notify_debugger_of_wait_completion_method_cache = NULL;
 static MonoMethod*
 get_notify_debugger_of_wait_completion_method (void)
 {
+#if UNITY_TINY
+    return NULL;
+#else
 	if (notify_debugger_of_wait_completion_method_cache != NULL)
 		return notify_debugger_of_wait_completion_method_cache;
 	MonoError error;
@@ -5392,6 +5404,7 @@ get_notify_debugger_of_wait_completion_method (void)
 	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
 	return notify_debugger_of_wait_completion_method_cache;
+#endif // UNITY_TINY
 }
 
 #ifndef RUNTIME_IL2CPP
@@ -5847,7 +5860,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, int seque
 #ifndef RUNTIME_IL2CPP
 	process_event (EVENT_KIND_STEP, jinfo_get_method (ji), il_offset, ctx, events, suspend_policy);
 #else
-	Il2CppSequencePoint* sequence_pt = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1];
+	Il2CppSequencePoint* sequence_pt = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint;
     MonoMethod *sp_method = il2cpp_get_seq_point_method(sequence_pt);
 
 	/*
@@ -5859,7 +5872,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, int seque
 		gboolean found = FALSE;
 		for (int k = 0; ss_req->user_assemblies[k]; k++)
 		{
-			if (ss_req->user_assemblies[k] == sp_method->klass->image->assembly)
+			if (ss_req->user_assemblies[k] == mono_image_get_assembly (mono_class_get_image (mono_method_get_class (sp_method))))
 			{
 				found = TRUE;
 				break;
@@ -6436,7 +6449,7 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint
 	} else {
 		if (ss_req->depth == STEP_DEPTH_OVER)
 		{
-			MonoMethod* currentMethod = il2cpp_get_seq_point_method(tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1]);
+			MonoMethod* currentMethod = il2cpp_get_seq_point_method(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint);
 
 			void *seqPointIter = NULL;
 			Il2CppSequencePoint *seqPoint;
@@ -6450,9 +6463,9 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint
 			}
 		}
 
-		if (tls->il2cpp_context.frameCount > 1)
+		if (tls->il2cpp_context->frameCount > 1)
 		{
-		Il2CppSequencePoint* sequencePointForStepOut = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 2];
+		Il2CppSequencePoint* sequencePointForStepOut = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 2]->currentSequencePoint;
 		g_assert(sequencePointForStepOut->kind == kSequencePointKind_StepOut);
 			ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, sequencePointForStepOut);
 		}
@@ -6541,12 +6554,12 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	g_assert (tls);
 
 #ifdef RUNTIME_IL2CPP
-	ss_req->nframes = tls->il2cpp_context.frameCount;
+	ss_req->nframes = tls->il2cpp_context->frameCount;
 	Il2CppSequencePoint *catchFrameSp = NULL;
 
-	if (tls->il2cpp_context.frameCount > 0)
+	if (tls->il2cpp_context->frameCount > 0)
 	{
-		Il2CppSequencePoint* seq_point = tls->il2cpp_context.sequencePoints[tls->il2cpp_context.frameCount - 1];
+		Il2CppSequencePoint* seq_point = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint;
         MonoMethod *sp_method = il2cpp_get_seq_point_method(seq_point);
 		ss_req->start_method = sp_method;
 		ss_req->last_method = sp_method;
@@ -6769,7 +6782,7 @@ static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_in_method(Il2CppSeq
 	while (sp = il2cpp_get_method_sequence_points(method, &seqPointIter))
 	{
         MonoClass *catchType = il2cpp_get_class_from_index(sp->catchTypeIndex);
-		if (sp->tryDepth == tryDepth && sp->ilOffset > ilOffset && catchType != NULL && mono_class_is_assignable_from(catchType, exc->object.vtable->klass))
+		if (sp->tryDepth == tryDepth && sp->ilOffset > ilOffset && catchType != NULL && mono_class_is_assignable_from (catchType, mono_object_get_class (&exc->object)))
 			return sp;
 	}
 
@@ -6778,10 +6791,10 @@ static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_in_method(Il2CppSeq
 
 static Il2CppSequencePoint* il2cpp_find_catch_sequence_point(DebuggerTlsData *tls)
 {
-	int frameIndex = tls->il2cpp_context.frameCount - 1;
+	int frameIndex = tls->il2cpp_context->frameCount - 1;
 	while (frameIndex >= 0)
 	{
-		Il2CppSequencePoint* sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context.sequencePoints[frameIndex], tls->exception);
+		Il2CppSequencePoint* sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint, tls->exception);
 		if (sp)
 			return sp;
 
@@ -6802,10 +6815,10 @@ static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_from_exeption(Debug
 			return sp;
 	}
 
-	int frameIndex = tls->il2cpp_context.frameCount - 1;
+	int frameIndex = tls->il2cpp_context->frameCount - 1;
 	while (frameIndex >= 0)
 	{
-		sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context.sequencePoints[frameIndex], exc);
+		sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint, exc);
 		if (sp)
 			return sp;
 
@@ -6874,7 +6887,7 @@ unity_debugger_agent_handle_exception(MonoException *exc, Il2CppSequencePoint *s
 				if (assemblies)
 				{
 					for (k = 0; assemblies[k]; ++k)
-						if (assemblies[k] == sp_method->klass->image->assembly)
+						if (assemblies[k] == mono_image_get_assembly (mono_class_get_image (mono_method_get_class (sp_method))))
 							found = TRUE;
 				}
 				if (!found)
@@ -6956,7 +6969,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 
 		for (l = agent_config.onthrow; l; l = l->next) {
 			char *ex_type = (char *)l->data;
-			char *f = mono_type_full_name (&exc->object.vtable->klass->byval_arg);
+			char *f = mono_type_full_name (mono_class_get_type (mono_object_get_class (&exc->object)));
 
 			if (!strcmp (ex_type, "") || !strcmp (ex_type, f))
 				found = TRUE;
@@ -7011,7 +7024,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 
 				if (assemblies) {
 					for (k = 0; assemblies [k]; ++k)
-						if (assemblies [k] == jinfo_get_method (catch_ji)->klass->image->assembly)
+						if (assemblies [k] == mono_image_get_assembly (mono_class_get_image (mono_method_get_class (jinfo_get_method (catch_ji)))))
 							found = TRUE;
 				}
 				if (!found)
@@ -7197,7 +7210,7 @@ static void buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDom
 		if (!obj) {
 			buffer_add_byte (buf, VALUE_TYPE_ID_NULL);
 		} else {
-			if (obj->vtable->klass->valuetype) {
+			if (mono_class_is_valuetype (mono_object_get_class (obj))) {
 				t = &obj->vtable->klass->byval_arg;
 				addr = mono_object_unbox (obj);
 				boxed_vtype = TRUE;
@@ -7447,14 +7460,14 @@ static void buffer_add_value_full(Buffer *buf, MonoType *t, void *addr, MonoDoma
 			}
 
 			buffer_add_byte(buf, MONO_TYPE_VALUETYPE);
-			buffer_add_byte(buf, klass->enumtype);
+			buffer_add_byte(buf, mono_class_is_enum (klass));
 			buffer_add_typeid(buf, domain, klass);
 
 			nfields = 0;
 			iter = NULL;
 			while ((f = mono_class_get_fields(klass, &iter)))
 			{
-				if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				if (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC)
 					continue;
 				if (mono_field_is_deleted(f))
 					continue;
@@ -7465,11 +7478,11 @@ static void buffer_add_value_full(Buffer *buf, MonoType *t, void *addr, MonoDoma
 			iter = NULL;
 			while ((f = mono_class_get_fields(klass, &iter)))
 			{
-				if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				if (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC)
 					continue;
 				if (mono_field_is_deleted(f))
 					continue;
-				buffer_add_value_full(buf, f->type, (guint8*)addr + f->offset - sizeof(MonoObject), domain, FALSE, parent_vtypes);
+				buffer_add_value_full(buf, mono_field_get_type (f), (guint8*)addr + mono_field_get_offset (f) - sizeof(MonoObject), domain, FALSE, parent_vtypes);
 			}
 
 			if (boxed_vtype)
@@ -7508,7 +7521,7 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 static gboolean
 obj_is_of_type (MonoObject *obj, MonoType *t)
 {
-	MonoClass *klass = obj->vtable->klass;
+	MonoClass *klass = mono_object_get_class (obj);
 	if (!mono_class_is_assignable_from (mono_class_from_mono_type (t), klass)) {
 		if (mono_class_is_transparent_proxy (klass)) {
 			klass = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
@@ -7554,11 +7567,11 @@ decode_vtype (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 
 	nfields = decode_int (buf, &buf, limit);
 	while ((f = mono_class_get_fields (klass, &iter))) {
-		if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
+		if (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted(f))
 			continue;
-		err = decode_value (f->type, domain, (guint8*)addr + f->offset - sizeof (MonoObject), buf, &buf, limit);
+		err = decode_value (mono_field_get_type (f), domain, (guint8*)addr + mono_field_get_offset (f) - sizeof (MonoObject), buf, &buf, limit);
 		if (err != ERR_NONE)
 			return err;
 		nfields --;
@@ -7655,11 +7668,11 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				return err;
 			if (!obj)
 				return ERR_INVALID_ARGUMENT;
-			if (obj->vtable->klass != mono_class_from_mono_type (t)) {
-				DEBUG_PRINTF (1, "Expected type '%s', got object '%s'\n", mono_type_full_name (t), obj->vtable->klass->name);
+			if (mono_object_get_class (obj) != mono_class_from_mono_type (t)) {
+				DEBUG_PRINTF (1, "Expected type '%s', got object '%s'\n", mono_type_full_name (t), mono_class_get_name (mono_object_get_class (obj)));
 				return ERR_INVALID_ARGUMENT;
 			}
-			memcpy (addr, mono_object_unbox (obj), mono_class_value_size (obj->vtable->klass, NULL));
+			memcpy (addr, mono_object_unbox (obj), mono_class_value_size (mono_object_get_class (obj), NULL));
 		} else {
 			err = decode_vtype (t, domain, addr, buf, &buf, limit);
 			if (err != ERR_NONE)
@@ -7680,7 +7693,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 
 				if (obj) {
 					if (!obj_is_of_type (obj, t)) {
-						DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), obj->vtable->klass->name);
+						DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), mono_class_get_name (mono_object_get_class (obj)));
 						return ERR_INVALID_ARGUMENT;
 					}
 				}
@@ -7723,7 +7736,11 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 					g_free (vtype_buf);
 					return err;
 				}
+#ifdef RUNTIME_IL2CPP 
+				il2cpp_gc_wbarrier_set_field(NULL, (void**)addr, mono_value_box_checked (d, klass, vtype_buf, &error));
+#else				
 				*(MonoObject**)addr = mono_value_box_checked (d, klass, vtype_buf, &error);
+#endif
 				mono_error_cleanup (&error);
 				g_free (vtype_buf);
 			} else {
@@ -7751,7 +7768,7 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 	int type = decode_byte (buf, &buf, limit);
 
 	if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
-		MonoType *targ = t->data.generic_class->context.class_inst->type_argv[0];
+		MonoType *targ = mono_generic_class_get_context (m_type_get_generic_class (t))->class_inst->type_argv[0];
 		guint8 *nullable_buf;
 
 		/*
@@ -8034,7 +8051,7 @@ clear_assembly_from_modifier (EventRequest *req, Modifier *m, MonoAssembly *asse
 {
 	int i;
 
-	if (m->kind == MOD_KIND_EXCEPTION_ONLY && m->data.exc_class && m->data.exc_class->image->assembly == assembly)
+	if (m->kind == MOD_KIND_EXCEPTION_ONLY && m->data.exc_class && mono_image_get_assembly (mono_class_get_image (m->data.exc_class) == assembly))
 		m->kind = MOD_KIND_NONE;
 	if (m->kind == MOD_KIND_ASSEMBLY_ONLY && m->data.assemblies) {
 		int count = 0, match_count = 0, pos;
@@ -8176,7 +8193,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		 * Invoke this method directly, currently only Environment.Exit () is supported.
 		 */
 		this_arg = NULL;
-		DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (invoke->method, TRUE), this_arg ? this_arg->vtable->klass->name : "<null>");
+		DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (invoke->method, TRUE), this_arg ? mono_class_get_name (mono_object_get_class (this_arg)) : "<null>");
 
 		mono_runtime_try_invoke (invoke->method, NULL, invoke->args, &exc, &error);
 		mono_error_assert_ok (&error);
@@ -8189,7 +8206,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		return err;
 	sig = mono_method_signature (m);
 
-	if (m->klass->valuetype)
+	if (mono_class_is_valuetype (m->klass))
 		this_buf = (guint8 *)g_alloca (mono_class_instance_size (m->klass));
 	else
 		this_buf = (guint8 *)g_alloca (sizeof (MonoObject*));
@@ -8197,7 +8214,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	if (m->is_generic) {
         DEBUG_PRINTF (1, "[%p] Error: Attemtping to invoke uninflated generic method %s.\n", (gpointer)(gsize)mono_native_thread_id_get (), mono_method_full_name (m, TRUE));
         return ERR_INVALID_ARGUMENT;
-    } else if (m->klass->valuetype && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
+    } else if (mono_class_is_valuetype (m->klass) && (m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		/* Should be null */
 		int type = decode_byte (p, &p, end);
 		if (type != VALUE_TYPE_ID_NULL) {
@@ -8205,7 +8222,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			return ERR_INVALID_ARGUMENT;
 		}
 		memset (this_buf, 0, mono_class_instance_size (m->klass));
-	} else if (m->klass->valuetype && !strcmp (m->name, ".ctor")) {
+	} else if (mono_class_is_valuetype(m->klass) && !strcmp (m->name, ".ctor")) {
 			/* Could be null */
 			guint8 *tmp_p;
 
@@ -8214,19 +8231,19 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 				memset (this_buf, 0, mono_class_instance_size (m->klass));
 				p = tmp_p;
 			} else {
-				err = decode_value(&m->klass->byval_arg, domain, this_buf, p, &p, end);
+				err = decode_value(mono_class_get_type (m->klass), domain, this_buf, p, &p, end);
 
 				if (err != ERR_NONE)
 					return err;
 			}
 	} else {
-		err = decode_value (&m->klass->byval_arg, domain, this_buf, p, &p, end);
+		err = decode_value (mono_class_get_type (m->klass), domain, this_buf, p, &p, end);
 
 		if (err != ERR_NONE)
 			return err;
 	}
 
-	if (!m->klass->valuetype)
+	if (!mono_class_is_valuetype (m->klass))
 		this_arg = *(MonoObject**)this_buf;
 	else
 		this_arg = NULL;
@@ -8238,28 +8255,28 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		}
 		m = mono_object_get_virtual_method (this_arg, m);
 		/* Transform this to the format the rest of the code expects it to be */
-		if (m->klass->valuetype) {
+		if (mono_class_is_valuetype (m->klass)) {
 			this_buf = (guint8 *)g_alloca (mono_class_instance_size (m->klass));
 			memcpy (this_buf, mono_object_unbox (this_arg), mono_class_instance_size (m->klass));
 		}
-	} else if ((m->flags & METHOD_ATTRIBUTE_VIRTUAL) && !m->klass->valuetype && invoke->flags & INVOKE_FLAG_VIRTUAL) {
+	} else if ((m->flags & METHOD_ATTRIBUTE_VIRTUAL) && !mono_class_is_valuetype (m->klass) && invoke->flags & INVOKE_FLAG_VIRTUAL) {
 		if (!this_arg) {
 			DEBUG_PRINTF (1, "[%p] Error: invoke with INVOKE_FLAG_VIRTUAL flag set without this argument.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 			return ERR_INVALID_ARGUMENT;
 		}
 		m = mono_object_get_virtual_method (this_arg, m);
-		if (m->klass->valuetype) {
+		if (mono_class_is_valuetype (m->klass)) {
 			this_buf = (guint8 *)g_alloca (mono_class_instance_size (m->klass));
 			memcpy (this_buf, mono_object_unbox (this_arg), mono_class_instance_size (m->klass));
 		}
 	}
 
-	DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (m, TRUE), this_arg ? this_arg->vtable->klass->name : "<null>");
+	DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer) (gsize) mono_native_thread_id_get (), mono_method_full_name (m, TRUE), this_arg ? mono_class_get_name (mono_object_get_class (this_arg)): "<null>");
 
 	if (this_arg && VM_OBJECT_GET_DOMAIN(this_arg) != domain)
 		NOT_IMPLEMENTED;
 
-	if (!m->klass->valuetype && !(m->flags & METHOD_ATTRIBUTE_STATIC) && !this_arg) {
+	if (!mono_class_is_valuetype (m->klass) && !(m->flags & METHOD_ATTRIBUTE_STATIC) && !this_arg) {
 		if (!strcmp (m->name, ".ctor")) {
 			if (mono_class_is_abstract (m->klass))
 				return ERR_INVALID_ARGUMENT;
@@ -8273,7 +8290,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		}
 	}
 
-	if (this_arg && !obj_is_of_type (this_arg, &m->klass->byval_arg))
+	if (this_arg && !obj_is_of_type (this_arg, mono_class_get_type (m->klass)))
 		return ERR_INVALID_ARGUMENT;
 
 	nargs = decode_int (p, &p, end);
@@ -8340,17 +8357,17 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 #endif
 
 	mono_stopwatch_start (&watch);
-	res = mono_runtime_try_invoke (m, m->klass->valuetype ? (gpointer)this_buf : (gpointer)this_arg, args, &exc, &error);
+	res = mono_runtime_try_invoke (m, mono_class_is_valuetype (m->klass) ? (gpointer)this_buf : (gpointer)this_arg, args, &exc, &error);
 	if (!mono_error_ok (&error) && exc == NULL) {
 		exc = (MonoObject*) mono_error_convert_to_exception (&error);
 	} else {
 		mono_error_cleanup (&error); /* FIXME report error */
 	}
 	mono_stopwatch_stop (&watch);
-	DEBUG_PRINTF (1, "[%p] Invoke result: %p, exc: %s, time: %ld ms.\n", (gpointer) (gsize) mono_native_thread_id_get (), res, exc ? exc->vtable->klass->name : NULL, (long)mono_stopwatch_elapsed_ms (&watch));
+	DEBUG_PRINTF (1, "[%p] Invoke result: %p, exc: %s, time: %ld ms.\n", (gpointer) (gsize) mono_native_thread_id_get (), res, exc ? mono_class_get_name (mono_object_get_class (exc)) : NULL, (long)mono_stopwatch_elapsed_ms (&watch));
 	if (exc) {
 		buffer_add_byte (buf, 0);
-		buffer_add_value (buf, &VM_DEFAULTS_OBJECT_CLASS->byval_arg, &exc, domain);
+		buffer_add_value (buf, mono_class_get_type (VM_DEFAULTS_OBJECT_CLASS), &exc, domain);
 	} else {
 		gboolean out_this = FALSE;
 		gboolean out_args = FALSE;
@@ -8361,24 +8378,24 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			out_args = TRUE;
 		buffer_add_byte (buf, 1 + (out_this ? 2 : 0) + (out_args ? 4 : 0));
 		if (VM_METHOD_IS_STRING_CTOR(m)) {
-			buffer_add_value (buf, &mono_get_string_class ()->byval_arg, &res, domain);
+			buffer_add_value (buf, mono_class_get_type (mono_get_string_class ()), &res, domain);
 		} else if ( sig->ret->type == MONO_TYPE_VOID && !VM_METHOD_IS_STRING_CTOR(m)) {
 			if (!strcmp (m->name, ".ctor")) {
-				if (!m->klass->valuetype)
-					buffer_add_value (buf, &VM_DEFAULTS_OBJECT_CLASS->byval_arg, &this_arg, domain);
+				if (!mono_class_is_valuetype (m->klass))
+					buffer_add_value (buf, mono_class_get_type (VM_DEFAULTS_OBJECT_CLASS), &this_arg, domain);
 				else
-					buffer_add_value (buf, &m->klass->byval_arg, this_buf, domain);
+					buffer_add_value (buf, mono_class_get_type (m->klass), this_buf, domain);
 			} else {
-				buffer_add_value (buf, &VM_DEFAULTS_VOID_CLASS->byval_arg, NULL, domain);
+				buffer_add_value (buf, mono_class_get_type (VM_DEFAULTS_VOID_CLASS), NULL, domain);
 			}
 		} else if (MONO_TYPE_IS_REFERENCE (sig->ret)) {
 			if (sig->ret->byref) {
-				MonoType* ret_byval = &mono_class_from_mono_type (sig->ret)->byval_arg;
+				MonoType* ret_byval = mono_class_get_type (mono_class_from_mono_type (sig->ret));
 				buffer_add_value (buf, ret_byval, &res, domain);
 			} else {
 				buffer_add_value (buf, sig->ret, &res, domain);
 			}
-		} else if (mono_class_from_mono_type (sig->ret)->valuetype || sig->ret->type == MONO_TYPE_PTR || sig->ret->type == MONO_TYPE_FNPTR) {
+		} else if (mono_class_is_valuetype (mono_class_from_mono_type (sig->ret)) || sig->ret->type == MONO_TYPE_PTR || sig->ret->type == MONO_TYPE_FNPTR) {
 			if (mono_class_is_nullable (mono_class_from_mono_type (sig->ret))) {
 				MonoClass *k = mono_class_from_mono_type (sig->ret);
 				guint8 *nullable_buf = (guint8 *)g_alloca (mono_class_value_size (k, NULL));
@@ -8390,7 +8407,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 				g_assert (res);
 
 				if (sig->ret->byref) {
-					MonoType* ret_byval = &mono_class_from_mono_type (sig->ret)->byval_arg;
+					MonoType* ret_byval = mono_class_get_type (mono_class_from_mono_type (sig->ret));
 					buffer_add_value (buf, ret_byval, mono_object_unbox (res), domain);
 				} else {
 					buffer_add_value (buf, sig->ret, mono_object_unbox (res), domain);
@@ -8401,7 +8418,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		}
 		if (out_this)
 			/* Return the new value of the receiver after the call */
-			buffer_add_value (buf, &m->klass->byval_arg, this_buf, domain);
+			buffer_add_value (buf, mono_class_get_type (m->klass), this_buf, domain);
 		if (out_args) {
 			buffer_add_int (buf, nargs);
 			for (i = 0; i < nargs; ++i) {
@@ -9088,7 +9105,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					req->modifiers [i].subclasses = decode_byte (p, &p, end);
 				else
 					req->modifiers [i].subclasses = TRUE;
-				DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? exc_class->name : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
+				DEBUG_PRINTF (1, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s%s).\n", exc_class ? mono_class_get_name (exc_class) : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : "", req->modifiers [i].subclasses ? ", include-subclasses" : "");
 				if (exc_class) {
 					req->modifiers [i].data.exc_class = exc_class;
 
@@ -9170,7 +9187,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
                 tls = (DebuggerTlsData *)mono_g_hash_table_lookup(thread_to_tls, THREAD_TO_INTERNAL(step_thread));
                 mono_loader_unlock();
 
-                if (tls->il2cpp_context.frameCount == 1 && depth == STEP_DEPTH_OUT)
+                if (tls->il2cpp_context->frameCount == 1 && depth == STEP_DEPTH_OUT)
                 {
                     g_free(req);
                     return ERR_NONE;
@@ -9328,7 +9345,7 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (err != ERR_NONE)
 			return err;
 
-		buffer_add_assemblyid (buf, domain, domain->domain->mbr.obj.vtable->klass->image->assembly);
+		buffer_add_assemblyid (buf, domain, m_domain_get_corlib (domain));
 		break;
 	}
 	case CMD_APPDOMAIN_CREATE_STRING: {
@@ -9429,7 +9446,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		guint32 token;
 		MonoMethod *m;
 
-		if (ass->image->dynamic) {
+		if (mono_image_is_dynamic (ass->image)) {
 			buffer_add_id (buf, 0);
 		} else {
 #ifdef RUNTIME_IL2CPP
@@ -9538,12 +9555,12 @@ module_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		MonoImage *image = decode_moduleid (p, &p, end, &domain, &err);
 		char *basename;
 
-		basename = g_path_get_basename (image->name);
+		basename = g_path_get_basename (mono_image_get_filename (image));
 		buffer_add_string (buf, basename); // name
 		buffer_add_string (buf, VM_IMAGE_GET_MODULE_NAME(image)); // scopename
-		buffer_add_string (buf, image->name); // fqname
+		buffer_add_string (buf, mono_image_get_filename (image)); // fqname
 		buffer_add_string (buf, mono_image_get_guid (image)); // guid
-		buffer_add_assemblyid (buf, domain, image->assembly); // assembly
+		buffer_add_assemblyid (buf, domain, mono_image_get_assembly (image)); // assembly
 		g_free (basename);
 		break;
 	}
@@ -9564,10 +9581,10 @@ field_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_FIELD_GET_INFO: {
 		MonoClassField *f = decode_fieldid (p, &p, end, &domain, &err);
 
-		buffer_add_string (buf, f->name);
-		buffer_add_typeid (buf, domain, f->parent);
-		buffer_add_typeid (buf, domain, mono_class_from_mono_type (f->type));
-		buffer_add_int (buf, f->type->attrs);
+		buffer_add_string (buf, mono_field_get_name (f));
+		buffer_add_typeid (buf, domain, mono_field_get_parent (f));
+		buffer_add_typeid (buf, domain, mono_class_from_mono_type (mono_field_get_type (f)));
+		buffer_add_int (buf, mono_type_get_attrs (mono_field_get_type (f)));
 		break;
 	}
 	default:
@@ -9580,7 +9597,7 @@ field_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 static void
 buffer_add_cattr_arg (Buffer *buf, MonoType *t, MonoDomain *domain, MonoObject *val)
 {
-	if (val && val->vtable->klass == mono_defaults.runtimetype_class) {
+	if (val && mono_object_get_class(val) == mono_defaults.runtimetype_class) {
 		/* Special case these so the client doesn't have to handle Type objects */
 		
 		buffer_add_byte (buf, VALUE_TYPE_ID_TYPE);
@@ -9762,7 +9779,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			int count, i;
 
 			if (mono_class_is_ginst (klass)) {
-				MonoGenericInst *inst = mono_class_get_generic_class(klass)->context.class_inst;
+				MonoGenericInst *inst = mono_generic_class_get_context (mono_class_get_generic_class (klass))->class_inst;
 
 				count = inst->type_argc;
 				buffer_add_int (buf, count);
@@ -9815,9 +9832,9 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		while ((f = mono_class_get_fields (klass, &iter))) {
 			buffer_add_fieldid (buf, domain, f);
-			buffer_add_string (buf, f->name);
-			buffer_add_typeid (buf, domain, mono_class_from_mono_type (mono_field_get_type(f)));
-			buffer_add_int (buf, mono_field_get_type(f)->attrs);
+			buffer_add_string (buf, mono_field_get_name (f));
+			buffer_add_typeid (buf, domain, mono_class_from_mono_type (mono_field_get_type (f)));
+			buffer_add_int (buf, mono_type_get_attrs (mono_field_get_type (f)));
 			i ++;
 		}
 		g_assert (i == nfields);
@@ -9835,10 +9852,10 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		while ((p = mono_class_get_properties (klass, &iter))) {
 			buffer_add_propertyid (buf, domain, p);
-			buffer_add_string (buf, p->name);
-			buffer_add_methodid (buf, domain, p->get);
-			buffer_add_methodid (buf, domain, p->set);
-			buffer_add_int (buf, p->attrs);
+			buffer_add_string (buf, mono_property_get_name (p));
+			buffer_add_methodid (buf, domain, mono_property_get_get_method (p));
+			buffer_add_methodid (buf, domain, mono_property_get_set_method (p));
+			buffer_add_int (buf, mono_type_get_attrs (mono_property_get_parent (p)));
 			i ++;
 		}
 		g_assert (i == nprops);
@@ -9954,11 +9971,11 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (err != ERR_NONE)
 				return err;
 
-			if (!(f->type->attrs & FIELD_ATTRIBUTE_STATIC))
+			if (!(mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC))
 				return ERR_INVALID_FIELDID;
 
 #ifdef RUNTIME_IL2CPP
-			if (!thread && f->offset == THREAD_STATIC_FIELD_OFFSET)
+			if (!thread && mono_field_get_offset (f) == THREAD_STATIC_FIELD_OFFSET)
 				return ERR_INVALID_FIELDID;
 #else
 			special_static_type = mono_class_field_get_special_static_type (f);
@@ -9969,8 +9986,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 #endif
 			/* Check that the field belongs to the object */
 			found = FALSE;
-			for (k = klass; k; k = k->parent) {
-				if (k ==  f->parent) {
+			for (k = klass; k; k = mono_class_get_parent(k)) {
+				if (k ==  mono_field_get_parent(f)) {
 					found = TRUE;
 					break;
 				}
@@ -9978,12 +9995,12 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (!found)
 				return ERR_INVALID_FIELDID;
 
-			vtable = mono_class_vtable (domain, f->parent);
-			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
+			vtable = mono_class_vtable (domain, mono_field_get_parent (f));
+			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (mono_field_get_type (f))));
 			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val, &error);
 			if (!is_ok (&error))
 				return ERR_INVALID_FIELDID;
-			buffer_add_value (buf, f->type, val, domain);
+			buffer_add_value (buf, mono_field_get_type (f), val, domain);
 			g_free (val);
 		}
 		break;
@@ -10002,7 +10019,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (err != ERR_NONE)
 				return err;
 
-			if (!(mono_field_get_type(f)->attrs & FIELD_ATTRIBUTE_STATIC))
+			if (!(mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC))
 				return ERR_INVALID_FIELDID;
 			if (mono_class_field_is_special_static (f))
 				return ERR_INVALID_FIELDID;
@@ -10108,7 +10125,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 		tclass = klass;
 
-		for (parent = tclass; parent; parent = parent->parent) {
+		for (parent = tclass; parent; parent = mono_class_get_parent (parent)) {
 			mono_class_setup_interfaces (parent, &error);
 			if (!mono_error_ok (&error))
 				return ERR_LOADER_ERROR;
@@ -10169,7 +10186,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 #ifndef RUNTIME_IL2CPP
 			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
 #else
-			buffer_add_int (buf, klass->initialized ? 1 : 0);
+			buffer_add_int (buf, m_class_is_initialized (klass) ? 1 : 0);
 #endif
 		else
 			buffer_add_int (buf, 0);
@@ -10695,7 +10712,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 			MonoString *s;
 			char *s2;
 
-			s = mono_ldstr_checked (domain, method->klass->image, mono_metadata_token_index (token), &error);
+			s = mono_ldstr_checked (domain, mono_class_get_image (method->klass), mono_metadata_token_index (token), &error);
 			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 			s2 = mono_string_to_utf8_checked (s, &error);
@@ -10721,7 +10738,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 					break;
 				}
 			} else {
-				val = mono_ldtoken_checked (method->klass->image, token, &handle_class, NULL, &error);
+				val = mono_ldtoken_checked (mono_class_get_image (method->klass), token, &handle_class, NULL, &error);
 				if (!val)
 					g_error ("Could not load token due to %s", mono_error_get_message (&error));
 			}
@@ -10806,7 +10823,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		}
 		ginst = mono_metadata_get_generic_inst (type_argc, type_argv);
 		g_free (type_argv);
-		tmp_context.class_inst = mono_class_is_ginst (method->klass) ? mono_class_get_generic_class (method->klass)->context.class_inst : NULL;
+		tmp_context.class_inst = mono_class_is_ginst (method->klass) ? mono_generic_class_get_context (mono_class_get_generic_class (method->klass))->class_inst : NULL;
 		tmp_context.method_inst = ginst;
 
 		inflated = mono_class_inflate_generic_method_checked (method, &tmp_context, &error);
@@ -11171,10 +11188,10 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_STACK_FRAME_GET_THIS: {
 		if (frame->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
 			return ERR_ABSENT_INFORMATION;
-		if (frame->api_method->klass->valuetype) {
+		if (mono_class_is_valuetype (frame->api_method->klass)) {
 			if (!sig->hasthis) {
 				MonoObject *p = NULL;
-				buffer_add_value (buf, &VM_DEFAULTS_OBJECT_CLASS->byval_arg, &p, frame->domain);
+				buffer_add_value (buf, mono_class_get_type (VM_DEFAULTS_OBJECT_CLASS), &p, frame->domain);
 			} else {
 #ifndef RUNTIME_IL2CPP
 				if (frame->ji->is_interp) {
@@ -11187,14 +11204,14 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					add_var (buf, jit, &frame->actual_method->klass->this_arg, jit->this_var, &frame->ctx, frame->domain, TRUE);
 				}
 #else
-				buffer_add_value_full (buf, &frame->actual_method->klass->this_arg, *frame->frame_context->thisArg, frame->domain, FALSE, NULL);
+				buffer_add_value_full (buf, mono_class_get_byref_type (frame->actual_method->klass), *frame->frame_context->thisArg, frame->domain, FALSE, NULL);
 				break;
 #endif
 			}
 		} else {
 			if (!sig->hasthis) {
 				MonoObject *p = NULL;
-				buffer_add_value (buf, &frame->actual_method->klass->byval_arg, &p, frame->domain);
+				buffer_add_value (buf, mono_class_get_type (frame->actual_method->klass), &p, frame->domain);
 			} else {
 #ifndef RUNTIME_IL2CPP
 				if (frame->ji->is_interp) {
@@ -11207,7 +11224,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					add_var (buf, jit, &frame->api_method->klass->byval_arg, jit->this_var, &frame->ctx, frame->domain, TRUE);
 				}
 #else
-				buffer_add_value_full (buf, &frame->actual_method->klass->byval_arg, *frame->frame_context->thisArg, frame->domain, FALSE, NULL);
+				buffer_add_value_full (buf, mono_class_get_type (frame->actual_method->klass), *frame->frame_context->thisArg, frame->domain, FALSE, NULL);
 #endif
 			}
 		}
@@ -11307,7 +11324,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		void *var;
 #endif
 
-		t = &frame->actual_method->klass->byval_arg;
+		t = mono_class_get_type (frame->actual_method->klass);
 		/* Checked by the sender */
 		g_assert (MONO_TYPE_ISSTRUCT (t));
 
@@ -11329,7 +11346,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			set_var (&frame->actual_method->klass->this_arg, var, &frame->ctx, frame->domain, val_buf, frame->reg_locations, &tls->restore_state.ctx);
 		}
 #else
-		il2cpp_set_var(val_buf, *frame->frame_context->thisArg, &frame->actual_method->klass->this_arg);
+		il2cpp_set_var(val_buf, *frame->frame_context->thisArg, mono_class_get_byref_type (frame->actual_method->klass));
 #endif
 		break;
 	}
@@ -11355,12 +11372,12 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	switch (command) {
 	case CMD_ARRAY_REF_GET_LENGTH:
-		buffer_add_int (buf, arr->obj.vtable->klass->rank);
+		buffer_add_int (buf, mono_class_get_rank (mono_object_get_class (&arr->obj)));
 		if (!arr->bounds) {
 			buffer_add_int (buf, arr->max_length);
 			buffer_add_int (buf, 0);
 		} else {
-			for (i = 0; i < arr->obj.vtable->klass->rank; ++i) {
+			for (i = 0; i < mono_class_get_rank (mono_object_get_class (&arr->obj)); ++i) {
 				buffer_add_int (buf, arr->bounds[i].length);
 				buffer_add_int (buf, arr->bounds[i].lower_bound);
 			}
@@ -11374,10 +11391,10 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// Reordered to avoid integer overflow
 		g_assert (!(index > arr->max_length - len));
 
-		esize = mono_array_element_size (arr->obj.vtable->klass);
+		esize = mono_array_element_size (mono_object_get_class (&arr->obj));
 		for (i = index; i < index + len; ++i) {
 			elem = (gpointer*)((char*)arr->vector + (i * esize));
-			buffer_add_value (buf, &arr->obj.vtable->klass->element_class->byval_arg, elem, VM_OBJECT_GET_DOMAIN(arr));
+			buffer_add_value (buf, mono_class_get_type (mono_class_get_element_class (mono_object_get_class (&arr->obj))), elem, VM_OBJECT_GET_DOMAIN(arr));
 		}
 		break;
 	case CMD_ARRAY_REF_SET_VALUES:
@@ -11388,10 +11405,10 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		// Reordered to avoid integer overflow
 		g_assert (!(index > arr->max_length - len));
 
-		esize = mono_array_element_size (arr->obj.vtable->klass);
+		esize = mono_array_element_size (mono_object_get_class (&arr->obj));
 		for (i = index; i < index + len; ++i) {
 			elem = (gpointer*)((char*)arr->vector + (i * esize));
-			decode_value (&arr->obj.vtable->klass->element_class->byval_arg, VM_OBJECT_GET_DOMAIN(arr), (guint8 *)elem, p, &p, end);
+			decode_value (mono_class_get_type (mono_class_get_element_class (mono_object_get_class (&arr->obj))), VM_OBJECT_GET_DOMAIN(arr), (guint8 *)elem, p, &p, end);
 		}
 		break;
 	default:
@@ -11476,10 +11493,10 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (err != ERR_NONE)
 			return err;
 
-		if (klass->byval_arg.type != MONO_TYPE_PTR)
+		if (mono_class_get_type (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
 
-		buffer_add_value (buf, &klass->element_class->byval_arg, (gpointer)addr, domain);
+		buffer_add_value (buf, mono_class_get_type (mono_class_get_element_class (klass)), (gpointer)addr, domain);
 
 		break;
 	default:
@@ -11519,7 +11536,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	MonoClass *obj_type;
 	gboolean remote_obj = FALSE;
 
-	obj_type = obj->vtable->klass;
+	obj_type = mono_object_get_class (obj);
 	if (mono_class_is_transparent_proxy (obj_type)) {
 		obj_type = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
 		remote_obj = TRUE;
@@ -11533,7 +11550,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		/* This handles transparent proxies too */
 		buffer_add_typeid (buf, VM_OBJECT_GET_DOMAIN(obj), mono_class_from_mono_type (((MonoReflectionType*)obj->vtable->type)->type));
 #else
-		buffer_add_typeid (buf, VM_OBJECT_GET_DOMAIN(obj), obj->vtable->klass);
+		buffer_add_typeid (buf, VM_OBJECT_GET_DOMAIN(obj), mono_object_get_class (obj));
 #endif //RUNTIME_IL2CPP
 		break;
 	case CMD_OBJECT_REF_GET_VALUES:
@@ -11546,8 +11563,8 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
-			for (k = obj_type; k; k = k->parent) {
-				if (k == f->parent) {
+			for (k = obj_type; k; k = mono_class_get_parent (k)) {
+				if (k == mono_field_get_parent (f)) {
 					found = TRUE;
 					break;
 				}
@@ -11555,22 +11572,22 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (!found)
 				return ERR_INVALID_FIELDID;
 
-			if (f->type->attrs  & FIELD_ATTRIBUTE_STATIC) {
+			if (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
 				if (mono_class_field_is_special_static (f))
 					return ERR_INVALID_FIELDID;
 
-				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
-				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), f->parent);
-				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
+				g_assert (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC);
+				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), mono_field_get_parent (f));
+				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (mono_field_get_type (f))));
 				mono_field_static_get_value_checked (vtable, f, val, &error);
 				if (!is_ok (&error)) {
 					mono_error_cleanup (&error); /* FIXME report the error */
 					return ERR_INVALID_OBJECT;
 				}
-				buffer_add_value (buf, f->type, val, VM_OBJECT_GET_DOMAIN(obj));
+				buffer_add_value (buf, mono_field_get_type (f), val, VM_OBJECT_GET_DOMAIN(obj));
 				g_free (val);
 			} else {
 				guint8 *field_value = NULL;
@@ -11588,9 +11605,9 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 #endif
 				}
 				else
-					field_value = (guint8*)(obj) + f->offset;
+					field_value = (guint8*)(obj) + mono_field_get_offset (f);
 
-				buffer_add_value (buf, f->type, field_value, VM_OBJECT_GET_DOMAIN(obj));
+				buffer_add_value (buf, mono_field_get_type (f), field_value, VM_OBJECT_GET_DOMAIN(obj));
 			}
 		}
 		break;
@@ -11604,8 +11621,8 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 			/* Check that the field belongs to the object */
 			found = FALSE;
-			for (k = obj_type; k; k = k->parent) {
-				if (k == f->parent) {
+			for (k = obj_type; k; k = mono_class_get_parent (k)) {
+				if (k == mono_field_get_parent (f)) {
 					found = TRUE;
 					break;
 				}
@@ -11613,18 +11630,18 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (!found)
 				return ERR_INVALID_FIELDID;
 
-			if (f->type->attrs & FIELD_ATTRIBUTE_STATIC) {
+			if (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC) {
 				guint8 *val;
 				MonoVTable *vtable;
 
 				if (mono_class_field_is_special_static (f))
 					return ERR_INVALID_FIELDID;
 
-				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
-				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), f->parent);
+				g_assert (mono_type_get_attrs (mono_field_get_type (f)) & FIELD_ATTRIBUTE_STATIC);
+				vtable = mono_class_vtable (VM_OBJECT_GET_DOMAIN(obj), mono_field_get_parent (f));
 
-				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
-				err = decode_value (f->type, VM_OBJECT_GET_DOMAIN(obj), val, p, &p, end);
+				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (mono_field_get_type (f))));
+				err = decode_value (mono_field_get_type (f), VM_OBJECT_GET_DOMAIN(obj), val, p, &p, end);
 				if (err != ERR_NONE) {
 					g_free (val);
 					return err;
@@ -11632,7 +11649,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				mono_field_static_set_value (vtable, f, val);
 				g_free (val);
 			} else {
-				err = decode_value (f->type, VM_OBJECT_GET_DOMAIN(obj), (guint8*)obj + f->offset, p, &p, end);
+				err = decode_value (mono_field_get_type (f), VM_OBJECT_GET_DOMAIN(obj), (guint8*)obj + mono_field_get_offset (f), p, &p, end);
 				if (err != ERR_NONE)
 					return err;
 			}
@@ -12195,8 +12212,8 @@ unity_process_breakpoint_inner(DebuggerTlsData *tls, gboolean from_signal, Il2Cp
 			SingleStepReq *ss_req = (SingleStepReq *)bp->req->info;
 			gboolean validFrame = FALSE;
 			validFrame |= ss_req->depth == STEP_DEPTH_INTO;
-			validFrame |= ss_req->depth == STEP_DEPTH_OVER && tls->il2cpp_context.frameCount <= ss_req->nframes;
-			validFrame |= ss_req->depth == STEP_DEPTH_OUT && tls->il2cpp_context.frameCount < ss_req->nframes;
+			validFrame |= ss_req->depth == STEP_DEPTH_OVER && tls->il2cpp_context->frameCount <= ss_req->nframes;
+			validFrame |= ss_req->depth == STEP_DEPTH_OUT && tls->il2cpp_context->frameCount < ss_req->nframes;
 			if (!validFrame)
 				continue;
 		}

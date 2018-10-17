@@ -6,7 +6,9 @@
 #include "gc/GarbageCollector.h"
 #include "gc/WriteBarrier.h"
 #include "gc/gc_wrapper.h"
+#if !UNITY_TINY
 #include "metadata/FieldLayout.h"
+#include "metadata/GenericMetadata.h"
 #include "vm/Assembly.h"
 #include "vm/AssemblyName.h"
 #include "vm/Class.h"
@@ -19,15 +21,13 @@
 #include "vm/Object.h"
 #include "vm/Profiler.h"
 #include "vm/Reflection.h"
-#include "vm/Runtime.h"
-#include "vm/String.h"
 #include "vm/Thread.h"
 #include "vm/ThreadPoolMs.h"
 #include "vm/Type.h"
+#endif
+#include "vm/Runtime.h"
+#include "vm/String.h"
 #include "vm-utils/Debugger.h"
-#include "metadata/GenericMetadata.h"
-
-extern "C" {
 
 #include <glib.h>
 #include <mono/utils/mono-coop-mutex.h>
@@ -41,7 +41,10 @@ extern "C" {
 #include <mono/metadata/profiler.h>
 #include <mono/sgen/sgen-conf.h>
 #include <mono/metadata/seq-points-data.h>
+
 #include "il2cpp-c-types.h"
+
+extern "C" {
 
 Il2CppMonoDefaults il2cpp_mono_defaults;
 Il2CppMonoDebugOptions il2cpp_mono_debug_options;
@@ -50,18 +53,30 @@ Il2CppMonoDebugOptions il2cpp_mono_debug_options;
 
 static MonoGHashTable *method_signatures;
 
+#if !UNITY_TINY
 static il2cpp::os::Mutex s_il2cpp_mono_loader_lock(false);
+#endif
 static uint64_t s_il2cpp_mono_loader_lock_tid = 0;
 
 MonoMethod* il2cpp_mono_image_get_entry_point (MonoImage *image)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoMethod*)il2cpp::vm::Image::GetEntryPoint((Il2CppImage*)image);
+#endif
 }
 
 const char* il2cpp_mono_image_get_filename (MonoImage *monoImage)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	Il2CppImage *image = (Il2CppImage*)monoImage;
 	return image->name;
+#endif
 }
 
 const char*  il2cpp_mono_image_get_guid (MonoImage *image)
@@ -71,17 +86,32 @@ const char*  il2cpp_mono_image_get_guid (MonoImage *image)
 
 MonoClass* il2cpp_mono_type_get_class (MonoType *type)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*) il2cpp::vm::Type::GetClass((Il2CppType*)type);
+#endif
 }
 
 mono_bool il2cpp_mono_type_is_struct (MonoType *type)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Type::IsStruct((Il2CppType*)type);
+#endif
 }
 
 mono_bool il2cpp_mono_type_is_reference (MonoType *type)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Type::IsReference((Il2CppType*)type);
+#endif
 }
 
 void il2cpp_mono_metadata_free_mh (MonoMethodHeader *mh)
@@ -91,6 +121,10 @@ void il2cpp_mono_metadata_free_mh (MonoMethodHeader *mh)
 
 Il2CppMonoMethodSignature* il2cpp_mono_method_signature (MonoMethod *m)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	MethodInfo* method = (MethodInfo*)m;
 
 	if (method_signatures == NULL)
@@ -129,6 +163,7 @@ Il2CppMonoMethodSignature* il2cpp_mono_method_signature (MonoMethod *m)
 	mono_g_hash_table_insert(method_signatures, method, sig);
 
 	return sig;
+#endif
 }
 
 static void il2cpp_mono_free_method_signature(gpointer unused1, gpointer value, gpointer unused2)
@@ -150,18 +185,27 @@ void il2cpp_mono_free_method_signatures()
 
 void il2cpp_mono_method_get_param_names (MonoMethod *m, const char **names)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	MethodInfo* method = (MethodInfo*)m;
 	uint32_t numberOfParameters = il2cpp::vm::Method::GetParamCount(method);
 	for (int i = 0; i < numberOfParameters; ++i)
 		names[i] = il2cpp::vm::Method::GetParamName(method, i);
+#endif
 }
 
 mono_bool il2cpp_mono_type_generic_inst_is_valuetype (MonoType *monoType)
 {
+ #if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	static const int kBitIsValueType = 1;
 	Il2CppType *type = (Il2CppType*)monoType;
 	const Il2CppTypeDefinition *typeDef = il2cpp::vm::MetadataCache::GetTypeDefinitionFromIndex(type->data.generic_class->typeDefinitionIndex);
 	return (typeDef->bitfield >> (kBitIsValueType - 1)) & 0x1;
+#endif
 }
 
 MonoMethodHeader* il2cpp_mono_method_get_header_checked (MonoMethod *method, MonoError *error)
@@ -177,7 +221,12 @@ gboolean il2cpp_mono_class_init (MonoClass *klass)
 
 MonoVTable* il2cpp_mono_class_vtable (MonoDomain *domain, MonoClass *klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoVTable*)((Il2CppClass*)klass)->vtable;
+#endif
 }
 
 MonoClassField* il2cpp_mono_class_get_field_from_name (MonoClass *klass, const char *name)
@@ -188,63 +237,123 @@ MonoClassField* il2cpp_mono_class_get_field_from_name (MonoClass *klass, const c
 
 int32_t il2cpp_mono_array_element_size (MonoClass *monoClass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	Il2CppClass *klass = (Il2CppClass*)monoClass;
 	return klass->element_size;
+#endif
 }
 
 int32_t il2cpp_mono_class_instance_size (MonoClass *klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::GetInstanceSize((Il2CppClass*)klass);
+#endif
 }
 
 int32_t il2cpp_mono_class_value_size (MonoClass *klass, uint32_t *align)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::GetValueSize((Il2CppClass*)klass, align);
+#endif
 }
 
 gboolean il2cpp_mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::IsAssignableFrom((Il2CppClass*)klass, (Il2CppClass*)oklass);
+#endif
 }
 
 MonoClass* il2cpp_mono_class_from_mono_type (MonoType *type)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp::vm::Class::FromIl2CppType((Il2CppType*)type);
+#endif
 }
 
 int il2cpp_mono_class_num_fields (MonoClass *klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::GetNumFields((Il2CppClass*)klass);
+#endif
 }
 
 int il2cpp_mono_class_num_methods (MonoClass *klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::GetNumMethods((Il2CppClass*)klass);
+#endif
 }
 
 int il2cpp_mono_class_num_properties (MonoClass *klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::GetNumProperties((Il2CppClass*)klass);
+#endif
 }
 
 MonoClassField* il2cpp_mono_class_get_fields (MonoClass* klass, gpointer *iter)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClassField*)il2cpp::vm::Class::GetFields((Il2CppClass*)klass, iter);
+#endif
 }
 
 MonoMethod* il2cpp_mono_class_get_methods (MonoClass* klass, gpointer *iter)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoMethod*)il2cpp::vm::Class::GetMethods((Il2CppClass*)klass, iter);
+#endif
 }
 
 MonoProperty* il2cpp_mono_class_get_properties (MonoClass* klass, gpointer *iter)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoProperty*)il2cpp::vm::Class::GetProperties((Il2CppClass*)klass, iter);
+#endif
 }
 
 const char* il2cpp_mono_field_get_name (MonoClassField *field)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return il2cpp::vm::Field::GetName((FieldInfo*)field);
+#endif
 }
 
 mono_unichar2* il2cpp_mono_string_chars (MonoString *monoStr)
@@ -273,7 +382,12 @@ uintptr_t il2cpp_mono_array_length (MonoArray *array)
 
 MonoString* il2cpp_mono_string_new (MonoDomain *domain, const char *text)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoString*)il2cpp::vm::String::New(text);
+#endif
 }
 
 
@@ -285,10 +399,15 @@ MonoString* il2cpp_mono_string_new_checked (MonoDomain *domain, const char *text
 
 char* il2cpp_mono_string_to_utf8_checked (MonoString *string_obj, MonoError *error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	Il2CppString *str = (Il2CppString*)string_obj;
 	std::string s = il2cpp::utils::StringUtils::Utf16ToUtf8(str->chars, str->length);
 	return g_strdup(s.c_str());
+#endif
 }
 
 int il2cpp_mono_object_hash (MonoObject* obj)
@@ -298,8 +417,13 @@ int il2cpp_mono_object_hash (MonoObject* obj)
 
 void* il2cpp_mono_object_unbox (MonoObject *monoObj)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	Il2CppObject *obj = (Il2CppObject*)monoObj;
 	return il2cpp::vm::Object::Unbox(obj);
+#endif
 }
 
 void il2cpp_mono_field_set_value (MonoObject *obj, MonoClassField *field, void *value)
@@ -309,12 +433,20 @@ void il2cpp_mono_field_set_value (MonoObject *obj, MonoClassField *field, void *
 
 void il2cpp_mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Field::StaticSetValue((FieldInfo*)field, value);
+#endif
 }
 
 uint32_t il2cpp_mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 {
+#if UNITY_TINY
+    return il2cpp::gc::GCHandle::NewWeakref((Il2CppObject*)obj);
+#else
 	return il2cpp::gc::GCHandle::NewWeakref((Il2CppObject*)obj, track_resurrection == 0 ? false : true);
+#endif
 }
 
 MonoObject*  il2cpp_mono_gchandle_get_target  (uint32_t gchandle)
@@ -334,6 +466,10 @@ void il2cpp_mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 
 int il2cpp_mono_reflection_parse_type_checked (char *name, Il2CppMonoTypeNameParse *monoInfo, MonoError *error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	error_init(error);
 	il2cpp::vm::TypeNameParseInfo *pInfo = new il2cpp::vm::TypeNameParseInfo();
 	std::string nameStr = name;
@@ -342,16 +478,26 @@ int il2cpp_mono_reflection_parse_type_checked (char *name, Il2CppMonoTypeNamePar
 	monoInfo->assembly.name = NULL;
 	monoInfo->il2cppTypeNameParseInfo = pInfo;
 	return parser.Parse();
+#endif
 }
 
 void il2cpp_mono_reflection_free_type_info (Il2CppMonoTypeNameParse *info)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	delete (il2cpp::vm::TypeNameParseInfo*)info->il2cppTypeNameParseInfo;
+#endif
 }
 
 MonoDomain* il2cpp_mono_get_root_domain (void)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoDomain*)il2cpp::vm::Domain::GetCurrent();
+#endif
 }
 
 void il2cpp_mono_runtime_quit (void)
@@ -361,7 +507,12 @@ void il2cpp_mono_runtime_quit (void)
 
 gboolean il2cpp_mono_runtime_is_shutting_down (void)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Runtime::IsShuttingDown() ? TRUE : FALSE;
+#endif
 }
 
 MonoDomain* il2cpp_mono_domain_get (void)
@@ -407,8 +558,13 @@ void il2cpp_mono_set_is_debugger_attached(gboolean attached)
 
 char* il2cpp_mono_type_full_name(MonoType* type)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	std::string name = il2cpp::vm::Type::GetName((Il2CppType*)type, IL2CPP_TYPE_NAME_FORMAT_FULL_NAME);
 	return g_strdup(name.c_str());
+#endif
 }
 
 char* il2cpp_mono_method_full_name(MonoMethod* method, gboolean signature)
@@ -418,22 +574,41 @@ char* il2cpp_mono_method_full_name(MonoMethod* method, gboolean signature)
 
 MonoThread* il2cpp_mono_thread_current()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoThread*)il2cpp::vm::Thread::Current();
+#endif
 }
 
 MonoThread* il2cpp_mono_thread_get_main()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoThread*)il2cpp::vm::Thread::Main();
+#endif
 }
 
 MonoThread* il2cpp_mono_thread_attach(MonoDomain* domain)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoThread*)il2cpp::vm::Thread::Attach((Il2CppDomain*)domain);
+#endif
 }
 
 void il2cpp_mono_thread_detach(MonoThread* thread)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Thread::Detach((Il2CppThread*)thread);
+#endif
 }
 
 void il2cpp_mono_domain_lock(MonoDomain* domain)
@@ -457,7 +632,12 @@ guint il2cpp_mono_aligned_addr_hash(gconstpointer ptr)
 
 MonoGenericInst* il2cpp_mono_metadata_get_generic_inst(int type_argc, MonoType** type_argv)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoGenericInst*)il2cpp::vm::MetadataCache::GetGenericInst((Il2CppType**)type_argv, type_argc);
+#endif
 }
 
 MonoMethod* il2cpp_mono_get_method_checked(MonoImage* image, guint32 token, MonoClass* klass, MonoGenericContext* context, MonoError* error)
@@ -473,8 +653,13 @@ SgenDescriptor il2cpp_mono_gc_make_root_descr_all_refs(int numbits)
 
 int il2cpp_mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	il2cpp::gc::GarbageCollector::RegisterRoot(start, size);
 	return 1;
+#endif
 }
 
 MonoGCDescriptor il2cpp_mono_gc_make_vector_descr (void)
@@ -495,17 +680,30 @@ void il2cpp_mono_class_setup_supertypes(MonoClass* klass)
 
 void il2cpp_mono_class_setup_vtable(MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Class::Init((Il2CppClass*)klass);
+#endif
 }
 
 void il2cpp_mono_class_setup_methods(MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Class::SetupMethods((Il2CppClass*)klass);
+#endif
 }
 
 gboolean il2cpp_mono_class_field_is_special_static(MonoClassField* field)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Field::IsNormalStatic((FieldInfo*)field) ? FALSE : TRUE;
+#endif
 }
 
 guint32 il2cpp_mono_class_field_get_special_static_type(MonoClassField* field)
@@ -516,51 +714,84 @@ guint32 il2cpp_mono_class_field_get_special_static_type(MonoClassField* field)
 
 MonoGenericContext* il2cpp_mono_class_get_context(MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoGenericContext*)&((Il2CppClass*)klass)->generic_class->context;
+#endif
 }
 
 MonoGenericContext* il2cpp_mono_method_get_context(MonoMethod* monoMethod)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	MethodInfo * method = (MethodInfo*)monoMethod;
 
 	if (!method->is_inflated || method->is_generic)
 		return NULL;
 
 	return (MonoGenericContext*) &((MethodInfo*)method)->genericMethod->context;
+#endif
 }
 
 MonoGenericContainer* il2cpp_mono_method_get_generic_container(MonoMethod* monoMethod)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	MethodInfo * method = (MethodInfo*)monoMethod;
 
 	if (method->is_inflated || !method->is_generic)
 		return NULL;
 
 	return (MonoGenericContainer*) method->genericContainer;
+#endif
 }
 
 MonoMethod* il2cpp_mono_class_inflate_generic_method_full_checked(MonoMethod* method, MonoClass* klass_hint, MonoGenericContext* context, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	return (MonoMethod*) il2cpp::metadata::GenericMetadata::Inflate((MethodInfo*)method, (Il2CppClass*)klass_hint, (Il2CppGenericContext*)context);
+#endif
 }
 
 MonoMethod* il2cpp_mono_class_inflate_generic_method_checked(MonoMethod* method, MonoGenericContext* context, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	return (MonoMethod*)il2cpp::metadata::GenericMetadata::Inflate((MethodInfo*)method, NULL, (Il2CppGenericContext*)context);
+#endif
 }
 
 void il2cpp_mono_loader_lock()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	s_il2cpp_mono_loader_lock.Lock();
 	s_il2cpp_mono_loader_lock_tid = il2cpp::os::Thread::CurrentThreadId();
+#endif
 }
 
 void il2cpp_mono_loader_unlock()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	s_il2cpp_mono_loader_lock_tid = 0;
 	s_il2cpp_mono_loader_lock.Unlock();
+#endif
 }
 
 void il2cpp_mono_loader_lock_track_ownership(gboolean track)
@@ -569,7 +800,12 @@ void il2cpp_mono_loader_lock_track_ownership(gboolean track)
 
 gboolean il2cpp_mono_loader_lock_is_owned_by_self()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return s_il2cpp_mono_loader_lock_tid == il2cpp::os::Thread::CurrentThreadId();
+#endif
 }
 
 gpointer il2cpp_mono_method_get_wrapper_data(MonoMethod* method, guint32 id)
@@ -580,24 +816,43 @@ gpointer il2cpp_mono_method_get_wrapper_data(MonoMethod* method, guint32 id)
 
 char* il2cpp_mono_type_get_name_full(MonoType* type, MonoTypeNameFormat format)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	std::string name = il2cpp::vm::Type::GetName((Il2CppType*)type, (Il2CppTypeNameFormat)format);
 	return g_strdup(name.c_str());
+#endif
 }
 
 gboolean il2cpp_mono_class_is_nullable(MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Class::IsNullable((Il2CppClass*)klass);
+#endif
 }
 
 MonoGenericContainer* il2cpp_mono_class_get_generic_container(MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     return (MonoGenericContainer*)il2cpp::vm::Class::GetGenericContainer((Il2CppClass*)klass);
+#endif
 }
 
 void il2cpp_mono_class_setup_interfaces(MonoClass* klass, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	error_init(error);
 	il2cpp::vm::Class::SetupInterfaces((Il2CppClass*)klass);
+#endif
 }
 
 enum {
@@ -622,6 +877,10 @@ enum {
 static gboolean
 method_nonpublic (MethodInfo* method, gboolean start_klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	switch (method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) {
 		case METHOD_ATTRIBUTE_ASSEM:
 			return (start_klass || il2cpp_defaults.generic_ilist_class);
@@ -632,10 +891,15 @@ method_nonpublic (MethodInfo* method, gboolean start_klass)
 		default:
 			return TRUE;
 	}
+#endif
 }
 
 GPtrArray* il2cpp_mono_class_get_methods_by_name(MonoClass* il2cppMonoKlass, const char* name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	GPtrArray *array;
 	Il2CppClass *klass = (Il2CppClass*)il2cppMonoKlass;
 	Il2CppClass *startklass;
@@ -719,6 +983,7 @@ handle_parent:
 		g_free (method_slots);*/
 
 	return array;
+#endif
 }
 
 gpointer il2cpp_mono_ldtoken_checked(MonoImage* image, guint32 token, MonoClass** handle_class, MonoGenericContext* context, MonoError* error)
@@ -729,7 +994,12 @@ gpointer il2cpp_mono_ldtoken_checked(MonoImage* image, guint32 token, MonoClass*
 
 MonoClass* il2cpp_mono_class_from_generic_parameter_internal(MonoGenericParam* param)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp::vm::Class::FromGenericParameter((Il2CppGenericParameter*)param);
+#endif
 }
 
 MonoClass* il2cpp_mono_class_load_from_name(MonoImage* image, const char* name_space, const char* name)
@@ -740,8 +1010,13 @@ MonoClass* il2cpp_mono_class_load_from_name(MonoImage* image, const char* name_s
 
 MonoGenericClass* il2cpp_mono_class_get_generic_class(MonoClass* monoClass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	Il2CppClass *klass = (Il2CppClass*)monoClass;
 	return (MonoGenericClass*)klass->generic_class;
+#endif
 }
 
 MonoInternalThread* il2cpp_mono_thread_internal_current()
@@ -756,16 +1031,28 @@ gboolean il2cpp_mono_thread_internal_is_current(MonoInternalThread* thread)
 
 void il2cpp_mono_thread_internal_abort(MonoInternalThread* thread, gboolean appdomain_unload)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Thread::RequestAbort((Il2CppInternalThread*)thread);
+#endif
 }
 
 void il2cpp_mono_thread_internal_reset_abort(MonoInternalThread* thread)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Thread::ResetAbort((Il2CppInternalThread*)thread);
+#endif
 }
 
 gunichar2* il2cpp_mono_thread_get_name(MonoInternalThread* this_obj, guint32* name_len)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	std::string name = il2cpp::vm::Thread::GetName((Il2CppInternalThread*)this_obj);
 
 	if (name_len != NULL)
@@ -774,12 +1061,17 @@ gunichar2* il2cpp_mono_thread_get_name(MonoInternalThread* this_obj, guint32* na
 	if (name.empty())
 		return NULL;
 	return g_utf8_to_utf16(name.c_str(), name.size(), NULL, NULL, NULL);
+#endif
 }
 
 void il2cpp_mono_thread_set_name_internal(MonoInternalThread* this_obj, MonoString* name, gboolean permanent, gboolean reset, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Thread::SetName((Il2CppInternalThread*)this_obj, (Il2CppString*)name);
 	error_init(error);
+#endif
 }
 
 void il2cpp_mono_thread_suspend_all_other_threads()
@@ -800,25 +1092,42 @@ Il2CppMonoRuntimeExceptionHandlingCallbacks* il2cpp_mono_get_eh_callbacks()
 
 void il2cpp_mono_nullable_init(guint8* buf, MonoObject* value, MonoClass* klass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::vm::Object::NullableInit(buf, (Il2CppObject*)value, (Il2CppClass*)klass);
+#endif
 }
 
 MonoObject* il2cpp_mono_value_box_checked(MonoDomain* domain, MonoClass* klass, gpointer value, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	return (MonoObject*)il2cpp::vm::Object::Box((Il2CppClass*)klass, value);
+#endif
 }
 
 void il2cpp_mono_field_static_get_value_checked(MonoVTable* vt, MonoClassField* field, void* value, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	error_init(error);
 	il2cpp::vm::Field::StaticGetValue((FieldInfo*)field, value);
+#endif
 }
 
 void il2cpp_mono_field_static_get_value_for_thread(MonoInternalThread* thread, MonoVTable* vt, MonoClassField* field, void* value, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	error_init(error);
 	il2cpp::vm::Field::StaticGetValueForThread((FieldInfo*)field, value, (Il2CppInternalThread*)thread);
+#endif
 }
 
 MonoObject* il2cpp_mono_field_get_value_object_checked(MonoDomain* domain, MonoClassField* field, MonoObject* obj, MonoError* error)
@@ -829,8 +1138,13 @@ MonoObject* il2cpp_mono_field_get_value_object_checked(MonoDomain* domain, MonoC
 
 MonoObject* il2cpp_mono_object_new_checked(MonoDomain* domain, MonoClass* klass, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	return (MonoObject*)il2cpp::vm::Object::New((Il2CppClass*)klass);
+#endif
 }
 
 MonoString* il2cpp_mono_ldstr_checked(MonoDomain* domain, MonoImage* image, guint32 idx, MonoError* error)
@@ -841,12 +1155,17 @@ MonoString* il2cpp_mono_ldstr_checked(MonoDomain* domain, MonoImage* image, guin
 
 MonoObject* il2cpp_mono_runtime_try_invoke(MonoMethod* method, void* obj, void** params, MonoObject** exc, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 
 	if (((MethodInfo*)method)->klass->valuetype)
 		obj = static_cast<Il2CppObject*>(obj) - 1;
 
 	return (MonoObject*)il2cpp::vm::Runtime::Invoke((MethodInfo*)method, obj, params, (Il2CppException**)exc);
+#endif
 }
 
 MonoObject* il2cpp_mono_runtime_invoke_checked(MonoMethod* method, void* obj, void** params, MonoError* error)
@@ -859,16 +1178,28 @@ void il2cpp_mono_gc_base_init()
 {
 }
 
+#if !UNITY_TINY
 static il2cpp::os::Mutex s_il2cpp_gc_root_lock(false);
+#endif
+
 int il2cpp_mono_gc_register_root(char* start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char* msg)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	il2cpp::gc::GarbageCollector::RegisterRoot(start, size);
 	return 1;
+#endif
 }
 
 void il2cpp_mono_gc_deregister_root(char* addr)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::gc::GarbageCollector::UnregisterRoot(addr);
+#endif
 }
 
 #ifndef HOST_WIN32
@@ -886,7 +1217,12 @@ gboolean il2cpp_mono_gc_is_moving()
 
 gint32 il2cpp_mono_environment_exitcode_get()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Runtime::GetExitCode();
+#endif
 }
 
 void il2cpp_mono_environment_exitcode_set(gint32 value)
@@ -896,31 +1232,53 @@ void il2cpp_mono_environment_exitcode_set(gint32 value)
 
 void il2cpp_mono_threadpool_suspend()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 #if NET_4_0
 	il2cpp::vm::ThreadPoolMs::Suspend();
 #endif // NET_4_0
+#endif
 }
 
 void il2cpp_mono_threadpool_resume()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 #if NET_4_0
 	il2cpp::vm::ThreadPoolMs::Resume();
 #endif // NET_4_0
+#endif
 }
 
 MonoImage* il2cpp_mono_assembly_get_image(MonoAssembly* assembly)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoImage*)il2cpp::vm::Assembly::GetImage((Il2CppAssembly*)assembly);
+#endif
 }
 
 gboolean il2cpp_mono_runtime_try_shutdown()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	il2cpp::vm::Runtime::Shutdown();
 	return TRUE;
+#endif
 }
 
 gboolean il2cpp_mono_verifier_is_method_valid_generic_instantiation(MonoMethod* method)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	if (!method)
 		return FALSE;
 
@@ -928,10 +1286,15 @@ gboolean il2cpp_mono_verifier_is_method_valid_generic_instantiation(MonoMethod* 
 		return TRUE;
 
 	return FALSE;
+#endif
 }
 
 MonoType* il2cpp_mono_reflection_get_type_checked(MonoImage* rootimage, MonoImage* image, Il2CppMonoTypeNameParse* info, gboolean ignorecase, gboolean* type_resolve, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 
 	Il2CppClass *klass = il2cpp::vm::Image::FromTypeNameParseInfo((Il2CppImage*)image, *((il2cpp::vm::TypeNameParseInfo*)info->il2cppTypeNameParseInfo), ignorecase);
@@ -939,17 +1302,28 @@ MonoType* il2cpp_mono_reflection_get_type_checked(MonoImage* rootimage, MonoImag
 		return NULL;
 
 	return (MonoType*)il2cpp::vm::Class::GetType(klass);
+#endif
 }
 
 MonoReflectionAssemblyHandle il2cpp_mono_assembly_get_object_handle(MonoDomain* domain, MonoAssembly* assembly, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoReflectionAssemblyHandle)il2cpp::vm::Reflection::GetAssemblyObject((const Il2CppAssembly *)assembly);
+#endif
 }
 
 MonoReflectionType* il2cpp_mono_type_get_object_checked(MonoDomain* domain, MonoType* type, MonoError* error)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	error_init(error);
 	return (MonoReflectionType*)il2cpp::vm::Reflection::GetTypeObject((const Il2CppType*)type);
+#endif
 }
 
 void il2cpp_mono_network_init()
@@ -1134,7 +1508,12 @@ gboolean il2cpp_mono_class_has_parent (MonoClass *klass, MonoClass *parent)
 
 MonoGenericParam* il2cpp_mono_generic_container_get_param (MonoGenericContainer *gc, int i)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoGenericParam*)il2cpp::vm::GenericContainer::GetGenericParameter((Il2CppGenericContainer*)gc, i);
+#endif
 }
 
 gboolean il2cpp_mono_find_seq_point (MonoDomain *domain, MonoMethod *method, gint32 il_offset, MonoSeqPointInfo **info, SeqPoint *seq_point)
@@ -1203,7 +1582,12 @@ void* il2cpp_mono_gc_alloc_fixed (size_t size, void* descr, MonoGCRootSource sou
 typedef void* (*Il2CppMonoGCLockedCallbackFunc) (void *data);
 void* il2cpp_mono_gc_invoke_with_gc_lock (Il2CppMonoGCLockedCallbackFunc func, void *data)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return il2cpp::gc::GarbageCollector::CallWithAllocLockHeld (func, data);
+#endif
 }
 
 // These functions expose the IL2CPP VM C++ API to C
@@ -1222,6 +1606,11 @@ MonoAssembly* il2cpp_domain_get_assemblies_iter(MonoAppDomain *domain, void* *it
 {
 	if (!iter)
 		return NULL;
+
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 
 	il2cpp::vm::AssemblyVector* assemblies = il2cpp::vm::Assembly::GetAllAssemblies();
 
@@ -1246,6 +1635,7 @@ MonoAssembly* il2cpp_domain_get_assemblies_iter(MonoAppDomain *domain, void* *it
 	}
 
 	return NULL;
+#endif
 }
 
 void il2cpp_start_debugger_thread()
@@ -1308,85 +1698,150 @@ gboolean il2cpp_mono_methods_match(MonoMethod* left, MonoMethod* right)
 
 MonoClass* il2cpp_class_get_nested_types_accepts_generic(MonoClass *monoClass, void* *iter)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	Il2CppClass *klass = (Il2CppClass*)monoClass;
 	if (klass->generic_class)
 		return NULL;
 
 	return (MonoClass*)il2cpp::vm::Class::GetNestedTypes(klass, iter);
+#endif
 }
 
 MonoClass* il2cpp_defaults_object_class()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp_defaults.object_class;
+#endif
 }
 
 guint8 il2cpp_array_rank(MonoArray *monoArr)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	Il2CppArray *arr = (Il2CppArray*)monoArr;
 	return arr->klass->rank;
+#endif
 }
 
 const char* il2cpp_image_name(MonoImage *monoImage)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	Il2CppImage *image = (Il2CppImage*)monoImage;
 	return image->name;
+#endif
 }
 
 guint8* il2cpp_field_get_address(MonoObject *obj, MonoClassField *monoField)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	FieldInfo *field = (FieldInfo*)monoField;
 	return (guint8*)obj + field->offset;
+#endif
 }
 
 MonoType* il2cpp_mono_object_get_type(MonoObject* object)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     return (MonoType*)&(((Il2CppObject*)object)->klass->byval_arg);
+#endif
 }
 
 MonoClass* il2cpp_defaults_exception_class()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp_defaults.exception_class;
+#endif
 }
 
 MonoImage* il2cpp_defaults_corlib_image()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoImage*)il2cpp_defaults.corlib;
+#endif
 }
 
 bool il2cpp_method_is_string_ctor(const MonoMethod * method)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	MethodInfo* methodInfo = (MethodInfo*)method;
 	return methodInfo->klass == il2cpp_defaults.string_class && !strcmp (methodInfo->name, ".ctor");
+#endif
 }
 
 MonoClass* il2cpp_defaults_void_class()
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp_defaults.void_class;
+#endif
 }
 
 void il2cpp_set_var(guint8* newValue, void *value, MonoType *localVariableTypeMono)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+#else
 	il2cpp::metadata::SizeAndAlignment sa = il2cpp::metadata::FieldLayout::GetTypeSizeAndAlignment((const Il2CppType*)localVariableTypeMono);
 	if (((Il2CppType*)localVariableTypeMono)->byref)
 		memcpy(*(void**)value, newValue, sa.size);
 	else
 		memcpy(value, newValue, sa.size);
+#endif
 }
 
 MonoMethod* il2cpp_get_interface_method(MonoClass* klass, MonoClass* itf, int slot)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	const VirtualInvokeData* data = il2cpp::vm::Class::GetInterfaceInvokeDataFromVTable((Il2CppClass*)klass, (Il2CppClass*)itf, slot);
 	if (!data)
 		return NULL;
 
 	return (MonoMethod*)data->method;
+#endif
 }
 
 gboolean il2cpp_field_is_deleted(MonoClassField *field)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
 	return il2cpp::vm::Field::IsDeleted((FieldInfo*)field);
+#endif
 }
 
+#if !UNITY_TINY
 struct TypeIterState
 {
 	il2cpp::vm::AssemblyVector* assemblies;
@@ -1395,12 +1850,17 @@ struct TypeIterState
 	il2cpp::vm::TypeVector types;
 	il2cpp::vm::TypeVector::iterator type;
 };
+#endif
 
 MonoClass* il2cpp_iterate_loaded_classes(void* *iter)
 {
 	if (!iter)
 		return NULL;
 
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	if (!*iter)
 	{
 		TypeIterState *state = new TypeIterState();
@@ -1409,12 +1869,12 @@ MonoClass* il2cpp_iterate_loaded_classes(void* *iter)
 		state->image = il2cpp::vm::Assembly::GetImage(*state->assembly);
 		il2cpp::vm::Image::GetTypes(state->image, true, &state->types);
 		state->type = state->types.begin();
-		*iter = state;	
+		*iter = state;
 		return (MonoClass*)*state->type;
 	}
 
 	TypeIterState *state = (TypeIterState*)*iter;
-	
+
 	state->type++;
 	if (state->type == state->types.end())
 	{
@@ -1432,6 +1892,7 @@ MonoClass* il2cpp_iterate_loaded_classes(void* *iter)
 	}
 
 	return (MonoClass*)*state->type;
+#endif
 }
 
 const char** il2cpp_get_source_files_for_type(MonoClass *klass, int *count)
@@ -1445,34 +1906,54 @@ const char** il2cpp_get_source_files_for_type(MonoClass *klass, int *count)
 
 MonoMethod* il2cpp_method_get_generic_definition(MonoMethodInflated *imethod)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	MethodInfo *method = (MethodInfo*)imethod;
 
 	if (!method->is_inflated || method->is_generic)
 		return NULL;
 
 	return (MonoMethod*)((MethodInfo*)imethod)->genericMethod->methodDefinition;
+#endif
 }
 
 
 MonoGenericInst* il2cpp_method_get_generic_class_inst(MonoMethodInflated *imethod)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	MethodInfo *method = (MethodInfo*)imethod;
 
 	if (!method->is_inflated || method->is_generic)
 		return NULL;
 
 	return (MonoGenericInst*)method->genericMethod->context.class_inst;
+#endif
 }
 
 MonoClass* il2cpp_generic_class_get_container_class(MonoGenericClass *gclass)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp::vm::GenericClass::GetTypeDefinition((Il2CppGenericClass*)gclass);
+#endif
 }
 
 
 MonoClass* il2cpp_mono_get_string_class (void)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
 	return (MonoClass*)il2cpp_defaults.string_class;
+#endif
 }
 
 Il2CppSequencePoint* il2cpp_get_sequence_point(int id)
@@ -1483,11 +1964,16 @@ Il2CppSequencePoint* il2cpp_get_sequence_point(int id)
     return NULL;
 #endif
 }
-    
+
 char* il2cpp_assembly_get_full_name(MonoAssembly *assembly)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     std::string s = il2cpp::vm::AssemblyName::AssemblyNameToString(assembly->aname);
     return g_strdup(s.c_str());
+#endif
 }
 
 const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint)
@@ -1501,26 +1987,105 @@ const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint)
 
 const MonoClass* il2cpp_get_class_from_index(int index)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     if (index < 0)
         return NULL;
 
     return il2cpp::vm::MetadataCache::GetTypeInfoFromTypeIndex(index);
+#endif
 }
 
 const MonoType* il2cpp_get_type_from_index(int index)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     return il2cpp::vm::MetadataCache::GetIl2CppTypeFromIndex(index);
+#endif
 }
 
 const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* context)
 {
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
     return il2cpp::metadata::GenericMetadata::InflateIfNeeded(type, context, true);
+#endif
 }
 
 void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes)
 {
 #if IL2CPP_MONO_DEBUGGER
     il2cpp::utils::Debugger::GetMethodExecutionContextInfo(method, executionContextInfoCount, executionContextInfo, headerInfo, scopes);
+#endif
+}
+
+Il2CppThreadUnwindState* il2cpp_debugger_get_thread_context ()
+{
+#if IL2CPP_MONO_DEBUGGER
+    return il2cpp::utils::Debugger::GetThreadStatePointer();
+#else
+    return NULL;
+#endif
+}
+
+MonoGenericClass* il2cpp_m_type_get_generic_class(MonoType* type)
+{
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
+    return (MonoGenericClass*)((Il2CppType*)type)->data.generic_class;
+#endif
+}
+
+mono_bool il2cpp_mono_image_is_dynamic(MonoImage *image)
+{
+    return false;
+}
+
+const MonoAssembly* il2cpp_m_domain_get_corlib (MonoDomain *domain)
+{
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
+    return il2cpp::vm::Image::GetAssembly(il2cpp_defaults_corlib_image());
+#endif
+}
+
+MonoGenericContext* il2cpp_mono_generic_class_get_context (MonoGenericClass *gclass)
+{
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
+    return il2cpp::vm::GenericClass::GetContext((Il2CppGenericClass*)gclass);
+#endif
+}
+
+mono_bool il2cpp_m_class_is_initialized (MonoClass* klass)
+{
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return false;
+#else
+    return ((Il2CppClass*)klass)->initialized;
+#endif
+}
+
+MonoType* il2cpp_mono_class_get_byref_type (MonoClass *klass)
+{
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return NULL;
+#else
+    return (MonoType*)il2cpp::vm::Class::GetByrefType((Il2CppClass*)klass);
 #endif
 }
 

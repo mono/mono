@@ -1321,6 +1321,12 @@ mono_domain_get_friendly_name (MonoDomain *domain)
 	return domain->friendly_name;
 }
 
+MonoAssembly*
+m_domain_get_corlib (MonoDomain *domain)
+{
+    return domain->domain->mbr.obj.vtable->klass->image->assembly;
+}
+
 /*
  * mono_domain_alloc:
  *

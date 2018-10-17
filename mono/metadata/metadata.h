@@ -351,6 +351,9 @@ mono_type_get_signature  (MonoType *type);
 MONO_API MonoClass*
 mono_type_get_class      (MonoType *type);
 
+MonoGenericClass*
+m_type_get_generic_class      (MonoType *type);
+
 MONO_API MonoArrayType*
 mono_type_get_array_type (MonoType *type);
 
