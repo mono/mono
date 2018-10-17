@@ -213,6 +213,7 @@ common_sources = \
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
+	external-only.c		\
 	external-only.h		\
 	w32file.c		\
 	w32file.h		\
