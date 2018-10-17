@@ -5346,7 +5346,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 	res = mono_marshal_alloc_hglobal (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 
 	return res;
 }
@@ -5363,14 +5363,14 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gsize size, MonoError *error)
 {
 	if (ptr == NULL) {
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 		return NULL;
 	}
 
 	gpointer const res = mono_marshal_realloc_hglobal (ptr, size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 
 	return res;
 }
@@ -5395,7 +5395,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoE
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 
 	return res;
 }
@@ -5406,7 +5406,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size,
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
 	if (!res)
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 
 	return res;
 }
@@ -5431,7 +5431,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr,
 	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
 
 	if (!res) {
-		mono_set_pending_exception (mono_domain_get ()->out_of_memory_ex);
+		mono_error_set_out_of_memory (error, "");
 		return NULL;
 	}
 	return res;
