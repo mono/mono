@@ -95,9 +95,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
-ifdef ENABLE_WASM_CROSS
 wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
-endif
 
 endef
 
@@ -159,9 +157,7 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
-ifdef ENABLE_WASM_CROSS
 wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
-endif
 
 endef
 
