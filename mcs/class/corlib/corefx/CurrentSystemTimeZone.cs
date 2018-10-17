@@ -23,7 +23,6 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-    [Serializable]
     partial class CurrentSystemTimeZone
     {
         private DaylightTime GetCachedDaylightChanges(int year)

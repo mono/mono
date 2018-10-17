@@ -60,10 +60,8 @@ endif
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY_SUBDIR),$(LIBRARY_SUBDIR)/)
 
 ifdef RESOURCE_STRINGS
-ifneq (basic, $(PROFILE))
 RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
 IL_REPLACE_FILES += $(IL_REPLACE:%=--ilreplace:%)
-endif
 endif
 
 ifdef ENFORCE_LIBRARY_WARN_AS_ERROR

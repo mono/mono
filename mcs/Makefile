@@ -35,7 +35,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then $(MAKE) -C ../runtime; fi
+	@if [ "$(NO_DIR_CHECK)" = "" ]; then $(MAKE) -C ../runtime; fi
 
 # fun specialty targets
 

@@ -38,7 +38,6 @@ build_PARALLEL_SUBDIRS = \
 	System.Drawing
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs
 
 build_SUBDIRS += \
 	Mono.Security \

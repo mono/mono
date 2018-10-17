@@ -24,7 +24,7 @@ if (typeof console !== "undefined") {
 
 fail_exec = function(reason) {
 	print (reason);
-	throw "FAIL";
+	wasm_exit (1);
 }
 
 try {
@@ -33,7 +33,7 @@ try {
 	read = WScript.LoadBinaryFile;
 	fail_exec = function(reason) {
 		print (reason);
-		WScript.Quit(1);
+		wasm_exit (1);
 	}
 } catch(e) {}
 
@@ -55,13 +55,43 @@ function inspect_object (o){
     return r;
 }
 
-load ("config.js");
+// Preprocess arguments
+var args = testArguments;
+print("Arguments: " + testArguments);
+profilers = [];
+setenv = {};
+while (true) {
+	if (args [0].startsWith ("--profile=")) {
+		var arg = args [0].substring ("--profile=".length);
+
+		profilers.push (arg);
+
+		args = args.slice (1);
+	} else if (args [0].startsWith ("--setenv=")) {
+		var arg = args [0].substring ("--setenv=".length);
+		var parts = arg.split ('=');
+		if (parts.length != 2)
+			fail_exec ("Error: malformed argument: '" + args [0]);
+		setenv [parts [0]] = parts [1];
+		args = args.slice (1);
+	} else {
+		break;
+	}
+}
+
+load ("mono-config.js");
 
 var Module = { 
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
 	onRuntimeInitialized: function () {
+		// Have to set env vars here to enable setting MONO_LOG_LEVEL etc.
+		var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+		for (var variable in setenv) {
+			wasm_setenv (variable, setenv [variable]);
+		}
+
 		MONO.mono_load_runtime_and_bcl (
 			config.vfs_prefix,
 			config.deploy_prefix,
@@ -104,6 +134,8 @@ var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point
 var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
 var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
 var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
+var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
 
 const IGNORE_PARAM_COUNT = -1;
 
@@ -111,18 +143,11 @@ var App = {
     init: function () {
 
 		Module.print("Initializing.....");
-		Module.print("Arguments: " + testArguments);
 
-		var args = testArguments;
-
-		if (args [0].startsWith ("--profile=")) {
-			var arg = args [0].substring ("--profile=".length);
-
-			var init = Module.cwrap ('mono_wasm_load_profiler_' + arg, 'void', ['string'])
+		for (var i = 0; i < profilers.length; ++i) {
+			var init = Module.cwrap ('mono_wasm_load_profiler_' + profilers [i], 'void', ['string'])
 
 			init ("");
-
-			args = args.slice (1);
 		}
 
 		if (args[0] == "--regression") {

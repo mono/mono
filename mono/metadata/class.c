@@ -3747,7 +3747,7 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 			MonoReflectionTypeBuilder *tb = mono_class_get_ref_info_raw (candidate); /* FIXME use handles */
 			int j;
 			if (tb && tb->interfaces) {
-				for (j = mono_array_length (tb->interfaces) - 1; j >= 0; --j) {
+				for (j = mono_array_length_internal (tb->interfaces) - 1; j >= 0; --j) {
 					MonoReflectionType *iface = mono_array_get (tb->interfaces, MonoReflectionType*, j);
 					MonoClass *iface_class;
 
@@ -4794,6 +4794,27 @@ mono_field_get_name (MonoClassField *field)
 }
 
 /**
+ * mono_field_get_type_internal:
+ * \param field the \c MonoClassField to act on
+ * \returns \c MonoType of the field.
+ */
+MonoType*
+mono_field_get_type_internal (MonoClassField *field)
+{
+	MonoType *type = field->type;
+	if (type)
+		return type;
+
+	ERROR_DECL (error);
+	type = mono_field_get_type_checked (field, error);
+	if (!mono_error_ok (error)) {
+		mono_trace_warning (MONO_TRACE_TYPE, "Could not load field's type due to %s", mono_error_get_message (error));
+		mono_error_cleanup (error);
+	}
+	return type;
+}
+
+/**
  * mono_field_get_type:
  * \param field the \c MonoClassField to act on
  * \returns \c MonoType of the field.
@@ -4801,18 +4822,15 @@ mono_field_get_name (MonoClassField *field)
 MonoType*
 mono_field_get_type (MonoClassField *field)
 {
-	ERROR_DECL (error);
-	MonoType *type;
+	MonoType *type = field->type;
+	if (type)
+		return type;
+
 	MONO_ENTER_GC_UNSAFE;
-	type = mono_field_get_type_checked (field, error);
-	if (!mono_error_ok (error)) {
-		mono_trace_warning (MONO_TRACE_TYPE, "Could not load field's type due to %s", mono_error_get_message (error));
-		mono_error_cleanup (error);
-	}
+	type = mono_field_get_type_internal (field);
 	MONO_EXIT_GC_UNSAFE;
 	return type;
 }
-
 
 /**
  * mono_field_get_type_checked:
@@ -4825,8 +4843,10 @@ MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error)
 {
 	error_init (error);
-	if (!field->type)
-		mono_field_resolve_type (field, error);
+	MonoType *type = field->type;
+	if (type)
+		return type;
+	mono_field_resolve_type (field, error);
 	return field->type;
 }
 
@@ -5555,11 +5575,11 @@ gboolean
 mono_method_can_access_field (MonoMethod *method, MonoClassField *field)
 {
 	/* FIXME: check all overlapping fields */
-	int can = can_access_member (method->klass, field->parent, NULL, mono_field_get_type (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+	int can = can_access_member (method->klass, field->parent, NULL, mono_field_get_type_internal (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
 	if (!can) {
 		MonoClass *nested = m_class_get_nested_in (method->klass);
 		while (nested) {
-			can = can_access_member (nested, field->parent, NULL, mono_field_get_type (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+			can = can_access_member (nested, field->parent, NULL, mono_field_get_type_internal (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
 			if (can)
 				return TRUE;
 			nested = m_class_get_nested_in (nested);

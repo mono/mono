@@ -1122,9 +1122,10 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveNotFoundException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/EndOfStreamException.cs
-../referencesource/mscorlib/system/io/ioexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/IOException.cs
 ../referencesource/mscorlib/system/io/fileinfo.cs
-../referencesource/mscorlib/system/io/fileloadexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/FileLoadException.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/FileLoadException.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileNotFoundException.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
 ../referencesource/mscorlib/system/io/filesystemenumerable.cs

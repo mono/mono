@@ -248,7 +248,7 @@ class Driver {
 			sdkdir = Path.Combine (tool_prefix, "../out");
 		} else {
 			framework_prefix = Path.Combine (tool_prefix, "framework");
-			bcl_prefix = Path.Combine (tool_prefix, "bcl");
+			bcl_prefix = Path.Combine (tool_prefix, "wasm-bcl/wasm");
 			sdkdir = tool_prefix;
 		}
 		bcl_facades_prefix = Path.Combine (bcl_prefix, "Facades");
@@ -296,7 +296,7 @@ class Driver {
 		if (add_binding || true)
 			config += "\tadd_bindings: function() { " + $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");" + " }\n";
 		config += "}\n";
-		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "config.js");
+		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "mono-config.js");
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
@@ -358,7 +358,7 @@ class Driver {
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
-		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-mono-sgen");
+		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
 		ninja.WriteLine ("emcc_flags = -Os -g -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'FS_createPath\', \'FS_createDataFile\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\"");
@@ -380,21 +380,21 @@ class Driver {
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
 
-		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting $linker_args; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $bcl_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
-		ninja.WriteLine ("build $appdir/config.js: cpifdiff $builddir/config.js");
+		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (enable_aot) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
 			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
-			ninja.WriteLine ("  flags = -DENABLE_AOT=1");
+			ninja.WriteLine ("  flags = -DENABLE_AOT=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");

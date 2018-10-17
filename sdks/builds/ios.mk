@@ -341,16 +341,5 @@ $(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,ll
 # 64->arm32 cross compiler
 $(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,ios-target32,llvm-llvm64,arm-apple-darwin10))
 
-##
-# Parameters
-#  $(1): build profiles
-#  $(2): test profile
-define iOSBclTemplate
-
-$$(eval $$(call BclTemplate,ios,$(1),$(2)))
-
+$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime,monotouch monotouch_tv monotouch_watch))
 ios_TARGETS += ios-bcl
-
-endef
-
-$(eval $(call iOSBclTemplate,monotouch monotouch_tv monotouch_watch monotouch_runtime monotouch_tv_runtime monotouch_watch_runtime,monotouch))
