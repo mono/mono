@@ -222,9 +222,7 @@ namespace System.Xml.Serialization
                                        return ReadTypedPrimitive(AnyType);
                                else {
                                        XmlTypeMapping realMap = typeMap.GetRealElementMap(Reader.LocalName, Reader.NamespaceURI);
-                                       if (realMap == null)
-                                               throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)t);
-                                       if (realMap != typeMap)
+                                       if (realMap != null && realMap != typeMap)
                                                return ReadObject(realMap, false, false);
                                }
                        }
