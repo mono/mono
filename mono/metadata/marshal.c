@@ -5384,7 +5384,7 @@ mono_marshal_free_hglobal (gpointer ptr)
 #endif
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr)
 {
 	mono_marshal_free_hglobal (ptr);
 }
