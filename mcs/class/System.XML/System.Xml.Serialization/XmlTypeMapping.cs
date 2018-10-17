@@ -404,7 +404,7 @@ namespace System.Xml.Serialization
                                                selected = info;
                                        }
                                }
-                               else if (info.MappedType.DerivedTypes.Count > 0) {
+                               else if (info.MappedType != null && info.MappedType.DerivedTypes.Count > 0) {
                                        foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes) {
                                                if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
                                                        if (info.ExplicitOrder < minimalOrder)
