@@ -786,7 +786,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUn
 
 ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk);
 
 ICALL_EXPORT
 void*

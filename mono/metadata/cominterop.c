@@ -1628,7 +1628,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUn
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert (pUnk);
 	return mono_IUnknown_Release (pUnk);
@@ -3599,7 +3599,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *p
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert_not_reached ();
 	return 0;
