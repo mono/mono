@@ -778,7 +778,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateIn
 
 ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk);
 
 ICALL_EXPORT
 int

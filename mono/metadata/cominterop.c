@@ -1616,7 +1616,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 #define MONO_E_DISPID_UNKNOWN      (gint32)-1
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
 	return mono_IUnknown_AddRef (pUnk);
 }
@@ -3592,7 +3592,7 @@ mono_marshal_free_ccw (MonoObject* object)
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
 	g_assert_not_reached ();
 	return 0;
