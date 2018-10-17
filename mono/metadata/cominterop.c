@@ -1622,7 +1622,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *p
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
 {
 	return mono_IUnknown_QueryInterface (pUnk, riid, ppv);
 }
@@ -3606,7 +3606,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
 {
 	g_assert_not_reached ();
 	return 0;
