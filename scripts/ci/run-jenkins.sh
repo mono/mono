@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -xe
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
@@ -99,7 +99,7 @@ if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
+if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
@@ -134,7 +134,7 @@ if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
