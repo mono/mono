@@ -57,6 +57,11 @@
 #include "external-only.h"
 #include "monitor.h"
 
+// Exports do not work portably/reliably if compiled separately.
+// They must be in .o/.obj files otherwise referenced.
+// .def files work better in this regard.
+#include "external-only.c"
+
 static void
 get_default_field_value (MonoDomain* domain, MonoClassField *field, void *value, MonoError *error);
 

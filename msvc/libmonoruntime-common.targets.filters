@@ -100,9 +100,9 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\exception-internals.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\external-only.c">
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\external-only.c">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\external-only.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>

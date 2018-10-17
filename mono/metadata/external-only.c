@@ -16,7 +16,6 @@
 #include "class-init.h"
 #include "marshal.h"
 #include "object.h"
-#include "external-only.h"
 
 /* GC handles support
  *
