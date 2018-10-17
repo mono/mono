@@ -25,6 +25,7 @@ namespace System
 {
     partial class CurrentSystemTimeZone
     {
+        // copied from CoreRT
         private DaylightTime GetCachedDaylightChanges(int year)
         {
             object objYear = (object)year;
