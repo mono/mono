@@ -4840,14 +4840,14 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 }
 
 #ifndef HOST_WIN32
-static inline void*
+static void*
 mono_marshal_alloc_co_task_mem (size_t size)
 {
-	if ((gulong)size == 0)
+	if (size == 0)
 		/* This returns a valid pointer for size 0 on MS.NET */
 		size = 4;
 
-	return g_try_malloc ((gulong)size);
+	return g_try_malloc (size);
 }
 #endif
 
@@ -5401,7 +5401,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoE
 }
 
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size, MonoError *error)
 {
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
@@ -5421,7 +5421,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 static inline gpointer
 mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 {
-	return g_try_realloc (ptr, (gulong)size);
+	return g_try_realloc (ptr, size);
 }
 #endif
 
