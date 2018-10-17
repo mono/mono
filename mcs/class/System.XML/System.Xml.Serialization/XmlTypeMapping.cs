@@ -427,7 +427,7 @@ namespace System.Xml.Serialization
                        foreach (XmlTypeMapElementInfo info in _elements.Values)
                                if (info.ElementName == name && info.Namespace == ns)
                                        return info;
-                               else if (info.MappedType.DerivedTypes.Count > 0) {
+                               else if (info.MappedType != null && info.MappedType.DerivedTypes.Count > 0) {
                                        foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes)
                                                if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
                                                    return info;
