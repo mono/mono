@@ -4178,7 +4178,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	tls = g_new0 (DebuggerTlsData, 1);
 #endif
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Reference");
-	mono_gc_wbarrier_set_field(tls, (void**)&tls->thread, thread);
+	mono_gc_wbarrier_generic_store((void**)&tls->thread, thread);
 #ifdef RUNTIME_IL2CPP
 	tls->il2cpp_context = il2cpp_debugger_get_thread_context ();
 #endif	
@@ -4218,7 +4218,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 #ifndef RUNTIME_IL2CPP
 			MONO_GC_UNREGISTER_ROOT (tls->thread);
 #endif
-			mono_gc_wbarrier_set_field(tls, (void**)&tls->thread, NULL);
+			mono_gc_wbarrier_generic_store((void**)&tls->thread, NULL);
 		}
 	}
 	mono_loader_unlock ();
@@ -7730,7 +7730,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 					g_free (vtype_buf);
 					return err;
 				}
-				mono_gc_wbarrier_set_field(NULL, (void**)addr, mono_value_box_checked (d, klass, vtype_buf, &error));
+				mono_gc_wbarrier_generic_store((void**)addr, mono_value_box_checked (d, klass, vtype_buf, &error));
 				mono_error_cleanup (&error);
 				g_free (vtype_buf);
 			} else {
