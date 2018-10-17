@@ -16,6 +16,7 @@ using System.Runtime.Serialization;
 using NUnit.Framework;
 
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace MonoTests.System
 {
