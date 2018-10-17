@@ -28,6 +28,20 @@
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
 
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.TimeZone.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.FreeLibrary.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.TimeZone.Registry.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.MUI.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.LoadLibraryEx.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.MAX_PATH.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/User32/Interop.LoadString.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeLibraryHandle.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.AdjustmentRule.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.StringSerializer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.TransitionTime.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.Win32.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.cs
+
 corert/RuntimeImports.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Number.Windows.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs

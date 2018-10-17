@@ -22,6 +22,7 @@ namespace System
 		public static bool IsOpenSUSE => false;
 		public static bool IsUbuntu1404 => false;
 		public static bool IsNotRedHatFamily6 => true;
+		public static bool IsMacOsHighSierraOrHigher => true;
 
 		public static bool IsNetfx462OrNewer => false;
 
