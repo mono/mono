@@ -1,4 +1,3 @@
-../../../build/common/MonoNativeConfig.cs
 Mono/NativePlatformTest.cs
 ../Mono/MonoNativePlatform.cs
 ../Mono/MonoNativePlatformType.cs
