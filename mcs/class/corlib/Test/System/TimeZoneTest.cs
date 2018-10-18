@@ -348,12 +348,11 @@ public class TimeZoneTest {
 				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during " + year + ".");
 
 			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
-			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(61));
+			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(1));
 
 //			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
 			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
 			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
-			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
 		}
 
 
