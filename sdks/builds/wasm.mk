@@ -6,12 +6,19 @@ EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
+
+.stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git pull
+	touch $@
+
+.stamp-wasm-install-and-select-the-right-emsdk: .stamp-wasm-checkout-and-update-emsdk
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
-	-cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && patch -p1 < $(TOP)/sdks/builds/emsdk-eh.diff
+	-cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && patch -N -p1 < $(TOP)/sdks/builds/emsdk-eh.diff 
+	touch $@
 
 .PHONY: provision-wasm
-provision-wasm: | $(EMSCRIPTEN_SDK_DIR)
+provision-wasm: .stamp-wasm-install-and-select-the-right-emsdk
 
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
