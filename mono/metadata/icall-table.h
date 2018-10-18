@@ -60,7 +60,6 @@ typedef MonoType *MonoType_ptr;
 typedef MonoTypedRef *MonoTypedRef_ptr;
 typedef gunichar2 *mono_bstr;
 typedef const gunichar2 *mono_bstr_const;
-typedef MonoIUnknown *MonoIUnknown_ptr;
 typedef unsigned *unsigned_ptr;
 typedef mono_unichar2 *mono_unichar2_ptr;
 typedef WSABUF *WSABUF_ptr;
@@ -135,7 +134,6 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_PInfo			ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_mono_bstr			ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_mono_bstr_const		ICALL_HANDLES_WRAP_NONE
-#define MONO_HANDLE_TYPE_WRAP_MonoIUnknown_ptr		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_unsigned_ptr		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_mono_unichar2_ptr		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoImage_ptr		ICALL_HANDLES_WRAP_NONE
@@ -180,9 +178,6 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_guint32_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_guint64_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gpointer_ptr		ICALL_HANDLES_WRAP_NONE
-
-// FIXME Use of gulong is a mistake. (https://github.com/mono/mono/pull/11211 fixes it)
-#define MONO_HANDLE_TYPE_WRAP_gulong   			ICALL_HANDLES_WRAP_NONE
 
 // Please keep this sorted (grep ICALL_HANDLES_WRAP_OBJ$ | sort)
 #define MONO_HANDLE_TYPE_WRAP_MonoAppContext 			ICALL_HANDLES_WRAP_OBJ
