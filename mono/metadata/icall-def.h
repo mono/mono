@@ -45,7 +45,7 @@
  *
  * HANDLES(icallid, methodname, cfuncptr, return-type, number-of-parmeters, (parameter-types))
  * types:
- *   managed types are just MonoObject, MonoString, etc. * and Handle are implied.
+ *   managed types are just MonoObject, MonoString, etc. `*` and Handle prefix are appended automatically.
  *   Types must be single identifiers, and be handled in icall-table.h.
  *   MonoError is added to the list automatically.
  *   A function with no parameters is "0, ()"
