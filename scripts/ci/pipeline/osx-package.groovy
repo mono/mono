@@ -9,7 +9,7 @@ def commitHash = null
 def utils = null
 properties([compressBuildLog()])
 
-node ("osx-amd64") {
+node ("mono-package") {
     ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
