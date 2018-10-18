@@ -1931,7 +1931,7 @@ collect_pred_seq_points (TransformData *td, InterpBasicBlock *bb, SeqPoint *seqp
 }
 
 static void
-save_seq_points (TransformData *td)
+save_seq_points (TransformData *td, MonoJitInfo *jinfo)
 {
 	InterpMethod *rtm = td->rtm;
 	GByteArray *array;
@@ -2018,6 +2018,8 @@ save_seq_points (TransformData *td)
 	mono_domain_lock (domain);
 	g_hash_table_insert (domain_jit_info (domain)->seq_points, rtm->method, info);
 	mono_domain_unlock (domain);
+
+	jinfo->seq_points = info;
 }
 
 static void
@@ -4978,7 +4980,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		}
 	}
 
-	save_seq_points (td);
+	save_seq_points (td, jinfo);
 
 exit:
 	mono_basic_block_free (original_bb);

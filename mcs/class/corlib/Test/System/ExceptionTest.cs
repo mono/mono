@@ -17,6 +17,8 @@ using System.Reflection;
 
 using NUnit.Framework;
 
+using System.Threading.Tasks;
+
 namespace MonoTests.System
 {
 	[TestFixture]
@@ -473,6 +475,102 @@ namespace MonoTests.System
 				//  }
 			}
 		}
+
+		void DumpSingle ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("DumpStateSingle", BindingFlags.NonPublic | BindingFlags.Static);
+			var output = (Tuple<String, ulong, ulong>) convert.Invoke(null, Array.Empty<object> ());
+
+			var dump = output.Item1;
+			var portable_hash = output.Item2;
+			var unportable_hash = output.Item3;
+
+			Assert.IsTrue (portable_hash != 0, "#1");
+			Assert.IsTrue (unportable_hash != 0, "#2");
+			Assert.IsTrue (dump.Length > 0, "#3");
+		}
+
+		void DumpTotal ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("DumpStateTotal", BindingFlags.NonPublic | BindingFlags.Static);
+			var output = (Tuple<String, ulong, ulong>) convert.Invoke(null, Array.Empty<object> ());
+
+			var dump = output.Item1;
+			var portable_hash = output.Item2;
+			var unportable_hash = output.Item3;
+
+			Assert.IsTrue (portable_hash != 0, "#1");
+			Assert.IsTrue (unportable_hash != 0, "#2");
+			Assert.IsTrue (dump.Length > 0, "#3");
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleOnce ()
+		{
+			DumpSingle ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleConcurrent ()
+		{
+			// checks that self-dumping works in parallel, locklessly
+			int amt = 20;
+			var tasks = new Task [amt];
+			for (int i=0; i < amt; i++)
+				tasks [i] = Task.Run(() => DumpSingle ());
+			Task.WaitAll (tasks);
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallSingleAsync ()
+		{
+			// checks that dumping works in an async context
+			var t = Task.Run(() => DumpSingle ());
+			t.Wait ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalOnce ()
+		{
+			DumpTotal ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalRepeated ()
+		{
+			// checks that the state doesn't get broken with repeated use
+			DumpTotal ();
+			DumpTotal ();
+			DumpTotal ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalAsync ()
+		{
+			// checks that dumping works in an async context
+			var t = Task.Run(() => DumpTotal ());
+			t.Wait ();
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalConcurrent ()
+		{
+			int amt = 3;
+			var tasks = new Task [amt];
+			for (int i=0; i < amt; i++)
+				tasks [i] = Task.Run(() => DumpTotal ());
+			Task.WaitAll (tasks);
+		}
+
 #endif
 
 		[Test]
