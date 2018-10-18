@@ -102,34 +102,16 @@ typedef MonoReflectionModule MonoReflectionModuleOut;
 typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 
 // How the arguments and return value of an icall should be wrapped.
-// These names are from marshal-ilgen.c.
+// The names and meanings are from marshal-ilgen.c.
+// 	ICALL_HANDLES_WRAP_NONE
+// 	ICALL_HANDLES_WRAP_OBJ
+// 	ICALL_HANDLES_WRAP_OBJ_INOUT
+// 	ICALL_HANDLES_WRAP_OBJ_OUT
+// 	ICALL_HANDLES_WRAP_VALUETYPE_REF
 //
-// ICALL_HANDLES_WRAP_NONE
-// Do not wrap at all, pass the argument as is.
-//
-// ICALL_HANDLES_WRAP_OBJ
-// Wrap the argument in an object handle, pass the handle to the icall.
-//
-// ICALL_HANDLES_WRAP_OBJ_INOUT
-// Wrap the argument in an object handle, pass the handle to the icall,
-// write the value out from the handle when the icall returns. This is rare,
-// and could be easily eliminated.
-//
-// ICALL_HANDLES_WRAP_OBJ_OUT
-// Initialized an object handle to null, pass to the icalls,
-// write the value out from the handle when the icall returns.
-//
-// ICALL_HANDLES_WRAP_VALUETYPE_REF
-// Wrap the argument (a valuetype reference) in a handle to pin its
-// enclosing object, but pass the raw reference to the icall. This is
-// also how we pass byref generic parameter arguments to generic method
-// icalls (eg, System.Array:GetGenericValueImpl<T>(int idx, T out value)).
-
-//
-// In this scheme, all that matters is, handle-or-not, in and out and inout are
-// the same, and none and valuetype_ref are the same. The handle creation
-// is back in marshal-ilgen.c.
-//
+// In the present implementation, all that matters is, handle-or-not,
+// in and out and inout are the same, and none and valuetype_ref are the same.
+// Handle creation is in marshal-ilgen.c.
 
 // Map a type to a type class: Void and above.
 #define MONO_HANDLE_TYPE_WRAP_void 			Void
@@ -199,7 +181,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_guint64_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gpointer_ptr		ICALL_HANDLES_WRAP_NONE
 
-// FIXME Use of gulong is a mistake.
+// FIXME Use of gulong is a mistake. (https://github.com/mono/mono/pull/11211 fixes it)
 #define MONO_HANDLE_TYPE_WRAP_gulong   			ICALL_HANDLES_WRAP_NONE
 
 // Please keep this sorted (grep ICALL_HANDLES_WRAP_OBJ$ | sort)
