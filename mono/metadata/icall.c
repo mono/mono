@@ -6010,6 +6010,14 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 	return result;
 }
 
+ICALL_EXPORT void
+ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, const char *module_name)
+{
+#ifdef TARGET_OSX
+	mono_get_eh_callbacks ()->mono_register_native_library (path_suffix, module_name);
+#endif
+}
+
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char *name, MonoAssemblyName *aname, MonoBoolean *is_version_defined_arg, MonoBoolean *is_token_defined_arg)
 {

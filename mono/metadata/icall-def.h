@@ -99,6 +99,7 @@ HANDLES(ICALL(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Run
 HANDLES(ICALL(RUNTIME_3, "ExceptionToState_internal", ves_icall_Mono_Runtime_ExceptionToState))
 HANDLES(ICALL(RUNTIME_4, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
 HANDLES(ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace))
+HANDLES(ICALL(RUNTIME_17, "RegisterReportingForNativeLib_internal", ves_icall_Mono_Runtime_RegisterReportingForNativeLib))
 HANDLES(ICALL(RUNTIME_13, "SendMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_SendMicrosoftTelemetry))
 HANDLES(ICALL(RUNTIME_14, "WriteStateToFile_internal", ves_icall_Mono_Runtime_DumpTelemetry))
 

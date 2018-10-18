@@ -658,6 +658,7 @@ typedef struct {
 	void (*mono_summarize_managed_stack) (MonoThreadSummary *out);
 	void (*mono_summarize_unmanaged_stack) (MonoThreadSummary *out);
 	void (*mono_summarize_exception) (MonoException *exc, MonoThreadSummary *out);
+	void (*mono_register_native_library) (const char *module_path, const char *module_name);
 #endif
 } MonoRuntimeExceptionHandlingCallbacks;
 

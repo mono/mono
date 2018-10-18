@@ -63,7 +63,7 @@ namespace Mono {
 
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
-		// Format is undefined only for use as a string for reporting
+		// Format is undefined only for use as a string for 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 #if MOBILE || XAMMAC_4_5
 		public
@@ -190,5 +190,18 @@ namespace Mono {
 
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
+
 	}
 }

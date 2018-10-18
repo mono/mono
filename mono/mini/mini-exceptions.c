@@ -130,6 +130,7 @@ static void mono_uninstall_current_handler_block_guard (void);
 static void mono_summarize_managed_stack (MonoThreadSummary *out);
 static void mono_summarize_unmanaged_stack (MonoThreadSummary *out);
 static void mono_summarize_exception (MonoException *exc, MonoThreadSummary *out);
+static void mono_crash_reporting_register_native_library (const char *module_path, const char *module_name);
 #endif
 
 static gboolean
@@ -240,6 +241,7 @@ mono_exceptions_init (void)
 	cbs.mono_summarize_managed_stack = mono_summarize_managed_stack;
 	cbs.mono_summarize_unmanaged_stack = mono_summarize_unmanaged_stack;
 	cbs.mono_summarize_exception = mono_summarize_exception;
+	cbs.mono_register_native_library = mono_crash_reporting_register_native_library;
 #endif
 
 	if (mono_llvm_only) {
@@ -1371,23 +1373,16 @@ mono_get_portable_ip (intptr_t in_ip, intptr_t *out_ip, gint32 *out_offset, cons
 	// try to call dl_addr while interrupted while inside the lock, we will try to take a
 	// non-recursive lock twice on this thread, and will deadlock.
 	Dl_info info;
-	int success = dladdr ((void*) mono_get_portable_ip, &info);
-	intptr_t this_module = (intptr_t) info.dli_fbase;
-
+	gboolean success = dladdr ((void*)in_ip, &info);
 	if (!success)
 		return FALSE;
 
-	success = dladdr ((void*)in_ip, &info);
-	if (!success)
+	if (!check_whitelisted_module (info.dli_fname, out_module))
 		return FALSE;
 
 	*out_ip = mono_make_portable_ip ((intptr_t) info.dli_saddr, (intptr_t) info.dli_fbase);
 	*out_offset = in_ip - (intptr_t) info.dli_saddr;
 
-#ifndef MONO_PRIVATE_CRASHES
-	if (info.dli_saddr && out_name)
-		copy_summary_string_safe (out_name, info.dli_sname);
-#endif
 	return TRUE;
 }
 
