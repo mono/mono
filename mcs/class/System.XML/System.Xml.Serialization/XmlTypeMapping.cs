@@ -406,12 +406,13 @@ namespace System.Xml.Serialization
                                }
                                else if (info.MappedType != null && info.MappedType.DerivedTypes.Count > 0) {
                                        foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes) {
-                                               if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
+                                               if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns) {
                                                        if (info.ExplicitOrder < minimalOrder)
-                                                           continue;
-                                               
-                                               if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
-                                                       selected = info;
+                                                               continue;
+                                                       
+                                                       if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
+                                                               selected = info;
+                                                       }
                                                }
                                        }
                                }
