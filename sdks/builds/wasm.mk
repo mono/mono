@@ -11,13 +11,13 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	cd $(TOP)/sdks/builds/toolchains/emsdk && git pull
 	touch $@
 
-.stamp-wasm-install-and-select-the-right-emsdk: .stamp-wasm-checkout-and-update-emsdk
+.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
 	touch $@
 
 .PHONY: provision-wasm
-provision-wasm: .stamp-wasm-install-and-select-the-right-emsdk
+provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
 
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
