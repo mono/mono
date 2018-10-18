@@ -42,6 +42,7 @@
 #define NOHANDLES(inner) inner
 #define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
 #define HANDLES(id, name, func, ...)	ICALL (id, name, func ## _raw)
+#define HANDLES_REUSE_WRAPPER		HANDLES
 
 // Generate Icall_ constants
 enum {
@@ -170,6 +171,7 @@ static const guchar icall_uses_handles [] = {
 
 #undef HANDLES
 #undef HANDLES_MAYBE
+#undef HANDLES_REUSE_WRAPPER
 #undef NOHANDLES
 
 static int

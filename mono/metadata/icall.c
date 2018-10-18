@@ -2202,13 +2202,6 @@ leave:
 		mono_gchandle_free (value_gchandle);
 }
 
-ICALL_EXPORT void
-ves_icall_MonoField_SetValueInternal2 (MonoReflectionFieldHandle field, MonoObjectHandle obj, MonoObjectHandle value, MonoError  *error)
-// Duplicated due to multiple managed names.
-{
-	ves_icall_MonoField_SetValueInternal (field, obj, value, error);
-}
-
 static MonoObjectHandle
 typed_reference_to_object (MonoTypedRef *tref, MonoError *error)
 {
@@ -2797,62 +2790,6 @@ ves_icall_reflection_get_token (MonoObjectHandle obj, MonoError *error)
 	return mono_reflection_get_token_checked (obj, error);
 }
 
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token1 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token2 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token3 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token4 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token5 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token6 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token7 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
-ICALL_EXPORT guint32
-ves_icall_reflection_get_token8 (MonoObjectHandle obj, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_reflection_get_token (obj, error);
-}
-
 ICALL_EXPORT MonoReflectionModuleHandle
 ves_icall_RuntimeTypeHandle_GetModule (MonoReflectionTypeHandle type, MonoError *error)
 {
@@ -3169,15 +3106,6 @@ ves_icall_RuntimeType_GetCorrespondingInflatedMethod (MonoReflectionTypeHandle r
 }
 
 ICALL_EXPORT MonoReflectionMethodHandle
-ves_icall_RuntimeType_GetCorrespondingInflatedMethod2 (MonoReflectionTypeHandle ref_type, 
-						      MonoReflectionMethodHandle generic,
-						      MonoError *error)
-// Duplicated due to multiple managed names.
-{
-	return ves_icall_RuntimeType_GetCorrespondingInflatedMethod (ref_type, generic, error);
-}
-
-ICALL_EXPORT MonoReflectionMethodHandle
 ves_icall_RuntimeType_get_DeclaringMethod (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	error_init (error);
@@ -3310,13 +3238,6 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_
 	}
 
 	return mono_method_get_object_handle (MONO_HANDLE_DOMAIN (ref_method), result, NULL, error);
-}
-
-ICALL_EXPORT MonoReflectionMethodHandle
-ves_icall_MonoMethod_GetGenericMethodDefinition2 (MonoReflectionMethodHandle ref_method, MonoError *error)
-// Duplicate because exposed under two managed names and HANDLES () creates duplicate wrappers. 
-{
-	return ves_icall_MonoMethod_GetGenericMethodDefinition (ref_method, error);
 }
 
 ICALL_EXPORT MonoBoolean
@@ -5517,13 +5438,6 @@ ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfi
 	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (rfield, method);
 	return mono_security_core_clr_method_level (method, TRUE);
-}
-
-int
-ves_icall_MonoMethod_get_core_clr_security_level2 (MonoReflectionMethodHandle rfield, MonoError *error)
-// Duplicate because one per managed exposure.
-{
-	return ves_icall_MonoMethod_get_core_clr_security_level (rfield, error);
 }
 
 ICALL_EXPORT MonoStringHandle
@@ -8895,6 +8809,13 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 #define ICALL(id,name,func) /* nothing */
 #define NOHANDLES(inner)  /* nothing */
 
+// Some native functions are exposed via multiple managed names.
+// Producing a wrapper for these results in duplicate wrappers with the same names,
+// which fails to compile. Do not produce such duplicate wrappers. Alternatively,
+// a one line native function with a different name that calls the main one could be used.
+// i.e. the wrapper would also have a different name.
+#define HANDLES_REUSE_WRAPPER(...) /* nothing  */
+
 #define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) \
 	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
 	MONO_HANDLE_IMPLEMENT_MAYBE (cond, id, name, func, ret, nargs, argtypes)
@@ -8906,6 +8827,7 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 
 #undef HANDLES
 #undef HANDLES_MAYBE
+#undef HANDLES_REUSE_WRAPPER
 #undef ICALL_TYPE
 #undef ICALL
 #undef NOHANDLES

@@ -53,6 +53,7 @@ typedef enum {
 
 #define NOHANDLES(inner) inner
 #define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
+#define HANDLES_REUSE_WRAPPER(...) /* nothing */
 
 // Generate prototypes for coop icall wrappers.
 #define ICALL_TYPE(id, name, first)	/* nothing */
@@ -61,8 +62,9 @@ typedef enum {
 #include "icall-def.h"
 #undef ICALL_TYPE
 #undef ICALL
-#undef HANDLES_MAYBE
 #undef HANDLES
+#undef HANDLES_MAYBE
+#undef HANDLES_REUSE_WRAPPER
 #undef NOHANDLES
 
 // This is sorted.
