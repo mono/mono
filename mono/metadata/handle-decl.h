@@ -107,11 +107,4 @@ MONO_HANDLE_TYPECHECK_FOR (TYPE##InOut) (TYPE *a)		\
 	return MONO_HANDLE_TYPECHECK_FOR (TYPE) (a);		\
 }
 
-/*
- * TYPED_VALUE_HANDLE_DECL(SomeType):
- *   Expands to a decl for handles to SomeType (which is a managed valuetype (likely a struct) of some sort).
- * It is currently identical to TYPED_HANDLE_DECL (valuetypes vs. referencetypes).
- */
-#define TYPED_VALUE_HANDLE_DECL(TYPE) TYPED_HANDLE_DECL(TYPE)
-
 #endif /* __MONO_HANDLE_DECL_H__ */
