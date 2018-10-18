@@ -218,28 +218,23 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 {
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
-	// Note: this function only returns for a single thread
-	// When it's invoked on other threads once the dump begins,
-	// those threads perform their dumps and then sleep until we
-	// die. The dump ends with the exit(1) below
 	MonoContext mctx;
 	gchar *output = NULL;
 	MonoStackHash hashes;
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	if (!mono_threads_summarize (&mctx, &output, &hashes))
+	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
 		g_assert_not_reached ();
 
 	if (mono_merp_enabled ()) {
 		pid_t crashed_pid = getpid ();
 		mono_merp_invoke (crashed_pid, "SIGTERM", output, &hashes);
 	} else {
-		// Only the dumping-supervisor thread exits mono_thread_summarize
-		MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
-		sleep (3);
+		// Controlling thread gets the dump
+		if (output)
+			MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
 	}
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
-	exit (1);
 }
 #endif
 
@@ -398,8 +393,14 @@ remove_signal_handler (int signo)
 void
 mini_register_sigterm_handler (void)
 {
-	/* always catch SIGTERM, conditionals inside of handler */
-	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	static gboolean enabled;
+
+	if (!enabled) {
+		enabled = TRUE;
+
+		/* always catch SIGTERM, conditionals inside of handler */
+		add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	}
 }
 #endif
 

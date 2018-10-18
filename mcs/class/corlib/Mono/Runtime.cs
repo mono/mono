@@ -63,7 +63,7 @@ namespace Mono {
 
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
-		// Format is undefined only for use as a string for reporting
+		// Format is undefined only for use as a string for 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 #if MOBILE || XAMMAC_4_5
 		public
@@ -104,6 +104,21 @@ namespace Mono {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void WriteStateToFile_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
+
+		static void
+		WriteStateToFile (Exception exc)
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+			using (var payload_chars = RuntimeMarshal.MarshalString (payload_str))
+			{
+				WriteStateToFile_internal (payload_chars.Value, portable_hash, unportable_hash);
+			}
+		}
 
 		static void SendMicrosoftTelemetry (string payload_str, ulong portable_hash, ulong unportable_hash)
 		{
@@ -149,6 +164,44 @@ namespace Mono {
 			}
 		}
 #endif
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateSingle_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string DumpStateTotal_internal (out ulong portable_hash, out ulong unportable_hash);
+
+		static Tuple<String, ulong, ulong>
+		DumpStateSingle ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		static Tuple<String, ulong, ulong>
+		DumpStateTotal ()
+		{
+			ulong portable_hash;
+			ulong unportable_hash;
+			string payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
+
+			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
 
 	}
 }

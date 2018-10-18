@@ -4296,7 +4296,6 @@ add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
 	int i, j;
 	MonoSeqPointInfo *seq_points;
 	MonoDomain *domain;
-	MonoMethod *jmethod;
 
 	if (!breakpoints)
 		return;
@@ -4320,20 +4319,16 @@ add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
 		}
 
 		if (!found) {
-			MonoMethod *declaring = NULL;
-
-			jmethod = jinfo_get_method (ji);
-			if (jmethod->is_inflated)
-				declaring = mono_method_get_declaring_generic_method (jmethod);
-
-			mono_domain_lock (domain);
-			seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, jmethod);
-			if (!seq_points && declaring)
-				seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, declaring);
-			mono_domain_unlock (domain);
-			if (!seq_points)
-				/* Could be AOT code */
-				continue;
+			seq_points = (MonoSeqPointInfo *) ji->seq_points;
+			if (!seq_points) {
+				MonoMethod *jmethod = jinfo_get_method (ji);
+				if (jmethod->is_inflated) {
+					MonoJitInfo *seq_ji;
+					MonoMethod *declaring = mono_method_get_declaring_generic_method (jmethod);
+					mono_jit_search_all_backends_for_jit_info (domain, declaring, &seq_ji);
+					seq_points = (MonoSeqPointInfo *) seq_ji->seq_points;
+				}
+			}
 			g_assert (seq_points);
 
 			insert_breakpoint (seq_points, domain, ji, bp, NULL);
@@ -4352,22 +4347,8 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, MonoSeqPointInfo *seq_
 	if (error)
 		error_init (error);
 
-	code = mono_jit_find_compiled_method_with_jit_info (domain, method, &ji);
-	if (!code) {
-		ERROR_DECL_VALUE (oerror);
-
-		/* Might be AOTed code */
-		mono_class_init (method->klass);
-		code = mono_aot_get_method (domain, method, &oerror);
-		if (code) {
-			mono_error_assert_ok (&oerror);
-			ji = mono_jit_info_table_find (domain, code);
-		} else {
-			/* Might be interpreted */
-			ji = mini_get_interp_callbacks ()->find_jit_info (domain, method);
-		}
-		g_assert (ji);
-	}
+	code = mono_jit_search_all_backends_for_jit_info (domain, method, &ji);
+	g_assert (ji);
 
 	insert_breakpoint (seq_points, domain, ji, bp, error);
 }
