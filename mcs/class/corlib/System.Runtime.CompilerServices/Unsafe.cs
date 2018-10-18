@@ -36,7 +36,7 @@ using nint = System.Int32;
 
 namespace System.Runtime.CompilerServices
 {
-	static partial class Unsafe
+	unsafe static partial class Unsafe
 	{
 		public static ref T Add<T> (ref T source, int elementOffset)
 		{
@@ -129,6 +129,11 @@ namespace System.Runtime.CompilerServices
 		}
 
 		public static void WriteUnaligned<T> (ref byte destination, T value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void WriteUnaligned<T>(void* destination, T value)
 		{
 			throw new NotImplementedException ();
 		}
