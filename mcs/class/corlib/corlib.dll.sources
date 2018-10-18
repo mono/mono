@@ -7,13 +7,13 @@ Microsoft.Win32/IRegistryApi.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/Registry.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKeyPermissionCheck.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryHive.cs
+../../../external/corefx/src/Common/src/CoreLib/Microsoft/Win32/RegistryHive.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryOptions.cs
-../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryValueKind.cs
+../../../external/corefx/src/Common/src/CoreLib/Microsoft/Win32/RegistryValueKind.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryValueOptions.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryView.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/ThrowHelper.cs
-../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegistryOptions.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Advapi32/Interop.RegistryConstants.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
@@ -280,9 +280,9 @@ System.Reflection.Emit/MonoArrayMethod.cs
 System.Reflection.Emit/OpCodeNames.cs
 System.Reflection.Emit/OpCode.cs
 System.Reflection.Emit/OpCodes.cs
-../../../external/corefx/src/System.Reflection.Primitives/src/System/Reflection/Emit/OpcodeType.cs
-../../../external/corefx/src/System.Reflection.Primitives/src/System/Reflection/Emit/OperandType.cs
-../../../external/corefx/src/System.Reflection.Primitives/src/System/Reflection/Emit/PackingSize.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Emit/OpcodeType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Emit/OperandType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Emit/PackingSize.cs
 System.Reflection.Emit/ParameterBuilder.cs
 System.Reflection.Emit/ParameterToken.cs
 System.Reflection.Emit/PEFileKinds.cs
@@ -291,7 +291,7 @@ System.Reflection.Emit/PropertyOnTypeBuilderInst.cs
 System.Reflection.Emit/PropertyToken.cs
 System.Reflection.Emit/SignatureHelper.cs
 System.Reflection.Emit/SignatureToken.cs
-../../../external/corefx/src/System.Reflection.Primitives/src/System/Reflection/Emit/StackBehaviour.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Emit/StackBehaviour.cs
 System.Reflection.Emit/StringToken.cs
 System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeBuilderInstantiation.cs
@@ -860,9 +860,8 @@ ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MethodBase.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/RuntimeHandles.cs
-ReferenceSources/CompareInfo.cs
 ReferenceSources/Buffer.cs
-ReferenceSources/TextInfo.cs
+ReferenceSources/DateTimeFormatInfo.cs
 ReferenceSources/win32native.cs
 ReferenceSources/SecurityContext.cs
 ReferenceSources/PathInternal.cs
@@ -1094,6 +1093,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/numberformatinfo.cs
 ../referencesource/mscorlib/system/globalization/Persiancalendar.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/SortVersion.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/TextInfo.cs
 ../referencesource/mscorlib/system/globalization/stringinfo.cs
 ../referencesource/mscorlib/system/globalization/taiwancalendar.cs
 ../referencesource/mscorlib/system/globalization/taiwanlunisolarcalendar.cs
@@ -1103,7 +1103,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/TimeSpanParse.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/TimeSpanStyles.cs
 
-../referencesource/mscorlib/system/globalization/textinfo.cs
 ../referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
 ../referencesource/mscorlib/system/globalization/umalquracalendar.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/UnicodeCategory.cs
@@ -1197,7 +1196,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ReflectionTypeLoadException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceLocation.cs
-../../../external/corefx/src/System.Runtime/src/System/Reflection/RuntimeReflectionExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetInvocationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
@@ -1210,6 +1208,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
 
 ../referencesource/mscorlib/system/reflection/CustomAttributeExtensions.cs
+../referencesource/mscorlib/system/reflection/RuntimeReflectionExtensions.cs
 ../referencesource/mscorlib/system/reflection/mdimport.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
@@ -1223,6 +1222,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/resources/filebasedresourcegroveler.cs
 ../referencesource/mscorlib/system/resources/iresourcegroveler.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/IResourceReader.cs
+../../../external/corefx/src/System.Resources.Writer/src/System/Resources/ResourceWriter.cs
 ../../../external/corefx/src/System.Resources.Writer/src/System/Resources/IResourceWriter.cs
 ../referencesource/mscorlib/system/resources/looselylinkedresourcereference.cs
 ../referencesource/mscorlib/system/resources/manifestbasedresourcegroveler.cs
@@ -1233,8 +1233,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/resources/resourcemanager.cs
 ../referencesource/mscorlib/system/resources/resourcereader.cs
 ../referencesource/mscorlib/system/resources/resourceset.cs
-../../../external/corefx/src/Common/src/CoreLib/System/Resources/ResourceTypeCode.cs
-../referencesource/mscorlib/system/resources/resourcewriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/RuntimeResourceSet.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/SatelliteContractVersionAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Resources/UltimateResourceFallbackLocation.cs
@@ -1449,13 +1447,13 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/EncodingProvider.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/Latin1Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/NormalizationForm.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UnicodeEncoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF32Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF7Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF8Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
 ../referencesource/mscorlib/system/text/codepageencoding.cs
-../referencesource/mscorlib/system/text/encoding.cs
 ../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
 ../referencesource/mscorlib/system/text/surrogateencoder.cs
 
@@ -1580,7 +1578,6 @@ corefx/AwaitTaskContinuation.cs
 corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/SR.missing.cs
-corefx/CompareInfo.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/RuntimeImports.cs
@@ -1600,6 +1597,7 @@ corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
 
+../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corert/src/Common/src/System/Collections/Generic/LowLevelList.cs
 
 ../../../external/corert/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
@@ -1609,8 +1607,6 @@ corert/RuntimeAugments.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Array.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/ByReference.cs
-# TODO: Should all come from shared
-../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ArraySortHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.CoreRT.cs
 
 ../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
@@ -1637,12 +1633,13 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/ArrayList.cs
 ../../../external/corefx/src/System.Collections.NonGeneric/src/System/Collections/*.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/KeyValuePairs.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/BitArray.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/StructuralComparisons.cs
-../../../external/corefx/src/Common/src/System/Collections/CompatibleComparer.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/CompatibleComparer.cs
 
-../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/Hashtable.cs
-../../../external/corefx/src/System.Runtime.Extensions/src/System/Collections/IHashCodeProvider.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Hashtable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/IHashCodeProvider.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/KeyedCollection.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/ObjectModel/ReadOnlyDictionary.cs
@@ -1686,6 +1683,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/Utilities.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/HashHelpers.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/HashHelpers.SerializationInfoTable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Comparer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/DictionaryEntry.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/ICollection.cs
@@ -1771,9 +1769,6 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/ValueTask.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/Sources/IValueTaskSource.cs
 
-../../../external/corefx/src/Common/src/System/Collections/Concurrent/ConcurrentQueue_Segment.cs
-
-../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
 
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/BeginEndAwaitableAdapter.cs
@@ -1783,16 +1778,17 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
-../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentQueue.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Concurrent/ConcurrentQueue.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Concurrent/ConcurrentQueueSegment.cs
+../../../external/corefx/src/Common/src/CoreLib/Internal/Padding.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentStack.cs
-../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/IProducerConsumerCollection.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Concurrent/IProducerConsumerCollection.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Concurrent/IProducerConsumerCollectionDebugView.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/OrderablePartitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
-../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
 ../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
-../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
 ../../../external/corefx/src/System.Memory/src/System/ThrowHelper.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/*.cs
 ../../../external/corefx/src/System.Memory/src/System/Buffers/Binary/*.cs

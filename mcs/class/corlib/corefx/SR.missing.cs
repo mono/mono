@@ -2,7 +2,6 @@ partial class SR
 {
 	public const string ArgumentOutOfRange_ConsoleKey = "Console key values must be between 0 and 255 inclusive.";
 	public const string Arg_InvalidComObjectException = "Attempt has been made to use a COM object that does not have a backing class factory.";
-	public const string Arg_MustBeNullTerminatedString = "The string must be null-terminated.";
 	public const string Arg_InvalidOleVariantTypeException = "Specified OLE variant was invalid.";
 	public const string Arg_SafeArrayRankMismatchException = "Specified array was not of the expected rank.";
 	public const string Arg_SafeArrayTypeMismatchException = "Specified array was not of the expected type.";
@@ -23,4 +22,7 @@ partial class SR
 	public const string Argument_MemberAndArray = "Argument_MemberAndArray";
 	public const string Argument_MustSupplyContainer = "Argument_MustSupplyContainer";
 	public const string Serialization_NoID = "Serialization_NoID";
+
+	public const string InvalidOperation_ResourceWriterSaved = "FOO";
+	public const string NotSupported_BinarySerializedResources = "FOO";
 }

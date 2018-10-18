@@ -57,7 +57,7 @@ namespace System.Globalization {
 
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
-    public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider
+    public sealed partial class DateTimeFormatInfo : ICloneable, IFormatProvider
     {
         //
         // Note, some fields are derived so don't really need to be serialized, but we can't mark as

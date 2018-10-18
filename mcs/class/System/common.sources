@@ -405,7 +405,6 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TimeSpanConverter.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ToolboxItemFilterAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ToolboxItemFilterType.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeConverterAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeDescriptionProvider.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeDescriptionProviderAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/TypeDescriptionProviderService.cs
@@ -426,28 +425,29 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/ComponentModel/PropertyChangedEventHandler.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/ComponentModel/PropertyChangingEventArgs.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/ComponentModel/PropertyChangingEventHandler.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ActiveDocumentEvent.cs
+../../../external/corefx/src/System.ObjectModel/src/System/ComponentModel/TypeConverterAttribute.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ActiveDesignerEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ActiveDocumentEventHandler.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/CheckoutException.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/CommandID.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangedEvent.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangedEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangedEventHandler.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangingEvent.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangingEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentChangingEventHandler.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentEvent.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentEventHandler.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentRenameEvent.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentRenameEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ComponentRenameEventHandler.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransaction.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransactionCloseEvent.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransactionCloseEventArgs.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerTransactionCloseEventHandler.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerVerb.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerVerbCollection.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesigntimeLicenseContext.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesigntimeLicenseContextSerializer.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DocumentCollection.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DocumentEventArgs.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DocumentEventHandler.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerCollection.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerEventArgs.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/DesignerEventHandler.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/HelpContextType.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/HelpKeywordAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/HelpKeywordType.cs
@@ -467,7 +467,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/IHelpService.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/IInheritanceService.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/IMenuCommandService.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/InheritanceAttribute.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/InheritanceAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/InheritanceLevel.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/IReferenceService.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/IResourceService.cs
@@ -483,10 +483,10 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/PropertyTabScope.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/SelectionTypes.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ServiceCreatorCallback.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ServiceObjectContainer.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ServiceContainer.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/StandardCommands.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/StandardToolWindows.cs
-../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ToolboxItemAttribute.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/ToolboxItemAttribute.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/ViewTechnology.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/ComponentModel/Design/Serialization/*.cs
 ../referencesource/System/compmod/system/componentmodel/design/DesignerOptionService.cs
@@ -807,9 +807,9 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/BitHelper.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ICollectionDebugView.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/LinkedList.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
@@ -829,6 +829,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionMode.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/GZipStream.cs
 
+#../../../external/corefx/src/System.Net.Http/src/System/Net/Http/HttpMessageHandler.cs
+#../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/HttpConnectionSettings.cs
 #../../../external/corefx/src/System.Net.Http/src/System/Net/Http/SocketsHttpHandler/SocketsHttpHandler.cs
 
 ../../../external/corefx/src/System.Net.ServicePoint/src/System/Net/SecurityProtocolType.cs
@@ -864,6 +866,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 
 # Everything except compiled
+../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/ValueStringBuilder.Reverse.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CaptureCollection.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CollectionDebuggerProxy.cs
@@ -888,6 +892,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexNode.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexOptions.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParser.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParseError.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexParseException.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexPrefix.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexReplacement.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexRunner.cs

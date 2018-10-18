@@ -1,0 +1,6 @@
+#include corlib.dll.sources
+
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.BOOL.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/TextInfo.Windows.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.Globalization.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CompareInfo.Windows.cs

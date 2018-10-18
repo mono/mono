@@ -45,6 +45,9 @@ namespace System
 {
 	public abstract partial class Array
 	{
+		internal const int MaxArrayLength = Array_ReferenceSources.MaxArrayLength;
+		internal const int MaxByteArrayLength = Array_ReferenceSources.MaxByteArrayLength;
+
 		// Constructor
 		private Array ()
 		{

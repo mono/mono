@@ -688,6 +688,8 @@ namespace System {
         TaskCompletionSourceT_TrySetException_NoExceptions,
         NotSupported_StringComparison,
         InvalidOperation_NullArray,
+
+        ConcurrentCollection_SyncRoot_NotSupported,
     }
 }
 
