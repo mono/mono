@@ -29,6 +29,8 @@ Mono/CertificateImportFlags.cs
 Mono/DependencyInjector.cs
 Mono/ISystemCertificateProvider.cs
 Mono/ISystemDependencyProvider.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 Mono/Runtime.cs
 Mono/RuntimeHandles.cs
 Mono/RuntimeMarshal.cs
