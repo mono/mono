@@ -409,6 +409,7 @@ namespace MonoTests.System
 		//
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void StacktraceToState ()
 		{
 			try {
@@ -507,6 +508,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallSingleOnce ()
 		{
 			DumpSingle ();
@@ -514,6 +516,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallSingleConcurrent ()
 		{
 			// checks that self-dumping works in parallel, locklessly
@@ -526,6 +529,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallSingleAsync ()
 		{
 			// checks that dumping works in an async context
@@ -535,6 +539,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallTotalOnce ()
 		{
 			DumpTotal ();
@@ -542,6 +547,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallTotalRepeated ()
 		{
 			// checks that the state doesn't get broken with repeated use
@@ -552,6 +558,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallTotalAsync ()
 		{
 			// checks that dumping works in an async context
@@ -561,6 +568,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallTotalConcurrent ()
 		{
 			int amt = 3;
