@@ -297,10 +297,6 @@ Handle macros/functions
 #define HANDLE_OWNER (__FILE__ ":" STRINGIFY (__LINE__))
 #endif
 
-/* Have to double expand because MONO_STRUCT_OFFSET is doing token pasting on cross-compilers. */
-#define MONO_HANDLE_OFFSET_(Type) MONO_STRUCT_OFFSET(Type, __raw)
-#define MONO_HANDLE_OFFSET(TYPE) MONO_HANDLE_OFFSET_(TYPED_HANDLE_NAME (TYPE))
-
 //XXX add functions to get/set raw, set field, set field to null, set array, set array to null
 #define MONO_HANDLE_DCL(TYPE, NAME) TYPED_HANDLE_NAME(TYPE) NAME = MONO_HANDLE_NEW (TYPE, (NAME ## _raw))
 

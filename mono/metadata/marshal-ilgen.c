@@ -6223,20 +6223,13 @@ signature_param_uses_handles (MonoMethodSignature *sig, MonoMethodSignature *gen
 static void
 mono_emit_handle_raw (MonoMethodBuilder *mb)
 {
-	// MONO_HANDLE_RAW()
+	// This is similar to MONO_HANDLE_RAW() but not quite the same.
+	// MONO_HANDLE_RAW accepts a struct by value, that contains
+	// a pointer to a pointer, checks the pointer for null,
+	// and dereferences it if it is not null.
 	//
-	// This is playing a bit loose with the types.
-	// For most of the C code, there is a struct passed by value,
-	// with a pointer to a pointer. For this code, in order to ease
-	// ABI concerns, it is a pointer to a struct containing a pointer.
-	//
-	// The same level of indirection either way.
-	//
-	// Generated C code converts between the types. The JIT doesn't
-	// have to pass/accept structs by value.
-	//
-	// In either case, we dereference twice and both offsets are 0.
-	mono_mb_emit_ldflda (mb, MONO_HANDLE_OFFSET (MonoObject));
+	// This code recieves the pointer instead of the struct
+	// and assumes it is not null.
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 }
 
