@@ -14,7 +14,6 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 .stamp-wasm-install-and-select-the-right-emsdk: .stamp-wasm-checkout-and-update-emsdk
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
-	-cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && patch -N -p1 < $(TOP)/sdks/builds/emsdk-eh.diff 
 	touch $@
 
 .PHONY: provision-wasm
