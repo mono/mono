@@ -43,7 +43,7 @@
  * boilerplate when manipulating managed objects from runtime code and to use MonoError for
  * threading exceptions out to managed callerrs:
  *
- * HANDLES(icallid, methodname, cfuncptr, return-type, number-of-parmeters, (parameter-types))
+ * HANDLES(icallid, methodname, cfuncptr, return-type, number-of-parameters, (parameter-types))
  * types:
  *   managed types are just MonoObject, MonoString, etc. `*` and Handle prefix are appended automatically.
  *   Types must be single identifiers, and be handled in icall-table.h.
