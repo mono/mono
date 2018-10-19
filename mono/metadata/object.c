@@ -4941,11 +4941,13 @@ mono_runtime_exec_managed_code (MonoDomain *domain,
 				MonoMainThreadFunc main_func,
 				gpointer main_args)
 {
+	// This function is external_only.
+
 	ERROR_DECL (error);
 	mono_thread_create_checked (domain, main_func, main_args, error);
 	mono_error_assert_ok (error);
 
-	MONO_EXTERNAL_ONLY_VOID (mono_thread_manage ());
+	mono_thread_manage ();
 }
 
 static void
