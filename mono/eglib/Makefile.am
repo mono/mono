@@ -53,6 +53,9 @@ libeglib_la_SOURCES = \
 	unicode-data.h	\
 	$(os_files)
 
+eglibdir=$(datadir)/mono-$(API_VER)/mono/eglib
+eglib_DATA = eglib-config.h
+
 libeglib_la_CFLAGS = -g -Wall -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE
 
 AM_CPPFLAGS = -I$(srcdir)
