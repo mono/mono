@@ -85,6 +85,14 @@ var Module = {
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
 
+	onAbort: function(x) {
+		print ("ABORT: " + x);
+		var err = new Error();
+		print ("Stacktrace: \n");
+		print (err.stack);
+		wasm_exit (1);
+	},
+
 	onRuntimeInitialized: function () {
 		// Have to set env vars here to enable setting MONO_LOG_LEVEL etc.
 		var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
