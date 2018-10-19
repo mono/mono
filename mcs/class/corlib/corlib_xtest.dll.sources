@@ -327,3 +327,6 @@
 # System.IO.MemoryStream
 ../../../external/corefx/src/System.IO/tests/MemoryStream/*.cs
 ../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
+
+# System.IO.UnmanagedMemoryStream
+../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs
