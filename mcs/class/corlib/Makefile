@@ -190,7 +190,7 @@ TEST_RESX_RESOURCES = \
 
 TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
-	Test/resources/Resources.nn-NO.resources \
+	Test/resources/Resources.nn-NO.resources
 
 CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
 
@@ -201,17 +201,17 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
-satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly1 = $(test_lib_dir)/es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
-$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
+$(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) | $(test_lib_dir)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
-	@mkdir -p es-ES
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
-	@mkdir -p nn-NO
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
