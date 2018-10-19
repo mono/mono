@@ -1,14 +1,15 @@
 
-var Module = { 
+var MONO_WASM = { 
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl (
-			"@VFS_PREFIX@",
-			"@DEPLOY_PREFIX@",
-			@ENABLE_DEBUGGING@,
-			[ @FILE_LIST@ ],
+			config.vfs_prefix,
+			config.deploy_prefix,
+			config.enable_debugging,
+			config.file_list,
 			function () {
-				@BINDINGS_LOADING@
+				config.add_bindings ();
 				App.init ();
-			});
+			}
+		)
 	},
 };
