@@ -1,5 +1,5 @@
 
-var MONO_WASM = { 
+var Module = { 
 	onRuntimeInitialized: function () {
 		MONO.mono_load_runtime_and_bcl (
 			config.vfs_prefix,
