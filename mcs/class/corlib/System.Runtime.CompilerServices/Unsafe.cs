@@ -36,7 +36,7 @@ using nint = System.Int32;
 
 namespace System.Runtime.CompilerServices
 {
-	unsafe static partial class Unsafe
+	public unsafe static partial class Unsafe
 	{
 		public static ref T Add<T> (ref T source, int elementOffset)
 		{
