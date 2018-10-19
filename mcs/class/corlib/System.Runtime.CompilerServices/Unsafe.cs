@@ -128,6 +128,11 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
+		public static void Write<T> (ref byte destination, T value)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static void WriteUnaligned<T> (ref byte destination, T value)
 		{
 			throw new NotImplementedException ();
