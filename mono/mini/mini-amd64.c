@@ -2535,7 +2535,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 typedef struct {
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
-	int nstack_args;
+	int nstack_args, nullable_area;
 } ArchDynCallInfo;
 
 static gboolean
@@ -2587,7 +2587,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
-	int i;
+	int i, aindex;
 
 	cinfo = get_call_info (NULL, sig);
 
@@ -2613,6 +2613,34 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 			break;
 		}
 	}
+
+	for (aindex = 0; aindex < sig->param_count; aindex++) {
+		MonoType *t = sig->params [aindex];
+		ArgInfo *ainfo = &cinfo->args [aindex + sig->hasthis];
+
+		if (t->byref)
+			continue;
+
+		switch (t->type) {
+		case MONO_TYPE_GENERICINST:
+			if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
+				MonoClass *klass = mono_class_from_mono_type (t);
+				int size;
+
+				if (!(ainfo->storage == ArgValuetypeInReg || ainfo->storage == ArgOnStack)) {
+					/* Nullables need a temporary buffer, its stored at the end of DynCallArgs.regs after the stack args */
+					size = mono_class_value_size (klass, NULL);
+					info->nullable_area += size;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	info->nullable_area = ALIGN_TO (info->nullable_area, 16);
+
 	/* Align to 16 bytes */
 	if (info->nstack_args & 1)
 		info->nstack_args ++;
@@ -2640,7 +2668,7 @@ mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 
 	/* Extend the 'regs' field dynamically */
-	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t));
+	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t)) + ainfo->nullable_area;
 }
 
 #define PTR_TO_GREG(ptr) (mgreg_t)(ptr)
@@ -2668,6 +2696,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	int arg_index, greg, i, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
 	int buffer_offset = 0;
+	guint8 *nullable_buffer;
 	static int general_param_reg_to_index[MONO_MAX_IREGS];
 	static int float_param_reg_to_index[MONO_MAX_FREGS];
 
@@ -2691,6 +2720,12 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	arg_index = 0;
 	greg = 0;
 	pindex = 0;
+
+	/* Stored after the stack arguments */
+	nullable_buffer = (guint8*)&(p->regs [PARAM_REGS + (dinfo->nstack_args * sizeof (mgreg_t))]);
+
+	if (dinfo->nullable_area)
+		printf ("%d\n", dinfo->nullable_area);
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
 		p->regs [greg ++] = PTR_TO_GREG(*(args [arg_index ++]));
@@ -2788,9 +2823,13 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 					int size;
 
 					size = mono_class_value_size (klass, NULL);
-					nullable_buf = p->buffer + buffer_offset;
-					buffer_offset += size;
-					g_assert (buffer_offset <= 256);
+					if (ainfo->storage == ArgValuetypeInReg || ainfo->storage == ArgOnStack) {
+						nullable_buf = g_alloca (size);
+					} else {
+						nullable_buf = nullable_buffer + buffer_offset;
+						buffer_offset += size;
+						g_assert (buffer_offset <= dinfo->nullable_area);
+					}
 
 					/* The argument pointed to by arg is either a boxed vtype or null */
 					mono_nullable_init (nullable_buf, (MonoObject*)arg, klass);
