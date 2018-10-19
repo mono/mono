@@ -132,7 +132,7 @@ EXTRA_DISTFILES = \
 
 include ../../build/library.make
 
-$(test_lib_output): $(TEST_RESOURCES) $(test_lib_dir)
+$(test_lib_output): $(TEST_RESOURCES) | $(test_lib_dir)
 
 # Helper target to run the perl regex test suite
 regex-check:
