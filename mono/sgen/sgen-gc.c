@@ -3034,7 +3034,7 @@ mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
 }
 
 /**
- * mono_gc_wbarrier_generic_store:
+ * mono_gc_wbarrier_generic_store_internal:
  */
 void
 mono_gc_wbarrier_generic_store_internal (gpointer ptr, GCObject* value)

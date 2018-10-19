@@ -129,7 +129,7 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, Mo
 }
 
 /**
- * mono_gc_wbarrier_object_copy:
+ * mono_gc_wbarrier_object_copy_internal:
  *
  * Write barrier to call when \p obj is the result of a clone or copy of an object.
  */
@@ -157,7 +157,7 @@ mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 }
 
 /**
- * mono_gc_wbarrier_set_arrayref:
+ * mono_gc_wbarrier_set_arrayref_internal:
  */
 void
 mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoObject* value)
@@ -175,7 +175,7 @@ mono_gc_wbarrier_set_arrayref_internal (MonoArray *arr, gpointer slot_ptr, MonoO
 }
 
 /**
- * mono_gc_wbarrier_set_field:
+ * mono_gc_wbarrier_set_field_internal:
  */
 void
 mono_gc_wbarrier_set_field_internal (MonoObject *obj, gpointer field_ptr, MonoObject* value)

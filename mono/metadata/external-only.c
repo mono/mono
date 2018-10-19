@@ -96,12 +96,19 @@ mono_gchandle_free (uint32_t gchandle)
 }
 
 /* GC write barriers support */
+
+/**
+ * mono_gc_wbarrier_set_field:
+ */
 void
 mono_gc_wbarrier_set_field (MonoObject *obj, void* field_ptr, MonoObject* value)
 {
 	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_set_field_internal (obj, field_ptr, value));
 }
 
+/**
+ * mono_gc_wbarrier_set_arrayref:
+ */
 void
 mono_gc_wbarrier_set_arrayref (MonoArray *arr, void* slot_ptr, MonoObject* value)
 {
@@ -114,12 +121,20 @@ mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count)
 	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_arrayref_copy_internal (dest_ptr, src_ptr, count));
 }
 
+/**
+ * mono_gc_wbarrier_generic_store:
+ */
 void
 mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 {
 	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_store_internal (ptr, value));
 }
 
+/**
+ * mono_gc_wbarrier_generic_store_atomic_internal:
+ * Same as \c mono_gc_wbarrier_generic_store but performs the store
+ * as an atomic operation with release semantics.
+ */
 void
 mono_gc_wbarrier_generic_store_atomic (void *ptr, MonoObject *value)
 {
@@ -138,6 +153,11 @@ mono_gc_wbarrier_value_copy (void* dest, /*const*/ void* src, int count, MonoCla
 	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_value_copy_internal (dest, src, count, klass));
 }
 
+/**
+ * mono_gc_wbarrier_object_copy:
+ *
+ * Write barrier to call when \p obj is the result of a clone or copy of an object.
+ */
 void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {

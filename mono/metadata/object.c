@@ -113,7 +113,7 @@ mono_runtime_object_init (MonoObject *this_obj)
 }
 
 /**
- * mono_runtime_object_init_checked:
+ * mono_runtime_object_init_handle:
  * \param this_obj the object to initialize
  * \param error set on error.
  * This function calls the zero-argument constructor (which must
