@@ -17,19 +17,20 @@
 #include "marshal.h"
 #include "object.h"
 
-/* GC handles support
+/**
+ * mono_gchandle_new:
+ * \param obj managed object to get a handle for
+ * \param pinned whether the object should be pinned
+ * This returns a handle that wraps the object, this is used to keep a
+ * reference to a managed object from the unmanaged world and preventing the
+ * object from being disposed.
  *
- * A handle can be created to refer to a managed object and either prevent it
- * from being garbage collected or moved or to be able to know if it has been
- * collected or not (weak references).
- * mono_gchandle_new () is used to prevent an object from being garbage collected
- * until mono_gchandle_free() is called. Use a TRUE value for the pinned argument to
- * prevent the object from being moved (this should be avoided as much as possible
- * and this should be used only for shorts periods of time or performance will suffer).
- * To create a weakref use mono_gchandle_new_weakref (): track_resurrection should
- * usually be false (see the GC docs for more details).
- * mono_gchandle_get_target () can be used to get the object referenced by both kinds
- * of handle: for a weakref handle, if an object has been collected, it will return NULL.
+ * If \p pinned is false the address of the object can not be obtained, if it is
+ * true the address of the object can be obtained.  This will also pin the
+ * object so it will not be possible by a moving garbage collector to move the
+ * object.
+ *
+ * \returns a handle that can be used to access the object from unmanaged code.
  */
 uint32_t
 mono_gchandle_new (MonoObject *obj, mono_bool pinned)
@@ -37,18 +38,57 @@ mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_internal (obj, pinned));
 }
 
+/**
+ * mono_gchandle_new_weakref:
+ * \param obj managed object to get a handle for
+ * \param track_resurrection Determines how long to track the object, if this is set to TRUE, the object is tracked after finalization, if FALSE, the object is only tracked up until the point of finalization.
+ *
+ * This returns a weak handle that wraps the object, this is used to
+ * keep a reference to a managed object from the unmanaged world.
+ * Unlike the \c mono_gchandle_new_internal the object can be reclaimed by the
+ * garbage collector.  In this case the value of the GCHandle will be
+ * set to zero.
+ *
+ * If \p track_resurrection is TRUE the object will be tracked through
+ * finalization and if the object is resurrected during the execution
+ * of the finalizer, then the returned weakref will continue to hold
+ * a reference to the object.   If \p track_resurrection is FALSE, then
+ * the weak reference's target will become NULL as soon as the object
+ * is passed on to the finalizer.
+ *
+ * \returns a handle that can be used to access the object from
+ * unmanaged code.
+ */
 uint32_t
 mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 {
 	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
 }
 
+/**
+ * mono_gchandle_get_target:
+ * \param gchandle a GCHandle's handle.
+ *
+ * The handle was previously created by calling \c mono_gchandle_new_internal or
+ * \c mono_gchandle_new_weakref.
+ *
+ * \returns a pointer to the \c MonoObject* represented by the handle or
+ * NULL for a collected object if using a weakref handle.
+ */
 MonoObject*
 mono_gchandle_get_target (uint32_t gchandle)
 {
 	MONO_EXTERNAL_ONLY (MonoObject*, mono_gchandle_get_target_internal (gchandle));
 }
 
+/**
+ * mono_gchandle_free:
+ * \param gchandle a GCHandle's handle.
+ *
+ * Frees the \p gchandle handle.  If there are no outstanding
+ * references, the garbage collector can reclaim the memory of the
+ * object wrapped.
+ */
 void
 mono_gchandle_free (uint32_t gchandle)
 {

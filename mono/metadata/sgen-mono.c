@@ -985,7 +985,7 @@ static gboolean use_managed_allocator = TRUE;
 
 #ifdef MANAGED_ALLOCATION
 /* FIXME: Do this in the JIT, where specialized allocation sequences can be created
- * for each class. This is currently not easy to do, as it is hard to generate basic 
+ * for each class. This is currently not easy to do, as it is hard to generate basic
  * blocks + branches, but it is easy with the linear IL codebase.
  *
  * For this to work we'd need to solve the TLAB race, first.  Now we
@@ -2273,7 +2273,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 /*
  * mono_gc_set_stack_end:
  *
- *   Set the end of the current threads stack to STACK_END. The stack space between 
+ *   Set the end of the current threads stack to STACK_END. The stack space between
  * STACK_END and the real end of the threads stack will not be scanned during collections.
  */
 void
@@ -2505,18 +2505,18 @@ sgen_client_metadata_for_object (GCObject *obj)
 }
 
 /**
- * mono_gchandle_new:
+ * mono_gchandle_new_internal:
  * \param obj managed object to get a handle for
  * \param pinned whether the object should be pinned
  * This returns a handle that wraps the object, this is used to keep a
  * reference to a managed object from the unmanaged world and preventing the
  * object from being disposed.
- * 
+ *
  * If \p pinned is false the address of the object can not be obtained, if it is
  * true the address of the object can be obtained.  This will also pin the
  * object so it will not be possible by a moving garbage collector to move the
- * object. 
- * 
+ * object.
+ *
  * \returns a handle that can be used to access the object from unmanaged code.
  */
 guint32
@@ -2526,7 +2526,7 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 }
 
 /**
- * mono_gchandle_new_weakref:
+ * mono_gchandle_new_weakref_internal:
  * \param obj managed object to get a handle for
  * \param track_resurrection Determines how long to track the object, if this is set to TRUE, the object is tracked after finalization, if FALSE, the object is only tracked up until the point of finalization.
  *
@@ -2535,14 +2535,14 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
  * Unlike the \c mono_gchandle_new_internal the object can be reclaimed by the
  * garbage collector.  In this case the value of the GCHandle will be
  * set to zero.
- * 
+ *
  * If \p track_resurrection is TRUE the object will be tracked through
  * finalization and if the object is resurrected during the execution
  * of the finalizer, then the returned weakref will continue to hold
  * a reference to the object.   If \p track_resurrection is FALSE, then
  * the weak reference's target will become NULL as soon as the object
  * is passed on to the finalizer.
- * 
+ *
  * \returns a handle that can be used to access the object from
  * unmanaged code.
  */
@@ -2566,12 +2566,12 @@ mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
 }
 
 /**
- * mono_gchandle_free:
+ * mono_gchandle_free_internal:
  * \param gchandle a GCHandle's handle.
  *
  * Frees the \p gchandle handle.  If there are no outstanding
  * references, the garbage collector can reclaim the memory of the
- * object wrapped. 
+ * object wrapped.
  */
 void
 mono_gchandle_free_internal (guint32 gchandle)
@@ -2596,7 +2596,7 @@ mono_gchandle_free_domain (MonoDomain *unloading)
  * \param gchandle a GCHandle's handle.
  *
  * The handle was previously created by calling \c mono_gchandle_new_internal or
- * \c mono_gchandle_new_weakref. 
+ * \c mono_gchandle_new_weakref.
  *
  * \returns a pointer to the \c MonoObject* represented by the handle or
  * NULL for a collected object if using a weakref handle.
