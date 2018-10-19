@@ -14,7 +14,6 @@ _bcl_CONFIGURE_FLAGS = \
 .PHONY: build-bcl
 build-bcl: .stamp-bcl-configure
 	$(MAKE) -C bcl -C mono
-	$(MAKE) -C bcl -C runtime all-mcs build_profiles="build"
 
 .PHONY: clean-bcl
 clean-bcl:

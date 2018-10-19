@@ -8,20 +8,9 @@ LIB_REFS = System Mono.Cecil System.Core
 LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS /publicsign
 KEYFILE = $(LIBRARY_SNK)
 
-# special case monodroid_tools since it doesn't contain mscorlib etc but we need to compile the tests against something
-# and want dtest-app.exe etc to end up in the monodroid profile
-ifeq ($(PROFILE), monodroid_tools)
-TEST_MCS_FLAGS = -d:MONODROID_TEST
-DEFAULT_REFERENCES =
-LIB_REFS += mscorlib
-dtest_profile = monodroid
-TEST_LIB_REFS = Mono.Cecil ../$(dtest_profile)/mscorlib ../$(dtest_profile)/System ../$(dtest_profile)/System.Core
-else
 TEST_LIB_REFS = Mono.Cecil System System.Core
-dtest_profile = $(PROFILE)
-endif
 
-VALID_TEST_PROFILE := $(filter net_4_x monodroid_tools, $(PROFILE))
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
 
 ifdef VALID_TEST_PROFILE
 
@@ -34,7 +23,7 @@ check:
 
 endif
 
-test_output_dir=$(topdir)/class/lib/$(dtest_profile)/tests
+test_output_dir=$(topdir)/class/lib/$(PROFILE)/tests
 
 $(test_output_dir):
 	mkdir -p $@
@@ -45,7 +34,7 @@ $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(dtest_profile)/mscorlib.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.Core.dll -r:$(topdir)/class/lib/$(dtest_profile)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \
