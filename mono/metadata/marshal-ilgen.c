@@ -6228,7 +6228,7 @@ mono_emit_handle_raw (MonoMethodBuilder *mb)
 	// a pointer to a pointer, checks the pointer for null,
 	// and dereferences it if it is not null.
 	//
-	// This code recieves the pointer instead of the struct
+	// This code receives the pointer instead of the struct
 	// and assumes it is not null.
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 }
