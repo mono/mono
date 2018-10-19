@@ -318,8 +318,13 @@ namespace System.Windows.Forms
 
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
 		{
-			Size sz = MeasureTextInternal (dc, text, font, useDrawString);
+			Size sz = MeasureTextInternal (dc, text, font, flags, useDrawString);
 			DrawTextInternal (dc, text, font, new Rectangle (pt, sz), foreColor, backColor, flags, useDrawString);
+		}
+
+		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, TextFormatFlags flags, bool useMeasureString)
+		{
+			return MeasureTextInternal (dc, text, font, Size.Empty, flags, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, bool useMeasureString)
