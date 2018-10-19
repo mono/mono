@@ -139,16 +139,20 @@ var MonoSupportLib = {
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
 						console.log ("initializing mono runtime");
-						try {
-							load_runtime (vfs_prefix, enable_debugging);
-						} catch (ex) {
-							print ("load_runtime () failed: " + ex);
-							var err = new Error();
-							print ("Stacktrace: \n");
-							print (err.stack);
+						if (ENVIRONMENT_IS_SHELL) {
+							try {
+								load_runtime (vfs_prefix, enable_debugging);
+							} catch (ex) {
+								print ("load_runtime () failed: " + ex);
+								var err = new Error();
+								print ("Stacktrace: \n");
+								print (err.stack);
 
-							var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
-							wasm_exit (1);
+								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+								wasm_exit (1);
+							}
+						} else {
+							load_runtime (vfs_prefix, enable_debugging);
 						}
 						MONO.mono_wasm_runtime_ready ();
 						loaded_cb ();
