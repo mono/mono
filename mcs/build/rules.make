@@ -136,9 +136,7 @@ endif
 # mcs/class/lib/$(PROFILE)/
 ifndef TOP_LEVEL_DO
 
-ifdef ALWAYS_AOT_BCL
-TOP_LEVEL_DO = do-all-aot
-else ifdef ALWAYS_AOT_TESTS
+ifneq ($(or $(ALWAYS_AOT_BCL), $(ALWAYS_AOT_TESTS)),)
 TOP_LEVEL_DO = do-all-aot
 else
 TOP_LEVEL_DO = do-all
