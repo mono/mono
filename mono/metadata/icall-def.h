@@ -305,7 +305,7 @@ HANDLES(ENV_2, "GetCommandLineArgs", ves_icall_System_Environment_GetCommandLine
 ICALL(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames)
 ICALL(ENV_31, "GetIs64BitOperatingSystem", ves_icall_System_Environment_GetIs64BitOperatingSystem)
 ICALL(ENV_4, "GetLogicalDrivesInternal", ves_icall_System_Environment_GetLogicalDrives )
-HANDLES(ENV_5, "GetMachineConfigPath", ves_icall_System_Environment_GetMachineConfigPath, MonoString, 0, ())
+HANDLES_REUSE_WRAPPER(ENV_5, "GetMachineConfigPath", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path, MonoString, 0, ())
 HANDLES(ENV_51, "GetNewLine", ves_icall_System_Environment_get_NewLine, MonoString, 0, ())
 HANDLES(ENV_6, "GetOSVersionString", ves_icall_System_Environment_GetOSVersionString, MonoString, 0, ())
 ICALL(ENV_6a, "GetPageSize", mono_pagesize)
@@ -1142,7 +1142,7 @@ ICALL(VALUET_1, "InternalEquals", ves_icall_System_ValueType_Equals)
 ICALL(VALUET_2, "InternalGetHashCode", ves_icall_System_ValueType_InternalGetHashCode)
 
 ICALL_TYPE(WEBIC, "System.Web.Util.ICalls", WEBIC_1)
-HANDLES(WEBIC_1, "GetMachineConfigPath", ves_icall_System_Web_Util_ICalls_GetMachineConfigPath, MonoString, 0, ())
+HANDLES_REUSE_WRAPPER(WEBIC_1, "GetMachineConfigPath", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path, MonoString, 0, ())
 HANDLES(WEBIC_2, "GetMachineInstallDirectory", ves_icall_System_Web_Util_ICalls_get_machine_install_dir, MonoString, 0, ())
 HANDLES(WEBIC_3, "GetUnmanagedResourcesPtr", ves_icall_get_resources_ptr, MonoBoolean, 3, (MonoReflectionAssembly, gpointer_ref, gint32_ref))
 
