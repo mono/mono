@@ -123,7 +123,7 @@ set (
 
 add_library (mono-btls-shared SHARED ${MONO_BTLS_SOURCES})
 
-if (CYGWIN OR MSVC)
+if (BTLS_HOST_WIN32)
 	set (CMAKE_SHARED_LIBRARY_PREFIX "lib")
 endif ()
 
