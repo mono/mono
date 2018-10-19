@@ -2616,8 +2616,8 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 
 		switch (t->type) {
 		case MONO_TYPE_GENERICINST:
-			if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type_internal (t))) {
-				MonoClass *klass = mono_class_from_mono_type_internal (t);
+			if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
+				MonoClass *klass = mono_class_from_mono_type (t);
 				int size;
 
 				if (!(ainfo->storage == ArgValuetypeInReg || ainfo->storage == ArgOnStack)) {
