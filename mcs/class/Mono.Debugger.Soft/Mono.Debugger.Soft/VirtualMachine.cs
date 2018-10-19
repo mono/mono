@@ -808,6 +808,9 @@ namespace Mono.Debugger.Soft
 				case EventType.UserLog:
 					l.Add (new UserLogEvent (vm, req_id, thread_id, ei.Level, ei.Category, ei.Message));
 					break;
+				case EventType.Crash:
+					l.Add (new CrashEvent (vm, req_id, thread_id, ei.Dump, ei.Hash));
+					break;
 				}
 			}
 			

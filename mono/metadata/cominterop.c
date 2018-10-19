@@ -1616,19 +1616,19 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 #define MONO_E_DISPID_UNKNOWN      (gint32)-1
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
 	return mono_IUnknown_AddRef (pUnk);
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
 {
 	return mono_IUnknown_QueryInterface (pUnk, riid, ppv);
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert (pUnk);
 	return mono_IUnknown_Release (pUnk);
@@ -2460,8 +2460,22 @@ cominterop_class_guid_equal (const guint8* guid, MonoClass* klass)
 }
 
 static int STDCALL 
+cominterop_ccw_addref_impl (MonoCCWInterface* ccwe);
+
+static int STDCALL 
 cominterop_ccw_addref (MonoCCWInterface* ccwe)
 {
+	int result;
+	MONO_ENTER_GC_UNSAFE;
+	result = cominterop_ccw_addref_impl (ccwe);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+static int STDCALL 
+cominterop_ccw_addref_impl (MonoCCWInterface* ccwe)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	MonoCCW* ccw = ccwe->ccw;
 	g_assert (ccw);
 	g_assert (ccw->gc_handle);
@@ -2477,8 +2491,22 @@ cominterop_ccw_addref (MonoCCWInterface* ccwe)
 }
 
 static int STDCALL 
+cominterop_ccw_release_impl (MonoCCWInterface* ccwe);
+
+static int STDCALL 
 cominterop_ccw_release (MonoCCWInterface* ccwe)
 {
+	int result;
+	MONO_ENTER_GC_UNSAFE;
+	result = cominterop_ccw_release_impl (ccwe);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+static int STDCALL 
+cominterop_ccw_release_impl (MonoCCWInterface* ccwe)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	MonoCCW* ccw = ccwe->ccw;
 	g_assert (ccw);
 	g_assert (ccw->ref_count > 0);
@@ -2512,8 +2540,22 @@ cominterop_ccw_getfreethreadedmarshaler (MonoCCW* ccw, MonoObjectHandle object, 
 #endif
 
 static int STDCALL 
+cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, gpointer* ppv);
+
+static int STDCALL 
 cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, const guint8* riid, gpointer* ppv)
 {
+	int result;
+	MONO_ENTER_GC_UNSAFE;
+	result = cominterop_ccw_queryinterface_impl (ccwe, riid, ppv);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+static int STDCALL 
+cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, gpointer* ppv)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	ERROR_DECL (error);
 	GPtrArray *ifaces;
 	MonoClass *itf = NULL;
@@ -2613,10 +2655,29 @@ cominterop_ccw_get_type_info (MonoCCWInterface* ccwe, guint32 iTInfo, guint32 lc
 }
 
 static int STDCALL 
+cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
+				      gunichar2** rgszNames, guint32 cNames,
+				      guint32 lcid, gint32 *rgDispId);
+
+
+static int STDCALL 
 cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 											 gunichar2** rgszNames, guint32 cNames,
 											 guint32 lcid, gint32 *rgDispId)
 {
+	int result;
+	MONO_ENTER_GC_UNSAFE;
+	result = cominterop_ccw_get_ids_of_names_impl (ccwe, riid, rgszNames, cNames, lcid, rgDispId);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+static int STDCALL 
+cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
+				      gunichar2** rgszNames, guint32 cNames,
+				      guint32 lcid, gint32 *rgDispId)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	static MonoClass *ComDispIdAttribute = NULL;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *cinfo = NULL;
@@ -3592,21 +3653,21 @@ mono_marshal_free_ccw (MonoObject* object)
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
 	g_assert_not_reached ();
 	return 0;
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert_not_reached ();
 	return 0;
 }
 
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
 {
 	g_assert_not_reached ();
 	return 0;
@@ -3621,13 +3682,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (mono_bstr_cons
 }
 
 mono_bstr
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2* ptr, int len)
 {
 	return mono_ptr_to_bstr (ptr, len);
 }
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr)
 {
 	mono_free_bstr ((gpointer)ptr);
 }
