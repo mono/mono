@@ -57,9 +57,13 @@
 #include "external-only.h"
 #include "monitor.h"
 
-// Exports do not work portably/reliably if compiled separately.
-// They must be in .o/.obj files otherwise referenced.
-// .def files work better in this regard.
+// If no symbols in an object file in a static library are referenced, its exports will not be exported.
+// There are a few workarounds:
+// 1. Link to .o/.obj files directly on the link command line,
+//     instead of putting them in static libraries.
+// 2. Use a Windows .def file, or exports on command line, or Unix equivalent.
+// 3. Have a reference to at least one symbol in the .o/.obj.
+//    That is effectively what this include does.
 #include "external-only.c"
 
 static void
