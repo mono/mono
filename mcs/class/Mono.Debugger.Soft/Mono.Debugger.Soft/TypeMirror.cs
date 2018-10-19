@@ -805,22 +805,15 @@ namespace Mono.Debugger.Soft
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			return ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
 		}
 
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
+			return ObjectMirror.InvokeMethodAsync (vm, thread, method, null, arguments, options);
+		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			return ObjectMirror.InvokeMethodAsyncWithResult (vm, thread, method, null, arguments, options);
 		}
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
