@@ -9,6 +9,8 @@
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadPoolHelpers.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
+../../../external/corefx/src/Common/tests/System/Security/Cryptography/ByteUtils.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
 
 #../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs:
 
@@ -252,9 +254,6 @@
 ../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
 ../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
 
-#../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
-
-
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ApplicationExceptionTests.cs
@@ -317,9 +316,9 @@
 ../../../external/corefx/src/System.Runtime/tests/System/Threading/*.cs:WaitHandleTests.cs
 
 # System.Runtime.Extensions
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/Math.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathF.netcoreapp.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/MathTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,Random.netcoreapp.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
 
 # System.Runtime.InteropServices
 ../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
@@ -328,3 +327,6 @@
 # System.IO.MemoryStream
 ../../../external/corefx/src/System.IO/tests/MemoryStream/*.cs
 ../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
+
+# System.IO.UnmanagedMemoryStream
+../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs

@@ -37,6 +37,7 @@ else
     then ${TESTCMD} --label=Windows.Forms --timeout=5m xvfb-run -a -- make -w -C mcs/class/System.Windows.Forms run-test
     else echo "The simple test failed (maybe because of missing X server), skipping test suite." && ${TESTCMD} --label=Windows.Forms --skip; fi
 fi
+${TESTCMD} --label=System.Windows.Forms.DataVisualization --timeout=5m make -w -C mcs/class/System.Windows.Forms.DataVisualization run-test
 ${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
 ${TESTCMD} --label=System.Data-xunit --timeout=5m make -w -C mcs/class/System.Data run-xunit-test
 if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=Mono.Data.Sqlite --skip; else ${TESTCMD} --label=Mono.Data.Sqlite --timeout=5m make -w -C mcs/class/Mono.Data.Sqlite run-test; fi
@@ -86,6 +87,10 @@ ${TESTCMD} --label=System.Web.Extensions-standalone --timeout=5m make -w -C mcs/
 ${TESTCMD} --label=System.ComponentModel.DataAnnotations --timeout=5m make -w -C mcs/class/System.ComponentModel.DataAnnotations run-test
 ${TESTCMD} --label=System.ComponentModel.Composition-xunit --timeout=5m make -w -C mcs/class/System.ComponentModel.Composition.4.5 run-xunit-test
 ${TESTCMD} --label=Mono.CodeContracts --timeout=5m make -w -C mcs/class/Mono.CodeContracts run-test
+# needs RabbitMQ installed and hangs on process exit
+# ${TESTCMD} --label=System.Messaging --timeout=5m make -w -C mcs/class/System.Messaging run-test
+${TESTCMD} --label=Mono.Messaging --timeout=5m make -w -C mcs/class/Mono.Messaging run-test
+${TESTCMD} --label=Mono.Messaging.RabbitMQ --timeout=5m make -w -C mcs/class/Mono.Messaging.RabbitMQ run-test
 ${TESTCMD} --label=System.Runtime.Caching --timeout=5m make -w -C mcs/class/System.Runtime.Caching run-test
 ${TESTCMD} --label=System.Data.Services --timeout=5m make -w -C mcs/class/System.Data.Services run-test
 ${TESTCMD} --label=System.Web.DynamicData --timeout=5m make -w -C mcs/class/System.Web.DynamicData run-test
@@ -106,7 +111,9 @@ ${TESTCMD} --label=System.Runtime.CompilerServices.Unsafe-xunit --timeout=5m mak
 ${TESTCMD} --label=Mono.Debugger.Soft --timeout=5m make -w -C mcs/class/Mono.Debugger.Soft run-test
 ${TESTCMD} --label=Microsoft.CSharp-xunit --timeout=5m make -w -C mcs/class/Microsoft.CSharp run-xunit-test
 ${TESTCMD} --label=Microsoft.Build --timeout=5m make -w -C mcs/class/Microsoft.Build run-test
-if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=monodoc --skip; else ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
+# fails one test and needs to get rid of CallerFilePath to locate test resources
+# ${TESTCMD} --label=monodoc --timeout=10m make -w -C mcs/class/monodoc run-test
+if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=mdoc --skip; else ${TESTCMD} --label=mdoc --timeout=10m make -w -C mcs/tools/mdoc run-test; fi
 ${TESTCMD} --label=Microsoft.Build-12 --timeout=10m make -w -C mcs/class/Microsoft.Build run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Engine-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Engine run-test PROFILE=xbuild_12
 ${TESTCMD} --label=Microsoft.Build.Framework-12 --timeout=60m make -w -C mcs/class/Microsoft.Build.Framework run-test PROFILE=xbuild_12

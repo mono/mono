@@ -349,8 +349,11 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\IOException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\MemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathTooLongException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PinnedBufferMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\SeekOrigin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamHelpers.CopyValidation.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryAccessor.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStreamWrapper.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObservable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObserver.cs" />
@@ -857,6 +860,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\OutOfMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\ConstrainedExecution\CriticalFinalizerObject.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\InteropServices\SafeBuffer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\ManualResetEventSlim.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\NativeOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\SpinWait.cs" />
@@ -1007,7 +1011,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\fileinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesystemenumerable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesysteminfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\pinnedbuffermemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamwriter.cs" />
@@ -1015,8 +1018,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemoryaccessor.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
@@ -1470,7 +1471,6 @@
     <Compile Include="System.Runtime.InteropServices\RegistrationServices.cs" />
     <Compile Include="System.Runtime.InteropServices\STATSTG.cs" />
     <Compile Include="System.Runtime.InteropServices\SYSKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\SafeBuffer.cs" />
     <Compile Include="System.Runtime.InteropServices\SafeHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\TYPELIBATTR.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibConverter.cs" />
