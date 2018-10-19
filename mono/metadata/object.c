@@ -2848,13 +2848,6 @@ leave:
 }
 #endif /* DISABLE_REMOTING */
 
-/**
- * mono_object_get_virtual_method:
- * \param obj object to operate on.
- * \param method method 
- * Retrieves the \c MonoMethod that would be called on \p obj if \p obj is passed as
- * the instance of a callvirt of \p method.
- */
 MonoMethod*
 mono_object_get_virtual_method_internal (MonoObject *obj_raw, MonoMethod *method)
 {
@@ -2867,6 +2860,13 @@ mono_object_get_virtual_method_internal (MonoObject *obj_raw, MonoMethod *method
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
+/**
+ * mono_object_get_virtual_method:
+ * \param obj object to operate on.
+ * \param method method
+ * Retrieves the \c MonoMethod that would be called on \p obj if \p obj is passed as
+ * the instance of a callvirt of \p method.
+ */
 MonoMethod*
 mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 {
@@ -2876,7 +2876,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 /**
  * mono_object_handle_get_virtual_method:
  * \param obj object to operate on.
- * \param method method 
+ * \param method method
  * Retrieves the \c MonoMethod that would be called on \p obj if \p obj is passed as
  * the instance of a callvirt of \p method.
  */
@@ -2998,7 +2998,7 @@ do_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **ex
  *
  * The params array contains the arguments to the method with the
  * same convention: \c MonoObject* pointers for object instances and
- * pointers to the value type otherwise. 
+ * pointers to the value type otherwise.
  * 
  * From unmanaged code you'll usually use the
  * \c mono_runtime_invoke variant.
@@ -3052,8 +3052,8 @@ mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **
  *
  * The params array contains the arguments to the method with the
  * same convention: \c MonoObject* pointers for object instances and
- * pointers to the value type otherwise. 
- * 
+ * pointers to the value type otherwise.
+ *
  * From unmanaged code you'll usually use the
  * mono_runtime_invoke() variant.
  *
@@ -3322,6 +3322,18 @@ handle_enum:
 	}
 }
 
+void
+mono_field_set_value_internal (MonoObject *obj, MonoClassField *field, void *value)
+{
+	void *dest;
+
+	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+		return;
+
+	dest = (char*)obj + field->offset;
+	mono_copy_value (field->type, dest, value, FALSE);
+}
+
 /**
  * mono_field_set_value:
  * \param obj Instance object
@@ -3335,31 +3347,11 @@ handle_enum:
  * The value must be in the native format of the field type. 
  */
 void
-mono_field_set_value_internal (MonoObject *obj, MonoClassField *field, void *value)
-{
-	void *dest;
-
-	if ((field->type->attrs & FIELD_ATTRIBUTE_STATIC))
-		return;
-
-	dest = (char*)obj + field->offset;
-	mono_copy_value (field->type, dest, value, FALSE);
-}
-
-void
 mono_field_set_value (MonoObject *obj, MonoClassField *field, void *value)
 {
 	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_field_set_value_internal (obj, field, value));
 }
 
-/**
- * mono_field_static_set_value:
- * \param field \c MonoClassField describing the field to set
- * \param value The value to be set
- * Sets the value of the static field described by \p field
- * to the value passed in \p value.
- * The value must be in the native format of the field type. 
- */
 void
 mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, void *value)
 {
@@ -3385,6 +3377,14 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 	mono_copy_value (field->type, dest, value, FALSE);
 }
 
+/**
+ * mono_field_static_set_value:
+ * \param field \c MonoClassField describing the field to set
+ * \param value The value to be set
+ * Sets the value of the static field described by \p field
+ * to the value passed in \p value.
+ * The value must be in the native format of the field type. 
+ */
 void
 mono_field_static_set_value (MonoVTable *vt, MonoClassField *field, void *value)
 {
@@ -4087,11 +4087,6 @@ mono_nullable_box_handle (gpointer buf, MonoClass *klass, MonoError *error)
 	return MONO_HANDLE_NEW (MonoObject, mono_nullable_box (buf, klass, error));
 }
 
-/**
- * mono_get_delegate_invoke:
- * \param klass The delegate class
- * \returns the \c MonoMethod for the \c Invoke method in the delegate class or NULL if \p klass is a broken delegate type
- */
 MonoMethod *
 mono_get_delegate_invoke_internal (MonoClass *klass)
 {
@@ -4103,6 +4098,11 @@ mono_get_delegate_invoke_internal (MonoClass *klass)
 	return result;
 }
 
+/**
+ * mono_get_delegate_invoke:
+ * \param klass The delegate class
+ * \returns the \c MonoMethod for the \c Invoke method in the delegate class or NULL if \p klass is a broken delegate type
+ */
 MonoMethod*
 mono_get_delegate_invoke (MonoClass *klass)
 {
@@ -4177,11 +4177,6 @@ mono_get_delegate_begin_invoke_checked (MonoClass *klass, MonoError *error)
 	return im;
 }
 
-/**
- * mono_get_delegate_end_invoke:
- * \param klass The delegate class
- * \returns the \c MonoMethod for the \c EndInvoke method in the delegate class or NULL if \p klass is a broken delegate type
- */
 MonoMethod *
 mono_get_delegate_end_invoke_internal (MonoClass *klass)
 {
@@ -4193,6 +4188,11 @@ mono_get_delegate_end_invoke_internal (MonoClass *klass)
 	return result;
 }
 
+/**
+ * mono_get_delegate_end_invoke:
+ * \param klass The delegate class
+ * \returns the \c MonoMethod for the \c EndInvoke method in the delegate class or NULL if \p klass is a broken delegate type
+ */
 MonoMethod*
 mono_get_delegate_end_invoke (MonoClass *klass)
 {
@@ -4828,17 +4828,6 @@ mono_runtime_unhandled_exception_policy_get (void)
 	return runtime_unhandled_exception_policy;
 }
 
-/**
- * mono_unhandled_exception:
- * \param exc exception thrown
- * This is a VM internal routine.
- *
- * We call this function when we detect an unhandled exception
- * in the default domain.
- *
- * It invokes the \c UnhandledException event in \c AppDomain or prints
- * a warning to the console 
- */
 void
 mono_unhandled_exception_internal (MonoObject *exc_raw)
 {
@@ -4850,6 +4839,17 @@ mono_unhandled_exception_internal (MonoObject *exc_raw)
 	HANDLE_FUNCTION_RETURN ();
 }
 
+/**
+ * mono_unhandled_exception:
+ * \param exc exception thrown
+ * This is a VM internal routine.
+ *
+ * We call this function when we detect an unhandled exception
+ * in the default domain.
+ *
+ * It invokes the \c UnhandledException event in \c AppDomain or prints
+ * a warning to the console
+ */
 void
 mono_unhandled_exception (MonoObject *exc)
 {
@@ -4857,7 +4857,7 @@ mono_unhandled_exception (MonoObject *exc)
 }
 
 /**
- * mono_unhandled_exception:
+ * mono_unhandled_exception_checked:
  * @exc: exception thrown
  *
  * This is a VM internal routine.
@@ -4866,7 +4866,7 @@ mono_unhandled_exception (MonoObject *exc)
  * in the default domain.
  *
  * It invokes the * UnhandledException event in AppDomain or prints
- * a warning to the console 
+ * a warning to the console
  */
 void
 mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
@@ -5826,7 +5826,7 @@ mono_object_new_alloc_specific (MonoVTable *vtable)
 /**
  * mono_object_new_alloc_specific_checked:
  * \param vtable virtual table for the object.
- * \param error holds the error return value.  
+ * \param error holds the error return value.
  *
  * This function allocates a new \c MonoObject with the type derived
  * from the \p vtable information. If the class of this object has a 
@@ -6416,11 +6416,6 @@ mono_string_empty_wrapper (void)
 	return mono_string_empty_internal (domain);
 }
 
-/**
- * mono_string_empty:
- *
- * Returns: The same empty string instance as the managed string.Empty
- */
 MonoString*
 mono_string_empty_internal (MonoDomain *domain)
 {
@@ -6429,6 +6424,11 @@ mono_string_empty_internal (MonoDomain *domain)
 	return domain->empty_string;
 }
 
+/**
+ * mono_string_empty:
+ *
+ * Returns: The same empty string instance as the managed string.Empty
+ */
 MonoString*
 mono_string_empty (MonoDomain *domain)
 {
@@ -6612,7 +6612,7 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 }
 
 /**
- * mono_string_new_len_checked:
+ * mono_string_new_utf8_len_handle:
  * \param text a pointer to an utf8 string
  * \param length number of bytes in \p text to consider
  * \param error set on error
@@ -6714,7 +6714,7 @@ mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *error)
 	}
 	
 	g_free (ut);
-    
+
 /*FIXME g_utf8_get_char, g_utf8_next_char and g_utf8_validate are not part of eglib.*/
 #if 0
 	gunichar2 *str;
@@ -6767,7 +6767,7 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 
 	if (!eg_error)
 		o = mono_string_new_utf16_checked (domain, ut, items_written, error);
-	else 
+	else
 		g_error_free (eg_error);
 
 	g_free (ut);
@@ -6775,17 +6775,17 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 	return o;
 }
 
-/**
- * mono_string_new_wrapper:
- * \param text pointer to UTF-8 characters.
- * Helper function to create a string object from \p text in the current domain.
- */
 MonoString*
 mono_string_new_wrapper_internal (const char *text)
 {
 	return mono_string_new_internal (mono_domain_get (), text);
 }
 
+/**
+ * mono_string_new_wrapper:
+ * \param text pointer to UTF-8 characters.
+ * Helper function to create a string object from \p text in the current domain.
+ */
 MonoString*
 mono_string_new_wrapper (const char *text)
 {
@@ -6811,7 +6811,7 @@ mono_value_box (MonoDomain *domain, MonoClass *klass, gpointer value)
 }
 
 /**
- * mono_value_box_checked:
+ * mono_value_box_handle:
  * \param domain the domain of the new object
  * \param class the class of the value
  * \param value a pointer to the unboxed data
@@ -6943,6 +6943,14 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
 	return res;
 }
 
+void
+mono_value_copy_internal (gpointer dest, gpointer src, MonoClass *klass)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	mono_gc_wbarrier_value_copy_internal (dest, src, 1, klass);
+}
+
 /**
  * mono_value_copy:
  * \param dest destination pointer
@@ -6952,17 +6960,20 @@ mono_value_box_checked (MonoDomain *domain, MonoClass *klass, gpointer value, Mo
  * when \p klass contains reference fields.
  */
 void
-mono_value_copy_internal (gpointer dest, gpointer src, MonoClass *klass)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	mono_gc_wbarrier_value_copy_internal (dest, src, 1, klass);
-}
-
-void
 mono_value_copy (gpointer dest, gpointer src, MonoClass *klass)
 {
 	mono_value_copy_internal (dest, src, klass);
+}
+
+void
+mono_value_copy_array_internal (MonoArray *dest, int dest_idx, gpointer src, int count)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	int size = mono_array_element_size (dest->obj.vtable->klass);
+	char *d = mono_array_addr_with_size_fast (dest, size, dest_idx);
+	g_assert (size == mono_class_value_size (m_class_get_element_class (mono_object_class (dest)), NULL));
+	mono_gc_wbarrier_value_copy_internal (d, src, count, m_class_get_element_class (mono_object_class (dest)));
 }
 
 /**
@@ -6975,17 +6986,6 @@ mono_value_copy (gpointer dest, gpointer src, MonoClass *klass)
  * This function must be used when \p klass contains references fields.
  * Overlap is handled.
  */
-void
-mono_value_copy_array_internal (MonoArray *dest, int dest_idx, gpointer src, int count)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	int size = mono_array_element_size (dest->obj.vtable->klass);
-	char *d = mono_array_addr_with_size_fast (dest, size, dest_idx);
-	g_assert (size == mono_class_value_size (m_class_get_element_class (mono_object_class (dest)), NULL));
-	mono_gc_wbarrier_value_copy_internal (d, src, count, m_class_get_element_class (mono_object_class (dest)));
-}
-
 void
 mono_value_copy_array (MonoArray *dest, int dest_idx, void* src, int count)
 {
@@ -7005,11 +7005,6 @@ mono_object_get_vtable (MonoObject *obj)
 	MONO_EXTERNAL_ONLY (MonoVTable*, mono_object_get_vtable_internal (obj));
 }
 
-/**
- * mono_object_get_domain:
- * \param obj object to query
- * \returns the \c MonoDomain where the object is hosted
- */
 MonoDomain*
 mono_object_get_domain_internal (MonoObject *obj)
 {
@@ -7018,6 +7013,11 @@ mono_object_get_domain_internal (MonoObject *obj)
 	return mono_object_domain (obj);
 }
 
+/**
+ * mono_object_get_domain:
+ * \param obj object to query
+ * \returns the \c MonoDomain where the object is hosted
+ */
 MonoDomain*
 mono_object_get_domain (MonoObject *obj)
 {
@@ -7036,11 +7036,6 @@ mono_object_get_class (MonoObject *obj)
 	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoClass*, mono_object_class (obj));
 }
 
-/**
- * mono_object_get_size:
- * \param o object to query
- * \returns the size, in bytes, of \p o
- */
 guint
 mono_object_get_size_internal (MonoObject* o)
 {
@@ -7063,10 +7058,23 @@ mono_object_get_size_internal (MonoObject* o)
 	}
 }
 
+/**
+ * mono_object_get_size:
+ * \param o object to query
+ * \returns the size, in bytes, of \p o
+ */
 unsigned
 mono_object_get_size (MonoObject *o)
 {
 	MONO_EXTERNAL_ONLY (unsigned, mono_object_get_size_internal (o));
+}
+
+gpointer
+mono_object_unbox_internal (MonoObject *obj)
+{
+	/* add assert for valuetypes? */
+	g_assert (m_class_is_valuetype (mono_object_class (obj)));
+	return mono_object_get_data (obj);
 }
 
 /**
@@ -7077,14 +7085,6 @@ mono_object_get_size (MonoObject *o)
  *
  * This method will assert if the object passed is not a valuetype.
  */
-gpointer
-mono_object_unbox_internal (MonoObject *obj)
-{
-	/* add assert for valuetypes? */
-	g_assert (m_class_is_valuetype (mono_object_class (obj)));
-	return mono_object_get_data (obj);
-}
-
 void*
 mono_object_unbox (MonoObject *obj)
 {
@@ -7266,7 +7266,7 @@ leave:
 /**
  * mono_object_castclass_mbyref:
  * \param obj an object
- * \param klass a pointer to a class 
+ * \param klass a pointer to a class
  * \returns \p obj if \p obj is derived from \p klass, returns NULL otherwise.
  */
 MonoObject *
@@ -7348,11 +7348,6 @@ mono_string_is_interned_lookup (MonoString *str, int insert, MonoError *error)
 	return NULL;
 }
 
-/**
- * mono_string_is_interned:
- * \param o String to probe
- * \returns Whether the string has been interned.
- */
 MonoString*
 mono_string_is_interned_internal (MonoString *o)
 {
@@ -7363,6 +7358,11 @@ mono_string_is_interned_internal (MonoString *o)
 	return result;
 }
 
+/**
+ * mono_string_is_interned:
+ * \param o String to probe
+ * \returns Whether the string has been interned.
+ */
 MonoString*
 mono_string_is_interned (MonoString *str)
 {
@@ -7372,7 +7372,7 @@ mono_string_is_interned (MonoString *str)
 /**
  * mono_string_intern:
  * \param o String to intern
- * Interns the string passed.  
+ * Interns the string passed.
  * \returns The interned string.
  */
 MonoString*
@@ -7626,14 +7626,6 @@ mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 	return as;
 }
 
-/**
- * mono_string_to_utf8_checked:
- * \param s a \c System.String
- * \param error a \c MonoError.
- * Converts a \c MonoString to its UTF-8 representation. May fail; check
- * \p error to determine whether the conversion was successful.
- * The resulting buffer should be freed with \c mono_free().
- */
 char *
 mono_string_to_utf8_checked_internal (MonoString *s, MonoError *error)
 {
@@ -7650,6 +7642,14 @@ mono_string_to_utf8_checked_internal (MonoString *s, MonoError *error)
 	return mono_utf16_to_utf8 (mono_string_chars_internal (s), s->length, error);
 }
 
+/**
+ * mono_string_to_utf8_checked:
+ * \param s a \c System.String
+ * \param error a \c MonoError.
+ * Converts a \c MonoString to its UTF-8 representation. May fail; check
+ * \p error to determine whether the conversion was successful.
+ * The resulting buffer should be freed with \c mono_free().
+ */
 char*
 mono_string_to_utf8_checked (MonoString *string_obj, MonoError *error)
 {
@@ -7697,14 +7697,6 @@ mono_string_to_utf8_ignore (MonoString *s)
 	return as;
 }
 
-/**
- * mono_string_to_utf16:
- * \param s a \c MonoString
- * \returns a null-terminated array of the UTF-16 chars
- * contained in \p s. The result must be freed with \c g_free().
- * This is a temporary helper until our string implementation
- * is reworked to always include the null-terminating char.
- */
 mono_unichar2*
 mono_string_to_utf16_internal (MonoString *s)
 {
@@ -7723,18 +7715,20 @@ mono_string_to_utf16_internal (MonoString *s)
 	return as;
 }
 
+/**
+ * mono_string_to_utf16:
+ * \param s a \c MonoString
+ * \returns a null-terminated array of the UTF-16 chars
+ * contained in \p s. The result must be freed with \c g_free().
+ * This is a temporary helper until our string implementation
+ * is reworked to always include the null-terminating char.
+ */
 mono_unichar2*
 mono_string_to_utf16 (MonoString *string_obj)
 {
 	MONO_EXTERNAL_ONLY (mono_unichar2*, mono_string_to_utf16_internal (string_obj));
 }
 
-/**
- * mono_string_to_utf32:
- * \param s a \c MonoString
- * \returns a null-terminated array of the UTF-32 (UCS-4) chars
- * contained in \p s. The result must be freed with \c g_free().
- */
 mono_unichar4*
 mono_string_to_utf32_internal (MonoString *s)
 {
@@ -7746,6 +7740,12 @@ mono_string_to_utf32_internal (MonoString *s)
 	return g_utf16_to_ucs4 (s->chars, s->length, NULL, NULL, NULL);
 }
 
+/**
+ * mono_string_to_utf32:
+ * \param s a \c MonoString
+ * \returns a null-terminated array of the UTF-32 (UCS-4) chars
+ * contained in \p s. The result must be freed with \c g_free().
+ */
 mono_unichar4*
 mono_string_to_utf32 (MonoString *string_obj)
 {
@@ -7911,14 +7911,8 @@ mono_get_eh_callbacks (void)
 	return &eh_callbacks;
 }
 
-/**
- * mono_raise_exception:
- * \param ex exception object
- * Signal the runtime that the exception \p ex has been raised in unmanaged code.
- * DEPRECATED. DO NOT ADD NEW CALLERS FOR THIS FUNCTION.
- */
 void
-mono_raise_exception_internal (MonoException *ex) 
+mono_raise_exception_internal (MonoException *ex)
 {
 	/* raise_exception doesn't return, so the transition to GC Unsafe is unbalanced */
 	MONO_STACKDATA (stackdata);
@@ -7926,8 +7920,14 @@ mono_raise_exception_internal (MonoException *ex)
 	mono_raise_exception_deprecated (ex);
 }
 
+/**
+ * mono_raise_exception:
+ * \param ex exception object
+ * Signal the runtime that the exception \p ex has been raised in unmanaged code.
+ * DEPRECATED. DO NOT ADD NEW CALLERS FOR THIS FUNCTION.
+ */
 void
-mono_raise_exception (MonoException *ex) 
+mono_raise_exception (MonoException *ex)
 {
 	MONO_EXTERNAL_ONLY_VOID (mono_raise_exception_internal (ex));
 }
@@ -8983,11 +8983,6 @@ mono_get_addr_from_ftnptr (gpointer descr)
 	return callbacks.get_addr_from_ftnptr (descr);
 }	
 
-/**
- * mono_string_chars:
- * \param s a \c MonoString
- * \returns a pointer to the UTF-16 characters stored in the \c MonoString
- */
 gunichar2 *
 mono_string_chars_internal (MonoString *s)
 {
@@ -8996,17 +8991,17 @@ mono_string_chars_internal (MonoString *s)
 	return s->chars;
 }
 
+/**
+ * mono_string_chars:
+ * \param s a \c MonoString
+ * \returns a pointer to the UTF-16 characters stored in the \c MonoString
+ */
 mono_unichar2*
 mono_string_chars (MonoString *s)
 {
 	MONO_EXTERNAL_ONLY (mono_unichar2*, mono_string_chars_internal (s));
 }
 
-/**
- * mono_string_length:
- * \param s MonoString
- * \returns the length in characters of the string
- */
 int
 mono_string_length_internal (MonoString *s)
 {
@@ -9015,6 +9010,11 @@ mono_string_length_internal (MonoString *s)
 	return s->length;
 }
 
+/**
+ * mono_string_length:
+ * \param s MonoString
+ * \returns the length in characters of the string
+ */
 int
 mono_string_length (MonoString *s)
 {
@@ -9064,7 +9064,7 @@ mono_array_addr_with_size (MonoArray *array, int size, uintptr_t idx)
 }
 
 MonoArray *
-mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error) 
+mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoArray *res;

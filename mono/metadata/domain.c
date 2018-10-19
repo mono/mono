@@ -227,15 +227,6 @@ mono_install_free_domain_hook (MonoFreeDomainFunc func)
 	free_domain_hook = func;
 }
 
-/**
- * mono_string_equal:
- * \param s1 First string to compare
- * \param s2 Second string to compare
- *
- * Compares two \c MonoString* instances ordinally for equality.
- *
- * \returns FALSE if the strings differ.
- */
 gboolean
 mono_string_equal_internal (MonoString *s1, MonoString *s2)
 {
@@ -250,19 +241,21 @@ mono_string_equal_internal (MonoString *s1, MonoString *s2)
 	return memcmp (mono_string_chars_internal (s1), mono_string_chars_internal (s2), l1 * 2) == 0;
 }
 
+/**
+ * mono_string_equal:
+ * \param s1 First string to compare
+ * \param s2 Second string to compare
+ *
+ * Compares two \c MonoString* instances ordinally for equality.
+ *
+ * \returns FALSE if the strings differ.
+ */
 gboolean
 mono_string_equal (MonoString *s1, MonoString *s2)
 {
 	MONO_EXTERNAL_ONLY (gboolean, mono_string_equal_internal (s1, s2));
 }
 
-/**
- * mono_string_hash:
- * \param s the string to hash
- *
- * Compute the hash for a \c MonoString*
- * \returns the hash for the string.
- */
 guint
 mono_string_hash_internal (MonoString *s)
 {
@@ -278,6 +271,13 @@ mono_string_hash_internal (MonoString *s)
 	return h;	
 }
 
+/**
+ * mono_string_hash:
+ * \param s the string to hash
+ *
+ * Compute the hash for a \c MonoString*
+ * \returns the hash for the string.
+ */
 guint
 mono_string_hash (MonoString *s)
 {

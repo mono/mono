@@ -467,7 +467,6 @@ alloc_mon (MonoObject *obj, gint32 id)
 	return mon;
 }
 
-
 static void
 discard_mon (MonoThreadsSync *mon)
 {
@@ -558,12 +557,6 @@ mono_monitor_inflate (MonoObject *obj)
 
 #define MONO_OBJECT_ALIGNMENT_SHIFT	3
 
-/*
- * mono_object_hash:
- * @obj: an object
- *
- * Calculate a hash code for @obj that is constant while @obj is alive.
- */
 int
 mono_object_hash_internal (MonoObject* obj)
 {
@@ -635,6 +628,12 @@ mono_object_hash_internal (MonoObject* obj)
 #endif
 }
 
+/*
+ * mono_object_hash:
+ * @obj: an object
+ *
+ * Calculate a hash code for @obj that is constant while @obj is alive.
+ */
 int
 mono_object_hash (MonoObject* obj)
 {
@@ -780,7 +779,7 @@ signal_monitor (gpointer mon_untyped)
 	mono_coop_mutex_unlock (mon->entry_mutex);
 }
 
-/* If allow_interruption==TRUE, the method will be interrumped if abort or suspend
+/* If allow_interruption==TRUE, the method will be interrupted if abort or suspend
  * is requested. In this case it returns -1.
  */ 
 static inline gint32 
@@ -1093,9 +1092,6 @@ mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_try_enter_internal (obj, ms, FALSE) == 1);
 }
 
-/**
- * mono_monitor_exit:
- */
 void
 mono_monitor_exit_internal (MonoObject *obj)
 {
@@ -1121,6 +1117,9 @@ mono_monitor_exit_internal (MonoObject *obj)
 		mono_monitor_exit_flat (obj, lw);
 }
 
+/**
+ * mono_monitor_exit:
+ */
 void
 mono_monitor_exit (MonoObject *obj)
 {
