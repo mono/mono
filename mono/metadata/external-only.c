@@ -69,7 +69,7 @@ mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
  * mono_gchandle_get_target:
  * \param gchandle a GCHandle's handle.
  *
- * The handle was previously created by calling \c mono_gchandle_new_internal or
+ * The handle was previously created by calling \c mono_gchandle_new or
  * \c mono_gchandle_new_weakref.
  *
  * \returns a pointer to the \c MonoObject* represented by the handle or
