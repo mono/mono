@@ -105,6 +105,7 @@ typedef struct MonoAotModule {
 	guint32 image_table_len;
 	gboolean out_of_date;
 	gboolean plt_inited;
+	gboolean got_initializing;
 	gboolean got_initialized;
 	guint8 *mem_begin;
 	guint8 *mem_end;
@@ -1945,6 +1946,12 @@ init_amodule_got (MonoAotModule *amodule)
 	guint32 got_offsets [128];
 	ERROR_DECL (error);
 	int i, npatches;
+
+	// To fix circular loading
+	if (amodule->shared_got [0] || amodule->got_initializing)
+		return;
+
+	amodule->got_initializing = TRUE;
 
 	/* These can't be initialized in load_aot_module () */
 	if (amodule->got_initialized)
