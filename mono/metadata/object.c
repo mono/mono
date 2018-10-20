@@ -3451,7 +3451,7 @@ mono_field_get_addr (MonoObject *obj, MonoVTable *vt, MonoClassField *field)
  * <pre>
  * int i;
  *
- * mono_field_get_value_internal (obj, int_field, &i);
+ * mono_field_get_value (obj, int_field, &i);
  * </pre>
  */
 void
