@@ -218,7 +218,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = Color.FromArgb (182, 189, 210);
 
 					menu_strip_gradient_begin = SystemColors.Control;
-					menu_strip_gradient_end = Color.FromArgb (246, 245, 244);
+					menu_strip_gradient_end = SystemColors.ControlLight;
 
 					overflow_button_gradient_begin = Color.FromArgb (225, 222, 217);
 					overflow_button_gradient_end = SystemColors.ButtonShadow;
@@ -238,7 +238,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = Color.FromArgb (246, 245, 244);
 					tool_strip_drop_down_background = SystemColors.Window;
 
-					tool_strip_gradient_begin = Color.FromArgb (245, 244, 242);
+					tool_strip_gradient_begin = SystemColors.ControlLight;
 					tool_strip_gradient_end = SystemColors.Control;
 					tool_strip_gradient_middle = Color.FromArgb (234, 232, 228);
 
@@ -289,7 +289,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (193, 210, 238) : Color.FromArgb (255, 203, 136);
 
 					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (196, 218, 250);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (127, 177, 250);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (0, 53, 145);
@@ -309,7 +309,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
 					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 249) : Color.FromArgb (246, 246, 246);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (227, 239, 255);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (227, 239, 255);
 					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (123, 164, 224);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (203, 225, 252);
 
@@ -362,7 +362,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (223, 227, 212) : Color.FromArgb (255, 203, 136);
 
 					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (242, 241, 228);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (186, 204, 150);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (96, 119, 107);
@@ -382,7 +382,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
 					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 249) : Color.FromArgb (244, 244, 238);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (255, 255, 237);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (255, 255, 237);
 					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (181, 196, 143);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (206, 220, 167);
 
@@ -435,7 +435,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (232, 233, 236) : Color.FromArgb (255, 203, 136);
 
 					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (243, 243, 247);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (233, 233, 235) : Color.FromArgb (186, 185, 206);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (118, 116, 146);
@@ -455,7 +455,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
 					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (253, 250, 255);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (248, 248, 249) : Color.FromArgb (249, 249, 255);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (249, 249, 255);
 					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (147, 145, 176);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (240, 239, 241) : Color.FromArgb (225, 226, 236);
 
@@ -508,7 +508,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (194, 207, 229) : Color.FromArgb (194, 207, 229);
 
 					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (251, 250, 251);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (241, 240, 242) : Color.FromArgb (242, 242, 242);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (167, 166, 170);
@@ -528,7 +528,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
 					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 252) : Color.FromArgb (252, 252, 252);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (250, 250, 251) : Color.FromArgb (252, 252, 252);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (252, 252, 252);
 					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (245, 244, 246) : Color.FromArgb (245, 244, 246);
 
@@ -581,7 +581,7 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_end = Color.FromArgb (194, 224, 255);
 
 					menu_strip_gradient_begin = SystemColors.Control;
-					menu_strip_gradient_end = Color.FromArgb (253, 253, 253);
+					menu_strip_gradient_end = SystemColors.ControlLight;
 
 					overflow_button_gradient_begin = Color.FromArgb (247, 247, 247);
 					overflow_button_gradient_end = SystemColors.ButtonShadow;
@@ -601,7 +601,7 @@ namespace System.Windows.Forms
 					tool_strip_content_panel_gradient_end = Color.FromArgb (253, 253, 253);
 					tool_strip_drop_down_background = Color.FromArgb (253, 253, 253);
 
-					tool_strip_gradient_begin = Color.FromArgb (252, 252, 252);
+					tool_strip_gradient_begin = SystemColors.ControlLight;
 					tool_strip_gradient_end = SystemColors.Control;
 					tool_strip_gradient_middle = Color.FromArgb (250, 250, 250);
 
