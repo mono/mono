@@ -167,6 +167,7 @@ var App = {
 					Module.print ("REGRESSION RESULT: " + res);
 				} catch (e) {
 					Module.print ("ABORT: " + e);
+					print (e.stack);
 					res = 1;
 				}
 
