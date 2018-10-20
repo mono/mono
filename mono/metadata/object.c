@@ -4132,11 +4132,6 @@ mono_get_delegate_invoke_checked (MonoClass *klass, MonoError *error)
 	return im;
 }
 
-/**
- * mono_get_delegate_begin_invoke:
- * \param klass The delegate class
- * \returns the \c MonoMethod for the \c BeginInvoke method in the delegate class or NULL if \p klass is a broken delegate type
- */
 MonoMethod *
 mono_get_delegate_begin_invoke_internal (MonoClass *klass)
 {
@@ -4148,6 +4143,11 @@ mono_get_delegate_begin_invoke_internal (MonoClass *klass)
 	return result;
 }
 
+/**
+ * mono_get_delegate_begin_invoke:
+ * \param klass The delegate class
+ * \returns the \c MonoMethod for the \c BeginInvoke method in the delegate class or NULL if \p klass is a broken delegate type
+ */
 MonoMethod*
 mono_get_delegate_begin_invoke (MonoClass *klass)
 {
