@@ -351,6 +351,12 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 if (_reader == null)
                 {
+                    // If we've read everything, then _reader and _status will be null
+                    if (_status == null)
+                    {
+                        return 0;
+                    }
+
                     using (var body = _status.Body)
                     {
                         _reader = (JSObject)body.Invoke("getReader");
@@ -369,6 +375,8 @@ namespace WebAssembly.Net.Http.HttpClient
                 {
                     if ((bool)read.GetObjectProperty("done"))
                     {
+                        _reader.Dispose();
+                        _reader = null;
                         return 0;
                     }
 
@@ -395,6 +403,7 @@ namespace WebAssembly.Net.Http.HttpClient
 
             protected override void Dispose(bool disposing)
             {
+                _reader?.Dispose();
                 _status?.Dispose();
             }
 
