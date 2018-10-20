@@ -2031,12 +2031,18 @@ mono_compile_create_vars (MonoCompile *cfg)
 	cfg->args = (MonoInst **)mono_mempool_alloc0 (cfg->mempool, (sig->param_count + sig->hasthis) * sizeof (MonoInst*));
 
 	if (sig->hasthis) {
-		cfg->args [0] = mono_compile_create_var (cfg, m_class_get_this_arg (cfg->method->klass), OP_ARG);
-		cfg->this_arg = cfg->args [0];
+		MonoInst* arg = mono_compile_create_var (cfg, m_class_get_this_arg (cfg->method->klass), OP_ARG);
+		if (header->volatile_args)
+			arg->flags |= MONO_INST_VOLATILE;
+		cfg->args [0] = arg;
+		cfg->this_arg = arg;
 	}
 
 	for (i = 0; i < sig->param_count; ++i) {
-		cfg->args [i + sig->hasthis] = mono_compile_create_var (cfg, sig->params [i], OP_ARG);
+		MonoInst* arg = mono_compile_create_var (cfg, sig->params [i], OP_ARG);
+		if (header->volatile_args)
+			arg->flags |= MONO_INST_VOLATILE;
+		cfg->args [i + sig->hasthis] = arg;
 	}
 
 	if (cfg->verbose_level > 2) {

@@ -609,6 +609,7 @@ struct _MonoMethodHeader {
 	unsigned int num_clauses : 15;
 	/* if num_locals != 0, then the following apply: */
 	unsigned int init_locals : 1;
+	unsigned volatile_args   : 1; // if 1, all args are volatile; used for handles() wrappers.
 	guint16      num_locals;
 	MonoExceptionClause *clauses;
 	MonoType    *locals [MONO_ZERO_LEN_ARRAY];

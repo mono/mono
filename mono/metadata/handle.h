@@ -69,7 +69,7 @@ typedef struct _HandleChunk HandleChunk;
 /*#define MONO_HANDLE_TRACK_SP*/
 
 typedef struct {
-	gpointer o; /* MonoObject ptr or interior ptr */
+	gpointer o; /* MonoObject ptr */
 #ifdef MONO_HANDLE_TRACK_OWNER
 	const char *owner;
 	gpointer backtrace_ips[7]; /* result of backtrace () at time of allocation */
@@ -91,20 +91,18 @@ typedef struct MonoHandleStack {
 #ifdef MONO_HANDLE_TRACK_SP
 	gpointer stackmark_sp; // C stack pointer top when from most recent mono_stack_mark_init
 #endif
-	/* Chunk for storing interior pointers. Not extended right now */
-	HandleChunk *interior;
 } HandleStack;
 
 // Keep this in sync with RuntimeStructs.cs
 typedef struct {
-	int size, interior_size;
+	int size;
 	HandleChunk *chunk;
 #ifdef MONO_HANDLE_TRACK_SP
 	gpointer prev_sp; // C stack pointer from prior mono_stack_mark_init
 #endif
 } HandleStackMark;
 
-typedef void *MonoRawHandle;
+typedef void volatile * MonoRawHandle;
 
 typedef void (*GcScanFunc) (gpointer*, gpointer);
 
@@ -126,10 +124,8 @@ typedef void (*GcScanFunc) (gpointer*, gpointer);
 
 #ifndef MONO_HANDLE_TRACK_OWNER
 MonoRawHandle mono_handle_new (MonoObject *object);
-gpointer mono_handle_new_interior (gpointer rawptr);
 #else
 MonoRawHandle mono_handle_new (MonoObject *object, const char* owner);
-gpointer mono_handle_new_interior (gpointer rawptr, const char *owner);
 #endif
 
 void mono_handle_stack_scan (HandleStack *stack, GcScanFunc func, gpointer gc_data, gboolean precise, gboolean check);
@@ -153,7 +149,6 @@ mono_stack_mark_init (MonoThreadInfo *info, HandleStackMark *stackmark)
 	HandleStack *handles = info->handle_stack;
 	stackmark->size = handles->top->size;
 	stackmark->chunk = handles->top;
-	stackmark->interior_size = handles->interior->size;
 #ifdef MONO_HANDLE_TRACK_SP
 	stackmark->prev_sp = handles->stackmark_sp;
 	handles->stackmark_sp = sptop;
@@ -168,7 +163,6 @@ mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 	old_top->size = stackmark->size;
 	mono_memory_write_barrier ();
 	handles->top = old_top;
-	handles->interior->size = stackmark->interior_size;
 #ifdef MONO_HANDLE_TRACK_SP
 	mono_memory_write_barrier (); /* write to top before prev_sp */
 	handles->stackmark_sp = stackmark->prev_sp;
