@@ -104,37 +104,6 @@ chunk_element (HandleChunk *chunk, int idx)
 	return &chunk->elems[idx];
 }
 
-static HandleChunkElem*
-handle_to_chunk_element (MonoObjectHandle o)
-{
-	return (HandleChunkElem*)o.__raw;
-}
-
-/* Given a HandleChunkElem* search through the current handle stack to find its chunk and offset. */
-static HandleChunk*
-chunk_element_to_chunk_idx (HandleStack *stack, HandleChunkElem *elem, int *out_idx)
-{
-	HandleChunk *top = stack->top;
-	HandleChunk *cur = stack->bottom;
-
-	*out_idx = 0;
-
-	while (cur != NULL) {
-		HandleChunkElem *front = &cur->elems [0];
-		HandleChunkElem *back = &cur->elems [cur->size];
-
-		if (front <= elem && elem < back) {
-			*out_idx = (int)(elem - front);
-			return cur;
-		}
-
-		if (cur == top)
-			break; /* didn't find it. */
-		cur = cur->next;
-	}
-	return NULL;
-}
-
 #ifdef MONO_HANDLE_TRACK_OWNER
 #ifdef HAVE_BACKTRACE_SYMBOLS
 #define SET_BACKTRACE(btaddrs) do {					\
@@ -156,7 +125,8 @@ chunk_element_to_chunk_idx (HandleStack *stack, HandleChunkElem *elem, int *out_
 
 #ifdef MONO_HANDLE_TRACK_SP
 void
-mono_handle_chunk_leak_check (HandleStack *handles) {
+mono_handle_chunk_leak_check (HandleStack *handles)
+{
 	if (handles->stackmark_sp) {
 		/* walk back from the top to the topmost non-empty chunk */
 		HandleChunk *c = handles->top;
@@ -486,15 +456,6 @@ mono_array_handle_length (MonoArrayHandle arr)
 uint32_t
 mono_gchandle_from_handle (MonoObjectHandle handle, mono_bool pinned)
 {
-	/* FIXME: chunk_element_to_chunk_idx does a linear search through the
-	 * chunks and we only need it for the assert */
-	MonoThreadInfo *info = mono_thread_info_current ();
-	HandleStack *stack = info->handle_stack;
-	HandleChunkElem* elem = handle_to_chunk_element (handle);
-	int elem_idx = 0;
-	HandleChunk *chunk = chunk_element_to_chunk_idx (stack, elem, &elem_idx);
-	/* gchandles cannot deal with interior pointers */
-	g_assert (chunk != NULL);
 	return mono_gchandle_new (MONO_HANDLE_RAW (handle), pinned);
 }
 
