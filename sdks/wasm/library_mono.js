@@ -80,8 +80,6 @@ var MonoSupportLib = {
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
-			Module.FS_createPath ("/", vfs_prefix, true, true);
-
 			var pending = file_list.length;
 			var loaded_files = [];
 			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
