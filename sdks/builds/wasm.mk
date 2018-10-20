@@ -103,6 +103,8 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--enable-minimal=appdomains,com,remoting \
 	--enable-icall-symbol-map \
+	--with-cooperative-gc=no \
+	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
