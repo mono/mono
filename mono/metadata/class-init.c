@@ -4167,7 +4167,7 @@ mono_class_init (MonoClass *klass)
 			goto leave;
 		if (!cast_class->inited)
 			mono_class_init (cast_class);
-		if (mono_class_set_type_load_failure_causedby_class (klass, element_class, "Could not load array cast class"))
+		if (mono_class_set_type_load_failure_causedby_class (klass, cast_class, "Could not load array cast class"))
 			goto leave;
 	}
 
