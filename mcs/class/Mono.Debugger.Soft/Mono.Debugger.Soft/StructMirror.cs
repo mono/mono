@@ -7,7 +7,7 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Represents a valuetype value in the debuggee
 	 */
-	public class StructMirror : Value {
+	public class StructMirror : Value, IInvokable {
 	
 		TypeMirror type;
 		Value[] fields;
