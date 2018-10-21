@@ -33,7 +33,7 @@ emit_fill_call_ctx (MonoCompile *cfg, MonoInst *method, MonoInst *ret)
 	MonoInst *args_alloc, *ins;
 	MonoMethodSignature *sig;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	MONO_INST_NEW (cfg, args_alloc, OP_LOCALLOC_IMM);
 	args_alloc->dreg = alloc_preg (cfg);
