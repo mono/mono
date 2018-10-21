@@ -80,7 +80,19 @@ var MonoSupportLib = {
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
-			Module.FS_createPath ("/", vfs_prefix, true, true);
+			// /dev/random doesn't work on js shells, so define our own
+			// See library_fs.js:createDefaultDevices ()
+			var random_device;
+			if (typeof crypto !== 'undefined') {
+				var randomBuffer = new Uint8Array(1);
+				random_device = function() { crypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
+			} else if (ENVIRONMENT_IS_NODE) {
+				random_device = function() { return require('crypto')['randomBytes'](1)[0]; };
+			} else {
+				// This is not crypto quality
+				random_device = function() { return (Math.random()*256)|0; };
+			}
+			FS.createDevice('/dev', 'mono_random', random_device);
 
 			var pending = file_list.length;
 			var loaded_files = [];
@@ -139,7 +151,21 @@ var MonoSupportLib = {
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
 						console.log ("initializing mono runtime");
-						load_runtime (vfs_prefix, enable_debugging);
+						if (ENVIRONMENT_IS_SHELL) {
+							try {
+								load_runtime (vfs_prefix, enable_debugging);
+							} catch (ex) {
+								print ("load_runtime () failed: " + ex);
+								var err = new Error();
+								print ("Stacktrace: \n");
+								print (err.stack);
+
+								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+								wasm_exit (1);
+							}
+						} else {
+							load_runtime (vfs_prefix, enable_debugging);
+						}
 						MONO.mono_wasm_runtime_ready ();
 						loaded_cb ();
 					}
