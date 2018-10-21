@@ -133,11 +133,12 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	if (!trace_spec.enabled)
 		return;
 
+	fname = mono_method_full_name (method, TRUE);
+	indent (1);
+
 	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
-	fname = mono_method_full_name (method, TRUE);
-	indent (1);
 	printf ("ENTER: %s(", fname);
 	g_free (fname);
 
@@ -151,7 +152,8 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
-				goto unlock;
+				mono_atomic_store_release (&output_lock, 0);
+				return;
 			}
 		}
 	}
@@ -161,7 +163,7 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 		if (m_class_is_valuetype (method->klass)) {
 			printf ("value:%p, ", this_buf);
 		} else {
-			MonoObject *o = *(void**)this_buf;
+			MonoObject *o = *(MonoObject**)this_buf;
 
 			if (o) {
 				klass = o->vtable->klass;
@@ -283,7 +285,6 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	printf (")\n");
 	fflush (stdout);
 
-unlock:
 	mono_atomic_store_release (&output_lock, 0);
 }
 
@@ -297,11 +298,12 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	if (!trace_spec.enabled)
 		return;
 
+	fname = mono_method_full_name (method, TRUE);
+	indent (-1);
+
 	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
-	fname = mono_method_full_name (method, TRUE);
-	indent (-1);
 	printf ("LEAVE: %s", fname);
 	g_free (fname);
 
@@ -313,7 +315,8 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
-				goto unlock;
+				mono_atomic_store_release (&output_lock, 0);
+				return;
 			}
 		}
 	}
@@ -341,7 +344,7 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 		break;
 	}
 	case MONO_TYPE_OBJECT: {
-		MonoObject *o = *arg_in_stack_slot (buf, gpointer);
+		MonoObject *o = *arg_in_stack_slot (buf, MonoObject*);
 
 		if (o) {
 			gpointer data = mono_object_get_data (o);
@@ -398,7 +401,6 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	printf ("\n");
 	fflush (stdout);
 
-unlock:
 	mono_atomic_store_release (&output_lock, 0);
 }
 
