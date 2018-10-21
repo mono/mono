@@ -22,7 +22,17 @@ namespace Mono.Debugger.Soft
 		public Value[] OutArgs { get; set; }
 	}
 
-	public class ObjectMirror : Value {
+	public interface IInvokable {
+		Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments);
+		Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options);
+		IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state);
+		Value EndInvokeMethod (IAsyncResult asyncResult);
+		InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult);
+		Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None);
+		Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None);
+	}
+
+	public class ObjectMirror : Value, IInvokable {
 		TypeMirror type;
 		AppDomainMirror domain;
 	
