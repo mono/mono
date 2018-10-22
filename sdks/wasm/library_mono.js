@@ -80,20 +80,6 @@ var MonoSupportLib = {
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
-			// /dev/random doesn't work on js shells, so define our own
-			// See library_fs.js:createDefaultDevices ()
-			var random_device;
-			if (typeof crypto !== 'undefined') {
-				var randomBuffer = new Uint8Array(1);
-				random_device = function() { crypto.getRandomValues(randomBuffer); return randomBuffer[0]; };
-			} else if (ENVIRONMENT_IS_NODE) {
-				random_device = function() { return require('crypto')['randomBytes'](1)[0]; };
-			} else {
-				// This is not crypto quality
-				random_device = function() { return (Math.random()*256)|0; };
-			}
-			FS.createDevice('/dev', 'mono_random', random_device);
-
 			var pending = file_list.length;
 			var loaded_files = [];
 			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
