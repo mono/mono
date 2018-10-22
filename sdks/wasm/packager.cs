@@ -202,7 +202,6 @@ class Driver {
 
 	enum CopyType
 	{
-		Default,
 		Always,
 		IfNewer		
 	}
@@ -226,8 +225,8 @@ class Driver {
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
-		var copyTypeParm = "default";
-		var copyType = CopyType.Default;
+		var copyTypeParam = "";
+		var copyType = CopyType.IfNewer;
 
 		var p = new OptionSet () {
 				{ "debug", s => enable_debug = true },
@@ -245,7 +244,7 @@ class Driver {
 				{ "template=", s => runtimeTemplate = s },
 				{ "asset=", s => assets.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
-				{ "copy=", s => copyTypeParm = s },
+				{ "copy=", s => copyTypeParam = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -259,7 +258,7 @@ class Driver {
 			return;
 		}
 
-		if (!Enum.TryParse(copyTypeParm, true, out copyType)) {
+		if (copyTypeParam.Length > 0 && !Enum.TryParse(copyTypeParam, true, out copyType)) {
 			Console.WriteLine("Invalid copy value");
 			Usage ();
 			return;
@@ -591,7 +590,7 @@ class Driver {
 		switch (copyType)
 		{
 			case CopyType.Always:
-				File.Copy(sourceFileName, destFileName, true);
+				File.Copy(sourceFileName, destFileName, overwrite: true);
 				break;
 			case CopyType.IfNewer:
 				if (!File.Exists(destFileName))
@@ -604,14 +603,13 @@ class Driver {
 					var dstInfo = new FileInfo (destFileName);
 					
 					if (srcInfo.LastWriteTime.Ticks > dstInfo.LastWriteTime.Ticks || srcInfo.Length > dstInfo.Length)
-						File.Copy(sourceFileName, destFileName, true);
+						File.Copy(sourceFileName, destFileName, overwrite: true);
 					else
 						Console.WriteLine($"    skipping: {sourceFileName}");
 				}
 				break;
 			default:
-				File.Copy(sourceFileName, destFileName);
-				break;
+				throw new Exception ($"Invalid CopyFile mode {copyType}");
 		}
 
 	}
