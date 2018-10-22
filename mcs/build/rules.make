@@ -136,11 +136,13 @@ endif
 # mcs/class/lib/$(PROFILE)/
 ifndef TOP_LEVEL_DO
 
-ifdef ALWAYS_AOT
+ifdef ALWAYS_AOT_BCL
+TOP_LEVEL_DO = do-all-aot
+else ifdef ALWAYS_AOT_TESTS
 TOP_LEVEL_DO = do-all-aot
 else
 TOP_LEVEL_DO = do-all
-endif # ALWAYS_AOT
+endif
 
 endif # !TOP_LEVEL_DO
 
@@ -172,10 +174,15 @@ do-all-aot:
 # be able to evaluate the .dylibs to make
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
+ifdef ALWAYS_AOT_BCL
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
-AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 AOT_PROFILE_ASSEMBLIES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+endif
+
+ifdef ALWAYS_AOT_TESTS
+AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 AOT_PROFILE_TESTS_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_TESTS))
+endif
 
 # This can run in parallel
 .PHONY: aot-all-profile

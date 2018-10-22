@@ -161,14 +161,14 @@ ifdef TEST_HARNESS_VERBOSE
 LABELS_ARG = -labels
 endif
 
-ifdef ALWAYS_AOT
+ifdef ALWAYS_AOT_TESTS
 test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp $(test_assemblies)
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) $(test_assemblies)
 
 else
 test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp $(test_assemblies)
 
-endif # ALWAYS_AOT
+endif # ALWAYS_AOT_TESTS
 
 ifdef COVERAGE
 TEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/coverage_nunit_$(ASSEMBLY).xml
