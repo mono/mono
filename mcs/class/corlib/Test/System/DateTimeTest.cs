@@ -232,7 +232,7 @@ namespace MonoTests.System
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category("MobileNotWorking")]
+		[Category("NotWorking")]
 		public void AddHoursOutOfRangeException1 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);
@@ -241,7 +241,7 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category("MobileNotWorking")]
+		[Category("NotWorking")]
 		public void AddHoursOutOfRangeException2 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);

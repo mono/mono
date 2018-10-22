@@ -65,8 +65,8 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		Assert.AreEqual("04/07/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
-		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
+		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
+		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
 		DateTime d3 = new DateTime (2002,2,25);
