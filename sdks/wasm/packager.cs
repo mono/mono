@@ -288,8 +288,18 @@ class Driver {
 		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
 
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
-		File.Delete (runtime_js);
-		File.Copy (runtimeTemplate, runtime_js);
+		if (emit_ninja) {
+			File.Delete (runtime_js);
+			File.Copy (runtimeTemplate, runtime_js);
+		} else {
+			if (File.Exists(runtime_js)) {
+				CopyFile (runtimeTemplate, runtime_js, CopyType.IfNewer, $"runtime template <{runtimeTemplate}> ");
+			} else {
+				var runtime_gen = "\nvar Module = {\n\tonRuntimeInitialized: function () {\n\t\tMONO.mono_load_runtime_and_bcl (\n\t\tconfig.vfs_prefix,\n\t\tconfig.deploy_prefix,\n\t\tconfig.enable_debugging,\n\t\tconfig.file_list,\n\t\tfunction () {\n\t\t\tconfig.add_bindings ();\n\t\t\tApp.init ();\n\t\t}\n\t)\n\t},\n};";
+				File.Delete (runtime_js);
+				File.WriteAllText (runtime_js, runtime_gen);
+			}
+		}
 
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\"").Distinct());
 		var config = String.Format ("config = {{\n \tvfs_prefix: \"{0}\",\n \tdeploy_prefix: \"{1}\",\n \tenable_debugging: {2},\n \tfile_list: [ {3} ],\n", vfs_prefix, deploy_prefix, enable_debug ? "1" : "0", file_list_str);

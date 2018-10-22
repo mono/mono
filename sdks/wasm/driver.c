@@ -181,7 +181,6 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 	mono_trace_init ();
 	mono_trace_set_log_handler (wasm_logger, NULL);
-	mono_set_assemblies_path (m_strdup (managed_path));
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
