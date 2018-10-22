@@ -380,7 +380,7 @@ System.Runtime.InteropServices/RegistrationClassContext.cs
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Runtime/InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/STATSTG.cs
 System.Runtime.InteropServices/RegistrationServices.cs
-System.Runtime.InteropServices/SafeBuffer.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/InteropServices/SafeBuffer.cs
 System.Runtime.InteropServices/SafeHandle.cs
 System.Runtime.InteropServices/SYSKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
@@ -1131,7 +1131,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/filesystemenumerable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
-../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
 ../referencesource/mscorlib/system/io/stream.cs
 ../referencesource/mscorlib/system/io/streamreader.cs
 ../referencesource/mscorlib/system/io/streamwriter.cs
@@ -1139,8 +1139,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/stringwriter.cs
 ../referencesource/mscorlib/system/io/textreader.cs
 ../referencesource/mscorlib/system/io/textwriter.cs
-../referencesource/mscorlib/system/io/unmanagedmemoryaccessor.cs
-../referencesource/mscorlib/system/io/unmanagedmemorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryAccessor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStreamWrapper.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AmbiguousMatchException.cs

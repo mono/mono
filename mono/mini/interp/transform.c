@@ -967,8 +967,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 
 			if (arg_size < SIZEOF_VOID_P) { // 4 -> 8
 				switch (type_index) {
-				case 0: case 1:
+				case 0:
 					ADD_CODE (td, MINT_CONV_I8_I4);
+					break;
+				case 1:
+					ADD_CODE (td, MINT_CONV_I8_U4);
 					break;
 				case 2:
 					ADD_CODE (td, MINT_CONV_R8_R4);
@@ -1046,8 +1049,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 #if SIZEOF_VOID_P == 8
 			if (src_size < dst_size) { // 4 -> 8
 				switch (type_index) {
-				case 0: case 1:
+				case 0:
 					ADD_CODE (td, MINT_CONV_I8_I4);
+					break;
+				case 1:
+					ADD_CODE (td, MINT_CONV_I8_U4);
 					break;
 				case 2:
 					ADD_CODE (td, MINT_CONV_R8_R4);
@@ -1441,9 +1447,15 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				ADD_CODE (td, MINT_LDIND_I);
 				ADD_CODE (td, csignature->param_count);
 			}
-			ADD_CODE (td, MINT_BOX);
-			ADD_CODE (td, get_data_item_index (td, constrained_class));
-			ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+			if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
+				ADD_CODE (td, MINT_BOX_VT);
+				ADD_CODE (td, get_data_item_index (td, constrained_class));
+				ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+			} else {
+				ADD_CODE (td, MINT_BOX);
+				ADD_CODE (td, get_data_item_index (td, constrained_class));
+				ADD_CODE (td, csignature->param_count);
+			}
 		} else if (!m_class_is_valuetype (constrained_class)) {
 			/* managed pointer on the stack, we need to deref that puppy */
 			ADD_CODE (td, MINT_LDIND_I);
@@ -1470,9 +1482,15 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 						ADD_CODE (td, MINT_LDIND_I);
 						ADD_CODE (td, csignature->param_count);
 					}
-					ADD_CODE (td, MINT_BOX);
-					ADD_CODE (td, get_data_item_index (td, constrained_class));
-					ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+					if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
+						ADD_CODE (td, MINT_BOX_VT);
+						ADD_CODE (td, get_data_item_index (td, constrained_class));
+						ADD_CODE (td, csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP));
+					} else {
+						ADD_CODE (td, MINT_BOX);
+						ADD_CODE (td, get_data_item_index (td, constrained_class));
+						ADD_CODE (td, csignature->param_count);
+					}
 				}
 			}
 			is_virtual = FALSE;
@@ -3174,7 +3192,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 			goto_if_nok (error, exit);
 
 			if (m_class_is_valuetype (klass)) {
-				ADD_CODE (td, MINT_CPOBJ);
+				int mt = mint_type (m_class_get_byval_arg (klass));
+				ADD_CODE (td, (mt == MINT_TYPE_VT) ? MINT_CPOBJ_VT : MINT_CPOBJ);
 				ADD_CODE (td, get_data_item_index(td, klass));
 			} else {
 				ADD_CODE (td, MINT_LDIND_REF);
@@ -3203,9 +3222,11 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				POP_VT (td, tos_size);
 			}
 
-			ADD_CODE(td, MINT_LDOBJ);
-			ADD_CODE(td, get_data_item_index(td, klass));
 			int mt = mint_type (m_class_get_byval_arg (klass));
+
+			ADD_CODE(td, (mt == MINT_TYPE_VT) ? MINT_LDOBJ_VT: MINT_LDOBJ);
+			ADD_CODE(td, get_data_item_index(td, klass));
+
 			if (mt == MINT_TYPE_VT) {
 				size = mono_class_value_size (klass, NULL);
 				PUSH_VT (td, size);
@@ -3439,7 +3460,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				ADD_CODE (td, MINT_UNBOX);
 				ADD_CODE (td, get_data_item_index (td, klass));
 
-				ADD_CODE (td, MINT_LDOBJ);
+				ADD_CODE (td, (mt == MINT_TYPE_VT) ? MINT_LDOBJ_VT: MINT_LDOBJ);
 				ADD_CODE (td, get_data_item_index(td, klass));
 				SET_TYPE (td->sp - 1, stack_type [mt], klass);
 
@@ -3802,7 +3823,10 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				} else if (td->sp [-1].type == STACK_TYPE_R8 && m_class_get_byval_arg (klass)->type == MONO_TYPE_R4) {
 					ADD_CODE (td, MINT_CONV_R4_R8);
 				}
-				ADD_CODE(td, MINT_BOX);
+				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
+					ADD_CODE (td, MINT_BOX_VT);
+				else
+					ADD_CODE (td, MINT_BOX);
 				ADD_CODE(td, get_data_item_index (td, klass));
 				ADD_CODE (td, 0);
 				SET_TYPE(td->sp - 1, STACK_TYPE_O, klass);

@@ -194,7 +194,7 @@ package: app/assets/asm/monodroid_mini_test.dll
 
 .PHONY: $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb
 $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb:
-	$(MAKE) PROFILE='monodroid_tools' -C $(TOP)/mcs/class/Mono.Debugger.Soft test
+	$(MAKE) PROFILE='monodroid' -C $(TOP)/mcs/class/Mono.Debugger.Soft build-dtest
 
 app/assets/asm/dtest-app.exe: $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe
 	cp $< $@

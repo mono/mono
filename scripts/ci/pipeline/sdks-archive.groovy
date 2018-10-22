@@ -65,17 +65,19 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
-                        if (platform == "Darwin") {
-                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz"
-                            sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
+                        lock ("${product}-${env.NODE_NAME}") {
+                            if (platform == "Darwin") {
+                                def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz"
+                                sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
 
-                            sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
-                        } else if (platform == "Linux") {
-                            chroot chrootName: chrootname,
-                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
-                                additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
-                        } else {
-                            throw new Exception("Unknown platform \"${platform}\"")
+                                sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
+                            } else if (platform == "Linux") {
+                                chroot chrootName: chrootname,
+                                    command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                    additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
+                            } else {
+                                throw new Exception("Unknown platform \"${platform}\"")
+                            }
                         }
                     }
                     // move Archive to the workspace root

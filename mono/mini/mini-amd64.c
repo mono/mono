@@ -41,7 +41,6 @@
 
 #include "interp/interp.h"
 
-#include "trace.h"
 #include "ir-emit.h"
 #include "mini-amd64.h"
 #include "cpu-amd64.h"
@@ -1341,7 +1340,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 }
 
 gboolean
-mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
@@ -1553,8 +1552,6 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 	if (cfg->param_area)
 		cfg->arch.omit_fp = FALSE;
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
-		cfg->arch.omit_fp = FALSE;
-	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		cfg->arch.omit_fp = FALSE;
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
@@ -2531,7 +2528,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 typedef struct {
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
-	int nstack_args;
+	int nstack_args, nullable_area;
 } ArchDynCallInfo;
 
 static gboolean
@@ -2583,7 +2580,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
-	int i;
+	int i, aindex;
 
 	cinfo = get_call_info (NULL, sig);
 
@@ -2609,6 +2606,34 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 			break;
 		}
 	}
+
+	for (aindex = 0; aindex < sig->param_count; aindex++) {
+		MonoType *t = sig->params [aindex];
+		ArgInfo *ainfo = &cinfo->args [aindex + sig->hasthis];
+
+		if (t->byref)
+			continue;
+
+		switch (t->type) {
+		case MONO_TYPE_GENERICINST:
+			if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type_internal (t))) {
+				MonoClass *klass = mono_class_from_mono_type_internal (t);
+				int size;
+
+				if (!(ainfo->storage == ArgValuetypeInReg || ainfo->storage == ArgOnStack)) {
+					/* Nullables need a temporary buffer, its stored at the end of DynCallArgs.regs after the stack args */
+					size = mono_class_value_size (klass, NULL);
+					info->nullable_area += size;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	info->nullable_area = ALIGN_TO (info->nullable_area, 16);
+
 	/* Align to 16 bytes */
 	if (info->nstack_args & 1)
 		info->nstack_args ++;
@@ -2636,7 +2661,7 @@ mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 
 	/* Extend the 'regs' field dynamically */
-	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t));
+	return sizeof (DynCallArgs) + (ainfo->nstack_args * sizeof (mgreg_t)) + ainfo->nullable_area;
 }
 
 #define PTR_TO_GREG(ptr) (mgreg_t)(ptr)
@@ -2664,6 +2689,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	int arg_index, greg, i, pindex;
 	MonoMethodSignature *sig = dinfo->sig;
 	int buffer_offset = 0;
+	guint8 *nullable_buffer;
 	static int general_param_reg_to_index[MONO_MAX_IREGS];
 	static int float_param_reg_to_index[MONO_MAX_FREGS];
 
@@ -2687,6 +2713,12 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	arg_index = 0;
 	greg = 0;
 	pindex = 0;
+
+	/* Stored after the stack arguments */
+	nullable_buffer = (guint8*)&(p->regs [PARAM_REGS + (dinfo->nstack_args * sizeof (mgreg_t))]);
+
+	if (dinfo->nullable_area)
+		printf ("%d\n", dinfo->nullable_area);
 
 	if (sig->hasthis || dinfo->cinfo->vret_arg_index == 1) {
 		p->regs [greg ++] = PTR_TO_GREG(*(args [arg_index ++]));
@@ -2784,9 +2816,13 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 					int size;
 
 					size = mono_class_value_size (klass, NULL);
-					nullable_buf = p->buffer + buffer_offset;
-					buffer_offset += size;
-					g_assert (buffer_offset <= 256);
+					if (ainfo->storage == ArgValuetypeInReg || ainfo->storage == ArgOnStack) {
+						nullable_buf = g_alloca (size);
+					} else {
+						nullable_buf = nullable_buffer + buffer_offset;
+						buffer_offset += size;
+						g_assert (buffer_offset <= dinfo->nullable_area);
+					}
 
 					/* The argument pointed to by arg is either a boxed vtype or null */
 					mono_nullable_init (nullable_buf, (MonoObject*)arg, klass);
@@ -6822,9 +6858,6 @@ get_max_epilog_size (MonoCompile *cfg)
 	
 	if (cfg->method->save_lmf)
 		max_epilog_size += 256;
-	
-	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
 
 	max_epilog_size += (AMD64_NREG * 2);
 
@@ -6892,14 +6925,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	CallInfo *cinfo;
 	MonoInst *lmf_var = cfg->lmf_var;
 	gboolean args_clobbered = FALSE;
-	gboolean trace = FALSE;
 
 	cfg->code_size = MAX (cfg->header->code_size * 4, 1024);
 
 	code = cfg->native_code = (unsigned char *)g_malloc (cfg->code_size);
-
-	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		trace = TRUE;
 
 	/* Amount of stack space allocated by register saving code */
 	pos = 0;
@@ -7161,7 +7190,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 		ins = cfg->args [i];
 
-		if ((ins->flags & MONO_INST_IS_DEAD) && !trace)
+		if (ins->flags & MONO_INST_IS_DEAD && !MONO_CFG_PROFILE (cfg, ENTER_CONTEXT))
 			/* Unused arguments */
 			continue;
 
@@ -7254,11 +7283,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (cfg->method->save_lmf)
 		args_clobbered = TRUE;
-
-	if (trace) {
-		args_clobbered = TRUE;
-		code = (guint8 *)mono_arch_instrument_prolog (cfg, (gpointer)mono_trace_enter_method, code, TRUE);
-	}
 
 	/*
 	 * Optimize the common case of the first bblock making a call with the same
@@ -7393,9 +7417,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 	/* Save the uwind state which is needed by the out-of-line code */
 	mono_emit_unwind_op_remember_state (cfg, code);
-
-	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint8 *)mono_arch_instrument_epilog (cfg, (gpointer)mono_trace_leave_method, code, TRUE);
 
 	/* the code restoring the registers must be kept in sync with OP_TAILCALL */
 	
