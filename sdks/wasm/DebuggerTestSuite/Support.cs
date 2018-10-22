@@ -17,24 +17,24 @@ namespace DebuggerTests
 	class Inspector
 	{
 		// InspectorClient client;
-		Dictionary<string, TaskCompletionSource<bool>> notifications = new Dictionary<string, TaskCompletionSource<bool>> ();
+		Dictionary<string, TaskCompletionSource<JObject>> notifications = new Dictionary<string, TaskCompletionSource<JObject>> ();
 		Dictionary<string, Func<JObject, CancellationToken, Task>> eventListeners = new Dictionary<string, Func<JObject, CancellationToken, Task>> ();
 
 		public const string PAUSE = "pause";
 		public const string READY = "ready";
 
-		public Task WaitFor(string what) {
+		public Task<JObject> WaitFor(string what) {
 			if (notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, waiting for {what} while another wait is already setup");
-			var n = new TaskCompletionSource<bool> ();
+			var n = new TaskCompletionSource<JObject> ();
 			notifications [what] = n;
 			return n.Task;
 		}
 
-		void NotifyOf (string what) {
+		void NotifyOf (string what, JObject args) {
 			if (!notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, notifying of {what}, but nobody waiting");
-			notifications [what].SetResult (true);
+			notifications [what].SetResult (args);
 			notifications.Remove (what);
 		}
 
@@ -46,10 +46,10 @@ namespace DebuggerTests
 		{
 			switch (method) {
 			case "Debugger.paused":
-				NotifyOf (PAUSE);
+				NotifyOf (PAUSE, args);
 				break;
 			case "Mono.runtimeReady":
-				NotifyOf (READY);
+				NotifyOf (READY, args);
 				break;
 			}
 			if (eventListeners.ContainsKey (method))
@@ -62,7 +62,7 @@ namespace DebuggerTests
 				var uri = new Uri ("ws://localhost:9300/launch-chrome-and-connect");
 				using (var client = new InspectorClient ()) {
 					await client.Connect (uri, OnMessage, async token => {
-						Task[] init_cmds = new [] {
+						Task[] init_cmds = new Task [] {
 							client.SendCommand ("Profiler.enable", null, token),
 							client.SendCommand ("Runtime.enable", null, token),
 							client.SendCommand ("Debugger.enable", null, token),
