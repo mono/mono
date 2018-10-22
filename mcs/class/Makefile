@@ -345,6 +345,7 @@ net_4_x_parallel_dirs := \
 unityjit_dirs := \
 	$(net_4_x_dirs) \
 	System.ComponentModel.Composition.4.5 \
+	System.Data.DataSetExtensions \
 	I18N \
 	$(pcl_facade_dirs)
 
@@ -361,6 +362,7 @@ unityaot_dirs := \
 		System.Xml.Serialization \
 		System.Runtime.CompilerServices.Unsafe, $(mobile_common_dirs))	\
 	System.Drawing			\
+	System.Data.DataSetExtensions \
 	$(pcl_facade_dirs)
 
 xbuild_2_0_dirs := \
