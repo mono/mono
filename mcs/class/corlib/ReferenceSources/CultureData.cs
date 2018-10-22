@@ -239,6 +239,9 @@ namespace System.Globalization
 					case "zh":
 						waCalendars = new int[] { calendarId, Calendar.CAL_TAIWAN };
 						break;
+					case "he":
+						waCalendars = new int[] { calendarId, Calendar.CAL_HEBREW };
+						break;
 					default:
 						waCalendars = new int [] { calendarId };
 						break;
