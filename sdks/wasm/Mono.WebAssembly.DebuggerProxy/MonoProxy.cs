@@ -22,7 +22,7 @@ namespace Mono.WebAssembly {
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
 	}
 
-	internal enum MonoErrorCodes {
+	public enum MonoErrorCodes {
 		BpNotFound = 100000,
 	}
 
@@ -337,8 +337,7 @@ namespace Mono.WebAssembly {
 				hitBreakpoints = bp_list,
 			});
 
-			// Console.WriteLine ($"XXXXXXXXX {o}");
-			SendEvent ("Debugger.paused", o, token);
+				SendEvent ("Debugger.paused", o, token);
 		}
 
 		async Task OnDefaultContext (int ctx_id, JObject aux_data, CancellationToken token)
@@ -460,7 +459,6 @@ namespace Mono.WebAssembly {
 
 			var res = await SendCommand ("Runtime.evaluate", o, token);
 			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
-			Console.WriteLine ("XXXXX " + res.ToJObject(8888));
 
 			if (ret_code.HasValue) {
 				bp.RemoteId = ret_code.Value;
