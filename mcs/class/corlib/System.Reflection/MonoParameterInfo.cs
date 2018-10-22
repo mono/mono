@@ -214,14 +214,7 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern int GetMetadataToken ();
 
-		public
-		override
-		Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
 
 		internal object[] GetPseudoCustomAttributes () 
 		{
@@ -289,14 +282,7 @@ namespace System.Reflection
 			return attrsData;
 		}
 
-		public
-		override
-		Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
 		public override bool HasDefaultValue {
 			get { 
@@ -327,6 +313,17 @@ namespace System.Reflection
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
 			return new MonoParameterInfo (type, member, marshalAs);
-		}		
+		}
+
+		private Type[] GetCustomModifiers (bool optional) {
+			Type[] types = GetTypeModifiers (optional);
+			if (types == null)
+				return Type.EmptyTypes;
+			// Mono returns modifiers in the same order as they appear in the signatures.
+			// NetFX/CoreFX returns them in reversed order.
+			// So we just reverse the order to follow NetFX/CoreFX behavior.
+			Array.Reverse (types);
+			return types;			
+		}
 	}
 }
