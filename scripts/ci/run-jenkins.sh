@@ -210,6 +210,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=debugger --timeout=60m make -C sdks/wasm test-debugger
             ${TESTCMD} --label=aot-mini --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m make -C sdks/wasm run-aot-${suite}; done
