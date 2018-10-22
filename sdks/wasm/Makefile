@@ -140,7 +140,7 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.js
-	mono packager.exe -debug -out=debug_sample --asset=debug.html sample.dll
+	mono --debug packager.exe -debug -out=debug_sample --asset=debug.html sample.dll
 	touch $@	
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
@@ -157,14 +157,14 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 
 # For development
 aot-sample: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini
@@ -178,7 +178,7 @@ check-aot-mini run-aot-mini: build-aot-mini
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --nobinding --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
+	mono --debug packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --nobinding --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
@@ -206,10 +206,13 @@ build-debug-sample: .stamp-build-debug-sample
 build-test-suite: .stamp-build-test-suite
 
 build-debugger-test-app: .stamp-build-debugger-test-app
-build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
+build-managed: build-debug-sample build-test-suite build-dbg-testsuite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
+
+build-dbg-testsuite:
+	dotnet build DebuggerTestSuite
 
 build-framework-nuget:
 	nuget pack WebAssembly.Framework.nuspec
@@ -239,6 +242,9 @@ run-all-%:
 	make -C . run-v8-$*
 	make -C . run-sm-$*
 	make -C . run-jsc-$*
+
+test-debugger: build-debugger-test-app build-dbg-testsuite
+	dotnet test DebuggerTestSuite
 
 clean:
 
