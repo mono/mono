@@ -1454,10 +1454,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF7Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF8Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
-../referencesource/mscorlib/system/text/codepageencoding.cs
 ../referencesource/mscorlib/system/text/encoding.cs
-../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
-../referencesource/mscorlib/system/text/surrogateencoder.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/ISpanFormattable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilder.cs
