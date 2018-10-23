@@ -145,7 +145,7 @@ namespace WsProxy {
 					Console.WriteLine ("New test request");
 					await LaunchAndServe (psi, context, str => {
 						//We wait for it as a signal that chrome finished launching
-						if (!str.StartsWith ("DevTools listening on "))
+						if (!str.StartsWith ("DevTools listening on ", StringComparison.Ordinal))
 							return null;
 
 						var client = new HttpClient ();

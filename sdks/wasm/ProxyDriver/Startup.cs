@@ -43,6 +43,17 @@ namespace WsProxy
 		{
 			app.UseWebSockets ();
 
+			var debug_path = configuration ["Debug"];
+			if (debug_path != null) {
+				var serve_path = Path.GetDirectoryName (debug_path);
+				Console.WriteLine ($"Configuring to server from {serve_path} under /app");
+				app.UseStaticFiles (new StaticFileOptions {
+					FileProvider = new PhysicalFileProvider (serve_path),
+					ServeUnknownFileTypes = true, //Cuz .wasm is not a known file type :cry:
+					RequestPath = "/app"
+				});
+			}
+
 			app.UseRouter (router => {
 				router.MapGet ("devtools/page/{pageId}", async context => {
 					if (!context.WebSockets.IsWebSocketRequest) {
