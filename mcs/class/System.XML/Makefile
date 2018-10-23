@@ -10,7 +10,7 @@ TXT_RESOURCE_STRINGS = \
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Private.Xml/src/Resources/Strings.resx
 
-LIB_MCS_FLAGS = -nowarn:219,414,649,1717 -unsafe -d:ASYNC
+LIB_MCS_FLAGS = -nowarn:219,414,618,649,1717 -unsafe -d:ASYNC
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:AGCLR -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML -d:DISABLE_CAS_USE

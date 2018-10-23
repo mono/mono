@@ -254,6 +254,13 @@
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ApplicationExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeOffsetTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeOffsetTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeZoneTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.cs
