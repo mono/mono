@@ -2647,8 +2647,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 
 	if (!start_with_ip) {
 		frame->args = g_newa (char, rtm->alloca_size);
-		memset (frame->args, 0, rtm->alloca_size);
-
 		ip = rtm->code;
 	} else {
 		ip = start_with_ip;
