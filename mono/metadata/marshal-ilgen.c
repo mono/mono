@@ -6347,6 +6347,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 		/* TODO support adding wrappers to non-static struct methods */
 		g_assert (!sig->hasthis || !m_class_is_valuetype (mono_method_get_class (method)));
 
+		/* Add MonoError* param */
 		MonoClass * const error_class = mono_class_load_from_name (mono_get_corlib (), "Mono", "RuntimeStructs/MonoError");
 		int const error_var = mono_mb_add_local (mb, m_class_get_byval_arg (error_class));
 		call_sig->params [csig->param_count] = mono_class_get_byref_type (error_class);
