@@ -16,12 +16,14 @@ $(TOP)/sdks/builds/toolchains/llvm36:
 $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 
 # Compile only a subset of tools to speed up the build and avoid building tools which use threads since they don't build on mxe
+# -DLLVM_ENABLE_LIBXML2=OFF is needed because xml2 is not used and it breaks 32-bit builds on 64-bit Linux hosts
 llvm_CMAKE_FLAGS = \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 	-DLLVM_BUILD_TESTS=Off -DLLVM_INCLUDE_TESTS=Off \
 	-DLLVM_BUILD_EXAMPLES=Off -DLLVM_INCLUDE_EXAMPLES=Off \
 	-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
+	-DLLVM_ENABLE_LIBXML2=Off \
 	$(if $(NINJA),-G Ninja,)
 
 ##
