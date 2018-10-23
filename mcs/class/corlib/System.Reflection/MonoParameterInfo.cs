@@ -315,15 +315,6 @@ namespace System.Reflection
 			return new MonoParameterInfo (type, member, marshalAs);
 		}
 
-		private Type[] GetCustomModifiers (bool optional) {
-			Type[] types = GetTypeModifiers (optional);
-			if (types == null)
-				return Type.EmptyTypes;
-			// Mono returns modifiers in the same order as they appear in the signatures.
-			// NetFX/CoreFX returns them in reversed order.
-			// So we just reverse the order to follow NetFX/CoreFX behavior.
-			Array.Reverse (types);
-			return types;			
-		}
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
 	}
 }
