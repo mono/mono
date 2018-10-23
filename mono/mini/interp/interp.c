@@ -2611,20 +2611,19 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	0 };
 #endif
 
-
 	frame->ex = NULL;
-	frame->ip = NULL;
 
 	debug_enter (frame, &tracing);
 
 	rtm = frame->imethod;
-	if (!frame->imethod->transformed) {
+	if (!rtm->transformed) {
 #if DEBUG_INTERP
 		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
 
+		frame->ip = NULL;
 		do_transform_method (frame, context);
 		if (frame->ex)
 			THROW_EX (frame->ex, NULL);
