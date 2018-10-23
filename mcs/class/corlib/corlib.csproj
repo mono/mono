@@ -358,6 +358,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PinnedBufferMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\SeekOrigin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamHelpers.CopyValidation.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\TextReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryAccessor.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStreamWrapper.cs" />
@@ -1015,11 +1017,9 @@
     <Compile Include="..\referencesource\mscorlib\system\io\filesystemenumerable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesysteminfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stream.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\streamreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\textreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
