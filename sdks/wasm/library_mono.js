@@ -79,6 +79,14 @@ var MonoSupportLib = {
 			return this.mono_wasm_del_bp (breakpoint_id);
 		},
 
+		// Set environment variable NAME to VALUE
+		// Should be called before mono_load_runtime_and_bcl () in most cases 
+		mono_wasm_setenv: function (name, value) {
+			if (!this.wasm_setenv)
+				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+			this.wasm_setenv (name, value);
+		},
+
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];

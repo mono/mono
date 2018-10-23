@@ -107,7 +107,7 @@ var Module = {
 		// Have to set env vars here to enable setting MONO_LOG_LEVEL etc.
 		var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
 		for (var variable in setenv) {
-			wasm_setenv (variable, setenv [variable]);
+			MONO.mono_wasm_setenv (variable, setenv [variable]);
 		}
 
 		MONO.mono_load_runtime_and_bcl (
