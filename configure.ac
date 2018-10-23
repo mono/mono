@@ -5319,7 +5319,25 @@ AC_DEFINE(MONO_INSIDE_RUNTIME,1, [Disable banned functions from being used by th
 mono_build_root=`pwd`
 AC_SUBST(mono_build_root)
 
-mono_runtime=mono/mini/mono
+if test x$host_win32 = xyes; then
+	AC_ARG_WITH(msvc, [  --with-msvc=yes,no      Build with Visual Studio (msvc) (defaults to no)],[],[with_msvc=no])
+	AM_CONDITIONAL(WITH_MSVC, test x$with_msvc = xyes)
+fi
+
+if test "x$with_msvc" = "xyes"; then
+	if test "x$support_boehm" = "xyes"; then
+		echo "Error, Boehm GC is not supported when build using --with-msvc."
+		exit 1
+	fi
+	if test "x$host_cpu" = "xi686"; then
+		mono_runtime=$(top_srcdir)/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe
+	else
+		mono_runtime=$(top_srcdir)/msvc/build/sgen/x64/bin/Release/mono-sgen.exe
+	fi
+else
+	mono_runtime=mono/mini/mono
+fi
+
 AC_SUBST(mono_runtime)
 
 CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
