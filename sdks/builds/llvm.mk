@@ -164,6 +164,7 @@ define LLVMMxeTemplate
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
+# -DLLVM_ENABLE_LIBXML2=OFF is needed because xml2 is not used and it breaks 32-bit builds on 64-bit Linux hosts
 _llvm-$(1)_CMAKE_FLAGS = \
 	$$(llvm_CMAKE_FLAGS) \
 	-DCMAKE_INSTALL_PREFIX=$$(TOP)/sdks/out/llvm-$(1) \
@@ -171,6 +172,7 @@ _llvm-$(1)_CMAKE_FLAGS = \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
 	-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/$(3).cmake \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
+	-DLLVM_ENABLE_LIBXML2=OFF \
 	$$(llvm-$(1)_CMAKE_FLAGS)
 
 $$(LLVM_SRC)/cmake/modules/$(3).cmake: $(3).cmake.in | $$(LLVM_SRC)
