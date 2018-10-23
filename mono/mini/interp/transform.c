@@ -2226,7 +2226,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 	body_start_offset = td->new_ip - td->new_code;
 
-	if (header->num_locals)
+	if (header->num_locals && header->init_locals)
 		ADD_CODE(td, MINT_INITLOCALS);
 
 	if (rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER)
