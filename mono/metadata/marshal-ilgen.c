@@ -6296,7 +6296,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	// FIXME:
 	MonoMethodSignature *call_sig = csig;
 	gboolean uses_handles = FALSE;
-	gboolean save_handles_to_locals = FALSE;
+	gboolean foreign_icall = FALSE;
 	IcallHandlesLocal *handles_locals = NULL;
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	gboolean need_gc_safe = FALSE;
