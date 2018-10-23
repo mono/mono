@@ -82,37 +82,47 @@ namespace DebuggerTests
 	}
 
 	public class DebuggerTestBase {
-		static string GuessTestPath () {
+		static string FindTestPath () {
+			//FIXME how would I locate it otherwise?
+			var test_path = Environment.GetEnvironmentVariable ("TEST_SUITE_PATH");
+			//Lets try to guest
+			if (test_path != null && Directory.Exists (test_path))
+				return test_path;
+
 			var cwd = Environment.CurrentDirectory;
 			Console.WriteLine ("guessing from {0}", cwd);
 			//tests run from DebuggerTestSuite/bin/Debug/netcoreapp2.1
 			var new_path = Path.Combine (cwd, "../../../../bin/debugger-test-suite");
 			if (File.Exists (Path.Combine (new_path, "debugger-driver.html")))
 				return new_path;
-			return null;
+
+			throw new Exception ("Missing TEST_SUITE_PATH env var and could not guess path from CWD");
+		}
+
+		static string[] PROBE_LIST = new[] {
+			"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/usr/bin/chromium",
+			"/usr/bin/chromium-browser",
+		};
+		static string chrome_path;
+
+
+		static String FindChromePath ()
+		{
+			if (chrome_path != null)
+				return chrome_path;
+			foreach (var s in PROBE_LIST){
+				if (File.Exists (s)) {
+					chrome_path = s;
+					return s;
+				}
+			}
+			throw new Exception ("Could not find an installed Chrome to use");
 		}
 
 		public DebuggerTestBase () {
-			//FIXME probe for chromium on linux
-			string chrome_path = null;
-			if (File.Exists ("/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"))
-				chrome_path = "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary";
-			else if (File.Exists ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"))
-				chrome_path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-			if (chrome_path == null)
-				throw new Exception ("Could not find an installed Chrome to use");
-
-			//FIXME how would I locate it otherwise?
-			var test_path = Environment.GetEnvironmentVariable ("TEST_SUITE_PATH");
-			//Lets try to guest
-			if (test_path == null || !Directory.Exists (test_path))
-				test_path = GuessTestPath ();
-
-			if (test_path == null || !Directory.Exists (test_path)) {
-				throw new Exception ("Missing or Invalid TEST_SUITE_PATH env var");
-			}
-
-			WsProxy.TestHarnessProxy.Start (chrome_path, test_path, "debugger-driver.html");
+			WsProxy.TestHarnessProxy.Start (FindChromePath (), FindTestPath (), "debugger-driver.html");
 		}
 	}
 }
