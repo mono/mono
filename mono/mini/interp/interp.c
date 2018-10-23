@@ -2624,9 +2624,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 
 
 	frame->ex = NULL;
-	frame->ex_handler = NULL;
 	frame->ip = NULL;
-	frame->domain = mono_domain_get ();
 	context->current_frame = frame;
 
 	debug_enter (frame, &tracing);
@@ -4254,7 +4252,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_THROW)
 			--sp;
-			frame->ex_handler = NULL;
 			if (!sp->data.p)
 				sp->data.p = mono_get_exception_null_reference ();
 
@@ -5257,11 +5254,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			}
 			frame->ip = ip;
 
-			if (frame->ex_handler != NULL && MONO_OFFSET_IN_HANDLER(frame->ex_handler, frame->ip - rtm->code)) {
-				frame->ex_handler = NULL;
-				frame->ex = NULL;
-			}
-
 			if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
 				stackval tmp_sp;
 
@@ -5801,7 +5793,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			 * actually run the new found handler.
 			 */
 			int exvar_offset = *(guint16*)(ip + 1);
-			frame->ex_handler = NULL;
 			THROW_EX_GENERAL (*(MonoException**)(frame->locals + exvar_offset), ip - 1, TRUE);
 			MINT_IN_BREAK;
 	   }
@@ -5815,7 +5806,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			 */
 
 			--sp;
-			frame->ex_handler = NULL;
 			if (!sp->data.p)
 				sp->data.p = mono_get_exception_null_reference ();
 
@@ -5886,12 +5876,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 
 		if (endfinally_ip != NULL)
 			finally_ips = g_slist_prepend(finally_ips, (void *)endfinally_ip);
-		for (i = 0; i < rtm->num_clauses; ++i)
-			if (frame->ex_handler == &rtm->clauses [i])
-				break;
 
-		while (i > 0) {
-			--i;
+		for (i = rtm->num_clauses - 1; i >= 0; i--) {
 			clause = &rtm->clauses [i];
 			if (MONO_OFFSET_IN_CLAUSE (clause, ip_offset) && (endfinally_ip == NULL || !(MONO_OFFSET_IN_CLAUSE (clause, endfinally_ip - rtm->code)))) {
 				if (clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
@@ -6089,7 +6075,7 @@ interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 		return FALSE;
 
 	MonoMethod *method = iframe->imethod->method;
-	frame->domain = iframe->domain;
+	frame->domain = iframe->imethod->domain;
 	frame->interp_frame = iframe;
 	frame->method = method;
 	frame->actual_method = method;

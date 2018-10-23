@@ -135,8 +135,6 @@ struct _InterpFrame {
 	unsigned char  invoke_trap;
 	const unsigned short  *ip;
 	MonoException     *ex;
-	MonoExceptionClause *ex_handler;
-	MonoDomain *domain;
 };
 
 typedef struct {
