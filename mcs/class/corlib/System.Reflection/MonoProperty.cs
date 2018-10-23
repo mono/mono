@@ -445,19 +445,11 @@ namespace System.Reflection {
 			method.Invoke (obj, invokeAttr, binder, parms, culture);
 		}
 
-		public override Type[] GetOptionalCustomModifiers () {
-			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
 
-		public override Type[] GetRequiredCustomModifiers () {
-			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
+
+		private Type[] GetCustomModifiers (bool optional) => MonoPropertyInfo.GetTypeModifiers (this, optional) ?? Type.EmptyTypes;
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
