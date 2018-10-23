@@ -270,3 +270,5 @@ elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then exit 0;
 else make check-ci;
 fi
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

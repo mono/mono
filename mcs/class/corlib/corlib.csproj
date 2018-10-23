@@ -281,9 +281,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Configuration\Assemblies\AssemblyVersionCompatibility.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Convert.Base64.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Convert.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\CurrentSystemTimeZone.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DBNull.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DataMisalignedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTimeKind.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTimeOffset.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DayOfWeek.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\CodeAnalysis\SuppressMessageAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\ConditionalAttribute.cs" />
@@ -313,7 +316,10 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CultureNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CultureTypes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormat.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormatInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormatInfoScanner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeParse.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeStyles.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DaylightTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DigitShapes.cs" />
@@ -622,6 +628,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\ThreadStateException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Timeout.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\WaitHandleCannotBeOpenedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeSpan.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZone.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeoutException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
@@ -957,8 +965,6 @@
     <Compile Include="..\referencesource\mscorlib\system\contextboundobject.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextmarshalexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextstaticattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\datetime.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\datetimeoffset.cs" />
     <Compile Include="..\referencesource\mscorlib\system\defaultbinder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\assert.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\assertfilter.cs" />
@@ -976,9 +982,6 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendardata.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformat.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformatinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeparse.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\eastasianlunisolarcalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\globalizationassembly.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\gregoriancalendar.cs" />
@@ -1227,7 +1230,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandleExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\throwhelper.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\timespan.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\type.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
@@ -1965,7 +1967,6 @@
     <Compile Include="System\TermInfoNumbers.cs" />
     <Compile Include="System\TermInfoReader.cs" />
     <Compile Include="System\TermInfoStrings.cs" />
-    <Compile Include="System\TimeZone.cs" />
     <Compile Include="System\TimeZoneInfo.Android.cs" />
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
@@ -1987,12 +1988,16 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\CurrentSystemTimeZone.cs" />
+    <Compile Include="corefx\DateTime.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
+    <Compile Include="corefx\TimeZone.cs" />
+    <Compile Include="corefx\TimeZoneInfo.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
     <Compile Include="corert\Decimal.DecCalc.cs" />
     <Compile Include="corert\Decimal.cs" />
