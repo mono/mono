@@ -132,12 +132,12 @@ namespace System.Reflection
 		public override
 		object DefaultValue {
 			get {
-				if (ClassImpl == typeof (Decimal)) {
+				if (ClassImpl == typeof (Decimal) || ClassImpl == typeof (Decimal?)) {
 					/* default values for decimals are encoded using a custom attribute */
 					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
 					if (attrs.Length > 0)
 						return attrs [0].Value;
-				} else if (ClassImpl == typeof (DateTime)) {
+				} else if (ClassImpl == typeof (DateTime) || ClassImpl == typeof (DateTime?)) {
 					/* default values for DateTime are encoded using a custom attribute */
 					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
 					if (attrs.Length > 0)
