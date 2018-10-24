@@ -137,7 +137,7 @@ namespace DebuggerTests
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 4, 41, scripts, top_frame["functionLocation"]);
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, scripts, top_frame["location"]);
 
-				//not check the scope
+				//now check the scope
 				var scope = top_frame ["scopeChain"][0];
 				Assert.Equal ("local", scope ["type"]);
 				Assert.Equal ("IntAdd", scope ["name"]);
@@ -146,6 +146,70 @@ namespace DebuggerTests
 				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 4, 41, scripts, scope["startLocation"]);
 				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 10, 1, scripts, scope["endLocation"]);
+			});
+		}
+
+		void CheckNumber (JToken locals, string name, int value)
+		{
+			foreach (var l in locals) {
+				if (name != l["name"]?.Value<string> ())
+					continue;
+				var val = l["value"];
+				Assert.Equal ("number", val ["type"]?.Value<string> ());
+				Assert.Equal (value, val["value"]?.Value <int> ());
+				return;
+			}
+			Assert.True(false, $"Could not find variable '{name}'");
+		}
+
+		[Fact]
+		public async Task InspectLocalsAtBreakpoitSite () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await insp.Ready (async (cli, token) => {
+				var bp1_req = JObject.FromObject(new {
+					lineNumber = 5,
+					columnNumber = 2,
+					url = "dotnet://debugger-test.dll/debugger-test.cs",
+				});
+
+				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
+				Assert.True (bp1_res.IsOk);
+
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
+				});
+
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsOk);
+
+				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+				//make sure we're on the right bp
+				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				var top_frame = pause_location ["callFrames"][0];
+
+				var scope = top_frame ["scopeChain"][0];
+				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+
+				//ok, what's on that scope?
+				var get_prop_req = JObject.FromObject(new {
+					objectId = "dotnet:scope:0",
+				});
+
+				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+
+				Assert.True (frame_props.IsOk);
+				Console.WriteLine ("frame got {0}", frame_props);
+
+				var locals = frame_props.Value ["result"];
+				CheckNumber (locals, "a", 10);
+				CheckNumber (locals, "b", 20);
+				CheckNumber (locals, "c", 0);
+				CheckNumber (locals, "d", 0);
+				CheckNumber (locals, "e", 0);
 			});
 		}
 	}
