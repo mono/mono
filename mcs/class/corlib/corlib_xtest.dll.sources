@@ -334,3 +334,8 @@
 
 # System.IO.UnmanagedMemoryStream
 ../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs
+
+# System.IO.TextReader/StreamReader
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
