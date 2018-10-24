@@ -5,7 +5,7 @@ Right now the WebAssembly sdk is packaged in a zip file and can be downloaded an
 &nbsp;&nbsp;&nbsp;&nbsp;[Requirements](#requirements)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Download WebAssembly SDK](#download-webassembly-sdk)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Latest Successful Build](#latest-successful-build)   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Specific Build](#specific-build)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Specific Build](#specific-build)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Extraction](#extraction)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Mac extraction](#mac-extraction)   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Windows extraction](#windows-extraction)
