@@ -940,24 +940,18 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetOffsetToStringData (
 	return offsetof (MonoString, chars);
 }
 
-MonoObject *
-ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetObjectValue (MonoObject *obj)
+MonoObjectHandle
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetObjectValue (MonoObjectHandle obj, MonoError *error)
 {
-	if ((obj == NULL) || !m_class_is_valuetype (mono_object_class (obj)))
+	if (MONO_HANDLE_IS_NULL (obj) || !m_class_is_valuetype (mono_handle_class (obj)))
 		return obj;
-	else {
-		ERROR_DECL (error);
-		MonoObject *ret = mono_object_clone_checked (obj, error);
-		mono_error_set_pending_exception (error);
 
-		return ret;
-	}
+	return mono_object_clone_handle (obj, error);
 }
 
 void
-ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (MonoType *handle)
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (MonoType *handle, MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoClass *klass;
 	MonoVTable *vtable;
 
@@ -970,37 +964,30 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 		return;
 
 	vtable = mono_class_vtable_checked (mono_domain_get (), klass, error);
-	if (!is_ok (error)) {
-		mono_error_set_pending_exception (error);
+	if (!is_ok (error))
 		return;
-	}
 
 	/* This will call the type constructor */
-	if (!mono_runtime_class_init_full (vtable, error))
-		mono_error_set_pending_exception (error);
+	mono_runtime_class_init_full (vtable, error);
 }
 
 void
-ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (MonoImage *image)
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (MonoImage *image, MonoError *error)
 {
-	ERROR_DECL (error);
-
 	mono_image_check_for_module_cctor (image);
-	if (image->has_module_cctor) {
-		MonoClass *module_klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, error);
-		if (!mono_error_ok (error)) {
-			mono_error_set_pending_exception (error);
-			return;
-		}
-		/*It's fine to raise the exception here*/
-		MonoVTable * vtable = mono_class_vtable_checked (mono_domain_get (), module_klass, error);
-		if (!is_ok (error)) {
-			mono_error_set_pending_exception (error);
-			return;
-		}
-		if (!mono_runtime_class_init_full (vtable, error))
-			mono_error_set_pending_exception (error);
-	}
+	if (!image->has_module_cctor)
+		return;
+
+	MonoClass *module_klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, error);
+	if (!mono_error_ok (error))
+		return;
+
+	/*It's fine to raise the exception here*/
+	MonoVTable * vtable = mono_class_vtable_checked (mono_domain_get (), module_klass, error);
+	if (!is_ok (error))
+		return;
+
+	mono_runtime_class_init_full (vtable, error);
 }
 
 MonoBoolean
@@ -1042,14 +1029,10 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 	return TRUE;
 }
 
-MonoObject *
-ves_icall_System_Object_MemberwiseClone (MonoObject *this_obj)
+MonoObjectHandle
+ves_icall_System_Object_MemberwiseClone (MonoObjectHandle this_obj, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoObject *ret = mono_object_clone_checked (this_obj, error);
-	mono_error_set_pending_exception (error);
-
-	return ret;
+	return mono_object_clone_handle (this_obj, error);
 }
 
 gint32
@@ -5417,16 +5400,15 @@ ves_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfie
 }
 
 int
-ves_icall_MonoField_get_core_clr_security_level (MonoReflectionField *rfield)
+ves_icall_MonoField_get_core_clr_security_level (MonoReflectionFieldHandle rfield, MonoError *error)
 {
-	MonoClassField *field = rfield->field;
+	MonoClassField *field = MONO_HANDLE_GETVAL (rfield, field);
 	return mono_security_core_clr_field_level (field, TRUE);
 }
 
 int
 ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfield, MonoError *error)
 {
-	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (rfield, method);
 	return mono_security_core_clr_method_level (method, TRUE);
 }
@@ -7229,31 +7211,17 @@ ves_icall_System_Text_EncodingHelper_InternalCodePage (gint32 *int_code_page, Mo
 MonoBoolean
 ves_icall_System_Environment_get_HasShutdownStarted (void)
 {
-	if (mono_runtime_is_shutting_down ())
-		return TRUE;
-
-	if (mono_domain_is_unloading (mono_domain_get ()))
-		return TRUE;
-
-	return FALSE;
+	return mono_runtime_is_shutting_down () || mono_domain_is_unloading (mono_domain_get ());
 }
 
 #ifndef HOST_WIN32
-static inline MonoBoolean
-mono_icall_broadcast_setting_change (MonoError *error)
-{
-	error_init (error);
-	return TRUE;
-}
-#endif /* !HOST_WIN32 */
 
 void
 ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
-	error_init (error);
-	mono_icall_broadcast_setting_change (error);
 }
 
+#endif
 
 gint32
 ves_icall_System_Environment_get_TickCount (void)
@@ -7272,7 +7240,6 @@ ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (MonoError *er
 MonoBoolean
 ves_icall_IsTransparentProxy (MonoObjectHandle proxy, MonoError *error)
 {
-	error_init (error);
 	if (MONO_HANDLE_IS_NULL (proxy))
 		return 0;
 
@@ -7288,7 +7255,6 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 {
 	MonoReflectionMethodHandle ret = MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE);
 
-	error_init (error);
 	if (MONO_HANDLE_IS_NULL (rtype)) {
 		mono_error_set_argument_null (error, "type", "");
 		return ret;
@@ -7344,8 +7310,6 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 void
 ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (MonoReflectionTypeHandle type, MonoBoolean enable, MonoError *error)
 {
-	error_init (error);
-
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (type, type));
 	MonoVTable *vtable = mono_class_vtable_checked (mono_domain_get (), klass, error);
 	return_if_nok (error);
@@ -7358,7 +7322,6 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 void
 ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (MonoReflectionTypeHandle type, MonoBoolean enable, MonoError *error)
 {
-	error_init (error);
 	g_assert_not_reached ();
 }
 
@@ -7367,8 +7330,6 @@ ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (Mo
 MonoObjectHandle
 ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClassInstance (MonoReflectionTypeHandle type, MonoError *error)
 {
-	error_init (error);
-	
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (type);
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (type, type));
 	mono_class_init_checked (klass, error);
@@ -7433,14 +7394,12 @@ ves_icall_System_IO_DriveInfo_GetDriveType (MonoString *root_path_name)
 gpointer
 ves_icall_RuntimeMethodHandle_GetFunctionPointer (MonoMethod *method, MonoError *error)
 {
-	error_init (error);
 	return mono_compile_method_checked (method, error);
 }
 
 MonoStringHandle
 ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError *error)
 {
-	error_init (error);
 	gchar *path;
 
 	path = g_build_path (G_DIR_SEPARATOR_S, mono_get_config_dir (), "mono", mono_get_runtime_info ()->framework_version, "machine.config", NULL);
@@ -7458,7 +7417,6 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError 
 MonoStringHandle
 ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_app_config (MonoError *error)
 {
-	error_init (error);
 	const gchar *app_config;
 	MonoDomain *domain;
 	gchar *config_file_name, *config_file_path;
@@ -7539,10 +7497,7 @@ ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_con
 MonoStringHandle
 ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 {
-	error_init (error);
-	gchar *path;
-
-	path = g_path_get_dirname (mono_get_config_dir ());
+	char *path = g_path_get_dirname (mono_get_config_dir ());
 
 	mono_icall_make_platform_path (path);
 
@@ -7555,7 +7510,6 @@ ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 MonoBoolean
 ves_icall_get_resources_ptr (MonoReflectionAssemblyHandle assembly, gpointer *result, gint32 *size, MonoError *error)
 {
-	error_init (error);
 	MonoPEResourceDataEntry *entry;
 	MonoImage *image;
 
@@ -7589,10 +7543,8 @@ ves_icall_System_Diagnostics_Debugger_IsAttached_internal (MonoError *error)
 MonoBoolean
 ves_icall_System_Diagnostics_Debugger_IsLogging (MonoError *error)
 {
-	if (mono_get_runtime_callbacks ()->debug_log_is_enabled)
-		return mono_get_runtime_callbacks ()->debug_log_is_enabled ();
-	else
-		return FALSE;
+	return mono_get_runtime_callbacks ()->debug_log_is_enabled
+		&& mono_get_runtime_callbacks ()->debug_log_is_enabled ();
 }
 
 void
@@ -7620,7 +7572,6 @@ ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const
 MonoObjectHandle
 ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
-	error_init (error);
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_type);
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
@@ -7639,7 +7590,6 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 MonoReflectionMethodHandle
 ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, MonoBoolean definition, MonoError *error)
 {
-	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 
 	MonoMethod *base = mono_method_get_base_method (method, definition, error);
@@ -7663,7 +7613,6 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, MonoBoolean 
 MonoStringHandle
 ves_icall_MonoMethod_get_name (MonoReflectionMethodHandle m, MonoError *error)
 {
-	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 
 	MonoStringHandle s = mono_string_new_handle (MONO_HANDLE_DOMAIN (m), method->name, error);
