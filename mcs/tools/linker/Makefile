@@ -119,7 +119,7 @@ bcl-size-current: compile-tests
 		rm -rf $(LINKER_OUTPUT); \
 		mkdir $(LINKER_OUTPUT); \
 		echo Checking linked BCL size for $$app; \
-		$(LINKER) -a Tests/$$app; \
+		$(LINKER_DEFAULT) -a Tests/$$app; \
 		sizes=""; \
 		for asm in $(BCL_ASSEMBLIES); do \
 			if [ -f "$(LINKER_OUTPUT)/$$asm" ]; then size=$$(wc -c < "$(LINKER_OUTPUT)/$$asm" | tr -d "[:space:]"); else size="0"; fi; \
