@@ -912,6 +912,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (

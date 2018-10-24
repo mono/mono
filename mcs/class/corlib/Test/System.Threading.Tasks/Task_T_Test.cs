@@ -40,6 +40,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SimpleTaskTestCase ()
 		{
 			Task<int> f = InitTestTask ();
@@ -49,6 +50,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TaskContinueWithTestCase ()
 		{
 			bool result = false;
@@ -73,6 +75,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void NestedFutureTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -87,6 +90,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FaultedFutureTest ()
 		{
 			var thrown = new ApplicationException ();
