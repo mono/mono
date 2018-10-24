@@ -14,6 +14,7 @@ if WITH_MSVC
 all-local:
 	@echo "Building Mono runtime using Visual Studio."
 	$(top_srcdir)/msvc/run-msbuild.sh "build" "$(host_cpu)"
+	$(mono_msvc_build_bin_dir)/mono-sgen.exe --version
 
 clean-local:
 	@echo "Clean Visual Studio build Mono runtime."
@@ -21,4 +22,10 @@ clean-local:
 
 install-exec-local:
 	@echo "Install Visual Studio build Mono runtime."
+	$(mkinstalldirs) "$(DESTDIR)$(libdir)"
+	$(mkinstalldirs) "$(DESTDIR)$(bindir)"
+	$(install_sh) $(mono_msvc_build_lib_dir)/*.lib "$(DESTDIR)$(libdir)"
+	$(install_sh) $(mono_msvc_build_bin_dir)/*.dll "$(DESTDIR)$(bindir)"
+	$(install_sh) $(mono_msvc_build_bin_dir)/*.exe "$(DESTDIR)$(bindir)"
+	$(install_sh) $(mono_msvc_build_bin_dir)/*.pdb "$(DESTDIR)$(bindir)"
 endif

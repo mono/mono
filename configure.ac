@@ -5326,14 +5326,22 @@ fi
 
 if test "x$with_msvc" = "xyes"; then
 	if test "x$support_boehm" = "xyes"; then
-		echo "Error, Boehm GC is not supported when build using --with-msvc."
+		echo "Error, Boehm GC is not supported when using --with-msvc."
 		exit 1
 	fi
+	mono_msvc_build_dir='$(top_srcdir)'/msvc/build/sgen
 	if test "x$host_cpu" = "xi686"; then
-		mono_runtime=$(top_srcdir)/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe
+		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/Win32/lib/Release
+		mono_msvc_build_bin_dir='$(mono_msvc_build_dir)'/Win32/bin/Release
+		mono_runtime=msvc/build/sgen/Win32/bin/Release/mono-sgen.exe
 	else
-		mono_runtime=$(top_srcdir)/msvc/build/sgen/x64/bin/Release/mono-sgen.exe
+		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/x64/lib/Release
+		mono_msvc_build_bin_dir='$(mono_msvc_build_dir)'/x64/bin/Release
+		mono_runtime=msvc/build/sgen/x64/bin/Release/mono-sgen.exe
 	fi
+	AC_SUBST(mono_msvc_build_dir)
+	AC_SUBST(mono_msvc_build_lib_dir)
+	AC_SUBST(mono_msvc_build_bin_dir)
 else
 	mono_runtime=mono/mini/mono
 fi

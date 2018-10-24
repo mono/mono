@@ -23,10 +23,10 @@ VS_BUILD_ARGS+=" /p:Platform=$VS_PLATFORM"
 VS_BUILD_ARGS+=" /p:MONO_TARGET_GC=sgen"
 VS_BUILD_ARGS+=" /t:Build"
 
-export PATH=$ORIGINAL_PATH
-if $WINDIR/System32/cmd.exe /c "$VS_BUILD_ARGS" ; then
-    ./build/sgen/$VS_PLATFORM/bin/Release/mono-sgen.exe --version
-else
-    echo "Error, failed to build Visual Studio Mono runtime."
-    exit 1
+if [[ -z "$ORIGINAL_PATH" ]]; then
+    echo "Warning, run-msbuild.sh executed without ORIGINAL_PATH environment variable set. \
+    Windows environment can not be properly restored before running command."
 fi
+
+export PATH=$ORIGINAL_PATH
+$WINDIR/System32/cmd.exe /c "$VS_BUILD_ARGS"
