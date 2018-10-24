@@ -2203,7 +2203,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
+		if (mono_object_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
@@ -2236,7 +2236,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
+		if (mono_object_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
