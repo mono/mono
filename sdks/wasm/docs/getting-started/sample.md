@@ -36,7 +36,7 @@ The WebAssembly SDK includes the sample code that we can use.
 1.  Compile sample
 
     ```
-    csc /target:library -out:sample.dll /r:$WASM_SDK/bcl/System.Net.Http.dll /r:$WASM_SDK/framework/WebAssembly.Bindings.dll /r:$WASM_SDK/framework/WebAssembly.Net.Http.dll dependency.cs sample.cs
+    csc /target:library -out:sample.dll /r:$WASM_SDK/wasm-bcl/wasm/System.Net.Http.dll /r:$WASM_SDK/framework/WebAssembly.Bindings.dll /r:$WASM_SDK/framework/WebAssembly.Net.Http.dll dependency.cs sample.cs
     ```
 
 1. Package and publish sample 
