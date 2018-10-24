@@ -14,7 +14,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 #This is a weird rule to workaround the circularity of the next rule.
 #.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION) depends on .emscripten and, at the same time, it updates it.
 #This is designed to force the .stamp target to rerun when a different emscripten version is selected, which causes .emscripten to be updated
-$(EMSCRIPTEN_SDK_DIR)/.emscripten:
+$(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
