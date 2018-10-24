@@ -510,6 +510,26 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (expected, actual, "#1");
 		}
 
+		public class Dummy {
+			public void M1 (decimal? arg = 12.345M) { }
+			public void M2 ([Optional, DecimalConstant (1, 2, 3, 4, 5)] decimal? arg) { }
+			public void M3 (decimal? arg = null) { }
+			public void M4 ([Optional, DateTimeConstant (1L)] DateTime? arg) { }
+			public void M5 (DateTime? arg = null) { }			
+		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/11303
+		public void RawDefaultValue_Nullable ()
+		{
+			var type = typeof (Dummy);
+			Assert.AreEqual (12.345M, type.GetMethod("M1").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (new DecimalConstantAttribute (1, 2, 3, 4, 5).Value, type.GetMethod ("M2").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (null, type.GetMethod ("M3").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (new DateTime (1), type.GetMethod ("M4").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (null, type.GetMethod ("M5").GetParameters () [0].RawDefaultValue);
+		}		
+
 		public sealed class A { }
 		public sealed class B { }
 		public sealed class C { }
