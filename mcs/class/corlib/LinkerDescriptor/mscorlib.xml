@@ -808,9 +808,7 @@
 		-->
 		<type fullname="Mono.Runtime" />
 
-		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
-		<type fullname="Mono.RuntimeStructs/HandleStackMark" />
-		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
+		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
 
 		<type fullname="System.Threading.WasmRuntime"/>
