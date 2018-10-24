@@ -177,5 +177,5 @@ endef
 
 $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 
-$(eval $(call BclTemplate,wasm-bcl,wasm,wasm))
+$(eval $(call BclTemplate,wasm-bcl,wasm wasm_tools,wasm))
 wasm_TARGETS += wasm-bcl
