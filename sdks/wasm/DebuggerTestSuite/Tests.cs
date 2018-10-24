@@ -149,8 +149,7 @@ namespace DebuggerTests
 			});
 		}
 
-		void CheckNumber (JToken locals, string name, int value)
-		{
+		void CheckNumber (JToken locals, string name, int value) {
 			foreach (var l in locals) {
 				if (name != l["name"]?.Value<string> ())
 					continue;
@@ -163,7 +162,7 @@ namespace DebuggerTests
 		}
 
 		[Fact]
-		public async Task InspectLocalsAtBreakpoitSite () {
+		public async Task InspectLocalsAtBreakpointSite () {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -200,9 +199,7 @@ namespace DebuggerTests
 				});
 
 				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
-
 				Assert.True (frame_props.IsOk);
-				Console.WriteLine ("frame got {0}", frame_props);
 
 				var locals = frame_props.Value ["result"];
 				CheckNumber (locals, "a", 10);
@@ -212,5 +209,117 @@ namespace DebuggerTests
 				CheckNumber (locals, "e", 0);
 			});
 		}
+
+		[Fact]
+		public async Task TrivalStepping () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await insp.Ready (async (cli, token) => {
+				var bp1_req = JObject.FromObject(new {
+					lineNumber = 5,
+					columnNumber = 2,
+					url = "dotnet://debugger-test.dll/debugger-test.cs",
+				});
+
+				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
+				Assert.True (bp1_res.IsOk);
+
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
+				});
+
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsOk);
+
+				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+				//make sure we're on the right bp
+				Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+				var top_frame = pause_location ["callFrames"][0];
+				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 4, 41, scripts, top_frame["functionLocation"]);
+				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, scripts, top_frame["location"]);
+
+				var step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
+				Assert.True (step_res.IsOk);
+
+				var pause_location2 = await insp.WaitFor(Inspector.PAUSE);
+
+				var top_frame2 = pause_location2 ["callFrames"][0];
+				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 4, 41, scripts, top_frame2["functionLocation"]);
+				CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 6, 2, scripts, top_frame2["location"]); //it moved one line!
+			});
+		}
+
+		[Fact]
+		public async Task InspectLocalsDuringStepping () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await insp.Ready (async (cli, token) => {
+				var bp1_req = JObject.FromObject(new {
+					lineNumber = 5,
+					columnNumber = 2,
+					url = "dotnet://debugger-test.dll/debugger-test.cs",
+				});
+
+				var bp1_res = await cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, token);
+				Assert.True (bp1_res.IsOk);
+
+				var eval_req = JObject.FromObject(new {
+					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
+				});
+
+				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
+				Assert.True (eval_res.IsOk);
+
+				var pause_location = await insp.WaitFor(Inspector.PAUSE);
+
+				//ok, what's on that scope?
+				var get_prop_req = JObject.FromObject(new {
+					objectId = "dotnet:scope:0",
+				});
+
+				var frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				Assert.True (frame_props.IsOk);
+				var locals = frame_props.Value ["result"];
+				CheckNumber (locals, "a", 10);
+				CheckNumber (locals, "b", 20);
+				CheckNumber (locals, "c", 0);
+				CheckNumber (locals, "d", 0);
+				CheckNumber (locals, "e", 0);
+
+				//step and get locals
+				var step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
+				Assert.True (step_res.IsOk);
+				pause_location = await insp.WaitFor(Inspector.PAUSE);
+				frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				Assert.True (frame_props.IsOk);
+
+				locals = frame_props.Value ["result"];
+				CheckNumber (locals, "a", 10);
+				CheckNumber (locals, "b", 20);
+				CheckNumber (locals, "c", 30);
+				CheckNumber (locals, "d", 0);
+				CheckNumber (locals, "e", 0);
+
+				//step and get locals
+				step_res = await cli.SendCommand ("Debugger.stepOver", null, token);
+				Assert.True (step_res.IsOk);
+				pause_location = await insp.WaitFor(Inspector.PAUSE);
+				frame_props = await cli.SendCommand ("Runtime.getProperties", get_prop_req, token);
+				Assert.True (frame_props.IsOk);
+
+				locals = frame_props.Value ["result"];
+				CheckNumber (locals, "a", 10);
+				CheckNumber (locals, "b", 20);
+				CheckNumber (locals, "c", 30);
+				CheckNumber (locals, "d", 50);
+				CheckNumber (locals, "e", 0);
+			});
+		}
+
+		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
 }
