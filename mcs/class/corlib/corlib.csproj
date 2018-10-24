@@ -1206,10 +1206,7 @@
     <Compile Include="..\referencesource\mscorlib\system\security\util\parser.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\util\tokenizer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\sharedstatics.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\codepageencoding.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\encoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\mlangcodepageencoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\surrogateencoder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationToken.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationTokenSource.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\SemaphoreSlim.cs" />
