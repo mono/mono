@@ -964,8 +964,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 		return;
 
 	vtable = mono_class_vtable_checked (mono_domain_get (), klass, error);
-	if (!is_ok (error))
-		return;
+	return_if_nok (error);
 
 	/* This will call the type constructor */
 	mono_runtime_class_init_full (vtable, error);
@@ -979,12 +978,10 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 		return;
 
 	MonoClass *module_klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, error);
-	if (!is_ok (error))
-		return;
+	return_if_nok (error);
 
 	MonoVTable * vtable = mono_class_vtable_checked (mono_domain_get (), module_klass, error);
-	if (!is_ok (error))
-		return;
+	return_if_nok (error);
 
 	mono_runtime_class_init_full (vtable, error);
 }
@@ -2476,8 +2473,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 	MonoClass *ic;
 
 	mono_class_setup_interfaces (klass, error);
-	if (!is_ok (error))
-		return;
+	return_if_nok (error);
 
 	int klass_interface_count = m_class_get_interface_count (klass);
 	MonoClass **klass_interfaces = m_class_get_interfaces (klass);
@@ -2486,8 +2482,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 		g_hash_table_insert (ifaces, ic, ic);
 
 		collect_interfaces (ic, ifaces, error);
-		if (!is_ok (error))
-			return;
+		return_if_nok (error);
 	}
 }
 
@@ -2657,8 +2652,7 @@ ves_icall_RuntimeType_GetPacking (MonoReflectionTypeHandle ref_type, guint32 *pa
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
 
 	mono_class_init_checked (klass, error);
-	if (!is_ok (error))
-		return;
+	return_if_nok (error);
 
 	if (image_is_dynamic (m_class_get_image (klass))) {
 		MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_CAST (MonoReflectionTypeBuilder, ref_type);
