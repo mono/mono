@@ -1,5 +1,5 @@
 <Project>
-  <PropertyGroup>
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('Mono.WebAssembly.'))">
     <Version>0.1</Version>
     <PackageTags>WebAssembly Wasm Mono Sdk</PackageTags>
     <PackageOutputPath>$(MSBuildThisFileDirectory)packages</PackageOutputPath>
