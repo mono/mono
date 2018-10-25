@@ -6240,9 +6240,9 @@ typedef enum {
 
 typedef struct {
 	IcallHandlesWrap wrap;
-	// If wrap is OBJ_OUT or OBJ_INOUT this holds the referenced managed object,
+	// If wrap is OBJ_OUT or OBJ_INOUT this is >= 0 and holds the referenced managed object,
 	// in case the actual parameter refers to a native frame.
-	// Otherwise it is not meaningful.
+	// Otherwise it is -1.
 	int handle;
 }  IcallHandlesLocal;
 
@@ -6395,7 +6395,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			handles_locals [i].handle = local;
 
 			// Load each argument. References into the managed heap get wrapped in handles.
-			// Again, handles here are just pointers to managed volatile locals.
+			// Handles here are just pointers to managed volatile locals.
 			switch (w) {
 				case ICALL_HANDLES_WRAP_NONE:
 				case ICALL_HANDLES_WRAP_VALUETYPE_REF:
@@ -6450,7 +6450,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	if (G_UNLIKELY (need_gc_safe))
 		gc_safe_transition_builder_emit_exit (&gc_safe_transition_builder);
 
-	// Copy back ObjIn and ObjInOut from locals through parameters.
+	// Copy back ObjOut and ObjInOut from locals through parameters.
 	if (mb->volatile_locals) {
 		g_assert (handles_locals);
 		for (int i = 0; i < csig->param_count; i++) {
