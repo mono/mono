@@ -13,7 +13,6 @@ define DesktopTemplate
 _desktop-$(1)_CC=cc
 
 _desktop-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mcs-build \
@@ -29,3 +28,5 @@ $$(eval $$(call RuntimeTemplate,desktop-$(1),$(2)))
 endef
 
 $(eval $(call DesktopTemplate,x86_64,x86_64-apple-darwin17.2.0))
+
+$(eval $(call BclTemplate,desktop-bcl,net_4_x,))

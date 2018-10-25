@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en-us">
   <head>
+		<style>
+			body {
+				padding: 20px;
+				background-color:#ffffc9
+			  }
+				  
+			  p { margin : 0; }
+		</style>    	  
   </head>
   <body>
 	  C# output:
@@ -9,6 +17,9 @@
 	  <br>
 		  <button type="button" onclick="App.onClick()" id="button" disabled="true">Run</button>
 	  <br>
+
+	  <p><button onclick="App.geoFindMeCSharp()">Show my location</button></p>
+	  <div id="out"></div>	  
 	
 	<script type='text/javascript'>
 		var App = {
@@ -24,10 +35,31 @@
 				this.button = document.getElementById ("button");
 
 				this.button.disabled = false;
+
+				// initialize geolocation sample
+				BINDING.call_static_method("[sample] GeoLocation.Program:Main", []);
 			},
+            geoFindMeCSharp: function () {
+                BINDING.call_static_method("[sample] GeoLocation.Program:GeoFindMe", [ document.getElementById("out") ]);
+            }			
 		};
+
+        // Called from C# passing in the mime type of the image and the 
+        // image data converted from byte array to base64
+        function showMyPosition (mimeType, imageData)
+        {
+            var output = document.getElementById("out");
+
+            var img = new Image();
+            img.src = "data:" + mimeType + ";base64," + imageData;
+
+            output.appendChild(img);
+
+        }
+
       </script>
-      <script type="text/javascript" src="runtime.js"></script>
+    <script type="text/javascript" src="mono-config.js"></script>
+	<script type="text/javascript" src="runtime.js"></script>
       <script async type="text/javascript" src="mono.js"></script>
   </body>
   </html>

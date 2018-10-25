@@ -37,6 +37,7 @@ AOT_FRIENDLY_PROFILE = yes
 ALWAYS_AOT = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
+NO_SRE=1
 
 # Note need for trailing comma. If you add, keep it
 PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,

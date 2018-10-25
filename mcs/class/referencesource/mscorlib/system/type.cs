@@ -1890,7 +1890,10 @@ namespace System {
 
         // private convenience data
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
+#if !MONO
+        // now it's located in external/corefx/src/Common/src/CoreLib/System/Reflection/TypeInfo.cs
         internal const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+#endif
 
 #if MONO
         public virtual bool IsSZArray { get { throw new NotImplementedException (); } }

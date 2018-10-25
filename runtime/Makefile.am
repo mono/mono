@@ -1,3 +1,4 @@
+
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
@@ -76,38 +77,53 @@ build_profiles += unreal
 endif
 
 if INSTALL_WASM
-build_profiles += wasm
+build_profiles += wasm wasm_tools
 endif
 
-test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
-
-if BUILD_MCS
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
 # The write check is to foil 'make distcheck'
-all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+all-mcs: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	cd $(mcs_topdir) && $(MAKE) $(MAKE_FLAGS) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
-# override automake
-install: install-exec install-data
+install-mcs: install-mcs-exec install-mcs-data
 
 # override automake
-install-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
+install-mcs-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
-install-data:
+install-mcs-data:
 	@:
 
 # override automake
-uninstall:
+uninstall-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
-clean-local:
+clean-mcs:
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' clean-profiles
 	-rm -fr $(etctmp) $(tmpinst)
+
+if BUILD_MCS
+
+all-local: all-mcs
+
+# override automake
+install: install-mcs
+
+# override automake
+install-exec: install-mcs-exec
+
+# override automake
+install-data: install-mcs-data
+
+# override automake
+uninstall: uninstall-mcs
+
+clean-local: clean-mcs
 
 endif BUILD_MCS
 
@@ -145,6 +161,9 @@ if HOST_WIN32
 # Mono.WebBrowser.dll fails to verify on Windows
 VERIFY_TESTS_FILTER += Mono.WebBrowser.dll
 endif
+
+# fails to verify with "VTable setup of type Xunit.NetCore.Extensions.SkippedTestCase failed", not sure why
+VERIFY_TESTS_FILTER += Xunit.NetCore.Extensions.dll
 
 if FULL_AOT_TESTS
 #  ILASM.exe has features which a testing_aot_full runtime will not support.
@@ -200,19 +219,12 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	else \
 		echo "Unknown directory '$(abs_top_builddir)/support'" && false; \
 	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-native.la",' $@ > $@.tmp \
+	if test -d "$(abs_top_builddir)/mono/native"; then \
+		sed 's,target="$$mono_libdir/$(MONO_NATIVE_LIBRARY_NAME)$(libsuffix)",target="$(abs_top_builddir)/mono/native/$(MONO_NATIVE_LIBRARY_NAME).la",' $@ > $@.tmp \
 		 && mv $@.tmp $@ \
 		 ; \
 	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
-	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-net-security-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-net-security-native.la",' $@ > $@.tmp \
-		 && mv $@.tmp $@ \
-		 ; \
-	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+		echo "Unknown directory '$(abs_top_builddir)/mono/native'" && false; \
 	fi
 	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
 		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \

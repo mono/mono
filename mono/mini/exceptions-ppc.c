@@ -322,7 +322,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 }
 
 void
-mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow)
+mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow, gboolean preserve_ips)
 {
 	ERROR_DECL (error);
 	MonoContext ctx;
@@ -335,7 +335,7 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 	/*printf ("stack in throw: %p\n", esp);*/
 	MONO_CONTEXT_SET_BP (&ctx, esp);
 	MONO_CONTEXT_SET_IP (&ctx, eip);
-	memcpy (&ctx.regs, int_regs, sizeof (mgreg_t) * MONO_MAX_IREGS);
+	memcpy (&ctx.regs, int_regs, sizeof (host_mgreg_t) * MONO_MAX_IREGS);
 	memcpy (&ctx.fregs, fp_regs, sizeof (double) * MONO_MAX_FREGS);
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
@@ -343,6 +343,8 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
+		} else if (preserve_ips) {
+			mono_ex->caught_in_unmanaged = TRUE;
 		}
 	}
 	mono_error_assert_ok (error);
@@ -362,7 +364,7 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
  *
  */
 static gpointer
-mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corlib, gboolean rethrow, gboolean aot)
+mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corlib, gboolean rethrow, gboolean aot, gboolean preserve_ips)
 {
 	guint8 *start, *code;
 	int alloc_size, pos;
@@ -424,6 +426,7 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 	pos -= sizeof (gpointer) * MONO_MAX_IREGS;
 	ppc_addi (code, ppc_r6, ppc_sp, pos);
 	ppc_li (code, ppc_r8, rethrow);
+	ppc_li (code, ppc_r9, preserve_ips);
 
 	if (aot) {
 		// This can be called from runtime code, which can't guarantee that
@@ -449,9 +452,26 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
 
 	if (info)
-		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" : (rethrow ? "rethrow_exception" : "throw_exception"), start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" : (preserve_ips ? "rethrow_preserve_exception" : (rethrow ? "rethrow_exception" : "throw_exception")), start, code - start, ji, unwind_ops);
 
 	return start;
+}
+
+/**
+ * mono_arch_get_rethrow_preserve_exception:
+ * \returns a function pointer which can be used to rethrow
+ * exceptions and completely preserve trace_ips.
+ * The returned function has the following 
+ * signature: void (*func) (MonoException *exc); 
+ */
+gpointer
+mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
+{
+	int size = MONO_PPC_32_64_CASE (132, 224) + PPC_FTNPTR_SIZE;
+
+	if (aot)
+		size += 64;
+	return mono_arch_get_throw_exception_generic (size, info, FALSE, TRUE, aot, TRUE);
 }
 
 /**
@@ -467,7 +487,7 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (aot)
 		size += 64;
-	return mono_arch_get_throw_exception_generic (size, info, FALSE, TRUE, aot);
+	return mono_arch_get_throw_exception_generic (size, info, FALSE, TRUE, aot, FALSE);
 }
 
 /**
@@ -489,7 +509,7 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (aot)
 		size += 64;
-	return mono_arch_get_throw_exception_generic (size, info, FALSE, FALSE, aot);
+	return mono_arch_get_throw_exception_generic (size, info, FALSE, FALSE, aot, FALSE);
 }
 
 /**
@@ -506,7 +526,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (aot)
 		size += 64;
-	return mono_arch_get_throw_exception_generic (size, info, TRUE, FALSE, aot);
+	return mono_arch_get_throw_exception_generic (size, info, TRUE, FALSE, aot, FALSE);
 }
 
 /*
@@ -518,7 +538,7 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
@@ -532,7 +552,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	if (ji != NULL) {
 		int i;
-		mgreg_t regs [ppc_lr + 1];
+		host_mgreg_t regs [ppc_lr + 1];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -550,7 +570,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			/* sframe->sp points just past the end of the LMF */
 			guint8 *lmf_addr = (guint8*)sframe->sp - sizeof (MonoLMF);
 			memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, fregs), sizeof (double) * MONO_SAVED_FREGS);
-			memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (mgreg_t) * MONO_SAVED_GREGS);
+			memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], lmf_addr + G_STRUCT_OFFSET (MonoLMF, iregs), sizeof (host_mgreg_t) * MONO_SAVED_GREGS);
 			/* the calling IP is in the parent frame */
 			sframe = (MonoPPCStackFrame*)sframe->sp;
 			/* we substract 4, so that the IP points into the call instruction */
@@ -591,7 +611,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		MONO_CONTEXT_SET_IP (new_ctx, sframe->lr);*/
 		MONO_CONTEXT_SET_BP (new_ctx, (*lmf)->ebp);
 		MONO_CONTEXT_SET_IP (new_ctx, (*lmf)->eip);
-		memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], (*lmf)->iregs, sizeof (mgreg_t) * MONO_SAVED_GREGS);
+		memcpy (&new_ctx->regs [MONO_PPC_FIRST_SAVED_GREG], (*lmf)->iregs, sizeof (host_mgreg_t) * MONO_SAVED_GREGS);
 		memcpy (&new_ctx->fregs [MONO_PPC_FIRST_SAVED_FREG], (*lmf)->fregs, sizeof (double) * MONO_SAVED_FREGS);
 
 		frame->ji = ji;
@@ -750,7 +770,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	 * resume into the normal stack and do most work there if possible.
 	 */
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	mgreg_t sp;
+	host_mgreg_t sp;
 	void *sigctx = ctx;
 	int frame_size;
 	void *uc = sigctx;
@@ -765,9 +785,9 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	frame_size = 224;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (mgreg_t)(UCONTEXT_REG_Rn(uc, 1) & ~15);
-	sp = (mgreg_t)(sp - frame_size);
-	UCONTEXT_REG_Rn(uc, 1) = (mgreg_t)sp;
+	sp = (host_mgreg_t)(UCONTEXT_REG_Rn(uc, 1) & ~15);
+	sp = (host_mgreg_t)(sp - frame_size);
+	UCONTEXT_REG_Rn(uc, 1) = (host_mgreg_t)sp;
 	setup_ucontext_return (uc, handle_signal_exception);
 
 	return TRUE;

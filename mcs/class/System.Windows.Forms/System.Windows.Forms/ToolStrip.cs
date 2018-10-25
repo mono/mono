@@ -1018,8 +1018,8 @@ namespace System.Windows.Forms
 			base.OnPaintBackground (e);
 
 			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
-			ToolStripRenderEventArgs tsrea = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, SystemColors.Control);
-			
+			ToolStripRenderEventArgs tsrea = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, BackColor);
+
 			this.Renderer.DrawToolStripBackground (tsrea);
 		}
 

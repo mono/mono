@@ -11,13 +11,10 @@ CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
 NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
+
 ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
 DISABLE_IOS=1
-endif
-
-ifndef ENABLE_WASM_CROSS
-DISABLE_WASM_CROSS=1
 endif
 
 include $(TOP)/sdks/versions.mk
@@ -41,7 +38,20 @@ $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 
 TARGETS=
 
+ifndef DISABLE_ANDROID
+android_TARGETS=
+endif
+
+ifndef DISABLE_IOS
+ios_TARGETS=
+endif
+
+ifndef DISABLE_WASM
+wasm_TARGETS=
+endif
+
 include runtime.mk
+include bcl.mk
 
 ## MXE targets
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
@@ -51,11 +61,6 @@ endif
 
 ## LLVM targets
 include llvm.mk
-
-## BCL targets
-ifndef DISABLE_BCL
-include bcl.mk
-endif
 
 ## Android targets
 ifndef DISABLE_ANDROID
@@ -76,6 +81,32 @@ endif
 ## WASM targets
 ifndef DISABLE_WASM
 include wasm.mk
+endif
+
+## Archive targets
+
+##
+# Parameters:
+#  $(1): target (android, ios, wasm)
+define ArchiveTemplate
+_$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
+_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).zip
+
+.PHONY: archive-$(1)
+archive-$(1): $$(foreach target,$$(filter $(1)-%,$$(patsubst %-$$(CONFIGURATION),%,$$($(1)_TARGETS))),package-$$(target))
+	cd $$(TOP)/sdks/out && 7z a $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$(foreach target,$$($(1)_TARGETS),$$(or $$(wildcard $$(target)-$$(CONFIGURATION)),$$(target))))
+endef
+
+ifndef DISABLE_ANDROID
+$(eval $(call ArchiveTemplate,android))
+endif
+
+ifndef DISABLE_IOS
+$(eval $(call ArchiveTemplate,ios))
+endif
+
+ifndef DISABLE_WASM
+$(eval $(call ArchiveTemplate,wasm))
 endif
 
 ## Generic targets

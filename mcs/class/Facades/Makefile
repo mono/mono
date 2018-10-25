@@ -39,8 +39,8 @@ doc-update-recursive:
 
 System System.Core System.ComponentModel.DataAnnotations System.Numerics System.Numerics.Vectors System.Runtime.Serialization System.Transactions System.Xml \
 System.ComponentModel.Composition System.ServiceModel System.Xml.Linq System.Data System.IO.Compression.FileSystem System.Runtime.InteropServices.RuntimeInformation \
-System.ServiceProcess System.Security System.Net.Http.WebRequest System.Net.Http System.ServiceProcess System.IO.Compression System.IdentityModel \
-System.Web.Services:
+System.ServiceProcess System.Security System.Net.Http.WebRequest System.Net.Http System.ServiceProcess System.IO.Compression System.IdentityModel System.Web \
+Facades/System.Drawing.Primitives System.Drawing System.Web.Services:
 
 all-local-aot:
 

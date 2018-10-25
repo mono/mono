@@ -586,7 +586,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 	int pos = data->variable;
 	if (pos < 0) {
 		pos = -pos - 1;
-		type = mono_method_signature (method)->params [pos];
+		type = mono_method_signature_internal (method)->params [pos];
 		addr = mini_get_interp_callbacks ()->frame_get_arg (frame, pos);
 	} else {
 		header = mono_method_get_header_checked (method, error);
@@ -631,7 +631,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 			MonoString *str_obj = *(MonoString **)addr;
 			if (!str_obj)
 				mono_wasm_add_string_var (NULL);
-			char *str = mono_string_to_utf8_checked (str_obj, error);
+			char *str = mono_string_to_utf8_checked_internal (str_obj, error);
 			mono_error_assert_ok (error); /* FIXME report error */
 
 			mono_wasm_add_string_var (str);

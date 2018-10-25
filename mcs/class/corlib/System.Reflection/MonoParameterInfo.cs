@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.CompilerServices;
@@ -79,7 +79,7 @@ namespace System.Reflection
 			}
 		}
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
@@ -93,6 +93,11 @@ namespace System.Reflection
 				this.AttrsImpl = ParameterAttributes.None;
 			}
 		}
+
+		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
+		{
+			return new MonoParameterInfo (pb, type, member, position);
+		}		
 #endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
@@ -123,7 +128,7 @@ namespace System.Reflection
 		internal MonoParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
-			this.NameImpl = "";
+			this.NameImpl = null;
 			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
 			this.AttrsImpl = ParameterAttributes.Retval;
 			this.marshalAs = marshalAs;
@@ -132,12 +137,12 @@ namespace System.Reflection
 		public override
 		object DefaultValue {
 			get {
-				if (ClassImpl == typeof (Decimal)) {
+				if (ClassImpl == typeof (Decimal) || ClassImpl == typeof (Decimal?)) {
 					/* default values for decimals are encoded using a custom attribute */
 					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
 					if (attrs.Length > 0)
 						return attrs [0].Value;
-				} else if (ClassImpl == typeof (DateTime)) {
+				} else if (ClassImpl == typeof (DateTime) || ClassImpl == typeof (DateTime?)) {
 					/* default values for DateTime are encoded using a custom attribute */
 					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
 					if (attrs.Length > 0)
@@ -150,6 +155,8 @@ namespace System.Reflection
 		public override
 		object RawDefaultValue {
 			get {
+				if (DefaultValue != null && DefaultValue.GetType ().IsEnum)
+					return ((Enum)DefaultValue).GetValue ();
 				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
 				return DefaultValue;
 			}
@@ -207,14 +214,7 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern int GetMetadataToken ();
 
-		public
-		override
-		Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
 
 		internal object[] GetPseudoCustomAttributes () 
 		{
@@ -282,14 +282,7 @@ namespace System.Reflection
 			return attrsData;
 		}
 
-		public
-		override
-		Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
 		public override bool HasDefaultValue {
 			get { 
@@ -307,13 +300,6 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type[] GetTypeModifiers (bool optional);		
 
-#if !FULL_AOT_RUNTIME
-		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
-		{
-			return new MonoParameterInfo (pb, type, member, position);
-		}
-#endif
-
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{
 			return new MonoParameterInfo (pinfo, type, member, position);
@@ -327,6 +313,8 @@ namespace System.Reflection
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
 			return new MonoParameterInfo (type, member, marshalAs);
-		}		
+		}
+
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
 	}
 }

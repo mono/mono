@@ -468,10 +468,8 @@ mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *r, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
-
 	return (gpointer)(gsize)r [ppc_r3];
 }
 
@@ -923,7 +921,7 @@ is_struct_returnable_via_regs  (MonoClass *klass, gboolean is_pinvoke)
 				} else if ((f->type->type >= MONO_TYPE_BOOLEAN) && (f->type->type <= MONO_TYPE_R8)) {
 					has_a_field = TRUE;
 				} else if (MONO_TYPE_ISSTRUCT (f->type)) {
-					MonoClass *klass = mono_class_from_mono_type (f->type);
+					MonoClass *klass = mono_class_from_mono_type_internal (f->type);
 					if (is_struct_returnable_via_regs(klass, is_pinvoke)) {
 						has_a_field = TRUE;
 					} else {
@@ -1118,7 +1116,7 @@ get_call_info (MonoMethodSignature *sig)
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_TYPEDBYREF: {
 			gint size;
-			MonoClass *klass = mono_class_from_mono_type (sig->params [i]);
+			MonoClass *klass = mono_class_from_mono_type_internal (sig->params [i]);
 			if (simpletype->type == MONO_TYPE_TYPEDBYREF)
 				size = sizeof (MonoTypedRef);
 			else if (is_pinvoke)
@@ -1347,7 +1345,7 @@ get_call_info (MonoMethodSignature *sig)
 #ifndef DISABLE_JIT
 
 gboolean
-mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	CallInfo *caller_info = get_call_info (caller_sig);
 	CallInfo *callee_info = get_call_info (callee_sig);
@@ -1420,7 +1418,7 @@ mono_arch_allocate_vars (MonoCompile *m)
 		m->used_int_regs |= 1 << frame_reg;
 	}
 
-	sig = mono_method_signature (m->method);
+	sig = mono_method_signature_internal (m->method);
 	
 	offset = 0;
 	curinst = 0;
@@ -1563,7 +1561,7 @@ mono_arch_allocate_vars (MonoCompile *m)
 void
 mono_arch_create_vars (MonoCompile *cfg)
 {
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
@@ -1842,7 +1840,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 	if (!ret->byref) {
 #ifndef __mono_ppc64__
 		if (ret->type == MONO_TYPE_I8 || ret->type == MONO_TYPE_U8) {
@@ -1902,7 +1900,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	guchar *code = p;
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
-	int rtype = mini_get_underlying_type (mono_method_signature (method)->ret)->type;
+	int rtype = mini_get_underlying_type (mono_method_signature_internal (method)->ret)->type;
 	int save_offset = PPC_STACK_PARAM_OFFSET + cfg->param_area;
 	save_offset += 15;
 	save_offset &= ~15;
@@ -4681,7 +4679,7 @@ mono_arch_register_lowlevel_calls (void)
 }
 
 #ifdef __mono_ppc64__
-#ifdef _LITTLE_ENDIAN
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define patch_load_sequence(ip,val) do {\
 		guint16 *__load = (guint16*)(ip);	\
 		g_assert (sizeof (val) == sizeof (gsize)); \
@@ -4690,7 +4688,7 @@ mono_arch_register_lowlevel_calls (void)
 		__load [6] = (((guint64)(gsize)(val)) >> 16) & 0xffff;	\
 		__load [8] =  ((guint64)(gsize)(val))        & 0xffff;	\
 	} while (0)
-#elif defined _BIG_ENDIAN
+#elif G_BYTE_ORDER == G_BIG_ENDIAN
 #define patch_load_sequence(ip,val) do {\
 		guint16 *__load = (guint16*)(ip);	\
 		g_assert (sizeof (val) == sizeof (gsize)); \
@@ -4848,7 +4846,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		tracing = 1;
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	cfg->code_size = 512 + sig->param_count * 32;
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
@@ -5146,8 +5144,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				g_assert (ppc_is_imm16 (inst->inst_offset));
 				g_assert (ppc_is_imm16 (inst->inst_offset + ainfo->vtregs * sizeof (gpointer)));
 				/* FIXME: what if there is no class? */
-				if (sig->pinvoke && mono_class_from_mono_type (inst->inst_vtype))
-					size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), NULL);
+				if (sig->pinvoke && mono_class_from_mono_type_internal (inst->inst_vtype))
+					size = mono_class_native_size (mono_class_from_mono_type_internal (inst->inst_vtype), NULL);
 				for (cur_reg = 0; cur_reg < ainfo->vtregs; ++cur_reg) {
 					if (ainfo->size == 4) {
 						ppc_stfs (code, ainfo->reg + cur_reg, doffset, inst->inst_basereg);
@@ -5165,8 +5163,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				g_assert (ppc_is_imm16 (inst->inst_offset));
 				g_assert (ppc_is_imm16 (inst->inst_offset + ainfo->vtregs * sizeof (gpointer)));
 				/* FIXME: what if there is no class? */
-				if (sig->pinvoke && mono_class_from_mono_type (inst->inst_vtype))
-					size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), NULL);
+				if (sig->pinvoke && mono_class_from_mono_type_internal (inst->inst_vtype))
+					size = mono_class_native_size (mono_class_from_mono_type_internal (inst->inst_vtype), NULL);
 				for (cur_reg = 0; cur_reg < ainfo->vtregs; ++cur_reg) {
 #if __APPLE__
 					/*
@@ -5737,19 +5735,17 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
+	host_mgreg_t *r = (host_mgreg_t*)regs;
 
 	return (MonoMethod*)(gsize) r [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
-	mgreg_t *r = (mgreg_t*)regs;
-
-	return (MonoVTable*)(gsize) r [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*)(gsize) regs [MONO_ARCH_RGCTX_REG];
 }
 
 GSList*
@@ -5769,11 +5765,11 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 	return NULL;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	if (reg == ppc_r1)
-		return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+		return (mgreg_t)(gsize)MONO_CONTEXT_GET_SP (ctx);
 
 	return ctx->regs [reg];
 }

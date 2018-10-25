@@ -1,28 +1,19 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace marshalertest
 {
     struct MarshalTest : ICustomMarshaler
     {
-        public static readonly List<string> Log = new List<string>();
-
-        public static int NextId = 1;
-
-        public int Id;
-        public string Key;
-
         public static ICustomMarshaler GetInstance (string key) {
-            return new MarshalTest() { Key = key, Id = NextId++};            
+            return new MarshalTest();
         }
 
         public void CleanUpManagedData (object ManagedObj) {
         }
 
         public void CleanUpNativeData(IntPtr pNativeData) {
-            Log.Add($"{this}.CleanUpNativeData");
         }
 
         public int GetNativeDataSize () {
@@ -30,17 +21,11 @@ namespace marshalertest
         }
 
         public IntPtr MarshalManagedToNative (object ManagedObj) {
-            Log.Add($"{this}.MarshalManagedToNative");
             return IntPtr.Zero;
         }
 
         public object MarshalNativeToManaged (IntPtr pNativeData) {
-            Log.Add($"{this}.MarshalNativeToManaged");
             return null;
-        }
-
-        public override string ToString () {
-            return $"(id:{Id}, key:{Key})";
         }
     }
 
@@ -153,64 +138,6 @@ namespace marshalertest
         }
     }
 
-    struct MarshalerGetInstanceThrows : ICustomMarshaler
-    {
-        public static ICustomMarshaler GetInstance (string key) {
-            throw new Exception("Custom GetInstance exception");
-        }
-
-        public void CleanUpManagedData (object ManagedObj) {
-        }
-
-        public void CleanUpNativeData(IntPtr pNativeData) {
-        }
-
-        public int GetNativeDataSize () {
-            return -1;
-        }
-
-        public IntPtr MarshalManagedToNative (object ManagedObj) {
-            return IntPtr.Zero;
-        }
-
-        public object MarshalNativeToManaged (IntPtr pNativeData) {
-            return null;
-        }
-    }
-
-    struct MarshalerGetInstanceNestedThrow : ICustomMarshaler
-    {
-        public static ICustomMarshaler GetInstance (string key) {
-            return InnerMethod1 (key);
-        }
-
-        static ICustomMarshaler InnerMethod1 (string key) {
-            return InnerMethod2 (key);
-        }
-
-        static ICustomMarshaler InnerMethod2 (string key) {
-            throw new Exception("Inner exception");
-        }
-
-        public void CleanUpManagedData (object ManagedObj) {
-        }
-
-        public void CleanUpNativeData(IntPtr pNativeData) {
-        }
-
-        public int GetNativeDataSize () {
-            return -1;
-        }
-
-        public IntPtr MarshalManagedToNative (object ManagedObj) {
-            return IntPtr.Zero;
-        }
-
-        public object MarshalNativeToManaged (IntPtr pNativeData) {
-            return null;
-        }
-    }
-
     static class Program {
         const string fileName = "./test-marshaling-native.so";
 
@@ -264,18 +191,6 @@ namespace marshalertest
             ref string p
         );
 
-        [DllImport(fileName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TestMarshalling")]
-        static extern void TestGetInstanceThrows(
-            [param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MarshalerGetInstanceThrows))]
-            ref string p
-        );
-
-        [DllImport(fileName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TestMarshalling")]
-        static extern void TestGetInstanceNestedThrow(
-            [param: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(MarshalerGetInstanceNestedThrow))]
-            ref string p
-        );
-
         public static unsafe void ExpectThrow<T> (string message, TestFn func, ref int errorCount) 
             where T: Exception {
 
@@ -297,33 +212,22 @@ namespace marshalertest
             }
         }
 
-        public static unsafe int Main(string[] args) {
+        public static unsafe int Main(string[] args)
+        {
+            // Avoid beeing linked out (need something better)
+            MarshalTest.GetInstance (null);
+            MarshalerNoInterface.GetInstance (null);
+            MarshalerWrongArgumentType.GetInstance (0);
+            MarshalerWrongArgumentCount.GetInstance ("", "");
+            MarshalerNullInstance.GetInstance (null);
+            MarshalerWrongReturnType.GetInstance (null);
+
             var param = "1";
             TestMarshalling(ref param);
             param = "2";
             TestMarshalling(ref param);
             param = "3";
             TestMarshalling2(ref param);
-
-            var expected = new string[] {
-                "(id:1, key:1).MarshalManagedToNative",
-                "(id:1, key:1).MarshalNativeToManaged",
-                "(id:1, key:1).CleanUpNativeData",
-                "(id:1, key:1).MarshalManagedToNative",
-                "(id:1, key:1).MarshalNativeToManaged",
-                "(id:1, key:1).CleanUpNativeData",
-                "(id:2, key:2).MarshalManagedToNative",
-                "(id:2, key:2).MarshalNativeToManaged",
-                "(id:2, key:2).CleanUpNativeData"
-            };
-
-            if (!expected.SequenceEqual(MarshalTest.Log)) {
-                Console.Error.WriteLine("Log does not match expected sequence. Log follows:");
-                foreach (var entry in MarshalTest.Log)
-                    Console.Error.WriteLine(entry);
-
-                return 1;
-            }
 
             int errorCount = 0;
 
@@ -339,10 +243,6 @@ namespace marshalertest
                 TestNullInstance, ref errorCount);
             ExpectThrow<ApplicationException>("does not implement a static GetInstance method", 
                 TestWrongReturnType, ref errorCount);
-            ExpectThrow<Exception>("Custom GetInstance exception", 
-                TestGetInstanceThrows, ref errorCount);
-            ExpectThrow<Exception>("Inner exception", 
-                TestGetInstanceNestedThrow, ref errorCount);
 
             return errorCount;
         }

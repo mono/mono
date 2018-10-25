@@ -4,8 +4,7 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 
 # Resgen is corlib specific tool
 
-basic_SUBDIRS := build jay class
-build_SUBDIRS := build class class/aot-compiler tools ilasm
+build_SUBDIRS := build jay tools/gensources class class/aot-compiler tools
 monodroid_SUBDIRS := build class tools
 monodroid_tools_SUBDIRS := build class tools
 monotouch_SUBDIRS := build class tools
@@ -26,6 +25,7 @@ winaot_SUBDIRS := build class
 orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
+wasm_tools_SUBDIRS := build class tools
 
 include build/rules.make
 
@@ -36,7 +36,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then $(MAKE) -C ../runtime; fi
+	@if [ "$(NO_DIR_CHECK)" = "" ]; then $(MAKE) -C ../runtime; fi
 
 # fun specialty targets
 
@@ -83,7 +83,7 @@ $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:          
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
-$(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
+$(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

@@ -307,6 +307,7 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
+	exception-invokes.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	typeload-unaligned.cs	\
@@ -397,6 +398,7 @@ TESTS_CS_SRC=		\
 	delegate13.cs		\
 	delegate14.cs		\
 	delegate15.cs		\
+	delegate16.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -690,7 +692,9 @@ TESTS_CS_SRC=		\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
 	verbose.cs \
-	generic-unmanaged-constraint.cs
+	generic-unmanaged-constraint.cs \
+	bug-10834.cs \
+	bug-gh-9507.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1077,8 +1081,7 @@ if HOST_WIN32
 PLATFORM_DISABLED_TESTS += async-exc-compilation.exe finally_guard.exe finally_block_ending_in_dead_bb.exe \
 	bug-18026.exe monitor.exe threadpool-exceptions5.exe process-unref-race.exe w32message.exe \
 	unhandled-exception-1.exe unhandled-exception-2.exe unhandled-exception-3.exe unhandled-exception-4.exe \
-	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe \
-	thread-suspend-suspended.exe thread-suspend-selfsuspended.exe
+	unhandled-exception-5.exe unhandled-exception-6.exe unhandled-exception-7.exe unhandled-exception-8.exe
 endif
 
 # test_virt.exe fails because callee takes more parameters than caller, 1 vs. 0, and

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{1F165EE1-C483-4ACE-BD45-31074A9F735F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,219,414,649,1717</NoWarn>
+    <NoWarn>1699,219,414,618,649,1717</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>

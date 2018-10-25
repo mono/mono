@@ -188,7 +188,7 @@ create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringH
 		
 		if (strcmp (".ctor", mono_method_get_name (m)))
 			continue;
-		sig = mono_method_signature (m);
+		sig = mono_method_signature_internal (m);
 		if (sig->param_count != count)
 			continue;
 
@@ -827,9 +827,9 @@ mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExcep
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
 		if (!strcmp (".ctor", mono_method_get_name (method))) {
-			MonoMethodSignature *sig = mono_method_signature (method);
+			MonoMethodSignature *sig = mono_method_signature_internal (method);
 
-			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_STRING && mono_class_from_mono_type (sig->params [1]) == mono_defaults.exception_class)
+			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_STRING && mono_class_from_mono_type_internal (sig->params [1]) == mono_defaults.exception_class)
 				break;
 		}
 		method = NULL;
@@ -1028,7 +1028,7 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
 		if (!strcmp (".ctor", mono_method_get_name (method))) {
-			MonoMethodSignature *sig = mono_method_signature (method);
+			MonoMethodSignature *sig = mono_method_signature_internal (method);
 
 			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_SZARRAY && sig->params [1]->type == MONO_TYPE_SZARRAY)
 				break;
@@ -1150,7 +1150,7 @@ mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
 	MONO_ENTER_GC_SAFE;
 	messages = backtrace_symbols (addr, len);
 	MONO_EXIT_GC_SAFE;
-	mono_gchandle_free (gchandle);
+	mono_gchandle_free_internal (gchandle);
 
 	for (i = 0; i < len; ++i) {
 		gpointer ip;
@@ -1209,7 +1209,7 @@ mono_error_raise_exception_deprecated (MonoError *target_error)
 }
 
 /**
- * mono_error_set_pending_exception:
+ * mono_error_set_pending_exception_slow:
  * \param error The error
  * If \p error is set, convert it to an exception and set the pending exception for the current icall.
  * \returns TRUE if \p error was set, or FALSE otherwise, so that you can write:
@@ -1218,8 +1218,9 @@ mono_error_raise_exception_deprecated (MonoError *target_error)
  *      return;
  *    }
  */
+// For efficiency, call mono_error_set_pending_exception instead of mono_error_set_pending_exception_slow.
 gboolean
-mono_error_set_pending_exception (MonoError *error)
+mono_error_set_pending_exception_slow (MonoError *error)
 {
 	if (is_ok (error))
 		return FALSE;
@@ -1253,7 +1254,7 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 		char *msg = NULL;
 		
 		if (str && is_ok (&inner_error)) {
-			msg = mono_string_to_utf8_checked (str, &inner_error);
+			msg = mono_string_to_utf8_checked_internal (str, &inner_error);
 			if (!is_ok (&inner_error)) {
 				msg = g_strdup_printf ("Nested exception while formatting original exception");
 				mono_error_cleanup (&inner_error);

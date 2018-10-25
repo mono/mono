@@ -287,7 +287,6 @@ typedef struct {
 	double fregs [8];
 	mgreg_t has_fp;
 	mgreg_t nstack_args;
-	guint8 buffer [256];
 	/* This should come last as the structure is dynamically extended */
 	mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
@@ -342,12 +341,12 @@ struct CallInfo {
 
 typedef struct {
 	/* General registers */
-	mgreg_t gregs [AMD64_NREG];
+	host_mgreg_t gregs [AMD64_NREG];
 	/* Floating registers */
 	double fregs [AMD64_XMM_NREG];
 	/* Stack usage, used for passing params on stack */
-	size_t stack_size;
-	gpointer *stack;
+	guint32 stack_size;
+	guint8 *stack;
 } CallContext;
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->gregs [AMD64_RAX] = (gsize)exc; } while (0)
@@ -464,6 +463,7 @@ typedef struct {
 #define MONO_ARCH_FLOAT32_SUPPORTED 1
 
 #define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
+#define MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
@@ -501,7 +501,7 @@ mono_amd64_patch (unsigned char* code, gpointer target);
 void
 mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 							guint64 dummy5, guint64 dummy6,
-							MonoContext *mctx, MonoObject *exc, gboolean rethrow);
+							MonoContext *mctx, MonoObject *exc, gboolean rethrow, gboolean preserve_ips);
 
 void
 mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,

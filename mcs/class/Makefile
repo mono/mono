@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools wasm_tools testing_aot_full testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
@@ -12,29 +12,15 @@ ifdef MCS_MODE
 MCS_MODE_dirs := Mono.Cecil.Mdb
 endif
 
-# The minimal set of csc dependencies
-basic_SUBDIRS := \
-	Mono.Cecil \
-	$(MCS_MODE_dirs) \
-	../tools/cil-stringreplacer \
-	corlib \
-	Mono.Security \
-	System \
-	System.XML \
-	System.Security \
-	System.Core \
-	System.ComponentModel.Composition.4.5 \
-	System.Numerics \
-	System.Xml.Linq \
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI \
-	../ilasm \
-	corlib/il
-
+# Tooling dependencies of mscorlib, we build them to /tmp folder for MONO_PATH to work
+# reliably for clean and update builds. All deps are built against stable API to run with
+# range of boostrap versions and .NET at the same time
 build_SUBDIRS = \
 	Mono.Cecil \
 	$(MCS_MODE_dirs) \
 	../tools/cil-stringreplacer \
+	PEAPI \
+	../ilasm \
 	corlib
 
 build_PARALLEL_SUBDIRS = \
@@ -49,12 +35,9 @@ build_PARALLEL_SUBDIRS = \
 	System.Numerics \
 	System.Xml.Linq \
 	System.IO.Compression \
-	System.Drawing			\
-	Mono.CompilerServices.SymbolWriter	\
-	PEAPI
+	System.Drawing
 
 ifdef MCS_MODE
-basic_PARALLEL_SUBDIRS := ../mcs
 
 build_SUBDIRS += \
 	Mono.Security \
@@ -62,7 +45,8 @@ build_SUBDIRS += \
 	System.XML \
 	System.Security \
 	Mono.Posix \
-	System.Core
+	System.Core \
+	Mono.CompilerServices.SymbolWriter
 
 build_PARALLEL_SUBDIRS += ../mcs
 endif
@@ -167,6 +151,9 @@ unreal_dirs_parallel := \
 wasm_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	System.Drawing
+
+wasm_tools_dirs_parallel := \
+	Mono.Cecil
 
 orbis_dirs_parallel := \
 	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
@@ -415,12 +402,14 @@ unreal_PARALLEL_SUBDIRS := $(unreal_dirs_parallel)
 
 wasm_SUBDIRS := $(mobile_common_dirs)
 wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
+wasm_tools_SUBDIRS :=
+wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
 include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
-$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(xbuild_14_SUBDIRS) \
+$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
 dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
@@ -451,6 +440,7 @@ DISTFILES = \
 	test-helpers/RemoteExecutorTestBase.Mobile.cs \
 	test-helpers/RemoteExecutorTestBase.Mono.cs \
 	test-helpers/SocketResponder.cs \
+	test-helpers/TestResourceHelper.cs \
 	$(foreach HOST_PLATFORM,macos linux win32 unix,lib/$(monolite_dir)/mcs.exe $(monolite_files))
 
 .PHONY: all-local $(STD_TARGETS:=-local)

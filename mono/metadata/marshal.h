@@ -33,6 +33,10 @@ typedef const gunichar2 *mono_bstr_const;
 		mono_marshal_find_nonzero_bit_offset ((guint8*)&tmp, sizeof (tmp), (byte_offset), (bitmask)); \
 	} while (0)
 
+
+GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(stringbuilder)
+
+
 /*
  * This structure holds the state kept by the emit_ marshalling functions.
  * This is exported so it can be used by cominterop.c.
@@ -397,7 +401,7 @@ void
 mono_marshal_set_wrapper_info (MonoMethod *method, WrapperInfo *info);
 
 WrapperInfo*
-mono_marshal_get_wrapper_info (MonoMethod *wrapper);
+mono_marshal_get_wrapper_info (MonoMethod *wrapper) MONO_LLVM_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method);
@@ -636,18 +640,6 @@ mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 gboolean
 mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
 
-MonoThreadInfo*
-mono_icall_start (HandleStackMark *stackmark, MonoError *error);
-
-void
-mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error);
-
-MonoObjectHandle
-mono_icall_handle_new (gpointer rawobj);
-
-gpointer
-mono_icall_handle_new_interior (gpointer rawobj);
-
 MonoObject* mono_marshal_get_type_object (MonoClass *klass);
 
 ICALL_EXPORT
@@ -714,7 +706,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 
 ICALL_EXPORT
 mono_bstr
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2 *ptr, int len, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2 *ptr, int len);
 
 ICALL_EXPORT
 char*
@@ -734,11 +726,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size, MonoE
 
 ICALL_EXPORT
 void*
-ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size, MonoError *error);
 
 ICALL_EXPORT
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr);
 
 ICALL_EXPORT
 gpointer 
@@ -754,11 +746,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, g
 
 ICALL_EXPORT
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr);
 
 ICALL_EXPORT
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr);
 
 ICALL_EXPORT
 void*
@@ -774,15 +766,15 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateIn
 
 ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk);
 
 ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv);
 
 ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk, MonoError *error);
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk);
 
 ICALL_EXPORT
 void*

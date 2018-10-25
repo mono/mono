@@ -25,6 +25,12 @@ wasm_rethrow_exception (void)
 }
 
 static void
+wasm_rethrow_preserve_exception (void)
+{
+	g_error ("wasm_rethrow_preserve_exception");
+}
+
+static void
 wasm_throw_corlib_exception (void)
 {
 	g_error ("wasm_throw_corlib_exception");
@@ -34,7 +40,7 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	if (ji)
@@ -77,6 +83,14 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
 	if (info)
 		*info = mono_tramp_info_create ("rethrow_exception", (guint8*)wasm_rethrow_exception, 1, NULL, NULL);
+	return (gpointer)wasm_rethrow_exception;
+}
+
+gpointer
+mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
+{
+	if (info)
+		*info = mono_tramp_info_create ("rethrow_preserve_exception", (guint8*)wasm_rethrow_preserve_exception, 1, NULL, NULL);
 	return (gpointer)wasm_rethrow_exception;
 }
 

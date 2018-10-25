@@ -747,7 +747,7 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	MonoMethodSignature *sig;
 	CallInfo *cinfo;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = get_call_info (cfg, sig, FALSE);
 
@@ -793,7 +793,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	header = cfg->header;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	cinfo = get_call_info (cfg, sig, FALSE);
 
@@ -872,7 +872,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		/* inst->backend.is_pinvoke indicates native sized value types, this is used by the
 		* pinvoke wrappers when they call functions returning structure */
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
-			size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), &align);
+			size = mono_class_native_size (mono_class_from_mono_type_internal (inst->inst_vtype), &align);
 		else
 			size = mini_type_stack_size (inst->inst_vtype, &align);
 
@@ -1027,7 +1027,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
 
-	sig = mono_method_signature (cfg->method);
+	sig = mono_method_signature_internal (cfg->method);
 
 	if (MONO_TYPE_ISSTRUCT ((sig->ret))) {
 		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
@@ -1342,8 +1342,8 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	CallInfo *cinfo = get_call_info (cfg, mono_method_signature (method), FALSE);
-	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
+	CallInfo *cinfo = get_call_info (cfg, mono_method_signature_internal (method), FALSE);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	switch (cinfo->ret.storage) {
 	case ArgInIReg:
@@ -2116,7 +2116,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
 
 	/* FIXME: Generate intermediate code instead */
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 
 	cinfo = get_call_info (cfg, sig, FALSE);
 	
@@ -2368,7 +2368,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 }
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 #ifdef SPARCV9
 	g_assert_not_reached ();
@@ -2378,7 +2378,7 @@ mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	mono_sparc_flushw ();
 
@@ -2928,7 +2928,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_SETFRET:
-			if (mono_method_signature (cfg->method)->ret->type == MONO_TYPE_R4)
+			if (mono_method_signature_internal (cfg->method)->ret->type == MONO_TYPE_R4)
 				sparc_fdtos (code, ins->sreg1, sparc_f0);
 			else {
 #ifdef SPARCV9
@@ -3707,7 +3707,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 {
 	int i;
 	guint32 *code = (guint32*)p;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	CallInfo *cinfo;
 
 	/* Save registers to stack */
@@ -3778,7 +3778,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 
-	switch (mini_get_underlying_type (mono_method_signature (method)->ret)->type) {
+	switch (mini_get_underlying_type (mono_method_signature_internal (method)->ret)->type) {
 	case MONO_TYPE_VOID:
 		/* special case string .ctor icall */
 		if (strcmp (".ctor", method->name) && method->klass == mono_defaults.string_class)
@@ -3929,7 +3929,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	}
 */
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 
 	cinfo = get_call_info (cfg, sig, FALSE);
 
@@ -4111,7 +4111,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	 * The V8 ABI requires that calls to functions which return a structure
 	 * return to %i7+12
 	 */
-	if (!v64 && mono_method_signature (cfg->method)->pinvoke && MONO_TYPE_ISSTRUCT(mono_method_signature (cfg->method)->ret))
+	if (!v64 && mono_method_signature_internal (cfg->method)->pinvoke && MONO_TYPE_ISSTRUCT(mono_method_signature_internal (cfg->method)->ret))
 		sparc_jmpl_imm (code, sparc_i7, 12, sparc_g0);
 	else
 		sparc_ret (code);
@@ -4391,7 +4391,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	return 0;
 }
 
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	/* FIXME: implement */
@@ -4405,7 +4405,7 @@ mono_arch_opcode_supported (int opcode)
 }
 
 gboolean
-mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	return FALSE;
 }

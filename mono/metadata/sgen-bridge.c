@@ -560,7 +560,7 @@ static gboolean
 test_scc (MonoGCBridgeSCC *scc, int i)
 {
 	int status = BRIDGE_DEAD;
-	mono_field_get_value (scc->objs [i], mono_bridge_test_field, &status);
+	mono_field_get_value_internal (scc->objs [i], mono_bridge_test_field, &status);
 	return status > 0;
 }
 
@@ -571,7 +571,7 @@ mark_scc (MonoGCBridgeSCC *scc, int value)
 	for (i = 0; i < scc->num_objs; ++i) {
 		if (!test_scc (scc, i)) {
 			int status = value;
-			mono_field_set_value (scc->objs [i], mono_bridge_test_field, &status);
+			mono_field_set_value_internal (scc->objs [i], mono_bridge_test_field, &status);
 		}
 	}
 }
@@ -583,7 +583,7 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 	gboolean modified;
 
 	if (!mono_bridge_test_field) {
-		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_get_class (sccs[0]->objs [0]), "__test", NULL);
+		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
 		g_assert (mono_bridge_test_field);
 	}
 
@@ -602,7 +602,7 @@ bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xref
 		for (j = 0; j < sccs [i]->num_objs; ++j) {
 			if (!test_scc (sccs [i], j)) {
 				int status = BRIDGE_SAME_SCC;
-				mono_field_set_value (sccs [i]->objs [j], mono_bridge_test_field, &status);
+				mono_field_set_value_internal (sccs [i]->objs [j], mono_bridge_test_field, &status);
 			}
 		}
 	}
@@ -633,7 +633,7 @@ bridge_test_positive_status (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs
 	int i;
 
 	if (!mono_bridge_test_field) {
-		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_get_class (sccs[0]->objs [0]), "__test", NULL);
+		mono_bridge_test_field = mono_class_get_field_from_name_full (mono_object_class (sccs[0]->objs [0]), "__test", NULL);
 		g_assert (mono_bridge_test_field);
 	}
 

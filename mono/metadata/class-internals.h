@@ -832,6 +832,9 @@ mono_class_get_context (MonoClass *klass);
 MONO_PROFILER_API MonoMethodSignature*
 mono_method_signature_checked (MonoMethod *m, MonoError *err);
 
+MONO_PROFILER_API MonoMethodSignature*
+mono_method_signature_internal (MonoMethod *m);
+
 MonoGenericContext*
 mono_method_get_context_general (MonoMethod *method, gboolean uninflated);
 
@@ -901,7 +904,6 @@ typedef struct {
 	MonoClass *array_class;
 	MonoClass *delegate_class;
 	MonoClass *multicastdelegate_class;
-	MonoClass *asyncresult_class;
 	MonoClass *manualresetevent_class;
 	MonoClass *typehandle_class;
 	MonoClass *fieldhandle_class;
@@ -922,25 +924,18 @@ typedef struct {
 	MonoClass *appdomain_class;
 	MonoClass *field_info_class;
 	MonoClass *method_info_class;
-	MonoClass *stringbuilder_class;
-	MonoClass *math_class;
 	MonoClass *stack_frame_class;
-	MonoClass *stack_trace_class;
 	MonoClass *marshal_class;
 	MonoClass *typed_reference_class;
 	MonoClass *argumenthandle_class;
 	MonoClass *monitor_class;
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
-	MonoClass *handleref_class;
 	MonoClass *attribute_class;
-	MonoClass *customattribute_data_class;
 	MonoClass *critical_finalizer_object; /* MAYBE NULL */
 	MonoClass *generic_ireadonlylist_class;
 	MonoClass *generic_ienumerator_class;
-	MonoClass *threadpool_wait_callback_class;
 	MonoMethod *threadpool_perform_wait_callback_method;
-	MonoClass *console_class;
 } MonoDefaults;
 
 #ifdef DISABLE_REMOTING
@@ -1007,6 +1002,7 @@ GENERATE_GET_CLASS_WITH_CACHE_DECL (appdomain_unloaded_exception)
 
 GENERATE_GET_CLASS_WITH_CACHE_DECL (valuetype)
 
+GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(handleref)
 /* If you need a MonoType, use one of the mono_get_*_type () functions in class-inlines.h */
 extern MonoDefaults mono_defaults;
 
@@ -1113,8 +1109,11 @@ mono_type_get_full_name (MonoClass *klass);
 char *
 mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret, MonoTypeNameFormat format);
 
-char *
+MONO_PROFILER_API char *
 mono_method_get_full_name (MonoMethod *method);
+
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type);
 
 MonoArrayType *mono_dup_array_type (MonoImage *image, MonoArrayType *a);
 MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMethodSignature *sig);
@@ -1217,10 +1216,16 @@ mono_class_has_variant_generic_params (MonoClass *klass);
 gboolean
 mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv);
 
+mono_bool
+mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass);
+
 gboolean mono_is_corlib_image (MonoImage *image);
 
 MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error);
+
+MonoType*
+mono_field_get_type_internal (MonoClassField *field);
 
 MonoClassField*
 mono_class_get_fields_internal (MonoClass* klass, gpointer *iter);
@@ -1257,6 +1262,9 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 
 MonoClass *
 mono_class_from_name_case_checked (MonoImage *image, const char* name_space, const char *name, MonoError *error);
+
+MONO_PROFILER_API MonoClass *
+mono_class_from_mono_type_internal (MonoType *type);
 
 MonoClassField*
 mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context, MonoError *error);
@@ -1447,6 +1455,9 @@ mono_class_contextbound_bit_offset (int* byte_offset_out, guint8* mask_out);
 
 gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
+
+MonoType*
+mono_class_enum_basetype_internal (MonoClass *klass);
 
 /*Now that everything has been defined, let's include the inline functions */
 #include <mono/metadata/class-inlines.h>

@@ -29,9 +29,6 @@ provision-android-$(3)-$(1): $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.st
 .PHONY: provision-android
 provision-android: provision-android-$(3)-$(1)
 
-.PHONY: provision
-provision: provision-android-$(3)-$(1)
-
 endef
 
 AndroidNDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),,ndk,$(ANDROID_URI))
@@ -141,7 +138,6 @@ _android-$(1)_LDFLAGS= \
 	-L$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-executables \
 	--disable-iconv \
@@ -164,6 +160,8 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	touch $$@
 
 $$(eval $$(call RuntimeTemplate,android-$(1),$(4)))
+
+android_TARGETS += android-$(1)-$$(CONFIGURATION)
 
 endef
 
@@ -204,18 +202,19 @@ _android-$(1)_LD=ld
 _android-$(1)_RANLIB=ranlib
 _android-$(1)_STRIP=strip
 
+_android-$(1)_CFLAGS= \
+	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
+
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mono-debugger \
 	--disable-nls \
+	--disable-mcs-build \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
 	--enable-monodroid \
 	--with-mcs-docs=no \
-	--with-monodroid \
-	--with-profile4_x=no \
 	--without-ikvm-native \
 	--disable-crash-reporting
 
@@ -224,11 +223,11 @@ _android-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call RuntimeTemplate,android-$(1)))
 
+android_TARGETS += android-$(1)-$$(CONFIGURATION)
+
 endef
 
-android-host-Darwin_CFLAGS=-mmacosx-version-min=10.9
-$(eval $(call AndroidHostTemplate,host-Darwin))
-$(eval $(call AndroidHostTemplate,host-Linux))
+$(eval $(call AndroidHostTemplate,host-$(UNAME)))
 
 ##
 # Parameters
@@ -259,7 +258,6 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-llvm \
 	--disable-mcs-build \
@@ -276,12 +274,12 @@ _android-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call RuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)))
 
+android_TARGETS += android-$(1)-$$(CONFIGURATION)
+
 endef
 
-ifneq ($(MXE_PREFIX),)
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
-endif
 
 ##
 # Parameters
@@ -315,7 +313,6 @@ _android-$(1)_CXXFLAGS= \
 	-DXAMARIN_PRODUCT_VERSION=0
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
@@ -324,6 +321,8 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--with-tls=pthread
 
 $$(eval $$(call CrossRuntimeTemplate,android-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-linux-android,$(4),$(5),$(6)))
+
+android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
 
 endef
 
@@ -374,7 +373,6 @@ _android-$(1)_LDFLAGS= \
 	-static-libstdc++
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$(if $(ENABLE_CXX),--enable-cxx) \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
@@ -386,9 +384,14 @@ _android-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-linux-android,$(4),$(5),$(6)))
 
+android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
+
 endef
 
 $(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
+
+$(eval $(call BclTemplate,android-bcl,monodroid monodroid_tools,monodroid))
+android_TARGETS += android-bcl

@@ -916,7 +916,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
@@ -927,7 +926,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
@@ -982,6 +980,7 @@
             <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+            <Compile Include="corefx\Interop.cs" />
           </ItemGroup>
         </When>
         <When Condition="'$(HostPlatform)' == 'macos'">
@@ -994,7 +993,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
@@ -1005,7 +1003,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
@@ -1060,6 +1057,7 @@
             <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+            <Compile Include="corefx\Interop.cs" />
           </ItemGroup>
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
@@ -1072,7 +1070,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Fcntl.SetCloseOnExec.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetHostName.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerID.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetPeerUserName.cs" />
@@ -1083,7 +1080,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Read.Pipe.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.SetEUid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Pipe.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
@@ -1138,6 +1134,7 @@
             <Compile Include="System.Security.Cryptography\SHA256Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA384Cng.cs" />
             <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
+            <Compile Include="corefx\Interop.cs" />
           </ItemGroup>
         </When>
       </Choose>

@@ -36,7 +36,7 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -505,7 +505,7 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
@@ -1339,7 +1339,7 @@ namespace System {
 
 			string name;
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 			if (name_or_tb is TypeBuilder)
 				name = ((TypeBuilder) name_or_tb).FullName;
 			else

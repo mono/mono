@@ -73,7 +73,7 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 		return NULL;
 	}
 
-	res = mono_object_get_virtual_method (obj, method);
+	res = mono_object_get_virtual_method_internal (obj, method);
 
 	if (gshared && method->is_inflated && mono_method_get_context (method)->method_inst) {
 		MonoGenericContext context = { NULL, NULL };
@@ -702,7 +702,7 @@ mono_array_new_va (MonoMethod *cm, ...)
 	int rank;
 	int i, d;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	va_start (ap, cm);
@@ -749,7 +749,7 @@ mono_array_new_1 (MonoMethod *cm, guint32 length)
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length;
@@ -784,7 +784,7 @@ mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2)
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -820,7 +820,7 @@ mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -857,7 +857,7 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 	int pcount;
 	int rank;
 
-	pcount = mono_method_signature (cm)->param_count;
+	pcount = mono_method_signature_internal (cm)->param_count;
 	rank = m_class_get_rank (cm->klass);
 
 	lengths [0] = length1;
@@ -942,7 +942,7 @@ mono_ldtoken_wrapper (MonoImage *image, int token, MonoGenericContext *context)
 gpointer
 mono_ldtoken_wrapper_generic_shared (MonoImage *image, int token, MonoMethod *method)
 {
-	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	MonoGenericContext *generic_context;
 
 	if (sig->is_inflated) {
@@ -1117,7 +1117,7 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 		mono_error_set_pending_exception (error);
 		return NULL;
 	}
-	vmethod = mono_object_get_virtual_method (obj, method);
+	vmethod = mono_object_get_virtual_method_internal (obj, method);
 	g_assert (!mono_class_is_gtd (vmethod->klass));
 	g_assert (!mono_class_is_ginst (vmethod->klass) || !mono_class_get_generic_class (vmethod->klass)->context.class_inst->is_open);
 	g_assert (!context->method_inst || !context->method_inst->is_open);
@@ -1130,7 +1130,7 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 
 	/* Since this is a virtual call, have to unbox vtypes */
 	if (m_class_is_valuetype (obj->vtable->klass))
-		*this_arg = mono_object_unbox (obj);
+		*this_arg = mono_object_unbox_internal (obj);
 	else
 		*this_arg = obj;
 
@@ -1367,7 +1367,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		klass = this_obj->vtable->klass;
 	}
 
-	if (mono_method_signature (cmethod)->pinvoke) {
+	if (mono_method_signature_internal (cmethod)->pinvoke) {
 		/* Object.GetType () */
 		m = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
 	} else {
@@ -1400,7 +1400,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 			*/
 			MonoObject *this_obj = *(MonoObject**)mp;
 
-			*this_arg = mono_object_unbox (this_obj);
+			*this_arg = mono_object_unbox_internal (this_obj);
 		} else {
 			/*
 			 * Calling a vtype method with a vtype receiver
@@ -1464,9 +1464,9 @@ void
 mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClass *klass)
 {
 	if (m_class_is_valuetype (klass))
-		mono_value_copy (dest, src, klass);
+		mono_value_copy_internal (dest, src, klass);
 	else
-        mono_gc_wbarrier_generic_store (dest, *(MonoObject**)src);
+        mono_gc_wbarrier_generic_store_internal (dest, *(MonoObject**)src);
 }
 
 void
@@ -1884,8 +1884,8 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 		if (mono_error_set_pending_exception (error))
 			return;
 
-		if (m_class_is_valuetype (m->klass) && mono_method_signature (m)->hasthis)
-		    addr = mono_aot_get_unbox_trampoline (m);
+		if (m_class_is_valuetype (m->klass) && mono_method_signature_internal (m)->hasthis)
+		    addr = mono_aot_get_unbox_trampoline (m, NULL);
 
 		gpointer arg = mini_get_delegate_arg (del->method, addr);
 
@@ -1904,7 +1904,7 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 
 	g_assert (target);
 
-	method = mono_object_get_virtual_method (target, method);
+	method = mono_object_get_virtual_method_internal (target, method);
 
 	if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 		method = mono_marshal_get_synchronized_wrapper (method);
@@ -1914,7 +1914,7 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 	if (mono_error_set_pending_exception (error))
 		return;
 	if (m_class_is_valuetype (method->klass))
-		del->method_ptr = mono_aot_get_unbox_trampoline (method);
+		del->method_ptr = mono_aot_get_unbox_trampoline (method, NULL);
 	del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 }
 

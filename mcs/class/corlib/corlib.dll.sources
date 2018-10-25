@@ -125,7 +125,11 @@ System/TermInfoDriver.cs
 System/TermInfoNumbers.cs
 System/TermInfoReader.cs
 System/TermInfoStrings.cs
-System/TimeZone.cs
+corefx/TimeZone.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeZone.cs
+../../../external/corefx/src/Common/src/CoreLib/System/CurrentSystemTimeZone.cs
+corefx/CurrentSystemTimeZone.cs
+corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
@@ -376,7 +380,7 @@ System.Runtime.InteropServices/RegistrationClassContext.cs
 ../../../external/corefx/src/System.Runtime.InteropServices/src/System/Runtime/InteropServices/RegistrationConnectionType.cs
 System.Runtime.InteropServices/STATSTG.cs
 System.Runtime.InteropServices/RegistrationServices.cs
-System.Runtime.InteropServices/SafeBuffer.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/InteropServices/SafeBuffer.cs
 System.Runtime.InteropServices/SafeHandle.cs
 System.Runtime.InteropServices/SYSKIND.cs
 System.Runtime.InteropServices/TYPELIBATTR.cs
@@ -912,9 +916,10 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Convert.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Convert.Base64.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DataMisalignedException.cs
-../referencesource/mscorlib/system/datetime.cs
+../../../external/corefx/src/Common/src/CoreLib/System/DateTime.cs
+corefx/DateTime.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DateTimeKind.cs
-../referencesource/mscorlib/system/datetimeoffset.cs
+../../../external/corefx/src/Common/src/CoreLib/System/DateTimeOffset.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/DayOfWeek.cs
 #../../../external/corert/src/System.Private.CoreLib/src/System/Decimal.cs
 #../../../external/corert/src/System.Private.CoreLib/src/System/Decimal.DecCalc.cs
@@ -1008,7 +1013,7 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/StringFreezingAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/SystemException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeoutException.cs
-../referencesource/mscorlib/system/timespan.cs
+../../../external/corefx/src/Common/src/CoreLib/System/TimeSpan.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ThreadAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ThreadStaticAttribute.cs
 ../referencesource/mscorlib/system/throwhelper.cs
@@ -1071,10 +1076,10 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureNotFoundException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DaylightTime.cs
-../referencesource/mscorlib/system/globalization/datetimeformat.cs
-../referencesource/mscorlib/system/globalization/datetimeformatinfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DateTimeFormat.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DateTimeFormatInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DateTimeFormatInfoScanner.cs
-../referencesource/mscorlib/system/globalization/datetimeparse.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DateTimeParse.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DateTimeStyles.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DigitShapes.cs
 ../referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
@@ -1117,24 +1122,25 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveNotFoundException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/EndOfStreamException.cs
-../referencesource/mscorlib/system/io/ioexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/IOException.cs
 ../referencesource/mscorlib/system/io/fileinfo.cs
-../referencesource/mscorlib/system/io/fileloadexception.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/FileLoadException.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/FileLoadException.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileNotFoundException.cs
 ../referencesource/mscorlib/system/io/filesysteminfo.cs
 ../referencesource/mscorlib/system/io/filesystemenumerable.cs
-../referencesource/mscorlib/system/io/memorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
-../referencesource/mscorlib/system/io/pinnedbuffermemorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
 ../referencesource/mscorlib/system/io/stream.cs
-../referencesource/mscorlib/system/io/streamreader.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs
 ../referencesource/mscorlib/system/io/streamwriter.cs
 ../referencesource/mscorlib/system/io/stringreader.cs
 ../referencesource/mscorlib/system/io/stringwriter.cs
-../referencesource/mscorlib/system/io/textreader.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/TextReader.cs
 ../referencesource/mscorlib/system/io/textwriter.cs
-../referencesource/mscorlib/system/io/unmanagedmemoryaccessor.cs
-../referencesource/mscorlib/system/io/unmanagedmemorystream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStream.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryAccessor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStreamWrapper.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/AmbiguousMatchException.cs
@@ -1202,6 +1208,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeFilter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeDelegator.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TypeInfo.cs
 
 ../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/TypeExtensions.cs
 ../../../external/corefx/src/System.Reflection.TypeExtensions/src/System/Reflection/Requires.cs
@@ -1211,8 +1219,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/reflection/memberinfoserializationholder.cs
 ../referencesource/mscorlib/system/reflection/methodbase.cs
 ../referencesource/mscorlib/system/reflection/methodinfo.cs
-../referencesource/mscorlib/system/reflection/typedelegator.cs
-../referencesource/mscorlib/system/reflection/typeinfo.cs
 
 ../referencesource/mscorlib/system/reflection/emit/methodbuilder.cs
 ../referencesource/mscorlib/system/reflection/emit/symboltype.cs
@@ -1453,10 +1459,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF7Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/UTF8Encoding.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
-../referencesource/mscorlib/system/text/codepageencoding.cs
 ../referencesource/mscorlib/system/text/encoding.cs
-../referencesource/mscorlib/system/text/mlangcodepageencoding.cs
-../referencesource/mscorlib/system/text/surrogateencoder.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/ISpanFormattable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilder.cs
@@ -1827,3 +1830,5 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
 
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/Error.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamHelpers.CopyValidation.cs

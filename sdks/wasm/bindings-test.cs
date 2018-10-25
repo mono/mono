@@ -287,6 +287,29 @@ public class TestClass {
 		client = new HttpClient();
 	}	
 
+	public static RequestCache[] requestEnums;
+
+	public static void SetRequestEnums (RequestCache dflt, RequestCache nostore, RequestCache reload, RequestCache nocache, RequestCache force, RequestCache onlyif) 
+	{
+		requestEnums = new RequestCache[6];
+		requestEnums[0] = dflt;
+		requestEnums[1] = nostore;
+		requestEnums[2] = reload;
+		requestEnums[3] = nocache;
+		requestEnums[4] = force;
+		requestEnums[5] = onlyif;
+	}
+
+	public static void SetRequestEnumsProperties (JSObject obj) 
+	{
+		obj.SetObjectProperty("dflt", RequestCache.Default);
+		obj.SetObjectProperty("nostore", RequestCache.NoStore);
+		obj.SetObjectProperty("reload", RequestCache.Reload);
+		obj.SetObjectProperty("nocache", RequestCache.NoCache);
+		obj.SetObjectProperty("force", RequestCache.ForceCache);
+		obj.SetObjectProperty("onlyif", RequestCache.OnlyIfCached);
+	}
+
 }
 
 
@@ -298,6 +321,22 @@ public class FakeHttpClientHandler : HttpClientHandler
 		TestClass.fakeClientHandler = this;
 	}
 }
+
+public enum RequestCache
+{
+	[Export(EnumValue = ConvertEnum.Default)]
+	Default = -1,
+	[Export("no-store")]
+	NoStore,
+	[Export(EnumValue = ConvertEnum.ToUpper)]
+	Reload,
+	[Export(EnumValue = ConvertEnum.ToLower)]
+	NoCache,
+	[Export("force-cache")]
+	ForceCache,
+	OnlyIfCached = -3636,
+}
+
 
 [TestFixture]
 public class BindingTests {
@@ -961,6 +1000,40 @@ public class BindingTests {
 		Assert.AreNotEqual (null, TestClass.fakeClientHandler);
 		Assert.AreEqual (typeof(FakeHttpClientHandler), TestClass.fakeClientHandler.GetType());
 		Assert.AreNotEqual (null, TestClass.client);
+	}
+
+	[Test]
+	public static void MarshalRequestEnums () {
+		Runtime.InvokeJS (@"
+		    var dflt = ""Default"";
+			var nostore = ""no-store"";
+			var reload = ""RELOAD"";
+			var nocache = ""nocache"";
+			var force = 3;
+			var onlyif = -3636;
+			Module.mono_call_static_method (""[binding_tests]TestClass:SetRequestEnums"", [ dflt, nostore, reload, nocache, force, onlyif ]);
+		");
+		Assert.AreEqual (RequestCache.Default, TestClass.requestEnums[0]);
+		Assert.AreEqual (RequestCache.NoStore, TestClass.requestEnums[1]);
+		Assert.AreEqual (RequestCache.Reload, TestClass.requestEnums[2]);
+		Assert.AreEqual (RequestCache.NoCache, TestClass.requestEnums[3]);
+		Assert.AreEqual (RequestCache.ForceCache, TestClass.requestEnums[4]);
+		Assert.AreEqual (RequestCache.OnlyIfCached, TestClass.requestEnums[5]);
+	}
+
+	[Test]
+	public static void MarshalRequestEnumProps () {
+		Runtime.InvokeJS (@"
+		    var obj = {};
+			Module.mono_call_static_method (""[binding_tests]TestClass:SetRequestEnumsProperties"", [ obj ]);
+			Module.mono_call_static_method (""[binding_tests]TestClass:SetRequestEnums"", [ obj.dflt, obj.nostore, obj.reload, obj.nocache, obj.force, obj.onlyif ]);
+		");
+		Assert.AreEqual (RequestCache.Default, TestClass.requestEnums[0]);
+		Assert.AreEqual (RequestCache.NoStore, TestClass.requestEnums[1]);
+		Assert.AreEqual (RequestCache.Reload, TestClass.requestEnums[2]);
+		Assert.AreEqual (RequestCache.NoCache, TestClass.requestEnums[3]);
+		Assert.AreEqual (RequestCache.ForceCache, TestClass.requestEnums[4]);
+		Assert.AreEqual (RequestCache.OnlyIfCached, TestClass.requestEnums[5]);
 	}
 
 }
