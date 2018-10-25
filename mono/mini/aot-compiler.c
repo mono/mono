@@ -1324,7 +1324,7 @@ arm64_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	imm = pagesize;
 
 	/* Unbox this arg */
-	arm_addx_imm (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
+	arm_addx_imm (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
 
 	/* The trampoline address is in IP0 */
 	arm_movzx (code, ARMREG_IP1, imm & 0xffff, 0);
@@ -1915,7 +1915,7 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	emit_label (acfg, symbol);
 	code = buf;
 
-	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
 	imm8 = mono_arm_is_rotated_imm8 (pagesize, &rot_amount);
 	ARM_SUB_REG_IMM (code, ARMREG_IP, ARMREG_IP, imm8, rot_amount);
 	ARM_LDR_IMM (code, ARMREG_PC, ARMREG_IP, -4);
@@ -2760,7 +2760,7 @@ arch_emit_unbox_arbitrary_trampoline (MonoAotCompile *acfg, int offset, int *tra
 {
 #if defined(TARGET_ARM64)
 	emit_unset_mode (acfg);
-	fprintf (acfg->fp, "add x0, x0, %d\n", (int)(MONO_ABI_SIZEOF (MonoObject)));
+	fprintf (acfg->fp, "add x0, x0, %d\n", (int)(sizeof (MonoObject)));
 	arm64_emit_load_got_slot (acfg, ARMREG_R17, offset);
 	fprintf (acfg->fp, "br x17\n");
 	*tramp_size = 5 * 4;
@@ -2771,7 +2771,7 @@ arch_emit_unbox_arbitrary_trampoline (MonoAotCompile *acfg, int offset, int *tra
 
 	this_reg = mono_arch_get_this_arg_reg (NULL);
 	code = buf;
-	amd64_alu_reg_imm (code, X86_ADD, this_reg, MONO_ABI_SIZEOF (MonoObject));
+	amd64_alu_reg_imm (code, X86_ADD, this_reg, sizeof (MonoObject));
 	emit_bytes (acfg, buf, code - buf);
 
 	amd64_emit_load_got_slot (acfg, AMD64_RAX, offset);
@@ -2784,7 +2784,7 @@ arch_emit_unbox_arbitrary_trampoline (MonoAotCompile *acfg, int offset, int *tra
 
 	code = buf;
 	/* Unbox */
-	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, MONO_ABI_SIZEOF (MonoObject));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
 
 	label = code;
 	/* Calculate GOT slot */
