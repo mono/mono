@@ -2456,6 +2456,7 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
+	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
 		bool success = false;
 
