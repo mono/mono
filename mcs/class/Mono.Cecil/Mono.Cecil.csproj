@@ -35,6 +35,11 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
     <DefineConstants>NET_4_6;MONO;WIN_PLATFORM;NET_4_0</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'wasm_tools' ">
+    <OutputPath>./../../class/lib/wasm_tools</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;NET_4_0</DefineConstants>
+  </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -193,6 +198,23 @@
     <ProjectReference Include="../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/mscorlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'wasm_tools' ">
     <Reference Include="./../../../external/binary-reference-assemblies/v4.6/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.6/System.Core.dll</HintPath>
