@@ -62,6 +62,26 @@ void   mono_object_register_finalizer               (MonoObject  *obj);
 void
 mono_object_register_finalizer_handle (MonoObjectHandle obj);
 
+ICALL_EXPORT
+void
+ves_icall_System_GC_InternalCollect (int generation);
+
+ICALL_EXPORT
+gint64
+ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection);
+
+ICALL_EXPORT
+void
+ves_icall_System_GC_WaitForPendingFinalizers (void);
+
+ICALL_EXPORT
+void
+ves_icall_System_GCHandle_FreeHandle (guint32 handle);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle);
+
 extern void mono_gc_init (void);
 extern void mono_gc_base_init (void);
 extern void mono_gc_cleanup (void);
@@ -87,6 +107,10 @@ void mono_gchandle_set_target (guint32 gchandle, MonoObject *obj);
 
 /*Ephemeron functionality. Sgen only*/
 gboolean    mono_gc_ephemeron_array_add (MonoObject *obj);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle);
 
 /* User defined marking function */
 /* It should work like this:
