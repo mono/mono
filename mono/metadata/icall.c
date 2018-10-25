@@ -1894,7 +1894,7 @@ ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionFieldHandl
 	MonoClassField *field = MONO_HANDLE_GETVAL (field_h, field);
 
 	MonoType *type = mono_field_get_type_checked (field, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	return type_array_from_modifiers (m_class_get_image (field->parent), type, optional, error);
 }
@@ -2580,7 +2580,7 @@ ves_icall_RuntimeType_GetInterfaces (MonoReflectionTypeHandle ref_type, MonoErro
 
 fail:
 	g_hash_table_destroy (iface_hash);
-	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+	return NULL_HANDLE_ARRAY;
 }
 
 static gboolean
@@ -3252,27 +3252,27 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethodHandle ref_method,
 		if (inst) {
 			int count = inst->type_argc;
 			MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
-			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 			for (int i = 0; i < count; i++) {
 				if (!set_array_generic_argument_handle_inflated (domain, inst, i, res, error))
 					break;
 			}
-			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 			return res;
 		}
 	}
 
 	int count = mono_method_signature_internal (method)->generic_param_count;
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	MonoGenericContainer *container = mono_method_get_generic_container (method);
 	for (int i = 0; i < count; i++) {
 		if (!set_array_generic_argument_handle_gparam (domain, container, i, res, error))
 			break;
 	}
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	return res;
 }
 
@@ -4830,7 +4830,7 @@ ves_icall_System_Reflection_Assembly_GetManifestResourceNames (MonoReflectionAss
 	}
 	return result;
 fail:
-	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+	return NULL_HANDLE_ARRAY;
 }
 
 MonoStringHandle
@@ -5203,7 +5203,7 @@ ves_icall_System_Reflection_Assembly_GetModulesInternal (MonoReflectionAssemblyH
 
 	return res;
 fail:
-	return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+	return NULL_HANDLE_ARRAY;
 }
 
 MonoReflectionMethodHandle
@@ -5561,14 +5561,14 @@ mono_module_get_types (MonoDomain *domain, MonoImage *image, MonoArrayHandleOut 
 		count = tdef->rows - 1;
 	}
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_defaults.runtimetype_class, count, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	MONO_HANDLE_ASSIGN (exceptions,  mono_array_new_handle (domain, mono_defaults.exception_class, count, error));
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	count = 0;
 	for (i = 1; i < tdef->rows; ++i) {
 		if (!exportedOnly || mono_module_type_is_visible (tdef, image, i+1)) {
 			image_get_type (domain, image, tdef, i + 1, count, res, exceptions, exportedOnly, error);
-			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 			count++;
 		}
 	}
@@ -5636,17 +5636,17 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 	MonoImage *image = assembly->image;
 	MonoTableInfo *table = &image->tables [MONO_TABLE_FILE];
 	MonoArrayHandle res = mono_module_get_types (domain, image, exceptions, exportedOnly, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	/* Append data from all modules in the assembly */
 	for (i = 0; i < table->rows; ++i) {
 		if (!(mono_metadata_decode_row_col (table, i, MONO_FILE_FLAGS) & FILE_CONTAINS_NO_METADATA)) {
 			MonoImage *loaded_image = mono_assembly_load_module_checked (image->assembly, i + 1, error);
-			return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 			if (loaded_image) {
 				append_module_types (domain, res, exceptions, loaded_image, exportedOnly, error);
-				return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+				return_val_if_nok (error, NULL_HANDLE_ARRAY);
 			}
 		}
 	}
@@ -5684,7 +5684,7 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 		MonoArrayHandle exl = mono_array_new_handle (domain, mono_defaults.exception_class, length, error);
 		if (!is_ok (error)) {
 			g_list_free (list);
-			return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+			return NULL_HANDLE_ARRAY;
 		}
 		/* Types for which mono_class_get_checked () succeeded */
 		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
@@ -5704,9 +5704,9 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 		list = NULL;
 
 		MONO_HANDLE_ASSIGN (exc, mono_get_exception_reflection_type_load_checked (res, exl, error));
-		return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 		mono_error_set_exception_handle (error, exc);
-		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+		return NULL_HANDLE_ARRAY;
 	}
 		
 	return res;
@@ -7898,7 +7898,7 @@ ves_icall_ParameterInfo_GetTypeModifiers (MonoReflectionParameterHandle param, M
 		char *type_name = mono_type_get_full_name (member_class);
 		mono_error_set_not_supported (error, "Custom modifiers on a ParamInfo with member %s are not supported", type_name);
 		g_free (type_name);
-		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+		return NULL_HANDLE_ARRAY;
 	}
 
 	image = m_class_get_image (method->klass);
@@ -7936,7 +7936,7 @@ ves_icall_MonoPropertyInfo_GetTypeModifiers (MonoReflectionPropertyHandle proper
 	MonoImage *image = m_class_get_image (klass);
 
 	if (!type)
-		return MONO_HANDLE_CAST (MonoArray, NULL_HANDLE);
+		return NULL_HANDLE_ARRAY;
 	return type_array_from_modifiers (image, type, optional, error);
 }
 
@@ -8022,7 +8022,7 @@ ves_icall_MonoCustomAttrs_GetCustomAttributesInternal (MonoObjectHandle obj, Mon
 
 	if (attr_class) {
 		mono_class_init_checked (attr_class, error);
-		return_val_if_nok (error, MONO_HANDLE_CAST (MonoArray, NULL_HANDLE));
+		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	}
 
 	return mono_reflection_get_custom_attrs_by_type_handle (obj, attr_class, error);
