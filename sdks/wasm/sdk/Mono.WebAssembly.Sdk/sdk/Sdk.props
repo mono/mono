@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <MonoWebAssemblyBuildPackageVersion>0.1</MonoWebAssemblyBuildPackageVersion>
-    <MonoWebAssemblyFrameworkPackageVersion>0.1</MonoWebAssemblyFrameworkPackageVersion>
+    <_MonoWebAssemblyBuildPackageVersion>0.1</_MonoWebAssemblyBuildPackageVersion>
+    <_MonoWebAssemblyFrameworkPackageVersion>0.1</_MonoWebAssemblyFrameworkPackageVersion>
     <_IsMonoWasmProject>True</_IsMonoWasmProject>
   </PropertyGroup>
 
@@ -24,13 +24,13 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'!='' And '$(EnableCentralPackageVersions)'!='false'">
-    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
-    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(_MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'=='' Or '$(EnableCentralPackageVersions)'=='false'">
-    <PackageReference Include="Mono.WebAssembly.Build" Version="$(MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
-    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Build" Version="$(_MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
   </ItemGroup>
 
   <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.props" Condition="'$(MonoWasmTargetsPath)'!=''" />
