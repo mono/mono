@@ -6,8 +6,8 @@
     <BuildOutputTargetFolder>build\netstandard2.0</BuildOutputTargetFolder>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\out\bcl\wasm\monolinker.exe" Link="monolinker.exe" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
