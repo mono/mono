@@ -228,6 +228,7 @@ System.IO.IsolatedStorage/IsolatedStorageSecurityOptions.cs
 System.IO.IsolatedStorage/IsolatedStorageSecurityState.cs
 System.Reflection/Assembly.cs
 System.Reflection/AssemblyName.cs
+System.Reflection/Binder.cs
 System.Reflection/CustomAttributeData.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/CustomAttributeFormatException.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Reflection/CustomAttributeNamedArgument.cs
