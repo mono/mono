@@ -68,13 +68,14 @@ namespace WebAssembly.Net.Http.HttpClient
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<HttpResponseMessage>();
-            cancellationToken.Register(() => tcs.TrySetCanceled());
+            using (cancellationToken.Register(() => tcs.TrySetCanceled()))
+            {
+                #pragma warning disable 4014
+                doFetch(tcs, request, cancellationToken).ConfigureAwait(false);
+                #pragma warning restore 4014
 
-            #pragma warning disable 4014
-            doFetch(tcs, request, cancellationToken).ConfigureAwait(false);
-            #pragma warning restore 4014
-
-            return await tcs.Task;
+                return await tcs.Task;
+            }
         }
 
         private async Task doFetch(TaskCompletionSource<HttpResponseMessage> tcs, HttpRequestMessage request, CancellationToken cancellationToken)
@@ -128,12 +129,19 @@ namespace WebAssembly.Net.Http.HttpClient
                 }
 
                 JSObject abortController = null;
+                CancellationTokenRegistration abortRegistration = default(CancellationTokenRegistration);
                 if (cancellationToken.CanBeCanceled)
                 {
                     abortController = (JSObject)global.Invoke("__mono_wasm_abortcontroller_hook__");
                     var signal = abortController.GetObjectProperty("signal");
                     requestObject.SetObjectProperty("signal", signal);
-                    cancellationToken.Register(() => abortController?.Invoke("abort"));
+                    abortRegistration = cancellationToken.Register(() =>
+                    {
+                        if (abortController.JSHandle != -1)
+                        {
+                            abortController.Invoke("abort");
+                        }
+                    });
                 }
 
                 var args = (JSObject)json.Invoke("parse", "[]");
@@ -147,7 +155,7 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 var t = await response;
 
-                var status = new WasmFetchResponse((JSObject)t, abortController);
+                var status = new WasmFetchResponse((JSObject)t, abortController, abortRegistration);
 
                 //Console.WriteLine($"bodyUsed: {status.IsBodyUsed}");
                 //Console.WriteLine($"ok: {status.IsOK}");
@@ -202,31 +210,31 @@ namespace WebAssembly.Net.Http.HttpClient
 
         class WasmFetchResponse : IDisposable
         {
-            private JSObject managedJSObject;
+            private JSObject fetchResponse;
             private JSObject abortController;
-            private readonly int JSHandle;
+            private readonly CancellationTokenRegistration abortRegistration;
 
-            public WasmFetchResponse(JSObject jsobject, JSObject abortController)
+            public WasmFetchResponse(JSObject fetchResponse, JSObject abortController, CancellationTokenRegistration abortRegistration)
             {
-                managedJSObject = jsobject;
+                this.fetchResponse = fetchResponse;
                 this.abortController = abortController;
-                JSHandle = managedJSObject.JSHandle;
+                this.abortRegistration = abortRegistration;
             }
 
-            public bool IsOK => (bool)managedJSObject.GetObjectProperty("ok");
-            public bool IsRedirected => (bool)managedJSObject.GetObjectProperty("redirected");
-            public int Status => (int)managedJSObject.GetObjectProperty("status");
-            public string StatusText => (string)managedJSObject.GetObjectProperty("statusText");
-            public string ResponseType => (string)managedJSObject.GetObjectProperty("type");
-            public string Url => (string)managedJSObject.GetObjectProperty("url");
+            public bool IsOK => (bool)fetchResponse.GetObjectProperty("ok");
+            public bool IsRedirected => (bool)fetchResponse.GetObjectProperty("redirected");
+            public int Status => (int)fetchResponse.GetObjectProperty("status");
+            public string StatusText => (string)fetchResponse.GetObjectProperty("statusText");
+            public string ResponseType => (string)fetchResponse.GetObjectProperty("type");
+            public string Url => (string)fetchResponse.GetObjectProperty("url");
             //public bool IsUseFinalURL => (bool)managedJSObject.GetObjectProperty("useFinalUrl");
-            public bool IsBodyUsed => (bool)managedJSObject.GetObjectProperty("bodyUsed");
-            public JSObject Headers => (JSObject)managedJSObject.GetObjectProperty("headers");
-            public JSObject Body => (JSObject)managedJSObject.GetObjectProperty("body");
+            public bool IsBodyUsed => (bool)fetchResponse.GetObjectProperty("bodyUsed");
+            public JSObject Headers => (JSObject)fetchResponse.GetObjectProperty("headers");
+            public JSObject Body => (JSObject)fetchResponse.GetObjectProperty("body");
 
-            public Task<object> ArrayBuffer() => (Task<object>)managedJSObject.Invoke("arrayBuffer");
-            public Task<object> Text() => (Task<object>)managedJSObject.Invoke("text");
-            public Task<object> JSON() => (Task<object>)managedJSObject.Invoke("json");
+            public Task<object> ArrayBuffer() => (Task<object>)fetchResponse.Invoke("arrayBuffer");
+            public Task<object> Text() => (Task<object>)fetchResponse.Invoke("text");
+            public Task<object> JSON() => (Task<object>)fetchResponse.Invoke("json");
 
             public void Dispose()
             {
@@ -243,12 +251,13 @@ namespace WebAssembly.Net.Http.HttpClient
                 {
                     // Free any other managed objects here.
                     //
+                    abortRegistration.Dispose();
                 }
 
                 // Free any unmanaged objects here.
                 //
-                managedJSObject?.Dispose();
-                managedJSObject = null;
+                fetchResponse?.Dispose();
+                fetchResponse = null;
 
                 abortController?.Dispose();
                 abortController = null;
@@ -361,8 +370,6 @@ namespace WebAssembly.Net.Http.HttpClient
                     {
                         _reader = (JSObject)body.Invoke("getReader");
                     }
-                    _status.Dispose();
-                    _status = null;
                 }
 
                 if (_bufferedBytes != null && _position < _bufferedBytes.Length)
@@ -377,6 +384,9 @@ namespace WebAssembly.Net.Http.HttpClient
                     {
                         _reader.Dispose();
                         _reader = null;
+
+                        _status.Dispose();
+                        _status = null;
                         return 0;
                     }
 
