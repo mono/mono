@@ -979,7 +979,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 		return;
 
 	MonoClass *module_klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, error);
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		return;
 
 	/*It's fine to raise the exception here*/
@@ -2233,7 +2233,7 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 	mono_class_init (field->parent);
 
 	t = mono_field_get_type_checked (field, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		mono_error_set_pending_exception (error);
 		return NULL;
 	}
@@ -2292,7 +2292,7 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 		klass = mono_class_from_mono_type_internal (t);
 		g_free (t);
 		o = mono_object_new_checked (domain, klass, error);
-		if (!mono_error_ok (error)) {
+		if (!is_ok (error)) {
 			mono_error_set_pending_exception (error);
 			return NULL;
 		}
@@ -2477,7 +2477,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 	MonoClass *ic;
 
 	mono_class_setup_interfaces (klass, error);
-	if (!mono_error_ok (error))
+	if (!is_ok (error))
 		return;
 
 	int klass_interface_count = m_class_get_interface_count (klass);
@@ -2487,7 +2487,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 		g_hash_table_insert (ifaces, ic, ic);
 
 		collect_interfaces (ic, ifaces, error);
-		if (!mono_error_ok (error))
+		if (!is_ok (error))
 			return;
 	}
 }
@@ -3387,14 +3387,14 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		if (m_class_get_rank (m->klass) == 1 && sig->param_count == 2 && m_class_get_rank (m_class_get_element_class (m->klass))) {
 			/* This is a ctor for jagged arrays. MS creates an array of arrays. */
 			arr = mono_array_new_full_checked (mono_object_domain (params), m->klass, lengths, NULL, error);
-			if (!mono_error_ok (error)) {
+			if (!is_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
 
 			for (i = 0; i < mono_array_length_internal (arr); ++i) {
 				MonoArray *subarray = mono_array_new_full_checked (mono_object_domain (params), m_class_get_element_class (m->klass), &lengths [1], NULL, error);
-				if (!mono_error_ok (error)) {
+				if (!is_ok (error)) {
 					mono_error_set_pending_exception (error);
 					return NULL;
 				}
@@ -3406,7 +3406,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		if (m_class_get_rank (m->klass) == pcount) {
 			/* Only lengths provided. */
 			arr = mono_array_new_full_checked (mono_object_domain (params), m->klass, lengths, NULL, error);
-			if (!mono_error_ok (error)) {
+			if (!is_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
@@ -3423,7 +3423,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 			}
 
 			arr = mono_array_new_full_checked (mono_object_domain (params), m->klass, lengths, lower_bounds, error);
-			if (!mono_error_ok (error)) {
+			if (!is_ok (error)) {
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
@@ -5258,7 +5258,7 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 		else if (mono_class_is_gtd (klass))
 			ctx.class_inst = mono_class_get_generic_container (klass)->context.class_inst;
 		result = mono_class_inflate_generic_method_full_checked (inflated->declaring, klass, &ctx, error);
-		g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
+		g_assert (is_ok (error)); /* FIXME don't swallow the error */
 		return result;
 	}
 
@@ -6987,7 +6987,7 @@ mono_icall_set_environment_variable (MonoString *name, MonoString *value)
 	}
 
 	utf8_value = mono_string_to_utf8_checked_internal (value, error);
-	if (!mono_error_ok (error)) {
+	if (!is_ok (error)) {
 		g_free (utf8_name);
 		mono_error_set_pending_exception (error);
 		return;
