@@ -65,9 +65,6 @@ namespace System.Runtime.Remoting.Messaging {
 
 		Identity identity;
 
-		internal static String CallContextKey = "__CallContext";
-		internal static String UriKey           = "__Uri";
-
 		internal void InitMessage (MonoMethod method, object [] out_args)
 		{
 			this.method = method;
