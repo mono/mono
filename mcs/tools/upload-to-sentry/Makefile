@@ -16,7 +16,7 @@ LIB_REFS = \
 NO_INSTALL = yes
 
 upload-crashes:
-	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/build-$(HOST_PLATFORM)/upload-to-sentry.exe
+	MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/upload-to-sentry.exe
 
 # It can be run using system .net during boostrap
 TARGET_NET_REFERENCE = v4.6
