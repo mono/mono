@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use File::Basename;
 
 sub print_usage
 {
@@ -20,15 +21,25 @@ my $testcases_failed = 0;
 my $report;
 my $testcase_name;
 my $testcase_xml;
+my $monosgen;
+my $profmoduledir;
+my $mprofreportdir;
 
-my $profbuilddir = $builddir . "/mono/profiler";
-my $minibuilddir = $builddir . "/mono/mini";
+if ($builddir eq "out-of-tree") {
+	$monosgen = $ENV{'MONO_EXECUTABLE'};
+	$profmoduledir = dirname ($monosgen);
+	$mprofreportdir = dirname ($monosgen);
+} else {
+	$monosgen = "$builddir/mono/mini/mono-sgen";
+	$profmoduledir = "$builddir/mono/mini/.libs";
+	$mprofreportdir = "$builddir/mono/profiler";
+}
 
 # Setup the execution environment
 # for the profiler module
-append_path ("DYLD_LIBRARY_PATH", $minibuilddir . "/.libs");
-# for mprof-report
-append_path ("PATH", $profbuilddir);
+append_path ("LD_LIBRARY_PATH", $profmoduledir);
+append_path ("DYLD_LIBRARY_PATH", $profmoduledir);
+append_path ("PATH", $mprofreportdir);
 
 # first a basic test
 $report = run_test ("test-alloc.exe", "report,legacy,calls,alloc");
@@ -70,7 +81,7 @@ check_report_exceptions ($report, 1000, 1000, 1000);
 report_errors ();
 add_xml_testcase_result ();
 # test heapshot
-$report = run_test_sgen ("test-heapshot.exe", "report,heapshot,legacy");
+$report = run_test ("test-heapshot.exe", "report,heapshot,legacy");
 if ($report ne "missing binary") {
 	check_report_basics ($report);
 	check_report_heapshot ($report, 0, {"T" => 5000});
@@ -79,7 +90,7 @@ if ($report ne "missing binary") {
 	add_xml_testcase_result ();
 }
 # test heapshot traces
-$report = run_test_sgen ("test-heapshot.exe", "heapshot,output=traces.mlpd,legacy", "--traces traces.mlpd");
+$report = run_test ("test-heapshot.exe", "heapshot,output=traces.mlpd,legacy", "--traces traces.mlpd");
 if ($report ne "missing binary") {
 	check_report_basics ($report);
 	check_report_heapshot ($report, 0, {"T" => 5000});
@@ -140,17 +151,7 @@ sub append_path {
 
 sub run_test
 {
-	return run_test_bin ("$minibuilddir/mono", @_);
-}
-
-sub run_test_sgen
-{
-	return run_test_bin ("$minibuilddir/mono-sgen", @_);
-}
-
-sub run_test_bin
-{
-	my $bin = shift;
+	my $bin = $monosgen;
 	my $test_name = shift;
 	my $option = shift || "report";
 	my $roptions = shift;
@@ -166,7 +167,7 @@ sub run_test_bin
 	my $report = `$bin --profile=log:$option $test_name`;
 	print "\n";
 	if (defined $roptions) {
-		return `$profbuilddir/mprof-report $roptions`;
+		return `$mprofreportdir/mprof-report $roptions`;
 	}
 	return $report;
 }
