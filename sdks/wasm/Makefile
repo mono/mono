@@ -19,8 +19,9 @@ EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
 MINI_PATH=$(TOP)/mono/mini
-CSC= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
+CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
+API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
@@ -88,12 +89,6 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXPORTED_FUNCTIONS=['_putchar']" -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 	touch $@
 
-$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/build/monolinker.exe
-	cp $< $@
-
-$(WASM_BCL_DIR)/Mono.Cecil.dll: $(TOP)/mcs/class/lib/build/Mono.Cecil.dll
-	cp $< $@
-
 build-native: debug/.stamp-build release/.stamp-build
 
 do-runtime:
@@ -126,13 +121,18 @@ sample.dll: Simple.Dependency.dll sample.cs WebAssembly.Bindings.dll WebAssembly
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-Mono.Cecil.dll: Makefile
-	nuget install -version 0.10.0 Mono.Cecil
-	cp Mono.Cecil.0.10.0/lib/net40/Mono.Cecil.dll $@
+$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/wasm_tools/monolinker.exe
+	cp $< $@
 
-# We use system csc as this is a desktop program
+$(WASM_BCL_DIR)/Mono.Cecil.dll: Mono.Cecil.dll
+	cp $< $@
+
+Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
+	cp $< $@
+
+# Should use .csproj file and msbuild
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
-	csc /debug:portable /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS)
+	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.js
 	mono packager.exe -debug -out=debug_sample sample.dll

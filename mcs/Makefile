@@ -25,6 +25,7 @@ winaot_SUBDIRS := build class
 orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
+wasm_tools_SUBDIRS := build class tools
 
 include build/rules.make
 
@@ -82,6 +83,7 @@ $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:          
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
+$(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
