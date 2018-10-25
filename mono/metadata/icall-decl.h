@@ -156,6 +156,8 @@ ICALL_EXPORT gint8 ves_icall_System_Buffer_GetByteInternal (MonoArray*, gint32);
 ICALL_EXPORT guint32 ves_icall_System_IO_DriveInfo_GetDriveType (MonoString*);
 ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int);
 ICALL_EXPORT int ves_icall_System_Environment_get_Platform (void);
+ICALL_EXPORT int ves_icall_System_GC_GetCollectionCount (int);
+ICALL_EXPORT int ves_icall_System_GC_GetMaxGeneration (void);
 ICALL_EXPORT int ves_icall_System_Threading_Thread_SystemMaxStackSize (void);
 ICALL_EXPORT int ves_icall_get_method_attributes (MonoMethod* method);
 ICALL_EXPORT void mono_ArgIterator_Setup (MonoArgIterator*, char*, char*);
@@ -165,6 +167,7 @@ ICALL_EXPORT void ves_icall_System_Array_SetGenericValueImpl (MonoArray*, guint3
 ICALL_EXPORT void ves_icall_System_Buffer_SetByteInternal (MonoArray*, gint32, gint8);
 ICALL_EXPORT void ves_icall_System_Environment_Exit (int);
 ICALL_EXPORT void ves_icall_System_Environment_InternalSetEnvironmentVariable (MonoString*, MonoString*);
+ICALL_EXPORT void ves_icall_System_GC_RecordPressure (gint64);
 ICALL_EXPORT void ves_icall_System_IO_LogcatTextWriter_Log (const char*, gint32, const char*);
 ICALL_EXPORT void ves_icall_System_NumberFormatter_GetFormatterTables (guint64 const**, gint32 const**, gunichar2 const**, gunichar2 const**, gint64 const**, gint32 const**);
 ICALL_EXPORT void ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField*, MonoReflectionType*, MonoTypedRef*, MonoObject*, MonoReflectionType*);
