@@ -5508,27 +5508,6 @@ mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gbo
 	}
 }
 
-static void
-dump_cmods (MonoType *t)
-{
-	if (!t)
-		return;
-	if (!t->has_cmods)
-		return;
-
-	ERROR_DECL (error);
-
-	MonoCustomModContainer *cm = mono_type_get_cmods (t);
-	g_assert (cm);	
-
-	for (int i=0; i < cm->count; i++) {
-		MonoClass *c = mono_class_get_checked (cm->image, cm->modifiers [i].token, error);
-		mono_error_assert_ok (error);
-		printf("'%s' ", m_class_get_name (c));
-	}
-}
-
-
 /*
  * mono_metadata_type_equal:
  * @t1: a type
@@ -5546,14 +5525,11 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 
 	gboolean cmod_reject = FALSE;
 
-	gboolean is_pointery = (t1->type == MONO_TYPE_PTR);
+	gboolean is_pointer = (t1->type == MONO_TYPE_PTR);
 
-	if (t1->has_cmods != t2->has_cmods) {
-		// printf ("has_cmods mismatch: %i %i\n", t1->has_cmods, t2->has_cmods);
+	if (t1->has_cmods != t2->has_cmods)
 		cmod_reject = TRUE;
-	}
-
-	if (t1->has_cmods && t2->has_cmods) {
+	else if (t1->has_cmods && t2->has_cmods) {
 		MonoCustomModContainer *cm1 = mono_type_get_cmods (t1);
 		MonoCustomModContainer *cm2 = mono_type_get_cmods (t2);
 
@@ -5565,7 +5541,6 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		// Two signatures that differ only by the addition of a custom modifier 
 		// (required or optional) shall not be considered to match.
 		if (cm1->count != cm2->count) {
-			// printf ("cmod count mismatch: %i %i\n", cm1->count, cm2->count);
 			cmod_reject = TRUE;
 		} else for (int i=0; i < cm1->count; i++) {
 			if (cm1->modifiers[i].required != cm2->modifiers[i].required) {
@@ -5644,18 +5619,8 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		return FALSE;
 	}
 
-	if (cmod_reject && is_pointery) {
-		if (result && FALSE) {
-			printf ("cmod rejected %s types for equality that were otherwise equal:\n", is_pointery ? "pointer" : "non-pointer");
-			printf ("'%s' [", mono_type_get_name (t1));
-			dump_cmods (t1);
-			printf ("] vs [");
-			dump_cmods (t2);
-			printf("]\n");
-		}
-
+	if (cmod_reject && is_pointer)
 		return FALSE;
-	}
 
 	return result;
 }
