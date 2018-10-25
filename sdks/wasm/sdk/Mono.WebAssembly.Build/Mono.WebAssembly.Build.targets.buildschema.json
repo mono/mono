@@ -1,0 +1,7 @@
+{
+  "license": "Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.",
+  "intellisenseImports": [
+    "..\\Mono.WebAssembly.Sdk\\sdk\\Sdk.props",
+    "..\\Mono.WebAssembly.Sdk\\sdk\\Sdk.targets"
+  ]
+}
