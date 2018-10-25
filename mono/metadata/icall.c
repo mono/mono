@@ -982,7 +982,6 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 	if (!is_ok (error))
 		return;
 
-	/*It's fine to raise the exception here*/
 	MonoVTable * vtable = mono_class_vtable_checked (mono_domain_get (), module_klass, error);
 	if (!is_ok (error))
 		return;
