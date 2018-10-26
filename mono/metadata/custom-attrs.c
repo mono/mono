@@ -704,7 +704,7 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 	int index = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		if (custom_attr_visible (image, cattr, ctor_handle, &ctor_method))
+		if (!custom_attr_visible (image, cattr, ctor_handle, &ctor_method))
 			continue;
 		MONO_HANDLE_GET (cattr_data, cattr, data);
 		unsigned char *saved = (unsigned char *)mono_image_alloc (image, mono_array_handle_length (cattr_data));
