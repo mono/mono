@@ -81,7 +81,7 @@ lookup_custom_attr (MonoImage *image, gpointer member)
 
 static gboolean
 custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, MonoReflectionMethodHandle ctor_handle, MonoMethod **ctor_method)
-// ctor_handle is a local to this function, allocated by its caller for efficiency.
+// ctor_handle is local to this function, allocated by its caller for efficiency.
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -92,7 +92,7 @@ custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, Mon
 	if (*ctor_method) {
 		MonoClass *klass = (*ctor_method)->klass;
 		if (m_class_get_image (klass) != image) {
-			const int visibility = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK;
+			const int visibility = (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK);
 			if ((visibility != TYPE_ATTRIBUTE_PUBLIC) && (visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC))
 				return FALSE;
 		}
@@ -688,18 +688,17 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 
 	/* Skip nonpublic attributes since MS.NET seems to do the same */
 	/* FIXME: This needs to be done more globally */
-	int not_visible = 0;
+	int count_visible = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		not_visible += !custom_attr_visible (image, cattr, ctor_handle, &ctor_method);
+		count_visible += custom_attr_visible (image, cattr, ctor_handle, &ctor_method);
 	}
 
-	int const num_attrs = count - not_visible;
 	MonoCustomAttrInfo *ainfo;
-	ainfo = (MonoCustomAttrInfo *)mono_image_g_malloc0 (alloc_img, MONO_SIZEOF_CUSTOM_ATTR_INFO + sizeof (MonoCustomAttrEntry) * num_attrs);
+	ainfo = (MonoCustomAttrInfo *)mono_image_g_malloc0 (alloc_img, MONO_SIZEOF_CUSTOM_ATTR_INFO + sizeof (MonoCustomAttrEntry) * count_visible);
 
 	ainfo->image = image;
-	ainfo->num_attrs = num_attrs;
+	ainfo->num_attrs = count_visible;
 	ainfo->cached = alloc_img != NULL;
 	int index = 0;
 	for (int i = 0; i < count; ++i) {
@@ -717,7 +716,7 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 		ainfo->attrs [index].data_size = mono_array_handle_length (cattr_data);
 		index ++;
 	}
-	g_assert (index == num_attrs && count == num_attrs + not_visible);
+	g_assert (index == count_visible);
 	HANDLE_FUNCTION_RETURN_VAL (ainfo);
 }
 
