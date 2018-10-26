@@ -1,7 +1,10 @@
 <Project>
   <PropertyGroup>
-    <_MonoWebAssemblyBuildPackageVersion>0.1</_MonoWebAssemblyBuildPackageVersion>
-    <_MonoWebAssemblyFrameworkPackageVersion>0.1</_MonoWebAssemblyFrameworkPackageVersion>
+    <_MonoWasmBuildPackageVersion>0.1</_MonoWasmBuildPackageVersion>
+    <_MonoWasmFrameworkPackageVersion>0.1</_MonoWasmFrameworkPackageVersion>
+    <_MonoWasmRuntimePackageVersion>0.1</_MonoWasmRuntimePackageVersion>
+    <_MonoWasmBindingsPackageVersion>0.1</_MonoWasmBindingsPackageVersion>
+    <_MonoWasmHttpHandlerPackageVersion>0.1</_MonoWasmHttpHandlerPackageVersion>
     <_IsMonoWasmProject>True</_IsMonoWasmProject>
   </PropertyGroup>
 
@@ -11,9 +14,11 @@
   <!-- derive other values from MonoWasmSdkPath -->
   <PropertyGroup Condition="'$(MonoWasmSdkPath)' != ''">
     <MonoWasmSdkPath Condition="'$(MonoWasmSdkPath)'!='' And !HasTrailingSlash('$(MonoWasmSdkPath)')">$(MonoWasmSdkPath)\</MonoWasmSdkPath>
-    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'==''">$(MonoWasmSdkPath)out\bcl\wasm</MonoWasmFrameworkPath>
-    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0</MonoWasmTargetsPath>
-    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\debug</MonoWasmRuntimePath>
+    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'==''">$(MonoWasmSdkPath)out\bcl\wasm\</MonoWasmFrameworkPath>
+    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0\</MonoWasmTargetsPath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\debug\</MonoWasmRuntimePath>
+    <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmBindingsPath>
+    <MonoWasmHttpHandlerPath Condition="'$(MonoWasmHttpHandlerPath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmHttpHandlerPath>
   </PropertyGroup>
 
   <!-- ensure these paths have consistent trailing slashes -->
@@ -21,16 +26,29 @@
     <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'!='' And !HasTrailingSlash('$(MonoWasmTargetsPath)')">$(MonoWasmTargetsPath)\</MonoWasmTargetsPath>
     <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'!='' And !HasTrailingSlash('$(MonoWasmFrameworkPath)')">$(MonoWasmFrameworkPath)\</MonoWasmFrameworkPath>
     <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'!='' And !HasTrailingSlash('$(MonoWasmRuntimePath)')">$(MonoWasmRuntimePath)\</MonoWasmRuntimePath>
+    <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'!='' And !HasTrailingSlash('$(MonoWasmBindingsPath)')">$(MonoWasmBindingsPath)\</MonoWasmBindingsPath>
+    <MonoWasmHttpHandlerPath Condition="'$(MonoWasmHttpHandlerPath)'!='' And !HasTrailingSlash('$(MonoWasmHttpHandlerPath)')">$(MonoWasmHttpHandlerPath)\</MonoWasmHttpHandlerPath>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'!='' And '$(EnableCentralPackageVersions)'!='false'">
-    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(_MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
-    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(_MonoWasmBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Runtime" VersionOverride="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
+    <PackageReference Include="WebAssembly.Bindings" VersionOverride="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'==''" />
+    <PackageReference Include="WebAssembly.Net.Http" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmHttpHandlerPath)'==''" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'=='' Or '$(EnableCentralPackageVersions)'=='false'">
-    <PackageReference Include="Mono.WebAssembly.Build" Version="$(_MonoWebAssemblyBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
-    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWebAssemblyFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Build" Version="$(_MonoWasmBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Runtime" Version="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
+    <PackageReference Include="WebAssembly.Bindings" Override="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'==''" />
+    <PackageReference Include="WebAssembly.Net.Http" Override="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmHttpHandlerPath)'==''" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Bindings.dll" Condition="'$(MonoWasmBindingsPath)' != ''" />
+    <Reference Include="$(MonoWasmHttpHandlerPath)WebAssembly.Net.Http.dll" Condition="'$(MonoWasmHttpHandlerPath)' != ''" />
   </ItemGroup>
 
   <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.props" Condition="'$(MonoWasmTargetsPath)'!=''" />

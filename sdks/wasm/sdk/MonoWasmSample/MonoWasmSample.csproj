@@ -4,8 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\sample.cs" />
-    <Reference Include="..\..\WebAssembly.Bindings.dll" />
-    <Reference Include="..\..\WebAssembly.Net.Http.dll" />
     <Reference Include="..\..\Simple.Dependency.dll" />
   </ItemGroup>
 </Project>
