@@ -42,7 +42,7 @@ extern void mono_wasm_add_long_var (gint64);
 extern void mono_wasm_add_float_var (float);
 extern void mono_wasm_add_double_var (double);
 extern void mono_wasm_add_string_var (const char*);
-extern void mono_wasm_begin_object (const char*, int, const char*);
+extern void mono_wasm_begin_object (const char*, int);
 extern void mono_wasm_end_object (void);
 extern void mono_wasm_set_last_var_name (const char*);
 extern void mono_wasm_set_object_fqn (const char*);
@@ -629,19 +629,6 @@ describe_address (void *addr, MonoType *type, MonoError *error)
 		case MONO_TYPE_R8:
 			mono_wasm_add_float_var (*(double*)addr);
 			break;
-		case MONO_TYPE_STRING: {
-			MonoString *str_obj = *(MonoString **)addr;
-			if (!str_obj) {
-				mono_wasm_add_string_var (NULL);
-			} else {
-				char *str = mono_string_to_utf8_checked (str_obj, error);
-				mono_error_assert_ok (error); /* FIXME report error */
-
-				mono_wasm_add_string_var (str);
-				g_free (str);
-			}
-			break;
-		}
 		//TODO
 		// case MONO_TYPE_ARRAY:
 		// case MONO_TYPE_SZARRAY:
@@ -650,20 +637,30 @@ describe_address (void *addr, MonoType *type, MonoError *error)
 		case MONO_TYPE_GENERICINST:
 			if (m_class_is_valuetype (mono_class_from_mono_type_internal (type)))
 				goto cant_handle_yet;
+		case MONO_TYPE_STRING:
 		case MONO_TYPE_OBJECT:
-		case MONO_TYPE_CLASS:
-		{
+		case MONO_TYPE_CLASS: {
 			MonoObject *obj = *(MonoObject**)addr;
 			if (!obj) {
 				mono_wasm_add_string_var (NULL);
-			} else {
-				char *type_name = mono_type_get_full_name (mono_object_class (obj));
-				int object_id = get_object_id (obj);
-				mono_wasm_begin_object (type_name, object_id, "C# object");
-				//XXX the preview node is optional and marked as experimental 
-				mono_wasm_end_object ();
-				g_free (type_name);				
+				break;
 			}
+			if (mono_object_class (obj) == mono_defaults.string_class) {
+				char *str = mono_string_to_utf8_checked ((MonoString*)obj, error);
+				mono_error_assert_ok (error); /* FIXME report error */
+
+				mono_wasm_add_string_var (str);
+				g_free (str);
+				break;
+			}
+				
+			char *type_name = mono_type_get_full_name (mono_object_class (obj));
+			int object_id = get_object_id (obj);
+			printf ("WUT OBJ %p %d %s\n", obj, object_id, type_name);
+			mono_wasm_begin_object (type_name, object_id);
+			//XXX the preview node is optional and marked as experimental 
+			mono_wasm_end_object ();
+			g_free (type_name);				
 			break;			
 		}
 		default: {
@@ -748,7 +745,8 @@ mono_wasm_get_obj_info (int object_id)
 
 	MonoObject *object = get_object_from_id (object_id);
 	MonoClass *klass = mono_object_class (object);
-
+	
+	printf ("GET INFO, ID %d PTR %p\n", object_id, object);
 	// mono_class_setup_fields (klass); This >MUST< not be required as setup_fields is a requirement to get to a managed object
 	int count = mono_class_get_field_count (klass);
 	MonoClassField *fields = m_class_get_fields (klass);
@@ -771,7 +769,8 @@ mono_wasm_get_obj_info (int object_id)
 
 		if ((f->offset <= 0) || mono_field_is_deleted (f) || (field_type->attrs & FIELD_ATTRIBUTE_STATIC))
 			continue;
-		
+
+		printf ("field %p offset %d\n", f, f->offset);
 		describe_address ((char*)object + f->offset, field_type, error);
 		mono_error_assert_ok (error);
 

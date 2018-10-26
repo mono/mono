@@ -286,7 +286,7 @@ var MonoSupportLib = {
 		MONO.cur_obj_fqn = Module.UTF8ToString (obj_fqn);
 	},
 
-	mono_wasm_begin_object: function (type_name, obj_id, desc) {
+	mono_wasm_begin_object: function (type_name, obj_id) {
 		if (!MONO.current_dbg_obj) {
 			MONO.current_dbg_obj = {
 				value: {

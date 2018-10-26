@@ -8,6 +8,11 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+using Mono.Cecil;
+using Mono.Cecil.Cil;
+
 
 namespace Mono.WebAssembly {
 
@@ -449,6 +454,39 @@ namespace Mono.WebAssembly {
 			SendResponse (msg_id, Result.Ok (o), token);
 		}
 
+		bool FilterField (TypeDefinition typeDesc, JObject field)
+		{
+			//FIXME take some sort of filtering rule as argument
+			Console.WriteLine ("FILTERING {0} TD -> {1}", field, typeDesc);
+			if (typeDesc != null) {
+				var fieldName = field ["name"].Value<string>();
+				FieldDefinition field_def = typeDesc.Fields.FirstOrDefault (f => f.Name == fieldName);
+				if (field_def == null) {
+					Console.WriteLine ("can't find field info :(");
+					return true;
+				}
+				if (field_def.IsPublic)
+					return true;
+
+				var r = new Regex ("<(.*)>k__BackingField");
+				if (r.IsMatch (fieldName)) {
+					var m = r.Match (fieldName);
+					var propNameInField = m.Groups[1].Value;
+					var pd = typeDesc.Properties.FirstOrDefault (p => p.Name == propNameInField);
+					if (pd != null && pd.GetMethod != null && pd.GetMethod.IsPublic) {
+						field["name"] = pd.Name;
+						return true;
+					}
+				}
+				//<A>k__BackingField
+				//ok, field is private, maybe it's the backing field of a property?
+				// if (field_def != null && !field_def.IsPublic) {
+				Console.WriteLine ("filtering private field");
+				return false;
+			}
+			return true;
+		}
+
 		async Task GetObjectProperties (int msg_id, int object_id, CancellationToken token)
 		{
 			//TODO respect the objectGroup of the debugger
@@ -477,6 +515,9 @@ namespace Mono.WebAssembly {
 			var fqn = res.Value? ["result"]? ["value"]? ["fqn"]?.Value<string> ();
 			Console.WriteLine ($"FQN IS {fqn}");
 
+			var typeDesc = this.store.LookupType (fqn);
+			Console.WriteLine ($"TypeDesc is {typeDesc}");
+
 			var var_list = new List<JObject> ();
 
 			var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
@@ -491,6 +532,17 @@ namespace Mono.WebAssembly {
 				}
 			}));
 
+
+
+			var_list.Add (JObject.FromObject (new {
+				name = "FakeProperty",
+				value = new {
+					type = "object",
+					description = "Fake Property",
+					objectId = "dotnet:objid-fake-property:"  + object_id,
+					get = "dotnet:invoke-getter:1"
+				}
+			}));
 			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
 			// results in a "Memory access out of bounds", causing 'values' to be null,
 			// so skip returning variable values in that case.
@@ -498,9 +550,13 @@ namespace Mono.WebAssembly {
 				//TODO filter backing fields for public properties
 				//TODO filter non public fields
 				//TODO add public properties!
-				var_list.Add (fields [i]);
+				if (FilterField (typeDesc, fields [i]))
+					var_list.Add (fields [i]);
 			}
 
+			//TODO add a property and see what happens
+
+			//FIXME only add this selectively
 			var_list.Add (JObject.FromObject (new {
 				name = "Non-Public",
 				value = new {

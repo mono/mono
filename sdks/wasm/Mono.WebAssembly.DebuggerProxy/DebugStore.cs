@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 
 namespace Mono.WebAssembly {
+
 	internal class BreakPointRequest {
 		public string Assembly { get; private set; }
 		public string File { get; private set; }
@@ -263,7 +264,7 @@ namespace Mono.WebAssembly {
 
 	internal class AssemblyInfo {
 		static int next_id;
-		ModuleDefinition image;
+		internal readonly ModuleDefinition image;
 		readonly int id;
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
 		readonly List<SourceFile> sources = new List<SourceFile> ();
@@ -345,6 +346,14 @@ namespace Mono.WebAssembly {
 			return methods [token];
 		}
 
+		public TypeDefinition GetTypeByName (string name) {
+			return this.image.GetType (name);
+			// var type_def = this.image.GetTypes().FirstOrDefault (t => {
+			// 	Console.WriteLine ($"\ttt {t.FullName} x {name}");
+			// 	return t.FullName == name;
+			// });
+			// return type_def;
+		}
 	}
 
 	internal class SourceFile {
@@ -528,6 +537,22 @@ namespace Mono.WebAssembly {
 		public string ToUrl (SourceLocation location)
 		{
 			return GetFileById (location.Id).Url;
+		}
+
+		public TypeDefinition LookupType (string fqn) {
+			//Simple.Generic`1, Simple.Dependency, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+			var parts = fqn.Split (',');
+			var typeName = parts[0].Trim ();
+			var asmName = parts[1].Trim ();
+			Console.WriteLine ($"({typeName}) ({asmName})");
+			var asm = this.assemblies.FirstOrDefault (a => {
+				Console.WriteLine ($"{a.Name} x {asmName} x... {a.image.Assembly.Name.Name}");
+				return a.image.Assembly.Name.Name == asmName;
+			});
+			if (asm == null)
+				return null;
+			
+			return asm.GetTypeByName (typeName);
 		}
 	}
 }
