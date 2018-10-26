@@ -601,8 +601,8 @@ mono_class_is_open_constructed_type (MonoType *t)
 This is a simple function to catch the most common bad instances of generic types.
 Specially those that might lead to further failures in the runtime.
 */
-static gboolean
-is_valid_generic_argument (MonoType *type)
+gboolean
+mono_is_valid_generic_argument (MonoType *type)
 {
 	switch (type->type) {
 	case MONO_TYPE_VOID:
@@ -634,7 +634,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;
 		}
 
-		if (!is_valid_generic_argument (inst->type_argv [num])) {
+		if (!mono_is_valid_generic_argument (inst->type_argv [num])) {
 			const char *pname = mono_generic_param_name (type->data.generic_param);
 			mono_error_set_bad_image (error, image, "MVAR %d (%s) cannot be expanded with type 0x%x",
 				num, pname ? pname : "", inst->type_argv [num]->type);
@@ -662,7 +662,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 				num, pname ? pname : "", inst->type_argc);
 			return NULL;
 		}
-		if (!is_valid_generic_argument (inst->type_argv [num])) {
+		if (!mono_is_valid_generic_argument (inst->type_argv [num])) {
 			const char *pname = mono_generic_param_name (type->data.generic_param);
 			mono_error_set_bad_image (error, image, "VAR %d (%s) cannot be expanded with type 0x%x",
 				num, pname ? pname : "", inst->type_argv [num]->type);
@@ -1057,7 +1057,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 
 		/* Check that the method is not instantiated with any invalid types */
 		for (int i = 0; i < method_inst->type_argc; i++) {
-			if (!is_valid_generic_argument (method_inst->type_argv [i])) {
+			if (!mono_is_valid_generic_argument (method_inst->type_argv [i])) {
 				mono_error_set_bad_image (error, mono_method_get_image (method), "MVAR %d cannot be expanded with type 0x%x",
 							  i, method_inst->type_argv [i]->type);
 				goto fail;
