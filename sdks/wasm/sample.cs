@@ -8,6 +8,8 @@ using WebAssembly.Net.Http.HttpClient;
 public class Math {
 	public static int IntAdd (int a, int b) {
 		var cp = new Simple.Complex (10, "hello");
+		var ermergerd = new Simple.Generic<GeoLocation.Program> ();
+		var learray = new Simple.Complex[10];
 		int c = a + b;
 		int d = c + b;
 		int e = d + a;

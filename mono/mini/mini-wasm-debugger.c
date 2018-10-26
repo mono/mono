@@ -3,6 +3,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata.h>
+#include <mono/metadata/mono-hash.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/mini/aot-runtime.h>
 #include <mono/mini/seq-points.h>
@@ -30,6 +31,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_enum_frames (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_setup_single_step (int kind);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_get_obj_info (int objid);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -40,6 +42,10 @@ extern void mono_wasm_add_long_var (gint64);
 extern void mono_wasm_add_float_var (float);
 extern void mono_wasm_add_double_var (double);
 extern void mono_wasm_add_string_var (const char*);
+extern void mono_wasm_begin_object (const char*, int, const char*);
+extern void mono_wasm_end_object (void);
+extern void mono_wasm_set_last_var_name (const char*);
+extern void mono_wasm_set_object_fqn (const char*);
 
 G_END_DECLS
 
@@ -321,6 +327,35 @@ mono_wasm_debugger_init (void)
 	mono_profiler_set_domain_loaded_callback (prof, appdomain_load);
 }
 
+//TODO respect release group requests
+static MonoGHashTable *obj_to_objref;
+static MonoGHashTable *objref_to_obj;
+static int obj_id;
+
+static int
+get_object_id (MonoObject *obj)
+{
+	if (!obj_to_objref) {
+		obj_to_objref = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Object Table");
+		objref_to_obj = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Reverse Object Table");
+	}
+
+	void *res = mono_g_hash_table_lookup (obj_to_objref, obj);
+	if (res)
+		return GPOINTER_TO_INT (res);
+
+	int id = ++obj_id;
+	mono_g_hash_table_insert (obj_to_objref, obj, GINT_TO_POINTER (id));
+	mono_g_hash_table_insert (objref_to_obj, GINT_TO_POINTER (id), obj);
+	return id;
+}
+
+static MonoObject*
+get_object_from_id (int object_id)
+{
+	return (MonoObject*)mono_g_hash_table_lookup (objref_to_obj, GINT_TO_POINTER (object_id));
+}
+
 MONO_API void
 mono_wasm_enable_debugging (void)
 {
@@ -558,6 +593,90 @@ typedef struct {
 	int variable;
 } FrameDescData;
 
+static void
+describe_address (void *addr, MonoType *type, MonoError *error)
+{
+	error_init (error);
+
+	DEBUG_PRINTF (2, "adding val %p type [%p] %s\n", addr, type, mono_type_full_name (type));
+
+	switch (type->type) {
+		case MONO_TYPE_BOOLEAN:
+			mono_wasm_add_bool_var (*(gint8*)addr);
+			break;
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+			mono_wasm_add_int_var (*(gint8*)addr);
+			break;
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+			mono_wasm_add_int_var (*(gint16*)addr);
+			break;
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_I:
+		case MONO_TYPE_U:
+			mono_wasm_add_int_var (*(gint32*)addr);
+			break;
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+			mono_wasm_add_long_var (*(gint32*)addr);
+			break;
+		case MONO_TYPE_R4:
+			mono_wasm_add_float_var (*(float*)addr);
+			break;
+		case MONO_TYPE_R8:
+			mono_wasm_add_float_var (*(double*)addr);
+			break;
+		case MONO_TYPE_STRING: {
+			MonoString *str_obj = *(MonoString **)addr;
+			if (!str_obj) {
+				mono_wasm_add_string_var (NULL);
+			} else {
+				char *str = mono_string_to_utf8_checked (str_obj, error);
+				mono_error_assert_ok (error); /* FIXME report error */
+
+				mono_wasm_add_string_var (str);
+				g_free (str);
+			}
+			break;
+		}
+		//TODO
+		// case MONO_TYPE_ARRAY:
+		// case MONO_TYPE_SZARRAY:
+		// case MONO_TYPE_VALUETYPE:
+
+		case MONO_TYPE_GENERICINST:
+			if (m_class_is_valuetype (mono_class_from_mono_type_internal (type)))
+				goto cant_handle_yet;
+		case MONO_TYPE_OBJECT:
+		case MONO_TYPE_CLASS:
+		{
+			MonoObject *obj = *(MonoObject**)addr;
+			if (!obj) {
+				mono_wasm_add_string_var (NULL);
+			} else {
+				char *type_name = mono_type_get_full_name (mono_object_class (obj));
+				int object_id = get_object_id (obj);
+				mono_wasm_begin_object (type_name, object_id, "C# object");
+				//XXX the preview node is optional and marked as experimental 
+				mono_wasm_end_object ();
+				g_free (type_name);				
+			}
+			break;			
+		}
+		default: {
+cant_handle_yet:
+			char *type_name = mono_type_full_name (type);
+			char *msg = g_strdup_printf("Can't handle type %s [%p, 0x%x]", type_name, type, type->type);
+			mono_wasm_add_string_var (msg);
+			g_free (msg);
+			g_free (type_name);
+		}
+	}
+}
+
 static gboolean
 describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 {
@@ -596,60 +715,14 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 		addr = mini_get_interp_callbacks ()->frame_get_local (frame, pos);
 	}
 
-	DEBUG_PRINTF (2, "adding val %p type [%p] %s\n", addr, type, mono_type_full_name (type));
+	describe_address (addr, type, error);
+	mono_error_assert_ok (error);
 
-	switch (type->type) {
-		case MONO_TYPE_BOOLEAN:
-			mono_wasm_add_bool_var (*(gint8*)addr);
-			break;
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-			mono_wasm_add_int_var (*(gint8*)addr);
-			break;
-		case MONO_TYPE_CHAR:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-			mono_wasm_add_int_var (*(gint16*)addr);
-			break;
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-			mono_wasm_add_int_var (*(gint32*)addr);
-			break;
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-			mono_wasm_add_long_var (*(gint32*)addr);
-			break;
-		case MONO_TYPE_R4:
-			mono_wasm_add_float_var (*(float*)addr);
-			break;
-		case MONO_TYPE_R8:
-			mono_wasm_add_float_var (*(double*)addr);
-			break;
-		case MONO_TYPE_STRING: {
-			MonoString *str_obj = *(MonoString **)addr;
-			if (!str_obj)
-				mono_wasm_add_string_var (NULL);
-			char *str = mono_string_to_utf8_checked (str_obj, error);
-			mono_error_assert_ok (error); /* FIXME report error */
-
-			mono_wasm_add_string_var (str);
-			g_free (str);
-			break;
-		}
-		default: {
-			char *type_name = mono_type_full_name (type);
-			char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
-			mono_wasm_add_string_var (msg);
-			g_free (msg);
-			g_free (type_name);
-		}
-	}
 	if (header)
 		mono_metadata_free_mh (header);
 
 	return TRUE;
+
 }
 
 //FIXME this doesn't support getting the return value pseudo-var
@@ -666,6 +739,45 @@ mono_wasm_get_var_info (int scope, int pos)
 	mono_walk_stack_with_ctx (describe_variable, NULL, MONO_UNWIND_NONE, &data);
 }
 
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_get_obj_info (int object_id)
+{
+	ERROR_DECL (error);
+
+	DEBUG_PRINTF (2, "getting info for objid %d\n", object_id);
+
+	MonoObject *object = get_object_from_id (object_id);
+	MonoClass *klass = mono_object_class (object);
+
+	// mono_class_setup_fields (klass); This >MUST< not be required as setup_fields is a requirement to get to a managed object
+	int count = mono_class_get_field_count (klass);
+	MonoClassField *fields = m_class_get_fields (klass);
+
+	char *fqn;
+	if (mono_class_is_ginst (klass)) {
+		MonoClass *gtd = mono_class_get_generic_type_definition (klass);
+		fqn = mono_type_get_name_full (m_class_get_byval_arg (gtd), MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED);
+	} else {
+		fqn = mono_type_get_name_full (m_class_get_byval_arg (klass), MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED);
+	}
+
+	mono_wasm_set_object_fqn (fqn);
+	g_free (fqn);
+
+	for (int i = 0; i < count; ++i) {
+		MonoClassField *f = &fields [i];
+		MonoType *field_type = mono_field_get_type_checked (f, error);
+		mono_error_assert_ok (error);
+
+		if ((f->offset <= 0) || mono_field_is_deleted (f) || (field_type->attrs & FIELD_ATTRIBUTE_STATIC))
+			continue;
+		
+		describe_address ((char*)object + f->offset, field_type, error);
+		mono_error_assert_ok (error);
+
+		mono_wasm_set_last_var_name (f->name);
+	}
+}
 
 // Functions required by debugger-state-machine.
 gsize

@@ -59,6 +59,24 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		mono_wasm_get_object_fields: function (object_id) {
+			console.log(">>>mono_wasm_get_object_fields " + object_id);
+			if (!this.mono_wasm_get_obj_info)
+				this.mono_wasm_get_obj_info = Module.cwrap ("mono_wasm_get_obj_info", 'void', [ 'number']);
+
+			this.var_info = [];
+			this.mono_wasm_get_obj_info (object_id);
+
+			var res = {
+				fqn: this.cur_obj_fqn,
+				fields: this.var_info
+			};
+			this.var_info = []
+			this.cur_obj_fqn = null;
+
+			return res;
+		},
+
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
@@ -260,6 +278,36 @@ var MonoSupportLib = {
 		}
 	},
 
+	mono_wasm_set_last_var_name: function (var_name) {
+		MONO.var_info [MONO.var_info.length - 1]["name"] = Module.UTF8ToString (var_name);
+	},
+
+	mono_wasm_set_object_fqn: function (obj_fqn) {
+		MONO.cur_obj_fqn = Module.UTF8ToString (obj_fqn);
+	},
+
+	mono_wasm_begin_object: function (type_name, obj_id, desc) {
+		if (!MONO.current_dbg_obj) {
+			MONO.current_dbg_obj = {
+				value: {
+					type: "object",
+					className: Module.UTF8ToString (type_name),
+					description: Module.UTF8ToString (type_name),
+					objectId: "dotnet:objid:" + obj_id,
+				}
+			};
+		} else {
+			throw "Can't handle nested objects!";
+		}
+	},
+
+	mono_wasm_end_object: function () {
+		if (!MONO.current_dbg_obj)
+			throw "Can't finish an object that is null!";
+
+		MONO.var_info.push (MONO.current_dbg_obj);
+		MONO.current_dbg_obj = null;
+	},
 
 	mono_wasm_add_frame: function(il, method, name) {
 		MONO.active_frames.push( {

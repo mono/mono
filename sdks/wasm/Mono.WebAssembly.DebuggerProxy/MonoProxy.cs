@@ -20,6 +20,7 @@ namespace Mono.WebAssembly {
 		public const string REMOVE_BREAK_POINT = "MONO.mono_wasm_remove_breakpoint({0})";
 		public const string GET_LOADED_FILES = "MONO.mono_wasm_get_loaded_files()";
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
+		public const string GET_OBJECT_FIELDS = "MONO.mono_wasm_get_object_fields({0})";
 	}
 
 	public enum MonoErrorCodes {
@@ -198,6 +199,10 @@ namespace Mono.WebAssembly {
 					var objId = args? ["objectId"]?.Value<string> ();
 					if (objId.StartsWith ("dotnet:scope:", StringComparison.InvariantCulture)) {
 						await GetScopeProperties (id, int.Parse (objId.Substring ("dotnet:scope:".Length)), token);
+						return true;
+					}
+					if (objId.StartsWith ("dotnet:objid:", StringComparison.InvariantCulture)) {
+						await GetObjectProperties (id, int.Parse (objId.Substring ("dotnet:objid:".Length)), token);
 						return true;
 					}
 
@@ -406,6 +411,7 @@ namespace Mono.WebAssembly {
 
 			var var_ids = string.Join (",", vars.Select (v => v.Index));
 
+			//TODO respect the objectGroup of the debugger
 			var o = JObject.FromObject (new {
 				expression = string.Format (MonoCommands.GET_SCOPE_VARIABLES, scope.Id, var_ids),
 				objectGroup = "mono_debugger",
@@ -436,6 +442,74 @@ namespace Mono.WebAssembly {
 				}));
 
 			}
+			o = JObject.FromObject (new {
+				result = var_list
+			});
+
+			SendResponse (msg_id, Result.Ok (o), token);
+		}
+
+		async Task GetObjectProperties (int msg_id, int object_id, CancellationToken token)
+		{
+			//TODO respect the objectGroup of the debugger
+			//TODO deal with 
+		    // "ownProperties": false,
+		    // "accessorPropertiesOnly": false,
+		    // "generatePreview": true
+			
+			//XXX resolve the type locally and produce property info without going to the debugee
+			var o = JObject.FromObject (new {
+				expression = string.Format (MonoCommands.GET_OBJECT_FIELDS, object_id),
+				objectGroup = "mono_debugger",
+				includeCommandLineAPI = false,
+				silent = false,
+				returnByValue = true,
+			});
+
+			var res = await SendCommand ("Runtime.evaluate", o, token);
+			//if we fail we just buble that to the IDE (and let it panic over it)
+			if (res.IsErr) {
+				SendResponse (msg_id, res, token);
+				return;
+			}
+
+			// Console.WriteLine("we gots {0}", res);
+			var fqn = res.Value? ["result"]? ["value"]? ["fqn"]?.Value<string> ();
+			Console.WriteLine ($"FQN IS {fqn}");
+
+			var var_list = new List<JObject> ();
+
+			var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
+			Console.WriteLine ($"fields are {fields}");
+
+			var_list.Add (JObject.FromObject (new {
+				name = "Base",
+				value = new {
+					type = "object",
+					description = "Base class fields",
+					objectId = "dotnet:objid-base:"  + object_id
+				}
+			}));
+
+			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
+			// results in a "Memory access out of bounds", causing 'values' to be null,
+			// so skip returning variable values in that case.
+			for (int i = 0; fields != null && i < fields.Length; ++i) {
+				//TODO filter backing fields for public properties
+				//TODO filter non public fields
+				//TODO add public properties!
+				var_list.Add (fields [i]);
+			}
+
+			var_list.Add (JObject.FromObject (new {
+				name = "Non-Public",
+				value = new {
+					type = "object",
+					description = "Non Public stuff",
+					objectId = "dotnet:objid-priv:"  + object_id
+				}
+			}));
+
 			o = JObject.FromObject (new {
 				result = var_list
 			});

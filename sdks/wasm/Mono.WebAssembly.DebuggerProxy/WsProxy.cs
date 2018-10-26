@@ -180,6 +180,9 @@ namespace Mono.WebAssembly {
 				if (!await AcceptCommand (id, method, args, token)) {
 					var res = await SendCommandInternal (method, args, token);
 					SendResponseInternal (id, res, token);
+					if (method == "Runtime.getProperties")
+						Console.WriteLine ("req: {0}\n res: {1}", args, res);
+						
 				}
 			} catch (Exception e) {
 				side_exception.TrySetException (e);
@@ -324,7 +327,7 @@ namespace Mono.WebAssembly {
 							}
 						}
 					} catch (Exception e) {
-						Debug ($"got exception {e}");
+						Console.WriteLine ($"got exception {e}");
 						//throw;
 					} finally {
 						x.Cancel ();
@@ -335,17 +338,17 @@ namespace Mono.WebAssembly {
 
 		protected void Debug (string msg)
 		{
-			// Console.WriteLine (msg);
+			Console.WriteLine (msg);
 		}
 
 		protected void Info (string msg)
 		{
-			// Console.WriteLine (msg);
+			Console.WriteLine (msg);
 		}
 
 		protected void Dump (string msg)
 		{
-			// Console.WriteLine (msg);
+			Console.WriteLine (msg);
 		}
 	}
 }

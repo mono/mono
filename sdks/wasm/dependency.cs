@@ -5,6 +5,9 @@ namespace Simple {
 		public int A { get; set; }
 		public string B { get; set; }
 		public object c;
+		private int zz;
+		public int D { get { return zz; }}
+		public int M { set { } }
 
 		public Complex (int a, string b) {
 			A = a;
@@ -30,5 +33,9 @@ namespace Simple {
 
 			return x;
 		}
+	}
+	public class Generic<T> {
+		int x;
+		T t;
 	}
 }
