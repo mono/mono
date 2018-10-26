@@ -18,7 +18,6 @@
     <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0\</MonoWasmTargetsPath>
     <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\debug\</MonoWasmRuntimePath>
     <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmBindingsPath>
-    <MonoWasmHttpHandlerPath Condition="'$(MonoWasmHttpHandlerPath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmHttpHandlerPath>
   </PropertyGroup>
 
   <!-- ensure these paths have consistent trailing slashes -->
@@ -27,7 +26,6 @@
     <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'!='' And !HasTrailingSlash('$(MonoWasmFrameworkPath)')">$(MonoWasmFrameworkPath)\</MonoWasmFrameworkPath>
     <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'!='' And !HasTrailingSlash('$(MonoWasmRuntimePath)')">$(MonoWasmRuntimePath)\</MonoWasmRuntimePath>
     <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'!='' And !HasTrailingSlash('$(MonoWasmBindingsPath)')">$(MonoWasmBindingsPath)\</MonoWasmBindingsPath>
-    <MonoWasmHttpHandlerPath Condition="'$(MonoWasmHttpHandlerPath)'!='' And !HasTrailingSlash('$(MonoWasmHttpHandlerPath)')">$(MonoWasmHttpHandlerPath)\</MonoWasmHttpHandlerPath>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'!='' And '$(EnableCentralPackageVersions)'!='false'">
@@ -35,7 +33,7 @@
     <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
     <PackageReference Include="Mono.WebAssembly.Runtime" VersionOverride="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
     <PackageReference Include="WebAssembly.Bindings" VersionOverride="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
-    <PackageReference Include="WebAssembly.Net.Http" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmHttpHandlerPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.Http" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(CentralPackagesFile)'=='' Or '$(EnableCentralPackageVersions)'=='false'">
@@ -43,12 +41,12 @@
     <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
     <PackageReference Include="Mono.WebAssembly.Runtime" Version="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
     <PackageReference Include="WebAssembly.Bindings" Override="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
-    <PackageReference Include="WebAssembly.Net.Http" Override="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmHttpHandlerPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.Http" Override="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Bindings.dll" Condition="'$(MonoWasmBindingsPath)' != '' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
-    <Reference Include="$(MonoWasmHttpHandlerPath)WebAssembly.Net.Http.dll" Condition="'$(MonoWasmHttpHandlerPath)' != '' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+  <ItemGroup Condition="'$(MonoWasmBindingsPath)' != '' And '$(DisableImplicitWasmBindingReferences)' != 'True'">
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Bindings.dll" />
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Net.Http.dll" />
   </ItemGroup>
 
   <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.props" Condition="'$(MonoWasmTargetsPath)'!=''" />
