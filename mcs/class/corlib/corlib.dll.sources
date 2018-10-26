@@ -882,7 +882,6 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AccessViolationException.cs
 ../referencesource/mscorlib/system/activator.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AggregateException.cs
-../referencesource/mscorlib/system/appdomainattributes.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/AppDomainUnloadedException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ApplicationException.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/ApplicationId.cs
@@ -906,7 +905,7 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/CharEnumerator.cs
 ../../../external/corefx/src/System.Console/src/System/ConsoleCancelEventArgs.cs
 ../../../external/corefx/src/System.Console/src/System/ConsoleColor.cs
-../referencesource/mscorlib/system/consolekey.cs
+../../../external/corefx/src/System.Console/src/System/ConsoleKey.cs
 ../../../external/corefx/src/System.Console/src/System/ConsoleKeyInfo.cs
 ../../../external/corefx/src/System.Console/src/System/ConsoleModifiers.cs
 ../../../external/corefx/src/System.Console/src/System/ConsoleSpecialKey.cs
@@ -968,7 +967,6 @@ corert/Decimal.DecCalc.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IObservable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IObserver.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IProgress.cs
-../referencesource/mscorlib/system/iserviceobjectprovider.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/InvalidTimeZoneException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Lazy.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LazyThreadSafetyMode.cs
@@ -1676,7 +1674,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Tuple.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TupleExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ValueTuple.cs
-../../../external/corefx//src/Common/src/CoreLib/System/Nullable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Nullable.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/ArrayPool.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Buffers/ArrayPoolEventSource.cs
@@ -1774,6 +1772,8 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/ValueTask.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/Sources/IValueTaskSource.cs
 
+../../../external/corefx/src/Common/src/System/MutableDecimal.cs
+
 ../../../external/corefx/src/Common/src/System/Collections/Concurrent/ConcurrentQueue_Segment.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
@@ -1793,6 +1793,8 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/Partitioner.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/PartitionerStatic.cs
 
+../../../external/corefx/src/System.ComponentModel/src/System/IServiceProvider.cs
+
 ../../../external/corefx/src/System.Memory/src/System/Pinnable.cs
 ../../../external/corefx/src/System.Memory/src/System/SequencePosition.cs
 ../../../external/corefx/src/System.Memory/src/System/SpanHelpers.cs
@@ -1811,7 +1813,8 @@ corert/RuntimeAugments.cs
 # Once that's done, we still need these parts here - but their namespace should be changed back to System, to make them become part of the "Number" class.
 ../../../external/corefx/src/System.Memory/src/System/Number/*.cs
 
-../../../external/corefx/src/Common/src/System/MutableDecimal.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/LoaderOptimization.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/LoaderOptimizationAttribute.cs
 
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/OSPlatform.cs
 ../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/System/Runtime/InteropServices/RuntimeInformation/Architecture.cs
