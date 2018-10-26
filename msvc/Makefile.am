@@ -10,7 +10,7 @@ EXTRA_DIST = \
 	     runmdesc.bat \
 	     winsetup.bat
 
-if WITH_MSVC
+if ENABLE_MSVC
 all-local:
 	@echo "Building Mono runtime using Visual Studio."
 	$(top_srcdir)/msvc/run-msbuild.sh "build" "$(host_cpu)"

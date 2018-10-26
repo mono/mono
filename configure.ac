@@ -5319,18 +5319,18 @@ AC_DEFINE(MONO_INSIDE_RUNTIME,1, [Disable banned functions from being used by th
 mono_build_root=`pwd`
 AC_SUBST(mono_build_root)
 
-AC_ARG_WITH(msvc, [  --with-msvc=yes,no      Build with Visual Studio (msvc) (defaults to no)],[],[with_msvc=no])
+AC_ARG_ENABLE(msvc,[  --enable-msvc    Build with Visual Studio (msvc) (defaults to no)], enable_msvc=$enableval, enable_msvc=no)
 if test x$host_win32 = xno; then
-	if test x$with_msvc = xyes; then
-		echo "Error, --with-msvc only supported for Windows builds."
+	if test x$enable_msvc = xyes; then
+		echo "Error, --enable-msvc only supported for Windows builds."
 		exit 1
 	fi
 fi
-AM_CONDITIONAL(WITH_MSVC, test x$with_msvc = xyes)
+AM_CONDITIONAL(ENABLE_MSVC, test x$enable_msvc = xyes)
 
-if test "x$with_msvc" = "xyes"; then
+if test "x$enable_msvc" = "xyes"; then
 	if test "x$support_boehm" = "xyes"; then
-		echo "Error, Boehm GC is not supported when using --with-msvc."
+		echo "Error, Boehm GC is not supported when using --enable-msvc."
 		exit 1
 	fi
 	mono_msvc_build_dir='$(top_srcdir)'/msvc/build/sgen

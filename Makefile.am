@@ -11,7 +11,7 @@ else
 tools_dir = tools
 endif
 
-if WITH_MSVC
+if ENABLE_MSVC
 build_with_msvc = msvc
 build_without_msvc =
 else
