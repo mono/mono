@@ -691,7 +691,7 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 	int not_visible = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		not_visible += custom_attr_visible (image, cattr, ctor_handle);
+		not_visible += !custom_attr_visible (image, cattr, ctor_handle);
 	}
 
 	int const num_attrs = count - not_visible;
