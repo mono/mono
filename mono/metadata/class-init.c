@@ -740,6 +740,21 @@ class_has_isbyreflike_attribute (MonoClass *klass)
 	return has_isbyreflike.has_isbyreflike;
 }
 
+
+static gboolean
+check_valid_generic_inst_arguments (MonoGenericInst *inst, MonoError *error)
+{
+	for (int i = 0; i < inst->type_argc; i++) {
+		if (!mono_type_is_valid_generic_argument (inst->type_argv [i])) {
+			char *type_name = mono_type_full_name (inst->type_argv [i]);
+			mono_error_set_invalid_program (error, "generic type cannot be instantiated with type '%s'", type_name);
+			g_free (type_name);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 /*
  * Create the `MonoClass' for an instantiation of a generic type.
  * We only do this if we actually need it.
@@ -811,6 +826,16 @@ mono_class_create_generic_inst (MonoGenericClass *gclass)
 			klass->instance_size = gklass->instance_size;
 			klass->sizes.class_size = gklass->sizes.class_size;
 			klass->size_inited = 1;
+		}
+	}
+
+	{
+		ERROR_DECL (error_inst);
+		if (!check_valid_generic_inst_arguments (gclass->context.class_inst, error_inst)) {
+			char *gklass_name = mono_type_get_full_name (gklass);
+			mono_class_set_type_load_failure (klass, "Could not instantiate %s due to %s", gklass_name, mono_error_get_message (error_inst));
+			g_free (gklass_name);
+			mono_error_cleanup (error_inst);
 		}
 	}
 
