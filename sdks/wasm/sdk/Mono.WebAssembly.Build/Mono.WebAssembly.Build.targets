@@ -5,6 +5,7 @@
 		<MonoWasmManagedOutputDir Condition="'$(MonoWasmManagedOutputDir)'==''">$(OutputPath)managed\</MonoWasmManagedOutputDir>
 		<MonoWasmIntermediateDir>$(IntermediateOutputPath)monowasm</MonoWasmIntermediateDir>
 		<MonoWasmLinkMode Condition="'$(MonoWasmLinkMode)'==''">SdkOnly</MonoWasmLinkMode>
+		<MonoWasmI18n Condition="'$(MonoWasmI18n)'==''">None</MonoWasmI18n>
 	</PropertyGroup>
 
 	<!-- suppress local copy -->
@@ -22,6 +23,7 @@
 			LinkMode="$(MonoWasmLinkMode)"
 			LinkSkip="$(MonoWasmLinkSkip)"
 			Debug="$(_DebugSymbolsProduced)"
+			I18n="$(MonoWasmI18n)"
 		/>
   </Target>
 

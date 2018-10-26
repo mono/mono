@@ -52,6 +52,11 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public bool Debug { get; set; }
 
+		/// <summary>
+		/// Internationalization code pages to be supported
+		/// </summary>
+		public string I18n { get; set; }
+
 		protected override string ToolName => "monolinker";
 
 		protected override string GenerateFullPathToTool ()
@@ -133,6 +138,13 @@ namespace Mono.WebAssembly.Build
 					continue;
 				}
 				sb.AppendFormat (" -r \"{0}\"", p);
+			}
+
+			if (string.IsNullOrEmpty (I18n)) {
+				sb.Append (" -l none");
+			} else {
+				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
+				sb.AppendFormat (" -l {0}", string.Join(",", vals));
 			}
 
 			return sb.ToString ();
