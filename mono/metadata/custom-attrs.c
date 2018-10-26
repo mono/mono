@@ -79,7 +79,7 @@ lookup_custom_attr (MonoImage *image, gpointer member)
 	return res;
 }
 
-static gboolean
+static MonoMethod*
 custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, MonoReflectionMethodHandle ctor_handle)
 // ctor_handle is a local to this function, allocated by its caller for efficiency.
 {
@@ -95,11 +95,11 @@ custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, Mon
 			int visibility = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK;
 
 			if ((visibility != TYPE_ATTRIBUTE_PUBLIC) && (visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC))
-				return FALSE;
+				return NULL;
 		}
 	}
 
-	return TRUE;
+	return ctor_method;
 }
 
 static gboolean
@@ -704,15 +704,16 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 	int index = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		if (!custom_attr_visible (image, cattr, ctor_handle))
+		MonoMethod *visible_ctor_method = custom_attr_visible (image, cattr, ctor_handle);
+		if (!visible_ctor_method)
 			continue;
 		MONO_HANDLE_GET (cattr_data, cattr, data);
 		unsigned char *saved = (unsigned char *)mono_image_alloc (image, mono_array_handle_length (cattr_data));
 		guint32 gchandle = 0;
 		memcpy (saved, MONO_ARRAY_HANDLE_PIN (cattr_data, char, 0, &gchandle), mono_array_handle_length (cattr_data));
 		mono_gchandle_free_internal (gchandle);
-		ainfo->attrs [index].ctor = MONO_HANDLE_GETVAL (cattr, ctor)->method;
-		g_assert (MONO_HANDLE_GETVAL (cattr, ctor)->method);
+		ainfo->attrs [index].ctor = visible_ctor_method;
+		g_assert (visible_ctor_method);
 		ainfo->attrs [index].data = saved;
 		ainfo->attrs [index].data_size = mono_array_handle_length (cattr_data);
 		index ++;
