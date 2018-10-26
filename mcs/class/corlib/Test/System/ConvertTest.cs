@@ -4916,7 +4916,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ChangeTypeFromInvalidDouble ()
 		{
 			// types which should generate OverflowException from double.NaN, etc.
