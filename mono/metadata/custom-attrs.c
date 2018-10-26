@@ -79,27 +79,26 @@ lookup_custom_attr (MonoImage *image, gpointer member)
 	return res;
 }
 
-static MonoMethod*
-custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, MonoReflectionMethodHandle ctor_handle)
+static gboolean
+custom_attr_visible (MonoImage *image, MonoReflectionCustomAttrHandle cattr, MonoReflectionMethodHandle ctor_handle, MonoMethod **ctor_method)
 // ctor_handle is a local to this function, allocated by its caller for efficiency.
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MONO_HANDLE_GET (ctor_handle, cattr, ctor);
-	MonoMethod *ctor_method = MONO_HANDLE_GETVAL (ctor_handle, method);
+	*ctor_method = MONO_HANDLE_GETVAL (ctor_handle, method);
 
 	/* FIXME: Need to do more checks */
-	if (ctor_method) {
-		MonoClass *klass = ctor_method->klass;
+	if (*ctor_method) {
+		MonoClass *klass = (*ctor_method)->klass;
 		if (m_class_get_image (klass) != image) {
-			int visibility = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK;
-
+			const int visibility = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK;
 			if ((visibility != TYPE_ATTRIBUTE_PUBLIC) && (visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC))
-				return NULL;
+				return FALSE;
 		}
 	}
 
-	return ctor_method;
+	return TRUE;
 }
 
 static gboolean
@@ -685,13 +684,14 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 	MonoReflectionMethodHandle ctor_handle = MONO_HANDLE_NEW (MonoReflectionMethod, NULL);
 
 	int const count = mono_array_handle_length (cattrs);
+	MonoMethod *ctor_method =  NULL;
 
 	/* Skip nonpublic attributes since MS.NET seems to do the same */
 	/* FIXME: This needs to be done more globally */
 	int not_visible = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		not_visible += !custom_attr_visible (image, cattr, ctor_handle);
+		not_visible += !custom_attr_visible (image, cattr, ctor_handle, &ctor_method);
 	}
 
 	int const num_attrs = count - not_visible;
@@ -704,16 +704,15 @@ mono_custom_attrs_from_builders_handle (MonoImage *alloc_img, MonoImage *image, 
 	int index = 0;
 	for (int i = 0; i < count; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (cattr, cattrs, i);
-		MonoMethod *visible_ctor_method = custom_attr_visible (image, cattr, ctor_handle);
-		if (!visible_ctor_method)
+		if (custom_attr_visible (image, cattr, ctor_handle, &ctor_method))
 			continue;
 		MONO_HANDLE_GET (cattr_data, cattr, data);
 		unsigned char *saved = (unsigned char *)mono_image_alloc (image, mono_array_handle_length (cattr_data));
 		guint32 gchandle = 0;
 		memcpy (saved, MONO_ARRAY_HANDLE_PIN (cattr_data, char, 0, &gchandle), mono_array_handle_length (cattr_data));
 		mono_gchandle_free_internal (gchandle);
-		ainfo->attrs [index].ctor = visible_ctor_method;
-		g_assert (visible_ctor_method);
+		ainfo->attrs [index].ctor = ctor_method;
+		g_assert (ctor_method);
 		ainfo->attrs [index].data = saved;
 		ainfo->attrs [index].data_size = mono_array_handle_length (cattr_data);
 		index ++;
