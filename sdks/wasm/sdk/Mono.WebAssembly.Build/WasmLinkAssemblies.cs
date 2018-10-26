@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -10,12 +11,17 @@ using Microsoft.Build.Utilities;
 
 namespace Mono.WebAssembly.Build
 {
-	class WasmLinkAssemblies : ToolTask
+	public class WasmLinkAssemblies : ToolTask
 	{
 		/// <summary>
-		/// The application assemblies to be linked.
+		/// The root application assembly.
 		/// </summary>
 		[Required]
+		public ITaskItem[] RootAssembly { get; set; }
+
+		/// <summary>
+		/// Any additional assemblies to be considered by the linker.
+		/// </summary>
 		public ITaskItem[] Assemblies { get; set; }
 
 		/// <summary>
@@ -33,7 +39,8 @@ namespace Mono.WebAssembly.Build
 		/// <summary>
 		/// Controls which kinds of assemblies are linked.
 		/// </summary>
-		public LinkMode LinkMode { get; set; }
+		// HACK: for some reason MSBuild doesn't like us typing this as an enum
+		public string LinkMode { get; set; }
 
 		/// <summary>
 		/// Semicolon separated list of assembly names that should not be linked.
@@ -72,37 +79,67 @@ namespace Mono.WebAssembly.Build
 		{
 			var sb = new StringBuilder ();
 
-			sb.Append (" -verbose");
+			sb.Append (" --verbose");
 
-			switch (LinkMode) {
-			case LinkMode.None:
-				sb.Append (" -c copyused -u copy");
+			string coremode, usermode;
+
+			switch ((WasmLinkMode)Enum.Parse (typeof (WasmLinkMode), LinkMode)) {
+			case WasmLinkMode.SdkOnly:
+				coremode = "link";
+				usermode = "copy";
 				break;
-			case LinkMode.SdkOnly:
-				sb.Append (" -c link -u copy");
+			case WasmLinkMode.Full:
+				coremode = "link";
+				usermode = "link";
 				break;
-			case LinkMode.Full:
-				sb.Append (" -c link -u link");
+			default:
+				coremode = "copyused";
+				usermode = "copy";
 				break;
 			}
 
-			var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (var s in skips) {
-				sb.AppendFormat (" -p {0} copy", s);
+			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
+
+			//the linker doesn't consider these core by default
+			sb.AppendFormat (" -p {0} netstandard -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http", coremode);
+
+			if (!string.IsNullOrEmpty (LinkSkip)) {
+				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var s in skips) {
+					sb.AppendFormat (" -p \"{0}\" copy", s);
+				}
 			}
 
 			sb.AppendFormat (" -out \"{0}\"", OutputDir);
 			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
+			sb.AppendFormat (" -b {0} -v {0}", Debug);
 
-			if (Debug) {
-				sb.Append (" -b -v");
+			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
+
+			//we'll normally have to check most of the because the SDK references most framework asm by default
+			//so let's enumerate upfront
+			var frameworkAssemblies = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			foreach (var f in Directory.EnumerateFiles (FrameworkDir)) {
+				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
+			}
+			foreach (var f in Directory.EnumerateFiles (Path.Combine (FrameworkDir, "Facades"))) {
+				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
+			}
+
+			//add references for non-framework assemblies
+			foreach (var asm in Assemblies) {
+				var p = asm.GetMetadata ("FullPath");
+				if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
+					continue;
+				}
+				sb.AppendFormat (" -r \"{0}\"", p);
 			}
 
 			return sb.ToString ();
 		}
 	}
 
-	public enum LinkMode
+	public enum WasmLinkMode
 	{
 		None,
 		SdkOnly,

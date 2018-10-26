@@ -1,3 +1,32 @@
 <Project>
 	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)Mono.WebAssembly.Build.dll" TaskName="WasmLinkAssemblies" />
+
+	<PropertyGroup>
+		<MonoWasmManagedOutputDir Condition="'$(MonoWasmManagedOutputDir)'==''">$(OutputPath)managed\</MonoWasmManagedOutputDir>
+		<MonoWasmIntermediateDir>$(IntermediateOutputPath)monowasm</MonoWasmIntermediateDir>
+		<MonoWasmLinkMode Condition="'$(MonoWasmLinkMode)'==''">SdkOnly</MonoWasmLinkMode>
+	</PropertyGroup>
+
+	<!-- suppress local copy -->
+	<Target Name="_CopyFilesMarkedCopyLocal" />
+
+	<Target Name="_MonoWasmLink">
+		<!--
+          Inputs="@(IntermediateAssembly);@(ReferencePath);$(MSBuildThisFileFullPath)"
+          Outputs="$(_MonoWasmLinkedAssembly)">-->
+		<WasmLinkAssemblies
+			RootAssembly="@(IntermediateAssembly)"
+			Assemblies="@(ReferencePath)"
+			FrameworkDir="$(MonoWasmFrameworkPath)"
+			OutputDir="$(MonoWasmManagedOutputDir)"
+			LinkMode="$(MonoWasmLinkMode)"
+			LinkSkip="$(MonoWasmLinkSkip)"
+			Debug="$(_DebugSymbolsProduced)"
+		/>
+  </Target>
+
+  <Target Name="_MonoWasmAssemblyCollectOutput"
+          AfterTargets="_CheckForCompileOutputs"
+          DependsOnTargets="_MonoWasmLink">
+	</Target>
 </Project>
