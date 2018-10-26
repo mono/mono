@@ -195,6 +195,8 @@ handle_data_grow (HandleData *handles, gboolean track)
 static guint32
 alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 {
+	if (!obj)
+		return 0;
 	gint slot, i;
 	guint32 res;
 	lock_handles (handles);
