@@ -6825,29 +6825,22 @@ ves_icall_System_Environment_get_NewLine (MonoError *error)
 #endif
 }
 
-#ifndef HOST_WIN32
-static inline MonoBoolean
-mono_icall_is_64bit_os (void)
-{
-#if SIZEOF_VOID_P == 8
-	return TRUE;
-#else
-#if defined(HAVE_SYS_UTSNAME_H)
-	struct utsname name;
-
-	if (uname (&name) >= 0) {
-		return strcmp (name.machine, "x86_64") == 0 || strncmp (name.machine, "aarch64", 7) == 0 || strncmp (name.machine, "ppc64", 5) == 0;
-	}
-#endif
-	return FALSE;
-#endif
-}
-#endif /* !HOST_WIN32 */
-
 MonoBoolean
 ves_icall_System_Environment_GetIs64BitOperatingSystem (void)
 {
-	return mono_icall_is_64bit_os ();
+#if SIZEOF_VOID_P == 8
+	return TRUE;
+#elif defined (HOST_WIN32)
+	BOOL isWow64Process = FALSE;
+	return IsWow64Process (GetCurrentProcess (), &isWow64Process) && isWow64Process;
+#elif defined (HAVE_SYS_UTSNAME_H)
+	struct utsname name;
+	memset (&name, 0, sizeof (name));
+	if (uname (&name) >= 0)
+		return strcmp (name.machine, "x86_64") == 0 || strncmp (name.machine, "aarch64", 7) == 0 || strncmp (name.machine, "ppc64", 5) == 0;
+#else
+	return FALSE;
+#endif
 }
 
 MonoStringHandle
