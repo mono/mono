@@ -43,11 +43,11 @@
 #include <string.h>
 #include <errno.h>
 #include <mono/utils/w32api.h>
-
 #if defined(HOST_WIN32)
 #include <oleauto.h>
 #include "mono/metadata/cominterop-win32-internals.h"
 #endif
+#include "icall-decl.h"
 
 #ifndef DISABLE_COM
 
@@ -1909,8 +1909,6 @@ ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk, MonoError *erro
 	g_assert_not_reached ();
 #endif
 }
-
-typedef guint32 gchandle_t; // FIXME use this more
 
 /**
  * cominterop_get_ccw_object:
