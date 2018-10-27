@@ -6793,11 +6793,13 @@ ves_icall_System_Environment_get_MachineName (MonoError *error)
 #endif
 }
 
-#ifndef HOST_WIN32
-static inline int
-mono_icall_get_platform (void)
+int
+ves_icall_System_Environment_get_Platform (void)
 {
-#if defined(__MACH__)
+#if defined (HOST_WIN32)
+	/* Win32NT */
+	return 2;
+#elif defined(__MACH__)
 	/* OSX */
 	//
 	// Notice that the value is hidden from user code, and only exposed
@@ -6812,27 +6814,15 @@ mono_icall_get_platform (void)
 	return 4;
 #endif
 }
-#endif /* !HOST_WIN32 */
-
-int
-ves_icall_System_Environment_get_Platform (void)
-{
-	return mono_icall_get_platform ();
-}
-
-#ifndef HOST_WIN32
-static inline MonoStringHandle
-mono_icall_get_new_line (MonoError *error)
-{
-	error_init (error);
-	return mono_string_new_handle (mono_domain_get (), "\n", error);
-}
-#endif /* !HOST_WIN32 */
 
 MonoStringHandle
 ves_icall_System_Environment_get_NewLine (MonoError *error)
 {
-	return mono_icall_get_new_line (error);
+#ifdef HOST_WIN32
+	return mono_string_new_handle (mono_domain_get (), "\r\n", error);
+#else
+	return mono_string_new_handle (mono_domain_get (), "\n", error);
+#endif
 }
 
 #ifndef HOST_WIN32
