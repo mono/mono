@@ -5381,7 +5381,6 @@ ves_icall_System_RuntimeType_getFullName (MonoReflectionTypeHandle object, MonoB
 int
 ves_icall_RuntimeType_get_core_clr_security_level (MonoReflectionTypeHandle rfield, MonoError *error)
 {
-	error_init (error);
 	MonoType *type = MONO_HANDLE_GETVAL (rfield, type);
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
 
@@ -5407,7 +5406,6 @@ ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfi
 MonoStringHandle
 ves_icall_System_Reflection_Assembly_get_fullName (MonoReflectionAssemblyHandle assembly, MonoError *error)
 {
-	error_init (error);
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (assembly);
 	MonoAssembly *mass = MONO_HANDLE_GETVAL (assembly, assembly);
 	gchar *name;

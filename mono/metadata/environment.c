@@ -50,7 +50,6 @@ mono_environment_exitcode_set (gint32 value)
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 {
-	error_init (error);
 #ifdef HOST_WIN32
 	OSVERSIONINFOEX verinfo;
 
