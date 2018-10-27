@@ -68,8 +68,11 @@ namespace System.IO {
 		
 		static void GetDiskFreeSpace (string path, out ulong availableFreeSpace, out ulong totalSize, out ulong totalFreeSpace)
 		{
-			MonoIOError error;
-			if (!GetDiskFreeSpaceInternal (path, out availableFreeSpace, out totalSize, out totalFreeSpace, out error))
+			MonoIOError error = MonoIOError.ERROR_SUCCESS;
+			availableFreeSpace = 0;
+			totalSize = 0;
+			totalFreeSpace = 0;
+			if (!GetDiskFreeSpaceInternal (path, ref availableFreeSpace, ref totalSize, ref totalFreeSpace, ref error))
 				throw MonoIO.GetException (path, error);
 		}
 
@@ -169,9 +172,9 @@ namespace System.IO {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool GetDiskFreeSpaceInternal (string pathName, out ulong freeBytesAvail,
-							     out ulong totalNumberOfBytes, out ulong totalNumberOfFreeBytes,
-							     out MonoIOError error);
+		extern static bool GetDiskFreeSpaceInternal (string pathName, ref ulong freeBytesAvail,
+							     ref ulong totalNumberOfBytes, ref ulong totalNumberOfFreeBytes,
+							     ref MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static uint GetDriveTypeInternal (string rootPathName);
