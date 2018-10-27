@@ -288,7 +288,7 @@
 #define g_unichar_to_utf16 monoeg_unichar_to_utf16
 #define g_utf8_get_char_validated monoeg_utf8_get_char_validated
 #define g_utf8_to_ucs4 monoeg_utf8_to_ucs4
-
+#define g_utf16_len monoeg_utf16_len
 
 #define g_log_default_handler monoeg_log_default_handler
 #define g_log_set_default_handler monoeg_log_set_default_handler
