@@ -70,16 +70,13 @@ typedef enum {
 
 // This is sorted.
 // grep ICALL_EXPORT | sort | uniq
-ICALL_EXPORT MonoArray* ves_icall_System_Environment_GetEnvironmentVariableNames (void);
-ICALL_EXPORT MonoArray* ves_icall_System_Environment_GetLogicalDrives (void);
 ICALL_EXPORT MonoAssemblyName* ves_icall_System_Reflection_AssemblyName_GetNativeName (MonoAssembly*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_is_subclass_of (MonoType*, MonoType*);
 ICALL_EXPORT MonoBoolean ves_icall_System_Array_FastCopy (MonoArray*, int, MonoArray*, int, int);
 ICALL_EXPORT MonoBoolean ves_icall_System_Buffer_BlockCopyInternal (MonoArray*, gint32, MonoArray*, gint32, gint32);
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_GetIs64BitOperatingSystem (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_get_HasShutdownStarted (void);
-ICALL_EXPORT MonoBoolean ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle);
-ICALL_EXPORT MonoBoolean ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString*, guint64*, guint64*, guint64*, gint32*);
+ICALL_EXPORT MonoBoolean ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2*, int, guint64*, guint64*, guint64*, gint32*);
 ICALL_EXPORT MonoBoolean ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char*, MonoAssemblyName*, MonoBoolean*, MonoBoolean* is_token_defined_arg);
 ICALL_EXPORT MonoBoolean ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Thread_YieldInternal (void);
@@ -90,7 +87,6 @@ ICALL_EXPORT MonoObject* ves_icall_MonoField_GetRawConstantValue (MonoReflection
 ICALL_EXPORT MonoObject* ves_icall_MonoField_GetValueInternal (MonoReflectionField* field, MonoObject* obj);
 ICALL_EXPORT MonoObject* ves_icall_property_info_get_default_value (MonoReflectionProperty*);
 ICALL_EXPORT MonoReflectionType* ves_icall_Remoting_RealProxy_InternalGetProxyType (MonoTransparentProxy*);
-ICALL_EXPORT MonoString* ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString*);
 ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
@@ -154,9 +150,13 @@ ICALL_EXPORT gint64 ves_icall_System_Diagnostics_Stopwatch_GetTimestamp (void);
 ICALL_EXPORT gint64 ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection);
 ICALL_EXPORT gint64 ves_icall_System_Threading_Timer_GetTimeMonotonic (void);
 ICALL_EXPORT gint8 ves_icall_System_Buffer_GetByteInternal (MonoArray*, gint32);
+<<<<<<< HEAD
 ICALL_EXPORT gpointer ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle);
 ICALL_EXPORT guint32 ves_icall_System_IO_DriveInfo_GetDriveType (MonoString*);
 ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int);
+=======
+ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, const char*, char*, int);
+>>>>>>> Move icalls to HANDLES(), NOHANDLES(), and/or fixed:
 ICALL_EXPORT int ves_icall_System_Environment_get_Platform (void);
 ICALL_EXPORT int ves_icall_System_GC_GetCollectionCount (int);
 ICALL_EXPORT int ves_icall_System_GC_GetMaxGeneration (void);
@@ -167,11 +167,15 @@ ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const ch
 ICALL_EXPORT void ves_icall_System_Array_GetGenericValueImpl (MonoArray*, guint32, gpointer);
 ICALL_EXPORT void ves_icall_System_Array_SetGenericValueImpl (MonoArray*, guint32, gpointer);
 ICALL_EXPORT void ves_icall_System_Buffer_SetByteInternal (MonoArray*, gint32, gint8);
+ICALL_EXPORT void ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2*);
 ICALL_EXPORT void ves_icall_System_Environment_Exit (int);
+<<<<<<< HEAD
 ICALL_EXPORT void ves_icall_System_GCHandle_FreeHandle (guint32 handle);
 ICALL_EXPORT void ves_icall_System_GC_InternalCollect (int generation);
 ICALL_EXPORT void ves_icall_System_GC_RecordPressure (gint64);
 ICALL_EXPORT void ves_icall_System_GC_WaitForPendingFinalizers (void);
+=======
+>>>>>>> Move icalls to HANDLES(), NOHANDLES(), and/or fixed:
 ICALL_EXPORT void ves_icall_System_IO_LogcatTextWriter_Log (const char*, gint32, const char*);
 ICALL_EXPORT void ves_icall_System_NumberFormatter_GetFormatterTables (guint64 const**, gint32 const**, gunichar2 const**, gunichar2 const**, gint64 const**, gint32 const**);
 ICALL_EXPORT void ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField*, MonoReflectionType*, MonoTypedRef*, MonoObject*, MonoReflectionType*);
