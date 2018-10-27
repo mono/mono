@@ -7000,20 +7000,27 @@ ves_icall_System_Environment_GetGacPath (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), mono_assembly_getrootdir (), error);
 }
 
-#ifndef HOST_WIN32
-static inline MonoStringHandle
-mono_icall_get_windows_folder_path (int folder, MonoError *error)
-{
-	error_init (error);
-	g_warning ("ves_icall_System_Environment_GetWindowsFolderPath should only be called on Windows!");
-	return mono_string_new_handle (mono_domain_get (), "", error);
-}
-#endif /* !HOST_WIN32 */
-
 MonoStringHandle
 ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 {
-	return mono_icall_get_windows_folder_path (folder, error);
+#ifdef HOST_WIN32
+#if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
+	#ifndef CSIDL_FLAG_CREATE
+		#define CSIDL_FLAG_CREATE	0x8000
+	#endif
+	WCHAR path [MAX_PATH];
+	/* Create directory if no existing */
+	if (SUCCEEDED (SHGetFolderPathW (NULL, folder | CSIDL_FLAG_CREATE, NULL, 0, path)))
+		return mono_string_new_utf16_handle (mono_domain_get (), path, wcslen (path), error);
+	return mono_string_new_handle (mono_domain_get (), "", error);
+#else
+	g_unsupported_api ("SHGetFolderPath");
+	return mono_string_new_handle (mono_domain_get (), "", error);
+#endif
+#else
+	g_warning ("ves_icall_System_Environment_GetWindowsFolderPath should only be called on Windows.");
+	return mono_string_new_handle (mono_domain_get (), "", error);
+#endif
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
