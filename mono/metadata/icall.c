@@ -7829,16 +7829,16 @@ ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitect
 }
 
 int
-ves_icall_Interop_Sys_DoubleToString(double value, char *format, char *buffer, int bufferLength)
+ves_icall_Interop_Sys_DoubleToString (double value, const char *format, char *buffer, int bufferLength)
 {
-	return snprintf(buffer, bufferLength, format, value);
+	return snprintf (buffer, bufferLength, format, value);
 }
 
 void
-ves_icall_System_Runtime_RuntimeImports_ecvt_s(char *buffer, size_t sizeInBytes, double value, int count, int* dec, int* sign)
+ves_icall_System_Runtime_RuntimeImports_ecvt_s (char *buffer, size_t sizeInBytes, double value, int count, int* dec, int* sign)
 {
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
-	_ecvt_s(buffer, sizeInBytes, value, count, dec, sign);
+	_ecvt_s (buffer, sizeInBytes, value, count, dec, sign);
 #endif
 }
 
