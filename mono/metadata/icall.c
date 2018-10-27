@@ -5957,18 +5957,15 @@ ves_icall_System_Reflection_Module_GetGuidInternal (MonoReflectionModuleHandle r
 	return mono_string_new_handle (domain, image->guid, error);
 }
 
-#ifndef HOST_WIN32
-static inline gpointer
-mono_icall_module_get_hinstance (MonoReflectionModuleHandle module)
-{
-	return (gpointer) (-1);
-}
-#endif /* HOST_WIN32 */
-
 gpointer
 ves_icall_System_Reflection_Module_GetHINSTANCE (MonoReflectionModuleHandle module, MonoError *error)
 {
-	return mono_icall_module_get_hinstance (module);
+#ifdef HOST_WIN32
+	MonoImage *image = MONO_HANDLE_GETVAL (module, image);
+	if (image && image->is_module_handle)
+		return image->raw_data;
+#endif
+	return (gpointer) (-1);
 }
 
 void
