@@ -167,9 +167,16 @@ mono_icall_make_platform_path (gchar *path)
 static const char *
 mono_icall_get_file_path_prefix (const gchar *path)
 {
+#ifdef HOST_WIN32
+	if (*path == '/' && *(path + 1) == '/') {
+		return "file:";
+	} else {
+		return "file:///";
+	}
+#else
 	return "file://";
+#endif
 }
-#endif /* HOST_WIN32 */
 
 MonoObjectHandle
 ves_icall_System_Array_GetValueImpl (MonoArrayHandle array, guint32 pos, MonoError *error)
