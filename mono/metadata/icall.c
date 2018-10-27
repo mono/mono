@@ -19,6 +19,15 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#if defined(HOST_WIN32)
+#include <winsock2.h>
+#include <windows.h>
+#include "icall-windows-internals.h"
+#include "w32subset.h"
+#if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
+#include <shlobj.h>
+#endif
+#endif
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -7373,39 +7382,6 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
 
-#ifndef PLATFORM_NO_DRIVEINFO
-MonoBoolean
-ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString *path_name, guint64 *free_bytes_avail,
-						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
-						gint32 *error)
-{
-	gboolean result;
-
-	*error = ERROR_SUCCESS;
-
-	result = mono_w32file_get_disk_free_space (mono_string_chars_internal (path_name), free_bytes_avail, total_number_of_bytes, total_number_of_free_bytes);
-	if (!result)
-		*error = mono_w32error_get_last ();
-
-	return result;
-}
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) || G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
-static inline guint32
-mono_icall_drive_info_get_drive_type (MonoString *root_path_name)
-{
-	return mono_w32file_get_drive_type (mono_string_chars_internal (root_path_name));
-}
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
-guint32
-ves_icall_System_IO_DriveInfo_GetDriveType (MonoString *root_path_name)
-{
-	return mono_icall_drive_info_get_drive_type (root_path_name);
-}
-
-#endif /* PLATFORM_NO_DRIVEINFO */
-
 gpointer
 ves_icall_RuntimeMethodHandle_GetFunctionPointer (MonoMethod *method, MonoError *error)
 {
@@ -7508,7 +7484,6 @@ ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_con
 	return get_bundled_machine_config (error);
 }
 
-
 MonoStringHandle
 ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 {
@@ -7569,18 +7544,14 @@ ves_icall_System_Diagnostics_Debugger_Log (int level, MonoStringHandle category,
 		mono_get_runtime_callbacks ()->debug_log (level, category, message);
 }
 
-#ifndef HOST_WIN32
-static inline void
-mono_icall_write_windows_debug_string (const gunichar2 *message)
-{
-	g_warning ("WriteWindowsDebugString called and HOST_WIN32 not defined!\n");
-}
-#endif /* !HOST_WIN32 */
-
 void
-ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message, MonoError *error)
+ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (const gunichar2 *message)
 {
-	mono_icall_write_windows_debug_string (message);
+#ifdef HOST_WIN32
+	OutputDebugStringW (message);
+#else
+	g_warning ("WriteWindowsDebugString called and HOST_WIN32 not defined!\n");
+#endif
 }
 
 /* Only used for value types */
@@ -8092,18 +8063,18 @@ ves_icall_Mono_Runtime_GetDisplayName (MonoError *error)
 	return display_name;
 }
 
-#ifndef HOST_WIN32
-static inline gint32
-mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
-{
-	return WAIT_TIMEOUT;
-}
-#endif /* !HOST_WIN32 */
-
 gint32
 ves_icall_Microsoft_Win32_NativeMethods_WaitForInputIdle (gpointer handle, gint32 milliseconds, MonoError *error)
 {
-	return mono_icall_wait_for_input_idle (handle, milliseconds);
+#ifdef HOST_WIN32
+#if HAVE_API_SUPPORT_WIN32_WAIT_FOR_INPUT_IDLE
+	return WaitForInputIdle (handle, milliseconds);
+#else
+	return WAIT_TIMEOUT;
+#endif
+#else
+	return WAIT_TIMEOUT;
+#endif /* !HOST_WIN32 */
 }
 
 gint32
@@ -8536,7 +8507,7 @@ mono_lookup_icall_symbol (MonoMethod *m)
 }
 
 static MonoType*
-type_from_typename (char *type_name)
+type_from_typename (const char *type_name)
 {
 	MonoClass *klass = NULL;	/* assignment to shut GCC warning up */
 

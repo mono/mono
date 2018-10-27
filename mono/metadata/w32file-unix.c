@@ -54,6 +54,7 @@
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
 #include "utils/refcount.h"
+#include "icall-decl.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -65,8 +66,6 @@
 
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
-
-#define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
 
 typedef struct {
 	guint64 device;
@@ -1031,10 +1030,12 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 	return attrs;
 }
 
-static void
+static int
 _wapi_set_last_error_from_errno (void)
 {
-	mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
+	int const win32error = mono_w32error_unix_to_win32 (errno);
+	mono_w32error_set_last (win32error);
+	return win32error;
 }
 
 static void _wapi_set_last_path_error_from_errno (const gchar *dir,
@@ -4315,9 +4316,12 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 }
 #endif
 
+#ifndef PLATFORM_NO_DRIVEINFO
 #if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
+ICALL_EXPORT MonoBoolean
+ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, int path_name_length, guint64 *free_bytes_avail,
+						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
+						gint32 *win32error)
 {
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
@@ -4329,11 +4333,15 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	gint ret;
 	unsigned long block_size;
 
+	*win32error = ERROR_SUCCESS;
+	// FIXME check for embedded nuls in native or managed
+
 	if (path_name == NULL) {
 		utf8_path_name = g_strdup (g_get_current_dir());
 		if (utf8_path_name == NULL) {
-			mono_w32error_set_last (ERROR_DIRECTORY);
-			return(FALSE);
+			*win32error = ERROR_DIRECTORY;
+			mono_w32error_set_last (*win32error);
+			return FALSE;
 		}
 	}
 	else {
@@ -4341,8 +4349,9 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 		if (utf8_path_name == NULL) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
-			mono_w32error_set_last (ERROR_INVALID_NAME);
-			return(FALSE);
+			*win32error = ERROR_INVALID_NAME;
+			mono_w32error_set_last (*win32error);
+			return FALSE;
 		}
 	}
 
@@ -4369,9 +4378,9 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	g_free(utf8_path_name);
 
 	if (ret == -1) {
-		_wapi_set_last_error_from_errno ();
+		*win32error = _wapi_set_last_error_from_errno ();
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: statvfs failed: %s", __func__, g_strerror (errno));
-		return(FALSE);
+		return FALSE;
 	}
 
 	/* total number of free bytes for non-root */
@@ -4399,27 +4408,30 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 		}
 	}
 	
-	return(TRUE);
+	return TRUE;
 }
 #else
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
+ICALL_EXPORT MonoBoolean
+ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, int path_name_length, guint64 *free_bytes_avail,
+						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
+						gint32 *win32error)
 {
-	if (free_bytes_avail != NULL) {
-		*free_bytes_avail = (guint64) -1;
-	}
+	*win32error = ERROR_SUCCESS;
+	// FIXME check for embedded nuls in native or managed
 
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = (guint64) -1;
-	}
+	if (free_bytes_avail)
+		*free_bytes_avail = (gint64) -1;
 
-	if (total_number_of_free_bytes != NULL) {
-		*total_number_of_free_bytes = (guint64) -1;
-	}
+	if (total_number_of_bytes)
+		*total_number_of_bytes = (gint64) -1;
 
-	return(TRUE);
+	if (total_number_of_free_bytes)
+		*total_number_of_free_bytes = (gint64) -1;
+
+	return TRUE;
 }
 #endif
+#endif // PLATFORM_NO_DRIVEINFO
 
 /*
  * General Unix support
@@ -4707,35 +4719,36 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 }
 #endif
 
+#ifndef PLATFORM_NO_DRIVEINFO
 guint32
-mono_w32file_get_drive_type(const gunichar2 *root_path_name)
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, int root_path_name_length, MonoError *error)
 {
+	// FIXME check for embedded nuls in native or managed
 	gchar *utf8_root_path_name;
 	guint32 drive_type;
 
 	if (root_path_name == NULL) {
 		utf8_root_path_name = g_strdup (g_get_current_dir());
-		if (utf8_root_path_name == NULL) {
-			return(DRIVE_NO_ROOT_DIR);
-		}
+		if (utf8_root_path_name == NULL)
+			return DRIVE_NO_ROOT_DIR;
 	}
 	else {
 		utf8_root_path_name = mono_unicode_to_external (root_path_name);
 		if (utf8_root_path_name == NULL) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
-			return(DRIVE_NO_ROOT_DIR);
+			return DRIVE_NO_ROOT_DIR;
 		}
 		
 		/* strip trailing slash for compare below */
-		if (g_str_has_suffix(utf8_root_path_name, "/") && utf8_root_path_name [1] != 0) {
+		if (g_str_has_suffix(utf8_root_path_name, "/") && utf8_root_path_name [1] != 0)
 			utf8_root_path_name[strlen(utf8_root_path_name) - 1] = 0;
-		}
 	}
 	drive_type = GetDriveTypeFromPath (utf8_root_path_name);
 	g_free (utf8_root_path_name);
 
-	return (drive_type);
+	return drive_type;
 }
+#endif
 
 #if defined (HOST_DARWIN) || defined (__linux__) || defined(HOST_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__) || defined(_AIX)
 static gchar*
@@ -4750,9 +4763,8 @@ get_fstypename (gchar *utfpath)
 	statvfs_res = statvfs (utfpath, &stat);
 	MONO_EXIT_GC_SAFE;
 
-	if (statvfs_res != -1) {
+	if (statvfs_res != -1)
 		return g_strdup (stat.f_basetype);
-	}
 
 	return NULL;
 #elif defined (HOST_DARWIN) || defined (__linux__)
@@ -4786,9 +4798,10 @@ get_fstypename (gchar *utfpath)
 gboolean
 mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
-	gchar *utfpath;
-	gchar *fstypename;
+	char *utfpath = NULL;
+	char *fstypename = NULL;
 	gboolean status = FALSE;
+	gunichar2 *ret = NULL;
 	glong len;
 	
 	// We only support getting the file system type
@@ -4796,17 +4809,16 @@ mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, g
 		return 0;
 	
 	utfpath = mono_unicode_to_external (path);
-	if ((fstypename = get_fstypename (utfpath)) != NULL){
-		gunichar2 *ret = g_utf8_to_utf16 (fstypename, -1, NULL, &len, NULL);
-		if (ret != NULL && len < fsbuffersize){
+	if ((fstypename = get_fstypename (utfpath)) != NULL) {
+		ret = g_utf8_to_utf16 (fstypename, -1, NULL, &len, NULL);
+		if (ret != NULL && len < fsbuffersize) {
 			memcpy (fsbuffer, ret, len * sizeof (gunichar2));
 			fsbuffer [len] = 0;
 			status = TRUE;
 		}
-		if (ret != NULL)
-			g_free (ret);
-		g_free (fstypename);
 	}
+	g_free (ret);
+	g_free (fstypename);
 	g_free (utfpath);
 	return status;
 }

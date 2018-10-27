@@ -14,7 +14,7 @@
 #include "mono/utils/mono-proclib.h"
 
 int
-mono_process_current_pid ()
+mono_process_current_pid (void)
 {
 	return (int) GetCurrentProcessId ();
 }

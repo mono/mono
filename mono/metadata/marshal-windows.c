@@ -13,6 +13,7 @@
 #include <windows.h>
 #include <objbase.h>
 #include "mono/metadata/marshal-windows-internals.h"
+#include "icall-decl.h"
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 void*

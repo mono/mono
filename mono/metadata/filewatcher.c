@@ -91,6 +91,8 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 #endif
 }
 
+// FIXME This does not make sense. Is it alive?
+
 /* Almost copied from fam.h. Weird, I know */
 typedef struct {
 	gint reqnum;

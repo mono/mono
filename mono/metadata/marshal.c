@@ -57,9 +57,9 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-error-internals.h>
-
 #include <string.h>
 #include <errno.h>
+#include "icall-decl.h"
 
 /* #define DEBUG_RUNTIME_CODE */
 
@@ -5186,7 +5186,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gconstpoin
 int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle ref_type, MonoStringHandle field_name, MonoError *error)
 {
-	error_init (error);
 	if (MONO_HANDLE_IS_NULL (ref_type)) {
 		mono_error_set_argument_null (error, "type", "");
 		return 0;
@@ -5345,7 +5344,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoE
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5411,7 +5410,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr)
 }
 
 #ifndef HOST_WIN32
-static inline gpointer
+static gpointer
 mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 {
 	return g_try_realloc (ptr, size);
@@ -5422,11 +5421,8 @@ gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size, MonoError *error)
 {
 	void *res = mono_marshal_realloc_co_task_mem (ptr, size);
-
-	if (!res) {
+	if (!res)
 		mono_error_set_out_of_memory (error, "");
-		return NULL;
-	}
 	return res;
 }
 

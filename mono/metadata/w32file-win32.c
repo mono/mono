@@ -12,6 +12,7 @@
 #include <windows.h>
 #include "mono/metadata/w32file-win32-internals.h"
 #include "mono/metadata/w32subset.h"
+#include "icall-decl.h"
 
 void
 mono_w32file_init (void)
@@ -347,16 +348,25 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 	return res;
 }
 
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
+#ifndef PLATFORM_NO_DRIVEINFO
+
+MonoBoolean
+ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, int path_name_length, guint64 *free_bytes_avail,
+						guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes,
+						gint32 *win32error)
 {
 	gboolean result;
 	ULARGE_INTEGER wapi_free_bytes_avail;
 	ULARGE_INTEGER wapi_total_number_of_bytes;
 	ULARGE_INTEGER wapi_total_number_of_free_bytes;
 
+	*win32error = ERROR_SUCCESS;
+	// FIXME check for embedded nuls in native or managed
+
 	MONO_ENTER_GC_SAFE;
-	result = GetDiskFreeSpaceEx (path_name, &wapi_free_bytes_avail, &wapi_total_number_of_bytes, &wapi_total_number_of_free_bytes);
+	result = GetDiskFreeSpaceExW (path_name, &wapi_free_bytes_avail, &wapi_total_number_of_bytes, &wapi_total_number_of_free_bytes);
+	if (!result)
+		*win32error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	if (result) {
 		if (free_bytes_avail)
@@ -370,12 +380,14 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	return result;
 }
 
+#endif
+
 gboolean
 mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
-	res = GetVolumeInformationW (path, NULL, NULL, NULL, NULL, NULL, fsbuffer, fsbuffersize);
+	res = GetVolumeInformationW (path, NULL, 0, NULL, NULL, NULL, fsbuffer, fsbuffersize);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
@@ -528,8 +540,7 @@ mono_w32file_get_file_size (HANDLE handle, gint32 *error)
 	return length.QuadPart;
 }
 
-#if HAVE_API_SUPPORT_WIN32_GET_DRIVE_TYPE
-// Support older UWP SDK?
+// Support older UWP SDK.
 WINBASEAPI
 UINT
 WINAPI
@@ -538,15 +549,22 @@ GetDriveTypeW (
 	);
 
 guint32
-mono_w32file_get_drive_type (const gunichar2 *root_path_name)
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, int root_path_name_length, MonoError *error)
 {
+	// FIXME check for embedded nuls in native or managed
+#if HAVE_API_SUPPORT_WIN32_GET_DRIVE_TYPE
 	guint32 res;
 	MONO_ENTER_GC_SAFE;
-	res = GetDriveType (root_path_name);
+	res = GetDriveTypeW (root_path_name);
 	MONO_EXIT_GC_SAFE;
 	return res;
-}
+#else
+	// FIXME GetDriveType is supported by UWP.
+	g_unsupported_api ("GetDriveType");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetDriveType");
+	return DRIVE_UNKNOWN;
 #endif
+}
 
 #if HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS
 gint32
@@ -557,5 +575,14 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	res = GetLogicalDriveStrings (len, buf);
 	MONO_EXIT_GC_SAFE;
 	return res;
+}
+#else
+MonoArrayHandle
+ves_icall_System_Environment_GetLogicalDrives (MonoError *error)
+{
+	g_unsupported_api ("GetLogicalDriveStrings");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetLogicalDriveStrings");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return NULL_HANDLE_ARRAY;
 }
 #endif

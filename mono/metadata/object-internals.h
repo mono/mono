@@ -8,7 +8,6 @@
 #include <mono/utils/mono-forward-internal.h>
 #include <mono/metadata/object-forward.h>
 #include <mono/metadata/handle-decl.h>
-
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/reflection.h>
@@ -1655,8 +1654,18 @@ mono_string_from_blob (const char *str, MonoError *error);
 void
 mono_release_type_locks (MonoInternalThread *thread);
 
-int
-mono_string_handle_length (MonoStringHandle s);
+/**
+ * mono_string_handle_length:
+ * \param s \c MonoString
+ * \returns the length in characters of the string
+ */
+static inline int
+mono_string_handle_length (MonoStringHandle s)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	return MONO_HANDLE_GETVAL (s, length);
+}
 
 char *
 mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
@@ -2007,6 +2016,10 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
+
+void
+mono_new_string_utf16_to_array (MonoArrayHandle array, gsize index,
+	MonoDomain *domain, const guint16 *s, gsize length, MonoError *error);
 
 MonoStringHandle
 mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint length, MonoError *error);

@@ -612,8 +612,7 @@ mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, g
 		fsbuffer [len] = 0;
 		status = TRUE;
 	}
-	if (ret != NULL)
-		g_free (ret);
+	g_free (ret);
 
 	return status;
 }
@@ -648,7 +647,6 @@ pthread_sigmask (int how, const sigset_t *set, sigset_t *oset)
 {
 	return 0;
 }
-
 
 int
 sigsuspend(const sigset_t *sigmask)
