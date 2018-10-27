@@ -9078,6 +9078,11 @@ mono_aot_get_direct_call_symbol (MonoJumpInfoType type, gconstpointer data)
 				sym = mono_lookup_icall_symbol (method);
 			else if (llvm_acfg->aot_opts.direct_pinvoke)
 				sym = get_pinvoke_import (llvm_acfg, method);
+		} else if (type == MONO_PATCH_INFO_INTERNAL_METHOD) {
+			MonoJitICallInfo *info = mono_find_jit_icall_by_name ((const char*)data);
+			const char *name = mono_lookup_jit_icall_symbol ((const char*)data);
+			if (name && llvm_acfg->aot_opts.direct_icalls && info->func == info->wrapper)
+				sym = name;
 		}
 		if (sym)
 			return g_strdup (sym);
