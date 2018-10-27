@@ -6898,34 +6898,85 @@ ves_icall_System_Environment_GetCommandLineArgs (MonoError *error)
 }
 
 #ifndef HOST_WIN32
-static MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error)
-{
-	MonoArray *names;
-	MonoDomain *domain;
-	MonoString *str;
-	gchar **e, **parts;
-	int n;
 
-	error_init (error);
-	n = 0;
+static void
+mono_new_string_utf8_to_array (MonoArrayHandle array, gsize index,
+	MonoDomain *domain, const char *s, gsize length, MonoError *error)
+{
+	// Handle creation outside of loop.
+	HANDLE_FUNCTION_ENTER ();
+	MonoStringHandle t = mono_string_new_utf8_len_handle (domain, s, length, error);
+	MONO_HANDLE_ARRAY_SETREF (array, index, t);
+	HANDLE_FUNCTION_RETURN ();
+}
+
+#endif
+
+MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
+{
+	MonoDomain * const domain = mono_domain_get ();
+	gsize n = 0;
+
+#ifdef HOST_WIN32
+	WCHAR * const env_strings = GetEnvironmentStringsW ();
+
+	if (env_strings) {
+		WCHAR const *env_string = env_strings;
+		while (*env_string != '\0') {
+			/* weird case that MS seems to skip (per drive letter current working directory) */
+			if (*env_string != '=')
+				n++;
+			while (*env_string != '\0')
+				env_string++;
+			env_string++;
+		}
+	}
+
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
+
+	if (env_strings) {
+		n = 0;
+		WCHAR const *env_string = env_strings;
+		while (*env_string != '\0') {
+			/* weird case that MS seems to skip (per drive letter current working directory) */
+			if (*env_string != '=') {
+				WCHAR const * const equal_str = wcschr (env_string, '=');
+				g_assert (equal_str);
+				mono_new_string_utf16_to_array (names, n, domain, env_string, (gsize)(equal_str - env_string), error);
+				goto_if_nok (error, exit);
+				n++;
+			}
+			while (*env_string != '\0')
+				env_string++;
+			env_string++;
+		}
+
+	}
+
+exit:
+	if (env_strings)
+		FreeEnvironmentStringsW (env_strings);
+	return is_ok (error) ? names : NULL_HANDLE_ARRAY;
+#else
+	char **e;
+
 	for (e = environ; *e != 0; ++ e)
 		++ n;
 
-	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	n = 0;
 	for (e = environ; *e != 0; ++ e) {
-		parts = g_strsplit (*e, "=", 2);
+		char **parts = g_strsplit (*e, "=", 2);
 		if (*parts != 0) {
-			str = mono_string_new_checked (domain, *parts, error);
+			mono_new_string_utf8_to_array (names, n, domain, *parts, strlen (*parts), error);
 			if (!is_ok (error)) {
 				g_strfreev (parts);
-				return NULL;
+				return NULL_HANDLE_ARRAY;
 			}
-			mono_array_setref_internal (names, n, str);
 		}
 
 		g_strfreev (parts);
@@ -6934,16 +6985,7 @@ mono_icall_get_environment_variable_names (MonoError *error)
 	}
 
 	return names;
-}
 #endif /* !HOST_WIN32 */
-
-MonoArray *
-ves_icall_System_Environment_GetEnvironmentVariableNames (void)
-{
-	ERROR_DECL (error);
-	MonoArray *result = mono_icall_get_environment_variable_names (error);
-	mono_error_set_pending_exception (error);
-	return result;
 }
 
 void
