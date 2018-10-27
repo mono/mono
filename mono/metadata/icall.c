@@ -148,7 +148,7 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 static MonoArrayHandle
 type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoError *error);
 
-static inline MonoBoolean
+static MonoBoolean
 is_generic_parameter (MonoType *type)
 {
 	return !type->byref && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR);
@@ -161,7 +161,7 @@ mono_icall_make_platform_path (gchar *path)
 	return;
 }
 
-static inline const gchar *
+static const char *
 mono_icall_get_file_path_prefix (const gchar *path)
 {
 	return "file://";
