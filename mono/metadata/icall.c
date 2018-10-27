@@ -6735,13 +6735,36 @@ ves_icall_System_Environment_get_UserName (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_user_name (), error);
 }
 
-#ifndef HOST_WIN32
-static MonoStringHandle
-mono_icall_get_machine_name (MonoError *error)
+#ifdef HOST_WIN32
+// Support older UWP SDK.
+WINBASEAPI
+BOOL
+WINAPI
+GetComputerNameW (
+	PWSTR buffer,
+	PDWORD size
+	);
+#endif
+
+MonoStringHandle
+ves_icall_System_Environment_get_MachineName (MonoError *error)
 {
-	error_init (error);
-#if !defined(DISABLE_SOCKETS)
-	MonoStringHandle result;
+#ifdef HOST_WIN32
+#if HAVE_API_SUPPORT_WIN32_GET_COMPUTER_NAME
+	gunichar2 buf [MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD len = G_N_ELEMENTS (buf);
+
+	// FIXME GC mode transition?
+
+	if (GetComputerNameW (buf, &len))
+		return mono_string_new_utf16_handle (mono_domain_get (), buf, len, error);
+	return MONO_HANDLE_NEW (MonoString, NULL);
+#else
+	g_unsupported_api ("GetComputerName");
+	return mono_string_new_handle (mono_domain_get (), "mono", error);
+#endif
+#elif !defined(DISABLE_SOCKETS)
+	MonoStringHandle result = NULL_HANDLE_STRING;
 	char *buf;
 	int n, i;
 #if defined _SC_HOST_NAME_MAX
@@ -6761,22 +6784,13 @@ mono_icall_get_machine_name (MonoError *error)
 			}
 		}
 		result = mono_string_new_handle (mono_domain_get (), buf, error);
-	} else
-		result = MONO_HANDLE_CAST (MonoString, NULL_HANDLE);
+	}
 	g_free (buf);
 	
 	return result;
 #else
 	return mono_string_new_handle (mono_domain_get (), "mono", error);
 #endif
-}
-#endif /* !HOST_WIN32 */
-
-MonoStringHandle
-ves_icall_System_Environment_get_MachineName (MonoError *error)
-{
-	error_init (error);
-	return mono_icall_get_machine_name (error);
 }
 
 #ifndef HOST_WIN32
