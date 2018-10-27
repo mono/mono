@@ -7224,14 +7224,19 @@ ves_icall_System_Environment_get_HasShutdownStarted (void)
 	return mono_runtime_is_shutting_down () || mono_domain_is_unloading (mono_domain_get ());
 }
 
-#ifndef HOST_WIN32
-
 void
 ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
-}
-
+#ifdef HOST_WIN32
+#if HAVE_API_SUPPORT_WIN32_SEND_MESSAGE_TIMEOUT
+	SendMessageTimeoutW (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
+#else
+	g_unsupported_api ("SendMessageTimeout");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "SendMessageTimeout");
+	SetLastError (ERROR_NOT_SUPPORTED);
 #endif
+#endif /* !HOST_WIN32 */
+}
 
 gint32
 ves_icall_System_Environment_get_TickCount (void)
