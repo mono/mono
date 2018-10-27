@@ -154,11 +154,14 @@ is_generic_parameter (MonoType *type)
 	return !type->byref && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR);
 }
 
-#ifndef HOST_WIN32
-static inline void
+static void
 mono_icall_make_platform_path (gchar *path)
 {
-	return;
+#ifdef HOST_WIN32
+	for (size_t i = strlen (path); i > 0; i--)
+		if (path [i - 1] == '\\')
+			path [i - 1] = '/';
+#endif
 }
 
 static const char *
