@@ -35,9 +35,6 @@ mono_icall_get_new_line (MonoError *error);
 MonoBoolean
 mono_icall_is_64bit_os (void);
 
-MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error);
-
 void
 mono_icall_set_environment_variable (MonoString *name, MonoString *value);
 

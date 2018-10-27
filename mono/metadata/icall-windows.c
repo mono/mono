@@ -95,64 +95,56 @@ mono_icall_is_64bit_os (void)
 #endif
 }
 
-MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error)
+#ifdef HOST_WIN32 // else in icall.c
+MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
 {
-	MonoArray *names;
-	MonoDomain *domain;
-	MonoString *str;
-	WCHAR* env_strings;
-	WCHAR* env_string;
-	WCHAR* equal_str;
-	int n = 0;
-
-	error_init (error);
-	env_strings = GetEnvironmentStrings();
+	gsize n = 0;
+	WCHAR * const env_strings = GetEnvironmentStringsW ();
 
 	if (env_strings) {
-		env_string = env_strings;
-		while (*env_string != '\0') {
-		/* weird case that MS seems to skip */
+		WCHAR const *env_string = env_strings;
+		while (*env_string) {
+			/* weird case that MS seems to skip (per drive letter current working directory) */
 			if (*env_string != '=')
 				n++;
-			while (*env_string != '\0')
+			while (*env_string)
 				env_string++;
 			env_string++;
 		}
 	}
 
-	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	MonoDomain * const domain = mono_domain_get ();
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	if (env_strings) {
 		n = 0;
-		env_string = env_strings;
-		while (*env_string != '\0') {
-			/* weird case that MS seems to skip */
+		WCHAR const *env_string = env_strings;
+		MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
+		while (*env_string) {
+			/* weird case that MS seems to skip (per drive letter current working directory) */
 			if (*env_string != '=') {
-				equal_str = wcschr(env_string, '=');
-				g_assert(equal_str);
-				str = mono_string_new_utf16_checked (domain, env_string, (gint32)(equal_str - env_string), error);
-				goto_if_nok (error, cleanup);
-
-				mono_array_setref_internal (names, n, str);
+				WCHAR const * const equal_str = wcschr (env_string, '=');
+				g_assert (equal_str);
+				mono_string_new_utf16_assign (str, domain, env_string, (gsize)(equal_str - env_string), error);
+				goto_if_nok (error, exit);
+				MONO_HANDLE_ARRAY_SETREF (names, n, str);
 				n++;
 			}
-			while (*env_string != '\0')
+			while (*env_string)
 				env_string++;
 			env_string++;
 		}
 
 	}
 
-cleanup:
+exit:
 	if (env_strings)
-		FreeEnvironmentStrings (env_strings);
-	if (!is_ok (error))
-		return NULL;
-	return names;
+		FreeEnvironmentStringsW (env_strings);
+	return is_ok (error) ? names : NULL_HANDLE_ARRAY;
 }
+#endif // HOST_WIN32
 
 #if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
 MonoStringHandle

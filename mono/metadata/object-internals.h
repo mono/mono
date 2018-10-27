@@ -2040,6 +2040,12 @@ MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
 
 MonoStringHandle
+mono_string_new_utf16_assign (MonoStringHandleOut handle, MonoDomain *domain, const gunichar2 *text, gsize length, MonoError *error);
+
+MonoStringHandle
+mono_string_new_utf8_assign (MonoStringHandleOut handle, MonoDomain *domain, const char *text, gsize length, MonoError *error);
+
+MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MonoString *

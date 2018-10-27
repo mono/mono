@@ -6920,54 +6920,40 @@ ves_icall_System_Environment_GetCommandLineArgs (MonoError *error)
 	return result;
 }
 
-#ifndef HOST_WIN32
-static MonoArray *
-mono_icall_get_environment_variable_names (MonoError *error)
+#ifndef HOST_WIN32 // else in icall-windows.c
+MonoArrayHandle
+ves_icall_System_Environment_GetEnvironmentVariableNames (MonoError *error)
 {
-	MonoArray *names;
-	MonoDomain *domain;
-	MonoString *str;
-	gchar **e, **parts;
-	int n;
+	gsize n = 0;
 
-	error_init (error);
-	n = 0;
-	for (e = environ; *e != 0; ++ e)
-		++ n;
+	for (char **e = environ; *e; ++e)
+		++n;
 
-	domain = mono_domain_get ();
-	names = mono_array_new_checked (domain, mono_defaults.string_class, n, error);
-	return_val_if_nok (error, NULL);
+	MonoDomain * const domain = mono_domain_get ();
+	MonoArrayHandle names = mono_array_new_handle (domain, mono_defaults.string_class, n, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
 
 	n = 0;
-	for (e = environ; *e != 0; ++ e) {
-		parts = g_strsplit (*e, "=", 2);
-		if (*parts != 0) {
-			str = mono_string_new_checked (domain, *parts, error);
+	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
+	for (char **e = environ; *e; ++ e) {
+		char **parts = g_strsplit (*e, "=", 2);
+		if (*parts) {
+			mono_string_new_utf8_assign (str, domain, *parts, strlen (*parts), error);
 			if (!is_ok (error)) {
 				g_strfreev (parts);
-				return NULL;
+				return NULL_HANDLE_ARRAY;
 			}
-			mono_array_setref_internal (names, n, str);
+			MONO_HANDLE_ARRAY_SETREF (names, n, str);
 		}
 
 		g_strfreev (parts);
 
-		++ n;
+		++n;
 	}
 
 	return names;
 }
-#endif /* !HOST_WIN32 */
-
-MonoArray *
-ves_icall_System_Environment_GetEnvironmentVariableNames (void)
-{
-	ERROR_DECL (error);
-	MonoArray *result = mono_icall_get_environment_variable_names (error);
-	mono_error_set_pending_exception (error);
-	return result;
-}
+#endif // HOST_WIN32
 
 void
 ves_icall_System_Environment_InternalSetEnvironmentVariable (const gunichar2 *name, gint32 name_length,

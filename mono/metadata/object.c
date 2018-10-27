@@ -6512,7 +6512,16 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
-	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
+	return mono_string_new_utf16_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, len, error);
+}
+
+MonoStringHandle
+mono_string_new_utf16_assign (MonoStringHandleOut handle, MonoDomain *domain, const gunichar2 *text, gsize len, MonoError *error)
+{
+	MonoString *s = mono_string_new_utf16_checked (domain, text, len, error);
+	return_val_if_nok (error, NULL_HANDLE_STRING);
+	MONO_HANDLE_ASSIGN_RAW (handle, s);
+	return handle;
 }
 
 /**
@@ -6638,7 +6647,41 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 }
 
 /**
- * mono_string_new_utf8_len:
+ * mono_string_new_utf8_assign:
+ * \param handle where to assign the new string
+ * \param text a pointer to an utf8 string
+ * \param length number of bytes in \p text to consider
+ * \param error set on error
+ * \returns A newly created string object which contains \p text. On
+ * failure returns NULL and sets \p error.
+ */
+MonoStringHandle
+mono_string_new_utf8_assign (MonoStringHandleOut handle, MonoDomain *domain, const char *text, gsize length, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	GError *eg_error = NULL;
+	gunichar2 *ut = NULL;
+	glong items_written;
+
+	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
+
+	if (!eg_error)
+		handle = mono_string_new_utf16_assign (handle, domain, ut, items_written, error);
+	else {
+		mono_error_set_argument (error, "string", eg_error->message);
+		g_error_free (eg_error);
+		handle = NULL_HANDLE_STRING;
+	}
+
+	g_free (ut);
+	return handle;
+}
+
+/**
+ * mono_string_new_utf8_len_handle:
  * \param text a pointer to an utf8 string
  * \param length number of bytes in \p text to consider
  * \param error set on error
@@ -6648,27 +6691,7 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	error_init (error);
-
-	GError *eg_error = NULL;
-	MonoStringHandle o = NULL_HANDLE_STRING;
-	gunichar2 *ut = NULL;
-	glong items_written;
-
-	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
-
-	if (!eg_error)
-		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
-	else {
-		mono_error_set_argument (error, "string", eg_error->message);
-		g_error_free (eg_error);
-	}
-
-	g_free (ut);
-
-	return o;
+	return mono_string_new_utf8_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, length, error);
 }
 
 MonoString*

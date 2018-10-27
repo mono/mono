@@ -307,7 +307,7 @@ HANDLES(ENUM_7, "get_value", ves_icall_System_Enum_get_value, MonoObject, 1, (Mo
 ICALL_TYPE(ENV, "System.Environment", ENV_1)
 NOHANDLES(ICALL(ENV_1, "Exit", ves_icall_System_Environment_Exit))
 HANDLES(ENV_2, "GetCommandLineArgs", ves_icall_System_Environment_GetCommandLineArgs, MonoArray, 0, ())
-ICALL(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames)
+HANDLES(ENV_3, "GetEnvironmentVariableNames", ves_icall_System_Environment_GetEnvironmentVariableNames, MonoArray, 0, ())
 NOHANDLES(ICALL(ENV_31, "GetIs64BitOperatingSystem", ves_icall_System_Environment_GetIs64BitOperatingSystem))
 ICALL(ENV_4, "GetLogicalDrivesInternal", ves_icall_System_Environment_GetLogicalDrives )
 HANDLES_REUSE_WRAPPER(ENV_5, "GetMachineConfigPath", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path, MonoString, 0, ())
