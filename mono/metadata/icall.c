@@ -7065,17 +7065,15 @@ ves_icall_System_Environment_GetWindowsFolderPath (int folder, MonoError *error)
 #endif
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static MonoArray *
-mono_icall_get_logical_drives (void)
+#if HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS || !defined (HOST_WIN32)
+
+MonoArrayHandle
+ves_icall_System_Environment_GetLogicalDrives (MonoError *error)
 {
-	ERROR_DECL (error);
 	gunichar2 buf [256], *ptr, *dname;
 	gunichar2 *u16;
 	guint initial_size = 127, size = 128;
 	gint ndrives;
-	MonoArray *result;
-	MonoString *drivestr;
 	MonoDomain *domain = mono_domain_get ();
 	gint len;
 
@@ -7102,20 +7100,17 @@ mono_icall_get_logical_drives (void)
 	} while (*dname);
 
 	dname = ptr;
-	result = mono_array_new_checked (domain, mono_defaults.string_class, ndrives, error);
-	if (mono_error_set_pending_exception (error))
-		goto leave;
+	MonoArrayHandle result = mono_array_new_handle (domain, mono_defaults.string_class, ndrives, error);
+	goto_if_nok (error, leave);
 
 	ndrives = 0;
 	do {
 		len = 0;
 		u16 = dname;
 		while (*u16) { u16++; len ++; }
-		drivestr = mono_string_new_utf16_checked (domain, dname, len, error);
-		if (mono_error_set_pending_exception (error))
-			goto leave;
 
-		mono_array_setref_internal (result, ndrives++, drivestr);
+		mono_new_string_utf16_to_array (result, ndrives++, domain, dname, len, error);
+		goto_if_nok (error, leave);
 		while (*dname++);
 	} while (*dname);
 
@@ -7125,25 +7120,19 @@ leave:
 
 	return result;
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-MonoArray *
-ves_icall_System_Environment_GetLogicalDrives (void)
-{
-	return mono_icall_get_logical_drives ();
-}
+#endif // HAVE_API_SUPPORT_WIN32_GET_LOGICAL_DRIVE_STRINGS || !defined (HOST_WIN32)
 
-MonoString *
-ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString *path)
+MonoStringHandle
+ves_icall_System_IO_DriveInfo_GetDriveFormat (const gunichar2 *path, int path_length, MonoError *error)
 {
-	ERROR_DECL (error);
 	gunichar2 volume_name [MAX_PATH + 1];
+
+	// FIXME check if path contains nuls
 	
-	if (mono_w32file_get_file_system_type (mono_string_chars_internal (path), volume_name, MAX_PATH + 1) == FALSE)
-		return NULL;
-	MonoString *result = mono_string_from_utf16_checked (volume_name, error);
-	mono_error_set_pending_exception (error);
-	return result;
+	if (mono_w32file_get_file_system_type (path, volume_name, MAX_PATH + 1) == FALSE)
+		return NULL_HANDLE_STRING;
+	return mono_string_new_utf16_handle (mono_domain_get (), volume_name, g_utf16_len (volume_name), error);
 }
 
 MonoStringHandle
