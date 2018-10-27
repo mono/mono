@@ -5243,6 +5243,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 {
 	return mono_utf16_to_utf8 (s, length, error);
 }
+#endif /* !HOST_WIN32 */
 
 gunichar2*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
@@ -5250,12 +5251,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunic
 	if (!s)
 		return NULL;
 
-	gunichar2 *res = g_new (gunichar2, length + 1);
-	memcpy (res, s, length * sizeof (*res));
-	res [length] = 0;
+	gsize const len = ((gsize)length + 1) * 2;
+	gunichar2 *res = (gunichar2*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
+	if (res) {
+		memcpy (res, s, length * 2);
+		res [length] = 0;
+	}
 	return res;
 }
-#endif /* !HOST_WIN32 */
 
 void
 mono_struct_delete_old (MonoClass *klass, char *ptr)

@@ -75,21 +75,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 	return ret;
 }
 
-gunichar2*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
-{
-	if (!s)
-		return NULL;
-
-	gsize const len = ((gsize)length + 1) * 2;
-	gunichar2 *res = (gunichar2*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
-	if (res) {
-		memcpy (res, s, length * 2);
-		res [length] = 0;
-	}
-	return res;
-}
-
 gpointer
 mono_string_to_utf8str_handle (MonoStringHandle s, MonoError *error)
 {
