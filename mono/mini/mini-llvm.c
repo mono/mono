@@ -1701,6 +1701,7 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 {
 	LLVMValueRef callee;
 	char *callee_name;
+
 	if (ctx->llvm_only) {
 		callee_name = mono_aot_get_direct_call_symbol (type, data);
 		if (callee_name) {
@@ -1724,9 +1725,38 @@ get_callee (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gcons
 		}
 
 		/*
+		 * Change references to jit icalls to the icall wrappers when in corlib, so
+		 * they can be called directly.
+		 */
+		if (ctx->module->assembly->image == mono_get_corlib () && type == MONO_PATCH_INFO_INTERNAL_METHOD) {
+			MonoJitICallInfo *info = mono_find_jit_icall_by_name ((const char*)data);
+			g_assert (info);
+
+			if (info->func != info->wrapper) {
+				type = MONO_PATCH_INFO_METHOD;
+				data = mono_icall_get_wrapper_method (info);
+			}
+		}
+
+		/*
 		 * Calls are made through the GOT.
 		 */
-		return get_aotconst_typed (ctx, type, data, LLVMPointerType (llvm_sig, 0));
+		LLVMValueRef callee = get_aotconst_typed (ctx, type, data, LLVMPointerType (llvm_sig, 0));
+
+		if (type == MONO_PATCH_INFO_METHOD) {
+			MonoMethod *method = (MonoMethod*)data;
+			if (m_class_get_image (method->klass)->assembly == ctx->module->assembly) {
+				/*
+				 * Collect instructions representing the callee into a hash so they can be replaced
+				 * by the llvm method for the callee if the callee turns out to be direct
+				 * callable. Currently this only requires it to not fail llvm compilation.
+				 */
+				GSList *l = (GSList*)g_hash_table_lookup (ctx->method_to_callers, method);
+				l = g_slist_prepend (l, callee);
+				g_hash_table_insert (ctx->method_to_callers, method, l);
+			}
+		}
+		return callee;
 	} else {
 		MonoJumpInfo *ji = NULL;
 
@@ -3364,16 +3394,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				if (!callee) {
 					set_failure (ctx, "can't encode patch");
 					return;
-				}
-				if (cfg->llvm_only && m_class_get_image (call->method->klass)->assembly == ctx->module->assembly) {
-					/*
-					 * Collect instructions representing the callee into a hash so they can be replaced
-					 * by the llvm method for the callee if the callee turns out to be direct
-					 * callable. Currently this only requires it to not fail llvm compilation.
-					 */
-					GSList *l = (GSList*)g_hash_table_lookup (ctx->method_to_callers, call->method);
-					l = g_slist_prepend (l, callee);
-					g_hash_table_insert (ctx->method_to_callers, call->method, l);
 				}
 			} else {
 				ERROR_DECL (error);
