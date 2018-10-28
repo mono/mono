@@ -3501,8 +3501,11 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			g_assert (info);
 			encode_value (info->subtype, p, &p);
 			if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				strcpy ((char*)p, method->name);
-				p += strlen (method->name) + 1;
+				MonoJitICallInfo *callinfo = NULL;
+				callinfo = mono_find_jit_icall_by_addr (info->d.icall.func);
+				g_assert (callinfo);
+				strcpy ((char*)p, callinfo->name);
+				p += strlen (callinfo->name) + 1;
 			} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			} else {
@@ -7834,6 +7837,7 @@ can_encode_method (MonoAotCompile *acfg, MonoMethod *method)
 			case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
 			case MONO_WRAPPER_DELEGATE_END_INVOKE:
 			case MONO_WRAPPER_SYNCHRONIZED:
+			case MONO_WRAPPER_MANAGED_TO_NATIVE:
 				break;
 			case MONO_WRAPPER_MANAGED_TO_MANAGED:
 			case MONO_WRAPPER_CASTCLASS: {
