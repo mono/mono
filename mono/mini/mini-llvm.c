@@ -7652,7 +7652,15 @@ emit_method_inner (EmitContext *ctx)
 		 * NATIVE_TO_MANAGED methods might be called on a thread not attached to the runtime, so they are initialized when loaded
 		 * in load_method ().
 		 */
-		if ((ctx->has_got_access || mono_class_get_cctor (cfg->method->klass)) && !(cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)) {
+		gboolean needs_init = ctx->has_got_access;
+		if (!needs_init && mono_class_get_cctor (cfg->method->klass)) {
+			/* Needs init to run the cctor */
+			if (cfg->method->flags & METHOD_ATTRIBUTE_STATIC)
+				needs_init = TRUE;
+		}
+		if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
+			needs_init = FALSE;
+		if (needs_init) {
 			/*
 			 * linkonce methods shouldn't have initialization,
 			 * because they might belong to assemblies which
