@@ -20,16 +20,16 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;ASPNETWEBPAGES</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;ASPNETWEBPAGES</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,8 +44,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\UnvalidatedRequestValues.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Helpers\Validation.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Checkbox.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Input.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Internal.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Label.cs" />
@@ -112,11 +112,15 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Select.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.TextArea.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.Validation.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\HtmlHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelState.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\ModelStateDictionary.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Html\SelectListItem.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\HttpContextExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IDisplayMode.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.Availability.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\HttpContextAdapter.generated.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\InstrumentationService.cs" />
@@ -124,9 +128,6 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageExecutionListenerAdapter.generated.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PageInstrumentationServiceAdapter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Instrumentation\PositionTagged.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\ITemplateFile.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IVirtualPathFactory.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\IWebPageRequestExecutor.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\HttpAntiForgeryException.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationEqualToRule.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.WebPages\Mvc\ModelClientValidationRangeRule.cs" />
@@ -191,7 +192,15 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\VirtualPathUtilityWrapper.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -219,4 +228,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

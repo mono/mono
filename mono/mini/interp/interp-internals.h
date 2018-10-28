@@ -59,8 +59,10 @@ typedef struct {
 			gint32 lo;
 			gint32 hi;
 		} pair;
+		float f_r4;
 		double f;
 		/* native size integer and pointer types */
+		MonoObject *o;
 		gpointer p;
 		mono_u nati;
 		gpointer vt;
@@ -95,6 +97,7 @@ typedef struct _InterpMethod
 	guint32 alloca_size;
 	unsigned int init_locals : 1;
 	unsigned int vararg : 1;
+	unsigned int needs_thread_attach : 1;
 	unsigned short *code;
 	unsigned short *new_body_start; /* after all STINARG instrs */
 	MonoPIFunc func;
@@ -137,7 +140,6 @@ struct _InterpFrame {
 };
 
 typedef struct {
-	MonoDomain *original_domain;
 	InterpFrame *current_frame;
 	/* Resume state for resuming execution in mixed mode */
 	gboolean       has_resume_state;
@@ -152,8 +154,8 @@ typedef struct {
 extern int mono_interp_traceopt;
 extern GSList *mono_interp_jit_classes;
 
-MonoException *
-mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, InterpFrame *frame);
+void
+mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoError *error);
 
 void
 mono_interp_transform_init (void);
@@ -206,7 +208,7 @@ enum_type:
 		return MINT_TYPE_O;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			type = mono_class_enum_basetype (type->data.klass);
+			type = mono_class_enum_basetype_internal (type->data.klass);
 			goto enum_type;
 		} else
 			return MINT_TYPE_VT;

@@ -26,27 +26,48 @@ ifeq ($(PROFILE),build)
 CSC_RUNTIME_FLAGS=--profile=aot:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/csc.$(LIBRARY).aotprofile
 endif
 
+RESX_EXTRA_ARGUMENTS = \
+	--in=ReferenceSources/SR.cs \
+	--in=ReferenceSources/SR2.cs
+
 RESX_RESOURCE_STRING = \
-	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Collections.Concurrent/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Collections.NonGeneric/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.ComponentModel.TypeConverter/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Buffers/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.FileSystem.Watcher/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.IO.Ports/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Memory/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.HttpListener/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Net.Requests/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Net.Http/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Reflection.TypeExtensions/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Runtime.Extensions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.InteropServices.RuntimeInformation/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Text.RegularExpressions/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Threading.Tasks.Parallel/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
-	../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
+	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx	\
+	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-ifneq ($(PROFILE),basic)
-RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 include il/il.make
 
-MODULE_DEPS = $(IL_REPLACE)
-endif
+RESOURCE_STRINGS_FILES = --mscorlib-debug
+
+RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
+MODULE_DEPS = $(IL_REPLACE) LinkerDescriptor/mscorlib.xml
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -60,6 +81,10 @@ RESOURCE_FILES = \
 	LinkerDescriptor/mscorlib.xml
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
+
+ifndef NO_SRE
+LIB_MCS_FLAGS += -d:MONO_FEATURE_SRE
+endif
 
 ifndef MOBILE_PROFILE
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
@@ -100,7 +125,7 @@ ifdef MONO_FEATURE_APPLE_X509
 LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
 endif
 
-COREFX_FLAGS := -d:FEATURE_PORTABLE_SPAN
+COREFX_FLAGS := -d:BIT64,REGISTRY_ASSEMBLY
 
 WARNING_ABOUT_DISABLED_WARNING=1635
 LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,3001,3002,3003,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) $(COREFX_FLAGS)
@@ -108,8 +133,9 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Runtime.CompilerServices.Unsafe
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
 XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
+XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
@@ -149,6 +175,13 @@ CommonCrypto/%.g.cs:
 endif
 
 EXTRA_DISTFILES = \
+	Test/resources/culture-*.cs		\
+	$(RESOURCE_FILES) \
+	$(TEST_RESOURCE_FILES) \
+	$(TEST_RESOURCES:.resources=.resx) \
+	LinkerDescriptor/mscorlib_test.xml
+
+TEST_RESOURCE_FILES = \
 	Test/resources/MyResources.resources	\
 	Test/resources/MyResources.de.resources	\
 	Test/resources/Empty.resources		\
@@ -157,20 +190,18 @@ EXTRA_DISTFILES = \
 	Test/resources/StreamTest.ja.resources	\
 	Test/resources/bug81759.resources	\
 	Test/resources/415628.bin		\
-	Test/resources/Fergie.GED		\
-	Test/resources/culture-*.cs		\
-	$(RESOURCE_FILES) \
-	$(TEST_RESOURCES:.resources=.resx) \
-	LinkerDescriptor/mscorlib_test.xml
+	Test/resources/Fergie.GED
+
+TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
 TEST_RESX_RESOURCES = \
 	Test/resources/Resources.resources
 
 TEST_RESX_RESOURCES_SATELITE = \
 	Test/resources/Resources.es-ES.resources \
-	Test/resources/Resources.nn-NO.resources \
+	Test/resources/Resources.nn-NO.resources
 
-CLEAN_FILES += $(TEST_RESX_RESOURCES) $(IL_REPLACE)
+CLEAN_FILES += $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE) $(IL_REPLACE)
 
 include $(topdir)/build/library.make
 
@@ -179,17 +210,17 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
-satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly1 = $(test_lib_dir)/es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
 $(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
-	@mkdir -p es-ES
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
-	@mkdir -p nn-NO
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization

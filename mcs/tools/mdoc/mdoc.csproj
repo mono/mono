@@ -17,16 +17,16 @@
     <AssemblyName>mdoc</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
@@ -46,19 +46,22 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\ecmadoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\exceptions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\AssemblySet.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkEntry.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkIndex.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\Frameworks\FrameworkTypeEntry.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\assembler.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\dump.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\ecmadoc.cs" />
+    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\exceptions.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\frameworksbootstrapper.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\index.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\mdoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\MdocFile.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocer.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2html.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\monodocs2slashdoc.cs" />
@@ -66,14 +69,21 @@
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\normalize.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\validate.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\webdoc.cs" />
-    <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Documentation\XhtmlWriter.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\ObjectRocks.cs" />
     <Compile Include="..\..\..\external\api-doc-tools\mdoc\Mono.Rocks\StreamRocks.cs" />
     <Compile Include="..\..\..\external\cecil\rocks\Mono.Cecil.Rocks\DocCommentId.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
     <Compile Include="cecil.mixin.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../class/monodoc/monodoc.csproj" />
@@ -145,4 +155,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

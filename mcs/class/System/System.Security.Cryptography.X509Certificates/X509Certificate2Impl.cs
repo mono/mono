@@ -25,12 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using Microsoft.Win32.SafeHandles;
+
 namespace System.Security.Cryptography.X509Certificates
 {
 	internal abstract class X509Certificate2Impl : X509CertificateImpl
 	{
-#if SECURITY_DEP
-
 		public abstract bool Archived {
 			get; set;
 		}
@@ -77,14 +77,10 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract string GetNameInfo (X509NameType nameType, bool forIssuer);
 
-		public abstract void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags);
-
-		public abstract byte[] Export (X509ContentType contentType, string password);
+		public abstract void Import (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags);
 
 		public abstract bool Verify (X509Certificate2 thisCertificate);
 
 		public abstract void Reset ();
-
-#endif
 	}
 }

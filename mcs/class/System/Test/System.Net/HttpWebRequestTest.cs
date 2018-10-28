@@ -26,10 +26,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Reflection;
-using Mono.Security.Authenticode;
-#if !MOBILE && !MONOMAC
-using Mono.Security.Protocol.Tls;
-#endif
+using System.Runtime.ExceptionServices;
 
 using MonoTests.Helpers;
 
@@ -160,40 +157,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if !MOBILE && !MONOMAC
-		[Test]
-		[Ignore ("Fails on MS.NET")]
-		public void SslClientBlock ()
-		{
-			// This tests that the write request/initread/write body sequence does not hang
-			// when using SSL.
-			// If there's a regression for this, the test will hang.
-			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
-			try {
-				SslHttpServer server = new SslHttpServer ();
-				server.Start ();
-
-				string url = String.Format ("https://{0}:{1}/nothing.html", server.IPAddress, server.Port);
-				HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
-				request.Method = "POST";
-				Stream stream = request.GetRequestStream ();
-				byte [] bytes = new byte [100];
-				stream.Write (bytes, 0, bytes.Length);
-				stream.Close ();
-				HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
-				Assert.AreEqual (200, (int) resp.StatusCode, "StatusCode");
-				StreamReader sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
-				sr.ReadToEnd ();
-				sr.Close ();
-				resp.Close ();
-				server.Stop ();
-				if (server.Error != null)
-					throw server.Error;
-			} finally {
-				ServicePointManager.CertificatePolicy = null;
-			}
-		}
-#endif
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
@@ -2362,15 +2325,26 @@ namespace MonoTests.System.Net
 			ManualResetEvent [] completed = new ManualResetEvent [2];
 			completed [0] = new ManualResetEvent (false);
 			completed [1] = new ManualResetEvent (false);
+			ExceptionDispatchInfo edi = null;
 
-			using (ListenerScope scope = new ListenerScope (processor, port, completed [0])) {
+			using (ListenerScope scope = new ListenerScope (processor, port, completed [0], e => { edi = ExceptionDispatchInfo.Capture (e); })) {
 				Uri address = new Uri (string.Format ("http://localhost:{0}", port));
 				HttpWebRequest client = (HttpWebRequest) WebRequest.Create (address);
 
-				ThreadPool.QueueUserWorkItem ((o) => request (client, completed [1]));
+				ThreadPool.QueueUserWorkItem (l => {
+					try {
+						request (client, completed [1]);
+					} catch (Exception e) {
+						edi = ExceptionDispatchInfo.Capture (e);
+					}
+				});
 
-				if (!WaitHandle.WaitAll (completed, 10000))
-					Assert.Fail ("Test hung.");
+				if (!WaitHandle.WaitAll (completed, 10000)) {
+					edi?.Throw ();
+					Assert.Fail ("Test hung");
+				}
+
+				edi?.Throw ();
 			}
 		}
 
@@ -2580,11 +2554,13 @@ namespace MonoTests.System.Net
 			EventWaitHandle completed;
 			public HttpListener listener;
 			Action<HttpListenerContext> processor;
+			Action<Exception> eh;
 
-			public ListenerScope (Action<HttpListenerContext> processor, int port, EventWaitHandle completed)
+			public ListenerScope (Action<HttpListenerContext> processor, int port, EventWaitHandle completed, Action<Exception> exceptionHandler)
 			{
 				this.processor = processor;
 				this.completed = completed;
+				this.eh = exceptionHandler;
 
 				this.listener = new HttpListener ();
 				this.listener.Prefixes.Add (string.Format ("http://localhost:{0}/", port));
@@ -2613,6 +2589,8 @@ namespace MonoTests.System.Net
 					try {
 						this.processor (context);
 					} catch (HttpListenerException) {
+					} catch (Exception e) {
+						eh (e);
 					}
 				});
 
@@ -2622,65 +2600,6 @@ namespace MonoTests.System.Net
 			public void Dispose ()
 			{
 				this.listener.Stop ();
-			}
-		}
-
-#if !MOBILE && !MONOMAC
-		class SslHttpServer : HttpServer {
-			X509Certificate _certificate;
-
-			protected override void Run ()
-			{
-				try {
-					Socket client = sock.Accept ();
-					NetworkStream ns = new NetworkStream (client, true);
-					SslServerStream s = new SslServerStream (ns, Certificate, false, false);
-					s.PrivateKeyCertSelectionDelegate += new PrivateKeySelectionCallback (GetPrivateKey);
-
-					StreamReader reader = new StreamReader (s);
-					StreamWriter writer = new StreamWriter (s, Encoding.ASCII);
-
-					string line;
-					string hello = "<html><body><h1>Hello World!</h1></body></html>";
-					string answer = "HTTP/1.0 200\r\n" +
-							"Connection: close\r\n" +
-							"Content-Type: text/html\r\n" +
-							"Content-Encoding: " + Encoding.ASCII.WebName + "\r\n" +
-							"Content-Length: " + hello.Length + "\r\n" +
-							"\r\n" + hello;
-
-					// Read the headers
-					do {
-						line = reader.ReadLine ();
-					} while (line != "" && line != null && line.Length > 0);
-
-					// Now the content. We know it's 100 bytes.
-					// This makes BeginRead in sslclientstream block.
-					char [] cs = new char [100];
-					reader.Read (cs, 0, 100);
-
-					writer.Write (answer);
-					writer.Flush ();
-					if (evt.WaitOne (5000, false))
-						error = new Exception ("Timeout when stopping the server");
-				} catch (Exception e) {
-					error = e;
-				}
-			}
-
-			X509Certificate Certificate {
-				get {
-					if (_certificate == null)
-						_certificate = new X509Certificate (CertData.Certificate);
-
-					return _certificate;
-				}
-			}
-
-			AsymmetricAlgorithm GetPrivateKey (X509Certificate certificate, string targetHost)
-			{
-				PrivateKey key = new PrivateKey (CertData.PrivateKey, null);
-				return key.RSA;
 			}
 		}
 
@@ -2759,7 +2678,6 @@ namespace MonoTests.System.Net
 				238, 60, 227, 77, 217, 93, 117, 122, 111, 46, 173, 113, 
 			};
 		}
-#endif
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS

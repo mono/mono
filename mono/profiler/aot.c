@@ -109,7 +109,7 @@ parse_args (const char *desc)
 	const char *p;
 	gboolean in_quotes = FALSE;
 	char quote_char = '\0';
-	char *buffer = malloc (strlen (desc));
+	char *buffer = g_malloc (strlen (desc) + 1);
 	int buffer_pos = 0;
 
 	for (p = desc; *p; p++){
@@ -288,7 +288,7 @@ add_type (MonoProfiler *prof, MonoType *type)
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_GENERICINST:
-		return add_class (prof, mono_class_from_mono_type (type));
+		return add_class (prof, mono_class_from_mono_type_internal (type));
 	default:
 		return -1;
 	}
@@ -341,9 +341,9 @@ add_class (MonoProfiler *prof, MonoClass *klass)
 
 	MonoClass *klass_nested_in = mono_class_get_nesting_type (klass);
 	if (klass_nested_in)
-		name = g_strdup_printf ("%s.%s/%s", mono_class_get_namespace (klass_nested_in), mono_class_get_name (klass_nested_in), mono_class_get_name (klass));
+		name = g_strdup_printf ("%s.%s/%s", m_class_get_name_space (klass_nested_in), m_class_get_name (klass_nested_in), m_class_get_name (klass));
 	else
-		name = g_strdup_printf ("%s.%s", mono_class_get_namespace (klass), mono_class_get_name (klass));
+		name = g_strdup_printf ("%s.%s", m_class_get_name_space (klass), m_class_get_name (klass));
 
 	id = prof->id ++;
 	emit_record (prof, AOTPROF_RECORD_TYPE, id);

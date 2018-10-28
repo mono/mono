@@ -17,10 +17,22 @@
 #include <glib.h>
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
+#include <mono/metadata/icalls.h>
 
-MonoBoolean ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (void);
-gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (MonoArray *seed);
-gpointer ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, MonoArray *arry);
-void ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (MonoError *error);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize (const guchar *seed, gssize seed_length, MonoError *error);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngGetBytes (gpointer handle, guchar *array, gssize array_length, MonoError *error);
+
+ICALL_EXPORT
+void
+ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpointer handle, MonoError *error);
 
 #endif

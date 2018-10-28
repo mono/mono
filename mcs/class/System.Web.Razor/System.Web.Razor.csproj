@@ -20,16 +20,16 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;ASPNETWEBPAGES</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;ASPNETWEBPAGES</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,8 +44,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\CommonResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\ExceptionHelper.cs" />
@@ -55,22 +56,23 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\DocumentParseCompleteEventArgs.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\AutoCompleteEditHandler.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\BackgroundParseTask.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\EditorHints.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\EditResult.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\EditorHints.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\ImplicitExpressionEditHandler.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\SingleLineMarkupEditHandler.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Editor\SpanEditHandler.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\GeneratorResults.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\AddImportCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\AttributeBlockCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\BaseCodeWriter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\BlockCodeGenerator.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CSharpCodeWriter.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CSharpRazorCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CodeGenerationCompleteEventArgs.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CodeGeneratorBase.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CodeGeneratorContext.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CodeWriter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CodeWriterExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CSharpCodeWriter.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\CSharpRazorCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\DynamicAttributeBlockCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\ExpressionCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\ExpressionRenderingMode.cs" />
@@ -96,20 +98,20 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\TypeMemberCodeGenerator.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\VBCodeWriter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Generator\VBRazorCodeGenerator.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\GeneratorResults.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\GlobalSuppressions.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\ParserResults.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\BalancingModes.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CallbackVisitor.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\ConditionalAttributeCollapser.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CSharpCodeParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CSharpCodeParser.Directives.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CSharpCodeParser.Statements.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CSharpCodeParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CSharpLanguageCharacteristics.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\CallbackVisitor.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\ConditionalAttributeCollapser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlLanguageCharacteristics.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlMarkupParser.Block.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlMarkupParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlMarkupParser.Document.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlMarkupParser.Section.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\HtmlMarkupParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\ISyntaxTreeRewriter.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\LanguageCharacteristics.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\MarkupCollapser.cs" />
@@ -132,14 +134,13 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\SyntaxTree\SpanKind.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\SyntaxTree\SyntaxTreeNode.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\TextReaderExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\TokenizerBackedParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\TokenizerBackedParser.Helpers.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\VBCodeParser.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\TokenizerBackedParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\VBCodeParser.Directives.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\VBCodeParser.Statements.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\VBCodeParser.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\VBLanguageCharacteristics.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Parser\WhitespaceRewriter.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\ParserResults.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\PartialParseResult.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\RazorCodeLanguage.cs" />
@@ -190,13 +191,21 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Tokenizer\XmlHelpers.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Utils\CharUtils.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Utils\DisposableAction.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Utils\EnumUtil.cs" />
+    <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\Utils\EnumeratorExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Razor\VBRazorCodeLanguage.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -214,4 +223,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

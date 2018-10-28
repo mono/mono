@@ -195,7 +195,7 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
-#if __WATCHOS__
+#if MONOTOUCH_WATCH
 			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
 			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 #elif !MONODROID
@@ -1286,6 +1286,22 @@ namespace MonoTests.System.Reflection
 				Assert.Fail ("must throw");
 			} catch (NotImplementedException){
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LoadFileRelativeThrows ()
+		{
+			Assembly.LoadFile (Path.Combine ("non-existent", "relative", "path.dll"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void LoadFileAbsoluteNotFoundThrows ()
+		{
+			// have to use GetFullPath so we get C:\... on Windows
+			var abspath = Path.GetFullPath (Path.Combine ("non-existent", "absolute", "path.dll"));
+			Assembly.LoadFile (abspath);
 		}
 	}
 

@@ -19,16 +19,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -71,8 +71,8 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5-$(HostPlatform)</IntermediateOutputPath>
+    <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
@@ -103,6 +103,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -117,8 +119,8 @@
     <Compile Include="System.Net.Http.Headers\HeaderInfo.cs" />
     <Compile Include="System.Net.Http.Headers\HttpContentHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpHeaderKind.cs" />
-    <Compile Include="System.Net.Http.Headers\HttpHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpHeaderValueCollection.cs" />
+    <Compile Include="System.Net.Http.Headers\HttpHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpRequestHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\HttpResponseHeaders.cs" />
     <Compile Include="System.Net.Http.Headers\Lexer.cs" />
@@ -157,49 +159,72 @@
     <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
     <Compile Include="System.Net.Http\StreamContent.cs" />
     <Compile Include="System.Net.Http\StringContent.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="System.Net.Http\HttpClient.android.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <Compile Include="System.Net.Http\HttpClient.mac.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-  </ItemGroup>
+  <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.mac.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.wasm.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="System.Net.Http\HttpClient.android.cs" />
+        <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System.Core/System.Core.csproj" />
@@ -220,4 +245,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

@@ -33,7 +33,7 @@ using System.Runtime.CompilerServices;
 namespace Mono.Btls
 {
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
-	delegate int MonoBtlsSelectCallback ();
+	delegate int MonoBtlsSelectCallback (string[] acceptableIssuers);
 
 	class MonoBtlsSsl : MonoBtlsObject
 	{

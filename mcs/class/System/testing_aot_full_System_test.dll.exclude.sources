@@ -183,7 +183,6 @@ System.CodeDom/CodeVariableDeclarationStatementCas.cs
 System.CodeDom/CodeVariableDeclarationStatementTest.cs
 System.CodeDom/CodeVariableReferenceExpressionCas.cs
 System.CodeDom/CodeVariableReferenceExpressionTest.cs
-System.Configuration.Provider
 System.Configuration.Provider/ProviderBaseTest.cs
 System.Configuration/ApplicationSettingsBaseTest.cs
 System.Configuration/ConfigXmlDocumentTest.cs

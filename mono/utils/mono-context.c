@@ -414,7 +414,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	/* Why are we only copying 16 registers?! There are 32! */
 	memcpy (&mctx->fregs, &context->D, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = sigctx;
+	arm_ucontext *my_uc = (arm_ucontext*)sigctx;
 
 	mctx->pc = UCONTEXT_REG_PC (my_uc);
 	mctx->regs [ARMREG_SP] = UCONTEXT_REG_SP (my_uc);
@@ -441,7 +441,7 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 	/* Why are we only copying 16 registers?! There are 32! */
 	memcpy (&context->D, &mctx->fregs, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = ctx;
+	arm_ucontext *my_uc = (arm_ucontext*)ctx;
 
 	UCONTEXT_REG_PC (my_uc) = mctx->pc;
 	UCONTEXT_REG_SP (my_uc) = mctx->regs [ARMREG_SP];
@@ -548,6 +548,22 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	/* The valid values for pc and sp are stored here and not in regs array */
 	UCONTEXT_REG_NIP(uc) = mctx->sc_ir;
 	UCONTEXT_REG_Rn(uc, 1) = mctx->sc_sp;
+}
+
+#elif defined (TARGET_WASM)
+
+#include <mono/utils/mono-context.h>
+
+void
+mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+	g_error ("MonoContext not supported");
+}
+
+void
+mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+	g_error ("MonoContext not supported");
 }
 
 #endif /* #if defined(__i386__) */

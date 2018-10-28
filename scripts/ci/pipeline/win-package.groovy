@@ -7,6 +7,7 @@ def packageFileNameX86 = null
 def packageFileNameX64 = null
 def commitHash = null
 def utils = null
+properties([compressBuildLog()])
 
 node ("w64") {
     ws ("workspace/${jobName}/${monoBranch}") {
@@ -14,6 +15,9 @@ node ("w64") {
             stage('Checkout') {
                 // clone and checkout repo
                 checkout scm
+
+                // we need to reset to the commit sha passed to us by the upstream Mac build
+                sh (script: "git reset --hard ${env.sha1} && git submodule update --recursive")
 
                 // get current commit sha
                 commitHash = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()

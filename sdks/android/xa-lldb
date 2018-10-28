@@ -1,6 +1,8 @@
 #!/bin/bash
 
-PLATFORM_TOOLS_DIR=/Users/akyte/Library/Developer/Xamarin/android-sdk-macosx/platform-tools
+set -xi
+
+PLATFORM_TOOLS_DIR=$HOME/android-toolchain/sdk/platform-tools
 
 shell()
 {

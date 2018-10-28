@@ -34,6 +34,21 @@ sgen_libs = \
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(glib_libs)
 
+if ENABLE_LLVM
+-include $(mono_build_root)/llvm/llvm_config.mk
+LLVM_CFLAGS=$(LLVM_CFLAGS_INTERNAL) $(LLVM_CFLAGS_EXTERNAL)
+LLVM_CXXFLAGS=$(LLVM_CXXFLAGS_INTERNAL) $(LLVM_CXXFLAGS_EXTERNAL)
+LLVM_LDFLAGS=$(LLVM_LDFLAGS_INTERNAL) $(LLVM_LDFLAGS_EXTERNAL)
+LLVM_LIBS=$(LLVM_LIBS_INTERNAL) $(LLVM_LIBS_EXTERNAL)
+
+print-llvm-info:
+	echo "cflags: $(LLVM_CFLAGS)"
+	echo "cxxflags: $(LLVM_CXXFLAGS)"
+	echo "ldflags: $(LLVM_LDFLAGS)"
+	echo "libs: $(LLVM_LIBS)"
+endif
+
+
 if FULL_AOT_TESTS
 # if the tests are going to run with framework assemblies compiled with
 # -d:MOBILE, tell the runtime to remap framework assemblies using the mobile
@@ -154,44 +169,47 @@ endif
 
 noinst_LTLIBRARIES = $(mini_common_lib)
 
+noinst_LIBRARIES = libmain.a
+
+libmain_a_SOURCES = main-sgen.c
+if SUPPORT_BOEHM
+libmain_a_SOURCES += main.c
+endif
+libmain_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+
 if LOADED_LLVM
 lib_LTLIBRARIES += libmono-llvm.la
 libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
 libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
+
 if HOST_DARWIN
-libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
+libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace 
 endif
 endif
 
-mono_boehm_SOURCES = \
-	main.c
+# we need this to prevent automake from generating a default mono_SOURCES = mono.c
+mono_SOURCES =
 
-mono_CFLAGS = $(AM_CFLAGS)
-
-mono_boehm_CFLAGS = $(AM_CFLAGS)
+mono_boehm_SOURCES =
+mono_boehm_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
 AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
 
-mono_sgen_SOURCES = \
-	main-sgen.c
-
-mono_SOURCES = \
-	main-sgen.c
-
-mono_sgen_CFLAGS = $(AM_CFLAGS)
+mono_sgen_SOURCES =
+mono_sgen_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
 
 # We build this after libmono was built so it contains the date when the final
 # link was done
 if SUPPORT_BOEHM
 buildver-boehm.h: libmini.la $(monodir)/mono/metadata/libmonoruntime.la
 	@echo "const char *build_date = \"`date`\";" > buildver-boehm.h
-mono_boehm-main.$(OBJEXT): buildver-boehm.h
+libmain_a-main.$(OBJEXT): buildver-boehm.h
 endif
 
 buildver-sgen.h: libmini.la $(monodir)/mono/metadata/libmonoruntimesgen.la $(monodir)/mono/sgen/libmonosgen.la
 	@echo "const char *build_date = \"`date`\";" > buildver-sgen.h
-mono_sgen-main-sgen.$(OBJEXT): buildver-sgen.h
-main-sgen.$(OBJEXT): buildver-sgen.h
+
+libmain_a-main-sgen.$(OBJEXT): buildver-sgen.h
 
 if DTRACE_G_REQUIRED
 LIBMONO_DTRACE_OBJECT = .libs/mono-dtrace.$(OBJEXT)
@@ -222,6 +240,7 @@ LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
 endif
 
 mono_boehm_LDADD = \
+	libmain_a-main.$(OBJEXT) \
 	$(MONO_LIB)		\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
@@ -229,16 +248,17 @@ mono_boehm_LDADD = \
 	$(MONO_DTRACE_OBJECT)
 
 mono_boehm_LDFLAGS = \
-	$(static_flags) $(monobinldflags) $(monobin_platform_ldflags)
+	$(static_flags) $(monobinldflags) $(monobin_platform_ldflags) 
 
 mono_sgen_LDADD = \
+	libmain_a-main-sgen.$(OBJEXT) \
 	$(MONO_SGEN_LIB)	\
 	$(glib_libs)		\
 	$(LLVMMONOF)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
-mono_sgen_LDFLAGS = $(static_flags) $(monobinldflags) $(monobin_platform_ldflags)
+mono_sgen_LDFLAGS = $(static_flags) $(monobinldflags) $(monobin_platform_ldflags) 
 
 if BITCODE
 libmonoldflags += -no-undefined
@@ -280,6 +300,8 @@ endif
 wasm_sources = \
 	mini-wasm.c		\
 	mini-wasm.h		\
+	mini-wasm-debugger.c	\
+	debugger-engine.c	\
 	exceptions-wasm.c	\
 	tramp-wasm.c
 
@@ -368,7 +390,6 @@ endif
 endif
 
 interp_sources =	\
-	interp/hacks.h		\
 	interp/interp.h	\
 	interp/interp-internals.h	\
 	interp/interp.c	\
@@ -450,7 +471,9 @@ common_sources = \
 	mini-gc.h		\
 	mini-gc.c		\
 	debugger-agent.h 	\
+	debugger-engine.h	\
 	debugger-agent-stubs.c	\
+	debugger-state-machine.h	\
 	xdebug.c			\
 	mini-llvm.h			\
 	mini-llvm-cpp.h	\
@@ -622,11 +645,10 @@ endif
 
 if MONO_JEMALLOC_ENABLED
 libmonoldflags += $(JEMALLOC_LDFLAGS)
-mono_CFLAGS += $(JEMALLOC_CFLAGS)
 endif
 
 libmono_ee_interp_la_SOURCES = $(interp_sources)
-libmono_ee_interp_la_CFLAGS = $(mono_CFLAGS)
+libmono_ee_interp_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 if BITCODE
 libmono_ee_interp_la_LDFLAGS = $(libmonoldflags)
 if DISABLE_INTERPRETER
@@ -634,8 +656,12 @@ libmono_ee_interp_la_LIBADD = libmonosgen-2.0.la
 endif
 endif
 
-libmono_dbg_la_SOURCES = debugger-agent.c
-libmono_dbg_la_CFLAGS = $(mono_CFLAGS)
+if !WASM
+extra_libmono_dbg_source = debugger-engine.c
+endif
+
+libmono_dbg_la_SOURCES = debugger-agent.c debugger-state-machine.c $(extra_libmono_dbg_source)
+libmono_dbg_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 if BITCODE
 if DISABLE_DEBUGGER_AGENT
 libmono_dbg_la_LIBADD = libmonosgen-2.0.la
@@ -658,20 +684,25 @@ endif
 # compile time dependencies on boehm/sgen.
 #
 libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources)
-libmini_la_CFLAGS = $(mono_CFLAGS)
+libmini_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
 libmonoboehm_2_0_la_SOURCES =
-libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS)
+libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS) @CXX_ADD_CFLAGS@
+
 libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
-libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
 
 libmonosgen_2_0_la_SOURCES =
-libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)
+libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS) @CXX_ADD_CFLAGS@
+
 libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
-libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
+# These are public headers.
+# They should not use glib.h, G_BEGIN_DECLS, guint, etc.
+# They should be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS.
 libmonoinclude_HEADERS = jit.h
 
 CSFLAGS = -unsafe -nowarn:0219,0169,0414,0649,0618
@@ -776,8 +807,8 @@ check-seq-points:
 else
 check-seq-points: mono $(regtests)
 	rm -f TestResult-op_il_seq_point.xml
-	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $$i || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
-	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $$i --aot || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
+	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $(DEFAULT_PROFILE) $$i || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
+	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $(DEFAULT_PROFILE) $$i --aot || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
 	$(srcdir)/test_op_il_seq_point_headerfooter.sh
 endif
 
@@ -801,6 +832,10 @@ gsharedvtcheck:
 
 hybridcheck:
 	$(MAKE) fullaotcheck HYBRID=1
+
+# FIXME: force preemptive suspend while interpreter doesn't support coop/hybird suspend
+fullaotmixedcheck:
+	$(MAKE) fullaotcheck MIXED=1 MONO_THREADS_SUSPEND=preemptive
 
 fullaot_regtests = $(regtests)
 fullaot_testing_deps = generics-variant-types.dll TestDriver.dll MemoryIntrinsics.dll
@@ -835,7 +870,7 @@ FULLAOT_LIBS = $(filter-out $(FULLAOT_LIBS_DISABLED),$(FULLAOT_LIBS_UNIVERSAL))
 
 FULLAOT_TMP_DIR=$(top_builddir)/mono/mini/fullaot-tmp
 
-FULLAOT_AOT_ARGS=$(if $(HYBRID),hybrid,full)
+FULLAOT_AOT_ARGS=$(if $(HYBRID),hybrid,full,interp)
 FULLAOT_ARGS=$(if $(HYBRID),--hybrid-aot,--full-aot)
 
 # This currently only works on amd64/arm
@@ -847,6 +882,7 @@ fullaotcheck: $(mono) $(fullaot_regtests) $(fullaot_testing_deps)
 	MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot="$(FULLAOT_AOT_ARGS),$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" $(FULLAOT_TMP_DIR)/{$(fullaot_testing_deps_commas),*.exe} || exit 1
 	ln -s $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$$PWD/mono) $(FULLAOT_TMP_DIR)/
 	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(FULLAOT_ARGS) $(FULLAOT_TMP_DIR)/$$i --exclude '!FULLAOT' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
+	if test x$(MIXED) == x1; then failed=0;i=0; while test $$i -lt 900; do i=`expr $$i + 1`; bash -c "echo -n '.'"; MONO_PATH=$(FULLAOT_TMP_DIR) MONO_DEBUG=aot-skip=$$i ./mono --full-aot-interp $(FULLAOT_TMP_DIR)/basic.exe > $(FULLAOT_TMP_DIR)/mixed.log || failed=1; if test $$failed -eq 1; then echo "Failed at $$i"; exit $$failed; fi; done; fi
 
 # This can run in parallel
 fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
@@ -965,9 +1001,17 @@ patch-automake:
 tags:
 	etags -o TAGS `find .. -name "*.h" -o -name "*.c"`
 
+if ENABLE_LLVM
+llvm_makefile_dep = $(mono_build_root)/llvm/llvm_config.mk
+endif
+
 if HAS_EXTENSION_MODULE
 else
 Makefile.am: Makefile.am.in
 	echo "##################### Generated from Makefile.am.in, do not modify ##########################" > $@
 	cat $< >> $@
+
 endif
+
+# Per-library because linking doesn't like -xc++, it treats libraries as C++.
+CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)

@@ -45,6 +45,8 @@ MINI_OP(OP_IMPLICIT_EXCEPTION, "implicit_exception", NONE, NONE, NONE)
 MINI_OP(OP_BOX, "box", IREG, IREG, NONE)
 /* A box of the int value in inst_c0 */
 MINI_OP(OP_BOX_ICONST, "box_iconst", IREG, NONE, NONE)
+/* Same as OP_MOVE, ins->dreg is an objref of type ins->klass */
+MINI_OP(OP_TYPED_OBJREF, "typed_objref", IREG, IREG, NONE)
 
 /* CALL opcodes need to stay together, see MONO_IS_CALL macro */
 MINI_OP(OP_VOIDCALL,	"voidcall", NONE, NONE, NONE)
@@ -716,6 +718,7 @@ MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
 /* to optimize strings */
 MINI_OP(OP_STRLEN, "strlen", IREG, IREG, NONE)
 MINI_OP(OP_NEWARR, "newarr", IREG, IREG, NONE)
+/* Load a readonly length field from [sreg1+inst_imm] */
 MINI_OP(OP_LDLEN, "ldlen", IREG, IREG, NONE)
 MINI_OP(OP_BOUNDS_CHECK, "bounds_check", NONE, IREG, IREG)
 /* type checks */
@@ -962,6 +965,11 @@ MINI_OP(OP_CVTTPS2DQ, "cvttps2dq", XREG, XREG, NONE)
 /* r4 dot product */
 /* multiply all 4 single precision float elements, add them together, and store the result to the lowest element */
 MINI_OP(OP_DPPS, "dpps", XREG, XREG, XREG)
+
+/* sse 4.1 */
+
+/* inst_c0 is the rounding mode: 0 = round, 1 = floor, 2 = ceiling */
+MINI_OP(OP_SSE41_ROUNDPD, "roundpd", XREG, XREG, NONE)
 
 #endif
 

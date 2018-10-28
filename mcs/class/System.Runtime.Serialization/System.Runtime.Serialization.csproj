@@ -18,16 +18,16 @@
     <AssemblyName>System.Runtime.Serialization</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;NO_DYNAMIC_CODEGEN;NET_3_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
@@ -70,8 +70,8 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;NO_DYNAMIC_CODEGEN;NO_CONFIGURATION;NO_SECURITY_ATTRIBUTES;NO_CODEDOM;NO_DESKTOP_SECURITY</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <OutputPath>./../../class/lib/xammac_net_4_5-$(HostPlatform)</OutputPath>
-    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5-$(HostPlatform)</IntermediateOutputPath>
+    <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;NO_DYNAMIC_CODEGEN;NET_3_0;NO_CONFIGURATION</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
@@ -102,6 +102,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Serialization.Primitives\src\System\Runtime\Serialization\ISerializationSurrogateProvider.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
@@ -171,6 +173,8 @@
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ObjectReferenceStack.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ObjectToIdCache.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\PrimitiveDataContract.cs" />
+    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaExporter.cs" />
+    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaHelper.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ScopedKnownTypes.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SerializationMode.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SerializationPermissionNotRequiredAttribute.cs" />
@@ -178,6 +182,7 @@
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SpecialTypeDataContract.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SurrogateDataContract.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\TypeInformation.cs" />
+    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XPathQueryGenerator.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlDataContract.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlFormatGeneratorStatics.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlFormatReaderGenerator.cs" />
@@ -193,7 +198,6 @@
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlSerializableServices.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlSerializableWriter.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XmlWriterDelegator.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XPathQueryGenerator.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Text\Base64Encoding.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Text\BinHexEncoding.cs" />
     <Compile Include="..\referencesource\System.Runtime.Serialization\System\Text\SurrogateChar.cs" />
@@ -250,107 +254,97 @@
     <Compile Include="ReferenceSources\XmlFormatReaderGenerator_static.cs" />
     <Compile Include="ReferenceSources\XmlFormatWriterGenerator_static.cs" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\CodeExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ConfigurationStrings.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DataContractSerializerSection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidator.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidatorAttribute.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\NetDataContractSerializerSection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\Properties.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\SerializationSectionGroup.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ContractCodeDomInfo.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ImportOptions.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaHelper.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaImporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractImporter.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'winaot' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\CodeExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ConfigurationStrings.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DataContractSerializerSection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidator.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidatorAttribute.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\NetDataContractSerializerSection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\Properties.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\SerializationSectionGroup.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElement.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElementCollection.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ContractCodeDomInfo.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ImportOptions.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaHelper.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaImporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractExporter.cs" />
-    <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractImporter.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'orbis' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'unreal' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
-    <Compile Include="ReferenceSources\SchemaExporter_mobile.cs" />
-    <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
-    <Compile Include="ReferenceSources\XsdDataContractExporter_mobile.cs" />
-  </ItemGroup>
+  <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup>
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\CodeExporter.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ConfigurationStrings.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DataContractSerializerSection.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElement.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeElementCollection.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidator.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\DeclaredTypeValidatorAttribute.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\NetDataContractSerializerSection.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElement.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\ParameterElementCollection.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\Properties.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\SerializationSectionGroup.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElement.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\Configuration\TypeElementCollection.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ContractCodeDomInfo.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\ImportOptions.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\SchemaImporter.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="..\referencesource\System.Runtime.Serialization\System\Runtime\Serialization\XsdDataContractImporter.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Private.DataContractSerialization\src\System\Runtime\Serialization\XsdDataContractExporter.cs" />
+        <Compile Include="ReferenceSources\SimplifiedCodeTypeReference.cs" />
+        <Compile Include="corefx\DiagnosticUtility.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../System/System.csproj" />
@@ -383,4 +377,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

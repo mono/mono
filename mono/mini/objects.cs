@@ -1389,6 +1389,7 @@ ncells ) {
 		return 1.4e-45f;
 	}
 
+#if !NO_BITCODE
 	[Category ("!BITCODE")] // bug #59953
 	public static int test_0_float_return_spill () {
 		// The return value of return_float () is spilled because of the
@@ -1397,6 +1398,7 @@ ncells ) {
 		float f = return_float ();
 		return (float)o == f ? 0 : 1;
 	}
+#endif
 
 	class R4Holder {
 		public static float pi = 3.14f;
@@ -1947,6 +1949,58 @@ ncells ) {
 		var e2 = (IList<AClass1> []) d;
 		return 0;
 	}
+
+	class SimpleContainer {
+		public Simple simple1;
+		public Simple simple2;
+
+		public static Simple constsimple;
+
+		public int SetFields () {
+			constsimple.a = 0x1337;
+			simple1 = simple2 = constsimple;
+			return simple1.a - simple2.a;
+		}
+	}
+
+	public static int test_0_dup_vtype () {
+		return new SimpleContainer ().SetFields ();
+	}
+
+	public struct Vec3 {
+		public int X, Y, Z;
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public Vec3(int x, int y, int z) {
+			X = x;
+			Y = y;
+			Z = z;
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int gh_11378_inner_1 (Vec3 p1, Vec3 p2) {
+		p1.X -= p2.X;
+		p1.Y -= p2.Y;
+		p1.Z -= p2.Z;
+
+		return (int)p2.Y;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int gh_11378_inner_2 (Vec3 c, Vec3 pos) {
+		return gh_11378_inner_1 (pos, c);
+	}
+
+	static int gh_11378_inner_3 (Vec3 c) {
+		var c2 = c;
+		return gh_11378_inner_2 (c, c2);
+	}
+
+	public static int test_2_gh_11378 () {
+		return gh_11378_inner_3 (new Vec3(0, 2, -20));
+	}
+
 }
 
 #if __MOBILE__

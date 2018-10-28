@@ -30,42 +30,22 @@
 #ifdef _MSC_VER
 
 #include <math.h>
-
-#if _MSC_VER < 1800 /* VS 2013 */
-#define strtoull _strtoui64
-#endif
-
 #include <float.h>
-#define trunc(x)	(((x) < 0) ? ceil((x)) : floor((x)))
-#if _MSC_VER < 1800 /* VS 2013 */
-#define isnan(x)	_isnan(x)
-#define isinf(x)	(_isnan(x) ? 0 : (_fpclass(x) == _FPCLASS_NINF) ? -1 : (_fpclass(x) == _FPCLASS_PINF) ? 1 : 0)
-#define isnormal(x)	_finite(x)
-#endif
 
 #define popen		_popen
 #define pclose		_pclose
-
 #include <direct.h>
 #define mkdir(x)	_mkdir(x)
 
 #define __func__ __FUNCTION__
 
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
+#include <stddef.h>
+#include <stdint.h>
 
-/*
- * SSIZE_MAX is not defined in MSVC, so define it here.
- *
- * These values come from MinGW64, and are public domain.
- *
- */
+// ssize_t and SSIZE_MAX are Posix, define for Windows.
+typedef ptrdiff_t ssize_t;
 #ifndef SSIZE_MAX
-#ifdef _WIN64
-#define SSIZE_MAX _I64_MAX
-#else
-#define SSIZE_MAX INT_MAX
-#endif
+#define SSIZE_MAX INTPTR_MAX
 #endif
 
 #endif /* _MSC_VER */
@@ -89,7 +69,7 @@ typedef SSIZE_T ssize_t;
 
 #if !defined(_MSC_VER) && !defined(HOST_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && !defined(MONOTOUCH) && HAVE_VISIBILITY_HIDDEN
 #if MONO_LLVM_LOADED
-#define MONO_LLVM_INTERNAL MONO_API
+#define MONO_LLVM_INTERNAL MONO_API_NO_EXTERN_C
 #else
 #define MONO_LLVM_INTERNAL
 #endif
@@ -99,6 +79,9 @@ typedef SSIZE_T ssize_t;
 
 /* Used to mark internal functions used by the profiler modules */
 #define MONO_PROFILER_API MONO_API
+
+/* Used to mark internal functions used by the CoreFX PAL library */
+#define MONO_PAL_API MONO_API
 
 #ifdef __GNUC__
 #define MONO_ALWAYS_INLINE __attribute__ ((__always_inline__))
@@ -120,6 +103,14 @@ typedef SSIZE_T ssize_t;
 #define MONO_COLD __attribute__ ((__cold__))
 #else
 #define MONO_COLD
+#endif
+
+#if defined (__clang__)
+#define MONO_NO_OPTIMIZATION __attribute__ ((optnone))
+#elif __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
+#define MONO_NO_OPTIMIZATION __attribute__ ((optimize("O0")))
+#else
+#define MONO_NO_OPTIMIZATION /* nothing */
 #endif
 
 #if defined (__GNUC__) && defined (__GNUC_MINOR__) && defined (__GNUC_PATCHLEVEL__)
@@ -170,6 +161,11 @@ typedef int32_t __mono_off32_t;
 #endif
 
 #if !defined(mmap)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Unified headers before API 21 do not declare mmap when LARGE_FILES are used (via -D_FILE_OFFSET_BITS=64)
  * which is always the case when Mono build targets Android. The problem here is that the unified headers
  * map `mmap` to `mmap64` if large files are enabled but this api exists only in API21 onwards. Therefore
@@ -177,6 +173,11 @@ typedef int32_t __mono_off32_t;
  * in this instance off_t is redeclared to be 64-bit and that's not what we want.
  */
 void* mmap (void*, size_t, int, int, int, __mono_off32_t);
+
+#ifdef __cplusplus
+} // extern C
+#endif
+
 #endif /* !mmap */
 
 #ifdef HAVE_SYS_SENDFILE_H
@@ -184,12 +185,21 @@ void* mmap (void*, size_t, int, int, int, __mono_off32_t);
 #endif
 
 #if !defined(sendfile)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The same thing as with mmap happens with sendfile */
 ssize_t sendfile (int out_fd, int in_fd, __mono_off32_t* offset, size_t count);
+
+#ifdef __cplusplus
+} // extern C
+#endif
+
 #endif /* !sendfile */
 
 #endif /* __ANDROID_API__ < 21 */
 #endif /* HOST_ANDROID && ANDROID_UNIFIED_HEADERS */
 
 #endif /* __UTILS_MONO_COMPILER_H__*/
-

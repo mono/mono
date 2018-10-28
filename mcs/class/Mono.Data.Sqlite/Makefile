@@ -15,10 +15,13 @@ KEYFILE = ../mono.pub
 LIB_MCS_FLAGS = /unsafe \
 	$(RESOURCES:%=-resource:%) -d:SQLITE_STANDARD
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
+TEST_RESOURCE_FILES = Test/test.db
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618 $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
 EXTRA_DISTFILES = Test/SqliteTest.cs \
 	Test/test.sql \
+	$(TEST_RESOURCE_FILES) \
 	resources/SR.resx	\
 	resources/DataTypes.xml	\
 	resources/MetaDataCollections.xml \
@@ -29,11 +32,9 @@ CLEAN_FILES += $(RESX_RESOURCES)
 
 CLEAN_FILES = $(RESX_RESOURCES)
 
-test-local: test.db 
-
-test.db: Test/test.sql
+Test/test.db: Test/test.sql
 	rm -f $@
-	sqlite3 $@ < $< || :
+	sqlite3 $@ < $<
 
 include ../../build/library.make
 

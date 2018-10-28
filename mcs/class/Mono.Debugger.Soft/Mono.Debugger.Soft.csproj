@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
-    <ProjectGuid>{8787A3B7-8A19-4586-8DCF-6F5914FD48D5}</ProjectGuid>
+    <ProjectGuid>{767CAD15-F8B5-4EAC-8B3D-4EF75F768015}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
@@ -20,16 +20,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,11 +44,12 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Debugger.Soft\AbsentInformationException.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainCreateEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\AppDomainMirror.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Mono.Debugger.Soft\BreakpointEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\BreakpointEventRequest.cs" />
     <Compile Include="Mono.Debugger.Soft\Connection.cs" />
+    <Compile Include="Mono.Debugger.Soft\CrashEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\CustomAttributeDataMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\CustomAttributeNamedArgumentMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\CustomAttributeTypedArgumentMirror.cs" />
@@ -79,11 +81,11 @@
     <Compile Include="Mono.Debugger.Soft\ILInstruction.cs" />
     <Compile Include="Mono.Debugger.Soft\ILInterpreter.cs" />
     <Compile Include="Mono.Debugger.Soft\IMirror.cs" />
+    <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
     <Compile Include="Mono.Debugger.Soft\InterfaceMappingMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\InvalidStackFrameException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvocationException.cs" />
     <Compile Include="Mono.Debugger.Soft\InvokeOptions.cs" />
-    <Compile Include="Mono.Debugger.Soft\ITargetProcess.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalScope.cs" />
     <Compile Include="Mono.Debugger.Soft\LocalVariable.cs" />
     <Compile Include="Mono.Debugger.Soft\Location.cs" />
@@ -115,15 +117,23 @@
     <Compile Include="Mono.Debugger.Soft\TypeMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\UserBreakEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\UserLogEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDeathEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
+    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
     <Compile Include="Mono.Debugger.Soft\Value.cs" />
     <Compile Include="Mono.Debugger.Soft\VirtualMachine.cs" />
     <Compile Include="Mono.Debugger.Soft\VirtualMachineManager.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDeathEvent.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDisconnectedException.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMDisconnectEvent.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMMismatchException.cs" />
-    <Compile Include="Mono.Debugger.Soft\VMStartEvent.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -134,4 +144,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

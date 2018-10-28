@@ -17,10 +17,10 @@
     <AssemblyName>nunitlite</AssemblyName>
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
@@ -46,6 +46,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Api\ExpectedExceptionData.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Api\IParameterDataSource.cs" />
@@ -74,8 +76,8 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\CultureAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DataAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DatapointAttribute.cs" />
-    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DatapointsAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DatapointSourceAttribute.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DatapointsAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\DescriptionAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\ExpectedExceptionAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\ExplicitAttribute.cs" />
@@ -102,8 +104,8 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\TestFixtureTearDownAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\TheoryAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\TimeoutAttribute.cs" />
-    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\ValuesAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\ValueSourceAttribute.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Attributes\ValuesAttribute.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\AllItemsConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\AndConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\AssignableFromConstraint.cs" />
@@ -144,20 +146,20 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\FloatingPointNumerics.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\GreaterThanConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\GreaterThanOrEqualConstraint.cs" />
-    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\InstanceOfTypeConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\IResolveConstraint.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\InstanceOfTypeConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\LessThanConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\LessThanOrEqualConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\MessageWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\MsgUtils.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NUnitComparer.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NUnitEqualityComparer.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NaNConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NoItemConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NotConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NullConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NullOrEmptyStringConstraint.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\Numerics.cs" />
-    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NUnitComparer.cs" />
-    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\NUnitEqualityComparer.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\Operators\AllOperator.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\Operators\AndOperator.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Constraints\Operators\AttributeOperator.cs" />
@@ -306,6 +308,7 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit2XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\NUnit3XmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\OutputWriter.cs" />
+    <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\OutputWriters\XunitXmlOutputWriter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultReporter.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\ResultSummary.cs" />
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Runner\TcpWriter.cs" />
@@ -316,6 +319,7 @@
     <Compile Include="..\..\..\..\external\nunit-lite\NUnitLite-1.0.0\src\framework\Throws.cs" />
     <Compile Include="BabysitterSupport.cs" />
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../../class/System/System.csproj" />
@@ -325,4 +329,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

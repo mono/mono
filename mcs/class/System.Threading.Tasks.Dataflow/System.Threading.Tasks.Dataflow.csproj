@@ -19,16 +19,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../ecma.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;CONCURRENT_COLLECTIONS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;CONCURRENT_COLLECTIONS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -43,8 +43,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowBlock.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowBlockOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Base\DataflowLinkOptions.cs" />
@@ -70,8 +71,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\DataflowEtwProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\EnumerableDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\IDebuggerDisplay.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ImmutableArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\IProducerConsumerCollection.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ImmutableArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\Padding.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\ProducerConsumerQueues.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Threading.Tasks.Dataflow\src\Internal\QueuedMap.cs" />
@@ -87,7 +88,15 @@
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="corefx\SR.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -97,4 +106,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

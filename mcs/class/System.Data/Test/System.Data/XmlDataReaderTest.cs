@@ -32,6 +32,8 @@ using System.Xml.Serialization;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]	
@@ -41,8 +43,8 @@ namespace MonoTests.System.Data
 		public void XmlLoadTest ()
 		{
 				DataSet ds = new DataSet();
-				ds.ReadXmlSchema ("Test/System.Data/TestReadXmlSchema1.xml");
-				ds.ReadXml ("Test/System.Data/TestReadXml1.xml");
+				ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/TestReadXmlSchema1.xml"));
+				ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/TestReadXml1.xml"));
 		}
 		
 		// Test for Bug#377146

@@ -19,16 +19,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../../class/lib/net_4_x-$(HostPlatform)/legacy</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-legacy</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;NET_3_5</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;NET_3_5</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -43,8 +43,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil.Cil\Code.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil.Cil\CodeReader.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil.Cil\CodeWriter.cs" />
@@ -140,13 +141,13 @@
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ModuleKind.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ModuleReference.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\NativeType.cs" />
+    <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PInvokeAttributes.cs" />
+    <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PInvokeInfo.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ParameterAttributes.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ParameterDefinition.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ParameterDefinitionCollection.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\ParameterReference.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PinnedType.cs" />
-    <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PInvokeAttributes.cs" />
-    <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PInvokeInfo.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PointerType.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PropertyAttributes.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono.Cecil\PropertyDefinition.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="..\..\..\..\external\cecil-legacy\Mono\Funcs.cs" />
     <Compile Include="..\..\..\..\external\cecil-legacy\System.Runtime.CompilerServices\ExtensionAttribute.cs" />
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -181,4 +183,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

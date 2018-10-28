@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 
 using System;
 using System.Reflection;
@@ -172,7 +172,7 @@ namespace System.Reflection.Emit {
 
 			CreateDynMethod ();
 
-			deleg = Delegate.CreateDelegate (delegateType, this);
+			deleg = Delegate.CreateDelegate (delegateType, null, this);
 			return deleg;
 		}
 
@@ -264,7 +264,7 @@ namespace System.Reflection.Emit {
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {
-				retval [i] = ParameterInfo.New (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
+				retval [i] = MonoParameterInfo.New (pinfo?[i + 1], parameters [i], this, i + 1);
 			}
 			return retval;
 		}
@@ -424,8 +424,9 @@ namespace System.Reflection.Emit {
 		}
 
 		// This class takes care of constructing the module in a thread safe manner
-		class AnonHostModuleHolder {
-			public static Module anon_host_module;
+		static class AnonHostModuleHolder
+		{
+			public static readonly Module anon_host_module;
 
 			static AnonHostModuleHolder () {
 				AssemblyName aname = new AssemblyName ();

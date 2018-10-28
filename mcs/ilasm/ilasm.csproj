@@ -17,16 +17,16 @@
     <AssemblyName>ilasm</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>HAS_MONO_SECURITY;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,10 +41,21 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <Compile Include="ILParser.cs" />
+  </ItemGroup>
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\build\common\Consts.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+    <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SymbolWriterImpl.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Driver.cs" />
+    <Compile Include="Report.cs" />
     <Compile Include="codegen\Assembly.cs" />
     <Compile Include="codegen\BaseClassRef.cs" />
     <Compile Include="codegen\BaseGenericTypeRef.cs" />
@@ -75,17 +86,17 @@
     <Compile Include="codegen\GenericArguments.cs" />
     <Compile Include="codegen\GenericMethodRef.cs" />
     <Compile Include="codegen\GenericMethodSig.cs" />
-    <Compile Include="codegen\GenericParameters.cs" />
     <Compile Include="codegen\GenericParamRef.cs" />
+    <Compile Include="codegen\GenericParameters.cs" />
     <Compile Include="codegen\GenericTypeInst.cs" />
     <Compile Include="codegen\GlobalFieldRef.cs" />
     <Compile Include="codegen\GlobalMethodRef.cs" />
     <Compile Include="codegen\HandlerBlock.cs" />
     <Compile Include="codegen\IFieldRef.cs" />
     <Compile Include="codegen\IInstr.cs" />
+    <Compile Include="codegen\ISehClause.cs" />
     <Compile Include="codegen\InstrTable.cs" />
     <Compile Include="codegen\IntInstr.cs" />
-    <Compile Include="codegen\ISehClause.cs" />
     <Compile Include="codegen\LabelInfo.cs" />
     <Compile Include="codegen\LdcInstr.cs" />
     <Compile Include="codegen\LdstrInstr.cs" />
@@ -115,31 +126,49 @@
     <Compile Include="codegen\TypeRef.cs" />
     <Compile Include="codegen\TypeSpecFieldRef.cs" />
     <Compile Include="codegen\TypeSpecMethodRef.cs" />
-    <Compile Include="Driver.cs" />
     <Compile Include="parser\ScannerAdapter.cs" />
-    <Compile Include="Report.cs" />
     <Compile Include="scanner\ILReader.cs" />
     <Compile Include="scanner\ILTables.cs" />
     <Compile Include="scanner\ILToken.cs" />
     <Compile Include="scanner\ILTokenizer.cs" />
     <Compile Include="scanner\ILTokenizingException.cs" />
-    <Compile Include="scanner\InstrToken.cs" />
     <Compile Include="scanner\ITokenStream.cs" />
+    <Compile Include="scanner\InstrToken.cs" />
     <Compile Include="scanner\Location.cs" />
     <Compile Include="scanner\NumberHelper.cs" />
     <Compile Include="scanner\StringHelper.cs" />
     <Compile Include="scanner\StringHelperBase.cs" />
-    <Compile Include="ILParser.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)\mcs\jay\jay.vcxproj">
+      <Name>jay</Name>
+      <Project>{5d485d32-3b9f-4287-ab24-c8da5b89f537}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <ProjectReference Include="../class/PEAPI/PEAPI.csproj" />
-    <ProjectReference Include="../class/Mono.CompilerServices.SymbolWriter/Mono.CompilerServices.SymbolWriter.csproj" />
+    <ProjectReference Include="../class/System/System.csproj" />
     <ProjectReference Include="../class/Mono.Security/Mono.Security.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">$(ProjectDir)\..\jay\jay -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay &gt; $(ProjectDir)\ILParser.cs</PreBuildEvent>
     <PreBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">$(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(ProjectDir)\parser\ILParser.jay &gt; $(ProjectDir)\ILParser.cs</PreBuildEvent>

@@ -18,48 +18,115 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-publib.h>
+#include <mono/metadata/icalls.h>
+#include "reflection-internals.h"
 
 G_BEGIN_DECLS
 
 /* System.Environment */
-extern MonoStringHandle ves_icall_System_Environment_get_UserName (MonoError *error);
-
+ICALL_EXPORT
+MonoStringHandle
+ves_icall_System_Environment_get_UserName (MonoError *error);
 
 /* System.Security.Principal.WindowsIdentity */
-gpointer mono_security_principal_windows_identity_get_current_token (void);
-extern MonoArray* ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token);
-extern gpointer ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *error);
-extern MonoStringHandle ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token, MonoError *error);
-extern gpointer ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoStringHandle username, MonoError *error);
+gpointer
+mono_security_principal_windows_identity_get_current_token (MonoError *error);
 
+ICALL_EXPORT
+MonoArray*
+ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *error);
+
+ICALL_EXPORT
+MonoStringHandle
+ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token, MonoError *error);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoStringHandle username, MonoError *error);
+
+ICALL_EXPORT
+MonoArray*
+ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *error);
+
+ICALL_EXPORT
+MonoStringHandle
+ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token, MonoError *error);
+
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoStringHandle username, MonoError *error);
 
 /* System.Security.Principal.WindowsImpersonationContext */
-extern gboolean ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token);
-extern gpointer ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (gpointer token);
-extern gboolean ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token);
-extern gboolean ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (void);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token, MonoError *error);
 
+ICALL_EXPORT
+gpointer
+ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (gpointer token, MonoError *error);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (MonoError *error);
 
 /* System.Security.Principal.WindowsPrincipal */
-extern gboolean ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group);
-extern gboolean ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, MonoString *group);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error);
 
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *group, MonoError *error);
 
 /* Mono.Security.Cryptography.KeyPairPersistance */
-extern MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (MonoString *root);
-extern MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (MonoString *path);
-extern MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (MonoString *path);
-extern MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (MonoString *path);
-extern MonoBoolean ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (MonoString *path);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2 *root, MonoError *error);
 
+ICALL_EXPORT
+MonoBoolean
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2 *path, MonoError *error);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2 *path, MonoError *error);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2 *path, MonoError *error);
+
+ICALL_EXPORT
+MonoBoolean
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2 *path, MonoError *error);
 
 /* System.Security.Policy.Evidence */
-MonoBoolean ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent (MonoReflectionAssemblyHandle refass, MonoError *error);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent (MonoReflectionAssemblyHandle refass, MonoError *error);
 
 /* System.Security.SecureString */
-extern void ves_icall_System_Security_SecureString_DecryptInternal (MonoArray *data, MonoObject *scope);
-extern void ves_icall_System_Security_SecureString_EncryptInternal (MonoArray *data, MonoObject *scope);
-void mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gboolean encrypt, MonoError *error);
+ICALL_EXPORT
+void
+ves_icall_System_Security_SecureString_DecryptInternal (MonoArray *data, MonoObject *scope);
+
+ICALL_EXPORT
+void
+ves_icall_System_Security_SecureString_EncryptInternal (MonoArray *data, MonoObject *scope);
+
+void
+mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gboolean encrypt, MonoError *error);
 
 G_END_DECLS
 

@@ -62,6 +62,8 @@ namespace System
 		private IntPtr delegate_trampoline;
 		private IntPtr extra_arg;
 		private IntPtr method_code;
+		private IntPtr interp_method;
+		private IntPtr interp_invoke_impl;
 		private MethodInfo method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.
@@ -227,7 +229,7 @@ namespace System
 			}
 			if (!argLengthMatch) {
 				if (throwOnBindFailure)
-					throw new ArgumentException ("method argument length mismatch");
+					throw new TargetParameterCountException ("Parameter count mismatch.");
 				else
 					return null;
 			}

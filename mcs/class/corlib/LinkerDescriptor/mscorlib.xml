@@ -123,10 +123,6 @@
 		<!-- domain.c: mono_defaults.stack_frame_class -->
 		<!-- used in mini-exceptions.c to create array and MonoStackFrame instance, i.e. only fields are required to be preserved -->
 		<type fullname="System.Diagnostics.StackFrame" preserve="fields" />
-		
-		<!-- domain.c: mono_defaults.stack_trace_class -->
-		<!-- does not seems used outside the g_assert in domain.c (maybe it could be removed) -->
-		<type fullname="System.Diagnostics.StackTrace" preserve="fields" />
 
 		<!-- debugger-agent.c: create_event_list -->
 		<type fullname="System.Diagnostics.DebuggerNonUserCodeAttribute"/>
@@ -230,7 +226,7 @@
 		</type>
 
 		<!-- reflection.c mono_get_reflection_missing_object -->
-		<type fullname="System.Missing" preserve="fields" />
+		<type fullname="System.Reflection.Missing" preserve="fields" />
 
 		<type fullname="System.MarshalByRefObject" preserve="fields" feature="remoting" />
 
@@ -322,9 +318,6 @@
 			<method signature="System.Void .ctor()" />
 		</type>
 
-		<!-- reflection.c: mono_get_reflection_missing_object -->
-		<type fullname="System.Reflection.Missing" preserve="field" />
-
 		<!-- domain.c: mono_defaults.argumenthandle_class -->		
 		<type fullname="System.RuntimeArgumentHandle" preserve="fields" />
 		
@@ -355,8 +348,6 @@
 		
 		<!-- domain.c: mono_defaults.string_class -->
 		<type fullname="System.String" preserve="fields">
-			<!-- marshal.c mono_marshal_get_native_wrapper -->
-			<method name="CreateString" />
 			<!-- method-to-ir.c: mini_redirect_call -->
 			<method name="InternalAllocateStr" />
 			<!-- method-to-it.c: mini_emit_initobj -->
@@ -466,18 +457,10 @@
 			<method name=".ctor" />
 		</type>
 
-		<!-- console-unix.c: do_console_cancel_event -->
-		<type fullname="System.Console">
-			<method name="DoConsoleCancelEventInBackground" />
-		</type>
-
 		<!-- icalls - but (at least parts of them) are used thru interfaces at runtime and cannot be linked out -->
 		<type fullname="System.Globalization.DateTimeFormatInfo" preserve="fields" />
 		<type fullname="System.Globalization.CompareInfo" preserve="fields" />
-		<type fullname="System.Globalization.CultureInfo" preserve="fields">
-			<!-- icall.c: fill_reflection_assembly_name (assert) and ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (assert) -->
-			<method name="CreateCulture" />
-		</type>
+		<type fullname="System.Globalization.CultureInfo" preserve="fields" />
 		<type fullname="System.Globalization.NumberFormatInfo" preserve="fields" />
 		<type fullname="System.Globalization.RegionInfo" preserve="fields" />
 		<type fullname="System.Globalization.SortKey" preserve="fields" />
@@ -498,12 +481,6 @@
 
 		<!-- fileio.h: shared structure between the managed and unmanaged worlds -->
 		<type fullname="System.IO.MonoIOStat" preserve="fields" />
-		
-		<!-- domain.c: mono_defaults.math_class
-			method-to-ir.c: empty branch (wrt Min/Max optimization)
-			mini-[x86|amd64].c needs the type but then only check for names
-			note: there's no fields (static type) but that will mark the type itself -->
-		<type fullname="System.Math" preserve="fields" />
 
 		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
@@ -511,9 +488,8 @@
 		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
 		<type fullname="System.Reflection.ConstructorInfo" preserve="fields" />
 
-		<!-- domain.c: mono_defaults.customattribute_data_class -->
-		<type fullname="System.Reflection.CustomAttributeData" preserve="fields">
-			<!-- custom-attrs.c: create_custom_attr_data - create an instance with the ctor using 4 arguments -->
+		<!-- custom-attr.c: create_custom_attr_data -->
+		<type fullname="System.Reflection.CustomAttributeData">
 			<method signature="System.Void .ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)" />
 		</type>
 
@@ -556,11 +532,6 @@
 		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
 		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoField" preserve="fields" />
-		
-		<!-- reflection.c: mono_method_get_object uses both MonoGeneric[C]Method / will crash for ves_icall_Type_GetConstructors_internal -->
-		<type fullname="System.Reflection.MonoGenericMethod" preserve="fields" />
-		<type fullname="System.Reflection.MonoGenericCMethod" preserve="fields" />
-		
 		<type fullname="System.Reflection.MonoMethod" preserve="fields" />
 		<type fullname="System.Reflection.MonoMethodInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoPropertyInfo" preserve="fields" />
@@ -598,39 +569,39 @@
 		</type>
 
 		<type fullname="System.Reflection.Emit.AssemblyBuilder" preserve="fields" feature="sre">
-			<method name="AddPermissionRequests" />
-			<method name="AddModule" />
-			<method name="DefineIconResource" />
-			<method name="AddTypeForwarder" />
-			<method name="EmbedResourceFile" />
+			<method name="AddPermissionRequests" feature="sre" />
+			<method name="AddModule" feature="sre" />
+			<method name="DefineIconResource" feature="sre" />
+			<method name="AddTypeForwarder" feature="sre" />
+			<method name="EmbedResourceFile" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ConstructorBuilder" preserve="fields" feature="sre">
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.CustomAttributeBuilder" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.DynamicMethod" preserve="fields" />
-		<type fullname="System.Reflection.Emit.EnumBuilder" preserve="fields" />
-		<type fullname="System.Reflection.Emit.EventBuilder" preserve="fields" />
-		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" >
-			<method name="RuntimeResolve" />
+		<type fullname="System.Reflection.Emit.DynamicMethod" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.EnumBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.EventBuilder" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.FieldBuilder" preserve="fields" feature="sre" >
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.GenericTypeParameterBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ILExceptionBlock" preserve="fields" feature="sre" />
-		<type fullname="System.Reflection.Emit.ILExceptionInfo" preserve="fields" />
-		<type fullname="System.Reflection.Emit.ILGenerator" preserve="fields">
-			<method name="Mono_GetCurrentOffset" />
+		<type fullname="System.Reflection.Emit.ILExceptionInfo" preserve="fields" feature="sre" />
+		<type fullname="System.Reflection.Emit.ILGenerator" preserve="fields" feature="sre" >
+			<method name="Mono_GetCurrentOffset" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.LocalBuilder" preserve="fields" feature="sre" >
-			<method name="Mono_GetLocalIndex" />
+			<method name="Mono_GetLocalIndex" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MethodBuilder" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ModuleBuilder" preserve="fields" feature="sre">
-			<method name="Mono_GetGuid" />
-			<method name="RuntimeResolve" />
+			<method name="Mono_GetGuid" feature="sre" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MonoResource" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.MonoWin32Resource" preserve="fields" feature="sre" />
@@ -638,34 +609,34 @@
 		<type fullname="System.Reflection.Emit.PropertyBuilder" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.SignatureHelper" preserve="fields" feature="sre" />
 		<type fullname="System.Reflection.Emit.TypeBuilder" preserve="fields" feature="sre">
-			<method name="SetCharSet" />
+			<method name="SetCharSet" feature="sre" />
 			<!-- reflection.c mono_reflection_call_is_assignable_to () -->
-			<method name="IsAssignableTo" />
+			<method name="IsAssignableTo" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.UnmanagedMarshal" preserve="fields" feature="sre" >
-			<method name="DefineCustom" />
-			<method name="DefineLPArrayInternal" />
+			<method name="DefineCustom" feature="sre" />
+			<method name="DefineLPArrayInternal" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.TypeBuilderInstantiation" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ArrayType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ByRefType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.PointerType" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.FieldOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.MethodOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 		<type fullname="System.Reflection.Emit.ConstructorOnTypeBuilderInst" preserve="fields" feature="sre" >
-			<method name="RuntimeResolve" />
+			<method name="RuntimeResolve" feature="sre" />
 		</type>
 
 		<!-- domain.c: mono_defaults.internals_visible_class -->
@@ -694,9 +665,6 @@
 			<method name="DangerousRelease" />
 		</type>
 		
-		<!-- object-internals.h: defines MonoReflectionUnmanagedFunctionPointerAttribute, marshal.c: use it -->
-		<type fullname="System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute" preserve="fields"/>
-
 		<!-- marshal.c: mono_mb_emit_exception_marshal_directive -->
 		<type fullname="System.Runtime.InteropServices.MarshalDirectiveException">
 			<method signature="System.Void .ctor(System.String)" />
@@ -724,7 +692,7 @@
 		</type>
 
 		<!-- domain.c: mono_defaults.mono_method_message_class -->
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields" feature="remoting" >
+		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
 			<!-- object.c: mono_message_init -->
 			<method name="InitMessage" />
 		</type>
@@ -745,7 +713,7 @@
 		</type>
 
 		<!-- object.c: mono_object_new_specific_checked -->
-		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" >
+		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" feature="remoting">
 			<method name="CreateProxyForType"/>
 		</type>
 
@@ -755,9 +723,6 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- domain.c: mono_defaults.runtimesecurityframe_class -->		
-		<type fullname="System.Security.RuntimeSecurityFrame" preserve="fields" />
-		
 		<!-- domain.c: mono_defaults.executioncontext_class -->
 		<type fullname="System.Threading.ExecutionContext">
 			<!-- security-manager.c: mono_get_context_capture_method (can likely be removed) -->
@@ -830,9 +795,6 @@
 		  <method name="PerformWaitCallback"/>
 		</type>
 
-		<!-- domain.c: mono_defaults.stringbuilder_class -->
-		<type fullname="System.Text.StringBuilder" preserve="fields" />
-
 		<!-- cominterop.c -->
 		<type fullname="Mono.Interop.ComInteropProxy" feature="com" />
 		<type fullname="Mono.Interop.IDispatch" feature="com" />
@@ -846,9 +808,9 @@
 		-->
 		<type fullname="Mono.Runtime" />
 
-		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
-		<type fullname="Mono.RuntimeStructs/HandleStackMark" />
-		<!-- marshal.c (mono_marshal_get_native_wrapper) -->
+		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
+
+		<type fullname="System.Threading.WasmRuntime"/>
 	</assembly>
 </linker>

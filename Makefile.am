@@ -11,9 +11,9 @@ else
 tools_dir = tools
 endif
 
-SUBDIRS = mk po $(libgc_dir) mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
+SUBDIRS = mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = m4 mk po $(libgc_dir) mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
+DIST_SUBDIRS = m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests
 
 all: update_submodules
 
@@ -126,6 +126,7 @@ package-inputs:
 		(echo "    <project dir=\"$$1\" library=\"$$2\">"; \
 		 read boot;   echo "      <boot>$$boot</boot>"; \
 		 read flags;  echo "      <flags>$$flags</flags>"; \
+		 read sources;echo "      <sources>$$sources</sources>"; \
 		 read output; echo "      <output>$$output</output>"; \
 		 read built;  echo "      <built_sources>`echo $$built | sed 's/\\\/\\\\/g'`</built_sources>"; \
 		 read libou;  echo "      <library_output>$$libou</library_output>"; \
@@ -144,7 +145,7 @@ update-llvm-version:
 
 
 update-solution-files:
-	(pushd msvc/scripts; rm genproj.exe; $(MAKE) genproj.exe; popd)
+	cd msvc/scripts && $(MAKE) genproj.exe || exit $$?;
 	$(MAKE) update-csproj
 	$(MAKE) package-inputs
 	(cd msvc/scripts; mono --debug genproj.exe $(GENPROJ_ARGS))

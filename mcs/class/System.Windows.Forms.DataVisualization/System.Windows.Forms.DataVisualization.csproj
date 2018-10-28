@@ -19,16 +19,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -43,8 +43,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -97,10 +98,10 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\CompareMethod.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Cursor.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\CursorEventArgs.cs" />
-    <Compile Include="System.Windows.Forms.DataVisualization.Charting\CustomizeLegendEventArgs.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\CustomLabel.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\CustomLabelCollection.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\CustomProperties.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\CustomizeLegendEventArgs.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataFormula.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataManipulator.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\DataPoint.cs" />
@@ -111,9 +112,9 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Docking.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ElementPosition.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\EllipseAnnotation.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\FTestResult.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\FinancialFormula.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\FormatNumberEventArgs.cs" />
-    <Compile Include="System.Windows.Forms.DataVisualization.Charting\FTestResult.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\GradientStyle.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Grid.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\GridTickTypes.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\StatisticFormula.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\StripLine.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\StripLinesCollection.cs" />
+    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TTestResult.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextAnnotation.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextAntiAliasingQuality.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TextOrientation.cs" />
@@ -180,11 +182,18 @@
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\Title.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\TitleCollection.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ToolTipEventArgs.cs" />
-    <Compile Include="System.Windows.Forms.DataVisualization.Charting\TTestResult.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\VerticalLineAnnotation.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ViewEventArgs.cs" />
     <Compile Include="System.Windows.Forms.DataVisualization.Charting\ZTestResult.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -198,4 +207,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

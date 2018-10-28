@@ -348,15 +348,7 @@ public class StringTest
 	[Test] // ctor (SByte*, Int32, Int32)
 	public unsafe void Constructor7_Value_Null ()
 	{
-		try {
-			new String ((sbyte*) null, 0, 0);
-			Assert.Fail ("#A1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
-			Assert.IsNull (ex.InnerException, "#A3");
-			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.AreEqual ("value", ex.ParamName, "#A5");
-		}
+		Assert.AreEqual (string.Empty, new String ((sbyte*) null, 0, 0));
 
 		try {
 			new String ((sbyte*) null, 0, 1);
@@ -368,15 +360,7 @@ public class StringTest
 			Assert.AreEqual ("value", ex.ParamName, "#B5");
 		}
 
-		try {
-			new String ((sbyte*) null, 1, 0);
-			Assert.Fail ("#C1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
-			Assert.IsNull (ex.InnerException, "#C3");
-			Assert.IsNotNull (ex.Message, "#C4");
-			Assert.AreEqual ("value", ex.ParamName, "#C5");
-		}
+		Assert.AreEqual (string.Empty, new String ((sbyte*) null, 1, 0));
 	}
 
 	[Test] // ctor (SByte*, Int32, Int32, Encoding)
@@ -511,15 +495,7 @@ public class StringTest
 	[Test] // ctor (SByte*, Int32, Int32, Encoding)
 	public unsafe void Constructor8_Value_Null ()
 	{
-		try {
-			new String ((sbyte*) null, 0, 0, null);
-			Assert.Fail ("#A1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
-			Assert.IsNull (ex.InnerException, "#A3");
-			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.AreEqual ("value", ex.ParamName, "#A5");
-		}
+		Assert.AreEqual (string.Empty, new String ((sbyte*) null, 0, 0, null));
 
 		try {
 			new String ((sbyte*) null, 0, 1, null);
@@ -531,15 +507,7 @@ public class StringTest
 			Assert.AreEqual ("value", ex.ParamName, "#B5");
 		}
 
-		try {
-			new String ((sbyte*) null, 1, 0, null);
-			Assert.Fail ("#C1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
-			Assert.IsNull (ex.InnerException, "#C3");
-			Assert.IsNotNull (ex.Message, "#C4");
-			Assert.AreEqual ("value", ex.ParamName, "#C5");
-		}
+		Assert.AreEqual (string.Empty, new String ((sbyte*) null, 1, 0, null));
 
 		Assert.AreEqual (String.Empty, new String ((sbyte*) null, 0, 0, Encoding.Default), "#D");
 

@@ -221,6 +221,13 @@ obtained by calling the bundled
 .I opt
 program that comes with Mono.
 .TP
+.I llvmllc=[options]
+Use this option to override the built-in set of flags passed to the
+LLVM static compiler (llc).   The list of possible flags that can be passed can be
+obtained by calling the bundled 
+.I llc
+program that comes with Mono.
+.TP
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
@@ -374,6 +381,9 @@ Prints additional information about type loading failures.
 .TP
 .I write-symbols,no-write-symbols
 Instructs the AOT compiler to emit (or not emit) debug symbol information.
+.TP
+.I no-opt
+Instructs the AOT compiler tot no call opt when compiling with LLVM.
 .PP
 For more information about AOT, see: http://www.mono-project.com/docs/advanced/aot/
 .RE
@@ -477,6 +487,9 @@ Notice that this feature will abort execution at runtime if a codepath
 in your program, or Mono's class libraries attempts to generate code
 dynamically.  You should test your software upfront and make sure that
 you do not use any dynamic features.
+.TP
+\fB--full-aot-interp\fR
+Same as --full-aot with fallback to the interpreter.
 .TP
 \fB--gc=boehm\fR, \fB--gc=sgen\fR
 Selects the Garbage Collector engine for Mono to use, Boehm or SGen.
@@ -1175,19 +1188,33 @@ If set, tells mono to attempt using native asynchronous I/O services. If not
 set, a default select/poll implementation is used. Currently epoll and kqueue
 are supported.
 .TP
+\fBMONO_THREADS_SUSPEND\fR
+Selects a mechanism that Mono will use to suspend threads.  May be set to
+"preemptive", "coop", or "hybrid".  Threads may need to be suspended by the
+debugger, or using some .NET threading APIs, and most commonly when the SGen
+garbage collector needs to stop all threads during a critical phase of garbage
+collection.  Preemptive mode is the mode that Mono has used historically, going
+back to the Boehm days, where the garbage collector would run at any point and
+suspend execution of all threads as required to perform a garbage collection.
+The cooperative mode on the other hand requires the cooperation of all threads
+to stop at a safe point.  This makes for an easier to debug garbage collector.
+As of Mono 4.3.0 it is a work in progress, and while it works, it has not been
+used extensively.  This option enables the feature and allows us to find spots
+that need to be tuned for this mode of operation.  Hybrid mode is a combination
+of the two that retains better compatability with scenarios where Mono is
+embedded in another application: threads that are running managed code or code
+that comprises the Mono runtime will be cooperatively suspended, while threads
+running embedder code will be preemptively suspended.
+
+Alternatively, coop and hybrid mode can be enabled at compile time by using the
+--enable-cooperative-suspend or --enable-hybrid-suspend flags, respectively,
+when calling configure.  The \fBMONO_THREADS_SUSPEND\fR environment variable
+takes priority over the compiled default.
+.TP
 \fBMONO_ENABLE_COOP_SUSPEND\fR
-This makes the Mono runtime and the SGen garbage collector run in cooperative
-mode as opposed to run on preemptive mode.   Preemptive mode is the mode
-that Mono has used historically, going back to the Boehm days, where the
-garbage collector would run at any point and suspend execution of all 
-threads as required to perform a garbage collection.  The cooperative mode
-on the other hand requires the cooperation of all threads to stop at a 
-safe point.   This makes for an easier to debug garbage collector.   As
-of Mono 4.3.0 it is a work in progress, and while it works, it has not
-been used extensively.   This option enabled the feature and allows us to
-find spots that need to be tuned for this mode of operation.   Alternatively,
-this mode can be enabled at compile time by using the --enable-cooperative-suspend
-flag when calling configure.
+This environment variable is obsolete, but retained for backward compatibility.
+Use \fBMONO_THREADS_SUSPEND\fR set to "coop" instead.  Note that if configure flags
+were provided to enable cooperative or hybrid suspend, this variable is ignored.
 .TP
 \fBMONO_ENV_OPTIONS\fR
 This environment variable allows you to pass command line arguments to
@@ -1611,6 +1638,32 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
+\fBMONO_TLS_PROVIDER\fR
+This environment variable controls which TLS/SSL provider Mono will
+use.  The options are usually determined by the operating system where
+Mono was compiled and the configuration options that were used for
+it.   
+.RS
+.ne 8
+.TP
+.I default
+Uses the default TLS stack that the Mono runtime was configured with.
+Usually this is configured to use Apple's SSL stack on Apple
+platforms, and Boring SSL on other platforms.
+.TP
+.I apple
+Forces the use of the Apple SSL stack, only works on Apple platforms.
+.TP
+.I btls
+Forces the use of the BoringSSL stack.    See
+https://opensource.google.com/projects/boringssl for more information
+about this stack.
+.TP
+.I legacy
+This is the old Mono stack, which only supports SSL and TLS up to
+version 1.0.   It is deprecated and will be removed in the future.
+.RE
+.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very
@@ -1796,6 +1849,9 @@ This option will suspend the program when an unhandled exception occurs.
 .TP
 \fBthread-dump-dir=DIR\fR
 Use DIR for storage thread dumps created by SIGQUIT.
+.TP
+\fBverbose-gdb\fR
+Make gdb output on native crashes more verbose.
 .ne
 .RE
 .TP
@@ -1877,7 +1933,7 @@ for example, to see managed frame names on gdb backtraces.
 \fBMONO_VERBOSE_METHOD\fR
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
-method.   This can be a comma-separated list of method names to
+method.   This can be a semicolon-separated list of method names to
 match.  If the name is simple, this applies to any method with that
 name, otherwise you can use a mono method description (see the section
 METHOD DESCRIPTIONS).

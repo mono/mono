@@ -19,13 +19,14 @@
 #include <mono/utils/mono-memory-model.h>
 
 static GENERATE_GET_CLASS_WITH_CACHE (runtime_helpers, "System.Runtime.CompilerServices", "RuntimeHelpers")
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 
 /* optimize the simple GetGenericValueImpl/SetGenericValueImpl generic icalls */
 static MonoInst*
 emit_array_generic_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args, int is_set)
 {
 	MonoInst *addr, *store, *load;
-	MonoClass *eklass = mono_class_from_mono_type (fsig->params [2]);
+	MonoClass *eklass = mono_class_from_mono_type_internal (fsig->params [2]);
 
 	/* the bounds check is already done by the callers */
 	addr = mini_emit_ldelema_1_ins (cfg, eklass, args [0], args [1], FALSE);
@@ -51,7 +52,7 @@ mono_type_is_native_blittable (MonoType *t)
 	if (MONO_TYPE_IS_PRIMITIVE_SCALAR (t))
 		return TRUE;
 
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 
 	//MonoClass::blitable depends on mono_class_setup_fields being done.
 	mono_class_setup_fields (klass);
@@ -68,9 +69,30 @@ mono_type_is_native_blittable (MonoType *t)
 MonoInst*
 mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-#ifdef MONO_ARCH_SIMD_INTRINSICS
+	const char* cmethod_klass_name_space = m_class_get_name_space (cmethod->klass);
+	const char* cmethod_klass_name = m_class_get_name (cmethod->klass);
+	MonoImage *cmethod_klass_image = m_class_get_image (cmethod->klass);
+	gboolean in_corlib = cmethod_klass_image == mono_defaults.corlib;
 	MonoInst *ins = NULL;
 
+	/* Required intrinsics are always used even with -O=-intrins */
+	if (in_corlib &&
+		!strcmp (cmethod_klass_name_space, "System") &&
+		!strcmp (cmethod_klass_name, "ByReference`1")) {
+		/* public ByReference(ref T value) */
+		g_assert (fsig->hasthis && fsig->param_count == 1);
+		EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [0]->dreg, 0, args [1]->dreg);
+		return ins;
+	}
+
+	ins = mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
+	if (ins)
+		return ins;
+
+	if (!(cfg->opt & MONO_OPT_INTRINS))
+		return NULL;
+
+#ifdef MONO_ARCH_SIMD_INTRINSICS
 	if (cfg->opt & MONO_OPT_SIMD) {
 		ins = mono_emit_simd_intrinsics (cfg, cmethod, fsig, args);
 		if (ins)
@@ -78,7 +100,7 @@ mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 	}
 #endif
 
-	return mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
+	return NULL;
 }
 
 static MonoInst*
@@ -103,7 +125,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (opcode) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
-			ins->dreg = mono_alloc_dreg (cfg, ins->type);
+			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
 			if (fsig->param_count == 2)
 				ins->sreg2 = args [1]->dreg;
@@ -111,7 +133,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 	}
 	/* The LLVM backend supports these intrinsics */
-	if (cmethod->klass == mono_defaults.math_class) {
+	if (cmethod->klass == mono_class_try_get_math_class ()) {
 		if (strcmp (cmethod->name, "Sin") == 0) {
 			opcode = OP_SIN;
 		} else if (strcmp (cmethod->name, "Cos") == 0) {
@@ -125,7 +147,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (opcode && fsig->param_count == 1) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = STACK_R8;
-			ins->dreg = mono_alloc_dreg (cfg, ins->type);
+			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
@@ -156,7 +178,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		if (opcode && fsig->param_count == 2) {
 			MONO_INST_NEW (cfg, ins, opcode);
 			ins->type = fsig->params [0]->type == MONO_TYPE_I4 ? STACK_I4 : STACK_I8;
-			ins->dreg = mono_alloc_dreg (cfg, ins->type);
+			ins->dreg = mono_alloc_dreg (cfg, (MonoStackType)ins->type);
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
@@ -164,6 +186,74 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	}
 
 	return ins;
+}
+
+static MonoInst*
+emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+
+	MonoClassField *ptr_field = mono_class_get_field_from_name_full (cmethod->klass, "_pointer", NULL);
+	if (!ptr_field)
+		/* Portable Span<T> */
+		return NULL;
+
+	if (!strcmp (cmethod->name, "get_Item")) {
+		MonoClassField *length_field = mono_class_get_field_from_name_full (cmethod->klass, "_length", NULL);
+
+		g_assert (length_field);
+
+		MonoGenericClass *gclass = mono_class_get_generic_class (cmethod->klass);
+		MonoClass *param_class = mono_class_from_mono_type_internal (gclass->context.class_inst->type_argv [0]);
+
+		if (mini_is_gsharedvt_variable_klass (param_class))
+			return NULL;
+
+		int span_reg = args [0]->dreg;
+		/* Load _pointer.Value */
+		int base_reg = alloc_preg (cfg);
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, base_reg, span_reg, ptr_field->offset - MONO_ABI_SIZEOF (MonoObject));
+		/* Similar to mini_emit_ldelema_1_ins () */
+		int size = mono_class_array_element_size (param_class);
+
+		int index_reg = mini_emit_sext_index_reg (cfg, args [1]);
+
+		MONO_EMIT_BOUNDS_CHECK_OFFSET(cfg, span_reg, length_field->offset - MONO_ABI_SIZEOF (MonoObject), index_reg);
+
+		// FIXME: Sign extend index ?
+
+		int mult_reg = alloc_preg (cfg);
+		int add_reg = alloc_preg (cfg);
+
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
+		EMIT_NEW_BIALU (cfg, ins, OP_PADD, add_reg, base_reg, mult_reg);
+		ins->klass = param_class;
+		ins->type = STACK_MP;
+
+		return ins;
+	} else if (!strcmp (cmethod->name, "get_Length")) {
+		MonoClassField *length_field = mono_class_get_field_from_name_full (cmethod->klass, "_length", NULL);
+		g_assert (length_field);
+
+		/*
+		 * FIXME: This doesn't work with abcrem, since the src is a unique LDADDR not
+		 * the same array object.
+		 */
+		MONO_INST_NEW (cfg, ins, OP_LDLEN);
+		ins->dreg = alloc_preg (cfg);
+		ins->sreg1 = args [0]->dreg;
+		ins->inst_imm = length_field->offset - MONO_ABI_SIZEOF (MonoObject);
+		ins->type = STACK_I4;
+		MONO_ADD_INS (cfg->cbb, ins);
+
+		cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
+		cfg->cbb->needs_decompose = TRUE;
+
+		return ins;
+	}
+
+
+	return NULL;
 }
 
 MonoInst*
@@ -176,6 +266,20 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	const char* cmethod_klass_name = m_class_get_name (cmethod->klass);
 	MonoImage *cmethod_klass_image = m_class_get_image (cmethod->klass);
 	gboolean in_corlib = cmethod_klass_image == mono_defaults.corlib;
+
+	/* Required intrinsics are always used even with -O=-intrins */
+	if (in_corlib &&
+		!strcmp (cmethod_klass_name_space, "System") &&
+		!strcmp (cmethod_klass_name, "ByReference`1") &&
+		!strcmp (cmethod->name, "get_Value")) {
+		g_assert (fsig->hasthis && fsig->param_count == 0);
+		int dreg = alloc_preg (cfg);
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, args [0]->dreg, 0);
+		return ins;
+	}
+
+	if (!(cfg->opt & MONO_OPT_INTRINS))
+		return NULL;
 
 	if (cmethod->klass == mono_defaults.string_class) {
 		if (strcmp (cmethod->name, "get_Chars") == 0 && fsig->param_count + fsig->hasthis == 2) {
@@ -215,8 +319,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			EMIT_NEW_UNALU (cfg, ins, OP_STRLEN, dreg, args [0]->dreg);
 			ins->type = STACK_I4;
 			ins->flags |= MONO_INST_FAULT;
-			cfg->cbb->has_array_access = TRUE;
-			cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
+			cfg->cbb->needs_decompose = TRUE;
+			cfg->flags |= MONO_CFG_NEEDS_DECOMPOSE;
 
 			return ins;
 		} else 
@@ -250,6 +354,11 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return emit_array_generic_access (cfg, fsig, args, FALSE);
 		else if (strcmp (cmethod->name, "SetGenericValueImpl") == 0 && fsig->param_count + fsig->hasthis == 3 && !cfg->gsharedvt)
 			return emit_array_generic_access (cfg, fsig, args, TRUE);
+		else if (!strcmp (cmethod->name, "GetRawSzArrayData")) {
+			int dreg = alloc_preg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->sreg1, MONO_STRUCT_OFFSET (MonoArray, vector));
+			return ins;
+		}
 
 #ifndef MONO_BIG_ARRAYS
 		/*
@@ -335,7 +444,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			/* Resolve the argument class as possible so we can handle common cases fast */
 			t = mini_get_underlying_type (arg_type);
-			klass = mono_class_from_mono_type (t);
+			klass = mono_class_from_mono_type_internal (t);
 			mono_class_init (klass);
 			if (MONO_TYPE_IS_REFERENCE (t))
 				EMIT_NEW_ICONST (cfg, ins, 1);
@@ -349,7 +458,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				g_assert (cfg->gshared);
 
 				/* Have to use the original argument class here */
-				MonoClass *arg_class = mono_class_from_mono_type (arg_type);
+				MonoClass *arg_class = mono_class_from_mono_type_internal (arg_type);
 				int context_used = mini_class_check_context_used (cfg, arg_class);
 
 				/* This returns 1 or 2 */
@@ -862,7 +971,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			g_assert (t->byref);
 			/* t is a byref type, so the reference check is more complicated */
-			is_ref = mini_type_is_reference (m_class_get_byval_arg (mono_class_from_mono_type (t)));
+			is_ref = mini_type_is_reference (m_class_get_byval_arg (mono_class_from_mono_type_internal (t)));
 			if (t->type == MONO_TYPE_I1)
 				opcode = OP_ATOMIC_LOAD_I1;
 			else if (t->type == MONO_TYPE_U1 || t->type == MONO_TYPE_BOOLEAN)
@@ -943,7 +1052,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			gboolean is_ref;
 
 			g_assert (t->byref);
-			is_ref = mini_type_is_reference (m_class_get_byval_arg (mono_class_from_mono_type (t)));
+			is_ref = mini_type_is_reference (m_class_get_byval_arg (mono_class_from_mono_type_internal (t)));
 			if (t->type == MONO_TYPE_I1)
 				opcode = OP_ATOMIC_STORE_I1;
 			else if (t->type == MONO_TYPE_U1 || t->type == MONO_TYPE_BOOLEAN)
@@ -1047,7 +1156,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				mini_set_inline_failure (cfg, "MethodBase:GetCurrentMethod ()");
 			return ins;
 		}
-	} else if (cmethod->klass == mono_defaults.math_class) {
+	} else if (cmethod->klass == mono_class_try_get_math_class ()) {
 		/* 
 		 * There is general branchless code for Min/Max, but it does not work for 
 		 * all inputs:
@@ -1119,6 +1228,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		ins = mini_handle_enum_has_flag (cfg, args [0]->klass, NULL, args [0]->sreg1, args [1]);
 		NULLIFY_INS (args [0]);
 		return ins;
+	} else if (in_corlib &&
+			   !strcmp (cmethod_klass_name_space, "System") &&
+			   (!strcmp (cmethod_klass_name, "Span`1") || !strcmp (cmethod_klass_name, "ReadOnlySpan`1"))) {
+		return emit_span_intrinsics (cfg, cmethod, fsig, args);
 	}
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
@@ -1149,9 +1262,9 @@ emit_array_unsafe_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst 
 	MonoClass *eklass;
 	
 	if (is_set)
-		eklass = mono_class_from_mono_type (fsig->params [2]);
+		eklass = mono_class_from_mono_type_internal (fsig->params [2]);
 	else
-		eklass = mono_class_from_mono_type (fsig->ret);
+		eklass = mono_class_from_mono_type_internal (fsig->ret);
 
 	if (is_set) {
 		return mini_emit_array_store (cfg, eklass, args, FALSE);
@@ -1168,8 +1281,8 @@ is_unsafe_mov_compatible (MonoCompile *cfg, MonoClass *param_klass, MonoClass *r
 	uint32_t align;
 	int param_size, return_size;
 
-	param_klass = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (param_klass)));
-	return_klass = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (return_klass)));
+	param_klass = mono_class_from_mono_type_internal (mini_get_underlying_type (m_class_get_byval_arg (param_klass)));
+	return_klass = mono_class_from_mono_type_internal (mini_get_underlying_type (m_class_get_byval_arg (return_klass)));
 
 	if (cfg->verbose_level > 3)
 		printf ("[UNSAFE-MOV-INTRISIC] %s <- %s\n", m_class_get_name (return_klass), m_class_get_name (param_klass));
@@ -1246,8 +1359,8 @@ is_unsafe_mov_compatible (MonoCompile *cfg, MonoClass *param_klass, MonoClass *r
 static MonoInst*
 emit_array_unsafe_mov (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **args)
 {
-	MonoClass *param_klass = mono_class_from_mono_type (fsig->params [0]);
-	MonoClass *return_klass = mono_class_from_mono_type (fsig->ret);
+	MonoClass *param_klass = mono_class_from_mono_type_internal (fsig->params [0]);
+	MonoClass *return_klass = mono_class_from_mono_type_internal (fsig->ret);
 
 	if (mini_is_gsharedvt_variable_type (fsig->ret))
 		return NULL;
@@ -1275,6 +1388,25 @@ mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoM
 			return emit_array_unsafe_mov (cfg, fsig, args);
 	}
 
+	return NULL;
+}
+
+MonoInst*
+mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
+{
+	MonoClass *klass = field->parent;
+	const char *klass_name_space = m_class_get_name_space (klass);
+	const char *klass_name = m_class_get_name (klass);
+	MonoImage *klass_image = m_class_get_image (klass);
+	gboolean in_corlib = klass_image == mono_defaults.corlib;
+	gboolean is_le;
+	MonoInst *ins;
+
+	if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "BitConverter") && !strcmp (field->name, "IsLittleEndian")) {
+		is_le = (TARGET_BYTE_ORDER == G_LITTLE_ENDIAN);
+		EMIT_NEW_ICONST (cfg, ins, is_le);
+		return ins;
+	}
 	return NULL;
 }
 

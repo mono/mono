@@ -42,6 +42,8 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Runtime.Serialization;
+using Microsoft.Win32.SafeHandles;
+using Mono;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -51,7 +53,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		new internal X509Certificate2Impl Impl {
 			get {
 				var impl2 = base.Impl as X509Certificate2Impl;
-				X509Helper2.ThrowIfContextInvalid (impl2);
+				X509Helper.ThrowIfContextInvalid (impl2);
 				return impl2;
 			}
 		}
@@ -66,61 +68,68 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 (byte[] rawData)
 		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			// MONO: temporary hack until `X509CertificateImplApple` derives from
+			//       `X509Certificate2Impl`.
+			if (rawData != null && rawData.Length != 0) {
+				using (var safePasswordHandle = new SafePasswordHandle ((string)null)) {
+					var impl = X509Helper.Import (rawData, safePasswordHandle, X509KeyStorageFlags.DefaultKeySet);
+					ImportHandle (impl);
+				}
+			}
 		}
 
 		public X509Certificate2 (byte[] rawData, string password)
+			: base (rawData, password)
 		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password)
+			: base (rawData, password)
 		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (rawData, password, keyStorageFlags)
 		{
-			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+			: base (rawData, password, keyStorageFlags)
 		{
-			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName)
+			: base (fileName)
 		{
-			Import (fileName, String.Empty, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password)
+			: base (fileName, password)
 		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password)
+			: base (fileName, password)
 		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+			: base (fileName, password, keyStorageFlags)
 		{
-			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
+			: base (fileName, password, keyStorageFlags)
 		{
-			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
-			: base (X509Helper2.Import (certificate))
+			: base (certificate)
 		{
 		}
 
@@ -146,11 +155,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public string FriendlyName {
 			get {
-				ThrowIfContextInvalid ();
+				ThrowIfInvalid ();
 				return friendlyName;
 			}
 			set {
-				ThrowIfContextInvalid ();
+				ThrowIfInvalid ();
 				friendlyName = value;
 			}
 		}
@@ -164,17 +173,19 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public DateTime NotAfter {
-			get { return Impl.GetValidUntil ().ToLocalTime (); }
+			get { return Impl.NotAfter.ToLocalTime (); }
 		}
 
 		public DateTime NotBefore {
-			get { return Impl.GetValidFrom ().ToLocalTime (); }
+			get { return Impl.NotBefore.ToLocalTime (); }
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
 			get { return Impl.PrivateKey; }
-			set { Impl.PrivateKey = value; }
-		} 
+			set {
+				throw new PlatformNotSupportedException ();
+			}
+		}
 
 		public PublicKey PublicKey {
 			get { return Impl.PublicKey; }
@@ -214,46 +225,41 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Import (byte[] rawData) 
 		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			base.Import (rawData);
 		}
 
-		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			var impl = X509Helper2.Import (rawData, password, keyStorageFlags);
-			ImportHandle (impl);
+			base.Import (rawData, password, keyStorageFlags);
 		}
 
-		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			Import (rawData, (string) null, keyStorageFlags);
+			base.Import (rawData, password, keyStorageFlags);
 		}
 
 		public override void Import (string fileName) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			base.Import (fileName);
 		}
 
-		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, password, keyStorageFlags);
+			base.Import (fileName, password, keyStorageFlags);
 		}
 
-		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = File.ReadAllBytes (fileName);
-			Import (rawData, (string)null, keyStorageFlags);
+			base.Import (fileName, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
 		public override byte[] Export (X509ContentType contentType, string password)
 		{
-			return Impl.Export (contentType, password);
+			X509Helper.ThrowIfContextInvalid (Impl);
+			using (var handle = new SafePasswordHandle (password)) {
+				return Impl.Export (contentType, handle);
+			}
 		}
 
 		public override void Reset () 
@@ -328,49 +334,43 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private static byte[] signedData = new byte[] { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02 };
 
-		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12, Pkcs7 and Unknown")]
+		[MonoTODO ("Detection limited to Cert, Pfx/Pkcs12, Pkcs7 and Unknown")]
 		public static X509ContentType GetCertContentType (byte[] rawData)
 		{
 			if ((rawData == null) || (rawData.Length == 0))
 				throw new ArgumentException ("rawData");
 
-			X509ContentType type = X509ContentType.Unknown;
-			try {
-				ASN1 data = new ASN1 (rawData);
-				if (data.Tag != 0x30) {
-					string msg = Locale.GetText ("Unable to decode certificate.");
-					throw new CryptographicException (msg);
-				}
+			if (rawData[0] == 0x30) {
+				// ASN.1 SEQUENCE
+				try {
+					ASN1 data = new ASN1 (rawData);
 
-				if (data.Count == 0)
-					return type;
+					// SEQUENCE / SEQUENCE / BITSTRING
+					if (data.Count == 3 && data [0].Tag == 0x30 && data [1].Tag == 0x30 && data [2].Tag == 0x03)
+						return X509ContentType.Cert;
 
-				if (data.Count == 3) {
-					switch (data [0].Tag) {
-					case 0x30:
-						// SEQUENCE / SEQUENCE / BITSTRING
-						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x03))
-							type = X509ContentType.Cert;
-						break;
-					case 0x02:
-						// INTEGER / SEQUENCE / SEQUENCE
-						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x30))
-							type = X509ContentType.Pkcs12;
-						// note: Pfx == Pkcs12
-						break;
-					}
+					// INTEGER / SEQUENCE / SEQUENCE
+					if (data.Count == 3 && data [0].Tag == 0x02 && data [1].Tag == 0x30 && data [2].Tag == 0x30)
+						return X509ContentType.Pkcs12; // note: Pfx == Pkcs12
+
+					// check for PKCS#7 (count unknown but greater than 0)
+					// SEQUENCE / OID (signedData)
+					if (data.Count > 0 && data [0].Tag == 0x06 && data [0].CompareValue (signedData))
+						return X509ContentType.Pkcs7;
+					
+					return X509ContentType.Unknown;
 				}
-				// check for PKCS#7 (count unknown but greater than 0)
-				// SEQUENCE / OID (signedData)
-				if ((data [0].Tag == 0x06) && data [0].CompareValue (signedData))
-					type = X509ContentType.Pkcs7;
-			}
-			catch (Exception e) {
-				string msg = Locale.GetText ("Unable to decode certificate.");
-				throw new CryptographicException (msg, e);
+				catch (Exception) {
+					return X509ContentType.Unknown;
+				}
+			} else {
+				string pem = Encoding.ASCII.GetString (rawData);
+				int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
+				if (start >= 0)
+					return X509ContentType.Cert;
 			}
 
-			return type;
+			return X509ContentType.Unknown;
 		}
 
 		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]

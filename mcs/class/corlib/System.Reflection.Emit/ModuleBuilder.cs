@@ -30,7 +30,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Collections;
@@ -43,11 +43,37 @@ using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class ModuleBuilder : _ModuleBuilder
+	{
+		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public class ModuleBuilder : Module, _ModuleBuilder {
+	public partial class ModuleBuilder : Module {
 
 #pragma warning disable 169, 414
 		#region Sync with object-internals.h
@@ -1022,26 +1048,6 @@ namespace System.Reflection.Emit {
 		internal static Guid Mono_GetGuid (ModuleBuilder mb)
 		{
 			return mb.GetModuleVersionId ();
-		}
-
-		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public override	Assembly Assembly {

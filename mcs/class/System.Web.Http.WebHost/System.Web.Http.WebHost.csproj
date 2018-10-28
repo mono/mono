@@ -20,16 +20,16 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../winfx.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS;ASPNETMVC</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;ASPNETMVC</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,15 +44,16 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
+    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\CommonWebApiResources.Designer.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\DictionaryExtensions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\Error.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\HttpMethodHelper.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpers.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\Common\TaskHelpersExtensions.cs" />
-    <Compile Include="..\..\..\external\aspnetwebstack\src\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalConfiguration.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\HttpControllerHandler.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="..\..\..\external\aspnetwebstack\src\System.Web.Http.WebHost\WebHostHttpControllerTypeResolver.cs" />
     <Compile Include="..\..\..\external\aspnetwebstack\src\TransparentCommonAssemblyInfo.cs" />
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -104,4 +106,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

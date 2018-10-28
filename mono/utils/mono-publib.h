@@ -15,8 +15,8 @@
 #define MONO_BEGIN_DECLS  extern "C" {
 #define MONO_END_DECLS    }
 #else
-#define MONO_BEGIN_DECLS
-#define MONO_END_DECLS
+#define MONO_BEGIN_DECLS /* nothing */
+#define MONO_END_DECLS   /* nothing */
 #endif
 
 MONO_BEGIN_DECLS
@@ -59,17 +59,43 @@ typedef unsigned __int64	uint64_t;
 
 #include <stdlib.h>
 
-#if defined(MONO_DLL_EXPORT)
-	#define MONO_API MONO_API_EXPORT
-#elif defined(MONO_DLL_IMPORT)
-	#define MONO_API MONO_API_IMPORT
+#ifdef __cplusplus
+#define MONO_EXTERN_C extern "C"
 #else
-	#define MONO_API
+#define MONO_EXTERN_C /* nothing */
+#endif
+
+#if defined(MONO_DLL_EXPORT)
+	#define MONO_API_NO_EXTERN_C MONO_API_EXPORT
+#elif defined(MONO_DLL_IMPORT)
+	#define MONO_API_NO_EXTERN_C MONO_API_IMPORT
+#else
+	#define MONO_API_NO_EXTERN_C /* nothing  */
+#endif
+
+#define MONO_API MONO_EXTERN_C MONO_API_NO_EXTERN_C
+
+// extern "C" extern int c; // warning: duplicate 'extern' declaration specifier [-Wduplicate-decl-specifier]
+//
+// Therefore, remove extern on functions as always meaningless/redundant,
+// and provide MONO_API_DATA for data, that always has one and only one extern.
+#ifdef __cplusplus
+#define MONO_API_DATA MONO_API
+#else
+#define MONO_API_DATA extern MONO_API
 #endif
 
 typedef int32_t		mono_bool;
 typedef uint8_t		mono_byte;
+typedef mono_byte       MonoBoolean;
+#ifdef _WIN32
+MONO_END_DECLS
+#include <wchar.h>
+typedef wchar_t 	mono_unichar2;
+MONO_BEGIN_DECLS
+#else
 typedef uint16_t	mono_unichar2;
+#endif
 typedef uint32_t	mono_unichar4;
 
 typedef void	(*MonoFunc)	(void* data, void* user_data);

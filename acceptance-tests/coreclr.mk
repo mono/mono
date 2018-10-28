@@ -2162,7 +2162,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleepsilon.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleequals1.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleequals2.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doublegethashcode.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleiconvertibletoboolean.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleiconvertibletobyte.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/double/doubleiconvertibletodatetime.cs	\
@@ -3242,7 +3241,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/security/securityexception/securityexceptionctor3.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/security/securityexception/securityexceptiontostring.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/single/singleepsilon.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/single/singlegethashcode.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/single/singleisinfinity.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/single/singleisnan.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/single/singleisnegativeinfinity.cs	\
@@ -3691,9 +3689,8 @@ CORECLR_STRESSTEST_RUNNER_CS_SRC=	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/RFLogging.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/DetourHelpers.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/LoaderClass.cs	\
-	GCStressTests/AssemblyLoadContext.cs	\
-	GCStressTests/AssemblyExtensions.cs
-
+	GCStressTests/AssemblyLoadContext.cs
+	
 CORECLR_TESTLIBRARY_CS_SRC = 	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/TestFramework.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Utilities.cs	\

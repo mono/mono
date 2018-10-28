@@ -119,8 +119,8 @@ BOOL STDMETHODCALLTYPE _CorDllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpRes
 		 * loader trampolines should be used and assembly loading should
 		 * probably be delayed until the first call to an exported function.
 		 */
-		if (image->tables [MONO_TABLE_ASSEMBLY].rows && ((MonoCLIImageInfo*) image->image_info)->cli_cli_header.ch_vtable_fixups.rva)
-			assembly = mono_assembly_open_predicate (file_name, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+		if (image->tables [MONO_TABLE_ASSEMBLY].rows && image->image_info->cli_cli_header.ch_vtable_fixups.rva)
+			assembly = mono_assembly_open_predicate (file_name, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 
 		g_free (file_name);
 		break;
@@ -171,7 +171,7 @@ __int32 STDMETHODCALLTYPE _CorExeMain(void)
 		ExitProcess (1);
 	}
 
-	assembly = mono_assembly_open_predicate (file_name, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+	assembly = mono_assembly_open_predicate (file_name, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 	mono_close_exe_image ();
 	if (!assembly) {
 		g_free (file_name);
@@ -511,13 +511,13 @@ typedef struct _EXPORT_FIXUP
 
 /* Has to be binary ordered. */
 static const EXPORT_FIXUP ExportFixups[] = {
-	{"CorBindToRuntime", {&CorBindToRuntime}},
-	{"CorBindToRuntimeEx", {&CorBindToRuntimeEx}},
-	{"CorExitProcess", {&CorExitProcess}},
-	{"_CorDllMain", {&_CorDllMain}},
-	{"_CorExeMain", {&_CorExeMain}},
-	{"_CorImageUnloading", {&_CorImageUnloading}},
-	{"_CorValidateImage", {&_CorValidateImage}},
+	{"CorBindToRuntime", {(PVOID)&CorBindToRuntime}},
+	{"CorBindToRuntimeEx", {(PVOID)&CorBindToRuntimeEx}},
+	{"CorExitProcess", {(PVOID)&CorExitProcess}},
+	{"_CorDllMain", {(PVOID)&_CorDllMain}},
+	{"_CorExeMain", {(PVOID)&_CorExeMain}},
+	{"_CorImageUnloading", {(PVOID)&_CorImageUnloading}},
+	{"_CorValidateImage", {(PVOID)&_CorValidateImage}},
 	{NULL, {NULL}}
 };
 
@@ -827,7 +827,7 @@ STDAPI MonoFixupExe(HMODULE ModuleHandle)
 					else
 					{
 						IMAGE_IMPORT_BY_NAME* ImportByName = (IMAGE_IMPORT_BY_NAME*)((DWORD_PTR)DosHeader + ImportThunkData->u1.AddressOfData);
-						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, ImportByName->Name);
+						ProcAddress = (DWORD_PTR)GetProcAddress(ImportModuleHandle, (PCSTR)ImportByName->Name);
 					}
 					if (ProcAddress == 0)
 						return E_FAIL;
@@ -893,7 +893,7 @@ mono_coree_set_act_ctx (const char* file_name)
 	act_ctx.dwFlags = ACTCTX_FLAG_SET_PROCESS_DEFAULT | ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID | ACTCTX_FLAG_RESOURCE_NAME_VALID | ACTCTX_FLAG_APPLICATION_NAME_VALID;
 	act_ctx.lpSource = full_path_utf16;
 	act_ctx.lpAssemblyDirectory = dir_name_utf16;
-	act_ctx.lpResourceName = MAKEINTRESOURCE (CREATEPROCESS_MANIFEST_RESOURCE_ID);
+	act_ctx.lpResourceName = CREATEPROCESS_MANIFEST_RESOURCE_ID;
 	act_ctx.lpApplicationName = base_name_utf16;
 
 	handle = CreateActCtx_proc (&act_ctx);

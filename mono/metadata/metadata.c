@@ -59,6 +59,9 @@ static void free_inflated_method (MonoMethodInflated *method);
 static void free_inflated_signature (MonoInflatedMethodSignature *sig);
 static void mono_metadata_field_info_full (MonoImage *meta, guint32 index, guint32 *offset, guint32 *rva, MonoMarshalSpec **marshal_spec, gboolean alloc_from_image);
 
+static MonoType* mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter);
+
+
 /*
  * This enumeration is used to describe the data types in the metadata
  * tables
@@ -494,7 +497,7 @@ table_description [] = {
 	CUSTOMDEBUGINFORMATION_SCHEMA_OFFSET
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -507,20 +510,10 @@ static const struct msgstr_t {
 #undef TABLEDEF
 };
 static const gint16 tableidx [] = {
-#define TABLEDEF(a,b) [a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define TABLEDEF(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 };
-
-#else
-#define TABLEDEF(a,b) b,
-static const char* const
-mono_tables_names [] = {
-#include "mono/cil/tables.def"
-	NULL
-};
-
-#endif
 
 /* If TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
  * that the public key token, culture and version of a candidate assembly matches
@@ -548,11 +541,7 @@ mono_meta_table_name (int table)
 	if ((table < 0) || (table > MONO_TABLE_LAST))
 		return "";
 
-#ifdef HAVE_ARRAY_ELEM_INIT
 	return (const char*)&tablestr + tableidx [table];
-#else
-	return mono_tables_names [table];
-#endif
 }
 
 /* The guy who wrote the spec for this should not be allowed near a
@@ -1242,8 +1231,8 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
 {
 	guint32 bitfield = t->size_bitfield;
 	int i;
-	register const char *data; 
-	register int n;
+	const char *data;
+	int n;
 	
 	g_assert (idx < t->rows);
 	g_assert (col < mono_metadata_table_count (bitfield));
@@ -1516,7 +1505,7 @@ mono_metadata_parse_array_internal (MonoImage *m, MonoGenericContainer *containe
 		return NULL;
 
 	array = transient ? (MonoArrayType *)g_malloc0 (sizeof (MonoArrayType)) : (MonoArrayType *)mono_image_alloc0 (m, sizeof (MonoArrayType));
-	array->eklass = mono_class_from_mono_type (etype);
+	array->eklass = mono_class_from_mono_type_internal (etype);
 	array->rank = mono_metadata_decode_value (ptr, &ptr);
 
 	array->numsizes = mono_metadata_decode_value (ptr, &ptr);
@@ -2498,8 +2487,8 @@ retry:
 	case MONO_TYPE_MVAR:
 		return image == mono_get_image_for_generic_param (type->data.generic_param);
 	default:
-		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type () */
-		return image == m_class_get_image (mono_class_from_mono_type (type));
+		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type_internal () */
+		return image == m_class_get_image (mono_class_from_mono_type_internal (type));
 	}
 }
 
@@ -2929,7 +2918,7 @@ collect_method_images (MonoMethodInflated *method, CollectData *data)
 	 * Dynamic assemblies have no references, so the images they depend on can be unloaded before them.
 	 */
 	if (image_is_dynamic (m_class_get_image (m->klass)))
-		collect_signature_images (mono_method_signature (m), data);
+		collect_signature_images (mono_method_signature_internal (m), data);
 }
 
 static void
@@ -2961,7 +2950,7 @@ retry:
 	}
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE:
-		add_image (m_class_get_image (mono_class_from_mono_type (type)), data);
+		add_image (m_class_get_image (mono_class_from_mono_type_internal (type)), data);
 		break;
 	default:
 		add_image (mono_defaults.corlib, data);
@@ -3008,7 +2997,7 @@ inflated_method_in_image (gpointer key, gpointer value, gpointer data)
 	// https://bugzilla.novell.com/show_bug.cgi?id=458168
 	g_assert (m_class_get_image (method->declaring->klass) == image ||
 		(method->context.class_inst && ginst_in_image (method->context.class_inst, image)) ||
-			  (method->context.method_inst && ginst_in_image (method->context.method_inst, image)) || (((MonoMethod*)method)->signature && signature_in_image (mono_method_signature ((MonoMethod*)method), image)));
+			  (method->context.method_inst && ginst_in_image (method->context.method_inst, image)) || (((MonoMethod*)method)->signature && signature_in_image (mono_method_signature_internal ((MonoMethod*)method), image)));
 
 	return TRUE;
 }
@@ -3046,7 +3035,7 @@ check_gmethod (gpointer key, gpointer value, gpointer data)
 	if (method->context.method_inst)
 		g_assert (!ginst_in_image (method->context.method_inst, image));
 	if (((MonoMethod*)method)->signature)
-		g_assert (!signature_in_image (mono_method_signature ((MonoMethod*)method), image));
+		g_assert (!signature_in_image (mono_method_signature_internal ((MonoMethod*)method), image));
 }
 
 /*
@@ -3395,7 +3384,7 @@ mono_metadata_lookup_generic_class (MonoClass *container_class, MonoGenericInst 
 
 	mono_image_set_lock (set);
 
-	MonoGenericClass *gclass2 = mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
+	MonoGenericClass *gclass2 = (MonoGenericClass*)mono_conc_hashtable_insert (set->gclass_cache, gclass, gclass);
 	if (!gclass2)
 		gclass2 = gclass;
 
@@ -3496,7 +3485,7 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 	if (gtype == NULL)
 		return FALSE;
 
-	gklass = mono_class_from_mono_type (gtype);
+	gklass = mono_class_from_mono_type_internal (gtype);
 	if (!mono_class_is_gtd (gklass)) {
 		mono_error_set_bad_image (error, m, "Generic instance with non-generic definition");
 		return FALSE;
@@ -3580,11 +3569,15 @@ lookup_anon_gparam (MonoImage *image, MonoGenericContainer *container, gint32 pa
 			return NULL;
 		return &cache[param_num];
 	} else {
-		MonoGenericParam key = { .owner = container, .num = param_num, .gshared_constraint = NULL };
+		MonoGenericParam key;
+		memset (&key, 0, sizeof (key));
+		key.owner = container;
+		key.num = param_num;
+		key.gshared_constraint = NULL;
 		MonoConcurrentHashTable *cache = is_mvar ? image->mvar_gparam_cache : image->var_gparam_cache;
 		if (!cache)
 			return NULL;
-		return mono_conc_hashtable_lookup (cache, &key);
+		return (MonoGenericParam*)mono_conc_hashtable_lookup (cache, &key);
 	}
 }
 
@@ -3596,7 +3589,7 @@ publish_anon_gparam_fast (MonoImage *image, MonoGenericContainer *container, gin
 	if (!*cache) {
 		mono_image_lock (image);
 		if (!*cache) {
-			*cache = mono_image_alloc0 (image, sizeof (MonoGenericParam) * FAST_GPARAM_CACHE_SIZE);
+			*cache = (MonoGenericParam*)mono_image_alloc0 (image, sizeof (MonoGenericParam) * FAST_GPARAM_CACHE_SIZE);
 			for (gint32 i = 0; i < FAST_GPARAM_CACHE_SIZE; ++i) {
 				MonoGenericParam *param = &(*cache)[i];
 				param->owner = container;
@@ -3628,7 +3621,7 @@ publish_anon_gparam_slow (MonoImage *image, MonoGenericParam *gparam)
 		}
 		mono_image_unlock (image);
 	}
-	MonoGenericParam *other = mono_conc_hashtable_insert (*cache, gparam, gparam);
+	MonoGenericParam *other = (MonoGenericParam*)mono_conc_hashtable_insert (*cache, gparam, gparam);
 	// If another thread published first return their param, otherwise return ours.
 	return other ? other : gparam;
 }
@@ -3656,7 +3649,7 @@ mono_metadata_create_anon_gparam (MonoImage *image, gint32 param_num, gboolean i
 		// Create a candidate generic param and try to insert it in the cache.
 		// If multiple threads both try to publish the same param, all but one
 		// will leak, but that's okay.
-		gparam = mono_image_alloc0 (image, sizeof (MonoGenericParam));
+		gparam = (MonoGenericParam*)mono_image_alloc0 (image, sizeof (MonoGenericParam));
 		gparam->owner = container;
 		gparam->num = param_num;
 
@@ -3881,7 +3874,7 @@ do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoGenericContainer 
 		if (!etype)
 			return FALSE;
 
-		type->data.klass = mono_class_from_mono_type (etype);
+		type->data.klass = mono_class_from_mono_type_internal (etype);
 
 		if (transient)
 			mono_metadata_free_type (etype);
@@ -5097,7 +5090,7 @@ mono_type_size (MonoType *t, int *align)
 		return MONO_ABI_SIZEOF (gpointer);
 	case MONO_TYPE_VALUETYPE: {
 		if (m_class_is_enumtype (t->data.klass))
-			return mono_type_size (mono_class_enum_basetype (t->data.klass), align);
+			return mono_type_size (mono_class_enum_basetype_internal (t->data.klass), align);
 		else
 			return mono_class_value_size (t->data.klass, (guint32*)align);
 	}
@@ -5120,9 +5113,9 @@ mono_type_size (MonoType *t, int *align)
 
 		if (m_class_is_valuetype (container_class)) {
 			if (m_class_is_enumtype (container_class))
-				return mono_type_size (mono_class_enum_basetype (container_class), align);
+				return mono_type_size (mono_class_enum_basetype_internal (container_class), align);
 			else
-				return mono_class_value_size (mono_class_from_mono_type (t), (guint32*)align);
+				return mono_class_value_size (mono_class_from_mono_type_internal (t), (guint32*)align);
 		} else {
 			*align = MONO_ABI_ALIGNOF (gpointer);
 			return MONO_ABI_SIZEOF (gpointer);
@@ -5161,10 +5154,10 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open)
 {
 	int tmp;
 	MonoTypeEnum simple_type;
-#if SIZEOF_VOID_P == SIZEOF_REGISTER
+#if TARGET_SIZEOF_VOID_P == SIZEOF_REGISTER
 	int stack_slot_size = MONO_ABI_SIZEOF (gpointer);
 	int stack_slot_align = MONO_ABI_ALIGNOF (gpointer);
-#elif SIZEOF_VOID_P < SIZEOF_REGISTER
+#elif TARGET_SIZEOF_VOID_P < SIZEOF_REGISTER
 	int stack_slot_size = SIZEOF_REGISTER;
 	int stack_slot_align = SIZEOF_REGISTER;
 #endif
@@ -5227,7 +5220,7 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open)
 		guint32 size;
 
 		if (m_class_is_enumtype (t->data.klass))
-			return mono_type_stack_size_internal (mono_class_enum_basetype (t->data.klass), align, allow_open);
+			return mono_type_stack_size_internal (mono_class_enum_basetype_internal (t->data.klass), align, allow_open);
 		else {
 			size = mono_class_value_size (t->data.klass, (guint32*)align);
 
@@ -5249,9 +5242,9 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open)
 
 		if (m_class_is_valuetype (container_class)) {
 			if (m_class_is_enumtype (container_class))
-				return mono_type_stack_size_internal (mono_class_enum_basetype (container_class), align, allow_open);
+				return mono_type_stack_size_internal (mono_class_enum_basetype_internal (container_class), align, allow_open);
 			else {
-				guint32 size = mono_class_value_size (mono_class_from_mono_type (t), (guint32*)align);
+				guint32 size = mono_class_value_size (mono_class_from_mono_type_internal (t), (guint32*)align);
 
 				*align = *align + stack_slot_align - 1;
 				*align &= ~(stack_slot_align - 1);
@@ -5530,10 +5523,13 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 	if (t1->type != t2->type || t1->byref != t2->byref)
 		return FALSE;
 
-	if (t1->has_cmods != t2->has_cmods)
-		return FALSE;
+	gboolean cmod_reject = FALSE;
 
-	if (t1->has_cmods) {
+	gboolean is_pointer = (t1->type == MONO_TYPE_PTR);
+
+	if (t1->has_cmods != t2->has_cmods)
+		cmod_reject = TRUE;
+	else if (t1->has_cmods && t2->has_cmods) {
 		MonoCustomModContainer *cm1 = mono_type_get_cmods (t1);
 		MonoCustomModContainer *cm2 = mono_type_get_cmods (t2);
 
@@ -5544,12 +5540,13 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		// The CLI itself shall treat required and optional modifiers in the same manner.
 		// Two signatures that differ only by the addition of a custom modifier 
 		// (required or optional) shall not be considered to match.
-		if (cm1->count != cm2->count)
-			return FALSE;
-
-		for (int i=0; i < cm1->count; i++) {
-			if (cm1->modifiers[i].required != cm2->modifiers[i].required)
-				return FALSE;
+		if (cm1->count != cm2->count) {
+			cmod_reject = TRUE;
+		} else for (int i=0; i < cm1->count; i++) {
+			if (cm1->modifiers[i].required != cm2->modifiers[i].required) {
+				cmod_reject = TRUE;
+				break;
+			}
 
 			// FIXME: propagate error to caller
 			ERROR_DECL (error);
@@ -5558,10 +5555,14 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 			MonoClass *c2 = mono_class_get_checked (cm2->image, cm2->modifiers [i].token, error);
 			mono_error_assert_ok (error);
 
-			if (c1 != c2)
-				return FALSE;
+			if (c1 != c2) {
+				cmod_reject = TRUE;
+				break;
+			}
 		}
 	}
+
+	gboolean result = FALSE;
 
 	switch (t1->type) {
 	case MONO_TYPE_VOID:
@@ -5582,34 +5583,46 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 	case MONO_TYPE_U:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_TYPEDBYREF:
-		return TRUE;
+		result = TRUE;
+		break;
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_SZARRAY:
-		return mono_metadata_class_equal (t1->data.klass, t2->data.klass, signature_only);
+		result = mono_metadata_class_equal (t1->data.klass, t2->data.klass, signature_only);
+		break;
 	case MONO_TYPE_PTR:
-		return do_mono_metadata_type_equal (t1->data.type, t2->data.type, signature_only);
+		result = do_mono_metadata_type_equal (t1->data.type, t2->data.type, signature_only);
+		break;
 	case MONO_TYPE_ARRAY:
 		if (t1->data.array->rank != t2->data.array->rank)
-			return FALSE;
-		return mono_metadata_class_equal (t1->data.array->eklass, t2->data.array->eklass, signature_only);
+			result = FALSE;
+		else
+			result = mono_metadata_class_equal (t1->data.array->eklass, t2->data.array->eklass, signature_only);
+		break;
 	case MONO_TYPE_GENERICINST:
-		return _mono_metadata_generic_class_equal (
+		result = _mono_metadata_generic_class_equal (
 			t1->data.generic_class, t2->data.generic_class, signature_only);
+		break;
 	case MONO_TYPE_VAR:
-		return mono_metadata_generic_param_equal_internal (
+		result = mono_metadata_generic_param_equal_internal (
 			t1->data.generic_param, t2->data.generic_param, signature_only);
+		break;
 	case MONO_TYPE_MVAR:
-		return mono_metadata_generic_param_equal_internal (
+		result = mono_metadata_generic_param_equal_internal (
 			t1->data.generic_param, t2->data.generic_param, signature_only);
+		break;
 	case MONO_TYPE_FNPTR:
-		return mono_metadata_fnptr_equal (t1->data.method, t2->data.method, signature_only);
+		result = mono_metadata_fnptr_equal (t1->data.method, t2->data.method, signature_only);
+		break;
 	default:
 		g_error ("implement type compare for %0x!", t1->type);
 		return FALSE;
 	}
 
-	return FALSE;
+	if (cmod_reject && is_pointer)
+		return FALSE;
+
+	return result;
 }
 
 /**
@@ -5692,12 +5705,27 @@ mono_metadata_signature_equal (MonoMethodSignature *sig1, MonoMethodSignature *s
 MonoType *
 mono_metadata_type_dup (MonoImage *image, const MonoType *o)
 {
+	return mono_metadata_type_dup_with_cmods (image, o, o);
+}
+
+/**
+ * Works the same way as mono_metadata_type_dup but pick cmods from @cmods_source
+ */
+MonoType *
+mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const MonoType *cmods_source)
+{
 	MonoType *r = NULL;
-	size_t sizeof_o = mono_sizeof_type (o);
+	size_t sizeof_o = mono_sizeof_type (cmods_source);
 
 	r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_o) : (MonoType *)g_malloc (sizeof_o);
 
-	memcpy (r, o, sizeof_o);
+	if (cmods_source->has_cmods) {
+		g_assert (!image || image == mono_type_get_cmods (cmods_source)->image);
+		memcpy (r, cmods_source, sizeof_o);
+	}
+
+	memcpy (r, o, sizeof (MonoType));
+	r->has_cmods = cmods_source->has_cmods;
 
 	if (o->type == MONO_TYPE_PTR) {
 		r->data.type = mono_metadata_type_dup (image, o->data.type);
@@ -6136,7 +6164,7 @@ mono_type_create_from_typespec_checked (MonoImage *image, guint32 type_spec, Mon
 	mono_image_lock (image);
 
 	/* We might leak some data in the image mempool if found */
-	type = mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
+	type = (MonoType*)mono_conc_hashtable_insert (image->typespec_cache, GUINT_TO_POINTER (type_spec), type2);
 	if (!type)
 		type = type2;
 
@@ -6257,6 +6285,9 @@ mono_metadata_parse_marshal_spec_full (MonoImage *image, MonoImage *parent_image
 void 
 mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
 {
+	if (!spec)
+		return;
+
 	if (spec->native == MONO_NATIVE_CUSTOM) {
 		g_free (spec->data.custom_data.custom_name);
 		g_free (spec->data.custom_data.cookie);
@@ -6271,7 +6302,7 @@ mono_metadata_free_marshal_spec (MonoMarshalSpec *spec)
  * \returns A \c MonoMarshalNative enumeration value (<code>MONO_NATIVE_</code>) value
  * describing the underlying native reprensetation of the type.
  */
-guint32
+guint32 // FIXMEcxx MonoMarshalNative
 mono_type_to_unmanaged (MonoType *type, MonoMarshalSpec *mspec, gboolean as_field,
 			gboolean unicode, MonoMarshalConv *conv) 
 {
@@ -6372,10 +6403,10 @@ handle_enum:
 	case MONO_TYPE_PTR: return MONO_NATIVE_UINT;
 	case MONO_TYPE_VALUETYPE: /*FIXME*/
 		if (m_class_is_enumtype (type->data.klass)) {
-			t = mono_class_enum_basetype (type->data.klass)->type;
+			t = mono_class_enum_basetype_internal (type->data.klass)->type;
 			goto handle_enum;
 		}
-		if (type->data.klass == mono_defaults.handleref_class){
+		if (type->data.klass == mono_class_try_get_handleref_class ()){
 			*conv = MONO_MARSHAL_CONV_HANDLEREF;
 			return MONO_NATIVE_INT;
 		}
@@ -6774,9 +6805,9 @@ mono_metadata_load_generic_params (MonoImage *image, guint32 token, MonoGenericC
 		container->owner.image = image;
 	} else {
 		if (is_method)
-			container->owner.method = real_owner;
+			container->owner.method = (MonoMethod*)real_owner;
 		else
-			container->owner.klass = real_owner;
+			container->owner.klass = (MonoClass*)real_owner;
 	}
 	do {
 		n++;
@@ -6850,10 +6881,14 @@ mono_get_shared_generic_inst (MonoGenericContainer *container)
  * \returns TRUE if \p type represents a type passed by reference,
  * FALSE otherwise.
  */
-gboolean
+mono_bool
 mono_type_is_byref (MonoType *type)
 {
-	return type->byref;
+	mono_bool result;
+	MONO_ENTER_GC_UNSAFE;
+	result = type->byref;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -6886,7 +6921,7 @@ mono_type_get_signature (MonoType *type)
  * mono_type_get_class:
  * \param type the \c MonoType operated on
  * It is only valid to call this function if \p type is a \c MONO_TYPE_CLASS or a
- * \c MONO_TYPE_VALUETYPE . For more general functionality, use \c mono_class_from_mono_type,
+ * \c MONO_TYPE_VALUETYPE . For more general functionality, use \c mono_class_from_mono_type_internal,
  * instead.
  * \returns the \c MonoClass pointer that describes the class that \p type represents.
  */
@@ -7006,7 +7041,11 @@ mono_type_is_generic_parameter (MonoType *type)
 MonoType*
 mono_signature_get_return_type (MonoMethodSignature *sig)
 {
-	return sig->ret;
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = sig->ret;
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -7022,6 +7061,16 @@ mono_signature_get_return_type (MonoMethodSignature *sig)
  */
 MonoType*
 mono_signature_get_params (MonoMethodSignature *sig, gpointer *iter)
+{
+	MonoType *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_signature_get_params_internal (sig, iter);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+MonoType*
+mono_signature_get_params_internal (MonoMethodSignature *sig, gpointer *iter)
 {
 	MonoType** type;
 	if (!iter)

@@ -465,7 +465,7 @@ mono_ssa_compute (MonoCompile *cfg)
 
 	/* Renaming phase */
 
-	stack = (MonoInst **)alloca (sizeof (MonoInst *) * cfg->num_varinfo);
+	stack = g_newa (MonoInst*, cfg->num_varinfo);
 	memset (stack, 0, sizeof (MonoInst *) * cfg->num_varinfo);
 
 	lvreg_stack = g_new0 (guint32, cfg->next_vreg);
@@ -1509,7 +1509,7 @@ mono_ssa_loop_invariant_code_motion (MonoCompile *cfg)
 				MONO_REMOVE_INS (bb, ins);
 				mono_bblock_insert_before_ins (idom, idom->last_ins, ins);
 				if (ins->opcode == OP_LDLEN || ins->opcode == OP_STRLEN)
-					idom->has_array_access = TRUE;
+					idom->needs_decompose = TRUE;
 			}
 		}
 	}

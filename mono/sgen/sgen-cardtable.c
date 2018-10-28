@@ -133,7 +133,7 @@ sgen_card_table_wbarrier_generic_nostore (gpointer ptr)
 }
 
 static void
-sgen_card_table_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+sgen_card_table_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	GCObject **dest = (GCObject **)_dest;
 	GCObject **src = (GCObject **)_src;
@@ -468,6 +468,26 @@ sgen_get_card_table_configuration (int *shift_bits, gpointer *mask)
 	*mask = (gpointer)CARD_MASK;
 #else
 	*mask = NULL;
+#endif
+
+	return sgen_cardtable;
+#endif
+}
+
+guint8*
+sgen_get_target_card_table_configuration (int *shift_bits, target_mgreg_t *mask)
+{
+#ifndef MANAGED_WBARRIER
+	return NULL;
+#else
+	if (!sgen_cardtable)
+		return NULL;
+
+	*shift_bits = CARD_BITS;
+#ifdef SGEN_TARGET_HAVE_OVERLAPPING_CARDS
+	*mask = CARD_MASK;
+#else
+	*mask = 0;
 #endif
 
 	return sgen_cardtable;

@@ -35,6 +35,8 @@ using NUnit.Framework;
 using System.IO;
 using Microsoft.Build.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class Items {
@@ -722,9 +724,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		public void TestEmptyItemsWithBatching ()
 		{
 			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
-			<UsingTask TaskName='TestTask_TaskItem' AssemblyFile='Test\resources\TestTasks.dll' />
-			<UsingTask TaskName='TestTask_TaskItems' AssemblyFile='Test\resources\TestTasks.dll' />
+			<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
+			<UsingTask TaskName='TestTask_TaskItem' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
+			<UsingTask TaskName='TestTask_TaskItems' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 	<Target Name=""1"">
 		<StringTestTask Property=""%(Item4.Identity)"">
 			<Output TaskParameter=""OutputString"" PropertyName=""OutputString""/>
@@ -808,7 +810,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>@(A)g</B>
@@ -875,7 +877,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<ItemGroup>
 						<A Include='A;B;C' />
 					</ItemGroup>
@@ -901,7 +903,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
@@ -946,7 +948,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
@@ -995,7 +997,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
@@ -1041,7 +1043,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
@@ -1192,7 +1194,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		{
 			return @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
@@ -1236,7 +1238,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<ItemGroup>
 						<A Include='A;B;C' />
 					</ItemGroup>
@@ -1260,7 +1262,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<ItemGroup>
 						<A Include='A;B;C' />
 					</ItemGroup>
@@ -1284,7 +1286,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<ItemGroup>
 						<A Include='A;B;C' />
 					</ItemGroup>
@@ -1311,7 +1313,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<ItemGroup>
 						<A Include='A;B;C' />
 						<B Include='Foo;' />

@@ -2,7 +2,7 @@
 Assembly/AssemblyInfo.cs
 corefx/SR.cs
 
-../../../external/corefx/src/Common/src/System/IO/StringBuilderCache.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/StringBuilderCache.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs

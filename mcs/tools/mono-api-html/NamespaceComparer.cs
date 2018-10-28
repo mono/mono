@@ -30,15 +30,16 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class NamespaceComparer : Comparer {
+	class NamespaceComparer : Comparer {
 
 		ClassComparer comparer;
 
-		public NamespaceComparer ()
+		public NamespaceComparer (State state)
+			: base (state)
 		{
-			comparer =  new ClassComparer ();
+			comparer =  new ClassComparer (state);
 		}
 
 		public void Compare (XElement source, XElement target)

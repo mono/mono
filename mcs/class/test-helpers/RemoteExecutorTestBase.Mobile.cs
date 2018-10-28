@@ -4,7 +4,7 @@
 
 using System.Reflection;
 using System.Text;
-using Xunit;
+using System.IO;
 
 namespace System.Diagnostics
 {

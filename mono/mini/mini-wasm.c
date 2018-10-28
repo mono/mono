@@ -3,6 +3,8 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata.h>
+#include <mono/metadata/loader-internals.h>
+#include <mono/metadata/icall-internals.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/mini/aot-runtime.h>
 #include <mono/mini/seq-points.h>
@@ -10,34 +12,391 @@
 //XXX This is dirty, extend ee.h to support extracting info from MonoInterpFrameHandle
 #include <mono/mini/interp/interp-internals.h>
 
-#include <emscripten.h>
+#ifndef DISABLE_JIT
 
+#include "ir-emit.h"
+#include "cpu-wasm.h"
 
-static int log_level = 1;
+ //FIXME figure out if we need to distingush between i,l,f,d types
+typedef enum {
+	ArgOnStack,
+	ArgValuetypeAddrOnStack,
+	ArgGsharedVTOnStack,
+	ArgValuetypeAddrInIReg,
+	ArgInvalid,
+} ArgStorage;
 
-#define DEBUG_PRINTF(level, ...) do { if (G_UNLIKELY ((level) <= log_level)) { fprintf (stdout, __VA_ARGS__); } } while (0)
+typedef struct {
+	ArgStorage storage : 8;
+} ArgInfo;
 
-//functions exported to be used by JS
-EMSCRIPTEN_KEEPALIVE int mono_wasm_set_breakpoint (const char *assembly_name, int method_token, int il_offset);
-EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
-EMSCRIPTEN_KEEPALIVE int mono_wasm_current_bp_id (void);
-EMSCRIPTEN_KEEPALIVE void mono_wasm_enum_frames (void);
-EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
+struct CallInfo {
+	int nargs;
+	gboolean gsharedvt;
 
-//JS functions imported that we use
-extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
-extern void mono_wasm_fire_bp (void);
-extern void mono_set_timeout (int t, int d);
-extern void mono_wasm_add_bool_var (gint8);
-extern void mono_wasm_add_int_var (gint32);
-extern void mono_wasm_add_long_var (gint64);
-extern void mono_wasm_add_float_var (float);
-extern void mono_wasm_add_double_var (double);
-extern void mono_wasm_add_string_var (const char*);
+	ArgInfo ret;
+	ArgInfo args [1];
+};
 
+static ArgStorage
+get_storage (MonoType *type, gboolean is_return)
+{
+	switch (type->type) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+	case MONO_TYPE_OBJECT:
+		return ArgOnStack;
+
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+		return ArgOnStack;
+
+	case MONO_TYPE_R4:
+		return ArgOnStack;
+
+	case MONO_TYPE_R8:
+		return ArgOnStack;
+
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (type))
+			return ArgOnStack;
+
+		if (mini_is_gsharedvt_type (type)) {
+			return ArgGsharedVTOnStack;
+		}
+		/* fall through */
+	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_TYPEDBYREF: {
+		return is_return ? ArgValuetypeAddrInIReg : ArgValuetypeAddrOnStack;
+		break;
+	}
+	case MONO_TYPE_VAR:
+	case MONO_TYPE_MVAR:
+		g_assert (mini_is_gsharedvt_type (type));
+		return ArgGsharedVTOnStack;
+		break;
+	case MONO_TYPE_VOID:
+		g_assert (is_return);
+		break;
+	default:
+		g_error ("Can't handle as return value 0x%x", type->type);
+	}
+	return ArgInvalid;
+}
+
+static CallInfo*
+get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
+{
+	int n = sig->hasthis + sig->param_count;
+	CallInfo *cinfo;
+
+	if (mp)
+		cinfo = (CallInfo *)mono_mempool_alloc0 (mp, sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+	else
+		cinfo = (CallInfo *)g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+
+	cinfo->nargs = n;
+	cinfo->gsharedvt = mini_is_gsharedvt_variable_signature (sig);
+
+	/* return value */
+	cinfo->ret.storage = get_storage (mini_get_underlying_type (sig->ret), TRUE);
+
+	if (sig->hasthis)
+		cinfo->args [0].storage = ArgOnStack;
+
+	// not supported
+	g_assert (sig->call_convention != MONO_CALL_VARARG);
+
+	int i;
+	for (i = 0; i < sig->param_count; ++i)
+		cinfo->args [i + sig->hasthis].storage = get_storage (mini_get_underlying_type (sig->params [i]), FALSE);
+
+	return cinfo;
+}
+
+gboolean
+mono_arch_have_fast_tls (void)
+{
+	return FALSE;
+}
+
+guint32
+mono_arch_get_patch_offset (guint8 *code)
+{
+	g_error ("mono_arch_get_patch_offset");
+	return 0;
+}
+gpointer
+mono_arch_ip_from_context (void *sigctx)
+{
+	g_error ("mono_arch_ip_from_context");
+}
+
+gboolean
+mono_arch_is_inst_imm (int opcode, int imm_opcode, gint64 imm)
+{
+	return TRUE;
+}
+
+void
+mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+gboolean
+mono_arch_opcode_supported (int opcode)
+{
+	return FALSE;
+}
+
+void
+mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	g_error ("mono_arch_output_basic_block");
+}
+
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+guint32
+mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
+{
+	return 0;
+}
+
+GList *
+mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
+{
+	g_error ("mono_arch_get_allocatable_int_vars");
+}
+
+GList *
+mono_arch_get_global_int_regs (MonoCompile *cfg)
+{
+	g_error ("mono_arch_get_global_int_regs");
+}
+
+void
+mono_arch_allocate_vars (MonoCompile *cfg)
+{
+	g_error ("mono_arch_allocate_vars");
+}
+
+void
+mono_arch_create_vars (MonoCompile *cfg)
+{
+	MonoMethodSignature *sig;
+	CallInfo *cinfo;
+	MonoType *sig_ret;
+
+	sig = mono_method_signature_internal (cfg->method);
+
+	if (!cfg->arch.cinfo)
+		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
+	cinfo = (CallInfo *)cfg->arch.cinfo;
+
+	// if (cinfo->ret.storage == ArgValuetypeInReg)
+	// 	cfg->ret_var_is_local = TRUE;
+
+	sig_ret = mini_get_underlying_type (sig->ret);
+	if (cinfo->ret.storage == ArgValuetypeAddrInIReg || cinfo->ret.storage == ArgGsharedVTOnStack) {
+		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr = ");
+			mono_print_ins (cfg->vret_addr);
+		}
+	}
+
+	if (cfg->gen_sdb_seq_points)
+		g_error ("gen_sdb_seq_points not supported");
+
+	if (cfg->method->save_lmf)
+		cfg->create_lmf_var = TRUE;
+
+	if (cfg->method->save_lmf)
+		cfg->lmf_ir = TRUE;
+}
+
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
+{
+	g_error ("mono_arch_emit_call");
+}
+
+void
+mono_arch_emit_epilog (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_epilog");
+}
+
+void
+mono_arch_emit_exceptions (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_exceptions");
+}
+
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	return NULL;
+}
+
+void
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
+{
+	g_error ("mono_arch_emit_outarg_vt");
+}
+
+guint8 *
+mono_arch_emit_prolog (MonoCompile *cfg)
+{
+	g_error ("mono_arch_emit_prolog");
+}
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+	MonoType *ret = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
+
+	if (!ret->byref) {
+		if (ret->type == MONO_TYPE_R4) {
+			MONO_EMIT_NEW_UNALU (cfg, cfg->r4fp ? OP_RMOVE : OP_FMOVE, cfg->ret->dreg, val->dreg);
+			return;
+		} else if (ret->type == MONO_TYPE_R8) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_FMOVE, cfg->ret->dreg, val->dreg);
+			return;
+		} else if (ret->type == MONO_TYPE_I8 || ret->type == MONO_TYPE_U8) {
+			MONO_EMIT_NEW_UNALU (cfg, OP_LMOVE, cfg->ret->dreg, val->dreg);
+			return;
+		}
+	}
+	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
+}
+
+void
+mono_arch_flush_icache (guint8 *code, gint size)
+{
+}
+
+const char*
+mono_arch_fregname (int reg)
+{
+	return "freg0";
+}
+
+const char*
+mono_arch_regname (int reg)
+{
+	return "r0";
+}
+
+LLVMCallInfo*
+mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
+{
+	int i, n;
+	CallInfo *cinfo;
+	LLVMCallInfo *linfo;
+
+	cinfo = get_call_info (cfg->mempool, sig);
+	n = cinfo->nargs;
+
+	linfo = mono_mempool_alloc0 (cfg->mempool, sizeof (LLVMCallInfo) + (sizeof (LLVMArgInfo) * n));
+
+	if (mini_type_is_vtype (sig->ret)) {
+		/* Vtype returned using a hidden argument */
+		linfo->ret.storage = LLVMArgVtypeRetAddr;
+		// linfo->vret_arg_index = cinfo->vret_arg_index;
+	} else {
+		if (sig->ret->type != MONO_TYPE_VOID)
+			linfo->ret.storage = LLVMArgNormal;
+	}
+
+	for (i = 0; i < n; ++i) {
+		ArgInfo *ainfo = &cinfo->args[i];
+
+		switch (ainfo->storage) {
+		case ArgOnStack:
+			linfo->args [i].storage = LLVMArgNormal;
+			break;
+		case ArgValuetypeAddrOnStack:
+			linfo->args [i].storage = LLVMArgVtypeByRef;
+			break;
+		case ArgGsharedVTOnStack:
+			linfo->args [i].storage = LLVMArgGsharedvtVariable;
+			break;
+		case ArgValuetypeAddrInIReg:
+			g_error ("this is only valid for sig->ret");
+			break;
+		}
+	}
+
+	return linfo;
+}
+
+gboolean
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
+{
+	return FALSE;
+}
+
+#endif // DISABLE_JIT
+
+int
+mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
+{
+	g_error ("mono_arch_get_argument_info");
+}
+
+GSList*
+mono_arch_get_delegate_invoke_impls (void)
+{
+	g_error ("mono_arch_get_delegate_invoke_impls");
+}
 
 gpointer
-mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
+mono_arch_get_gsharedvt_call_info (gpointer addr, MonoMethodSignature *normal_sig, MonoMethodSignature *gsharedvt_sig, gboolean gsharedvt_in, gint32 vcall_offset, gboolean calli)
+{
+	g_error ("mono_arch_get_gsharedvt_call_info");
+	return NULL;
+}
+
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	g_error ("mono_arch_get_delegate_invoke_impl");
+}
+
+#ifdef HOST_WASM
+
+#include <emscripten.h>
+
+//functions exported to be used by JS
+G_BEGIN_DECLS
+EMSCRIPTEN_KEEPALIVE void mono_set_timeout_exec (int id);
+
+//JS functions imported that we use
+extern void mono_set_timeout (int t, int d);
+G_END_DECLS
+
+#endif // HOST_WASM
+
+gpointer
+mono_arch_get_this_arg_from_call (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_get_this_arg_from_call");
 }
@@ -89,14 +448,14 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 
 
 MonoMethod*
-mono_arch_find_imt_method (mgreg_t *regs, guint8 *code)
+mono_arch_find_imt_method (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_find_static_call_vtable");
 	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
 }
 
 MonoVTable*
-mono_arch_find_static_call_vtable (mgreg_t *regs, guint8 *code)
+mono_arch_find_static_call_vtable (host_mgreg_t *regs, guint8 *code)
 {
 	g_error ("mono_arch_find_static_call_vtable");
 	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
@@ -117,37 +476,19 @@ mono_arch_cpu_enumerate_simd_versions (void)
 guint32
 mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
+	/* No arch specific passes yet */
+	*exclude_mask = 0;
 	return 0;
 }
 
-GSList*
-mono_arch_get_delegate_invoke_impls (void)
-{
-	g_error ("mono_arch_get_delegate_invoke_impls");
-	return NULL;
-}
-
-gpointer
-mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
-{
-	g_error ("mono_arch_get_delegate_invoke_impl");
-	return NULL;
-}
-
-mgreg_t
+host_mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	g_error ("mono_arch_context_get_int_reg");
 	return 0;
 }
 
-int
-mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
-{
-	g_error ("mono_arch_get_argument_info");
-	return 0;
-
-}
+#ifdef HOST_WASM
 
 void
 mono_runtime_setup_stat_profiler (void)
@@ -188,7 +529,6 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo 
 	return FALSE;
 }
 
-
 EMSCRIPTEN_KEEPALIVE void
 mono_set_timeout_exec (int id)
 {
@@ -196,7 +536,8 @@ mono_set_timeout_exec (int id)
 	MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "WasmRuntime");
 	g_assert (klass);
 
-	MonoMethod *method = mono_class_get_method_from_name (klass, "TimeoutCallback", -1);
+	MonoMethod *method = mono_class_get_method_from_name_checked (klass, "TimeoutCallback", -1, 0, error);
+	mono_error_assert_ok (error);
 	g_assert (method);
 
 	gpointer params[1] = { &id };
@@ -212,22 +553,26 @@ mono_set_timeout_exec (int id)
 	}
 
 	if (exc) {
-		char *type_name = mono_type_get_full_name (mono_object_get_class (exc));
+		char *type_name = mono_type_get_full_name (mono_object_class (exc));
 		printf ("timeout callback threw a %s\n", type_name);
 		g_free (type_name);
 	}
 }
 
+#endif
+
 void
 mono_wasm_set_timeout (int timeout, int id)
 {
+#ifdef HOST_WASM
 	mono_set_timeout (timeout, id);
+#endif
 }
 
 void
 mono_arch_register_icall (void)
 {
-	mono_add_internal_call ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
+	mono_add_internal_call_internal ("System.Threading.WasmRuntime::SetTimeout", mono_wasm_set_timeout);
 }
 
 void
@@ -236,10 +581,15 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	g_error ("mono_arch_patch_code_new");
 }
 
+#ifdef HOST_WASM
+
 /*
 The following functions don't belong here, but are due to laziness.
 */
 gboolean mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
+
+G_BEGIN_DECLS
+
 void * getgrnam (const char *name);
 void * getgrgid (gid_t gid);
 int inotify_init (void);
@@ -247,6 +597,7 @@ int inotify_rm_watch (int fd, int wd);
 int inotify_add_watch (int fd, const char *pathname, uint32_t mask);
 int sem_timedwait (sem_t *sem, const struct timespec *abs_timeout);
 
+G_END_DECLS
 
 //w32file-wasm.c
 gboolean
@@ -267,6 +618,7 @@ mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumenam
 	return status;
 }
 
+G_BEGIN_DECLS
 
 //llvm builtin's that we should not have used in the first place
 
@@ -286,13 +638,13 @@ pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *pa
 
 
 int
-pthread_attr_getstacksize (const pthread_attr_t *restrict attr, size_t *restrict stacksize)
+pthread_attr_getstacksize (const pthread_attr_t *attr, size_t *stacksize)
 {
 	return 65536; //wasm page size
 }
 
 int
-pthread_sigmask (int how, const sigset_t * restrict set, sigset_t * restrict oset)
+pthread_sigmask (int how, const sigset_t *set, sigset_t *oset)
 {
 	return 0;
 }
@@ -351,593 +703,6 @@ sem_timedwait (sem_t *sem, const struct timespec *abs_timeout)
 	
 }
 
+G_END_DECLS
 
-typedef struct {
-	//request data
-	MonoAssembly *assembly;
-	MonoMethod *method;
-	int il_offset;
-
-	//bp id
-	int bp_id;
-
-
-	GPtrArray *children;
-} BreakPointRequest;
-
-typedef struct {
-	long il_offset, native_offset;
-	guint8 *ip;
-	MonoJitInfo *ji;
-	MonoDomain *domain;
-} BreakpointInstance;
-
-
-//FIXME move all of those fields to the profiler object
-static gboolean debugger_enabled;
-static int bp_id_count;
-static GHashTable *bp_locs;
-static GPtrArray *active_breakpoints;
-
-static void
-breakpoint_request_free (BreakPointRequest *bp)
-{
-	g_free (bp);
-}
-
-static void
-inplace_tolower (char *c)
-{
-	int i;
-	for (i = strlen (c) - 1; i >= 0; --i)
-		c [i] = tolower (c [i]);
-}
-
-static BreakPointRequest *
-breakpoint_request_new (MonoAssembly *assembly, MonoMethod *method, int il_offset)
-{
-	//dup and lower
-	BreakPointRequest *req = g_new0(BreakPointRequest, 1);
-	req->assembly = assembly;
-	req->method = method;
-	req->il_offset = il_offset;
-
-	return req;
-}
-
-static gboolean
-breakpoint_matches (BreakPointRequest *bp, MonoMethod *method)
-{
-	if (!bp->method)
-		return FALSE;
-	if (method == bp->method)
-		return TRUE;
-	if (method->is_inflated && ((MonoMethodInflated*)method)->declaring == bp->method)
-		return TRUE;
-	//XXX we don't support setting a breakpoint on a specif ginst, so whatever
-
-	return FALSE;
-}
-//LOCKING: loader lock must be held
-static void
-find_applicable_methods (BreakPointRequest *bp, GPtrArray *methods, GPtrArray *method_seq_points)
-{
-	GHashTableIter iter;
-	MonoMethod *method;
-	MonoSeqPointInfo *seq_points;
-
-	mono_domain_lock (mono_get_root_domain ());
-	g_hash_table_iter_init (&iter, domain_jit_info (mono_get_root_domain ())->seq_points);
-	while (g_hash_table_iter_next (&iter, (void**)&method, (void**)&seq_points)) {
-		if (breakpoint_matches (bp, method)) {
-			g_ptr_array_add (methods, method);
-			g_ptr_array_add (method_seq_points, seq_points);
-		}
-	}
-	mono_domain_unlock (mono_get_root_domain ());
-}
-
-static gboolean
-insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo *ji, BreakPointRequest *bp, MonoError *error)
-{
-	int count;
-	SeqPointIterator it;
-	gboolean it_has_sp = FALSE;
-
-	error_init (error);
-
-	DEBUG_PRINTF (1, "insert_breakpoint: JI [%p] method %s at %d SP %p\n", ji, jinfo_get_method (ji)->name, bp->il_offset, seq_points);
-
-	mono_seq_point_iterator_init (&it, seq_points);
-	while (mono_seq_point_iterator_next (&it)) {
-		if (it.seq_point.il_offset == bp->il_offset) {
-			it_has_sp = TRUE;
-			break;
-		}
-	}
-
-	if (!it_has_sp) {
-		/*
-		 * The set of IL offsets with seq points doesn't completely match the
-		 * info returned by CMD_METHOD_GET_DEBUG_INFO (#407).
-		 */
-		mono_seq_point_iterator_init (&it, seq_points);
-		while (mono_seq_point_iterator_next (&it)) {
-			if (it.seq_point.il_offset != METHOD_ENTRY_IL_OFFSET &&
-				it.seq_point.il_offset != METHOD_EXIT_IL_OFFSET &&
-				it.seq_point.il_offset + 1 == bp->il_offset) {
-				it_has_sp = TRUE;
-				break;
-			}
-		}
-	}
-
-	if (!it_has_sp) {
-		DEBUG_PRINTF (1, "Unable to insert breakpoint at %s:%d. SeqPoint data:", mono_method_full_name (jinfo_get_method (ji), TRUE), bp->il_offset);
-
-		mono_seq_point_iterator_init (&it, seq_points);
-		while (mono_seq_point_iterator_next (&it))
-			DEBUG_PRINTF (1, "\t%d\n", it.seq_point.il_offset);
-
-		DEBUG_PRINTF (1, "End of data\n");
-		mono_error_set_error (error, MONO_ERROR_GENERIC, "Failed to find the SP for the given il offset");
-		return FALSE;
-	}
-
-	BreakpointInstance *inst = g_new0 (BreakpointInstance, 1);
-	inst->il_offset = it.seq_point.il_offset;
-	inst->native_offset = it.seq_point.native_offset;
-	inst->ip = (guint8*)ji->code_start + it.seq_point.native_offset;
-	inst->ji = ji;
-	inst->domain = mono_get_root_domain ();
-
-	mono_loader_lock ();
-
-	if (!bp->children)
-		bp->children = g_ptr_array_new ();
-	g_ptr_array_add (bp->children, inst);
-
-	mono_loader_unlock ();
-
-	// dbg_lock ();
-	count = GPOINTER_TO_INT (g_hash_table_lookup (bp_locs, inst->ip));
-	g_hash_table_insert (bp_locs, inst->ip, GINT_TO_POINTER (count + 1));
-	// dbg_unlock ();
-
-	if (it.seq_point.native_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE) {
-		DEBUG_PRINTF (1, "Attempting to insert seq point at dead IL offset %d, ignoring.\n", (int)bp->il_offset);
-	} else if (count == 0) {
-		DEBUG_PRINTF (1, "ACTIVATING BREAKPOINT in %s\n", jinfo_get_method (ji)->name);
-		if (ji->is_interp) {
-			mini_get_interp_callbacks ()->set_breakpoint (ji, inst->ip);
-		} else {
-			g_error ("no idea how to deal with compiled code");
-#ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
-			mono_arch_set_breakpoint (ji, inst->ip);
-#else
-			NOT_IMPLEMENTED;
-#endif
-		}
-	}
-
-	return TRUE;
-}
-
-static gboolean
-set_breakpoint (MonoMethod *method, MonoSeqPointInfo *seq_points, BreakPointRequest *bp, MonoError *error)
-{
-	MonoJitInfo *ji = NULL;
-
-	error_init (error);
-
-	MonoDomain *domain = mono_get_root_domain ();
-	gpointer code = mono_jit_find_compiled_method_with_jit_info (domain, method, &ji);
-	if (!code) {
-		/* Might be AOTed code */
-		mono_class_init (method->klass);
-		code = mono_aot_get_method (domain, method, error);
-		if (code) {
-			mono_error_assert_ok (error);
-			ji = mono_jit_info_table_find (domain, code);
-		} else {
-			/* Might be interpreted */
-			ji = mini_get_interp_callbacks ()->find_jit_info (domain, method);
-		}
-		g_assert (ji);
-	}
-
-	return insert_breakpoint (seq_points, domain, ji, bp, error);
-}
-
-static void
-add_breakpoint (BreakPointRequest *bp)
-{
-	int i;
-	ERROR_DECL (error);
-	bp->bp_id = ++bp_id_count;
-
-	error_init (error);
-
-	GPtrArray *methods = g_ptr_array_new ();
-	GPtrArray *method_seq_points = g_ptr_array_new ();
-
-	mono_loader_lock ();
-
-	find_applicable_methods (bp, methods, method_seq_points);
-
-	for (i = 0; i < methods->len; ++i) {
-		MonoMethod *method = (MonoMethod *)g_ptr_array_index (methods, i);
-		MonoSeqPointInfo *seq_points = (MonoSeqPointInfo *)g_ptr_array_index (method_seq_points, i);
-
-		if (!set_breakpoint (method, seq_points, bp, error)) {
-			//FIXME don't swallow the error
-			DEBUG_PRINTF (1, "Error setting breaking due to %s\n", mono_error_get_message (error));
-			mono_error_cleanup (error);
-			return;
-		}
-	}
-
-	g_ptr_array_add (active_breakpoints, bp);
-
-	mono_loader_unlock ();
-
-	g_ptr_array_free (methods, TRUE);
-	g_ptr_array_free (method_seq_points, TRUE);
-}
-
-static void
-add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
-{
-	int i, j;
-	MonoSeqPointInfo *seq_points;
-	MonoDomain *domain;
-	MonoMethod *jmethod;
-
-	if (!active_breakpoints)
-		return;
-
-	domain = mono_domain_get ();
-
-	mono_loader_lock ();
-
-	for (i = 0; i < active_breakpoints->len; ++i) {
-		BreakPointRequest *bp = (BreakPointRequest *)g_ptr_array_index (active_breakpoints, i);
-		gboolean found = FALSE;
-
-		if (!breakpoint_matches (bp, method))
-			continue;
-
-		for (j = 0; j < bp->children->len; ++j) {
-			BreakpointInstance *inst = (BreakpointInstance *)g_ptr_array_index (bp->children, j);
-
-			if (inst->ji == ji)
-				found = TRUE;
-		}
-
-		if (!found) {
-			ERROR_DECL (error);
-			MonoMethod *declaring = NULL;
-
-			jmethod = jinfo_get_method (ji);
-			if (jmethod->is_inflated)
-				declaring = mono_method_get_declaring_generic_method (jmethod);
-
-			mono_domain_lock (domain);
-			seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, jmethod);
-			if (!seq_points && declaring)
-				seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, declaring);
-			mono_domain_unlock (domain);
-			if (!seq_points) {
-				/* Could be AOT code */
-				continue;
-			}
-			g_assert (seq_points);
-
-			if (!insert_breakpoint (seq_points, domain, ji, bp, error)) {
-				DEBUG_PRINTF (1, "Failed to resolve pending BP due to %s\n", mono_error_get_message (error));
-				mono_error_cleanup (error);
-			}
-		}
-	}
-
-	mono_loader_unlock ();
-}
-
-static void
-jit_done (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo)
-{
-	add_pending_breakpoints (method, jinfo);
-}
-
-void
-mono_wasm_debugger_init (void)
-{
-	if (!debugger_enabled)
-		return;
-
-	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
-	mini_get_debug_options ()->gen_sdb_seq_points = TRUE;
-	mini_get_debug_options ()->mdb_optimizations = TRUE;
-	mono_disable_optimizations (MONO_OPT_LINEARS);
-	mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE;
-
-	MonoProfilerHandle prof = mono_profiler_create (NULL);
-	mono_profiler_set_jit_done_callback (prof, jit_done);
-
-	bp_locs = g_hash_table_new (NULL, NULL);
-	active_breakpoints = g_ptr_array_new ();
-}
-
-MONO_API void
-mono_wasm_enable_debugging (void)
-{
-	DEBUG_PRINTF (1, "DEBUGGING ENABLED");
-	debugger_enabled = TRUE;
-}
-
-
-EMSCRIPTEN_KEEPALIVE int
-mono_wasm_set_breakpoint (const char *assembly_name, int method_token, int il_offset)
-{
-	int i;
-	ERROR_DECL (error);
-	DEBUG_PRINTF (1, "SET BREAKPOINT: assembly %s method %x offset %x\n", assembly_name, method_token, il_offset);
-
-
-	//we get 'foo.dll' but mono_assembly_load expects 'foo' so we strip the last dot
-	char *lookup_name = g_strdup (assembly_name);
-	for (i = strlen (lookup_name) - 1; i >= 0; --i) {
-		if (lookup_name [i] == '.') {
-			lookup_name [i] = 0;
-			break;
-		}
-	}
-
-	//resolve the assembly
-	MonoImageOpenStatus status;
-	MonoAssemblyName* aname = mono_assembly_name_new (lookup_name);
-	MonoAssembly *assembly = mono_assembly_load (aname, NULL, &status);
-	g_free (lookup_name);
-	if (!assembly) {
-		DEBUG_PRINTF (1, "Could not resolve assembly %s\n", assembly_name);
-		return -1;
-	}
-
-	mono_assembly_name_free (aname);
-
-	MonoMethod *method = mono_get_method_checked (assembly->image, MONO_TOKEN_METHOD_DEF | method_token, NULL, NULL, error);
-	if (!method) {
-		//FIXME don't swallow the error
-		DEBUG_PRINTF (1, "Could not find method due to %s\n", mono_error_get_message (error));
-		mono_error_cleanup (error);
-		return -1;
-	}
-
-	BreakPointRequest *req = breakpoint_request_new (assembly, method, il_offset);
-
-	add_breakpoint (req);
-	return req->bp_id;
-}
-
-//trampoline
-
-void
-mono_sdb_single_step_trampoline (void)
-{
-	g_error ("mono_sdb_single_step_trampoline");
-}
-
-void
-mono_wasm_breakpoint_hit (void)
-{
-	mono_wasm_fire_bp ();
-}
-
-EMSCRIPTEN_KEEPALIVE int
-mono_wasm_current_bp_id (void)
-{
-	int i, j;
-
-	DEBUG_PRINTF (1, "COMPUTING breapoint ID\n");
-	//FIXME handle compiled case
-
-	/* Interpreter */
-	MonoLMF *lmf = mono_get_lmf ();
-
-	g_assert (((guint64)lmf->previous_lmf) & 2);
-	MonoLMFExt *ext = (MonoLMFExt*)lmf;
-
-	g_assert (ext->interp_exit);
-	MonoInterpFrameHandle *frame = ext->interp_exit_data;
-	MonoJitInfo *ji = mini_get_interp_callbacks ()->frame_get_jit_info (frame);
-	guint8 *ip = mini_get_interp_callbacks ()->frame_get_ip (frame);
-
-	g_assert (ji && !ji->is_trampoline);
-	MonoMethod *method = jinfo_get_method (ji);
-
-	/* Compute the native offset of the breakpoint from the ip */
-	guint32 native_offset = ip - (guint8*)ji->code_start;
-
-	MonoSeqPointInfo *info = NULL;
-	SeqPoint sp;
-	gboolean found_sp = mono_find_prev_seq_point_for_native_offset (mono_domain_get (), method, native_offset, &info, &sp);
-	if (!found_sp)
-		DEBUG_PRINTF (1, "Could not find SP\n");
-
-	for (i = 0; i < active_breakpoints->len; ++i) {
-		BreakPointRequest *bp = (BreakPointRequest *)g_ptr_array_index (active_breakpoints, i);
-
-		if (!bp->method)
-			continue;
-
-		for (j = 0; j < bp->children->len; ++j) {
-			BreakpointInstance *inst = (BreakpointInstance *)g_ptr_array_index (bp->children, j);
-			if (inst->ji == ji && inst->il_offset == sp.il_offset && inst->native_offset == sp.native_offset) {
-				DEBUG_PRINTF (1, "FOUND BREAKPOINT idx %d ID %d\n", i, bp->bp_id);
-				return bp->bp_id;
-			}
-		}
-	}
-	DEBUG_PRINTF (1, "BP NOT FOUND for method %s JI %p il_offset %d\n", method->name, ji, sp.il_offset);
-
-	return -1;
-}
-
-static gboolean
-list_frames (MonoStackFrameInfo *info, MonoContext *ctx, gpointer data)
-{
-	SeqPoint sp;
-	MonoMethod *method;
-
-	//skip wrappers
-	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP)
-		return FALSE;
-
-
-	if (info->ji)
-		method = jinfo_get_method (info->ji);
-	else
-		method = info->method;
-
-	if (!method)
-		return FALSE;
-
-	DEBUG_PRINTF (2, "Reporting method %s native_offset %d\n", method->name, info->native_offset);
-
-	if (!mono_find_prev_seq_point_for_native_offset (mono_get_root_domain (), method, info->native_offset, NULL, &sp))
-		DEBUG_PRINTF (1, "Failed to lookup sequence point\n");
-
-	while (method->is_inflated)
-		method = ((MonoMethodInflated*)method)->declaring;
-
-	char *assembly_name = g_strdup (m_class_get_image (method->klass)->module_name);
-	inplace_tolower (assembly_name);
-
-	if (method->wrapper_type == MONO_WRAPPER_NONE) {
-		DEBUG_PRINTF (2, "adding off %d token %d assembly name %s\n", sp.il_offset, mono_metadata_token_index (method->token), assembly_name);
-		mono_wasm_add_frame (sp.il_offset, mono_metadata_token_index (method->token), assembly_name);
-	}
-
-	g_free (assembly_name);
-
-	return FALSE;
-}
-
-EMSCRIPTEN_KEEPALIVE void
-mono_wasm_enum_frames (void)
-{
-	mono_walk_stack_with_ctx (list_frames, NULL, MONO_UNWIND_NONE, NULL);
-}
-
-typedef struct {
-	int cur_frame;
-	int target_frame;
-	int variable;
-} FrameDescData;
-
-static gboolean
-describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
-{
-	ERROR_DECL (error);
-	MonoMethodHeader *header = NULL;
-
-	FrameDescData *data = ud;
-
-	//skip wrappers
-	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP) {
-		return FALSE;
-	}
-
-	if (data->cur_frame < data->target_frame) {
-		++data->cur_frame;
-		return FALSE;
-	}
-
-	InterpFrame *frame = info->interp_frame;
-	g_assert (frame);
-	MonoMethod *method = frame->imethod->method;
-	g_assert (method);
-
-	MonoType *type = NULL;
-	gpointer addr = NULL;
-	int pos = data->variable;
-	if (pos < 0) {
-		pos = -pos - 1;
-		type = mono_method_signature (method)->params [pos];
-		addr = mini_get_interp_callbacks ()->frame_get_arg (frame, pos);
-	} else {
-		header = mono_method_get_header_checked (method, error);
-		mono_error_assert_ok (error); /* FIXME report error */
-
-		type = header->locals [pos];
-		addr = mini_get_interp_callbacks ()->frame_get_local (frame, pos);
-	}
-
-	DEBUG_PRINTF (2, "adding val %p type [%p] %s\n", addr, type, mono_type_full_name (type));
-
-	switch (type->type) {
-		case MONO_TYPE_BOOLEAN:
-			mono_wasm_add_bool_var (*(gint8*)addr);
-			break;
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-			mono_wasm_add_int_var (*(gint8*)addr);
-			break;
-		case MONO_TYPE_CHAR:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-			mono_wasm_add_int_var (*(gint16*)addr);
-			break;
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-			mono_wasm_add_int_var (*(gint32*)addr);
-			break;
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-			mono_wasm_add_long_var (*(gint32*)addr);
-			break;
-		case MONO_TYPE_R4:
-			mono_wasm_add_float_var (*(float*)addr);
-			break;
-		case MONO_TYPE_R8:
-			mono_wasm_add_float_var (*(double*)addr);
-			break;
-		case MONO_TYPE_STRING: {
-			MonoString *str_obj = *(MonoString **)addr;
-			if (!str_obj)
-				mono_wasm_add_string_var (NULL);
-			char *str = mono_string_to_utf8_checked (str_obj, error);
-			mono_error_assert_ok (error); /* FIXME report error */
-
-			mono_wasm_add_string_var (str);
-			g_free (str);
-			break;
-		}
-		default: {
-			char *type_name = mono_type_full_name (type);
-			char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
-			mono_wasm_add_string_var (msg);
-			g_free (msg);
-			g_free (type_name);
-		}
-	}
-	mono_metadata_free_mh (header);
-
-	return TRUE;
-}
-
-//FIXME this doesn't support getting the return value pseudo-var
-EMSCRIPTEN_KEEPALIVE void
-mono_wasm_get_var_info (int scope, int pos)
-{
-	DEBUG_PRINTF (2, "getting var %d of scope %d\n", pos, scope);
-
-	FrameDescData data;
-	data.cur_frame = 0;
-	data.target_frame = scope;
-	data.variable = pos;
-
-	mono_walk_stack_with_ctx (describe_variable, NULL, MONO_UNWIND_NONE, &data);
-}
+#endif // HOST_WASM

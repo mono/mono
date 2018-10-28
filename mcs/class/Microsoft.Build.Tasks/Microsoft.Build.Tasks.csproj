@@ -19,16 +19,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../msfinal.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -43,8 +43,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\tools\xbuild\XBuildConsts.cs" />
@@ -137,18 +138,18 @@
     <Compile Include="Microsoft.Build.Tasks\GetFrameworkSdkPath.cs" />
     <Compile Include="Microsoft.Build.Tasks\GetReferenceAssemblyPaths.cs" />
     <Compile Include="Microsoft.Build.Tasks\LC.cs" />
+    <Compile Include="Microsoft.Build.Tasks\MSBuild.cs" />
     <Compile Include="Microsoft.Build.Tasks\MakeDir.cs" />
     <Compile Include="Microsoft.Build.Tasks\ManagedCompiler.cs" />
     <Compile Include="Microsoft.Build.Tasks\Message.cs" />
-    <Compile Include="Microsoft.Build.Tasks\MSBuild.cs" />
     <Compile Include="Microsoft.Build.Tasks\ReadLinesFromFile.cs" />
     <Compile Include="Microsoft.Build.Tasks\RegisterAssembly.cs" />
     <Compile Include="Microsoft.Build.Tasks\RemoveDir.cs" />
     <Compile Include="Microsoft.Build.Tasks\RemoveDuplicates.cs" />
     <Compile Include="Microsoft.Build.Tasks\ResolveAssemblyReference.cs" />
-    <Compile Include="Microsoft.Build.Tasks\ResolvedReference.cs" />
     <Compile Include="Microsoft.Build.Tasks\ResolveManifestFiles.cs" />
     <Compile Include="Microsoft.Build.Tasks\ResolveProjectBase.cs" />
+    <Compile Include="Microsoft.Build.Tasks\ResolvedReference.cs" />
     <Compile Include="Microsoft.Build.Tasks\SGen.cs" />
     <Compile Include="Microsoft.Build.Tasks\SignFile.cs" />
     <Compile Include="Microsoft.Build.Tasks\TaskExtension.cs" />
@@ -157,8 +158,8 @@
     <Compile Include="Microsoft.Build.Tasks\Touch.cs" />
     <Compile Include="Microsoft.Build.Tasks\UnregisterAssembly.cs" />
     <Compile Include="Microsoft.Build.Tasks\UpdateManifest.cs" />
-    <Compile Include="Microsoft.Build.Tasks\Vbc.cs" />
     <Compile Include="Microsoft.Build.Tasks\VCBuild.cs" />
+    <Compile Include="Microsoft.Build.Tasks\Vbc.cs" />
     <Compile Include="Microsoft.Build.Tasks\Warning.cs" />
     <Compile Include="Microsoft.Build.Tasks\WriteCodeFragment.cs" />
     <Compile Include="Microsoft.Build.Tasks\WriteLinesToFile.cs" />
@@ -167,7 +168,15 @@
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceWriter.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceReader.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceWriter.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -183,4 +192,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

@@ -52,7 +52,7 @@
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (((desc == 'l') ? sparc_o0 : (desc == 'L' ? (hreg1 + 1) : -1)))
 #endif
 
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 #else
 #define MONO_ARCH_FRAME_ALIGNMENT 8
@@ -82,7 +82,6 @@ typedef struct MonoCompileArch {
 } MonoCompileArch;
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
-		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\

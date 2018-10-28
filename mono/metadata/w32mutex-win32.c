@@ -30,6 +30,11 @@ ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoSt
 
 	*created = TRUE;
 
+	/* Need to blow away any old errors here, because code tests
+	 * for ERROR_ALREADY_EXISTS on success (!) to see if a mutex
+	 * was freshly created */
+	SetLastError (ERROR_SUCCESS);
+
 	if (MONO_HANDLE_IS_NULL (name)) {
 		MONO_ENTER_GC_SAFE;
 		mutex = CreateMutex (NULL, owned, NULL);
@@ -43,7 +48,7 @@ ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, MonoSt
 		if (GetLastError () == ERROR_ALREADY_EXISTS)
 			*created = FALSE;
 		MONO_EXIT_GC_SAFE;
-		mono_gchandle_free (gchandle);
+		mono_gchandle_free_internal (gchandle);
 	}
 
 	return mutex;
@@ -60,7 +65,6 @@ ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoStringHandle name, gint
 {
 	HANDLE ret;
 
-	error_init (error);
 	*err = ERROR_SUCCESS;
 
 	uint32_t gchandle = 0;
@@ -73,7 +77,7 @@ ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoStringHandle name, gint
 		*err = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	if (gchandle != 0)
-		mono_gchandle_free (gchandle);
+		mono_gchandle_free_internal (gchandle);
 
 	return ret;
 }

@@ -46,7 +46,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 	mips_load (code, mips_t9, addr);
 	/* The this pointer is kept in a0 */
-	mips_addiu (code, mips_a0, mips_a0, sizeof (MonoObject));
+	mips_addiu (code, mips_a0, mips_a0, MONO_ABI_SIZEOF (MonoObject));
 	mips_jr (code, mips_t9);
 	mips_nop (code);
 
@@ -102,7 +102,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	g_assert_not_reached ();
 }
@@ -431,7 +431,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		mips_jr (code, mips_at);
 		mips_nop (code);
 	} else {
-		tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
+		tramp = (guint8*)mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
 		mips_load (code, mips_at, tramp);
 		mips_jr (code, mips_at);
 		mips_nop (code);

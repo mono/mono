@@ -44,7 +44,7 @@ namespace Mono.Security.X509 {
 	// b.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal class X509Certificate : ISerializable {
 #else
 	public class X509Certificate : ISerializable {
@@ -70,9 +70,10 @@ namespace Mono.Security.X509 {
 		private DSA _dsa;
 
 		// from http://msdn.microsoft.com/en-gb/library/ff635835.aspx
-		private const string OID_DSA = "1.2.840.10040.4.1";
-		private const string OID_RSA = "1.2.840.113549.1.1.1";
-		
+		internal const string OID_DSA = "1.2.840.10040.4.1";
+		internal const string OID_RSA = "1.2.840.113549.1.1.1";
+		internal const string OID_ECC = "1.2.840.10045.2.1";
+
 		// from http://www.ietf.org/rfc/rfc2459.txt
 		//
 		//Certificate  ::=  SEQUENCE  {

@@ -174,7 +174,7 @@ namespace System.Windows.Forms {
 			columnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 			columnHeadersDefaultCellStyle = new DataGridViewCellStyle();
 			columnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
-			columnHeadersDefaultCellStyle.ForeColor = SystemColors.WindowText;
+			columnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
 			columnHeadersDefaultCellStyle.SelectionBackColor = SystemColors.Highlight;
 			columnHeadersDefaultCellStyle.SelectionForeColor = SystemColors.HighlightText;
 			columnHeadersDefaultCellStyle.Font = this.Font;
@@ -189,7 +189,7 @@ namespace System.Windows.Forms {
 			dataMember = String.Empty;
 			defaultCellStyle = new DataGridViewCellStyle();
 			defaultCellStyle.BackColor = SystemColors.Window;
-			defaultCellStyle.ForeColor = SystemColors.ControlText;
+			defaultCellStyle.ForeColor = SystemColors.WindowText;
 			defaultCellStyle.SelectionBackColor = SystemColors.Highlight;
 			defaultCellStyle.SelectionForeColor = SystemColors.HighlightText;
 			defaultCellStyle.Font = this.Font;

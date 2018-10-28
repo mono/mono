@@ -17,16 +17,16 @@
     <AssemblyName>nunit.core</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>StronglyNamedAssembly;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>StronglyNamedAssembly;NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,8 +41,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs" />
     <Compile Include="AbstractTestCaseDecoration.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -76,15 +77,15 @@
     <Compile Include="LegacySuite.cs" />
     <Compile Include="Log4NetCapture.cs" />
     <Compile Include="LogCapture.cs" />
-    <Compile Include="NamespaceTreeBuilder.cs" />
-    <Compile Include="NoTestFixturesException.cs" />
-    <Compile Include="NotRunnableTestCase.cs" />
     <Compile Include="NTrace.cs" />
-    <Compile Include="NullListener.cs" />
     <Compile Include="NUnitException.cs" />
     <Compile Include="NUnitFramework.cs" />
     <Compile Include="NUnitTestFixture.cs" />
     <Compile Include="NUnitTestMethod.cs" />
+    <Compile Include="NamespaceTreeBuilder.cs" />
+    <Compile Include="NoTestFixturesException.cs" />
+    <Compile Include="NotRunnableTestCase.cs" />
+    <Compile Include="NullListener.cs" />
     <Compile Include="PlatformHelper.cs" />
     <Compile Include="ProxyTestRunner.cs" />
     <Compile Include="QueuingEventListener.cs" />
@@ -107,9 +108,10 @@
     <Compile Include="TestSuite.cs" />
     <Compile Include="TestSuiteBuilder.cs" />
     <Compile Include="TextCapture.cs" />
-    <Compile Include="ThreadedTestRunner.cs" />
     <Compile Include="ThreadUtility.cs" />
+    <Compile Include="ThreadedTestRunner.cs" />
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -120,4 +122,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

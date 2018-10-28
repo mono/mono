@@ -32,8 +32,13 @@
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
+#ifdef __mono_ppc64__
+#define THUNK_SIZE ((2 + 5) * 4)
+#else
+#define THUNK_SIZE ((2 + 2) * 4)
+#endif
+
 void ppc_patch (guchar *code, const guchar *target);
-void ppc_patch_full (guchar *code, const guchar *target, gboolean is_fd);
 
 struct MonoLMF {
 	/*
@@ -47,13 +52,15 @@ struct MonoLMF {
 	gulong     eip;
 	/* Add a dummy field to force iregs to be aligned when cross compiling from x86 */
 	gulong     dummy;
-	mgreg_t    iregs [MONO_SAVED_GREGS]; /* 13..31 */
+	host_mgreg_t iregs [MONO_SAVED_GREGS]; /* 13..31 */
 	gdouble    fregs [MONO_SAVED_FREGS]; /* 14..31 */
 };
 
 
 typedef struct MonoCompileArch {
 	int fp_conv_var_offset;
+	guint8 *thunks;
+	int thunks_size;
 } MonoCompileArch;
 
 /*
@@ -377,7 +384,7 @@ void
 mono_ppc_patch (guchar *code, const guchar *target);
 
 void
-mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow);
+mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean rethrow, gboolean preserve_ips);
 
 #ifdef __mono_ppc64__
 #define MONO_PPC_32_64_CASE(c32,c64)	c64

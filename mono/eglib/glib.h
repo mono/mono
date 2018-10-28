@@ -1,5 +1,22 @@
 #ifndef __GLIB_H
 #define __GLIB_H
+
+// Ask stdint.h and inttypes.h for the full C99 features for CentOS 6 g++ 4.4, Android, etc.
+// See for example:
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/inttypes.h
+// $HOME/android-toolchain/toolchains/armeabi-v7a-clang/sysroot/usr/include/stdint.h
+#ifdef __cplusplus
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+#endif // __cplusplus
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,16 +24,13 @@
 #include <stddef.h>
 #include <ctype.h>
 #include <limits.h>
-
-
-#ifdef _MSC_VER
-#pragma include_alias(<eglib-config.h>, <eglib-config.hw>)
-#endif
-
 #include <stdint.h>
 #include <inttypes.h>
-
+#ifdef _MSC_VER
+#include <eglib-config.hw>
+#else
 #include <eglib-config.h>
+#endif
 
 // - Pointers should only be converted to or from pointer-sized integers.
 // - Any size integer can be converted to any other size integer.
@@ -44,14 +58,110 @@
 #   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
 #endif
 
-#define __EGLIB_X11 1
-
 #ifdef  __cplusplus
 #define G_BEGIN_DECLS  extern "C" {
 #define G_END_DECLS    }
+#define G_EXTERN_C     extern "C"
 #else
-#define G_BEGIN_DECLS
-#define G_END_DECLS
+#define G_BEGIN_DECLS  /* nothing */
+#define G_END_DECLS    /* nothing */
+#define G_EXTERN_C     /* nothing */
+#endif
+
+#ifdef __cplusplus
+
+#define g_cast monoeg_g_cast // in case not inlined (see eglib-remap.h)
+
+// g_cast converts void* to T*.
+// e.g. #define malloc(x) (g_cast (malloc (x)))
+// FIXME It used to do more. Rename?
+struct g_cast
+{
+private:
+	void * const x;
+public:
+	explicit g_cast (void volatile *y) : x((void*)y) { }
+	// Lack of rvalue constructor inhibits ternary operator.
+	// Either don't use ternary, or cast each side.
+	// sa = (salen <= 128) ? g_alloca (salen) : g_malloc (salen);
+	// w32socket.c:1045:24: error: call to deleted constructor of 'monoeg_g_cast'
+	//g_cast (g_cast&& y) : x(y.x) { }
+	g_cast (g_cast&&) = delete;
+	g_cast () = delete;
+	g_cast (const g_cast&) = delete;
+
+	template <typename TTo>
+	operator TTo* () const
+	{
+		return (TTo*)x;
+	}
+};
+
+#else
+
+// FIXME? Parens are omitted to preserve prior meaning.
+#define g_cast(x) x
+
+#endif
+
+#ifdef __cplusplus
+
+// G++4.4 breaks opeq below without this.
+#if defined  (__GNUC__) || defined  (__clang__)
+#define G_MAY_ALIAS  __attribute__((__may_alias__))
+#else
+#define G_MAY_ALIAS /* nothing */
+#endif
+
+// Provide for bit operations on enums, but not all integer operations.
+// This alleviates a fair number of casts in porting C to C++.
+
+// Forward declare template with no generic implementation.
+template <size_t> struct g_size_to_int;
+
+// Template specializations.
+template <> struct g_size_to_int<1> { typedef int8_t type; };
+template <> struct g_size_to_int<2> { typedef int16_t type; };
+template <> struct g_size_to_int<4> { typedef int32_t type; };
+template <> struct g_size_to_int<8> { typedef int64_t type; };
+
+// g++4.4 does not accept:
+//template <typename T>
+//using g_size_to_int_t = typename g_size_to_int <sizeof (T)>::type;
+#define g_size_to_int_t(x) g_size_to_int <sizeof (x)>::type
+
+#define G_ENUM_BINOP(Enum, op, opeq) 		\
+inline Enum					\
+operator op (Enum a, Enum b)			\
+{						\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(static_cast<type>(a) op b); \
+}						\
+						\
+inline Enum&					\
+operator opeq (Enum& a, Enum b)			\
+{						\
+	typedef g_size_to_int_t (Enum) G_MAY_ALIAS type; \
+	return (Enum&)((type&)a opeq b); 	\
+}						\
+
+#define G_ENUM_FUNCTIONS(Enum)			\
+extern "C++" { /* in case within extern "C" */	\
+inline Enum					\
+operator~ (Enum a)				\
+{						\
+	typedef g_size_to_int_t (Enum) type; 	\
+	return static_cast<Enum>(~static_cast<type>(a)); \
+}						\
+						\
+G_ENUM_BINOP (Enum, |, |=) 			\
+G_ENUM_BINOP (Enum, &, &=) 			\
+G_ENUM_BINOP (Enum, ^, ^=) 			\
+						\
+} /* extern "C++" */
+
+#else
+#define G_ENUM_FUNCTIONS(Enum) /* nothing */
 #endif
 
 G_BEGIN_DECLS
@@ -83,7 +193,14 @@ typedef float          gfloat;
 typedef double         gdouble;
 typedef int32_t        gboolean;
 
+#if defined (HOST_WIN32) || defined (_WIN32)
+G_END_DECLS
+#include <wchar.h>
+typedef wchar_t gunichar2;
+G_BEGIN_DECLS
+#else
 typedef guint16 gunichar2;
+#endif
 typedef guint32 gunichar;
 
 /*
@@ -99,6 +216,12 @@ typedef guint32 gunichar;
 #define G_MAXUSHORT          USHRT_MAX
 #define G_MAXINT             INT_MAX
 #define G_MININT             INT_MIN
+#define G_MAXINT8            INT8_MAX
+#define G_MAXUINT8           UINT8_MAX
+#define G_MININT8            INT8_MIN
+#define G_MAXINT16           INT16_MAX
+#define G_MAXUINT16          UINT16_MAX
+#define G_MININT16           INT16_MIN
 #define G_MAXINT32           INT32_MAX
 #define G_MAXUINT32          UINT32_MAX
 #define G_MININT32           INT32_MIN
@@ -141,10 +264,15 @@ typedef guint32 gunichar;
 /*
  * Allocation
  */
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void g_free (void *ptr);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_realloc (gpointer obj, gsize size);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_malloc (gsize x);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer g_malloc0 (gsize x);
+G_EXTERN_C // Used by profilers, at least.
 gpointer g_calloc (gsize n, gsize x);
 gpointer g_try_malloc (gsize x);
 gpointer g_try_realloc (gpointer obj, gsize size);
@@ -154,9 +282,10 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
-#define g_renew(struct_type, mem, n_structs) g_realloc (mem, sizeof (struct_type) * n_structs)
-#define g_alloca(size)		alloca (size)
+#define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
+#define g_alloca(size)		(g_cast (alloca (size)))
 
+G_EXTERN_C // Used by libtest, at least.
 gpointer g_memdup (gconstpointer mem, guint byte_size);
 static inline gchar   *g_strdup (const gchar *str) { if (str) { return (gchar*) g_memdup (str, (guint)strlen (str) + 1); } return NULL; }
 gchar **g_strdupv (gchar **str_array);
@@ -181,7 +310,10 @@ typedef struct _GMemChunk GMemChunk;
 
 gboolean         g_hasenv(const gchar *variable);
 gchar *          g_getenv(const gchar *variable);
+
+G_EXTERN_C // sdks/wasm/driver.c is C and uses this
 gboolean         g_setenv(const gchar *variable, const gchar *value, gboolean overwrite);
+
 void             g_unsetenv(const gchar *variable);
 
 gchar*           g_win32_getlocale(void);
@@ -212,6 +344,7 @@ void    g_propagate_error (GError **dest, GError *src);
 /*
  * Strings utility
  */
+G_EXTERN_C // Used by libtest, at least.
 gchar       *g_strdup_printf  (const gchar *format, ...);
 gchar       *g_strdup_vprintf (const gchar *format, va_list args);
 gchar       *g_strndup        (const gchar *str, gsize n);
@@ -232,7 +365,7 @@ gchar       *g_strchomp       (gchar *str);
 void         g_strdown        (gchar *string);
 gchar       *g_strnfill       (gsize length, gchar fill_char);
 
-gchar       *g_strdelimit     (gchar *string, const gchar *delimiters, gchar new_delimiter);
+void	     g_strdelimit     (char *string, char delimiter, char new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
 
 gchar       *g_filename_to_uri   (const gchar *filename, const gchar *hostname, GError **gerror);
@@ -279,9 +412,6 @@ gboolean g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii);
 #endif
 #define g_ascii_strdup strdup
 
-
-#define	G_STR_DELIMITERS "_-|> <."
-
 /*
  * String type
  */
@@ -304,10 +434,7 @@ GString     *g_string_append_c      (GString *string, gchar c);
 GString     *g_string_append        (GString *string, const gchar *val);
 GString     *g_string_append_len    (GString *string, const gchar *val, gssize len);
 GString     *g_string_truncate      (GString *string, gsize len);
-GString     *g_string_prepend       (GString *string, const gchar *val);
-GString     *g_string_insert        (GString *string, gssize pos, const gchar *val);
 GString     *g_string_set_size      (GString *string, gsize len);
-GString     *g_string_erase         (GString *string, gssize pos, gssize len);
 
 #define g_string_sprintfa g_string_append_printf
 
@@ -444,22 +571,28 @@ struct _GHashTableIter
 	gpointer dummy [8];
 };
 
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 GHashTable     *g_hash_table_new             (GHashFunc hash_func, GEqualFunc key_equal_func);
 GHashTable     *g_hash_table_new_full        (GHashFunc hash_func, GEqualFunc key_equal_func,
 					      GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gpointer value, gboolean replace);
 guint           g_hash_table_size            (GHashTable *hash);
 GList          *g_hash_table_get_keys        (GHashTable *hash);
 GList          *g_hash_table_get_values      (GHashTable *hash);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_foreach         (GHashTable *hash, GHFunc func, gpointer user_data);
 gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicate, gpointer user_data);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_steal           (GHashTable *hash, gconstpointer key);
 void            g_hash_table_remove_all      (GHashTable *hash);
 guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
 guint           g_hash_table_foreach_steal   (GHashTable *hash, GHRFunc func, gpointer user_data);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void            g_hash_table_destroy         (GHashTable *hash);
 void            g_hash_table_print_stats     (GHashTable *table);
 
@@ -471,7 +604,9 @@ guint           g_spaced_primes_closest      (guint x);
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
 
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 guint    g_direct_hash  (gconstpointer v1);
 gboolean g_int_equal    (gconstpointer v1, gconstpointer v2);
 guint    g_int_hash     (gconstpointer v1);
@@ -515,6 +650,7 @@ void    g_array_set_size          (GArray *array, gint length);
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
 #define g_array_index(a,t,i)      *(t*)(((a)->data) + sizeof(t) * (i))
+//FIXME previous missing parens
 
 /*
  * QSort
@@ -546,6 +682,7 @@ gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
+//FIXME previous missing parens
 
 /*
  * Queues
@@ -587,13 +724,17 @@ typedef enum {
 	G_LOG_LEVEL_MASK              = ~(G_LOG_FLAG_RECURSION | G_LOG_FLAG_FATAL)
 } GLogLevelFlags;
 
+G_ENUM_FUNCTIONS (GLogLevelFlags)
+
 void           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
 void           g_printerr             (const gchar *format, ...);
 GLogLevelFlags g_log_set_always_fatal (GLogLevelFlags fatal_mask);
 GLogLevelFlags g_log_set_fatal_mask   (const gchar *log_domain, GLogLevelFlags fatal_mask);
 void           g_logv                 (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, va_list args);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_log                  (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, ...);
+G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_assertion_message    (const gchar *format, ...) G_GNUC_NORETURN;
 const char *   g_get_assertion_message (void);
 
@@ -789,9 +930,11 @@ gchar     *g_utf8_strdown (const gchar *str, gssize len);
 gint       g_unichar_to_utf8 (gunichar c, gchar *outbuf);
 gunichar  *g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written);
 gunichar  *g_utf8_to_ucs4 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+G_EXTERN_C // Used by libtest, at least.
 gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *eg_utf8_to_utf16_with_nuls (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar2 *eg_wtf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err);
+G_EXTERN_C // Used by libtest, at least.
 gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gunichar  *g_utf16_to_ucs4 (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GError **err);
 gchar     *g_ucs4_to_utf8  (const gunichar *str, glong len, glong *items_read, glong *items_written, GError **err);
@@ -919,6 +1062,7 @@ typedef enum {
 	G_FILE_TEST_EXISTS = 1 << 4
 } GFileTest;
 
+G_ENUM_FUNCTIONS (GFileTest)
 
 gboolean   g_file_set_contents (const gchar *filename, const gchar *contents, gssize length, GError **gerror);
 gboolean   g_file_get_contents (const gchar *filename, gchar **contents, gsize *length, GError **gerror);
@@ -1062,8 +1206,6 @@ extern const guchar g_utf8_jump_table[256];
 
 gboolean  g_utf8_validate      (const gchar *str, gssize max_len, const gchar **end);
 gunichar  g_utf8_get_char_validated (const gchar *str, gssize max_len);
-gchar    *g_utf8_find_prev_char (const char *str, const char *p);
-gchar    *g_utf8_prev_char     (const char *str);
 #define   g_utf8_next_char(p)  ((p) + g_utf8_jump_table[(guchar)(*p)])
 gunichar  g_utf8_get_char      (const gchar *src);
 glong     g_utf8_strlen        (const gchar *str, gssize max);
@@ -1145,4 +1287,22 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
  
 G_END_DECLS
 
-#endif
+// For each allocator; i.e. returning gpointer that needs to be cast.
+// Macros do not recurse, so naming function and macro the same is ok.
+// However these are also already macros.
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+#define g_malloc(x) (g_cast (monoeg_malloc (x)))
+#define g_realloc(obj, size) (g_cast (monoeg_realloc ((obj), (size))))
+#define g_malloc0(x) (g_cast (monoeg_malloc0 (x)))
+#define g_calloc(x, y) (g_cast (monoeg_g_calloc ((x), (y))))
+#define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
+#define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
+#define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#endif // __GLIB_H

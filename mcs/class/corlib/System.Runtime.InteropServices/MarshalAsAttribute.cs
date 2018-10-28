@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices {
 
@@ -44,6 +45,7 @@ namespace System.Runtime.InteropServices {
 		public string MarshalType;
 
 		[ComVisible(true)]
+		[PreserveDependency ("GetCustomMarshalerInstance", "System.Runtime.InteropServices.Marshal")]
 		public Type MarshalTypeRef;
 		public Type SafeArrayUserDefinedSubType;
 

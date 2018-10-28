@@ -44,11 +44,15 @@ ifndef NO_THREAD_SUSPEND_RESUME
 TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
 endif
 
+TEST_RESOURCE_FILES = $(wildcard Test/System.Web.Services.Description/*.wsdl)
+
+TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
 EXTRA_DISTFILES = \
 	System.Web.Services.Description/web-reference.xsd	\
 	System.Web.Services.Description/wsdl-1.1.xsd		\
 	System.Web.Services.Description/wsdl-1.1-soap.xsd	\
 	System.Web.Services.Description/wsdl.genxs		\
-	Test/System.Web.Services.Description/*.wsdl
+	$(TEST_RESOURCE_FILES)
 
 include ../../build/library.make

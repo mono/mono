@@ -912,6 +912,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (
@@ -925,7 +926,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[Category ("NotWorking")] // #10539
 #endif
@@ -1102,7 +1102,6 @@ namespace MonoTests.System
 		event Action bar_handler;
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		[ExpectedException (typeof (ArgumentException))] // #635349, #605936
 		public void NewDelegateClosedOverNullReferenceInstanceMethod ()
 		{
@@ -1146,6 +1145,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		// Interp uses slowpath delegate invoke virtual wrapper which throws NRE also with JIT
+		[Category ("NotWorkingRuntimeInterpreter")]
 		public void DynamicInvokeOpenInstanceDelegate ()
 		{
 			var d1 = Delegate.CreateDelegate (typeof (Func<DelegateTest, int>), typeof(DelegateTest).GetMethod ("DynamicInvokeOpenInstanceDelegate_CB"));
@@ -1283,7 +1284,6 @@ namespace MonoTests.System
 		}
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();

@@ -20,16 +20,16 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../winfx3.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
-  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
-  is a problem to compile the Mono mscorlib.dll -->
   <PropertyGroup>
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+    is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MULTIPLEX_OS</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -44,8 +44,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- @COMMON_SOURCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <!-- @BUILT_SOURCES@ -->
+  <!--Common files-->
+  <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -82,6 +83,8 @@
     <Compile Include="System.IO.Packaging\EncryptedPackageEnvelope.cs" />
     <Compile Include="System.IO.Packaging\EncryptionOption.cs" />
     <Compile Include="System.IO.Packaging\InvalidSignatureEventHandler.cs" />
+    <Compile Include="System.IO.Packaging\PackUriHelper.cs" />
+    <Compile Include="System.IO.Packaging\PackUriParser.cs" />
     <Compile Include="System.IO.Packaging\Package.cs" />
     <Compile Include="System.IO.Packaging\PackageDigitalSignature.cs" />
     <Compile Include="System.IO.Packaging\PackageDigitalSignatureManager.cs" />
@@ -93,8 +96,6 @@
     <Compile Include="System.IO.Packaging\PackageRelationshipCollection.cs" />
     <Compile Include="System.IO.Packaging\PackageRelationshipSelector.cs" />
     <Compile Include="System.IO.Packaging\PackageRelationshipSelectorType.cs" />
-    <Compile Include="System.IO.Packaging\PackUriHelper.cs" />
-    <Compile Include="System.IO.Packaging\PackUriParser.cs" />
     <Compile Include="System.IO.Packaging\RightsManagementInformation.cs" />
     <Compile Include="System.IO.Packaging\SignatureVerificationEventArgs.cs" />
     <Compile Include="System.IO.Packaging\StorageInfo.cs" />
@@ -159,10 +160,10 @@
     <Compile Include="System.Windows.Markup\DictionaryKeyPropertyAttribute.cs" />
     <Compile Include="System.Windows.Markup\IComponentConnector.cs" />
     <Compile Include="System.Windows.Markup\INameScope.cs" />
-    <Compile Include="System.Windows.Markup\InternalTypeHelper.cs" />
     <Compile Include="System.Windows.Markup\IReceiveMarkupExtension.cs" />
     <Compile Include="System.Windows.Markup\IValueSerializerContext.cs" />
     <Compile Include="System.Windows.Markup\IXamlTypeResolver.cs" />
+    <Compile Include="System.Windows.Markup\InternalTypeHelper.cs" />
     <Compile Include="System.Windows.Markup\MarkupExtension.cs" />
     <Compile Include="System.Windows.Markup\MarkupExtensionReturnTypeAttribute.cs" />
     <Compile Include="System.Windows.Markup\NameScopePropertyAttribute.cs" />
@@ -214,9 +215,9 @@
     <Compile Include="System.Windows\Expression.cs" />
     <Compile Include="System.Windows\ExpressionConverter.cs" />
     <Compile Include="System.Windows\Freezable.cs" />
+    <Compile Include="System.Windows\IWeakEventListener.cs" />
     <Compile Include="System.Windows\Int32Rect.cs" />
     <Compile Include="System.Windows\Int32RectConverter.cs" />
-    <Compile Include="System.Windows\IWeakEventListener.cs" />
     <Compile Include="System.Windows\LocalValueEntry.cs" />
     <Compile Include="System.Windows\LocalValueEnumerator.cs" />
     <Compile Include="System.Windows\NumericListTokenizer.cs" />
@@ -247,7 +248,15 @@
     <Compile Include="ZipSharp\ZipStream.cs" />
     <Compile Include="ZipSharp\ZipTime.cs" />
     <Compile Include="ZipSharp\ZipWriteStream.cs" />
+    <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
+      <Name>genconsts</Name>
+      <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
@@ -258,4 +267,10 @@
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
+  <PropertyGroup>
+    <!-- Force the pre-build event to run after references have been resolved. The default
+      behavior is to run them before resolving references, which can cause things like
+      culevel.exe to be used before they have been built. -->
+    <PreBuildEventDependsOn>ResolveReferences</PreBuildEventDependsOn>
+  </PropertyGroup>
 </Project>

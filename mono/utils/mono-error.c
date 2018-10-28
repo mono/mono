@@ -62,7 +62,7 @@ get_class (MonoErrorInternal *error)
 {
 	MonoClass *klass = NULL;
 	if (is_managed_exception (error))
-		klass = mono_object_class (mono_gchandle_get_target (error->exn.instance_handle));
+		klass = mono_object_class (mono_gchandle_get_target_internal (error->exn.instance_handle));
 	else
 		klass = error->exn.klass;
 	return klass;
@@ -134,7 +134,7 @@ mono_error_cleanup (MonoError *oerror)
 
 
 	if (has_instance_handle)
-		mono_gchandle_free (error->exn.instance_handle);
+		mono_gchandle_free_internal (error->exn.instance_handle);
 
 
 	g_free ((char*)error->full_message);
@@ -194,6 +194,8 @@ mono_error_get_message (MonoError *oerror)
 	case MONO_ERROR_FILE_NOT_FOUND:
 	case MONO_ERROR_MISSING_FIELD:
 		return error->full_message;
+	case MONO_ERROR_CLEANUP_CALLED_SENTINEL:
+		g_assert_not_reached ();
 	}
 
 	if (error->full_message_with_fields)
@@ -457,7 +459,7 @@ mono_error_set_exception_instance (MonoError *oerror, MonoException *exc)
 
 	mono_error_prepare (error);
 	error->error_code = MONO_ERROR_EXCEPTION_INSTANCE;
-	error->exn.instance_handle = mono_gchandle_new (exc ? &exc->object : NULL, FALSE);
+	error->exn.instance_handle = mono_gchandle_new_internal (exc ? &exc->object : NULL, FALSE);
 }
 
 void
@@ -482,7 +484,7 @@ mono_error_set_out_of_memory (MonoError *oerror, const char *msg_format, ...)
 }
 
 void
-mono_error_set_argument (MonoError *oerror, const char *argument, const char *msg_format, ...)
+mono_error_set_argument_format (MonoError *oerror, const char *argument, const char *msg_format, ...)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	mono_error_prepare (error);
@@ -491,6 +493,18 @@ mono_error_set_argument (MonoError *oerror, const char *argument, const char *ms
 	error->first_argument = argument;
 
 	set_error_message ();
+}
+
+void
+mono_error_set_argument (MonoError *oerror, const char *argument, const char *msg)
+{
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+	mono_error_prepare (error);
+
+	error->error_code = MONO_ERROR_ARGUMENT;
+	error->first_argument = argument;
+	if (msg && msg [0] && !(error->full_message = g_strdup (msg)))
+		error->flags |= MONO_ERROR_INCOMPLETE;
 }
 
 void
@@ -522,23 +536,24 @@ mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char
 
 
 /* Used by mono_error_prepare_exception - it sets its own error on mono_string_new_checked failure. */
-static MonoString*
+static MonoStringHandle
 string_new_cleanup (MonoDomain *domain, const char *text)
 {
-	ERROR_DECL_VALUE (ignored_err);
-	MonoString *result = mono_string_new_checked (domain, text, &ignored_err);
-	mono_error_cleanup (&ignored_err);
+	ERROR_DECL (ignored_err);
+	MonoStringHandle result = mono_string_new_handle (domain, text, ignored_err);
+	mono_error_cleanup (ignored_err);
 	return result;
 }
 
-static MonoString*
+static MonoStringHandle
 get_type_name_as_mono_string (MonoErrorInternal *error, MonoDomain *domain, MonoError *error_out)
 {
-	MonoString* res = NULL;
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoStringHandle res = NULL_HANDLE_STRING;
 
 	if (error->type_name) {
 		res = string_new_cleanup (domain, error->type_name);
-		
 	} else {
 		MonoClass *klass = get_class (error);
 		if (klass) {
@@ -549,43 +564,38 @@ get_type_name_as_mono_string (MonoErrorInternal *error, MonoDomain *domain, Mono
 			}
 		}
 	}
-	if (!res)
+	if (MONO_HANDLE_IS_NULL (res))
 		mono_error_set_out_of_memory (error_out, "Could not allocate type name");
-	return res;
-}
-
-static void
-set_message_on_exception (MonoException *exception, MonoErrorInternal *error, MonoError *error_out)
-{
-	MonoString *msg = string_new_cleanup (mono_domain_get (), error->full_message);
-	if (msg)
-		MONO_OBJECT_SETREF (exception, message, msg);
-	else
-		mono_error_set_out_of_memory (error_out, "Could not allocate exception object");
+	HANDLE_FUNCTION_RETURN_REF (MonoString, res);
 }
 
 static MonoExceptionHandle
 mono_error_prepare_exception_handle (MonoError *oerror, MonoError *error_out)
 // Can fail with out-of-memory
 {
-	return MONO_HANDLE_NEW (MonoException, mono_error_prepare_exception (oerror, error_out));
+	HANDLE_FUNCTION_ENTER ();
+	MonoExceptionHandle ex = MONO_HANDLE_NEW (MonoException, mono_error_prepare_exception (oerror, error_out));
+	HANDLE_FUNCTION_RETURN_REF (MonoException, ex);
 }
 
 /*Can fail with out-of-memory*/
 MonoException*
 mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 
-	MonoException* exception = NULL;
-	MonoString *assembly_name = NULL, *type_name = NULL;
+	MonoExceptionHandle exception = MONO_HANDLE_CAST (MonoException, mono_new_null ());
 	MonoDomain *domain = mono_domain_get ();
+	char *type_name = NULL;
+	char *message = NULL;
 
 	error_init (error_out);
 
 	switch (error->error_code) {
 	case MONO_ERROR_NONE:
-		return NULL;
+		goto exit;
 
 	case MONO_ERROR_MISSING_METHOD:
 		exception = mono_corlib_exception_new_with_args ("System", "MissingMethodException", error->full_message, error->first_argument, error_out);
@@ -600,10 +610,13 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		exception = mono_corlib_exception_new_with_args ("System", "MissingFieldException", error->full_message, error->first_argument, error_out);
 		break;
 	case MONO_ERROR_MEMBER_ACCESS:
-		exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MemberAccessException", error->full_message);
+		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "MemberAccessException", error->full_message, error_out);
 		break;
 
-	case MONO_ERROR_TYPE_LOAD:
+	case MONO_ERROR_TYPE_LOAD: {
+		MonoStringHandle assembly_name;
+		MonoStringHandle type_name;
+
 		if ((error->type_name && error->assembly_name) || error->exn.klass) {
 			type_name = get_type_name_as_mono_string (error, domain, error_out);
 			if (!mono_error_ok (error_out))
@@ -611,88 +624,97 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 
 			if (error->assembly_name) {
 				assembly_name = string_new_cleanup (domain, error->assembly_name);
-				if (!assembly_name) {
+				if (MONO_HANDLE_IS_NULL (assembly_name)) {
 					mono_error_set_out_of_memory (error_out, "Could not allocate assembly name");
 					break;
 				}
 			} else {
-				assembly_name = mono_string_empty (domain);
+				assembly_name = mono_string_empty_handle (domain);
 			}
 
 			exception = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", "TypeLoadException", type_name, assembly_name, error_out);
-			if (exception && error->full_message != NULL && strcmp (error->full_message, ""))
-				set_message_on_exception (exception, error, error_out);
+			if (!MONO_HANDLE_IS_NULL (exception)) {
+				const char *full_message = error->full_message;
+				if (full_message && full_message [0]) {
+					MonoStringHandle msg = string_new_cleanup (mono_domain_get (), full_message);	
+					if (!MONO_HANDLE_IS_NULL (msg))
+						MONO_HANDLE_SET (exception, message, msg);
+					else
+						mono_error_set_out_of_memory (error_out, "Could not allocate exception object");
+				}
+			}
 		} else {
-			exception = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", error->full_message);
+			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "TypeLoadException", error->full_message, error_out);
 		}
-		break;
+	}
+	break;
 
 	case MONO_ERROR_OUT_OF_MEMORY:
 		if (domain)
-			exception = domain->out_of_memory_ex;
-		if (!exception)
-			exception = mono_get_exception_out_of_memory ();
+			exception = MONO_HANDLE_NEW (MonoException, domain->out_of_memory_ex);
+		if (MONO_HANDLE_IS_NULL (exception))
+			exception = mono_get_exception_out_of_memory_handle ();
 		break;
 
 	case MONO_ERROR_ARGUMENT:
-		exception = mono_get_exception_argument (error->first_argument, error->full_message);
+		exception = mono_exception_new_argument (error->first_argument, error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_ARGUMENT_NULL:
-		exception = mono_get_exception_argument_null (error->first_argument);
+		exception = mono_exception_new_argument_null (error->first_argument, error_out);
 		break;
 
-	case MONO_ERROR_NOT_VERIFIABLE: {
-		char *type_name = NULL, *message;
+	case MONO_ERROR_NOT_VERIFIABLE:
 		if (error->exn.klass) {
 			type_name = mono_type_get_full_name (error->exn.klass);
-			if (!type_name) {
-				mono_error_set_out_of_memory (error_out, "Could not allocate message");
-				break;
-			}
+			if (!type_name)
+				goto out_of_memory;
 		}
 		message = g_strdup_printf ("Error in %s:%s %s", type_name, error->member_name, error->full_message);
-		if (!message) {
-			g_free (type_name);
-			mono_error_set_out_of_memory (error_out, "Could not allocate message");
-			break;	
-		}
-		exception = mono_exception_from_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", message);
-		g_free (message);
-		g_free (type_name);
+		if (!message)
+			goto out_of_memory;
+		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", message, error_out);
 		break;
-	}
+
 	case MONO_ERROR_GENERIC:
 		if (!error->exception_name_space || !error->exception_name)
 			mono_error_set_execution_engine (error_out, "MonoError with generic error but no exception name was supplied");
 		else
-			exception = mono_exception_from_name_msg (mono_defaults.corlib, error->exception_name_space, error->exception_name, error->full_message);
+			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, error->exception_name_space, error->exception_name, error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_EXCEPTION_INSTANCE:
-		exception = (MonoException*) mono_gchandle_get_target (error->exn.instance_handle);
+		exception = MONO_HANDLE_CAST (MonoException, mono_gchandle_get_target_handle (error->exn.instance_handle));
 		break;
 
 	case MONO_ERROR_CLEANUP_CALLED_SENTINEL:
 		mono_error_set_execution_engine (error_out, "MonoError reused after mono_error_cleanup");
 		break;
 
-	case MONO_ERROR_INVALID_PROGRAM: {
-		gboolean lacks_message = error->flags & MONO_ERROR_INCOMPLETE;
-		if (lacks_message)
-			return mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", "");
-		else
-			return mono_exception_from_name_msg (mono_defaults.corlib, "System", "InvalidProgramException", error->full_message);
-	}
+	case MONO_ERROR_INVALID_PROGRAM:
+		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "InvalidProgramException",
+			(error->flags & MONO_ERROR_INCOMPLETE) ? "" : error->full_message, error_out);
+		break;
+
 	default:
 		mono_error_set_execution_engine (error_out, "Invalid error-code %d", error->error_code);
 	}
 
 	if (!mono_error_ok (error_out))
-		return NULL;
-	if (!exception)
+		goto return_null;
+
+	if (MONO_HANDLE_IS_NULL (exception))
 		mono_error_set_out_of_memory (error_out, "Could not allocate exception object");
-	return exception;
+	goto exit;
+out_of_memory:
+	mono_error_set_out_of_memory (error_out, "Could not allocate message");
+	goto exit;
+return_null:
+	exception = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+exit:
+	g_free (message);
+	g_free (type_name);
+	HANDLE_FUNCTION_RETURN_OBJ (exception);
 }
 
 /*
@@ -746,7 +768,7 @@ mono_error_box (const MonoError *ierror, MonoImage *image)
 	MonoErrorInternal *from = (MonoErrorInternal*)ierror;
 	/* Don't know how to box a gchandle */
 	g_assert (!is_managed_exception (from));
-	MonoErrorBoxed* box = mono_image_alloc (image, sizeof (MonoErrorBoxed));
+	MonoErrorBoxed* box = (MonoErrorBoxed*)mono_image_alloc (image, sizeof (MonoErrorBoxed));
 	box->image = image;
 	mono_error_init_flags (&box->error, MONO_ERROR_MEMPOOL_BOXED);
 	MonoErrorInternal *to = (MonoErrorInternal*)&box->error;

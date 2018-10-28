@@ -39,7 +39,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	start = code = mono_domain_code_reserve (mono_domain_get (), 36);
 
 	/* This executes in the context of the caller, hence o0 */
-	sparc_add_imm (code, 0, sparc_o0, sizeof (MonoObject), sparc_o0);
+	sparc_add_imm (code, 0, sparc_o0, MONO_ABI_SIZEOF (MonoObject), sparc_o0);
 #ifdef SPARCV9
 	reg = sparc_g4;
 #else
@@ -68,7 +68,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code, guint8 *addr)
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	g_assert_not_reached ();
 }

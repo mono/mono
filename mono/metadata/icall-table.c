@@ -32,180 +32,153 @@
 #include <wchar.h>
 #endif
 
-#include <mono/metadata/icall-table.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/bsearch.h>
+#include <mono/metadata/icalls.h>
+#include "handle-decl.h"
+#include "icall-decl.h"
 
-/*
- * icall.c defines a lot of icalls as static, to avoid having to add prototypes for
- * them, just don't include any mono headers and emit dummy prototypes.
- */
-// Generate prototypes
-#define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) extern void func (void);
-#define HANDLES(inner) inner
-#include "metadata/icall-def.h"
+// These definitions are used for multiple includes of icall-def.h and eventually undefined.
+#define NOHANDLES(inner) inner
+#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
+#define HANDLES(id, name, func, ...)	ICALL (id, name, func ## _raw)
+#define HANDLES_REUSE_WRAPPER		HANDLES
 
 // Generate Icall_ constants
-#undef ICALL_TYPE
-#undef ICALL
-#undef HANDLES
+enum {
+#define ICALL_TYPE(id,name,first)	/* nothing */
 #define ICALL_TYPE(id,name,first)
 #define ICALL(id,name,func) Icall_ ## id,
-#define HANDLES(inner) inner
-
-enum {
 #include "metadata/icall-def.h"
+#undef ICALL_TYPE
+#undef ICALL
 	Icall_last
 };
 
+enum {
+#define ICALL_TYPE(id,name,first) Icall_type_ ## id,
+#define ICALL(id,name,func) 		/* nothing */
+#include "metadata/icall-def.h"
 #undef ICALL_TYPE
 #undef ICALL
-#define ICALL_TYPE(id,name,first) Icall_type_ ## id,
-#define ICALL(id,name,func)
-#undef HANDLES
-#define HANDLES(inner) inner
-enum {
-#include "metadata/icall-def.h"
 	Icall_type_num
 };
 
-#undef ICALL_TYPE
-#undef ICALL
-#define ICALL_TYPE(id,name,firstic) {(Icall_ ## firstic)},
-#define ICALL(id,name,func)
-#undef HANDLES
-#define HANDLES(inner) inner
 typedef struct {
 	guint16 first_icall;
 } IcallTypeDesc;
 
-static const IcallTypeDesc
-icall_type_descs [] = {
+static const IcallTypeDesc icall_type_descs [] = {
+#define ICALL_TYPE(id,name,firstic) {(Icall_ ## firstic)},
+#define ICALL(id,name,func) 		/* nothing */
 #include "metadata/icall-def.h"
+#undef ICALL_TYPE
+#undef ICALL
 	{Icall_last}
 };
 
 #define icall_desc_num_icalls(desc) ((desc) [1].first_icall - (desc) [0].first_icall)
 
-#undef HANDLES
-#define HANDLES(inner) inner
-#undef ICALL_TYPE
-#define ICALL_TYPE(id,name,first)
-#undef ICALL
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 
-#ifdef HAVE_ARRAY_ELEM_INIT
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 
 static const struct msgstrtn_t {
-#define ICALL(id,name,func)
-#undef ICALL_TYPE
 #define ICALL_TYPE(id,name,first) char MSGSTRFIELD(__LINE__) [sizeof (name)];
+#define ICALL(id,name,func) 		/* nothing */
 #include "metadata/icall-def.h"
 #undef ICALL_TYPE
+#undef ICALL
 } icall_type_names_str = {
 #define ICALL_TYPE(id,name,first) (name),
+#define ICALL(id,name,func)
 #include "metadata/icall-def.h"
 #undef ICALL_TYPE
+#undef ICALL
 };
+
 static const guint16 icall_type_names_idx [] = {
-#define ICALL_TYPE(id,name,first) [Icall_type_ ## id] = offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__)),
+#define ICALL_TYPE(id,name,first) (offsetof (struct msgstrtn_t, MSGSTRFIELD(__LINE__))),
+#define ICALL(id,name,func) 		/* nothing */
 #include "metadata/icall-def.h"
 #undef ICALL_TYPE
+#undef ICALL
 };
+
 #define icall_type_name_get(id) ((const char*)&icall_type_names_str + icall_type_names_idx [(id)])
 
 static const struct msgstr_t {
-#undef ICALL
-#define ICALL_TYPE(id,name,first)
+#define ICALL_TYPE(id,name,first)	/* nothing */
 #define ICALL(id,name,func) char MSGSTRFIELD(__LINE__) [sizeof (name)];
 #include "metadata/icall-def.h"
+#undef ICALL_TYPE
 #undef ICALL
 } icall_names_str = {
+#define ICALL_TYPE(id,name,first)
 #define ICALL(id,name,func) (name),
 #include "metadata/icall-def.h"
+#undef ICALL_TYPE
 #undef ICALL
 };
+
 static const guint16 icall_names_idx [] = {
-#define ICALL(id,name,func) [Icall_ ## id] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define ICALL_TYPE(id,name,first)	/* nothing */
+#define ICALL(id,name,func) (offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__))),
 #include "metadata/icall-def.h"
+#undef ICALL_TYPE
 #undef ICALL
 };
+
 #define icall_name_get(id) ((const char*)&icall_names_str + icall_names_idx [(id)])
 
-#else
-
+static const gconstpointer icall_functions [] = {
+#define ICALL_TYPE(id,name,first)	/* nothing */
+#define ICALL(id,name,func) ((gpointer)(func)),
+#include "metadata/icall-def.h"
 #undef ICALL_TYPE
 #undef ICALL
-#define ICALL_TYPE(id,name,first) name,
-#define ICALL(id,name,func)
-static const char* const
-icall_type_names [] = {
-#include "metadata/icall-def.h"
-	NULL
-};
-
-#define icall_type_name_get(id) (icall_type_names [(id)])
-
-#undef ICALL_TYPE
-#undef ICALL
-#define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) name,
-static const char* const
-icall_names [] = {
-#include "metadata/icall-def.h"
-	NULL
-};
-#define icall_name_get(id) icall_names [(id)]
-
-#endif /* !HAVE_ARRAY_ELEM_INIT */
-
-#undef HANDLES
-#define HANDLES(inner) inner
-#undef ICALL_TYPE
-#undef ICALL
-#define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) func,
-static const gconstpointer
-icall_functions [] = {
-#include "metadata/icall-def.h"
 	NULL
 };
 
 #ifdef ENABLE_ICALL_SYMBOL_MAP
-#undef HANDLES
-#define HANDLES(inner) inner
+
+static const gconstpointer icall_symbols [] = {
+#define ICALL_TYPE(id,name,first)	/* nothing */
+#define ICALL(id,name,func) #func,
+#include "metadata/icall-def.h"
 #undef ICALL_TYPE
 #undef ICALL
-#define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) #func,
-static const gconstpointer
-icall_symbols [] = {
-#include "metadata/icall-def.h"
 	NULL
 };
-#endif
 
+#endif // ENABLE_ICALL_SYMBOL_MAP
+
+#undef HANDLES
+#undef HANDLES_MAYBE
+#undef NOHANDLES
+
+static const guchar icall_uses_handles [] = {
+#define ICALL_TYPE(id,name,first)	/* nothing */
+#define ICALL(id,name,func) 0,
+#define HANDLES(...) 1,
+#define HANDLES_MAYBE(...) 1,
+#define NOHANDLES(inner) 0,
+#include "metadata/icall-def.h"
 #undef ICALL_TYPE
 #undef ICALL
-#define ICALL_TYPE(id,name,first)
-#define ICALL(id,name,func) 0,
-#undef HANDLES
-#define HANDLES(inner) 1,
-static const guchar
-icall_uses_handles [] = {
-#include "metadata/icall-def.h"
-#undef ICALL
-#undef HANDLES
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+#undef HANDLES
+#undef HANDLES_MAYBE
+#undef HANDLES_REUSE_WRAPPER
+#undef NOHANDLES
+
 static int
 compare_method_imap (const void *key, const void *elem)
 {
 	const char* method_name = (const char*)&icall_names_str + (*(guint16*)elem);
-	return strcmp (key, method_name);
+	return strcmp ((const char*)key, method_name);
 }
 
 static gsize
@@ -239,7 +212,7 @@ static int
 compare_class_imap (const void *key, const void *elem)
 {
 	const char* class_name = (const char*)&icall_type_names_str + (*(guint16*)elem);
-	return strcmp (key, class_name);
+	return strcmp ((const char*)key, class_name);
 }
 
 static const IcallTypeDesc*
@@ -250,60 +223,6 @@ find_class_icalls (const char *name)
 		return NULL;
 	return &icall_type_descs [nameslot - &icall_type_names_idx [0]];
 }
-
-#else /* HAVE_ARRAY_ELEM_INIT */
-
-static int
-compare_method_imap (const void *key, const void *elem)
-{
-	const char** method_name = (const char**)elem;
-	return strcmp (key, *method_name);
-}
-
-static gsize
-find_slot_icall (const IcallTypeDesc *imap, const char *name)
-{
-	const char **nameslot = mono_binary_search (name, icall_names + imap->first_icall, icall_desc_num_icalls (imap), sizeof (icall_names [0]), compare_method_imap);
-	if (!nameslot)
-		return -1;
-	return nameslot - icall_names;
-}
-
-static gpointer
-find_method_icall (const IcallTypeDesc *imap, const char *name)
-{
-	gsize slotnum = find_slot_icall (imap, name);
-	if (slotnum == -1)
-		return NULL;
-	return (gpointer)icall_functions [slotnum];
-}
-
-static gboolean
-find_uses_handles_icall (const IcallTypeDesc *imap, const char *name)
-{
-	gsize slotnum = find_slot_icall (imap, name);
-	if (slotnum == -1)
-		return FALSE;
-	return (gboolean)icall_uses_handles [slotnum];
-}
-
-static int
-compare_class_imap (const void *key, const void *elem)
-{
-	const char** class_name = (const char**)elem;
-	return strcmp (key, *class_name);
-}
-
-static const IcallTypeDesc*
-find_class_icalls (const char *name)
-{
-	const char **nameslot = mono_binary_search (name, icall_type_names, Icall_type_num, sizeof (icall_type_names [0]), compare_class_imap);
-	if (!nameslot)
-		return NULL;
-	return &icall_type_descs [nameslot - icall_type_names];
-}
-
-#endif /* HAVE_ARRAY_ELEM_INIT */
 
 static gpointer
 icall_table_lookup (char *classname, char *methodname, char *sigstart, gboolean *uses_handles)
@@ -374,7 +293,7 @@ lookup_icall_symbol (gpointer func)
 					functions_sorted [i + 1] = tmp;
 					tmp = symbols_sorted [i];
 					symbols_sorted [i] = symbols_sorted [i + 1];
-					symbols_sorted [i + 1] = tmp;
+					symbols_sorted [i + 1] = (const char*)tmp;
 					changed = TRUE;
 				}
 			}

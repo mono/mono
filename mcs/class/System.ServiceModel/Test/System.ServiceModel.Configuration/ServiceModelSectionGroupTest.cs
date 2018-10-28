@@ -40,6 +40,8 @@ using NUnit.Framework;
 
 using ConfigurationType = System.Configuration.Configuration;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -57,7 +59,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		[Test]
 		public void GetSectionGroup ()
 		{
-			ServiceModelSectionGroup g = GetConfig ("Test/config/test1");
+			ServiceModelSectionGroup g = GetConfig (TestResourceHelper.GetFullPathOfResource ("Test/config/test1"));
 			Assert.IsNotNull (g.Bindings, "bindings");
 			Assert.IsNotNull (g.Client, "client");
 			Assert.IsNotNull (g.Services, "services");
@@ -68,7 +70,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		[Category ("NotWorking")]
 		[Ignore ("fails under .NET; I never bothered to fix the test")]
 		public void BindingCollections () {
-			ServiceModelSectionGroup g = GetConfig ("Test/config/test1.config");
+			ServiceModelSectionGroup g = GetConfig (TestResourceHelper.GetFullPathOfResource ("Test/config/test1.config"));
 			List<BindingCollectionElement> coll = g.Bindings.BindingCollections;
 			Assert.AreEqual (20, coll.Count, "Count");
 		}
@@ -76,7 +78,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		[Test]
 		public void Endpoints ()
 		{
-			ServiceModelSectionGroup g = GetConfig ("Test/config/test1");
+			ServiceModelSectionGroup g = GetConfig (TestResourceHelper.GetFullPathOfResource ("Test/config/test1"));
 			ChannelEndpointElementCollection col = g.Client.Endpoints;
 			Assert.AreEqual (1, col.Count, "initial count");
 			ChannelEndpointElement e = col [0];

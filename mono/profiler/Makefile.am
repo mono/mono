@@ -36,9 +36,7 @@ suppression_DATA = mono-profiler-coverage.suppression
 #
 # See: https://bugzilla.xamarin.com/show_bug.cgi?id=57011
 if !ENABLE_COOP_SUSPEND
-if !ENABLE_HYBRID_SUSPEND
 check_targets = testlog
-endif
 endif
 
 endif
@@ -85,7 +83,16 @@ else
 if HOST_TIZEN
 libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
 else
+# BITCODE => -no-undefined
+if HOST_DARWIN
+if BITCODE
+libmono_dep = $(top_builddir)/mono/mini/$(LIBMONO_LA)
+else
 libmono_dep =
+endif
+else
+libmono_dep =
+endif
 endif
 endif
 endif
@@ -133,6 +140,7 @@ endif
 
 mprof_report_SOURCES = mprof-report.c
 mprof_report_LDADD = $(glib_libs) $(zlib_dep)
+mprof_report_LDFLAGS = -no-undefined
 
 PLOG_TESTS_SRC = \
 	test-alloc.cs \
@@ -152,7 +160,7 @@ MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:01
 	$(MCS) -out:$@ $<
 
 testlog: $(PLOG_TESTS)
-	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir)
+	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir) nunit TestResult-profiler.xml
 
 check-local: $(check_targets)
 

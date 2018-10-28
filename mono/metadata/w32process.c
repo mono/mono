@@ -28,33 +28,33 @@ mono_w32process_get_pid (gpointer handle)
 }
 
 static gboolean
-mono_w32process_try_get_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
+mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 size, PDWORD needed)
 {
-	return EnumProcessModules (process, (HMODULE *) modules, size, (LPDWORD) needed);
+	return EnumProcessModules (process, modules, size, needed);
 }
 
 static guint32
 mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleBaseName (process, module, basename, size);
+	return GetModuleBaseName (process, (HMODULE)module, basename, size);
 }
 
 static guint32
 mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleFileNameEx (process, module, basename, size);
+	return GetModuleFileNameEx (process, (HMODULE)module, basename, size);
 }
 
 static gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size)
 {
-	return GetModuleInformation (process, module, modinfo, size);
+	return GetModuleInformation (process, (HMODULE)module, modinfo, size);
 }
 
 static gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
-	guint32 handle;
+	DWORD handle;
 	gsize datasize;
 
 	g_assert (data);
@@ -142,10 +142,10 @@ process_set_field_object (MonoObject *obj, const gchar *fieldname, MonoObject *d
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, data);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, data);
 }
 
 static void
@@ -166,13 +166,13 @@ process_set_field_string (MonoObject *obj, const gchar *fieldname, const gunicha
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_utf16_checked (domain, val, len, error);
 	return_if_nok (error);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, (MonoObject*)string);
 }
 
 static void
@@ -192,13 +192,13 @@ process_set_field_string_char (MonoObject *obj, const gchar *fieldname, const gc
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_checked (domain, val, error);
 	return_if_nok (error);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, (MonoObject*)string);
 }
 
 static void
@@ -212,7 +212,7 @@ process_set_field_int (MonoObject *obj, const gchar *fieldname, guint32 val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint32 *)(((char *)obj) + field->offset)=val;
@@ -229,7 +229,7 @@ process_set_field_intptr (MonoObject *obj, const gchar *fieldname, gpointer val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(gpointer *)(((char *)obj) + field->offset) = val;
@@ -246,7 +246,7 @@ process_set_field_bool (MonoObject *obj, const gchar *fieldname, gboolean val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint8 *)(((char *)obj) + field->offset) = val;
@@ -432,13 +432,13 @@ ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject
 
 	stash_system_image (m_class_get_image (mono_object_class (this_obj)));
 
-	mono_w32process_get_fileversion (this_obj, mono_string_chars (filename), error);
+	mono_w32process_get_fileversion (this_obj, mono_string_chars_internal (filename), error);
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
 		return;
 	}
 
-	process_set_field_string (this_obj, "filename", mono_string_chars (filename), mono_string_length (filename), error);
+	process_set_field_string (this_obj, "filename", mono_string_chars_internal (filename), mono_string_length_internal (filename), error);
 	if (!mono_error_ok (error)) {
 		mono_error_set_pending_exception (error);
 	}
@@ -597,7 +597,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
-			mono_array_setref (temp_arr, num_added++, module);
+			mono_array_setref_internal (temp_arr, num_added++, module);
 		}
 	}
 
@@ -609,7 +609,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 				mono_error_set_pending_exception (error);
 				return NULL;
 			}
-			mono_array_setref (temp_arr, num_added++, module);
+			mono_array_setref_internal (temp_arr, num_added++, module);
 		}
 		g_ptr_array_free (assemblies, TRUE);
 	}
@@ -623,7 +623,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 			return NULL;
 
 		for (i = 0; i < num_added; i++)
-			mono_array_setref (arr, i, mono_array_get (temp_arr, MonoObject*, i));
+			mono_array_setref_internal (arr, i, mono_array_get_internal (temp_arr, MonoObject*, i));
 	}
 
 	return arr;
@@ -671,4 +671,49 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 	if (error)
 		*error = perror;
 	return res;
+}
+
+static void
+mono_pin_string (MonoStringHandle in_coophandle, MonoStringHandle *out_coophandle, gunichar2 **chars, gsize *length, gchandle_t *gchandle)
+{
+	*out_coophandle = in_coophandle;
+	if (!MONO_HANDLE_IS_NULL (in_coophandle)) {
+		*chars = mono_string_handle_pin_chars (in_coophandle, gchandle);
+		*length = mono_string_handle_length (in_coophandle);
+	}
+}
+
+void
+mono_createprocess_coop_init (MonoCreateProcessCoop *coop, MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info)
+{
+	memset (coop, 0, sizeof (*coop));
+
+#define PIN_STRING(h, x) (mono_pin_string (h, &coop->coophandle.x, &coop->x, &coop->length.x, &coop->gchandle.x))
+
+#define PIN(x) PIN_STRING (MONO_HANDLE_NEW_GET (MonoString, proc_start_info, x), x)
+	PIN (filename);
+	PIN (arguments);
+	PIN (working_directory);
+	PIN (verb);
+#undef PIN
+#define PIN(x) PIN_STRING (MONO_HANDLE_NEW (MonoString, process_info->x), x)
+	PIN (username);
+	PIN (domain);
+#undef PIN
+}
+
+static void
+mono_unpin_array (gchandle_t *gchandles, gsize count)
+{
+	for (gsize i = 0; i < count; ++i) {
+		mono_gchandle_free_internal (gchandles [i]);
+		gchandles [i] = 0;
+	}
+}
+
+void
+mono_createprocess_coop_cleanup (MonoCreateProcessCoop *coop)
+{
+	mono_unpin_array ((gchandle_t*)&coop->gchandle, sizeof (coop->gchandle) / sizeof (gchandle_t));
+	memset (coop, 0, sizeof (*coop));
 }

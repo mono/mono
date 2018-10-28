@@ -14,12 +14,11 @@
 #                 command line.
 #
 
-# All dependent libs become dependent dirs for parallel builds
-# Have to rename to handle differences between assembly/directory names
-DEP_LIBS=$(patsubst System.Xml,System.XML,$(LIB_REFS))
-
 LIB_REFS_FULL = $(call _FILTER_OUT,=, $(LIB_REFS)) $(DEFAULT_REFERENCES)
 LIB_REFS_ALIAS = $(filter-out $(LIB_REFS_FULL),$(LIB_REFS))
+
+# All dependent libs become dependent dirs for parallel builds
+DEP_LIBS = $(filter-out %=, $(subst =,= ,$(LIB_REFS)))
 
 ifdef TARGET_NET_REFERENCE
 # System*, mscorlib references come from the TARGET_NET_REFERENCE dir, others from the profile dir
@@ -61,10 +60,8 @@ endif
 the_libdir_base = $(topdir)/class/$(lib_dir)/$(PROFILE_DIRECTORY)/$(if $(LIBRARY_SUBDIR),$(LIBRARY_SUBDIR)/)
 
 ifdef RESOURCE_STRINGS
-ifneq (basic, $(PROFILE))
 RESOURCE_STRINGS_FILES += $(RESOURCE_STRINGS:%=--resourcestrings:%)
 IL_REPLACE_FILES += $(IL_REPLACE:%=--ilreplace:%)
-endif
 endif
 
 ifdef ENFORCE_LIBRARY_WARN_AS_ERROR
@@ -74,17 +71,6 @@ LIB_MCS_FLAGS += -warnaserror
 endif
 endif
 endif
-
-#
-# The bare directory contains the plain versions of System and System.Xml
-#
-bare_libdir = $(the_libdir_base)bare
-
-#
-# The secxml directory contains the System version that depends on 
-# System.Xml and Mono.Security
-#
-secxml_libdir = $(the_libdir_base)secxml
 
 the_libdir = $(the_libdir_base)$(intermediate)
 
@@ -136,6 +122,7 @@ csproj-library:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
@@ -224,7 +211,7 @@ test-local run-test-local run-test-ondotnet-local:
 ccomma = ,
 define RESOURCE_template
 $(1).resources: $(2)
-	$(RESGEN) "$$<" "$$@"
+	$$(RESGEN) "$$<" "$$@"
 
 GEN_RESOURCE_DEPS += $(1).resources
 GEN_RESOURCE_FLAGS += -resource:$(1).resources
@@ -236,11 +223,12 @@ ifdef RESOURCE_DEFS
 $(foreach pair,$(RESOURCE_DEFS), $(eval $(call RESOURCE_template,$(word 1, $(subst $(ccomma), ,$(pair))), $(word 2, $(subst $(ccomma), ,$(pair))))))
 endif
 
-DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
+DISTFILES = $(wildcard *.sources) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
 
 ASSEMBLY      = $(LIBRARY)
 ASSEMBLY_EXT  = .dll
 the_assembly  = $(the_lib)
+
 include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
@@ -251,6 +239,7 @@ csproj-test:
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
+	echo $(LIBRARY); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \
@@ -295,14 +284,12 @@ endif
 # The library
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources := $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).sources)) $(wildcard $(PROFILE)_$(LIBRARY).sources) $(wildcard $(LIBRARY).sources))
-PROFILE_excludes = $(firstword $(if $(PROFILE_PLATFORM),$(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY).exclude.sources)) $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources))
+# TODO: depend on all *.sources (except tests) for now and figure out how to list only needed files later
+PROFILE_sources = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.sources))
 
-# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
-# We don't include it in the dependencies since it isn't always created
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(depsdir)/.stamp
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)'
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(LIBRARY)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 library_CLEAN_FILES += $(sourcefile)
 

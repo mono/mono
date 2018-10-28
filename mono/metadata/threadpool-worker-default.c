@@ -25,7 +25,6 @@
 #include <mono/metadata/w32event.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-complex.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-proclib.h>
@@ -34,6 +33,7 @@
 #include <mono/utils/mono-rand.h>
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-complex.h> // This header has defines to muck with names, so put it late.
 
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
@@ -307,20 +307,20 @@ mono_threadpool_worker_cleanup (void)
 static void
 work_item_push (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
 		g_assert (old >= 0);
 
-		new = old + 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old + 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 }
 
 static gboolean
 work_item_try_pop (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
@@ -329,8 +329,8 @@ work_item_try_pop (void)
 		if (old == 0)
 			return FALSE;
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 
 	return TRUE;
 }
@@ -362,7 +362,7 @@ worker_park (void)
 {
 	gboolean timeout = FALSE;
 	gboolean interrupted = FALSE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -385,8 +385,8 @@ worker_park (void)
 			old = mono_atomic_load_i32 (&worker.parked_threads_count);
 			g_assert (old >= G_MININT32);
 
-			new = old + 1;
-		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+			new_ = old + 1;
+		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, 5 * 1000, 60 * 1000), MONO_SEM_FLAGS_ALERTABLE)) {
 		case MONO_SEM_TIMEDWAIT_RET_SUCCESS:
@@ -407,8 +407,8 @@ worker_park (void)
 				old = mono_atomic_load_i32 (&worker.parked_threads_count);
 				g_assert (old > G_MININT32);
 
-				new = old - 1;
-			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+				new_ = old - 1;
+			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 		}
 
 		COUNTER_ATOMIC (counter, {
@@ -427,7 +427,7 @@ static gboolean
 worker_try_unpark (void)
 {
 	gboolean res = TRUE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -441,8 +441,8 @@ worker_try_unpark (void)
 			break;
 		}
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 	if (res)
 		mono_coop_sem_post (&worker.parked_threads_sem);
@@ -477,10 +477,17 @@ worker_thread (gpointer unused)
 		if (mono_thread_interruption_checkpoint_bool ())
 			continue;
 
-		if (!work_item_try_pop ()) {
-			gboolean timeout;
+		// If a worker thread is in its native top, not running managed code,
+		// there is no point in raising thread abort, and no code will clear
+		// the abort request. As such, the subsequent timedwait, would
+		// not be interrupted at runtime shutdown, because an abort is already requested.
+		// Clear the abort request.
+		// This avoids a shutdown hang in tests thread6 and thread7.
+		if (thread->state & ThreadState_AbortRequested)
+			mono_thread_internal_reset_abort (thread);
 
-			timeout = worker_park ();
+		if (!work_item_try_pop ()) {
+			gboolean const timeout = worker_park ();
 			if (timeout)
 				break;
 
@@ -551,7 +558,7 @@ worker_try_create (void)
 		counter._.starting ++;
 	});
 
-	thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL, error);
+	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)worker_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL, error);
 	if (!thread) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread due to %s",
 			GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())), mono_error_get_message (error));
@@ -651,9 +658,7 @@ monitor_sufficient_delay_since_last_dequeue (void)
 	if (worker.cpu_usage < CPU_USAGE_LOW) {
 		threshold = MONITOR_INTERVAL;
 	} else {
-		ThreadPoolWorkerCounter counter;
-		counter = COUNTER_READ ();
-		threshold = counter._.max_working * MONITOR_INTERVAL * 2;
+		threshold = COUNTER_READ ()._.max_working * MONITOR_INTERVAL * 2;
 	}
 
 	return mono_msec_ticks () >= worker.heuristic_last_dequeue + threshold;
@@ -782,7 +787,7 @@ monitor_ensure_running (void)
 				return;
 			if (mono_atomic_cas_i32 (&worker.monitor_status, MONITOR_STATUS_REQUESTED, MONITOR_STATUS_NOT_RUNNING) == MONITOR_STATUS_NOT_RUNNING) {
 				// printf ("monitor_thread: creating\n");
-				if (!mono_thread_create_internal (mono_get_root_domain (), monitor_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK, error)) {
+				if (!mono_thread_create_internal (mono_get_root_domain (), (gpointer)monitor_thread, NULL, (MonoThreadCreateFlags)(MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK), error)) {
 					// printf ("monitor_thread: creating failed\n");
 					worker.monitor_status = MONITOR_STATUS_NOT_RUNNING;
 					mono_error_cleanup (error);
@@ -1065,8 +1070,7 @@ static gboolean
 heuristic_should_adjust (void)
 {
 	if (worker.heuristic_last_dequeue > worker.heuristic_last_adjustment + worker.heuristic_adjustment_interval) {
-		ThreadPoolWorkerCounter counter;
-		counter = COUNTER_READ ();
+		ThreadPoolWorkerCounter const counter = COUNTER_READ ();
 		if (counter._.working <= counter._.max_working)
 			return TRUE;
 	}
@@ -1083,11 +1087,9 @@ heuristic_adjust (void)
 		gint64 sample_duration = sample_end - worker.heuristic_sample_start;
 
 		if (sample_duration >= worker.heuristic_adjustment_interval / 2) {
-			ThreadPoolWorkerCounter counter;
-			gint16 new_thread_count;
 
-			counter = COUNTER_READ ();
-			new_thread_count = hill_climbing_update (counter._.max_working, sample_duration, completions, &worker.heuristic_adjustment_interval);
+			ThreadPoolWorkerCounter counter = COUNTER_READ ();
+			gint16 const new_thread_count = hill_climbing_update (counter._.max_working, sample_duration, completions, &worker.heuristic_adjustment_interval);
 
 			COUNTER_ATOMIC (counter, {
 				counter._.max_working = new_thread_count;
@@ -1117,11 +1119,9 @@ heuristic_notify_work_completed (void)
 gboolean
 mono_threadpool_worker_notify_completed (void)
 {
-	ThreadPoolWorkerCounter counter;
-
 	heuristic_notify_work_completed ();
 
-	counter = COUNTER_READ ();
+	ThreadPoolWorkerCounter const counter = COUNTER_READ ();
 	return counter._.working <= counter._.max_working;
 }
 

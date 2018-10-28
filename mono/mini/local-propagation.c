@@ -370,7 +370,7 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 	}
 	case OP_IDIV_UN_IMM:
 	case OP_IDIV_IMM: {
-		if (!COMPILE_LLVM (cfg))
+		if ((!COMPILE_LLVM (cfg)) && (!cfg->backend->optimized_div))
 			allocated_vregs = mono_strength_reduction_division (cfg, ins);
 		break;
 	}
@@ -383,10 +383,8 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 			ins->opcode = OP_ICONST;
 			MONO_INST_NULLIFY_SREGS (ins);
 			ins->inst_c0 = 0;
-#if __s390__
-		}
-#else
-		} else if ((ins->inst_imm > 0) && (ins->inst_imm < (1LL << 32)) && (power != -1)) {
+		} else if ((ins->inst_imm > 0) && (ins->inst_imm < (1LL << 32)) && 
+			   (power != -1) && (!cfg->backend->optimized_div)) {
 			gboolean is_long = ins->opcode == OP_LREM_IMM;
 			int compensator_reg = alloc_ireg (cfg);
 			int intermediate_reg;
@@ -411,7 +409,6 @@ mono_strength_reduction_ins (MonoCompile *cfg, MonoInst *ins, const char **spec)
 
 			allocated_vregs = TRUE;
 		}
-#endif
 		break;
 	}
 #if SIZEOF_REGISTER == 4
@@ -641,8 +638,8 @@ mono_local_cprop (MonoCompile *cfg)
 
 				/* Constant propagation */
 				/* is_inst_imm is only needed for binops */
-				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST)) || (def->opcode == OP_PCONST)) &&
-					 (((srcindex == 0) && (ins->sreg2 == -1)))) ||
+				if ((((def->opcode == OP_ICONST) || ((sizeof (gpointer) == 8) && (def->opcode == OP_I8CONST)) || (def->opcode == OP_PCONST)))
+					||
 					(!MONO_ARCH_USE_FPSTACK && (def->opcode == OP_R8CONST))) {
 					guint32 opcode2;
 
@@ -669,12 +666,13 @@ mono_local_cprop (MonoCompile *cfg)
 					opcode2 = mono_op_to_op_imm (ins->opcode);
 					if ((opcode2 != -1) && mono_arch_is_inst_imm (ins->opcode, opcode2, def->inst_c0) && ((srcindex == 1) || (ins->sreg2 == -1))) {
 						ins->opcode = opcode2;
-						if ((def->opcode == OP_I8CONST) && (sizeof (gpointer) == 4)) {
-							ins->inst_ls_word = def->inst_ls_word;
-							ins->inst_ms_word = def->inst_ms_word;
-						} else {
+						if ((def->opcode == OP_I8CONST) && TARGET_SIZEOF_VOID_P == 4)
+							ins->inst_l = def->inst_l;
+						else if (regtype == 'l' && TARGET_SIZEOF_VOID_P == 4)
+							/* This can happen if the def was a result of an iconst+conv.i8, which is transformed into just an iconst */
+							ins->inst_l = def->inst_c0;
+						else
 							ins->inst_imm = def->inst_c0;
-						}
 						sregs [srcindex] = -1;
 						mono_inst_set_src_registers (ins, sregs);
 
@@ -744,6 +742,11 @@ mono_local_cprop (MonoCompile *cfg)
 				} else if (srcindex == 0 && ins->opcode == OP_COMPARE && defs [ins->sreg1]->opcode == OP_PCONST && defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_PCONST) {
 					/* typeof(T) == typeof(..) */
 					mono_constant_fold_ins (cfg, ins, defs [ins->sreg1], defs [ins->sreg2], TRUE);
+				} else if (ins->opcode == OP_MOVE && def->opcode == OP_LDADDR) {
+					ins->opcode = OP_LDADDR;
+					ins->sreg1 = -1;
+					ins->inst_p0 = def->inst_p0;
+					ins->klass = def->klass;
 				}
 			}
 

@@ -44,11 +44,29 @@ mono_mb_emit_calli (MonoMethodBuilder *mb, MonoMethodSignature *sig);
 void
 mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpointer func);
 
+#ifdef __cplusplus
+template <typename T>
+inline void
+mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, T func)
+{
+	mono_mb_emit_native_call (mb, sig, (gpointer)func);
+}
+#endif // __cplusplus
+
 void
 mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *opt_sig);
 
 void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func);
+
+#ifdef __cplusplus
+template <typename T>
+inline void
+mono_mb_emit_icall (MonoMethodBuilder *mb, T func)
+{
+	mono_mb_emit_icall (mb, (gpointer)func);
+}
+#endif // __cplusplus
 
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);

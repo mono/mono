@@ -25,7 +25,37 @@ public enum Target {
 	Library, Exe, Module, WinExe
 }
 
-class SlnGenerator {
+public static class KnownProject {
+	public static readonly KnownProjectInfo
+		Genconsts = new KnownProjectInfo {
+			Name = "genconsts",
+			Path = @"$(SolutionDir)\msvc\scripts\genconsts.csproj",
+			Guid = "{702AE2C0-71DD-4112-9A06-E4FABCA59986}"
+		},
+		Stringreplacer = new KnownProjectInfo {
+			Name = "cil-stringreplacer",
+			Path = @"$(SolutionDir)\mcs\tools\cil-stringreplacer\cil-stringreplacer.csproj",
+			Guid = "{53c50ffa-8b39-4c70-8ba8-caa70c41a47b}"
+		},
+		Jay = new KnownProjectInfo {
+			Name = "jay",
+			Path = @"$(SolutionDir)\mcs\jay\jay.vcxproj",
+			Guid = "{5d485d32-3b9f-4287-ab24-c8da5b89f537}"
+		},
+		Culevel = new KnownProjectInfo {
+			Name = "culevel",
+			Path = @"$(SolutionDir)\mcs\tools\culevel\culevel.csproj",
+			Guid = "{E8E246BD-CD0C-4734-A3C2-7F44796EC47B}"
+		};		
+}
+
+public class KnownProjectInfo {
+	public string Path;
+	public string Guid;
+	public string Name;
+}
+
+public class SlnGenerator {
 	public static readonly string NewLine = "\r\n"; //Environment.NewLine; // "\n"; 
 	public SlnGenerator (string slnVersion)
 	{
@@ -36,7 +66,7 @@ class SlnGenerator {
 	const string project_start = "Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\""; // Note: No need to double up on {} around {2}
 	const string project_end = "EndProject";
 
-	public List<string> profiles = new List<string> {
+	public static readonly List<string> profiles = new List<string> {
 		"net_4_x",
 		"monodroid",
 		"monotouch",
@@ -53,8 +83,8 @@ class SlnGenerator {
 		"net_4_x"
 	};
 
-	const string jay_vcxproj_guid = "{5D485D32-3B9F-4287-AB24-C8DA5B89F537}";
-	const string jay_sln_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
+	public const string csproj_type_guid = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}";
+	public const string vcxproj_type_guid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
 	public static Dictionary<string, HashSet<string>> profilesByGuid = new Dictionary<string, HashSet<string>> ();
 	public List<MsbuildGenerator.VsCsproj> libraries = new List<MsbuildGenerator.VsCsproj> ();
@@ -76,7 +106,7 @@ class SlnGenerator {
 		try {
 			libraries.Add (vsproj);
 		} catch (Exception ex) {
-			Console.Error.WriteLine ($"Error while adding library: {ex.Message}");
+			Console.Error.WriteLine ($"// Error while adding library: {ex.Message}");
 		}
 	}
 
@@ -101,29 +131,18 @@ class SlnGenerator {
 		var unixProjFile = proj.csProjFilename.Replace ("\\", "/");
 		var fullProjPath = Path.GetFullPath (unixProjFile).Replace ("\\", "/");
 		var relativePath = MsbuildGenerator.GetRelativePath (slnFullPath, fullProjPath);
+		string[] dependencyGuids = null;
 
-		var dependencyGuids = new string[0];
-		if (proj.preBuildEvent.Contains ("jay"))
-			dependencyGuids = new [] { jay_vcxproj_guid };
-
-		foreach (var fd in MsbuildGenerator.fixed_dependencies) {
-			if (fullProjPath.EndsWith (fd.Item1)) {
-				dependencyGuids = dependencyGuids.Concat (fd.Item2).ToArray ();
-			}
-		}
-
-		if (dependencyGuids.Length > 0)
-			Console.WriteLine ($"Project {fullProjPath} has {dependencyGuids.Length} dependencies: {string.Join(", ", dependencyGuids)}");
-
-		WriteProjectReference(sln, "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", proj.library, relativePath, proj.projectGuid, dependencyGuids);
+		WriteProjectReference(sln, csproj_type_guid, proj.library, relativePath, proj.projectGuid, dependencyGuids);
 	}
 
-	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform)
+	private void WriteProjectConfigurationPlatforms (StreamWriter sln, string guid, string defaultPlatform, bool forceBuild)
 	{
 		var fallbackProfileNames = new List<string> ();
+		var didBuildAnyProfile = false;
 
 		foreach (var profile in profiles) {
-			if (!observedProfiles.Contains (profile))
+			if (!observedProfiles.Contains (profile) && !forceBuild)
 				continue;
 
 			var platformToBuild = profile;
@@ -136,8 +155,11 @@ class SlnGenerator {
 			) {
 				fallbackProfileNames.Add (platformToBuild);
 				platformToBuild = defaultPlatform;
-				isBuildEnabled = false;
+				isBuildEnabled = forceBuild;
 			}
+
+			if (isBuildEnabled)
+				didBuildAnyProfile = true;
 
 			sln.WriteLine ("\t\t{0}.Debug|{1}.ActiveCfg = Debug|{2}", guid, profile, platformToBuild);
 			if (isBuildEnabled)
@@ -146,6 +168,9 @@ class SlnGenerator {
 			if (isBuildEnabled)
 				sln.WriteLine ("\t\t{0}.Release|{1}.Build.0 = Release|{2}", guid, profile, platformToBuild);
 		}
+
+		if (!didBuildAnyProfile)
+			Console.Error.WriteLine($"// Project {guid} not set to build in any profile");
 
 		if (fallbackProfileNames.Count > 0)
 			Console.Error.WriteLine ($"// Project {guid} does not have profile(s) {string.Join(", ", fallbackProfileNames)} so using {defaultPlatform}");
@@ -160,7 +185,13 @@ class SlnGenerator {
 			sln.WriteLine (header);
 
 			// Manually insert jay's vcxproj. We depend on jay.exe to perform build steps later.
-			WriteProjectReference (sln, jay_sln_guid, "jay", "mcs/jay/jay.vcxproj", jay_vcxproj_guid, null);
+			WriteProjectReference (sln, vcxproj_type_guid, "jay", "mcs/jay/jay.vcxproj", KnownProject.Jay.Guid, null);
+
+			// Manually insert genconsts. This is used to generate Consts.cs.
+			WriteProjectReference (sln, csproj_type_guid, "genconsts", "msvc/scripts/genconsts.csproj", KnownProject.Genconsts.Guid, null);
+
+			// Manually insert cil-stringreplacer. We can't trivially do this through the order.xml flow and it has a custom csproj.
+			WriteProjectReference (sln, csproj_type_guid, "cil-stringreplacer", "mcs/tools/cil-stringreplacer/cil-stringreplacer.csproj", KnownProject.Stringreplacer.Guid, null);
 
 			foreach (var proj in libraries) {
 				WriteProjectReference (sln, fullPath, proj);
@@ -180,11 +211,13 @@ class SlnGenerator {
 
 			sln.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 
-			// Manually insert jay's configurations because they are different
-			WriteProjectConfigurationPlatforms (sln, jay_vcxproj_guid, "Win32");
+			// Manually insert configurations for the special projects that always build
+			WriteProjectConfigurationPlatforms (sln, KnownProject.Jay.Guid, "Win32", true);
+			WriteProjectConfigurationPlatforms (sln, KnownProject.Genconsts.Guid, "x86", true);
+			WriteProjectConfigurationPlatforms (sln, KnownProject.Stringreplacer.Guid, "AnyCPU", true);
 
 			foreach (var proj in libraries) {
-				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x");
+				WriteProjectConfigurationPlatforms (sln, proj.projectGuid, "net_4_x", false);
 			}
 
 			sln.WriteLine ("\tEndGlobalSection");
@@ -205,7 +238,7 @@ class SlnGenerator {
 	public int Count { get { return libraries.Count; } }
 }
 
-class MsbuildGenerator {
+public class MsbuildGenerator {
 	static readonly string NewLine = SlnGenerator.NewLine;
 	static XmlNamespaceManager xmlns;
 
@@ -214,14 +247,8 @@ class MsbuildGenerator {
 	public const string profile_4_0 = "_4_0";
 	public const string profile_4_x = "_4_x";
 
-	public const string culevel_guid = "{E8E246BD-CD0C-4734-A3C2-7F44796EC47B}";
-
 	public static readonly (string, string)[] fixed_guids = new [] {
-		("tools/culevel/culevel.csproj", culevel_guid)
-	};
-
-	public static readonly (string, string[])[] fixed_dependencies = new [] {
-		("class/System.Web/System.Web.csproj", new [] { culevel_guid })
+		("tools/culevel/culevel.csproj", KnownProject.Culevel.Guid)
 	};
 
 	static void Usage ()
@@ -777,6 +804,7 @@ class MsbuildGenerator {
 
 	void AppendResource (StringBuilder resources, string source, string logical)
 	{
+		source = NativeName (source);
 		resources.AppendFormat ("    <EmbeddedResource Include=\"{0}\">" + NewLine, source);
 		resources.AppendFormat ("      <LogicalName>{0}</LogicalName>" + NewLine, logical);
 		resources.AppendFormat ("    </EmbeddedResource>" + NewLine);
@@ -793,27 +821,237 @@ class MsbuildGenerator {
 		if (File.Exists(generatedProjFile))
 			File.Delete(generatedProjFile);
 	}
+
+	SourcesParser _SourcesParser = null;
+
+	private SourcesParser GetSourcesParser () {
+		if (_SourcesParser != null)
+			return _SourcesParser;
+
+		var platformsFolder = Path.GetFullPath ("../../mcs/build/platforms");
+		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
+
+		SourcesParser.TraceLevel = 0;
+		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
+	}
+
+	private ParseResult ReadSources (string sourcesFileName) {
+		var libraryDirectory = Path.GetDirectoryName (GetProjectFilename ());
+
+		// HACK: Sometimes the sources path contains a relative path like ../../x
+		if (sourcesFileName.Contains ("/") || sourcesFileName.Contains ("\\")) {
+			libraryDirectory = Path.Combine (libraryDirectory, Path.GetDirectoryName (sourcesFileName));
+			sourcesFileName = Path.GetFileName (sourcesFileName);
+		}
+
+		libraryDirectory = Path.GetFullPath (libraryDirectory);
+
+		// HACK: executable.make generates sources paths containing .sources already
+		var libraryName = sourcesFileName.Replace (".sources", "");
+
+		var parser = GetSourcesParser ();
+		var result = parser.Parse (libraryDirectory, libraryName);
+
+		if (result.SourcesFiles.Count == 0)
+			Console.Error.WriteLine ($"// No sources files found for '{sourcesFileName}', looked in '{libraryDirectory}' for {libraryName}");
+
+		return result;
+	}
+
+	private string FixupSourceName (string s) {
+		string src = s.Replace ("/", "\\");
+		if (src.StartsWith (@"Test\..\"))
+			src = src.Substring (8, src.Length - 8);
+
+		return src;
+	}
+
+	private bool IsValidProfile (string output_name, string profile) {
+		return SlnGenerator.profiles.Contains (profile);
+	}
+
+	private void GenerateSourceItems (XmlWriter writer, IEnumerable<string> fileNames, HashSet<string> commonFiles) {
+		foreach (var file in fileNames.OrderBy (f => f, StringComparer.Ordinal)) {
+			// FIXME: Is this needed?
+			if ((commonFiles != null) && commonFiles.Contains (file))
+				continue;
+
+			writer.WriteStartElement ("Compile");
+			writer.WriteAttributeString ("Include", file);
+			writer.WriteEndElement ();
+		}	
+	}
+
+	private void GenerateProjectDependency (XmlWriter xmlWriter, KnownProjectInfo project) {
+		xmlWriter.WriteStartElement ("ProjectReference");
+		xmlWriter.WriteAttributeString ("Include", project.Path);
+		xmlWriter.WriteElementString ("Name", project.Name);
+		xmlWriter.WriteElementString ("Project", project.Guid);
+		xmlWriter.WriteElementString ("ReferenceOutputAssembly", "false");
+		xmlWriter.WriteElementString ("CopyToOutputDirectory", "Never");
+		xmlWriter.WriteElementString ("Private", "false");
+		xmlWriter.WriteEndElement();
+	}
+
+	private void GenerateProjectDependencies (
+		XmlWriter writer,
+		HashSet<string> commonFiles,
+		string prebuild, string postbuild
+	) {
+		var prebuild_postbuild = (prebuild + Environment.NewLine + postbuild)
+			.Replace ("\\", "/");
+
+		if (commonFiles.Any (f => f.EndsWith("build\\common\\Consts.cs")))
+			GenerateProjectDependency (writer, KnownProject.Genconsts);
+
+		if (prebuild_postbuild.Contains ("jay.exe"))
+			GenerateProjectDependency (writer, KnownProject.Jay);
+
+		if (prebuild_postbuild.Contains ("culevel.exe"))
+			GenerateProjectDependency (writer, KnownProject.Culevel);
+
+		if (prebuild_postbuild.Contains ("cil-stringreplacer.exe"))
+			GenerateProjectDependency (writer, KnownProject.Stringreplacer);
+	}
+
+	private StringBuilder GenerateSourceItemGroups (
+		string output_name, 
+		string profile,
+		string sources_file_name,
+		string groupConditional,
+		string prebuild, string postbuild
+	) {
+		var result = new StringBuilder ();
+		var xmlWriterSettings = new XmlWriterSettings () {
+			ConformanceLevel = ConformanceLevel.Fragment,
+			WriteEndDocumentOnClose = true,
+			CheckCharacters = true,
+			Encoding = Encoding.UTF8,
+			Indent = true,
+			IndentChars = "  ",
+			NewLineChars = NewLine,
+			NewLineHandling = NewLineHandling.Replace,
+			NewLineOnAttributes = false,
+			OmitXmlDeclaration = true
+		};
+		var xmlWriter = XmlWriter.Create (result, xmlWriterSettings);
+		var parseResult = ReadSources (sources_file_name);
+
+		var hostPlatformNames = GetSourcesParser ().AllHostPlatformNames;
+
+		var nullExclusions = new SourcesFile ("null", true);
+
+		if (parseResult.TargetDictionary.Count == 0)
+			return result;
+
+		var targetFileSets = (from target in parseResult.Targets
+			where (target.Key.profile == null) || IsValidProfile (output_name, target.Key.profile)
+			let matches = parseResult.GetMatches (target)
+				.Select (m => FixupSourceName (m.RelativePath))
+				.OrderBy (s => s, StringComparer.Ordinal)
+				.Distinct ()
+			let fileNames = new HashSet<string> (matches)
+			orderby target.Key.profile descending, target.Key.hostPlatform descending
+			select (key: target.Key, fileNames: fileNames)).ToList ();
+
+		var commonFiles = targetFileSets.Aggregate (
+			(HashSet<string>)null,
+			(files, targetSet) => {
+				if (files == null)
+					files = new HashSet<string> (targetSet.fileNames, StringComparer.Ordinal);
+				else
+					files.IntersectWith (targetSet.fileNames);
+				return files;
+			}
+		);
+
+		xmlWriter.WriteComment ("Common files");
+		xmlWriter.WriteStartElement ("ItemGroup");
+		GenerateSourceItems (xmlWriter, commonFiles, null);
+
+		GenerateProjectDependencies (xmlWriter, commonFiles, prebuild, postbuild);
+
+  		xmlWriter.WriteEndElement ();
+  		xmlWriter.WriteComment ("End of common files");
+
+  		// FIXME: Is this right if the profile/platform pair are not null,null? It probably is
+  		if (targetFileSets.Count != 1) {
+			var profileGroups = (from tfs in targetFileSets 
+				group tfs by tfs.key.profile into sets
+				select sets).ToList ();
+
+			xmlWriter.WriteComment ("Per-profile files");
+			if (profileGroups.Count > 1)
+				xmlWriter.WriteStartElement ("Choose");
+
+			foreach (var profileGroup in profileGroups) {
+				if (profileGroups.Count == 1) {
+				} else if (profileGroup.Key == null) {
+					xmlWriter.WriteStartElement ("Otherwise");
+				} else {
+					xmlWriter.WriteStartElement ("When");
+					xmlWriter.WriteAttributeString ("Condition", $"'$(Platform)' == '{profileGroup.Key}'");
+				}
+
+				var hostPlatforms = profileGroup.ToList ();
+				if (hostPlatforms.Count == 1) {
+					xmlWriter.WriteStartElement ("ItemGroup");
+					GenerateSourceItems (xmlWriter, hostPlatforms[0].fileNames, commonFiles);
+					xmlWriter.WriteEndElement ();
+				} else {
+					xmlWriter.WriteComment ("Per-host-platform files");
+					xmlWriter.WriteStartElement ("Choose");
+
+					foreach (var set in hostPlatforms) {
+						if (set.key.hostPlatform == null) {
+							xmlWriter.WriteStartElement ("Otherwise");
+						} else {
+							xmlWriter.WriteStartElement ("When");
+							xmlWriter.WriteAttributeString ("Condition", $"'$(HostPlatform)' == '{set.key.hostPlatform}'");
+						}
+
+						xmlWriter.WriteStartElement ("ItemGroup");
+						GenerateSourceItems (xmlWriter, set.fileNames, commonFiles);
+						xmlWriter.WriteEndElement ();
+
+						xmlWriter.WriteEndElement();
+					}
+
+					xmlWriter.WriteEndElement ();
+					xmlWriter.WriteComment ("End of per-host-platform files");
+				}
+
+				if (profileGroups.Count > 1)
+					xmlWriter.WriteEndElement ();
+			}
+
+			if (profileGroups.Count > 1)
+				xmlWriter.WriteEndElement ();
+			xmlWriter.WriteComment ("End of per-profile files");
+  		}
+
+		xmlWriter.Close ();
+
+		return result;
+	}
 	
 	public VsCsproj Generate (string library_output, Dictionary<string,MsbuildGenerator> projects, out string profile, bool showWarnings = false)
 	{
 		var generatedProjFile = GetProjectFilename();
 		var updatingExistingProject = File.Exists(generatedProjFile);
 
-		Console.WriteLine (
-			"{0}: {1}", updatingExistingProject 
-				? "Updating" 
-				: "Generating", 
-			generatedProjFile
-		);
+		if (!updatingExistingProject)
+			Console.WriteLine ($"Generating {generatedProjFile}");
 
-		string boot, flags, output_name, built_sources, response, reskey;
+		string boot, flags, output_name, built_sources, response, reskey, sources_file_name;
 
 		boot = xproject.Element ("boot").Value;
 		flags = xproject.Element ("flags").Value;
+		sources_file_name = xproject.Element ("sources").Value;
 		output_name = xproject.Element ("output").Value;
 		if (output_name.EndsWith (".exe"))
 			Target = Target.Exe;
-		built_sources = xproject.Element ("built_sources").Value;
+		built_sources = xproject.Element ("built_sources").Value.Trim ();
 		response = xproject.Element ("response").Value;
 		reskey = xproject.Element ("resources").Value;
 
@@ -841,6 +1079,7 @@ class MsbuildGenerator {
 				fx_version = "4.6.2";
 				profile = "net_4_x";
 			}
+			Console.WriteLine ($"Using response fallback for {output_name}: {response}");
 		}
 		//
 		// Prebuild code, might be in inputs, check:
@@ -880,44 +1119,16 @@ class MsbuildGenerator {
 			}
 		}
 
-		string [] source_files;
-		using (var reader = new StreamReader (NativeName (base_dir + "\\" + response))) {
-			source_files = reader.ReadToEnd ().Split ();
-		}
-
-		Array.Sort (source_files);
-
 		var groupConditional = $"Condition=\" '$(Platform)' == '{profile}' \"";
 
-		StringBuilder sources = new StringBuilder ();
-		sources.Append ($"  <ItemGroup {groupConditional}>{NewLine}");
-
-		foreach (string s in source_files) {
-			if (s.Length == 0)
-				continue;
-
-			string src = s.Replace ("/", "\\");
-			if (src.StartsWith (@"Test\..\"))
-				src = src.Substring (8, src.Length - 8);
-
-			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
-		}
-
-		source_files = built_sources.Split ();
-		Array.Sort (source_files);
-
-		foreach (string s in source_files) {
-			if (s.Length == 0)
-				continue;
-
-			string src = s.Replace ("/", "\\");
-			if (src.StartsWith (@"Test\..\"))
-				src = src.Substring (8, src.Length - 8);
-
-			sources.AppendFormat ("    <Compile Include=\"{0}\" />" + NewLine, src);
-		}
-
-		sources.Append ("  </ItemGroup>");
+		var sources = 
+			updatingExistingProject 
+				? new StringBuilder ()
+				: GenerateSourceItemGroups (
+					output_name, profile, 
+					sources_file_name, groupConditional, 
+					prebuild, postbuild
+				);
 
 		//if (library == "corlib-build") // otherwise, does not compile on fx_version == 4.0
 		//{
@@ -1048,11 +1259,12 @@ class MsbuildGenerator {
 			intermediate_output_dir =  "obj\\Debug\\" + library;
 		}
 
-		if (build_output_dir.Contains ("-linux") || build_output_dir.Contains ("-darwin") || build_output_dir.Contains ("-win32"))
+		if (build_output_dir.Contains ("-linux") || build_output_dir.Contains ("-macos") || build_output_dir.Contains ("-win32") || build_output_dir.Contains ("-unix"))
 			build_output_dir = build_output_dir
 				.Replace ("-linux", "-$(HostPlatform)")
-				.Replace ("-darwin", "-$(HostPlatform)")
-				.Replace ("-win32", "-$(HostPlatform)");
+				.Replace ("-macos", "-$(HostPlatform)")
+				.Replace ("-win32", "-$(HostPlatform)")
+				.Replace ("-unix", "-$(HostPlatform)");
 
 		bool basic_or_build = (library.Contains ("-basic") || library.Contains ("-build"));
 
@@ -1111,6 +1323,16 @@ class MsbuildGenerator {
 			prebuild_postbuild.Append ($"  </PropertyGroup>{NewLine}");
 		}
 
+		var builtSources = new StringBuilder ();
+		if (built_sources.Length > 0) {
+			builtSources.Append ($"  <ItemGroup Condition=\" '$(Platform)' == '{profile}' \">{NewLine}");
+			foreach (var fileName in built_sources.Split ()) {
+				var fixedFileName = FixupSourceName (fileName);
+				builtSources.Append ($"    <Compile Include=\"{fixedFileName}\" />{NewLine}");
+			}
+			builtSources.Append ($"  </ItemGroup>{NewLine}");
+		}
+
 		Csproj.output = textToUpdate.
 			Replace ("@OUTPUTTYPE@", Target == Target.Library ? "Library" : "Exe").
 			Replace ("@SIGNATURE@", strongNameSection).
@@ -1137,12 +1359,14 @@ class MsbuildGenerator {
 		var refsPlaceholder = "<!-- @ALL_REFERENCES@ -->";
 		var resourcesPlaceholder = "<!-- @ALL_RESOURCES@ -->";
 		var sourcesPlaceholder = "<!-- @ALL_SOURCES@ -->";
+		var builtSourcesPlaceholder = "<!-- @BUILT_SOURCES@ -->";
 
 		Csproj.output = Csproj.output.
 			Replace (propertiesPlaceholder, properties.ToString () + NewLine + propertiesPlaceholder).
 			Replace (refsPlaceholder, refs.ToString () + NewLine + refsPlaceholder).
 			Replace (resourcesPlaceholder, resources.ToString () + NewLine + resourcesPlaceholder).
-			Replace (sourcesPlaceholder, sources.ToString () + NewLine + sourcesPlaceholder);
+			Replace (sourcesPlaceholder, sources.ToString () + NewLine + sourcesPlaceholder).
+			Replace (builtSourcesPlaceholder, builtSources.ToString () + NewLine + builtSourcesPlaceholder);
 
 		Csproj.preBuildEvent = prebuild;
 		Csproj.postBuildEvent = postbuild;
@@ -1243,7 +1467,7 @@ class MsbuildGenerator {
 
 		}
 		var ljoined = String.Join (", ", libs);
-		Console.Error.WriteLine ($"{library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
+		Console.Error.WriteLine ($"// {library_output}: did not find referenced {dllReferenceName} with libs={ljoined}");
 
 		// FIXME: This is incredibly noisy and generates a billion lines of output
 		if (false)
@@ -1256,8 +1480,7 @@ class MsbuildGenerator {
 
 }
 
-public class Driver {
-
+public static class Driver {
 	static IEnumerable<XElement> GetProjects (bool withTests = false)
 	{
 		XDocument doc = XDocument.Load ("order.xml");
@@ -1289,24 +1512,30 @@ public class Driver {
 		}
 	}
 
-	static void Main (string [] args)
+	public static void Main (string [] args)
 	{
 		if (!File.Exists ("genproj.cs")) {
 			Console.Error.WriteLine ("This command must be executed from mono/msvc/scripts");
 			Environment.Exit (1);
 		}
 
-		if (args.Length == 1 && args [0].ToLower ().Contains ("-h")) {
-			Console.Error.WriteLine ("Usage:");
-			Console.Error.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
-			Console.Error.WriteLine ("If output_full_solutions is false, only the main System*.dll");
-			Console.Error.WriteLine (" assemblies (and dependencies) is included in the solution.");
-			Console.Error.WriteLine ("Example:");
-			Console.Error.WriteLine ("genproj.exe 2012 false false");
-			Console.Error.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
-			Console.Error.WriteLine ("genproj.exe deps");
-			Console.Error.WriteLine ("Generates a Makefile dependency file from the projects input");
-			Environment.Exit (0);
+		if (args.Length == 1) {
+			switch (args[0].ToLower()) {
+				case "-h":
+				case "--help":
+				case "-?":
+					Console.Error.WriteLine ("Usage:");
+					Console.Error.WriteLine ("genproj.exe [visual_studio_release] [output_full_solutions] [with_tests]");
+					Console.Error.WriteLine ("If output_full_solutions is false, only the main System*.dll");
+					Console.Error.WriteLine (" assemblies (and dependencies) is included in the solution.");
+					Console.Error.WriteLine ("Example:");
+					Console.Error.WriteLine (" genproj.exe 2012 false false");
+					Console.Error.WriteLine ("genproj.exe with no arguments is equivalent to 'genproj.exe 2012 true false'\n\n");
+					Console.Error.WriteLine ("genproj.exe deps");
+					Console.Error.WriteLine ("Generates a Makefile dependency file from the projects input");
+					Environment.Exit (0);
+					break;
+			}
 		}
 
 		var slnVersion = (args.Length > 0) ? args [0] : "2012";
@@ -1345,7 +1574,7 @@ public class Driver {
 				}
 				
 				if (profileName == null) {
-					Console.Error.WriteLine ($"{library_output} has no profile");
+					Console.Error.WriteLine ($"// {library_output} has no profile");
 				} else {
 					HashSet<string> profileNames;
 					if (!SlnGenerator.profilesByGuid.TryGetValue (csproj.projectGuid, out profileNames))
@@ -1359,10 +1588,12 @@ public class Driver {
 			}
 		}
 
+		Console.WriteLine ("Deduplicating project references");
+
 		foreach (var csprojFile in projects.Values.Select (x => x.GetProjectFilename ()).Distinct ())
 		{
-			Console.WriteLine ("Deduplicating: " + csprojFile);
-			DeduplicateSourcesAndProjectReferences (csprojFile);
+			// Console.WriteLine ("Deduplicating: " + csprojFile);
+			DeduplicateProjectReferences (csprojFile);
 		}
 
 		Func<MsbuildGenerator.VsCsproj, bool> additionalFilter;
@@ -1410,7 +1641,7 @@ public class Driver {
 		//WriteSolution (build_sln_gen, "mcs_build.sln");
 	}
 
-	static void DeduplicateSourcesAndProjectReferences (string csprojFilename)
+	static void DeduplicateProjectReferences (string csprojFilename)
 	{
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (csprojFilename);
@@ -1418,17 +1649,10 @@ public class Driver {
 		mgr.AddNamespace ("x", "http://schemas.microsoft.com/developer/msbuild/2003");
 
 		XmlNode root = doc.DocumentElement;
-		var allSources = new Dictionary<string, List<string>> ();
 		var allProjectReferences = new Dictionary<string, List<string>> ();
 
 		ProcessCompileOrProjectReferenceItems (mgr, root,
-		// grab all sources across all platforms
-		(source, platform) =>
-		{
-			if (!allSources.ContainsKey (platform))
-				allSources[platform] = new List<string> ();
-			allSources[platform].Add (source.Attributes["Include"].Value);
-		},
+		(source, platform) => {},
 		// grab all project references across all platforms
 		(projRef, platform) =>
 		{
@@ -1436,43 +1660,6 @@ public class Driver {
 				allProjectReferences[platform] = new List<string> ();
 			allProjectReferences[platform].Add (projRef.Attributes["Include"].Value);
 		});
-
-		if (allSources.Count > 1)
-		{
-			// find the sources which are common across all platforms
-			var commonSources = allSources.Values.First ();
-			foreach (var l in allSources.Values.Skip (1))
-				commonSources = commonSources.Intersect (l).ToList ();
-
-			if (commonSources.Count > 0)
-			{
-				// remove common sources from the individual platforms
-				ProcessCompileOrProjectReferenceItems (mgr, root, (source, platform) =>
-				{
-					var parent = source.ParentNode;
-					if (commonSources.Contains (source.Attributes["Include"].Value))
-						parent.RemoveChild (source);
-
-					if (!parent.HasChildNodes)
-						parent.ParentNode.RemoveChild (parent);
-				}, null);
-
-				// add common sources as ItemGroup
-				XmlNode commonSourcesComment = root.SelectSingleNode ("//comment()[. = ' @COMMON_SOURCES@ ']");
-				XmlElement commonSourcesElement = doc.CreateElement ("ItemGroup", root.NamespaceURI);
-
-				foreach (var s in commonSources)
-				{
-					var c = doc.CreateElement ("Compile", root.NamespaceURI);
-					var v = doc.CreateAttribute ("Include");
-					v.Value = s;
-					c.Attributes.Append (v);
-
-					commonSourcesElement.AppendChild (c);
-				}
-				root.ReplaceChild (commonSourcesElement, commonSourcesComment);
-			}
-		}
 
 		if (allProjectReferences.Count > 1)
 		{

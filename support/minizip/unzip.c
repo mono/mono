@@ -300,7 +300,7 @@ local int strcmpcasenosensitive_internal (const char *fileName1, const char *fil
         (like 1 on Unix, 2 on Windows)
 
 */
-extern int ZEXPORT unzStringFileNameCompare (fileName1,fileName2,iCaseSensitivity)
+static int unzStringFileNameCompare (fileName1,fileName2,iCaseSensitivity)
     const char* fileName1;
     const char* fileName2;
     int iCaseSensitivity;
@@ -901,48 +901,6 @@ typedef struct unz_file_pos_s
 } unz_file_pos;
 */
 
-extern int ZEXPORT unzGetFilePos(file, file_pos)
-    unzFile file;
-    unz_file_pos* file_pos;
-{
-    unz_s* s;
-
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
-    s=(unz_s*)file;
-    if (!s->current_file_ok)
-        return UNZ_END_OF_LIST_OF_FILE;
-
-    file_pos->pos_in_zip_directory  = s->pos_in_central_dir;
-    file_pos->num_of_file           = s->num_file;
-
-    return UNZ_OK;
-}
-
-extern int ZEXPORT unzGoToFilePos(file, file_pos)
-    unzFile file;
-    unz_file_pos* file_pos;
-{
-    unz_s* s;
-    int err;
-
-    if (file==NULL || file_pos==NULL)
-        return UNZ_PARAMERROR;
-    s=(unz_s*)file;
-
-    /* jump to the right spot */
-    s->pos_in_central_dir = file_pos->pos_in_zip_directory;
-    s->num_file           = file_pos->num_of_file;
-
-    /* set the current file */
-    err = unzlocal_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                               &s->cur_file_info_internal,
-                                               NULL,0,NULL,0,NULL,0);
-    /* return results */
-    s->current_file_ok = (err == UNZ_OK);
-    return err;
-}
-
 /*
 // Unzip Helper Functions - should be here?
 ///////////////////////////////////////////
@@ -1191,13 +1149,6 @@ extern int ZEXPORT unzOpenCurrentFile (file)
     unzFile file;
 {
     return unzOpenCurrentFile3(file, NULL, NULL, 0, NULL);
-}
-
-extern int ZEXPORT unzOpenCurrentFilePassword (file, password)
-    unzFile file;
-    const char* password;
-{
-    return unzOpenCurrentFile3(file, NULL, NULL, 0, password);
 }
 
 extern int ZEXPORT unzOpenCurrentFile2 (file,method,level,raw)
@@ -1572,24 +1523,4 @@ extern uLong ZEXPORT unzGetOffset (file)
       if (s->num_file==s->gi.number_entry)
          return 0;
     return s->pos_in_central_dir;
-}
-
-extern int ZEXPORT unzSetOffset (file, pos)
-        unzFile file;
-        uLong pos;
-{
-    unz_s* s;
-    int err;
-
-    if (file==NULL)
-        return UNZ_PARAMERROR;
-    s=(unz_s*)file;
-
-    s->pos_in_central_dir = pos;
-    s->num_file = s->gi.number_entry;      /* hack */
-    err = unzlocal_GetCurrentFileInfoInternal(file,&s->cur_file_info,
-                                              &s->cur_file_info_internal,
-                                              NULL,0,NULL,0,NULL,0);
-    s->current_file_ok = (err == UNZ_OK);
-    return err;
 }

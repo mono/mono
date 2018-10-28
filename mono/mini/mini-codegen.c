@@ -567,6 +567,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_IOR_IMM:
 	case OP_IXOR_IMM:
 	case OP_SUB_IMM:
+	case OP_MUL_IMM:
 	case OP_STORE_MEMBASE_IMM:
 		g_string_append_printf (sbuf, " [%d]", (int)ins->inst_imm);
 		break;
@@ -2345,6 +2346,7 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_LEQ:
 		return CMP_EQ;
 	case OP_FCNEQ:
+	case OP_RCNEQ:
 	case OP_ICNEQ:
 	case OP_IBNE_UN:
 	case OP_LBNE_UN:
@@ -2718,12 +2720,12 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 	MonoType *ftype, *prev_ftype = NULL;
 	int nfields = 0;
 
-	klass = mono_class_from_mono_type (t);
+	klass = mono_class_from_mono_type_internal (t);
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
-		ftype = mono_field_get_type (field);
+		ftype = mono_field_get_type_internal (field);
 		ftype = mini_native_type_replace_type (ftype);
 
 		if (MONO_TYPE_ISSTRUCT (ftype)) {

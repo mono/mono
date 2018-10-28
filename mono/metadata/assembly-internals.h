@@ -11,6 +11,26 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 
+/* Flag bits for mono_assembly_names_equal_flags (). */
+typedef enum {
+	/* Default comparison: all fields must match */
+	MONO_ANAME_EQ_NONE = 0x0,
+	/* Don't compare public key token */
+	MONO_ANAME_EQ_IGNORE_PUBKEY = 0x1,
+	/* Don't compare the versions */
+	MONO_ANAME_EQ_IGNORE_VERSION = 0x2,
+	/* When comparing simple names, ignore case differences */
+	MONO_ANAME_EQ_IGNORE_CASE = 0x4,
+
+	MONO_ANAME_EQ_MASK = 0x7
+} MonoAssemblyNameEqFlags;
+
+void
+mono_assembly_name_free_internal (MonoAssemblyName *aname);
+
+gboolean
+mono_assembly_names_equal_flags (MonoAssemblyName *l, MonoAssemblyName *r, MonoAssemblyNameEqFlags flags);
+
 gboolean
 mono_assembly_get_assemblyref_checked (MonoImage *image, int index, MonoAssemblyName *aname, MonoError *error);
 
@@ -23,6 +43,12 @@ MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 						MonoAssemblyContextKind asmctx,
 						MonoImageOpenStatus *status);
 
+MonoAssembly* mono_assembly_load_with_partial_name_internal (const char *name, MonoImageOpenStatus *status);
+
+
+typedef gboolean (*MonoAssemblyAsmCtxFromPathFunc) (const char *absfname, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
+
+void mono_install_assembly_asmctx_from_path_hook (MonoAssemblyAsmCtxFromPathFunc func, gpointer user_data);
 
 /* If predicate returns true assembly should be loaded, if false ignore it. */
 typedef gboolean (*MonoAssemblyCandidatePredicate)(MonoAssembly *, gpointer);
@@ -31,6 +57,7 @@ MonoAssembly*          mono_assembly_open_predicate (const char *filename,
 						     MonoAssemblyContextKind asmctx,
 						     MonoAssemblyCandidatePredicate pred,
 						     gpointer user_data,
+						     MonoAssembly *requesting_assembly,
 						     MonoImageOpenStatus *status);
 
 MonoAssembly*          mono_assembly_load_from_predicate (MonoImage *image, const char *fname,
@@ -53,5 +80,11 @@ mono_assembly_binding_applies_to_image (MonoImage* image, MonoImageOpenStatus *s
 
 MonoAssembly*
 mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx);
+
+MONO_PROFILER_API MonoAssemblyName*
+mono_assembly_get_name_internal (MonoAssembly *assembly);
+
+MONO_PROFILER_API MonoImage*
+mono_assembly_get_image_internal (MonoAssembly *assembly);
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

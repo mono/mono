@@ -14,6 +14,7 @@
 #include "w32handle-namespace.h"
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/metadata/w32handle.h"
+#include "object-internals.h"
 
 #define MAX_PATH 260
 
@@ -103,7 +104,7 @@ static gsize namedsema_typesize (void)
 void
 mono_w32semaphore_init (void)
 {
-	static MonoW32HandleOps sem_ops = {
+	static const MonoW32HandleOps sem_ops = {
 		NULL,			/* close */
 		sem_handle_signal,		/* signal */
 		sem_handle_own,		/* own */
@@ -115,7 +116,7 @@ mono_w32semaphore_init (void)
 		sema_typesize,	/* typesize */
 	};
 
-	static MonoW32HandleOps namedsem_ops = {
+	static const MonoW32HandleOps namedsem_ops = {
 		NULL,			/* close */
 		sem_handle_signal,	/* signal */
 		sem_handle_own,		/* own */
@@ -256,7 +257,7 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 	if (!name)
 		sem = sem_create (initialCount, maximumCount);
 	else
-		sem = namedsem_create (initialCount, maximumCount, mono_string_chars (name));
+		sem = namedsem_create (initialCount, maximumCount, mono_string_chars_internal (name));
 
 	*error = mono_w32error_get_last ();
 
@@ -328,7 +329,7 @@ ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, g
 	/* w32 seems to guarantee that opening named objects can't race each other */
 	mono_w32handle_namespace_lock ();
 
-	utf8_name = g_utf16_to_utf8 (mono_string_chars (name), -1, NULL, NULL, NULL);
+	utf8_name = g_utf16_to_utf8 (mono_string_chars_internal (name), -1, NULL, NULL, NULL);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: Opening named sem [%s]", __func__, utf8_name);
 

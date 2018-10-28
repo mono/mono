@@ -22,7 +22,14 @@ typedef guint32 mword;
 typedef guint64 mword;
 #endif
 
-typedef mword SgenDescriptor;
+#if TARGET_SIZEOF_VOID_P == 4
+typedef guint32 target_mword;
+#else
+typedef guint64 target_mword;
+#endif
+
+/* This neeeds to be target specific since its embedded in vtables */
+typedef target_mword SgenDescriptor;
 #define SGEN_DESCRIPTOR_NULL	0
 
 /*
@@ -167,6 +174,15 @@ typedef mword SgenDescriptor;
 */
 #define SGEN_MAX_NURSERY_WASTE 512
 
+
+/*
+ * Max nursery size that we support.
+ *
+ * We depend on an array of longs to mark empty sections and we only support 4 byte indexes
+ */
+#if SIZEOF_VOID_P == 8
+#define SGEN_MAX_NURSERY_SIZE ((mword)1 << 35)
+#endif
 
 /*
  * Minimum allowance for nursery allocations, as a multiple of the size of nursery.

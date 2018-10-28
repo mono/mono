@@ -11,6 +11,7 @@
 
 #include <config.h>
 #include <glib.h>
+#include "attach.h"
 
 #ifdef HOST_WIN32
 #define DISABLE_ATTACH
@@ -39,7 +40,6 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-threads.h>
-#include "attach.h"
 
 #include <mono/utils/w32api.h>
 
@@ -208,7 +208,7 @@ mono_attach_start (void)
 	 * by creating it is to enable the attach mechanism if the process receives a 
 	 * SIGQUIT signal, which can only be sent by the owner/root.
 	 */
-	snprintf (path, sizeof (path), "/tmp/.mono_attach_pid%"PRIdMAX"", (intmax_t) getpid ());
+	snprintf (path, sizeof (path), "/tmp/.mono_attach_pid%" PRIdMAX, (intmax_t) getpid ());
 	fd = open (path, O_RDONLY);
 	if (fd == -1)
 		return FALSE;
@@ -276,7 +276,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	gpointer pa [1];
 	MonoImageOpenStatus open_status;
 
-	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -287,7 +287,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	 * Can't use mono_jit_exec (), as it sets things which might confuse the
 	 * real Main method.
 	 */
-	image = mono_assembly_get_image (agent_assembly);
+	image = mono_assembly_get_image_internal (agent_assembly);
 	entry = mono_image_get_entry_point (image);
 	if (!entry) {
 		g_print ("Assembly '%s' doesn't have an entry point.\n", mono_image_get_filename (image));
@@ -320,7 +320,7 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 			g_free (agent);
 			return 1;
 		}
-		mono_array_set (main_args, MonoString*, 0, args_str);
+		mono_array_set_internal (main_args, MonoString*, 0, args_str);
 	}
 
 
@@ -415,7 +415,7 @@ ipc_connect (void)
 		}
 	}
 
-	filename = g_strdup_printf ("%s/.mono-%"PRIdMAX"", directory, (intmax_t) getpid ());
+	filename = g_strdup_printf ("%s/.mono-%" PRIdMAX, directory, (intmax_t) getpid ());
 	unlink (filename);
 
 	/* Bind a name to the socket.   */
@@ -450,7 +450,7 @@ ipc_connect (void)
 
 	ipc_filename = g_strdup (filename);
 
-	server_uri = g_strdup_printf ("unix://%s/.mono-%"PRIdMAX"?/vm", directory, (intmax_t) getpid ());
+	server_uri = g_strdup_printf ("unix://%s/.mono-%" PRIdMAX "?/vm", directory, (intmax_t) getpid ());
 
 	g_free (filename);
 	g_free (directory);
@@ -491,7 +491,7 @@ transport_start_receive (void)
 	if (!listen_fd)
 		return;
 
-	internal = mono_thread_create_internal (mono_get_root_domain (), receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
+	internal = mono_thread_create_internal (mono_get_root_domain (), (gpointer)receiver_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	mono_error_assert_ok (error);
 
 	receiver_thread_handle = mono_threads_open_thread_handle (internal->handle);

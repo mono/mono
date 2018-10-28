@@ -7,8 +7,8 @@ CommonCrypto/RijndaelManaged.cs
 CommonCrypto/RNGCryptoServiceProvider.cryptor.cs
 CommonCrypto/RC4CommonCrypto.cs
 CoreFoundation/CFHelpers.cs
-System.Security.Cryptography.X509Certificates/X509CertificateImplApple.cs
-System.Security.Cryptography.X509Certificates/X509Helper.Apple.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 System.Text/EncodingHelper.MonoTouch.cs
 System/Environment.iOS.cs
 System/Guid.MonoTouch.cs

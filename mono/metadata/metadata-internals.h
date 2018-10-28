@@ -5,6 +5,7 @@
 #ifndef __MONO_METADATA_INTERNALS_H__
 #define __MONO_METADATA_INTERNALS_H__
 
+#include "mono/utils/mono-forward-internal.h"
 #include "mono/metadata/image.h"
 #include "mono/metadata/blob.h"
 #include "mono/metadata/cil-coff.h"
@@ -152,8 +153,7 @@ typedef struct {
 	GHashTable *delegate_invoke_cache;
 	GHashTable *delegate_begin_invoke_cache;
 	GHashTable *delegate_end_invoke_cache;
-	GHashTable *runtime_invoke_cache;
-	GHashTable *runtime_invoke_vtype_cache;
+	GHashTable *runtime_invoke_signature_cache;
 	GHashTable *runtime_invoke_sig_cache;
 
 	/*
@@ -165,7 +165,7 @@ typedef struct {
 	 * indexed by MonoMethod pointers
 	 * Protected by the marshal lock
 	 */
-	GHashTable *runtime_invoke_direct_cache;
+	GHashTable *runtime_invoke_method_cache;
 	GHashTable *managed_wrapper_cache;
 
 	GHashTable *native_wrapper_cache;
@@ -280,7 +280,7 @@ struct _MonoImage {
 	char *version;
 	gint16 md_version_major, md_version_minor;
 	char *guid;
-	void *image_info;
+	MonoCLIImageInfo    *image_info;
 	MonoMemPool         *mempool; /*protected by the image lock*/
 
 	char                *raw_metadata;
@@ -321,7 +321,7 @@ struct _MonoImage {
 	MonoImage **files;
 	guint32 file_count;
 
-	gpointer aot_module;
+	MonoAotModule *aot_module;
 
 	guint8 aotid[16];
 
@@ -377,7 +377,6 @@ struct _MonoImage {
 	/*
 	 * indexed by MonoMethod pointers 
 	 */
-	GHashTable *runtime_invoke_vcall_cache;
 	GHashTable *wrapper_param_names;
 	GHashTable *array_accessor_cache;
 
@@ -612,6 +611,8 @@ struct _MonoMethodHeader {
 	unsigned int init_locals : 1;
 	guint16      num_locals;
 	MonoExceptionClause *clauses;
+	MonoBitSet  *volatile_args;
+	MonoBitSet  *volatile_locals;
 	MonoType    *locals [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -894,6 +895,8 @@ void mono_unload_interface_ids (MonoBitSet *bitset);
 
 
 MonoType *mono_metadata_type_dup (MonoImage *image, const MonoType *original);
+MonoType *mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *original, const MonoType *cmods_source);
+
 MonoMethodSignature  *mono_metadata_signature_dup_full (MonoImage *image,MonoMethodSignature *sig);
 MonoMethodSignature  *mono_metadata_signature_dup_mempool (MonoMemPool *mp, MonoMethodSignature *sig);
 MonoMethodSignature  *mono_metadata_signature_dup_add_this (MonoImage *image, MonoMethodSignature *sig, MonoClass *klass);
@@ -1015,8 +1018,12 @@ mono_signature_get_managed_fmt_string (MonoMethodSignature *sig);
 gboolean
 mono_type_in_image (MonoType *type, MonoImage *image);
 
+gboolean
+mono_type_is_valid_generic_argument (MonoType *type);
+
 MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
 
-#endif /* __MONO_METADATA_INTERNALS_H__ */
+#define MONO_CLASS_IS_INTERFACE_INTERNAL(c) ((mono_class_get_flags (c) & TYPE_ATTRIBUTE_INTERFACE) || mono_type_is_generic_parameter (m_class_get_byval_arg (c)))
 
+#endif /* __MONO_METADATA_INTERNALS_H__ */
