@@ -35,6 +35,9 @@ build_PARALLEL_SUBDIRS = \
 	System.Numerics \
 	System.Xml.Linq \
 	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.Net.Http \
+	System.Net.Http.WebRequest \
 	System.Drawing
 
 ifdef MCS_MODE

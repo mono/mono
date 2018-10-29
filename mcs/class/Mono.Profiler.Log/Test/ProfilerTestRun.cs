@@ -46,7 +46,7 @@ namespace MonoTests.Mono.Profiler.Log {
 			_currentProcess = Process.GetCurrentProcess();
 			Name = name;
 			Options = options;
-			_output = $"test-{_id++}.mlpd";
+			_output = Path.GetFullPath ($"test-{_id++}.mlpd");
 		}
 
 		public void Run (Action<IReadOnlyList<LogEvent>> action)

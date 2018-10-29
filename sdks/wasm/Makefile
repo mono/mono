@@ -235,12 +235,13 @@ clean:
 package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp
 	mkdir tmp
-	mkdir tmp/bcl
-	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/bcl/
-	rm -rf tmp/bcl/bare
-	rm -rf tmp/bcl/secxml
-	rm -rf tmp/bcl/tests
-	rm -rf tmp/bcl/corlib.unsafe.dll.tmp
+	mkdir tmp/wasm-bcl
+	mkdir tmp/wasm-bcl/wasm
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/wasm-bcl/wasm/
+	rm -rf tmp/wasm-bcl/wasm/bare
+	rm -rf tmp/wasm-bcl/wasm/secxml
+	rm -rf tmp/wasm-bcl/wasm/tests
+	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
 	cp driver.c tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
@@ -250,25 +251,29 @@ package: build build-dbg-proxy build-framework-nuget
 	cp -r release tmp/
 	rm tmp/debug/.stamp-build
 	rm tmp/release/.stamp-build
-	cp sample.html tmp/
-	mkdir tmp/framework
 	cp bindings.cs tmp
+	mkdir tmp/framework
 	cp WebAssembly.Bindings.dll tmp/framework
 	cp WebAssembly.Bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
 	cp WebAssembly.Net.Http.dll tmp/framework
 	cp WebAssembly.Net.Http.pdb tmp/framework
 	cp WebAssembly.Framework.0.1.0-alpha.nupkg tmp/framework
+	cp sample.html tmp/
 	cp sample.cs tmp/
+	cp dependency.cs tmp/
 	cp README.md tmp/
 	cp server.py tmp/
 	cp Mono.Cecil.dll tmp/
+	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
 	cp -r ProxyDriver/bin/Debug/netcoreapp2.1/ tmp/dbg-proxy/
+	mkdir tmp/docs
+	cp -r ./docs/ tmp/docs/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 

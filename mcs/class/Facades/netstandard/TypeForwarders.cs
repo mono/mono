@@ -608,6 +608,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.ComponentModel.Design.Serialization.SerializationStore))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Configuration.Assemblies.AssemblyHashAlgorithm))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Configuration.Assemblies.AssemblyVersionCompatibility))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.AcceptRejectRule))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.CommandBehavior))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.CommandType))]
@@ -762,6 +763,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.SqlTypes.SqlTypeException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.SqlTypes.SqlXml))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.SqlTypes.StorageState))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.BooleanSwitch))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.ConditionalAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.CorrelationManager))]
@@ -1672,6 +1674,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.ComTypes.VARDESC))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.ComTypes.VARFLAGS))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.InteropServices.ComTypes.VARKIND))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.CollectionDataContractAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ContractNamespaceAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.DataContractAttribute))]
@@ -1685,22 +1688,31 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.EnumMemberAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ExportOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ExtensionDataObject))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Formatter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.FormatterConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.FormatterServices))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IDeserializationCallback))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IExtensibleDataObject))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IFormatter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IFormatterConverter))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IgnoreDataMemberAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.InvalidDataContractException))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.IObjectReference))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ISafeSerializationData))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ISerializable))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ISerializationSurrogate))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ISerializationSurrogateProvider))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ISurrogateSelector))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.KnownTypeAttribute))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ObjectIDGenerator))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.ObjectManager))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.OnDeserializedAttribute))]
@@ -1718,19 +1730,23 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.StreamingContext))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.StreamingContextStates))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.SurrogateSelector))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.XmlObjectSerializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.XmlSerializableServices))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.XPathQueryGenerator))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.XsdDataContractExporter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Formatters.FormatterAssemblyStyle))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Formatters.FormatterTypeStyle))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Formatters.TypeFilterLevel))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Formatters.Binary.BinaryFormatter))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Json.DataContractJsonSerializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Json.DataContractJsonSerializerSettings))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Json.IXmlJsonReaderInitializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Json.IXmlJsonWriterInitializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Serialization.Json.JsonReaderWriterFactory))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Versioning.ComponentGuaranteesAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Versioning.ComponentGuaranteesOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.Versioning.FrameworkName))]
@@ -2047,6 +2063,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Timers.ElapsedEventHandler))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Timers.Timer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Timers.TimersDescriptionAttribute))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.CommittableTransaction))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.DependentCloneOption))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.DependentTransaction))]
@@ -2082,46 +2099,61 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.TransactionStartedEventHandler))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Transactions.TransactionStatus))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Web.HttpUtility))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Windows.Input.ICommand))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.ConformanceLevel))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.DtdProcessing))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.EntityHandling))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Formatting))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IFragmentCapableXmlDictionaryWriter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IHasXmlNode))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IStreamProvider))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlBinaryReaderInitializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlBinaryWriterInitializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlDictionary))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlLineInfo))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlNamespaceResolver))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlTextReaderInitializer))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.IXmlTextWriterInitializer))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.NamespaceHandling))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.NameTable))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.NewLineHandling))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.OnXmlDictionaryReaderClose))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.ReadState))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.UniqueId))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.ValidationType))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.WhitespaceHandling))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.WriteState))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlAttributeCollection))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlBinaryReaderSession))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlBinaryWriterSession))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlCDataSection))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlCharacterData))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlComment))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlConvert))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDateTimeSerializationMode))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDeclaration))]
+#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionary))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionaryReader))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionaryReaderQuotas))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionaryReaderQuotaTypes))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionaryString))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDictionaryWriter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDocument))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDocumentFragment))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.XmlDocumentType))]

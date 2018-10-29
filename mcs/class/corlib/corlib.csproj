@@ -687,8 +687,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\BitArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\StructuralComparisons.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.ComponentModel\src\System\IServiceProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleCancelEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleColor.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKey.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleModifiers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleSpecialKey.cs" />
@@ -790,6 +792,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\ArrayList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimization.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimizationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\OperatingSystem.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Reflection\AssemblyNameProxy.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Runtime\Versioning\ComponentGuaranteesAttribute.cs" />
@@ -957,13 +961,11 @@
     <Compile Include="..\referencesource\mscorlib\system\_localdatastore.cs" />
     <Compile Include="..\referencesource\mscorlib\system\_localdatastoremgr.cs" />
     <Compile Include="..\referencesource\mscorlib\system\activator.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\appdomainattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\attribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\buffer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\emptyreadonlydictionaryinternal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\generic\comparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\generic\equalitycomparer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\consolekey.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextboundobject.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextmarshalexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextstaticattribute.cs" />
@@ -1021,7 +1023,6 @@
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
@@ -1421,6 +1422,7 @@
     <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
     <Compile Include="System.Reflection\Assembly.cs" />
     <Compile Include="System.Reflection\AssemblyName.cs" />
+    <Compile Include="System.Reflection\Binder.cs" />
     <Compile Include="System.Reflection\CustomAttributeData.cs" />
     <Compile Include="System.Reflection\EventInfo.cs" />
     <Compile Include="System.Reflection\ExceptionHandlingClause.cs" />
