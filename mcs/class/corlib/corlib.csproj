@@ -1328,6 +1328,7 @@
     <Compile Include="System.Diagnostics.Tracing\EventManifestOptions.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSourceAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSourceCreatedEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSourceSettings.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventWrittenEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\NonEventAttribute.cs" />
