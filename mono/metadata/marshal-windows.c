@@ -16,9 +16,12 @@
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 void*
-mono_marshal_alloc_hglobal (size_t size)
+mono_marshal_alloc_hglobal (size_t size, MonoError *error)
 {
-	return GlobalAlloc (GMEM_FIXED, size);
+	void* p = GlobalAlloc (GMEM_FIXED, size);
+	if (!p)
+		mono_error_set_out_of_memory (error, "");
+	return p;
 }
 
 gpointer
