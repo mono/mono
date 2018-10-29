@@ -75,6 +75,7 @@ namespace Mono
 
 		static int initialized;
 		static X509PalImpl x509pal;
+		static object syncRoot = new object ();
 
 		static void EnsureInitialized ()
 		{
@@ -83,13 +84,15 @@ namespace Mono
 			 * MonoTlsProviderFactory.InitializeInternal().
 			 *
 			 */
-			if (Interlocked.CompareExchange (ref initialized, 1, 0) != 0)
-				return;
+			lock (syncRoot) {
+				if (Interlocked.CompareExchange (ref initialized, 1, 0) != 0)
+					return;
 
 #if MONO_FEATURE_BTLS || MONO_FEATURE_APPLETLS
 			provider = MonoTlsProviderFactory.GetProvider ();
 #endif
-			x509pal = GetX509Pal ();
+				x509pal = GetX509Pal ();
+			}
 		}
 
 		public X509PalImpl X509Pal {
