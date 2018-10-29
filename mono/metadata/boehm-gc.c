@@ -430,7 +430,7 @@ int64_t
 mono_gc_get_max_time_slice_ns()
 {
 #if HAVE_BDWGC_GC
-    return GC_get_time_limit() * 1000000;
+    return GC_get_time_limit_ns();
 #else
 	return 0;
 #endif		
@@ -440,7 +440,7 @@ void
 mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
 {
 #if HAVE_BDWGC_GC
-	GC_set_time_limit(maxTimeSlice / 1000000);
+	GC_set_time_limit_ns(maxTimeSlice);
 #endif	
 }
 
