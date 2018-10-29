@@ -3225,8 +3225,8 @@ public class DebuggerTests
 
 		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
-//https://github.com/mono/mono/issues/11416
-//		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
+		// https://github.com/mono/mono/issues/11416
+		// Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
 #endif
 
