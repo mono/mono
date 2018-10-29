@@ -2456,7 +2456,6 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
-	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
 		bool success = false;
 
@@ -2476,13 +2475,17 @@ public class DebuggerTests
 
 				break;
 			}
-		} finally {
-			try {
-				vm.Detach ();
-			} finally {
-				vm = null;
-			}
+		} catch (VMDisconnectedException exc) {
+			Assert.Fail ("Got VMDisconnectedException rather than crash event");
 		}
+
+		try {
+			vm.Detach ();
+		} catch (VMDisconnectedException exc) {
+			// This is fine
+		}
+
+		vm = null;
 
 		if (!success)
 			Assert.Fail ("Didn't get crash event");
