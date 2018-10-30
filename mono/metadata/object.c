@@ -6882,8 +6882,10 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 		}
 #endif
 	}
-	if (m_class_has_finalize (klass))
+	if (m_class_has_finalize (klass)) {
 		mono_object_register_finalizer (res);
+		return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+	}
 
 	return res_handle;
 }
