@@ -293,18 +293,6 @@ mono_arch_flush_icache (guint8 *code, gint size)
 {
 }
 
-const char*
-mono_arch_fregname (int reg)
-{
-	return "freg0";
-}
-
-const char*
-mono_arch_regname (int reg)
-{
-	return "r0";
-}
-
 LLVMCallInfo*
 mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 {
@@ -355,6 +343,18 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 }
 
 #endif // DISABLE_JIT
+
+const char*
+mono_arch_fregname (int reg)
+{
+	return "freg0";
+}
+
+const char*
+mono_arch_regname (int reg)
+{
+	return "r0";
+}
 
 int
 mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
@@ -586,7 +586,7 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 /*
 The following functions don't belong here, but are due to laziness.
 */
-gboolean mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
+gboolean mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize);
 
 G_BEGIN_DECLS
 
@@ -601,7 +601,7 @@ G_END_DECLS
 
 //w32file-wasm.c
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	glong len;
 	gboolean status = FALSE;

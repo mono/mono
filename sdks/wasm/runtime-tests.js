@@ -22,6 +22,16 @@ if (typeof console !== "undefined") {
 		console.warn = console.log;
 }
 
+if (typeof crypto == 'undefined') {
+	// /dev/random doesn't work on js shells, so define our own
+	// See library_fs.js:createDefaultDevices ()
+	var crypto = {
+		getRandomValues: function (buffer) {
+			buffer[0] = (Math.random()*256)|0;
+		}
+	}
+}
+
 fail_exec = function(reason) {
 	print (reason);
 	wasm_exit (1);
@@ -97,7 +107,7 @@ var Module = {
 		// Have to set env vars here to enable setting MONO_LOG_LEVEL etc.
 		var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
 		for (var variable in setenv) {
-			wasm_setenv (variable, setenv [variable]);
+			MONO.mono_wasm_setenv (variable, setenv [variable]);
 		}
 
 		MONO.mono_load_runtime_and_bcl (
@@ -193,14 +203,21 @@ var App = {
 				obj_array_set (app_args, i - 2, string_from_js (args [i]));
 			}
 
-			var invoke_args = Module._malloc (4);
-			Module.setValue (invoke_args, app_args, "i32");
-			var eh_throw = Module._malloc (4);
-			Module.setValue (eh_throw, 0, "i32");
-			var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
-			var eh_res = Module.getValue (eh_throw, "i32");
-			if (eh_res == 1) {
-				print ("Exception:" + string_get_utf8 (res));
+			try {
+				var invoke_args = Module._malloc (4);
+				Module.setValue (invoke_args, app_args, "i32");
+				var eh_throw = Module._malloc (4);
+				Module.setValue (eh_throw, 0, "i32");
+				var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
+				var eh_res = Module.getValue (eh_throw, "i32");
+				if (eh_res == 1) {
+					print ("Exception:" + string_get_utf8 (res));
+					wasm_exit (1);
+				}
+			} catch (ex) {
+				print ("JS exception: " + ex);
+				print (ex.stack);
+				wasm_exit (1);
 			}
 			return;
 		}

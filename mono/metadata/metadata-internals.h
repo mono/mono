@@ -1012,11 +1012,11 @@ mono_loader_set_strict_strong_names (gboolean enabled);
 gboolean
 mono_loader_get_strict_strong_names (void);
 
-char*
-mono_signature_get_managed_fmt_string (MonoMethodSignature *sig);
-
 gboolean
 mono_type_in_image (MonoType *type, MonoImage *image);
+
+gboolean
+mono_type_is_valid_generic_argument (MonoType *type);
 
 MonoAssemblyContextKind
 mono_asmctx_get_kind (const MonoAssemblyContext *ctx);
