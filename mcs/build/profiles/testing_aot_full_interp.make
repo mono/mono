@@ -3,6 +3,6 @@
 include $(topdir)/build/profiles/testing_aot_common.make
 
 PROFILE_MCS_FLAGS += \
-	-d:MOBILE_DYNAMIC
+	-d:DISABLE_COM
 
-MOBILE_DYNAMIC = yes
+ALWAYS_AOT_BCL = yes

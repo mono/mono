@@ -19,12 +19,6 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_5 \
 	-d:MONO \
 	-d:MOBILE,MOBILE_LEGACY \
-	-d:FULL_AOT_DESKTOP	\
-	-d:FULL_AOT_RUNTIME \
-	-d:WASM \
-	-d:DISABLE_REMOTING \
-	-d:DISABLE_COM \
-	-d:FEATURE_NO_BSD_SOCKETS	\
 	-nowarn:1699 \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
@@ -34,10 +28,5 @@ FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install
 NO_INSTALL = yes
-AOT_FRIENDLY_PROFILE = yes
-ALWAYS_AOT_BCL = yes
-ALWAYS_AOT_TESTS = yes
-MOBILE_PROFILE = yes
-NO_VTS_TEST = yes
 NO_CONSOLE = yes
-NO_SRE=1
+MOBILE_PROFILE = yes
