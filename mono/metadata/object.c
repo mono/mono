@@ -6854,8 +6854,11 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
+		MONO_BEGIN_UNSUSPENDABLE;
 		mono_gc_wbarrier_value_copy_internal (mono_get_data_unsafe (res_handle), value, 1, klass);
+		MONO_END_UNSUSPENDABLE;
 	} else {
+		MONO_BEGIN_UNSUSPENDABLE;
 		gpointer data = mono_get_data_unsafe (res_handle);
 #if NO_UNALIGNED_ACCESS
 		mono_gc_memmove_atomic (data, value, size);
@@ -6877,6 +6880,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 			mono_gc_memmove_atomic (data, value, size);
 		}
 #endif
+		MONO_END_UNSUSPENDABLE;
 	}
 	if (m_class_has_finalize (klass))
 		mono_object_register_finalizer_handle (res_handle);

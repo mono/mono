@@ -2333,4 +2333,7 @@ mono_gc_wbarrier_value_copy_internal (void* dest, /*const*/ void* src, int count
 void
 mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src);
 
+#define MONO_BEGIN_UNSUSPENDABLE /* nothing yet */
+#define MONO_END_UNSUSPENDABLE /* nothing yet */
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
