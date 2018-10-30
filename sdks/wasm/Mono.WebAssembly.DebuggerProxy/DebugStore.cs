@@ -348,11 +348,6 @@ namespace Mono.WebAssembly {
 
 		public TypeDefinition GetTypeByName (string name) {
 			return this.image.GetType (name);
-			// var type_def = this.image.GetTypes().FirstOrDefault (t => {
-			// 	Console.WriteLine ($"\ttt {t.FullName} x {name}");
-			// 	return t.FullName == name;
-			// });
-			// return type_def;
 		}
 	}
 
@@ -540,15 +535,11 @@ namespace Mono.WebAssembly {
 		}
 
 		public TypeDefinition LookupType (string fqn) {
-			//Simple.Generic`1, Simple.Dependency, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 			var parts = fqn.Split (',');
 			var typeName = parts[0].Trim ();
 			var asmName = parts[1].Trim ();
 			Console.WriteLine ($"({typeName}) ({asmName})");
-			var asm = this.assemblies.FirstOrDefault (a => {
-				Console.WriteLine ($"{a.Name} x {asmName} x... {a.image.Assembly.Name.Name}");
-				return a.image.Assembly.Name.Name == asmName;
-			});
+			var asm = this.assemblies.FirstOrDefault (a => a.image.Assembly.Name.Name == asmName);
 			if (asm == null)
 				return null;
 			

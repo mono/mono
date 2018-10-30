@@ -31,7 +31,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_enum_frames (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_setup_single_step (int kind);
-EMSCRIPTEN_KEEPALIVE void mono_wasm_get_obj_info (int objid);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_get_obj_info (int objid, int requested_depth);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -600,6 +600,7 @@ describe_address (void *addr, MonoType *type, MonoError *error)
 
 	DEBUG_PRINTF (2, "adding val %p type [%p] %s\n", addr, type, mono_type_full_name (type));
 
+retry:
 	switch (type->type) {
 		case MONO_TYPE_BOOLEAN:
 			mono_wasm_add_bool_var (*(gint8*)addr);
@@ -645,7 +646,9 @@ describe_address (void *addr, MonoType *type, MonoError *error)
 				mono_wasm_add_string_var (NULL);
 				break;
 			}
-			if (mono_object_class (obj) == mono_defaults.string_class) {
+
+			MonoClass *klass = mono_object_class (obj);
+			if (klass == mono_defaults.string_class) {
 				char *str = mono_string_to_utf8_checked ((MonoString*)obj, error);
 				mono_error_assert_ok (error); /* FIXME report error */
 
@@ -653,10 +656,16 @@ describe_address (void *addr, MonoType *type, MonoError *error)
 				g_free (str);
 				break;
 			}
-				
-			char *type_name = mono_type_get_full_name (mono_object_class (obj));
+
+			if (m_class_is_valuetype (klass)) {
+				type = m_class_get_byval_arg (klass);
+				addr = mono_object_unbox (obj);
+				goto retry;
+			}
+
+			char *type_name = mono_type_get_full_name (klass);
 			int object_id = get_object_id (obj);
-			printf ("WUT OBJ %p %d %s\n", obj, object_id, type_name);
+			printf ("WUT OBJ %p %d %s is vt %d\n", obj, object_id, type_name, m_class_is_valuetype (klass));
 			mono_wasm_begin_object (type_name, object_id);
 			//XXX the preview node is optional and marked as experimental 
 			mono_wasm_end_object ();
@@ -737,15 +746,22 @@ mono_wasm_get_var_info (int scope, int pos)
 }
 
 EMSCRIPTEN_KEEPALIVE void
-mono_wasm_get_obj_info (int object_id)
+mono_wasm_get_obj_info (int object_id, int requested_depth)
 {
 	ERROR_DECL (error);
 
-	DEBUG_PRINTF (2, "getting info for objid %d\n", object_id);
+	DEBUG_PRINTF (2, "getting info for objid %d at depth %d\n", object_id, requested_depth);
 
 	MonoObject *object = get_object_from_id (object_id);
 	MonoClass *klass = mono_object_class (object);
-	
+	for (int i = 0; klass && i < requested_depth; ++i)
+		klass = m_class_get_parent (klass);
+
+	if (!klass) {
+		printf ("INVALID DEPTH %d\n", requested_depth);
+		mono_wasm_set_object_fqn ("Invalid depth request");
+		return;
+	}
 	printf ("GET INFO, ID %d PTR %p\n", object_id, object);
 	// mono_class_setup_fields (klass); This >MUST< not be required as setup_fields is a requirement to get to a managed object
 	int count = mono_class_get_field_count (klass);

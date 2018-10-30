@@ -59,13 +59,13 @@ var MonoSupportLib = {
 			return res;
 		},
 
-		mono_wasm_get_object_fields: function (object_id) {
-			console.log(">>>mono_wasm_get_object_fields " + object_id);
+		mono_wasm_get_object_fields: function (object_id, requested_depth) {
+			console.log(">>>mono_wasm_get_object_fields id: " + object_id + " depth: " + requested_depth);
 			if (!this.mono_wasm_get_obj_info)
-				this.mono_wasm_get_obj_info = Module.cwrap ("mono_wasm_get_obj_info", 'void', [ 'number']);
+				this.mono_wasm_get_obj_info = Module.cwrap ("mono_wasm_get_obj_info", 'void', [ 'number', 'number']);
 
 			this.var_info = [];
-			this.mono_wasm_get_obj_info (object_id);
+			this.mono_wasm_get_obj_info (object_id, requested_depth);
 
 			var res = {
 				fqn: this.cur_obj_fqn,

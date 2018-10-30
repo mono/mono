@@ -32,6 +32,268 @@ namespace Mono.WebAssembly {
 		BpNotFound = 100000,
 	}
 
+	class ObjectId {
+		public int Id { get; private set; }
+		public bool NonPublicOnly { get; private set; }
+		public int DepthLevel { get; private set; }
+		public string PropertyName { get; private set; }
+
+		public bool IsPropertyFetch => PropertyName != null;
+		public bool IsParentFetch => DepthLevel > 0;
+
+		public static ObjectId TryParse (string str) {
+			if (!str.StartsWith ("dotnet:objid:", StringComparison.InvariantCulture))
+				return null;
+			var res = new ObjectId ();
+
+			var parts = str.Substring ("dotnet:objid:".Length).Split (':');
+			foreach (var p in parts) {
+				if (p.StartsWith ("base_", StringComparison.InvariantCulture)) {
+					res.DepthLevel = int.Parse (p.Substring ("base_".Length));
+				} else if (p == "priv") {
+					res.NonPublicOnly = true;
+				} else if (p.StartsWith ("prop_", StringComparison.InvariantCulture)) {
+					res.PropertyName = p.Substring ("prop_".Length);
+				} else {
+					res.Id = int.Parse (p);
+				}
+			}
+			return res;
+		}
+
+		static string MakeObjectId (int object_id, int depth_level, bool nonPublicOnly)
+		{
+			string parent_str = depth_level > 0 ? $":base_{depth_level}" : "";
+			string priv_str = nonPublicOnly ? ":priv" : "";
+			return $"dotnet:objid{parent_str}{priv_str}:{object_id}";
+		}
+
+		public string MakePropertyFetchID (string name) {
+			return $"{this}:prop_{name}";
+		}
+
+		public string JsQueryString {
+			get {
+				return $"{Id}, {DepthLevel}";
+			}
+		}
+
+		public string ParentObjectId {
+			get {
+				return MakeObjectId (Id, DepthLevel + 1, NonPublicOnly);
+			}
+		}
+
+		public string PrivateStuffObjectId {
+			get {
+				return MakeObjectId (Id, DepthLevel, true);
+			}
+		}
+
+		public override string ToString () {
+			return MakeObjectId (Id, DepthLevel, NonPublicOnly);
+		}
+	}
+
+	class DisplayCandidate {
+		public FieldDefinition Field { get; private set; }
+		public PropertyDefinition Property { get; private set; }
+		public bool Included { get; private set; }
+		public bool IsField => Field != null && Property == null;
+		public bool IsProperty => Property != null;
+		public bool IsGeneratedProperty => Property != null && Field != null;
+
+		public DisplayCandidate (FieldDefinition f) {
+			Field = f;
+		}
+
+		public DisplayCandidate (PropertyDefinition p, FieldDefinition f) {
+			Property = p;
+			Field = f;
+		}
+
+		public override string ToString () {
+			if (Property != null)
+				return $"prop {Property.Name} " + (Field == null ? "" : $"backed by {Field.Name}");
+			return $"field {Field.Name}";
+		}
+
+		//FIXME this method name SUCKS
+		public void AddFromFieldValue (List<JObject> list, JObject src) {
+			Console.WriteLine ($"TRYING TO ADD {this} / {Included}");
+			if (Included)
+				return;
+			Included = true;
+			if (IsGeneratedProperty)
+				src ["name"] = Property.Name;
+			Console.WriteLine ("ADDING: {0}", src);
+			list.Add (src);
+		}
+
+		public void AddWithoutValue (List<JObject> list, ObjectId objId) {
+			Console.WriteLine ($"TRYING TO FAKE ADD {this} / {Included}");
+			if (Included)
+				return;
+			Included = true;
+
+			if (IsProperty) {
+				list.Add (JObject.FromObject (new {
+					name = Property.Name,
+					value = new {
+						type = "object",
+						description = "Computed Property", //This is needed otherwise it bricks the devtools debugger <o>
+						objectId = objId.MakePropertyFetchID (Property.Name),
+						//get = XXX a getter is not needed
+					}
+				}));
+			} else {
+				throw new Exception ($"Unprocessed DisplayCandidate: {this}");
+			}
+		}
+	}
+
+	class TypeDescriber {
+		readonly ObjectId objId;
+		readonly TypeDefinition typeDesc;
+		readonly JObject[] fields;
+
+		internal TypeDescriber (ObjectId objId, TypeDefinition typeDesc, JObject[] fields) {
+			this.objId = objId;
+			this.typeDesc = typeDesc;
+			this.fields = fields;
+		}
+
+		internal List<JObject> CollectDisplayFields () {
+			/*Var display algorithm:
+			1) collect fields/properties from MD
+			2) match those to supplied data (including field->property conversion)
+			3) add the missing ones under prop fetch objIds
+			4) include pseudo base/private objects
+			*/
+			Console.WriteLine ($"RESOLVING ({objId}) for ({typeDesc})");
+
+			var candidates = new Dictionary <string, DisplayCandidate> ();
+			var possibleBackingFields = new Dictionary <string, FieldDefinition> ();
+			var isBackingField = new Regex ("<(.*)>k__BackingField");
+
+			bool has_unmatched_data = false;
+			foreach (var f in typeDesc.Fields) {
+				if (f.IsStatic || f.IsLiteral)
+					continue;
+				if (isBackingField.IsMatch (f.Name)) {
+					var m = isBackingField.Match (f.Name);
+					var propNameInField = m.Groups[1].Value;
+					possibleBackingFields [propNameInField] = f;
+				}
+
+				if (this.objId.NonPublicOnly == f.IsPublic) {
+					has_unmatched_data = true;
+					continue;
+				}
+				candidates [f.Name] = new DisplayCandidate (f);
+			}
+
+			foreach (var pd in typeDesc.Properties) {
+				//ignore write only properties
+				if (pd.GetMethod == null)
+					continue;
+				if (pd.GetMethod.IsStatic)
+					continue;
+				if (this.objId.NonPublicOnly == pd.GetMethod.IsPublic) {
+					has_unmatched_data = true;
+					continue;
+				}
+
+				//try to find a backing field
+				FieldDefinition fd = null;
+				possibleBackingFields.TryGetValue (pd.Name, out fd);
+
+				var c = new DisplayCandidate (pd, fd);
+				candidates [pd.Name] = c;
+				if (fd != null)
+					candidates [fd.Name] = c;
+			}
+
+			Console.WriteLine ("Candidates:");
+			foreach (var kv in candidates)
+				Console.WriteLine($"\t'{kv.Key}': {kv.Value}");
+
+			var var_list = new List<JObject> ();
+
+			Console.WriteLine ("-- processing fields");
+			for (int i = 0; fields != null && i < fields.Length; ++i) {
+				var field = fields [i];
+				var fieldName = field ["name"].Value<string>();
+
+				DisplayCandidate cand = null;
+				Console.WriteLine ($"\tfield '{fieldName} -> {candidates.ContainsKey (fieldName)}");
+				if (!candidates.TryGetValue (fieldName, out cand))
+					continue;
+				cand.AddFromFieldValue (var_list, field);
+			}
+
+			foreach (var cand in candidates.Values)
+				cand.AddWithoutValue (var_list, objId);
+
+			Console.WriteLine ("Considering base type: {0} / {1}",
+				typeDesc.BaseType != null,
+				typeDesc.BaseType == null ? "" : typeDesc.BaseType.FullName);
+			if (!objId.NonPublicOnly && typeDesc.BaseType != null && typeDesc.BaseType.FullName != "System.Object")
+				var_list.Add (JObject.FromObject (new {
+					name = "Base",
+					value = new {
+						type = "object",
+						description = $"{typeDesc.BaseType.FullName} fields",
+						objectId = objId.ParentObjectId
+					}
+				}));
+
+			if (!objId.NonPublicOnly && has_unmatched_data)
+				var_list.Add (JObject.FromObject (new {
+					name = "Non-Public",
+					value = new {
+						type = "object",
+						description = "Non Public stuff",
+						objectId =  objId.PrivateStuffObjectId
+					}
+				}));
+			return var_list;
+		}
+
+		bool FilterField (TypeDefinition typeDesc, JObject field)
+		{
+			//FIXME take some sort of filtering rule as argument
+			Console.WriteLine ("FILTERING {0} TD -> {1}", field, typeDesc);
+			if (typeDesc != null) {
+				var fieldName = field ["name"].Value<string>();
+				FieldDefinition field_def = typeDesc.Fields.FirstOrDefault (f => f.Name == fieldName);
+				if (field_def == null) {
+					Console.WriteLine ("can't find field info :(");
+					return true;
+				}
+				if (field_def.IsPublic)
+					return true;
+
+				var r = new Regex ("<(.*)>k__BackingField");
+				if (r.IsMatch (fieldName)) {
+					var m = r.Match (fieldName);
+					var propNameInField = m.Groups[1].Value;
+					var pd = typeDesc.Properties.FirstOrDefault (p => p.Name == propNameInField);
+					if (pd != null && pd.GetMethod != null && pd.GetMethod.IsPublic) {
+						field["name"] = pd.Name;
+						return true;
+					}
+				}
+				//<A>k__BackingField
+				//ok, field is private, maybe it's the backing field of a property?
+				// if (field_def != null && !field_def.IsPublic) {
+				Console.WriteLine ("filtering private field");
+				return false;
+			}
+			return true;
+		}
+	}
+
 
 	internal class MonoConstants {
 		public const string RUNTIME_IS_READY = "mono_wasm_runtime_ready";
@@ -206,8 +468,9 @@ namespace Mono.WebAssembly {
 						await GetScopeProperties (id, int.Parse (objId.Substring ("dotnet:scope:".Length)), token);
 						return true;
 					}
-					if (objId.StartsWith ("dotnet:objid:", StringComparison.InvariantCulture)) {
-						await GetObjectProperties (id, int.Parse (objId.Substring ("dotnet:objid:".Length)), token);
+					var o = ObjectId.TryParse (objId);
+					if (o != null) {
+						await GetObjectProperties (id, o, token);
 						return true;
 					}
 
@@ -454,50 +717,17 @@ namespace Mono.WebAssembly {
 			SendResponse (msg_id, Result.Ok (o), token);
 		}
 
-		bool FilterField (TypeDefinition typeDesc, JObject field)
-		{
-			//FIXME take some sort of filtering rule as argument
-			Console.WriteLine ("FILTERING {0} TD -> {1}", field, typeDesc);
-			if (typeDesc != null) {
-				var fieldName = field ["name"].Value<string>();
-				FieldDefinition field_def = typeDesc.Fields.FirstOrDefault (f => f.Name == fieldName);
-				if (field_def == null) {
-					Console.WriteLine ("can't find field info :(");
-					return true;
-				}
-				if (field_def.IsPublic)
-					return true;
-
-				var r = new Regex ("<(.*)>k__BackingField");
-				if (r.IsMatch (fieldName)) {
-					var m = r.Match (fieldName);
-					var propNameInField = m.Groups[1].Value;
-					var pd = typeDesc.Properties.FirstOrDefault (p => p.Name == propNameInField);
-					if (pd != null && pd.GetMethod != null && pd.GetMethod.IsPublic) {
-						field["name"] = pd.Name;
-						return true;
-					}
-				}
-				//<A>k__BackingField
-				//ok, field is private, maybe it's the backing field of a property?
-				// if (field_def != null && !field_def.IsPublic) {
-				Console.WriteLine ("filtering private field");
-				return false;
-			}
-			return true;
-		}
-
-		async Task GetObjectProperties (int msg_id, int object_id, CancellationToken token)
+		async Task GetObjectProperties (int msg_id, ObjectId objId, CancellationToken token)
 		{
 			//TODO respect the objectGroup of the debugger
 			//TODO deal with 
 		    // "ownProperties": false,
 		    // "accessorPropertiesOnly": false,
 		    // "generatePreview": true
-			
+
 			//XXX resolve the type locally and produce property info without going to the debugee
 			var o = JObject.FromObject (new {
-				expression = string.Format (MonoCommands.GET_OBJECT_FIELDS, object_id),
+				expression = string.Format (MonoCommands.GET_OBJECT_FIELDS, objId.JsQueryString),
 				objectGroup = "mono_debugger",
 				includeCommandLineAPI = false,
 				silent = false,
@@ -511,64 +741,21 @@ namespace Mono.WebAssembly {
 				return;
 			}
 
-			// Console.WriteLine("we gots {0}", res);
 			var fqn = res.Value? ["result"]? ["value"]? ["fqn"]?.Value<string> ();
 			Console.WriteLine ($"FQN IS {fqn}");
-
-			var typeDesc = this.store.LookupType (fqn);
-			Console.WriteLine ($"TypeDesc is {typeDesc}");
-
-			var var_list = new List<JObject> ();
 
 			var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
 			Console.WriteLine ($"fields are {fields}");
 
-			var_list.Add (JObject.FromObject (new {
-				name = "Base",
-				value = new {
-					type = "object",
-					description = "Base class fields",
-					objectId = "dotnet:objid-base:"  + object_id
-				}
-			}));
+			var typeDesc = this.store.LookupType (fqn);
+			Console.WriteLine ($"TypeDesc is {typeDesc}");
 
-
-
-			var_list.Add (JObject.FromObject (new {
-				name = "FakeProperty",
-				value = new {
-					type = "object",
-					description = "Fake Property",
-					objectId = "dotnet:objid-fake-property:"  + object_id,
-					get = "dotnet:invoke-getter:1"
-				}
-			}));
-			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
-			// results in a "Memory access out of bounds", causing 'values' to be null,
-			// so skip returning variable values in that case.
-			for (int i = 0; fields != null && i < fields.Length; ++i) {
-				//TODO filter backing fields for public properties
-				//TODO filter non public fields
-				//TODO add public properties!
-				if (FilterField (typeDesc, fields [i]))
-					var_list.Add (fields [i]);
-			}
-
-			//TODO add a property and see what happens
-
-			//FIXME only add this selectively
-			var_list.Add (JObject.FromObject (new {
-				name = "Non-Public",
-				value = new {
-					type = "object",
-					description = "Non Public stuff",
-					objectId = "dotnet:objid-priv:"  + object_id
-				}
-			}));
+			var td = new TypeDescriber (objId, typeDesc, fields);
 
 			o = JObject.FromObject (new {
-				result = var_list
+				result = td.CollectDisplayFields ()
 			});
+			Console.WriteLine ("sending {0}", o);
 
 			SendResponse (msg_id, Result.Ok (o), token);
 		}

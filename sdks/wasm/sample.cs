@@ -7,24 +7,44 @@ using WebAssembly.Net.Http.HttpClient;
 
 public class Math {
 	public static int IntAdd (int a, int b) {
-		var cp = new Simple.Complex (10, "hello");
-		var ermergerd = new Simple.Generic<GeoLocation.Program> ();
-		var learray = new Simple.Complex[10];
+		var obj = new Test ();
+		obj.PubProperty = 99;
+		obj.pubField2 = obj;
+		obj.pubField2 = "a string";
 		int c = a + b;
 		int d = c + b;
 		int e = d + a;
-
-		e += cp.DoStuff ();
-
 		return e;
 	}
 
+}
 
-	public int First (int[] x) {
-		return x.FirstOrDefault ();
+class Test: TestBase {
+	public int pubField = 123;
+	public object pubField2;
+	public int PubProperty { get; set; }
+	private int privField;
+	private object PrivProperty { get; set; }
+	public Test () {
+		PubProperty = 10;
+		privField = 20;
+		pubField = 30;
+		pubField2 = 40;
+		PrivProperty = "this is private";
+	}
+
+	public string ComputedProperty {
+		get => "This string is generated!";
 	}
 }
 
+class TestBase: BaseBase {
+	private int privBaseField;
+}
+
+class BaseBase {
+	public int field;
+}
 namespace GeoLocation
 {
     class Program
