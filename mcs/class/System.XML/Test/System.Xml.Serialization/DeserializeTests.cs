@@ -1697,16 +1697,16 @@ namespace MonoTests.System.XmlSerialization
 
 			PR11194Parent2 child;
 			Assert.IsNotNull(result, "#11194_1");
-			Assert.AreEqual(1, result.children.Count(), "#11194_2");
+			Assert.AreEqual(1, result.children.Count, "#11194_2");
 			child = result.children[0] as PR11194Parent2;
 			Assert.IsNotNull(child, "#11194_3");
-			Assert.AreEqual(1, child.children.Count(), "#11194_4");
+			Assert.AreEqual(1, child.children.Count, "#11194_4");
 			child = child.children[0] as PR11194Parent2;
 			Assert.IsNotNull(child, "#11194_5");
-			Assert.AreEqual(7, child.children.Count(), "#11194_6");
+			Assert.AreEqual(7, child.children.Count, "#11194_6");
 			child = child.children[1] as PR11194Parent2;
 			Assert.IsNotNull(child, "#11194_7");
-			Assert.AreEqual(1, child.children.Count(), "#11194_8");
+			Assert.AreEqual(1, child.children.Count, "#11194_8");
 			Assert.AreEqual("PR11194ChildL", child.children[0].GetType().Name, "#11194_9");
 		}
 	}
