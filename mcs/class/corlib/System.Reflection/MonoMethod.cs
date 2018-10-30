@@ -229,7 +229,7 @@ namespace System.Reflection {
 			return get_base_method (this, true);
 		}
 
-		internal override MethodInfo GetBaseMethod ()
+		internal MethodInfo GetBaseMethod ()
 		{
 			return get_base_method (this, false);
 		}
