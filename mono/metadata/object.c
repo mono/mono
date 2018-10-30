@@ -6845,12 +6845,12 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 		return mono_nullable_box_handle (value, klass, error);
 
 	vtable = mono_class_vtable_checked (domain, klass, error);
-	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+	return_val_if_nok (error, NULL_HANDLE);
 
 	size = mono_class_instance_size (klass);
 
 	MonoObjectHandle res_handle = mono_object_new_alloc_by_vtable (vtable, error);
-	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+	return_val_if_nok (error, NULL_HANDLE);
 	res = MONO_HANDLE_RAW (res_handle);
 
 	size = size - MONO_ABI_SIZEOF (MonoObject);
@@ -6884,7 +6884,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	}
 	if (m_class_has_finalize (klass)) {
 		mono_object_register_finalizer (res);
-		return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+		return_val_if_nok (error, NULL_HANDLE);
 	}
 
 	return res_handle;
