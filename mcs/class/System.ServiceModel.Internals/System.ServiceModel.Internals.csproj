@@ -92,7 +92,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;MONO_FEATURE_MULTIPLE_APPDOMAINS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
