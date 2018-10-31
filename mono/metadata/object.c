@@ -6857,7 +6857,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 		MONO_ENTER_NO_SAFEPOINTS;
 		gpointer data = mono_handle_get_data_unsafe (res_handle);
 		mono_gc_wbarrier_value_copy_internal (data, value, 1, klass);
-		MONO_ENTER_NO_SAFEPOINTS;
+		MONO_EXIT_NO_SAFEPOINTS;
 	} else {
 		MONO_ENTER_NO_SAFEPOINTS;
 		gpointer data = mono_handle_get_data_unsafe (res_handle);
