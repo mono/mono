@@ -61,6 +61,14 @@ namespace System.Security.Policy {
 				Merge (evidence);	
 		}
 
+		public Evidence (EvidenceBase[] hostEvidence, EvidenceBase[] assemblyEvidence)
+		{
+			if (null != hostEvidence)
+				HostEvidenceList.AddRange (hostEvidence);
+			if (null != assemblyEvidence)
+				AssemblyEvidenceList.AddRange (assemblyEvidence);
+		}
+
 		[Obsolete]
 		public Evidence (object[] hostEvidence, object[] assemblyEvidence)
 		{
