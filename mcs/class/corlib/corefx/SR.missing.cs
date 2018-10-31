@@ -23,4 +23,6 @@ partial class SR
 	public const string Argument_MemberAndArray = "Argument_MemberAndArray";
 	public const string Argument_MustSupplyContainer = "Argument_MustSupplyContainer";
 	public const string Serialization_NoID = "Serialization_NoID";
+	public const string InvalidTimeZone_NJulianDayNotSupported = "InvalidTimeZone_NJulianDayNotSupported";
+	public const string InvalidTimeZone_InvalidJulianDay = "InvalidTimeZone_InvalidJulianDay";
 }
