@@ -737,6 +737,99 @@ STATE_BLOCKING_ASYNC_SUSPENDED: This is an exit state of abort blocking, can't h
 	}
 }
 
+/*
+Set the no_safepoints flag on an executing GC Unsafe thread.
+The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
+Thus the thread will not be (cooperatively) interrupted while the bit is set.
+
+We don't allow nesting no_safepoints regions, so the flag must be initially unset.
+
+Since a suspend initiator may at any time request that a thread should suspend,
+ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
+(Future: We could augment this function to return a return value that tells the
+thread to poll and retry the transition since if we enter here in the
+ASYNC_SUSPEND_REQUESTED state).
+ */
+void
+mono_threads_transition_begin_no_safepoints (MonoThreadInfo *info, const char *func)
+{
+	int raw_state, cur_state, suspend_count;
+	gboolean no_safepoints;
+
+retry_state_change:
+	UNWRAP_THREAD_STATE (raw_state, cur_state, suspend_count, no_safepoints, info);
+	switch (cur_state) {
+	case STATE_RUNNING:
+	case STATE_ASYNC_SUSPEND_REQUESTED:
+		/* Maybe revisit this.  But for now, don't allow nesting. */
+		if (no_safepoints)
+			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE with BEGIN_NO_SAFEPOINTS.  Can't nest no safepointing regions");
+		if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (cur_state, suspend_count, TRUE), raw_state) != raw_state)
+			goto retry_state_change;
+		trace_state_change_with_func ("BEGIN_NO_SAFEPOINTS", info, raw_state, cur_state, TRUE, 0, func);
+		return;
+/*
+STATE_STARTING:
+STATE_DETACHED:
+STATE_SELF_SUSPENDED:
+STATE_ASYNC_SUSPENDED:
+STATE_BLOCKING:
+STATE_BLOCKING_ASYNC_SUSPENDED:
+STATE_BLOCKING_SELF_SUSPENDED:
+STATE_BLOCKING_SUSPEND_REQUESTED:
+	no_safepoints only allowed for threads that are executing and GC Unsafe.
+*/
+	default:
+		mono_fatal_with_history ("Cannot transition thread %p from %s with BEGIN_NO_SAFEPOINTS", mono_thread_info_get_tid (info), state_name (cur_state));
+	}
+}
+
+/*
+Unset the no_safepoints flag on an executing GC Unsafe thread.
+The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
+Thus the thread will not be (cooperatively) interrupted while the bit is set.
+
+We don't allow nesting no_safepoints regions, so the flag must be initially set.
+
+Since a suspend initiator may at any time request that a thread should suspend,
+ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
+(Future: We could augment this function to perform the transition and then
+return a return value that tells the thread to poll (and safepoint) if we enter
+here in the ASYNC_SUSPEND_REQUESTED state).
+ */
+void
+mono_threads_transition_end_no_safepoints (MonoThreadInfo *info, const char *func)
+{
+	int raw_state, cur_state, suspend_count;
+	gboolean no_safepoints;
+
+retry_state_change:
+	UNWRAP_THREAD_STATE (raw_state, cur_state, suspend_count, no_safepoints, info);
+	switch (cur_state) {
+	case STATE_RUNNING:
+	case STATE_ASYNC_SUSPEND_REQUESTED:
+		if (!no_safepoints)
+			mono_fatal_with_history ("no_safepoints = FALSE, but should be TRUE with END_NO_SAFEPOINTS.  Unbalanced no safepointing region");
+		if (mono_atomic_cas_i32 (&info->thread_state, build_thread_state (cur_state, suspend_count, FALSE), raw_state) != raw_state)
+			goto retry_state_change;
+		trace_state_change_with_func ("END_NO_SAFEPOINTS", info, raw_state, cur_state, TRUE, 0, func);
+		return;
+/*
+STATE_STARTING:
+STATE_DETACHED:
+STATE_SELF_SUSPENDED:
+STATE_ASYNC_SUSPENDED:
+STATE_BLOCKING:
+STATE_BLOCKING_ASYNC_SUSPENDED:
+STATE_BLOCKING_SELF_SUSPENDED:
+STATE_BLOCKING_SUSPEND_REQUESTED:
+	no_safepoints only allowed for threads that are executing and GC Unsafe.
+*/
+	default:
+		mono_fatal_with_history ("Cannot transition thread %p from %s with END_NO_SAFEPOINTS", mono_thread_info_get_tid (info), state_name (cur_state));
+	}
+}
+
 // State checking code
 /**
  * Return TRUE is the thread is in a runnable state.
@@ -801,4 +894,10 @@ mono_thread_is_gc_unsafe_mode (void)
 	default:
 		return FALSE;
 	}
+}
+
+gboolean
+mono_thread_info_will_not_safepoint (MonoThreadInfo *info)
+{
+	return get_thread_no_safepoints (info->thread_state);
 }

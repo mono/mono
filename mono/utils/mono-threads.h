@@ -699,6 +699,8 @@ MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char* func);
 gboolean mono_threads_transition_peek_blocking_suspend_requested (THREAD_INFO_TYPE* info);
+void mono_threads_transition_begin_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
+void mono_threads_transition_end_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
 
 G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
@@ -717,6 +719,8 @@ int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
 gboolean mono_thread_is_gc_unsafe_mode (void);
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
+gboolean mono_thread_info_will_not_safepoint (THREAD_INFO_TYPE *info);
 
 /* Suspend phases:
  *
