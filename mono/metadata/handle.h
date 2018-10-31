@@ -172,6 +172,7 @@ mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 #endif
 }
 
+// There are deliberately locals and a constant NULL global with this same name.
 extern MonoThreadInfo * const mono_thread_info_current_var;
 
 /*
@@ -180,6 +181,7 @@ Icall macros
 #define SETUP_ICALL_COMMON	\
 	do { \
 		ERROR_DECL (error);	\
+		/* There are deliberately locals and a constant NULL global with this same name. */ \
 		MonoThreadInfo *mono_thread_info_current_var = mono_thread_info_current (); \
 
 #define CLEAR_ICALL_COMMON	\
@@ -198,6 +200,7 @@ Icall macros
 	(RESULT) = g_cast (mono_stack_mark_pop_value (mono_thread_info_current_var, &__mark, (HANDLE)));
 
 #define HANDLE_FUNCTION_ENTER() do {				\
+	/* There are deliberately locals and a constant NULL global with this same name. */ \
 	MonoThreadInfo *mono_thread_info_current_var = mono_thread_info_current ();	\
 	SETUP_ICALL_FRAME					\
 

@@ -155,6 +155,7 @@ mono_handle_chunk_leak_check (HandleStack *handles) {
 }
 #endif
 
+// There are deliberately locals and a constant NULL global with this same name.
 extern MonoThreadInfo * const mono_thread_info_current_var = NULL;
 
 /* Actual handles implementation */
