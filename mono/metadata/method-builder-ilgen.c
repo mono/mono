@@ -72,6 +72,25 @@ free_ilgen (MonoMethodBuilder *mb)
 	g_free (mb);
 }
 
+static gsize
+mono_bitset_duplicate_size (MonoBitSet *set)
+{
+	return set ? mono_bitset_alloc_size (mono_bitset_size (set), 0) : 0;
+}
+
+static void
+mono_bitset_move (MonoBitSet **dest, MonoBitSet **source, char **end)
+{
+	if (!*source)
+		return;
+	const gsize size = mono_bitset_duplicate_size (*source);
+	*dest = (MonoBitSet*)*end;
+	*end += size;
+	memcpy (*dest, *source, size);
+	mono_bitset_free (*source);
+	*source = NULL;
+}
+
 static MonoMethod *
 create_method_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *signature, int max_stack)
 {
@@ -86,6 +105,11 @@ create_method_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *signature, int 
 
 	image = m_class_get_image (mb->method->klass);
 
+	const gsize size_volatile_args = mono_bitset_duplicate_size (mb->volatile_args);
+	const gsize size_volatile_locals = mono_bitset_duplicate_size (mb->volatile_locals);
+	const gsize header_size1 = MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *);
+	const gsize header_size = header_size1 + size_volatile_args + size_volatile_locals;
+
 	if (mb->dynamic) {
 		method = mb->method;
 		mw = (MonoMethodWrapper*)method;
@@ -93,8 +117,7 @@ create_method_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *signature, int 
 		method->name = mb->name;
 		method->dynamic = TRUE;
 
-		mw->header = header = (MonoMethodHeader *) 
-			g_malloc0 (MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *));
+		mw->header = header = (MonoMethodHeader *)g_malloc0 (header_size);
 
 		header->code = mb->code;
 
@@ -114,8 +137,7 @@ create_method_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *signature, int 
 		else
 			method->name = mono_image_strdup (image, mb->name);
 
-		mw->header = header = (MonoMethodHeader *) 
-			mono_image_alloc0 (image, MONO_SIZEOF_METHOD_HEADER + mb->locals * sizeof (MonoType *));
+		mw->header = header = (MonoMethodHeader *)mono_image_alloc0 (image, header_size);
 
 		header->code = (const unsigned char *)mono_image_alloc (image, mb->pos);
 		memcpy ((char*)header->code, mb->code, mb->pos);
@@ -137,6 +159,10 @@ create_method_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *signature, int 
 		max_stack = 8;
 
 	header->max_stack = max_stack;
+
+	char *end = ((char*)header) + header_size1;
+	mono_bitset_move (&header->volatile_args, &mb->volatile_args, &end);
+	mono_bitset_move (&header->volatile_locals, &mb->volatile_locals, &end);
 
 	header->code_size = mb->pos;
 	header->num_locals = mb->locals;
