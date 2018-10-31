@@ -1,0 +1,5 @@
+System.IO/FileSystem.NotSupported.cs
+System.IO/PathInternal.NotSupported.cs
+System.IO/FileSystemInfo.NotSupported.cs
+System.IO.Enumeration/FileSystemEnumerator.NotSupported.cs
+System.IO.Enumeration/FileSystemEntry.NotSupported.cs

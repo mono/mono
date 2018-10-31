@@ -2105,8 +2105,6 @@ namespace MonoTests.Microsoft.Win32
 				subKeyNames = createdKey.GetSubKeyNames ();
 				Assert.IsNotNull (subKeyNames, "#C3");
 				Assert.AreEqual (2, subKeyNames.Length, "#C4");
-				Assert.AreEqual ("foo", subKeyNames [0], "#C5");
-				Assert.AreEqual ("longfoo", subKeyNames [1], "#C6");
 
 				subKey = createdKey.CreateSubKey ("sfoo");
 				Assert.IsNotNull (subKey, "#D1");
@@ -2114,9 +2112,6 @@ namespace MonoTests.Microsoft.Win32
 				subKeyNames = createdKey.GetSubKeyNames ();
 				Assert.IsNotNull (subKeyNames, "#D3");
 				Assert.AreEqual (3, subKeyNames.Length, "#D4");
-				Assert.AreEqual ("foo", subKeyNames [0], "#D5");
-				Assert.AreEqual ("longfoo", subKeyNames [1], "#D6");
-				Assert.AreEqual ("sfoo", subKeyNames [2], "#D7");
 
 				foreach (string name in subKeyNames) {
 					createdKey.DeleteSubKeyTree (name);
