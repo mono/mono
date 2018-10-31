@@ -80,16 +80,16 @@ namespace MonoTests.System
 		public static void SetLocal (TimeZoneInfo val)
 		{
 			if (localField == null) {
-				if (Type.GetType ("Mono.Runtime") != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+#if MOBILE
 					localField = typeof (TimeZoneInfo).GetField ("local",
 							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-				} else {
+#else
 					cachedDataField = typeof (TimeZoneInfo).GetField ("s_cachedData",
 							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
 
 					localField = cachedDataField.FieldType.GetField ("_localTimeZone",
 						BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
-				}
+#endif
 			}
 
 			if (cachedDataField != null)
@@ -301,7 +301,6 @@ namespace MonoTests.System
 			}
 		
 			[Test]
-			[Category ("NotOnWindows")]
 			public void DSTTransitions ()
 			{
 				DateTime beforeDST = new DateTime (2007, 03, 25, 0, 59, 59, DateTimeKind.Unspecified);
@@ -385,7 +384,6 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("NotOnWindows")]
 			public void TestAthensDST_InDSTDelta ()
 			{
 				// In .NET GetUtcOffset() returns the BaseUtcOffset for times within the hour
@@ -641,7 +639,6 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("NotOnWindows")]
 			public void ConvertToTimeZone ()
 			{
 				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Pacific/Auckland")));
@@ -655,7 +652,6 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("NotOnWindows")]
 			public void ConvertTime_DateTime_TimeZoneInfo_DateTimeKindMatch ()
 			{
 				var sdt = new DateTime (2014, 1, 9, 23, 0, 0, DateTimeKind.Utc);
@@ -789,7 +785,6 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
-		[Category ("NotOnWindows")]
 		public class IsAmbiguousTimeTests
 		{
 			TimeZoneInfo london;
@@ -1188,7 +1183,6 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("NotOnWindows")]
 			public void GetUtcOffset_FromUnspecified ()
 			{
 				var d = dst1Start.Add (dstOffset);
@@ -1239,7 +1233,6 @@ namespace MonoTests.System
 		  }
 
 			[Test]
-			[Category ("NotOnWindows")]
 			public void DTS_WithMinimalDate ()
 			{
 				TimeZoneInfo.TransitionTime startTransition, endTransition;
@@ -1261,8 +1254,7 @@ namespace MonoTests.System
 		{
 			private static void GetDaylightTime (TimeZoneInfo tz, int year, out DateTime start, out DateTime end, out TimeSpan delta)
 			{
-				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
+#if !MOBILE
 					var rule = tz.GetAdjustmentRules ().FirstOrDefault (r => r.DateStart.Year <= year && r.DateEnd.Year >= year);
 					if (rule == null) {
 						start = DateTime.MinValue;
@@ -1276,15 +1268,13 @@ namespace MonoTests.System
 					start = (DateTime) dts.GetField ("Start").GetValue (daylightTime);
 					end = (DateTime) dts.GetField ("End").GetValue (daylightTime);
 					delta = (TimeSpan) dts.GetField ("Delta").GetValue (daylightTime);
-				}
-				else
-				{
+#else
 					MethodInfo getChanges = typeof (TimeZoneInfo).GetMethod ("GetDaylightChanges", BindingFlags.Instance | BindingFlags.NonPublic);
 					var changes = (DaylightTime) getChanges.Invoke (tz, new object [] {year});
 					start = changes.Start;
 					end = changes.End;
 					delta = changes.Delta;
-				}
+#endif
 			}
 
 			[Test]
@@ -1338,7 +1328,7 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("NotOnWindows")]
+			[Category ("NotWorking")]
 			public void Bug31432 ()
 			{
 				// Europe/Moscow from failing device
