@@ -372,9 +372,9 @@ def run(): # Returns exit code
 						sys.stderr.write("%s: Sending SIGKILL to `%s`\n" % (scriptname, command[0]))
 						send_signal(proc, signal.SIGKILL)
 						code = wait(proc, 1)
-						sys.stderr.write("%s: Command `%` returned with %s after SIGKILL\n" % (scriptname, command[0], str(code)))
+						sys.stderr.write("%s: Command `%s` returned with %s after SIGKILL\n" % (scriptname, command[0], str(code)))
 					else:
-						sys.stderr.write("%s: Command `%` returned with %s after %s\n" % (scriptname, command[0], str(code), "SIG" + args.signal))
+						sys.stderr.write("%s: Command `%s` returned with %s after %s\n" % (scriptname, command[0], str(code), "SIG" + args.signal))
 				code = proc.wait()         # Waits forever
 				sys.stderr.write("%s: Command `%s` timed out with %s\n" % (scriptname, command[0], str(code)))
 			died_politely = True
