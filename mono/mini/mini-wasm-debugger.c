@@ -32,6 +32,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_get_var_info (int scope, int pos);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_setup_single_step (int kind);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_obj_info (int objid, int requested_depth);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_get_prop_value (int object_id, int requested_depth, const char *prop_name);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -745,25 +746,11 @@ mono_wasm_get_var_info (int scope, int pos)
 	mono_walk_stack_with_ctx (describe_variable, NULL, MONO_UNWIND_NONE, &data);
 }
 
-EMSCRIPTEN_KEEPALIVE void
-mono_wasm_get_obj_info (int object_id, int requested_depth)
+static void
+describe_object (MonoObject *obj, MonoClass *klass, MonoError *error)
 {
-	ERROR_DECL (error);
+	error_init (error);
 
-	DEBUG_PRINTF (2, "getting info for objid %d at depth %d\n", object_id, requested_depth);
-
-	MonoObject *object = get_object_from_id (object_id);
-	MonoClass *klass = mono_object_class (object);
-	for (int i = 0; klass && i < requested_depth; ++i)
-		klass = m_class_get_parent (klass);
-
-	if (!klass) {
-		printf ("INVALID DEPTH %d\n", requested_depth);
-		mono_wasm_set_object_fqn ("Invalid depth request");
-		return;
-	}
-	printf ("GET INFO, ID %d PTR %p\n", object_id, object);
-	// mono_class_setup_fields (klass); This >MUST< not be required as setup_fields is a requirement to get to a managed object
 	int count = mono_class_get_field_count (klass);
 	MonoClassField *fields = m_class_get_fields (klass);
 
@@ -787,13 +774,99 @@ mono_wasm_get_obj_info (int object_id, int requested_depth)
 			continue;
 
 		printf ("field %p offset %d\n", f, f->offset);
-		describe_address ((char*)object + f->offset, field_type, error);
+		describe_address ((char*)obj + f->offset, field_type, error);
 		mono_error_assert_ok (error);
 
 		mono_wasm_set_last_var_name (f->name);
 	}
 }
 
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_get_obj_info (int object_id, int requested_depth)
+{
+	ERROR_DECL (error);
+
+	DEBUG_PRINTF (2, "getting info for objid %d at depth %d\n", object_id, requested_depth);
+
+	MonoObject *object = get_object_from_id (object_id);
+	MonoClass *klass = mono_object_class (object);
+	for (int i = 0; klass && i < requested_depth; ++i)
+		klass = m_class_get_parent (klass);
+
+	if (!klass) {
+		printf ("INVALID DEPTH %d\n", requested_depth);
+		mono_wasm_set_object_fqn ("Invalid depth request");
+		return;
+	}
+	printf ("GET INFO, ID %d PTR %p\n", object_id, object);
+	describe_object (object, klass, error);
+	mono_error_assert_ok (error);
+}
+
+static gboolean
+is_obj_encoded_as_value (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_I8:
+	case MONO_TYPE_U8:
+	case MONO_TYPE_R4:
+	case MONO_TYPE_R8:
+	case MONO_TYPE_STRING:
+		return TRUE;
+	}
+	return FALSE;
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_get_prop_value (int object_id, int requested_depth, const char *prop_name)
+{
+	ERROR_DECL (error);
+
+	DEBUG_PRINTF (2, "getting property '%s' for objid %d at depth %d\n", prop_name, object_id, requested_depth);
+
+	MonoObject *object = get_object_from_id (object_id);
+	MonoClass *klass = mono_object_class (object);
+	for (int i = 0; klass && i < requested_depth; ++i)
+		klass = m_class_get_parent (klass);
+
+	if (!klass) {
+		printf ("INVALID DEPTH %d\n", requested_depth);
+		mono_wasm_add_string_var ("Invalid depth request");
+		return;
+	}
+
+	printf ("GET INFO, ID %d PTR %p\n", object_id, object);
+	MonoProperty *prop = mono_class_get_property_from_name (klass, prop_name);
+	if (!prop) {
+		printf ("INVALID PROP NAME %s\n", prop_name);
+		mono_wasm_add_string_var ("Invalid property name");
+		return;
+	}
+
+	MonoObject *res = mono_property_get_value_checked (prop, object, NULL, error);
+	mono_error_assert_ok (error);
+	MonoClass *prop_klass = res ? mono_object_class (res) : mono_defaults.string_class;
+
+	if (m_class_is_valuetype (prop_klass)) {
+		describe_address (mono_object_unbox (res), m_class_get_byval_arg (prop_klass), error);
+		mono_error_assert_ok (error);
+	} else {
+		describe_address ((void*)&res, m_class_get_byval_arg (prop_klass), error);
+		mono_error_assert_ok (error);
+	}
+
+}
+	
 // Functions required by debugger-state-machine.
 gsize
 mono_debugger_tls_thread_id (DebuggerTlsData *debuggerTlsData)

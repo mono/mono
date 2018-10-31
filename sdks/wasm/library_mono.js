@@ -77,6 +77,19 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		mono_wasm_evaluate_property: function(object_id, requested_depth, property_name) {
+			console.log(">>>mono_wasm_evaluate_property id: " + object_id + " depth: " + requested_depth + " prop: '" + property_name + "'");
+			if (!this.mono_wasm_get_prop_value)
+				this.mono_wasm_get_prop_value = Module.cwrap ("mono_wasm_get_prop_value", 'void', [ 'number', 'number', 'string']);
+
+			this.var_info = [];
+			this.mono_wasm_get_prop_value (object_id, requested_depth, property_name);
+			var res = this.var_info;
+			this.var_info = []
+
+			return res;
+		},
+
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)

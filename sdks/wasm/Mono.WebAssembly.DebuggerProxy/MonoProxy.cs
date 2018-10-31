@@ -26,6 +26,7 @@ namespace Mono.WebAssembly {
 		public const string GET_LOADED_FILES = "MONO.mono_wasm_get_loaded_files()";
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
 		public const string GET_OBJECT_FIELDS = "MONO.mono_wasm_get_object_fields({0})";
+		public const string EVALUATE_PROPERTY = "MONO.mono_wasm_evaluate_property({0}, '{1}')";
 	}
 
 	public enum MonoErrorCodes {
@@ -120,18 +121,15 @@ namespace Mono.WebAssembly {
 
 		//FIXME this method name SUCKS
 		public void AddFromFieldValue (List<JObject> list, JObject src) {
-			Console.WriteLine ($"TRYING TO ADD {this} / {Included}");
 			if (Included)
 				return;
 			Included = true;
 			if (IsGeneratedProperty)
 				src ["name"] = Property.Name;
-			Console.WriteLine ("ADDING: {0}", src);
 			list.Add (src);
 		}
 
 		public void AddWithoutValue (List<JObject> list, ObjectId objId) {
-			Console.WriteLine ($"TRYING TO FAKE ADD {this} / {Included}");
 			if (Included)
 				return;
 			Included = true;
@@ -139,12 +137,13 @@ namespace Mono.WebAssembly {
 			if (IsProperty) {
 				list.Add (JObject.FromObject (new {
 					name = Property.Name,
-					value = new {
-						type = "object",
-						description = "Computed Property", //This is needed otherwise it bricks the devtools debugger <o>
-						objectId = objId.MakePropertyFetchID (Property.Name),
-						//get = XXX a getter is not needed
-					}
+					// value = new {
+					// 	type = "object",
+					// 	description = "Computed Property", //This is needed otherwise it bricks the devtools debugger <o>
+					// 	objectId = objId.MakePropertyFetchID (Property.Name),
+					// }
+					// get could work, but it's complicated 
+					get = objId.MakePropertyFetchID (Property.Name),
 				}));
 			} else {
 				throw new Exception ($"Unprocessed DisplayCandidate: {this}");
@@ -214,19 +213,17 @@ namespace Mono.WebAssembly {
 					candidates [fd.Name] = c;
 			}
 
-			Console.WriteLine ("Candidates:");
-			foreach (var kv in candidates)
-				Console.WriteLine($"\t'{kv.Key}': {kv.Value}");
+			// Console.WriteLine ("Candidates:");
+			// foreach (var kv in candidates)
+			// 	Console.WriteLine($"\t'{kv.Key}': {kv.Value}");
 
 			var var_list = new List<JObject> ();
 
-			Console.WriteLine ("-- processing fields");
 			for (int i = 0; fields != null && i < fields.Length; ++i) {
 				var field = fields [i];
 				var fieldName = field ["name"].Value<string>();
 
 				DisplayCandidate cand = null;
-				Console.WriteLine ($"\tfield '{fieldName} -> {candidates.ContainsKey (fieldName)}");
 				if (!candidates.TryGetValue (fieldName, out cand))
 					continue;
 				cand.AddFromFieldValue (var_list, field);
@@ -235,9 +232,6 @@ namespace Mono.WebAssembly {
 			foreach (var cand in candidates.Values)
 				cand.AddWithoutValue (var_list, objId);
 
-			Console.WriteLine ("Considering base type: {0} / {1}",
-				typeDesc.BaseType != null,
-				typeDesc.BaseType == null ? "" : typeDesc.BaseType.FullName);
 			if (!objId.NonPublicOnly && typeDesc.BaseType != null && typeDesc.BaseType.FullName != "System.Object")
 				var_list.Add (JObject.FromObject (new {
 					name = "Base",
@@ -476,8 +470,32 @@ namespace Mono.WebAssembly {
 
 					break;
 				}
-			}
+			case "Runtime.callFunctionOn": {
+					var objId = args? ["objectId"]?.Value<string> ();
+					var funcDecl = args? ["functionDeclaration"]?.Value<string> ();
 
+					var o = ObjectId.TryParse (objId);
+					if (o == null)
+						break;
+
+					//ensure devtools is calling invokeGetter
+					if (funcDecl.IndexOf ("invokeGetter") < 0)
+						break;
+
+					var prop_array = args? ["arguments"]? [0]? ["value"]?.Value<string> ();
+					string propName = null;
+					if (prop_array == null)
+						break;
+
+					var parts = prop_array.Split('\"');
+					if (parts == null || parts.Length < 2)
+						break;
+
+					propName = parts [1];
+					await EvaluateProperty (id, o, propName, token);
+					return true;
+				}
+			}
 			return false;
 		}
 
@@ -717,6 +735,29 @@ namespace Mono.WebAssembly {
 			SendResponse (msg_id, Result.Ok (o), token);
 		}
 
+		async Task EvaluateProperty (int msg_id, ObjectId objId, string propName, CancellationToken token)
+		{
+			var o = JObject.FromObject (new {
+				expression = string.Format (MonoCommands.EVALUATE_PROPERTY, objId.JsQueryString, propName),
+				objectGroup = "mono_debugger",
+				includeCommandLineAPI = false,
+				silent = false,
+				returnByValue = true,
+			});
+
+			var res = await SendCommand ("Runtime.evaluate", o, token);
+			//if we fail we just buble that to the IDE (and let it panic over it)
+			if (res.IsErr) {
+				SendResponse (msg_id, res, token);
+				return;
+			}
+
+			o = JObject.FromObject (new {
+				result = res.Value? ["result"]? ["value"]? [0]? ["value"]
+			});
+			SendResponse (msg_id, Result.Ok (o), token);
+		}
+
 		async Task GetObjectProperties (int msg_id, ObjectId objId, CancellationToken token)
 		{
 			//TODO respect the objectGroup of the debugger
@@ -724,6 +765,9 @@ namespace Mono.WebAssembly {
 		    // "ownProperties": false,
 		    // "accessorPropertiesOnly": false,
 		    // "generatePreview": true
+
+			if (objId.IsPropertyFetch)
+				throw new Exception ($"Invalid GetProperty objid {objId}");
 
 			//XXX resolve the type locally and produce property info without going to the debugee
 			var o = JObject.FromObject (new {
@@ -742,21 +786,14 @@ namespace Mono.WebAssembly {
 			}
 
 			var fqn = res.Value? ["result"]? ["value"]? ["fqn"]?.Value<string> ();
-			Console.WriteLine ($"FQN IS {fqn}");
-
 			var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
-			Console.WriteLine ($"fields are {fields}");
-
 			var typeDesc = this.store.LookupType (fqn);
-			Console.WriteLine ($"TypeDesc is {typeDesc}");
 
 			var td = new TypeDescriber (objId, typeDesc, fields);
 
 			o = JObject.FromObject (new {
 				result = td.CollectDisplayFields ()
 			});
-			Console.WriteLine ("sending {0}", o);
-
 			SendResponse (msg_id, Result.Ok (o), token);
 		}
 
