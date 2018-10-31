@@ -662,13 +662,6 @@ mono_bitset_resize (MonoBitSet **set, guint32 max_size)
 	*set = new_set;
 }
 
-void
-mono_bitset_set_safe (MonoBitSet **set, guint32 pos)
-{
-	mono_bitset_resize (set, pos + 1);
-	mono_bitset_set (*set, pos);
-}
-
 gboolean
 mono_bitset_test_safe (const MonoBitSet *set, guint32 pos)
 {
