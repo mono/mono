@@ -25,6 +25,9 @@
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/class-internals.h>
 
+// There are deliberately locals and a constant NULL global with this same name.
+extern MonoThreadInfo * const mono_thread_info_current_var;
+
 G_BEGIN_DECLS
 
 /*
@@ -171,9 +174,6 @@ mono_stack_mark_pop (MonoThreadInfo *info, HandleStackMark *stackmark)
 	handles->stackmark_sp = stackmark->prev_sp;
 #endif
 }
-
-// There are deliberately locals and a constant NULL global with this same name.
-extern MonoThreadInfo * const mono_thread_info_current_var;
 
 /*
 Icall macros
