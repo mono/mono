@@ -93,7 +93,7 @@ endif
 tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_response) $(test_makefrag)
 
 xtest_sourcefile = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-xtest_sourcefile_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
+xtest_sourcefile_excludes = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
