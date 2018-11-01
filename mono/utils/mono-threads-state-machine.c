@@ -11,6 +11,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads-debug.h>
+#include <mono/utils/mono-threads-coop.h>
 
 #include <errno.h>
 
@@ -742,17 +743,22 @@ Set the no_safepoints flag on an executing GC Unsafe thread.
 The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
 Thus the thread will not be (cooperatively) interrupted while the bit is set.
 
-We don't allow nesting no_safepoints regions, so the flag must be initially unset.
+We do not allow nesting no_safepoints regions, so the flag must be initially unset.
 
 Since a suspend initiator may at any time request that a thread should suspend,
 ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
 (Future: We could augment this function to return a return value that tells the
 thread to poll and retry the transition since if we enter here in the
 ASYNC_SUSPEND_REQUESTED state).
+
+This function is internal.
+The public interface is MONO_ENTER_NO_SAFEPOINTS.
  */
 void
-mono_threads_transition_begin_no_safepoints (MonoThreadInfo *info, const char *func)
+mono_threads_enter_no_safepoints_slow (MonoThreadInfo *info, const char *func)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+	info = info ? info : mono_thread_info_current ();
 	int raw_state, cur_state, suspend_count;
 	gboolean no_safepoints;
 
@@ -789,17 +795,22 @@ Unset the no_safepoints flag on an executing GC Unsafe thread.
 The no_safepoints bit prevents polling (hence self-suspending) and transitioning from GC Unsafe to GC Safe.
 Thus the thread will not be (cooperatively) interrupted while the bit is set.
 
-We don't allow nesting no_safepoints regions, so the flag must be initially set.
+We do not allow nesting no_safepoints regions, so the flag must be initially set.
 
 Since a suspend initiator may at any time request that a thread should suspend,
 ASYNC_SUSPEND_REQUESTED is allowed to have the no_safepoints bit set, too.
 (Future: We could augment this function to perform the transition and then
 return a return value that tells the thread to poll (and safepoint) if we enter
 here in the ASYNC_SUSPEND_REQUESTED state).
+
+This function is internal.
+The public interface is MONO_EXIT_NO_SAFEPOINTS.
  */
 void
-mono_threads_transition_end_no_safepoints (MonoThreadInfo *info, const char *func)
+mono_threads_exit_no_safepoints (MonoThreadInfo *info, const char *func)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+	info = info ? info : mono_thread_info_current ();
 	int raw_state, cur_state, suspend_count;
 	gboolean no_safepoints;
 

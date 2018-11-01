@@ -107,4 +107,36 @@ mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info
 
 G_END_DECLS
 
+void
+mono_threads_enter_no_safepoints_slow (MonoThreadInfo *info, const char *func);
+
+void
+mono_threads_exit_no_safepoints (MonoThreadInfo *info, const char *func);
+
+static inline gboolean
+mono_threads_enter_no_safepoints (MonoThreadInfo *info, const char *func)
+{
+	gboolean are_safepoints_enabled = mono_threads_are_safepoints_enabled ();
+	if (are_safepoints_enabled)
+		mono_threads_enter_no_safepoints_slow (info, func);
+	return are_safepoints_enabled;
+}
+
+// Use these macro over brief spans of code,
+// that have raw pointers, but have otherwise
+// been converted to be cooperative suspend / precise
+// stack scan correct.
+//
+// Such spans of code will neither initiate a cooperative
+// suspend nor cooperate with such a request from another thread.
+// Therefore extending pause times under memory pressure,
+// or exhausting memory only due to refusal to collect.
+// Therefore such spans of code should be rare and small.
+#define MONO_ENTER_NO_SAFEPOINTS						\
+do { const gboolean are_safepoints_enabled = mono_threads_enter_no_safepoints (mono_thread_info_current_var, __func__)
+
+#define MONO_EXIT_NO_SAFEPOINTS							\
+	are_safepoints_enabled ? mono_threads_exit_no_safepoints (mono_thread_info_current_var, __func__) : (void)0; \
+} while (0)
+
 #endif

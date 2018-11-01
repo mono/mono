@@ -707,17 +707,3 @@ mono_threads_coop_end_global_suspend (void)
 	if (mono_threads_are_safepoints_enabled ())
 		mono_polling_required = 0;
 }
-
-void
-mono_threads_enter_no_safepoints_region (const char *func)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-	mono_threads_transition_begin_no_safepoints (mono_thread_info_current (), func);
-}
-
-void
-mono_threads_exit_no_safepoints_region (const char *func)
-{
-	MONO_REQ_GC_UNSAFE_MODE;
-	mono_threads_transition_end_no_safepoints (mono_thread_info_current (), func);
-}
