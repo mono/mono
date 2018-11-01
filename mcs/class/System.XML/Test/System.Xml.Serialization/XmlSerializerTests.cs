@@ -2128,18 +2128,6 @@ namespace MonoTests.System.XmlSerialization
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
 		}
 
-#if !MOBILE
-		[Test]
-		public void GenerateSerializerGenerics ()
-		{
-			XmlReflectionImporter imp = new XmlReflectionImporter ();
-			Type type = typeof (List<int>);
-			XmlSerializer.GenerateSerializer (
-				new Type [] {type},
-				new XmlTypeMapping [] {imp.ImportTypeMapping (type)});
-		}
-#endif
-
 		[Test]
 		public void Nullable ()
 		{

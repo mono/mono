@@ -32,12 +32,13 @@ endif
 
 LIBRARY_WARN_AS_ERROR = yes
 
-LIB_REFS = System
+LIB_REFS = System System.Core
 
-ifndef MOBILE_PROFILE
-API_BIN_REFS += System.Configuration
-LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
-endif
+RESOURCE_FILES = \
+	../../../external/corefx/src/System.Private.Xml/src/System/Xml/XmlCharType.bin \
+	../../../external/corefx/src/System.Private.Xml/src/Resources/System.Private.Xml.rd.xml
+
+LIB_MCS_FLAGS += $(RESOURCE_FILES:%=-resource:%)
 
 nist_dom_files = \
 	ITest.cs readme.txt util.cs
