@@ -660,3 +660,6 @@ corefx/XslCompiledTransform.cs
 System.Xml.Serialization/TypeData.cs
 System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/TypeTranslator.cs
+
+../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xsl/Runtime/XmlCollation.Unix.cs
+../../../external/corefx/src/System.Private.Xml/src/System/Xml/Core/XmlTextReaderImpl.Unix.cs

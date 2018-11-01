@@ -1,3 +1,1 @@
 #include common.sources
-../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xsl/Runtime/XmlCollation.Unix.cs
-../../../external/corefx/src/System.Private.Xml/src/System/Xml/Core/XmlTextReaderImpl.Unix.cs
