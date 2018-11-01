@@ -140,7 +140,6 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 		mono_threads_exit_gc_safe_region_unbalanced_internal (__gc_safe_unbalanced_cookie, &__gc_safe_unbalanced_dummy);	\
 	} while (0)
 
-<<<<<<< HEAD
 void
 mono_threads_enter_no_safepoints_region (const char *func);
 
@@ -158,10 +157,6 @@ mono_threads_exit_no_safepoints_region (const char *func);
 		if (mono_threads_are_safepoints_enabled ())			\
 			mono_threads_exit_no_safepoints_region (__func__);	\
 	} while (0)
-=======
-#define MONO_ENTER_NO_SAFEPOINTS /* nothing yet */
-#define MONO_EXIT_NO_SAFEPOINTS /* nothing yet */
->>>>>>> Line up better with https://github.com/mono/mono/pull/11476
 
 MONO_END_DECLS
 
