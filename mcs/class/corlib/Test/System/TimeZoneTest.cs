@@ -276,6 +276,7 @@ public class TimeZoneTest {
 	}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetUTCNowAtDSTBoundaries ()
 		{
 			TimeZoneInfo.TransitionTime startTransition = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 2, 0, 0), 3, 5, DayOfWeek.Sunday);
