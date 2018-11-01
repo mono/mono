@@ -30,5 +30,17 @@
   <Target Name="_MonoWasmAssemblyCollectOutput"
           AfterTargets="_CheckForCompileOutputs"
           DependsOnTargets="_MonoWasmLink">
+		<!--
+    <ItemGroup Condition="Exists('@(IntermediateAssembly)')">
+      <FileWrites Include="$(_MonoUE4IntermediateAsm)" />
+      <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+      <IntermediateAssembly Include="$(_MonoUE4IntermediateAsm)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(_DebugSymbolsProduced)'== 'True'">
+      <_DebugSymbolsIntermediatePath Remove="@(_DebugSymbolsIntermediatePath)" />
+      <_DebugSymbolsIntermediatePath Include="$(_MonoUE4IntermediatePdb)" />
+      <FileWrites Include="$(_MonoUE4IntermediatePdb)"/>
+    </ItemGroup>
+  -->
 	</Target>
 </Project>

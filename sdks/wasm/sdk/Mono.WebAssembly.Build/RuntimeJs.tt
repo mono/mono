@@ -1,0 +1,23 @@
+<#@ template language="C#" #>
+var Module = { 
+	onRuntimeInitialized: function () {
+		MONO.mono_load_runtime_and_bcl (
+			"<#=VfsPrefix#>",
+			"<#=DeployPrefix#>",
+			<#=EnableDebugging#>,
+			[ <#=FileList#> ],
+			function () {
+				<#=BindingsLoading#>
+				App.init ();
+			});
+	},
+};
+
+
+<#+
+public string VfsPrefix { get; set; }
+public string DeployPrefix { get; set; }
+public string EnableDebugging { get; set; }
+public string FileList { get; set; }
+public string BindingsLoading { get; set; }
+#>

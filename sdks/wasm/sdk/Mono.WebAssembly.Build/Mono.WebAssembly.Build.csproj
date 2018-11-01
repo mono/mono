@@ -8,10 +8,20 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="System.CodeDom" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\out\bcl\wasm\monolinker.exe" Link="monolinker.exe" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
     <None Update="Mono.WebAssembly.Build.targets" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
     <None Update="Mono.WebAssembly.Build.props" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
+    <None Update="RuntimeManifest.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>RuntimeManifest.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="RuntimeManifest.cs">
+      <DependentUpon>RuntimeJs.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
