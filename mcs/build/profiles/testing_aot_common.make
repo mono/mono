@@ -26,7 +26,9 @@ PROFILE_MCS_FLAGS = \
 API_BIN_PROFILE = build/monotouch
 FRAMEWORK_VERSION = 2.1
 
-# the tuner takes care of the install
 NO_INSTALL = yes
 NO_CONSOLE = yes
 MOBILE_PROFILE = yes
+
+# Note need for trailing comma. If you add, keep it
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
