@@ -139,7 +139,9 @@ XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
+ifneq ($(PROFILE),testing_aot_full_interp)
 TEST_LIB_REFS += Mono.Posix
+endif
 endif
 endif
 

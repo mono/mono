@@ -12,6 +12,7 @@ TEST_CASES := \
 	mscorlib/test-calendar-02.cs \
 	mscorlib/test-exception-01.cs \
 	mscorlib/test-locale-01.cs \
+	mscorlib/test-methodimpl-01.cs \
 	mscorlib/test-reflection-01.cs \
 	mscorlib/test-reflection-02.cs \
 	mscorlib/test-string-01.cs \

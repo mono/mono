@@ -1145,8 +1145,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		// Interp uses slowpath delegate invoke virtual wrapper which throws NRE also with JIT
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void DynamicInvokeOpenInstanceDelegate ()
 		{
 			var d1 = Delegate.CreateDelegate (typeof (Func<DelegateTest, int>), typeof(DelegateTest).GetMethod ("DynamicInvokeOpenInstanceDelegate_CB"));
