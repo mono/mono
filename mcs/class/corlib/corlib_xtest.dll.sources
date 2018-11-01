@@ -259,6 +259,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeZoneTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeZoneInfoTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeZoneNotFoundExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
