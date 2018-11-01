@@ -86,6 +86,9 @@ typedef struct {
 	MonoJitInfo *jinfo;
 } JitInfoMap;
 
+#define GOT_INITIALIZING 1
+#define GOT_INITIALIZED  2
+
 typedef struct MonoAotModule {
 	char *aot_name;
 	/* Pointer to the Global Offset Table */
@@ -105,7 +108,7 @@ typedef struct MonoAotModule {
 	guint32 image_table_len;
 	gboolean out_of_date;
 	gboolean plt_inited;
-	gboolean got_initialized;
+	int got_initialized;
 	guint8 *mem_begin;
 	guint8 *mem_end;
 	guint8 *jit_code_start;
@@ -1126,13 +1129,11 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			char *name;
 
 			if (subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				if (!target)
-					return FALSE;
-
 				name = (char*)p;
-				if (strcmp (target->name, name) != 0)
-					return FALSE;
-				ref->method = target;
+
+				MonoJitICallInfo *info = mono_find_jit_icall_by_name (name);
+				g_assert (info);
+				ref->method = mono_icall_get_wrapper_method (info);
 			} else {
 				m = decode_resolve_method_ref (module, p, &p, error);
 				if (!m)
@@ -1216,15 +1217,15 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 
 				switch (wrapper_type) {
 				case MONO_WRAPPER_DELEGATE_INVOKE:
-					invoke = mono_get_delegate_invoke (klass);
+					invoke = mono_get_delegate_invoke_internal (klass);
 					wrapper = mono_marshal_get_delegate_invoke (invoke, NULL);
 					break;
 				case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
-					invoke = mono_get_delegate_begin_invoke (klass);
+					invoke = mono_get_delegate_begin_invoke_internal (klass);
 					wrapper = mono_marshal_get_delegate_begin_invoke (invoke);
 					break;
 				case MONO_WRAPPER_DELEGATE_END_INVOKE:
-					invoke = mono_get_delegate_end_invoke (klass);
+					invoke = mono_get_delegate_end_invoke_internal (klass);
 					wrapper = mono_marshal_get_delegate_end_invoke (invoke);
 					break;
 				default:
@@ -1947,15 +1948,22 @@ init_amodule_got (MonoAotModule *amodule)
 	int i, npatches;
 
 	/* These can't be initialized in load_aot_module () */
-	if (amodule->got_initialized)
+	if (amodule->got_initialized == GOT_INITIALIZED)
 		return;
 
 	mono_loader_lock ();
 
+	/*
+	 * If it is initialized some other thread did it in the meantime. If it is
+	 * initializing it means the current thread is initializing it since we are
+	 * holding the loader lock, skip it.
+	 */
 	if (amodule->got_initialized) {
 		mono_loader_unlock ();
 		return;
 	}
+
+	amodule->got_initialized = GOT_INITIALIZING;
 
 	mp = mono_mempool_new ();
 	npatches = amodule->info.nshared_got_entries;
@@ -2003,7 +2011,7 @@ init_amodule_got (MonoAotModule *amodule)
 	mono_mempool_destroy (mp);
 
 	mono_memory_barrier ();
-	amodule->got_initialized = TRUE;
+	amodule->got_initialized = GOT_INITIALIZED;
 	mono_loader_unlock ();
 }
 
@@ -2295,6 +2303,7 @@ if (container_assm_name && !container_amodule) {
 	amodule->trampolines [MONO_AOT_TRAMP_IMT] = (guint8 *)info->imt_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = (guint8 *)info->gsharedvt_arg_trampolines;
 	amodule->trampolines [MONO_AOT_TRAMP_FTNPTR_ARG] = (guint8 *)info->ftnptr_arg_trampolines;
+	amodule->trampolines [MONO_AOT_TRAMP_UNBOX_ARBITRARY] = (guint8 *)info->unbox_arbitrary_trampolines;
 
 	if (!strcmp (assembly->aname.name, "mscorlib"))
 		mscorlib_aot_module = amodule;
@@ -4537,9 +4546,10 @@ static void
 init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, MonoClass *init_class, MonoGenericContext *context)
 {
 	ERROR_DECL (error);
+	gboolean res;
 
-	init_method (amodule, method_index, method, init_class, context, error);
-	if (!is_ok (error)) {
+	res = init_method (amodule, method_index, method, init_class, context, error);
+	if (!res || !is_ok (error)) {
 		MonoException *ex = mono_error_convert_to_exception (error);
 		/* Its okay to raise in llvmonly mode */
 		if (ex)
@@ -5478,6 +5488,8 @@ read_page_trampoline_uwinfo (MonoTrampInfo *info, int tramp_type, gboolean is_ge
 		sprintf (symbol_name, "imt_trampolines_page_%s_p", is_generic ? "gen" : "sp");
 	else if (tramp_type == MONO_AOT_TRAMP_GSHAREDVT_ARG)
 		sprintf (symbol_name, "gsharedvt_trampolines_page_%s_p", is_generic ? "gen" : "sp");
+	else if (tramp_type == MONO_AOT_TRAMP_UNBOX_ARBITRARY)
+		sprintf (symbol_name, "unbox_arbitrary_trampolines_page_%s_p", is_generic ? "gen" : "sp");
 	else
 		g_assert_not_reached ();
 
@@ -5526,6 +5538,8 @@ get_new_trampoline_from_page (int tramp_type)
 		tpage = load_function (amodule, "imt_trampolines_page");
 	else if (tramp_type == MONO_AOT_TRAMP_GSHAREDVT_ARG)
 		tpage = load_function (amodule, "gsharedvt_arg_trampolines_page");
+	else if (tramp_type == MONO_AOT_TRAMP_UNBOX_ARBITRARY)
+		tpage = load_function (amodule, "unbox_arbitrary_trampolines_page");
 	else
 		g_error ("Incorrect tramp type for trampolines page");
 	g_assert (tpage);
@@ -5674,6 +5688,20 @@ get_new_gsharedvt_arg_trampoline_from_page (gpointer tramp, gpointer arg)
 	return code;
 }
 
+static gpointer
+get_new_unbox_arbitrary_trampoline_frome_page (gpointer addr)
+{
+	void *code;
+	gpointer *data;
+
+	code = get_new_trampoline_from_page (MONO_AOT_TRAMP_UNBOX_ARBITRARY);
+
+	data = (gpointer*)((char*)code - MONO_AOT_TRAMP_PAGE_SIZE);
+	data [0] = addr;
+
+	return code;
+}
+
 /* Return a given kind of trampoline */
 /* FIXME set unwind info for these trampolines */
 static gpointer
@@ -5798,7 +5826,25 @@ mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr)
 }
 
 gpointer
-mono_aot_get_unbox_trampoline (MonoMethod *method)
+mono_aot_get_unbox_arbitrary_trampoline (gpointer addr)
+{
+	MonoAotModule *amodule;
+	guint8 *code;
+	guint32 got_offset;
+
+	if (USE_PAGE_TRAMPOLINES) {
+		code = (guint8 *)get_new_unbox_arbitrary_trampoline_frome_page (addr);
+	} else {
+		code = (guint8 *)get_numerous_trampoline (MONO_AOT_TRAMP_UNBOX_ARBITRARY, 1, &amodule, &got_offset, NULL);
+		amodule->got [got_offset] = addr;
+	}
+
+	/* The caller expects an ftnptr */
+	return mono_create_ftnptr (mono_domain_get (), code);
+}
+
+gpointer
+mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 {
 	ERROR_DECL (error);
 	guint32 method_index = mono_metadata_token_index (method->token) - 1;
@@ -5821,10 +5867,17 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 
 			method_index = find_aot_method (shared, &amodule);
 		}
-		g_assert (method_index != 0xffffff);
-	} else {
+	} else
 		amodule = m_class_get_image (method->klass)->aot_module;
-		g_assert (amodule);
+
+	if (amodule == NULL || method_index == 0xffffff) {
+		/* couldn't find unbox trampoline specifically generated for that
+		 * method. this should only happen when an unbox trampoline is needed
+		 * for `fullAOT code -> native-to-interp -> interp` transition if
+		 *   (1) it's a virtual call
+		 *   (2) the receiver is a value type, thus needs unboxing */
+		g_assert (mono_use_interpreter);
+		return mono_aot_get_unbox_arbitrary_trampoline (addr);
 	}
 
 	if (amodule->info.llvm_get_unbox_tramp) {
@@ -6242,7 +6295,14 @@ mono_aot_get_trampoline (const char *name)
 }
 
 gpointer
-mono_aot_get_unbox_trampoline (MonoMethod *method)
+mono_aot_get_unbox_arbitrary_trampoline (gpointer addr)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

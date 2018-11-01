@@ -66,6 +66,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Throw ()
 		{
 			Exception orig = null;

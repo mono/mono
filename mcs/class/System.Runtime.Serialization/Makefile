@@ -45,9 +45,10 @@ TEST_RESOURCE_FILES = \
 
 # we need to write the test resource args into a response file to avoid
 # hitting "argument list too long" errors because of too many files
-TEST_RESOURCES_RESPONSE_FILE = $(depsdir)/$(test_lib).resources.response
+TEST_RESOURCES_RESPONSE_FILE = $(depsdir)/$(LIBRARY)_test.resources.response
 
 $(TEST_RESOURCES_RESPONSE_FILE): $(TEST_RESOURCE_FILES)
+	@echo Creating $@ ...
 	@echo $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r)) > $(TEST_RESOURCES_RESPONSE_FILE)
 
 test-local: $(TEST_RESOURCES_RESPONSE_FILE)

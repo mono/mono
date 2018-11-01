@@ -34,7 +34,8 @@ FRAMEWORK_VERSION = 2.1
 # the tuner takes care of the install
 NO_INSTALL = yes
 AOT_FRIENDLY_PROFILE = yes
-ALWAYS_AOT = yes
+ALWAYS_AOT_BCL = yes
+ALWAYS_AOT_TESTS = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
 NO_CONSOLE = yes

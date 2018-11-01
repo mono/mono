@@ -627,7 +627,9 @@ namespace System {
         offset,
         values,
         comparisonType,
-        s
+        s,
+        input,
+        format
 #endif
     }
 

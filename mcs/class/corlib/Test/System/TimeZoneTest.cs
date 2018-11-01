@@ -65,8 +65,8 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		Assert.AreEqual("04/07/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
-		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
+		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
+		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
 		DateTime d3 = new DateTime (2002,2,25);
@@ -348,12 +348,11 @@ public class TimeZoneTest {
 				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during " + year + ".");
 
 			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
-			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(61));
+			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(1));
 
 //			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
 			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
 			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
-			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
 		}
 
 

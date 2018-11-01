@@ -193,6 +193,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
 	   export aot_test_suites="System.Core"
 
+	   ${TESTCMD} --label=provision --timeout=20m --fatal make --output-sync=recurse --trace -C sdks/builds provision-wasm
 	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
@@ -270,3 +271,5 @@ elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then exit 0;
 else make check-ci;
 fi
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

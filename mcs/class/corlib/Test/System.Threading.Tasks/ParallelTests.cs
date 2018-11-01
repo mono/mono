@@ -42,6 +42,7 @@ namespace MonoTests.System.Threading.Tasks
 	public class ParallelTests
 	{
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForTestCase ()
 		{
 			int[] expected = Enumerable.Range (1, 1000).Select ((e) => e * 2).ToArray ();
@@ -58,12 +59,14 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test, ExpectedException (typeof (AggregateException))]
+		[Category ("MultiThreaded")]
 		public void ParallelForExceptionTestCase ()
 		{
 			Parallel.For(1, 100, delegate (int i) { throw new Exception("foo"); });
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForSmallRangeTest ()
 		{
 			ParallelTestHelper.Repeat (() => {
@@ -75,6 +78,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForNoOperationTest ()
 		{
 			bool launched = false;
@@ -83,6 +87,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForNestedTest ()
 		{
 			bool[] launched = new bool[6 * 20 * 10];
@@ -98,6 +103,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForEachTestCase ()
 		{
 			ParallelTestHelper.Repeat (() => {
@@ -115,6 +121,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallelForEachTestCaseWithIndex ()
 		{
 			var list = new List<int> { 0, 1, 2, 3, 4 };
@@ -131,6 +138,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParallerForEach_UserType ()
 		{
 			var values = new[] {
@@ -154,6 +162,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 			
 		[Test, ExpectedException (typeof (AggregateException))]
+		[Category ("MultiThreaded")]
 		public void ParallelForEachExceptionTestCase ()
 		{
 			IEnumerable<int> e = Enumerable.Repeat (1, 10);
@@ -161,6 +170,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BasicInvokeTest ()
 		{
 			int val1 = 0, val2 = 0;
@@ -171,6 +181,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InvokeWithOneNullActionTest ()
 		{
 			int val1 = 0, val2 = 0;
@@ -186,6 +197,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void OneActionInvokeTest ()
 		{
 			int val = 0;
@@ -207,6 +219,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void InvokeWithExceptions ()
 		{
 			try {

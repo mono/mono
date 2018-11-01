@@ -2756,6 +2756,8 @@ mono_w32file_get_std_handle (gint stdhandle)
 static gboolean
 mono_w32file_read_or_write (gboolean read, gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, gint32 *win32error)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
+
 	FileHandle *filehandle;
 	gboolean ret = FALSE;
 
@@ -4782,7 +4784,7 @@ get_fstypename (gchar *utfpath)
 
 /* Linux has struct statfs which has a different layout */
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	gchar *utfpath;
 	gchar *fstypename;

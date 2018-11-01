@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools wasm_tools testing_aot_full testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
@@ -35,6 +35,9 @@ build_PARALLEL_SUBDIRS = \
 	System.Numerics \
 	System.Xml.Linq \
 	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.Net.Http \
+	System.Net.Http.WebRequest \
 	System.Drawing
 
 ifdef MCS_MODE
@@ -94,6 +97,8 @@ testing_aot_full_dirs_parallel := \
 	Mono.Simd \
 	Mono.CSharp
 
+testing_aot_full_interp_dirs_parallel := $(testing_aot_full_dirs_parallel)
+
 testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
 xammac_dirs_parallel := \
@@ -151,6 +156,9 @@ unreal_dirs_parallel := \
 wasm_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	System.Drawing
+
+wasm_tools_dirs_parallel := \
+	Mono.Cecil
 
 orbis_dirs_parallel := \
 	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
@@ -372,6 +380,8 @@ monotouch_watch_runtime_PARALLEL_SUBDIRS := $(monotouch_watch_runtime_dirs_paral
 monotouch_tv_runtime_SUBDIRS := $(mobile_common_dirs)
 monotouch_tv_runtime_PARALLEL_SUBDIRS := $(monotouch_tv_runtime_dirs_parallel)
 
+testing_aot_full_interp_SUBDIRS := $(mobile_common_dirs)
+testing_aot_full_interp_PARALLEL_SUBDIRS := $(testing_aot_full_interp_dirs_parallel)
 testing_aot_full_SUBDIRS := $(mobile_common_dirs)
 testing_aot_full_PARALLEL_SUBDIRS := $(testing_aot_full_dirs_parallel)
 testing_aot_hybrid_SUBDIRS := $(mobile_common_dirs)
@@ -399,13 +409,15 @@ unreal_PARALLEL_SUBDIRS := $(unreal_dirs_parallel)
 
 wasm_SUBDIRS := $(mobile_common_dirs)
 wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
+wasm_tools_SUBDIRS :=
+wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
 include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
-$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(xbuild_14_SUBDIRS) \
-dlr aot-compiler reference-assemblies Facades
+$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
+$(testing_aot_full_interp_dirs_parallel) dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess

@@ -41,7 +41,6 @@
 
 #include "interp/interp.h"
 
-#include "trace.h"
 #include "ir-emit.h"
 #include "mini-amd64.h"
 #include "cpu-amd64.h"
@@ -1341,7 +1340,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 }
 
 gboolean
-mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
@@ -1553,8 +1552,6 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 	if (cfg->param_area)
 		cfg->arch.omit_fp = FALSE;
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
-		cfg->arch.omit_fp = FALSE;
-	if ((mono_jit_trace_calls != NULL && mono_trace_eval (cfg->method)))
 		cfg->arch.omit_fp = FALSE;
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
@@ -6861,9 +6858,6 @@ get_max_epilog_size (MonoCompile *cfg)
 	
 	if (cfg->method->save_lmf)
 		max_epilog_size += 256;
-	
-	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
 
 	max_epilog_size += (AMD64_NREG * 2);
 
@@ -6931,14 +6925,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	CallInfo *cinfo;
 	MonoInst *lmf_var = cfg->lmf_var;
 	gboolean args_clobbered = FALSE;
-	gboolean trace = FALSE;
 
 	cfg->code_size = MAX (cfg->header->code_size * 4, 1024);
 
 	code = cfg->native_code = (unsigned char *)g_malloc (cfg->code_size);
-
-	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		trace = TRUE;
 
 	/* Amount of stack space allocated by register saving code */
 	pos = 0;
@@ -7200,7 +7190,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 		ins = cfg->args [i];
 
-		if ((ins->flags & MONO_INST_IS_DEAD) && !trace)
+		if (ins->flags & MONO_INST_IS_DEAD && !MONO_CFG_PROFILE (cfg, ENTER_CONTEXT))
 			/* Unused arguments */
 			continue;
 
@@ -7293,11 +7283,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (cfg->method->save_lmf)
 		args_clobbered = TRUE;
-
-	if (trace) {
-		args_clobbered = TRUE;
-		code = (guint8 *)mono_arch_instrument_prolog (cfg, (gpointer)mono_trace_enter_method, code, TRUE);
-	}
 
 	/*
 	 * Optimize the common case of the first bblock making a call with the same
@@ -7432,9 +7417,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 	/* Save the uwind state which is needed by the out-of-line code */
 	mono_emit_unwind_op_remember_state (cfg, code);
-
-	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint8 *)mono_arch_instrument_epilog (cfg, (gpointer)mono_trace_leave_method, code, TRUE);
 
 	/* the code restoring the registers must be kept in sync with OP_TAILCALL */
 	
@@ -7680,160 +7662,6 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 }
 
 #endif /* DISABLE_JIT */
-
-void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
-{
-	guchar *code = (guchar *)p;
-	MonoMethodSignature *sig;
-	MonoInst *inst;
-	int i, n, stack_area = 0;
-
-	/* Keep this in sync with mono_arch_get_argument_info */
-
-	if (enable_arguments) {
-		/* Allocate a new area on the stack and save arguments there */
-		sig = mono_method_signature_internal (cfg->method);
-
-		n = sig->param_count + sig->hasthis;
-
-		stack_area = ALIGN_TO (n * 8, 16);
-
-		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, stack_area);
-
-		for (i = 0; i < n; ++i) {
-			inst = cfg->args [i];
-
-			if (inst->opcode == OP_REGVAR)
-				amd64_mov_membase_reg (code, AMD64_RSP, (i * 8), inst->dreg, 8);
-			else {
-				if (inst->opcode == OP_VTARG_ADDR)
-					inst = inst->inst_left;
-				amd64_mov_reg_membase (code, AMD64_R11, inst->inst_basereg, inst->inst_offset, 8);
-				amd64_mov_membase_reg (code, AMD64_RSP, (i * 8), AMD64_R11, 8);
-			}
-		}
-	}
-
-	mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_METHODCONST, cfg->method);
-	amd64_set_reg_template (code, AMD64_ARG_REG1);
-	amd64_mov_reg_reg (code, AMD64_ARG_REG2, AMD64_RSP, 8);
-	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func, TRUE);
-
-	if (enable_arguments)
-		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, stack_area);
-
-	set_code_cursor (cfg, code);
-
-	return code;
-}
-
-enum {
-	SAVE_NONE,
-	SAVE_STRUCT,
-	SAVE_EAX,
-	SAVE_EAX_EDX,
-	SAVE_XMM
-};
-
-void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
-{
-	guchar *code = (guchar *)p;
-	int save_mode = SAVE_NONE;
-	MonoMethod *method = cfg->method;
-	MonoType *ret_type = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
-	
-	switch (ret_type->type) {
-	case MONO_TYPE_VOID:
-		/* special case string .ctor icall */
-		if (strcmp (".ctor", method->name) && method->klass == mono_defaults.string_class)
-			save_mode = SAVE_EAX;
-		else
-			save_mode = SAVE_NONE;
-		break;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		save_mode = SAVE_EAX;
-		break;
-	case MONO_TYPE_R4:
-	case MONO_TYPE_R8:
-		save_mode = SAVE_XMM;
-		break;
-	case MONO_TYPE_GENERICINST:
-		if (!mono_type_generic_inst_is_valuetype (ret_type)) {
-			save_mode = SAVE_EAX;
-			break;
-		}
-		/* Fall through */
-	case MONO_TYPE_VALUETYPE:
-		save_mode = SAVE_STRUCT;
-		break;
-	default:
-		save_mode = SAVE_EAX;
-		break;
-	}
-
-	/* Save the result and copy it into the proper argument register */
-	switch (save_mode) {
-	case SAVE_EAX:
-		amd64_push_reg (code, AMD64_RAX);
-		/* Align stack */
-		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-		if (enable_arguments)
-			amd64_mov_reg_reg (code, AMD64_ARG_REG2, AMD64_RAX, 8);
-		break;
-	case SAVE_STRUCT:
-		/* FIXME: */
-		if (enable_arguments)
-			amd64_mov_reg_imm (code, AMD64_ARG_REG2, 0);
-		break;
-	case SAVE_XMM:
-		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-		amd64_movsd_membase_reg (code, AMD64_RSP, 0, AMD64_XMM0);
-		/* Align stack */
-		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-		/* 
-		 * The result is already in the proper argument register so no copying
-		 * needed.
-		 */
-		break;
-	case SAVE_NONE:
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-
-	/* Set %al since this is a varargs call */
-	code = amd64_handle_varargs_nregs (code, save_mode == SAVE_XMM);
-	mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_METHODCONST, method);
-	amd64_set_reg_template (code, AMD64_ARG_REG1);
-	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func, TRUE);
-
-	/* Restore result */
-	switch (save_mode) {
-	case SAVE_EAX:
-		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
-		amd64_pop_reg (code, AMD64_RAX);
-		break;
-	case SAVE_STRUCT:
-		/* FIXME: */
-		break;
-	case SAVE_XMM:
-		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
-		amd64_movsd_reg_membase (code, AMD64_XMM0, AMD64_RSP, 0);
-		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
-		break;
-	case SAVE_NONE:
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-
-	set_code_cursor (cfg, code);
-
-	return code;
-}
 
 MONO_NEVER_INLINE
 void

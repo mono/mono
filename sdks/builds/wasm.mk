@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.11
+EMSCRIPTEN_VERSION=1.38.13
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 $(TOP)/sdks/builds/toolchains/emsdk:
@@ -14,7 +14,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 #This is a weird rule to workaround the circularity of the next rule.
 #.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION) depends on .emscripten and, at the same time, it updates it.
 #This is designed to force the .stamp target to rerun when a different emscripten version is selected, which causes .emscripten to be updated
-$(EMSCRIPTEN_SDK_DIR)/.emscripten:
+$(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 	touch $@
 
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
@@ -103,6 +103,8 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--enable-minimal=appdomains,com,remoting \
 	--enable-icall-symbol-map \
+	--with-cooperative-gc=no \
+	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
 $$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
@@ -175,5 +177,5 @@ endef
 
 $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 
-$(eval $(call BclTemplate,wasm-bcl,wasm,wasm))
+$(eval $(call BclTemplate,wasm-bcl,wasm wasm_tools,wasm))
 wasm_TARGETS += wasm-bcl

@@ -11,6 +11,9 @@
 using System;
 using System.Threading;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
+using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
@@ -506,5 +509,59 @@ namespace MonoTests.System.Reflection
 			
 			Assert.AreEqual (expected, actual, "#1");
 		}
+
+		public class Dummy {
+			public void M1 (decimal? arg = 12.345M) { }
+			public void M2 ([Optional, DecimalConstant (1, 2, 3, 4, 5)] decimal? arg) { }
+			public void M3 (decimal? arg = null) { }
+			public void M4 ([Optional, DateTimeConstant (1L)] DateTime? arg) { }
+			public void M5 (DateTime? arg = null) { }			
+		}
+
+		[Test]
+		// https://github.com/mono/mono/issues/11303
+		public void RawDefaultValue_Nullable ()
+		{
+			var type = typeof (Dummy);
+			Assert.AreEqual (12.345M, type.GetMethod("M1").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (new DecimalConstantAttribute (1, 2, 3, 4, 5).Value, type.GetMethod ("M2").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (null, type.GetMethod ("M3").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (new DateTime (1), type.GetMethod ("M4").GetParameters () [0].RawDefaultValue);
+			Assert.AreEqual (null, type.GetMethod ("M5").GetParameters () [0].RawDefaultValue);
+		}		
+
+		public sealed class A { }
+		public sealed class B { }
+		public sealed class C { }
+		public sealed class D { }
+
+#if !FULL_AOT_RUNTIME
+		[Test]
+		// https://github.com/mono/mono/issues/11302
+		public void CustomModifiersOrder()
+		{
+			var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly (new AssemblyName ("SomeAssembly"), AssemblyBuilderAccess.RunAndSave);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule ("SomeAssembly", "SomeAssembly.dll");
+			var typeBuilder = moduleBuilder.DefineType ("SomeClass", TypeAttributes.Class);
+			var methodBuilder = typeBuilder.DefineMethod (
+				"SomeMethod",
+				MethodAttributes.Public,
+				CallingConventions.HasThis,
+				typeof (void),
+				null,
+				null,
+				new[] { typeof (int) },
+				new[] { new[] { typeof (A), typeof (B), typeof (A), typeof (A) } },
+				new[] { new[] { typeof (C), typeof (D), typeof (C), typeof (C) } });
+			methodBuilder.GetILGenerator ().Emit (OpCodes.Ret);
+			var type = typeBuilder.CreateType ();
+			var method = type.GetMethod ("SomeMethod");
+			var parameter = method.GetParameters () [0];
+			var requiredCustomModifiers = parameter.GetRequiredCustomModifiers ();
+			Assert.AreEqual (new[] { typeof (A), typeof (A), typeof (B), typeof (A) }, requiredCustomModifiers);            
+			var optionalCustomModifiers = parameter.GetOptionalCustomModifiers ();
+			Assert.AreEqual (new[] { typeof (C), typeof (C), typeof (D), typeof (C) }, optionalCustomModifiers);
+		}
+#endif		
 	}
 }

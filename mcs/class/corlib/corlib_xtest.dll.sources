@@ -1,10 +1,9 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 ../../../external/corefx/src/Common/tests/System/MockType.cs
-../../../external/corefx/src/Common/tests/System/Reflection/MockParameterInfo.cs
 
 ../../../external/corefx/src/Common/tests/System/RandomExtensions.cs
 ../../../external/corefx/src/Common/tests/System/RandomDataGenerator.cs
-
+../../../external/corefx/src/Common/tests/System/Reflection/MockParameterInfo.cs
 ../../../external/corefx/src/Common/tests/System/Buffers/NativeMemoryManager.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
 ../../../external/corefx/src/Common/tests/System/Threading/ThreadTestHelpers.cs
@@ -19,7 +18,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
 
-../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,GetTypeTests.cs,MethodInfoTests.cs,ModuleTests.cs
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
@@ -158,8 +157,7 @@
 # TODO: Many more to be included
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/BindingFlagsDoNotWrap.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/CustomAttribute_Named_Typed_ArgumentTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,AssemblyTests.cs,CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,ModuleTests.cs,PointerTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
@@ -221,14 +219,12 @@
 ../../../external/corefx/src/Common/tests/System/ObjectCloner.cs
 ../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/SortedSet/*.cs:SortedSet.TreeSubSet.Tests.cs
-../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Stack/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/SortedList/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/SortedDictionary/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Queue/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/List/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/LinkedList/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/HashSet/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/HashCollisionScenarios/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/*.cs
 ../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs:EqualityComparer.Tests.cs
@@ -256,6 +252,13 @@
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ApplicationExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeOffsetTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeOffsetTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/DateTimeTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeZoneTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.cs
@@ -329,3 +332,8 @@
 
 # System.IO.UnmanagedMemoryStream
 ../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs
+
+# System.IO.TextReader/StreamReader
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
