@@ -1780,6 +1780,9 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Concurrent/ConcurrentQueue_Segment.cs
 
+../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
 
@@ -1787,6 +1790,10 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
