@@ -170,6 +170,13 @@ namespace Mono.WebAssembly {
 			4) include pseudo base/private objects
 			*/
 			Console.WriteLine ($"RESOLVING ({objId}) for ({typeDesc})");
+			var var_list = new List<JObject> ();
+
+			if (typeDesc == null) {
+				for (int i = 0; fields != null && i < fields.Length; ++i)
+					var_list.Add (fields [i]);
+				return var_list;
+			}
 
 			var candidates = new Dictionary <string, DisplayCandidate> ();
 			var possibleBackingFields = new Dictionary <string, FieldDefinition> ();
@@ -216,8 +223,6 @@ namespace Mono.WebAssembly {
 			// Console.WriteLine ("Candidates:");
 			// foreach (var kv in candidates)
 			// 	Console.WriteLine($"\t'{kv.Key}': {kv.Value}");
-
-			var var_list = new List<JObject> ();
 
 			for (int i = 0; fields != null && i < fields.Length; ++i) {
 				var field = fields [i];
@@ -788,7 +793,6 @@ namespace Mono.WebAssembly {
 			var fqn = res.Value? ["result"]? ["value"]? ["fqn"]?.Value<string> ();
 			var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
 			var typeDesc = this.store.LookupType (fqn);
-
 			var td = new TypeDescriber (objId, typeDesc, fields);
 
 			o = JObject.FromObject (new {

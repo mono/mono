@@ -7,14 +7,14 @@ using WebAssembly.Net.Http.HttpClient;
 
 public class Math {
 	public static int IntAdd (int a, int b) {
-		var obj = new Test ();
-		obj.PubProperty = 99;
-		obj.pubField2 = obj;
-		obj.pubField2 = "a string";
 		int c = a + b;
 		int d = c + b;
-		int e = d + a;
-		return e;
+
+		Func<int> x = () => {
+			int e = c + d;
+			return e;
+		};
+		return x ();
 	}
 
 }

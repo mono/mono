@@ -536,10 +536,11 @@ namespace Mono.WebAssembly {
 
 		public TypeDefinition LookupType (string fqn) {
 			var parts = fqn.Split (',');
-			var typeName = parts[0].Trim ();
+			var typeName = parts[0].Trim ().Replace ("+", "/");
 			var asmName = parts[1].Trim ();
 			Console.WriteLine ($"({typeName}) ({asmName})");
 			var asm = this.assemblies.FirstOrDefault (a => a.image.Assembly.Name.Name == asmName);
+			Console.WriteLine ($"asm : {asm}");
 			if (asm == null)
 				return null;
 			
