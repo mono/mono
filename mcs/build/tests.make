@@ -80,7 +80,8 @@ endif
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
 test_lib_output = $(test_lib_dir)/$(test_lib)
 
-test_sourcefile_excludes = $(test_lib).exclude.sources
+test_excludes_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll).exclude.sources
+test_sourcefile_excludes = $(firstword $(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(test_excludes_base) $(PROFILE)_$(test_excludes_base) $(test_excludes_base)))
 
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
@@ -92,8 +93,9 @@ test_assembly_dep = $(the_assembly)
 endif
 tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_response) $(test_makefrag)
 
-xtest_sourcefile = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-xtest_sourcefile_excludes = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
+xtest_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll)
+xtest_sourcefile = $(firstword $(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_sourcefile_base).sources $(PROFILE)_$(xtest_sourcefile_base).sources $(xtest_sourcefile_base).sources))
+xtest_sourcefile_excludes = $(firstword $(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_sourcefile_base).exclude.sources $(PROFILE)_$(xtest_sourcefile_base).exclude.sources $(xtest_sourcefile_base).exclude.sources))
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
