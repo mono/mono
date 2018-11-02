@@ -263,7 +263,8 @@ corefx/XslCompiledTransform.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XsltArgumentList.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XsltContext.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XsltException.cs
-../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XslTransform.cs
+#../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XslTransform.cs
+corefx/XslTransform.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Xslt/XsltSettings.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Schema/Asttree.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Schema/AutoValidator.cs
