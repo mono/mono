@@ -43,23 +43,15 @@ node ("mono-package") {
                     packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0].name
                 }
                 stage('Upload .pkg to Azure') {
-                    step([
-                        $class: 'WAStoragePublisher',
-                        allowAnonymousAccess: true,
-                        cleanUpContainer: false,
-                        cntPubAccess: true,
-                        containerName: "${jobName}",
-                        doNotFailIfArchivingReturnsNothing: false,
-                        doNotUploadIndividualFiles: false,
-                        doNotWaitForPreviousBuild: true,
-                        excludeFilesPath: '',
-                        filesPath: "${packageFileName}",
-                        storageAccName: 'credential for xamjenkinsartifact',
-                        storageCredentialId: 'fbd29020e8166fbede5518e038544343',
-                        uploadArtifactsOnlyIfSuccessful: true,
-                        uploadZips: false,
-                        virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/"
-                    ])
+                    azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
+                                storageType: "blobstorage",
+                                containerName: "${jobName}",
+                                virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/",
+                                filesPath: "${packageFileName}",
+                                allowAnonymousAccess: true,
+                                pubAccessible: true,
+                                doNotWaitForPreviousBuild: true,
+                                uploadArtifactsOnlyIfSuccessful: true)
                 }
 
                 if (isReleaseJob) {
