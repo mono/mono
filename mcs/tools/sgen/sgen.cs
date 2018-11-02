@@ -170,10 +170,10 @@ public class Driver
 			return 1;
 		}
 		
-		XmlSerializer.GenerateSerializer (
-				(Type[]) userTypes.ToArray (typeof(Type)), 
-				(XmlTypeMapping[]) maps.ToArray (typeof(XmlTypeMapping)), 
-				parameters);
+		//XmlSerializer.GenerateSerializer (
+		//		(Type[]) userTypes.ToArray (typeof(Type)), 
+		//		(XmlTypeMapping[]) maps.ToArray (typeof(XmlTypeMapping)), 
+		//		parameters);
 				
 		if (!silent) {
 			Console.WriteLine ("Generated assembly: " + file);
