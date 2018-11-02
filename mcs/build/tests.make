@@ -71,7 +71,8 @@ test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROF
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
-test_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+test_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+test_sourcefile = $(firstword $(wildcard $(PROFILE_PLATFORM)_$(PROFILE)_$(test_sourcefile_base) $(PROFILE)_$(test_sourcefile_base) $(test_sourcefile_base)))
 
 ifeq ($(wildcard $(test_sourcefile)),)
 test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
