@@ -26,10 +26,10 @@ build_SUBDIRS = \
 build_PARALLEL_SUBDIRS = \
 	Mono.Security \
 	System \
+	System.Core \
 	System.XML \
 	System.Security \
 	Mono.Posix \
-	System.Core \
 	System.Configuration \
 	System.ComponentModel.Composition.4.5 \
 	System.Numerics \
@@ -45,10 +45,10 @@ ifdef MCS_MODE
 build_SUBDIRS += \
 	Mono.Security \
 	System \
+	System.Core \
 	System.XML \
 	System.Security \
 	Mono.Posix \
-	System.Core \
 	Mono.CompilerServices.SymbolWriter
 
 build_PARALLEL_SUBDIRS += ../mcs
@@ -459,7 +459,7 @@ all-local-aot:
 monolite_dir = monolite-$(HOST_PLATFORM)/$(MONO_CORLIB_VERSION)
 
 # Files needed to bootstrap C# compiler and cil-stringreplacer
-build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll \
+build_files := mscorlib.dll System.dll System.Core.dll System.Xml.dll Mono.Security.dll System.Security.dll System.Configuration.dll \
 	System.Numerics.dll System.Xml.Linq.dll System.IO.Compression.dll \
 	Facades/System.Collections.Concurrent.dll Facades/System.Linq.dll Facades/System.Runtime.dll Facades/System.Collections.dll	\
 	Facades/System.Reflection.Extensions.dll Facades/System.Text.Encoding.Extensions.dll Facades/System.Diagnostics.Debug.dll \
