@@ -437,7 +437,8 @@ corefx/XslTransform.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializationWriter.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializationWriterILGen.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializerAssemblyAttribute.cs
-../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializer.cs
+#../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializer.cs
+corefx/XmlSerializer.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializerFactory.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializerNamespaces.cs
 ../../../external/corefx/src/System.Private.Xml/src/System/Xml/Serialization/XmlSerializerVersionAttribute.cs
