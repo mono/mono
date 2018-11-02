@@ -9,12 +9,20 @@ public class Math {
 	public static int IntAdd (int a, int b) {
 		int c = a + b;
 		int d = c + b;
+		int f = b - 2;
 
 		Func<int> x = () => {
 			int e = c + d;
 			return e;
 		};
-		return x ();
+
+		int tmp = x ();
+		Func<int> y= () => {
+			int k = tmp + d + f;
+			return k;
+		};
+
+		return y ();
 	}
 
 }

@@ -726,13 +726,40 @@ namespace Mono.WebAssembly {
 			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
 			// results in a "Memory access out of bounds", causing 'values' to be null,
 			// so skip returning variable values in that case.
+			JObject capture_object = null;
 			for (int i = 0; values != null && i < vars.Length; ++i) {
+				if (vars [i].Name.StartsWith ("CS$")) { //FIXME is this the right pattern to match?
+					capture_object = values [i] ["value"]?.Value<JObject> ();
+					continue;
+				}
 				var_list.Add (JObject.FromObject (new {
 					name = vars [i].Name,
 					value = values [i] ["value"]
 				}));
-
 			}
+
+			if (capture_object != null) {
+				var objId = ObjectId.TryParse (capture_object ["objectId"]?.Value<string> ());
+				o = JObject.FromObject (new {
+					expression = string.Format (MonoCommands.GET_OBJECT_FIELDS, objId.JsQueryString),
+					objectGroup = "mono_debugger",
+					includeCommandLineAPI = false,
+					silent = false,
+					returnByValue = true,
+				});
+
+				res = await SendCommand ("Runtime.evaluate", o, token);
+				if (!res.IsErr) {
+					var fields = res.Value? ["result"]? ["value"]? ["fields"]?.Values<JObject> ().ToArray ();
+					foreach (var f in fields) {
+						var_list.Add (JObject.FromObject (new {
+							name = f["name"],
+							value = f["value"]
+						}));
+					}
+				}
+			}
+
 			o = JObject.FromObject (new {
 				result = var_list
 			});
