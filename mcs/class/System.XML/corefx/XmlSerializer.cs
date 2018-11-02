@@ -806,6 +806,7 @@ namespace System.Xml.Serialization
 
         public static bool GenerateSerializer(Type[] types, XmlMapping[] mappings, object stream)
         {
+            return true;
         }
 
 #if !FEATURE_SERIALIZATION_UAPAOT
