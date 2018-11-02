@@ -3782,7 +3782,8 @@ public class DebuggerTests
 		AssertValue (true, entry_point.DeclaringType.GetValue (f));
 	}
 
-	[Test]
+	// https://github.com/mono/mono/issues/11516
+	// [Test]
 	public void StackTraceInNative () {
 		// Check that stack traces can be produced for threads in native code
 		vm.Detach ();
