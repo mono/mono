@@ -334,14 +334,14 @@ namespace System.Web.Services.Description {
                 MethodNames.Clear();
                 ExtraCodeClasses.Clear();
                 soapImporter = new SoapSchemaImporter(AbstractSchemas, ServiceImporter.CodeGenerationOptions, ImportContext);
-                xmlImporter = new XmlSchemaImporter(ConcreteSchemas, ServiceImporter.CodeGenerationOptions, ServiceImporter.CodeGenerator, ImportContext);
-                foreach (Type extensionType in ServiceImporter.Extensions) {
-                    xmlImporter.Extensions.Add(extensionType.FullName, extensionType);
-                }
+                xmlImporter = new XmlSchemaImporter(ConcreteSchemas);
+                //foreach (Type extensionType in ServiceImporter.Extensions) {
+                //    xmlImporter.Extensions.Add(extensionType.FullName, extensionType);
+                //}
                 // use cached version of typed DataSetSchemaImporterExtension for /sharetypes feature
                 // 
-                xmlImporter.Extensions.Add(TypedDataSetSchemaImporterExtension);
-                xmlImporter.Extensions.Add(new DataSetSchemaImporterExtension());
+                //xmlImporter.Extensions.Add(TypedDataSetSchemaImporterExtension);
+                //xmlImporter.Extensions.Add(new DataSetSchemaImporterExtension());
                 xmlExporter = new XmlCodeExporter(this.CodeNamespace, ServiceImporter.CodeCompileUnit, ServiceImporter.CodeGenerator, ServiceImporter.CodeGenerationOptions, ExportContext);
                 soapExporter = new SoapCodeExporter(this.CodeNamespace, null, ServiceImporter.CodeGenerator, ServiceImporter.CodeGenerationOptions, ExportContext);
             }

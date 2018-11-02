@@ -1,1 +1,15 @@
 #include common.sources
+ReferenceSources/Res.cs
+../referencesource/System.Xml/System/Xml/Serialization/Advanced/SchemaImporterExtension.cs
+../referencesource/System.Xml/System/Xml/Serialization/SoapSchemaExporter.cs
+#../referencesource/System.Xml/System/Xml/Serialization/SoapCodeExporter.cs
+../referencesource/System.Xml/System/Xml/Serialization/XmlCodeExporter.cs
+../referencesource/System.Xml/System/Xml/Serialization/CodeExporter.cs
+
+../referencesource/System.Xml/System/Xml/Serialization/SoapSchemaImporter.cs
+../referencesource/System.Xml/System/Xml/Serialization/SoapCodeExporter.cs
+../referencesource/System.Xml/System/Xml/Serialization/Advanced/SchemaImporterExtension.cs
+../referencesource/System.Xml/System/Xml/Serialization/Configuration/SchemaImporterExtensionElement.cs
+../referencesource/System.Xml/System/Xml/Serialization/Configuration/SchemaImporterExtensionElementCollection.cs
+../referencesource/System.Xml/System/Xml/Serialization/Configuration/SchemaImporterExtensionsSection.cs
+../referencesource/System.Xml/System/Xml/Serialization/Configuration/ConfigurationStrings.cs

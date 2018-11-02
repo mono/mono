@@ -33,7 +33,12 @@ endif
 LIBRARY_WARN_AS_ERROR = yes
 
 LIB_REFS = System
-API_BIN_REFS := System.Core
+API_BIN_REFS += System.Core
+
+ifndef MOBILE_PROFILE
+API_BIN_REFS += System.Configuration
+LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
+endif
 
 RESOURCE_FILES = \
 	../../../external/corefx/src/System.Private.Xml/src/System/Xml/XmlCharType.bin \

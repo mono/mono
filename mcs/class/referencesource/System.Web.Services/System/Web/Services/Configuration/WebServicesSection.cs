@@ -507,7 +507,7 @@ namespace System.Web.Services.Configuration {
         Type[] discoveryReferenceTypes = new Type[] { typeof(DiscoveryDocumentReference), typeof(ContractReference), typeof(SchemaReference), typeof(System.Web.Services.Discovery.SoapBinding) };
         XmlSerializer discoveryDocumentSerializer = null;
         WebServiceProtocols enabledProtocols = WebServiceProtocols.Unknown;
-        Type[] mimeImporterTypes = new Type[] { typeof(MimeXmlImporter), typeof(MimeFormImporter), typeof(MimeTextImporter) };
+        Type[] mimeImporterTypes = new Type[] { typeof(MimeFormImporter), typeof(MimeTextImporter) };
         Type[] mimeReflectorTypes = new Type[] { typeof(MimeXmlReflector), typeof(MimeFormReflector) };
         Type[] parameterReaderTypes = new Type[] { typeof(UrlParameterReader), typeof(HtmlFormParameterReader) };
         Type[] protocolImporterTypes = new Type[0];

@@ -164,7 +164,7 @@ namespace System.Xml.Serialization {
                 ExportType(mapping.BaseMapping);
 
             ExportDerivedStructs(mapping);
-            CodeGenerator.ValidateIdentifiers(codeClass);
+            //CodeGenerator.ValidateIdentifiers(codeClass);
             return codeClass;
         }
 
@@ -217,7 +217,7 @@ namespace System.Xml.Serialization {
         }
 
         void ExportMember(CodeTypeDeclaration codeClass, MemberMapping member) {
-            string fieldType = member.GetTypeName(CodeProvider);
+            string fieldType = member.Name;
             CodeMemberField field = new CodeMemberField(fieldType, member.Name);
             field.Attributes = (field.Attributes & ~MemberAttributes.AccessMask) | MemberAttributes.Public;
             field.Comments.Add(new CodeCommentStatement(Res.GetString(Res.XmlRemarks), true));
@@ -236,7 +236,7 @@ namespace System.Xml.Serialization {
 
         void ExportProperty(CodeTypeDeclaration codeClass, MemberMapping member, CodeIdentifiers memberScope) {
             string fieldName = memberScope.AddUnique(CodeExporter.MakeFieldName(member.Name), member);
-            string fieldType = member.GetTypeName(CodeProvider);
+            string fieldType = member.Name;
             // need to create a private field
             CodeMemberField field = new CodeMemberField(fieldType, fieldName);
             field.Attributes = MemberAttributes.Private;

@@ -38,7 +38,7 @@ ReferenceSources/Res.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/MimeReflector.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/MimeReturn.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/MimeTextImporter.cs
-../referencesource/System.Web.Services/System/Web/Services/Description/MimeXmlImporter.cs
+#../referencesource/System.Web.Services/System/Web/Services/Description/MimeXmlImporter.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/MimeXmlReflector.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/ProtocolImporter.cs
 ../referencesource/System.Web.Services/System/Web/Services/Description/ProtocolReflector.cs

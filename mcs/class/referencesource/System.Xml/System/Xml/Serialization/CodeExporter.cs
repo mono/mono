@@ -38,8 +38,8 @@ namespace System.Xml.Serialization {
         CodeAttributeDeclaration generatedCodeAttribute;
 
         internal CodeExporter(CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, CodeDomProvider codeProvider, CodeGenerationOptions options, Hashtable exportedMappings) {
-            if (codeNamespace != null)
-                CodeGenerator.ValidateIdentifiers(codeNamespace);
+            //if (codeNamespace != null)
+            //    CodeGenerator.ValidateIdentifiers(codeNamespace);
             this.codeNamespace = codeNamespace;
             if (codeCompileUnit != null) {
                 if (!codeCompileUnit.ReferencedAssemblies.Contains("System.dll"))
@@ -228,7 +228,7 @@ namespace System.Xml.Serialization {
                 CodeAttributeDeclaration flags = new CodeAttributeDeclaration(typeof(FlagsAttribute).FullName);
                 codeClass.CustomAttributes.Add(flags);
             }
-            CodeGenerator.ValidateIdentifiers(codeClass);
+            //CodeGenerator.ValidateIdentifiers(codeClass);
             return codeClass;
         }
 

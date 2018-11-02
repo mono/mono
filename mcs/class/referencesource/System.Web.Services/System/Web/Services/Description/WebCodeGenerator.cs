@@ -126,7 +126,7 @@ namespace System.Web.Services.Description {
         }
 
         internal static string FullTypeName(XmlMemberMapping mapping, CodeDomProvider codeProvider) {
-            return mapping.GenerateTypeName(codeProvider);
+            return mapping.TypeName;
         }
 
         static string MakeFieldName(string name) {

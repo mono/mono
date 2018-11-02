@@ -121,10 +121,10 @@ namespace System.Xml.Serialization {
 
             if (ExportedMappings[mapping] == null) {
                 ExportedMappings.Add(mapping, mapping);
-                if (mapping.TypeDesc.IsMappedType) {
+                /*if (mapping.TypeDesc.IsMappedType) {
                     codeClass = mapping.TypeDesc.ExtendedType.ExportTypeDefinition(CodeNamespace, CodeCompileUnit);
                 }
-                else if (mapping is EnumMapping) {
+                else*/ if (mapping is EnumMapping) {
                     codeClass = ExportEnum((EnumMapping)mapping, typeof(XmlEnumAttribute));
                 }
                 else if (mapping is StructMapping) {
@@ -388,7 +388,7 @@ namespace System.Xml.Serialization {
                 }
                 return;
             }
-            if (mapping.TypeDesc.IsMappedType && field != null && defaultValue is string) {
+            /*if (mapping.TypeDesc.IsMappedType && field != null && defaultValue is string) {
                 SchemaImporterExtension extension = mapping.TypeDesc.ExtendedType.Extension;
                 CodeExpression init = extension.ImportDefaultValue((string)defaultValue, mapping.TypeDesc.FullName);
 
@@ -407,7 +407,7 @@ namespace System.Xml.Serialization {
                     }
                 }
                 return;
-            }
+            }*/
             object value = null;
             if (defaultValue is string || defaultValue == null) {
                 value = ImportDefault(mapping, (string)defaultValue);
@@ -552,7 +552,7 @@ namespace System.Xml.Serialization {
                 ExportType(mapping.BaseMapping, null, mapping.Namespace, null, false);
 
             ExportDerivedStructs(mapping);
-            CodeGenerator.ValidateIdentifiers(codeClass);
+            //CodeGenerator.ValidateIdentifiers(codeClass);
             if (ctor.Statements.Count == 0) codeClass.Members.Remove(ctor);
             return codeClass;
         }
@@ -702,7 +702,7 @@ namespace System.Xml.Serialization {
         }
 
         void ExportMember(CodeTypeDeclaration codeClass, MemberMapping member, string ns, CodeConstructor ctor) {
-            string fieldType = member.GetTypeName(CodeProvider);
+            string fieldType = member.Name;
             CodeMemberField field = new CodeMemberField(fieldType, member.Name);
             field.Attributes = (field.Attributes & ~MemberAttributes.AccessMask) | MemberAttributes.Public;
             field.Comments.Add(new CodeCommentStatement(Res.GetString(Res.XmlRemarks), true));
@@ -721,7 +721,7 @@ namespace System.Xml.Serialization {
 
         void ExportProperty(CodeTypeDeclaration codeClass, MemberMapping member, string ns, CodeIdentifiers memberScope, CodeConstructor ctor) {
             string fieldName = memberScope.AddUnique(MakeFieldName(member.Name), member);
-            string fieldType = member.GetTypeName(CodeProvider);
+            string fieldType = member.Name;
             // need to create a private field
             CodeMemberField field = new CodeMemberField(fieldType, fieldName);
             field.Attributes = MemberAttributes.Private;

@@ -55,7 +55,7 @@ namespace System.Web.Services.Protocols {
             else
             {
 #pragma warning disable 618 // If we're in a non-homogenous domain, legacy CAS mode is enabled, so passing through evidence will not fail
-                serializers = XmlSerializer.FromMappings(xmlMappings, evidence);
+                serializers = XmlSerializer.FromMappings(xmlMappings);
 #pragma warning restore 618
             }
 
