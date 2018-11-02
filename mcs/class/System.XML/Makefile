@@ -32,7 +32,8 @@ endif
 
 LIBRARY_WARN_AS_ERROR = yes
 
-LIB_REFS = System System.Core
+LIB_REFS = System
+API_BIN_REFS := System.Core
 
 RESOURCE_FILES = \
 	../../../external/corefx/src/System.Private.Xml/src/System/Xml/XmlCharType.bin \
