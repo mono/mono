@@ -3506,8 +3506,6 @@
         <Compile Include="System.Net\ServicePoint.platformnotsupported.cs" />
         <Compile Include="System.Net\ServicePointManager.platformnotsupported.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
-        <Compile Include="corefx\Unix\Interop.Read.cs" />
-        <Compile Include="corefx\Unix\Interop.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
@@ -3625,8 +3623,6 @@
         <Compile Include="System.Net\WebRequestStream.cs" />
         <Compile Include="System.Net\WebResponseStream.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
-        <Compile Include="corefx\Unix\Interop.Read.cs" />
-        <Compile Include="corefx\Unix\Interop.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
@@ -3744,8 +3740,6 @@
         <Compile Include="System.Net\WebRequestStream.cs" />
         <Compile Include="System.Net\WebResponseStream.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
-        <Compile Include="corefx\Unix\Interop.Read.cs" />
-        <Compile Include="corefx\Unix\Interop.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
