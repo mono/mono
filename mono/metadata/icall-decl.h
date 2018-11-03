@@ -89,7 +89,6 @@ ICALL_EXPORT MonoObject* ves_icall_MonoField_GetRawConstantValue (MonoReflection
 ICALL_EXPORT MonoObject* ves_icall_MonoField_GetValueInternal (MonoReflectionField* field, MonoObject* obj);
 ICALL_EXPORT MonoObject* ves_icall_property_info_get_default_value (MonoReflectionProperty*);
 ICALL_EXPORT MonoReflectionType* ves_icall_Remoting_RealProxy_InternalGetProxyType (MonoTransparentProxy*);
-ICALL_EXPORT MonoString* ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString*);
 ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
