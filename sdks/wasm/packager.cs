@@ -8,12 +8,30 @@ using Mono.Options;
 class Driver {
 	static bool enable_debug, enable_linker;
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_facades_prefix, out_prefix;
-	static HashSet<string> asm_list = new HashSet<string> ();
+	static HashSet<string> asm_map = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
-	static List<string> assembly_names = new List<string> ();
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
+
+	class AssemblyData {
+		// Assembly name
+		public string name;
+		// Base filename
+		public string filename;
+		// Path outside build tree
+		public string src_path;
+		// Path of .bc file
+		public string bc_path;
+		// Path in appdir
+		public string app_path;
+		// Linker input path
+		public string linkin_path;
+		// Linker output path
+		public string linkout_path;
+	}
+
+	static List<AssemblyData> assemblies = new List<AssemblyData> ();
 
 	enum AssemblyKind {
 		User,
@@ -115,6 +133,8 @@ class Driver {
 	}
 
 	static void Import (string ra, AssemblyKind kind) {
+		if (!asm_map.Add (ra))
+			return;
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
 		if (add_pdb) {
@@ -122,13 +142,12 @@ class Driver {
 		}
 
 		rp.InMemory = true;
-
 		var image = ModuleDefinition.ReadModule (ra, rp);
-		if (!asm_list.Add (ra))
-			return;
 		file_list.Add (ra);
-		assembly_names.Add (image.Assembly.Name.Name);
 		Debug ($"Processing {ra} debug {add_pdb}");
+
+		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
+		assemblies.Add (data);
 
 		if (add_pdb && kind == AssemblyKind.User)
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
@@ -139,10 +158,10 @@ class Driver {
 		}
 	}
 
-	void GenDriver (string builddir, List<string> assembly_names, List<string> profilers) {
+	void GenDriver (string builddir, List<string> profilers) {
 		var symbols = new List<string> ();
-		foreach (var img in assembly_names) {
-			symbols.Add (String.Format ("mono_aot_module_{0}_info", img.Replace ('.', '_').Replace ('-', '_')));
+		foreach (var adata in assemblies) {
+			symbols.Add (String.Format ("mono_aot_module_{0}_info", adata.name.Replace ('.', '_').Replace ('-', '_')));
 		}
 
 		var w = File.CreateText (Path.Combine (builddir, "driver-gen.c.in"));
@@ -189,6 +208,7 @@ class Driver {
 		var vfs_prefix = "managed";
 		var use_release_runtime = true;
 		var enable_aot = false;
+		var enable_dedup = true;
 		var print_usage = false;
 		var emit_ninja = false;
 		var runtimeTemplate = "runtime.js";
@@ -306,6 +326,19 @@ class Driver {
 			}
 		}
 
+		AssemblyData dedup_asm = null;
+
+		if (enable_dedup) {
+			dedup_asm = new AssemblyData () { name = "aot-dummy",
+					filename = "aot-dummy.dll",
+					bc_path = "$builddir/aot-dummy.dll.bc",
+					app_path = "$appdir/$deploy_prefix/aot-dummy.dll",
+					linkout_path = "$builddir/linker-out/aot-dummy.dll"
+					};
+			assemblies.Add (dedup_asm);
+			file_list.Add ("aot-dummy.dll");
+		}
+
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\"").Distinct());
 		var config = String.Format ("config = {{\n \tvfs_prefix: \"{0}\",\n \tdeploy_prefix: \"{1}\",\n \tenable_debugging: {2},\n \tfile_list: [ {3} ],\n", vfs_prefix, deploy_prefix, enable_debug ? "1" : "0", file_list_str);
 		if (add_binding || true)
@@ -346,8 +379,10 @@ class Driver {
 				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
 				Environment.Exit (1);
 			}
-			GenDriver (builddir, assembly_names, profilers);
+			GenDriver (builddir, profilers);
 		}
+		if (!enable_linker || !enable_aot)
+			enable_dedup = false;
 
 		string profiler_libs = "";
 		string profiler_aot_args = "";
@@ -380,10 +415,14 @@ class Driver {
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
+		ninja.WriteLine ("rule aot-instances");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
+		ninja.WriteLine ("  description = [AOT-INSTANCES] $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
+		// Copy $in to $out only if it changed
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
@@ -424,7 +463,11 @@ class Driver {
 			if (!Directory.Exists (path))
 				Directory.CreateDirectory (path);
 		}
-		foreach (var assembly in asm_list) {
+		string aot_in_path = enable_linker ? "$builddir/linker-out" : "$builddir";
+		foreach (var a in assemblies) {
+			var assembly = a.src_path;
+			if (assembly == null)
+				continue;
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
 
@@ -432,10 +475,12 @@ class Driver {
 			string infile = "";
 
 			if (enable_linker) {
-				linker_infiles += $" $builddir/linker-in/{filename}";
-				linker_ofiles += $" $builddir/linker-out/{filename}";
-				infile = $"$builddir/linker-out/{filename}";
-				ninja.WriteLine ($"build $builddir/linker-in/{filename}: cpifdiff {source_file_path}");
+				a.linkin_path = $"$builddir/linker-in/{filename}";
+				a.linkout_path = $"$builddir/linker-out/{filename}";
+				linker_infiles += $" {a.linkin_path}";
+				linker_ofiles += $" {a.linkout_path}";
+				infile = $"{a.linkout_path}";
+				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
@@ -443,18 +488,37 @@ class Driver {
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {infile}");
 
 			if (enable_aot) {
-				string mono_path = enable_linker ? "$builddir/linker-out" : "$builddir";
-				string destdir = "$builddir";
-				string srcfile = infile;
+				a.bc_path = $"$builddir/{filename}.bc";
 
-				string outputs = $"{destdir}/{filename}.bc";
-				ninja.WriteLine ($"build {outputs}: aot {srcfile}");
-				ninja.WriteLine ($"  src_file={srcfile}");
-				ninja.WriteLine ($"  outfile={destdir}/{filename}.bc");
-				ninja.WriteLine ($"  mono_path={mono_path}");
+				ninja.WriteLine ($"build {a.bc_path}: aot {infile}");
+				ninja.WriteLine ($"  src_file={infile}");
+				ninja.WriteLine ($"  outfile={a.bc_path}");
+				ninja.WriteLine ($"  mono_path={aot_in_path}");
+				if (enable_dedup)
+					ninja.WriteLine ($"  aot_args=dedup-skip");
 
-				ofiles += " " + ($"{destdir}/{filename}.bc");
+				ofiles += " " + ($"{a.bc_path}");
 			}
+		}
+		if (enable_dedup) {
+			/*
+			 * Run the aot compiler in dedup mode:
+			 * mono --aot=<args>,dedup-include=aot-dummy.dll <assemblies> aot-dummy.dll
+			 * This will process all assemblies and emit all instances into the aot image of aot-dummy.dll
+			 */
+			var a = dedup_asm;
+			/*
+			 * The dedup process will read in the .dedup files created when running with dedup-skip, so add all the
+			 * .bc files as dependencies.
+			 */
+			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {ofiles} {a.linkout_path}");
+			ninja.WriteLine ($"  dedup_image={a.filename}");
+			ninja.WriteLine ($"  src_files={linker_ofiles} {a.linkout_path}");
+			ninja.WriteLine ($"  outfile={a.bc_path}");
+			ninja.WriteLine ($"  mono_path={aot_in_path}");
+			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
+			ofiles += $" {a.bc_path}";
+			linker_ofiles += $" {a.linkout_path}";
 		}
 		if (enable_aot) {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} $mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
@@ -479,7 +543,6 @@ class Driver {
 			var abs_path = Path.GetFullPath (asset);
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff {abs_path}");
 		}
-
 
 		ninja.Close ();
 	}
