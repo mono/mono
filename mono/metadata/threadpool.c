@@ -162,8 +162,6 @@ mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, Mo
 	MonoDomain *current_domain;
 	MonoBoolean f;
 	gpointer args [2];
-	gboolean pop_appdomain_ref = FALSE;
-	MonoDomain *domain_set = NULL;
 
 	error_init (error);
 	g_assert (work_item);
@@ -177,23 +175,24 @@ mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, Mo
 	}
 	g_assert (unsafe_queue_custom_work_item_method);
 
-	current_domain = mono_domain_get ();
-	if (current_domain != domain) {
-		mono_thread_push_appdomain_ref (domain);
-		pop_appdomain_ref = TRUE;
-		if (!mono_domain_set (domain, FALSE))
-			goto exit; // Success? MonoError not set.
-		domain_set = current_domain;
-	}
 	f = FALSE;
+
 	args [0] = (gpointer) work_item;
 	args [1] = (gpointer) &f;
-	mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, error);
-exit:
-	if (domain_set)
-		mono_domain_set (domain_set, TRUE);
-	if (pop_appdomain_ref)
+
+	current_domain = mono_domain_get ();
+	if (current_domain == domain) {
+		mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, error);
+	} else {
+		mono_thread_push_appdomain_ref (domain);
+		if (mono_domain_set (domain, FALSE)) {
+			mono_runtime_invoke_checked (unsafe_queue_custom_work_item_method, NULL, args, error);
+			mono_domain_set (current_domain, TRUE);
+		} else {
+			// mono_domain_set failing still leads to success.
+		}
 		mono_thread_pop_appdomain_ref ();
+	}
 	return is_ok (error);
 }
 
