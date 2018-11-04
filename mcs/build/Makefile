@@ -28,7 +28,6 @@ PROFILES = \
 
 COMMON_SRCS = \
 	Consts.cs.in			\
-	MonoNativeConfig.cs.in	\
 	Locale.cs			\
 	MonoTODOAttribute.cs \
 	basic-profile-check.cs		\
