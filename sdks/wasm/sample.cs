@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using WebAssembly;
 using WebAssembly.Net.Http.HttpClient;
 
@@ -25,6 +26,13 @@ public class Math {
 		return y ();
 	}
 
+	public async Task<int> AsyncAdd (int a, int b) {
+		Console.WriteLine ("Begin2");
+		int c = a + b;
+		await Task.Delay (100);
+		Console.WriteLine ("Waited");
+		return c;
+	}
 }
 
 class Test: TestBase {

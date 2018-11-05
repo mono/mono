@@ -8,6 +8,7 @@
 		 <textarea rows="10" cols="100" id="output"></textarea>
 	  <br>
 		  <button type="button" onclick="App.onClick()" id="button" disabled="true">SendEvent</button>
+		  <button type="button" onclick="App.onClick2()" id="button2" disabled="true">SendEventAsync</button>
 	  <br>
 	
 	<script type='text/javascript'>
@@ -18,12 +19,22 @@
 				this.output.value = "res is " + res;
 			},
 
+			onClick2: function () {
+				this.output.value = "...";
+				var res = this.int_add_async (10, 20);
+				res.then (function(value) {
+					this.output.value = "res is " + value;					
+				});
+			},
 			init: function () {
 				this.int_add = Module.mono_bind_static_method ("[sample] Math:IntAdd");
+				this.int_add_async = Module.mono_bind_static_method ("[sample] Math:AsyncAdd");
 				this.output = document.getElementById ("output");
 				this.button = document.getElementById ("button");
+				this.button2 = document.getElementById ("button2");
 
 				this.button.disabled = false;
+				this.button2.disabled = false;
 				console.log ("ready");
 			},
 		};
