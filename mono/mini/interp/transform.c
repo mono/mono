@@ -2224,6 +2224,61 @@ emit_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb, gboolea
 			goto exit; \
 	} while (0)
 
+static void
+interp_method_compute_offsets (InterpMethod *imethod, MonoMethodSignature *signature, MonoMethodHeader *header)
+{
+	int i, offset, size, align;
+
+	imethod->local_offsets = (guint32*)g_malloc (header->num_locals * sizeof(guint32));
+	offset = 0;
+	for (i = 0; i < header->num_locals; ++i) {
+		size = mono_type_size (header->locals [i], &align);
+		offset += align - 1;
+		offset &= ~(align - 1);
+		imethod->local_offsets [i] = offset;
+		offset += size;
+	}
+	offset = (offset + 7) & ~7;
+
+	imethod->exvar_offsets = (guint32*)g_malloc (header->num_clauses * sizeof (guint32));
+	for (i = 0; i < header->num_clauses; i++) {
+		imethod->exvar_offsets [i] = offset;
+		offset += sizeof (MonoObject*);
+	}
+	offset = (offset + 7) & ~7;
+
+	imethod->locals_size = offset;
+	g_assert (imethod->locals_size < 65536);
+	offset = 0;
+	imethod->arg_offsets = (guint32*)g_malloc ((!!signature->hasthis + signature->param_count) * sizeof(guint32));
+
+	if (signature->hasthis) {
+		g_assert (!signature->pinvoke);
+		size = align = SIZEOF_VOID_P;
+		offset += align - 1;
+		offset &= ~(align - 1);
+		imethod->arg_offsets [0] = offset;
+		offset += size;
+	}
+
+	for (i = 0; i < signature->param_count; ++i) {
+		if (signature->pinvoke) {
+			guint32 dummy;
+			size = mono_type_native_stack_size (signature->params [i], &dummy);
+			align = 8;
+		}
+		else
+			size = mono_type_stack_size (signature->params [i], &align);
+		offset += align - 1;
+		offset &= ~(align - 1);
+		imethod->arg_offsets [i + !!signature->hasthis] = offset;
+		offset += size;
+	}
+	offset = (offset + 7) & ~7;
+	imethod->args_size = offset;
+	g_assert (imethod->args_size < 10000);
+}
+
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
 {
@@ -5290,7 +5345,7 @@ mono_interp_transform_init (void)
 void
 mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoError *error)
 {
-	int i, align, size, offset;
+	int i, offset;
 	MonoMethod *method = imethod->method;
 	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodHeader *header = NULL;
@@ -5521,54 +5576,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	memcpy (&tmp_imethod, imethod, sizeof (InterpMethod));
 	imethod = &tmp_imethod;
 
-	imethod->local_offsets = (guint32*)g_malloc (header->num_locals * sizeof(guint32));
-	offset = 0;
-	for (i = 0; i < header->num_locals; ++i) {
-		size = mono_type_size (header->locals [i], &align);
-		offset += align - 1;
-		offset &= ~(align - 1);
-		imethod->local_offsets [i] = offset;
-		offset += size;
-	}
-	offset = (offset + 7) & ~7;
-
-	imethod->exvar_offsets = (guint32*)g_malloc (header->num_clauses * sizeof (guint32));
-	for (i = 0; i < header->num_clauses; i++) {
-		imethod->exvar_offsets [i] = offset;
-		offset += sizeof (MonoObject*);
-	}
-	offset = (offset + 7) & ~7;
-
-	imethod->locals_size = offset;
-	g_assert (imethod->locals_size < 65536);
-	offset = 0;
-	imethod->arg_offsets = (guint32*)g_malloc ((!!signature->hasthis + signature->param_count) * sizeof(guint32));
-
-	if (signature->hasthis) {
-		g_assert (!signature->pinvoke);
-		size = align = SIZEOF_VOID_P;
-		offset += align - 1;
-		offset &= ~(align - 1);
-		imethod->arg_offsets [0] = offset;
-		offset += size;
-	}
-
-	for (i = 0; i < signature->param_count; ++i) {
-		if (signature->pinvoke) {
-			guint32 dummy;
-			size = mono_type_native_stack_size (signature->params [i], &dummy);
-			align = 8;
-		}
-		else
-			size = mono_type_stack_size (signature->params [i], &align);
-		offset += align - 1;
-		offset &= ~(align - 1);
-		imethod->arg_offsets [i + !!signature->hasthis] = offset;
-		offset += size;
-	}
-	offset = (offset + 7) & ~7;
-	imethod->args_size = offset;
-	g_assert (imethod->args_size < 10000);
+	interp_method_compute_offsets (imethod, signature, header);
 
 	generate (method, header, imethod, is_bb_start, generic_context, error);
 
