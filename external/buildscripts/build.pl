@@ -351,17 +351,17 @@ if ($build)
 		my $texinfoVersion = "4.8";
 		my $automakeVersion = "1.15";
 		my $libtoolVersion = "2.4.6";
-		my $autoconfDir = "$externalBuildDeps/autoconf-$autoconfVersion";
-		my $texinfoDir = "$externalBuildDeps/texinfo-$texinfoVersion";
-		my $automakeDir = "$externalBuildDeps/automake-$automakeVersion";
-		my $libtoolDir = "$externalBuildDeps/libtool-$libtoolVersion";
+		my $autoconfDir = "$externalBuildDeps/autoconf-2-69/autoconf-$autoconfVersion";
+		my $texinfoDir = "$externalBuildDeps/texinfo-4-8/texinfo-$texinfoVersion";
+		my $automakeDir = "$externalBuildDeps/automake-1-15/automake-$automakeVersion";
+		my $libtoolDir = "$externalBuildDeps/libtool-2-4-6/libtool-$libtoolVersion";
 		my $builtToolsDir = "$externalBuildDeps/built-tools";
 
 		$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
 		if (!(-d "$autoconfDir"))
 		{
-			chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+			chdir("$externalBuildDeps/autoconf-2-69") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf autoconf-$autoconfVersion.tar.gz") eq 0  or die ("failed to extract autoconf\n");
 
 			chdir("$autoconfDir") eq 1 or die ("failed to chdir to autoconf directory\n");
@@ -374,7 +374,7 @@ if ($build)
 
 		if (!(-d "$texinfoDir") and $windowsSubsystemForLinux)
 		{
-			chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+			chdir("$externalBuildDeps/texinfo-4-8") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf texinfo-$texinfoVersion.tar.gz") eq 0 or die ("failed to extract texinfo\n");
 
 			chdir($texinfoDir) eq 1 or die ("failed to chdir to texinfo directory\n");
@@ -388,7 +388,7 @@ if ($build)
 		if (!(-d "$automakeDir"))
 		{
 			my $automakeMakeFlags = "";
-			chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+			chdir("$externalBuildDeps/automake-1-15") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf automake-$automakeVersion.tar.gz") eq 0  or die ("failed to extract automake\n");
 
 			chdir("$automakeDir") eq 1 or die ("failed to chdir to automake directory\n");
@@ -406,7 +406,7 @@ if ($build)
 
 		if (!(-d "$libtoolDir"))
 		{
-			chdir("$externalBuildDeps") eq 1 or die ("failed to chdir to external directory\n");
+			chdir("$externalBuildDeps/libtool-2-4-6") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf libtool-$libtoolVersion.tar.gz") eq 0  or die ("failed to extract libtool\n");
 
 			chdir("$libtoolDir") eq 1 or die ("failed to chdir to libtool directory\n");
@@ -1096,8 +1096,8 @@ if ($build)
 			print(">>> Linux SDK Version = $sdkVersion\n");
 
 			my $sdkName = "linux-sdk-$sdkVersion.tar.bz2";
-			my $depsSdkArchive = "$externalBuildDeps/$sdkName";
-			my $depsSdkFinal = "$externalBuildDeps/linux-sdk-$sdkVersion";
+			my $depsSdkArchive = "$externalBuildDeps/linux-sdk-$sdkVersion/$sdkName";
+			my $depsSdkFinal = "$externalBuildDeps/linux-sdk-$sdkVersion/linux-sdk-$sdkVersion";
 
 			print(">>> Linux SDK Archive = $depsSdkArchive\n");
 			print(">>> Linux SDK Extraction Destination = $depsSdkFinal\n");
