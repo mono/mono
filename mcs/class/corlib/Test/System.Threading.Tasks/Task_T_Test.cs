@@ -80,12 +80,12 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			ParallelTestHelper.Repeat (delegate {
 				var t = CreateNestedFuture(10);
-				var t2 = CreateNestedFuture(100);
-				var t3 = CreateNestedFuture(100);
+				var t2 = CreateNestedFuture(20);
+				var t3 = CreateNestedFuture(30);
 
 				Assert.AreEqual (11, t.Result);
-				Assert.AreEqual (101, t2.Result);
-				Assert.AreEqual (101, t3.Result);
+				Assert.AreEqual (21, t2.Result);
+				Assert.AreEqual (31, t3.Result);
 		   }, 50);
 		}
 

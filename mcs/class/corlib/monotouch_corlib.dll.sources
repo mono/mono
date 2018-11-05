@@ -7,8 +7,6 @@ CommonCrypto/RijndaelManaged.cs
 CommonCrypto/RNGCryptoServiceProvider.cryptor.cs
 CommonCrypto/RC4CommonCrypto.cs
 CoreFoundation/CFHelpers.cs
-Mono/MonoNativePlatform.cs
-Mono/MonoNativePlatformType.cs
 System.Text/EncodingHelper.MonoTouch.cs
 System/Environment.iOS.cs
 System/Guid.MonoTouch.cs

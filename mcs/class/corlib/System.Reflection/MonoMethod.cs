@@ -229,7 +229,8 @@ namespace System.Reflection {
 			return get_base_method (this, true);
 		}
 
-		internal override MethodInfo GetBaseMethod ()
+		// TODO: Remove, needed only for MonoCustomAttribute
+		internal MethodInfo GetBaseMethod ()
 		{
 			return get_base_method (this, false);
 		}
