@@ -12,7 +12,7 @@ namespace System {
 
 		static TimeZoneInfo CreateLocal ()
 		{
-			throw new NotImplementedException ();
+			return TimeZoneInfo.Utc;
 		}
 
 		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
