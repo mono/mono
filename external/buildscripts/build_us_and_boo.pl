@@ -49,24 +49,17 @@ sub BuildUnityScriptFor45
 	my $booCheckout = "$monoroot/../../boo/build";
 	print(">>> Using mono prefix $monoprefix45\n");
 	
-	# Build host is handling this
-	if (!$buildMachine)
+	if (!(-d "$booCheckout"))
 	{
-		if (!(-d "$booCheckout"))
-		{
-			print(">>> Checking out boo\n");
-			GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout, "unity-trunk");
-		}
+		print(">>> Checking out boo\n");
+		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout, "unity-trunk");
 	}
 	
 	my $usCheckout = "$monoroot/../../unityscript/build";
-	if (!$buildMachine)
+	if (!(-d "$usCheckout"))
 	{
-		if (!(-d "$usCheckout"))
-		{
-			print(">>> Checking out unity script\n");
-			GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout, "unity-trunk");
-		}
+		print(">>> Checking out unity script\n");
+		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout, "unity-trunk");
 	}
 	
 	my $boocCsproj = "$booCheckout/src/booc/booc.csproj";

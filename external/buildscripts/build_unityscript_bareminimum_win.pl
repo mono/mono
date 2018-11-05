@@ -65,19 +65,14 @@ sub UnityBooc
 
 sub BuildUnityScriptForUnity
 {	
-	# Build system is handling this
-	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
-		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
-	}
+	GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 
 	my $commonDefines = "NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,MSBUILD,IGNOREKEYFILE";
 
 	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"" . $commonDefines . "\" /property:OutputPath=$output/wp8");
 	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"" . $commonDefines . ",NO_SYSTEM_REFLECTION_EMIT\" /property:OutputPath=$output/wsa");
 	
-	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
-		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
-	}
+	GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
 	
 	UnityBooc("-out:$output/wsa/Boo.Lang.Extensions.dll -srcdir:$booCheckout/src/Boo.Lang.Extensions -r:$output/wsa/Boo.Lang.dll -r:$output/wsa/Boo.Lang.Compiler.dll");
 	UnityBooc("-out:$output/wsa/Boo.Lang.Useful.dll -srcdir:$booCheckout/src/Boo.Lang.Useful -r:$output/wsa/Boo.Lang.Parser");
