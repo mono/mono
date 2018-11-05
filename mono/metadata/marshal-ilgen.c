@@ -1457,7 +1457,7 @@ handle_enum:
 		 * we need to use mono_mb_emit_op to add method data when loading
 		 * a structure since method-to-ir needs this data for wrapper methods */
 		if (ldind_op == CEE_LDOBJ)
-			mono_mb_emit_op (mb, CEE_LDOBJ, mono_class_from_mono_type_internal (ret_byval));
+			mono_mb_emit_op (mb, CEE_LDOBJ, mono_class_from_mono_type (ret_byval));
 		else
 			mono_mb_emit_byte (mb, ldind_op);
 	}
