@@ -9239,7 +9239,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	if (acfg->aot_opts.llvm_opts && !cfg->aot_opts.llvm_opts_add) {
+	if (acfg->aot_opts.llvm_opts && !acfg->aot_opts.llvm_opts_add) {
 		opts = g_strdup (acfg->aot_opts.llvm_opts);
 	} else if (acfg->aot_opts.llvm_only) {
 		// FIXME: This doesn't work yet
@@ -9252,8 +9252,8 @@ emit_llvm_file (MonoAotCompile *acfg)
 #endif
 	}
 
-	if (cfg->aot_opts.llvm_opts_add) {
-		g_string_append_printf (opts, " %s", acfg->aot_opts.llvm_opts);
+	if (acfg->aot_opts.llvm_opts_add) {
+		opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
 	}
 
 	command = g_strdup_printf ("\"%sopt\" -f %s -o \"%s\" \"%s\"", acfg->aot_opts.llvm_path, opts, optbc, tempbc);
@@ -9322,7 +9322,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 			g_free (acfg->llc_args);
 			acfg->llc_args = g_string_new (acfg->aot_opts.llvm_llc);
 		} else {
-			acfg->llc_args = g_string_append_printf (acfg->llc_args, " %s", acfg->aot_opts.llvm_llc);
+			g_string_append_printf (acfg->llc_args, " %s", acfg->aot_opts.llvm_llc);
 		}
 	}
 
