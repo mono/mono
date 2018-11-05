@@ -32,7 +32,6 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/loader.h>
-#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -52,6 +51,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/monitor.h>
+#include <mono/metadata/icall-internals.h>
 #define MONO_MATH_DECLARE_ALL 1
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
@@ -607,21 +607,12 @@ mono_debug_count (void)
 	return TRUE;
 }
 
-gconstpointer
-mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
+MonoMethod*
+mono_icall_get_wrapper_method (MonoJitICallInfo* callinfo)
 {
-	ERROR_DECL (error);
-	char *name;
 	MonoMethod *wrapper;
-	gconstpointer trampoline;
-	MonoDomain *domain = mono_get_root_domain ();
 	gboolean check_exc = TRUE;
-
-	if (callinfo->wrapper)
-		return callinfo->wrapper;
-
-	if (callinfo->trampoline)
-		return callinfo->trampoline;
+	char *name;
 
 	if (!strcmp (callinfo->name, "mono_thread_interruption_checkpoint"))
 		/* This icall is used to check for exceptions, so don't check in the wrapper */
@@ -631,11 +622,29 @@ mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
 	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func, check_exc);
 	g_free (name);
 
+	return wrapper;
+}
+
+gconstpointer
+mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
+{
+	ERROR_DECL (error);
+	MonoMethod *wrapper;
+	gconstpointer trampoline;
+	MonoDomain *domain = mono_get_root_domain ();
+
+	if (callinfo->wrapper)
+		return callinfo->wrapper;
+
+	if (callinfo->trampoline)
+		return callinfo->trampoline;
+
+	wrapper = mono_icall_get_wrapper_method (callinfo);
+
 	if (do_compile) {
 		trampoline = mono_compile_method_checked (wrapper, error);
 		mono_error_assert_ok (error);
 	} else {
-
 		trampoline = mono_create_jit_trampoline (domain, wrapper, error);
 		mono_error_assert_ok (error);
 		trampoline = mono_create_ftnptr (domain, (gpointer)trampoline);
@@ -4564,17 +4573,17 @@ mono_fmod (double a, double b)
 static void
 register_icalls (void)
 {
-	mono_add_internal_call ("System.Diagnostics.StackFrame::get_frame_info",
+	mono_add_internal_call_internal ("System.Diagnostics.StackFrame::get_frame_info",
 				ves_icall_get_frame_info);
-	mono_add_internal_call ("System.Diagnostics.StackTrace::get_trace",
+	mono_add_internal_call_internal ("System.Diagnostics.StackTrace::get_trace",
 				ves_icall_get_trace);
-	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers",
+	mono_add_internal_call_internal ("Mono.Runtime::mono_runtime_install_handlers",
 				mono_runtime_install_handlers);
-	mono_add_internal_call ("Mono.Runtime::mono_runtime_cleanup_handlers",
+	mono_add_internal_call_internal ("Mono.Runtime::mono_runtime_cleanup_handlers",
 				mono_runtime_cleanup_handlers);
 
 #if defined(HOST_ANDROID) || defined(TARGET_ANDROID)
-	mono_add_internal_call ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
+	mono_add_internal_call_internal ("System.Diagnostics.Debugger::Mono_UnhandledException_internal",
 							mini_get_dbg_callbacks ()->unhandled_exception);
 #endif
 

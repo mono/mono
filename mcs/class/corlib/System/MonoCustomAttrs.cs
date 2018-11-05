@@ -555,7 +555,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {
@@ -582,7 +582,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
@@ -620,7 +620,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod == method)
 				return null;
 

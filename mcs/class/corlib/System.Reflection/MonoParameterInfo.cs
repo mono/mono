@@ -137,12 +137,12 @@ namespace System.Reflection
 		public override
 		object DefaultValue {
 			get {
-				if (ClassImpl == typeof (Decimal)) {
+				if (ClassImpl == typeof (Decimal) || ClassImpl == typeof (Decimal?)) {
 					/* default values for decimals are encoded using a custom attribute */
 					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
 					if (attrs.Length > 0)
 						return attrs [0].Value;
-				} else if (ClassImpl == typeof (DateTime)) {
+				} else if (ClassImpl == typeof (DateTime) || ClassImpl == typeof (DateTime?)) {
 					/* default values for DateTime are encoded using a custom attribute */
 					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
 					if (attrs.Length > 0)
@@ -214,14 +214,7 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern int GetMetadataToken ();
 
-		public
-		override
-		Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
 
 		internal object[] GetPseudoCustomAttributes () 
 		{
@@ -289,14 +282,7 @@ namespace System.Reflection
 			return attrsData;
 		}
 
-		public
-		override
-		Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
 		public override bool HasDefaultValue {
 			get { 
@@ -327,6 +313,8 @@ namespace System.Reflection
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
 			return new MonoParameterInfo (type, member, marshalAs);
-		}		
+		}
+
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
 	}
 }

@@ -11,9 +11,17 @@ else
 tools_dir = tools
 endif
 
-SUBDIRS = mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests
+if ENABLE_MSVC
+build_with_msvc = msvc
+build_without_msvc =
+else
+build_with_msvc =
+build_without_msvc = msvc
+endif
+
+SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests
+DIST_SUBDIRS = $(build_with_msvc) m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools $(build_without_msvc) docs acceptance-tests
 
 all: update_submodules
 
@@ -42,6 +50,13 @@ dist-hook:
 	test -d $(distdir)/mcs || mkdir $(distdir)/mcs
 	d=`cd $(distdir)/mcs && pwd`; cd $(mcs_topdir) && $(MAKE) distdir=$$d dist-recursive
 	rm -rf `find $(top_distdir)/external -path '*\.git'`
+	rm -rf `find $(top_distdir)/external -path '*\.libs'`
+	rm -rf `find $(top_distdir)/external -path '*\.deps'`
+	rm -f `find $(top_distdir)/external -path '*\.o'`
+	rm -f `find $(top_distdir)/external -path '*\.so'`
+	rm -f `find $(top_distdir)/external -path '*\.lo'`
+	rm -f `find $(top_distdir)/external -path '*\.Plo'`
+	rm -f `find $(top_distdir)/external -name '\.dirstamp'`
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
 	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*'`
 	rm -rf "$(top_distdir)/external/linker/linker/Tests"

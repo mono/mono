@@ -89,6 +89,7 @@ stamp-h.in
 *~
 *.swp
 *.o
+*.dylib
 .deps
 .libs
 

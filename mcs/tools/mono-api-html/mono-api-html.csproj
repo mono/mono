@@ -28,6 +28,11 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
     <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+  </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,8 +70,7 @@
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
-  <!-- @COMMON_PROJECT_REFERENCES@ -->
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+  <ItemGroup>
     <ProjectReference Include="../../class/System.XML/System.Xml.csproj" />
     <ProjectReference Include="../../class/System.Core/System.Core.csproj" />
     <ProjectReference Include="../../class/System/System.csproj" />

@@ -36,6 +36,39 @@ namespace MonoTests.System {
 
 	[TestFixture]
 	public class GCTest {
+		static class FinalizerHelpers {
+			private static IntPtr aptr;
+
+			private static unsafe void NoPinActionHelper (int depth, Action act)
+			{
+				// Avoid tail calls
+				int* values = stackalloc int [20];
+				aptr = new IntPtr (values);
+
+				if (depth <= 0) {
+					//
+					// When the action is called, this new thread might have not allocated
+					// anything yet in the nursery. This means that the address of the first
+					// object that would be allocated would be at the start of the tlab and
+					// implicitly the end of the previous tlab (address which can be in use
+					// when allocating on another thread, at checking if an object fits in
+					// this other tlab). We allocate a new dummy object to avoid this type
+					// of false pinning for most common cases.
+					//
+					new object ();
+					act ();
+				} else {
+					NoPinActionHelper (depth - 1, act);
+				}
+			}
+
+			public static void PerformNoPinAction (Action act)
+			{
+				Thread thr = new Thread (() => NoPinActionHelper (128, act));
+				thr.Start ();
+				thr.Join ();
+			}
+		}
 
 		class MyFinalizeObject
 		{
@@ -56,13 +89,11 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void ReRegisterForFinalizeTest ()
 		{
-			var thread =  new Thread (Run_ReRegisterForFinalizeTest);
-			thread.Start ();
-			thread.Join ();
-
+			FinalizerHelpers.PerformNoPinAction (delegate () {
+				Run_ReRegisterForFinalizeTest ();
+			});
 			var t = Task.Factory.StartNew (() => {
 				do {
 					GC.Collect ();

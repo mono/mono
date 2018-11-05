@@ -31,6 +31,7 @@ SIM_LDFLAGS = \
 	-mios-simulator-version-min=10.1 \
 	 -framework Foundation \
 	 -framework UIKit \
+	 -framework GSS \
 	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
 	$(SIM_SDK_DIR)/lib/libmonosgen-2.0.a \
 	$(SIM_SDK_DIR)/lib/libMonoPosixHelper.a \
@@ -61,6 +62,7 @@ DEV_LDFLAGS = \
 	-mios-simulator-version-min=10.1 \
 	 -framework Foundation \
 	 -framework UIKit \
+	 -framework GSS \
 	-Wl,-pie \
 	$(foreach u,$(UNREFERENCED_SYMBOLS),-u $u)  \
 	$(DEV_SDK_DIR)/lib/libmonosgen-2.0.a \

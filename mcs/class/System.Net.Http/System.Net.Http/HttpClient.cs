@@ -115,6 +115,8 @@ namespace System.Net.Http
 			if (disposing && !disposed) {
 				disposed = true;
 
+				//We don't use CancelPendingRequests() because we don't want to create new CancellationTokenSource
+				cts.Cancel ();
 				cts.Dispose ();
 			}
 			

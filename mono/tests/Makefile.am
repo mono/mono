@@ -203,6 +203,10 @@ if HYBRID_AOT_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY 
 endif
 
+if AOT_FULL_INTERP_TESTS
+PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
+endif
+
 MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
@@ -436,10 +440,8 @@ TESTS_CS_SRC=		\
 	threadpool.cs		\
 	threadpool1.cs		\
 	threadpool-exceptions1.cs \
-	threadpool-exceptions2.cs \
 	threadpool-exceptions3.cs \
 	threadpool-exceptions4.cs \
-	threadpool-exceptions5.cs \
 	threadpool-exceptions6.cs \
 	base-definition.cs	\
 	bug-27420.cs		\
@@ -986,7 +988,8 @@ TESTS_IL_SRC=			\
 	tailcall-return-valuetype.il \
 	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
-	newobj-abstract.il
+	newobj-abstract.il \
+	invalid-isbyreflike.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
@@ -1265,7 +1268,8 @@ PROFILE_DISABLED_TESTS += \
 	resolve_type_bug.2.exe \
 	bug-81691.exe \
 	bug-327438.2.exe \
-	newobj-abstract.exe
+	newobj-abstract.exe \
+	invalid-isbyreflike.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
@@ -1502,6 +1506,29 @@ PROFILE_DISABLED_TESTS += \
 	namedmutex-destroy-race.exe
 endif
 
+if AOT_FULL_INTERP_TESTS
+PROFILE_DISABLED_TESTS += \
+	appdomain-async-invoke.exe \
+	appdomain-unload-callback.exe \
+	appdomain-unload.exe \
+	appdomain-unload-doesnot-raise-pending-events.exe \
+	appdomain-serialize-exception.exe \
+	appdomain-thread-abort.exe \
+	bug-322722_dyn_method_throw.2.exe \
+	bug-80307.exe \
+	bug-70561.exe \
+	xdomain-threads.exe \
+	thread6.exe \
+	marshal2.exe \
+	transparentproxy.exe \
+	unload-appdomain-on-shutdown.exe \
+	remoting4.exe \
+	threadpool-exceptions2.exe \
+	threadpool-exceptions4.exe \
+	threadpool-exceptions5.exe \
+	threadpool-exceptions7.exe
+endif
+
 AOT_DISABLED_TESTS= \
 	constraints-load.exe
 
@@ -1521,6 +1548,18 @@ CI_PR_DISABLED_TESTS =
 
 # https://github.com/mono/mono/issues/8997
 CI_PR_DISABLED_TESTS += finalizer-thread.exe
+
+# https://github.com/mono/mono/issues/11392
+CI_PR_DISABLED_TESTS += appdomain-threadpool-unload.exe
+
+# https://github.com/mono/mono/issues/11415
+CI_PR_DISABLED_TESTS += finalizer-abort.exe
+
+# https://github.com/mono/mono/issues/11420
+CI_PR_DISABLED_TESTS += process-stress-2.exe
+
+# https://github.com/mono/mono/issues/11417
+CI_PR_DISABLED_TESTS += process-stress-3.exe
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1877,7 +1916,9 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
+if !AOT_FULL_INTERP_TESTS
 TEST_DRIVER_HARD_KILL_FEATURE=-r:$(CLASS)/Mono.Posix.dll
+endif
 endif
 endif
 
@@ -2024,6 +2065,9 @@ testtrace:
 
 testinterp: test-runner.exe compile-tests
 	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+
+testfullaotinterp: test-runner.exe compile-tests
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--full-aot-interp" --testsuite-name "runtime-aot-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
 
 testjitspeed: $(JITTEST_PROG) compile-tests
 	for i in $(TESTS_BENCH); do	\
@@ -2866,7 +2910,9 @@ TESTS_UNHANDLED_EXCEPTION_255_SRC =	\
 	unhandled-exception-5.cs	\
 	unhandled-exception-6.cs	\
 	unhandled-exception-7.cs	\
-	unhandled-exception-8.cs
+	unhandled-exception-8.cs	\
+	threadpool-exceptions2.cs	\
+	threadpool-exceptions5.cs
 
 TESTS_UNHANDLED_EXCEPTION_1=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_1_SRC:.cs=.exe))
 TESTS_UNHANDLED_EXCEPTION_255=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_255_SRC:.cs=.exe))

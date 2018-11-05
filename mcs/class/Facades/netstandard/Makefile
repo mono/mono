@@ -12,10 +12,14 @@ LIBRARY = netstandard.dll
 KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
 SIGN_FLAGS = /delaysign /nowarn:1616,1699 /nowarn:618
-LIB_REFS = System System.Xml System.Xml.Linq System.Runtime.Serialization System.Core System.Numerics System.Numerics.Vectors System.Net.Http System.Transactions \
-System.IO.Compression System.Data System.ComponentModel.Composition System.IO.Compression.FileSystem
+LIB_REFS = System System.Xml System.Xml.Linq System.Core System.Numerics System.Net.Http \
+System.IO.Compression System.ComponentModel.Composition System.IO.Compression.FileSystem
 
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
+
+ifneq ($(PROFILE),build)
+# for the build profile we include stubs for these types directly in netstandard.dll
+LIB_REFS += System.Transactions System.Runtime.Serialization System.Data
 
 ifeq ($(PROFILE),xammac_net_4_5)
 LIB_REFS += System.Web.Services Facades/System.Drawing.Primitives
@@ -23,6 +27,8 @@ else ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Web.Services
 else
 LIB_REFS += System.Web
+endif
+
 endif
 
 ifeq ($(PROFILE),monodroid)
@@ -47,7 +53,7 @@ API_BIN_REFS := Xamarin.Mac OpenTK
 endif
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal wasm, $(PROFILE))
+REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

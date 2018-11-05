@@ -51,7 +51,7 @@ System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Task
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
 System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System.IO.FileSystem.Primitives System.IO.FileSystem \
 System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple \
-System.Text.Encoding.CodePages System.Text.RegularExpressions System.Diagnostics.Contracts
+System.Text.Encoding.CodePages System.Text.RegularExpressions System.Diagnostics.Contracts netstandard
 
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)

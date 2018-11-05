@@ -1455,6 +1455,8 @@ typedef struct {
 	MonoArray *data;
 } MonoReflectionCustomAttr;
 
+TYPED_HANDLE_DECL (MonoReflectionCustomAttr);
+
 typedef struct {
 	MonoObject object;
 	MonoString *marshal_cookie;
@@ -1936,7 +1938,13 @@ void
 mono_error_raise_exception_deprecated (MonoError *target_error);
 
 gboolean
-mono_error_set_pending_exception (MonoError *error);
+mono_error_set_pending_exception_slow (MonoError *error);
+
+static inline gboolean
+mono_error_set_pending_exception (MonoError *error)
+{
+	return is_ok (error) ? FALSE : mono_error_set_pending_exception_slow (error);
+}
 
 MonoArray *
 mono_glist_to_array (GList *list, MonoClass *eclass, MonoError *error);
@@ -2152,6 +2160,8 @@ mono_string_empty_handle (MonoDomain *domain);
 gpointer
 mono_object_get_data (MonoObject *o);
 
+#define mono_handle_get_data_unsafe(handle) ((gpointer)((guint8*)MONO_HANDLE_RAW (handle) + MONO_ABI_SIZEOF (MonoObject)))
+
 gpointer
 mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);
 
@@ -2195,6 +2205,7 @@ mono_string_equal_internal (MonoString *s1, MonoString *s2);
 unsigned
 mono_string_hash_internal (MonoString *s);
 
+ICALL_EXPORT
 int
 mono_object_hash_internal (MonoObject* obj);
 
@@ -2212,6 +2223,7 @@ mono_object_get_domain_internal (MonoObject *obj);
 void*
 mono_object_unbox_internal (MonoObject *obj);
 
+ICALL_EXPORT
 void
 mono_monitor_exit_internal (MonoObject *obj);
 

@@ -2456,6 +2456,7 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
+	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
 		bool success = false;
 
@@ -3224,7 +3225,8 @@ public class DebuggerTests
 
 		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ThreadDeathEvent), e);
-		Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
+		// https://github.com/mono/mono/issues/11416
+		// Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
 #endif
 
@@ -4665,6 +4667,14 @@ public class DebuggerTests
 		m = t.GetMethod ("get_ref_string");
 		v = t.InvokeMethod (e.Thread, m, null);
 		AssertValue ("byref", v);
+
+		m = t.GetMethod ("get_ref_struct");
+		v = t.InvokeMethod (e.Thread, m, null);
+		Assert.IsTrue(v is StructMirror);
+
+		var mirror = (StructMirror)v;
+		AssertValue (1, mirror["i"]);
+		AssertValue (2.0, mirror["d"]);
 	}
 } // class DebuggerTests
 } // namespace

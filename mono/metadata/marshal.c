@@ -286,10 +286,6 @@ mono_marshal_init (void)
 		register_icall (mono_threads_exit_gc_unsafe_region_unbalanced, "mono_threads_exit_gc_unsafe_region_unbalanced", "void ptr ptr", TRUE);
 		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", "ptr ptr ptr", TRUE);
 		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", "void ptr ptr", TRUE);
-		register_icall (mono_icall_start, "mono_icall_start", "ptr ptr ptr", TRUE);
-		register_icall (mono_icall_end, "mono_icall_end", "void ptr ptr ptr", TRUE);
-		register_icall (mono_icall_handle_new, "mono_icall_handle_new", "ptr ptr", TRUE);
-		register_icall (mono_icall_handle_new_interior, "mono_icall_handle_new_interior", "ptr ptr", TRUE);
 		register_icall (mono_marshal_get_type_object, "mono_marshal_get_type_object", "object ptr", TRUE);
 
 		mono_cominterop_init ();
@@ -5248,18 +5244,30 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 	return mono_utf16_to_utf8 (s, length, error);
 }
 
+static void *
+mono_marshal_alloc_hglobal (size_t size, MonoError *error)
+{
+	void* p = g_try_malloc (size);
+	if (!p)
+		mono_error_set_out_of_memory (error, "");
+	return p;
+}
+#endif /* !HOST_WIN32 */
+
 gunichar2*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length, MonoError *error)
 {
 	if (!s)
 		return NULL;
 
-	gunichar2 *res = g_new (gunichar2, length + 1);
-	memcpy (res, s, length * sizeof (*res));
-	res [length] = 0;
+	gsize const len = ((gsize)length + 1) * 2;
+	gunichar2 *res = (gunichar2*)mono_marshal_alloc_hglobal (len, error);
+	if (res) {
+		memcpy (res, s, length * 2);
+		res [length] = 0;
+	}
 	return res;
 }
-#endif /* !HOST_WIN32 */
 
 void
 mono_struct_delete_old (MonoClass *klass, char *ptr)
@@ -5326,29 +5334,14 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 	mono_struct_delete_old (klass, (char *)src);
 }
 
-#ifndef HOST_WIN32
-static inline void *
-mono_marshal_alloc_hglobal (size_t size)
-{
-	return g_try_malloc (size);
-}
-#endif
-
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gsize size, MonoError *error)
 {
-	gpointer res;
-
 	if (size == 0)
 		/* This returns a valid pointer for size 0 on MS.NET */
 		size = 4;
 
-	res = mono_marshal_alloc_hglobal (size);
-
-	if (!res)
-		mono_error_set_out_of_memory (error, "");
-
-	return res;
+	return mono_marshal_alloc_hglobal (size, error);
 }
 
 #ifndef HOST_WIN32
@@ -6197,40 +6190,6 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 
 	if (marshal_mutex_initialized)
 		mono_marshal_unlock ();
-}
-
-MonoThreadInfo*
-mono_icall_start (HandleStackMark *stackmark, MonoError *error)
-{
-	MonoThreadInfo *info = mono_thread_info_current ();
-
-	mono_stack_mark_init (info, stackmark);
-	error_init (error);
-	return info;
-}
-
-void
-mono_icall_end (MonoThreadInfo *info, HandleStackMark *stackmark, MonoError *error)
-{
-	mono_stack_mark_pop (info, stackmark);
-	if (G_UNLIKELY (!is_ok (error)))
-		mono_error_set_pending_exception (error);
-}
-
-MonoRawHandle
-mono_icall_handle_new (gpointer rawobj)
-{
-	return mono_handle_new ((MonoObject*)rawobj);
-}
-
-gpointer
-mono_icall_handle_new_interior (gpointer rawobj)
-{
-#ifdef MONO_HANDLE_TRACK_OWNER
-	return mono_handle_new_interior ((MonoObject*)rawobj, "<marshal args>");
-#else
-	return mono_handle_new_interior ((MonoObject*)rawobj);
-#endif
 }
 
 MonoObject*

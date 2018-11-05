@@ -22,7 +22,17 @@ namespace Mono.Debugger.Soft
 		public Value[] OutArgs { get; set; }
 	}
 
-	public class ObjectMirror : Value {
+	public interface IInvokable {
+		Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments);
+		Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options);
+		IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state);
+		Value EndInvokeMethod (IAsyncResult asyncResult);
+		InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult);
+		Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None);
+		Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None);
+	}
+
+	public class ObjectMirror : Value, IInvokable {
 		TypeMirror type;
 		AppDomainMirror domain;
 	
@@ -164,36 +174,37 @@ namespace Mono.Debugger.Soft
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			return ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
 		}
 
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
+			return InvokeMethodAsync (vm, thread, method, this, arguments, options);
+		}
+
+		internal static Task<Value> InvokeMethodAsync (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+			return InvokeMethodAsync (vm, thread, method, this_obj, arguments, options, EndInvokeMethodInternal);
 		}
 
 		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<InvokeResult> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethodInternalWithResult (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
+			return InvokeMethodAsyncWithResult (vm, thread, method, this, arguments, options);
+		}
+
+		internal static Task<InvokeResult> InvokeMethodAsyncWithResult (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
+			return InvokeMethodAsync (vm, thread, method, this_obj, arguments, options, EndInvokeMethodInternalWithResult);
+		}
+
+		internal static Task<TResult> InvokeMethodAsync<TResult> (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, Func<IAsyncResult, TResult> callback) {
+			var tcs = new TaskCompletionSource<TResult> ();
+			BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, iar =>
+			{
+				try {
+					tcs.SetResult (callback (iar));
+				} catch (OperationCanceledException) {
+					tcs.TrySetCanceled ();
+				} catch (Exception ex) {
+					tcs.TrySetException (ex);
+				}
+			}, null);
 			return tcs.Task;
 		}
 

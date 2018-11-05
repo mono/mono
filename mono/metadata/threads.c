@@ -1866,7 +1866,6 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
  * Gets the priority of the given thread.
  * @return: The priority of the given thread.
  */
-ICALL_EXPORT
 int
 ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, MonoError *error)
 {
@@ -1888,7 +1887,6 @@ ves_icall_System_Threading_Thread_GetPriority (MonoThreadObjectHandle this_obj, 
  *
  * Sets the priority of the given thread.
  */
-ICALL_EXPORT
 void
 ves_icall_System_Threading_Thread_SetPriority (MonoThreadObjectHandle this_obj, int priority, MonoError *error)
 {
@@ -6218,7 +6216,7 @@ summary_timedwait (SummarizerGlobalState *state, int timeout_seconds)
 }
 
 static void
-summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, size_t provided_size)
+summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, size_t provided_size, MonoThreadSummary *controlling)
 {
 	// See the array writes
 	mono_memory_barrier ();
@@ -6246,7 +6244,7 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 		// much more stable to do it all from the controlling thread.
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (thread);
 
-		mono_summarize_native_state_add_thread (thread, thread->ctx);
+		mono_summarize_native_state_add_thread (thread, thread->ctx, thread == controlling);
 
 		// Set non-shared state to notify the waiting thread to clean up
 		// without having to keep our shared state alive
@@ -6313,7 +6311,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
 		// Dump and cleanup all the stack memory
-		summarizer_state_term (&state, out, mem, provided_size);
+		summarizer_state_term (&state, out, mem, provided_size, &this_thread);
 	} else {
 		// Wait here, keeping our stack memory alive
 		// for the dumper
@@ -6357,7 +6355,14 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 		gint64 next_request_id = mono_atomic_load_i64 ((volatile gint64 *) &request_available_to_run);
 
 		if (next_request_id == this_request_id) {
+			gboolean already_async = mono_thread_info_is_async_context ();
+			if (!already_async)
+				mono_thread_info_set_is_async_context (TRUE);
+
 			success = mono_threads_summarize_execute (ctx, out, hashes, silent, mem, provided_size);
+
+			if (!already_async)
+				mono_thread_info_set_is_async_context (FALSE);
 
 			// Only the thread that gets the ticket can unblock future dumpers.
 			mono_atomic_inc_i64 ((volatile gint64 *) &request_available_to_run);

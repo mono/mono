@@ -830,5 +830,11 @@ namespace System
 
 			return RuntimeTypeHandle.IsSubclassOf (this, rtType);
 		}
+
+		public override bool IsByRefLike {
+			get {
+				return RuntimeTypeHandle.IsByRefLike (this);
+			}
+		}
 	}
 }

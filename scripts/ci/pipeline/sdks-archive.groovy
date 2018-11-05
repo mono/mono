@@ -84,23 +84,15 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.zip")[0].name
                 }
                 stage('Upload Archive to Azure') {
-                    step([
-                        $class: 'WAStoragePublisher',
-                        allowAnonymousAccess: true,
-                        cleanUpContainer: false,
-                        cntPubAccess: true,
-                        containerName: "mono-sdks",
-                        doNotFailIfArchivingReturnsNothing: false,
-                        doNotUploadIndividualFiles: false,
-                        doNotWaitForPreviousBuild: true,
-                        excludeFilesPath: '',
-                        filesPath: "${packageFileName}",
-                        storageAccName: 'credential for xamjenkinsartifact',
-                        storageCredentialId: 'fbd29020e8166fbede5518e038544343',
-                        uploadArtifactsOnlyIfSuccessful: true,
-                        uploadZips: false,
-                        virtualPath: ""
-                    ])
+                    azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
+                                storageType: "blobstorage",
+                                containerName: "mono-sdks",
+                                virtualPath: "",
+                                filesPath: "${packageFileName}",
+                                allowAnonymousAccess: true,
+                                pubAccessible: true,
+                                doNotWaitForPreviousBuild: true,
+                                uploadArtifactsOnlyIfSuccessful: true)
                 }
 
                 utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, "Archive-${product}-${configuration}-${platform}", "https://xamjenkinsartifact.azureedge.net/mono-sdks/${packageFileName}", 'SUCCESS', packageFileName)

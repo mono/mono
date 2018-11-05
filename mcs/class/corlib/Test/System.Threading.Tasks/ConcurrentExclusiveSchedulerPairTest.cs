@@ -66,6 +66,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ExclusiveUsageTest ()
 		{
 			schedPair = new ConcurrentExclusiveSchedulerPair (TaskScheduler.Default, 4);
@@ -89,6 +90,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ConcurrentUsageTest ()
 		{
 			schedPair = new ConcurrentExclusiveSchedulerPair (TaskScheduler.Default, 4);
@@ -115,6 +117,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ConcurrentUsageWithExclusiveExecutingTest ()
 		{
 			schedPair = new ConcurrentExclusiveSchedulerPair (TaskScheduler.Default, 4);
@@ -145,6 +148,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ExclusiveUsageWithConcurrentExecutingTest ()
 		{
 			schedPair = new ConcurrentExclusiveSchedulerPair (TaskScheduler.Default, 4);

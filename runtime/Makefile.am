@@ -52,6 +52,10 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
+if INSTALL_TESTING_AOT_FULL_INTERP
+build_profiles += testing_aot_full_interp
+endif
+
 if INSTALL_TESTING_AOT_HYBRID
 build_profiles += testing_aot_hybrid
 endif
@@ -77,10 +81,10 @@ build_profiles += unreal
 endif
 
 if INSTALL_WASM
-build_profiles += wasm
+build_profiles += wasm wasm_tools
 endif
 
-test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 

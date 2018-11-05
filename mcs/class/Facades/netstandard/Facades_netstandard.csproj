@@ -101,21 +101,54 @@
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup />
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />
     <ProjectReference Include="../../System.XML/System.Xml.csproj" />
     <ProjectReference Include="../../System.Xml.Linq/System.Xml.Linq.csproj" />
-    <ProjectReference Include="../../System.Runtime.Serialization/System.Runtime.Serialization.csproj" />
     <ProjectReference Include="../../System.Core/System.Core.csproj" />
     <ProjectReference Include="../../System.Numerics/System.Numerics.csproj" />
-    <ProjectReference Include="../../System.Numerics.Vectors/System.Numerics.Vectors.csproj" />
     <ProjectReference Include="../../System.Net.Http/System.Net.Http.csproj" />
-    <ProjectReference Include="../../System.Transactions/System.Transactions.csproj" />
     <ProjectReference Include="../../System.IO.Compression/System.IO.Compression.csproj" />
-    <ProjectReference Include="../../System.Data/System.Data.csproj" />
     <ProjectReference Include="../../System.ComponentModel.Composition.4.5/System.ComponentModel.Composition.csproj" />
     <ProjectReference Include="../../System.IO.Compression.FileSystem/System.IO.Compression.FileSystem.csproj" />
+    <ProjectReference Include="../../System.Transactions/System.Transactions.csproj" />
+    <ProjectReference Include="../../System.Runtime.Serialization/System.Runtime.Serialization.csproj" />
+    <ProjectReference Include="../../System.Data/System.Data.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
