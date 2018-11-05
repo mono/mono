@@ -386,11 +386,10 @@ namespace Mono.WebAssembly {
 			var asm_files = new List<string> ();
 			var pdb_files = new List<string> ();
 			foreach (var f in loaded_files) {
-				var file_name = f.ToLower ();
-				if (file_name.EndsWith (".pdb", StringComparison.Ordinal))
-					pdb_files.Add (file_name);
+				if (f.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
+					pdb_files.Add (f);
 				else
-					asm_files.Add (file_name);
+					asm_files.Add (f);
 			}
 
 			//FIXME make this parallel

@@ -142,7 +142,7 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	ninja -v -C obj/test-suite
 	touch $@
 
-.stamp-build-debugger-test-app: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll debugger-test.dll debugger-test-driver.js
+.stamp-build-debugger-test-app: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll debugger-test.dll debugger-driver.html
 	mono --debug packager.exe --debugrt --debug --template=runtime.js --appdir=bin/debugger-test-suite --builddir=obj/debugger-test-suite debugger-test.dll --asset=debugger-driver.html
 	ninja -v -C obj/debugger-test-suite
 	touch $@

@@ -134,13 +134,9 @@ class Driver {
 		throw new Exception ($"Could not resolve {asm_name}");
 	}
 
-<<<<<<< HEAD
-	static void Import (string ra, AssemblyKind kind) {
+	void Import (string ra, AssemblyKind kind) {
 		if (!asm_map.Add (ra))
 			return;
-=======
-	void Import (string ra, AssemblyKind kind) {
->>>>>>> [wasm] Add test suite.
 		ReaderParameters rp = new ReaderParameters();
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
 		if (add_pdb) {
@@ -152,14 +148,10 @@ class Driver {
 		file_list.Add (ra);
 		Debug ($"Processing {ra} debug {add_pdb}");
 
-<<<<<<< HEAD
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
 
-		if (add_pdb && kind == AssemblyKind.User)
-=======
 		if (add_pdb && kind == AssemblyKind.User) {
->>>>>>> [wasm] Add test suite.
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
 			assemblies_with_dbg_info.Add (ra);
 		}
@@ -266,6 +258,8 @@ class Driver {
 
 		if (enable_aot)
 			enable_linker = true;
+		else
+			enable_dedup = false;
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
@@ -496,21 +490,8 @@ class Driver {
 			bool emit_pdb = assemblies_with_dbg_info.Contains (source_file_path);
 
 			if (enable_linker) {
-<<<<<<< HEAD
-				a.linkin_path = $"$builddir/linker-in/{filename}";
-				a.linkout_path = $"$builddir/linker-out/{filename}";
-				linker_infiles += $" {a.linkin_path}";
-				linker_ofiles += $" {a.linkout_path}";
-				infile = $"{a.linkout_path}";
-				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
-=======
-				linker_infiles += $" $builddir/linker-in/{filename}";
-				linker_ofiles += $" $builddir/linker-out/{filename}";
-				infile = $"$builddir/linker-out/{filename}";
-				ninja.WriteLine ($"build $builddir/linker-in/{filename}: cpifdiff {source_file_path}");
 				if (emit_pdb)
 					throw new Exception ("TODO");
->>>>>>> [wasm] Add test suite.
 			} else {
 				infile = $"$builddir/{filename}";
 

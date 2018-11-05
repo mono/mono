@@ -133,7 +133,6 @@ var MonoSupportLib = {
 			}
 
 			file_list.forEach (function(file_name) {
-				
 				var fetch_promise = fetch_file_cb (locateFile(deploy_prefix + "/" + file_name));
 
 				fetch_promise.then (function (response) {
@@ -148,8 +147,8 @@ var MonoSupportLib = {
 					heapBytes.set (asm);
 					mono_wasm_add_assembly (file_name, memory, asm.length);
 
-					console.log ("Loaded: " + file_name);
 					--pending;
+					console.log ("Loaded: " + file_name + " pending: " + pending + "/" + file_list.length);
 					if (pending == 0) {
 						MONO.loaded_files = loaded_files;
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);

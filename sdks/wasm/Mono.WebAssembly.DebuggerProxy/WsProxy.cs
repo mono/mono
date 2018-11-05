@@ -138,6 +138,7 @@ namespace Mono.WebAssembly {
 					//target just disconnected, meh
 					if (e.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
 						return null;
+					Error (e);
 					throw;
 				}
 			}
@@ -170,6 +171,7 @@ namespace Mono.WebAssembly {
 					SendEventInternal (method, args, token);
 				}
 			} catch (Exception e) {
+				Error (e);
 				side_exception.TrySetException (e);
 			}
 		}
@@ -182,6 +184,7 @@ namespace Mono.WebAssembly {
 					SendResponseInternal (id, res, token);
 				}
 			} catch (Exception e) {
+				Error (e);
 				side_exception.TrySetException (e);
 			}
 		}
@@ -324,13 +327,18 @@ namespace Mono.WebAssembly {
 							}
 						}
 					} catch (Exception e) {
-						Debug ($"got exception {e}");
+						Error (e);
 						//throw;
 					} finally {
 						x.Cancel ();
 					}
 				}
 			}
+		}
+
+		protected void Error (Exception e)
+		{
+			Console.WriteLine (e);
 		}
 
 		protected void Debug (string msg)

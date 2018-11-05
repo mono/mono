@@ -51,6 +51,9 @@ namespace DebuggerTests
 			case "Mono.runtimeReady":
 				NotifyOf (READY, args);
 				break;
+			case "Runtime.consoleAPICalled":
+				Console.WriteLine ("CWL: {0}", args? ["args"]? [0]? ["value"]);
+				break;
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
@@ -58,7 +61,7 @@ namespace DebuggerTests
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null) {
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (10 * 1000); //tests have 10 seconds to complete!
+				cts.CancelAfter (60 * 1000); //tests have 1 minute to complete
 				var uri = new Uri ("ws://localhost:9300/launch-chrome-and-connect");
 				using (var client = new InspectorClient ()) {
 					await client.Connect (uri, OnMessage, async token => {
@@ -115,6 +118,7 @@ namespace DebuggerTests
 			foreach (var s in PROBE_LIST){
 				if (File.Exists (s)) {
 					chrome_path = s;
+					Console.WriteLine($"Using chrome path: ${s}");
 					return s;
 				}
 			}
