@@ -637,8 +637,14 @@ retry:
 		// case MONO_TYPE_VALUETYPE:
 
 		case MONO_TYPE_GENERICINST:
-			if (m_class_is_valuetype (mono_class_from_mono_type_internal (type)))
-				goto cant_handle_yet;
+			if (m_class_is_valuetype (mono_class_from_mono_type_internal (type))) {
+				char *type_name = mono_type_full_name (type);
+				char *msg = g_strdup_printf("Can't handle type %s [%p, 0x%x]", type_name, type, type->type);
+				mono_wasm_add_string_var (msg);
+				g_free (msg);
+				g_free (type_name);
+				break;
+			}
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_OBJECT:
 		case MONO_TYPE_CLASS: {
@@ -674,7 +680,6 @@ retry:
 			break;			
 		}
 		default: {
-cant_handle_yet:
 			char *type_name = mono_type_full_name (type);
 			char *msg = g_strdup_printf("Can't handle type %s [%p, 0x%x]", type_name, type, type->type);
 			mono_wasm_add_string_var (msg);
