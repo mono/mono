@@ -75,13 +75,13 @@ namespace WsProxy {
 			var proc = Process.Start (psi);
 			try {
 				proc.ErrorDataReceived += (sender, e) => {
-					// Console.WriteLine ($"stderr: {e.Data}");
+					Console.WriteLine ($"stderr: {e.Data}");
 					var res = extract_conn_url (e.Data);
 					if (res != null)
 						tcs.TrySetResult (res);
 				};
 				proc.OutputDataReceived += (sender, e) => {
-					// Console.WriteLine ($"stdout: {e.Data}");
+					Console.WriteLine ($"stdout: {e.Data}");
 				};
 				proc.BeginErrorReadLine ();
 				proc.BeginOutputReadLine ();
@@ -91,19 +91,18 @@ namespace WsProxy {
 					throw new Exception ("node.js timedout");
 				}
 				var con_str = await tcs.Task;
-				// Console.WriteLine ($"lauching proxy for {con_str}");
+				Console.WriteLine ($"lauching proxy for {con_str}");
 
-				try {
-					var proxy = new MonoProxy ();
-					var browserUri = new Uri (con_str);
-					var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
+				var proxy = new MonoProxy ();
+				var browserUri = new Uri (con_str);
+				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
-					await proxy.Run (browserUri, ideSocket);
-					// Console.WriteLine("Proxy done");
-				} catch (Exception e) {
-					Console.WriteLine ("got exception {0}", e.GetType ().FullName);
-				}
+				await proxy.Run (browserUri, ideSocket);
+				Console.WriteLine("Proxy done");
+			} catch (Exception e) {
+				Console.WriteLine ("got exception {0}", e.GetType ().FullName);
 			} finally {
+				Console.WriteLine ("Proxy done");
 				proc.CancelErrorRead ();
 				proc.CancelOutputRead ();
 				proc.Kill ();
@@ -133,12 +132,13 @@ namespace WsProxy {
 
 
 			var psi = new ProcessStartInfo ();
-			psi.Arguments = $"--headless --remote-debugging-port=9333 http://localhost:9300/{pagePath}";
-			// psi.Arguments = $"--headless --disable-gpu --remote-debugging-port=9222 {appUrl}";
 			psi.UseShellExecute = false;
-			psi.FileName = chromePath;
 			psi.RedirectStandardError = true;
 			psi.RedirectStandardOutput = true;
+
+			psi.Arguments = $"--headless --remote-debugging-port=9333 http://localhost:9300/{pagePath}";
+			psi.FileName = chromePath;
+			// psi.Arguments = $"--headless --disable-gpu --remote-debugging-port=9222 {appUrl}";
 
 			app.UseRouter (router => {
 				router.MapGet ("launch-chrome-and-connect", async context => {
@@ -160,33 +160,28 @@ namespace WsProxy {
 				});
 			});
 
-			// if (configuration ["NodeApp"] != null) {
-			// 	var nodeApp = configuration ["NodeApp"];
-			// 	Console.WriteLine($"Doing the nodejs: {nodeApp}");
-			// 	Console.WriteLine (Path.GetFullPath (nodeApp));
-			// 	var nodeFullPath = Path.GetFullPath (nodeApp);
-			// 	var psi = new ProcessStartInfo ();
-			// 	psi.Arguments = $"--inspect-brk=localhost:0 {nodeFullPath}";
-			// 	psi.UseShellExecute = false;
-			// 	psi.FileName = "node";
-			// 	psi.WorkingDirectory = Path.GetDirectoryName (nodeFullPath);
-			// 	psi.RedirectStandardError = true;
-			// 	psi.RedirectStandardOutput = true;
-			//
-			// 	app.UseRouter (router => {
-			// 		//Inspector API for using chrome devtools directly
-			// 		router.MapGet ("json", SendNodeList);
-			// 		router.MapGet ("json/list", SendNodeList);
-			// 		router.MapGet ("json/version", SendNodeVersion);
-			// 		router.MapGet ("launch-done-and-connect", async context => {
-			// 			await LaunchAndServe (psi, context, str => {
-			// 				if (str.StartsWith ("Debugger listening on", StringComparison.Ordinal))
-			// 					return str.Substring (str.IndexOf ("ws://", StringComparison.Ordinal));
-			// 				return null;
-			// 			});
-			// 		});
-			// 	});
-			// }
+			if (configuration ["NodeApp"] != null) {
+				var nodeApp = configuration ["NodeApp"];
+				Console.WriteLine($"Doing the nodejs: {nodeApp}");
+				Console.WriteLine (Path.GetFullPath (nodeApp));
+				var nodeFullPath = Path.GetFullPath (nodeApp);
+				psi.Arguments = $"--inspect-brk=localhost:0 {nodeFullPath}";
+				psi.FileName = "node";
+
+				app.UseRouter (router => {
+					//Inspector API for using chrome devtools directly
+					router.MapGet ("json", SendNodeList);
+					router.MapGet ("json/list", SendNodeList);
+					router.MapGet ("json/version", SendNodeVersion);
+					router.MapGet ("launch-done-and-connect", async context => {
+						await LaunchAndServe (psi, context, str => {
+							if (str.StartsWith ("Debugger listening on", StringComparison.Ordinal))
+								return str.Substring (str.IndexOf ("ws://", StringComparison.Ordinal));
+							return null;
+						});
+					});
+				});
+			}
 		}
 	}
 }
