@@ -228,9 +228,7 @@ typedef struct MonoAotOptions {
 	char *instances_logfile_path;
 	char *logfile;
 	char *llvm_opts;
-	gboolean llvm_opts_add;
 	char *llvm_llc;
-	gboolean llvm_llc_add;
 	gboolean dump_json;
 	gboolean profile_only;
 	gboolean no_opt;
@@ -7715,14 +7713,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->verbose = TRUE;
 		} else if (str_begins_with (arg, "llvmopts=")){
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
-		} else if (str_begins_with (arg, "llvmopts-add=")){
-			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts-add="));
-			opts->llvm_opts_add = TRUE;
 		} else if (str_begins_with (arg, "llvmllc=")){
 			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc="));
-		} else if (str_begins_with (arg, "llvmllc-add=")){
-			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc-add="));
-			opts->llvm_llc_add = TRUE;
 		} else if (!strcmp (arg, "deterministic")) {
 			opts->deterministic = TRUE;
 		} else if (!strcmp (arg, "no-opt")) {
@@ -9239,9 +9231,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 * return OverwriteComplete;
 	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
 	 */
-	if (acfg->aot_opts.llvm_opts && !acfg->aot_opts.llvm_opts_add) {
-		opts = g_strdup (acfg->aot_opts.llvm_opts);
-	} else if (acfg->aot_opts.llvm_only) {
+	if (acfg->aot_opts.llvm_only) {
 		// FIXME: This doesn't work yet
 		opts = g_strdup ("");
 	} else {
@@ -9252,7 +9242,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 #endif
 	}
 
-	if (acfg->aot_opts.llvm_opts_add) {
+	if (acfg->aot_opts.llvm_opts) {
 		opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
 	}
 
@@ -9318,12 +9308,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	}
 
 	if (acfg->aot_opts.llvm_llc) {
-		if (!acfg->aot_opts.llvm_llc_add) {
-			g_free (acfg->llc_args);
-			acfg->llc_args = g_string_new (acfg->aot_opts.llvm_llc);
-		} else {
-			g_string_append_printf (acfg->llc_args, " %s", acfg->aot_opts.llvm_llc);
-		}
+		g_string_append_printf (acfg->llc_args, " %s", acfg->aot_opts.llvm_llc);
 	}
 
 	command = g_strdup_printf ("\"%sllc\" %s -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.llvm_path, acfg->llc_args->str, output_fname, acfg->tmpbasename);
