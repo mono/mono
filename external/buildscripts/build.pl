@@ -436,7 +436,7 @@ if ($build)
 		if (! -d $macSdkPath)
 		{
 			print(">>> Unzipping mac build toolchain\n");
-			system("$externalBuildDeps/unzip", '-qd', "$macBuildEnvDir", "$macBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping mac build toolchain\n");
+			system("unzip", '-qd', "$macBuildEnvDir", "$macBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping mac build toolchain\n");
 		}
 	}
 
@@ -453,7 +453,7 @@ if ($build)
 		if (! -d "$iosBuildEnvDir/builds")
 		{
 			print(">>> Unzipping ios build toolchain\n");
-			system("$externalBuildDeps/unzip", '-qd', "$iosBuildEnvDir/builds", "$iosBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping ios build toolchain\n");
+			system("unzip", '-qd', "$iosBuildEnvDir/builds", "$iosBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping ios build toolchain\n");
 		}
 
 		$ENV{PATH} = "$iosXcodeDefaultToolchainRoot/usr/bin:$iosBuildEnvDir/builds/Xcode.app/Contents/Developer/usr/bin:$ENV{PATH}";
