@@ -79,6 +79,7 @@ endif
 
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
 test_lib_output = $(test_lib_dir)/$(test_lib)
+test_lib_resources := $(patsubst %,$(test_lib_dir)/%,$(filter-out %/.gitattributes,$(filter-out %.cs,$(shell find Test -type f))))
 
 test_sourcefile_excludes = $(test_lib).exclude.sources
 
@@ -90,7 +91,7 @@ ifndef NO_BUILD
 test_flags += -r:$(the_assembly)
 test_assembly_dep = $(the_assembly)
 endif
-tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_response) $(test_makefrag)
+tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_lib_resources) $(test_response) $(test_makefrag)
 
 xtest_sourcefile = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
 xtest_sourcefile_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
@@ -129,13 +130,9 @@ tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 
 endif
 
-test_assemblies :=
-
 ifdef HAVE_CS_TESTS
-test_assemblies += $(test_lib_output)
-
 check: run-test
-test-local: $(test_assemblies)
+test-local: build-test-lib
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
@@ -235,17 +232,17 @@ TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $
 endif
 
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
+run-test-lib: build-test-lib test-local-aot-compile copy-nunitlite-appconfig
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
-	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_assemblies))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_lib_output) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_lib_output))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_lib_output))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$$ok
 
 ## Instructs compiler to compile to target .net execution, it can be usefull in rare cases when runtime detection is not possible
 run-test-ondotnet-lib: LOCAL_TEST_COMPILER_ONDOTNET_FLAGS:=-d:RUN_ONDOTNET
-run-test-ondotnet-lib: test-local
+run-test-ondotnet-lib: build-test-lib
 	ok=:; \
-	$(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(LABELS_ARG) -format:nunit2 -result:TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
+	$(TEST_HARNESS) $(test_lib_output) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(LABELS_ARG) -format:nunit2 -result:TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
 	$$ok
 
 
@@ -264,6 +261,10 @@ $(test_lib_dir):
 
 $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
+
+$(test_lib_resources): $(test_lib_dir)/%: %
+	@mkdir -p $(dir $@)
+	$(Q) cp $< $@
 
 test_response_preprocessed = $(test_response)_preprocessed
 
