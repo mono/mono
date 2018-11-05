@@ -95,9 +95,8 @@ public static class Program {
             return 1;
         }
 
-        var parser = new SourcesParser (platformsFolder, profilesFolder);
-
         ParseResult result;
+        SourcesParser parser;
 
         if (args.Count == 3) {
             var sourcesFile = Path.GetFullPath (args[1]);
@@ -108,7 +107,11 @@ public static class Program {
                 return 1;
             }
 
-            result = parser.Parse (baseDir ?? directory, sourcesFile, excludesFile);
+            var libraryDirectory = baseDir ?? directory;
+
+            parser = new SourcesParser (platformsFolder, profilesFolder, libraryDirectory);
+
+            result = parser.Parse (libraryDirectory, sourcesFile, excludesFile);
 
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
@@ -121,6 +124,9 @@ public static class Program {
             var profileName = args[3].Trim ();
             var libraryDirectory = Path.GetDirectoryName (libraryFullName);
             var libraryName = Path.GetFileName (libraryFullName);
+
+            parser = new SourcesParser (platformsFolder, profilesFolder, baseDir);
+
             result = parser.Parse (libraryDirectory, libraryName, platformName, profileName);
 
             if (SourcesParser.TraceLevel > 0)
@@ -403,11 +409,14 @@ public class SourcesParser {
     public readonly string[] AllHostPlatformNames;
     public readonly string[] AllProfileNames;
 
+    public readonly string BaseDirectory;
+
     private int ParseDepth = 0;
 
     public SourcesParser (
-        string platformsFolder, string profilesFolder
+        string platformsFolder, string profilesFolder, string baseDir
     ) {
+        BaseDirectory = baseDir;
         AllHostPlatformNames = Directory.GetFiles (platformsFolder, "*.make")
             .Select (Path.GetFileNameWithoutExtension)
             .ToArray ();
@@ -425,7 +434,7 @@ public class SourcesParser {
             Key = (hostPlatform: null, profile: null)
         };
 
-        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null, overrideDirectory: libraryDirectory);
+        var parsedTarget = ParseIntoTarget (state, tpr, sourcesFileName, exclusionsFileName, null);
 
         PrintSummary (state, sourcesFileName);
         return state.Result;
@@ -580,7 +589,7 @@ public class SourcesParser {
                 return;
             }
 
-            var newFile = ParseSingleFile (state, fileName, asExclusionsList, overrideDirectory: pathDirectory);
+            var newFile = ParseSingleFile (state, fileName, asExclusionsList);
             if (newFile == null) {
                 Console.Error.WriteLine ($"// Failed to parse included file: {fileName}");
                 state.Result.ErrorCount++;
@@ -616,7 +625,7 @@ public class SourcesParser {
     private TargetParseResult ParseIntoTarget (
         State state, TargetParseResult tpr, 
         string sourcesFileName, string exclusionsFileName,
-        TargetParseResult fallbackTarget, string overrideDirectory = null
+        TargetParseResult fallbackTarget
     ) {
         if (!File.Exists (sourcesFileName)) {
             if (fallbackTarget != null) {
@@ -634,16 +643,16 @@ public class SourcesParser {
             }
         }
 
-        tpr.Sources = ParseSingleFile (state, sourcesFileName, false, overrideDirectory: overrideDirectory);
+        tpr.Sources = ParseSingleFile (state, sourcesFileName, false);
 
         if (File.Exists (exclusionsFileName))
-            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true, overrideDirectory: overrideDirectory);
+            tpr.Exclusions = ParseSingleFile (state, exclusionsFileName, true);
 
         state.Result.TargetDictionary.Add (tpr.Key, tpr);
         return tpr;
     }
 
-    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList, string overrideDirectory = null) {
+    private SourcesFile ParseSingleFile (State state, string fileName, bool asExclusionsList) {
         var fileTable = asExclusionsList ? state.Result.ExclusionFiles : state.Result.SourcesFiles;
 
         var nullStr = "<none>";
@@ -661,7 +670,7 @@ public class SourcesParser {
         ParseDepth += 1;
 
         var includeDirectory = Path.GetDirectoryName (fileName);
-        var pathDirectory = overrideDirectory ?? includeDirectory;
+        var pathDirectory = BaseDirectory ?? includeDirectory;
         var result = new SourcesFile (fileName, asExclusionsList);
         fileTable.Add (fileName, result);
 
