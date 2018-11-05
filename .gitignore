@@ -117,6 +117,13 @@ GTAGS
 docs/doxygen*
 docs/perlmod*
 
+# Bee
+artifacts
+.vs
+external/buildscripts/build.gen*
+
+# Allow
+!external/buildscripts/bee.exe
 
 ##############################################################################
 # Mono-specific patterns
