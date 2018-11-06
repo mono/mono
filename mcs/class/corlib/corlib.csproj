@@ -1970,6 +1970,7 @@
     <Compile Include="System\TimeZoneInfo.Android.cs" />
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+    <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
     <Compile Include="System\TimeZoneInfo.WinRT.cs" />
     <Compile Include="System\TimeZoneInfo.cs" />
     <Compile Include="System\TypeIdentifier.cs" />
