@@ -8777,13 +8777,6 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 
 // Generate wrappers.
 
-#ifdef DISABLE_POLICY_EVIDENCE
-#define ENABLE_POLICY_EVIDENCE 0
-#else
-#define ENABLE_POLICY_EVIDENCE 1
-#endif
-#undef DISABLE_POLICY_EVIDENCE // Not redefined so keep at end of file.
-
 #define ICALL_TYPE(id,name,first) /* nothing */
 #define ICALL(id,name,func) /* nothing */
 #define NOHANDLES(inner)  /* nothing */
