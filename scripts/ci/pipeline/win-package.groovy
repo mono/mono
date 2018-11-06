@@ -30,6 +30,7 @@ node ("w64") {
                               downloadType: "project",
                               buildSelector: upstream(),
                               projectName: "${macJobName}",
+                              flattenDirectories: true,
                               includeFilesPattern: "**/*.pkg")
             }
             try {
