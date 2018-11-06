@@ -12,6 +12,7 @@
 **
 **
 =============================================================================*/
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
 
 namespace System.Runtime.InteropServices
 {
@@ -332,3 +333,5 @@ namespace System.Runtime.InteropServices
     }
 #endif
 }
+
+#endif

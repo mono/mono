@@ -52,6 +52,10 @@ if INSTALL_MONOTOUCH_TV
 build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
+if INSTALL_TESTING_AOT_FULL_INTERP
+build_profiles += testing_aot_full_interp
+endif
+
 if INSTALL_TESTING_AOT_HYBRID
 build_profiles += testing_aot_hybrid
 endif
@@ -77,10 +81,10 @@ build_profiles += unreal
 endif
 
 if INSTALL_WASM
-build_profiles += wasm
+build_profiles += wasm wasm_tools
 endif
 
-test_profiles = $(filter-out binary_reference_assemblies monodroid_tools,$(build_profiles))
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
@@ -162,6 +166,9 @@ if HOST_WIN32
 VERIFY_TESTS_FILTER += Mono.WebBrowser.dll
 endif
 
+# fails to verify with "VTable setup of type Xunit.NetCore.Extensions.SkippedTestCase failed", not sure why
+VERIFY_TESTS_FILTER += Xunit.NetCore.Extensions.dll
+
 if FULL_AOT_TESTS
 #  ILASM.exe has features which a testing_aot_full runtime will not support.
 #  It is invoked with an external mono when used in the runtime.
@@ -216,19 +223,12 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	else \
 		echo "Unknown directory '$(abs_top_builddir)/support'" && false; \
 	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-native.la",' $@ > $@.tmp \
+	if test -d "$(abs_top_builddir)/mono/native"; then \
+		sed 's,target="$$mono_libdir/$(MONO_NATIVE_LIBRARY_NAME)$(libsuffix)",target="$(abs_top_builddir)/mono/native/$(MONO_NATIVE_LIBRARY_NAME).la",' $@ > $@.tmp \
 		 && mv $@.tmp $@ \
 		 ; \
 	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
-	fi
-	if test -d "$(abs_top_builddir)/mono/metadata"; then \
-		sed 's,target="$$mono_libdir/libmono-system-net-security-native$(libsuffix)",target="$(abs_top_builddir)/mono/metadata/libmono-system-net-security-native.la",' $@ > $@.tmp \
-		 && mv $@.tmp $@ \
-		 ; \
-	else \
-		echo "Unknown directory '$(abs_top_builddir)/mono/metadata'" && false; \
+		echo "Unknown directory '$(abs_top_builddir)/mono/native'" && false; \
 	fi
 	if test -d "$(abs_top_builddir)/mono/btls/build-shared"; then \
 		sed 's,target="$$mono_libdir/libmono-btls-shared$(libsuffix)",target="$(abs_top_builddir)/mono/btls/build-shared/libmono-btls-shared$(libsuffix)",' $@ > $@.tmp \

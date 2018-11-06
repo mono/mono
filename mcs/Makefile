@@ -4,8 +4,7 @@ SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs packages
 
 # Resgen is corlib specific tool
 
-basic_SUBDIRS := build jay class
-build_SUBDIRS := build class class/aot-compiler tools ilasm
+build_SUBDIRS := build jay tools/gensources class class/aot-compiler tools
 monodroid_SUBDIRS := build class tools
 monodroid_tools_SUBDIRS := build class tools
 monotouch_SUBDIRS := build class tools
@@ -15,6 +14,7 @@ monotouch_runtime_SUBDIRS := build class
 monotouch_watch_runtime_SUBDIRS := build class
 monotouch_tv_runtime_SUBDIRS := build class
 xammac_SUBDIRS := build class
+testing_aot_full_interp_SUBDIRS := build class
 testing_aot_hybrid_SUBDIRS := build class
 testing_aot_full_SUBDIRS := build class
 binary_reference_assemblies_SUBDIRS := build class
@@ -26,6 +26,7 @@ winaot_SUBDIRS := build class
 orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
+wasm_tools_SUBDIRS := build class tools
 
 include build/rules.make
 
@@ -36,7 +37,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILE)" != "basic" ]; then $(MAKE) -C ../runtime; fi
+	@if [ "$(NO_DIR_CHECK)" = "" ]; then $(MAKE) -C ../runtime; fi
 
 # fun specialty targets
 
@@ -77,13 +78,14 @@ $(_boot_:%=profile-do--monotouch_watch_runtime--%):  profile-do--monotouch_watch
 $(_boot_:%=profile-do--monotouch_tv_runtime--%):     profile-do--monotouch_tv_runtime--%:     profile-do--build--%
 $(_boot_:%=profile-do--xammac--%):            profile-do--xammac--%:            profile-do--build--%
 $(_boot_:%=profile-do--xammac_net_4_5--%):    profile-do--xammac_net_4_5--%:           profile-do--build--%
+$(_boot_:%=profile-do--testing_aot_full_interp--%):        profile-do--testing_aot_full_interp--%:        profile-do--build--%
 $(_boot_:%=profile-do--testing_aot_hybrid--%):        profile-do--testing_aot_hybrid--%:        profile-do--build--%
 $(_boot_:%=profile-do--testing_aot_full--%):          profile-do--testing_aot_full--%:          profile-do--build--%
 $(_boot_:%=profile-do--winaot--%):              profile-do--winaot--%:              profile-do--build--%
 $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:              profile-do--build--%
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
-$(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%
+$(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

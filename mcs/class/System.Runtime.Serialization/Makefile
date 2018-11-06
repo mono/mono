@@ -13,7 +13,17 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
-XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Drawing Facades/System.Threading.Tasks
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks
+
+ifneq ($(PROFILE),monodroid)
+ifneq ($(PROFILE),monotouch)
+ifneq ($(PROFILE),monotouch_tv)
+ifneq ($(PROFILE),monotouch_watch)
+XTEST_LIB_REFS += System.Drawing
+endif
+endif
+endif
+endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration SMDiagnostics
@@ -35,9 +45,10 @@ TEST_RESOURCE_FILES = \
 
 # we need to write the test resource args into a response file to avoid
 # hitting "argument list too long" errors because of too many files
-TEST_RESOURCES_RESPONSE_FILE = $(depsdir)/$(test_lib).resources.response
+TEST_RESOURCES_RESPONSE_FILE = $(depsdir)/$(LIBRARY)_test.resources.response
 
 $(TEST_RESOURCES_RESPONSE_FILE): $(TEST_RESOURCE_FILES)
+	@echo Creating $@ ...
 	@echo $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r)) > $(TEST_RESOURCES_RESPONSE_FILE)
 
 test-local: $(TEST_RESOURCES_RESPONSE_FILE)

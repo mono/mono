@@ -79,18 +79,52 @@ var MonoSupportLib = {
 			return this.mono_wasm_del_bp (breakpoint_id);
 		},
 
-		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
-			Module.FS_createPath ("/", vfs_prefix, true, true);
+		// Set environment variable NAME to VALUE
+		// Should be called before mono_load_runtime_and_bcl () in most cases 
+		mono_wasm_setenv: function (name, value) {
+			if (!this.wasm_setenv)
+				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+			this.wasm_setenv (name, value);
+		},
 
+		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];
 			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
+
+			if (!fetch_file_cb) {
+				if (ENVIRONMENT_IS_NODE) {
+					var fs = require('fs');
+					fetch_file_cb = function (asset) {
+						console.log("Loading... " + asset);
+						var binary = fs.readFileSync (asset);
+						var resolve_func2 = function(resolve, reject) {
+							resolve(new Uint8Array (binary));
+						};
+
+						var resolve_func1 = function(resolve, reject) {
+							var response = {
+								ok: true,
+								url: asset,
+								arrayBuffer: function() {
+									return new Promise(resolve_func2);
+								}
+							};
+							resolve(response);
+						};
+
+						return new Promise(resolve_func1);
+					};
+				} else {
+					fetch_file_cb = function (asset) {
+						return fetch (asset, { credentials: 'same-origin' });
+					}
+				}
+			}
+
 			file_list.forEach (function(file_name) {
-				var fetch_promise = null;
-				if (fetch_file_cb)
-					fetch_promise = fetch_file_cb (deploy_prefix + "/" + file_name);
-				else
-					fetch_promise = fetch (deploy_prefix + "/" + file_name, { credentials: 'same-origin' });
+				
+				var fetch_promise = fetch_file_cb (locateFile(deploy_prefix + "/" + file_name));
 
 				fetch_promise.then (function (response) {
 					if (!response.ok)
@@ -111,7 +145,21 @@ var MonoSupportLib = {
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
 						console.log ("initializing mono runtime");
-						load_runtime (vfs_prefix, enable_debugging);
+						if (ENVIRONMENT_IS_SHELL) {
+							try {
+								load_runtime (vfs_prefix, enable_debugging);
+							} catch (ex) {
+								print ("load_runtime () failed: " + ex);
+								var err = new Error();
+								print ("Stacktrace: \n");
+								print (err.stack);
+
+								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+								wasm_exit (1);
+							}
+						} else {
+							load_runtime (vfs_prefix, enable_debugging);
+						}
 						MONO.mono_wasm_runtime_ready ();
 						loaded_cb ();
 					}

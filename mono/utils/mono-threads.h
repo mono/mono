@@ -145,10 +145,13 @@ enum {
 
 	STATE_MAX				= 0x09,
 
-	THREAD_STATE_MASK			= 0x00FF,
+	THREAD_STATE_MASK			= 0x007F,
 	THREAD_SUSPEND_COUNT_MASK	= 0xFF00,
 	THREAD_SUSPEND_COUNT_SHIFT	= 8,
 	THREAD_SUSPEND_COUNT_MAX	= 0xFF,
+
+	THREAD_SUSPEND_NO_SAFEPOINTS_MASK          = 0x0080,
+	THREAD_SUSPEND_NO_SAFEPOINTS_SHIFT = 7,
 
 	SELF_SUSPEND_STATE_INDEX = 0,
 	ASYNC_SUSPEND_STATE_INDEX = 1,
@@ -620,6 +623,9 @@ mono_native_thread_create (MonoNativeThreadId *tid, T func, gpointer arg)
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
 
+size_t
+mono_native_thread_get_name (MonoNativeThreadId tid, char *name_out, size_t max_len);
+
 MONO_API gboolean
 mono_native_thread_join (MonoNativeThreadId tid);
 
@@ -693,6 +699,8 @@ MonoDoBlockingResult mono_threads_transition_do_blocking (THREAD_INFO_TYPE* info
 MonoDoneBlockingResult mono_threads_transition_done_blocking (THREAD_INFO_TYPE* info, const char* func);
 MonoAbortBlockingResult mono_threads_transition_abort_blocking (THREAD_INFO_TYPE* info, const char* func);
 gboolean mono_threads_transition_peek_blocking_suspend_requested (THREAD_INFO_TYPE* info);
+void mono_threads_transition_begin_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
+void mono_threads_transition_end_no_safepoints (THREAD_INFO_TYPE* info, const char *func);
 
 G_EXTERN_C // due to THREAD_INFO_TYPE varying
 MonoThreadUnwindState* mono_thread_info_get_suspend_state (THREAD_INFO_TYPE *info);
@@ -711,6 +719,8 @@ int mono_thread_info_suspend_count (THREAD_INFO_TYPE *info);
 int mono_thread_info_current_state (THREAD_INFO_TYPE *info);
 const char* mono_thread_state_name (int state);
 gboolean mono_thread_is_gc_unsafe_mode (void);
+G_EXTERN_C // due to THREAD_INFO_TYPE varying
+gboolean mono_thread_info_will_not_safepoint (THREAD_INFO_TYPE *info);
 
 /* Suspend phases:
  *

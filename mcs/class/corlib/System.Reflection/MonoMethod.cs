@@ -229,7 +229,8 @@ namespace System.Reflection {
 			return get_base_method (this, true);
 		}
 
-		internal override MethodInfo GetBaseMethod ()
+		// TODO: Remove, needed only for MonoCustomAttribute
+		internal MethodInfo GetBaseMethod ()
 		{
 			return get_base_method (this, false);
 		}
@@ -328,6 +329,8 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+				} catch (OverflowException) {
+					throw;
 				} catch (Exception e) {
 					throw new TargetInvocationException (e);
 				}
@@ -799,6 +802,8 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+				} catch (OverflowException) {
+					throw;
 				} catch (Exception e) {
 					throw new TargetInvocationException (e);
 				}

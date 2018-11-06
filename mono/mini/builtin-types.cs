@@ -382,7 +382,7 @@ public class BuiltinTests {
 		}
 	}
 
-	public int test_0_nint_fieldload ()
+	static int test_0_nint_fieldload ()
 	{
 		var x = new SomeNativeStructWithNint ((nint) 20f);
 
@@ -419,6 +419,24 @@ public class BuiltinTests {
 			return 10;
 
 		return 0;
+	}
+
+	static int NuintConstructor (nuint cap)
+	{
+		if (cap > (ulong) nint.MaxValue)
+			return 1;
+		return 0;
+	}
+
+	/* resembles https://github.com/xamarin/xamarin-macios/blob/bc492585d137d8c3d3a2ffc827db3cdaae3cc869/tests/monotouch-test/Foundation/MutableDataTest.cs#L62-L89 */
+	static int test_0_nint_maxintcmp ()
+	{
+		/* does not work on 32bit */
+		if (IntPtr.Size == 4)
+			return 0;
+
+		uint cap = (uint) Int32.MaxValue + 2;
+		return NuintConstructor (cap);
 	}
 
 
@@ -783,7 +801,7 @@ public class BuiltinTests {
 		}
 	}
 
-	public int test_0_nuint_fieldload ()
+	static int test_0_nuint_fieldload ()
 	{
 		var x = new SomeNativeStructWithNuint ((nuint) 20f);
 
@@ -1268,7 +1286,7 @@ public class BuiltinTests {
 		}
 	}
 
-	public int test_0_nfloat_fieldload ()
+	static int test_0_nfloat_fieldload ()
 	{
 		var x = new SomeNativeStructWithNfloat ((nfloat) 20f);
 

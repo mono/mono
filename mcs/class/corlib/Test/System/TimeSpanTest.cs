@@ -1158,13 +1158,13 @@ public class TimeSpanTest {
 		try {
 			TimeSpan.ParseExact (null, "g", null);
 			Assert.Fail ("#A1");
-		} catch (FormatException) {
+		} catch (ArgumentNullException) {
 		}
 
 		try {
 			TimeSpan.ParseExact ("10:12", (string)null, null);
 			Assert.Fail ("#A2");
-		} catch (FormatException) {
+		} catch (ArgumentNullException) {
 		}
 
 		try {

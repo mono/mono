@@ -8,8 +8,11 @@ LIB_REFS = System System.Core System.Xml Mono.Cecil
 
 TEST_CASES := \
 	mscorlib/test-array.cs \
+	mscorlib/test-calendar-01.cs \
+	mscorlib/test-calendar-02.cs \
 	mscorlib/test-exception-01.cs \
 	mscorlib/test-locale-01.cs \
+	mscorlib/test-methodimpl-01.cs \
 	mscorlib/test-reflection-01.cs \
 	mscorlib/test-reflection-02.cs \
 	mscorlib/test-string-01.cs \
@@ -23,7 +26,8 @@ TEST_CASES := \
 
 ifdef MOBILE_PROFILE
 TEST_CASES += \
-	mscorlib/test-crypto-01.cs
+	mscorlib/test-crypto-01.cs \
+	System.Net.Http/test-handler-01.cs
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
@@ -55,6 +59,9 @@ mscorlib/test-marshaling.cs: $(MARSHALING_TEST_NATIVE)
 System/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
+System.Net.Http/test-%.cs:
+	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
+
 run-tests: $(TEST_CASES:.cs=.exe)
 
 LINKER_PROFILE_OPTIONS :=
@@ -70,16 +77,25 @@ endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH) $(LINKER_PROFILE_OPTIONS)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER_DEFAULT = $(LINKER) -l none $(LINKER_PROFILE_OPTIONS)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 
 .NOTPARALLEL:
 
-System/test-%.exe mscorlib/test-%.exe:
+System.Net.Http/test-%.exe System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@
-	$(LINKER) -a Tests/$@
+	$(LINKER_DEFAULT) -a Tests/$@
+	$(TEST_EXEC) $(LINKER_OUTPUT)/$(@F)
+	@rm -rf $(LINKER_OUTPUT)
+
+mscorlib/test-calendar-01.exe:
+	@rm -rf $(LINKER_OUTPUT)
+	@mkdir $(LINKER_OUTPUT)
+	@echo Testing $@
+	$(LINKER) -l mideast $(LINKER_PROFILE_OPTIONS) -a Tests/$@
 	$(TEST_EXEC) $(LINKER_OUTPUT)/$(@F)
 	@rm -rf $(LINKER_OUTPUT)
 
@@ -87,7 +103,7 @@ mscorlib/test-marshaling.exe: $(MARSHALING_TEST_NATIVE)
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@
-	$(LINKER) -a Tests/$@
+	$(LINKER_DEFAULT) -a Tests/$@
 	cp Tests/$(MARSHALING_TEST_NATIVE) $(LINKER_OUTPUT)
 	(cd $(LINKER_OUTPUT); MONO_PATH=. $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot ./$(@F))
 	@rm -rf $(LINKER_OUTPUT)
@@ -104,7 +120,7 @@ bcl-size-current: compile-tests
 		rm -rf $(LINKER_OUTPUT); \
 		mkdir $(LINKER_OUTPUT); \
 		echo Checking linked BCL size for $$app; \
-		$(LINKER) -a Tests/$$app; \
+		$(LINKER_DEFAULT) -a Tests/$$app; \
 		sizes=""; \
 		for asm in $(BCL_ASSEMBLIES); do \
 			if [ -f "$(LINKER_OUTPUT)/$$asm" ]; then size=$$(wc -c < "$(LINKER_OUTPUT)/$$asm" | tr -d "[:space:]"); else size="0"; fi; \

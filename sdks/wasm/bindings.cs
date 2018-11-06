@@ -7,17 +7,21 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
+/*
+ * TODO:
+ * - Expose annotated C# type to JS
+ * - Add property fetch to JSObject
+ * - Add typed method invoke support (get a delegate?)
+ * - Add JS helpers to fetch wrapped methods, like to Module.cwrap
+ * - Better Wrap C# exception when passing them as object (IE, on task failure)
+ * - Make JSObject disposable (same for js objects)
+*/
+	
 namespace WebAssembly
 {
-    /*
-	TODO:
-		Expose annotated C# type to JS
-		Add property fetch to JSObject
-		Add typed method invoke support (get a delegate?)
-		Add JS helpers to fetch wrapped methods, like to Module.cwrap
-		Better Wrap C# exception when passing them as object (IE, on task failure)
-		Make JSObject disposable (same for js objects)
-	*/
+    /// <summary>
+    ///   Provides access to the Mono/WebAssembly runtime to perform tasks like invoking JavaScript functions and retrieving global variables.
+    /// </summary>
     public sealed class Runtime
     {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -32,6 +36,8 @@ namespace WebAssembly
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern object GetGlobalObject(string globalName, out int exceptional_result);
 
+        /// <summary>
+	///   Execute the provided string in the JavaScript context
         public static string InvokeJS(string str)
         {
             int exception = 0;
@@ -315,6 +321,30 @@ namespace WebAssembly
         }
 
 
+	/// <summary>
+        ///   Fetches a global object from the Javascript world, either from the current brower window or from the node.js global context.
+	/// </summary>
+	/// <remarks>
+	///   This method returns the value of a global object marshalled for consumption in C#.
+	/// </remarks>
+	/// <returns>
+	///   <para>
+	///     The return value can either be a primitive (string, int, double), a <see
+	///     cref="T:WebAssembly.JSObject"/> for JavaScript objects, a <see
+	///     cref="T:System.Threading.Tasks.Task">(object) for JavaScript promises, an array of
+	///     a byte, int or double (for Javascript objects typed as ArrayBuffer) or a <see
+	///     cref="T:System.Func"/> to represent JavaScript functions.  The specific version of
+	///     the Func that will be returned depends on the parameters of the Javascript function
+	///     and return value.
+	///   </para>
+	///   <para>
+	///     The value of a returned promise (The Task(object) return) can in turn be any of the above
+	///     valuews.
+	///   </para>
+	/// </returns>
+	/// <param name="str">The name of the global object, or null if you want to retrieve the 'global' object itself.
+	/// On a browser, this is the 'window' object, on node.js it is the 'global' object.
+	/// </param>
         public static object GetGlobalObject(string str = null)
         {
             int exception = 0;
@@ -454,6 +484,10 @@ namespace WebAssembly
         public JSException(string msg) : base(msg) { }
     }
 
+    /// <summary>
+    ///   JSObjects are wrappers for a native JavaScript object, and
+    ///   they retain a reference to the JavaScript object for the lifetime of this C# object.
+    /// </summary>
     public class JSObject : IDisposable
     {
         public int JSHandle { get; internal set; }
@@ -473,6 +507,22 @@ namespace WebAssembly
             this.RawObject = raw_obj;
         }
 
+	
+	/// <returns>
+	///   <para>
+	///     The return value can either be a primitive (string, int, double), a <see
+	///     cref="T:WebAssembly.JSObject"/> for JavaScript objects, a <see
+	///     cref="T:System.Threading.Tasks.Task">(object) for JavaScript promises, an array of
+	///     a byte, int or double (for Javascript objects typed as ArrayBuffer) or a <see
+	///     cref="T:System.Func"/> to represent JavaScript functions.  The specific version of
+	///     the Func that will be returned depends on the parameters of the Javascript function
+	///     and return value.
+	///   </para>
+	///   <para>
+	///     The value of a returned promise (The Task(object) return) can in turn be any of the above
+	///     valuews.
+	///   </para>
+	/// </returns>
         public object Invoke(string method, params object[] args)
         {
             int exception = 0;
@@ -482,7 +532,28 @@ namespace WebAssembly
             return res;
         }
 
-
+	/// <summary>
+	///   Returns the named property from the object, or throws a JSException on error.
+	/// </summary>
+	/// <param name="name">The name of the property to lookup</param>
+	/// <remarks>
+	///   This method can raise a <see cref="T:WebAssembly.JSException"/> if fetching the property in Javascript raises an exception.
+	/// </remarks>
+	/// <returns>
+	///   <para>
+	///     The return value can either be a primitive (string, int, double), a <see
+	///     cref="T:WebAssembly.JSObject"/> for JavaScript objects, a <see
+	///     cref="T:System.Threading.Tasks.Task">(object) for JavaScript promises, an array of
+	///     a byte, int or double (for Javascript objects typed as ArrayBuffer) or a <see
+	///     cref="T:System.Func"/> to represent JavaScript functions.  The specific version of
+	///     the Func that will be returned depends on the parameters of the Javascript function
+	///     and return value.
+	///   </para>
+	///   <para>
+	///     The value of a returned promise (The Task(object) return) can in turn be any of the above
+	///     valuews.
+	///   </para>
+	/// </returns>
         public object GetObjectProperty(string expr)
         {
 
@@ -496,6 +567,17 @@ namespace WebAssembly
 
         }
 
+	/// <summary>
+	///   Sets the named property to the provided value.
+	/// </summary>
+	/// <remarks>
+	/// </remarks>
+	/// <param name="name">The name of the property to lookup</param>
+	/// <param name="value">The value can be a primitive type (int, double, string, bool), an
+	/// array that will be surfaced as a typed ArrayBuffer (byte[], sbyte[], short[], ushort[],
+	/// float[], double[]) </param>
+	/// <param name="createIfNotExists">Defaults to <see langword="true"/> and creates the property on the javascript object if not found, if set to <see langword="false"/> it will not create the property if it does not exist.  If the property exists, the value is updated with the provided value.</param>
+	/// <param name="hasOwnProperty"></param>
         public void SetObjectProperty(string expr, object value, bool createIfNotExists = true, bool hasOwnProperty = false)
         {
 

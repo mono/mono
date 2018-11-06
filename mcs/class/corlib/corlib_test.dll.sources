@@ -1,6 +1,9 @@
 Microsoft.Win32/RegistryKeyTest.cs
 Mono/DataConvertTest.cs
 ../Mono/DataConverter.cs
+Mono/NativePlatformTest.cs
+../Mono/MonoNativePlatform.cs
+../Mono/MonoNativePlatformType.cs
 System/ActivatorTest.cs
 System/AppDomainManagerTest.cs
 System/AppDomainSetupTest.cs

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">net_4_x</Platform>
     <ProjectGuid>{1F165EE1-C483-4ACE-BD45-31074A9F735F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,219,414,649,1717</NoWarn>
+    <NoWarn>1699,219,414,618,649,1717</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
@@ -64,10 +64,15 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
+    <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;ASYNC;AGCLR;DISABLE_XSLT_COMPILER;DISABLE_XSLT_SCRIPT;MONO_HYBRID_SYSTEM_XML;DISABLE_CAS_USE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
@@ -1544,6 +1549,12 @@
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full_interp\nunitlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

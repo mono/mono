@@ -10,7 +10,7 @@ TXT_RESOURCE_STRINGS = \
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Private.Xml/src/Resources/Strings.resx
 
-LIB_MCS_FLAGS = -nowarn:219,414,649,1717 -unsafe -d:ASYNC
+LIB_MCS_FLAGS = -nowarn:219,414,618,649,1717 -unsafe -d:ASYNC
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:AGCLR -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML -d:DISABLE_CAS_USE
@@ -18,7 +18,17 @@ endif
 
 TEST_LIB_REFS = System.Data System.Core
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
-XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Drawing Facades/System.Threading.Tasks System.Runtime.Serialization Facades/System.Text.Encoding.CodePages
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks System.Runtime.Serialization Facades/System.Text.Encoding.CodePages
+
+ifneq ($(PROFILE),monodroid)
+ifneq ($(PROFILE),monotouch)
+ifneq ($(PROFILE),monotouch_tv)
+ifneq ($(PROFILE),monotouch_watch)
+XTEST_LIB_REFS += System.Drawing
+endif
+endif
+endif
+endif
 
 LIBRARY_WARN_AS_ERROR = yes
 

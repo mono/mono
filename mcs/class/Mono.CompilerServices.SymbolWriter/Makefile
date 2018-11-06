@@ -9,12 +9,6 @@ LIB_MCS_FLAGS =
 
 NO_TEST = yes
 
-ifneq (basic, $(PROFILE))
-USE_BOOT_COMPILE = yes
-endif
-
-ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
 
 include ../../build/library.make

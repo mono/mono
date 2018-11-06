@@ -319,6 +319,10 @@ public class Tests : TestsBase, ITest2
 			unhandled_exception_endinvoke ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "crash-vm") {
+			crash ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-user") {
 			unhandled_exception_user ();
 			return 0;
@@ -1331,6 +1335,11 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void crash () {
+		unsafe { Console.WriteLine("{0}", *(int*) -1); }
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_user () {
 		System.Threading.Tasks.Task.Factory.StartNew (() => {
 				Throw ();
@@ -1812,6 +1821,12 @@ public class Tests : TestsBase, ITest2
 	static string ref_return_string = "byref";
 	public static ref string get_ref_string() {
 		return ref ref_return_string;
+	}
+
+
+	static BlittableStruct ref_return_struct = new BlittableStruct () { i = 1, d = 2.0 };
+	public static ref BlittableStruct get_ref_struct() {
+		return ref ref_return_struct;
 	}
 }
 

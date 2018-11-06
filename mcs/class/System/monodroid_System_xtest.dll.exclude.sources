@@ -1,0 +1,15 @@
+
+../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeObjects/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeStatements/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeTypeMembers/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Compiler/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Other/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/CSharp/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/VisualBasic/*.cs
+../../../external/corefx/src/System.CodeDom/tests/*.cs
+
+../../../external/corefx/src/System.Net.Security/tests/UnitTests/Fakes/*.cs
+
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs

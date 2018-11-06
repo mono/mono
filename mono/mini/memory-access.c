@@ -250,11 +250,11 @@ create_write_barrier_bitmap (MonoCompile *cfg, MonoClass *klass, unsigned *wb_bi
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		foffset = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject): field->offset;
-		if (mini_type_is_reference (mono_field_get_type (field))) {
+		if (mini_type_is_reference (mono_field_get_type_internal (field))) {
 			g_assert ((foffset % TARGET_SIZEOF_VOID_P) == 0);
 			*wb_bitmap |= 1 << ((offset + foffset) / TARGET_SIZEOF_VOID_P);
 		} else {
-			MonoClass *field_class = mono_class_from_mono_type (field->type);
+			MonoClass *field_class = mono_class_from_mono_type_internal (field->type);
 			if (m_class_has_references (field_class))
 				create_write_barrier_bitmap (cfg, field_class, wb_bitmap, offset + foffset);
 		}
@@ -356,7 +356,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 	*/
 
 	if (cfg->gshared)
-		klass = mono_class_from_mono_type (mini_get_underlying_type (m_class_get_byval_arg (klass)));
+		klass = mono_class_from_mono_type_internal (mini_get_underlying_type (m_class_get_byval_arg (klass)));
 
 	/*
 	 * This check breaks with spilled vars... need to handle it during verification anyway.
@@ -416,7 +416,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 				if (size_ins)
 					mono_emit_jit_icall (cfg, mono_gsharedvt_value_copy, iargs);
 				else
-					mono_emit_jit_icall (cfg, mono_value_copy, iargs);
+					mono_emit_jit_icall (cfg, mono_value_copy_internal, iargs);
 			} else {
 				/* We don't unroll more than 5 stores to avoid code bloat. */
 				/*This is harmless and simplify mono_gc_get_range_copy_func */
@@ -434,7 +434,7 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		iargs [0] = dest;
 		iargs [1] = src;
 		iargs [2] = size_ins;
-		mini_emit_calli (cfg, mono_method_signature (mini_get_memcpy_method ()), iargs, memcpy_ins, NULL, NULL);
+		mini_emit_calli (cfg, mono_method_signature_internal (mini_get_memcpy_method ()), iargs, memcpy_ins, NULL, NULL);
 	} else {
 		mini_emit_memcpy_const_size (cfg, dest, src, size, align);
 	}
@@ -490,7 +490,7 @@ mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoIn
 		tmp_var = mono_compile_create_var (cfg, type, OP_LOCAL);
 		EMIT_NEW_TEMPSTORE (cfg, mov, tmp_var->inst_c0, value);
 		EMIT_NEW_VARLOADA (cfg, addr, tmp_var, tmp_var->inst_vtype);
-		mini_emit_memory_copy_internal (cfg, dest, addr, mono_class_from_mono_type (type), 1, FALSE);
+		mini_emit_memory_copy_internal (cfg, dest, addr, mono_class_from_mono_type_internal (type), 1, FALSE);
 	} else {
 		MonoInst *ins;
 

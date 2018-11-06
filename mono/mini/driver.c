@@ -382,7 +382,7 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 			continue;
 
 		MonoClass *klass = centry->ctor->klass;
-		if (strcmp (m_class_get_name (klass), "CategoryAttribute") || mono_method_signature (centry->ctor)->param_count != 1)
+		if (strcmp (m_class_get_name (klass), "CategoryAttribute") || mono_method_signature_internal (centry->ctor)->param_count != 1)
 			continue;
 
 		gpointer *typed_args, *named_args;
@@ -727,7 +727,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				run++;
 				failed++;
 			} else {
-				result = *(gint32 *) mono_object_unbox (result_obj);
+				result = *(gint32 *) mono_object_unbox_internal (result_obj);
 				expected = atoi (method->name + 5);  // FIXME: oh no.
 				run++;
 
@@ -1177,7 +1177,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 
 		if (mono_class_is_gtd (method->klass))
 			continue;
-		sig = mono_method_signature (method);
+		sig = mono_method_signature_internal (method);
 		if (!sig) {
 			char * desc = mono_method_full_name (method, TRUE);
 			g_print ("Could not retrieve method signature for %s\n", desc);
@@ -1287,7 +1287,7 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 
 		res = mono_runtime_try_run_main (method, argc, argv, &exc);
 		if (exc) {
-			mono_unhandled_exception (exc);
+			mono_unhandled_exception_internal (exc);
 			mono_invoke_unhandled_exception_hook (exc);
 			g_assert_not_reached ();
 		}
@@ -1297,7 +1297,7 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 		if (!is_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
 			if (ex) {
-				mono_unhandled_exception (&ex->object);
+				mono_unhandled_exception_internal (&ex->object);
 				mono_invoke_unhandled_exception_hook (&ex->object);
 				g_assert_not_reached ();
 			}
@@ -1431,7 +1431,7 @@ load_agent (MonoDomain *domain, char *desc)
 		if (main_args) {
 			MonoString *str = mono_string_new_checked (domain, args, error);
 			if (str)
-				mono_array_set (main_args, MonoString*, 0, str);
+				mono_array_set_internal (main_args, MonoString*, 0, str);
 		}
 	} else {
 		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 0, error);

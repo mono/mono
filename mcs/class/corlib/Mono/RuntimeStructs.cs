@@ -49,12 +49,6 @@ namespace Mono {
 			internal int len;
 		}
 
-		// handle.h HandleStackMark
-		struct HandleStackMark {
-			int size, interior_size;
-			IntPtr chunk;
-		}
-
 		// mono-error.h MonoError
 		struct MonoError {
 			ushort error_code;

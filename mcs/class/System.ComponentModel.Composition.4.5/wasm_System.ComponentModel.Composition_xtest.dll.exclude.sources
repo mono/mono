@@ -1,0 +1,9 @@
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/AttributedModel/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/Diagnostics/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/Factories/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/Primitives/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/ComponentModel/Composition/ReflectionModel/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/Integration/*.cs
+../../../external/corefx/src/System.ComponentModel.Composition/tests/System/UnitTesting/*.cs

@@ -67,8 +67,6 @@ static guint32 mono_field_resolve_flags (MonoClassField *field);
 
 static MonoProperty* mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
 
-static MonoClass *mono_class_from_mono_type_internal (MonoType *type);
-
 static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
@@ -394,7 +392,7 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 		mono_type_name_check_byref (type, str);
 
 		if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
-			_mono_type_get_assembly_name (mono_class_from_mono_type (type->data.type), str);
+			_mono_type_get_assembly_name (mono_class_from_mono_type_internal (type->data.type), str);
 		break;
 	}
 	case MONO_TYPE_VAR:
@@ -408,7 +406,7 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		break;
 	default:
-		klass = mono_class_from_mono_type (type);
+		klass = mono_class_from_mono_type_internal (type);
 		if (m_class_get_nested_in (klass)) {
 			mono_type_get_name_recurse (
 				m_class_get_byval_arg (m_class_get_nested_in (klass)), str, TRUE, format);
@@ -558,9 +556,9 @@ MonoType*
 mono_type_get_underlying_type (MonoType *type)
 {
 	if (type->type == MONO_TYPE_VALUETYPE && m_class_is_enumtype (type->data.klass) && !type->byref)
-		return mono_class_enum_basetype (type->data.klass);
+		return mono_class_enum_basetype_internal (type->data.klass);
 	if (type->type == MONO_TYPE_GENERICINST && m_class_is_enumtype (type->data.generic_class->container_class) && !type->byref)
-		return mono_class_enum_basetype (type->data.generic_class->container_class);
+		return mono_class_enum_basetype_internal (type->data.generic_class->container_class);
 	return type;
 }
 
@@ -603,13 +601,15 @@ mono_class_is_open_constructed_type (MonoType *t)
 This is a simple function to catch the most common bad instances of generic types.
 Specially those that might lead to further failures in the runtime.
 */
-static gboolean
-is_valid_generic_argument (MonoType *type)
+gboolean
+mono_type_is_valid_generic_argument (MonoType *type)
 {
 	switch (type->type) {
 	case MONO_TYPE_VOID:
-	//case MONO_TYPE_TYPEDBYREF:
+	case MONO_TYPE_TYPEDBYREF:
 		return FALSE;
+	case MONO_TYPE_VALUETYPE:
+		return !m_class_is_byreflike (type->data.klass);
 	default:
 		return TRUE;
 	}
@@ -634,7 +634,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;
 		}
 
-		if (!is_valid_generic_argument (inst->type_argv [num])) {
+		if (!mono_type_is_valid_generic_argument (inst->type_argv [num])) {
 			const char *pname = mono_generic_param_name (type->data.generic_param);
 			mono_error_set_bad_image (error, image, "MVAR %d (%s) cannot be expanded with type 0x%x",
 				num, pname ? pname : "", inst->type_argv [num]->type);
@@ -662,7 +662,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 				num, pname ? pname : "", inst->type_argc);
 			return NULL;
 		}
-		if (!is_valid_generic_argument (inst->type_argv [num])) {
+		if (!mono_type_is_valid_generic_argument (inst->type_argv [num])) {
 			const char *pname = mono_generic_param_name (type->data.generic_param);
 			mono_error_set_bad_image (error, image, "VAR %d (%s) cannot be expanded with type 0x%x",
 				num, pname ? pname : "", inst->type_argv [num]->type);
@@ -679,7 +679,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		if (!inflated || !mono_error_ok (error))
 			return NULL;
 		nt = mono_metadata_type_dup (image, type);
-		nt->data.klass = mono_class_from_mono_type (inflated);
+		nt->data.klass = mono_class_from_mono_type_internal (inflated);
 		mono_metadata_free_type (inflated);
 		return nt;
 	}
@@ -689,7 +689,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		if (!inflated || !mono_error_ok (error))
 			return NULL;
 		nt = mono_metadata_type_dup (image, type);
-		nt->data.array->eklass = mono_class_from_mono_type (inflated);
+		nt->data.array->eklass = mono_class_from_mono_type_internal (inflated);
 		mono_metadata_free_type (inflated);
 		return nt;
 	}
@@ -880,7 +880,7 @@ mono_class_inflate_generic_class_checked (MonoClass *gklass, MonoGenericContext 
 	inflated = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (gklass), context, error);
 	return_val_if_nok (error, NULL);
 
-	res = mono_class_from_mono_type (inflated);
+	res = mono_class_from_mono_type_internal (inflated);
 	mono_metadata_free_type (inflated);
 
 	return res;
@@ -944,7 +944,7 @@ mono_class_inflate_generic_method_checked (MonoMethod *method, MonoGenericContex
  * On failure returns NULL and sets \p error.
  *
  * BEWARE: All non-trivial fields are invalid, including klass, signature, and header.
- *         Use mono_method_signature() and mono_method_get_header() to get the correct values.
+ *         Use mono_method_signature_internal () and mono_method_get_header () to get the correct values.
  */
 MonoMethod*
 mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context, MonoError *error)
@@ -996,7 +996,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		if (mono_class_is_gtd (iresult->declaring->klass))
 			iresult->context.class_inst = mono_class_get_generic_container (iresult->declaring->klass)->context.class_inst;
 	}
-	/* This can happen with some callers like mono_object_get_virtual_method () */
+	/* This can happen with some callers like mono_object_get_virtual_method_internal () */
 	if (!mono_class_is_gtd (iresult->declaring->klass) && !mono_class_is_ginst (iresult->declaring->klass))
 		iresult->context.class_inst = NULL;
 
@@ -1016,7 +1016,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 
 	UnlockedAdd (&mono_inflated_methods_size,  sizeof (MonoMethodInflated));
 
-	sig = mono_method_signature (method);
+	sig = mono_method_signature_internal (method);
 	if (!sig) {
 		char *name = mono_type_get_full_name (method->klass);
 		mono_error_set_bad_image (error, mono_method_get_image (method), "Could not resolve signature of method %s:%s", name, method->name);
@@ -1046,12 +1046,22 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 	}
 
 	if (iresult->context.method_inst) {
+		MonoGenericInst *method_inst = iresult->context.method_inst;
 		/* Set the generic_container of the result to the generic_container of method */
 		MonoGenericContainer *generic_container = mono_method_get_generic_container (method);
 
-		if (generic_container && iresult->context.method_inst == generic_container->context.method_inst) {
+		if (generic_container && method_inst == generic_container->context.method_inst) {
 			result->is_generic = 1;
 			mono_method_set_generic_container (result, generic_container);
+		}
+
+		/* Check that the method is not instantiated with any invalid types */
+		for (int i = 0; i < method_inst->type_argc; i++) {
+			if (!mono_type_is_valid_generic_argument (method_inst->type_argv [i])) {
+				mono_error_set_bad_image (error, mono_method_get_image (method), "MVAR %d cannot be expanded with type 0x%x",
+							  i, method_inst->type_argv [i]->type);
+				goto fail;
+			}
 		}
 	}
 
@@ -1069,7 +1079,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 		if (!mono_error_ok (error)) 
 			goto fail;
 
-		result->klass = inflated ? mono_class_from_mono_type (inflated) : method->klass;
+		result->klass = inflated ? mono_class_from_mono_type_internal (inflated) : method->klass;
 		if (inflated)
 			mono_metadata_free_type (inflated);
 	}
@@ -1749,7 +1759,7 @@ MonoClass*
 mono_class_get_nullable_param (MonoClass *klass)
 {
        g_assert (mono_class_is_nullable (klass));
-       return mono_class_from_mono_type (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+       return mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
 }
 
 gboolean
@@ -1892,7 +1902,7 @@ mono_class_from_mono_type_internal (MonoType *type)
 	case MONO_TYPE_VAR:
 		return mono_class_create_generic_parameter (type->data.generic_param);
 	default:
-		g_warning ("mono_class_from_mono_type: implement me 0x%02x\n", type->type);
+		g_warning ("mono_class_from_mono_type_internal: implement me 0x%02x\n", type->type);
 		g_assert_not_reached ();
 	}
 
@@ -1945,7 +1955,7 @@ mono_class_create_from_typespec (MonoImage *image, guint32 type_spec, MonoGeneri
 	gboolean inflated = FALSE;
 	MonoType *t = mono_type_retrieve_from_typespec (image, type_spec, context, &inflated, error);
 	return_val_if_nok (error, NULL);
-	ret = mono_class_from_mono_type (t);
+	ret = mono_class_from_mono_type_internal (t);
 	if (inflated)
 		mono_metadata_free_type (t);
 	return ret;
@@ -2638,7 +2648,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 
 	if (inflated) {
 		MonoType *tmp = type;
-		type = m_class_get_byval_arg (mono_class_from_mono_type (type));
+		type = m_class_get_byval_arg (mono_class_from_mono_type_internal (type));
 		/* FIXME: This is a workaround fo the fact that a typespec token sometimes reference to the generic type definition.
 		 * A MonoClass::_byval_arg of a generic type definion has type CLASS.
 		 * Some parts of mono create a GENERICINST to reference a generic type definition and this generates confict with _byval_arg.
@@ -3223,10 +3233,10 @@ mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
 	mono_class_init (klass);
 	mono_class_init (klassc);
 	
-	if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && !MONO_CLASS_IS_INTERFACE (klass)) {
+	if (check_interfaces && MONO_CLASS_IS_INTERFACE_INTERNAL (klassc) && !MONO_CLASS_IS_INTERFACE_INTERNAL (klass)) {
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (klass, m_class_get_interface_id (klassc)))
 			return TRUE;
-	} else if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && MONO_CLASS_IS_INTERFACE (klass)) {
+	} else if (check_interfaces && MONO_CLASS_IS_INTERFACE_INTERNAL (klassc) && MONO_CLASS_IS_INTERFACE_INTERNAL (klass)) {
 		int i;
 
 		MonoClass **klass_interfaces = m_class_get_interfaces (klass);
@@ -3236,7 +3246,7 @@ mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
 				return TRUE;
 		}
 	} else {
-		if (!MONO_CLASS_IS_INTERFACE (klass) && mono_class_has_parent (klass, klassc))
+		if (!MONO_CLASS_IS_INTERFACE_INTERNAL (klass) && mono_class_has_parent (klass, klassc))
 			return TRUE;
 	}
 
@@ -3289,7 +3299,7 @@ mono_gparam_is_reference_conversible (MonoClass *target, MonoClass *candidate, g
 		if (!pinfo || (pinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) == 0)
 			return FALSE;
 	}
-	if (!mono_class_is_assignable_from (target, candidate))
+	if (!mono_class_is_assignable_from_internal (target, candidate))
 		return FALSE;
 	return TRUE;
 }
@@ -3322,8 +3332,8 @@ mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean 
 	oklass_argv = &mono_class_get_generic_class (oklass)->context.class_inst->type_argv [0];
 
 	for (j = 0; j < container->type_argc; ++j) {
-		MonoClass *param1_class = mono_class_from_mono_type (klass_argv [j]);
-		MonoClass *param2_class = mono_class_from_mono_type (oklass_argv [j]);
+		MonoClass *param1_class = mono_class_from_mono_type_internal (klass_argv [j]);
+		MonoClass *param2_class = mono_class_from_mono_type_internal (oklass_argv [j]);
 
 		if (m_class_is_valuetype (param1_class) != m_class_is_valuetype (param2_class) || (m_class_is_valuetype (param1_class) && param1_class != param2_class))
 			return FALSE;
@@ -3379,9 +3389,9 @@ mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
 			MonoClass *cc = *candidate_class;
 			MonoType *cc_byval_arg = m_class_get_byval_arg (cc);
 
-			if (mono_type_is_reference (cc_byval_arg) && !MONO_CLASS_IS_INTERFACE (cc))
+			if (mono_type_is_reference (cc_byval_arg) && !MONO_CLASS_IS_INTERFACE_INTERNAL (cc))
 				class_constraint_satisfied = TRUE;
-			else if (!mono_type_is_reference (cc_byval_arg) && !MONO_CLASS_IS_INTERFACE (cc))
+			else if (!mono_type_is_reference (cc_byval_arg) && !MONO_CLASS_IS_INTERFACE_INTERNAL (cc))
 				valuetype_constraint_satisfied = TRUE;
 		}
 	}
@@ -3418,7 +3428,7 @@ mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
 			for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
 				MonoClass *cc = *candidate_class;
 
-				if (mono_class_is_assignable_from (tc, cc))
+				if (mono_class_is_assignable_from_internal (tc, cc))
 					break;
 
 				/*
@@ -3444,11 +3454,29 @@ mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
 	if (cinfo->constraints) {
 		for (candidate_class = cinfo->constraints; *candidate_class; ++candidate_class) {
 			MonoClass *cc = *candidate_class;
-			if (mono_class_is_assignable_from (target, cc))
+			if (mono_class_is_assignable_from_internal (target, cc))
 				return TRUE;
 		}
 	}
 	return FALSE;
+}
+
+/**
+ * mono_class_is_assignable_from_internal:
+ * \param klass the class to be assigned to
+ * \param oklass the source class
+ *
+ * \returns TRUE if an instance of class \p oklass can be assigned to an
+ * instance of class \p klass
+ */
+gboolean
+mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass)
+{
+	gboolean result = FALSE;
+	ERROR_DECL (error);
+	mono_class_is_assignable_from_checked (klass, oklass, &result, error);
+	mono_error_cleanup (error);
+	return result;
 }
 
 /**
@@ -3459,14 +3487,12 @@ mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
  * \returns TRUE if an instance of class \p oklass can be assigned to an
  * instance of class \p klass
  */
-gboolean
+mono_bool
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 {
-	gboolean result = FALSE;
+	gboolean result;
 	MONO_ENTER_GC_UNSAFE;
-	ERROR_DECL (error);
-	mono_class_is_assignable_from_checked (klass, oklass, &result, error);
-	mono_error_cleanup (error);
+	result = mono_class_is_assignable_from_internal (klass, oklass);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -3526,7 +3552,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 
 		if (constraints) {
 			for (i = 0; constraints [i]; ++i) {
-				if (mono_class_is_assignable_from (klass, constraints [i])) {
+				if (mono_class_is_assignable_from_internal (klass, constraints [i])) {
 					*result = TRUE;
 					return;
 				}
@@ -3537,7 +3563,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 		return;
 	}
 
-	if (MONO_CLASS_IS_INTERFACE (klass)) {
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (klass)) {
 
 		/* interface_offsets might not be set for dynamic classes */
 		if (mono_class_get_ref_info_handle (oklass) && !m_class_get_interface_bitmap (oklass)) {
@@ -3584,7 +3610,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 
 			//XXX we could offset this by having the cast target computed at JIT time
 			//XXX we could go even further and emit a wrapper that would do the extra type check
-			MonoClass *iface_klass = mono_class_from_mono_type (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+			MonoClass *iface_klass = mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
 			MonoClass *obj_klass = m_class_get_cast_class (oklass); //This gets us the cast class of element type of the array
 
 			// If the target we're trying to cast to is a valuetype, we must account of weird valuetype equivalences such as IntEnum <> int or uint <> int
@@ -3595,7 +3621,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 
 				//array covariant casts only operates on scalar to scalar
 				//This is so int[] can't be casted to IComparable<int>[]
-				if (!(m_class_is_valuetype (obj_klass) && !m_class_is_valuetype (iface_klass)) && mono_class_is_assignable_from (iface_klass, obj_klass)) {
+				if (!(m_class_is_valuetype (obj_klass) && !m_class_is_valuetype (iface_klass)) && mono_class_is_assignable_from_internal (iface_klass, obj_klass)) {
 					*result = TRUE;
 					return;
 				}
@@ -3688,8 +3714,8 @@ mono_class_is_variant_compatible_slow (MonoClass *klass, MonoClass *oklass)
 	oklass_argv = &mono_class_get_generic_class (oklass)->context.class_inst->type_argv [0];
 
 	for (j = 0; j < container->type_argc; ++j) {
-		MonoClass *param1_class = mono_class_from_mono_type (klass_argv [j]);
-		MonoClass *param2_class = mono_class_from_mono_type (oklass_argv [j]);
+		MonoClass *param1_class = mono_class_from_mono_type_internal (klass_argv [j]);
+		MonoClass *param2_class = mono_class_from_mono_type_internal (oklass_argv [j]);
 
 		if (m_class_is_valuetype (param1_class) != m_class_is_valuetype (param2_class))
 			return FALSE;
@@ -3719,7 +3745,7 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 	int i;
 	gboolean is_variant = mono_class_has_variant_generic_params (target);
 
-	if (is_variant && MONO_CLASS_IS_INTERFACE (candidate)) {
+	if (is_variant && MONO_CLASS_IS_INTERFACE_INTERNAL (candidate)) {
 		if (mono_class_is_variant_compatible_slow (target, candidate))
 			return TRUE;
 	}
@@ -3733,14 +3759,14 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 			MonoReflectionTypeBuilder *tb = mono_class_get_ref_info_raw (candidate); /* FIXME use handles */
 			int j;
 			if (tb && tb->interfaces) {
-				for (j = mono_array_length (tb->interfaces) - 1; j >= 0; --j) {
-					MonoReflectionType *iface = mono_array_get (tb->interfaces, MonoReflectionType*, j);
+				for (j = mono_array_length_internal (tb->interfaces) - 1; j >= 0; --j) {
+					MonoReflectionType *iface = mono_array_get_internal (tb->interfaces, MonoReflectionType*, j);
 					MonoClass *iface_class;
 
 					/* we can't realize the type here since it can do pretty much anything. */
 					if (!iface->type)
 						continue;
-					iface_class = mono_class_from_mono_type (iface->type);
+					iface_class = mono_class_from_mono_type_internal (iface->type);
 					if (iface_class == target)
 						return TRUE;
 					if (is_variant && mono_class_is_variant_compatible_slow (target, iface_class))
@@ -3782,7 +3808,7 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 
 /*
  * Check if @oklass can be assigned to @klass.
- * This function does the same as mono_class_is_assignable_from but is safe to be used from mono_class_init context.
+ * This function does the same as mono_class_is_assignable_from_internal but is safe to be used from mono_class_init context.
  */
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
@@ -3796,7 +3822,7 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
 		return TRUE;
 
 	/*If target is not an interface there is no need to check them.*/
-	if (MONO_CLASS_IS_INTERFACE (target))
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (target))
 		return mono_class_implement_interface_slow (target, candidate);
 
  	if (m_class_is_delegate (target) && mono_class_has_variant_generic_params (target))
@@ -3858,7 +3884,7 @@ mono_generic_param_get_base_type (MonoClass *klass)
 		for (i = 0; constraints [i]; ++i) {
 			MonoClass *constraint = constraints[i];
 
-			if (MONO_CLASS_IS_INTERFACE (constraint))
+			if (MONO_CLASS_IS_INTERFACE_INTERNAL (constraint))
 				continue;
 
 			MonoType *constraint_type = m_class_get_byval_arg (constraint);
@@ -4018,7 +4044,7 @@ handle_enum:
 		return 8;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			type = mono_class_enum_basetype (type->data.klass);
+			type = mono_class_enum_basetype_internal (type->data.klass);
 			klass = m_class_get_element_class (klass);
 			goto handle_enum;
 		}
@@ -4104,7 +4130,7 @@ mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class,
 		if (!type)
 			return NULL;
 
-		mono_class_init (mono_class_from_mono_type (type));
+		mono_class_init (mono_class_from_mono_type_internal (type));
 		/* We return a MonoType* as handle */
 		return type;
 	}
@@ -4268,6 +4294,23 @@ mono_class_is_enum (MonoClass *klass)
 }
 
 /**
+ * mono_class_enum_basetype_internal:
+ * \param klass the \c MonoClass to act on
+ *
+ * Use this function to get the underlying type for an enumeration value.
+ * 
+ * \returns The underlying type representation for an enumeration.
+ */
+MonoType*
+mono_class_enum_basetype_internal (MonoClass *klass)
+{
+	if (m_class_get_element_class (klass) == klass)
+		/* SRE or broken types */
+		return NULL;
+	return m_class_get_byval_arg (m_class_get_element_class (klass));
+}
+
+/**
  * mono_class_enum_basetype:
  * \param klass the \c MonoClass to act on
  *
@@ -4280,11 +4323,7 @@ mono_class_enum_basetype (MonoClass *klass)
 {
 	MonoType *res;
 	MONO_ENTER_GC_UNSAFE;
-	if (m_class_get_element_class (klass) == klass)
-		/* SRE or broken types */
-		res = NULL;
-	else
-		res = m_class_get_byval_arg (m_class_get_element_class (klass));
+	res = mono_class_enum_basetype_internal (klass);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
@@ -4376,11 +4415,7 @@ mono_class_get_namespace (MonoClass *klass)
 MonoType*
 mono_class_get_type (MonoClass *klass)
 {
-	MonoType *result;
-	MONO_ENTER_GC_UNSAFE;
-	result = m_class_get_byval_arg (klass);
-	MONO_EXIT_GC_UNSAFE;
-	return result;
+	return m_class_get_byval_arg (klass);
 }
 
 /**
@@ -4755,7 +4790,7 @@ mono_class_is_delegate (MonoClass *klass)
 mono_bool
 mono_class_implements_interface (MonoClass* klass, MonoClass* iface)
 {
-	return mono_class_is_assignable_from (iface, klass);
+	return mono_class_is_assignable_from_internal (iface, klass);
 }
 
 /**
@@ -4771,6 +4806,27 @@ mono_field_get_name (MonoClassField *field)
 }
 
 /**
+ * mono_field_get_type_internal:
+ * \param field the \c MonoClassField to act on
+ * \returns \c MonoType of the field.
+ */
+MonoType*
+mono_field_get_type_internal (MonoClassField *field)
+{
+	MonoType *type = field->type;
+	if (type)
+		return type;
+
+	ERROR_DECL (error);
+	type = mono_field_get_type_checked (field, error);
+	if (!mono_error_ok (error)) {
+		mono_trace_warning (MONO_TRACE_TYPE, "Could not load field's type due to %s", mono_error_get_message (error));
+		mono_error_cleanup (error);
+	}
+	return type;
+}
+
+/**
  * mono_field_get_type:
  * \param field the \c MonoClassField to act on
  * \returns \c MonoType of the field.
@@ -4778,18 +4834,15 @@ mono_field_get_name (MonoClassField *field)
 MonoType*
 mono_field_get_type (MonoClassField *field)
 {
-	ERROR_DECL (error);
-	MonoType *type;
+	MonoType *type = field->type;
+	if (type)
+		return type;
+
 	MONO_ENTER_GC_UNSAFE;
-	type = mono_field_get_type_checked (field, error);
-	if (!mono_error_ok (error)) {
-		mono_trace_warning (MONO_TRACE_TYPE, "Could not load field's type due to %s", mono_error_get_message (error));
-		mono_error_cleanup (error);
-	}
+	type = mono_field_get_type_internal (field);
 	MONO_EXIT_GC_UNSAFE;
 	return type;
 }
-
 
 /**
  * mono_field_get_type_checked:
@@ -4802,8 +4855,10 @@ MonoType*
 mono_field_get_type_checked (MonoClassField *field, MonoError *error)
 {
 	error_init (error);
-	if (!field->type)
-		mono_field_resolve_type (field, error);
+	MonoType *type = field->type;
+	if (type)
+		return type;
+	mono_field_resolve_type (field, error);
 	return field->type;
 }
 
@@ -5161,7 +5216,7 @@ mono_class_get_method_from_name_checked (MonoClass *klass, const char *name,
 
 			if (method->name[0] == name [0] && 
 				!strcmp (name, method->name) &&
-				(param_count == -1 || mono_method_signature (method)->param_count == param_count) &&
+				(param_count == -1 || mono_method_signature_internal (method)->param_count == param_count) &&
 				((method->flags & flags) == flags)) {
 				res = method;
 				break;
@@ -5294,7 +5349,7 @@ mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
 static gboolean
 is_valid_family_access (MonoClass *access_klass, MonoClass *member_klass, MonoClass *context_klass)
 {
-	if (MONO_CLASS_IS_INTERFACE (member_klass) && !MONO_CLASS_IS_INTERFACE (access_klass)) {
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (member_klass) && !MONO_CLASS_IS_INTERFACE_INTERNAL (access_klass)) {
 		/* Can happen with default interface methods */
 		if (!mono_class_implements_interface (access_klass, member_klass))
 			return FALSE;
@@ -5379,13 +5434,13 @@ can_access_instantiation (MonoClass *access_klass, MonoGenericInst *ginst)
 				return FALSE;
 			break;
 		case MONO_TYPE_PTR:
-			if (!can_access_type (access_klass, mono_class_from_mono_type (type->data.type)))
+			if (!can_access_type (access_klass, mono_class_from_mono_type_internal (type->data.type)))
 				return FALSE;
 			break;
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_GENERICINST:
-			if (!can_access_type (access_klass, mono_class_from_mono_type (type)))
+			if (!can_access_type (access_klass, mono_class_from_mono_type_internal (type)))
 				return FALSE;
 		default:
 			break;
@@ -5532,11 +5587,11 @@ gboolean
 mono_method_can_access_field (MonoMethod *method, MonoClassField *field)
 {
 	/* FIXME: check all overlapping fields */
-	int can = can_access_member (method->klass, field->parent, NULL, mono_field_get_type (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+	int can = can_access_member (method->klass, field->parent, NULL, mono_field_get_type_internal (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
 	if (!can) {
 		MonoClass *nested = m_class_get_nested_in (method->klass);
 		while (nested) {
-			can = can_access_member (nested, field->parent, NULL, mono_field_get_type (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
+			can = can_access_member (nested, field->parent, NULL, mono_field_get_type_internal (field)->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
 			if (can)
 				return TRUE;
 			nested = m_class_get_nested_in (nested);
@@ -5936,7 +5991,7 @@ mono_method_get_base_method (MonoMethod *method, gboolean definition, MonoError 
 		return method;
 
 	if (!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) ||
-	    MONO_CLASS_IS_INTERFACE (method->klass) ||
+	    MONO_CLASS_IS_INTERFACE_INTERNAL (method->klass) ||
 	    method->flags & METHOD_ATTRIBUTE_NEW_SLOT)
 		return method;
 

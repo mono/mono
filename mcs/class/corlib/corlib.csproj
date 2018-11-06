@@ -65,10 +65,15 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv_runtime</IntermediateOutputPath>
     <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;MONOTOUCH_TV;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
+    <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
@@ -103,7 +108,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -281,9 +286,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Configuration\Assemblies\AssemblyVersionCompatibility.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Convert.Base64.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Convert.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\CurrentSystemTimeZone.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DBNull.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DataMisalignedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTimeKind.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DateTimeOffset.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\DayOfWeek.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\CodeAnalysis\SuppressMessageAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Diagnostics\ConditionalAttribute.cs" />
@@ -313,7 +321,10 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CompareInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CultureNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\CultureTypes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormat.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormatInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeFormatInfoScanner.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeParse.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DateTimeStyles.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DaylightTime.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Globalization\DigitShapes.cs" />
@@ -341,14 +352,21 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\EndOfStreamException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Error.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileAccess.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileLoadException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileOptions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\FileShare.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\IOException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\MemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathTooLongException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PinnedBufferMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\SeekOrigin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamHelpers.CopyValidation.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\TextReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryAccessor.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStreamWrapper.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObservable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObserver.cs" />
@@ -448,6 +466,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ModuleResolveEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscateAssemblyAttribute.cs" />
@@ -468,6 +487,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetInvocationException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetParameterCountException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeDelegator.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeFilter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TypeInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ResolveEventArgs.cs" />
@@ -616,6 +636,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\ThreadStateException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Timeout.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\WaitHandleCannotBeOpenedException.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeSpan.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZone.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeoutException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
@@ -671,8 +693,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\BitArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\StructuralComparisons.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.ComponentModel\src\System\IServiceProvider.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleCancelEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleColor.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKey.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleModifiers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleSpecialKey.cs" />
@@ -774,6 +798,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\ArrayList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimization.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimizationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\OperatingSystem.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Reflection\AssemblyNameProxy.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Runtime\Versioning\ComponentGuaranteesAttribute.cs" />
@@ -854,6 +880,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\OutOfMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\ConstrainedExecution\CriticalFinalizerObject.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\InteropServices\SafeBuffer.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\ManualResetEventSlim.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\NativeOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\SpinWait.cs" />
@@ -866,6 +893,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\ByReference.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\IO\FileLoadException.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingMemberException.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
@@ -939,18 +967,14 @@
     <Compile Include="..\referencesource\mscorlib\system\_localdatastore.cs" />
     <Compile Include="..\referencesource\mscorlib\system\_localdatastoremgr.cs" />
     <Compile Include="..\referencesource\mscorlib\system\activator.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\appdomainattributes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\attribute.cs" />
     <Compile Include="..\referencesource\mscorlib\system\buffer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\emptyreadonlydictionaryinternal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\generic\comparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\collections\generic\equalitycomparer.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\consolekey.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextboundobject.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextmarshalexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\contextstaticattribute.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\datetime.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\datetimeoffset.cs" />
     <Compile Include="..\referencesource\mscorlib\system\defaultbinder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\assert.cs" />
     <Compile Include="..\referencesource\mscorlib\system\diagnostics\assertfilter.cs" />
@@ -968,9 +992,6 @@
     <Compile Include="..\referencesource\mscorlib\system\globalization\calendardata.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformat.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeformatinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\globalization\datetimeparse.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\eastasianlunisolarcalendar.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\globalizationassembly.cs" />
     <Compile Include="..\referencesource\mscorlib\system\globalization\gregoriancalendar.cs" />
@@ -1001,21 +1022,13 @@
     <Compile Include="..\referencesource\mscorlib\system\io\bufferedstream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\directory.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\fileinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\fileloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesystemenumerable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesysteminfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\ioexception.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\pinnedbuffermemorystream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stream.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\streamreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\textreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemoryaccessor.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\unmanagedmemorystream.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\iserviceobjectprovider.cs" />
     <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
@@ -1023,8 +1036,6 @@
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\methodinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\typedelegator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__fastresourcecomparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__hresults.cs" />
@@ -1204,10 +1215,7 @@
     <Compile Include="..\referencesource\mscorlib\system\security\util\parser.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\util\tokenizer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\sharedstatics.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\codepageencoding.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\encoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\mlangcodepageencoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\text\surrogateencoder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationToken.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\CancellationTokenSource.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\SemaphoreSlim.cs" />
@@ -1225,7 +1233,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandleExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\throwhelper.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\timespan.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\type.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
@@ -1326,6 +1333,7 @@
     <Compile Include="System.Diagnostics.Tracing\EventManifestOptions.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSourceAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSourceCreatedEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSourceSettings.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventWrittenEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\NonEventAttribute.cs" />
@@ -1420,6 +1428,7 @@
     <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
     <Compile Include="System.Reflection\Assembly.cs" />
     <Compile Include="System.Reflection\AssemblyName.cs" />
+    <Compile Include="System.Reflection\Binder.cs" />
     <Compile Include="System.Reflection\CustomAttributeData.cs" />
     <Compile Include="System.Reflection\EventInfo.cs" />
     <Compile Include="System.Reflection\ExceptionHandlingClause.cs" />
@@ -1469,7 +1478,6 @@
     <Compile Include="System.Runtime.InteropServices\RegistrationServices.cs" />
     <Compile Include="System.Runtime.InteropServices\STATSTG.cs" />
     <Compile Include="System.Runtime.InteropServices\SYSKIND.cs" />
-    <Compile Include="System.Runtime.InteropServices\SafeBuffer.cs" />
     <Compile Include="System.Runtime.InteropServices\SafeHandle.cs" />
     <Compile Include="System.Runtime.InteropServices\TYPELIBATTR.cs" />
     <Compile Include="System.Runtime.InteropServices\TypeLibConverter.cs" />
@@ -1964,7 +1972,6 @@
     <Compile Include="System\TermInfoNumbers.cs" />
     <Compile Include="System\TermInfoReader.cs" />
     <Compile Include="System\TermInfoStrings.cs" />
-    <Compile Include="System\TimeZone.cs" />
     <Compile Include="System\TimeZoneInfo.Android.cs" />
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
@@ -1986,12 +1993,16 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\CurrentSystemTimeZone.cs" />
+    <Compile Include="corefx\DateTime.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
+    <Compile Include="corefx\TimeZone.cs" />
+    <Compile Include="corefx\TimeZoneInfo.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
     <Compile Include="corert\Decimal.DecCalc.cs" />
     <Compile Include="corert\Decimal.cs" />
@@ -2041,6 +2052,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2107,6 +2120,8 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
@@ -2139,6 +2154,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2174,6 +2191,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2209,6 +2228,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2315,6 +2336,8 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono\MonoNativePlatform.cs" />
+            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2351,6 +2374,8 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono\MonoNativePlatform.cs" />
+            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2387,6 +2412,8 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono\MonoNativePlatform.cs" />
+            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2420,6 +2447,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2452,6 +2481,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2484,6 +2515,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2520,6 +2553,8 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono\MonoNativePlatform.cs" />
+        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2544,6 +2579,12 @@
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' "></ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' "></ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_aot_full_interp\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <Reference Include="nunitlite">
       <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
@@ -2767,6 +2808,35 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv_runtime' ">
+    <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
+      <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/charinfo.nlp">
+      <LogicalName>charinfo.nlp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkCHS.bin">
+      <LogicalName>collation.cjkCHS.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkCHT.bin">
+      <LogicalName>collation.cjkCHT.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkJA.bin">
+      <LogicalName>collation.cjkJA.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkKO.bin">
+      <LogicalName>collation.cjkKO.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
+      <LogicalName>collation.cjkKOlv2.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
     </EmbeddedResource>

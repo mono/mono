@@ -1140,7 +1140,7 @@ dis_stringify_object_with_class (MonoImage *m, MonoClass *c, gboolean prefix, gb
 static char *
 dis_stringify_object (MonoImage *m, MonoType *type, gboolean is_def)
 {
-	MonoClass *c = mono_class_from_mono_type (type);
+	MonoClass *c = mono_class_from_mono_type_internal (type);
 	return dis_stringify_object_with_class (m, c, TRUE, is_def);
 }
 
@@ -1947,7 +1947,7 @@ get_method_core (MonoImage *m, guint32 token, gboolean fullsig, MonoGenericConta
 
 	mh = mono_get_method_checked (m, token, NULL, (MonoGenericContext *) container, error);
 	if (mh) {
-		if (mono_method_signature (mh)->is_inflated)
+		if (mono_method_signature_internal (mh)->is_inflated)
 			container = mono_method_get_generic_container (((MonoMethodInflated *) mh)->declaring);
 		esname = get_escaped_name (mh->name);
 		sig = dis_stringify_type (m, m_class_get_byval_arg (mh->klass), TRUE);

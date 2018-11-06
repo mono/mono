@@ -1,5 +1,6 @@
 #include corefx.unix.sources
 #include net_4_x_System.dll.sources
+#include apple-certificates.sources
 #include appletls.sources
 
 Mono.AppleTls/MonoCertificatePal.OSX.cs

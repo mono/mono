@@ -221,6 +221,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitHandleConsistencyTest ()
 		{
 			var mre = new ManualResetEventSlim ();
@@ -240,6 +241,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndNotImmediateSetTest ()
 		{
 			var mres = new ManualResetEventSlim ();
@@ -249,6 +251,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndCancel ()
 		{
 			var mres = new ManualResetEventSlim ();

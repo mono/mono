@@ -66,12 +66,8 @@ include il/il.make
 
 RESOURCE_STRINGS_FILES = --mscorlib-debug
 
-ifneq ($(PROFILE),basic)
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
-MODULE_DEPS = $(IL_REPLACE)
-endif
-
-MODULE_DEPS += LinkerDescriptor/mscorlib.xml
+MODULE_DEPS = $(IL_REPLACE) LinkerDescriptor/mscorlib.xml
 
 RESOURCE_FILES = \
 	resources/charinfo.nlp \
@@ -143,7 +139,9 @@ XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests
 
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
+ifneq ($(PROFILE),testing_aot_full_interp)
 TEST_LIB_REFS += Mono.Posix
+endif
 endif
 endif
 
