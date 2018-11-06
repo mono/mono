@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Mono.Options;
@@ -232,6 +234,7 @@ public class AppBuilder
 	
 		var ofiles = "";
 		var assembly_names = new List<string> ();
+		var cultures = CultureInfo.GetCultures (CultureTypes.AllCultures).Where (x => !String.IsNullOrEmpty (x.IetfLanguageTag)).Select (x => x.IetfLanguageTag);
 		foreach (var assembly in assemblies) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
@@ -242,6 +245,17 @@ public class AppBuilder
 				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
+
+			var assembly_dir = Path.GetDirectoryName (assembly);
+			var resource_filename = filename.Replace (".dll", ".resources.dll");
+			foreach (var culture in cultures) {
+				var resource_assembly = Path.Combine (assembly_dir, culture, resource_filename);
+				if (!File.Exists(resource_assembly)) continue;
+
+				Directory.CreateDirectory (Path.Combine (builddir, culture));
+				File.Copy (resource_assembly, Path.Combine (builddir, culture, resource_filename), true);
+				ninja.WriteLine ($"build $appdir/{culture}/{resource_filename}: cpifdiff $builddir/{culture}/{resource_filename}");
+			}
 
 			if (isinterpany && filename_noext != "mscorlib")
 				continue;
