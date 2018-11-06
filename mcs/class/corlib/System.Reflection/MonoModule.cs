@@ -181,6 +181,8 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
 		}
 
+		protected override ModuleHandle GetModuleHandleImpl() => new ModuleHandle (_impl);
+
 		public override
 		void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
 			ModuleHandle.GetPEKind (out peKind, out machine);

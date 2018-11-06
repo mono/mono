@@ -133,8 +133,13 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
+TestModule.dll: ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il
+	$(ILASM) ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il /dll /out:System.Reflection.TestModule.dll
+
+xunit-test-local: TestModule.dll
+
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
-XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
+XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk -r:System.Reflection.TestModule.dll
 XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 ifndef AOT_FRIENDLY_PROFILE
