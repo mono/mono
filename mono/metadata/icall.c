@@ -8788,17 +8788,13 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 // i.e. the wrapper would also have a different name.
 #define HANDLES_REUSE_WRAPPER(...) /* nothing  */
 
-#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) \
-	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
-	MONO_HANDLE_IMPLEMENT_MAYBE (cond, id, name, func, ret, nargs, argtypes)
-
 #define HANDLES(id, name, func, ret, nargs, argtypes) \
-	HANDLES_MAYBE (TRUE, id, name, func, ret, nargs, argtypes)
+	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
+	MONO_HANDLE_IMPLEMENT (id, name, func, ret, nargs, argtypes)
 
 #include "metadata/icall-def.h"
 
 #undef HANDLES
-#undef HANDLES_MAYBE
 #undef HANDLES_REUSE_WRAPPER
 #undef ICALL_TYPE
 #undef ICALL
