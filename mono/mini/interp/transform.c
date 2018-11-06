@@ -685,12 +685,10 @@ store_inarg(TransformData *td, int n)
 	}
 }
 
-static void 
-load_local(TransformData *td, int n)
+static void
+load_local_general (TransformData *td, int offset, MonoType *type)
 {
-	MonoType *type = td->header->locals [n];
 	int mt = mint_type (type);
-	int offset = td->rtm->local_offsets [n];
 	MonoClass *klass = NULL;
 	if (mt == MINT_TYPE_VT) {
 		klass = mono_class_from_mono_type_internal (type);
@@ -717,6 +715,14 @@ load_local(TransformData *td, int n)
 			klass = mono_class_from_mono_type_internal (type);
 	}
 	PUSH_TYPE(td, stack_type[mt], klass);
+}
+
+static void
+load_local (TransformData *td, int n)
+{
+	MonoType *type = td->header->locals [n];
+	int offset = td->rtm->local_offsets [n];
+	load_local_general (td, offset, type);
 }
 
 static void 
@@ -2278,6 +2284,14 @@ interp_method_compute_offsets (InterpMethod *imethod, MonoMethodSignature *signa
 	g_assert (imethod->args_size < 10000);
 }
 
+static MonoType*
+get_arg_type (MonoMethodSignature *signature, int arg_n)
+{
+	if (signature->hasthis && arg_n == 0)
+		return mono_get_object_type ();
+	return signature->params [arg_n - !!signature->hasthis];
+}
+
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
 {
@@ -2302,6 +2316,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	MonoDomain *domain = rtm->domain;
 	MonoMethodSignature *signature = mono_method_signature_internal (method);
 	gboolean ret = TRUE;
+	guint32 *arg_offsets = NULL;
 
 	original_bb = bb = mono_basic_block_split (method, error, header);
 	goto_if_nok (error, exit);
@@ -2424,6 +2439,26 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		/* safepoint is required on method entry */
 		if (mono_threads_are_safepoints_enabled ())
 			ADD_CODE (td, MINT_SAFEPOINT);
+	} else {
+		int offset;
+		arg_offsets = (guint32*) g_malloc ((!!signature->hasthis + signature->param_count) * sizeof (guint32));
+		/* Allocate locals to store inlined method args from stack */
+		for (i = signature->param_count - 1; i >= 0; i--) {
+			offset = create_interp_local (td, signature->params [i]);
+			arg_offsets [i + !!signature->hasthis] = offset;
+			store_local_general (td, offset, signature->params [i]);
+		}
+
+		if (signature->hasthis) {
+			/*
+			 * If this is value type, it is passed by address and not by value.
+			 * FIXME We should use MINT_TYPE_P instead of MINT_TYPE_O
+			 */
+			MonoType *type = mono_get_object_type ();
+			offset = create_interp_local (td, type);
+			arg_offsets [0] = offset;
+			store_local_general (td, offset, type);
+		}
 	}
 
 	while (td->ip < end) {
@@ -2514,10 +2549,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		case CEE_LDARG_0:
 		case CEE_LDARG_1:
 		case CEE_LDARG_2:
-		case CEE_LDARG_3:
-			load_arg (td, *td->ip - CEE_LDARG_0);
+		case CEE_LDARG_3: {
+			int arg_n = *td->ip - CEE_LDARG_0;
+			if (td->method == method)
+				load_arg (td, arg_n);
+			else
+				load_local_general (td, arg_offsets [arg_n], get_arg_type (signature, arg_n));
 			++td->ip;
 			break;
+		}
 		case CEE_LDLOC_0:
 		case CEE_LDLOC_1:
 		case CEE_LDLOC_2:
@@ -2532,12 +2572,18 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			store_local (td, *td->ip - CEE_STLOC_0);
 			++td->ip;
 			break;
-		case CEE_LDARG_S:
-			load_arg (td, ((guint8 *)td->ip)[1]);
+		case CEE_LDARG_S: {
+			int arg_n = ((guint8 *)td->ip)[1];
+			if (td->method == method)
+				load_arg (td, arg_n);
+			else
+				load_local_general (td, arg_offsets [arg_n], get_arg_type (signature, arg_n));
 			td->ip += 2;
 			break;
+		}
 		case CEE_LDARGA_S: {
 			/* NOTE: n includes this */
+			INLINE_FAILURE; // probably uncommon
 			int n = ((guint8 *) td->ip) [1];
 			ADD_CODE (td, MINT_LDARGA);
 			ADD_CODE (td, td->rtm->arg_offsets [n]);
@@ -2545,10 +2591,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			td->ip += 2;
 			break;
 		}
-		case CEE_STARG_S:
-			store_arg (td, ((guint8 *)td->ip)[1]);
+		case CEE_STARG_S: {
+			int arg_n = ((guint8 *)td->ip)[1];
+			if (td->method == method)
+				store_arg (td, arg_n);
+			else
+				store_local_general (td, arg_offsets [arg_n], get_arg_type (signature, arg_n));
 			td->ip += 2;
 			break;
+		}
 		case CEE_LDLOC_S:
 			load_local (td, ((guint8 *)td->ip)[1]);
 			td->ip += 2;
@@ -4970,11 +5021,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				PUSH_SIMPLE_TYPE (td, STACK_TYPE_F);
 				break;
 			}
-			case CEE_LDARG:
-				load_arg (td, read16 (td->ip + 1));
+			case CEE_LDARG: {
+				int arg_n = read16 (td->ip + 1);
+				if (td->method == method)
+					load_arg (td, arg_n);
+				else
+					load_local_general (td, arg_offsets [arg_n], get_arg_type (signature, arg_n));
 				td->ip += 3;
 				break;
+			}
 			case CEE_LDARGA: {
+				INLINE_FAILURE;
 				int n = read16 (td->ip + 1);
 				ADD_CODE (td, MINT_LDARGA);
 				ADD_CODE (td, td->rtm->arg_offsets [n]); /* FIX for large offsets */
@@ -4982,10 +5039,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->ip += 3;
 				break;
 			}
-			case CEE_STARG:
-				store_arg (td, read16 (td->ip + 1));
+			case CEE_STARG: {
+				int arg_n = read16 (td->ip + 1);
+				if (td->method == method)
+					store_arg (td, arg_n);
+				else
+					store_local_general (td, arg_offsets [arg_n], get_arg_type (signature, arg_n));
 				td->ip += 3;
 				break;
+			}
 			case CEE_LDLOC:
 				load_local (td, read16 (td->ip + 1));
 				td->ip += 3;
@@ -5167,6 +5229,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	}
 
 exit_ret:
+	g_free (arg_offsets);
 	mono_basic_block_free (original_bb);
 	for (i = 0; i < header->code_size; ++i)
 		g_free (td->stack_state [i]);
