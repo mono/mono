@@ -54,7 +54,8 @@ xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs 
 endif
 endif
 endif
-endif
+
+endif # ($(USE_XTEST_REMOTE_EXECUTOR), YES)
 
 xunit_class_deps := 
 
@@ -71,29 +72,27 @@ test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROF
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
-test_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+test_sourcefile_base = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
 
-ifeq ($(wildcard $(test_sourcefile)),)
-test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+ifeq ($(wildcard $(test_sourcefile_base)),)
+test_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
 endif
 
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
 test_lib_output = $(test_lib_dir)/$(test_lib)
 
-test_sourcefile_excludes = $(test_lib).exclude.sources
+test_sourcefile_base_excludes = $(test_lib).exclude.sources
 
 test_pdb = $(test_lib:.dll=.pdb)
-test_response = $(depsdir)/$(test_lib).response
-test_makefrag = $(depsdir)/$(test_lib).makefrag
 test_flags = $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
 ifndef NO_BUILD
 test_flags += -r:$(the_assembly)
 test_assembly_dep = $(the_assembly)
 endif
-tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_response) $(test_makefrag)
+tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb)
 
-xtest_sourcefile = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-xtest_sourcefile_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
+xtest_sourcefile_base = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+xtest_sourcefile_base_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
@@ -102,16 +101,16 @@ xtest_response = $(depsdir)/$(xunit_test_lib).response
 xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
 xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
 
-ifeq ($(wildcard $(xtest_sourcefile)),)
-xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+ifeq ($(wildcard $(xtest_sourcefile_base)),)
+xtest_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
 tests_CLEAN_FILES += $(xtest_lib_output) $(xtest_response) $(xtest_makefrag)
 endif
 
 ifndef HAVE_CS_TESTS
-HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
+HAVE_CS_TESTS := $(wildcard $(test_sourcefile_base))
 endif
 
-HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile))
+HAVE_CS_XTESTS := $(wildcard $(xtest_sourcefile_base))
 
 endif # !NO_TEST
 
@@ -254,7 +253,7 @@ endif
 TEST_FILES =
 
 ifdef HAVE_CS_TESTS
-TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -e '/^\#.*$$/d' -et -e 's,^,Test/,' $(test_sourcefile)`
+TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -e '/^\#.*$$/d' -et -e 's,^,Test/,' $(test_sourcefile_base)`
 endif
 
 ifdef HAVE_CS_TESTS
@@ -262,23 +261,39 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
+test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
+
+test_sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).sourcesX
+$(test_sourcefile): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(depsdir)/.stamp
+	$(GENSOURCES) --trace:4 --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+
+test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).responseX
+$(test_response): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
+	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(test_sourcefile) >$@
+
+test_makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).makefragX
+$(test_makefrag): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
+	@echo Creating $@ ...
+	@sed 's,^,$(build_lib): ,' $< >$@
+	@if test ! -f $(test_sourcefile).makefrag; then :; else \
+	   cat $(test_sourcefile).makefrag >> $@ ; \
+	   echo '$@: $(test_sourcefile).makefrag' >> $@; \
+	   echo '$(test_sourcefile).makefrag:' >> $@; fi
+
 $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
-test_response_preprocessed = $(test_response)_preprocessed
+tests_CLEAN_FILES += $(test_sourcefile) $(test_response) $(test_makefrag)
 
-# This handles .excludes/.sources pairs, as well as resolving the
-# includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources)
-	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
-$(test_response): $(test_response_preprocessed)
-#	@echo Creating $@ ...
-	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_response_preprocessed) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
-$(test_makefrag): $(test_response)
-#	@echo Creating $@ ...
-	@sed 's,^,$(test_lib_output): ,' $< >$@
+martin-test::
+	@echo $(LIBRARY) - $(ASSEMBLY) - $(ASSEMBLY_EXT)
+	@echo $(ASSEMBLY:$(ASSEMBLY_EXT)=)
+	@echo $(test_sourcefile_base) - $(xtest_sourcefile_base)
+	@echo $(test_sourcefile)
+	@echo $(test_response)
+	@echo $(test_makefrag)
 
 -include $(test_makefrag)
 
@@ -338,8 +353,8 @@ xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_excludes))
-	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
+$(xtest_response): $(xtest_sourcefile_base) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_base_excludes))
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_sourcefile_base)" "$(xtest_sourcefile_base_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
