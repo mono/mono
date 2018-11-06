@@ -24,67 +24,82 @@ typedef struct CollectMetadataContext
 	MonoMetadataSnapshot* metadata;
 } CollectMetadataContext;
 
-static void ContextInsertClass(CollectMetadataContext* context, MonoClass* klass)
+static void
+ContextRecurseClassData (CollectMetadataContext *context, MonoClass *klass)
 {
 	gpointer orig_key, value;
+	gpointer iter = NULL;
+	MonoClassField *field = NULL;
+	int fieldCount;
+
 	/* use g_hash_table_lookup_extended as it returns boolean to indicate if value was found.
 	* If we use g_hash_table_lookup it returns the value which we were comparing to NULL. The problem is
 	* that 0 is a valid class index and was confusing our logic.
 	*/
-	if (klass->inited && !g_hash_table_lookup_extended(context->allTypes, klass, &orig_key, &value))
-		g_hash_table_insert(context->allTypes, klass, GINT_TO_POINTER(context->currentIndex++));
-}
+	if (!g_hash_table_lookup_extended (context->allTypes, klass, &orig_key, &value))
+		g_hash_table_insert (context->allTypes, klass, GINT_TO_POINTER (context->currentIndex++));
 
-static void CollectHashMapClass(gpointer key, gpointer value, gpointer user_data)
-{
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoClass* klass = (MonoClass*)value;
-	ContextInsertClass(context, klass);
-}
+	fieldCount = mono_class_num_fields (klass);
+	if (fieldCount > 0) {
+		while ((field = mono_class_get_fields (klass, &iter))) {
+			MonoClass *fieldKlass = mono_class_from_mono_type (field->type);
 
-static void CollectHashMapListClasses(gpointer key, gpointer value, gpointer user_data)
-{
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	GSList* list = (GSList*)value;
-
-	while (list != NULL)
-	{
-		MonoClass* klass = (MonoClass*)list->data;
-		ContextInsertClass(context, klass);
-
-		list = g_slist_next(list);
+			if (!g_hash_table_lookup_extended (context->allTypes, fieldKlass, &orig_key, &value))
+				ContextRecurseClassData (context, fieldKlass);
+		}
 	}
 }
 
-static void CollectGenericClass(MonoGenericClass* genericClass, gpointer user_data)
+static void
+CollectHashMapClass (gpointer key, gpointer value, gpointer user_data)
 {
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-
-	if (genericClass->cached_class != NULL)
-		ContextInsertClass(context, genericClass->cached_class);
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	MonoClass *klass = (MonoClass *)value;
+	ContextRecurseClassData (context, klass);
 }
 
-static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetadataContext* context)
+static void
+CollectHashMapListClasses (gpointer key, gpointer value, gpointer user_data)
+{
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	GSList *list = (GSList *)value;
+
+	while (list != NULL) {
+		MonoClass *klass = (MonoClass *)list->data;
+		ContextRecurseClassData (context, klass);
+
+		list = g_slist_next (list);
+	}
+}
+
+static void
+CollectGenericClass (MonoGenericClass *genericClass, gpointer user_data)
+{
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+
+	if (genericClass->cached_class != NULL)
+		ContextRecurseClassData (context, genericClass->cached_class);
+}
+
+static void
+CollectImageMetaData (MonoImage *image, gpointer value, CollectMetadataContext *context)
 {
 	int i;
 	MonoTableInfo *tdef = &image->tables[MONO_TABLE_TYPEDEF];
 	GSList *list;
 
-	if (image->dynamic)
-	{
+	if (image->dynamic) {
 		GHashTableIter iter;
 		gpointer key;
-		MonoDynamicImage* dynamicImage = (MonoDynamicImage*)image;
+		MonoDynamicImage *dynamicImage = (MonoDynamicImage *)image;
+		g_hash_table_iter_init (&iter, dynamicImage->typeref);
 
-		g_hash_table_iter_init(&iter, dynamicImage->typeref);
-
-		while (g_hash_table_iter_next(&iter, &key, NULL))
-		{
-			MonoType* monoType = (MonoType*)key;
-			MonoClass* klass = mono_type_get_class(monoType);
+		while (g_hash_table_iter_next (&iter, &key, NULL)) {
+			MonoType *monoType = (MonoType *)key;
+			MonoClass *klass = mono_type_get_class (monoType);
 
 			if (klass)
-				ContextInsertClass(context, klass);
+				ContextRecurseClassData (context, klass);
 		}
 	}
 
@@ -93,119 +108,121 @@ static void CollectImageMetaData(MonoImage* image, gpointer value, CollectMetada
 	*/
 	list = image->reflection_info_unregister_classes;
 
-	while (list) 
-	{
+	while (list) {
 		MonoClass *klass = (MonoClass *)list->data;
 
 		if (klass)
-			ContextInsertClass(context, klass);
+			ContextRecurseClassData (context, klass);
 
 		list = list->next;
 	}
 
-	for (i = 1; i < tdef->rows; ++i)
-	{
+	for (i = 1; i < tdef->rows; ++i) {
 		MonoClass *klass;
 		MonoError error;
 
 		guint32 token = (i + 1) | MONO_TOKEN_TYPE_DEF;
 
-		klass = mono_class_get_checked(image, token, &error);
+		klass = mono_class_get_checked (image, token, &error);
 
 		if (klass)
-			ContextInsertClass(context, klass);
+			ContextRecurseClassData (context, klass);
 	}
 
 	if (image->array_cache)
-		g_hash_table_foreach(image->array_cache, CollectHashMapListClasses, context);
+		g_hash_table_foreach (image->array_cache, CollectHashMapListClasses, context);
 
 	if (image->szarray_cache)
-		g_hash_table_foreach(image->szarray_cache, CollectHashMapClass, context);
+		g_hash_table_foreach (image->szarray_cache, CollectHashMapClass, context);
 
 	if (image->ptr_cache)
-		g_hash_table_foreach(image->ptr_cache, CollectHashMapClass, context);
+		g_hash_table_foreach (image->ptr_cache, CollectHashMapClass, context);
 }
 
-static int FindClassIndex(GHashTable* hashTable, MonoClass* klass)
+static int
+FindClassIndex (GHashTable *hashTable, MonoClass *klass)
 {
 	gpointer orig_key, value;
 
-	if (!g_hash_table_lookup_extended(hashTable, klass, &orig_key, &value))
+	if (!g_hash_table_lookup_extended (hashTable, klass, &orig_key, &value))
 		return -1;
 
-	return GPOINTER_TO_INT(value);
+	return GPOINTER_TO_INT (value);
 }
 
-static void AddMetadataType(gpointer key, gpointer value, gpointer user_data)
+static void
+AddMetadataType (gpointer key, gpointer value, gpointer user_data)
 {
-	MonoClass* klass = (MonoClass*)key;
-	int index = GPOINTER_TO_INT(value);
-	CollectMetadataContext* context = (CollectMetadataContext*)user_data;
-	MonoMetadataSnapshot* metadata = context->metadata;
-	MonoMetadataType* type = &metadata->types[index];
+	MonoClass *klass = (MonoClass *)key;
 
-	if (klass->rank > 0)
-	{
-		type->flags = (MonoMetadataTypeFlags)(kArray | (kArrayRankMask & (klass->rank << 16)));
-		type->baseOrElementTypeIndex = FindClassIndex(context->allTypes, mono_class_get_element_class(klass));
-	}
-	else
-	{
+	int index = GPOINTER_TO_INT (value);
+	CollectMetadataContext *context = (CollectMetadataContext *)user_data;
+	MonoMetadataSnapshot *metadata = context->metadata;
+	MonoMetadataType *type = &metadata->types[index];
+
+	if (klass->rank > 0) {
+		type->flags = (MonoMetadataTypeFlags) (kArray | (kArrayRankMask & (klass->rank << 16)));
+		type->baseOrElementTypeIndex = FindClassIndex (context->allTypes, mono_class_get_element_class (klass));
+	} else {
 		gpointer iter = NULL;
 		int fieldCount = 0;
-		MonoClassField* field;
-		MonoClass* baseClass;
-		MonoVTable* vtable;
-		void* statics_data;
+		MonoClassField *field;
+		MonoClass *baseClass;
+		MonoVTable *vtable;
+		void *statics_data;
 
 		type->flags = (klass->valuetype || klass->byval_arg.type == MONO_TYPE_PTR) ? kValueType : kNone;
 		type->fieldCount = 0;
+		fieldCount = mono_class_num_fields (klass);
+		if (fieldCount > 0) {
+			type->fields = g_new (MonoMetadataField, fieldCount);
 
-		if (mono_class_num_fields(klass) > 0)
-		{
-			type->fields = g_new(MonoMetadataField, mono_class_num_fields(klass));
+			while ((field = mono_class_get_fields (klass, &iter))) {
+				MonoMetadataField *metaField = &type->fields[type->fieldCount];
+				MonoClass *typeKlass = mono_class_from_mono_type (field->type);
 
-			while ((field = mono_class_get_fields(klass, &iter)))
-			{
-				MonoMetadataField* metaField = &type->fields[type->fieldCount];
-				metaField->typeIndex = FindClassIndex(context->allTypes, mono_class_from_mono_type(field->type));
+				if (typeKlass->rank > 0)
+					metaField->typeIndex = FindClassIndex (context->allTypes, mono_class_get_element_class (typeKlass));
+				else
+					metaField->typeIndex = FindClassIndex (context->allTypes, typeKlass);
 
 				// This will happen if fields type is not initialized
 				// It's OK to skip it, because it means the field is guaranteed to be null on any object
-				if (metaField->typeIndex == -1)
+				if (metaField->typeIndex == -1) {
 					continue;
+				}
 
 				// literals have no actual storage, and are not relevant in this context.
 				if ((field->type->attrs & FIELD_ATTRIBUTE_LITERAL) != 0)
 					continue;
 
 				metaField->isStatic = (field->type->attrs & FIELD_ATTRIBUTE_STATIC) != 0;
+
 				metaField->offset = field->offset;
 				metaField->name = field->name;
 				type->fieldCount++;
 			}
 		}
 
-		vtable = mono_class_try_get_vtable(mono_domain_get(), klass);
-		statics_data = vtable ? mono_vtable_get_static_field_data(vtable) : NULL;
+		vtable = mono_class_try_get_vtable (mono_domain_get (), klass);
+		statics_data = vtable ? mono_vtable_get_static_field_data (vtable) : NULL;
 
-		type->staticsSize = statics_data ? mono_class_data_size(klass) : 0;
+		type->staticsSize = statics_data ? mono_class_data_size (klass) : 0;
 		type->statics = NULL;
 
-		if (type->staticsSize > 0)
-		{
-			type->statics = g_new0(uint8_t, type->staticsSize);
-			memcpy(type->statics, statics_data, type->staticsSize);
+		if (type->staticsSize > 0) {
+			type->statics = g_new0 (uint8_t, type->staticsSize);
+			memcpy (type->statics, statics_data, type->staticsSize);
 		}
 
-		baseClass = mono_class_get_parent(klass);
-		type->baseOrElementTypeIndex = baseClass ? FindClassIndex(context->allTypes, baseClass) : -1;
+		baseClass = mono_class_get_parent (klass);
+		type->baseOrElementTypeIndex = baseClass ? FindClassIndex (context->allTypes, baseClass) : -1;
 	}
 
-	type->assemblyName = mono_class_get_image(klass)->assembly->aname.name;
-	type->name = mono_type_get_name_full(&klass->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
+	type->assemblyName = mono_class_get_image (klass)->assembly->aname.name;
+	type->name = mono_type_get_name_full (&klass->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
 	type->typeInfoAddress = (uint64_t)klass;
-	type->size = (klass->valuetype) != 0 ? (mono_class_instance_size(klass) - sizeof(MonoObject)) : mono_class_instance_size(klass);
+	type->size = (klass->valuetype) != 0 ? (mono_class_instance_size (klass) - sizeof (MonoObject)) : mono_class_instance_size (klass);
 }
 
 static void CollectMetadata(MonoMetadataSnapshot* metadata, GHashTable* monoImages)
