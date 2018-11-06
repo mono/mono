@@ -2671,7 +2671,7 @@ namespace MonoTests.System
 		[Test] // https://github.com/mono/mono/issues/11317
 		public void DateTimeKoCulture ()
 		{
-			foreach (var culture in new [] { new CultureInfo ("ko"), new CultureInfo ("ko-KP"), new CultureInfo ("ko-KR") })
+			foreach (var culture in new [] { new CultureInfo ("ko"), new CultureInfo ("ko-KR") })
 			{
 				var dateTimeAm = new DateTime (2018, 1, 1, 11, 0, 0);
 				var dateTimePm = new DateTime (2018, 1, 1, 13, 0, 0);
