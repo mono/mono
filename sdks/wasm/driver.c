@@ -157,9 +157,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_wasm_enable_debugging ();
 #endif
 
-	mono_icall_table_init ();
-
 #ifndef ENABLE_AOT
+	mono_icall_table_init ();
 	mono_ee_interp_init ("");
 	mono_marshal_ilgen_init ();
 	mono_method_builder_ilgen_init ();

@@ -2947,10 +2947,21 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "BEFORE SAFEPOINTS");
 
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		if (bb->loop_body_start || bb == cfg->bb_entry || bb->flags & BB_EXCEPTION_HANDLER)
+	/* if the method doesn't contain
+	 *  (1) a call (so it's a leaf method)
+	 *  (2) and no loops
+	 * we can skip the GC safepoint on method entry. */
+	gboolean requires_safepoint = cfg->has_calls;
+
+	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
+		if (bb->loop_body_start || bb->flags & BB_EXCEPTION_HANDLER) {
+			requires_safepoint = TRUE;
 			mono_create_gc_safepoint (cfg, bb);
+		}
 	}
+
+	if (requires_safepoint)
+		mono_create_gc_safepoint (cfg, cfg->bb_entry);
 
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "AFTER SAFEPOINTS");
@@ -3863,7 +3874,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		}
 
 		if (cfg->verbose_level > 0 && !cfg->compile_aot) {
-			nm = mono_method_full_name (cfg->method, TRUE);
+			nm = mono_method_get_full_name (cfg->method);
 			g_print ("LLVM Method %s emitted at %p to %p (code length %d) [%s]\n", 
 					 nm, 
 					 cfg->native_code, cfg->native_code + cfg->code_len, cfg->code_len, cfg->domain->friendly_name);
