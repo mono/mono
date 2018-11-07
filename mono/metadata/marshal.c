@@ -4148,10 +4148,18 @@ handle_enum:
 	}
 
 	if (sig->ret->byref) {
+		int ldind_op;
 		/* perform indirect load and return by value */
 		MonoType* ret_byval = &mono_class_from_mono_type (sig->ret)->byval_arg;
 		g_assert (!ret_byval->byref);
-		mono_mb_emit_byte (mb, mono_type_to_ldind (ret_byval));
+		ldind_op = mono_type_to_ldind (ret_byval);
+		/* taken from similar code in mini-generic-sharing.c
+		 * we need to use mono_mb_emit_op to add method data when loading
+		 * a structure since method-to-ir needs this data for wrapper methods */
+		if (ldind_op == CEE_LDOBJ)
+			mono_mb_emit_op (mb, CEE_LDOBJ, mono_class_from_mono_type (ret_byval));
+		else
+			mono_mb_emit_byte (mb, ldind_op);
 	}
 
 	switch (sig->ret->type) {

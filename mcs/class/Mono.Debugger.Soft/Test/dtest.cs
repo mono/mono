@@ -4423,6 +4423,13 @@ public class DebuggerTests
 		m = t.GetMethod ("get_ref_string");
 		v = t.InvokeMethod (e.Thread, m, null);
 		AssertValue ("byref", v);
+
+		m = t.GetMethod ("get_ref_struct");
+		v = t.InvokeMethod (e.Thread, m, null);
+		Assert.IsTrue(v is StructMirror);
+ 		var mirror = (StructMirror)v;
+		AssertValue (1, mirror["i"]);
+		AssertValue (2.0, mirror["d"]);
 	}
 } // class DebuggerTests
 } // namespace

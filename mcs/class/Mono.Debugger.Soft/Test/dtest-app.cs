@@ -1755,6 +1755,11 @@ public class Tests : TestsBase, ITest2
 	public static ref string get_ref_string() {
 		return ref ref_return_string;
 	}
+
+	static BlittableStruct ref_return_struct = new BlittableStruct () { i = 1, d = 2.0 };
+	public static ref BlittableStruct get_ref_struct () {
+		return ref ref_return_struct;
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {
