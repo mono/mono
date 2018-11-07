@@ -121,12 +121,6 @@ sample.dll: Simple.Dependency.dll sample.cs WebAssembly.Bindings.dll WebAssembly
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/wasm_tools/monolinker.exe
-	cp $< $@
-
-$(WASM_BCL_DIR)/Mono.Cecil.dll: Mono.Cecil.dll
-	cp $< $@
-
 Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
@@ -196,7 +190,7 @@ build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
+build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
