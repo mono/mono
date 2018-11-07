@@ -337,3 +337,19 @@
 ../../../external/corefx/src/System.IO/tests/TextReader/*.cs
 ../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
 ../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+
+# System.IO.Stream
+../../../external/corefx/src/Common/tests/System/IO/CallTrackingStream.cs
+../../../external/corefx/src/System.IO/tests/Stream/*.cs
+
+# System.IO.BufferedStream
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.CloseTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.FlushTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriterTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteByteCharTests.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/StreamReaderTests.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+../../../external/corefx/src/Common/tests/System/IO/WrappedMemoryStream.cs
+../../../external/corefx/src/System.IO/tests/BufferedStream/*.cs
