@@ -14,22 +14,28 @@
 
 # Order is important. The last matching pattern has the most precedence.
 
-/acceptance-tests @akoeplinger
+/acceptance-tests @akoeplinger @kg
 /acceptance-tests/profiler-stress* @alexrp
 
 /data @marek-safar @akoeplinger @luhenry
 /data/gdb @vargaz
 /data/lldb @lewurm @vargaz
 
-/docs @luhenry @marek-safar
+/docs @luhenry @marek-safar @akoeplinger
 /docs/riscv.md @alexrp @lewurm
 /docs/sources/mono-api-profiler.html @alexrp
 
-/external @marek-safar @luhenry
+/external @akoeplinger @marek-safar
 /external/binary-reference-assemblies @marek-safar @akoeplinger
 /external/bockbuild @akoeplinger @alexischr
 /external/boringssl @baulig
+/external/cecil @marek-safar
+/external/corefx @akoeplinger @marek-safar @egorbo @alexischr
+/external/corert @akoeplinger @marek-safar @egorbo @alexischr
+/external/linker @marek-safar
+/external/llvm @luhenry @vargaz
 /external/nuget-buildtasks @radical @akoeplinger
+/external/roslyn-binaries @kg @marek-safar @akoeplinger
 
 /libgc @BrzVlad @vargaz @luhenry
 
@@ -66,6 +72,7 @@
 /mcs/mcs @marek-safar @lewurm
 /mcs/tests @marek-safar
 /mcs/tools @marek-safar @akoeplinger
+/mcs/tools/gensources @kg
 
 /mono @luhenry
 
@@ -73,19 +80,19 @@
 
 /mono/btls @baulig
 /mono/dis @lambdageek @vargaz
-/mono/eglib @kumpera @vargaz @luhenry
+/mono/eglib @vargaz @luhenry
 
-/mono/metadata @vargaz @kumpera
-/mono/metadata/*verify* @kumpera
+/mono/metadata @vargaz @lambdageek
+/mono/metadata/*verify* @lambdageek
 /mono/metadata/*profiler* @alexrp
+/mono/metadata/handle* @jaykrell @lambdageek
 /mono/metadata/monitor* @brzvlad
 /mono/metadata/sgen* @brzvlad
-/mono/metadata/threads* @luhenry @kumpera
-/mono/metadata/threadpool* @luhenry
-/mono/metadata/w32* @luhenry
-/mono/metadata/*-win* @lateralusX @luhenry
+/mono/metadata/thread* @luhenry @lateralusX
+/mono/metadata/w32* @luhenry @lateralusX @jaykrell
+/mono/metadata/*-win* @lateralusX @luhenry @luhenry
 
-/mono/mini @vargaz @kumpera
+/mono/mini @vargaz @lewurm
 /mono/mini/*cfgdump* @lewurm
 /mono/mini/*exceptions* @lewurm
 /mono/mini/*ppc* @lewurm
@@ -97,22 +104,22 @@
 
 /mono/native @baulig
 
-/mono/profiler @alexrp @kumpera
+/mono/profiler @alexrp @luhenry
 
-/mono/sgen @BrzVlad @kumpera
+/mono/sgen @BrzVlad @luhenry
 
-/mono/utils @kumpera @vargaz
-/mono/utils/atomic* @alexrp
-/mono/utils/mono-hwcap* @alexrp
-/mono/utils/mono-mem* @alexrp
-/mono/utils/mono-threads* @luhenry @kumpera
-/mono/utils/*-win* @lateralusX @kumpera
+/mono/utils @vargaz @
+/mono/utils/atomic* @lewurm
+/mono/utils/mono-hwcap* @lewurm
+/mono/utils/mono-mem* @lewurm
+/mono/utils/mono-threads* @luhenry @vargaz
+/mono/utils/*-win* @lateralusX @jay
 
 /msvc @lateralusX @luhenry
 /msvc/*profiler* @alexrp
 /msvc/scripts @akoeplinger @kg
 
-/packaging/ @alexischr @akoeplinger @luhenry @directhex
+/packaging @alexischr @akoeplinger @luhenry @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
 
 /runtime @akoeplinger @marek-safar @luhenry
@@ -125,22 +132,22 @@
 /scripts/ci @akoeplinger @alexischr
 /scripts/ci/run-test-profiler-stress-tests.sh @alexrp
 
-/sdks @marek-safar @luhenry
+/sdks @marek-safar @luhenry @vargaz
 /sdks/builds/android* @luhenry @jonpryor
 /sdks/builds/mxe* @luhenry @jonpryor
 /sdks/builds/ios* @vargaz @rolfbjarne
-/sdks/wasm @kumpera @lrz
+/sdks/builds/wasm* @vargaz @kjpou1
+/sdks/wasm @vargaz @kjpou1 @kg
 /sdks/ios @vargaz @rolfbjarne
 /sdks/android @luhenry @jonpryor
 
 /support @luhenry @vargaz
 
-/tools @kumpera @luhenry
+/tools @luhenry
 /tools/checker @tritao
-/tools/crash-bisector @kumpera
 /tools/locale-builder @marek-safar
 /tools/monograph @vargaz
 /tools/nuget-hash-extractor @marek-safar
 /tools/offsets-tool @lewurm @rolfbjarne
-/tools/pedump @kumpera @lambdageek
+/tools/pedump @lambdageek
 /tools/sgen @brzvlad
