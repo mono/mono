@@ -187,7 +187,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   echo "ENABLE_WASM_CROSS=1" >> sdks/Make.config
 	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	       echo "ENABLE_CXX=1" >> sdks/Make.config
 	   fi
