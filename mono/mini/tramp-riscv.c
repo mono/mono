@@ -209,14 +209,19 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	return NULL;
 }
 
-/*
 gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
 }
-*/
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+	NOT_IMPLEMENTED;
+	return NULL;
+}
 
 #else
 
@@ -281,13 +286,18 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	return NULL;
 }
 
-/*
 gpointer
 mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
 	g_assert_not_reached ();
 	return NULL;
 }
-*/
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
 
 #endif

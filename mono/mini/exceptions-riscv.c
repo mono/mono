@@ -11,46 +11,62 @@
 
 #ifndef DISABLE_JIT
 
+
+static gpointer
+nop_stub (void)
+{
+	guint8 *code, *start;
+
+	start = code = mono_global_codeman_reserve (0x50);
+
+	/* nop */
+	riscv_addi (code, RISCV_X0, RISCV_X0, 0);
+
+	mono_arch_flush_icache (start, code - start);
+
+	return start;
+}
+
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 gpointer
 mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
-	NOT_IMPLEMENTED;
-	return NULL;
+	*info = NULL;
+	return nop_stub ();
 }
 
 #else
@@ -102,7 +118,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 void
 mono_arch_exceptions_init (void)
 {
-	NOT_IMPLEMENTED;
+	// NOT_IMPLEMENTED;
 }
 
 gboolean
@@ -159,10 +175,14 @@ mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 	MONO_CONTEXT_SET_IP (ctx, func);
 }
 
-/*
 void
-mono_arch_undo_ip_adjustment (MonoContext *ctx)
+mono_arch_undo_ip_adjustment (MonoContext *context)
 {
-	MONO_CONTEXT_SET_IP (ctx, (guint8 *) MONO_CONTEXT_GET_IP (ctx) + 1);
+	NOT_IMPLEMENTED;
 }
-*/
+
+void
+mono_arch_do_ip_adjustment (MonoContext *context)
+{
+	g_assert_not_reached ();
+}
