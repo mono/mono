@@ -269,20 +269,6 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #endif
 }
 
-void
-mono_arch_set_native_call_context (CallContext *ccontext, gpointer frame,
-                                   MonoMethodSignature *sig)
-{
-	NOT_IMPLEMENTED;
-}
-
-void
-mono_arch_get_native_call_context (CallContext *ccontext, gpointer frame,
-                                   MonoMethodSignature *sig)
-{
-	NOT_IMPLEMENTED;
-}
-
 MonoDynCallInfo *
 mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
@@ -331,6 +317,34 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code,
 	NOT_IMPLEMENTED;
 }
 
+/* Set arguments in the ccontext (for i2n entry) */
+void
+mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	NOT_IMPLEMENTED;
+}
+
+/* Set return value in the ccontext (for n2i return) */
+void
+mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	NOT_IMPLEMENTED;
+}
+
+/* Gets the arguments from ccontext (for n2i entry) */
+void
+mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	NOT_IMPLEMENTED;
+}
+
+/* Gets the return value from ccontext (for i2n exit) */
+void
+mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+{
+	NOT_IMPLEMENTED;
+}
+
 #ifndef DISABLE_JIT
 
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
@@ -364,8 +378,7 @@ mono_arch_opcode_needs_emulation (MonoCompile *cfg, int opcode)
 }
 
 gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
-                               MonoMethodSignature *callee_sig)
+mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
 	NOT_IMPLEMENTED;
 }
@@ -577,22 +590,6 @@ mono_riscv_emit_store (guint8 *code, int rs1, int rs2, gint32 imm)
 	return code;
 }
 
-void *
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p,
-                             gboolean enable_arguments)
-{
-    NOT_IMPLEMENTED;
-    return NULL;
-}
-
-void *
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p,
-                             gboolean enable_arguments)
-{
-    NOT_IMPLEMENTED;
-    return NULL;
-}
-
 guint8 *
 mono_arch_emit_prolog (MonoCompile *cfg)
 {
@@ -633,6 +630,7 @@ mono_arch_get_trampolines (gboolean aot)
 
 #endif
 
+#if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)
 void
 mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
@@ -689,3 +687,4 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 	NOT_IMPLEMENTED;
 	return NULL;
 }
+#endif /* MONO_ARCH_SOFT_DEBUG_SUPPORTED */

@@ -40,6 +40,13 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 }
 
 gpointer
+mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
+{
+	NOT_IMPLEMENTED;
+	return NULL;
+}
+
+gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
 	NOT_IMPLEMENTED;
