@@ -167,6 +167,13 @@ endef
 
 $(foreach check,$(BCL_CHECKS),$(eval $(call BCLTestAssemblyTemplate,$(check))))
 
+# corlib tests need additional resource assemblies
+app/assets/asm/monodroid_corlib_test.dll: app/assets/asm/es-ES/monodroid_corlib_test.resources.dll app/assets/asm/nn-NO/monodroid_corlib_test.resources.dll
+
+app/assets/asm/%/monodroid_corlib_test.resources.dll: $(TOP)/mcs/class/lib/monodroid/tests/%/monodroid_corlib_test.resources.dll
+	mkdir -p $(dir $@)
+	cp $< $@
+
 ## Package the mini test assembly
 
 MINI_TEST_SOURCES= \

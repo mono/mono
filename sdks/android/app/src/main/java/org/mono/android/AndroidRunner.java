@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import org.mono.android.AndroidTestRunner.R;
 
@@ -72,8 +73,19 @@ public class AndroidRunner extends Instrumentation
 			for (int i = 0; i < res.length; ++i) {
 				String fromFile = path + "/" + res [i];
 				String toFile = outpath + "/" + res [i];
+
+				InputStream fromStream;
+				try {
+					fromStream = am.open (fromFile);
+				} catch (FileNotFoundException e) {
+					// am.list() returns directories, we need to process them too
+					new File (toFile).mkdirs ();
+					copyAssetDir (am, fromFile, toFile);
+					continue;
+				}
+
 				Log.w ("MONO", "\tCOPYING " + fromFile + " to " + toFile);
-				copy (am.open (fromFile), new FileOutputStream (toFile));
+				copy (fromStream, new FileOutputStream (toFile));
 			}
 		} catch (Exception e) {
 			Log.w ("MONO", "WTF", e);
