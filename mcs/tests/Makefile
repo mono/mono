@@ -21,8 +21,8 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
-ifdef VALID_PROFILE
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
+ifdef VALID_TEST_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
@@ -46,12 +46,8 @@ test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 	-rm -f bootstrap-cast.exe casts.cs casts-boot.exe casts-mcs.exe boot-casts.out mcs-casts.out
 
-TEST_PATTERN = 'v2'
-
-ifeq (net_4_x, $(PROFILE))
 TEST_PATTERN = 'v4'
 DEFINES = -compiler-options:"-d:NET_4_0;NET_4_5 -debug"
-endif
 
 LOCAL_RUNTIME_FLAGS = --verify-all
 COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe

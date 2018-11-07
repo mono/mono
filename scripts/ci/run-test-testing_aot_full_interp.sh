@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1 CI=1
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1
 
 # FIXME
 #${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test

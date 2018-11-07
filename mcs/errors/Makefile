@@ -42,8 +42,8 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
-ifdef VALID_PROFILE
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
+ifdef VALID_TEST_PROFILE
 
 qcheck: run-mcs-tests 
 
