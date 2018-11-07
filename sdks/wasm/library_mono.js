@@ -63,6 +63,16 @@ var MonoSupportLib = {
 			console.log (">>mono_wasm_runtime_ready");
 			this.mono_wasm_runtime_is_ready = true;
 			debugger;
+
+			// Call the callback function(s).
+			if (Module['onMonoRuntimeInitialized']) {
+				if (typeof Module['onMonoRuntimeInitialized'] === 'function') Module['onMonoRuntimeInitialized'] = [Module['onMonoRuntimeInitialized']];
+				while (Module['onMonoRuntimeInitialized'].length > 0) {
+					Module['onMonoRuntimeInitialized'].shift()();
+				}
+			  
+			}
+
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
