@@ -326,6 +326,9 @@ class Driver {
 			}
 		}
 
+		if (!enable_linker || !enable_aot)
+			enable_dedup = false;
+
 		AssemblyData dedup_asm = null;
 
 		if (enable_dedup) {
@@ -381,8 +384,6 @@ class Driver {
 			}
 			GenDriver (builddir, profilers);
 		}
-		if (!enable_linker || !enable_aot)
-			enable_dedup = false;
 
 		string profiler_libs = "";
 		string profiler_aot_args = "";
