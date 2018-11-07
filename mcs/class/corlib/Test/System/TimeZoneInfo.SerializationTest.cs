@@ -55,7 +55,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("MobileNotWorking")]
 		public void SerializeCustomZoneWithFloatingDaylightTransitions ()
 		{
 			var tz3rules = new TimeZoneInfo.AdjustmentRule[] { TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (1, 1, 1), new DateTime (9999, 12, 31), TimeSpan.FromMinutes (23), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 58, 0), 3, 2, DayOfWeek.Tuesday), TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2, DayOfWeek.Tuesday)) };
@@ -64,7 +64,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("MobileNotWorking")]
 		public void SerializeCustomZoneWithFixedDaylightTransitions ()
 		{
 			var tz4rules = new TimeZoneInfo.AdjustmentRule[] { TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (1, 1, 1), new DateTime (9999, 12, 31), TimeSpan.FromMinutes (23), TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1, 2, 15, 59, 48), 3, 2), TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1, 2, 15, 59, 999), 6, 2)) };
@@ -73,7 +73,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("MobileNotWorking")]
 		public void SerializeCustomZoneWithMultipleDaylightRules ()
 		{
 			var tz5rules = new TimeZoneInfo.AdjustmentRule[] {
