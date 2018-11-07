@@ -42,7 +42,7 @@ export QEMU_LD_PREFIX=$RISCV/sysroot
 Install some dependencies needed to build the toolchain:
 
 ```console
-# apt install sudo apt-get install autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev libusb-1.0-0-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev device-tree-compiler pkg-config libexpat-dev
+# apt install autoconf automake autotools-dev curl libmpc-dev libmpfr-dev libgmp-dev libusb-1.0-0-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev device-tree-compiler pkg-config libexpat-dev libglib2.0-dev libpixman-1-dev
 ```
 
 Now you can build the toolchain:
