@@ -71,7 +71,6 @@ typedef struct
 	InterpMethod *rtm;
 	const unsigned char *il_code;
 	const unsigned char *ip;
-	const unsigned char *last_ip;
 	const unsigned char *in_start;
 	int code_size;
 	int body_start_offset;
@@ -5130,8 +5129,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			td->last_new_ip = td->new_code + new_in_start_offset;
 		else if (td->is_bb_start [td->in_start - td->il_code])
 			td->is_bb_start [td->ip - td->il_code] = 1;
-			
-		td->last_ip = td->in_start;
 	}
 
 	g_assert (td->ip == end);
