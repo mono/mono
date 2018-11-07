@@ -92,6 +92,13 @@ You can run Mono with QEMU like this:
 $ qemu-riscv64 $RISCV/sysroot/bin/mono hello.exe
 ```
 
+## Debugging
+
+```console
+$ qemu-riscv64 -g 12345 ./mono/mini/mono-sgen --interp basic.exe &
+$ riscv64-unknown-elf-gdb -ex 'target remote localhost:12345' -ex 'b main' -ex 'c' ./mono/mini/mono-sgen
+```
+
 ## Things to be done
 
 In no particular order:
