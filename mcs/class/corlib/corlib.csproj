@@ -798,6 +798,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\ArrayList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\Hashtable.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\Collections\IHashCodeProvider.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\IO\BufferedStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimization.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\LoaderOptimizationAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\OperatingSystem.cs" />
@@ -873,6 +874,7 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\GCHandleType.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ArraySortHelper.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Stream.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\InsufficientMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\MissingFieldException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\MissingMemberException.cs" />
@@ -894,6 +896,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Globalization\GlobalizationMode.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\IO\FileLoadException.CoreRT.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\IO\Stream.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\MissingMemberException.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.CoreRT.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
@@ -1019,12 +1022,10 @@
     <Compile Include="..\referencesource\mscorlib\system\io\__hresults.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\binaryreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\binarywriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\bufferedstream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\directory.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\fileinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesystemenumerable.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\filesysteminfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\stream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\streamwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
@@ -1975,6 +1976,7 @@
     <Compile Include="System\TimeZoneInfo.Android.cs" />
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+    <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
     <Compile Include="System\TimeZoneInfo.WinRT.cs" />
     <Compile Include="System\TimeZoneInfo.cs" />
     <Compile Include="System\TypeIdentifier.cs" />
@@ -2011,7 +2013,6 @@
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
     <Compile Include="corert\RuntimeAugments.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
-    <Compile Include="corert\Stream.cs" />
     <Compile Include="corert\Task.cs" />
     <Compile Include="corert\ThreadPool.cs" />
     <Compile Include="corert\Type.cs" />
