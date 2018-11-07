@@ -56,16 +56,6 @@ namespace System.Reflection {
 		public static readonly TypeFilter FilterTypeName = new TypeFilter (filter_by_type_name);
 		public static readonly TypeFilter FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
 	
-#pragma warning disable 649	
-		internal IntPtr _impl; /* a pointer to a MonoImage */
-		internal Assembly assembly;
-		internal string fqname;
-		internal string name;
-		internal string scopename;
-		internal bool is_resource;
-		internal int token;
-#pragma warning restore 649		
-	
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
@@ -75,7 +65,7 @@ namespace System.Reflection {
 
 		public ModuleHandle ModuleHandle {
 			get {
-				return new ModuleHandle (_impl);
+				return new ModuleHandle (GetImpl ());
 			}
 		}
 
@@ -142,7 +132,7 @@ namespace System.Reflection {
 	
 		public override string ToString () 
 		{
-			return name;
+			return Name;
 		}
 
 		internal Guid MvId {
@@ -153,9 +143,9 @@ namespace System.Reflection {
 
 		internal Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
 			if (error == ResolveTokenError.OutOfRange)
-				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
+				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, Name));
 			else
-				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
+				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, Name), "metadataToken");
 		}
 
 		internal IntPtr[] ptrs_from_types (Type[] types) {
@@ -192,7 +182,7 @@ namespace System.Reflection {
 		{
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (module._impl, token, null, null, out error);
+			IntPtr handle = ResolveTypeToken (module.GetImpl (), token, null, null, out error);
 			if (handle == IntPtr.Zero)
 				return null;
 			else
@@ -446,5 +436,7 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
+
+		internal abstract IntPtr GetImpl ();
 	}
 }
