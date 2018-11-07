@@ -77,6 +77,16 @@ namespace System.Reflection.Emit {
 
 #pragma warning disable 169, 414
 		#region Sync with object-internals.h
+		// This class inherits from Module, but the runtime expects it to have the same layout as MonoModule
+		#region Sync with MonoModule
+		internal IntPtr _impl; /* a pointer to a MonoImage */
+		internal Assembly assembly;
+		internal string fqname;
+		internal string name;
+		internal string scopename;
+		internal bool is_resource;
+		internal int token;
+		#endregion
 		private UIntPtr dynamic_image; /* GC-tracked */
 		private int num_types;
 		private TypeBuilder[] types;
@@ -1225,6 +1235,10 @@ namespace System.Reflection.Emit {
 			get {
 				return get_MetadataToken (this);
 			}
+		}
+
+		internal override IntPtr GetImpl () {
+			return _impl;
 		}
 	}
 
