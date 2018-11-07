@@ -787,7 +787,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Category ("SatelliteAssembliesNotWorking")]
 		public void TestSatellites ()
 		{
 			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);
