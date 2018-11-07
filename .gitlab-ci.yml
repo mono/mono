@@ -1,6 +1,18 @@
 stages:
+- runall
 - build
 - collate
+
+# This is just a config to help trigger rest of the builds
+run_all_builds:
+  image: ubuntu:latest
+  stage: runall
+  variables:
+    GIT_STRATEGY: none
+  script:
+  - pwd
+  when: manual
+  allow_failure: false
 
 # Build
 build_osx_runtime:
