@@ -86,7 +86,7 @@ namespace System.Reflection {
 		{
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (module.GetModuleHandleImpl (), token, null, null, out error);
+			IntPtr handle = ResolveTypeToken (module.GetImpl (), token, null, null, out error);
 			if (handle == IntPtr.Zero)
 				return null;
 			else
@@ -136,7 +136,16 @@ namespace System.Reflection {
 
 		public virtual X509Certificate GetSignerCertificate ()
 		{
-			throw new NotImplementedException ("Derived classes must implement it");
+			throw CreateNIE ();
 		}
+
+		internal virtual IntPtr GetImpl () {
+			throw CreateNIE ();
+		}
+
+		static Exception CreateNIE ()
+		{
+			return new NotImplementedException ("Derived classes must implement it");
+		}		
 	}
 }

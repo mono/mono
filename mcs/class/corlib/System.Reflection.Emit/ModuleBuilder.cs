@@ -1236,6 +1236,10 @@ namespace System.Reflection.Emit {
 				return get_MetadataToken (this);
 			}
 		}
+
+		internal override IntPtr GetImpl () {
+			return _impl;
+		}
 	}
 
 	internal class ModuleBuilderTokenGenerator : TokenGenerator {

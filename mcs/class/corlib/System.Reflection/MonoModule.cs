@@ -329,5 +329,9 @@ namespace System.Reflection {
 		{
 			return (RuntimeAssembly)assembly;
 		}
+
+		internal override IntPtr GetImpl () {
+			return _impl;
+		}
 	}
 }
