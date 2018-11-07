@@ -46,15 +46,6 @@ namespace System.Reflection {
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract partial class Module : ISerializable, ICustomAttributeProvider {
-#pragma warning disable 649	
-		internal IntPtr _impl; /* a pointer to a MonoImage */
-		internal Assembly assembly;
-		internal string fqname;
-		internal string name;
-		internal string scopename;
-		internal bool is_resource;
-		internal int token;
-#pragma warning restore 649		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int get_MetadataToken (Module module);
 		
@@ -72,9 +63,9 @@ namespace System.Reflection {
 
 		internal Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
 			if (error == ResolveTokenError.OutOfRange)
-				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
+				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, Name));
 			else
-				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
+				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, Name), "metadataToken");
 		}
 
 		internal IntPtr[] ptrs_from_types (Type[] types) {
@@ -95,7 +86,7 @@ namespace System.Reflection {
 		{
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (module._impl, token, null, null, out error);
+			IntPtr handle = ResolveTypeToken (module.GetModuleHandleImpl (), token, null, null, out error);
 			if (handle == IntPtr.Zero)
 				return null;
 			else
