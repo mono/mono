@@ -437,6 +437,8 @@ namespace System.Reflection {
 			get { return GetCustomAttributesData (); }
 		}
 
-		internal abstract IntPtr GetImpl ();
+		internal virtual IntPtr GetImpl () {
+			throw CreateNIE ();
+		}
 	}
 }
