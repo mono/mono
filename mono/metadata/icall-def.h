@@ -846,7 +846,6 @@ HANDLES(ICALL(RNG_2, "RngGetBytes", ves_icall_System_Security_Cryptography_RNGCr
 HANDLES(ICALL(RNG_3, "RngInitialize", ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize))
 HANDLES(ICALL(RNG_4, "RngOpen", ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen))
 
-#ifndef DISABLE_POLICY_EVIDENCE
 ICALL_TYPE(EVID, "System.Security.Policy.Evidence", EVID_1)
 HANDLES(ICALL(EVID_1, "IsAuthenticodePresent", ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent))
 
@@ -869,7 +868,6 @@ HANDLES(ICALL(WINPRIN_2, "IsMemberOfGroupName", ves_icall_System_Security_Princi
 ICALL_TYPE(SECSTRING, "System.Security.SecureString", SECSTRING_1)
 ICALL(SECSTRING_1, "DecryptInternal", ves_icall_System_Security_SecureString_DecryptInternal)
 ICALL(SECSTRING_2, "EncryptInternal", ves_icall_System_Security_SecureString_EncryptInternal)
-#endif /* !DISABLE_POLICY_EVIDENCE */
 
 ICALL_TYPE(SECMAN, "System.Security.SecurityManager", SECMAN_1)
 NOHANDLES(ICALL(SECMAN_1, "get_RequiresElevatedPermissions", mono_security_core_clr_require_elevated_permissions))
