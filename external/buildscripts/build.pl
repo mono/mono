@@ -275,7 +275,7 @@ if ($build)
 	{
 		# Check out on the fly
 		print(">>> Checking out mono build tools extra to : $extraBuildTools\n");
-		my $repo = 'git@gitlab.internal.unity3d.com:vm/mono-build-tools-extra.git';
+		my $repo = 'git@github.cds.internal.unity3d.com:unity/mono-build-tools-exta.git';
 		print(">>> Cloning $repo at $extraBuildTools\n");
 		my $checkoutResult = system("git", "clone", "--recurse-submodules", $repo, "$extraBuildTools");
 
