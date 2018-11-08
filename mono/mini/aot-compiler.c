@@ -8578,7 +8578,7 @@ append_mangled_type (GString *s, MonoType *t)
 		}
 		temps = g_string_free (temp, FALSE);
 		/* Include the length to avoid different length type names aliasing each other */
-		g_string_append_printf (s, "cl%x_%s_", strlen (temps), temps);
+		g_string_append_printf (s, "cl%x_%s_", (int)strlen (temps), temps);
 		g_free (temps);
 	}
 	}
@@ -9039,9 +9039,13 @@ append_mangled_context (GString *str, MonoGenericContext *context)
 	g_free (res);
 }
 
+static int count;
+
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method)
 {
+	count ++;
+
 	if (method->wrapper_type)
 		return append_mangled_wrapper (s, method);
 
@@ -9061,7 +9065,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 		g_string_append_printf (s, "_%s_", method->name);
 
 		MonoGenericContainer *container = mono_method_get_generic_container (method);
-		g_string_append_printf (s, "_%s");
+		g_string_append_printf (s, "_");
 		append_mangled_context (s, &container->context);
 
 		return append_mangled_signature (s, mono_method_signature_internal (method));
@@ -9174,9 +9178,9 @@ mono_aot_get_plt_symbol (MonoJumpInfoType type, gconstpointer data)
 	plt_entry->llvm_used = TRUE;
 
 #if defined(TARGET_MACH)
-	return g_strdup_printf (plt_entry->llvm_symbol + strlen (llvm_acfg->llvm_label_prefix));
+	return g_strdup (plt_entry->llvm_symbol + strlen (llvm_acfg->llvm_label_prefix));
 #else
-	return g_strdup_printf (plt_entry->llvm_symbol);
+	return g_strdup (plt_entry->llvm_symbol);
 #endif
 }
 
