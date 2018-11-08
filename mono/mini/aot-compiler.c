@@ -9039,13 +9039,9 @@ append_mangled_context (GString *str, MonoGenericContext *context)
 	g_free (res);
 }
 
-static int count;
-
 static gboolean
 append_mangled_method (GString *s, MonoMethod *method)
 {
-	count ++;
-
 	if (method->wrapper_type)
 		return append_mangled_wrapper (s, method);
 

@@ -98,7 +98,7 @@ mono_arch_exceptions_init (void)
 
 #endif
 
-#ifndef DISABLE_JIT
+#ifdef DISABLE_JIT
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
