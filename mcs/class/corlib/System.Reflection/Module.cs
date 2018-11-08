@@ -136,16 +136,11 @@ namespace System.Reflection {
 
 		public virtual X509Certificate GetSignerCertificate ()
 		{
-			throw CreateNIE ();
+			throw NotImplemented.ByDesign;
 		}
 
 		internal virtual IntPtr GetImpl () {
-			throw CreateNIE ();
+			throw NotImplemented.ByDesign;
 		}
-
-		static Exception CreateNIE ()
-		{
-			return new NotImplementedException ("Derived classes must implement it");
-		}		
 	}
 }
