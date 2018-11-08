@@ -40,6 +40,7 @@ public class Program
 	{
 		public bool ShowHelp { get; set; }
 		public string OutputFile { get; set; }
+		public bool ExistingOnly { get; set; }
 	}
 
 	internal static List<string> InputFiles;
@@ -52,13 +53,20 @@ public class Program
 		InputFiles = new List<string> ();
 		ExistingKeys = new Dictionary<string, object> ();
 
+		string className = "SR";
+
 		var p = new OptionSet () {
 			{ "o|out=", "Specifies output file name",
 				v => options.OutputFile = v },
 			{ "i|in=", "Specifies input file name",
 				v => InputFiles.Add (v) },
-			{ "h|help",  "Display available options", 
+			{ "n|name=", "Name for generated class, default is 'SR'",
+				v => className = v },
+			{ "h|help",  "Display available options",
 				v => options.ShowHelp = v != null },
+			{ "e|existing", "Only update existing values, do not add keys",
+				v => options.ExistingOnly = true
+			}
 		};
 
 		List<string> extra;
@@ -87,7 +95,7 @@ public class Program
 		if (!LoadStrings (resxStrings, extra))
 			return 3;
 
-		GenerateFile (resxStrings, options);
+		GenerateFile (className, resxStrings, options);
 
 		return 0;
 	}
@@ -101,7 +109,7 @@ public class Program
 		p.WriteOptionDescriptions (Console.Out);
 	}
 
-	static void GenerateFile (List<Tuple<string, string, string>> txtStrings, CmdOptions options)
+	static void GenerateFile (string className, List<Tuple<string, string, string>> txtStrings, CmdOptions options)
 	{
 //		var outputFile = options.OutputFile ?? "SR.cs";
 
@@ -111,12 +119,23 @@ public class Program
 			str.WriteLine ("//");
 			str.WriteLine ();
 
-			str.WriteLine ("partial class SR");
+			int nsIdx = className.LastIndexOf('.');
+			if (nsIdx > 0) {
+				str.WriteLine ($"namespace {className.Substring(0,nsIdx)}");
+				str.WriteLine ("{");
+				className = className.Substring(nsIdx+1);
+			}
+
+			str.WriteLine ($"partial class {className}");
 			str.WriteLine ("{");
 
 			var dict = new Dictionary<string, string> ();
 
 			foreach (var entry in txtStrings) {
+
+				if (options.ExistingOnly && !ExistingKeys.ContainsKey(entry.Item1)) {
+					continue;
+				}
 
 				var value = ToCSharpString (entry.Item2);
 				string found;
@@ -136,7 +155,18 @@ public class Program
 
 				str.WriteLine ();
 			}
+
+			foreach (var v in ExistingKeys.Keys) {
+				if (!dict.ContainsKey (v)) {
+					str.Write ($"\tpublic const string {v} = \"{v}\";");
+				}
+			}
+
 			str.WriteLine ("}");
+
+			if (nsIdx > 0) {
+				str.WriteLine ("}");
+			}
 		}
 	}
 
@@ -156,21 +186,40 @@ public class Program
 				return false;
 			}
 
-			var rr = new ResXResourceReader (fileName);
-			rr.UseResXDataNodes = true;
-			var dict = rr.GetEnumerator ();
-			while (dict.MoveNext ()) {
-				var node = (ResXDataNode)dict.Value;
-
-				if (ExistingKeys.ContainsKey (node.Name))
-					continue;
-				ExistingKeys.Add (node.Name, null);
-
-				resourcesStrings.Add (Tuple.Create (node.Name, (string) node.GetValue ((ITypeResolutionService)null), node.Comment));				
+			if (string.Equals (Path.GetExtension (fileName), ".txt", StringComparison.OrdinalIgnoreCase)) {
+				resourcesStrings.AddRange (ReadTextResources (fileName));
+			} else {
+				resourcesStrings.AddRange (ReadResxFile (fileName));
 			}
 		}
 
 		return true;
+	}
+
+	static IEnumerable<Tuple<string,string,string>> ReadResxFile (string fileName)
+	{
+		var rr = new ResXResourceReader (fileName);
+		rr.UseResXDataNodes = true;
+		var dict = rr.GetEnumerator ();
+		while (dict.MoveNext ()) {
+			var node = (ResXDataNode)dict.Value;
+			yield return Tuple.Create (node.Name, (string) node.GetValue ((ITypeResolutionService)null), node.Comment);
+		}
+	}
+
+	static IEnumerable<Tuple<string,string,string>> ReadTextResources (string fileName)
+	{
+		foreach (var line in File.ReadAllLines (fileName)) {
+			if (line.Length == 0 || line[0] == ';') {
+				continue;
+			}
+			var idx = line.IndexOf ('=');
+			if (idx < 1) {
+				Console.Error.WriteLine ($"Error reading resource file '{fileName}'");
+				continue;
+			}
+			yield return Tuple.Create (line.Substring(0, idx), line.Substring(idx+1), (string)null);
+		}
 	}
 
 	static bool LoadInputFiles ()
@@ -191,8 +240,7 @@ public class Program
 						continue;
 
 					var key = match.Groups[1].Value;
-					if (!ExistingKeys.ContainsKey (key))
-						ExistingKeys.Add (key, null);
+					ExistingKeys[key] = null;
 				}
 			}
 		}
