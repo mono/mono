@@ -98,7 +98,7 @@ CollectImageMetaData (MonoImage *image, gpointer value, CollectMetadataContext *
 
 		while (g_hash_table_iter_next (&iter, &key, NULL)) {
 			MonoType *monoType = (MonoType *)key;
-			MonoClass *klass = mono_type_get_class (monoType);
+			MonoClass *klass = mono_class_from_mono_type (monoType);
 
 			if (klass)
 				ContextRecurseClassData (context, klass);
