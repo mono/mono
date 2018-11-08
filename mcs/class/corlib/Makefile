@@ -134,8 +134,7 @@ DEFAULT_REFERENCES =
 TEST_LIB_REFS = System.Core System
 
 TestModule.dll: ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il
-	$(ILASM) ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il /dll /out:System.Reflection.TestModule.dll
-
+	$(ILASM) ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il /dll /out:$(test_lib_dir)/System.Reflection.TestModule.dll
 xunit-test-local: TestModule.dll
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
