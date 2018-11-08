@@ -22,7 +22,6 @@ build_osx_runtime:
     - darwin
   script:
   - git submodule update --init --recursive
-  - echo -e "[auth]\nono.schemes=https\nono.prefix=ono.unity3d.com\nono.username=$GITLAB_UNITY_META_ONO_USER\nono.password=$GITLAB_UNITY_META_ONO_PASS\n" >> ~/.hgrc
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
@@ -45,7 +44,6 @@ build_osx_classlibs:
     - darwin
   script:
   - git submodule update --init --recursive
-  - echo -e "[auth]\nono.schemes=https\nono.prefix=ono.unity3d.com\nono.username=$GITLAB_UNITY_META_ONO_USER\nono.password=$GITLAB_UNITY_META_ONO_PASS\n" >> ~/.hgrc
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
@@ -68,7 +66,6 @@ build_android:
     - darwin
   script:
   - git submodule update --init --recursive
-  - echo -e "[auth]\nono.schemes=https\nono.prefix=ono.unity3d.com\nono.username=$GITLAB_UNITY_META_ONO_USER\nono.password=$GITLAB_UNITY_META_ONO_PASS\n" >> ~/.hgrc
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
@@ -154,7 +151,6 @@ build_linux_x64:
   - linux
   script:
   - git submodule update --init --recursive
-  - echo -e "[auth]\nono.schemes=https\nono.prefix=ono.unity3d.com\nono.username=$GITLAB_UNITY_META_ONO_USER\nono.password=$GITLAB_UNITY_META_ONO_PASS\n" >> ~/.hgrc
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
@@ -177,7 +173,6 @@ build_linux_x86:
   - linux
   script:
   - git submodule update --init --recursive
-  - echo -e "[auth]\nono.schemes=https\nono.prefix=ono.unity3d.com\nono.username=$GITLAB_UNITY_META_ONO_USER\nono.password=$GITLAB_UNITY_META_ONO_PASS\n" >> ~/.hgrc
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
