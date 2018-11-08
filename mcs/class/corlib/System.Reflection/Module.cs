@@ -45,7 +45,7 @@ namespace System.Reflection {
 
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public abstract partial class Module : ISerializable, ICustomAttributeProvider {
+	partial class Module {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int get_MetadataToken (Module module);
 		
