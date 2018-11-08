@@ -897,8 +897,6 @@ ves_array_get (InterpFrame *frame, stackval *sp, stackval *retval, MonoMethodSig
 static gpointer
 ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArray *ao, stackval *sp, gboolean needs_typecheck)
 {
-	printf ("D: %p\n", ao);
-
 	MonoClass *ac = ((MonoObject *) ao)->vtable->klass;
 
 	g_assert (m_class_get_rank (ac) >= 1);
