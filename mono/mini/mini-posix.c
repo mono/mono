@@ -995,43 +995,6 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		gchar *output = NULL;
 		MonoStackHash hashes;
 
-#ifndef DISABLE_CRASH_REPORTING
-		MonoContext mctx;
-		if (ctx) {
-			gboolean leave = FALSE;
-			gboolean dump_for_merp = FALSE;
-#if defined(TARGET_OSX)
-			dump_for_merp = mono_merp_enabled ();
-#endif
-
-			if (!dump_for_merp) {
-#ifdef DISABLE_STRUCTURED_CRASH
-				leave = TRUE;
-#else
-				mini_register_sigterm_handler ();
-#endif
-			}
-
-			if (!leave) {
-				mono_sigctx_to_monoctx (ctx, &mctx);
-				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
-					g_assert_not_reached ();
-
-				// Wait for the other threads to clean up and exit their handlers
-				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
-				// while dumping. 
-				mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
-				sleep (1);
-			}
-
-			// We want our crash, and don't have telemetry
-			// So we dump to disk
-			if (!leave && !dump_for_merp)
-				mono_crash_dump (output, &hashes);
-		}
-#endif
-
 		/*
 		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
 		* it will deadlock. Call the syscall directly instead.
@@ -1054,6 +1017,45 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			// distributions set the scope to 1 which allows attaching only to direct children of
 			// the current process
 			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
+		}
+#endif
+
+#ifndef DISABLE_CRASH_REPORTING
+		if (pid > 0) {
+			MonoContext mctx;
+			if (ctx) {
+				gboolean leave = FALSE;
+				gboolean dump_for_merp = FALSE;
+#if defined(TARGET_OSX)
+				dump_for_merp = mono_merp_enabled ();
+#endif
+
+				if (!dump_for_merp) {
+#ifdef DISABLE_STRUCTURED_CRASH
+					leave = TRUE;
+#else
+					mini_register_sigterm_handler ();
+#endif
+				}
+
+				if (!leave) {
+					mono_sigctx_to_monoctx (ctx, &mctx);
+					// Do before forking
+					if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
+						g_assert_not_reached ();
+
+					// Wait for the other threads to clean up and exit their handlers
+					// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
+					// while dumping. 
+					mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
+					sleep (1);
+				}
+
+				// We want our crash, and don't have telemetry
+				// So we dump to disk
+				if (!leave && !dump_for_merp)
+					mono_crash_dump (output, &hashes);
+			}
 		}
 #endif
 
