@@ -634,6 +634,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\CompatibleComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Concurrent\ConcurrentQueue_Segment.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LowLevelDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\MutableDecimal.cs" />
@@ -666,6 +669,10 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections.NonGeneric\src\System\Collections\Stack.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\BitArray.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\CollectionExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Queue.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\QueueDebugView.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Stack.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\StackDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\StructuralComparisons.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleCancelEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleColor.cs" />
