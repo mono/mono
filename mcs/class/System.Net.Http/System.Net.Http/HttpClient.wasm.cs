@@ -19,23 +19,23 @@ namespace System.Net.Http
 
             if (GetHttpMessageHandler == null)
             {
-			    Type type = Type.GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler, WebAssembly.Net.Http");
-			    if (type == null)
-				    return GetFallback ("Invalid WebAssembly Module? Cannot find WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+                Type type = Type.GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler, WebAssembly.Net.Http");
+                if (type == null)
+                    return GetFallback ("Invalid WebAssembly Module? Cannot find WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
 
-			    MethodInfo method = type.GetMethod("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
-			    if (method == null)
-				    return GetFallback ("Your WebAssembly version does not support obtaining of the custom HttpClientHandler");
+                MethodInfo method = type.GetMethod("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
+                if (method == null)
+                    return GetFallback ("Your WebAssembly version does not support obtaining of the custom HttpClientHandler");
 
-			    object ret = method.Invoke(null, null);
-			    if (ret == null)
-				    return GetFallback ("WebAssembly returned no custom HttpClientHandler");
+                object ret = method.Invoke(null, null);
+                if (ret == null)
+                    return GetFallback ("WebAssembly returned no custom HttpClientHandler");
 
-			    var handler = ret as HttpMessageHandler;
-			    if (handler == null)
-				    return GetFallback ($"{ret?.GetType()} is not a valid HttpMessageHandler");
+                var handler = ret as HttpMessageHandler;
+                if (handler == null)
+                    return GetFallback ($"{ret?.GetType()} is not a valid HttpMessageHandler");
                     
-			    return handler;
+                return handler;
 
             }
             else
