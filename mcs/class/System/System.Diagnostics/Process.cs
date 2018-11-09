@@ -690,15 +690,12 @@ namespace System.Diagnostics
 			var procInfo = new ProcInfo ();
 
 			if (startInfo.HaveEnvVars) {
-				List<string> envVariables = null;
+				List<string> envVariables = new List<string> ();
 				StringBuilder sb = null;
 
 				foreach (DictionaryEntry de in startInfo.EnvironmentVariables) {
 					if (de.Value == null)
 						continue;
-
-					if (envVariables == null)
-						envVariables = new List<string> ();
 
 					if (sb == null)
 						sb = new StringBuilder ();
@@ -712,7 +709,7 @@ namespace System.Diagnostics
 					envVariables.Add (sb.ToString ());
 				}
 
-				procInfo.envVariables = envVariables?.ToArray ();
+				procInfo.envVariables = envVariables.ToArray ();
 			}
 
 			MonoIOError error;
