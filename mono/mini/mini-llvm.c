@@ -299,19 +299,19 @@ set_failure (EmitContext *ctx, const char *message)
 static LLVMTypeRef
 IntPtrType (void)
 {
-	return sizeof (gpointer) == 8 ? LLVMInt64Type () : LLVMInt32Type ();
+	return TARGET_SIZEOF_VOID_P == 8 ? LLVMInt64Type () : LLVMInt32Type ();
 }
 
 static LLVMTypeRef
 ObjRefType (void)
 {
-	return sizeof (gpointer) == 8 ? LLVMPointerType (LLVMInt64Type (), 0) : LLVMPointerType (LLVMInt32Type (), 0);
+	return TARGET_SIZEOF_VOID_P == 8 ? LLVMPointerType (LLVMInt64Type (), 0) : LLVMPointerType (LLVMInt32Type (), 0);
 }
 
 static LLVMTypeRef
 ThisType (void)
 {
-	return sizeof (gpointer) == 8 ? LLVMPointerType (LLVMInt64Type (), 0) : LLVMPointerType (LLVMInt32Type (), 0);
+	return TARGET_SIZEOF_VOID_P == 8 ? LLVMPointerType (LLVMInt64Type (), 0) : LLVMPointerType (LLVMInt32Type (), 0);
 }
 
 /*
@@ -327,7 +327,7 @@ get_vtype_size (MonoType *t)
 	size = mono_class_value_size (mono_class_from_mono_type_internal (t), NULL);
 
 	/* LLVMArgAsIArgs depends on this since it stores whole words */
-	while (size < 2 * sizeof (gpointer) && mono_is_power_of_two (size) == -1)
+	while (size < 2 * TARGET_SIZEOF_VOID_P && mono_is_power_of_two (size) == -1)
 		size ++;
 
 	return size;
@@ -688,7 +688,7 @@ op_to_llvm_type (int opcode)
 		return LLVMInt32Type ();
 	case OP_FCONV_TO_I:
 	case OP_FCONV_TO_U:
-		return sizeof (gpointer) == 8 ? LLVMInt64Type () : LLVMInt32Type ();
+		return TARGET_SIZEOF_VOID_P == 8 ? LLVMInt64Type () : LLVMInt32Type ();
 	case OP_IADD_OVF:
 	case OP_IADD_OVF_UN:
 	case OP_ISUB_OVF:
@@ -794,7 +794,7 @@ load_store_to_llvm_type (int opcode, int *size, gboolean *sext, gboolean *zext)
 	case OP_LOAD_MEM:
 	case OP_STORE_MEMBASE_REG:
 	case OP_STORE_MEMBASE_IMM:
-		*size = sizeof (gpointer);
+		*size = TARGET_SIZEOF_VOID_P;
 		return IntPtrType ();
 	default:
 		g_assert_not_reached ();
@@ -1427,7 +1427,7 @@ sig_to_llvm_sig_full (EmitContext *ctx, MonoMethodSignature *sig, LLVMCallInfo *
 			for (j = 0; j < 2; ++j) {
 				switch (ainfo->pair_storage [j]) {
 				case LLVMArgInIReg:
-					param_types [pindex ++] = LLVMIntType (sizeof (gpointer) * 8);
+					param_types [pindex ++] = LLVMIntType (TARGET_SIZEOF_VOID_P * 8);
 					break;
 				case LLVMArgNone:
 					break;
@@ -2343,7 +2343,7 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 
 	for (j = 0; j < nslots; ++j) {
 		LLVMValueRef index [2], addr, daddr;
-		int part_size = size > sizeof (gpointer) ? sizeof (gpointer) : size;
+		int part_size = size > TARGET_SIZEOF_VOID_P ? TARGET_SIZEOF_VOID_P : size;
 		LLVMTypeRef part_type;
 
 		while (part_size != 1 && part_size != 2 && part_size != 4 && part_size < 8)
@@ -2356,7 +2356,7 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		case LLVMArgInIReg: {
 			part_type = LLVMIntType (part_size * 8);
 			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t))) {
-				index [0] = LLVMConstInt (LLVMInt32Type (), j * sizeof (gpointer), FALSE);
+				index [0] = LLVMConstInt (LLVMInt32Type (), j * TARGET_SIZEOF_VOID_P, FALSE);
 				addr = LLVMBuildGEP (builder, address, index, 1, "");
 			} else {
 				daddr = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (IntPtrType (), 0), "");
@@ -2386,7 +2386,7 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 			g_assert_not_reached ();
 		}
 
-		size -= sizeof (gpointer);
+		size -= TARGET_SIZEOF_VOID_P;
 	}
 }
 
@@ -2414,7 +2414,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		nslots = 2;
 	for (j = 0; j < nslots; ++j) {
 		LLVMValueRef index [2], addr, daddr;
-		int partsize = size > sizeof (gpointer) ? sizeof (gpointer) : size;
+		int partsize = size > TARGET_SIZEOF_VOID_P ? TARGET_SIZEOF_VOID_P : size;
 
 		if (ainfo->pair_storage [j] == LLVMArgNone)
 			continue;
@@ -2422,7 +2422,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		switch (ainfo->pair_storage [j]) {
 		case LLVMArgInIReg:
 			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type_internal (t))) {
-				index [0] = LLVMConstInt (LLVMInt32Type (), j * sizeof (gpointer), FALSE);
+				index [0] = LLVMConstInt (LLVMInt32Type (), j * TARGET_SIZEOF_VOID_P, FALSE);
 				addr = LLVMBuildGEP (builder, address, index, 1, "");
 			} else {
 				daddr = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (IntPtrType (), 0), "");
@@ -2446,7 +2446,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		default:
 			g_assert_not_reached ();
 		}
-		size -= sizeof (gpointer);
+		size -= TARGET_SIZEOF_VOID_P;
 	}
 
 	*nargs = pindex;
@@ -2511,7 +2511,7 @@ emit_gsharedvt_ldaddr (EmitContext *ctx, int vreg)
 
 	int idx = cfg->gsharedvt_vreg_to_idx [vreg] - 1;
 
-	offset = LLVMConstInt (LLVMInt32Type (), MONO_STRUCT_OFFSET (MonoGSharedVtMethodRuntimeInfo, entries) + (idx * sizeof (gpointer)), FALSE);
+	offset = LLVMConstInt (LLVMInt32Type (), MONO_STRUCT_OFFSET (MonoGSharedVtMethodRuntimeInfo, entries) + (idx * TARGET_SIZEOF_VOID_P), FALSE);
 	ptr = LLVMBuildAdd (builder, convert (ctx, info_var, IntPtrType ()), convert (ctx, offset, IntPtrType ()), "");
 
 	name = g_strdup_printf ("gsharedvt_local_%d_offset", vreg);
@@ -3589,7 +3589,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	}
 
 	if (is_virtual) {
-		int size = sizeof (gpointer);
+		int size = TARGET_SIZEOF_VOID_P;
 		LLVMValueRef index;
 
 		g_assert (ins->inst_offset % size == 0);
@@ -3622,7 +3622,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		 */
 #ifdef TARGET_ARM
 		if (!ctx->imt_rgctx_loc)
-			ctx->imt_rgctx_loc = build_alloca_llvm_type (ctx, ctx->module->ptr_type, sizeof (gpointer));
+			ctx->imt_rgctx_loc = build_alloca_llvm_type (ctx, ctx->module->ptr_type, TARGET_SIZEOF_VOID_P);
 		LLVMBuildStore (builder, convert (ctx, ctx->values [call->rgctx_arg_reg], ctx->module->ptr_type), ctx->imt_rgctx_loc);
 		args [cinfo->rgctx_arg_pindex] = mono_llvm_build_load (builder, ctx->imt_rgctx_loc, "", TRUE);
 #else
@@ -3635,7 +3635,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		g_assert (cinfo->imt_arg_pindex < nargs);
 #ifdef TARGET_ARM
 		if (!ctx->imt_rgctx_loc)
-			ctx->imt_rgctx_loc = build_alloca_llvm_type (ctx, ctx->module->ptr_type, sizeof (gpointer));
+			ctx->imt_rgctx_loc = build_alloca_llvm_type (ctx, ctx->module->ptr_type, TARGET_SIZEOF_VOID_P);
 		LLVMBuildStore (builder, convert (ctx, ctx->values [call->imt_arg_reg], ctx->module->ptr_type), ctx->imt_rgctx_loc);
 		args [cinfo->imt_arg_pindex] = mono_llvm_build_load (builder, ctx->imt_rgctx_loc, "", TRUE);
 #else
@@ -5522,7 +5522,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_CHECK_THIS:
-			emit_load_general (ctx, bb, &builder, sizeof (gpointer), convert (ctx, lhs, LLVMPointerType (IntPtrType (), 0)), lhs, "", TRUE, LLVM_BARRIER_NONE);
+			emit_load_general (ctx, bb, &builder, TARGET_SIZEOF_VOID_P, convert (ctx, lhs, LLVMPointerType (IntPtrType (), 0)), lhs, "", TRUE, LLVM_BARRIER_NONE);
 			break;
 		case OP_OUTARG_VTRETADDR:
 			break;
@@ -8747,7 +8747,7 @@ add_intrinsics (LLVMModuleRef module)
 static void
 add_types (MonoLLVMModule *module)
 {
-	module->ptr_type = LLVMPointerType (sizeof (gpointer) == 8 ? LLVMInt64Type () : LLVMInt32Type (), 0);
+	module->ptr_type = LLVMPointerType (TARGET_SIZEOF_VOID_P == 8 ? LLVMInt64Type () : LLVMInt32Type (), 0);
 }
 
 void
