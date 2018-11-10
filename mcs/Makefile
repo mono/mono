@@ -43,8 +43,8 @@ dir-check:
 
 PROFILES = net_4_x binary_reference_assemblies xbuild_12 xbuild_14
 
-.PHONY: all-profiles $(STD_TARGETS:=-profiles)
-all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
+.PHONY: all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles)
+all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
 	@:
 
 profiles-do--%:
