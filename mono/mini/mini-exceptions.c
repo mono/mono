@@ -3277,8 +3277,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
 				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
-					g_assert_not_reached ();
+				leave = !mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0);
 			}
 
 			// We want our crash, and don't have telemetry
@@ -3318,7 +3317,10 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 			if (pid == 0) {
 				if (!ctx) {
 					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
-					exit (1);
+				} else if (output) {
+					mono_merp_invoke (crashed_pid, signal, output, &hashes);
+				} else {
+					mono_runtime_printf_err ("\nMerp dump step not run, no dump created.\n");
 				}
 
 				mono_merp_invoke (crashed_pid, signal, output, &hashes);
