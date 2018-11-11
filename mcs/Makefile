@@ -43,8 +43,8 @@ dir-check:
 
 PROFILES = net_4_x binary_reference_assemblies xbuild_12 xbuild_14
 
-.PHONY: all-profiles $(STD_TARGETS:=-profiles)
-all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
+.PHONY: all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles)
+all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
 	@:
 
 profiles-do--%:
@@ -87,11 +87,13 @@ $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:          
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
 
-testcorlib:
-	@cd class/corlib && $(MAKE) test run-test
+compiler-test:
+	$(MAKE) -C tests test
+	$(MAKE) -C errors test
 
-compiler-tests:
-	$(MAKE) TEST_SUBDIRS="tests errors" run-test-profiles
+run-compiler-test:
+	$(MAKE) -C tests run-test
+	$(MAKE) -C errors run-test
 
 package := mcs-$(VERSION)
 

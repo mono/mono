@@ -2,10 +2,12 @@
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
-
+export CI=1
+export CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
 export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
-
 export TEST_HARNESS_VERBOSE=1
+
+source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
 make_timeout=300m
 

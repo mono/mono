@@ -185,3 +185,4 @@ EXTRA_DIST += configure.host
 .S.s:
 	if $(CPP) $< >$@ ; then :; else rm -f $@; fi
 
+test:
