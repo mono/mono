@@ -279,7 +279,6 @@ if [[ $CI_TAGS == *'apidiff'* ]]; then
     then report_github_status "success" "API Diff" "No public API changes found." || true
     else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_20API_20Diff/" || true
     fi
-else ${TESTCMD} --label=apidiff --skip
 fi
 if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     make update-solution-files
@@ -287,5 +286,4 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
     else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
     fi
-else ${TESTCMD} --label=csprojdiff --skip
 fi
