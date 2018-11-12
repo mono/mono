@@ -49,6 +49,7 @@ fi
 if [ "$test_suite" = "--nunit" ]; then
     cd net_4_x || exit 1
     export MONO_PATH="$r/net_4_x/tests:$MONO_PATH"
+    export MONO_SYSTEMWEB_CACHEDEPENDENCY_SHARED_FSW=1
     case "$test_argument_1" in
         *"Microsoft.Build"*)
             export TESTING_MONO=a
