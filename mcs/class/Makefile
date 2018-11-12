@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools testing_aot_full testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
