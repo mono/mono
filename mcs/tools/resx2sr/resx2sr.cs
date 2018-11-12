@@ -123,7 +123,7 @@ public class Program
 			if (nsIdx > 0) {
 				str.WriteLine ($"namespace {className.Substring(0,nsIdx)}");
 				str.WriteLine ("{");
-				className = className.Substring(nsIdx+1);
+				className = className.Substring (nsIdx+1);
 			}
 
 			str.WriteLine ($"partial class {className}");
