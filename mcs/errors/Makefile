@@ -62,6 +62,13 @@ TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(LOCAL
 
 test-local: $(TEST_SUPPORT_FILES)
 
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/mcs-errors
+	cp -L -R dlls $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L *.cs *.inc *.dll *.snk *.pub $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L $(topdir)/class/lib/$(PROFILE)/compiler-tester.* $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L known-issues-$(PROFILE) $(TEST_BUNDLE_PATH)/tests/mcs-errors/known-issues-$(PROFILE)
+
 run-mcs-tests: test-local
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)
 

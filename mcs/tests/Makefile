@@ -86,6 +86,14 @@ run-test-local: test-local qcheck
 
 check: run-test-local
 
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/mcs
+	cp -L -R dlls $(TEST_BUNDLE_PATH)/tests/mcs/
+	cp -L *.cs *.xml *.inc *.dll *.snk $(TEST_BUNDLE_PATH)/tests/mcs/
+	cp -L $(topdir)/class/lib/$(PROFILE)/compiler-tester.* $(TEST_BUNDLE_PATH)/tests/mcs/
+	cp -L $(KNOWN_ISSUES) $(TEST_BUNDLE_PATH)/tests/mcs/$(KNOWN_ISSUES)
+	cp -L ver-il-$(PROFILE).xml $(TEST_BUNDLE_PATH)/tests/mcs/ver-il-$(PROFILE).xml
+
 endif
 
 clean-local:

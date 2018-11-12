@@ -13,6 +13,9 @@ git clean -xdff -- acceptance-tests/external || true
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
+helix_set_env_vars
+helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
+
 make_timeout=300m
 
 if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
@@ -257,10 +260,13 @@ if [[ ${CI_TAGS} == *'linux-ppc64el'* ]]; then make_parallelism=-j1; fi
 make_continue=
 if [[ ${CI_TAGS} == *'checked-all'* ]]; then make_continue=-k; fi
 
-
 if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
-	then
-	${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1
+    then
+    build_error=0
+    ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1 || build_error=1
+    helix_send_build_done_event "build/source/$MONO_HELIX_TYPE/" $build_error
+
+    if [[ ${build_error} != 0 ]]; then echo "ERROR: The Mono build failed."; exit ${build_error}; fi
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
@@ -274,6 +280,7 @@ elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
+elif [[ ${CI_TAGS} == *'helix-tests'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-helix.sh;
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests.";
 else make check-ci;
 fi
