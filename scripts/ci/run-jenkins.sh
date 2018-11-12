@@ -289,5 +289,3 @@ if [[ $CI_TAGS == *'csprojdiff'* ]]; then
     fi
 else ${TESTCMD} --label=csprojdiff --skip
 fi
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

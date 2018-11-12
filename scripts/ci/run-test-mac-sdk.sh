@@ -17,3 +17,5 @@ ${TESTCMD} --label="corlib-tests-llvm" --timeout=60m make -C mcs/class/corlib ru
 
 # Bundled libgdiplus
 ${TESTCMD} --label="System.Drawing" --timeout=60m make -C mcs/class/System.Drawing run-test
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
