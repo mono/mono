@@ -27,8 +27,10 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
-
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
 namespace MonoTests.System.Text
@@ -127,6 +129,22 @@ namespace MonoTests.System.Text
 		public void EncodingName ()
 		{
 			Assert.AreEqual ("Unicode (UTF-8)", Encoding.UTF8.EncodingName);
+		}
+
+		[Test] // https://github.com/mono/mono/issues/11529
+		public void AllEncodingsAreSerializable ()
+		{
+			foreach (var encoding in Encoding.GetEncodings ().Select(e => Encoding.GetEncoding (e.Name)))
+			{
+				var serializer = new BinaryFormatter ();
+				using (var ms = new MemoryStream ())
+				{
+					serializer.Serialize (ms, encoding);
+					ms.Position = 0;
+					var clone = (Encoding) serializer.Deserialize (ms);
+					Assert.AreEqual (encoding, clone);
+				}
+			}
 		}
 	}
 }
