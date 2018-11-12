@@ -119,7 +119,7 @@ public class Program
 			str.WriteLine ("//");
 			str.WriteLine ();
 
-			int nsIdx = className.LastIndexOf('.');
+			int nsIdx = className.LastIndexOf ('.');
 			if (nsIdx > 0) {
 				str.WriteLine ($"namespace {className.Substring(0,nsIdx)}");
 				str.WriteLine ("{");
