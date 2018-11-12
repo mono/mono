@@ -121,7 +121,7 @@ public class Program
 
 			int nsIdx = className.LastIndexOf ('.');
 			if (nsIdx > 0) {
-				str.WriteLine ($"namespace {className.Substring(0,nsIdx)}");
+				str.WriteLine ($"namespace {className.Substring (0, nsIdx)}");
 				str.WriteLine ("{");
 				className = className.Substring (nsIdx+1);
 			}
