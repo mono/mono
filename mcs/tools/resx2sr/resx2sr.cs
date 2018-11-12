@@ -218,7 +218,7 @@ public class Program
 				Console.Error.WriteLine ($"Error reading resource file '{fileName}'");
 				continue;
 			}
-			yield return Tuple.Create (line.Substring(0, idx), line.Substring(idx+1), (string)null);
+			yield return Tuple.Create (line.Substring (0, idx), line.Substring (idx+1), (string)null);
 		}
 	}
 
