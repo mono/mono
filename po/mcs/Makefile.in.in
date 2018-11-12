@@ -445,3 +445,5 @@ force:
 .NOEXPORT:
 
 test:
+
+test-bundle:
