@@ -51,7 +51,7 @@ net_4_5_dirs := \
 	gacutil
 
 build_SUBDIRS =
-build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
+build_PARALLEL_SUBDIRS := resgen gacutil security culevel upload-to-sentry mono-helix-client commoncryptogenerator resx2sr linker cil-strip corcompare mono-api-diff mono-api-html
 monodroid_tools_SUBDIRS =
 monodroid_tools_PARALLEL_SUBDIRS = cil-strip linker-analyzer mkbundle mdoc mono-symbolicate mono-api-diff mono-api-html
 monodroid_SUBDIRS = nunit-lite
@@ -61,7 +61,7 @@ net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 wasm_tools_SUBDIRS =
 wasm_tools_PARALLEL_SUBDIRS = linker
 
-DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry
+DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 
 include ../build/rules.make
 
