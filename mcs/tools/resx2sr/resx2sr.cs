@@ -133,7 +133,7 @@ public class Program
 
 			foreach (var entry in txtStrings) {
 
-				if (options.ExistingOnly && !ExistingKeys.ContainsKey(entry.Item1)) {
+				if (options.ExistingOnly && !ExistingKeys.ContainsKey (entry.Item1)) {
 					continue;
 				}
 
