@@ -90,12 +90,12 @@ accept-android-license:
 
 BCL_LIBS=$(subst corlib.dll,mscorlib.dll,$(patsubst %,%.dll,$(BCL_CHECKS)))
 BCL_PDBS=$(subst corlib.pdb,mscorlib.pdb,$(patsubst %,%.pdb,$(BCL_CHECKS)))
-BCL_REFERENCES=$(patsubst %,-r:$(TOP)/mcs/class/lib/monodroid/%,$(BCL_LIBS))
+BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%,$(BCL_LIBS))
 
 NUNIT_LIBS= \
 	nunitlite.dll
 
-NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/mcs/class/lib/monodroid/%,$(NUNIT_LIBS))
+NUNIT_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%,$(NUNIT_LIBS))
 
 local.properties:
 	echo "sdk.dir=$(SDK_DIR)" >  $@
@@ -142,7 +142,7 @@ package: app/assets/asm/main.exe app/assets/asm/Mono.Android.dll
 
 ## Package the BCL assemblies
 
-$(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/mcs/class/lib/monodroid/% | app/assets/asm
+$(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/sdks/out/android-bcl/monodroid/% | app/assets/asm
 	cp $< $@
 
 .PHONY: package
@@ -154,11 +154,7 @@ package: $(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/
 # Parameters:
 #  $(1): assembly name (corlib, System, etc.)
 define BCLTestAssemblyTemplate
-.PHONY: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
-$$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll:
-	$$(MAKE) PROFILE='monodroid' -C $$(TOP)/mcs/class/$(1) test-local
-
-app/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/mcs/class/lib/monodroid/tests/monodroid_$(1)_test.dll
+app/assets/asm/monodroid_$(1)_test.dll: $$(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$(1)_test.dll
 	cp $$< $$@
 
 .PHONY: package
@@ -196,10 +192,7 @@ package: app/assets/asm/monodroid_mini_test.dll
 $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb:
 	$(MAKE) PROFILE='monodroid' -C $(TOP)/mcs/class/Mono.Debugger.Soft build-dtest
 
-app/assets/asm/dtest-app.exe: $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.exe
-	cp $< $@
-
-app/assets/asm/dtest-app.pdb: $(TOP)/mcs/class/lib/monodroid/tests/dtest-app.pdb
+app/assets/asm/dtest-app.exe app/assets/asm/dtest-app.pdb: app/assets/asm/%: $(TOP)/mcs/class/lib/monodroid/tests/%
 	cp $< $@
 
 package: app/assets/asm/dtest-app.exe app/assets/asm/dtest-app.pdb
