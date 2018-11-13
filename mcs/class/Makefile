@@ -95,7 +95,8 @@ mobile_common_dirs_parallel := \
 testing_aot_full_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd \
-	Mono.CSharp
+	Mono.CSharp \
+	System.Drawing
 
 testing_aot_full_interp_dirs_parallel := $(testing_aot_full_dirs_parallel)
 

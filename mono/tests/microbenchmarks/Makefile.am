@@ -33,17 +33,19 @@ all-local: test
 
 check-local: test
 
-RUNTIME = MONO_PATH=$(top_srcdir)/mcs/class/lib/$(DEFAULT_PROFILE) $(top_srcdir)/runtime/mono-wrapper
+abs_top_srcdir = $(abspath $(top_srcdir))
+NET_4_X_RUNTIME = MONO_PATH=$(abs_top_srcdir)/mcs/class/lib/net_4_x $(abs_top_srcdir)/runtime/mono-wrapper
+FULL_AOT_RUNTIME = MONO_PATH=$(abs_top_srcdir)/mcs/class/lib/testing_aot_full $(abs_top_srcdir)/runtime/mono-wrapper
 
 define BenchmarkDotNetTemplate
 test-$(1):: DebianShootoutMono.stamp
-	MONO_BENCH_AOT_RUN=$(AOT_RUN_FLAGS) MONO_BENCH_AOT_BUILD=$(AOT_BUILD_FLAGS) MONO_BENCH_EXECUTABLE=$(top_srcdir)/runtime/mono-wrapper MONO_BENCH_PATH=$(top_srcdir)/mcs/class/lib/$(DEFAULT_PROFILE) $(RUNTIME) DebianShootoutMono/release/DebianShootoutMono.exe
+	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)" MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)" MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(DEFAULT_PROFILE)" $(NET_4_X_RUNTIME) DebianShootoutMono/release/DebianShootoutMono.exe
 
 test:: test-$(1)
 endef
 
 if FULL_AOT_TESTS
-prepare-dlls: 
+prepare-dlls: DebianShootoutMono.stamp
 	$(FULL_AOT_RUNTIME) $(AOT_BUILD_FLAGS) DebianShootoutMono/release/*.{dll,exe}
 
 else
