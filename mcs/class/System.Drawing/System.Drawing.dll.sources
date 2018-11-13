@@ -78,7 +78,7 @@ System.Drawing/StringFormat.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringTrimming.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/StringUnit.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SystemBrushes.cs
-System.Drawing/SystemColors.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SystemColors.cs
 System.Drawing/SystemFonts.cs
 System.Drawing/SystemIcons.cs
 System.Drawing/SystemPens.cs
