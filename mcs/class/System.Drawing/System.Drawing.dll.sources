@@ -27,7 +27,7 @@ System.Drawing/BufferedGraphicsManager.cs
 System.Drawing/BufferedGraphicsContext.cs
 System.Drawing/CharacterRange.cs
 System.Drawing/macFunctions.cs
-System.Drawing/ColorConverter.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/ColorConverter.cs
 ../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Color.cs
 ../../../external/corefx/src/Common/src/System/Drawing/KnownColorTable.cs
@@ -57,7 +57,7 @@ System.Drawing/Image.cs
 System.Drawing/ImageFormatConverter.cs
 System.Drawing/Pen.cs
 System.Drawing/Pens.cs
-System.Drawing/PointConverter.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/PointConverter.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Point.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/PointF.cs
 System.Drawing/RectangleConverter.cs
@@ -65,7 +65,7 @@ System.Drawing/RectangleConverter.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/RectangleF.cs
 System.Drawing/Region.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/RotateFlipType.cs
-System.Drawing/SizeConverter.cs
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/Drawing/SizeConverter.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Size.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/SizeF.cs
 ../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/Drawing/SizeFConverter.cs
