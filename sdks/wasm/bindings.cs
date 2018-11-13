@@ -36,6 +36,11 @@ namespace WebAssembly
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern object GetGlobalObject(string globalName, out int exceptional_result);
 
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object ReleaseHandle(int js_obj_handle, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object ReleaseObject(object obj, out int exceptional_result);
+
         /// <summary>
 	///   Execute the provided string in the JavaScript context
         public static string InvokeJS(string str)
@@ -119,18 +124,27 @@ namespace WebAssembly
                     raw_to_js.Remove(raw_obj);
                 }
 
-
                 obj.Dispose();
 
                 var gCHandle = obj.Handle;
                 obj.Handle.Free();
                 obj.JSHandle = -1;
                 obj.RawObject = null;
+                obj = null;
                 return (int)(IntPtr)gCHandle;
             }
-
+            obj = null;
             return 0;
 
+        }
+
+        public static void FreeObject (object obj)
+        {
+            int exception = 0;
+            Runtime.ReleaseObject(obj, out exception);
+            if (exception != 0)
+                throw new JSException($"Error releasing object on (raw-obj)");
+   
         }
 
         static object CreateTaskSource(int js_id)
@@ -288,13 +302,17 @@ namespace WebAssembly
         {
             task.GetAwaiter().OnCompleted(() =>
             {
-                //FIXME we should dispose cont_obj after completing the Promise
+                
                 if (task.Exception != null)
                     cont_obj.Invoke("reject", task.Exception.ToString());
                 else
                 {
                     cont_obj.Invoke("resolve", task.Result);
                 }
+                
+                cont_obj.Dispose();
+                FreeObject(task);
+
             });
         }
 
@@ -304,11 +322,14 @@ namespace WebAssembly
             {
                 task.GetAwaiter().OnCompleted(() =>
                 {
-                    //FIXME we should dispose cont_obj after completing the Promise
+                    
                     if (task.Exception != null)
                         cont_obj.Invoke("reject", task.Exception.ToString());
                     else
                         cont_obj.Invoke("resolve", null);
+
+                    cont_obj.Dispose();
+                    FreeObject(task);
                 });
             }
             else
@@ -591,7 +612,10 @@ namespace WebAssembly
         protected void FreeHandle()
         {
 
-            Runtime.InvokeJS("BINDING.mono_wasm_free_handle(" + JSHandle + ");");
+            int exception = 0;
+            Runtime.ReleaseHandle(JSHandle, out exception);
+            if (exception != 0)
+                throw new JSException($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
         }
 
         public override bool Equals(System.Object obj)
