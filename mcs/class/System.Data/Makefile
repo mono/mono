@@ -26,7 +26,9 @@ LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
 endif
 
 ifdef ENABLE_GSS
+ifndef NO_GSS
 LIB_MCS_FLAGS += -d:ENABLE_GSS
+endif
 endif
 
 ifndef PROFILE_DISABLE_BTLS
