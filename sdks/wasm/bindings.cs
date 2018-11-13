@@ -129,11 +129,8 @@ namespace WebAssembly
                 var gCHandle = obj.Handle;
                 obj.Handle.Free();
                 obj.JSHandle = -1;
-                obj.RawObject = null;
-                obj = null;
                 return (int)(IntPtr)gCHandle;
             }
-            obj = null;
             return 0;
 
         }

@@ -692,29 +692,17 @@ var BindingSupportLib = {
 		mono_wasm_unregister_obj: function(js_id) {
 			var obj = this.mono_wasm_object_registry[js_id - 1];
 			if (typeof obj  !== "undefined" && obj !== null) {
+				// if this is the global object then do not
+				// unregister it.
+				if (___mono_wasm_global___ && ___mono_wasm_global___ === obj)
+					return obj;
+
 				var gc_handle = obj.__mono_gchandle__;
 				if (typeof gc_handle  !== "undefined") {
 					this.wasm_unbind_js_obj_and_free(js_id);
 
-					// Windows Edge and Windows IE throws an exception `Object doesn't support this action` on
-					// certain host objects.
-					try {
-						delete obj.__mono_gchandle__;
-					}
-					catch (exc) {
-						if (obj.__mono_gchandle__)
-							obj.__mono_gchandle__ = undefined;
-					}
-
-					// Windows Edge and Windows IE throws an exception `Object doesn't support this action` on
-					// certain host objects.
-					try {
-						delete obj.__mono_jshandle__;
-					}
-					catch (exc) {
-						if (obj.__mono_jshandle__)
-							obj.__mono_jshandle__ = undefined;
-					}
+					obj.__mono_gchandle__ = undefined;
+					obj.__mono_jshandle__ = undefined;
 
 					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
