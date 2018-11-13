@@ -4968,7 +4968,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	}
 
 	/* Check if we use excessive stack space */
-	if (td->max_stack_height > header->max_stack * 3)
+	if (td->max_stack_height > header->max_stack * 3 && header->max_stack > 16)
 		g_warning ("Excessive stack space usage for method %s, %d/%d", method->name, td->max_stack_height, header->max_stack);
 
 	int code_len;
