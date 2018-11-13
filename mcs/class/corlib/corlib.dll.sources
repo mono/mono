@@ -1022,7 +1022,11 @@ coreclr/Math.CoreCLR.cs
 ../referencesource/mscorlib/system/throwhelper.cs
 ../referencesource/mscorlib/system/timezoneinfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneNotFoundException.cs
-../referencesource/mscorlib/system/type.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.Enum.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.Helpers.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Type.Internal.cs
+../../../external/corert/src/Common/src/System/CommonRuntimeTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeInitializationException.cs
 ../referencesource/mscorlib/system/typeloadexception.cs
@@ -1208,6 +1212,13 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceLocation.cs
 ../../../external/corefx/src/System.Runtime/src/System/Reflection/RuntimeReflectionExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureArrayType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureByRefType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureGenericMethodParameterType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureGenericParameterType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureHasElementType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignaturePointerType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureType.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetInvocationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
