@@ -33,3 +33,5 @@ ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 # wait for helix tests to complete
 export MONO_HELIX_CORRELATION_ID=$(cat "$MONO_HELIX_CORRELATION_ID_FILE")
 ${TESTCMD} --label=wait-helix-tests --timeout=40m make -w -C mcs/tools/mono-helix-client wait-for-job-completion
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
