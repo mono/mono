@@ -152,7 +152,44 @@ wasm_invoke_iiiiiiiii (void *target_func, InterpMethodArguments *margs)
 	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
 	*(int*)margs->retval = res;
+}
 
+static void
+wasm_invoke_iiiiiiiiii  (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8]);
+	*(int*)margs->retval = res;
+}
+
+static void
+wasm_invoke_iiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9]);
+	*(int*)margs->retval = res;
+}
+
+
+static void
+wasm_invoke_iiiiiiiiiiii  (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10]);
+	*(int*)margs->retval = res;
+}
+
+
+static void
+wasm_invoke_iiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11]);
+	*(int*)margs->retval = res;
 }
 
 static void
