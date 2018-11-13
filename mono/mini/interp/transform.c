@@ -5165,7 +5165,6 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	}
 
 	g_assert ((signature->param_count + signature->hasthis) < 1000);
-	g_assert (header->max_stack < 10000);
 	/* intern the strings in the method. */
 	ip = header->code;
 	end = ip + header->code_size;
