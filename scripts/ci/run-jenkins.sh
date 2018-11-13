@@ -9,7 +9,7 @@ export TEST_HARNESS_VERBOSE=1
 
 # workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
 # which won't clean untracked .git repos (remove once https://github.com/jenkinsci/git-plugin/pull/449 is available)
-git clean -xdff -- acceptance-tests/external || true
+for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "Cleaning $dir" && git clean -xdff); done
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
