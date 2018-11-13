@@ -44,7 +44,6 @@ public abstract class HelixTestBase : HelixBase
 
         _job = build
                     .WithTargetQueue (GetEnvironmentVariable ("MONO_HELIX_TARGET_QUEUE"))
-                    .WithCreator (GetEnvironmentVariable ("MONO_HELIX_CREATOR"))
                     .WithCorrelationPayloadDirectory (GetEnvironmentVariable ("MONO_HELIX_TEST_PAYLOAD_DIRECTORY"))
                     .WithCorrelationPayloadFiles (GetEnvironmentVariable ("MONO_HELIX_XUNIT_REPORTER_PATH"))
                     // these are well-known properties used by Mission Control

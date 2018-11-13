@@ -266,7 +266,11 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
     ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1 || build_error=1
     helix_send_build_done_event "build/source/$MONO_HELIX_TYPE/" $build_error
 
-    if [[ ${build_error} != 0 ]]; then echo "ERROR: The Mono build failed."; exit ${build_error}; fi
+    if [[ ${build_error} != 0 ]]; then
+        echo "ERROR: The Mono build failed."
+        ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+        exit ${build_error}
+    fi
 fi
 
 if [[ ${CI_TAGS} == *'checked-coop'* ]]; then export MONO_CHECK_MODE=gc,thread; fi
