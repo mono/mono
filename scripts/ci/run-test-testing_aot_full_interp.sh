@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1 CI=1
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1
 
 # FIXME
 #${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
@@ -29,3 +29,4 @@ ${TESTCMD} --label=System.Numerics --timeout=5m make -w -C mcs/class/System.Nume
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

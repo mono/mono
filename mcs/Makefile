@@ -43,8 +43,8 @@ dir-check:
 
 PROFILES = net_4_x binary_reference_assemblies xbuild_12 xbuild_14
 
-.PHONY: all-profiles $(STD_TARGETS:=-profiles)
-all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
+.PHONY: all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles)
+all-profiles compiler-test-profiles run-compiler-test-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
 	@:
 
 profiles-do--%:
@@ -87,11 +87,13 @@ $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:          
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
 
-testcorlib:
-	@cd class/corlib && $(MAKE) test run-test
+compiler-test:
+	$(MAKE) -C tests test
+	$(MAKE) -C errors test
 
-compiler-tests:
-	$(MAKE) TEST_SUBDIRS="tests errors" run-test-profiles
+run-compiler-test:
+	$(MAKE) -C tests run-test
+	$(MAKE) -C errors run-test
 
 package := mcs-$(VERSION)
 
@@ -148,7 +150,7 @@ distcheck: dist-tarball
 # Targets for creating API diffs of the framework
 
 MONO_API_SNAPSHOT_PATH := $(topdir)../external/api-snapshot/
-GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/GenAPI.exe
+GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/Microsoft.DotNet.GenAPI.exe
 MONO_API_SNAPSHOT_PROFILE_PATH := $(MONO_API_SNAPSHOT_PATH)profiles/$(PROFILE)/
 MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunit.core.dll nunit.core.extensions.dll nunit.core.interfaces.dll nunit.framework.dll nunit.framework.extensions.dll nunit.mocks.dll nunit.util.dll nunit-console-runner.dll nunitlite.dll Mono.Profiler.Log.dll)
 MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)

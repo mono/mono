@@ -2,10 +2,16 @@
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
-
+export CI=1
+export CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
 export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
-
 export TEST_HARNESS_VERBOSE=1
+
+# workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
+# which won't clean untracked .git repos (remove once https://github.com/jenkinsci/git-plugin/pull/449 is available)
+git clean -xdff -- acceptance-tests/external || true
+
+source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
 make_timeout=300m
 
@@ -187,7 +193,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   echo "ENABLE_WASM_CROSS=1" >> sdks/Make.config
 	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	       echo "ENABLE_CXX=1" >> sdks/Make.config
 	   fi
@@ -269,8 +274,20 @@ elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
-elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then exit 0;
+elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests.";
 else make check-ci;
 fi
 
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
+if [[ $CI_TAGS == *'apidiff'* ]]; then
+    if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j ${CI_CPU_COUNT} mono-api-diff
+    then report_github_status "success" "API Diff" "No public API changes found." || true
+    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_20API_20Diff/" || true
+    fi
+fi
+if [[ $CI_TAGS == *'csprojdiff'* ]]; then
+    make update-solution-files
+    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
+    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
+    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
+    fi
+fi

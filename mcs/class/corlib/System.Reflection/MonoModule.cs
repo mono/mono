@@ -47,8 +47,23 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	class MonoModule : RuntimeModule
 	{
+#pragma warning disable 649
+		#region Sync with object-internals.h
+		#region Sync with ModuleBuilder
+		internal IntPtr _impl; /* a pointer to a MonoImage */
+		internal Assembly assembly;
+		internal string fqname;
+		internal string name;
+		internal string scopename;
+		internal bool is_resource;
+		internal int token;
+		#endregion
+		#endregion
+#pragma warning restore 649
+
 		public
 		override
 		Assembly Assembly {
@@ -311,6 +326,10 @@ namespace System.Reflection {
 		internal RuntimeAssembly GetRuntimeAssembly ()
 		{
 			return (RuntimeAssembly)assembly;
+		}
+
+		internal override IntPtr GetImpl () {
+			return _impl;
 		}
 	}
 }
