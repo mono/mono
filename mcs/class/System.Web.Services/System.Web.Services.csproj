@@ -1057,6 +1057,7 @@
         <Compile Include="..\referencesource\System.Web.Services\System\Web\Services\WsiProfiles.cs" />
         <Compile Include="..\referencesource\System.Web.Services\inc\InvariantComparer.cs" />
         <Compile Include="..\referencesource\System.Web.Services\inc\PrivilegedConfigurationManager.cs" />
+        <Compile Include="ReferenceSources\Res.Helpers.cs" />
         <Compile Include="ReferenceSources\Res.cs" />
       </ItemGroup>
     </When>
