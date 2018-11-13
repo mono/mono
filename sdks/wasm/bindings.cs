@@ -45,7 +45,7 @@ namespace WebAssembly
 	///   Execute the provided string in the JavaScript context
         public static string InvokeJS(string str)
         {
-            int exception = 0;
+            int exception;
             var res = InvokeJS(str, out exception);
             if (exception != 0)
                 throw new JSException(res);
@@ -137,7 +137,7 @@ namespace WebAssembly
 
         public static void FreeObject (object obj)
         {
-            int exception = 0;
+            int exception;
             Runtime.ReleaseObject(obj, out exception);
             if (exception != 0)
                 throw new JSException($"Error releasing object on (raw-obj)");
@@ -365,7 +365,7 @@ namespace WebAssembly
 	/// </param>
         public static object GetGlobalObject(string str = null)
         {
-            int exception = 0;
+            int exception;
             var globalHandle = Runtime.GetGlobalObject(str, out exception);
 
             if (exception != 0)
@@ -543,7 +543,7 @@ namespace WebAssembly
 	/// </returns>
         public object Invoke(string method, params object[] args)
         {
-            int exception = 0;
+            int exception;
             var res = Runtime.InvokeJSWithArgs(JSHandle, method, args, out exception);
             if (exception != 0)
                 throw new JSException((string)res);
@@ -575,7 +575,7 @@ namespace WebAssembly
         public object GetObjectProperty(string expr)
         {
 
-            int exception = 0;
+            int exception;
             var propertyValue = Runtime.GetObjectProperty(JSHandle, expr, out exception);
 
             if (exception != 0)
@@ -599,7 +599,7 @@ namespace WebAssembly
         public void SetObjectProperty(string expr, object value, bool createIfNotExists = true, bool hasOwnProperty = false)
         {
 
-            int exception = 0;
+            int exception;
             var setPropResult = Runtime.SetObjectProperty(JSHandle, expr, value, createIfNotExists, hasOwnProperty, out exception);
             if (exception != 0)
                 throw new JSException($"Error setting {expr} on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");
@@ -609,7 +609,7 @@ namespace WebAssembly
         protected void FreeHandle()
         {
 
-            int exception = 0;
+            int exception;
             Runtime.ReleaseHandle(JSHandle, out exception);
             if (exception != 0)
                 throw new JSException($"Error releasing handle on (js-obj js '{JSHandle}' mono '{(IntPtr)Handle} raw '{RawObject != null})");

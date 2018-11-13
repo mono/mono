@@ -203,13 +203,19 @@ namespace WebAssembly.Net.Http.HttpClient
                         ((JSObject)other).Dispose();
                     });
 
-                    respHeaders.Invoke("forEach", foreachAction);
+                    try
+                    {
 
-                    // Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
-                    // if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
-                    // The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
-                    // Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
-                    WebAssembly.Runtime.FreeObject(foreachAction);
+                        respHeaders.Invoke("forEach", foreachAction);
+                    }
+                    finally
+                    {
+                        // Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
+                        // if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
+                        // The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
+                        // Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
+                        WebAssembly.Runtime.FreeObject(foreachAction);
+                    }
 
                 }
 

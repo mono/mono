@@ -38,13 +38,11 @@ namespace GeoLocation
             global = new DOMObject(string.Empty);
             navigator = new DOMObject("navigator");
 
-            var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
-            using (var location = (JSObject)window.GetObjectProperty("location"))
-            {
-                BaseApiUrl = (string)location.GetObjectProperty("origin");
-            }
-
-            window.Dispose();
+            using (var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window"))
+                using (var location = (JSObject)window.GetObjectProperty("location"))
+                {
+                    BaseApiUrl = (string)location.GetObjectProperty("origin");
+                }
 
             httpClient = new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
 
