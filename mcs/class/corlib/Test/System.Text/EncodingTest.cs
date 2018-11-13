@@ -136,6 +136,7 @@ namespace MonoTests.System.Text
 		{
 			foreach (var encoding in Encoding.GetEncodings ().Select(e => Encoding.GetEncoding (e.Name)))
 			{
+				var hashCode = encoding.GetHashCode (); 
 				var serializer = new BinaryFormatter ();
 				using (var ms = new MemoryStream ())
 				{
