@@ -1735,6 +1735,7 @@ mono_class_interface_match (const uint8_t *bitmap, int id)
 typedef struct {
 	MonoClass *ic;
 	int offset;
+	int insertion_order;
 } ClassAndOffset;
 
 static int
@@ -1743,7 +1744,13 @@ compare_by_interface_id (const void *a, const void *b)
 	const ClassAndOffset *ca = (const ClassAndOffset*)a;
 	const ClassAndOffset *cb = (const ClassAndOffset*)b;
 
-	return ca->ic->interface_id - cb->ic->interface_id;
+	/* Sort on interface_id, but keep equal elements in the same relative
+	 * order. */
+	int primary_order = ca->ic->interface_id - cb->ic->interface_id;
+	if (primary_order != 0)
+		return primary_order;
+	else
+		return ca->insertion_order - cb->insertion_order;
 }
 
 /*
@@ -1793,6 +1800,7 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 
 			co_pair [i].ic = inflated;
 			co_pair [i].offset = gklass->interface_offsets_packed [i];
+			co_pair [i].insertion_order = i;
 
 			int count = count_virtual_methods (inflated);
 			if (count == -1) {
@@ -1807,6 +1815,11 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 			max_iid = MAX (max_iid, inflated->interface_id);
 		}
 
+		/* qsort() is not guaranteed to be a stable sort (elements with
+		 * equal keys stay in the same relative order).  In practice,
+		 * qsort from MSVC isn't stable.  So we add a
+		 * ClassAndOffset:insertion_order field and use it as a
+		 * secondary sorting key when the interface ids are equal. */
 		qsort (co_pair, num_ifaces, sizeof (ClassAndOffset), compare_by_interface_id);
 		for (int i = 0; i < num_ifaces; ++i) {
 			interfaces_full [i] = co_pair [i].ic;
