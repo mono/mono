@@ -195,6 +195,9 @@ struct _MonoImage {
 	/* If the raw data was allocated from a source such as mmap, the allocator may store resource tracking information here. */
 	void *raw_data_handle;
 	char *raw_data;
+#ifdef IL2CPP_ON_MONO
+	void* il2cpp_codegen_handle;
+#endif
 	guint32 raw_data_len;
 	guint8 raw_buffer_used    : 1;
 	guint8 raw_data_allocated : 1;
