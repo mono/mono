@@ -18,7 +18,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
 
-../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,TypeInfoTests.netcoreapp.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
