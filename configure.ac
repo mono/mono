@@ -5557,6 +5557,7 @@ AC_SUBST(CSC)
 
 AC_CONFIG_FILES([po/mcs/Makefile.in])
 
+AC_CONFIG_FILES([acceptance-tests/microbench-perf.sh],[chmod +x acceptance-tests/microbench-perf.sh])
 AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
 AC_CONFIG_FILES([runtime/monodis-wrapper],[chmod +x runtime/monodis-wrapper])
 
