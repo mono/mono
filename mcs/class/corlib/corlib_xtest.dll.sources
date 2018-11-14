@@ -315,7 +315,6 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/WeakReferenceTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,AssemblyTests.cs,CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,ModuleTests.cs,PointerTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
