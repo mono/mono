@@ -109,7 +109,6 @@ class Driver {
 		"IDIII",
 		"LII",
 		"VID",
-		"VIIIIIII",
 		"VILLI",
 
 		"DID",

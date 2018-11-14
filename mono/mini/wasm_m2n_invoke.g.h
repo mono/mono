@@ -816,15 +816,6 @@ wasm_invoke_vid (void *target_func, InterpMethodArguments *margs)
 }
 
 static void
-wasm_invoke_viiiiiii (void *target_func, InterpMethodArguments *margs)
-{
-	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6);
-	T func = (T)target_func;
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
-
-}
-
-static void
 wasm_invoke_villi (void *target_func, InterpMethodArguments *margs)
 {
 	typedef void (*T)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3);
@@ -1061,8 +1052,6 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_lii (target_func, margs);
 	else if (!strcmp ("VID", cookie))
 		wasm_invoke_vid (target_func, margs);
-	else if (!strcmp ("VIIIIIII", cookie))
-		wasm_invoke_viiiiiii (target_func, margs);
 	else if (!strcmp ("VILLI", cookie))
 		wasm_invoke_villi (target_func, margs);
 	else if (!strcmp ("DID", cookie))
