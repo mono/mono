@@ -18,7 +18,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
 
-../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,TypeInfoTests.netcoreapp.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
@@ -313,8 +313,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/StringSplitExtensions.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/TypedReferenceTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/WeakReferenceTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,AssemblyTests.cs,CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,ModuleTests.cs,PointerTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
