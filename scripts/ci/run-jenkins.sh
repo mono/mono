@@ -125,7 +125,6 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
             ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
             ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
