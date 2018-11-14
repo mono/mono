@@ -34,6 +34,8 @@ run-microbench-profiled-$(1):: DebianShootoutMono.stamp
 	$(NET_4_X_RUNTIME) \
 	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
 	perf script > $(1).out.perf
+	cat $(1).out.perf | ./external/BenchmarkDotNet/FlameGraph/stackcollapse-perf.pl > $(1).out.perf-folded
+	./external/BenchmarkDotNet/FlameGraph/flamegraph.pl $(1).out.perf-folded > $(1).out.perf-flame.svg
 
 test-run-microbench-profiled:: run-microbench-profiled-$(1)
 endif
