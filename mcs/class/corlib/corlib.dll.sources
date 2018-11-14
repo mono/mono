@@ -1025,7 +1025,6 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Type.Enum.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Type.Helpers.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Type.Internal.cs
 ../../../external/corert/src/Common/src/System/CommonRuntimeTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeInitializationException.cs

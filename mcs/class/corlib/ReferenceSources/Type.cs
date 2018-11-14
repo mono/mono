@@ -154,6 +154,9 @@ namespace System
 
 		internal virtual bool IsSzArray => false;
 
+        // This is only ever called on RuntimeType objects.
+        internal string FormatTypeName () => FormatTypeName (false);
+
 		internal virtual string FormatTypeName (bool serialization) => throw new NotImplementedException();
 
 		public bool IsInterface {
