@@ -2,7 +2,7 @@
   {
       "name": "llvm", 
       "url": "git://github.com/mono/llvm.git",
-      "rev": "9f79399f87282524fee099b328bd8cbf07929daf",
+      "rev": "f80899cb3eb75f7f5640b4519e83bd96991bffb8",
       "remote-branch": "origin/master", 
       "branch": "master", 
       "directory": "llvm"
