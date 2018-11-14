@@ -316,6 +316,15 @@ ICALL_TYPE(REGINF, "System.Globalization.RegionInfo", REGINF_1)
 ICALL(REGINF_1, "construct_internal_region_from_lcid", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid)
 ICALL(REGINF_2, "construct_internal_region_from_name", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name)
 
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
+ICALL_TYPE(DEFLATESTREAM, "System.IO.Compression.DeflateStreamNative", DEFLATESTREAM_1)
+NOHANDLES(ICALL(DEFLATESTREAM_1, "CloseZStream", ves_icall_System_IO_Compression_DeflateStreamNative_CloseZStream))
+NOHANDLES(ICALL(DEFLATESTREAM_2, "CreateZStream", ves_icall_System_IO_Compression_DeflateStreamNative_CreateZStream))
+NOHANDLES(ICALL(DEFLATESTREAM_3, "Flush", ves_icall_System_IO_Compression_DeflateStreamNative_Flush))
+NOHANDLES(ICALL(DEFLATESTREAM_4, "ReadZStream", ves_icall_System_IO_Compression_DeflateStreamNative_ReadZStream))
+NOHANDLES(ICALL(DEFLATESTREAM_5, "WriteZStream", ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream))
+#endif
+
 #ifndef PLATFORM_NO_DRIVEINFO
 ICALL_TYPE(IODRIVEINFO, "System.IO.DriveInfo", IODRIVEINFO_1)
 ICALL(IODRIVEINFO_1, "GetDiskFreeSpaceInternal", ves_icall_System_IO_DriveInfo_GetDiskFreeSpace)
@@ -462,12 +471,21 @@ ICALL_TYPE(NDNS, "System.Net.Dns", NDNS_1)
 HANDLES(ICALL(NDNS_1, "GetHostByAddr_internal(string,string&,string[]&,string[]&,int)", ves_icall_System_Net_Dns_GetHostByAddr_internal))
 HANDLES(ICALL(NDNS_2, "GetHostByName_internal(string,string&,string[]&,string[]&,int)", ves_icall_System_Net_Dns_GetHostByName_internal))
 HANDLES(ICALL(NDNS_3, "GetHostName_internal(string&)", ves_icall_System_Net_Dns_GetHostName_internal))
+#endif
 
-#if defined(HOST_DARWIN) || defined(HOST_BSD)
+#if defined(ENABLE_MONODROID)
+ICALL_TYPE(LINUXNETWORKCHANGE, "System.Net.NetworkInformation.LinuxNetworkChange", LINUXNETWORKCHANGE_1)
+NOHANDLES(ICALL(LINUXNETWORKCHANGE_1, "CloseNLSocket", ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket))
+NOHANDLES(ICALL(LINUXNETWORKCHANGE_2, "CreateNLSocket", ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CreateNLSocket))
+NOHANDLES(ICALL(LINUXNETWORKCHANGE_3, "ReadEvents", ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents))
+#endif
+
+#if !defined(DISABLE_SOCKETS) && (defined(HOST_DARWIN) || defined(HOST_BSD))
 ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
 ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
 #endif
 
+#ifndef DISABLE_SOCKETS
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 HANDLES(ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal))
 HANDLES(ICALL(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal))
@@ -497,7 +515,9 @@ HANDLES(ICALL(SOCK_19, "Shutdown_internal(intptr,System.Net.Sockets.SocketShutdo
 HANDLES(ICALL(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal))
 HANDLES(ICALL(SOCK_20a, "SupportsPortReuse", ves_icall_System_Net_Sockets_Socket_SupportPortReuse))
 HANDLES(ICALL(SOCK_21a, "cancel_blocking_socket_operation", ves_icall_cancel_blocking_socket_operation))
+#endif
 
+#ifndef DISABLE_SOCKETS
 ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
 ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal)
 #endif /* !DISABLE_SOCKETS */
