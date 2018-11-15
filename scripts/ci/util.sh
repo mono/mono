@@ -47,7 +47,7 @@ function helix_send_build_start_event {
 
     mkdir -p "helix-telemetry/${1}"
     wget -O- --method="POST" --header='Content-Type: application/json' --header='Accept: application/json' --body-data="{
-        \"QueueId\": \"${MONO_HELIX_TARGET_QUEUE}\",
+        \"QueueId\": \"Build\",
         \"Source\": \"${MONO_HELIX_SOURCE}\",
         \"Type\": \"${1}\",
         \"Build\": \"${MONO_HELIX_BUILD_MONIKER}\",
