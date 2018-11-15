@@ -1146,10 +1146,10 @@ mono_thread_info_begin_pulse_resume_and_request_suspension (MonoThreadInfo *info
 	 * held by another preemptively-suspended thread, essentially
 	 * recreating the same problem that two-phase suspend intends to
 	 * fix. */
-	if (!mono_threads_is_hybrid_suspension_enabled ())
-		return mono_thread_info_core_resume (info);
-	else
+	if (mono_threads_is_multiphase_stw_enabled ())
 		return mono_thread_info_core_pulse (info);
+	else
+		return mono_thread_info_core_resume (info);
 }
 /*
 FIXME fix cardtable WB to be out of line and check with the runtime if the target is not the
