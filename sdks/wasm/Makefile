@@ -96,6 +96,12 @@ do-runtime:
 	make -j4 -C ../builds package-wasm-bcl
 	make build-native
 
+runtime:
+	$(MAKE) -C ../builds package-wasm-runtime
+
+cross:
+	$(MAKE) -C ../builds package-wasm-cross
+
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
 main.exe: $(APP_SOURCES)
@@ -120,12 +126,6 @@ sample.dll: Simple.Dependency.dll sample.cs WebAssembly.Bindings.dll WebAssembly
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:WebAssembly.Bindings.dll /r:WebAssembly.Net.Http.dll sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
-
-$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/wasm_tools/monolinker.exe
-	cp $< $@
-
-$(WASM_BCL_DIR)/Mono.Cecil.dll: Mono.Cecil.dll
-	cp $< $@
 
 Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
@@ -196,7 +196,7 @@ build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
+build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
 	dotnet build ProxyDriver

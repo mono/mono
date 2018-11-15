@@ -128,9 +128,6 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Collections\Generic\ValueListBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ComponentModel\DefaultValueAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ComponentModel\EditorBrowsableAttribute.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
-    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\LargeArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ChunkedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DelegatingStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
@@ -165,15 +162,11 @@
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\ICollectionDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\IDictionaryDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\LinkedList.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Queue.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\QueueDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedList.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedSet.TreeSubSet.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedSet.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\SortedSetEqualityComparer.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\Stack.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Collections\src\System\Collections\Generic\StackDebugView.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.EventBasedAsync\src\System\ComponentModel\AsyncOperation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.EventBasedAsync\src\System\ComponentModel\AsyncOperationManager.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.EventBasedAsync\src\System\ComponentModel\BackgroundWorker.cs" />
@@ -3436,11 +3429,19 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
@@ -3515,15 +3516,23 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3632,15 +3641,23 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />

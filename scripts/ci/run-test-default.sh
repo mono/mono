@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+source ${MONO_REPO_ROOT}/scripts/ci/util.sh
+
 ${TESTCMD} --label=mini --timeout=5m make -w -C mono/mini -k check check-seq-points EMIT_NUNIT=1
 if [[ ${CI_TAGS} == *'win-'* ]]
 then ${TESTCMD} --label=mini-aotcheck --skip;
@@ -10,8 +12,8 @@ then ${TESTCMD} --label=aot-test --skip;
 else ${TESTCMD} --label=aot-test --timeout=30m make -w -C mono/tests -j ${CI_CPU_COUNT} -k test-aot
 fi
 ${TESTCMD} --label=compile-bcl-tests --timeout=40m make -i -w -C runtime -j ${CI_CPU_COUNT} test xunit-test
-${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} tests
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1 CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
+${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
@@ -140,21 +142,6 @@ fi
 
 ${TESTCMD} --label=bundle-test-results --timeout=2m find . -name "TestResult*.xml" -exec tar -rvf TestResults.tar {} \;
 
-if [[ $CI_TAGS == *'apidiff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j ${CI_CPU_COUNT} mono-api-diff
-    then report_github_status "success" "API Diff" "No public API changes found." || true
-    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_20API_20Diff/" || true
-    fi
-else ${TESTCMD} --label=apidiff --skip
-fi
-if [[ $CI_TAGS == *'csprojdiff'* ]]; then
-    source ${MONO_REPO_ROOT}/scripts/ci/util.sh
-    make update-solution-files
-    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
-    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
-    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
-    fi
-else ${TESTCMD} --label=csprojdiff --skip
-fi
 rm -fr /tmp/jenkins-temp-aspnet*
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

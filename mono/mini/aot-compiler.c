@@ -1002,7 +1002,7 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 #define AOT_FUNC_ALIGNMENT 16
 #endif
  
-#if defined(TARGET_POWERPC64) && !defined(__mono_ilp32__)
+#if defined(TARGET_POWERPC64) && !defined(MONO_ARCH_ILP32)
 #define PPC_LD_OP "ld"
 #define PPC_LDX_OP "ldx"
 #else
@@ -1033,14 +1033,14 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 #endif
 
 #ifdef TARGET_POWERPC64
-#ifdef __mono_ilp32__
+#ifdef MONO_ARCH_ILP32
 #define AOT_TARGET_STR "POWERPC64 (mono ilp32)"
 #else
 #define AOT_TARGET_STR "POWERPC64 (!mono ilp32)"
 #endif
 #else
 #ifdef TARGET_POWERPC
-#ifdef __mono_ilp32__
+#ifdef MONO_ARCH_ILP32
 #define AOT_TARGET_STR "POWERPC (mono ilp32)"
 #else
 #define AOT_TARGET_STR "POWERPC (!mono ilp32)"
@@ -6392,7 +6392,8 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	patches = g_ptr_array_new ();
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next)
 		g_ptr_array_add (patches, patch_info);
-	g_ptr_array_sort (patches, compare_patches);
+	if (!acfg->aot_opts.llvm_only)
+		g_ptr_array_sort (patches, compare_patches);
 
 	/**********************/
 	/* Encode method info */
@@ -8578,7 +8579,7 @@ append_mangled_type (GString *s, MonoType *t)
 		}
 		temps = g_string_free (temp, FALSE);
 		/* Include the length to avoid different length type names aliasing each other */
-		g_string_append_printf (s, "cl%x_%s_", strlen (temps), temps);
+		g_string_append_printf (s, "cl%x_%s_", (int)strlen (temps), temps);
 		g_free (temps);
 	}
 	}
@@ -9061,7 +9062,7 @@ append_mangled_method (GString *s, MonoMethod *method)
 		g_string_append_printf (s, "_%s_", method->name);
 
 		MonoGenericContainer *container = mono_method_get_generic_container (method);
-		g_string_append_printf (s, "_%s");
+		g_string_append_printf (s, "_");
 		append_mangled_context (s, &container->context);
 
 		return append_mangled_signature (s, mono_method_signature_internal (method));
@@ -9174,9 +9175,9 @@ mono_aot_get_plt_symbol (MonoJumpInfoType type, gconstpointer data)
 	plt_entry->llvm_used = TRUE;
 
 #if defined(TARGET_MACH)
-	return g_strdup_printf (plt_entry->llvm_symbol + strlen (llvm_acfg->llvm_label_prefix));
+	return g_strdup (plt_entry->llvm_symbol + strlen (llvm_acfg->llvm_label_prefix));
 #else
-	return g_strdup_printf (plt_entry->llvm_symbol);
+	return g_strdup (plt_entry->llvm_symbol);
 #endif
 }
 

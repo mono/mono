@@ -89,8 +89,8 @@ wasm_logger (const char *log_domain, const char *log_level, const char *message,
 	if (fatal) {
 		EM_ASM(
 			   var err = new Error();
-			   print ("Stacktrace: \n");
-			   print (err.stack);
+			   console.log ("Stacktrace: \n");
+			   console.log (err.stack);
 			   );
 
 		fprintf (stderr, "%s", message);
