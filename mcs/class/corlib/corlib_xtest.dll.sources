@@ -304,6 +304,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SByteTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SingleTests.cs
 #../../../external/corefx/src/System.Runtime/tests/System/SingleTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt32Tests.cs

@@ -490,6 +490,8 @@ namespace System.Reflection.Emit
 		{
 			return new TypeBuilderInstantiation (type, typeArguments);
 		}
+
+		public override bool IsTypeDefinition => false;
 	}
 }
 #else

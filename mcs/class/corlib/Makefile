@@ -137,6 +137,11 @@ XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/Syste
 XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
+TestLoadAssembly.dll : ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
+	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -out:TestLoadAssembly.dll
+
+xunit-test-local : TestLoadAssembly.dll
+
 ifndef AOT_FRIENDLY_PROFILE
 ifneq ($(PROFILE),testing_aot_hybrid)
 ifneq ($(PROFILE),testing_aot_full_interp)
