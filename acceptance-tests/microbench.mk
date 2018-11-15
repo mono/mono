@@ -10,6 +10,7 @@ abs_top_srcdir = $(abspath $(top_srcdir))
 TEST_EXE_PATH=$(abs_top_srcdir)/acceptance-tests/external/DebianShootoutMono/release/
 NET_4_X_RUNTIME=MONO_PATH=$(TEST_EXE_PATH):$(abs_top_srcdir)/mcs/class/lib/net_4_x $(abs_top_srcdir)/runtime/mono-wrapper
 FULL_AOT_RUNTIME=MONO_PATH=$(abs_top_srcdir)/mcs/class/lib/testing_aot_full $(abs_top_srcdir)/runtime/mono-wrapper
+PERF_RUNTIME=$(abs_top_srcdir)/acceptance-tests/microbench-perf.sh
 
 define BenchmarkDotNetTemplate
 run-microbench-$(1):: DebianShootoutMono.stamp
@@ -25,17 +26,15 @@ test-run-microbench:: run-microbench-$(1)
 
 if HOST_LINUX
 run-microbench-profiled-$(1):: DebianShootoutMono.stamp
-	MONO_EXECUTABLE="perf record -F 99 -a -g -- $(abs_top_srcdir)/mono/mini/mono-sgen " \
-	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
+	MONO_BENCH_EXECUTABLE="$(PERF_RUNTIME)" \
 	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
 	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
-	MONO_BENCH_PROFILE_PREFIX="$(PROFILE_TOOL)"\
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
 	$(NET_4_X_RUNTIME) \
 	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
 	perf script > $(1).out.perf
-	cat $(1).out.perf | ./external/BenchmarkDotNet/FlameGraph/stackcollapse-perf.pl > $(1).out.perf-folded
-	./external/BenchmarkDotNet/FlameGraph/flamegraph.pl $(1).out.perf-folded > $(1).out.perf-flame.svg
+	cat $(1).out.perf | ./DebianShootoutMono/external/FlameGraph/stackcollapse-perf.pl > $(1).out.perf-folded
+	./external/DebianShootoutMono/external/FlameGraph/flamegraph.pl $(1).out.perf-folded > $(1).out.perf-flame.svg
 
 test-run-microbench-profiled:: run-microbench-profiled-$(1)
 endif
