@@ -1292,7 +1292,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	gsharedvt_sig->param_count = pindex;
 
 	// FIXME: Use shared signatures
-	mb = mono_mb_new (mono_defaults.object_class, sig->hasthis ? "gsharedvt_in_sig" : "gsharedvt_in_sig_static", MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, sig->hasthis ? "gsharedvt_in_sig" : "gsharedvt_in_sig_static", MONO_WRAPPER_OTHER);
 
 #ifndef DISABLE_JIT
 	if (sig->ret->type != MONO_TYPE_VOID)
@@ -1399,7 +1399,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	normal_sig->params [sig->param_count] = mono_get_int_type ();
 
 	// FIXME: Use shared signatures
-	mb = mono_mb_new (mono_defaults.object_class, "gsharedvt_out_sig", MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, "gsharedvt_out_sig", MONO_WRAPPER_OTHER);
 
 #ifndef DISABLE_JIT
 	if (sig->ret->type != MONO_TYPE_VOID)
@@ -1568,7 +1568,7 @@ mini_get_interp_in_wrapper (MonoMethodSignature *sig)
 		name = sig->hasthis ? "interp_in" : "interp_in_static";
 	}
 
-	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_OTHER);
 
 	/*
 	 * This is needed to be able to unwind out of interpreted code to managed.
@@ -1690,7 +1690,7 @@ mini_create_interp_lmf_wrapper (gpointer target)
 	WrapperInfo *info;
 	MonoType *int_type = mono_get_int_type ();
 
-	mb = mono_mb_new (mono_defaults.object_class, "interp_lmf", MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, "interp_lmf", MONO_WRAPPER_OTHER);
 
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 	sig->ret = mono_get_void_type ();;

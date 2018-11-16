@@ -3515,7 +3515,7 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_value (info->d.virtual_stelemref.kind, p, &p);
 			break;
 		}
-		case MONO_WRAPPER_UNKNOWN: {
+		case MONO_WRAPPER_OTHER: {
 			g_assert (info);
 			encode_value (info->subtype, p, &p);
 			if (info->subtype == WRAPPER_SUBTYPE_PTR_TO_STRUCTURE ||
@@ -7878,7 +7878,7 @@ can_encode_method (MonoAotCompile *acfg, MonoMethod *method)
 			case MONO_WRAPPER_PROXY_ISINST:
 			case MONO_WRAPPER_ALLOC:
 			case MONO_WRAPPER_REMOTING_INVOKE:
-			case MONO_WRAPPER_UNKNOWN:
+			case MONO_WRAPPER_OTHER:
 			case MONO_WRAPPER_WRITE_BARRIER:
 			case MONO_WRAPPER_DELEGATE_INVOKE:
 			case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
@@ -8646,7 +8646,7 @@ append_mangled_wrapper_type (GString *s, guint32 wrapper_type)
 	case MONO_WRAPPER_STELEMREF:
 		label = "stelemref";
 		break;
-	case MONO_WRAPPER_UNKNOWN:
+	case MONO_WRAPPER_OTHER:
 		label = "unknown";
 		break;
 	case MONO_WRAPPER_MANAGED_TO_NATIVE:
@@ -8894,7 +8894,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			g_string_append_printf (s, "%d", info->d.virtual_stelemref.kind);
 		break;
 	}
-	case MONO_WRAPPER_UNKNOWN: {
+	case MONO_WRAPPER_OTHER: {
 		append_mangled_wrapper_subtype (s, info->subtype);
 		if (info->subtype == WRAPPER_SUBTYPE_PTR_TO_STRUCTURE ||
 			info->subtype == WRAPPER_SUBTYPE_STRUCTURE_TO_PTR)
