@@ -258,6 +258,7 @@ $(test_lib_dir)/BinarySerializationOverVersionsTest.dll: $(vtsdir_src)/BinarySer
 		-r:$(topdir)/class/lib/$(PROFILE)/System.dll \
 		-target:library \
 		$(vtsdir_src)/BinarySerializationOverVersionsTest.cs -out:$@
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_dir)/BinarySerializationOverVersionsTest.dll.nunitlite.config
 
 run-test-vts: test-vts
 	@echo Running vts tests...
