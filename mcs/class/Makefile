@@ -120,7 +120,8 @@ monodroid_tools_dirs_parallel := \
 monotouch_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd \
-	Mono.CSharp
+	Mono.CSharp \
+	Mono.Runtime.Tests
 
 monotouch_watch_dirs_parallel := $(filter-out Mono.Security Mono.Data.Tds,$(monotouch_dirs_parallel))
 

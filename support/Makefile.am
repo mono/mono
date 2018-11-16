@@ -129,6 +129,10 @@ libMonoSupportW_la_SOURCES =			\
 libMonoSupportW_la_LIBADD =			\
 		$(glib_libs)
 
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)
+	cp -L .libs/libMonoPosixHelper$(libsuffix) $(TEST_BUNDLE_PATH)/
+
 # 
 # Use this target to refresh the values in map.[ch]
 #

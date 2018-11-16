@@ -96,6 +96,12 @@ do-runtime:
 	make -j4 -C ../builds package-wasm-bcl
 	make build-native
 
+runtime:
+	$(MAKE) -C ../builds package-wasm-runtime
+
+cross:
+	$(MAKE) -C ../builds package-wasm-cross
+
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
 main.exe: $(APP_SOURCES)

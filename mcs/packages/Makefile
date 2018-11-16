@@ -57,6 +57,10 @@ test-csi:
 	cat csi-test-output.txt && grep -q "hello world" csi-test-output.txt
 	rm csi-test-output.txt
 
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/csi
+	cp -L $(ROSLYN_CSC_DIR)/* $(TEST_BUNDLE_PATH)/tests/csi/
+
 endif
 
 dist-local: dist-default
