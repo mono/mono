@@ -1002,7 +1002,7 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 #define AOT_FUNC_ALIGNMENT 16
 #endif
  
-#if defined(TARGET_POWERPC64) && !defined(__mono_ilp32__)
+#if defined(TARGET_POWERPC64) && !defined(MONO_ARCH_ILP32)
 #define PPC_LD_OP "ld"
 #define PPC_LDX_OP "ldx"
 #else
@@ -1033,14 +1033,14 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 #endif
 
 #ifdef TARGET_POWERPC64
-#ifdef __mono_ilp32__
+#ifdef MONO_ARCH_ILP32
 #define AOT_TARGET_STR "POWERPC64 (mono ilp32)"
 #else
 #define AOT_TARGET_STR "POWERPC64 (!mono ilp32)"
 #endif
 #else
 #ifdef TARGET_POWERPC
-#ifdef __mono_ilp32__
+#ifdef MONO_ARCH_ILP32
 #define AOT_TARGET_STR "POWERPC (mono ilp32)"
 #else
 #define AOT_TARGET_STR "POWERPC (!mono ilp32)"
@@ -6392,7 +6392,8 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	patches = g_ptr_array_new ();
 	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next)
 		g_ptr_array_add (patches, patch_info);
-	g_ptr_array_sort (patches, compare_patches);
+	if (!acfg->aot_opts.llvm_only)
+		g_ptr_array_sort (patches, compare_patches);
 
 	/**********************/
 	/* Encode method info */

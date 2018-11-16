@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
@@ -45,10 +46,12 @@ namespace System.Web.Caching
 		DateTime start;
 		Cache cache;
 		FileSystemWatcher[] watchers;
+		static readonly bool useSharedWatchers = Environment.GetEnvironmentVariable ("MONO_SYSTEMWEB_CACHEDEPENDENCY_SHARED_FSW") != null;
+		static readonly Dictionary<string, FileSystemWatcher> sharedWatchers = new Dictionary<string, FileSystemWatcher> ();
 		bool hasChanged;
 		bool used;
 		DateTime utcLastModified;
-		object locker = new object ();
+		static readonly object locker = new object ();
 		EventHandlerList events = new EventHandlerList ();
 		
 		internal event EventHandler DependencyChanged {
@@ -102,25 +105,47 @@ namespace System.Web.Caching
 					filename = filenames [n];
 					if (String.IsNullOrEmpty (filename))
 						continue;
-					
-					FileSystemWatcher watcher = new FileSystemWatcher ();
+					string path = null;
+					string filter = null;
 					if (Directory.Exists (filename))
-						watcher.Path = filename;
+						path = filename;
 					else {
 						string parentPath = Path.GetDirectoryName (filename);
 						if (parentPath != null && Directory.Exists (parentPath)) {
-							watcher.Path = parentPath;
-							watcher.Filter = Path.GetFileName (filename);
+							path = parentPath;
+							filter = Path.GetFileName (filename);
 						} else
 							continue;
 					}
-					watcher.NotifyFilter |= NotifyFilters.Size;
-					watcher.Created += new FileSystemEventHandler (OnChanged);
-					watcher.Changed += new FileSystemEventHandler (OnChanged);
-					watcher.Deleted += new FileSystemEventHandler (OnChanged);
-					watcher.Renamed += new RenamedEventHandler (OnChanged);
-					watcher.EnableRaisingEvents = true;
-					watchers [n] = watcher;
+
+					lock (locker) {
+						FileSystemWatcher watcher;
+						if (useSharedWatchers) {
+							if (!sharedWatchers.TryGetValue (path, out watcher)) {
+								watcher = new FileSystemWatcher ();
+								watcher.Path = path;
+								watcher.NotifyFilter |= NotifyFilters.Size;
+								watcher.Created += new FileSystemEventHandler ((s, e) => { if (filter == null || e.Name == filter) OnChanged (s, e); });
+								watcher.Changed += new FileSystemEventHandler ((s, e) => { if (filter == null || e.Name == filter) OnChanged (s, e); });
+								watcher.Deleted += new FileSystemEventHandler ((s, e) => { if (filter == null || e.Name == filter) OnChanged (s, e); });
+								watcher.Renamed += new RenamedEventHandler ((s, e) => { if (filter == null || e.OldName == filter) OnChanged (s, e); });
+								watcher.EnableRaisingEvents = true;
+								sharedWatchers [path] = watcher;
+							}
+						} else {
+							watcher = new FileSystemWatcher ();
+							watcher.Path = path;
+							if (filter != null)
+								watcher.Filter = filter;
+							watcher.NotifyFilter |= NotifyFilters.Size;
+							watcher.Created += new FileSystemEventHandler (OnChanged);
+							watcher.Changed += new FileSystemEventHandler (OnChanged);
+							watcher.Deleted += new FileSystemEventHandler (OnChanged);
+							watcher.Renamed += new RenamedEventHandler (OnChanged);
+							watcher.EnableRaisingEvents = true;
+							watchers [n] = watcher;
+						}
+					}
 				}
 			}
 			this.cachekeys = cachekeys;
@@ -137,8 +162,17 @@ namespace System.Web.Caching
 			var sb = new StringBuilder ();
 			
 			lock (locker) {
-				if (watchers != null)
-					foreach (FileSystemWatcher fsw in watchers)
+				FileSystemWatcher[] watcherList;
+				
+				if (useSharedWatchers) {
+					watcherList = new FileSystemWatcher[sharedWatchers.Count];
+					sharedWatchers.Values.CopyTo (watcherList, 0);
+				} else {
+					watcherList = watchers;
+				}
+
+				if (watcherList != null)
+					foreach (FileSystemWatcher fsw in watcherList)
 						if (fsw != null && fsw.Path != null && fsw.Path.Length != 0)
 							sb.Append ("_" + fsw.Path);
 			}
@@ -172,6 +206,8 @@ namespace System.Web.Caching
 		
 		void DisposeWatchers ()
 		{
+			if (useSharedWatchers) return;
+
 			lock (locker) {
 				if (watchers != null) {
 					foreach (FileSystemWatcher w in watchers)

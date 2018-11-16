@@ -225,6 +225,15 @@ $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
+test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
+
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll
+	cp $< $(test_lib_dir)
+
+XTEST_LIB_FLAGS += -r:$(test_module)
+
+$(xtest_lib_output): $(test_module) $(test_lib_dir)
+
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \
 	$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
@@ -289,7 +298,7 @@ tzi.exe:System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/co
 	trap "rm -f $(TMP_FILE1) $(TMP_FILE2)" EXIT INT QUIT TERM && \
 	sed 's/Environment\.GetResourceString/string.Format/g' ../referencesource/mscorlib/system/timezoneinfo.cs > $(TMP_FILE1) && \
 	sed 's/StringBuilder\.DefaultCapacity/100/g' ../referencesource/mscorlib/system/text/stringbuildercache.cs > $(TMP_FILE2) && \
-	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;MOBILE;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
+	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;MOBILE;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
 
 android-pull-tzdb:
 	mkdir -p android/tzdb/usr/share/zoneinfo

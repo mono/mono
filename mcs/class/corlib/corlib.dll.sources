@@ -247,6 +247,7 @@ System.Reflection/FieldInfo.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
 System.Reflection/MonoEvent.cs

@@ -21,6 +21,7 @@ AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects]
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 AM_EXTRA_RECURSIVE_TARGETS([test])
+AM_EXTRA_RECURSIVE_TARGETS([test-bundle])
 
 API_VER=2.0
 AC_SUBST(API_VER)
@@ -1020,6 +1021,13 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 #CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
 CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
 # "c++0x" instead of C++11, for compat with Centos6/gcc4.4
+
+# -stdlib=libc++ is needed by clang for iOS 6.0 (-miphoneos-version-min=6.0)
+# to support C++11 headers but it does not seem to harm elsewhere, so over-approximate
+# and add it whenever we're running clang on Darwin.
+if test "x$mono_cv_clang" = xyes -a x$host_darwin = xyes; then
+	CXXFLAGS_COMMON="$CXXFLAGS_COMMON -stdlib=libc++"
+fi
 
 AC_SUBST(CXXFLAGS_COMMON)
 
@@ -3832,7 +3840,11 @@ if test "x$enable_llvm" = "xyes"; then
 
 	AC_SUBST(LLVM_CODEGEN_LIBS)
 	AC_SUBST(EXTERNAL_LLVM_CONFIG)
-	
+
+	if test "x$host_win32" = "xyes" && test "x$cross_compiling" = "xno" &&  test "x$internal_llvm" = "xno"; then
+		EXTERNAL_LLVM_CONFIG_WIN32=$(cygpath -m $EXTERNAL_LLVM_CONFIG)
+		AC_SUBST(EXTERNAL_LLVM_CONFIG_WIN32)
+	fi
 	AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
 fi # ENABLE_LLVM
 
@@ -3961,7 +3973,7 @@ case "$host" in
 		TARGET=AMD64;
 		arch_target=amd64;
 		if test "x$ac_cv_sizeof_void_p" = "x4"; then
-			AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
+			AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
 			sizeof_register=8
 		fi
 		case $host_os in
@@ -4153,7 +4165,7 @@ if test "x$host" != "x$target"; then
 		# It would be better to just use TARGET_POWERPC64, but lots of code already
 		# uses this define
 		AC_DEFINE(__mono_ppc64__, 1, [...])
-		AC_DEFINE(__mono_ilp32__, 1, [64 bit mode with 4 byte longs and pointers])
+		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
 		sizeof_register=8
 		target_byte_order=G_BIG_ENDIAN
 		;;

@@ -1,19 +1,12 @@
 
 all: harness.exe appbuilder.exe test-runner.exe
 
-BCL_DIR = ../../mcs/class/lib/monotouch
+BCL_DIR = ../out/ios-bcl/monotouch
 XCODE_ROOT=$(shell xcode-select -p)
 SYSROOT=$(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
-NINJA_PATH:=$(shell which ninja)
-ifeq ($(NINJA_PATH),)
-$(error "ninja not found, install it using 'brew install ninja'.")
-endif
-
-IOS_DEPLOY_PATH:=$(shell which ios-deploy)
-ifeq ($(IOS_DEPLOY_PATH),)
-$(error "ios-deploy not found, install it using 'brew install ios-deploy'.")
-endif
+NINJA_PATH:=$(or $(shell which ninja),$(error "ninja not found, install it using 'brew install ninja'."))
+IOS_DEPLOY_PATH:=$(or $(shell which ios-deploy),$(error "ios-deploy not found, install it using 'brew install ios-deploy'."))
 
 # Default to add-hoc signing
 IOS_SIGNING_IDENTITY ?= -
@@ -139,10 +132,6 @@ run-ios-dev-%: harness.exe test-runner.exe
 clean:
 	$(MAKE) -C runtime clean
 	$(RM) -rf bin obj *.exe *.log aot-cache
-
-# Compile all the test assemblies
-compile-tests:
-	for suite in $(TEST_SUITES) $(TEST_SUITES_COMPILING); do make -C ../../mcs/class/$$suite PROFILE=monotouch test || exit 1; done
 
 run-ios-sim-all:
 	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
