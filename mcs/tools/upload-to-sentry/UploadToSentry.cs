@@ -381,14 +381,14 @@ namespace UploadToSentry
 			this.codebase = assemblies;
 		}
 
-		static IEnumerable<string> GetAssemblies (string fileRoot) {
+		static string[] GetAssemblies (string fileRoot) {
 			var dlls = Directory.GetFiles (fileRoot, "*.dll", SearchOption.AllDirectories);
 			var exes = Directory.GetFiles (fileRoot, "*.exe", SearchOption.AllDirectories);
 
-			return Enumerable.Concat (dlls, exes);
+			return dlls.Concat (exes).ToArray ();
 		}
 
-		static IEnumerable<string> GetFiles (string fileRoot) {
+		static string[] GetFiles (string fileRoot) {
 			return Directory.GetFiles (fileRoot, "mono_crash.*.json", SearchOption.AllDirectories);
 		}
 
@@ -416,12 +416,12 @@ namespace UploadToSentry
 
 			var files = GetFiles (fileRoot);
 
-			if (files.Count () == 0)
+			if (files.Length == 0)
 				return;
 
 			// Find all of the assemblies in tree that could have made the crash dump
 			var assemblies = GetAssemblies (fileRoot);
-			var codebase = new CodeCollection (assemblies.ToArray ());
+			var codebase = new CodeCollection (assemblies);
 
 			foreach (var file in files) {
 				Console.WriteLine ($"Processing {file} ...");
