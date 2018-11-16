@@ -153,14 +153,6 @@
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
 
-# System.Runtime
-# TODO: Many more to be included
-../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
-../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
-
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/Task/*.cs:*.netcoreapp.cs,TaskContinueWithTests.cs,ExecutionContextFlowTest.cs
@@ -316,6 +308,16 @@
 ../../../external/corefx/src/System.Runtime/tests/System/IO/*.cs:FileLoadException.InteropTests.cs,DirectoryNotFoundException.InteropTests.cs,FileNotFoundException.InteropTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Threading/*.cs:WaitHandleTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/BadImageFormatExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/StackOverflowExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/StringSplitExtensions.cs
+../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
+../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Runtime.Extensions
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
