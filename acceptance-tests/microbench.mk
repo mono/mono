@@ -20,7 +20,7 @@ run-microbench-$(1):: DebianShootoutMono.stamp
 	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
 	$(NET_4_X_RUNTIME) \
-	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
+	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1) $(MONO_BENCH_GIST_URL)
 
 test-run-microbench:: run-microbench-$(1)
 
@@ -34,7 +34,7 @@ microbench-results/$(1).perf.data: DebianShootoutMono.stamp
 	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
 	$(NET_4_X_RUNTIME) \
-	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
+	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1) $(MONO_BENCH_GIST_URL)
 	mv perf.data microbench-results/$(1).perf.data
 
 microbench-results/$(1).tmp.perf: microbench-results/$(1).perf.data
@@ -93,4 +93,5 @@ $(eval $(call BenchmarkDotNetTemplate,Fannkuchredux))
 $(eval $(call BenchmarkDotNetTemplate,Fasta))
 $(eval $(call BenchmarkDotNetTemplate,KNucleotide))
 $(eval $(call BenchmarkDotNetTemplate,RevComp))
+$(eval $(call BenchmarkDotNetTemplate,GistBenchmark))
 

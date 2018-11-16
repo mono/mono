@@ -34,9 +34,9 @@
   {
     "name": "DebianShootoutMono", 
     "url": "https://github.com/alexanderkyte/DebianShootoutMono.git",
-    "rev": "13ffdb7d6a88299c4ca9c769ec3a596b2e7baffc",
-    "remote-branch": "origin/release_11_1_2018", 
-    "branch": "release_11_1_2018", 
+    "rev": "5395b8fe607254f15324cd059cb93ed9c5413b08",
+    "remote-branch": "origin/release_11_15_2018",
+    "branch": "release_11_15_2018",
     "directory": "DebianShootoutMono"
   }
 ]
