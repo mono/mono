@@ -267,7 +267,6 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 
     if [[ ${build_error} != 0 ]]; then
         echo "ERROR: The Mono build failed."
-        ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
         exit ${build_error}
     fi
 fi
