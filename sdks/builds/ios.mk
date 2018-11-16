@@ -99,7 +99,8 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--without-sigaltstack \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
-	--disable-crash-reporting
+	--disable-crash-reporting \
+	$$(if $$(wildcard $$(TOP)/../mono-extensions),--enable-extension-module=xamarin)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -222,9 +223,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--without-ikvm-native \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
-	--disable-crash-reporting
-
-# _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
+	--disable-crash-reporting \
+	$$(if $$(wildcard $$(TOP)/../mono-extensions),--enable-extension-module=xamarin)
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@

@@ -36,9 +36,8 @@ _mac-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-maintainer-mode \
 	--with-glib=embedded \
-	--with-mcs-docs=no
-
-# _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin --enable-extension-module
+	--with-mcs-docs=no \
+	$$(if $$(wildcard $$(TOP)/../mono-extensions),--enable-extension-module=xamarin --enable-extension-module)
 
 .stamp-mac-$(1)-toolchain:
 	touch $$@

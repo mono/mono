@@ -35,7 +35,7 @@ all: package
 configure-mono: $(TOP)/configure
 
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
-	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh $(if $(wildcard $(TOP)/../mono-extensions),--enable-extension-module=xamarin)
 
 TARGETS=
 
