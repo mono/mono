@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
 if [[ ${CI_TAGS} == *'win-'* ]]; then
