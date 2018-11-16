@@ -1161,7 +1161,7 @@ void mono_debugger_install_runtime_callbacks(MonoDebuggerRuntimeCallbacks* cbs)
 }
 
 uint32_t* g_unity_check;
-void mono_debugger_install_sequence_point_check(uint32_t* check)
+void mono_debugger_install_sequence_point_check(volatile uint32_t* check)
 {
 	g_unity_check = check;
 }
