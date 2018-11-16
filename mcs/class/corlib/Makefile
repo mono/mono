@@ -133,12 +133,8 @@ DEFAULT_REFERENCES =
 
 TEST_LIB_REFS = System.Core System
 
-TestModule.dll: ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il
-	$(ILASM) ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.il /dll /out:$(test_lib_dir)/System.Reflection.TestModule.dll
-xunit-test-local: TestModule.dll
-
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics System.Runtime.CompilerServices.Unsafe
-XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk -r:$(test_lib_dir)/System.Reflection.TestModule.dll
+XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 TestLoadAssembly.dll : ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
@@ -233,6 +229,15 @@ $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
+
+test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
+
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll
+	cp $< $(test_lib_dir)
+
+XTEST_LIB_FLAGS += -r:$(test_module)
+
+$(xtest_lib_output): $(test_module) $(test_lib_dir)
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \

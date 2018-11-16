@@ -27,6 +27,8 @@ using Mono.Cecil.Cil;
 
 using System.Net;
 
+[assembly: CLSCompliant (false)]
+
 namespace UploadToSentry
 {
 	// Modeled after https://github.com/getsentry/raven-csharp/blob/develop/src/app/SharpRaven/Dsn.cs
@@ -103,7 +105,7 @@ namespace UploadToSentry
 				if (assembly.EndsWith(".dll") || assembly.EndsWith(".exe"))
 				{
 					// Console.WriteLine("Reading {0}", assembly);
-					var readerParameters = new ReaderParameters { ReadSymbols = true };
+					var readerParameters = new ReaderParameters { ReadSymbols = true, InMemory = true };
 					AssemblyDefinition myLibrary = null;
 					try
 					{
@@ -121,6 +123,11 @@ namespace UploadToSentry
 								this.Add(assembly, klass, function, mvid, token, ty.Methods[i].DebugInformation.SequencePoints);
 							}
 						}
+					}
+					catch (SymbolsNotFoundException)
+					{
+						// ignore assemblies without debug symbols
+						continue;
 					}
 					catch (Exception e)
 					{
@@ -301,7 +308,7 @@ namespace UploadToSentry
 			var request = (HttpWebRequest) WebRequest.Create (url.SentryUri);
 			request.Method = "POST";
 			request.ContentType = "application/json";
-			request.UserAgent = "SharpRaven/2.4.0.0";
+			request.UserAgent = "MonoSentryUploader/1.0.0.0";
 
 			var sentryVersion = 7;
 			var time = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
@@ -374,19 +381,15 @@ namespace UploadToSentry
 			this.codebase = assemblies;
 		}
 
-		static bool IsAssembly (string fileName) {
-			var extension = Path.GetExtension(fileName).ToUpper ();
-			return (extension == ".EXE" || extension == ".DLL");
+		static string[] GetAssemblies (string fileRoot) {
+			var dlls = Directory.GetFiles (fileRoot, "*.dll", SearchOption.AllDirectories);
+			var exes = Directory.GetFiles (fileRoot, "*.exe", SearchOption.AllDirectories);
+
+			return dlls.Concat (exes).ToArray ();
 		}
 
-		static IEnumerable<string> GetAssemblies (string fileRoot) {
-			return Directory.GetFiles (fileRoot, "*.*", SearchOption.AllDirectories).Where(path => IsAssembly (path));
-		}
-
-		static IEnumerable<string> GetFiles (string fileRoot) {
-			var file_regex = @".*mono_crash.*json";
-			return Directory.GetFiles (fileRoot, "*.*", SearchOption.AllDirectories).Where (path =>
-				Regex.Match(Path.GetFileName(path), file_regex).Success);
+		static string[] GetFiles (string fileRoot) {
+			return Directory.GetFiles (fileRoot, "mono_crash.*.json", SearchOption.AllDirectories);
 		}
 
 		public static void Main (string[] args)
@@ -411,12 +414,17 @@ namespace UploadToSentry
 
 			var dsn = new Dsn(url);
 
+			var files = GetFiles (fileRoot);
+
+			if (files.Length == 0)
+				return;
+
 			// Find all of the assemblies in tree that could have made the crash dump
 			var assemblies = GetAssemblies (fileRoot);
-			var codebase = new CodeCollection (assemblies.ToArray ());
+			var codebase = new CodeCollection (assemblies);
 
-			var files = GetFiles (fileRoot);
 			foreach (var file in files) {
+				Console.WriteLine ($"Processing {file} ...");
 				var state = new Uploader (codebase);
 				state.Upload (file, os_tag, dsn);
 			}
