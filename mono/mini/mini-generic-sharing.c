@@ -1307,6 +1307,12 @@ get_wrapper_shared_type_full (MonoType *t, gboolean is_field)
 	case MONO_TYPE_I8:
 		return mono_get_int_type ();
 #endif
+#if TARGET_SIZEOF_VOID_P == 4
+	case MONO_TYPE_I:
+		return mono_get_int32_type ();
+	case MONO_TYPE_U:
+		return m_class_get_byval_arg (mono_defaults.uint32_class);
+#endif
 	default:
 		break;
 	}
