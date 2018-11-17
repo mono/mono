@@ -8514,7 +8514,7 @@ append_mangled_type (GString *s, MonoType *t)
 		g_string_append_printf (s, "b");
 	switch (t->type) {
 	case MONO_TYPE_VOID:
-		g_string_append_printf (s, "void_");
+		g_string_append_printf (s, "void");
 		break;
 	case MONO_TYPE_I1:
 		g_string_append_printf (s, "i1");
@@ -8551,6 +8551,9 @@ append_mangled_type (GString *s, MonoType *t)
 		break;
 	case MONO_TYPE_R8:
 		g_string_append_printf (s, "do");
+		break;
+	case MONO_TYPE_OBJECT:
+		g_string_append_printf (s, "obj");
 		break;
 	default: {
 		char *fullname = mono_type_full_name (t);
@@ -8594,13 +8597,14 @@ append_mangled_signature (GString *s, MonoMethodSignature *sig)
 	int i;
 	gboolean supported;
 
+	if (sig->pinvoke)
+		g_string_append_printf (s, "pinvoke_");
 	supported = append_mangled_type (s, sig->ret);
 	if (!supported)
 		return FALSE;
+		g_string_append_printf (s, "_");
 	if (sig->hasthis)
 		g_string_append_printf (s, "this_");
-	if (sig->pinvoke)
-		g_string_append_printf (s, "pinvoke_");
 	for (i = 0; i < sig->param_count; ++i) {
 		supported = append_mangled_type (s, sig->params [i]);
 		if (!supported)
@@ -8857,7 +8861,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	g_string_append_printf (s, "wrapper_");
 	g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
 
-	append_mangled_wrapper_type (s, method->wrapper_type);
+	if (method->wrapper_type != MONO_WRAPPER_OTHER)
+		append_mangled_wrapper_type (s, method->wrapper_type);
 
 	switch (method->wrapper_type) {
 	case MONO_WRAPPER_REMOTING_INVOKE:
