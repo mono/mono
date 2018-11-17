@@ -2900,6 +2900,11 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (!mono_threads_are_safepoints_enabled ())
 		return;
 
+	if (cfg->method->iflags & METHOD_IMPL_ATTRIBUTE_NOSAFEPOINTS) {
+		printf ("SKIPPING SAFEPOINTS for methods with NoSafepoints attribute\n");
+		return;
+	}
+
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		g_assert (mono_threads_are_safepoints_enabled ());

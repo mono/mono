@@ -26,6 +26,9 @@ namespace System.Runtime.CompilerServices {
         AggressiveInlining =   System.Reflection.MethodImplAttributes.AggressiveInlining,
         NoOptimization     =   System.Reflection.MethodImplAttributes.NoOptimization,
         // **** If you add something, update internal MethodImplAttribute(MethodImplAttributes methodImplAttributes)! ****
+#if MONO
+        NoSafepoints       =   0x400
+#endif
     }
 
     [Serializable]
