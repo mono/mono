@@ -1137,8 +1137,97 @@ tramp_info_equal (gconstpointer a, gconstpointer b)
 		tramp1->addr == tramp2->addr && tramp1->sig == tramp2->sig && tramp1->gsig == tramp2->gsig;
 }
 
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_1, "Mono", "ValueTuple`1");
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_2, "Mono", "ValueTuple`2");
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_3, "Mono", "ValueTuple`3");
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_4, "Mono", "ValueTuple`4");
+static GENERATE_GET_CLASS_WITH_CACHE (valuetuple_5, "Mono", "ValueTuple`5");
+
 static MonoType*
-get_wrapper_shared_type (MonoType *t)
+get_wrapper_shared_type (MonoType *t);
+static MonoType*
+get_wrapper_shared_type_full (MonoType *t, gboolean field);
+
+/*
+ * get_wrapper_shared_vtype:
+ *
+ *   Return an instantiation of one of the Mono.ValueTuple types with the same
+ * layout as the valuetype KLASS.
+ */
+static MonoType*
+get_wrapper_shared_vtype (MonoType *t)
+{
+	ERROR_DECL (error);
+	MonoGenericContext ctx;
+	MonoType *args [16];
+	MonoClass *klass;
+	MonoClass *tuple_class = NULL;
+	int findex = 0;
+
+	// FIXME: Map 1 member structs to primitive types on platforms where its supported
+
+	klass = mono_class_from_mono_type_internal (t);
+	if ((mono_class_get_flags (klass) & TYPE_ATTRIBUTE_LAYOUT_MASK) != TYPE_ATTRIBUTE_SEQUENTIAL_LAYOUT)
+		return NULL;
+	mono_class_setup_fields (klass);
+
+	int num_fields = mono_class_get_field_count (klass);
+	MonoClassField *klass_fields = m_class_get_fields (klass);
+
+	for (int i = 0; i < num_fields; ++i) {
+		MonoClassField *field = &klass_fields [i];
+
+		if (field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA))
+			continue;
+		MonoType *ftype = get_wrapper_shared_type_full (field->type, TRUE);
+		args [findex ++] = ftype;
+		if (findex >= 16)
+			break;
+	}
+	if (findex == 0 || findex > 5)
+		return NULL;
+
+	switch (findex) {
+	case 1:
+		tuple_class = mono_class_get_valuetuple_1_class ();
+		break;
+	case 2:
+		tuple_class = mono_class_get_valuetuple_2_class ();
+		break;
+	case 3:
+		tuple_class = mono_class_get_valuetuple_3_class ();
+		break;
+	case 4:
+		tuple_class = mono_class_get_valuetuple_4_class ();
+		break;
+	case 5:
+		tuple_class = mono_class_get_valuetuple_5_class ();
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	g_assert (tuple_class);
+
+	memset (&ctx, 0, sizeof (ctx));
+	ctx.class_inst = mono_metadata_get_generic_inst (findex, args);
+
+	MonoClass *tuple_inst = mono_class_inflate_generic_class_checked (tuple_class, &ctx, error);
+	mono_error_assert_ok (error);
+
+	//printf ("T: %s\n", mono_class_full_name (tuple_inst));
+
+	return m_class_get_byval_arg (tuple_inst);
+}
+
+/*
+ * get_wrapper_shared_type:
+ *
+ *   Return a type which is handled identically wrt to calling conventions as T.
+ */
+static MonoType*
+get_wrapper_shared_type_full (MonoType *t, gboolean is_field)
 {
 	if (t->byref)
 		return m_class_get_this_arg (mono_defaults.int_class);
@@ -1189,19 +1278,30 @@ get_wrapper_shared_type (MonoType *t)
 		if (inst) {
 			g_assert (inst->type_argc < 16);
 			for (i = 0; i < inst->type_argc; ++i)
-				args [i] = get_wrapper_shared_type (inst->type_argv [i]);
+				args [i] = get_wrapper_shared_type_full (inst->type_argv [i], TRUE);
 			ctx.class_inst = mono_metadata_get_generic_inst (inst->type_argc, args);
 		}
 		inst = orig_ctx->method_inst;
 		if (inst) {
 			g_assert (inst->type_argc < 16);
 			for (i = 0; i < inst->type_argc; ++i)
-				args [i] = get_wrapper_shared_type (inst->type_argv [i]);
+				args [i] = get_wrapper_shared_type_full (inst->type_argv [i], TRUE);
 			ctx.method_inst = mono_metadata_get_generic_inst (inst->type_argc, args);
 		}
 		klass = mono_class_inflate_generic_class_checked (mono_class_get_generic_class (klass)->container_class, &ctx, error);
 		mono_error_assert_ok (error); /* FIXME don't swallow the error */
-		return m_class_get_byval_arg (klass);
+
+		t = m_class_get_byval_arg (klass);
+		MonoType *shared_type = get_wrapper_shared_vtype (t);
+		if (shared_type)
+			t = shared_type;
+		return t;
+	}
+	case MONO_TYPE_VALUETYPE: {
+		MonoType *shared_type = get_wrapper_shared_vtype (t);
+		if (shared_type)
+			t = shared_type;
+		return t;
 	}
 #if TARGET_SIZEOF_VOID_P == 8
 	case MONO_TYPE_I8:
@@ -1212,8 +1312,13 @@ get_wrapper_shared_type (MonoType *t)
 	}
 
 	//printf ("%s\n", mono_type_full_name (t));
-
 	return t;
+}
+
+static MonoType*
+get_wrapper_shared_type (MonoType *t)
+{
+	return get_wrapper_shared_type_full (t, FALSE);
 }
 
 static MonoMethodSignature*
