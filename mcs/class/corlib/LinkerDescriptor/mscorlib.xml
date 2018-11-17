@@ -538,11 +538,6 @@
 			<method signature="System.Void .ctor()" />
 		</type>
 
-		<!-- reflection.c: mono_method_body_get_object -->
-		<type fullname="System.Reflection.MethodBody" preserve="fields" >
-			<!-- reflection.c mono_object_new_checked in method_body_object_construct -->
-			<method signature="System.Void .ctor()" />
-		</type>
 		<!-- domain.c: mono_defaults.method_info_class -->
 		<type fullname="System.Reflection.MethodInfo" preserve="nothing" />
 
