@@ -29,6 +29,7 @@ ${TESTCMD} --label=mini-aotcheck --timeout=5m make -j ${CI_CPU_COUNT} -w -C mono
 ${TESTCMD} --label=runtime --timeout=20m make -w -C mono/tests test-wrench IGNORE_TEST_JIT=1 V=1
 ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k check
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
+${TESTCMD} --label=System.Web.Extensions-standalone --timeout=5m make -w -C mcs/class/System.Web.Extensions run-standalone-test
 
 # wait for helix tests to complete
 export MONO_HELIX_CORRELATION_ID=$(cat "$MONO_HELIX_CORRELATION_ID_FILE")

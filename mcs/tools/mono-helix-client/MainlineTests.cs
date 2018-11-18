@@ -130,6 +130,7 @@ public class MainlineTests : HelixTestBase
         CreateNunitWorkItem ("net_4_x_Microsoft.Build.Tasks_test.dll");
         CreateNunitWorkItem ("net_4_x_Microsoft.Build.Framework_test.dll");
         CreateNunitWorkItem ("net_4_x_Microsoft.Build.Engine_test.dll");
+        CreateNunitWorkItem ("BinarySerializationOverVersionsTest.dll");
         CreateNunitWorkItem ("xbuild_12_Microsoft.Build_test.dll", profile: "xbuild_12");
         CreateNunitWorkItem ("xbuild_12_Microsoft.Build.Utilities_test.dll", profile: "xbuild_12");
         CreateNunitWorkItem ("xbuild_12_Microsoft.Build.Tasks_test.dll", profile: "xbuild_12");

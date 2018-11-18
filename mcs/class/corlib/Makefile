@@ -239,33 +239,36 @@ XTEST_LIB_FLAGS += -r:$(test_module)
 
 $(xtest_lib_output): $(test_module) $(test_lib_dir)
 
-vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
+vtsdir_src = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
+vtsdir = $(test_lib_dir)/vts
 vtslibs = \
-	$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/2.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/3.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/4.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/5.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/6.0/Address.dll
+	$(vtsdir)/1.0/Address.dll \
+	$(vtsdir)/2.0/Address.dll \
+	$(vtsdir)/3.0/Address.dll \
+	$(vtsdir)/4.0/Address.dll \
+	$(vtsdir)/5.0/Address.dll \
+	$(vtsdir)/6.0/Address.dll
 
-test-vts: $(vtslibs) $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
+test-vts: $(vtslibs) $(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
-$(vtsdir)/$(PROFILE)_TestLib/%/Address.dll: $(vtsdir)/VersionTolerantSerializationTestLib/%/Address.cs
+$(vtsdir)/%/Address.dll: $(vtsdir_src)/VersionTolerantSerializationTestLib/%/Address.cs
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -warn:0 -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -out:$@ $^
 
-$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(test_nunit_dep)
+$(test_lib_dir)/BinarySerializationOverVersionsTest.dll: $(vtsdir_src)/BinarySerializationOverVersionsTest.cs $(vtsdir)/1.0/Address.dll $(test_nunit_dep)
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) $(test_nunit_ref) -warn:0 \
-		-r:$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
+		-r:$(vtsdir)/1.0/Address.dll \
 		-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll \
 		-r:$(topdir)/class/lib/$(PROFILE)/System.dll \
-		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
-	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
+		-target:library \
+		$(vtsdir_src)/BinarySerializationOverVersionsTest.cs -out:$@
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_dir)/BinarySerializationOverVersionsTest.dll.nunitlite.config
 
 run-test-vts: test-vts
 	@echo Running vts tests...
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
-		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
+		$(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
 ifdef NO_TEST
 NO_VTS_TEST = yes
@@ -280,13 +283,13 @@ run-test:
 endif
 
 EXTRA_DISTFILES += \
-	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/2.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/3.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
-	$(vtsdir)/BinarySerializationOverVersions.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/1.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/2.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/3.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/4.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/5.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/6.0/Address.cs \
+	$(vtsdir_src)/BinarySerializationOverVersionsTest.cs \
 	System.Runtime.CompilerServices/Unsafe.il \
 	il/il.make \
 	il/Makefile
