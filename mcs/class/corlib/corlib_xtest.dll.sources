@@ -18,7 +18,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
 
-../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs,TypeInfoTests.netcoreapp.cs
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
@@ -296,7 +296,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SByteTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SingleTests.cs
 #../../../external/corefx/src/System.Runtime/tests/System/SingleTests.netcoreapp.cs
-#../../../external/corefx/src/System.Runtime/tests/System/TypeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TypeTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.netcoreapp.cs
@@ -317,7 +317,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
