@@ -13,6 +13,8 @@ extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *met
 extern MonoObject* mono_wasm_get_object_property (int js_handle, MonoString *method, int *is_exception);
 extern MonoObject* mono_wasm_set_object_property (int js_handle, MonoString *method, MonoObject *value, int createIfNotExist, int hasOwnProperty, int *is_exception);
 extern MonoObject* mono_wasm_get_global_object (MonoString *globalName, int *is_exception);
+extern void* mono_wasm_release_handle (int js_handle, int *is_exception);
+extern void* mono_wasm_release_object (MonoObject* obj, int *is_exception);
 
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
@@ -187,6 +189,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_add_internal_call ("WebAssembly.Runtime::GetObjectProperty", mono_wasm_get_object_property);
 	mono_add_internal_call ("WebAssembly.Runtime::SetObjectProperty", mono_wasm_set_object_property);
 	mono_add_internal_call ("WebAssembly.Runtime::GetGlobalObject", mono_wasm_get_global_object);
+	mono_add_internal_call ("WebAssembly.Runtime::ReleaseHandle", mono_wasm_release_handle);
+	mono_add_internal_call ("WebAssembly.Runtime::ReleaseObject", mono_wasm_release_object);
 
 	// Blazor specific custom routines - see dotnet_support.js for backing code		
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
