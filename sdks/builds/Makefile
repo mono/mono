@@ -13,8 +13,9 @@ NINJA:=$(shell which ninja)
 UNAME=$(shell uname)
 
 ifneq ($(UNAME),Darwin)
-# iOS requires Xcode to be available, and Xcode is only available on macOS
+# iOS and Mac requires Xcode to be available, and Xcode is only available on macOS
 DISABLE_IOS=1
+DISABLE_MAC=1
 endif
 
 include $(TOP)/sdks/versions.mk
@@ -34,7 +35,7 @@ all: package
 configure-mono: $(TOP)/configure
 
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
-	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
+	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh $(if $(wildcard $(TOP)/../mono-extensions),--enable-extension-module=xamarin)
 
 TARGETS=
 
@@ -44,6 +45,10 @@ endif
 
 ifndef DISABLE_IOS
 ios_TARGETS=
+endif
+
+ifndef DISABLE_MAC
+mac_TARGETS=
 endif
 
 ifndef DISABLE_WASM
@@ -70,6 +75,11 @@ endif
 ## iOS targets
 ifndef DISABLE_IOS
 include ios.mk
+endif
+
+## Mac targets
+ifndef DISABLE_MAC
+include mac.mk
 endif
 
 ## Desktop targets
@@ -103,6 +113,10 @@ endif
 
 ifndef DISABLE_IOS
 $(eval $(call ArchiveTemplate,ios))
+endif
+
+ifndef DISABLE_MAC
+$(eval $(call ArchiveTemplate,mac))
 endif
 
 ifndef DISABLE_WASM

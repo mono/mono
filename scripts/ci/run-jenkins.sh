@@ -149,6 +149,7 @@ fi
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_MAC=1" >> sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
         echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
@@ -194,6 +195,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
+	   echo "DISABLE_MAC=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
 	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	       echo "ENABLE_CXX=1" >> sdks/Make.config
