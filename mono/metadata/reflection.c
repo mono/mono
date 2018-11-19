@@ -1206,6 +1206,10 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	char *ptr;
 	unsigned char format, flags;
 	int i;
+	gpointer params [6];
+	MonoBoolean init_locals_param;
+	gint32 sig_token_param;
+	gint32 max_stack_param;
 
 	error_init (error);
 
@@ -1293,10 +1297,12 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	  MethodBody (ExceptionHandlingClause[] clauses, LocalVariableInfo[] locals,
 	              byte[] il, bool init_locals, int sig_token, int max_stack)
 	*/
-	gpointer params [6];
-	MonoBoolean init_locals_param = header->init_locals;
-	gint32 sig_token_param = local_var_sig_token;
-	gint32 max_stack_param = header->max_stack;
+	init_locals_param = header->init_locals;
+	sig_token_param = local_var_sig_token;
+	max_stack_param = header->max_stack;
+	mono_metadata_free_mh (header);
+	header = NULL;
+
 	params [0] = MONO_HANDLE_RAW (exn_clauses);
 	params [1] = MONO_HANDLE_RAW (locals_arr);
 	params [2] = MONO_HANDLE_RAW (il_arr);
@@ -1306,7 +1312,6 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
 	mono_error_assert_ok (error);
 
-	mono_metadata_free_mh (header);
 	return ret;
 fail:
 	if (header)
