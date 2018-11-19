@@ -5027,6 +5027,49 @@ namespace MonoTests.System
 
 		class Bug59738Derived<U> : Bug59738Class<U> {
 		}
+
+		ref struct UserByRefLikeStruct {
+			object u;
+			IntPtr i;
+		}
+
+		[Test]
+		public void IsByRefLike_positive ()
+		{
+			Assert.IsTrue (typeof(Span<int>).IsByRefLike, "#1");
+			Assert.IsTrue (typeof(RuntimeArgumentHandle).IsByRefLike, "#2");
+			Assert.IsTrue (typeof(TypedReference).IsByRefLike, "#3");
+			Assert.IsTrue (typeof(UserByRefLikeStruct).IsByRefLike, "#4");
+		}
+
+		[Test]
+		public void IsByRefLike_negative ()
+		{
+			Assert.IsFalse (typeof (int).IsByRefLike, "#1");
+			Assert.IsFalse (typeof (object).IsByRefLike, "#2");
+			Assert.IsFalse (typeof (int).MakeByRefType ().IsByRefLike, "#3");
+			Assert.IsFalse (typeof (string).MakeByRefType ().IsByRefLike, "#4");
+			Assert.IsFalse (typeof (Span<int>).MakeByRefType ().IsByRefLike, "#5");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakeByRefType ().IsByRefLike, "#6");
+			Assert.IsFalse (typeof (int).MakePointerType ().IsByRefLike, "#7");
+			Assert.IsFalse (typeof (Span<int>).MakePointerType ().IsByRefLike, "#8");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakePointerType ().IsByRefLike, "#9");
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfSpan_TLE ()
+		{
+			typeof(Span<int>).MakeArrayType ();
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfByrefLike_TLE ()
+		{
+			typeof(UserByRefLikeStruct).MakeArrayType ();
+		}
+
 	}
 
 	class UserType : Type
