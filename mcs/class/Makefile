@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools wasm_tools testing_aot_full testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools testing_aot_full testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
@@ -114,8 +114,13 @@ monodroid_dirs_parallel := \
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
+	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
 	monodoc
+
+monotouch_tools_dirs_parallel := \
+	Mono.Cecil \
+	Mono.Cecil.Mdb
 
 monotouch_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
@@ -380,6 +385,8 @@ monotouch_watch_runtime_SUBDIRS := $(mobile_common_dirs)
 monotouch_watch_runtime_PARALLEL_SUBDIRS := $(monotouch_watch_runtime_dirs_parallel)
 monotouch_tv_runtime_SUBDIRS := $(mobile_common_dirs)
 monotouch_tv_runtime_PARALLEL_SUBDIRS := $(monotouch_tv_runtime_dirs_parallel)
+monotouch_tools_SUBDIRS :=
+monotouch_tools_PARALLEL_SUBDIRS := $(monotouch_tools_dirs_parallel)
 
 testing_aot_full_interp_SUBDIRS := $(mobile_common_dirs)
 testing_aot_full_interp_PARALLEL_SUBDIRS := $(testing_aot_full_interp_dirs_parallel)
@@ -415,7 +422,7 @@ wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
 include ../build/rules.make
 
-DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) \
+DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
 $(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
 $(testing_aot_full_interp_dirs_parallel) dlr aot-compiler reference-assemblies Facades
