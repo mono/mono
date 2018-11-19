@@ -1432,8 +1432,6 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/tripledescryptoserviceprovider.cs
 ../referencesource/mscorlib/system/security/cryptography/utils.cs
 
-../referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
-
 ../../../external/corefx/src/System.Security.Claims/src/System/Security/Claims/GenericIdentity.cs
 
 ../referencesource/mscorlib/system/security/util/hex.cs

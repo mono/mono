@@ -533,11 +533,6 @@ public partial class CryptoConfig {
 		}
 	}
 
-	internal static string MapNameToOID (string name, OidGroup oidGroup)
-	{
-		return MapNameToOID (name);
-	}
-
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
