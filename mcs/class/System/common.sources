@@ -798,6 +798,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/System.Net.Http/src/System/Net/Http/NetEventSource.Http.cs
 
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
 
@@ -890,3 +891,11 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
+
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Activity.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Activity.Current.net46.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/Activity.DateTime.netfx.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticListener.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticSource.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticSourceActivity.cs
+../../../external/corefx/src/System.Diagnostics.DiagnosticSource/src/System/Diagnostics/DiagnosticSourceEventSource.cs
