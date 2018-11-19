@@ -193,7 +193,7 @@ namespace WebAssembly.Net.Http.HttpClient
                 {
                     // Here we invoke the forEach on the headers object
                     // Note: the Action takes 3 objects and not two.  The other seems to be the Header object.
-                    respHeaders.Invoke("forEach", new Action<object, object, object>((value, name, other) =>
+                    var foreachAction = new Action<object, object, object>((value, name, other) =>
                     {
 
                         if (!httpresponse.Headers.TryAddWithoutValidation((string)name, (string)value))
@@ -201,16 +201,25 @@ namespace WebAssembly.Net.Http.HttpClient
                                 if (!httpresponse.Content.Headers.TryAddWithoutValidation((string)name, (string)value))
                                     Console.WriteLine($"Warning: Can not add response header for name: {name} value: {value}");
                         ((JSObject)other).Dispose();
+                    });
+
+                    try
+                    {
+
+                        respHeaders.Invoke("forEach", foreachAction);
                     }
-                    ));
+                    finally
+                    {
+                        // Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
+                        // if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
+                        // The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
+                        // Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
+                        WebAssembly.Runtime.FreeObject(foreachAction);
+                    }
+
                 }
 
                 tcs.SetResult(httpresponse);
-
-                // Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
-                // if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
-                // If we do not null the field out it will not be GC'd
-                httpresponse = null;
 
                 signal?.Dispose();
             }
