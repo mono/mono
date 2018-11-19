@@ -1216,7 +1216,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\symmetricalgorithm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\utils.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\x509certificates\x509utils.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\safesecurityhandles.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitycontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitydocument.cs" />

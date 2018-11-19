@@ -146,6 +146,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\ManagedWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\WebSocketValidate.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerEncoder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerSequenceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\StringExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\BlockingCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
@@ -468,6 +470,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidGroup.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Oids.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Pal.OSX\CertificateData.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
@@ -962,6 +966,7 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2Enumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2Impl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2ImplMono.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2ImplUnix.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateCollection.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplCollection.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Chain.cs" />
@@ -3908,6 +3913,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
@@ -3933,6 +3943,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monodroid/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3951,6 +3966,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -3973,6 +3993,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -3993,6 +4018,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -4010,6 +4040,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -4025,6 +4060,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4045,6 +4085,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4071,6 +4116,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4093,6 +4143,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4119,6 +4174,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4137,6 +4197,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4159,6 +4224,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4177,6 +4247,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
@@ -4204,6 +4279,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4224,6 +4304,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4242,6 +4327,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
