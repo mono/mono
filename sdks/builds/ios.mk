@@ -10,7 +10,7 @@
 # Where <target> is: target32, target32s, target64, sim32, sim64, cross32, cross64
 #
 
-ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ##
 # Device builds
@@ -34,8 +34,8 @@ ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 #
 define iOSDeviceTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
@@ -99,8 +99,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--without-sigaltstack \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
-	--disable-crash-reporting \
-	$$(if $$(wildcard $$(TOP)/../mono-extensions),--enable-extension-module=xamarin)
+	--disable-crash-reporting
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -178,8 +177,8 @@ $(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
 #
 define iOSSimulatorTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_clock_nanosleep=no \
@@ -223,8 +222,9 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--without-ikvm-native \
 	--disable-cooperative-suspend \
 	--disable-hybrid-suspend \
-	--disable-crash-reporting \
-	$$(if $$(wildcard $$(TOP)/../mono-extensions),--enable-extension-module=xamarin)
+	--disable-crash-reporting
+
+# _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
 
 .stamp-ios-$(1)-toolchain:
 	touch $$@
@@ -295,8 +295,8 @@ define iOSCrossTemplate
 
 _ios-$(1)_OFFSETS_DUMPER_ARGS=--gen-ios
 
-_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no

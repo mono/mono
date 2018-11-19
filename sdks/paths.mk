@@ -1,5 +1,5 @@
 
-ifeq ($(and $(DISABLE_IOS),$(DISABLE_MAC)),)
+ifndef DISABLE_IOS
 
 CheckXcodeDir=$(or $(and $(wildcard $(1))),$(warning Could not find Xcode in "$(1)"))
 
