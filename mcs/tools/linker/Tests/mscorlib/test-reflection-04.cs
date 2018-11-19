@@ -15,7 +15,6 @@ public sealed class FooAttribute : Attribute
 	}
 }
 
-[Foo]
 [Foo (5, AProperty=6)]
 class Program {
 	public static int Main () {
