@@ -1627,6 +1627,12 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Diagnostics/Debug.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/Sources/IValueTaskSource.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/ValueTask.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ConfiguredValueTaskAwaitable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ValueTaskAwaiter.cs
 #../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/ValueTask.cs
 #../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
 #../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
@@ -1746,8 +1752,8 @@ corefx/MemoryExtensions.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509ContentType.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509KeyStorageFlags.cs
 
-../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
-../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
+#../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Threading/Tasks/ValueTask.cs
+#../../../external/corefx/src/System.Threading.Tasks.Extensions/src/System/Runtime/CompilerServices/*.cs
 
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/src/System/Threading/Tasks/*.cs
 
