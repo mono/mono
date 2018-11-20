@@ -566,7 +566,10 @@ namespace System {
         exceptions,
         exception,
         action,
-        comparison
+        comparison,
+        state,
+        task,
+        source
 #endif
     }
 
