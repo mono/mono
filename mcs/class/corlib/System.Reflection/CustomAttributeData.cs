@@ -55,6 +55,7 @@ namespace System.Reflection {
 		{
 		}
 
+		// custom-attrs.c:create_custom_attr_data ()
 		internal CustomAttributeData (ConstructorInfo ctorInfo, Assembly assembly, IntPtr data, uint data_length)
 		{
 			this.ctorInfo = ctorInfo;
