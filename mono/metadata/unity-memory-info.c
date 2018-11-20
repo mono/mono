@@ -36,7 +36,7 @@ ContextRecurseClassData (CollectMetadataContext *context, MonoClass *klass)
 	* If we use g_hash_table_lookup it returns the value which we were comparing to NULL. The problem is
 	* that 0 is a valid class index and was confusing our logic.
 	*/
-	if (!g_hash_table_lookup_extended (context->allTypes, klass, &orig_key, &value)) {
+	if (klass->inited && !g_hash_table_lookup_extended (context->allTypes, klass, &orig_key, &value)) {
 		g_hash_table_insert (context->allTypes, klass, GINT_TO_POINTER (context->currentIndex++));
 
 		fieldCount = mono_class_num_fields (klass);
@@ -183,10 +183,7 @@ AddMetadataType (gpointer key, gpointer value, gpointer user_data)
 				MonoMetadataField *metaField = &type->fields[type->fieldCount];
 				MonoClass *typeKlass = mono_class_from_mono_type (field->type);
 
-				if (typeKlass->rank > 0)
-					metaField->typeIndex = FindClassIndex (context->allTypes, mono_class_get_element_class (typeKlass));
-				else
-					metaField->typeIndex = FindClassIndex (context->allTypes, typeKlass);
+				metaField->typeIndex = FindClassIndex (context->allTypes, typeKlass);
 
 				// This will happen if fields type is not initialized
 				// It's OK to skip it, because it means the field is guaranteed to be null on any object
