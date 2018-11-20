@@ -858,5 +858,12 @@
 		<type fullname="Mono.RuntimeStructs/MonoError" />
 
 		<type fullname="System.Threading.WasmRuntime"/>
+
+		<!-- mini-generic-sharing.c -->
+		<type fullname="Mono.ValueTuple`1" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`2" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`3" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`4" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`5" preserve="fields"/>
 	</assembly>
 </linker>
