@@ -19,6 +19,7 @@
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/appdomain.h"
+#include "mono/metadata/abi-details.h"
 #ifdef MONO_CLASS_DEF_PRIVATE
 /* Rationale: we want the functions in this file to work even when everything
  * is broken.  They may be called from a debugger session, for example.  If
@@ -40,7 +41,7 @@ struct MonoMethodDesc {
 	gboolean include_namespace, klass_glob, name_glob;
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -53,36 +54,18 @@ static const struct msgstr_t {
 #undef WRAPPER
 };
 static const gint16 opidx [] = {
-#define WRAPPER(a,b) [MONO_WRAPPER_ ## a] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define WRAPPER(a,b) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "wrapper-types.h"
 #undef WRAPPER
 };
 
-static const char*
-wrapper_type_to_str (guint32 wrapper_type)
+const char*
+mono_wrapper_type_to_str (guint32 wrapper_type)
 {
 	g_assert (wrapper_type < MONO_WRAPPER_NUM);
 
 	return (const char*)&opstr + opidx [wrapper_type];
 }
-
-#else
-#define WRAPPER(a,b) b,
-static const char* const
-wrapper_type_names [MONO_WRAPPER_NUM + 1] = {
-#include "wrapper-types.h"
-	NULL
-};
-
-static const char*
-wrapper_type_to_str (guint32 wrapper_type)
-{
-	g_assert (wrapper_type < MONO_WRAPPER_NUM);
-
-	return wrapper_type_names [wrapper_type];
-}
-
-#endif
 
 static void
 append_class_name (GString *res, MonoClass *klass, gboolean include_namespace)
@@ -471,9 +454,9 @@ mono_method_desc_match (MonoMethodDesc *desc, MonoMethod *method)
 		return FALSE;
 	if (!desc->args)
 		return TRUE;
-	if (desc->num_args != mono_method_signature (method)->param_count)
+	if (desc->num_args != mono_method_signature_internal (method)->param_count)
 		return FALSE;
-	sig = mono_signature_get_desc (mono_method_signature (method), desc->include_namespace);
+	sig = mono_signature_get_desc (mono_method_signature_internal (method), desc->include_namespace);
 	if (strcmp (sig, desc->args)) {
 		g_free (sig);
 		return FALSE;
@@ -554,6 +537,8 @@ mono_method_desc_is_full (MonoMethodDesc *desc)
 gboolean
 mono_method_desc_full_match (MonoMethodDesc *desc, MonoMethod *method)
 {
+	if (!desc)
+		return FALSE;
 	if (!desc->klass)
 		return FALSE;
 	if (!match_class (desc, strlen (desc->klass), method->klass))
@@ -917,7 +902,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE)
-		sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
+		sprintf (wrapper, "(wrapper %s) ", mono_wrapper_type_to_str (method->wrapper_type));
 	else
 		strcpy (wrapper, "");
 
@@ -933,7 +918,7 @@ mono_method_get_name_full (MonoMethod *method, gboolean signature, gboolean ret,
 		}
 
 		if (method->wrapper_type != MONO_WRAPPER_NONE)
-			sprintf (wrapper, "(wrapper %s) ", wrapper_type_to_str (method->wrapper_type));
+			sprintf (wrapper, "(wrapper %s) ", mono_wrapper_type_to_str (method->wrapper_type));
 		else
 			strcpy (wrapper, "");
 		if (ret && sig) {
@@ -1023,7 +1008,7 @@ mono_object_describe (MonoObject *obj)
 	}
 	klass = mono_object_class (obj);
 	if (klass == mono_defaults.string_class) {
-		char *utf8 = mono_string_to_utf8_checked ((MonoString*)obj, error);
+		char *utf8 = mono_string_to_utf8_checked_internal ((MonoString*)obj, error);
 		mono_error_cleanup (error); /* FIXME don't swallow the error */
 		if (utf8 && strlen (utf8) > 60) {
 			utf8 [57] = '.';
@@ -1032,16 +1017,16 @@ mono_object_describe (MonoObject *obj)
 			utf8 [60] = 0;
 		}
 		if (utf8) {
-			g_print ("String at %p, length: %d, '%s'\n", obj, mono_string_length ((MonoString*) obj), utf8);
+			g_print ("String at %p, length: %d, '%s'\n", obj, mono_string_length_internal ((MonoString*) obj), utf8);
 		} else {
-			g_print ("String at %p, length: %d, unable to decode UTF16\n", obj, mono_string_length ((MonoString*) obj));
+			g_print ("String at %p, length: %d, unable to decode UTF16\n", obj, mono_string_length_internal ((MonoString*) obj));
 		}
 		g_free (utf8);
 	} else if (klass->rank) {
 		MonoArray *array = (MonoArray*)obj;
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);
-		g_print (" at %p, rank: %d, length: %d\n", obj, klass->rank, (int)mono_array_length (array));
+		g_print (" at %p, rank: %d, length: %d\n", obj, klass->rank, (int)mono_array_length_internal (array));
 	} else {
 		sep = print_name_space (klass);
 		g_print ("%s%s", sep, klass->name);
@@ -1079,7 +1064,7 @@ print_field_value (const char *field_ptr, MonoClassField *field, int type_offset
 			/* fall through */
 		}
 	case MONO_TYPE_VALUETYPE: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 		g_print ("%s ValueType (type: %p) at %p\n", k->name, k, field_ptr);
 		break;
 	}
@@ -1134,12 +1119,12 @@ objval_describe (MonoClass *klass, const char *addr)
 	gssize type_offset = 0;
 
 	if (klass->valuetype)
-		type_offset = -sizeof (MonoObject);
+		type_offset = - MONO_ABI_SIZEOF (MonoObject);
 
 	for (p = klass; p != NULL; p = p->parent) {
 		gpointer iter = NULL;
 		int printed_header = FALSE;
-		while ((field = mono_class_get_fields (p, &iter))) {
+		while ((field = mono_class_get_fields_internal (p, &iter))) {
 			if (field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA))
 				continue;
 
@@ -1210,7 +1195,7 @@ mono_class_describe_statics (MonoClass* klass)
 
 	for (p = klass; p != NULL; p = p->parent) {
 		gpointer iter = NULL;
-		while ((field = mono_class_get_fields (p, &iter))) {
+		while ((field = mono_class_get_fields_internal (p, &iter))) {
 			if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
 				continue;
 			if (!(field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA)))

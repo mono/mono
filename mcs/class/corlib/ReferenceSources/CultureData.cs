@@ -239,6 +239,9 @@ namespace System.Globalization
 					case "zh":
 						waCalendars = new int[] { calendarId, Calendar.CAL_TAIWAN };
 						break;
+					case "he":
+						waCalendars = new int[] { calendarId, Calendar.CAL_HEBREW };
+						break;
 					default:
 						waCalendars = new int [] { calendarId };
 						break;
@@ -247,6 +250,14 @@ namespace System.Globalization
 
 				return waCalendars;
 			}
+		}
+
+		internal CalendarId[] GetCalendarIds() 
+		{
+			var items = new CalendarId[CalendarIds.Length];
+			for (int i = 0; i < CalendarIds.Length; i++)
+				items[i] = (CalendarId)CalendarIds[i];
+			return items;
 		}
 
 		internal bool IsInvariantCulture {

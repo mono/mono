@@ -2791,7 +2791,7 @@ sgen_have_pending_finalizers (void)
  * We do not coalesce roots.
  */
 int
-sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, int source, void *key, const char *msg)
+sgen_register_root (char *start, size_t size, SgenDescriptor descr, int root_type, MonoGCRootSource source, void *key, const char *msg)
 {
 	RootRecord new_root;
 	int i;
@@ -2866,7 +2866,7 @@ sgen_wbroot_scan_card_table (void** start_root, mword size,  ScanCopyContext ctx
 	mword card_count = sgen_card_table_number_of_cards_in_range ((mword)start_root, size);
 	guint8 *card_data_end = card_data + card_count;
 	mword extra_idx = 0;
-	char *obj_start = sgen_card_table_align_pointer (start_root);
+	char *obj_start = (char*)sgen_card_table_align_pointer (start_root);
 	char *obj_end = (char*)start_root + size;
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 *overflow_scan_end = NULL;
@@ -2976,10 +2976,10 @@ sgen_thread_detach_with_lock (SgenThreadInfo *p)
  */
 
 /**
- * mono_gc_wbarrier_arrayref_copy:
+ * mono_gc_wbarrier_arrayref_copy_internal:
  */
 void
-mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
+mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gpointer src_ptr, int count)
 {
 	HEAVY_STAT (++stat_wbarrier_arrayref_copy);
 	/*This check can be done without taking a lock since dest_ptr array is pinned*/
@@ -3004,10 +3004,10 @@ mono_gc_wbarrier_arrayref_copy (gpointer dest_ptr, gpointer src_ptr, int count)
 }
 
 /**
- * mono_gc_wbarrier_generic_nostore:
+ * mono_gc_wbarrier_generic_nostore_internal:
  */
 void
-mono_gc_wbarrier_generic_nostore (gpointer ptr)
+mono_gc_wbarrier_generic_nostore_internal (gpointer ptr)
 {
 	gpointer obj;
 
@@ -3034,25 +3034,25 @@ mono_gc_wbarrier_generic_nostore (gpointer ptr)
 }
 
 /**
- * mono_gc_wbarrier_generic_store:
+ * mono_gc_wbarrier_generic_store_internal:
  */
 void
-mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value)
+mono_gc_wbarrier_generic_store_internal (gpointer ptr, GCObject* value)
 {
 	SGEN_LOG (8, "Wbarrier store at %p to %p (%s)", ptr, value, value ? sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (value)) : "null");
 	SGEN_UPDATE_REFERENCE_ALLOW_NULL (ptr, value);
 	if (ptr_in_nursery (value) || sgen_concurrent_collection_in_progress)
-		mono_gc_wbarrier_generic_nostore (ptr);
+		mono_gc_wbarrier_generic_nostore_internal (ptr);
 	sgen_dummy_use (value);
 }
 
 /**
- * mono_gc_wbarrier_generic_store_atomic:
+ * mono_gc_wbarrier_generic_store_atomic_internal:
  * Same as \c mono_gc_wbarrier_generic_store but performs the store
  * as an atomic operation with release semantics.
  */
 void
-mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value)
+mono_gc_wbarrier_generic_store_atomic_internal (gpointer ptr, GCObject *value)
 {
 	HEAVY_STAT (++stat_wbarrier_generic_store_atomic);
 
@@ -3061,13 +3061,13 @@ mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value)
 	mono_atomic_store_ptr ((volatile gpointer *)ptr, value);
 
 	if (ptr_in_nursery (value) || sgen_concurrent_collection_in_progress)
-		mono_gc_wbarrier_generic_nostore (ptr);
+		mono_gc_wbarrier_generic_nostore_internal (ptr);
 
 	sgen_dummy_use (value);
 }
 
 void
-sgen_wbarrier_range_copy (gpointer _dest, gpointer _src, int size)
+sgen_wbarrier_range_copy (gpointer _dest, gconstpointer _src, int size)
 {
 	remset.wbarrier_range_copy (_dest,_src, size);
 }

@@ -62,7 +62,7 @@ get_class (MonoErrorInternal *error)
 {
 	MonoClass *klass = NULL;
 	if (is_managed_exception (error))
-		klass = mono_object_class (mono_gchandle_get_target (error->exn.instance_handle));
+		klass = mono_object_class (mono_gchandle_get_target_internal (error->exn.instance_handle));
 	else
 		klass = error->exn.klass;
 	return klass;
@@ -134,7 +134,7 @@ mono_error_cleanup (MonoError *oerror)
 
 
 	if (has_instance_handle)
-		mono_gchandle_free (error->exn.instance_handle);
+		mono_gchandle_free_internal (error->exn.instance_handle);
 
 
 	g_free ((char*)error->full_message);
@@ -194,6 +194,8 @@ mono_error_get_message (MonoError *oerror)
 	case MONO_ERROR_FILE_NOT_FOUND:
 	case MONO_ERROR_MISSING_FIELD:
 		return error->full_message;
+	case MONO_ERROR_CLEANUP_CALLED_SENTINEL:
+		g_assert_not_reached ();
 	}
 
 	if (error->full_message_with_fields)
@@ -457,7 +459,7 @@ mono_error_set_exception_instance (MonoError *oerror, MonoException *exc)
 
 	mono_error_prepare (error);
 	error->error_code = MONO_ERROR_EXCEPTION_INSTANCE;
-	error->exn.instance_handle = mono_gchandle_new (exc ? &exc->object : NULL, FALSE);
+	error->exn.instance_handle = mono_gchandle_new_internal (exc ? &exc->object : NULL, FALSE);
 }
 
 void
@@ -766,7 +768,7 @@ mono_error_box (const MonoError *ierror, MonoImage *image)
 	MonoErrorInternal *from = (MonoErrorInternal*)ierror;
 	/* Don't know how to box a gchandle */
 	g_assert (!is_managed_exception (from));
-	MonoErrorBoxed* box = mono_image_alloc (image, sizeof (MonoErrorBoxed));
+	MonoErrorBoxed* box = (MonoErrorBoxed*)mono_image_alloc (image, sizeof (MonoErrorBoxed));
 	box->image = image;
 	mono_error_init_flags (&box->error, MONO_ERROR_MEMPOOL_BOXED);
 	MonoErrorInternal *to = (MonoErrorInternal*)&box->error;

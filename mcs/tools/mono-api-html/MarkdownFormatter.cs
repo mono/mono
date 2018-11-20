@@ -31,9 +31,14 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class MarkdownFormatter : Formatter {
+	class MarkdownFormatter : Formatter {
+
+		public MarkdownFormatter (State state)
+			: base (state)
+		{
+		}
 
 		public override string LesserThan => "<";
 		public override string GreaterThan => ">";
@@ -186,7 +191,7 @@ namespace Xamarin.ApiDiff {
 
 		public override void Diff (TextWriter output, ApiChange apichange)
 		{
-			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
+			foreach (var line in apichange.Member.ToString ().Split (new[] { Environment.NewLine }, 0)) {
 				if (line.Contains ("+++")) {
 					output.WriteLine ("-{0}", Clean (line, "+++", "---"));
 					output.WriteLine ("+{0}", Clean (line, "---", "+++"));

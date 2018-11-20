@@ -1546,7 +1546,7 @@ dis_data (MonoImage *m)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (mono_class_from_mono_type (type));
+		mono_class_init (mono_class_from_mono_type_internal (type));
 		size = mono_type_size (type, &align);
 
 		if (rva) {
@@ -1855,7 +1855,7 @@ try_load_from (MonoAssembly **assembly,
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
 	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR))
-		*assembly = mono_assembly_open_predicate (fullpath, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, user_data, NULL);
+		*assembly = mono_assembly_open_predicate (fullpath, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT, predicate, user_data, NULL, NULL);
 
 	g_free (fullpath);
 	return (*assembly != NULL);

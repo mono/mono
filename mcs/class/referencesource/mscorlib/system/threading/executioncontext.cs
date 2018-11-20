@@ -908,6 +908,11 @@ namespace System.Threading
             RunInternal(executionContext, callback, state, preserveSyncCtx);
         }
 
+        internal static void RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+        {
+            RunInternal(executionContext, callback, state, false);
+        }
+
         // Actual implementation of Run is here, in a non-DynamicSecurityMethod, because the JIT seems to refuse to inline callees into
         // a DynamicSecurityMethod.
         [SecurityCritical]

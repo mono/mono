@@ -392,6 +392,11 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static SocketAddress RemoteEndPoint_internal (IntPtr socket, int family, out int error);
 
+		internal SafeHandle SafeHandle
+		{
+			get { return m_Handle; }
+		}
+
 #endregion
 
 #region Select
@@ -1172,6 +1177,10 @@ namespace System.Net.Sockets
 			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
+
+				if (dep.AddressFamily == AddressFamily.Unspecified)
+					return true;
+
 				int last_valid = 0;
 				for (int i = 0; i < addresses.Length; ++i) {
 					if (addresses [i].AddressFamily != dep.AddressFamily)
@@ -1371,6 +1380,14 @@ namespace System.Net.Sockets
 
 			errorCode = (SocketError) nativeError;
 
+			return ret;
+		}
+
+		public int Receive (Span<byte> buffer, SocketFlags socketFlags)
+		{
+			byte[] tempBuffer = new byte[buffer.Length];
+			int ret = Receive (tempBuffer, SocketFlags.None);
+			tempBuffer.CopyTo (buffer);
 			return ret;
 		}
 
@@ -1858,6 +1875,11 @@ namespace System.Net.Sockets
 			errorCode = (SocketError)nativeError;
 
 			return ret;
+		}
+
+		public int Send (ReadOnlySpan<byte> buffer, SocketFlags socketFlags)
+		{
+			return Send (buffer.ToArray(), socketFlags);
 		}
 
 		public bool SendAsync (SocketAsyncEventArgs e)

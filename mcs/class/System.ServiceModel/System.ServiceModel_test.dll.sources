@@ -1,4 +1,5 @@
 ../../test-helpers/NunitHelpers.cs
+../../test-helpers/TestResourceHelper.cs
 NUnitMoonHelper.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
@@ -198,6 +199,7 @@ System.ServiceModel/ServiceHostBaseTest.cs
 System.ServiceModel/ServiceHostTest.cs
 System.ServiceModel/ServiceKnownTypeAttributeTest.cs
 System.ServiceModel/SynchronizedReadOnlyCollectionTest.cs
+System.ServiceModel/SynchronizedCollectionTest.cs
 System.ServiceModel/TransactionProtocolTest.cs
 System.ServiceModel/UriSchemeKeyedCollectionTest.cs
 System.ServiceModel/WSFederationHttpBindingTest.cs

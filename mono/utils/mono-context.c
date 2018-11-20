@@ -414,7 +414,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	/* Why are we only copying 16 registers?! There are 32! */
 	memcpy (&mctx->fregs, &context->D, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = sigctx;
+	arm_ucontext *my_uc = (arm_ucontext*)sigctx;
 
 	mctx->pc = UCONTEXT_REG_PC (my_uc);
 	mctx->regs [ARMREG_SP] = UCONTEXT_REG_SP (my_uc);
@@ -441,7 +441,7 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 	/* Why are we only copying 16 registers?! There are 32! */
 	memcpy (&context->D, &mctx->fregs, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = ctx;
+	arm_ucontext *my_uc = (arm_ucontext*)ctx;
 
 	UCONTEXT_REG_PC (my_uc) = mctx->pc;
 	UCONTEXT_REG_SP (my_uc) = mctx->regs [ARMREG_SP];
@@ -548,6 +548,52 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	/* The valid values for pc and sp are stored here and not in regs array */
 	UCONTEXT_REG_NIP(uc) = mctx->sc_ir;
 	UCONTEXT_REG_Rn(uc, 1) = mctx->sc_sp;
+}
+
+#elif defined (TARGET_WASM)
+
+#include <mono/utils/mono-context.h>
+
+void
+mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+	g_error ("MonoContext not supported");
+}
+
+void
+mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+	g_error ("MonoContext not supported");
+}
+
+#elif ((defined (HOST_RISCV) || defined (HOST_RISCV64)) && !defined (MONO_CROSS_COMPILE)) || defined (TARGET_RISCV)
+
+#include <mono/utils/mono-context.h>
+
+void
+mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#else
+	ucontext_t *uctx = sigctx;
+
+	memcpy (&mctx->gregs, &uctx->uc_mcontext.gregs, sizeof (mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&mctx->fregs, &uctx->uc_mcontext.fpregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+#endif
+}
+
+void
+mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#else
+	ucontext_t *uctx = sigctx;
+
+	memcpy (&uctx->uc_mcontext.gregs, &mctx->gregs, sizeof (mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&uctx->uc_mcontext.fpregs, &mctx->fregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+#endif
 }
 
 #endif /* #if defined(__i386__) */

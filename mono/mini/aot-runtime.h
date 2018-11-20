@@ -11,7 +11,7 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 145
+#define MONO_AOT_FILE_VERSION 149
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
@@ -57,7 +57,9 @@ typedef enum {
 	MONO_AOT_TRAMP_STATIC_RGCTX = 1,
 	MONO_AOT_TRAMP_IMT = 2,
 	MONO_AOT_TRAMP_GSHAREDVT_ARG = 3,
-	MONO_AOT_TRAMP_NUM = 4
+	MONO_AOT_TRAMP_FTNPTR_ARG = 4,
+	MONO_AOT_TRAMP_UNBOX_ARBITRARY = 5,
+	MONO_AOT_TRAMP_NUM = 6
 } MonoAotTrampoline;
 
 typedef enum {
@@ -69,6 +71,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_SAFEPOINTS = 32,
 	MONO_AOT_FILE_FLAG_SEPARATE_DATA = 64,
 	MONO_AOT_FILE_FLAG_EAGER_LOAD = 128,
+	MONO_AOT_FILE_FLAG_INTERP = 256,
 } MonoAotFileFlags;
 
 typedef enum {
@@ -136,12 +139,14 @@ typedef struct MonoAotFileInfo
 	 * The runtime version string for AOT images generated using 'bind-to-runtime-version',
 	 * NULL otherwise.
 	 */
-	gpointer runtime_version;
+	char *runtime_version;
 	/* Blocks of various kinds of trampolines */
 	gpointer specific_trampolines;
 	gpointer static_rgctx_trampolines;
 	gpointer imt_trampolines;
 	gpointer gsharedvt_arg_trampolines;
+	gpointer ftnptr_arg_trampolines;
+	gpointer unbox_arbitrary_trampolines;
 	/* In static mode, points to a table of global symbols for trampolines etc */
 	gpointer globals;
 	/* Points to a string containing the assembly name*/
@@ -168,6 +173,8 @@ typedef struct MonoAotFileInfo
 	guint32 plt_size;
 	/* Number of methods */
 	guint32 nmethods;
+	/* Number of extra methods */
+	guint32 nextra_methods;
 	/* A union of MonoAotFileFlags */
 	guint32 flags;
 	/* Optimization flags used to compile the module */
@@ -177,8 +184,8 @@ typedef struct MonoAotFileInfo
 	/* Index of the blob entry holding the GC used by this module */
 	gint32 gc_name_index;
 	guint32 num_rgctx_fetch_trampolines;
-	/* These are used for sanity checking object layout problems when cross-compiling */
-	guint32 double_align, long_align, generic_tramp_num;
+	/* These are used for sanity checking when cross-compiling */
+	guint32 double_align, long_align, generic_tramp_num, card_table_shift_bits, card_table_mask;
 	/* The page size used by trampoline pages */
 	guint32 tramp_page_size;
 	/*
@@ -215,21 +222,23 @@ gpointer  mono_aot_get_method               (MonoDomain *domain,
 gpointer  mono_aot_get_method_from_token    (MonoDomain *domain, MonoImage *image, guint32 token, MonoError *error);
 gboolean  mono_aot_is_got_entry             (guint8 *code, guint8 *addr);
 guint8*   mono_aot_get_plt_entry            (guint8 *code);
-guint32   mono_aot_get_plt_info_offset      (mgreg_t *regs, guint8 *code);
+guint32   mono_aot_get_plt_info_offset      (host_mgreg_t *regs, guint8 *code);
 gboolean  mono_aot_get_cached_class_info    (MonoClass *klass, MonoCachedClassInfo *res);
 gboolean  mono_aot_get_class_from_name      (MonoImage *image, const char *name_space, const char *name, MonoClass **klass);
 MonoJitInfo* mono_aot_find_jit_info         (MonoDomain *domain, MonoImage *image, gpointer addr);
 gpointer mono_aot_plt_resolve               (gpointer aot_module, guint32 plt_info_offset, guint8 *code, MonoError *error);
-void     mono_aot_patch_plt_entry           (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr);
+void     mono_aot_patch_plt_entry           (guint8 *code, guint8 *plt_entry, gpointer *got, host_mgreg_t *regs, guint8 *addr);
 gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vtable, int slot, MonoError *error);
 gpointer mono_aot_create_specific_trampoline   (MonoImage *image, gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len);
 gpointer mono_aot_get_trampoline            (const char *name);
 gpointer mono_aot_get_trampoline_full       (const char *name, MonoTrampInfo **out_tinfo);
-gpointer mono_aot_get_unbox_trampoline      (MonoMethod *method);
+gpointer mono_aot_get_unbox_trampoline      (MonoMethod *method, gpointer addr);
 gpointer mono_aot_get_lazy_fetch_trampoline (guint32 slot);
 gpointer mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr);
 gpointer mono_aot_get_imt_trampoline        (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp);
 gpointer mono_aot_get_gsharedvt_arg_trampoline(gpointer arg, gpointer addr);
+gpointer mono_aot_get_ftnptr_arg_trampoline (gpointer arg, gpointer addr);
+gpointer mono_aot_get_unbox_arbitrary_trampoline (gpointer addr);
 guint8*  mono_aot_get_unwind_info           (MonoJitInfo *ji, guint32 *unwind_info_len);
 guint32  mono_aot_method_hash               (MonoMethod *method);
 gboolean mono_aot_can_dedup                 (MonoMethod *method);
@@ -238,11 +247,21 @@ void     mono_aot_set_make_unreadable       (gboolean unreadable);
 gboolean mono_aot_is_pagefault              (void *ptr);
 void     mono_aot_handle_pagefault          (void *ptr);
 void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
+
+#ifdef __cplusplus
+template <typename T>
+inline void
+mono_aot_register_jit_icall (const char *name, T addr)
+{
+	mono_aot_register_jit_icall (name, (gpointer)addr);
+}
+#endif // __cplusplus
+
 guint32  mono_aot_find_method_index         (MonoMethod *method);
-void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
-void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
-void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
-void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+G_EXTERN_C void mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
+G_EXTERN_C void mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
+G_EXTERN_C void mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
+G_EXTERN_C void mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
 GHashTable *mono_aot_get_weak_field_indexes (MonoImage *image);
 
 /* This is an exported function */

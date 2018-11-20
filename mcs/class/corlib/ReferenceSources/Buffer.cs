@@ -1,7 +1,19 @@
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
+using System.Runtime.CompilerServices;
+using System.Runtime;
+
 namespace System
 {
 	partial class Buffer
 	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern unsafe void InternalMemcpy (byte *dest, byte *src, int count);
+
 		public static int ByteLength (Array array)
 		{
 			// note: the other methods in this class also use ByteLength to test for
@@ -182,6 +194,11 @@ namespace System
 		}
 
 		internal static unsafe void Memcpy (byte *dest, byte *src, int len) {
+			// For bigger lengths, we use the heavily optimized native code
+			if (len > 32) {
+				InternalMemcpy (dest, src, len);
+				return;
+			}
 			// FIXME: if pointers are not aligned, try to align them
 			// so a faster routine can be used. Handle the case where
 			// the pointers can't be reduced to have the same alignment
@@ -213,7 +230,28 @@ namespace System
 
 		internal static unsafe void Memmove (byte *dest, byte *src, uint len)
 		{
+            if (((nuint)dest - (nuint)src < len) || ((nuint)src - (nuint)dest < len))
+				goto PInvoke;
 			Memcpy (dest, src, (int) len);
+			return;
+
+            PInvoke:
+            RuntimeImports.Memmove(dest, src, len);
+		}
+
+		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
+		{
+            if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        Memmove(pDestination, pSource, (uint)elementCount * (uint)Unsafe.SizeOf<T>());
+                }
+			} else {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        RuntimeImports.Memmove_wbarrier(pDestination, pSource, (uint)elementCount, typeof(T).TypeHandle.Value);
+				}
+			}
 		}
 	}
 }

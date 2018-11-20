@@ -53,7 +53,7 @@ namespace MonoTests.System.Threading
 		public void Constructor_Defaults ()
 		{
 			Assert.IsFalse (mre.IsSet, "#1");
-			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 10, mre.SpinCount, "#2");
+			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 35, mre.SpinCount, "#2");
 		}
 
 		[Test]
@@ -221,6 +221,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitHandleConsistencyTest ()
 		{
 			var mre = new ManualResetEventSlim ();
@@ -240,6 +241,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndNotImmediateSetTest ()
 		{
 			var mres = new ManualResetEventSlim ();
@@ -249,6 +251,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndCancel ()
 		{
 			var mres = new ManualResetEventSlim ();

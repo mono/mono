@@ -26,6 +26,8 @@ namespace Mono.Debugger.Soft
 		// System.Diagnostics.Debugger.Log ()
 		//
 		UserLog = 16,
+		// Fatal error handling
+		Crash = 17,
 		// Not part of the wire protocol
 		VMDisconnect = 99
 	}

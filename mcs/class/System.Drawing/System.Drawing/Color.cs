@@ -160,7 +160,7 @@ namespace System.Drawing
 			} else {
 				c = new Color ();
 				c.state = (short) (ColorType.ARGB | ColorType.Known | ColorType.Named);
-				if ((n < 27) || (n > 169))
+				if ((n < 27) || (n >= 168))
 					c.state |= (short) ColorType.System;
 				c.Value = KnownColors.ArgbValues [n];
 			}

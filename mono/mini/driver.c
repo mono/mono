@@ -54,6 +54,7 @@
 #include "mono/utils/mono-logger-internals.h"
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
+#include "mono/metadata/custom-attrs-internals.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -75,6 +76,7 @@ static FILE *mini_stats_fd;
 
 static void mini_usage (void);
 static void mono_runtime_set_execution_mode (MonoEEMode mode);
+static int mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 
 #ifdef HOST_WIN32
 /* Need this to determine whether to detach console */
@@ -86,7 +88,8 @@ int _CRT_glob = 0;
 typedef void (*OptFunc) (const char *p);
 
 #undef OPTFLAG
-#ifdef HAVE_ARRAY_ELEM_INIT
+
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 
@@ -100,30 +103,13 @@ static const struct msgstr_t {
 #undef OPTFLAG
 };
 static const gint16 opt_names [] = {
-#define OPTFLAG(id,shift,name,desc) [(shift)] = offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
+#define OPTFLAG(id,shift,name,desc) offsetof (struct msgstr_t, MSGSTRFIELD(__LINE__)),
 #include "optflags-def.h"
 #undef OPTFLAG
 };
 
 #define optflag_get_name(id) ((const char*)&opstr + opt_names [(id)])
 #define optflag_get_desc(id) (optflag_get_name(id) + 1 + strlen (optflag_get_name(id)))
-
-#else /* !HAVE_ARRAY_ELEM_INIT */
-typedef struct {
-	const char* name;
-	const char* desc;
-} OptName;
-
-#define OPTFLAG(id,shift,name,desc) {name,desc},
-static const OptName 
-opt_names [] = {
-#include "optflags-def.h"
-	{NULL, NULL}
-};
-#define optflag_get_name(id) (opt_names [(id)].name)
-#define optflag_get_desc(id) (opt_names [(id)].desc)
-
-#endif
 
 #define DEFAULT_OPTIMIZATIONS (	\
 	MONO_OPT_PEEPHOLE |	\
@@ -161,8 +147,10 @@ parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
 
 	/* call out to cpu detection code here that sets the defaults ... */
 	if (cpu_opts) {
+#ifndef MONO_CROSS_COMPILE
 		opt |= mono_arch_cpu_optimizations (&exclude);
 		opt &= ~exclude;
+#endif
 	}
 	if (!p)
 		return opt;
@@ -314,9 +302,9 @@ opt_sets [] = {
        MONO_OPT_FCMOV,
        MONO_OPT_ALIAS_ANALYSIS,
 #ifdef MONO_ARCH_SIMD_INTRINSICS
-       MONO_OPT_SIMD,
+       MONO_OPT_SIMD | MONO_OPT_INTRINS,
        MONO_OPT_SSE2,
-       MONO_OPT_SIMD | MONO_OPT_SSE2,
+       MONO_OPT_SIMD | MONO_OPT_SSE2 | MONO_OPT_INTRINS,
 #endif
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_ALIAS_ANALYSIS,
@@ -347,6 +335,94 @@ domain_dump_native_code (MonoDomain *domain) {
 }
 #endif
 
+static gboolean do_regression_retries;
+static int regression_test_skip_index;
+
+
+static gboolean
+method_should_be_regression_tested (MonoMethod *method, gboolean interp)
+{
+	ERROR_DECL (error);
+
+	if (strncmp (method->name, "test_", 5) != 0)
+		return FALSE;
+
+	static gboolean filter_method_init = FALSE;
+	static const char *filter_method = NULL;
+
+	if (!filter_method_init) {
+		filter_method = g_getenv ("REGRESSION_FILTER_METHOD");
+		filter_method_init = TRUE;
+	}
+
+	if (filter_method) {
+		const char *name = filter_method;
+
+		if ((strchr (name, '.') > name) || strchr (name, ':')) {
+			MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
+			gboolean res = mono_method_desc_full_match (desc, method);
+			mono_method_desc_free (desc);
+			return res;
+		} else {
+			return strcmp (method->name, name) == 0;
+		}
+	}
+
+	MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
+	mono_error_cleanup (error);
+	if (!ainfo)
+		return TRUE;
+
+	int j;
+	for (j = 0; j < ainfo->num_attrs; ++j) {
+		MonoCustomAttrEntry *centry = &ainfo->attrs [j];
+		if (centry->ctor == NULL)
+			continue;
+
+		MonoClass *klass = centry->ctor->klass;
+		if (strcmp (m_class_get_name (klass), "CategoryAttribute") || mono_method_signature_internal (centry->ctor)->param_count != 1)
+			continue;
+
+		gpointer *typed_args, *named_args;
+		int num_named_args;
+		CattrNamedArg *arginfo;
+
+		mono_reflection_create_custom_attr_data_args_noalloc (
+			mono_defaults.corlib, centry->ctor, centry->data, centry->data_size,
+			&typed_args, &named_args, &num_named_args, &arginfo, error);
+		if (!is_ok (error))
+			continue;
+
+		char *utf8_str = (char*)(void*)typed_args[0]; //this points into image memory that is constant
+		g_free (typed_args);
+		g_free (named_args);
+		g_free (arginfo);
+
+		if (interp && !strcmp (utf8_str, "!INTERPRETER")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+
+#if HOST_WASM
+		if (!strcmp (utf8_str, "!WASM")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+#endif
+		if (mono_aot_mode == MONO_AOT_MODE_FULL && !strcmp (utf8_str, "!FULLAOT")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+
+		if ((mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && !strcmp (utf8_str, "!BITCODE")) {
+			g_print ("skip %s...\n", method->name);
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 static void
 mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		guint32 opt_flags,
@@ -364,6 +440,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 	g_free (n);
 	cfailed = failed = run = code_size = 0;
 	comp_time = elapsed = 0.0;
+	int local_skip_index = 0;
 
 	/* fixme: ugly hack - delete all previously compiled methods */
 	if (domain_jit_info (domain)) {
@@ -383,18 +460,27 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			continue;
 		}
-		if (strncmp (method->name, "test_", 5) == 0) {
-			MonoCompile *cfg;
+		if (method_should_be_regression_tested (method, FALSE)) {
+			MonoCompile *cfg = NULL;
 
 			expected = atoi (method->name + 5);
 			run++;
 			start_time = g_timer_elapsed (timer, NULL);
+
+#ifdef DISABLE_JIT
+#ifdef MONO_USE_AOT_COMPILER
+			ERROR_DECL (error);
+			func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
+			mono_error_cleanup (error);
+#else
+			g_error ("No JIT or AOT available, regression testing not possible!")
+#endif
+
+#else
 			comp_time -= start_time;
 			cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, opt_flags), mono_get_root_domain (), JIT_FLAG_RUN_CCTORS, 0, -1);
 			comp_time += g_timer_elapsed (timer, NULL);
 			if (cfg->exception_type == MONO_EXCEPTION_NONE) {
-				if (verbose >= 2)
-					g_print ("Running '%s' ...\n", method->name);
 #ifdef MONO_USE_AOT_COMPILER
 				ERROR_DECL (error);
 				func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
@@ -404,15 +490,37 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 #else
 					func = (TestMethod)(gpointer)cfg->native_code;
 #endif
-				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), func);
+				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
+			}
+#endif
+
+			if (func) {
+				if (do_regression_retries) {
+					++local_skip_index;
+
+					if(local_skip_index <= regression_test_skip_index)
+						continue;
+					++regression_test_skip_index;
+				}
+
+				if (verbose >= 2)
+					g_print ("Running '%s' ...\n", method->name);
+
+#if HOST_WASM
+				//WASM AOT injects dummy args and we must call with exact signatures
+				int (*func_2)(int) = (int (*)(int))(void*)func;
+				result = func_2 (-1);
+#else
 				result = func ();
+#endif
 				if (result != expected) {
 					failed++;
 					g_print ("Test '%s' failed result (got %d, expected %d).\n", method->name, result, expected);
 				}
-				code_size += cfg->code_len;
-				mono_destroy_compile (cfg);
-
+				if (cfg) {
+					code_size += cfg->code_len;
+					mono_destroy_compile (cfg);
+				}
 			} else {
 				cfailed++;
 				g_print ("Test '%s' failed compilation.\n", method->name);
@@ -526,6 +634,11 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 				if (!(opt_sets [opt] & MONO_OPT_INTRINS))
 					continue;
 
+			//we running in AOT only, it makes no sense to try multiple flags
+			if ((mono_aot_mode == MONO_AOT_MODE_FULL || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && opt_sets [opt] != DEFAULT_OPTIMIZATIONS) {
+				continue;
+			}
+
 			mini_regression_step (image, verbose, total_run, &total,
 					opt_sets [opt] & ~exclude,
 					timer, domain);
@@ -549,7 +662,7 @@ mini_regression_list (int verbose, int count, char *images [])
 	
 	total_run =  total = 0;
 	for (i = 0; i < count; ++i) {
-		ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+		ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -575,8 +688,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	double elapsed, transform_time;
 	int i;
 	MonoObject *result_obj;
-	static gboolean filter_method_init = FALSE;
-	static const char *filter_method = NULL;
+	int local_skip_index = 0;
 
 	g_print ("Test run: image=%s\n", mono_image_get_filename (image));
 	cfailed = failed = run = 0;
@@ -584,7 +696,6 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 
 	g_timer_start (timer);
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
-		MonoObject *exc = NULL;
 		ERROR_DECL (error);
 		MonoMethod *method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i + 1), NULL, NULL, error);
 		if (!method) {
@@ -592,61 +703,17 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 			continue;
 		}
 
-		if (!filter_method_init) {
-			filter_method = g_getenv ("INTERP_FILTER_METHOD");
-			filter_method_init = TRUE;
-		}
-		gboolean filter = FALSE;
-		if (filter_method) {
-			const char *name = filter_method;
-
-			if ((strchr (name, '.') > name) || strchr (name, ':')) {
-				MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
-				filter = mono_method_desc_full_match (desc, method);
-				mono_method_desc_free (desc);
-			} else {
-				filter = strcmp (method->name, name) == 0;
-			}
-		} else { /* no filter, check for `Category' attribute on method */
-			filter = TRUE;
-			MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_cleanup (error);
-
-			if (ainfo) {
-				int j;
-				for (j = 0; j < ainfo->num_attrs && filter; ++j) {
-					MonoCustomAttrEntry *centry = &ainfo->attrs [j];
-					if (centry->ctor == NULL)
-						continue;
-
-					MonoClass *klass = centry->ctor->klass;
-					if (strcmp (m_class_get_name (klass), "CategoryAttribute"))
-						continue;
-
-					MonoObject *obj = mono_custom_attrs_get_attr_checked (ainfo, klass, error);
-					/* FIXME: there is an ordering problem if there're multiple attributes, do this instead:
-					 * MonoObject *obj = create_custom_attr (ainfo->image, centry->ctor, centry->data, centry->data_size, error); */
-					mono_error_cleanup (error);
-					error_init (error);
-					MonoMethod *getter = mono_class_get_method_from_name_checked (klass, "get_Category", -1, 0, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					MonoObject *str = mini_get_interp_callbacks ()->runtime_invoke (getter, obj, NULL, &exc, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					char *utf8_str = mono_string_to_utf8_checked ((MonoString *) str, error);
-					mono_error_cleanup (error);
-					error_init (error);
-					if (!strcmp (utf8_str, "!INTERPRETER")) {
-						g_print ("skip %s...\n", method->name);
-						filter = FALSE;
-					}
-				}
-			}
-		}
-		if (strncmp (method->name, "test_", 5) == 0 && filter) {
+		if (method_should_be_regression_tested (method, TRUE)) {
 			ERROR_DECL_VALUE (interp_error);
 			MonoObject *exc = NULL;
+
+			if (do_regression_retries) {
+				++local_skip_index;
+
+				if(local_skip_index <= regression_test_skip_index)
+					continue;
+				++regression_test_skip_index;
+			}
 
 			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, &interp_error);
 			if (!mono_error_ok (&interp_error)) {
@@ -658,7 +725,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				run++;
 				failed++;
 			} else {
-				result = *(gint32 *) mono_object_unbox (result_obj);
+				result = *(gint32 *) mono_object_unbox_internal (result_obj);
 				expected = atoi (method->name + 5);  // FIXME: oh no.
 				run++;
 
@@ -720,7 +787,7 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 
 	total_run = total = 0;
 	for (i = 0; i < count; ++i) {
-		MonoAssembly *ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
+		MonoAssembly *ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -903,8 +970,9 @@ free_jit_info_data (ThreadData *td, JitInfoData *free)
 #define MODE_FREE	2
 
 static void
-test_thread_func (ThreadData *td)
+test_thread_func (gpointer void_arg)
 {
+	ThreadData* td = (ThreadData*)void_arg;
 	int mode = MODE_ALLOC;
 	int i = 0;
 	gulong lookup_successes = 0, lookup_failures = 0;
@@ -944,7 +1012,7 @@ test_thread_func (ThreadData *td)
 				}
 			} else {
 				int pos = random () % MAX_ADDR;
-				char *addr = (char*)(gulong) pos;
+				char *addr = (char*)(uintptr_t)pos;
 				MonoJitInfo *ji;
 
 				ji = mono_jit_info_table_find (domain, addr);
@@ -1053,7 +1121,7 @@ jit_info_table_test (MonoDomain *domain)
 	*/
 
 	for (i = 0; i < num_threads; ++i) {
-		mono_thread_create_checked (domain, test_thread_func, &thread_datas [i], error);
+		mono_thread_create_checked (domain, (gpointer)test_thread_func, &thread_datas [i], error);
 		mono_error_assert_ok (error);
 	}
 }
@@ -1107,7 +1175,7 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 
 		if (mono_class_is_gtd (method->klass))
 			continue;
-		sig = mono_method_signature (method);
+		sig = mono_method_signature_internal (method);
 		if (!sig) {
 			char * desc = mono_method_full_name (method, TRUE);
 			g_print ("Could not retrieve method signature for %s\n", desc);
@@ -1141,8 +1209,9 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 }
 
 static void
-compile_all_methods_thread_main (CompileAllThreadArgs *args)
+compile_all_methods_thread_main (gpointer void_args)
 {
+	CompileAllThreadArgs *args = (CompileAllThreadArgs*)void_args;
 	guint32 i;
 	for (i = 0; i < args->recompilation_times; ++i)
 		compile_all_methods_thread_main_inner (args);
@@ -1163,7 +1232,7 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	 * Need to create a mono thread since compilation might trigger
 	 * running of managed code.
 	 */
-	mono_thread_create_checked (mono_domain_get (), compile_all_methods_thread_main, &args, error);
+	mono_thread_create_checked (mono_domain_get (), (gpointer)compile_all_methods_thread_main, &args, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -1179,6 +1248,17 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 int 
 mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
 {
+	int rv;
+	MONO_ENTER_GC_UNSAFE;
+	rv = mono_jit_exec_internal (domain, assembly, argc, argv);
+	MONO_EXIT_GC_UNSAFE;
+	return rv;
+}
+
+int
+mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
+{
+	MONO_REQ_GC_UNSAFE_MODE;
 	ERROR_DECL (error);
 	MonoImage *image = mono_assembly_get_image_internal (assembly);
 	MonoMethod *method;
@@ -1205,7 +1285,7 @@ mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[
 
 		res = mono_runtime_try_run_main (method, argc, argv, &exc);
 		if (exc) {
-			mono_unhandled_exception (exc);
+			mono_unhandled_exception_internal (exc);
 			mono_invoke_unhandled_exception_hook (exc);
 			g_assert_not_reached ();
 		}
@@ -1215,7 +1295,7 @@ mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[
 		if (!is_ok (error)) {
 			MonoException *ex = mono_error_convert_to_exception (error);
 			if (ex) {
-				mono_unhandled_exception (&ex->object);
+				mono_unhandled_exception_internal (&ex->object);
 				mono_invoke_unhandled_exception_hook (&ex->object);
 				g_assert_not_reached ();
 			}
@@ -1315,7 +1395,7 @@ load_agent (MonoDomain *domain, char *desc)
 		args = NULL;
 	}
 
-	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
+	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -1349,7 +1429,7 @@ load_agent (MonoDomain *domain, char *desc)
 		if (main_args) {
 			MonoString *str = mono_string_new_checked (domain, args, error);
 			if (str)
-				mono_array_set (main_args, MonoString*, 0, str);
+				mono_array_set_internal (main_args, MonoString*, 0, str);
 		}
 	} else {
 		main_args = (MonoArray*)mono_array_new_checked (domain, mono_defaults.string_class, 0, error);
@@ -1514,11 +1594,11 @@ mono_get_version_info (void)
 	GString *output;
 	output = g_string_new ("");
 
-#ifdef HAVE_KW_THREAD
+#ifdef MONO_KEYWORD_THREAD
 	g_string_append_printf (output, "\tTLS:           __thread\n");
 #else
 	g_string_append_printf (output, "\tTLS:           \n");
-#endif /* HAVE_KW_THREAD */
+#endif /* MONO_KEYWORD_THREAD */
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	g_string_append_printf (output, "\tSIGSEGV:       altstack\n");
@@ -1796,8 +1876,47 @@ mono_enable_interp (const char *opts)
 #ifndef MONO_ARCH_INTERPRETER_SUPPORTED
 	g_error ("--interpreter not supported on this architecture.\n");
 #endif
+
 }
 
+static int
+mono_exec_regression_internal (int verbose_level, int count, char *images [], gboolean single_method)
+{
+	mono_do_single_method_regression = single_method;
+	if (mono_use_interpreter) {
+		if (mono_interp_regression_list (verbose_level, count, images)) {
+			g_print ("Regression ERRORS!\n");
+			return 1;
+		}
+		return 0;
+	}
+	if (mini_regression_list (verbose_level, count, images)) {
+		g_print ("Regression ERRORS!\n");
+		return 1;
+	}
+	return 0;
+}
+
+
+/**
+ * Returns TRUE for success, FALSE for failure.
+ */
+gboolean
+mono_regression_test_step (int verbose_level, const char *image, const char *method_name)
+{
+	if (method_name) {
+		//TODO
+	} else {
+		do_regression_retries = TRUE;
+	}
+
+	char *images[] = {
+		(char*)image,
+		NULL
+	};
+
+	return mono_exec_regression_internal (verbose_level, 1, images, FALSE) == 0;
+}
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -2027,7 +2146,13 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--aot=", 6) == 0) {
 			error_if_aot_unsupported ();
 			mono_compile_aot = TRUE;
-			aot_options = &argv [i][6];
+			if (aot_options) {
+				char *tmp = g_strdup_printf ("%s,%s", aot_options, &argv [i][6]);
+				g_free (aot_options);
+				aot_options = tmp;
+			} else {
+				aot_options = g_strdup (&argv [i][6]);
+			}
 #endif
 		} else if (strncmp (argv [i], "--apply-bindings=", 17) == 0) {
 			extra_bindings_config_file = &argv[i][17];
@@ -2219,7 +2344,20 @@ mono_main (int argc, char* argv[])
 		return 1;
 	}
 
-#if !defined(HOST_WIN32) && defined(HAVE_UNISTD_H)
+/*
+ * XXX: verify if other OSes need it; many platforms seem to have it so that
+ * mono_w32process_get_path -> mono_w32process_get_name, and the name is not
+ * necessarily a path instead of just the program name
+ */
+#if defined (_AIX)
+	/*
+	 * mono_w32process_get_path on these can only return a name, not a path;
+	 * which may not be good for us if the mono command name isn't on $PATH,
+	 * like in CI scenarios. chances are argv based is fine if we inherited
+	 * the environment variables.
+	 */
+	mono_w32process_set_cli_launcher (argv [0]);
+#elif !defined(HOST_WIN32) && defined(HAVE_UNISTD_H)
 	/*
 	 * If we are not embedded, use the mono runtime executable to run managed exe's.
 	 */
@@ -2242,10 +2380,7 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if SIZEOF_VOID_P == 8 && (defined(TARGET_ARM) || defined(TARGET_X86))
-       fprintf (stderr, "Can't cross-compile on 64-bit platforms to 32-bit architecture.\n");
-       exit (1);
-#elif SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+#if TARGET_SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
        fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif
@@ -2322,24 +2457,9 @@ mono_main (int argc, char* argv[])
 	
 	switch (action) {
 	case DO_SINGLE_METHOD_REGRESSION:
-		mono_do_single_method_regression = TRUE;
 	case DO_REGRESSION:
-		if (mono_use_interpreter) {
-			if (mono_interp_regression_list (2, argc -i, argv + i)) {
-				g_print ("Regression ERRORS!\n");
-				// mini_cleanup (domain);
-				return 1;
-			}
-			// mini_cleanup (domain);
-			return 0;
-		}
-		if (mini_regression_list (mini_verbose, argc -i, argv + i)) {
-			g_print ("Regression ERRORS!\n");
-			mini_cleanup (domain);
-			return 1;
-		}
-		mini_cleanup (domain);
-		return 0;
+		 return mono_exec_regression_internal (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
+
 	case DO_BENCH:
 		if (argc - i != 1 || mname == NULL) {
 			g_print ("Usage: mini --ncompile num --compile method assembly\n");
@@ -2383,7 +2503,7 @@ mono_main (int argc, char* argv[])
 		apply_root_domain_configuration_file_bindings (domain, extra_bindings_config_file);
 	}
 
-	assembly = mono_assembly_open_predicate (aname, MONO_ASMCTX_DEFAULT, NULL, NULL, &open_status);
+	assembly = mono_assembly_open_predicate (aname, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
 	if (!assembly) {
 		fprintf (stderr, "Cannot open assembly '%s': %s.\n", aname, mono_image_strerror (open_status));
 		mini_cleanup (domain);
@@ -2408,7 +2528,7 @@ mono_main (int argc, char* argv[])
 
 #if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
-		if (!enable_debugging && !mono_compile_aot && ((MonoCLIImageInfo*)(mono_assembly_get_image_internal (assembly)->image_info))->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
+		if (!enable_debugging && !mono_compile_aot && mono_assembly_get_image_internal (assembly)->image_info->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();
 #endif
 
@@ -2418,12 +2538,8 @@ mono_main (int argc, char* argv[])
 		main_args.argv = argv + i;
 		main_args.opts = opt;
 		main_args.aot_options = aot_options;
-#if RUN_IN_SUBTHREAD
-		mono_runtime_exec_managed_code (domain, main_thread_handler, &main_args);
-#else
 		main_thread_handler (&main_args);
 		mono_thread_manage ();
-#endif
 
 		mini_cleanup (domain);
 
@@ -2589,9 +2705,11 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_thread_manage ();
 
 	mini_cleanup (domain);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 void

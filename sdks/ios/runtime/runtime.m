@@ -11,7 +11,6 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/exception.h>
 #include <mono/jit/jit.h>
-#include <mono/jit/jit.h>
 
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -205,8 +204,16 @@ log_callback (const char *log_domain, const char *log_level, const char *message
 	}
 }
 
+static void
+register_dllmap (void)
+{
+	mono_dllmap_insert (NULL, "System.Native", NULL, "__Internal", NULL);
+	mono_dllmap_insert (NULL, "System.Security.Cryptography.Native.Apple", NULL, "__Internal", NULL);
+}
+
 /* Implemented by generated code */
 void mono_ios_register_modules (void);
+void mono_ios_setup_execution_mode (void);
 
 void
 mono_ios_runtime_init (void)
@@ -284,9 +291,11 @@ mono_ios_runtime_init (void)
 	const char *bundle = get_bundle_path ();
 	chdir (bundle);
 
+	register_dllmap ();
+
 #ifdef DEVICE
 	mono_ios_register_modules ();
-	mono_jit_set_aot_mode (MONO_AOT_MODE_FULL);
+	mono_ios_setup_execution_mode ();
 #endif
 
 	mono_debug_init (MONO_DEBUG_FORMAT_MONO);

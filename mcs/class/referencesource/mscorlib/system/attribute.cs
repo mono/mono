@@ -68,7 +68,7 @@ namespace System {
                     custom_attributes.Add (param_attribute);
                 }
 
-                var base_method = method.GetBaseMethod ();
+                var base_method = ((MonoMethod)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 
@@ -103,14 +103,14 @@ namespace System {
             if (member.MemberType != MemberTypes.Method)
                 return false;
 
-            var method = ((MethodInfo) member).GetBaseMethod ();
+            var method = ((MonoMethod)(MethodInfo) member).GetBaseMethod ();
 
             while (true) {
                 var param = method.GetParametersInternal () [parameter.Position];
                 if (param.IsDefined (attributeType, false))
                     return true;
 
-                var base_method = method.GetBaseMethod ();
+                var base_method = ((MonoMethod)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 

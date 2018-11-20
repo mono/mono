@@ -34,7 +34,7 @@ emit_cached_check_args (MonoCompile *cfg, MonoInst *obj, MonoClass *klass, int c
 		cache_ins = mini_emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_CAST_CACHE);
 
 		/* klass - it's the second element of the cache entry*/
-		EMIT_NEW_LOAD_MEMBASE (cfg, args [1], OP_LOAD_MEMBASE, alloc_preg (cfg), cache_ins->dreg, sizeof (gpointer));
+		EMIT_NEW_LOAD_MEMBASE (cfg, args [1], OP_LOAD_MEMBASE, alloc_preg (cfg), cache_ins->dreg, TARGET_SIZEOF_VOID_P);
 
 		args [2] = cache_ins; /* cache */
 	} else {
@@ -115,7 +115,7 @@ mini_emit_isninst_cast_inst (MonoCompile *cfg, int klass_reg, MonoClass *klass, 
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBLT_UN, false_target);
 	}
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, m_class_offsetof_supertypes ());
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((m_class_get_idepth (klass) - 1) * SIZEOF_VOID_P));
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((m_class_get_idepth (klass) - 1) * TARGET_SIZEOF_VOID_P));
 	if (klass_ins) {
 		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, stype, klass_ins->dreg);
 	} else if (cfg->compile_aot) {
@@ -123,7 +123,7 @@ mini_emit_isninst_cast_inst (MonoCompile *cfg, int klass_reg, MonoClass *klass, 
 		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
 		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, stype, const_reg);
 	} else {
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, klass);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, stype, (gsize)klass);
 	}
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, true_target);
 }
@@ -240,7 +240,7 @@ mini_emit_class_check_branch (MonoCompile *cfg, int klass_reg, MonoClass *klass,
 		MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
 		MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, klass_reg, const_reg);
 	} else {
-		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, (gsize)klass);
 	}
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, branch_op, target);
 }
@@ -345,7 +345,7 @@ mini_emit_castclass_inst (MonoCompile *cfg, int obj_reg, int klass_reg, MonoClas
 			MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "InvalidCastException");
 		}
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stypes_reg, klass_reg, m_class_offsetof_supertypes ());
-		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((m_class_get_idepth (klass) - 1) * SIZEOF_VOID_P));
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, stype, stypes_reg, ((m_class_get_idepth (klass) - 1) * TARGET_SIZEOF_VOID_P));
 		mini_emit_class_check_inst (cfg, stype, klass, klass_inst);
 	}
 }
@@ -511,10 +511,10 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context
 					mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 					return NULL;
 				}
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, vt);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, (gsize)vt);
 			} else {
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, (gsize)klass);
 			}
 			MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "InvalidCastException");
 		} else {
@@ -715,10 +715,10 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, int context_us
 						mono_cfg_set_exception (cfg, MONO_EXCEPTION_MONO_ERROR);
 						return NULL;
 					}
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, vt);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, (gsize)vt);
 				} else {
 					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, MONO_STRUCT_OFFSET (MonoVTable, klass));
-					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, klass);
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, klass_reg, (gsize)klass);
 				}
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false_bb);
 				MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, is_null_bb);

@@ -1223,5 +1223,37 @@ namespace System
             return InternalBoxEnum(rtType, value ? 1 : 0);
         }
         #endregion
+
+#if MONO
+        public static TEnum Parse<TEnum>(string value) where TEnum : struct
+        {
+            return Parse<TEnum>(value, false);
+        }
+
+        public static TEnum Parse<TEnum>(string value, bool ignoreCase) where TEnum : struct
+        {
+            EnumResult parseResult = new EnumResult() { canThrow = true };
+            if (TryParseEnum(typeof(TEnum), value, ignoreCase, ref parseResult))
+                return (TEnum)parseResult.parsedEnum;
+            else
+                throw parseResult.GetEnumParseException();
+        }
+
+        public static bool TryParse(Type enumType, String value, bool ignoreCase, out object result)
+        {
+            result = null;
+            EnumResult parseResult = new EnumResult();
+            bool retValue;
+
+            if (retValue = TryParseEnum(enumType, value, ignoreCase, ref parseResult))
+                result = parseResult.parsedEnum;
+            return retValue;
+        }
+
+        public static bool TryParse(Type enumType, String value, out object result)
+        {
+            return TryParse(enumType, value, false, out result);
+        }
+#endif
     }
 }

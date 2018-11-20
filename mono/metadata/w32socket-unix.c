@@ -122,10 +122,10 @@ socket_data_destroy (MonoFDHandle *fdhandle)
 void
 mono_w32socket_initialize (void)
 {
-	MonoFDHandleCallback socket_data_callbacks = {
-		.close = socket_data_close,
-		.destroy = socket_data_destroy
-	};
+	MonoFDHandleCallback socket_data_callbacks;
+	memset (&socket_data_callbacks, 0, sizeof (socket_data_callbacks));
+	socket_data_callbacks.close = socket_data_close;
+	socket_data_callbacks.destroy = socket_data_destroy;
 
 	mono_fdhandle_register (MONO_FDTYPE_SOCKET, &socket_data_callbacks);
 }
@@ -438,7 +438,7 @@ mono_w32socket_recvbuffers (SOCKET sock, WSABUF *buffers, guint32 count, guint32
 }
 
 int
-mono_w32socket_send (SOCKET sock, char *buf, int len, int flags, gboolean blocking)
+mono_w32socket_send (SOCKET sock, void *buf, int len, int flags, gboolean blocking)
 {
 	SocketHandle *sockethandle;
 	int ret;
@@ -582,18 +582,18 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 #if defined(HAVE_SENDFILE) && (defined(__linux__) || defined(DARWIN))
 	struct stat statbuf;
 #else
-	gchar *buffer;
+	gpointer buffer;
 #endif
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	if (((MonoFDHandle*) sockethandle)->type != MONO_FDTYPE_SOCKET) {
 		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
 		mono_w32error_set_last (WSAENOTSOCK);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	/* Write the header */
@@ -617,7 +617,7 @@ mono_w32socket_transmit_file (SOCKET sock, gpointer file_handle, TRANSMIT_FILE_B
 		gint errnum = errno;
 		mono_w32socket_set_last_error (mono_w32socket_convert_error (errnum));
 		mono_fdhandle_unref ((MonoFDHandle*) sockethandle);
-		return SOCKET_ERROR;
+		return FALSE;
 	}
 
 	do {
@@ -723,7 +723,8 @@ retry_socket:
 	 * https://bugzilla.novell.com/show_bug.cgi?id=MONO53992
 	 */
 	{
-		int ret, true_ = 1;
+		int ret;
+		const int true_ = 1;
 
 		MONO_ENTER_GC_SAFE;
 		ret = setsockopt (((MonoFDHandle*) sockethandle)->fd, SOL_SOCKET, SO_REUSEADDR, &true_, sizeof (true_));
@@ -901,11 +902,11 @@ mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optva
 }
 
 gint
-mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen)
+mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, gconstpointer optval, socklen_t optlen)
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gpointer tmp_val;
+	gconstpointer tmp_val;
 #if defined (__linux__)
 	/* This has its address taken so it cannot be moved to the if block which uses it */
 	gint bufsize = 0;
@@ -1129,12 +1130,13 @@ extension_transmit_file (SOCKET sock, gpointer file_handle, guint32 bytes_to_wri
 	return ret;
 }
 
+const
 static struct {
 	GUID guid;
 	gpointer func;
 } extension_functions[] = {
-	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, extension_disconect },
-	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, extension_transmit_file },
+	{ {0x7fda2e11,0x8630,0x436f,{0xa0,0x31,0xf5,0x36,0xa6,0xee,0xc1,0x57}} /* WSAID_DISCONNECTEX */, (gpointer)extension_disconect },
+	{ {0xb5367df0,0xcbac,0x11cf,{0x95,0xca,0x00,0x80,0x5f,0x48,0xa1,0x92}} /* WSAID_TRANSMITFILE */, (gpointer)extension_transmit_file },
 	{ {0} , NULL },
 };
 
@@ -1143,7 +1145,7 @@ mono_w32socket_ioctl (SOCKET sock, gint32 command, gchar *input, gint inputlen, 
 {
 	SocketHandle *sockethandle;
 	gint ret;
-	gchar *buffer;
+	gpointer buffer;
 
 	if (!mono_fdhandle_lookup_and_ref(sock, (MonoFDHandle**) &sockethandle)) {
 		mono_w32error_set_last (WSAENOTSOCK);
@@ -1541,7 +1543,7 @@ mono_w32socket_convert_error (gint error)
 	}
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, MonoError *error)
 {
 	error_init (error);

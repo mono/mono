@@ -28,12 +28,16 @@ struct _MonoDebuggerCallbacks {
 	void (*user_break) (void);
 	void (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
 	gboolean (*debug_log_is_enabled) (void);
+	void (*send_crash) (char *json_dump, MonoStackHash *hashes, int pause);
 };
 
 typedef struct _DebuggerTlsData DebuggerTlsData;
 
 MONO_API void
 mono_debugger_agent_init (void);
+
+MONO_API void
+mono_debugger_agent_parse_options (char *options);
 
 void
 mono_debugger_agent_stub_init (void);

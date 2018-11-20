@@ -121,7 +121,7 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_u1: dest:i src1:i len:4
 zext_i4: dest:i src1:i len:4
 
-long_mul_imm: dest:i src1:i clob:1 len:12
+long_mul_imm: dest:i src1:i clob:1 len:16
 long_min: dest:i src1:i src2:i len:16 clob:1
 long_min_un: dest:i src1:i src2:i len:16 clob:1
 long_max: dest:i src1:i src2:i len:16 clob:1
@@ -812,6 +812,8 @@ expand_i4: dest:x src1:i len:11
 expand_i8: dest:x src1:i len:11
 expand_r4: dest:x src1:f len:16
 expand_r8: dest:x src1:f len:13
+
+roundpd: dest:x src1:x len:10
 
 liverange_start: len:0
 liverange_end: len:0

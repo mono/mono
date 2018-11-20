@@ -51,8 +51,8 @@ namespace MonoTests.System.ServiceModel
 	public class ClientCredentialsSecurityTokenManagerTest
 	{
 		MyManager def_c;
-		X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		X509Certificate2 certpub = new X509Certificate2 ("Test/Resources/test.cer");
+		X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		X509Certificate2 certpub = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 
 		[SetUp]
 		public void Initialize ()

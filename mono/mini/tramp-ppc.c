@@ -95,12 +95,12 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	mono_domain_unlock (domain);
 
 	if (short_branch) {
-		ppc_addi (code, this_pos, this_pos, sizeof (MonoObject));
+		ppc_addi (code, this_pos, this_pos, MONO_ABI_SIZEOF (MonoObject));
 		ppc_emit32 (code, short_branch);
 	} else {
 		ppc_load_ptr (code, ppc_r0, addr);
 		ppc_mtctr (code, ppc_r0);
-		ppc_addi (code, this_pos, this_pos, sizeof (MonoObject));
+		ppc_addi (code, this_pos, this_pos, MONO_ABI_SIZEOF (MonoObject));
 		ppc_bcctr (code, 20, 0);
 	}
 	mono_arch_flush_icache (start, code - start);
@@ -189,7 +189,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	guint32 ins1, ins2, offset;
 
@@ -424,7 +424,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	if (aot) {
 		g_error ("Not implemented");
 	} else {
-		ppc_load_func (code, PPC_CALL_REG, mono_get_throw_exception_addr ());
+		ppc_load_func (code, PPC_CALL_REG, mono_get_rethrow_preserve_exception_addr ());
 		ppc_ldr (code, PPC_CALL_REG, 0, PPC_CALL_REG);
 		ppc_mtctr (code, PPC_CALL_REG);
 	}
@@ -646,7 +646,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		ppc_mtctr (code, ppc_r12);
 		ppc_bcctr (code, PPC_BR_ALWAYS, 0);
 	} else {
-		tramp = mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot),
+		tramp = (guint8*)mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot),
 			MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
 
 		/* jump to the actual trampoline */
@@ -682,7 +682,7 @@ mono_arch_get_call_target (guint8 *code)
 }
 
 guint32
-mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
+mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 	return ((guint32*)plt_entry) [8];

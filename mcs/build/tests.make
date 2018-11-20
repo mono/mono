@@ -19,13 +19,22 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 ## Unit test support
 ifndef NO_TEST
 
+test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
+
 test_nunit_lib = nunitlite.dll
-xunit_core := xunit.core xunit.execution.desktop xunit.abstractions xunit.assert Xunit.NetCore.Extensions
-xunit_deps := System.Runtime
+xunit_core := xunit.core xunit.execution.dotnet xunit.abstractions xunit.assert Xunit.NetCore.Extensions
+xunit_deps := netstandard System.Runtime
 xunit_src  := $(patsubst %,$(topdir)/../external/xunit-binaries/%,BenchmarkAttribute.cs BenchmarkDiscover.cs) $(topdir)/../mcs/class/test-helpers/PlatformDetection.cs
 
 ifeq ($(USE_XTEST_REMOTE_EXECUTOR), YES)
-XTEST_REMOTE_EXECUTOR = $(topdir)/class/lib/$(PROFILE)/RemoteExecutorConsoleApp.exe
+XTEST_REMOTE_EXECUTOR = $(test_lib_dir)/RemoteExecutorConsoleApp.exe
+
+ifeq ($(BUILD_PLATFORM), win32)
+XTEST_REMOTE_EXECUTOR_ABSPATH = $(shell cygpath -w $(abspath $(XTEST_REMOTE_EXECUTOR)))
+else
+XTEST_REMOTE_EXECUTOR_ABSPATH = $(abspath $(XTEST_REMOTE_EXECUTOR))
+endif
+
 xunit_src += $(topdir)/../mcs/class/test-helpers/AdminHelper.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/IO/FileCleanupTestBase.cs \
 $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.cs \
@@ -35,8 +44,15 @@ $(topdir)/../external/corefx/src/Common/src/System/PasteArguments.Unix.cs
 ifeq ($(PROFILE),monodroid)
 xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
 else
-xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs \
-$(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+ifeq ($(PROFILE),monotouch_tv)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+ifeq ($(PROFILE),monotouch_watch)
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mobile.cs
+else
+xunit_src += $(topdir)/../mcs/class/test-helpers/RemoteExecutorTestBase.Mono.cs $(topdir)/../external/corefx/src/CoreFx.Private.TestUtilities/src/System/Diagnostics/RemoteExecutorTestBase.Process.cs
+endif
+endif
 endif
 endif
 
@@ -62,6 +78,7 @@ test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
 endif
 
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
+test_lib_output = $(test_lib_dir)/$(test_lib)
 
 test_sourcefile_excludes = $(test_lib).exclude.sources
 
@@ -73,12 +90,13 @@ ifndef NO_BUILD
 test_flags += -r:$(the_assembly)
 test_assembly_dep = $(the_assembly)
 endif
-tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.pdb) $(test_response) $(test_makefrag)
+tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb) $(test_response) $(test_makefrag)
 
-xtest_sourcefile = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
+xtest_sourcefile = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
 xtest_sourcefile_excludes = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
+xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
 
 xtest_response = $(depsdir)/$(xunit_test_lib).response
 xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
@@ -86,7 +104,7 @@ xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LI
 
 ifeq ($(wildcard $(xtest_sourcefile)),)
 xtest_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-tests_CLEAN_FILES += $(xunit_test_lib) $(xtest_response) $(xtest_makefrag)
+tests_CLEAN_FILES += $(xtest_lib_output) $(xtest_response) $(xtest_makefrag)
 endif
 
 ifndef HAVE_CS_TESTS
@@ -113,10 +131,6 @@ endif
 
 test_assemblies :=
 
-test_lib_dir = $(topdir)/class/lib/$(PROFILE)/tests
-
-test_lib_output = $(topdir)/class/lib/$(PROFILE)/tests/$(test_lib)
-
 ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
 
@@ -136,25 +150,25 @@ TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)$(PRO
 NOSHADOW_FLAG =
 
 ifdef FIXTURE
-FIXTURE_ARG = -test=MonoTests.$(FIXTURE)
+FIXTURE_ARG = -test=$(FIXTURE)
 endif
 
 ifdef TESTNAME
-TESTNAME_ARG = -test=MonoTests.$(TESTNAME)
+TESTNAME_ARG = -test=$(TESTNAME)
 endif
 
 ifdef TEST_HARNESS_VERBOSE
 LABELS_ARG = -labels
 endif
 
-ifdef ALWAYS_AOT
+ifdef ALWAYS_AOT_TESTS
 test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp $(test_assemblies)
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(AOT_BUILD_FLAGS) $(test_assemblies)
 
 else
 test-local-aot-compile: $(topdir)/build/deps/nunit-$(PROFILE).stamp $(test_assemblies)
 
-endif # ALWAYS_AOT
+endif # ALWAYS_AOT_TESTS
 
 ifdef COVERAGE
 TEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/coverage_nunit_$(ASSEMBLY).xml
@@ -162,14 +176,20 @@ endif
 
 NUNITLITE_CONFIG_FILE=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)nunit-lite-console.exe.config
 
-patch-nunitlite-appconfig:
-	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(NUNITLITE_CONFIG_FILE)
+$(test_lib_output).nunitlite.config: $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(TEST_NUNITLITE_APP_CONFIG_GLOBAL) $(TEST_NUNITLITE_APP_CONFIG_RUNTIME) $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL) | $(test_lib_dir)
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_output).nunitlite.config
 ifdef TEST_NUNITLITE_APP_CONFIG_GLOBAL
-	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(NUNITLITE_CONFIG_FILE)
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_GLOBAL__/r $(TEST_NUNITLITE_APP_CONFIG_GLOBAL)" $(test_lib_output).nunitlite.config
 endif
 ifdef TEST_NUNITLITE_APP_CONFIG_RUNTIME
-	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(NUNITLITE_CONFIG_FILE)
+	sed -i -e "/__INSERT_CUSTOM_APP_CONFIG_RUNTIME__/r $(TEST_NUNITLITE_APP_CONFIG_RUNTIME)" $(test_lib_output).nunitlite.config
 endif
+ifdef TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL
+	cp -f $(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL) $(test_lib_output).nunitlite.config.$(TEST_NUNITLITE_APP_CONFIG_SUPPLEMENTAL)
+endif
+
+copy-nunitlite-appconfig: $(test_lib_output).nunitlite.config
+	cp -f $(test_lib_output).nunitlite.config $(NUNITLITE_CONFIG_FILE)
 
 ifdef PLATFORM_AOT_SUFFIX
 
@@ -215,7 +235,7 @@ TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $
 endif
 
 ## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local test-local-aot-compile patch-nunitlite-appconfig
+run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" DBG_RUNTIME_ARGS="$(TEST_RUNTIME_FLAGS)" $(TEST_HARNESS_EXEC) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(LABELS_ARG) -format:nunit2 -result:TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='$(notdir $(strip $(test_assemblies))).crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
@@ -242,15 +262,15 @@ ifdef HAVE_CS_TESTS
 $(test_lib_dir):
 	mkdir -p $@
 
-$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_dir)
+$(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
 test_response_preprocessed = $(test_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(test_response_preprocessed): $(test_sourcefile) $(wildcard $(test_sourcefile_excludes))
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
+$(test_response_preprocessed): $(test_sourcefile) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources)
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_sourcefile)" "$(test_sourcefile_excludes)"
 
 $(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
@@ -295,35 +315,35 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xunit_test_lib)
+xunit-test-local: $(xtest_lib_output)
 run-xunit-test-local: run-xunit-test-lib
 
-# cp -rf is a HACK for xunit runner to require xunit.execution.desktop.dll file in local folder on .net only
-run-xunit-test-lib: xunit-test-local $(XTEST_REMOTE_EXECUTOR)
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.desktop.dll xunit.execution.desktop.dll
+# cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
+run-xunit-test-lib: xunit-test-local
+	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.dotnet.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR=$(XTEST_REMOTE_EXECUTOR) $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xunit_test_lib) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
-	@rm -f xunit.execution.desktop.dll
+	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
-$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs
+$(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
-$(xunit_test_lib): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src)
+$(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
 xtest_response_preprocessed = $(xtest_response)_preprocessed
 
 # This handles .excludes/.sources pairs, as well as resolving the
 # includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile) $(wildcard $(xtest_sourcefile_excludes))
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(xtest_sourcefile)' '$(xtest_sourcefile_excludes)'
+$(xtest_response): $(xtest_sourcefile) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_excludes))
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_sourcefile)" "$(xtest_sourcefile_excludes)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
-	@sed 's,^,$(xunit_test_lib): ,' $< >$@
+	@sed 's,^,$(xtest_lib_output): ,' $< >$@
 
 -include $(xtest_makefrag)
 

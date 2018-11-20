@@ -107,7 +107,7 @@ stub_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 }
 
 static gpointer
-stub_create_method_pointer (MonoMethod *method, MonoError *error)
+stub_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *error)
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -131,12 +131,6 @@ stub_get_remoting_invoke (gpointer imethod, MonoError *error)
 {
 	g_assert_not_reached ();
 	return NULL;
-}
-
-static void
-stub_walk_stack_with_ctx (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwindOptions options, void *user_data)
-{
-	g_assert_not_reached ();
 }
 
 static void

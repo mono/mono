@@ -34,11 +34,19 @@
 //
 //
 
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System
 {
@@ -51,14 +59,7 @@ namespace System
 
 		public static readonly String Empty;
 
-		public unsafe static implicit operator ReadOnlySpan<char> (String value)
-		{
-			if (value == null)
-				return default;
-
-			fixed (void* start = &value._firstChar)
-				return new ReadOnlySpan<char> (start, value.Length);
-		}
+		public int Length => _stringLength;
 
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
@@ -85,6 +86,13 @@ namespace System
 				}
 			}
 			return -1;
+		}
+
+		[CLSCompliant(false)] 
+		public static String Concat(Object arg0, Object arg1, Object arg2, Object arg3, __arglist) 
+		{
+			// Added to maintain backward compatibility, see https://github.com/mono/mono/issues/9996
+			throw new PlatformNotSupportedException();
 		}
 
 		internal unsafe int IndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
@@ -202,7 +210,12 @@ namespace System
 			if (this.Length < value.Length || _firstChar != value._firstChar)
 				return false;
 
-			return value.Length == 1 ? true : StartsWithOrdinalHelper (this, value);
+			return value.Length == 1 ?
+				true :
+				SpanHelpers.SequenceEqual (
+					ref Unsafe.As<char, byte> (ref this.GetRawStringData ()),
+					ref Unsafe.As<char, byte> (ref value.GetRawStringData ()),
+					((nuint)value.Length) * 2);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -227,25 +240,6 @@ namespace System
 				bp++;
 			}
 			return countA - countB;
-		}
-
-		internal static unsafe void CharCopy (char *dest, char *src, int count) {
-			// Same rules as for memcpy, but with the premise that 
-			// chars can only be aligned to even addresses if their
-			// enclosing types are correctly aligned
-			if ((((int)(byte*)dest | (int)(byte*)src) & 3) != 0) {
-				if (((int)(byte*)dest & 2) != 0 && ((int)(byte*)src & 2) != 0 && count > 0) {
-					((short*)dest) [0] = ((short*)src) [0];
-					dest++;
-					src++;
-					count--;
-				}
-				if ((((int)(byte*)dest | (int)(byte*)src) & 2) != 0) {
-					Buffer.memcpy2 ((byte*)dest, (byte*)src, count * 2);
-					return;
-				}
-			}
-			Buffer.memcpy4 ((byte*)dest, (byte*)src, count * 2);
 		}
 
 		#region Runtime method-to-ir dependencies

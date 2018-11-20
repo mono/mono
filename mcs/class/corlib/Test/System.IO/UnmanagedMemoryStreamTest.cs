@@ -96,22 +96,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void Constructor1_Length_Negative ()
-		{
-			try {
-				new UnmanagedMemoryStream(mem_byteptr, -1);
-				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// Non-negative number required
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("length", ex.ParamName, "#6");
-			}
-		}
-
-		[Test]
 		public void Constructor1_Pointer_Null ()
 		{
 			try {
@@ -1008,7 +992,6 @@ namespace MonoTests.System.IO
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("length", ex.ParamName, "#6");
 			}
 			ums.Close();
 		}

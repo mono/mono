@@ -928,8 +928,7 @@ namespace Mono.CSharp {
 		public override Reachability MarkReachable (Reachability rc)
 		{
 			base.MarkReachable (rc);
-			expr.MarkReachable (rc);
-			return rc;
+			return expr.MarkReachable (rc);
 		}
 
 		public override bool Resolve (BlockContext ec)

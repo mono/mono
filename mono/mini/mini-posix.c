@@ -68,6 +68,7 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/os-event.h>
+#include <mono/utils/mono-state.h>
 #include <mono/mini/debugger-state-machine.h>
 
 #include "mini.h"
@@ -144,7 +145,7 @@ get_saved_signal_handler (int signo, gboolean remove)
 {
 	if (mono_saved_signal_handlers) {
 		/* The hash is only modified during startup, so no need for locking */
-		struct sigaction *handler = g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
+		struct sigaction *handler = (struct sigaction*)g_hash_table_lookup (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		if (remove && handler)
 			g_hash_table_remove (mono_saved_signal_handlers, GINT_TO_POINTER (signo));
 		return handler;
@@ -223,28 +224,25 @@ MONO_SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 	}
 }
 
-#ifdef TARGET_OSX
 MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 {
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
-	// Note: this function only returns for a single thread
-	// When it's invoked on other threads once the dump begins,
-	// those threads perform their dumps and then sleep until we
-	// die. The dump ends with the exit(1) below
+#ifndef DISABLE_CRASH_REPORTING
+	// Note: this is only run from the non-controlling thread
 	MonoContext mctx;
 	gchar *output = NULL;
+	MonoStackHash hashes;
 	mono_sigctx_to_monoctx (ctx, &mctx);
-	if (!mono_threads_summarize (&mctx, &output, NULL))
-		g_assert_not_reached ();
 
-	// Only the dumping-supervisor thread exits mono_thread_summarize
-	MOSTLY_ASYNC_SAFE_PRINTF("Unhandled exception dump: \n######\n%s\n######\n", output);
+	// Will return when the dumping is done, so this thread can continue
+	// running. Returns FALSE on unrecoverable error.
+	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
+		g_assert_not_reached ();
+#endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
-	exit (1);
 }
-#endif
 
 #if (defined (USE_POSIX_BACKEND) && defined (SIGRTMIN)) || defined (SIGPROF)
 #define HAVE_PROFILER_SIGNAL
@@ -290,7 +288,7 @@ MONO_SIG_HANDLER_FUNC (static, profiler_signal_handler)
 
 	mono_thread_info_set_is_async_context (TRUE);
 
-	MONO_PROFILER_RAISE (sample_hit, (mono_arch_ip_from_context (ctx), ctx));
+	MONO_PROFILER_RAISE (sample_hit, ((const mono_byte*)mono_arch_ip_from_context (ctx), ctx));
 
 	mono_thread_info_set_is_async_context (FALSE);
 
@@ -326,14 +324,16 @@ MONO_SIG_HANDLER_FUNC (static, sigusr2_signal_handler)
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 }
 
+typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoSignalHandler));
+
 static void
-add_signal_handler (int signo, gpointer handler, int flags)
+add_signal_handler (int signo, MonoSignalHandler handler, int flags)
 {
 	struct sigaction sa;
 	struct sigaction previous_sa;
 
 #ifdef MONO_ARCH_USE_SIGACTION
-	sa.sa_sigaction = (void (*)(int, siginfo_t *, void *))handler;
+	sa.sa_sigaction = handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO | flags;
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
@@ -364,7 +364,7 @@ add_signal_handler (int signo, gpointer handler, int flags)
 		sigemptyset (&block_mask);
 	}
 #else
-	sa.sa_handler = handler;
+	sa.sa_handler = (void (*)(int))handler;
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = flags;
 #endif
@@ -397,14 +397,20 @@ remove_signal_handler (int signo)
 	}
 }
 
-#ifdef TARGET_OSX
 void
 mini_register_sigterm_handler (void)
 {
-	/* always catch SIGTERM, conditionals inside of handler */
-	add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
-}
+#ifndef DISABLE_CRASH_REPORTING
+	static gboolean enabled;
+
+	if (!enabled) {
+		enabled = TRUE;
+
+		/* always catch SIGTERM, conditionals inside of handler */
+		add_signal_handler (SIGTERM, sigterm_signal_handler, 0);
+	}
 #endif
+}
 
 void
 mono_runtime_posix_install_handlers (void)
@@ -480,281 +486,6 @@ mono_runtime_cleanup_handlers (void)
 
 	free_saved_signal_handlers ();
 }
-
-#ifndef MONO_CROSS_COMPILE
-static gchar
-conv_ascii_char (gchar s)
-{
-	if (s < 0x20)
-		return '.';
-	if (s > 0x7e)
-		return '.';
-	return s;
-}
-
-static void
-xxd_mem (gpointer d, int len)
-{
-	guint8 *data = (guint8 *) d;
-
-	for (int off = 0; off < len; off += 0x10) {
-		g_printerr ("%p  ", data + off);
-
-		for (int i = 0; i < 0x10; i++) {
-			if ((i + off) >= len)
-				g_printerr ("   ");
-			else
-				g_printerr ("%02x ", data [off + i]);
-		}
-
-		g_printerr (" ");
-
-		for (int i = 0; i < 0x10; i++) {
-			if ((i + off) >= len)
-				g_printerr (" ");
-			else
-				g_printerr ("%c", conv_ascii_char (data [off + i]));
-		}
-
-		g_printerr ("\n");
-	}
-}
-
-static void
-dump_memory_around_ip (void *ctx)
-{
-#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-	MonoContext mctx;
-	mono_sigctx_to_monoctx (ctx, &mctx);
-	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
-	g_printerr ("Memory around native instruction pointer (%p):\n", native_ip);
-	xxd_mem (((guint8 *) native_ip) - 0x10, 0x40);
-#endif
-}
-
-static void
-print_process_map (void)
-{
-#ifdef __linux__
-	FILE *fp = fopen ("/proc/self/maps", "r");
-	char line [256];
-
-	if (fp == NULL) {
-		mono_runtime_printf_err ("no /proc/self/maps, not on linux?\n");
-		return;
-	}
-
-	mono_runtime_printf_err ("/proc/self/maps:");
-	const int max_lines = 25;
-	int i = 0;
-
-	while (fgets (line, sizeof (line), fp) && i++ < max_lines) {
-		// strip newline
-		size_t len = strlen (line);
-		if (len > 0 && line [len - 1] == '\n')
-			line [len - 1] = '\0';
-
-		mono_runtime_printf_err ("%s", line);
-	}
-
-	fclose (fp);
-#else
-	/* do nothing */
-#endif
-}
-
-#ifdef TARGET_OSX
-static void
-mono_crash_dump (const char *jsonFile)
-{
-	size_t size = strlen (jsonFile);
-
-	pid_t pid = getpid ();
-	gboolean success = FALSE;
-
-	// Save up to 100 dump files for a pid, in case mono is embedded?
-	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%d.%d.json", pid, increment);
-
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
-		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
-		}
-
-		/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
-
-		if (success)
-			return;
-	}
-
-	return;
-}
-#endif /*TARGET_OSX*/
-
-static void
-dump_native_stacktrace (const char *signal, void *ctx)
-{
-#ifdef HAVE_BACKTRACE_SYMBOLS
-	void *array [256];
-	char **names;
-	int i, size;
-
-	mono_runtime_printf_err ("\nNative stacktrace:\n");
-
-	size = backtrace (array, 256);
-	names = backtrace_symbols (array, size);
-	for (i = 0; i < size; ++i) {
-		mono_runtime_printf_err ("\t%s", names [i]);
-	}
-	g_free (names);
-
-	/* Try to get more meaningful information using gdb */
-	char *debugger_log = mono_debugger_state_str ();
-	if (debugger_log) {
-		fprintf (stderr, "\n\tDebugger session state:\n%s\n", debugger_log);
-	}
-
-#if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
-	if (!mini_get_debug_options ()->no_gdb_backtrace) {
-		/* From g_spawn_command_line_sync () in eglib */
-		pid_t pid;
-		int status;
-		pid_t crashed_pid = getpid ();
-
-#if defined(TARGET_OSX)
-		MonoStackHash hashes;
-#endif
-		gchar *output = NULL;
-		MonoContext mctx;
-		if (ctx) {
-			gboolean leave = FALSE;
-			gboolean dump_for_merp = FALSE;
-#if defined(TARGET_OSX)
-			dump_for_merp = mono_merp_enabled ();
-#endif
-
-			if (!dump_for_merp) {
-#ifdef DISABLE_STRUCTURED_CRASH
-				leave = TRUE;
-#elif defined(TARGET_OSX)
-				mini_register_sigterm_handler ();
-#endif
-			}
-
-#ifdef TARGET_OSX
-			if (!leave) {
-				mono_sigctx_to_monoctx (ctx, &mctx);
-				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes))
-					g_assert_not_reached ();
-			}
-
-			// We want our crash, and don't have telemetry
-			// So we dump to disk
-			if (!leave && !dump_for_merp)
-				mono_crash_dump (output);
-#endif
-		}
-
-		/*
-		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
-		* it will deadlock. Call the syscall directly instead.
-		*/
-#if defined(HOST_ANDROID)
-		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
-		g_assert_not_reached ();
-#elif !defined(HOST_DARWIN) && defined(SYS_fork)
-		pid = (pid_t) syscall (SYS_fork);
-#elif HAVE_FORK
-		pid = (pid_t) fork ();
-#else
-		g_assert_not_reached ();
-#endif
-
-#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
-		if (pid > 0) {
-			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
-			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
-			// distributions set the scope to 1 which allows attaching only to direct children of
-			// the current process
-			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
-		}
-#endif
-
-#if defined(TARGET_OSX)
-		if (mono_merp_enabled ()) {
-			if (pid == 0) {
-				if (!ctx) {
-					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
-					exit (1);
-				}
-
-				char *full_version = mono_get_runtime_build_info ();
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes, full_version);
-
-				exit (1);
-			}
-		}
-#endif
-
-		if (pid == 0) {
-			dup2 (STDERR_FILENO, STDOUT_FILENO);
-
-			mono_gdb_render_native_backtraces (crashed_pid);
-			exit (1);
-		}
-
-		mono_runtime_printf_err ("\nDebug info from gdb:\n");
-		waitpid (pid, &status, 0);
-	}
-#endif
-#else
-#ifdef HOST_ANDROID
-	/* set DUMPABLE for this process so debuggerd can attach with ptrace(2), see:
-	* https://android.googlesource.com/platform/bionic/+/151da681000c07da3c24cd30a3279b1ca017f452/linker/debugger.cpp#206
-	* this has changed on later versions of Android.  Also, we don't want to
-	* set this on start-up as DUMPABLE has security implications. */
-	prctl (PR_SET_DUMPABLE, 1);
-
-	mono_runtime_printf_err ("\nNo native Android stacktrace (see debuggerd output).\n");
-#endif
-#endif
-}
-
-void
-mono_dump_native_crash_info (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
-{
-	print_process_map ();
-
-	dump_memory_around_ip (ctx);
-
-	dump_native_stacktrace (signal, ctx);
-}
-
-void
-mono_post_native_crash_handler (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining)
-{
-	if (!crash_chaining) {
-		/*Android abort is a fluke, it doesn't abort, it triggers another segv. */
-#if defined (HOST_ANDROID)
-		exit (-1);
-#else
-		abort ();
-#endif
-	}
-}
-#endif /* !MONO_CROSS_COMPILE */
 
 #ifdef HAVE_PROFILER_SIGNAL
 
@@ -974,7 +705,9 @@ sampling_thread_func (gpointer unused)
 	 * to do our work, the kernel may knock us back down to the normal thread
 	 * scheduling policy without telling us.
 	 */
-	struct sched_param sched = { .sched_priority = sched_get_priority_max (SCHED_FIFO) };
+	struct sched_param sched;
+	memset (&sched, 0, sizeof (sched));
+	sched.sched_priority = sched_get_priority_max (SCHED_FIFO);
 	pthread_setschedparam (pthread_self (), SCHED_FIFO, &sched);
 
 	MonoProfilerSampleMode mode;
@@ -1119,7 +852,7 @@ mono_runtime_setup_stat_profiler (void)
 	mono_atomic_store_i32 (&sampling_thread_running, 1);
 
 	MonoError error;
-	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
+	MonoInternalThread *thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)sampling_thread_func, NULL, MONO_THREAD_CREATE_FLAGS_NONE, &error);
 	mono_error_assert_ok (&error);
 
 	sampling_thread = MONO_UINT_TO_NATIVE_THREAD_ID (thread->tid);
@@ -1140,6 +873,259 @@ mono_runtime_setup_stat_profiler (void)
 #endif
 
 #endif /* defined(HOST_WATCHOS) */
+
+#ifndef MONO_CROSS_COMPILE
+static gchar
+conv_ascii_char (gchar s)
+{
+	if (s < 0x20)
+		return '.';
+	if (s > 0x7e)
+		return '.';
+	return s;
+}
+
+static void
+xxd_mem (gpointer d, int len)
+{
+	guint8 *data = (guint8 *) d;
+
+	for (int off = 0; off < len; off += 0x10) {
+		gchar *line = g_strdup_printf ("%p  ", data + off);
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len)
+				line = g_strdup_printf ("%s   ", line);
+			else
+				line = g_strdup_printf ("%s%02x ", line, data [off + i]);
+		}
+
+		line = g_strdup_printf ("%s ", line);
+
+		for (int i = 0; i < 0x10; i++) {
+			if ((i + off) >= len)
+				line = g_strdup_printf ("%s ", line);
+			else
+				line = g_strdup_printf ("%s%c", line, conv_ascii_char (data [off + i]));
+		}
+
+		mono_runtime_printf_err ("%s", line);
+	}
+}
+
+static void
+dump_memory_around_ip (void *ctx)
+{
+#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
+	MonoContext mctx;
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
+	if (native_ip) {
+		mono_runtime_printf_err ("Memory around native instruction pointer (%p):", native_ip);
+		xxd_mem (((guint8 *) native_ip) - 0x10, 0x40);
+	} else {
+		mono_runtime_printf_err ("instruction pointer is NULL, skip dumping");
+	}
+#endif
+}
+
+static void
+print_process_map (void)
+{
+#ifdef __linux__
+	FILE *fp = fopen ("/proc/self/maps", "r");
+	char line [256];
+
+	if (fp == NULL) {
+		mono_runtime_printf_err ("no /proc/self/maps, not on linux?\n");
+		return;
+	}
+
+	mono_runtime_printf_err ("/proc/self/maps:");
+	const int max_lines = 25;
+	int i = 0;
+
+	while (fgets (line, sizeof (line), fp) && i++ < max_lines) {
+		// strip newline
+		size_t len = strlen (line);
+		if (len > 0 && line [len - 1] == '\n')
+			line [len - 1] = '\0';
+
+		mono_runtime_printf_err ("%s", line);
+	}
+
+	fclose (fp);
+#else
+	/* do nothing */
+#endif
+}
+
+static void
+dump_native_stacktrace (const char *signal, void *ctx)
+{
+#ifdef HAVE_BACKTRACE_SYMBOLS
+	void *array [256];
+	char **names;
+	int i, size;
+
+	mono_runtime_printf_err ("\nNative stacktrace:\n");
+
+	size = backtrace (array, 256);
+	names = backtrace_symbols (array, size);
+	for (i = 0; i < size; ++i) {
+		mono_runtime_printf_err ("\t%s", names [i]);
+	}
+	g_free (names);
+
+	/* Try to get more meaningful information using gdb */
+	// FIXME: Remove locking and reenable. Can race with itself
+	// due to signals being handled on other threads.
+	//
+	// char *debugger_log = mono_debugger_state_str ();
+	// if (debugger_log) {
+	// 	fprintf (stderr, "\n\tDebugger session state:\n%s\n", debugger_log);
+	// }
+
+#if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
+	if (!mini_get_debug_options ()->no_gdb_backtrace) {
+		/* From g_spawn_command_line_sync () in eglib */
+		pid_t pid;
+		int status;
+		pid_t crashed_pid = getpid ();
+		gchar *output = NULL;
+		MonoStackHash hashes;
+
+#ifndef DISABLE_CRASH_REPORTING
+		MonoContext mctx;
+		if (ctx) {
+			gboolean leave = FALSE;
+			gboolean dump_for_merp = FALSE;
+#if defined(TARGET_OSX)
+			dump_for_merp = mono_merp_enabled ();
+#endif
+
+			if (!dump_for_merp) {
+#ifdef DISABLE_STRUCTURED_CRASH
+				leave = TRUE;
+#else
+				mini_register_sigterm_handler ();
+#endif
+			}
+
+			if (!leave) {
+				mono_sigctx_to_monoctx (ctx, &mctx);
+				// Do before forking
+				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
+					g_assert_not_reached ();
+
+				// Wait for the other threads to clean up and exit their handlers
+				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
+				// while dumping. 
+				mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
+				sleep (1);
+			}
+
+			// We want our crash, and don't have telemetry
+			// So we dump to disk
+			if (!leave && !dump_for_merp)
+				mono_crash_dump (output, &hashes);
+		}
+#endif
+
+		/*
+		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
+		* it will deadlock. Call the syscall directly instead.
+		*/
+#if defined(HOST_ANDROID)
+		/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
+		g_assert_not_reached ();
+#elif !defined(HOST_DARWIN) && defined(SYS_fork)
+		pid = (pid_t) syscall (SYS_fork);
+#elif HAVE_FORK
+		pid = (pid_t) fork ();
+#else
+		g_assert_not_reached ();
+#endif
+
+#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
+		if (pid > 0) {
+			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
+			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
+			// distributions set the scope to 1 which allows attaching only to direct children of
+			// the current process
+			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
+		}
+#endif
+
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
+		if (mono_merp_enabled ()) {
+			if (pid == 0) {
+				if (!ctx) {
+					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
+					exit (1);
+				}
+
+				mono_merp_invoke (crashed_pid, signal, output, &hashes);
+
+				exit (1);
+			}
+		}
+#endif
+
+		if (pid == 0) {
+			dup2 (STDERR_FILENO, STDOUT_FILENO);
+
+			mono_runtime_printf_err ("\nDebug info from gdb:\n");
+			mono_gdb_render_native_backtraces (crashed_pid);
+			exit (1);
+		}
+
+		waitpid (pid, &status, 0);
+
+		// We've already done our gdb dump and our telemetry steps. Before exiting,
+		// see if we can notify any attached debugger instances.
+		//
+		// At this point we are accepting that the below step might end in a crash
+		mini_get_dbg_callbacks ()->send_crash (output, &hashes, 0 /* wait # seconds */);
+	}
+#endif
+#else
+#ifdef HOST_ANDROID
+	/* set DUMPABLE for this process so debuggerd can attach with ptrace(2), see:
+	* https://android.googlesource.com/platform/bionic/+/151da681000c07da3c24cd30a3279b1ca017f452/linker/debugger.cpp#206
+	* this has changed on later versions of Android.  Also, we don't want to
+	* set this on start-up as DUMPABLE has security implications. */
+	prctl (PR_SET_DUMPABLE, 1);
+
+	mono_runtime_printf_err ("\nNo native Android stacktrace (see debuggerd output).\n");
+#endif
+#endif
+}
+
+void
+mono_dump_native_crash_info (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info)
+{
+	print_process_map ();
+
+	dump_memory_around_ip (ctx);
+
+	dump_native_stacktrace (signal, ctx);
+}
+
+void
+mono_post_native_crash_handler (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining)
+{
+	if (!crash_chaining) {
+		/*Android abort is a fluke, it doesn't abort, it triggers another segv. */
+#if defined (HOST_ANDROID)
+		exit (-1);
+#else
+		abort ();
+#endif
+	}
+}
+#endif /* !MONO_CROSS_COMPILE */
+
 
 static gboolean
 native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)

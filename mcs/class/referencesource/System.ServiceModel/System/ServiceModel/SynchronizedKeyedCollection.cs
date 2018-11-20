@@ -236,7 +236,7 @@ namespace System.Collections.Generic
         {
             if (!(key != null))
             {
-                Fx.Assert("key shouldn't be null!");
+                //Fx.Assert("key shouldn't be null!");
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("key");
             }
             if (this.dictionary != null)

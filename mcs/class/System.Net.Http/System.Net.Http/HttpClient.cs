@@ -44,7 +44,7 @@ namespace System.Net.Http
 		long buffer_size;
 		TimeSpan timeout;
 
-#if !XAMARIN_MODERN
+#if !XAMARIN_MODERN && !WASM
 		public HttpClient ()
 			: this (new HttpClientHandler (), true)
 		{
@@ -115,6 +115,8 @@ namespace System.Net.Http
 			if (disposing && !disposed) {
 				disposed = true;
 
+				//We don't use CancelPendingRequests() because we don't want to create new CancellationTokenSource
+				cts.Cancel ();
 				cts.Dispose ();
 			}
 			

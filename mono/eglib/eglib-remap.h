@@ -1,3 +1,11 @@
+#undef g_malloc
+#undef g_realloc
+#undef g_malloc0
+#undef g_calloc
+#undef g_try_malloc
+#undef g_try_realloc
+#undef g_memdup
+
 #define g_array_append monoeg_g_array_append
 #define g_array_append_vals monoeg_g_array_append_vals
 #define g_array_free monoeg_g_array_free
@@ -278,9 +286,7 @@
 #define g_unichar_break_type monoeg_unichar_break_type
 #define g_unichar_isspace monoeg_unichar_isspace
 #define g_unichar_to_utf16 monoeg_unichar_to_utf16
-#define g_utf8_find_prev_char monoeg_utf8_find_prev_char
 #define g_utf8_get_char_validated monoeg_utf8_get_char_validated
-#define g_utf8_prev_char monoeg_utf8_prev_char
 #define g_utf8_to_ucs4 monoeg_utf8_to_ucs4
 
 
@@ -288,3 +294,5 @@
 #define g_log_set_default_handler monoeg_log_set_default_handler
 #define g_set_print_handler monoeg_set_print_handler
 #define g_set_printerr_handler monoeg_set_printerr_handler
+
+#define g_size_to_int monoeg_size_to_int

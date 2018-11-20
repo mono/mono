@@ -81,7 +81,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL: {
 			int slot_count = (src >> SLOT_COUNT_SHIFT) & SLOT_COUNT_MASK;
 			int j;
-			gpointer *addr = caller [source_reg];
+			gpointer *addr = (gpointer*)caller [source_reg];
 
 			for (j = 0; j < slot_count; ++j)
 				callee [dest_reg + j] = addr [j];
@@ -89,23 +89,23 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
-			guint8 *addr = caller [source_reg];
+			guint8 *addr = (guint8*)caller [source_reg];
 
-			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			callee [dest_reg] = (gpointer)(host_mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u1) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
-			guint16 *addr = caller [source_reg];
+			guint16 *addr = (guint16*)caller [source_reg];
 
-			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			callee [dest_reg] = (gpointer)(host_mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u2) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U4: {
-			guint32 *addr = caller [source_reg];
+			guint32 *addr = (guint32*)caller [source_reg];
 
-			callee [dest_reg] = (gpointer)(mgreg_t)*addr;
+			callee [dest_reg] = (gpointer)(host_mgreg_t)*addr;
 			DEBUG_AMD64_GSHAREDVT_PRINT ("[%d] <- (u4) [%d] (%p) <- (%p)\n", dest_reg, source_reg, &callee [dest_reg], &caller [source_reg]);
 			break;
 		}
@@ -117,7 +117,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 
 	//Can't handle for now
 	if (info->vcall_offset != -1){
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		DEBUG_AMD64_GSHAREDVT_PRINT ("target is a vcall at offset %d\n", info->vcall_offset / 8);
 		if (G_UNLIKELY (!this_obj))
@@ -176,7 +176,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	MonoJumpInfo *ji = NULL;
 	int n_arg_regs, n_arg_fregs, framesize, i;
 	int info_offset, offset, rgctx_arg_reg_offset;
-	int caller_reg_area_offset, callee_reg_area_offset, callee_stack_area_offset;
+	int caller_reg_area_offset, callee_reg_area_offset;
 	guint8 *br_out, *br [64], *br_ret [64];
 	int b_ret_index;
 	int reg_area_size;
@@ -252,7 +252,6 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	/* Allocate callee register area just below the caller area so it can be accessed from start_gsharedvt_call using negative offsets */
 	/* XXX figure out alignment */
 	callee_reg_area_offset = reg_area_size - ((n_arg_regs + n_arg_fregs) * 8); /* Ensure alignment */
-	callee_stack_area_offset = callee_reg_area_offset + reg_area_size;
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, reg_area_size);
 
 	/* Allocate stack area used to pass arguments to the method */

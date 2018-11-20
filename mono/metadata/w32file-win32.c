@@ -83,21 +83,25 @@ mono_w32file_delete (const gunichar2 *name)
 }
 
 gboolean
-mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, gint32 *win32error)
 {
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
 	res = ReadFile (handle, buffer, numbytes, (PDWORD)bytesread, NULL);
+	if (!res)
+		*win32error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, gint32 *win32error)
 {
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
 	res = WriteFile (handle, buffer, numbytes, (PDWORD)byteswritten, NULL);
+	if (!res)
+		*win32error = GetLastError ();
 	MONO_EXIT_GC_SAFE;
 	return res;
 }
@@ -367,11 +371,11 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 }
 
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	gboolean res;
 	MONO_ENTER_GC_SAFE;
-	res = GetVolumeInformation (path, volumename, volumesize, (PDWORD)outserial, (PDWORD)maxcomp, (PDWORD)fsflags, fsbuffer, fsbuffersize);
+	res = GetVolumeInformationW (path, NULL, NULL, NULL, NULL, NULL, fsbuffer, fsbuffersize);
 	MONO_EXIT_GC_SAFE;
 	return res;
 }

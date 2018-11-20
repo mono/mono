@@ -27,11 +27,7 @@ Q_MCS=$(if $(V),,@echo "$(if $(MCS_MODE),MCS,CSC)     [$(intermediate)$(PROFILE_
 Q_AOT=$(if $(V),,@echo "AOT     [$(intermediate)$(PROFILE_DIRECTORY)] $(notdir $(@))";)
 
 ifndef BUILD_TOOLS_PROFILE
-ifeq ($(PROFILE),basic)
-BUILD_TOOLS_PROFILE = basic
-else
 BUILD_TOOLS_PROFILE = build
-endif
 endif
 
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
@@ -56,7 +52,7 @@ INTERNAL_CSC = CSC_SDK_PATH_DISABLED= $(RUNTIME) $(RUNTIME_FLAGS) $(CSC_RUNTIME_
 RESGEN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/resgen.exe
 STRING_REPLACER = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/cil-stringreplacer.exe
 ILASM = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/ilasm.exe
-
+GENSOURCES = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/gensources.exe
 
 depsdir = $(topdir)/build/deps
 
@@ -140,11 +136,11 @@ endif
 # mcs/class/lib/$(PROFILE)/
 ifndef TOP_LEVEL_DO
 
-ifdef ALWAYS_AOT
+ifneq ($(or $(ALWAYS_AOT_BCL), $(ALWAYS_AOT_TESTS)),)
 TOP_LEVEL_DO = do-all-aot
 else
 TOP_LEVEL_DO = do-all
-endif # ALWAYS_AOT
+endif
 
 endif # !TOP_LEVEL_DO
 
@@ -176,10 +172,15 @@ do-all-aot:
 # be able to evaluate the .dylibs to make
 ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 
+ifdef ALWAYS_AOT_BCL
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
-AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 AOT_PROFILE_ASSEMBLIES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+endif
+
+ifdef ALWAYS_AOT_TESTS
+AOT_PROFILE_TESTS := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 AOT_PROFILE_TESTS_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_TESTS))
+endif
 
 # This can run in parallel
 .PHONY: aot-all-profile
@@ -238,6 +239,9 @@ endif
 		$(if $(filter $*,all), \
 			$(MAKE) $(PROFILE_PARALLEL_SUBDIRS) ENABLE_PARALLEL_SUBDIR_BUILD=1 || { final_exit="exit 1"; $$dk; };, \
 			$(foreach subdir,$(PROFILE_PARALLEL_SUBDIRS),$(MAKE) -C $(subdir) $* || { final_exit="exit 1"; $$dk; };))) \
+	$(if $(FACADES_FOLDER), \
+		$(MAKE) -C $(FACADES_FOLDER) $* || { final_exit="exit 1"; $$dk; }; \
+	) \
 	$$final_exit
 
 ifdef ENABLE_PARALLEL_SUBDIR_BUILD
@@ -259,15 +263,24 @@ endif
 # directories it depends on.
 #
 ifneq ($(PROFILE_PARALLEL_SUBDIRS),)
+
 dep_dirs = .dep_dirs-$(PROFILE)
-$(dep_dirs):
-	@echo "Creating $@..."
+
+#
+# This should track dependencies better but the variable can be defined in any
+# Makefile dependency. On top of that we should also regenerate when any of the
+# PROFILE_PARALLEL_SUBDIRS Makefile's are changed
+#
+$(dep_dirs): Makefile
+	$(if $(V),@echo "Creating $(abspath $@)...",)
 	list='$(PROFILE_PARALLEL_SUBDIRS)'; \
 	echo > $@; \
 	for d in $$list; do \
 		$(MAKE) -C $$d gen-deps DEPS_TARGET_DIR=$$d DEPS_FILE=$(abspath $@); \
 	done
+
 -include $(dep_dirs)
+
 endif
 
 .PHONY: gen-deps

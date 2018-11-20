@@ -207,6 +207,33 @@ namespace System {
         {
             return new InvalidOperationException(str);
         }
+
+        internal static void ThrowArraySegmentCtorValidationFailedExceptions(Array array, int offset, int count)
+        {
+            throw GetArraySegmentCtorValidationFailedException(array, offset, count);
+        }
+
+        private static Exception GetArraySegmentCtorValidationFailedException(Array array, int offset, int count)
+        {
+            if (array == null)
+                return GetArgumentNullException(ExceptionArgument.array);
+            if (offset < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.offset, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.count, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+
+            return GetArgumentException(ExceptionResource.Argument_InvalidOffLen);
+        }
+
+        private static ArgumentException GetArgumentException(ExceptionResource resource)
+        {
+            return new ArgumentException(resource.ToString());
+        }
+
+        private static ArgumentNullException GetArgumentNullException(ExceptionArgument argument)
+        {
+            return new ArgumentNullException(GetArgumentName(argument));
+        }
 #endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
@@ -598,7 +625,11 @@ namespace System {
         byteOffset,
         minimumBufferSize,
         offset,
-        values
+        values,
+        comparisonType,
+        s,
+        input,
+        format
 #endif
     }
 
@@ -657,6 +688,8 @@ namespace System {
         TaskT_TransitionToFinal_AlreadyCompleted,
         TaskCompletionSourceT_TrySetException_NullException,
         TaskCompletionSourceT_TrySetException_NoExceptions,
+        NotSupported_StringComparison,
+        InvalidOperation_NullArray,
     }
 }
 

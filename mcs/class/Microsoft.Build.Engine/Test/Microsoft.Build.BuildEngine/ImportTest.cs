@@ -33,6 +33,8 @@ using Microsoft.Build.Utilities;
 using NUnit.Framework;
 using System.IO;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ImportTest {
@@ -63,7 +65,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 						<Import Project='Test\resources\first.proj'/>
-						<Import Project='Test\resources\Import.csproj' Condition='false'/>
+						<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"' Condition='false'/>
                                 </Project>
                         ";
 
@@ -111,7 +113,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/SelfImport.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/SelfImport.csproj") + @"'/>
                                 </Project>
                         ";
 
@@ -128,7 +130,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/RelativeImport1.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/RelativeImport1.csproj") + @"'/>
                                 </Project>
                         ";
 
@@ -145,7 +147,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/Items.csproj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Items.csproj") + @"'/>
                                 </Project>
                         ";
 
@@ -167,7 +169,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/NonExistantProject.proj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/NonExistantProject.csproj") + @"'/>
                                 </Project>";
 
 			engine = new Engine (Consts.BinPath);
@@ -181,7 +183,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/NonExistantProject.proj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/NonExistantProject.csproj") + @"'/>
                                 </Project>
                         ";
 
@@ -199,7 +201,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<Import Project='Test/resources/NonExistantProject.proj'/>
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/NonExistantProject.csproj") + @"'/>
                                 </Project>
                         ";
 

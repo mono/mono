@@ -35,6 +35,8 @@ using NUnit.Framework;
 using System.IO;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
@@ -59,21 +61,10 @@ namespace MonoTests.System.Drawing.Imaging {
 			return s;
 		}
 
-		/* Get the input directory depending on the runtime*/
-		internal string getInFile (string file)
-		{				
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-				
-			if (!File.Exists (sRslt)) 
-				sRslt = "Test/System.Drawing/" + file;							
-			
-			return sRslt;
-		}
-
 		[Test]
 		public void Bitmap8bbpIndexedGreyscaleFeatures ()
 		{
-			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature-greyscale.jpg");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -112,7 +103,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap8bbpIndexedGreyscalePixels ()
 		{
-			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature-greyscale.jpg");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 32) {
@@ -144,7 +135,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap8bbpIndexedGreyscaleData ()
 		{
-			string sInFile = getInFile ("bitmaps/nature-greyscale.jpg");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature-greyscale.jpg");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {
@@ -207,7 +198,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap24bitFeatures ()
 		{
-			string sInFile = getInFile ("bitmaps/nature24bits.jpg");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits.jpg");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -238,7 +229,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap24bitPixels ()
 		{
-			string sInFile = getInFile ("bitmaps/nature24bits.jpg");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/nature24bits.jpg");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 32) {
@@ -270,7 +261,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap24bitData ()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {

@@ -76,7 +76,7 @@ int
 mono_w32socket_recvbuffers (SOCKET s, LPWSABUF lpBuffers, guint32 dwBufferCount, guint32 *lpNumberOfBytesRecvd, guint32 *lpFlags, gpointer lpOverlapped, gpointer lpCompletionRoutine, gboolean blocking);
 
 int
-mono_w32socket_send (SOCKET s, char *buf, int len, int flags, gboolean blocking);
+mono_w32socket_send (SOCKET s, void *buf, int len, int flags, gboolean blocking);
 
 int
 mono_w32socket_sendto (SOCKET s, const char *buf, int len, int flags, const struct sockaddr *to, int tolen, gboolean blocking);
@@ -109,7 +109,7 @@ gint
 mono_w32socket_getsockopt (SOCKET sock, gint level, gint optname, gpointer optval, socklen_t *optlen);
 
 gint
-mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, const gpointer optval, socklen_t optlen);
+mono_w32socket_setsockopt (SOCKET sock, gint level, gint optname, gconstpointer optval, socklen_t optlen);
 
 gint
 mono_w32socket_listen (SOCKET sock, gint backlog);

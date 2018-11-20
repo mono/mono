@@ -8,12 +8,13 @@ LIBRARY = System.Xaml.dll
 LIB_REFS = System System.Xml System.Core
 LIB_MCS_FLAGS = $(RESOURCE_FILES:%=/resource:%)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_RESOURCE_FILES = \
+	$(wildcard Test/XmlFiles/*.xml) \
+	$(wildcard Test/XmlFiles/*.xaml)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_DISTFILES)
-TEST_EXTRA_DISTFILES = \
-	Test/XmlFiles/*.xml \
-	Test/XmlFiles/*.xaml
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES)
 
 VALID_PROFILE := $(filter 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE

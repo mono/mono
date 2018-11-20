@@ -210,13 +210,13 @@ struct MonoLMF {
 	gpointer	lmf_addr;
 	MonoMethod	*method;
 	gpointer	eip;
-	mgreg_t     iregs [MONO_SAVED_GREGS];
+	host_mgreg_t    iregs [MONO_SAVED_GREGS];
 	mips_freg	fregs [MONO_SAVED_FREGS];
 	gulong		magic;
 };
 
 typedef struct MonoCompileArch {
-	gpointer    cinfo;
+	CallInfo	*cinfo;
 	guint		iregs_offset;
 	guint		lmf_offset;
 	guint		local_alloc_offset;

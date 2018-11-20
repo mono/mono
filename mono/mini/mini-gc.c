@@ -408,6 +408,11 @@ encode_frame_reg (int frame_reg)
 		return 0;
 	else if (frame_reg == S390_FP)
 		return 1;
+#elif defined (TARGET_RISCV)
+	if (frame_reg == RISCV_SP)
+		return 0;
+	else if (frame_reg == RISCV_FP)
+		return 1;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -438,6 +443,11 @@ decode_frame_reg (int encoded)
 		return S390_SP;
 	else if (encoded == 1)
 		return S390_FP;
+#elif defined (TARGET_RISCV)
+	if (encoded == 0)
+		return RISCV_SP;
+	else if (encoded == 1)
+		return RISCV_FP;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -469,6 +479,11 @@ static int callee_saved_regs [] = {
   ppc_r29, ppc_r30, ppc_r31 };
 #elif defined(TARGET_POWERPC)
 static int callee_saved_regs [] = { ppc_r6, ppc_r7, ppc_r8, ppc_r9, ppc_r10, ppc_r11, ppc_r12, ppc_r13, ppc_r14 };
+#elif defined (TARGET_RISCV)
+static int callee_saved_regs [] = {
+	RISCV_S0, RISCV_S1, RISCV_S2, RISCV_S3, RISCV_S4, RISCV_S5,
+	RISCV_S6, RISCV_S7, RISCV_S8, RISCV_S9, RISCV_S10, RISCV_S11,
+};
 #endif
 
 static guint32
@@ -698,7 +713,7 @@ slot_type_to_string (GCSlotType type)
 	}
 }
 
-static inline mgreg_t
+static inline host_mgreg_t
 get_frame_pointer (MonoContext *ctx, int frame_reg)
 {
 #if defined(TARGET_AMD64)
@@ -713,14 +728,19 @@ get_frame_pointer (MonoContext *ctx, int frame_reg)
 			return ctx->ebp;
 #elif defined(TARGET_ARM)
 		if (frame_reg == ARMREG_SP)
-			return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 		else if (frame_reg == ARMREG_FP)
-			return (mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_BP (ctx);
 #elif defined(TARGET_S390X)
 		if (frame_reg == S390_SP)
-			return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 		else if (frame_reg == S390_FP)
-			return (mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+#elif defined (TARGET_RISCV)
+		if (frame_reg == RISCV_SP)
+			return MONO_CONTEXT_GET_SP (ctx);
+		else if (frame_reg == RISCV_FP)
+			return MONO_CONTEXT_GET_BP (ctx);
 #endif
 		g_assert_not_reached ();
 		return 0;
@@ -748,8 +768,8 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 	int scanned = 0, scanned_precisely, scanned_conservatively, scanned_registers;
 	gboolean res;
 	StackFrameInfo frame;
-	mgreg_t *reg_locations [MONO_MAX_IREGS];
-	mgreg_t *new_reg_locations [MONO_MAX_IREGS];
+	host_mgreg_t *reg_locations [MONO_MAX_IREGS];
+	host_mgreg_t *new_reg_locations [MONO_MAX_IREGS];
 	guint8 *bitmaps;
 	FrameInfo *fi;
 	guint32 precise_regmask;
@@ -814,7 +834,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			}
 		}
 
-		g_assert ((mgreg_t)stack_limit % SIZEOF_SLOT == 0);
+		g_assert ((gsize)stack_limit % SIZEOF_SLOT == 0);
 
 		res = mono_find_jit_info_ext (frame.domain ? frame.domain : tls->unwind_state.unwind_data [MONO_UNWIND_DATA_DOMAIN], tls->unwind_state.unwind_data [MONO_UNWIND_DATA_JIT_TLS], NULL, &ctx, &new_ctx, NULL, &lmf, new_reg_locations, &frame);
 		if (!res)
@@ -919,7 +939,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		}
 
 		/* The embedded callsite table requires this */
-		g_assert (((mgreg_t)emap % 4) == 0);
+		g_assert (((gsize)emap % 4) == 0);
 
 		/*
 		 * Debugging aid to control the number of frames scanned precisely
@@ -1231,10 +1251,10 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end, void *gc_dat
 	 * Debugging aid to check for missed refs.
 	 */
 	if (tls->ref_to_track) {
-		mgreg_t *p;
+		gpointer *p;
 
-		for (p = (mgreg_t*)stack_start; p < (mgreg_t*)stack_end; ++p)
-			if (*p == (mgreg_t)tls->ref_to_track)
+		for (p = (gpointer*)stack_start; p < (gpointer*)stack_end; ++p)
+			if (*p == tls->ref_to_track)
 				printf ("REF AT %p.\n", p);
 	}
 }
@@ -1597,7 +1617,7 @@ process_other_slots (MonoCompile *cfg)
 static gsize*
 get_vtype_bitmap (MonoType *t, int *numbits)
 {
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 
 	if (klass->generic_container || mono_class_is_open_constructed_type (t)) {
 		/* FIXME: Generic sharing */
@@ -1625,7 +1645,7 @@ static void
 process_variables (MonoCompile *cfg)
 {
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	int i, locals_min_slot, locals_max_slot, cindex;
 	MonoBasicBlock *bb;
 	MonoInst *tmp;
@@ -1785,7 +1805,7 @@ process_variables (MonoCompile *cfg)
 						for (j = 0; j < numbits; ++j) {
 							if (bitmap [j / GC_BITS_PER_WORD] & ((gsize)1 << (j % GC_BITS_PER_WORD))) {
 								/* The descriptor is for the boxed object */
-								set_slot (gcfg, (pos + j - (sizeof (MonoObject) / SIZEOF_SLOT)), cindex, pin ? SLOT_PIN : SLOT_REF);
+								set_slot (gcfg, (pos + j - (MONO_ABI_SIZEOF (MonoObject) / SIZEOF_SLOT)), cindex, pin ? SLOT_PIN : SLOT_REF);
 							}
 						}
 					}
@@ -1794,7 +1814,7 @@ process_variables (MonoCompile *cfg)
 				if (cfg->verbose_level > 1) {
 					for (j = 0; j < numbits; ++j) {
 						if (bitmap [j / GC_BITS_PER_WORD] & ((gsize)1 << (j % GC_BITS_PER_WORD)))
-							printf ("\t\t%s slot at 0x%x(fp) (slot = %d)\n", pin ? "pin" : "ref", (int)(ins->inst_offset + (j * SIZEOF_SLOT)), (int)(pos + j - (sizeof (MonoObject) / SIZEOF_SLOT)));
+							printf ("\t\t%s slot at 0x%x(fp) (slot = %d)\n", pin ? "pin" : "ref", (int)(ins->inst_offset + (j * SIZEOF_SLOT)), (int)(pos + j - (MONO_ABI_SIZEOF (MonoObject) / SIZEOF_SLOT)));
 					}
 				}
 			} else {
@@ -2036,7 +2056,7 @@ compute_frame_size (MonoCompile *cfg)
 	int i, locals_min_offset, locals_max_offset, cfa_min_offset, cfa_max_offset;
 	int min_offset, max_offset;
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	GSList *l;
 
 	/* Compute min/max offsets from the fp */
@@ -2418,7 +2438,7 @@ create_map (MonoCompile *cfg)
 		p += encoded_size;
 
 		/* Callsite table */
-		p = (guint8*)ALIGN_TO ((mgreg_t)p, map->callsite_entry_size);
+		p = (guint8*)ALIGN_TO ((gsize)p, map->callsite_entry_size);
 		if (map->callsite_entry_size == 1) {
 			guint8 *offsets = p;
 			for (i = 0; i < ncallsites; ++i)

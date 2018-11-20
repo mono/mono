@@ -149,5 +149,14 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual (type.Module, co.Module);
 		}
+
+		delegate int D1 ();
+
+		[Test] // https://github.com/mono/mono/issues/10838
+		public void Issue10838 ()
+		{
+			var ctorInfo = typeof (D1).GetConstructors ()[0];
+			Assert.AreEqual ("Void .ctor(System.Object, IntPtr)", ctorInfo.ToString ());	
+		}		
 	}
 }

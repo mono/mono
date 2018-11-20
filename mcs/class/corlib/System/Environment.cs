@@ -48,11 +48,11 @@ namespace System {
 	public static partial class Environment {
 
 		/*
-		 * This is the version number of the corlib-runtime interface.
+		 * This is the version of the corlib-runtime interface.
 		 * It is defined in configure.ac.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = Consts.MonoCorlibVersion;
+		private const string mono_corlib_version = Consts.MonoCorlibVersion;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -904,7 +904,16 @@ namespace System {
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
+		internal unsafe static extern void InternalSetEnvironmentVariable (char *variable, int variable_length,
+									    char *value, int value_length);
+
+		internal unsafe static void InternalSetEnvironmentVariable (string variable, string value)
+		{
+			fixed (char *fixed_variable = variable)
+			fixed (char *fixed_value = value)
+			InternalSetEnvironmentVariable (fixed_variable, variable?.Length ?? 0,
+							fixed_value,    value?.Length ?? 0);
+		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)

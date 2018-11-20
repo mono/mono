@@ -113,10 +113,30 @@ static int map_hw_reg_to_dwarf_reg [32] = {
 #define NUM_DWARF_REGS 32
 #define DWARF_DATA_ALIGN (-(gint32)sizeof (mgreg_t))
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (mips_ra))
+#elif defined(TARGET_RISCV)
+
+/*
+ * These values have not currently been formalized in the RISC-V psABI. See
+ * instead gcc/config/riscv/riscv.h in the GCC source tree.
+ */
+
+#define NUM_DWARF_REGS (RISCV_N_GREGS + RISCV_N_FREGS)
+#define DWARF_DATA_ALIGN (-4)
+#define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (RISCV_RA))
+
+static int map_hw_reg_to_dwarf_reg [NUM_DWARF_REGS] = {
+	// x0..x31
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	// f0..f31
+	32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+};
+
 #else
 static int map_hw_reg_to_dwarf_reg [16];
 #define NUM_DWARF_REGS 16
-#define DWARF_DATA_ALIGN 0
+#define DWARF_DATA_ALIGN 1
 #define DWARF_PC_REG -1
 #endif
 
@@ -520,7 +540,7 @@ void
 mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len, 
 				   guint8 *start_ip, guint8 *end_ip, guint8 *ip, guint8 **mark_locations,
 				   mono_unwind_reg_t *regs, int nregs,
-				   mgreg_t **save_locations, int save_locations_len,
+				   host_mgreg_t **save_locations, int save_locations_len,
 				   guint8 **out_cfa)
 {
 	Loc locations [NUM_HW_REGS];
@@ -635,7 +655,7 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 	}
 
 	if (save_locations)
-		memset (save_locations, 0, save_locations_len * sizeof (mgreg_t*));
+		memset (save_locations, 0, save_locations_len * sizeof (host_mgreg_t*));
 
 	g_assert (cfa_reg != -1);
 	cfa_val = (guint8*)regs [mono_dwarf_reg_to_hw_reg (cfa_reg)] + cfa_offset;
@@ -646,9 +666,9 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 			if (IS_DOUBLE_REG (dwarfreg))
 				regs [hwreg] = *(guint64*)(cfa_val + locations [hwreg].offset);
 			else
-				regs [hwreg] = *(mgreg_t*)(cfa_val + locations [hwreg].offset);
+				regs [hwreg] = *(host_mgreg_t*)(cfa_val + locations [hwreg].offset);
 			if (save_locations && hwreg < save_locations_len)
-				save_locations [hwreg] = (mgreg_t*)(cfa_val + locations [hwreg].offset);
+				save_locations [hwreg] = (host_mgreg_t*)(cfa_val + locations [hwreg].offset);
 		}
 	}
 
@@ -909,7 +929,7 @@ decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo *ex_info, gpointer
 		*this_offset = -1;
 	}
 	ncall_sites = decode_uleb128 (p, &p);
-	p = (guint8*)ALIGN_TO ((mgreg_t)p, 4);
+	p = (guint8*)ALIGN_TO ((gsize)p, 4);
 
 	if (ex_info_len)
 		*ex_info_len = ncall_sites;

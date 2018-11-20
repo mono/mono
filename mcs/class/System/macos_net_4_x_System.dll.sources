@@ -1,5 +1,10 @@
 #include corefx.unix.sources
 #include net_4_x_System.dll.sources
+#include apple-certificates.sources
+#include appletls.sources
+
+Mono.AppleTls/MonoCertificatePal.OSX.cs
+Mono.AppleTls/SafeHandles.cs
 
 ../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/Interop/OSX/Interop.EventStream.cs
@@ -12,4 +17,3 @@
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeEventStreamHandle.OSX.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.OSX.cs
 Internal.Cryptography/OidLookup.Managed.cs
-

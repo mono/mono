@@ -2,7 +2,7 @@
   {
     "name": "roslyn", 
     "url": "git://github.com/mono/roslyn.git",
-    "rev": "380eec412868464a132cdcd3a45ef457fab6e060",
+    "rev": "7a840bd5697ef6ea41f554a09d837636fba9d88d",
     "remote-branch": "origin/mono-testing",
     "branch": "mono-testing",
     "directory": "roslyn"
@@ -10,7 +10,7 @@
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "aa62c0382ae79562293f3ea1a94ef0f16f80f498", 
+    "rev": "f3d9c9f742f9dcb5faf40080db5e7f464dab7e7c", 
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"

@@ -41,6 +41,8 @@ using System.IO;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
@@ -350,7 +352,7 @@ namespace MonoTests.System.Resources
 		public void CreateFileBasedResourceManager_BaseName_Resources ()
 		{
 			ResourceManager rm = ResourceManager.CreateFileBasedResourceManager (
-				"MyResources.resources", "Test/resources", null);
+				"MyResources.resources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			try {
 				rm.GetResourceSet (CultureInfo.InvariantCulture, true, true);
 				Assert.Fail ("#1");
@@ -385,7 +387,7 @@ namespace MonoTests.System.Resources
 		public void CreateFileBasedResourceManager_UsingResourceSet_Invalid ()
 		{
 			ResourceManager rm = ResourceManager.CreateFileBasedResourceManager (
-				"MyResources", "Test/resources", typeof (string));
+				"MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), typeof (string));
 			Assert.IsNotNull (rm.BaseName, "#1");
 			Assert.AreEqual ("MyResources", rm.BaseName, "#2");
 			Assert.IsFalse (rm.IgnoreCase, "#3");
@@ -397,7 +399,7 @@ namespace MonoTests.System.Resources
 		public void CreateFileBasedResourceManager_UsingResourceSet_Null ()
 		{
 			ResourceManager rm = ResourceManager.CreateFileBasedResourceManager (
-				"MyResources", "Test/resources", (Type) null);
+				"MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), (Type) null);
 			Assert.IsNotNull (rm.BaseName, "#1");
 			Assert.AreEqual ("MyResources", rm.BaseName, "#2");
 			Assert.IsFalse (rm.IgnoreCase, "#3");
@@ -412,7 +414,7 @@ namespace MonoTests.System.Resources
 		public void GetObject ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			Assert.AreEqual ("Hello World", rm.GetObject ("HelloWorld"), "#A1");
@@ -474,7 +476,7 @@ namespace MonoTests.System.Resources
 		{
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("de"),
 				true, true);
 			rs.Dispose ();
@@ -545,7 +547,7 @@ namespace MonoTests.System.Resources
 		public void GetString ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			Assert.AreEqual ("Hello World", rm.GetString ("HelloWorld"), "#A1");
@@ -607,7 +609,7 @@ namespace MonoTests.System.Resources
 		public void GetString_ResourceSet_Disposed ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("de"),
 				true, true);
 			rs.Dispose ();
@@ -622,7 +624,7 @@ namespace MonoTests.System.Resources
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+				CreateFileBasedResourceManager ("StreamTest", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			UnmanagedMemoryStream s = rm.GetStream ("test");
 			Assert.AreEqual (22, s.Length, "#A1");
 			Assert.AreEqual ("veritas vos liberabit\n", new StreamReader (s).ReadToEnd (), "#A2");
@@ -647,7 +649,7 @@ namespace MonoTests.System.Resources
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+				CreateFileBasedResourceManager ("StreamTest", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			UnmanagedMemoryStream s = rm.GetStream ("test", new CultureInfo ("ja-JP"));
 			Assert.AreEqual (22, s.Length, "#1");
 			Assert.AreEqual ("Veritas Vos Liberabit\n", new StreamReader (s).ReadToEnd (), "#2");
@@ -700,7 +702,7 @@ namespace MonoTests.System.Resources
 		public void GetStream_Resource_DoesNotExist ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+				CreateFileBasedResourceManager ("StreamTest", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			Assert.IsNull (rm.GetStream ("HelloWorld"));
 			rm.ReleaseAllResources ();
 		}
@@ -710,7 +712,7 @@ namespace MonoTests.System.Resources
 		public void GetStream_Resource_NonStream ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 
 			try {
 				rm.GetStream ("HelloWorld", CultureInfo.InvariantCulture);
@@ -730,7 +732,7 @@ namespace MonoTests.System.Resources
 		public void GetStream_ResourceFile_DoesNotExist ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("DoesNotExist", "Test/resources", null);
+				CreateFileBasedResourceManager ("DoesNotExist", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			try {
 				rm.GetStream ("HelloWorld");
 				Assert.Fail ("#1");
@@ -750,7 +752,7 @@ namespace MonoTests.System.Resources
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+				CreateFileBasedResourceManager ("StreamTest", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("ja-JP"),
 				true, true);
 			rs.Dispose ();
@@ -773,7 +775,7 @@ namespace MonoTests.System.Resources
 		public void IgnoreCase ()
 		{
 			ResourceManager rm = ResourceManager.
-				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+				CreateFileBasedResourceManager ("MyResources", TestResourceHelper.GetFullPathOfResource ("Test/resources"), null);
 
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			Assert.IsFalse (rm.IgnoreCase, "#A1");
@@ -785,7 +787,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Category ("SatelliteAssembliesNotWorking")]
 		public void TestSatellites ()
 		{
 			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);

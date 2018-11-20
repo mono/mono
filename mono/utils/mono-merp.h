@@ -29,7 +29,7 @@ void mono_merp_disable (void);
  * See MERP documentation for information on the bundle ID, signature, and version fields
  */
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath);
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath);
 
 /**
  * Whether the MERP-based handler is registered
@@ -47,7 +47,7 @@ gboolean mono_merp_enabled (void);
  * when the registered telemetry application does not respond.
  */
 void
-mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *dump_file, MonoStackHash *hashes, char *version);
+mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *dump_file, MonoStackHash *hashes);
 
 
 #endif // TARGET_OSX

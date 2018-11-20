@@ -137,7 +137,7 @@ mono_mem_account_register_counters (void)
 {
 	for (int i = 0; i < MONO_MEM_ACCOUNT_MAX; ++i) {
 		const char *prefix = "Valloc ";
-		const char *name = mono_mem_account_type_name (i);
+		const char *name = mono_mem_account_type_name ((MonoMemAccountType)i);
 		char descr [128];
 		g_assert (strlen (prefix) + strlen (name) < sizeof (descr));
 		sprintf (descr, "%s%s", prefix, name);
@@ -250,6 +250,13 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		mflags |= MAP_FIXED;
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
+
+#ifdef HOST_WASM
+	if (length == 0)
+		/* emscripten throws an exception on 0 length */
+		return NULL;
+#endif
+
 #if defined(__APPLE__) && defined(MAP_JIT)
 	if (flags & MONO_MMAP_JIT) {
 		if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
@@ -330,6 +337,12 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
 
+#ifdef HOST_WASM
+	if (length == 0)
+		/* emscripten throws an exception on 0 length */
+		return NULL;
+#endif
+
 	BEGIN_CRITICAL_SECTION;
 	ptr = mmap (0, length, prot, mflags, fd, offset);
 	END_CRITICAL_SECTION;
@@ -337,6 +350,13 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 		return NULL;
 	*ret_handle = (void*)length;
 	return ptr;
+}
+
+void*
+mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle,
+	const char *filepath, char **error_message)
+{
+	return mono_file_map (length, flags, fd, offset, ret_handle);
 }
 
 /**
@@ -702,39 +722,3 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountTyp
 	return aligned;
 }
 #endif
-
-int
-mono_pages_not_faulted (void *addr, size_t size)
-{
-#ifdef HAVE_MINCORE
-	int i;
-	gint64 count;
-	int pagesize = mono_pagesize ();
-	int npages = (size + pagesize - 1) / pagesize;
-	char *faulted = (char *) g_malloc0 (sizeof (char*) * npages);
-
-	/*
-	 * We cast `faulted` to void* because Linux wants an unsigned
-	 * char* while BSD wants a char*.
-	 */
-#ifdef __linux__
-	if (mincore (addr, size, (unsigned char *)faulted) != 0) {
-#else
-	if (mincore (addr, size, (char *)faulted) != 0) {
-#endif
-		count = -1;
-	} else {
-		count = 0;
-		for (i = 0; i < npages; ++i) {
-			if (faulted [i] != 0)
-				++count;
-		}
-	}
-
-	g_free (faulted);
-
-	return count;
-#else
-	return -1;
-#endif
-}

@@ -43,13 +43,13 @@ mono_stackdata_get_stackpointer (const MonoStackData *stackdata)
 	return stackdata->stackpointer;
 }
 
-MONO_RT_EXTERNAL_ONLY MONO_API gpointer
+MONO_API MONO_RT_EXTERNAL_ONLY gpointer
 mono_threads_enter_gc_unsafe_region (gpointer* stackdata);
 
 gpointer
 mono_threads_enter_gc_unsafe_region_internal (MonoStackData *stackdata);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_threads_exit_gc_unsafe_region (gpointer cookie, gpointer* stackdata);
 
 void
@@ -67,16 +67,16 @@ mono_threads_exit_gc_unsafe_region_unbalanced (gpointer cookie, gpointer* stackd
 void
 mono_threads_exit_gc_unsafe_region_unbalanced_internal (gpointer cookie, MonoStackData *stackdata);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_threads_assert_gc_unsafe_region (void);
 
-MONO_RT_EXTERNAL_ONLY MONO_API gpointer
+MONO_API MONO_RT_EXTERNAL_ONLY gpointer
 mono_threads_enter_gc_safe_region (gpointer *stackdata);
 
 MONO_PROFILER_API gpointer
 mono_threads_enter_gc_safe_region_internal (MonoStackData *stackdata);
 
-MONO_RT_EXTERNAL_ONLY MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_threads_exit_gc_safe_region (gpointer cookie, gpointer *stackdata);
 
 MONO_PROFILER_API void
@@ -138,6 +138,24 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 
 #define MONO_EXIT_GC_SAFE_UNBALANCED	\
 		mono_threads_exit_gc_safe_region_unbalanced_internal (__gc_safe_unbalanced_cookie, &__gc_safe_unbalanced_dummy);	\
+	} while (0)
+
+void
+mono_threads_enter_no_safepoints_region (const char *func);
+
+void
+mono_threads_exit_no_safepoints_region (const char *func);
+
+#define MONO_ENTER_NO_SAFEPOINTS						\
+	do {										\
+		do {									\
+			if (mono_threads_are_safepoints_enabled ())			\
+				mono_threads_enter_no_safepoints_region (__func__);	\
+		} while (0)
+
+#define MONO_EXIT_NO_SAFEPOINTS							\
+		if (mono_threads_are_safepoints_enabled ())			\
+			mono_threads_exit_no_safepoints_region (__func__);	\
 	} while (0)
 
 MONO_END_DECLS

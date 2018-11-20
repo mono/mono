@@ -13,6 +13,7 @@
 #if defined(USE_WINDOWS_BACKEND)
 
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/mono-os-wait.h>
 #include <limits.h>
@@ -50,11 +51,16 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 		return FALSE;
 	}
 
-	/* We're in the middle of a self-suspend, resume and register */
 	if (!mono_threads_transition_finish_async_suspend (info)) {
+		/* We raced with self-suspend and lost.  Resume the native
+		 * thread.  It is still self-suspended, waiting to be resumed.
+		 * So suspend can continue.
+		 */
 		result = ResumeThread (handle);
 		g_assert (result == 1);
-		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/1 %p -> %d\n", (void*)id, 0);
+		info->suspend_can_continue = TRUE;
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (void*)id);
+		g_assert (mono_threads_is_hybrid_suspension_enabled ());
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
 	}
@@ -104,7 +110,8 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 
 		ctx = info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx;
 		mono_threads_get_runtime_callbacks ()->setup_async_callback (&ctx, info->async_target, info->user_data);
-		info->async_target = info->user_data = NULL;
+		info->async_target = NULL;
+		info->user_data = NULL;
 
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 
@@ -227,7 +234,7 @@ mono_native_thread_id_equals (MonoNativeThreadId id1, MonoNativeThreadId id2)
 gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
-	return CreateThread (NULL, 0, (func), (arg), 0, (tid)) != NULL;
+	return CreateThread (NULL, 0, (LPTHREAD_START_ROUTINE)func, arg, 0, tid) != NULL;
 }
 
 gboolean
@@ -363,7 +370,7 @@ mono_threads_platform_exit (gsize exit_code)
 }
 
 int
-ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
+mono_thread_info_get_system_max_stack_size (void)
 {
 	//FIXME
 	return INT_MAX;

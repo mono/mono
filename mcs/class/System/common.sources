@@ -1,5 +1,4 @@
 Assembly/AssemblyInfo.cs
-../../build/common/SR.cs
 corefx/*.cs
 
 Microsoft.Win32.SafeHandles/SafeX509ChainHandle.cs
@@ -192,6 +191,13 @@ System.Timers/ElapsedEventArgs.cs
 
 System.Windows.Input/ICommand.cs
 
+Mono/AppleTypes.cs
+Mono/SystemCertificateProvider.cs
+Mono/SystemDependencyProvider.cs
+Mono/X509Pal.cs
+Mono/X509PalImpl.cs
+Mono/X509PalImpl.Mono.cs
+
 Mono.Btls/MonoBtlsBio.cs
 Mono.Btls/MonoBtlsContext.cs
 Mono.Btls/MonoBtlsError.cs
@@ -230,20 +236,9 @@ Mono.Btls/MonoBtlsX509VerifyFlags.cs
 Mono.Btls/MonoBtlsX509VerifyParam.cs
 Mono.Btls/X509CertificateImplBtls.cs
 Mono.Btls/X509ChainImplBtls.cs
+Mono.Btls/X509PalImpl.Btls.cs
 
-Mono.AppleTls/AppleCertificateHelper.cs
-Mono.AppleTls/AppleTlsContext.cs
-Mono.AppleTls/AppleTlsProvider.cs
-Mono.AppleTls/AppleTlsStream.cs
 Mono.AppleTls/INativeObject.cs
-Mono.AppleTls/Certificate.cs
-Mono.AppleTls/ImportExport.cs
-Mono.AppleTls/Enums.cs
-Mono.AppleTls/SecureTransport.cs
-Mono.AppleTls/Policy.cs
-Mono.AppleTls/Trust.cs
-Mono.AppleTls/SslConnection.cs
-Mono.AppleTls/Items.cs
 
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
@@ -262,8 +257,6 @@ ReferenceSources/ServerCertValidationCallback.cs
 ReferenceSources/SettingsSectionInternal.cs
 ReferenceSources/SecureStringHelper.cs
 ReferenceSources/Socket.cs
-ReferenceSources/SR.cs
-ReferenceSources/SR2.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/Win32Exception.cs
 
@@ -615,15 +608,16 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/HttpListenerRequestUriBuilder.cs
 ../referencesource/System/net/System/Net/HttpRequestHeader.cs
 ../referencesource/System/net/System/Net/HttpResponseHeader.cs
-../referencesource/System/net/System/Net/HttpStatusCode.cs
-../referencesource/System/net/System/Net/HttpVersion.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/HttpStatusCode.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/HttpVersion.cs
 ../referencesource/System/net/System/Net/IAuthenticationModule.cs
 ../referencesource/System/net/System/Net/ICertificatePolicy.cs
 ../referencesource/System/net/System/Net/ICredentials.cs
 ../referencesource/System/net/System/Net/ICredentialsByHost.cs
 ../referencesource/System/net/System/Net/Internal.cs
 ../referencesource/System/net/System/Net/IPAddress.cs
-../referencesource/System/net/System/Net/IPEndPoint.cs
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPEndPoint.cs
+../../../external/corefx/src/Common/src/System/Net/TcpValidationHelpers.cs
 ../referencesource/System/net/System/Net/IPHostEntry.cs
 ../referencesource/System/net/System/Net/iwebproxy.cs
 ../referencesource/System/net/System/Net/IWebProxyFinder.cs
@@ -788,16 +782,10 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
 
-corefx/SR.cs
-
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
 
 ../../../external/corefx/src/Common/src/System/NotImplemented.cs
 ../../../external/corefx/src/Common/src/System/StringExtensions.cs
-
-../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
-../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 
 ../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
 ../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
@@ -820,15 +808,11 @@ corefx/SR.cs
 ../../../external/corefx/src/System.ObjectModel/src/System/Collections/Generic/DebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/IDictionaryDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/LinkedList.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedDictionary.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedList.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSet.TreeSubSet.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/SortedSetEqualityComparer.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/BlockingCollection.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs

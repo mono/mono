@@ -97,6 +97,7 @@ static GHashTable* assembly_remapping_table;
 static const AssemblyVersionMap framework_assemblies [] = {
 	{"Accessibility", 0},
 	{"Commons.Xml.Relaxng", 0},
+	{"CustomMarshalers", 0},
 	{"I18N", 0},
 	{"I18N.CJK", 0},
 	{"I18N.MidEast", 0},
@@ -109,6 +110,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"Microsoft.Build.Tasks.v3.5", 2, "Microsoft.Build.Tasks.v4.0"},
 	{"Microsoft.Build.Utilities", 2, "Microsoft.Build.Utilities.v4.0"},
 	{"Microsoft.Build.Utilities.v3.5", 2, "Microsoft.Build.Utilities.v4.0"},
+	{"Microsoft.CSharp", 0},
 	{"Microsoft.VisualBasic", 1},
 	{"Microsoft.VisualC", 1},
 	FACADE_ASSEMBLY ("Microsoft.Win32.Primitives"),
@@ -147,12 +149,15 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Core", 2},
 	{"System.Data", 0},
 	FACADE_ASSEMBLY ("System.Data.Common"),
+	{"System.Data.DataSetExtensions", 0},
+	{"System.Data.Entity", 0},
 	{"System.Data.Linq", 2},
 	{"System.Data.OracleClient", 0},
 	{"System.Data.Services", 2},
 	{"System.Data.Services.Client", 2},
 	FACADE_ASSEMBLY ("System.Data.SqlClient"),
 	{"System.Data.SqlXml", 0},
+	{"System.Deployment", 0},
 	{"System.Design", 0},
 	FACADE_ASSEMBLY ("System.Diagnostics.Contracts"),
 	FACADE_ASSEMBLY ("System.Diagnostics.Debug"),
@@ -165,9 +170,12 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Diagnostics.TraceSource"),
 	FACADE_ASSEMBLY ("System.Diagnostics.Tracing"),
 	{"System.DirectoryServices", 0},
+	{"System.DirectoryServices.Protocols", 0},
 	{"System.Drawing", 0},
+	FACADE_ASSEMBLY ("System.Drawing.Common"),
 	{"System.Drawing.Design", 0},
 	FACADE_ASSEMBLY ("System.Drawing.Primitives"),
+	{"System.Dynamic", 0},
 	FACADE_ASSEMBLY ("System.Dynamic.Runtime"),
 	{"System.EnterpriseServices", 0},
 	FACADE_ASSEMBLY ("System.Globalization"),
@@ -177,6 +185,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.IdentityModel.Selectors", 3},
 	FACADE_ASSEMBLY ("System.IO"),
 	{"System.IO.Compression", 2},
+	{"System.IO.Compression.FileSystem", 0},
 	FACADE_ASSEMBLY ("System.IO.Compression.ZipFile"),
 	FACADE_ASSEMBLY ("System.IO.FileSystem"),
 	FACADE_ASSEMBLY ("System.IO.FileSystem.AccessControl"),
@@ -193,12 +202,14 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Linq.Parallel"),
 	FACADE_ASSEMBLY ("System.Linq.Queryable"),
 	{"System.Management", 0},
+	FACADE_ASSEMBLY ("System.Memory"),
 	{"System.Messaging", 0},
 	{"System.Net", 2},
 	FACADE_ASSEMBLY ("System.Net.AuthenticationManager"),
 	FACADE_ASSEMBLY ("System.Net.Cache"),
 	{"System.Net.Http", 4},
 	{"System.Net.Http.Rtc", 0},
+	{"System.Net.Http.WebRequest", 0},
 	FACADE_ASSEMBLY ("System.Net.HttpListener"),
 	FACADE_ASSEMBLY ("System.Net.Mail"),
 	FACADE_ASSEMBLY ("System.Net.NameResolution"),
@@ -217,6 +228,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Numerics.Vectors", 3},
 	FACADE_ASSEMBLY ("System.ObjectModel"),
 	FACADE_ASSEMBLY ("System.Reflection"),
+	{"System.Reflection.Context", 0},
 	FACADE_ASSEMBLY ("System.Reflection.DispatchProxy"),
 	FACADE_ASSEMBLY ("System.Reflection.Emit"),
 	FACADE_ASSEMBLY ("System.Reflection.Emit.ILGeneration"),
@@ -224,10 +236,14 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Reflection.Extensions"),
 	FACADE_ASSEMBLY ("System.Reflection.Primitives"),
 	FACADE_ASSEMBLY ("System.Reflection.TypeExtensions"),
+	FACADE_ASSEMBLY ("System.Resources.Reader"),
 	FACADE_ASSEMBLY ("System.Resources.ReaderWriter"),
 	FACADE_ASSEMBLY ("System.Resources.ResourceManager"),
+	FACADE_ASSEMBLY ("System.Resources.Writer"),
 	FACADE_ASSEMBLY ("System.Runtime"),
+	{"System.Runtime.Caching", 0},
 	FACADE_ASSEMBLY ("System.Runtime.CompilerServices.VisualC"),
+	{"System.Runtime.DurableInstancing", 0},
 	FACADE_ASSEMBLY ("System.Runtime.Extensions"),
 	FACADE_ASSEMBLY ("System.Runtime.Handles"),
 	FACADE_ASSEMBLY ("System.Runtime.InteropServices"),
@@ -254,8 +270,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Security.Cryptography.Encryption.Aes"),
 	FACADE_ASSEMBLY ("System.Security.Cryptography.Encryption.ECDiffieHellman"),
 	FACADE_ASSEMBLY ("System.Security.Cryptography.Encryption.ECDsa"),
-	FACADE_ASSEMBLY ("System.Security.Cryptography.Encryption.Hashing"),
-	FACADE_ASSEMBLY ("System.Security.Cryptography.Encryption.Hashing.Algorithms"),
+	FACADE_ASSEMBLY ("System.Security.Cryptography.Hashing"),
+	FACADE_ASSEMBLY ("System.Security.Cryptography.Hashing.Algorithms"),
 	FACADE_ASSEMBLY ("System.Security.Cryptography.OpenSsl"),
 	FACADE_ASSEMBLY ("System.Security.Cryptography.Pkcs"),
 	FACADE_ASSEMBLY ("System.Security.Cryptography.Primitives"),
@@ -267,10 +283,13 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Security.Principal.Windows"),
 	FACADE_ASSEMBLY ("System.Security.SecureString"),
 	{"System.ServiceModel", 3},
+	{"System.ServiceModel.Activation", 0},
+	{"System.ServiceModel.Discovery", 0},
 	FACADE_ASSEMBLY ("System.ServiceModel.Duplex"),
 	FACADE_ASSEMBLY ("System.ServiceModel.Http"),
 	FACADE_ASSEMBLY ("System.ServiceModel.NetTcp"),
 	FACADE_ASSEMBLY ("System.ServiceModel.Primitives"),
+	{"System.ServiceModel.Routing", 0},
 	FACADE_ASSEMBLY ("System.ServiceModel.Security"),
 	{"System.ServiceModel.Web", 2},
 	{"System.ServiceProcess", 0},
@@ -283,6 +302,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Threading.AccessControl"),
 	FACADE_ASSEMBLY ("System.Threading.Overlapped"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks"),
+	{"System.Threading.Tasks.Dataflow", 0},
+	FACADE_ASSEMBLY ("System.Threading.Tasks.Extensions"),
 	FACADE_ASSEMBLY ("System.Threading.Tasks.Parallel"),
 	FACADE_ASSEMBLY ("System.Threading.Thread"),
 	FACADE_ASSEMBLY ("System.Threading.ThreadPool"),
@@ -291,13 +312,21 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.ValueTuple"),
 	{"System.Web", 0},
 	{"System.Web.Abstractions", 2},
+	{"System.Web.ApplicationServices", 0},
 	{"System.Web.DynamicData", 2},
 	{"System.Web.Extensions", 2},
+	{"System.Web.Extensions.Design", 0},
 	{"System.Web.Mobile", 0},
+	{"System.Web.RegularExpressions", 0},
 	{"System.Web.Routing", 2},
 	{"System.Web.Services", 0},
 	{"System.Windows", 0},
 	{"System.Windows.Forms", 0},
+	{"System.Windows.Forms.DataVisualization", 0},
+	{"System.Workflow.Activities", 0},
+	{"System.Workflow.ComponentModel", 0},
+	{"System.Workflow.Runtime", 0},
+	{"System.Xaml", 0},
 	{"System.Xml", 0},
 	{"System.Xml.Linq", 2},
 	FACADE_ASSEMBLY ("System.Xml.ReaderWriter"),
@@ -310,6 +339,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	FACADE_ASSEMBLY ("System.Xml.XmlSerializer"),
 	FACADE_ASSEMBLY ("System.Xml.Xsl.Primitives"),
 	{"WindowsBase", 3},
+	{"cscompmgd", 0},
 	{"mscorlib", 0},
 	FACADE_ASSEMBLY ("netstandard"),
 };
@@ -367,6 +397,9 @@ framework_assembly_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *ca
 
 static const char *
 mono_asmctx_get_name (const MonoAssemblyContext *asmctx);
+
+static gboolean
+assembly_loadfrom_asmctx_from_path (const char *filename, MonoAssembly *requesting_assembly, gpointer user_data, MonoAssemblyContextKind *out_asmctx);
 
 static gchar*
 encode_public_tok (const guchar *token, gint32 len)
@@ -726,7 +759,7 @@ load_in_path (const char *basename, const char** search_path, MonoImageOpenStatu
 
 	for (i = 0; search_path [i]; ++i) {
 		fullpath = g_build_filename (search_path [i], basename, NULL);
-		result = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, status);
+		result = mono_assembly_open_predicate (fullpath, asmctx, predicate, user_data, NULL, status);
 		g_free (fullpath);
 		if (result)
 			return result;
@@ -1000,6 +1033,8 @@ mono_assemblies_init (void)
 		g_hash_table_insert (assembly_remapping_table, (void*)framework_assemblies [i].assembly_name, (void*)&framework_assemblies [i]);
 
 #endif
+	mono_install_assembly_asmctx_from_path_hook (assembly_loadfrom_asmctx_from_path, NULL);
+
 }
 
 static void
@@ -1078,8 +1113,8 @@ mono_assembly_fill_assembly_name_full (MonoImage *image, MonoAssemblyName *aname
 	else
 		aname->public_key = 0;
 
-	machine = ((MonoCLIImageInfo*)(image->image_info))->cli_header.coff.coff_machine;
-	flags = ((MonoCLIImageInfo*)(image->image_info))->cli_cli_header.ch_flags;
+	machine = image->image_info->cli_header.coff.coff_machine;
+	flags = image->image_info->cli_cli_header.ch_flags;
 	switch (machine) {
 	case COFF_MACHINE_I386:
 		/* https://bugzilla.xamarin.com/show_bug.cgi?id=17632 */
@@ -1471,17 +1506,17 @@ load_reference_by_aname_individual_asmctx (MonoAssemblyName *aname, MonoAssembly
 	aname = mono_assembly_apply_binding (aname, &maped_name_pp);
 
 	reference = mono_assembly_loaded_full (aname, FALSE);
-	/* Still try to load from MONO_PATH or the GAC.  This is consistent
-	 * with what .NET Framework (4.7) actually does, rather than what the
-	 * documentation implies: If `LoadFile` is used to load an assembly
-	 * into "no context"/individual assembly context, the runtime will
-	 * still load assemblies from the GAC (e.g. `System.Runtime` will be
-	 * loaded if it wasn't already).
+	/* Still try to load from application base directory, MONO_PATH or the
+	 * GAC.  This is consistent with what .NET Framework (4.7) actually
+	 * does, rather than what the documentation implies: If `LoadFile` is
+	 * used to load an assembly into "no context"/individual assembly
+	 * context, the runtime will still load assemblies from the GAC or the
+	 * application base directory (e.g. `System.Runtime` will be loaded if
+	 * it wasn't already).
+	 * Moreover, those referenced assemblies are loaded in the default context.
 	 */
 	if (!reference)
-		reference = mono_assembly_load_full_nodomain (aname, MONO_ASMCTX_DEFAULT, status);
-	if (!reference)
-		reference = mono_assembly_invoke_search_hook_internal (aname, requesting, FALSE, TRUE);
+		reference = mono_assembly_load_full_internal (aname, requesting, NULL, MONO_ASMCTX_DEFAULT, status);
 	if (!reference)
 		reference = (MonoAssembly*)REFERENCE_MISSING;
 	return reference;
@@ -1920,6 +1955,78 @@ free_assembly_preload_hooks (void)
 	}
 }
 
+typedef struct AssemblyAsmCtxFromPathHook AssemblyAsmCtxFromPathHook;
+struct AssemblyAsmCtxFromPathHook {
+	AssemblyAsmCtxFromPathHook *next;
+	MonoAssemblyAsmCtxFromPathFunc func;
+	gpointer user_data;
+};
+
+static AssemblyAsmCtxFromPathHook *assembly_asmctx_from_path_hook = NULL;
+
+/**
+ * mono_install_assembly_asmctx_from_path_hook:
+ *
+ * \param func Hook function
+ * \param user_data User data
+ *
+ * Installs a hook function \p func that when called with an absolute path name
+ * returns \c TRUE and writes to \c out_asmctx if an assembly that name would
+ * be found by that asmctx.  The hooks are called in the order from most
+ * recently added to oldest.
+ *
+ */
+void
+mono_install_assembly_asmctx_from_path_hook (MonoAssemblyAsmCtxFromPathFunc func, gpointer user_data)
+{
+	g_return_if_fail (func != NULL);
+
+	AssemblyAsmCtxFromPathHook *hook = g_new0 (AssemblyAsmCtxFromPathHook, 1);
+	hook->func = func;
+	hook->user_data = user_data;
+	hook->next = assembly_asmctx_from_path_hook;
+	assembly_asmctx_from_path_hook = hook;
+}
+
+/**
+ * mono_assembly_invoke_asmctx_from_path_hook:
+ *
+ * \param absfname absolute path name
+ * \param requesting_assembly the \c MonoAssembly that requested the load, may be \c NULL
+ * \param out_asmctx assembly context kind, written on output
+ *
+ * Invokes hooks to find the assembly context that would have searched for the
+ * given assembly name.  Writes to \p out_asmctx the assembly context kind from
+ * the first hook to return \c TRUE.  \returns \c TRUE if any hook wrote to \p
+ * out_asmctx, or \c FALSE otherwise.
+ */
+static gboolean
+assembly_invoke_asmctx_from_path_hook (const char *absfname, MonoAssembly *requesting_assembly, MonoAssemblyContextKind *out_asmctx)
+{
+	g_assert (absfname);
+	g_assert (out_asmctx);
+	AssemblyAsmCtxFromPathHook *hook;
+
+	for (hook = assembly_asmctx_from_path_hook; hook; hook = hook->next) {
+		*out_asmctx = MONO_ASMCTX_INDIVIDUAL;
+		if (hook->func (absfname, requesting_assembly, hook->user_data, out_asmctx))
+			return TRUE;
+	}
+	return FALSE;
+}
+
+
+static void
+free_assembly_asmctx_from_path_hooks (void)
+{
+	AssemblyAsmCtxFromPathHook *hook, *next;
+
+	for (hook = assembly_asmctx_from_path_hook; hook; hook = next) {
+		next = hook->next;
+		g_free (hook);
+	}
+}
+
 static gchar *
 absolute_dir (const gchar *filename)
 {
@@ -2065,13 +2172,26 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 MonoAssembly *
 mono_assembly_open_a_lot (const char *filename, MonoImageOpenStatus *status, MonoAssemblyContextKind asmctx)
 {
-	return mono_assembly_open_predicate (filename, asmctx, NULL, NULL, status);
+	return mono_assembly_open_predicate (filename, asmctx, NULL, NULL, NULL, status);
+}
+
+static gboolean
+assembly_loadfrom_asmctx_from_path (const char *filename, MonoAssembly *requesting_assembly,
+				    gpointer user_data, MonoAssemblyContextKind *out_asmctx) {
+	if (requesting_assembly && mono_asmctx_get_kind (&requesting_assembly->context) == MONO_ASMCTX_LOADFROM) {
+		if (mono_path_filename_in_basedir (filename, requesting_assembly->basedir)) {
+			*out_asmctx = MONO_ASMCTX_LOADFROM;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 MonoAssembly *
 mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmctx,
 			      MonoAssemblyCandidatePredicate predicate,
 			      gpointer user_data,
+			      MonoAssembly *requesting_assembly,
 			      MonoImageOpenStatus *status)
 {
 	MonoImage *image;
@@ -2130,6 +2250,21 @@ mono_assembly_open_predicate (const char *filename, MonoAssemblyContextKind asmc
 			*status = MONO_IMAGE_IMAGE_INVALID;
 			g_free (fname);
 			return NULL;
+		}
+
+		if (asmctx != MONO_ASMCTX_REFONLY) {
+			MonoAssemblyContextKind out_asmctx;
+			/* If the path belongs to the appdomain base dir or the
+			 * base dir of the requesting assembly, load the
+			 * assembly in the corresponding asmctx.
+			 */
+			if (assembly_invoke_asmctx_from_path_hook (fname, requesting_assembly, &out_asmctx))
+				asmctx = out_asmctx;
+		}
+	} else {
+		if (asmctx != MONO_ASMCTX_REFONLY) {
+			/* GAC assemblies always in default context or refonly context. */
+			asmctx = MONO_ASMCTX_DEFAULT;
 		}
 	}
 	if (new_fname && new_fname != fname) {
@@ -2534,7 +2669,7 @@ mono_assembly_open (const char *filename, MonoImageOpenStatus *status)
 {
 	MonoAssembly *res;
 	MONO_ENTER_GC_UNSAFE;
-	res = mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+	res = mono_assembly_open_predicate (filename, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, status);
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
@@ -2961,7 +3096,7 @@ parse_assembly_directory_name (const char *name, const char *dirname, MonoAssemb
 static gboolean
 split_key_value (const gchar *pair, gchar **key, guint32 *keylen, gchar **value)
 {
-	char *eqsign = strchr (pair, '=');
+	char *eqsign = (char*)strchr (pair, '=');
 	if (!eqsign) {
 		*key = NULL;
 		*keylen = 0;
@@ -3321,7 +3456,7 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 	if (fullpath == NULL)
 		return NULL;
 	else {
-		MonoAssembly *res = mono_assembly_open_predicate (fullpath, MONO_ASMCTX_DEFAULT, NULL, NULL, status);
+		MonoAssembly *res = mono_assembly_open_predicate (fullpath, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, status);
 		g_free (fullpath);
 		return res;
 	}
@@ -3728,13 +3863,15 @@ mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor,
 static MonoAssemblyName*
 mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_name)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	ERROR_DECL (error);
 	MonoAssemblyBindingInfo *info, *info2;
 	MonoImage *ppimage;
 	MonoDomain *domain;
 
 	if (aname->public_key_token [0] == 0)
-		return aname;
+		goto return_aname;
 
 	domain = mono_domain_get ();
 
@@ -3750,14 +3887,19 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 
 	if (info) {
 		if (!check_policy_versions (info, aname))
-			return aname;
+			goto return_aname;
 		
 		mono_assembly_bind_version (info, aname, dest_name);
-		return dest_name;
+		goto return_dest_name;
 	}
 
-	if (domain && domain->setup && domain->setup->configuration_file) {
-		gchar *domain_config_file_name = mono_string_to_utf8_checked (domain->setup->configuration_file, error);
+	MonoAppDomainSetupHandle setup;
+	MonoStringHandle configuration_file;
+
+	if (domain
+			&& !MONO_HANDLE_IS_NULL (setup = MONO_HANDLE_NEW (MonoAppDomainSetup, domain->setup))
+			&& !MONO_HANDLE_IS_NULL (configuration_file = MONO_HANDLE_NEW_GET (MonoString, setup, configuration_file))) {
+		char *domain_config_file_name = mono_string_handle_to_utf8 (configuration_file, error);
 		/* expect this to succeed because mono_domain_set_options_from_config () did
 		 * the same thing when the domain was created. */
 		mono_error_assert_ok (error);
@@ -3775,7 +3917,6 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 		}
 
 		mono_domain_unlock (domain);
-
 	}
 
 	if (!info) {
@@ -3814,10 +3955,22 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 	mono_assembly_binding_unlock ();
 	
 	if (!info->is_valid || !check_policy_versions (info, aname))
-		return aname;
+		goto return_aname;
 
 	mono_assembly_bind_version (info, aname, dest_name);
-	return dest_name;
+	goto return_dest_name;
+
+	MonoAssemblyName* result;
+
+return_dest_name:
+	result = dest_name;
+	goto exit;
+
+return_aname:
+	result = aname;
+	goto exit;
+exit:
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 /**
@@ -3870,7 +4023,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 		paths = extra_gac_paths;
 		while (!result && *paths) {
 			fullpath = g_build_path (G_DIR_SEPARATOR_S, *paths, "lib", "mono", "gac", subpath, NULL);
-			result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, status);
+			result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, NULL, status);
 			g_free (fullpath);
 			paths++;
 		}
@@ -3884,7 +4037,7 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 
 	fullpath = g_build_path (G_DIR_SEPARATOR_S, mono_assembly_getrootdir (),
 			"mono", "gac", subpath, NULL);
-	result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, status);
+	result = mono_assembly_open_predicate (fullpath, asmctx, NULL, NULL, NULL, status);
 	g_free (fullpath);
 
 	if (result)
@@ -4121,7 +4274,7 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 
 		if (basedir) {
 			fullpath = g_build_filename (basedir, filename, NULL);
-			result = mono_assembly_open_predicate (fullpath, asmctx, predicate, predicate_ud, status);
+			result = mono_assembly_open_predicate (fullpath, asmctx, predicate, predicate_ud, NULL, status);
 			g_free (fullpath);
 			if (result) {
 				result->in_gac = FALSE;
@@ -4416,6 +4569,7 @@ mono_assemblies_cleanup (void)
 	}
 	g_slist_free (loaded_assembly_bindings);
 
+	free_assembly_asmctx_from_path_hooks ();
 	free_assembly_load_hooks ();
 	free_assembly_search_hooks ();
 	free_assembly_preload_hooks ();

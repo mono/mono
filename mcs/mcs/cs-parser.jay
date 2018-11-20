@@ -1586,7 +1586,7 @@ constructor_body
 	 expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -1607,7 +1607,7 @@ expression_block
 	 lambda_arrow_expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -2207,6 +2207,11 @@ set_accessor_declaration
 accessor_body
 	: block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body property accessor");
+		}
+	  }
 	| SEMICOLON
 	  {
 		// TODO: lbag
@@ -2876,6 +2881,11 @@ event_accessor_block
 	  }
 	| block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body event accessor");
+		}
+	  }
 	;
 
 attributes_without_members
@@ -3953,7 +3963,15 @@ non_simple_argument
 	  {
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
-	  }	  
+	  }
+	| IN variable_reference
+	  {
+		if (lang_version < LanguageVersion.V_7_2)
+			FeatureIsNotAvailable (GetLocation ($1), "readonly references");
+
+		$$ = new Argument ((Expression) $2, Argument.AType.Readonly);
+		lbag.AddLocation ($$, GetLocation ($1));
+	  }
 	;
 
 out_variable_declaration
@@ -8010,6 +8028,14 @@ static bool IsUnaryOperator (Operator.OpType op)
 		return true;
 	}
 	return false;
+}
+
+static Statement CreateExpressionBodiedStatement (Expression expr)
+{
+	if (expr is ThrowExpression te)
+		return new StatementExpression (te);
+
+	return new ContextualReturn (expr);
 }
 
 void syntax_error (Location l, string msg)

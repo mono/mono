@@ -920,7 +920,7 @@ namespace Mono.CSharp
 
 		public override bool ContainsEmitWithAwait ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -13300,6 +13300,10 @@ namespace Mono.CSharp
 		public DefaultLiteralExpression (Location loc)
 		{
 			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)

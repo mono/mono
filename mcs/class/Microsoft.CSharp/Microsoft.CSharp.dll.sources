@@ -40,7 +40,6 @@ corefx/SR.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/RuntimeBinderInternalCompilerException.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/*.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Binding/*.cs
-../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Declarations/*.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Symbols/*.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/*.cs
 ../../../external/corefx/src/Microsoft.CSharp/src/Microsoft/CSharp/RuntimeBinder/Semantics/Tree/Visitors/*.cs

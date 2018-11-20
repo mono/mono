@@ -30,7 +30,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Collections;
@@ -43,14 +43,50 @@ using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ModuleBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class ModuleBuilder : _ModuleBuilder
+	{
+		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public class ModuleBuilder : Module, _ModuleBuilder {
+	public partial class ModuleBuilder : Module {
 
 #pragma warning disable 169, 414
 		#region Sync with object-internals.h
+		// This class inherits from Module, but the runtime expects it to have the same layout as MonoModule
+		#region Sync with MonoModule
+		internal IntPtr _impl; /* a pointer to a MonoImage */
+		internal Assembly assembly;
+		internal string fqname;
+		internal string name;
+		internal string scopename;
+		internal bool is_resource;
+		internal int token;
+		#endregion
 		private UIntPtr dynamic_image; /* GC-tracked */
 		private int num_types;
 		private TypeBuilder[] types;
@@ -1024,26 +1060,6 @@ namespace System.Reflection.Emit {
 			return mb.GetModuleVersionId ();
 		}
 
-		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -1219,6 +1235,10 @@ namespace System.Reflection.Emit {
 			get {
 				return get_MetadataToken (this);
 			}
+		}
+
+		internal override IntPtr GetImpl () {
+			return _impl;
 		}
 	}
 

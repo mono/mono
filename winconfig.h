@@ -21,9 +21,9 @@
 
 #include <SDKDDKVer.h>
 
-#if _WIN32_WINNT < 0x0600
-#error "Mono requires Windows Vista or later"
-#endif /* _WIN32_WINNT < 0x0600 */
+#if _WIN32_WINNT < 0x0601
+#error "Mono requires Windows 7 or later."
+#endif /* _WIN32_WINNT < 0x0601 */
 
 #ifndef HAVE_WINAPI_FAMILY_SUPPORT
 
@@ -83,6 +83,9 @@
 /* Disable support debug logging */
 /* #undef DISABLE_LOGGING */
 
+/* Disable runtime state dumping */
+#define DISABLE_CRASH_REPORTING 1
+
 /* Disable P/Invoke support */
 /* #undef DISABLE_PINVOKE */
 
@@ -103,12 +106,6 @@
 
 /* Enable DTrace probes */
 /* #undef ENABLE_DTRACE */
-
-/* Has the 'aintl' function */
-/* #undef HAVE_AINTL */
-
-/* Supports C99 array initialization */
-/* #undef HAVE_ARRAY_ELEM_INIT */
 
 /* Define to 1 if you have the <attr/xattr.h> header file. */
 /* #undef HAVE_ATTR_XATTR_H */
@@ -198,9 +195,6 @@
 /* Define to 1 if you have the `fgetpwent' function. */
 /* #undef HAVE_FGETPWENT */
 
-/* Define to 1 if you have the `finite' function. */
-/* #undef HAVE_FINITE */
-
 /* Define to 1 if you have the <fstab.h> header file. */
 /* #undef HAVE_FSTAB_H */
 
@@ -255,9 +249,6 @@
 /* Define to 1 if you have the <grp.h> header file. */
 /* #undef HAVE_GRP_H */
 
-/* Define to 1 if you have the <ieeefp.h> header file. */
-/* #undef HAVE_IEEEFP_H */
-
 /* Define to 1 if you have the `inet_aton' function. */
 /* #undef HAVE_INET_ATON */
 
@@ -279,17 +270,16 @@
 /* Have IP_PKTINFO */
 /* #undef HAVE_IP_PKTINFO */
 
-/* Define to 1 if you have the `isfinite' function. */
-/* #undef HAVE_ISFINITE */
-
-/* isinf available */
-#define HAVE_ISINF 1
-
 /* Define to 1 if you have the `kqueue' function. */
 /* #undef HAVE_KQUEUE */
 
 /* Have __thread keyword */
-/* #undef HAVE_KW_THREAD */
+#ifdef _MSC_VER
+#define MONO_KEYWORD_THREAD __declspec (thread)
+#else
+// Cygwin/gcc emulates __thread.
+#undef MONO_KEYWORD_THREAD
+#endif
 
 /* Have large file support */
 /* #undef HAVE_LARGE_FILE_SUPPORT */
@@ -404,9 +394,6 @@
 
  /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
-
-/* Have signbit */
-/* #undef HAVE_SIGNBIT */
 
 /* Can get interface list */
 /* #undef HAVE_SIOCGIFCONF */
@@ -567,9 +554,6 @@
 /* Have tm_gmtoff */
 /* #undef HAVE_TM_GMTOFF */
 
-/* Define to 1 if you have the `trunc' function. */
-#define HAVE_TRUNC 1
-
 /* Define to 1 if you have the `ttyname_r' function. */
 /* #undef HAVE_TTYNAME_R */
 
@@ -664,11 +648,16 @@
 /* The size of a `void *', as computed by sizeof. */
 #ifdef _WIN64
 #define SIZEOF_VOID_P 8
+#define TARGET_SIZEOF_VOID_P 8
 #else
 #define SIZEOF_VOID_P 4
+#define TARGET_SIZEOF_VOID_P 4
 #endif
 
 #define SIZEOF_REGISTER SIZEOF_VOID_P
+
+/* byte order of target */
+#define TARGET_BYTE_ORDER G_BYTE_ORDER
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -683,13 +672,6 @@
 
 /* Use mono_mutex_t */
 /* #undef USE_MONO_MUTEX */
-
-#ifdef ENABLE_LLVM
-	#define ENABLE_LLVM 1
-	#define ENABLE_LLVM_RUNTIME 1
-	#define LLVM_VERSION "3.6.0svn-mono-"
-	#define LLVM_API_VERSION 4
-#endif
 
 /* Version number of package */
 #define VERSION "#MONO_VERSION#"

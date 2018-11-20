@@ -2,6 +2,8 @@
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.GetRandomBytes.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.NTSTATUS.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Interop.Libraries.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
@@ -12,7 +14,7 @@
 
 ../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
 
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Errors.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
 
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/DeferredDisposableLifetime.cs
 
@@ -26,4 +28,35 @@
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs
 
+corert/RuntimeImports.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Number.Windows.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs
+corefx/Mono.SafePasswordHandle.Windows.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.cs
+corefx/Interop.Libraries.Advapi32.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.Windows.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.Windows.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.Windows.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/Registry.cs
+corefx/Registry.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.SECURITY_ATTRIBUTES.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.BOOL.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegCloseKey.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegConnectRegistry.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegCreateKeyEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegDeleteKeyEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegDeleteValue.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegEnumKeyEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegEnumValue.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegFlushKey.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegisterServiceCtrlHandler.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegisterServiceCtrlHandlerEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegistryOptions.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegOpenKeyEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegQueryInfoKey.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegQueryValueEx.cs
+../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegSetValueEx.cs

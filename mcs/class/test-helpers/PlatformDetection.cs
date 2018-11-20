@@ -21,6 +21,9 @@ namespace System
 		public static bool IsRedHatFamily => false;
 		public static bool IsOpenSUSE => false;
 		public static bool IsUbuntu1404 => false;
+		public static bool IsNotRedHatFamily6 => true;
+		public static bool IsInvokingStaticConstructorsSupported => true;
+		public static bool IsReflectionEmitSupported => true;
 
 		public static bool IsNetfx462OrNewer => false;
 

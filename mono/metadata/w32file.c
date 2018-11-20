@@ -509,7 +509,7 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArrayHandle dest,
 				 gint32 *io_error,
 				 MonoError *error)
 {
-	guchar *buffer;
+	void *buffer;
 	gboolean result;
 	guint32 n;
 
@@ -524,13 +524,11 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArrayHandle dest,
 
 	guint32 buffer_handle = 0;
 	buffer = MONO_ARRAY_HANDLE_PIN (dest, guchar, dest_offset, &buffer_handle);
-	result = mono_w32file_read (handle, buffer, count, &n);
-	mono_gchandle_free (buffer_handle);
+	result = mono_w32file_read (handle, buffer, count, &n, io_error);
+	mono_gchandle_free_internal (buffer_handle);
 
-	if (!result) {
-		*io_error=mono_w32error_get_last ();
+	if (!result)
 		return -1;
-	}
 
 	return (gint32)n;
 }
@@ -541,7 +539,7 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArrayHandle src,
 				  gint32 *io_error,
 				  MonoError *error)
 {
-	guchar *buffer;
+	void *buffer;
 	gboolean result;
 	guint32 n;
 
@@ -556,13 +554,11 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArrayHandle src,
 	
 	guint32 src_handle = 0;
 	buffer = MONO_ARRAY_HANDLE_PIN (src, guchar, src_offset, &src_handle);
-	result = mono_w32file_write (handle, buffer, count, &n);
-	mono_gchandle_free (src_handle);
+	result = mono_w32file_write (handle, buffer, count, &n, io_error);
+	mono_gchandle_free_internal (src_handle);
 
-	if (!result) {
-		*io_error=mono_w32error_get_last ();
+	if (!result)
 		return -1;
-	}
 
 	return (gint32)n;
 }
@@ -693,19 +689,19 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 }
 
 HANDLE 
-ves_icall_System_IO_MonoIO_get_ConsoleOutput ()
+ves_icall_System_IO_MonoIO_get_ConsoleOutput (void)
 {
 	return mono_w32file_get_console_output ();
 }
 
 HANDLE 
-ves_icall_System_IO_MonoIO_get_ConsoleInput ()
+ves_icall_System_IO_MonoIO_get_ConsoleInput (void)
 {
 	return mono_w32file_get_console_input ();
 }
 
 HANDLE 
-ves_icall_System_IO_MonoIO_get_ConsoleError ()
+ves_icall_System_IO_MonoIO_get_ConsoleError (void)
 {
 	return mono_w32file_get_console_error ();
 }
@@ -742,7 +738,7 @@ ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE
 
 	*target_handle = mono_w32handle_duplicate (source_handle_data);
 
-	mono_w32handle_unref (source_handle);
+	mono_w32handle_unref ((MonoW32Handle*)source_handle);
 #else
 	gboolean ret;
 
@@ -762,19 +758,19 @@ ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE
 
 #ifndef HOST_WIN32
 gunichar2 
-ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar ()
+ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar (void)
 {
 	return (gunichar2) '/';	/* forward slash */
 }
 
 gunichar2 
-ves_icall_System_IO_MonoIO_get_DirectorySeparatorChar ()
+ves_icall_System_IO_MonoIO_get_DirectorySeparatorChar (void)
 {
 	return (gunichar2) '/';	/* forward slash */
 }
 
 gunichar2 
-ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar ()
+ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar (void)
 {
 	if (IS_PORTABILITY_SET)
 		return (gunichar2) '\\';	/* backslash */
@@ -783,7 +779,7 @@ ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar ()
 }
 
 gunichar2 
-ves_icall_System_IO_MonoIO_get_PathSeparator ()
+ves_icall_System_IO_MonoIO_get_PathSeparator (void)
 {
 	return (gunichar2) ':';	/* colon */
 }
@@ -852,7 +848,7 @@ mono_filesize_from_path (MonoString *string)
 	ERROR_DECL (error);
 	struct stat buf;
 	gint64 res;
-	char *path = mono_string_to_utf8_checked (string, error);
+	char *path = mono_string_to_utf8_checked_internal (string, error);
 	mono_error_raise_exception_deprecated (error); /* OK to throw, external only without a good alternative */
 
 	gint stat_res;

@@ -1,0 +1,152 @@
+# Mono Code Owners File
+#
+# GitHub uses this file to determine who to assign for reviews
+# on pull requests. Please keep this file alphabetically sorted.
+#
+# References:
+#
+# https://github.com/blog/2392-introducing-code-owners
+# https://help.github.com/articles/about-codeowners
+
+
+# These owners will be the default owners for everything in the repo.
+* @luhenry @marek-safar
+
+# Order is important. The last matching pattern has the most precedence.
+
+/acceptance-tests @akoeplinger @kg
+/acceptance-tests/profiler-stress* @alexrp @akoeplinger
+
+/data @marek-safar @akoeplinger @luhenry
+/data/gdb @vargaz @luhenry
+/data/lldb @lewurm @vargaz
+
+/docs @luhenry @marek-safar @akoeplinger
+/docs/riscv.md @alexrp @lewurm
+/docs/sources/mono-api-profiler.html @alexrp
+
+/external @akoeplinger @marek-safar
+/external/api-snapshot @marek-safar @akoeplinger
+/external/binary-reference-assemblies @marek-safar @akoeplinger
+/external/bockbuild @akoeplinger @alexischr
+/external/boringssl @baulig
+/external/cecil @marek-safar @akoeplinger
+/external/corefx @akoeplinger @marek-safar @egorbo @alexischr
+/external/corert @akoeplinger @marek-safar @egorbo @alexischr
+/external/linker @marek-safar
+/external/llvm @luhenry @vargaz
+/external/nuget-buildtasks @radical @akoeplinger
+/external/roslyn-binaries @kg @marek-safar @akoeplinger
+
+/libgc @BrzVlad @vargaz @luhenry
+
+/llvm @vargaz @luhenry
+
+/man @marek-safar @miguel @luhenry
+/man/*prof* @alexrp
+
+/mcs @marek-safar @luhenry
+
+/mcs/build @marek-safar @akoeplinger
+
+/mcs/class @marek-safar @akoeplinger
+/mcs/class/corlib/System.Reflection*/ @vargaz @lambdageek
+/mcs/class/corlib/System.Security.Cryptography.X509Certificates @baulig @marek-safar
+/mcs/class/Mono.Btls.Interface @bauligg @marek-safar
+/mcs/class/Mono.Data.Tds @egorbo
+/mcs/class/Mono.Debugger.Soft @vargaz
+/mcs/class/Mono.Options @jonpryor @marek-safar
+/mcs/class/Mono.Profiler.Log @alexrp @luhenry
+/mcs/class/Mono.Security/Mono.Security/Interface @baulig @marek-safar
+/mcs/class/System/Mono.AppleTls @baulig @rolf
+/mcs/class/System/Mono.Btls @baulig  @marek-safar
+/mcs/class/System/Mono.Net.Security @baulig  @marek-safar
+/mcs/class/System/Mono.Security.Interface @baulig  @marek-safar
+/mcs/class/System/System.Security.Cryptography.X509Certificates @baulig  @marek-safar
+/mcs/class/System.Data* @egorbo  @marek-safar
+
+/mcs/errors @marek-safar @lewurm
+/mcs/ilasm @marek-safar @lewurm
+/mcs/jay @marek-safar @lewurm
+/mcs/mcs @marek-safar @lewurm
+/mcs/tests @marek-safar @lewurm
+
+/mcs/tools @marek-safar @akoeplinger
+/mcs/tools/gensources @kg @akoeplinger
+/mcs/tools/upload-to-sentry @alexanderkyte @akoeplinger
+
+/mono/arch @vargaz @lewurm
+
+/mono/btls @baulig @luhenry @marek-safar
+/mono/dis @lambdageek @vargaz
+/mono/eglib @vargaz @luhenry
+
+/mono/benchmark @alexanderkyte @luhenry
+
+/mono/metadata @vargaz @lambdageek
+/mono/metadata/*verify* @lambdageek @luhenry
+/mono/metadata/*profiler* @alexrp @luhenry
+/mono/metadata/handle* @jaykrell @lambdageek
+/mono/metadata/monitor* @brzvlad @vargaz
+/mono/metadata/sgen* @brzvlad @vargaz
+/mono/metadata/thread* @luhenry @lateralusX
+/mono/metadata/w32* @luhenry @lateralusX @jaykrell
+/mono/metadata/*-win* @lateralusX @luhenry @luhenry
+
+/mono/mini @vargaz @lewurm
+/mono/mini/*cfgdump* @lewurm @luhenry
+/mono/mini/*exceptions* @lewurm @luhenry
+/mono/mini/*ppc* @lewurm @vargaz
+/mono/mini/*riscv* @alexrp @lewurm
+/mono/mini/*type-check* @lewurm @lambdageek
+/mono/mini/interp/* @lewurm @BrzVlad
+/mono/mini/*profiler* @alexrp @luhenry
+/mono/mini/debugger-agent.c @vargaz @lewurm @DavidKarlas
+
+/mono/native @baulig @luhenry @marek-safar
+
+/mono/profiler @alexrp @luhenry
+
+/mono/sgen @BrzVlad @luhenry
+
+/mono/utils @vargaz @lewurm 
+/mono/utils/atomic* @lewurm @luhenry
+/mono/utils/mono-hwcap* @lewurm @luhenry
+/mono/utils/mono-mem* @lewurm @luhenry
+/mono/utils/mono-threads* @luhenry @vargaz
+/mono/utils/*-win* @lateralusX @jay
+
+/msvc @lateralusX @luhenry
+/msvc/*profiler* @alexrp @luhenry
+/msvc/scripts @akoeplinger @kg
+
+/packaging @alexischr @akoeplinger @luhenry @directhex
+/packaging/MacSDK/msbuild.py @radical @akoeplinger
+
+/runtime @akoeplinger @marek-safar @luhenry
+
+/samples @luhenry @lewurm
+/samples/profiler @alexrp @luhenry
+/samples/size @alexrp @luhenry
+
+/scripts @akoeplinger @luhenry
+/scripts/ci @akoeplinger @alexischr
+
+/sdks @marek-safar @luhenry @vargaz
+/sdks/builds/android* @luhenry @jonpryor
+/sdks/builds/mxe* @luhenry @jonpryor
+/sdks/builds/ios* @vargaz @rolfbjarne
+/sdks/builds/wasm* @vargaz @kjpou1
+/sdks/wasm @vargaz @kjpou1 @kg
+/sdks/ios @vargaz @rolfbjarne
+/sdks/android @luhenry @jonpryor
+
+/support @luhenry @vargaz
+
+/tools @luhenry @vargaz
+/tools/locale-builder @marek-safar @egorbo
+/tools/monograph @vargaz @vargaz
+/tools/nuget-hash-extractor @marek-safar @radical
+/tools/offsets-tool @lewurm @rolfbjarne
+/tools/pedump @lambdageek @lewurm
+/tools/sgen @brzvlad @vargaz

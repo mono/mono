@@ -37,8 +37,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Authenticode;
 
 namespace System.Security.Policy {
 
@@ -59,6 +59,14 @@ namespace System.Security.Policy {
 		{
 			if (evidence != null)
 				Merge (evidence);	
+		}
+
+		public Evidence (EvidenceBase[] hostEvidence, EvidenceBase[] assemblyEvidence)
+		{
+			if (null != hostEvidence)
+				HostEvidenceList.AddRange (hostEvidence);
+			if (null != assemblyEvidence)
+				AssemblyEvidenceList.AddRange (assemblyEvidence);
 		}
 
 		[Obsolete]
@@ -260,16 +268,14 @@ namespace System.Security.Policy {
 
 			// Authenticode(r) signed assemblies get a Publisher evidence
 			if (IsAuthenticodePresent (a)) {
-				// Note: The certificate is part of the evidences even if it is not trusted!
-				// so we can't call X509Certificate.CreateFromSignedFile
-				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (a.Location);
-				if (ad.SigningCertificate != null) {
-					X509Certificate x509 = new X509Certificate (ad.SigningCertificate.RawData);
-					if (x509.GetHashCode () != 0) {
-						e.AddHost (new Publisher (x509));
-					}
+				try {
+					X509Certificate x509 = X509Certificate.CreateFromSignedFile (a.Location);
+					e.AddHost (new Publisher (x509));
+				}
+				catch (CryptographicException) {
 				}
 			}
+
 			// assemblies loaded from the GAC also get a Gac evidence (new in Fx 2.0)
 			if (a.GlobalAssemblyCache) {
 				e.AddHost (new GacInstalled ());

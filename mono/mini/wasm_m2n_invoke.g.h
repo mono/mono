@@ -5,8 +5,8 @@
 static void
 wasm_invoke_v (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(void) = target_func;
-
+	typedef void (*T)(void);
+	T func = (T)target_func;
 	func ();
 
 }
@@ -14,8 +14,8 @@ wasm_invoke_v (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vi (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0) = target_func;
-
+	typedef void (*T)(int arg_0);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0]);
 
 }
@@ -23,8 +23,8 @@ wasm_invoke_vi (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vii (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, int arg_1) = target_func;
-
+	typedef void (*T)(int arg_0, int arg_1);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], (int)margs->iargs [1]);
 
 }
@@ -32,8 +32,8 @@ wasm_invoke_vii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viii (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, int arg_1, int arg_2) = target_func;
-
+	typedef void (*T)(int arg_0, int arg_1, int arg_2);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
 
 }
@@ -41,8 +41,8 @@ wasm_invoke_viii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viiii (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, int arg_1, int arg_2, int arg_3) = target_func;
-
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
 
 }
@@ -50,8 +50,8 @@ wasm_invoke_viiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viiiii (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4) = target_func;
-
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
 
 }
@@ -59,17 +59,53 @@ wasm_invoke_viiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viiiiii (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5) = target_func;
-
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
+
+}
+
+static void
+wasm_invoke_viiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6);
+	T func = (T)target_func;
+	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
+
+}
+
+static void
+wasm_invoke_viiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7);
+	T func = (T)target_func;
+	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+
+}
+
+static void
+wasm_invoke_viiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8);
+	T func = (T)target_func;
+	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8]);
+
+}
+
+static void
+wasm_invoke_viiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef void (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9);
+	T func = (T)target_func;
+	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9]);
 
 }
 
 static void
 wasm_invoke_i (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(void) = target_func;
-
+	typedef int (*T)(void);
+	T func = (T)target_func;
 	int res = func ();
 	*(int*)margs->retval = res;
 
@@ -78,8 +114,8 @@ wasm_invoke_i (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_ii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0) = target_func;
-
+	typedef int (*T)(int arg_0);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0]);
 	*(int*)margs->retval = res;
 
@@ -88,8 +124,8 @@ wasm_invoke_ii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1]);
 	*(int*)margs->retval = res;
 
@@ -98,8 +134,8 @@ wasm_invoke_iii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
@@ -108,8 +144,8 @@ wasm_invoke_iiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2, int arg_3) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
@@ -118,8 +154,8 @@ wasm_invoke_iiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiiiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
 	*(int*)margs->retval = res;
 
@@ -128,8 +164,8 @@ wasm_invoke_iiiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiiiiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
 	*(int*)margs->retval = res;
 
@@ -138,8 +174,8 @@ wasm_invoke_iiiiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
 	*(int*)margs->retval = res;
 
@@ -148,9 +184,59 @@ wasm_invoke_iiiiiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiiiiiiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7) = target_func;
-
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiiiiiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6, int arg_7, int arg_8, int arg_9, int arg_10, int arg_11, int arg_12);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7], (int)margs->iargs [8], (int)margs->iargs [9], (int)margs->iargs [10], (int)margs->iargs [11], (int)margs->iargs [12]);
 	*(int*)margs->retval = res;
 
 }
@@ -158,9 +244,349 @@ wasm_invoke_iiiiiiiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iiliiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, gint64 arg_1, int arg_2, int arg_3, int arg_4, int arg_5) = target_func;
-
+	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iif (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iifi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, int arg_2);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iffii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(float arg_0, float arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [0], (int)margs->iargs [1]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iifii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iifff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iifffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, int arg_4);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], (int)margs->iargs [1]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3, int arg_4);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iifiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, int arg_2, int arg_3, int arg_4);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, int arg_5);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [1]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffffii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, int arg_5, int arg_6);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [1], (int)margs->iargs [2]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiif (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiifi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiifii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3, int arg_4);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2], (int)margs->iargs [3]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiifiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, int arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiif (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiifi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiifii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3], (int)margs->iargs [4]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiifiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, float arg_3, int arg_4, int arg_5, int arg_6);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiifffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiffffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiif (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, float arg_6);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiiiff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, float arg_6, float arg_7);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffffffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiffffffff (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8, float arg_9);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiifii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, float arg_5, int arg_6, int arg_7);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], *(float*)&margs->fargs [FIDX (0)], (int)margs->iargs [5], (int)margs->iargs [6]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiffffffffiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, float arg_2, float arg_3, float arg_4, float arg_5, float arg_6, float arg_7, float arg_8, float arg_9, int arg_10, int arg_11, int arg_12);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], *(float*)&margs->fargs [FIDX (6)], *(float*)&margs->fargs [FIDX (7)], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiiiiffffiiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, int arg_1, int arg_2, int arg_3, float arg_4, float arg_5, float arg_6, float arg_7, int arg_8, int arg_9, int arg_10, int arg_11);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6], (int)margs->iargs [7]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iffffffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(float arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, int arg_6);
+	T func = (T)target_func;
+	int res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], *(float*)&margs->fargs [FIDX (5)], (int)margs->iargs [0]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_iiffiii (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(int arg_0, float arg_1, float arg_2, int arg_3, int arg_4, int arg_5);
+	T func = (T)target_func;
+	int res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3]);
+	*(int*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_ili (void *target_func, InterpMethodArguments *margs)
+{
+	typedef int (*T)(gint64 arg_0, int arg_1);
+	T func = (T)target_func;
+	int res = func (get_long_arg (margs, 0), (int)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
 }
@@ -168,8 +594,8 @@ wasm_invoke_iiliiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_l (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(void) = target_func;
-
+	typedef gint64 (*T)(void);
+	T func = (T)target_func;
 	gint64 res = func ();
 	*(gint64*)margs->retval = res;
 
@@ -178,8 +604,8 @@ wasm_invoke_l (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_ll (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(gint64 arg_0) = target_func;
-
+	typedef gint64 (*T)(gint64 arg_0);
+	T func = (T)target_func;
 	gint64 res = func (get_long_arg (margs, 0));
 	*(gint64*)margs->retval = res;
 
@@ -188,8 +614,8 @@ wasm_invoke_ll (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_li (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(int arg_0) = target_func;
-
+	typedef gint64 (*T)(int arg_0);
+	T func = (T)target_func;
 	gint64 res = func ((int)margs->iargs [0]);
 	*(gint64*)margs->retval = res;
 
@@ -198,8 +624,8 @@ wasm_invoke_li (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_lil (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(int arg_0, gint64 arg_1) = target_func;
-
+	typedef gint64 (*T)(int arg_0, gint64 arg_1);
+	T func = (T)target_func;
 	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1));
 	*(gint64*)margs->retval = res;
 
@@ -208,8 +634,8 @@ wasm_invoke_lil (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_lilii (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(int arg_0, gint64 arg_1, int arg_2, int arg_3) = target_func;
-
+	typedef gint64 (*T)(int arg_0, gint64 arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
 	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3], (int)margs->iargs [4]);
 	*(gint64*)margs->retval = res;
 
@@ -218,9 +644,19 @@ wasm_invoke_lilii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_dd (void *target_func, InterpMethodArguments *margs)
 {
-	double (*func)(double arg_0) = target_func;
-
+	typedef double (*T)(double arg_0);
+	T func = (T)target_func;
 	double res = func (margs->fargs [FIDX (0)]);
+	*(double*)margs->retval = res;
+
+}
+
+static void
+wasm_invoke_ddi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef double (*T)(double arg_0, int arg_1);
+	T func = (T)target_func;
+	double res = func (margs->fargs [FIDX (0)], (int)margs->iargs [0]);
 	*(double*)margs->retval = res;
 
 }
@@ -228,8 +664,8 @@ wasm_invoke_dd (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_ddd (void *target_func, InterpMethodArguments *margs)
 {
-	double (*func)(double arg_0, double arg_1) = target_func;
-
+	typedef double (*T)(double arg_0, double arg_1);
+	T func = (T)target_func;
 	double res = func (margs->fargs [FIDX (0)], margs->fargs [FIDX (1)]);
 	*(double*)margs->retval = res;
 
@@ -238,8 +674,8 @@ wasm_invoke_ddd (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vif (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, float arg_1) = target_func;
-
+	typedef void (*T)(int arg_0, float arg_1);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
 
 }
@@ -247,8 +683,8 @@ wasm_invoke_vif (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viff (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, float arg_1, float arg_2) = target_func;
-
+	typedef void (*T)(int arg_0, float arg_1, float arg_2);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 
 }
@@ -256,8 +692,8 @@ wasm_invoke_viff (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_viffff (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4) = target_func;
-
+	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)]);
 
 }
@@ -265,17 +701,26 @@ wasm_invoke_viffff (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vifffffi (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, int arg_6) = target_func;
-
+	typedef void (*T)(int arg_0, float arg_1, float arg_2, float arg_3, float arg_4, float arg_5, int arg_6);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], *(float*)&margs->fargs [FIDX (2)], *(float*)&margs->fargs [FIDX (3)], *(float*)&margs->fargs [FIDX (4)], (int)margs->iargs [1]);
+
+}
+
+static void
+wasm_invoke_viiffi (void *target_func, InterpMethodArguments *margs)
+{
+	typedef void (*T)(int arg_0, int arg_1, float arg_2, float arg_3, int arg_4);
+	T func = (T)target_func;
+	func ((int)margs->iargs [0], (int)margs->iargs [1], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)], (int)margs->iargs [2]);
 
 }
 
 static void
 wasm_invoke_ff (void *target_func, InterpMethodArguments *margs)
 {
-	float (*func)(float arg_0) = target_func;
-
+	typedef float (*T)(float arg_0);
+	T func = (T)target_func;
 	float res = func (*(float*)&margs->fargs [FIDX (0)]);
 	*(float*)margs->retval = res;
 
@@ -284,8 +729,8 @@ wasm_invoke_ff (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_fff (void *target_func, InterpMethodArguments *margs)
 {
-	float (*func)(float arg_0, float arg_1) = target_func;
-
+	typedef float (*T)(float arg_0, float arg_1);
+	T func = (T)target_func;
 	float res = func (*(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 	*(float*)margs->retval = res;
 
@@ -294,8 +739,8 @@ wasm_invoke_fff (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_di (void *target_func, InterpMethodArguments *margs)
 {
-	double (*func)(int arg_0) = target_func;
-
+	typedef double (*T)(int arg_0);
+	T func = (T)target_func;
 	double res = func ((int)margs->iargs [0]);
 	*(double*)margs->retval = res;
 
@@ -304,8 +749,8 @@ wasm_invoke_di (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_fi (void *target_func, InterpMethodArguments *margs)
 {
-	float (*func)(int arg_0) = target_func;
-
+	typedef float (*T)(int arg_0);
+	T func = (T)target_func;
 	float res = func ((int)margs->iargs [0]);
 	*(float*)margs->retval = res;
 
@@ -314,8 +759,8 @@ wasm_invoke_fi (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iil (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, gint64 arg_1) = target_func;
-
+	typedef int (*T)(int arg_0, gint64 arg_1);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1));
 	*(int*)margs->retval = res;
 
@@ -324,8 +769,8 @@ wasm_invoke_iil (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iili (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, gint64 arg_1, int arg_2) = target_func;
-
+	typedef int (*T)(int arg_0, gint64 arg_1, int arg_2);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), (int)margs->iargs [3]);
 	*(int*)margs->retval = res;
 
@@ -334,8 +779,8 @@ wasm_invoke_iili (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_iillli (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(int arg_0, gint64 arg_1, gint64 arg_2, gint64 arg_3, int arg_4) = target_func;
-
+	typedef int (*T)(int arg_0, gint64 arg_1, gint64 arg_2, gint64 arg_3, int arg_4);
+	T func = (T)target_func;
 	int res = func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), get_long_arg (margs, 5), (int)margs->iargs [7]);
 	*(int*)margs->retval = res;
 
@@ -344,8 +789,8 @@ wasm_invoke_iillli (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_idiii (void *target_func, InterpMethodArguments *margs)
 {
-	int (*func)(double arg_0, int arg_1, int arg_2, int arg_3) = target_func;
-
+	typedef int (*T)(double arg_0, int arg_1, int arg_2, int arg_3);
+	T func = (T)target_func;
 	int res = func (margs->fargs [FIDX (0)], (int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2]);
 	*(int*)margs->retval = res;
 
@@ -354,8 +799,8 @@ wasm_invoke_idiii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_lii (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(int arg_0, int arg_1) = target_func;
-
+	typedef gint64 (*T)(int arg_0, int arg_1);
+	T func = (T)target_func;
 	gint64 res = func ((int)margs->iargs [0], (int)margs->iargs [1]);
 	*(gint64*)margs->retval = res;
 
@@ -364,26 +809,17 @@ wasm_invoke_lii (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vid (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, double arg_1) = target_func;
-
+	typedef void (*T)(int arg_0, double arg_1);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], margs->fargs [FIDX (0)]);
-
-}
-
-static void
-wasm_invoke_viiiiiii (void *target_func, InterpMethodArguments *margs)
-{
-	void (*func)(int arg_0, int arg_1, int arg_2, int arg_3, int arg_4, int arg_5, int arg_6) = target_func;
-
-	func ((int)margs->iargs [0], (int)margs->iargs [1], (int)margs->iargs [2], (int)margs->iargs [3], (int)margs->iargs [4], (int)margs->iargs [5], (int)margs->iargs [6]);
 
 }
 
 static void
 wasm_invoke_villi (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3) = target_func;
-
+	typedef void (*T)(int arg_0, gint64 arg_1, gint64 arg_2, int arg_3);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3), (int)margs->iargs [5]);
 
 }
@@ -391,8 +827,8 @@ wasm_invoke_villi (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_did (void *target_func, InterpMethodArguments *margs)
 {
-	double (*func)(int arg_0, double arg_1) = target_func;
-
+	typedef double (*T)(int arg_0, double arg_1);
+	T func = (T)target_func;
 	double res = func ((int)margs->iargs [0], margs->fargs [FIDX (0)]);
 	*(double*)margs->retval = res;
 
@@ -401,8 +837,8 @@ wasm_invoke_did (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_didd (void *target_func, InterpMethodArguments *margs)
 {
-	double (*func)(int arg_0, double arg_1, double arg_2) = target_func;
-
+	typedef double (*T)(int arg_0, double arg_1, double arg_2);
+	T func = (T)target_func;
 	double res = func ((int)margs->iargs [0], margs->fargs [FIDX (0)], margs->fargs [FIDX (1)]);
 	*(double*)margs->retval = res;
 
@@ -411,8 +847,8 @@ wasm_invoke_didd (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_fif (void *target_func, InterpMethodArguments *margs)
 {
-	float (*func)(int arg_0, float arg_1) = target_func;
-
+	typedef float (*T)(int arg_0, float arg_1);
+	T func = (T)target_func;
 	float res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)]);
 	*(float*)margs->retval = res;
 
@@ -421,8 +857,8 @@ wasm_invoke_fif (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_fiff (void *target_func, InterpMethodArguments *margs)
 {
-	float (*func)(int arg_0, float arg_1, float arg_2) = target_func;
-
+	typedef float (*T)(int arg_0, float arg_1, float arg_2);
+	T func = (T)target_func;
 	float res = func ((int)margs->iargs [0], *(float*)&margs->fargs [FIDX (0)], *(float*)&margs->fargs [FIDX (1)]);
 	*(float*)margs->retval = res;
 
@@ -431,8 +867,8 @@ wasm_invoke_fiff (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_lill (void *target_func, InterpMethodArguments *margs)
 {
-	gint64 (*func)(int arg_0, gint64 arg_1, gint64 arg_2) = target_func;
-
+	typedef gint64 (*T)(int arg_0, gint64 arg_1, gint64 arg_2);
+	T func = (T)target_func;
 	gint64 res = func ((int)margs->iargs [0], get_long_arg (margs, 1), get_long_arg (margs, 3));
 	*(gint64*)margs->retval = res;
 
@@ -441,8 +877,8 @@ wasm_invoke_lill (void *target_func, InterpMethodArguments *margs)
 static void
 wasm_invoke_vil (void *target_func, InterpMethodArguments *margs)
 {
-	void (*func)(int arg_0, gint64 arg_1) = target_func;
-
+	typedef void (*T)(int arg_0, gint64 arg_1);
+	T func = (T)target_func;
 	func ((int)margs->iargs [0], get_long_arg (margs, 1));
 
 }
@@ -464,6 +900,14 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_viiiii (target_func, margs);
 	else if (!strcmp ("VIIIIII", cookie))
 		wasm_invoke_viiiiii (target_func, margs);
+	else if (!strcmp ("VIIIIIII", cookie))
+		wasm_invoke_viiiiiii (target_func, margs);
+	else if (!strcmp ("VIIIIIIII", cookie))
+		wasm_invoke_viiiiiiii (target_func, margs);
+	else if (!strcmp ("VIIIIIIIII", cookie))
+		wasm_invoke_viiiiiiiii (target_func, margs);
+	else if (!strcmp ("VIIIIIIIIII", cookie))
+		wasm_invoke_viiiiiiiiii (target_func, margs);
 	else if (!strcmp ("I", cookie))
 		wasm_invoke_i (target_func, margs);
 	else if (!strcmp ("II", cookie))
@@ -482,8 +926,86 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_iiiiiiii (target_func, margs);
 	else if (!strcmp ("IIIIIIIII", cookie))
 		wasm_invoke_iiiiiiiii (target_func, margs);
+	else if (!strcmp ("IIIIIIIIII", cookie))
+		wasm_invoke_iiiiiiiiii (target_func, margs);
+	else if (!strcmp ("IIIIIIIIIII", cookie))
+		wasm_invoke_iiiiiiiiiii (target_func, margs);
+	else if (!strcmp ("IIIIIIIIIIII", cookie))
+		wasm_invoke_iiiiiiiiiiii (target_func, margs);
+	else if (!strcmp ("IIIIIIIIIIIII", cookie))
+		wasm_invoke_iiiiiiiiiiiii (target_func, margs);
+	else if (!strcmp ("IIIIIIIIIIIIII", cookie))
+		wasm_invoke_iiiiiiiiiiiiii (target_func, margs);
 	else if (!strcmp ("IILIIII", cookie))
 		wasm_invoke_iiliiii (target_func, margs);
+	else if (!strcmp ("IIF", cookie))
+		wasm_invoke_iif (target_func, margs);
+	else if (!strcmp ("IIFI", cookie))
+		wasm_invoke_iifi (target_func, margs);
+	else if (!strcmp ("IIFF", cookie))
+		wasm_invoke_iiff (target_func, margs);
+	else if (!strcmp ("IFFII", cookie))
+		wasm_invoke_iffii (target_func, margs);
+	else if (!strcmp ("IIFII", cookie))
+		wasm_invoke_iifii (target_func, margs);
+	else if (!strcmp ("IIFFI", cookie))
+		wasm_invoke_iiffi (target_func, margs);
+	else if (!strcmp ("IIFFF", cookie))
+		wasm_invoke_iifff (target_func, margs);
+	else if (!strcmp ("IIFFFI", cookie))
+		wasm_invoke_iifffi (target_func, margs);
+	else if (!strcmp ("IIFFII", cookie))
+		wasm_invoke_iiffii (target_func, margs);
+	else if (!strcmp ("IIFIII", cookie))
+		wasm_invoke_iifiii (target_func, margs);
+	else if (!strcmp ("IIFFFFI", cookie))
+		wasm_invoke_iiffffi (target_func, margs);
+	else if (!strcmp ("IIFFFFII", cookie))
+		wasm_invoke_iiffffii (target_func, margs);
+	else if (!strcmp ("IIIF", cookie))
+		wasm_invoke_iiif (target_func, margs);
+	else if (!strcmp ("IIIFI", cookie))
+		wasm_invoke_iiifi (target_func, margs);
+	else if (!strcmp ("IIIFII", cookie))
+		wasm_invoke_iiifii (target_func, margs);
+	else if (!strcmp ("IIIFIII", cookie))
+		wasm_invoke_iiifiii (target_func, margs);
+	else if (!strcmp ("IIIIF", cookie))
+		wasm_invoke_iiiif (target_func, margs);
+	else if (!strcmp ("IIIIFI", cookie))
+		wasm_invoke_iiiifi (target_func, margs);
+	else if (!strcmp ("IIIIFII", cookie))
+		wasm_invoke_iiiifii (target_func, margs);
+	else if (!strcmp ("IIIIFIII", cookie))
+		wasm_invoke_iiiifiii (target_func, margs);
+	else if (!strcmp ("IIIFFFF", cookie))
+		wasm_invoke_iiiffff (target_func, margs);
+	else if (!strcmp ("IIIFFFFF", cookie))
+		wasm_invoke_iiifffff (target_func, margs);
+	else if (!strcmp ("IIFFFFFF", cookie))
+		wasm_invoke_iiffffff (target_func, margs);
+	else if (!strcmp ("IIIFFFFFF", cookie))
+		wasm_invoke_iiiffffff (target_func, margs);
+	else if (!strcmp ("IIIIIIIF", cookie))
+		wasm_invoke_iiiiiiif (target_func, margs);
+	else if (!strcmp ("IIIIIIIFF", cookie))
+		wasm_invoke_iiiiiiiff (target_func, margs);
+	else if (!strcmp ("IIFFFFFFFF", cookie))
+		wasm_invoke_iiffffffff (target_func, margs);
+	else if (!strcmp ("IIIFFFFFFFF", cookie))
+		wasm_invoke_iiiffffffff (target_func, margs);
+	else if (!strcmp ("IIIIIIFII", cookie))
+		wasm_invoke_iiiiiifii (target_func, margs);
+	else if (!strcmp ("IIIFFFFFFFFIII", cookie))
+		wasm_invoke_iiiffffffffiii (target_func, margs);
+	else if (!strcmp ("IIIIIFFFFIIII", cookie))
+		wasm_invoke_iiiiiffffiiii (target_func, margs);
+	else if (!strcmp ("IFFFFFFI", cookie))
+		wasm_invoke_iffffffi (target_func, margs);
+	else if (!strcmp ("IIFFIII", cookie))
+		wasm_invoke_iiffiii (target_func, margs);
+	else if (!strcmp ("ILI", cookie))
+		wasm_invoke_ili (target_func, margs);
 	else if (!strcmp ("L", cookie))
 		wasm_invoke_l (target_func, margs);
 	else if (!strcmp ("LL", cookie))
@@ -496,6 +1018,8 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_lilii (target_func, margs);
 	else if (!strcmp ("DD", cookie))
 		wasm_invoke_dd (target_func, margs);
+	else if (!strcmp ("DDI", cookie))
+		wasm_invoke_ddi (target_func, margs);
 	else if (!strcmp ("DDD", cookie))
 		wasm_invoke_ddd (target_func, margs);
 	else if (!strcmp ("VIF", cookie))
@@ -506,6 +1030,8 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_viffff (target_func, margs);
 	else if (!strcmp ("VIFFFFFI", cookie))
 		wasm_invoke_vifffffi (target_func, margs);
+	else if (!strcmp ("VIIFFI", cookie))
+		wasm_invoke_viiffi (target_func, margs);
 	else if (!strcmp ("FF", cookie))
 		wasm_invoke_ff (target_func, margs);
 	else if (!strcmp ("FFF", cookie))
@@ -526,8 +1052,6 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		wasm_invoke_lii (target_func, margs);
 	else if (!strcmp ("VID", cookie))
 		wasm_invoke_vid (target_func, margs);
-	else if (!strcmp ("VIIIIIII", cookie))
-		wasm_invoke_viiiiiii (target_func, margs);
 	else if (!strcmp ("VILLI", cookie))
 		wasm_invoke_villi (target_func, margs);
 	else if (!strcmp ("DID", cookie))

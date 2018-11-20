@@ -89,6 +89,7 @@ stamp-h.in
 *~
 *.swp
 *.o
+*.dylib
 .deps
 .libs
 
@@ -132,3 +133,5 @@ tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
 *.mlpd
+llvm/build/
+llvm/usr/

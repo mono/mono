@@ -9,7 +9,7 @@ def commitHash = null
 def utils = null
 properties([compressBuildLog()])
 
-node ("osx-amd64") {
+node ("mono-package") {
     ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
@@ -29,19 +29,6 @@ node ("osx-amd64") {
                 stage('Build') {
                     utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'PKG-mono', env.BUILD_URL, 'PENDING', 'Building...')
 
-                    // install openssl for .net core (remove once msbuild uses a 2.x version which doesn't rely on openssl)
-                    sh 'brew update && brew install openssl'
-                    sh 'mkdir -p /usr/local/lib'
-                    sh 'rm /usr/local/lib/libcrypto.1.0.0.dylib || true'
-                    sh 'rm /usr/local/lib/libssl.1.0.0.dylib || true'
-                    sh 'ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/'
-                    sh 'ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/'
-
-
-                    // workaround for libtiff issue
-                    sh 'make -C external/bockbuild/builds/tiff-4.0.8-x86 clean || true'
-                    sh 'make -C external/bockbuild/builds/tiff-4.0.8-x64 clean || true'
-
                     // build the .pkg
                     timeout (time: 420, unit: 'MINUTES') {
                         withEnv (["MONO_BRANCH=${isPr ? '' : monoBranch}", "MONO_BUILD_REVISION=${commitHash}"]) {
@@ -56,23 +43,15 @@ node ("osx-amd64") {
                     packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0].name
                 }
                 stage('Upload .pkg to Azure') {
-                    step([
-                        $class: 'WAStoragePublisher',
-                        allowAnonymousAccess: true,
-                        cleanUpContainer: false,
-                        cntPubAccess: true,
-                        containerName: "${jobName}",
-                        doNotFailIfArchivingReturnsNothing: false,
-                        doNotUploadIndividualFiles: false,
-                        doNotWaitForPreviousBuild: true,
-                        excludeFilesPath: '',
-                        filesPath: "${packageFileName}",
-                        storageAccName: 'credential for xamjenkinsartifact',
-                        storageCredentialId: 'fbd29020e8166fbede5518e038544343',
-                        uploadArtifactsOnlyIfSuccessful: true,
-                        uploadZips: false,
-                        virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/"
-                    ])
+                    azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
+                                storageType: "blobstorage",
+                                containerName: "${jobName}",
+                                virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/",
+                                filesPath: "${packageFileName}",
+                                allowAnonymousAccess: true,
+                                pubAccessible: true,
+                                doNotWaitForPreviousBuild: true,
+                                uploadArtifactsOnlyIfSuccessful: true)
                 }
 
                 if (isReleaseJob) {
@@ -103,11 +82,11 @@ node ("osx-amd64") {
 }
 
 if (!isPr || isWindowsPrBuild) {
-    def parameters = null
+    def parameters = [[$class: 'StringParameterValue', name: 'sha1', value: commitHash]]
+
     if (isWindowsPrBuild) {
-        parameters = [[$class: 'StringParameterValue', name: 'sha1', value: commitHash],
-                      [$class: 'StringParameterValue', name: 'ghprbPullId', value: env.ghprbPullId],
-                      [$class: 'StringParameterValue', name: 'ghprbActualCommit', value: env.ghprbActualCommit]]
+        parameters += [$class: 'StringParameterValue', name: 'ghprbPullId', value: env.ghprbPullId]
+        parameters += [$class: 'StringParameterValue', name: 'ghprbActualCommit', value: env.ghprbActualCommit]
     }
 
     // trigger the Windows build
