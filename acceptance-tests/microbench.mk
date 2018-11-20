@@ -20,9 +20,21 @@ run-microbench-$(1):: DebianShootoutMono.stamp
 	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
 	$(NET_4_X_RUNTIME) \
-	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1) $(MONO_BENCH_GIST_URL)
+	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
 
 test-run-microbench:: run-microbench-$(1)
+
+run-microbench-debug-$(1):: DebianShootoutMono.stamp
+	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
+	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
+	MONO_BENCH_PROFILE_PREFIX="$(PROFILE_TOOL)"\
+	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
+	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
+	MONO_BENCH_INPUT="$(2)" \
+	$(NET_4_X_RUNTIME) \
+	$(TEST_EXE_PATH)/DebianShootoutMono.exe Run $(1)
+
+test-run-microbench-debug:: run-microbench-debug-$(1)
 
 if HOST_LINUX
 run-microbench-profiled-$(1):: microbench-results/$(1).perf.data 
