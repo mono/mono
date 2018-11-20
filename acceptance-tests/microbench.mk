@@ -13,26 +13,23 @@ FULL_AOT_RUNTIME=MONO_PATH=$(abs_top_srcdir)/mcs/class/lib/testing_aot_full $(ab
 PERF_RUNTIME=$(abs_top_srcdir)/acceptance-tests/microbench-perf.sh
 
 define BenchmarkDotNetTemplate
+
 run-microbench-$(1):: DebianShootoutMono.stamp
 	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
 	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
-	MONO_BENCH_PROFILE_PREFIX="$(PROFILE_TOOL)"\
 	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
+	MONO_BENCH_INPUT="$(2)" \
 	$(NET_4_X_RUNTIME) \
 	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1)
 
 test-run-microbench:: run-microbench-$(1)
 
 run-microbench-debug-$(1):: DebianShootoutMono.stamp
-	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
-	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
-	MONO_BENCH_PROFILE_PREFIX="$(PROFILE_TOOL)"\
-	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
-	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
+	echo MONO_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" $(abs_top_srcdir)/runtime/mono-wrapper $(AOT_BUILD_FLAGS) $(TEST_EXE_PATH)/DebianShootoutMono.exe
 	MONO_BENCH_INPUT="$(2)" \
-	$(NET_4_X_RUNTIME) \
-	$(TEST_EXE_PATH)/DebianShootoutMono.exe Run $(1)
+	MONO_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
+	$(abs_top_srcdir)/runtime/mono-wrapper $(AOT_RUN_FLAGS) $(TEST_EXE_PATH)/DebianShootoutMono.exe Run $(1)
 
 test-run-microbench-debug:: run-microbench-debug-$(1)
 
@@ -45,8 +42,9 @@ microbench-results/$(1).perf.data: DebianShootoutMono.stamp
 	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
 	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
+	MONO_BENCH_INPUT="$(2)" \
 	$(NET_4_X_RUNTIME) \
-	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1) $(MONO_BENCH_GIST_URL)
+	$(TEST_EXE_PATH)/DebianShootoutMono.exe $(1) $(2)
 	mv perf.data microbench-results/$(1).perf.data
 
 microbench-results/$(1).tmp.perf: microbench-results/$(1).perf.data
@@ -96,14 +94,19 @@ prepare-dlls:
 
 endif
 
-$(eval $(call BenchmarkDotNetTemplate,BinaryTrees))
-$(eval $(call BenchmarkDotNetTemplate,NBody))
-$(eval $(call BenchmarkDotNetTemplate,Mandelbrot))
-$(eval $(call BenchmarkDotNetTemplate,RegexRedux))
-$(eval $(call BenchmarkDotNetTemplate,SpectralNorm))
-$(eval $(call BenchmarkDotNetTemplate,Fannkuchredux))
-$(eval $(call BenchmarkDotNetTemplate,Fasta))
-$(eval $(call BenchmarkDotNetTemplate,KNucleotide))
-$(eval $(call BenchmarkDotNetTemplate,RevComp))
-$(eval $(call BenchmarkDotNetTemplate,GistBenchmark))
+FIXTURE_DIR=$(abs_top_srcdir)/acceptance-tests/external/DebianShootoutMono/fixtures
+
+$(eval $(call BenchmarkDotNetTemplate,Mandelbrot,))
+$(eval $(call BenchmarkDotNetTemplate,RegexRedux,$(FIXTURE_DIR)/regexredux-input.txt))
+$(eval $(call BenchmarkDotNetTemplate,KNucleotide,$(FIXTURE_DIR)/knucleotide-input.txt))
+
+$(eval $(call BenchmarkDotNetTemplate,BinaryTrees,))
+$(eval $(call BenchmarkDotNetTemplate,NBodyTest,))
+$(eval $(call BenchmarkDotNetTemplate,SpectralNorm,))
+$(eval $(call BenchmarkDotNetTemplate,Fannkuchredux,))
+$(eval $(call BenchmarkDotNetTemplate,Fasta,))
+
+$(eval $(call BenchmarkDotNetTemplate,RevComp,$(FIXTURE_DIR)/revcomp-input.txt)) 
+
+#$(eval $(call BenchmarkDotNetTemplate,GistBenchmark,$(MONO_BENCH_GIST_URL))) broken in BDN, bug filed
 
