@@ -6232,6 +6232,8 @@ mono_ee_interp_init (const char *opts)
 	set_context (NULL);
 
 	interp_parse_options (opts);
+	if (mini_get_debug_options ()->mdb_optimizations)
+		mono_interp_opt &= ~INTERP_OPT_INLINE;
 	mono_interp_transform_init ();
 
 	MonoEECallbacks c;
