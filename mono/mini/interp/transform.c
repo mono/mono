@@ -5407,13 +5407,10 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 {
 	int i, offset;
 	MonoMethod *method = imethod->method;
-	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodHeader *header = NULL;
 	MonoMethodSignature *signature = mono_method_signature_internal (method);
 	const unsigned char *ip, *end;
 	const MonoOpcode *opcode;
-	MonoMethod *m;
-	MonoClass *klass;
 	unsigned char *is_bb_start;
 	int in;
 	MonoVTable *method_class_vt;
@@ -5531,47 +5528,12 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 			++ip;
 			break;
 		case MonoInlineString:
-			if (method->wrapper_type == MONO_WRAPPER_NONE) {
-				mono_ldstr_checked (domain, image, mono_metadata_token_index (read32 (ip + 1)), error);
-				if (!is_ok (error)) {
-					g_free (is_bb_start);
-					mono_metadata_free_mh (header);
-					return;
-				}
-			}
 			ip += 5;
 			break;
 		case MonoInlineType:
-			if (method->wrapper_type == MONO_WRAPPER_NONE) {
-				klass = mini_get_class (method, read32 (ip + 1), generic_context);
-				mono_class_init (klass);
-				/* quick fix to not do this for the fake ptr classes - probably should not be getting the vtable at all here */
-#if 0
-				g_error ("FIXME: interface method lookup: %s (in method %s)", klass->name, method->name);
-				if (!(klass->flags & TYPE_ATTRIBUTE_INTERFACE) && klass->interface_offsets != NULL)
-					mono_class_vtable (domain, klass);
-#endif
-			}
 			ip += 5;
 			break;
 		case MonoInlineMethod:
-			if (method->wrapper_type == MONO_WRAPPER_NONE && *ip != CEE_CALLI) {
-				m = mono_get_method_checked (image, read32 (ip + 1), NULL, generic_context, error);
-				if (!is_ok (error)) {
-					g_free (is_bb_start);
-					mono_metadata_free_mh (header);
-					return;
-				}
-				mono_class_init (m->klass);
-				if (!mono_class_is_interface (m->klass)) {
-					mono_class_vtable_checked (domain, m->klass, error);
-					if (!is_ok (error)) {
-						g_free (is_bb_start);
-						mono_metadata_free_mh (header);
-						return;
-					}
-				}
-			}
 			ip += 5;
 			break;
 		case MonoInlineField:
