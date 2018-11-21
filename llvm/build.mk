@@ -12,13 +12,11 @@ LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
 
-$(LLVM_BUILD) $(LLVM_PREFIX):
-	mkdir -p $@
-
 EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="WebAssembly",)
 
 # -DLLVM_ENABLE_LIBXML2=Off is needed because xml2 is not used and it breaks 32-bit builds on 64-bit Linux hosts
-$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/llvm/CMakeLists.txt | $(LLVM_BUILD) $(LLVM_PREFIX)
+$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/llvm/CMakeLists.txt
+	mkdir -p $(LLVM_BUILD) $(LLVM_PREFIX)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
 		-DCMAKE_INSTALL_PREFIX="$(LLVM_PREFIX)" \
@@ -34,7 +32,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/ll
 		-DLLVM_ENABLE_LIBXML2=Off \
 		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \
-		$(abs_top_srcdir)/external/llvm
+		$(dir $<)
 
 .PHONY: configure-llvm
 configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
@@ -47,7 +45,7 @@ build-llvm: configure-llvm
 	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
 
 .PHONY: install-llvm
-install-llvm: build-llvm | $(LLVM_PREFIX)
+install-llvm: build-llvm
 	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD) install
 
 .PHONY: download-llvm
