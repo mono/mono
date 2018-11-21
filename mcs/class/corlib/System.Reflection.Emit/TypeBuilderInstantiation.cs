@@ -492,6 +492,8 @@ namespace System.Reflection.Emit
 		}
 
 		public override bool IsTypeDefinition => false;
+
+		public override bool IsConstructedGenericType => true;
 	}
 }
 #else
