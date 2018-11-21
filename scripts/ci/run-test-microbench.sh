@@ -8,7 +8,7 @@ if [ -z "$MONO_BENCH_GIST_URL"]; then
 	${TESTCMD} --label=microbenchmark-BinaryTrees --timeout=40m make -C acceptance-tests run-microbench-BinaryTrees
 	${TESTCMD} --label=microbenchmark-Fannkuchredux --timeout=40m make -C acceptance-tests run-microbench-Fannkuchredux
 	${TESTCMD} --label=microbenchmark-Fasta --timeout=40m make -C acceptance-tests run-microbench-Fasta
-	${TESTCMD} --label=microbenchmark-NBody --timeout=40m make -C acceptance-tests run-microbench-NBody
+	${TESTCMD} --label=microbenchmark-NBodyTest --timeout=40m make -C acceptance-tests run-microbench-NBodyTest
 	${TESTCMD} --label=microbenchmark-Mandelbrot --timeout=40m make -C acceptance-tests run-microbench-Mandelbrot
 	${TESTCMD} --label=microbenchmark-RegexRedux --timeout=40m make -C acceptance-tests run-microbench-RegexRedux
 	${TESTCMD} --label=microbenchmark-RevComp --timeout=40m make -C acceptance-tests run-microbench-RevComp
@@ -26,7 +26,7 @@ if [[ ${CI_TAGS} == *'linux-'* ]]; then
 		${TESTCMD} --label=microbench-profiled-BinaryTrees   --timeout=40m make -C acceptance-tests run-microbench-profiled-BinaryTrees
 		${TESTCMD} --label=microbench-profiled-Fannkuchredux --timeout=40m make -C acceptance-tests run-microbench-profiled-Fannkuchredux
 		${TESTCMD} --label=microbench-profiled-Fasta         --timeout=40m make -C acceptance-tests run-microbench-profiled-Fasta
-		${TESTCMD} --label=microbench-profiled-NBody         --timeout=40m make -C acceptance-tests run-microbench-profiled-NBody
+		${TESTCMD} --label=microbench-profiled-NBodyTest         --timeout=40m make -C acceptance-tests run-microbench-profiled-NBodyTest
 		${TESTCMD} --label=microbench-profiled-Mandelbrot    --timeout=40m make -C acceptance-tests run-microbench-profiled-Mandelbrot
 		${TESTCMD} --label=microbench-profiled-RegexRedux    --timeout=40m make -C acceptance-tests run-microbench-profiled-RegexRedux
 		${TESTCMD} --label=microbench-profiled-RevComp       --timeout=40m make -C acceptance-tests run-microbench-profiled-RevComp
