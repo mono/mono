@@ -1272,22 +1272,13 @@ const char* il2cpp_domain_get_name(MonoDomain* domain)
 	return ((Il2CppDomain*)domain)->friendly_name;
 }
 
-Il2CppSequencePoint* il2cpp_get_sequence_points(void* *iter)
-{
-#if IL2CPP_MONO_DEBUGGER
-	return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
-#else
-    return NULL;
-#endif
-}
-
 Il2CppSequencePoint* il2cpp_get_method_sequence_points(MonoMethod* method, void* *iter)
 {
 #if IL2CPP_MONO_DEBUGGER
-	if (!method)
-		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints(iter);
-	else
-		return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
+    if (method == NULL)
+        return il2cpp::utils::Debugger::GetAllSequencePoints (iter);
+    else
+	    return (Il2CppSequencePoint*)il2cpp::utils::Debugger::GetSequencePoints((const MethodInfo*)method, iter);
 #else
     return NULL;
 #endif
@@ -1477,10 +1468,10 @@ MonoClass* il2cpp_mono_get_string_class (void)
 	return (MonoClass*)il2cpp_defaults.string_class;
 }
 
-Il2CppSequencePoint* il2cpp_get_sequence_point(int id)
+Il2CppSequencePoint* il2cpp_get_sequence_point(MonoImage* image, int id)
 {
 #if IL2CPP_MONO_DEBUGGER
-    return il2cpp::utils::Debugger::GetSequencePoint(id);
+    return il2cpp::utils::Debugger::GetSequencePoint(image, id);
 #else
     return NULL;
 #endif
@@ -1563,6 +1554,21 @@ mono_bool il2cpp_m_class_is_initialized (MonoClass* klass)
 MonoType* il2cpp_mono_class_get_byref_type (MonoClass *klass)
 {
     return (MonoType*)il2cpp::vm::Class::GetByrefType((Il2CppClass*)klass);
+}
+
+Il2CppSequencePointSourceFile* il2cpp_debug_get_source_file(MonoImage* image, int index)
+{
+	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->sequencePointSourceFiles + index;
+}
+
+const char* il2cpp_debug_get_local_name(MonoImage* image, int index)
+{
+	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->methodExecutionContextInfoStrings[index];
+}
+
+Il2CppMethodScope* il2cpp_debug_get_local_scope(MonoImage* image, int index)
+{
+	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->methodScopes + index;
 }
 
 }

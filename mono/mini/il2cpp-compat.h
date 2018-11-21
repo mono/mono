@@ -446,7 +446,6 @@ void il2cpp_mono_error_cleanup (MonoError *oerror);
 MonoException* il2cpp_mono_error_convert_to_exception (MonoError *target_error);
 const char* il2cpp_mono_error_get_message (MonoError *oerror);
 void il2cpp_mono_error_assert_ok_pos (MonoError *error, const char* filename, int lineno);
-Il2CppSequencePoint* il2cpp_get_sequence_points(void* *iter);
 Il2CppSequencePoint* il2cpp_get_method_sequence_points(MonoMethod* method, void* *iter);
 MonoClass* il2cpp_class_get_nested_types_accepts_generic(MonoClass *monoClass, void* *iter);
 MonoClass* il2cpp_defaults_object_class();
@@ -469,7 +468,7 @@ MonoGenericInst* il2cpp_method_get_generic_class_inst(MonoMethodInflated *imetho
 MonoClass* il2cpp_generic_class_get_container_class(MonoGenericClass *gclass);
 void il2cpp_mono_thread_detach(MonoThread* thread);
 MonoClass* il2cpp_mono_get_string_class (void);
-Il2CppSequencePoint* il2cpp_get_sequence_point(int id);
+Il2CppSequencePoint* il2cpp_get_sequence_point(MonoImage* image, int id);
 char* il2cpp_assembly_get_full_name(MonoAssembly *assembly);
 const MonoMethod* il2cpp_get_seq_point_method(Il2CppSequencePoint *seqPoint);
 const MonoClass* il2cpp_get_class_from_index(int index);
@@ -485,4 +484,7 @@ MonoGenericClass* il2cpp_m_type_get_generic_class(MonoType* type);
 const MonoAssembly* il2cpp_m_method_get_assembly(MonoMethod* method);
 const MonoAssembly* il2cpp_m_domain_get_corlib (MonoDomain *domain);
 mono_bool il2cpp_m_class_is_initialized (MonoClass* klass);
+Il2CppSequencePointSourceFile* il2cpp_debug_get_source_file(MonoImage* image, int index);
+const char* il2cpp_debug_get_local_name(MonoImage* image, int index);
+Il2CppMethodScope* il2cpp_debug_get_local_scope(MonoImage* image, int index);
 #endif // RUNTIME_IL2CPP
