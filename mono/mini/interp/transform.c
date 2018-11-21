@@ -1385,6 +1385,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	const unsigned char *prev_ip, *prev_il_code, *prev_in_start;
 	StackInfo **prev_stack_state;
 	int *prev_stack_height, *prev_vt_stack_size, *prev_clause_indexes, *prev_in_offsets;
+	guint8 *prev_is_bb_start;
 	gboolean ret;
 	GPtrArray *prev_relocs;
 	unsigned int prev_max_stack_height, prev_max_vt_sp, prev_total_locals_size;
@@ -1429,6 +1430,8 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_in_offsets = td->in_offsets;
 	td->in_offsets = (int*)g_malloc0((header->code_size + 1) * sizeof(int));
 
+	prev_is_bb_start = td->is_bb_start;
+
 	/* Inlining pops the arguments, restore the stack */
 	prev_param_area = (StackInfo*)g_malloc (nargs * sizeof (StackInfo));
 	memcpy (prev_param_area, &td->sp [-nargs], nargs * sizeof (StackInfo));
@@ -1443,6 +1446,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		td->max_stack_height = prev_max_stack_height;
 		td->max_vt_sp = prev_max_vt_sp;
 		td->total_locals_size = prev_total_locals_size;
+
 
 		/* Remove any newly added items */
 		for (i = prev_n_data_items; i < td->n_data_items; i++) {
@@ -1465,6 +1469,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	td->vt_stack_size = prev_vt_stack_size;
 	td->clause_indexes = prev_clause_indexes;
 	td->relocs = prev_relocs;
+	td->is_bb_start = prev_is_bb_start;
 	td->inlined_method = prev_inlined_method;
 
 	g_free (td->in_offsets);
@@ -2292,6 +2297,99 @@ get_arg_type (MonoMethodSignature *signature, int arg_n)
 	return signature->params [arg_n - !!signature->hasthis];
 }
 
+static void
+init_bb_start (TransformData *td, MonoMethodHeader *header)
+{
+	const unsigned char *ip, *end;
+	const MonoOpcode *opcode;
+	int offset, i, in, backwards;
+
+	/* intern the strings in the method. */
+	ip = header->code;
+	end = ip + header->code_size;
+
+	td->is_bb_start [0] = 1;
+	while (ip < end) {
+		in = *ip;
+		if (in == 0xfe) {
+			ip++;
+			in = *ip + 256;
+		}
+		else if (in == 0xf0) {
+			ip++;
+			in = *ip + MONO_CEE_MONO_ICALL;
+		}
+		opcode = &mono_opcodes [in];
+		switch (opcode->argument) {
+		case MonoInlineNone:
+			++ip;
+			break;
+		case MonoInlineString:
+			ip += 5;
+			break;
+		case MonoInlineType:
+			ip += 5;
+			break;
+		case MonoInlineMethod:
+			ip += 5;
+			break;
+		case MonoInlineField:
+		case MonoInlineSig:
+		case MonoInlineI:
+		case MonoInlineTok:
+		case MonoShortInlineR:
+			ip += 5;
+			break;
+		case MonoInlineBrTarget:
+			offset = read32 (ip + 1);
+			ip += 5;
+			backwards = offset < 0;
+			offset += ip - header->code;
+			g_assert (offset >= 0 && offset < header->code_size);
+			td->is_bb_start [offset] |= backwards ? 2 : 1;
+			break;
+		case MonoShortInlineBrTarget:
+			offset = ((gint8 *)ip) [1];
+			ip += 2;
+			backwards = offset < 0;
+			offset += ip - header->code;
+			g_assert (offset >= 0 && offset < header->code_size);
+			td->is_bb_start [offset] |= backwards ? 2 : 1;
+			break;
+		case MonoInlineVar:
+			ip += 3;
+			break;
+		case MonoShortInlineVar:
+		case MonoShortInlineI:
+			ip += 2;
+			break;
+		case MonoInlineSwitch: {
+			guint32 n;
+			const unsigned char *next_ip;
+			++ip;
+			n = read32 (ip);
+			ip += 4;
+			next_ip = ip + 4 * n;
+			for (i = 0; i < n; i++) {
+				offset = read32 (ip);
+				backwards = offset < 0;
+				offset += next_ip - header->code;
+				g_assert (offset >= 0 && offset < header->code_size);
+				td->is_bb_start [offset] |= backwards ? 2 : 1;
+				ip += 4;
+			}
+			break;
+		}
+		case MonoInlineR:
+		case MonoInlineI8:
+			ip += 9;
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+}
+
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
 {
@@ -2329,7 +2427,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	td->stack_height = (int*)g_malloc(header->code_size * sizeof(int));
 	td->vt_stack_size = (int*)g_malloc(header->code_size * sizeof(int));
 	td->clause_indexes = (int*)g_malloc (header->code_size * sizeof (int));
+	td->is_bb_start = (guint8*)g_malloc0(header->code_size);
 	td->relocs = g_ptr_array_new ();
+
+	init_bb_start (td, header);
 
 	for (i = 0; i < header->code_size; i++) {
 		td->stack_height [i] = -1;
@@ -5237,6 +5338,7 @@ exit_ret:
 	g_free (td->stack_height);
 	g_free (td->vt_stack_size);
 	g_free (td->clause_indexes);
+	g_free (td->is_bb_start);
 	g_ptr_array_free (td->relocs, TRUE);
 
 	return ret;
@@ -5246,7 +5348,7 @@ exit:
 }
 
 static void
-generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsigned char *is_bb_start, MonoGenericContext *generic_context, MonoError *error)
+generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoGenericContext *generic_context, MonoError *error)
 {
 	MonoDomain *domain = rtm->domain;
 	int i;
@@ -5265,7 +5367,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 
 	td->method = method;
 	td->rtm = rtm;
-	td->is_bb_start = is_bb_start;
 	td->code_size = header->code_size;
 	td->header = header;
 	td->max_code_size = td->code_size;
@@ -5405,16 +5506,10 @@ mono_interp_transform_init (void)
 void
 mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, MonoError *error)
 {
-	int i, offset;
 	MonoMethod *method = imethod->method;
 	MonoMethodHeader *header = NULL;
 	MonoMethodSignature *signature = mono_method_signature_internal (method);
-	const unsigned char *ip, *end;
-	const MonoOpcode *opcode;
-	unsigned char *is_bb_start;
-	int in;
 	MonoVTable *method_class_vt;
-	int backwards;
 	MonoGenericContext *generic_context = NULL;
 	MonoDomain *domain = imethod->domain;
 	InterpMethod tmp_imethod;
@@ -5506,91 +5601,6 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	}
 
 	g_assert ((signature->param_count + signature->hasthis) < 1000);
-	/* intern the strings in the method. */
-	ip = header->code;
-	end = ip + header->code_size;
-
-	is_bb_start = (guint8*)g_malloc0(header->code_size);
-	is_bb_start [0] = 1;
-	while (ip < end) {
-		in = *ip;
-		if (in == 0xfe) {
-			ip++;
-			in = *ip + 256;
-		}
-		else if (in == 0xf0) {
-			ip++;
-			in = *ip + MONO_CEE_MONO_ICALL;
-		}
-		opcode = &mono_opcodes [in];
-		switch (opcode->argument) {
-		case MonoInlineNone:
-			++ip;
-			break;
-		case MonoInlineString:
-			ip += 5;
-			break;
-		case MonoInlineType:
-			ip += 5;
-			break;
-		case MonoInlineMethod:
-			ip += 5;
-			break;
-		case MonoInlineField:
-		case MonoInlineSig:
-		case MonoInlineI:
-		case MonoInlineTok:
-		case MonoShortInlineR:
-			ip += 5;
-			break;
-		case MonoInlineBrTarget:
-			offset = read32 (ip + 1);
-			ip += 5;
-			backwards = offset < 0;
-			offset += ip - header->code;
-			g_assert (offset >= 0 && offset < header->code_size);
-			is_bb_start [offset] |= backwards ? 2 : 1;
-			break;
-		case MonoShortInlineBrTarget:
-			offset = ((gint8 *)ip) [1];
-			ip += 2;
-			backwards = offset < 0;
-			offset += ip - header->code;
-			g_assert (offset >= 0 && offset < header->code_size);
-			is_bb_start [offset] |= backwards ? 2 : 1;
-			break;
-		case MonoInlineVar:
-			ip += 3;
-			break;
-		case MonoShortInlineVar:
-		case MonoShortInlineI:
-			ip += 2;
-			break;
-		case MonoInlineSwitch: {
-			guint32 n;
-			const unsigned char *next_ip;
-			++ip;
-			n = read32 (ip);
-			ip += 4;
-			next_ip = ip + 4 * n;
-			for (i = 0; i < n; i++) {
-				offset = read32 (ip);
-				backwards = offset < 0;
-				offset += next_ip - header->code;
-				g_assert (offset >= 0 && offset < header->code_size);
-				is_bb_start [offset] |= backwards ? 2 : 1;
-				ip += 4;
-			}
-			break;
-		}
-		case MonoInlineR:
-		case MonoInlineI8:
-			ip += 9;
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-	}
 	// g_printerr ("TRANSFORM(0x%016lx): end %s::%s\n", mono_thread_current (), method->klass->name, method->name);
 
 	/* Make modifications to a copy of imethod, copy them back inside the lock */
@@ -5600,10 +5610,9 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 
 	interp_method_compute_offsets (imethod, signature, header);
 
-	generate (method, header, imethod, is_bb_start, generic_context, error);
+	generate (method, header, imethod, generic_context, error);
 
 	mono_metadata_free_mh (header);
-	g_free (is_bb_start);
 
 	return_if_nok (error);
 
