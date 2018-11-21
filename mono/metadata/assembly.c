@@ -1253,12 +1253,24 @@ assemblyref_public_tok_checked (MonoImage *image, guint32 key_index, guint32 fla
  * invoked.
  */
 void
-mono_assembly_addref (MonoAssembly *assembly, gboolean pinning)
+mono_assembly_addref (MonoAssembly *assembly)
+{
+	mono_assembly_addref_nopin (assembly);
+}
+
+void
+mono_assembly_addref_pin (MonoAssembly *assembly)
 {
 	mono_atomic_inc_i32 (&assembly->ref_count);
 	/* Order matters: increment pincount second */
-	if (pinning)
-		mono_atomic_inc_i32 (&assembly->pin_count);
+	mono_atomic_inc_i32 (&assembly->pin_count);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Addref %s ref_count = %d (pin_count = %d)", assembly->aname.name, assembly->ref_count, assembly->pin_count);
+}
+
+void
+mono_assembly_addref_nopin (MonoAssembly *assembly)
+{
+	mono_atomic_inc_i32 (&assembly->ref_count);
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Addref %s ref_count = %d (pin_count = %d)", assembly->aname.name, assembly->ref_count, assembly->pin_count);
 }
 
@@ -1481,7 +1493,7 @@ static void
 mono_assembly_pinref (MonoAssembly *reference)
 {
 	if (reference && reference != (MonoAssembly*)REFERENCE_MISSING)
-		mono_assembly_addref (reference, TRUE);
+		mono_assembly_addref_pin (reference);
 }
 
 static MonoAssembly*
@@ -1741,7 +1753,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	if (!image->references [index]) {
 		if (reference != REFERENCE_MISSING){
-			mono_assembly_addref (reference, FALSE);
+			mono_assembly_addref_nopin (reference);
 			/* decrement pin_count from load_reference_by_aname_xxx, above */
 			mono_assembly_dropref (reference, TRUE);
 			if (image->assembly)
@@ -1759,7 +1771,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 
 	if (image->references [index] != reference) {
 		/* Somebody loaded it before us */
-		mono_assembly_close_internal (reference, TRUE);
+		mono_assembly_close_unpin (reference);
 	}
 }
 
@@ -2857,7 +2869,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		mono_image_addref (mono_defaults.corlib);
 		*status = MONO_IMAGE_OK;
 		if (req->want_pinned)
-			mono_assembly_addref (mono_defaults.corlib->assembly, TRUE);
+			mono_assembly_addref_pin (mono_defaults.corlib->assembly);
 		return mono_defaults.corlib->assembly;
 	}
 
@@ -2881,7 +2893,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 			*status = MONO_IMAGE_OK;
 			/* FIXME: this is a race.  Need to ask the search hook to pin for us. */
 			if (req->want_pinned)
-				mono_assembly_addref (ass2, TRUE);
+				mono_assembly_addref_pin (ass2);
 			return ass2;
 		}
 	}
@@ -2929,7 +2941,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 		/* Pin ass2 before unlocking so it doesn't get GC'd */
 		ass2 = image->assembly;
 		if (req->want_pinned)
-			mono_assembly_addref (ass2, TRUE);
+			mono_assembly_addref_pin (ass2);
 		mono_assemblies_unlock ();
 		g_free (ass);
 		g_free (base_dir);
@@ -2950,7 +2962,7 @@ mono_assembly_request_load_from (MonoImage *image, const char *fname,
 	/* Unconditionally pin the new assembly.  We want it to survive the call to mono_assembly_load_hook ().
 	 * If it turns out we didn't want it pinned, we will unpin it after the hooks run.
 	 */
-	mono_assembly_addref (ass, TRUE);
+	mono_assembly_addref_pin (ass);
 	mono_assemblies_unlock ();
 
 #ifdef HOST_WIN32
@@ -4648,13 +4660,20 @@ mono_assembly_close_finish (MonoAssembly *assembly)
 void
 mono_assembly_close (MonoAssembly *assembly)
 {
-	mono_assembly_close_internal (assembly, TRUE);
+	mono_assembly_close_unpin (assembly);
 }
 
 void
-mono_assembly_close_internal (MonoAssembly *assembly, mono_bool drop_pinning)
+mono_assembly_close_unpin (MonoAssembly *assembly)
 {
-	if (mono_assembly_close_except_image_pools (assembly, drop_pinning))
+	if (mono_assembly_close_except_image_pools (assembly, TRUE))
+		mono_assembly_close_finish (assembly);
+}
+
+void
+mono_assembly_close_nounpin (MonoAssembly *assembly)
+{
+	if (mono_assembly_close_except_image_pools (assembly, FALSE))
 		mono_assembly_close_finish (assembly);
 }
 
@@ -5264,7 +5283,7 @@ sweep_phase (Freelist *fl)
 		 * will be force-closing outside the assemblies lock, but until
 		 * then it should stay alive.
 		 */
-		mono_assembly_addref (assm, TRUE);
+		mono_assembly_addref_pin (assm);
 		freelist_add (fl, assm);
 	}
 }

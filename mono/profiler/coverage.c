@@ -570,7 +570,7 @@ register_image (MonoImage *image)
 		 * otherwise they might be gone by the time we dump coverage data
 		 * during shutdown. This can happen with e.g. the corlib test suite.
 		 */
-		mono_assembly_addref (assembly, TRUE);
+		mono_assembly_addref_pin (assembly);
 
 		mono_conc_hashtable_insert (coverage_profiler.assemblies, assembly, assembly);
 	}
@@ -642,7 +642,7 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly)
 		 * runtime initialization has finished and processing them when we get
 		 * the runtime_initialized callback.
 		 */
-		mono_assembly_addref (assembly, TRUE);
+		mono_assembly_addref_pin (assembly);
 		g_hash_table_insert (coverage_profiler.deferred_assemblies, assembly, assembly);
 		return;
 	}
@@ -682,7 +682,7 @@ process_deferred_assembly (gpointer key, gpointer value, gpointer userdata)
 	MonoAssembly *assembly = key;
 
 	assembly_loaded ((MonoProfiler *) userdata, assembly);
-	mono_assembly_close_internal (assembly, TRUE);
+	mono_assembly_close_unpin (assembly);
 }
 
 static gboolean
@@ -844,7 +844,7 @@ static void
 unref_coverage_assemblies (gpointer key, gpointer value, gpointer userdata)
 {
 	MonoAssembly *assembly = (MonoAssembly *)value;
-	mono_assembly_close_internal (assembly, TRUE);
+	mono_assembly_close_unpin (assembly);
 }
 
 static void

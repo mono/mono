@@ -122,7 +122,10 @@ MONO_PROFILER_API MonoImage*
 mono_assembly_get_image_internal (MonoAssembly *assembly);
 
 MONO_PROFILER_API void
-mono_assembly_close_internal (MonoAssembly *assembly, mono_bool drop_pinning);
+mono_assembly_close_unpin (MonoAssembly *assembly);
+
+void
+mono_assembly_close_nounpin (MonoAssembly *assembly);
 
 void
 mono_assembly_collect_unreachable (void);

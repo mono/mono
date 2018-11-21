@@ -906,7 +906,9 @@ gboolean
 mono_metadata_generic_param_equal (MonoGenericParam *p1, MonoGenericParam *p2);
 
 void mono_dynamic_stream_reset  (MonoDynamicStream* stream);
-MONO_API void mono_assembly_addref       (MonoAssembly *assembly, gboolean pinning);
+MONO_API MONO_RT_EXTERNAL_ONLY void mono_assembly_addref       (MonoAssembly *assembly);
+MONO_PROFILER_API void mono_assembly_addref_pin (MonoAssembly *assembly);
+void mono_assembly_addref_nopin (MonoAssembly *assembly);
 void mono_assembly_load_friends (MonoAssembly* ass);
 gboolean mono_assembly_has_skip_verification (MonoAssembly* ass);
 
