@@ -54,8 +54,8 @@ microbench-results/$(1).tmp.perf: microbench-results/$(1).perf.data
 	$(PERF_BINARY) script -i microbench-results/$(1).perf.data > microbench-results/$(1).tmp.perf
 
 microbench-results/$(1).perf-flame.svg: microbench-results/$(1).tmp.perf
-	cat microbench-results/$(1).tmp.perf | ./external/DebianShootoutMono/external/FlameGraph/stackcollapse-perf.pl > microbench-results/$(1).perf-folded
-	./external/DebianShootoutMono/external/FlameGraph/flamegraph.pl microbench-results/$(1).perf-folded > microbench-results/$(1).perf-flame.svg
+	cat microbench-results/$(1).tmp.perf | ./external/DebianShootoutMono/FlameGraph/stackcollapse-perf.pl > microbench-results/$(1).perf-folded
+	./external/DebianShootoutMono/FlameGraph/flamegraph.pl microbench-results/$(1).perf-folded > microbench-results/$(1).perf-flame.svg
 	rm microbench-results/$(1).tmp.perf
 	rm microbench-results/$(1).perf-folded
 
