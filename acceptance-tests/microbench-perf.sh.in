@@ -10,8 +10,8 @@ echo "$r/runtime/mono-wrapper $@"
 exec $r/runtime/mono-wrapper $@
 else
 # else run it under perf
-echo "perf record -o $r/acceptance-tests/perf.data -v -s -g -- $r/mono/mini/mono-sgen $@"
-exec perf record -o $r/acceptance-tests/perf.data -v -s -g $r/mono/mini/mono-sgen $@
+echo "$MONO_PERF_BINARY record -o $r/acceptance-tests/perf.data -v -s -g -- $r/mono/mini/mono-sgen $@"
+exec $MONO_PERF_BINARY record -o $r/acceptance-tests/perf.data -v -s -g $r/mono/mini/mono-sgen $@
 fi
 
 

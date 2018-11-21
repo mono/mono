@@ -10,13 +10,15 @@ abs_top_srcdir = $(abspath $(top_srcdir))
 TEST_EXE_PATH=$(abs_top_srcdir)/acceptance-tests/external/DebianShootoutMono/release/
 NET_4_X_RUNTIME=MONO_PATH=$(TEST_EXE_PATH):$(abs_top_srcdir)/mcs/class/lib/net_4_x $(abs_top_srcdir)/runtime/mono-wrapper
 FULL_AOT_RUNTIME=MONO_PATH=$(abs_top_srcdir)/mcs/class/lib/testing_aot_full $(abs_top_srcdir)/runtime/mono-wrapper
+
+PERF_BINARY=$(if $(MONO_PERF_BINARY),$(MONO_PERF_BINARY),perf)
 PERF_RUNTIME=$(abs_top_srcdir)/acceptance-tests/microbench-perf.sh
 
 define BenchmarkDotNetTemplate
 
 run-microbench-$(1):: DebianShootoutMono.stamp
-	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
-	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
+	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)" \
+	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)" \
 	MONO_BENCH_EXECUTABLE="$(abs_top_srcdir)/runtime/mono-wrapper" \
 	MONO_BENCH_PATH="$(abs_top_srcdir)/mcs/class/lib/$(TEST_PROFILE)" \
 	MONO_BENCH_INPUT="$(2)" \
@@ -38,6 +40,7 @@ run-microbench-profiled-$(1):: microbench-results/$(1).perf.data
 
 microbench-results/$(1).perf.data: DebianShootoutMono.stamp 
 	mkdir -p microbench-results
+	MONO_PERF_BINARY="$(PERF_BINARY)" \
 	MONO_BENCH_EXECUTABLE="$(PERF_RUNTIME)" \
 	MONO_BENCH_AOT_RUN="$(AOT_RUN_FLAGS)"\
 	MONO_BENCH_AOT_BUILD="$(AOT_BUILD_FLAGS)"\
@@ -48,7 +51,7 @@ microbench-results/$(1).perf.data: DebianShootoutMono.stamp
 	mv perf.data microbench-results/$(1).perf.data
 
 microbench-results/$(1).tmp.perf: microbench-results/$(1).perf.data
-	perf script -i microbench-results/$(1).perf.data > microbench-results/$(1).tmp.perf
+	$(PERF_BINARY) script -i microbench-results/$(1).perf.data > microbench-results/$(1).tmp.perf
 
 microbench-results/$(1).perf-flame.svg: microbench-results/$(1).tmp.perf
 	cat microbench-results/$(1).tmp.perf | ./external/DebianShootoutMono/external/FlameGraph/stackcollapse-perf.pl > microbench-results/$(1).perf-folded
@@ -59,7 +62,7 @@ microbench-results/$(1).perf-flame.svg: microbench-results/$(1).tmp.perf
 MONO_PERF_FLAGS=--show-cpu-utilization -n --hierarchy -T $(MONO_PERF_ADDITIONAL_FLAGS)
 
 microbench-results/$(1).perf.report: microbench-results/$(1).perf.data
-	perf report -i microbench-results/$(1).perf.data $(MONO_PERF_FLAGS) > microbench-results/$(1).perf.report 
+	$(PERF_BINARY) report -i microbench-results/$(1).perf.data $(MONO_PERF_FLAGS) > microbench-results/$(1).perf.report 
 
 test-run-microbench-profiled:: run-microbench-profiled-$(1)
 
@@ -72,7 +75,7 @@ endef
 if HOST_LINUX
 
 test-run-microbench-perf-check:
-	perf record -a -o perf.data -- echo "testing"
+	$(PERF_BINARY) record -a -o perf.data -- echo "testing"
 	rm perf.data
 
 microbench-results/perf-data.zip:

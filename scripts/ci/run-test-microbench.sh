@@ -19,6 +19,7 @@ else
 fi
 
 if [[ ${CI_TAGS} == *'linux-'* ]]; then
+	export MONO_PERF_BINARY=perf_4.9
 	${TESTCMD} --label=microbench-profiler-check --timeout=40m make -C acceptance-tests test-run-microbench-perf-check
 
 	if [ -z "$MONO_BENCH_GIST_URL"]; then
@@ -35,6 +36,6 @@ if [[ ${CI_TAGS} == *'linux-'* ]]; then
 		${TESTCMD} --label=microbench-profiled-Gist --timeout=40m make -C acceptance-tests run-microbench-profiled-GistBenchmark
 	fi
 
-	${TESTCMD} --label=microbench-report --timeout=40m make -C acceptance-tests perf-report
+	${TESTCMD} --label=microbench-report --timeout=40m make -C acceptance-tests perf-report-total
 fi
 
