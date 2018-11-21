@@ -19,6 +19,8 @@ else
 fi
 
 if [[ ${CI_TAGS} == *'linux-'* ]]; then
+	${TESTCMD} --label=microbench-profiled --timeout=40m make -C acceptance-tests test-run-microbench-perf-check
+
 	if [ -z "$MONO_BENCH_GIST_URL"]; then
 		${TESTCMD} --label=microbench-profiled --timeout=40m make -C acceptance-tests run-microbench-profiled-BinaryTrees
 		${TESTCMD} --label=microbench-profiled --timeout=40m make -C acceptance-tests run-microbench-profiled-Fannkuchredux

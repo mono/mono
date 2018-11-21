@@ -71,6 +71,10 @@ endef
 
 if HOST_LINUX
 
+test-run-microbench-perf-check:
+	perf record -a -o perf.data -- echo "testing"
+	rm perf.data
+
 microbench-results/perf-data.zip:
 	zip microbench-results/perf-data.zip microbench-results/*.perf.data
 	rm microbench-results/*.perf.data
