@@ -2,6 +2,10 @@
 
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 
+if [[ ${CI_TAGS} == *'win-'* ]]; then
+	exit 0
+fi
+
 ${TESTCMD} --label=microbenchmark --timeout=40m make -C acceptance-tests DebianShootoutMono.stamp
 
 if [ -z "$MONO_BENCH_GIST_URL"]; then
