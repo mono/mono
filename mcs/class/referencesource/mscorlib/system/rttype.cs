@@ -4261,7 +4261,7 @@ namespace System
                 {
 #if MONO                    
                     if (instantiationElem.IsSignatureType)
-                        return Internal.Reflection.Augments.ReflectionAugments.MakeGenericSignatureType (this, instantiation);
+                        return MakeGenericSignatureType (this, instantiation);
 #endif
                     Type[] instantiationCopy = new Type[instantiation.Length];
                     for (int iCopy = 0; iCopy < instantiation.Length; iCopy++)

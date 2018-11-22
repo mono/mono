@@ -1614,7 +1614,6 @@ corert/ThreadPool.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
 corert/Type.cs
 corert/PreAllocatedOverlapped.platformnotsupported.cs
-corert/ReflectionAugments.cs
 corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
 
