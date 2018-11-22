@@ -468,6 +468,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Module.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ModuleResolveEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscateAssemblyAttribute.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ObfuscationAttribute.cs" />
@@ -1911,6 +1912,7 @@
     <Compile Include="System.Security\SecurityManager.cs" />
     <Compile Include="System.Security\SecurityManager_mobile.cs" />
     <Compile Include="System.Security\SecurityState.cs" />
+    <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
     <Compile Include="System.Text\EncodingHelper.cs" />
     <Compile Include="System.Threading\CompressedStack.cs" />
     <Compile Include="System.Threading\HostExecutionContext.cs" />

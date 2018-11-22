@@ -14,7 +14,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		//	  path, it would be interesting also to test a
 		//	  custom formatter, like the XML-RPC.net one!)
 	[TestFixture]
-	public class BinarySerializationOverVersions {
+	public class BinarySerializationOverVersionsTest {
 
 		[Test]
 		public void TestDroppedField () //eliminate CountryCode
@@ -122,11 +122,6 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			AppDomain.Unload (ad);
 		}
 
-		static void Main () {
-			throw new Exception ();
-		}
-
-
 		private static string Find (string assemblyVersion)
 		{
 			string initDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location);
@@ -135,7 +130,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 
 		private static string Find (string assemblyVersion, string path)
 		{
-			return Path.Combine (Path.Combine (path, assemblyVersion), AssemblyName);
+			return Path.Combine (Path.Combine (path, "vts", assemblyVersion), AssemblyName);
 		}
 	}
 }

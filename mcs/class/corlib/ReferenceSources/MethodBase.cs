@@ -55,6 +55,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[PreserveDependency(".ctor(System.Reflection.ExceptionHandlingClause[],System.Reflection.LocalVariableInfo[],System.Byte[],System.Boolean,System.Int32,System.Int32)", "System.Reflection.MethodBody")]
 		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
 
 		internal static MethodBody GetMethodBody (IntPtr handle) 

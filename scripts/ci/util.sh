@@ -24,7 +24,7 @@ function helix_set_env_vars {
     else echo "Couldn't determine operating system for Helix."; return 1; fi
 
     if [[ ${CI_TAGS} == *'pull-request'* ]]; then
-        export MONO_HELIX_TARGET_QUEUE="debian.9.amd64.open"
+        export MONO_HELIX_TARGET_QUEUE="Debian.9.Amd64.Open"
         export MONO_HELIX_SOURCE="pr/jenkins/mono/mono/$ghprbTargetBranch/"
         export MONO_HELIX_BUILD_MONIKER="$(git rev-parse HEAD)"
     else
@@ -34,7 +34,7 @@ function helix_set_env_vars {
         build_ver=$(echo "$version_number" | cut -d . -f 3)
         blame_rev=$(git blame configure.ac HEAD | grep AC_INIT | sed 's/ .*//')
         patch_ver=$(git log "$blame_rev"..HEAD --oneline | wc -l | sed 's/ //g')
-        export MONO_HELIX_TARGET_QUEUE="debian.9.amd64"
+        export MONO_HELIX_TARGET_QUEUE="Debian.9.Amd64"
         export MONO_HELIX_SOURCE="official/mono/mono/$MONO_BRANCH/"
         export MONO_HELIX_BUILD_MONIKER=$(printf %d.%d.%d.%d "$major_ver" "$minor_ver" "$build_ver" "$patch_ver")
     fi

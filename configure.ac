@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=0CC970F6-6F25-4218-9427-3E4C3DC8DE33
+MONO_CORLIB_VERSION=9E44EF5E-26C3-4EF6-8EE5-582372D0CA0A
 
 #
 # Put a quoted #define in config.h.
@@ -211,6 +211,16 @@ case "$host" in
 		libgc_threads=pthreads
 		use_sigposix=yes
 		has_dtrace=yes
+		case "$host" in
+		aarch64-*)
+			support_boehm=no
+			with_gc=sgen
+			;;
+		riscv*)
+			support_boehm=no
+			with_gc=sgen
+			;;
+		esac
 		with_sgen_default_concurrent=yes
 		;;
 	*-*-*openbsd*)
@@ -1021,6 +1031,13 @@ AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
 #CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
 CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
 # "c++0x" instead of C++11, for compat with Centos6/gcc4.4
+
+# -stdlib=libc++ is needed by clang for iOS 6.0 (-miphoneos-version-min=6.0)
+# to support C++11 headers but it does not seem to harm elsewhere, so over-approximate
+# and add it whenever we're running clang on Darwin.
+if test "x$mono_cv_clang" = xyes -a x$host_darwin = xyes; then
+	CXXFLAGS_COMMON="$CXXFLAGS_COMMON -stdlib=libc++"
+fi
 
 AC_SUBST(CXXFLAGS_COMMON)
 
@@ -3833,7 +3850,11 @@ if test "x$enable_llvm" = "xyes"; then
 
 	AC_SUBST(LLVM_CODEGEN_LIBS)
 	AC_SUBST(EXTERNAL_LLVM_CONFIG)
-	
+
+	if test "x$host_win32" = "xyes" && test "x$cross_compiling" = "xno" &&  test "x$internal_llvm" = "xno"; then
+		EXTERNAL_LLVM_CONFIG_WIN32=$(cygpath -m $EXTERNAL_LLVM_CONFIG)
+		AC_SUBST(EXTERNAL_LLVM_CONFIG_WIN32)
+	fi
 	AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
 fi # ENABLE_LLVM
 
