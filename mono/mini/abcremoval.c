@@ -1137,6 +1137,15 @@ process_block (MonoCompile *cfg, MonoBasicBlock *bb, MonoVariableRelationsEvalua
 		if (ins->opcode == OP_NOT_NULL)
 			add_non_null (area, cfg, ins->sreg1, &check_relations);
 
+		if (ins->opcode == OP_COMPARE_IMM && ins->inst_imm == 0 && ins->next && ins->next->opcode == OP_COND_EXC_EQ) {
+			if (eval_non_null (area, ins->sreg1)) {
+				if (REPORT_ABC_REMOVAL)
+					printf ("ARRAY-ACCESS: Removed null check.\n");
+				NULLIFY_INS (ins->next);
+				NULLIFY_INS (ins);
+			}
+		}
+
 		/* 
 		 * FIXME: abcrem equates an array with its length,
 		 * so a = new int [100] implies a != null, but a = new int [0] doesn't.
