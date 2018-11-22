@@ -1842,8 +1842,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		g_free (token);
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Exec prog [%s] args [%s]",
-		__func__, prog, args_after_prog);
+	g_printerr ("XXX-MONO: %s: Exec prog [%s] args [%s]\n", __func__, prog, args_after_prog);
 
 	/* Check for CLR binaries; if found, we will try to invoke
 	 * them using the same mono binary that started us.
@@ -2096,7 +2095,7 @@ free_strings:
 	if (argv)
 		g_strfreev (argv);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: returning handle %p for pid %d", __func__, handle, pid);
+	g_printerr ("XXX-MONO: %s: returning handle %p for pid %d\n", __func__, handle, pid);
 
 	/* Check if something needs to be cleaned up. */
 	processes_cleanup ();
