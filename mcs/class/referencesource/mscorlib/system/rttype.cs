@@ -3209,6 +3209,7 @@ namespace System
         #endregion
 
         #region Find XXXInfo
+#if !MONO        
         protected override MethodInfo GetMethodImpl(
             String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
             Type[] types, ParameterModifier[] modifiers) 
@@ -3246,7 +3247,7 @@ namespace System
 
             return binder.SelectMethod(bindingAttr, candidates.ToArray(), types, modifiers) as MethodInfo;                  
         }
-
+#endif
 
         protected override ConstructorInfo GetConstructorImpl(
             BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, 
