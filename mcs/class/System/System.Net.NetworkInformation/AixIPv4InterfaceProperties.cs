@@ -1,15 +1,12 @@
 //
-// System.Net.NetworkInformation.NetworkInterface
+// System.Net.NetworkInformation.IPv4InterfaceProperties
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
-//      Miguel de Icaza (miguel@novell.com)
-//      Eric Butler (eric@extremeboredom.net)
 //      Marek Habersack (mhabersack@novell.com)
-//  Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,31 +27,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 namespace System.Net.NetworkInformation {
-	internal static class UnixNetworkInterfaceFactoryPal
+	sealed class AixIPv4InterfaceProperties : UnixIPv4InterfaceProperties
 	{
-		public static NetworkInterfaceFactory Create ()
+		private int _mtu;
+
+		public AixIPv4InterfaceProperties (AixNetworkInterface iface, int mtu)
+			: base (iface)
 		{
-#if MONOTOUCH || XAMMAC
-			return new MacOsNetworkInterfaceAPI ();
-#else
-			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
+			_mtu = mtu;
+		}
 
-			if (runningOnUnix) {
-				// XXX: OpenBSD and NetBSD too? It seems other platforms map closer to the Mac OS version than Linux,
-				// even if not exactly; it seems Linux and/or glibc are the different ones.
-				if (Platform.IsMacOS || Platform.IsFreeBSD)
-					return new MacOsNetworkInterfaceAPI ();
+		// dummy
+		public override bool IsForwardingEnabled {
+			get { return false; }
+		}
 
-				// XXX: IBM i would be better with its own API targetting Qp2getifaddrs
-				if (Platform.IsAix || Platform.IsIBMi)
-					return new AixNetworkInterfaceAPI ();
-
-				return new LinuxNetworkInterfaceAPI ();
-			}
-
-			return null;
-#endif
+		public override int Mtu {
+			get { return _mtu; }
 		}
 	}
 }
+

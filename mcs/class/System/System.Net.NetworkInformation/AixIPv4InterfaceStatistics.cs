@@ -1,13 +1,10 @@
 //
-// System.Net.NetworkInformation.NetworkInterface
+// System.Net.NetworkInformation.IPv4InterfaceStatistics
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
-//      Miguel de Icaza (miguel@novell.com)
-//      Eric Butler (eric@extremeboredom.net)
-//      Marek Habersack (mhabersack@novell.com)
-//  Marek Safar (marek.safar@gmail.com)
+//	Miguel de Icaza (miguel@ximian.com)
 //
 // Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
 //
@@ -31,30 +28,63 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
-	internal static class UnixNetworkInterfaceFactoryPal
+	// dummy class
+	class AixIPv4InterfaceStatistics : IPv4InterfaceStatistics
 	{
-		public static NetworkInterfaceFactory Create ()
+		//AixNetworkInterface aix;
+
+		public AixIPv4InterfaceStatistics (AixNetworkInterface parent)
 		{
-#if MONOTOUCH || XAMMAC
-			return new MacOsNetworkInterfaceAPI ();
-#else
-			bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
+			//aix = parent;
+		}
 
-			if (runningOnUnix) {
-				// XXX: OpenBSD and NetBSD too? It seems other platforms map closer to the Mac OS version than Linux,
-				// even if not exactly; it seems Linux and/or glibc are the different ones.
-				if (Platform.IsMacOS || Platform.IsFreeBSD)
-					return new MacOsNetworkInterfaceAPI ();
+		public override long BytesReceived {
+			get { return 0; }
+		}
 
-				// XXX: IBM i would be better with its own API targetting Qp2getifaddrs
-				if (Platform.IsAix || Platform.IsIBMi)
-					return new AixNetworkInterfaceAPI ();
+		public override long BytesSent {
+			get { return 0; }
+		}
 
-				return new LinuxNetworkInterfaceAPI ();
-			}
+		public override long IncomingPacketsDiscarded {
+			get { return 0; }
+		}
 
-			return null;
-#endif
+		public override long IncomingPacketsWithErrors {
+			get { return 0; }
+		}
+
+		public override long IncomingUnknownProtocolPackets {
+			get { return 0; }
+		}
+
+		public override long NonUnicastPacketsReceived {
+			get { return 0; }
+		}
+
+		public override long NonUnicastPacketsSent {
+			get { return 0; }
+		}
+
+		public override long OutgoingPacketsDiscarded {
+			get { return 0; }
+		}
+
+		public override long OutgoingPacketsWithErrors {
+			get { return 0; }
+		}
+
+		public override long OutputQueueLength {
+			get { return 0; }
+		}
+
+		public override long UnicastPacketsReceived {
+			get { return 0; }
+		}
+
+		public override long UnicastPacketsSent {
+			get { return 0; }
 		}
 	}
 }
+
