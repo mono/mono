@@ -110,6 +110,26 @@ namespace System
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (String typeName, bool throwOnError, bool ignoreCase)
+		{
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, throwOnError, ignoreCase, false, ref stackMark);
+		}
+ 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (String typeName, bool throwOnError)
+		{
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, throwOnError, false, false, ref stackMark);
+		}
+ 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (String typeName) {
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, false, false, false, ref stackMark);
+		}
+
 		// Methods containing StackCrawlMark local var has to be marked non-inlineable
 		[MethodImplAttribute (MethodImplOptions.NoInlining)] 
 		public static Type GetType (
@@ -155,5 +175,12 @@ namespace System
 		{
 			return !object.ReferenceEquals (left, right);
 		}
+
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+        public static Type ReflectionOnlyGetType (String typeName, bool throwIfNotFound, bool ignoreCase) 
+        {
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+            return RuntimeType.GetType (typeName, throwIfNotFound, ignoreCase, true /*reflectionOnly*/, ref stackMark);
+        }
 	}
 }
