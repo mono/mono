@@ -27,6 +27,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		private X509Certificate2Collection coll_empty;
 		private X509Certificate2Collection coll;
 
+		string ReadWriteStore = "ReadWriteStore" + global::System.Diagnostics.Process.GetCurrentProcess ().Id;
+		string ReadOnlyStore = "ReadOnlyStore" + global::System.Diagnostics.Process.GetCurrentProcess ().Id;
+
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
@@ -38,13 +41,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			coll.Add (cert1);
 			coll.Add (cert2);
 
-			CleanUpStore ("ReadOnlyStore");
+			CleanUpStore (ReadOnlyStore);
 		}
 
 		[SetUp]
 		public void SetUp ()
 		{
-			CleanUpStore ("ReadWriteStore");
+			CleanUpStore (ReadWriteStore);
 		}
 
 		private void CleanUpStore (string s)
@@ -323,7 +326,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void Add_OpenReadOnly ()
 		{
-			X509Store xs = new X509Store ("ReadOnlyStore");
+			X509Store xs = new X509Store (ReadOnlyStore);
 			xs.Open (OpenFlags.ReadOnly);
 			xs.Add (cert1);
 		}
@@ -331,7 +334,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Add_SameCertificate ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			int n = xs.Certificates.Count;
 			xs.Add (cert1);
@@ -344,7 +347,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void Add_Empty_Certificate ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.Add (cert_empty);
 		}
@@ -353,7 +356,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void Add_ExistingCertificateReadOnly ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.Add (cert1);
 			xs.Close ();
@@ -372,7 +375,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void AddRange_Empty_Closed ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.AddRange (coll_empty);
 			Assert.AreEqual (coll_empty.Count, xs.Certificates.Count, "Count");
 		}
@@ -380,7 +383,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void AddRange_Empty_ReadOnly ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadOnly);
 			xs.AddRange (coll_empty);
 			Assert.AreEqual (coll_empty.Count, xs.Certificates.Count, "Count");
@@ -389,7 +392,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void AddRange_Empty_ReadWrite ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.AddRange (coll_empty);
 			Assert.AreEqual (coll_empty.Count, xs.Certificates.Count, "Count");
@@ -399,7 +402,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void AddRange_Empty_Certificate ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.AddRange (new X509Certificate2Collection (cert_empty));
 		}
@@ -407,7 +410,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void AddRange ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.AddRange (coll);
 			Assert.AreEqual (coll.Count, xs.Certificates.Count, "Count");
@@ -425,7 +428,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void AddRange_OpenReadOnly ()
 		{
-			X509Store xs = new X509Store ("ReadOnlyStore");
+			X509Store xs = new X509Store (ReadOnlyStore);
 			xs.Open (OpenFlags.ReadOnly);
 			xs.AddRange (coll);
 		}
@@ -439,7 +442,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Close_Collection ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.Add (cert1);
 			Assert.AreEqual (1, xs.Certificates.Count, "Open");
@@ -450,7 +453,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Open_Invalid ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open ((OpenFlags) Int32.MinValue);
 		}
 
@@ -495,7 +498,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Remove_OpenReadOnly_Unexisting ()
 		{
-			X509Store xs = new X509Store ("ReadOnlyStore");
+			X509Store xs = new X509Store (ReadOnlyStore);
 			xs.Open (OpenFlags.ReadOnly);
 			// note: cert1 wasn't present, remove "succeed"
 			xs.Remove (cert1);
@@ -505,7 +508,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void Remove_OpenReadOnly_Existing ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.Add (cert1);
 			xs.Close ();
@@ -516,7 +519,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Remove_Empty_Certificate ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			// note: impossible to add cert_empty, so we add something else
 			// to be sure we'll follow the complete code path (loop) of removal
@@ -549,7 +552,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void RemoveRange_OpenReadOnly_Unexisting ()
 		{
-			X509Store xs = new X509Store ("ReadOnlyStore");
+			X509Store xs = new X509Store (ReadOnlyStore);
 			xs.Open (OpenFlags.ReadOnly);
 			// note: cert1 wasn't present, RemoveRange "succeed"
 			xs.RemoveRange (coll);
@@ -559,7 +562,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (CryptographicException))]
 		public void RemoveRange_OpenReadOnly_Existing ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			xs.AddRange (coll);
 			xs.Close ();
@@ -570,7 +573,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void RemoveRange_Empty_Certificate ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Open (OpenFlags.ReadWrite);
 			// note: impossible to add cert_empty, so we add something else
 			// to be sure we'll follow the complete code path (loop) of removal
@@ -581,7 +584,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Test]
 		public void Collection_Add ()
 		{
-			X509Store xs = new X509Store ("ReadWriteStore");
+			X509Store xs = new X509Store (ReadWriteStore);
 			xs.Certificates.Add (cert1);
 			Assert.AreEqual (0, xs.Certificates.Count, "Not Open");
 			xs.Close ();
