@@ -2639,7 +2639,11 @@ namespace System
                             for(int i = 0; i < parameterInfos.Length; i ++)
                             {
                                 // a null argument type implies a null arg which is always a perfect match
+#if MONO                                
+                                if ((object)argumentTypes[i] != null && !argumentTypes[i].MatchesParameterTypeExactly(parameterInfos[i]))
+#else
                                 if ((object)argumentTypes[i] != null && !Object.ReferenceEquals(parameterInfos[i].ParameterType, argumentTypes[i]))
+#endif
                                     return false;
                             }
                         }
