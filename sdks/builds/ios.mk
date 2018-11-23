@@ -97,8 +97,6 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--without-sigaltstack \
-	--disable-cooperative-suspend \
-	--disable-hybrid-suspend \
 	--disable-crash-reporting
 
 .stamp-ios-$(1)-toolchain:
@@ -114,8 +112,11 @@ ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
+ios-target32_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
+ios-target32s_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
+ios-target64_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
+ios-targettv_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend --enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
 ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
@@ -220,8 +221,6 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
-	--disable-cooperative-suspend \
-	--disable-hybrid-suspend \
 	--disable-crash-reporting
 
 # _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
@@ -244,6 +243,9 @@ ios-sim64_SYSROOT = $(ios_sim_sysroot)
 ios-simtv_SYSROOT = $(tvos_sim_sysroot)
 ios-simwatch_SYSROOT = $(watchos_sim_sysroot)
 
+ios-sim32_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
+ios-sim64_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
+ios-simtv_CONFIGURE_FLAGS = --disable-cooperative-suspend --disable-hybrid-suspend
 ios-simwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend
 
 ios-sim32_CPPFLAGS = -DHOST_IOS
