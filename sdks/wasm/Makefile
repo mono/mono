@@ -150,12 +150,12 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	touch $@
 
 # For development
-aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js bug.exe
+aot-sample: packager.exe mini_tests.dll main.exe runtime.js
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --run bug.exe)
+	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll

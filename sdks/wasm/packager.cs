@@ -482,7 +482,7 @@ class Driver {
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
-				linker_infiles += $" {a.linkin_path}";
+				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
 				infile = $"{a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
@@ -539,7 +539,7 @@ class Driver {
 			}
 			linker_args += " -d $bcl_dir -c link";
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
-			ninja.WriteLine ($"build {linker_ofiles}: linker");
+			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
 			ninja.WriteLine ($"  linker_args={linker_args}");
 		}
 
