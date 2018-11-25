@@ -2311,7 +2311,7 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 }
 
 MonoReflectionAssemblyHandle
-ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoolean refOnly, MonoError *error)
+ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoolean refOnly, MonoStackCrawlMark *stack_mark, MonoError *error)
 {
 	error_init (error);
 	MonoDomain *domain = mono_domain_get ();
@@ -2332,7 +2332,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	MonoAssembly *requesting_assembly;
 	requesting_assembly = NULL;
 	if (!refOnly)
-		requesting_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
+		requesting_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 
 	MonoAssembly *ass;
 	MonoAssemblyOpenRequest req;
@@ -2356,7 +2356,7 @@ leave:
 }
 
 MonoReflectionAssemblyHandle
-ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoError *error)
+ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, MonoStackCrawlMark *stack_mark, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoReflectionAssemblyHandle result = MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
@@ -2376,7 +2376,7 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 
 	MonoImageOpenStatus status;
 	MonoAssembly *executing_assembly;
-	executing_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
+	executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 	MonoAssembly *ass;
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_INDIVIDUAL);
@@ -2468,7 +2468,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomainHandle ad,
 }
 
 MonoReflectionAssemblyHandle
-ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandle assRef, MonoObjectHandle evidence, MonoBoolean refOnly, MonoError *error)
+ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandle assRef, MonoObjectHandle evidence, MonoBoolean refOnly, MonoStackCrawlMark *stack_mark, MonoError *error)
 {
 	MonoDomain *domain = MONO_HANDLE_GETVAL (ad, data);
 	MonoImageOpenStatus status = MONO_IMAGE_OK;
@@ -2508,7 +2508,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		 * when probing for the given assembly name, and also load the
 		 * requested assembly in LoadFrom context.
 		 */
-		MonoAssembly *executing_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
+		MonoAssembly *executing_assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 		if (executing_assembly && mono_asmctx_get_kind (&executing_assembly->context) == MONO_ASMCTX_LOADFROM) {
 			asmctx = MONO_ASMCTX_LOADFROM;
 			basedir = executing_assembly->basedir;

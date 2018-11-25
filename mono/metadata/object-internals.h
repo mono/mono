@@ -347,6 +347,14 @@ typedef enum {
 } MonoCallType;
 
 /* System.Threading.StackCrawlMark */
+/*
+ * This type is used to identify the method where execution has entered
+ * the BCL during stack walks. The outermost public method should
+ * define it like this:
+ * StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+ * and pass the stackMark as a byref argument down the call chain
+ * until it reaches an icall.
+ */
 typedef enum {
 	STACK_CRAWL_ME = 0,
 	STACK_CRAWL_CALLER = 1,

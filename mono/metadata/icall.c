@@ -1392,6 +1392,7 @@ mono_runtime_get_caller_no_system_or_reflection (void)
 MonoAssembly*
 mono_runtime_get_caller_from_stack_mark (MonoStackCrawlMark *stack_mark)
 {
+	// FIXME: Use the stack mark
 	MonoMethod *dest = NULL;
 	mono_stack_walk_no_il (get_caller_no_system_or_reflection, &dest);
 	if (dest)
