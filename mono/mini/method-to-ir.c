@@ -2594,10 +2594,28 @@ emit_rgctx_fetch (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *ent
 		return mini_emit_abs_call (cfg, MONO_PATCH_INFO_RGCTX_FETCH, entry, helper_sig_rgctx_lazy_fetch_trampoline, &rgctx);
 }
 
+/*
+ * mini_emit_get_rgctx_klass:
+ *
+ *   Emit IR to load the property RGCTX_TYPE of KLASS. If context_used is 0, emit
+ * normal constants, else emit a load from the rgctx.
+ */
 MonoInst*
 mini_emit_get_rgctx_klass (MonoCompile *cfg, int context_used,
-					  MonoClass *klass, MonoRgctxInfoType rgctx_type)
+						   MonoClass *klass, MonoRgctxInfoType rgctx_type)
 {
+	if (!context_used) {
+		MonoInst *ins;
+
+		switch (rgctx_type) {
+		case MONO_RGCTX_INFO_KLASS:
+			EMIT_NEW_CLASSCONST (cfg, ins, klass);
+			return ins;
+		default:
+			g_assert_not_reached ();
+		}
+	}
+
 	MonoJumpInfoRgctxEntry *entry = mono_patch_info_rgctx_entry_new (cfg->mempool, cfg->method, context_used_is_mrgctx (cfg, context_used), MONO_PATCH_INFO_CLASS, klass, rgctx_type);
 	MonoInst *rgctx = emit_get_rgctx (cfg, context_used);
 
@@ -2852,7 +2870,6 @@ mini_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, gboolea
 		int klass_reg = alloc_preg (cfg);
 		MonoBasicBlock *is_null_bb = NULL;
 		MonoInst *tls_get;
-		int to_klass_reg, context_used;
 
 		if (null_check) {
 			NEW_BBLOCK (cfg, is_null_bb);
@@ -2872,17 +2889,8 @@ mini_save_cast_details (MonoCompile *cfg, MonoClass *klass, int obj_reg, gboolea
 
 		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, tls_get->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), klass_reg);
 
-		context_used = mini_class_check_context_used (cfg, klass);
-		if (context_used) {
-			MonoInst *class_ins;
-
-			class_ins = mini_emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_KLASS);
-			to_klass_reg = class_ins->dreg;
-		} else {
-			to_klass_reg = alloc_preg (cfg);
-			MONO_EMIT_NEW_CLASSCONST (cfg, to_klass_reg, klass);
-		}
-		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, tls_get->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, class_cast_to), to_klass_reg);
+		MonoInst *class_ins = mini_emit_get_rgctx_klass (cfg, mini_class_check_context_used (cfg, klass), klass, MONO_RGCTX_INFO_KLASS);
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, tls_get->dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, class_cast_to), class_ins->dreg);
 
 		if (null_check)
 			MONO_START_BB (cfg, is_null_bb);
@@ -3638,10 +3646,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 		 */
 
 		args [0] = sp [0];
-		if (mono_method_check_context_used (cmethod))
-			args [1] = emit_get_rgctx_method (cfg, mono_method_check_context_used (cmethod), cmethod, MONO_RGCTX_INFO_METHOD);
-		else
-			EMIT_NEW_METHODCONST (cfg, args [1], cmethod);
+		args [1] = emit_get_rgctx_method (cfg, mono_method_check_context_used (cmethod), cmethod, MONO_RGCTX_INFO_METHOD);
 		args [2] = mini_emit_get_rgctx_klass (cfg, mono_class_check_context_used (constrained_class), constrained_class, MONO_RGCTX_INFO_KLASS);
 
 		/* !fsig->hasthis is for the wrapper for the Object.GetType () icall */
@@ -9772,23 +9777,13 @@ field_access_end:
 			loc = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.typed_reference_class), OP_LOCAL);
 			EMIT_NEW_TEMPLOADA (cfg, addr, loc->inst_c0);
 
-			if (context_used) {
-				MonoInst *const_ins;
-				int type_reg = alloc_preg (cfg);
+			MonoInst *const_ins = mini_emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_KLASS);
+			int type_reg = alloc_preg (cfg);
 
-				const_ins = mini_emit_get_rgctx_klass (cfg, context_used, klass, MONO_RGCTX_INFO_KLASS);
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, klass), const_ins->dreg);
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADD_IMM, type_reg, const_ins->dreg, m_class_offsetof_byval_arg ());
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, type), type_reg);
-			} else {
-				int const_reg = alloc_preg (cfg);
-				int type_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, klass), const_ins->dreg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADD_IMM, type_reg, const_ins->dreg, m_class_offsetof_byval_arg ());
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, type), type_reg);
 
-				MONO_EMIT_NEW_CLASSCONST (cfg, const_reg, klass);
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, klass), const_reg);
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADD_IMM, type_reg, const_reg, m_class_offsetof_byval_arg ());
-				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, type), type_reg);
-			}
 			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREP_MEMBASE_REG, addr->dreg, MONO_STRUCT_OFFSET (MonoTypedRef, value), sp [0]->dreg);
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, loc->inst_c0);
