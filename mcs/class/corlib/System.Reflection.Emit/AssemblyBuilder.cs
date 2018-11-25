@@ -45,6 +45,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Threading;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
@@ -1160,15 +1161,19 @@ namespace System.Reflection.Emit
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-			return GetSatelliteAssembly (culture, null, true);
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, null, true, ref stackMark);
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			return GetSatelliteAssembly (culture, version, true);
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, version, true, ref stackMark);
 		}
 
 		public override Module ManifestModule {

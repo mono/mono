@@ -346,6 +346,7 @@ namespace System.Reflection {
 			}
 		}
 
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
@@ -467,13 +468,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
+		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError, ref StackCrawlMark stackMark)
 		{
 			if (culture == null)
 				throw new ArgumentNullException("culture");
 			Contract.EndContractBlock();
 
-			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			String name = GetSimpleName() + ".resources";
 			return InternalGetSatelliteAssembly(name, culture, version, true, ref stackMark);
 		}
