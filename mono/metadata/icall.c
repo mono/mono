@@ -1389,6 +1389,12 @@ mono_runtime_get_caller_no_system_or_reflection (void)
 	return dest;
 }
 
+/*
+ * mono_runtime_get_caller_from_stack_mark:
+ *
+ *   Walk the stack and return the assembly of the method referenced
+ * by the stack mark STACK_MARK.
+ */
 MonoAssembly*
 mono_runtime_get_caller_from_stack_mark (MonoStackCrawlMark *stack_mark)
 {
