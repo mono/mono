@@ -1161,18 +1161,18 @@ namespace System.Reflection.Emit
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
-        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return GetSatelliteAssembly (culture, null, true, ref stackMark);
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
-        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return GetSatelliteAssembly (culture, version, true, ref stackMark);
 		}
 

@@ -726,7 +726,7 @@ namespace System {
 		}
 
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			if (assemblyRef == null)
@@ -739,7 +739,7 @@ namespace System {
 					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 			}
 
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			Assembly assembly = LoadAssembly (assemblyRef.FullName, assemblySecurity, false, ref stackMark);
 			if (assembly != null)
 				return assembly;
@@ -779,18 +779,18 @@ namespace System {
 			return assembly;
 		}
 
-        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (string assemblyString)
 		{
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return Load (assemblyString, null, false, ref stackMark);
 		}
 
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
-            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return Load (assemblyString, assemblySecurity, false, ref stackMark);
 		}
 		
