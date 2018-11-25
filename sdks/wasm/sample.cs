@@ -38,22 +38,11 @@ namespace GeoLocation
             global = new DOMObject(string.Empty);
             navigator = new DOMObject("navigator");
 
-            var httpMessageHandler = typeof(HttpClient).GetField("GetHttpMessageHandler",
-                                            BindingFlags.Static |
-                                            BindingFlags.NonPublic);
-
-            var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
-            using (var location = (JSObject)window.GetObjectProperty("location"))
-            {
-                BaseApiUrl = (string)location.GetObjectProperty("origin");
-            }
-
-            window = null;
-
-            // Setup the HttpClientHandler
-            httpMessageHandler.SetValue(null, (Func<HttpMessageHandler>)(() => {
-                return new WasmHttpMessageHandler();
-            }));
+            using (var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window"))
+                using (var location = (JSObject)window.GetObjectProperty("location"))
+                {
+                    BaseApiUrl = (string)location.GetObjectProperty("origin");
+                }
 
             httpClient = new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
 

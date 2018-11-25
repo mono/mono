@@ -15,6 +15,8 @@ TEST_CASES := \
 	mscorlib/test-methodimpl-01.cs \
 	mscorlib/test-reflection-01.cs \
 	mscorlib/test-reflection-02.cs \
+	mscorlib/test-reflection-03.cs \
+	mscorlib/test-reflection-04.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
