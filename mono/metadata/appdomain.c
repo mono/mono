@@ -2331,11 +2331,8 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoole
 	
 	MonoAssembly *requesting_assembly;
 	requesting_assembly = NULL;
-	if (!refOnly) {
-		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
-		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
-		requesting_assembly = executing_assembly;
-	}
+	if (!refOnly)
+		requesting_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
 
 	MonoAssembly *ass;
 	MonoAssemblyOpenRequest req;
@@ -2378,10 +2375,8 @@ ves_icall_System_Reflection_Assembly_LoadFile_internal (MonoStringHandle fname, 
 	}
 
 	MonoImageOpenStatus status;
-	MonoMethod *executing_method;
-	executing_method = mono_runtime_get_caller_no_system_or_reflection ();
 	MonoAssembly *executing_assembly;
-	executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+	executing_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
 	MonoAssembly *ass;
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_INDIVIDUAL);
@@ -2513,8 +2508,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomainHandle ad, MonoStringHandl
 		 * when probing for the given assembly name, and also load the
 		 * requested assembly in LoadFrom context.
 		 */
-		MonoMethod *executing_method = mono_runtime_get_caller_no_system_or_reflection ();
-		MonoAssembly *executing_assembly = executing_method ? m_class_get_image (executing_method->klass)->assembly : NULL;
+		MonoAssembly *executing_assembly = mono_runtime_get_caller_from_stack_mark (NULL);
 		if (executing_assembly && mono_asmctx_get_kind (&executing_assembly->context) == MONO_ASMCTX_LOADFROM) {
 			asmctx = MONO_ASMCTX_LOADFROM;
 			basedir = executing_assembly->basedir;

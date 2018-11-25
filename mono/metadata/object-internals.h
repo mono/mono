@@ -346,6 +346,14 @@ typedef enum {
 	CallType_OneWay = 3
 } MonoCallType;
 
+/* System.Threading.StackCrawlMark */
+typedef enum {
+	STACK_CRAWL_ME = 0,
+	STACK_CRAWL_CALLER = 1,
+	STACK_CRAWL_CALLERS_CALLER = 2,
+	STACK_CRAWL_THREAD = 3
+} MonoStackCrawlMark;
+
 /* MonoSafeHandle is in class-internals.h. */
 /* Safely access System.Net.Sockets.SafeSocketHandle from native code */
 TYPED_HANDLE_DECL (MonoSafeHandle);
