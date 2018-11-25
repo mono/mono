@@ -6425,6 +6425,189 @@ handle_ctor_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 	return;
 }
 
+typedef struct {
+	MonoMethod *method;
+	gboolean inst_tailcall;
+} HandleCallData;
+
+/*
+ * handle_constrained_call:
+ *
+ *   Handle constrained calls. Return a MonoInst* representing the call or NULL.
+ * May overwrite sp [0] and modify the ref_... parameters.
+ */
+static MonoInst*
+handle_constrained_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoClass *constrained_class, MonoInst **sp,
+						 HandleCallData *cdata, MonoMethod **ref_cmethod, gboolean *ref_virtual, gboolean *ref_emit_widen)
+{
+	MonoInst *ins, *addr;
+	MonoMethod *method = cdata->method;
+	gboolean constrained_partial_call = FALSE;
+	gboolean constrained_is_generic_param =
+		m_class_get_byval_arg (constrained_class)->type == MONO_TYPE_VAR ||
+		m_class_get_byval_arg (constrained_class)->type == MONO_TYPE_MVAR;
+
+	if (constrained_is_generic_param && cfg->gshared) {
+		if (!mini_is_gsharedvt_klass (constrained_class)) {
+			g_assert (!m_class_is_valuetype (cmethod->klass));
+			if (!mini_type_is_reference (m_class_get_byval_arg (constrained_class)))
+				constrained_partial_call = TRUE;
+		}
+	}
+
+	if (mini_is_gsharedvt_klass (constrained_class)) {
+		if ((cmethod->klass != mono_defaults.object_class) && m_class_is_valuetype (constrained_class) && m_class_is_valuetype (cmethod->klass)) {
+			/* The 'Own method' case below */
+		} else if (m_class_get_image (cmethod->klass) != mono_defaults.corlib && !mono_class_is_interface (cmethod->klass) && !m_class_is_valuetype (cmethod->klass)) {
+			/* 'The type parameter is instantiated as a reference type' case below. */
+		} else {
+			ins = handle_constrained_gsharedvt_call (cfg, cmethod, fsig, sp, constrained_class, ref_emit_widen);
+			CHECK_CFG_EXCEPTION;
+			g_assert (ins);
+			if (cdata->inst_tailcall) // FIXME
+				mono_tailcall_print ("missed tailcall constrained_class %s -> %s\n", method->name, cmethod->name);
+			return ins;
+		}
+	}
+
+	if (constrained_partial_call) {
+		gboolean need_box = TRUE;
+
+		/*
+		 * The receiver is a valuetype, but the exact type is not known at compile time. This means the
+		 * called method is not known at compile time either. The called method could end up being
+		 * one of the methods on the parent classes (object/valuetype/enum), in which case we need
+		 * to box the receiver.
+		 * A simple solution would be to box always and make a normal virtual call, but that would
+		 * be bad performance wise.
+		 */
+		if (mono_class_is_interface (cmethod->klass) && mono_class_is_ginst (cmethod->klass)) {
+			/*
+			 * The parent classes implement no generic interfaces, so the called method will be a vtype method, so no boxing neccessary.
+			 */
+			need_box = FALSE;
+		}
+
+		if (!(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) && (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class)) {
+			/* The called method is not virtual, i.e. Object:GetType (), the receiver is a vtype, has to box */
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+			ins->klass = constrained_class;
+			sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+			CHECK_CFG_EXCEPTION;
+		} else if (need_box) {
+			MonoInst *box_type;
+			MonoBasicBlock *is_ref_bb, *end_bb;
+			MonoInst *nonbox_call, *addr;
+
+			/*
+			 * Determine at runtime whenever the called method is defined on object/valuetype/enum, and emit a boxing call
+			 * if needed.
+			 * FIXME: It is possible to inline the called method in a lot of cases, i.e. for T_INT,
+			 * the no-box case goes to a method in Int32, while the box case goes to a method in Enum.
+			 */
+			addr = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_CODE);
+
+			NEW_BBLOCK (cfg, is_ref_bb);
+			NEW_BBLOCK (cfg, end_bb);
+
+			box_type = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_BOX_TYPE);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, box_type->dreg, MONO_GSHAREDVT_BOX_TYPE_REF);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, is_ref_bb);
+
+			/* Non-ref case */
+			if (cfg->llvm_only)
+				/* addr is an ftndesc in this case */
+				nonbox_call = emit_llvmonly_calli (cfg, fsig, sp, addr);
+			else
+				nonbox_call = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
+
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
+
+			/* Ref case */
+			MONO_START_BB (cfg, is_ref_bb);
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+			ins->klass = constrained_class;
+			sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+			CHECK_CFG_EXCEPTION;
+			if (cfg->llvm_only)
+				ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
+			else
+				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
+
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
+
+			MONO_START_BB (cfg, end_bb);
+			cfg->cbb = end_bb;
+
+			nonbox_call->dreg = ins->dreg;
+			if (cdata->inst_tailcall) // FIXME
+				mono_tailcall_print ("missed tailcall constrained_partial_need_box %s -> %s\n", method->name, cmethod->name);
+			return ins;
+		} else {
+			g_assert (mono_class_is_interface (cmethod->klass));
+			addr = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_CODE);
+			if (cfg->llvm_only)
+				ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
+			else
+				ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
+			if (cdata->inst_tailcall) // FIXME
+				mono_tailcall_print ("missed tailcall constrained_partial %s -> %s\n", method->name, cmethod->name);
+			return ins;
+		}
+	} else if (m_class_is_valuetype (constrained_class) && (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class)) {
+		/*
+		 * The type parameter is instantiated as a valuetype,
+		 * but that type doesn't override the method we're
+		 * calling, so we need to box `this'.
+		 */
+		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+		ins->klass = constrained_class;
+		sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+		CHECK_CFG_EXCEPTION;
+	} else if (!m_class_is_valuetype (constrained_class)) {
+		int dreg = alloc_ireg_ref (cfg);
+
+		/*
+		 * The type parameter is instantiated as a reference
+		 * type.  We have a managed pointer on the stack, so
+		 * we need to dereference it here.
+		 */
+		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, sp [0]->dreg, 0);
+		ins->type = STACK_OBJ;
+		sp [0] = ins;
+	} else {
+		if (m_class_is_valuetype (cmethod->klass)) {
+			/* Own method */
+		} else {
+			/* Interface method */
+			int ioffset, slot;
+
+			mono_class_setup_vtable (constrained_class);
+			CHECK_TYPELOAD (constrained_class);
+			ioffset = mono_class_interface_offset (constrained_class, cmethod->klass);
+			if (ioffset == -1)
+				TYPE_LOAD_ERROR (constrained_class);
+			slot = mono_method_get_vtable_slot (cmethod);
+			if (slot == -1)
+				TYPE_LOAD_ERROR (cmethod->klass);
+			cmethod = m_class_get_vtable (constrained_class) [ioffset + slot];
+			*ref_cmethod = cmethod;
+
+			if (cmethod->klass == mono_defaults.enum_class) {
+				/* Enum implements some interfaces, so treat this as the first case */
+				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+				ins->klass = constrained_class;
+				sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+				CHECK_CFG_EXCEPTION;
+			}
+		}
+		*ref_virtual = FALSE;
+	}
+
+ exception_exit:
+	return NULL;
+}
+
 static void
 emit_setret (MonoCompile *cfg, MonoInst *val)
 {
@@ -7644,7 +7827,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			gboolean check_this; check_this = FALSE;
 			gboolean delegate_invoke; delegate_invoke = FALSE;
 			gboolean direct_icall; direct_icall = FALSE;
-			gboolean constrained_partial_call; constrained_partial_call = FALSE;
 			gboolean tailcall_calli; tailcall_calli = FALSE;
 
 			// Variables shared by CEE_CALLI and CEE_CALL/CEE_CALLVIRT.
@@ -7663,6 +7845,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							: ((ins_flag & MONO_INST_TAILCALL) != 0));
 			ins = NULL;
 
+			/* Used to pass arguments to called functions */
+			HandleCallData cdata;
+			memset (&cdata, 0, sizeof (HandleCallData));
+
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
@@ -7672,13 +7858,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				gboolean constrained_is_generic_param =
 					m_class_get_byval_arg (constrained_class)->type == MONO_TYPE_VAR ||
 					m_class_get_byval_arg (constrained_class)->type == MONO_TYPE_MVAR;
-				if (constrained_is_generic_param && cfg->gshared) {
-					if (!mini_is_gsharedvt_klass (constrained_class)) {
-						g_assert (!m_class_is_valuetype (cmethod->klass));
-						if (!mini_type_is_reference (m_class_get_byval_arg (constrained_class)))
-							constrained_partial_call = TRUE;
-					}
-				}
 
 				if (method->wrapper_type != MONO_WRAPPER_NONE) {
 					if (cfg->verbose_level > 2)
@@ -7828,158 +8007,18 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod && m_class_get_image (cmethod->klass) == mono_defaults.corlib && !strcmp (m_class_get_name (cmethod->klass), "ThrowHelper"))
 				cfg->cbb->out_of_line = TRUE;
 
+			cdata.method = method;
+			cdata.inst_tailcall = inst_tailcall;
+
 			/*
 			 * We have the `constrained.' prefix opcode.
 			 */
 			if (constrained_class) {
-				if (mini_is_gsharedvt_klass (constrained_class)) {
-					if ((cmethod->klass != mono_defaults.object_class) && m_class_is_valuetype (constrained_class) && m_class_is_valuetype (cmethod->klass)) {
-						/* The 'Own method' case below */
-					} else if (m_class_get_image (cmethod->klass) != mono_defaults.corlib && !mono_class_is_interface (cmethod->klass) && !m_class_is_valuetype (cmethod->klass)) {
-						/* 'The type parameter is instantiated as a reference type' case below. */
-					} else {
-						ins = handle_constrained_gsharedvt_call (cfg, cmethod, fsig, sp, constrained_class, &emit_widen);
-						CHECK_CFG_EXCEPTION;
-						g_assert (ins);
-						if (inst_tailcall) // FIXME
-							mono_tailcall_print ("missed tailcall constrained_class %s -> %s\n", method->name, cmethod->name);
-						goto call_end;
-					}
-				}
-
-				if (constrained_partial_call) {
-					gboolean need_box = TRUE;
-
-					/*
-					 * The receiver is a valuetype, but the exact type is not known at compile time. This means the
-					 * called method is not known at compile time either. The called method could end up being
-					 * one of the methods on the parent classes (object/valuetype/enum), in which case we need
-					 * to box the receiver.
-					 * A simple solution would be to box always and make a normal virtual call, but that would
-					 * be bad performance wise.
-					 */
-					if (mono_class_is_interface (cmethod->klass) && mono_class_is_ginst (cmethod->klass)) {
-						/*
-						 * The parent classes implement no generic interfaces, so the called method will be a vtype method, so no boxing neccessary.
-						 */
-						need_box = FALSE;
-					}
-
-					if (!(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) && (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class)) {
-						/* The called method is not virtual, i.e. Object:GetType (), the receiver is a vtype, has to box */
-						EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-						ins->klass = constrained_class;
-						sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-						CHECK_CFG_EXCEPTION;
-					} else if (need_box) {
-						MonoInst *box_type;
-						MonoBasicBlock *is_ref_bb, *end_bb;
-						MonoInst *nonbox_call;
-
-						/*
-						 * Determine at runtime whenever the called method is defined on object/valuetype/enum, and emit a boxing call
-						 * if needed.
-						 * FIXME: It is possible to inline the called method in a lot of cases, i.e. for T_INT,
-						 * the no-box case goes to a method in Int32, while the box case goes to a method in Enum.
-						 */
-						addr = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_CODE);
-
-						NEW_BBLOCK (cfg, is_ref_bb);
-						NEW_BBLOCK (cfg, end_bb);
-
-						box_type = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_BOX_TYPE);
-						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, box_type->dreg, MONO_GSHAREDVT_BOX_TYPE_REF);
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, is_ref_bb);
-
-						/* Non-ref case */
-						if (cfg->llvm_only)
-							/* addr is an ftndesc in this case */
-							nonbox_call = emit_llvmonly_calli (cfg, fsig, sp, addr);
-						else
-							nonbox_call = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
-
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
-
-						/* Ref case */
-						MONO_START_BB (cfg, is_ref_bb);
-						EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-						ins->klass = constrained_class;
-						sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-						CHECK_CFG_EXCEPTION;
-						if (cfg->llvm_only)
-							ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
-						else
-							ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
-
-						MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
-
-						MONO_START_BB (cfg, end_bb);
-						cfg->cbb = end_bb;
-
-						nonbox_call->dreg = ins->dreg;
-						if (inst_tailcall) // FIXME
-							mono_tailcall_print ("missed tailcall constrained_partial_need_box %s -> %s\n", method->name, cmethod->name);
-						goto call_end;
-					} else {
-						g_assert (mono_class_is_interface (cmethod->klass));
-						addr = emit_get_rgctx_virt_method (cfg, mono_class_check_context_used (constrained_class), constrained_class, cmethod, MONO_RGCTX_INFO_VIRT_METHOD_CODE);
-						if (cfg->llvm_only)
-							ins = emit_llvmonly_calli (cfg, fsig, sp, addr);
-						else
-							ins = (MonoInst*)mini_emit_calli (cfg, fsig, sp, addr, NULL, NULL);
-						if (inst_tailcall) // FIXME
-							mono_tailcall_print ("missed tailcall constrained_partial %s -> %s\n", method->name, cmethod->name);
-						goto call_end;
-					}
-				} else if (m_class_is_valuetype (constrained_class) && (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class)) {
-					/*
-					 * The type parameter is instantiated as a valuetype,
-					 * but that type doesn't override the method we're
-					 * calling, so we need to box `this'.
-					 */
-					EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-					ins->klass = constrained_class;
-					sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-					CHECK_CFG_EXCEPTION;
-				} else if (!m_class_is_valuetype (constrained_class)) {
-					int dreg = alloc_ireg_ref (cfg);
-
-					/*
-					 * The type parameter is instantiated as a reference
-					 * type.  We have a managed pointer on the stack, so
-					 * we need to dereference it here.
-					 */
-					EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, sp [0]->dreg, 0);
-					ins->type = STACK_OBJ;
-					sp [0] = ins;
-				} else {
-					if (m_class_is_valuetype (cmethod->klass)) {
-						/* Own method */
-					} else {
-						/* Interface method */
-						int ioffset, slot;
-
-						mono_class_setup_vtable (constrained_class);
-						CHECK_TYPELOAD (constrained_class);
-						ioffset = mono_class_interface_offset (constrained_class, cmethod->klass);
-						if (ioffset == -1)
-							TYPE_LOAD_ERROR (constrained_class);
-						slot = mono_method_get_vtable_slot (cmethod);
-						if (slot == -1)
-							TYPE_LOAD_ERROR (cmethod->klass);
-						cmethod = m_class_get_vtable (constrained_class) [ioffset + slot];
-
-						if (cmethod->klass == mono_defaults.enum_class) {
-							/* Enum implements some interfaces, so treat this as the first case */
-							EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-							ins->klass = constrained_class;
-							sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-							CHECK_CFG_EXCEPTION;
-						}
-					}
-					virtual_ = FALSE;
-				}
+				ins = handle_constrained_call (cfg, cmethod, fsig, constrained_class, sp, &cdata, &cmethod, &virtual_, &emit_widen);
+				CHECK_CFG_EXCEPTION;
 				constrained_class = NULL;
+				if (ins)
+					goto call_end;
 			}
 
 			for (int i = 0; i < fsig->param_count; ++i)
@@ -8361,7 +8400,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * patching gshared method addresses into a gsharedvt method.
 			 */
 			if (make_generic_call_out_of_gsharedvt_method) {
-
 				if (virtual_) {
 					//if (mono_class_is_interface (cmethod->klass))
 						//GSHAREDVT_FAILURE (il_op);
@@ -8553,8 +8591,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				INLINE_FAILURE ("call");
 			common_call = TRUE;
 
-			call_end:
-
+call_end:
 			// Check that the decision to tailcall would not have changed.
 			g_assert (!called_is_supported_tailcall || tailcall_method == method);
 			// FIXME? cmethod does change, weaken the assert if we weren't tailcalling anyway.
