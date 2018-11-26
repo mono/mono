@@ -385,3 +385,7 @@
 
 # System.IO.DirectoryInfo
 ../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs
+
+# System.IO.TextWriter/StreamWriter
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs

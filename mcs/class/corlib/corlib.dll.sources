@@ -1141,11 +1141,11 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs
-../referencesource/mscorlib/system/io/streamwriter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamWriter.cs
 ../referencesource/mscorlib/system/io/stringreader.cs
 ../referencesource/mscorlib/system/io/stringwriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/TextReader.cs
-../referencesource/mscorlib/system/io/textwriter.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/TextWriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryAccessor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStreamWrapper.cs
