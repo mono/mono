@@ -2095,7 +2095,7 @@ free_strings:
 	if (argv)
 		g_strfreev (argv);
 
-	g_printerr ("XXX-MONO: %s: returning handle %p for pid %d\n", __func__, handle, pid);
+	g_printerr ("XXX-MONO: %s: returning handle %p for pid %d from %d\n", __func__, handle, pid, getpid());
 
 	/* Check if something needs to be cleaned up. */
 	processes_cleanup ();
