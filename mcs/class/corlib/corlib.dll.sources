@@ -247,6 +247,7 @@ System.Reflection/FieldInfo.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
 System.Reflection/MonoEvent.cs
@@ -826,6 +827,7 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
+System.Text/EncodingHelper.WebAssembly.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs

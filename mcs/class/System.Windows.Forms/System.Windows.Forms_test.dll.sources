@@ -128,6 +128,7 @@ System.Windows.Forms/PrintDialogTest.cs
 System.Windows.Forms/PrintPreviewControlTest.cs
 System.Windows.Forms/ProgressBarTest.cs
 System.Windows.Forms/PropertyGridTest.cs
+System.Windows.Forms/PropertyGrid_GridEntryTest.cs
 System.Windows.Forms/PropertyManagerTest.cs
 System.Windows.Forms/RadioButtonTest.cs
 System.Windows.Forms/RowStyleTest.cs

@@ -2131,7 +2131,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 				 * See tests/test-arr.cs
 				 */
 				if (strstr (info->name, "ves_array_new_va_") == NULL && strstr (info->name, "ves_array_element_address_") == NULL) {
-					patch_info->type = MONO_PATCH_INFO_INTERNAL_METHOD;
+					patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
 					patch_info->data.name = info->name;
 				}
 			}
@@ -2931,7 +2931,7 @@ mono_insert_safepoints (MonoCompile *cfg)
 		}
 	}
 
-	if (cfg->method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 
 		if (info && (info->subtype == WRAPPER_SUBTYPE_INTERP_IN || info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)) {
@@ -3060,7 +3060,7 @@ init_backend (MonoBackend *backend)
 #else
 	backend->monitor_enter_adjustment = MONO_ARCH_MONITOR_ENTER_ADJUSTMENT;
 #endif
-#if defined(__mono_ilp32__)
+#if defined(MONO_ARCH_ILP32)
 	backend->ilp32 = 1;
 #endif
 #ifdef MONO_ARCH_NEED_DIV_CHECK
@@ -3385,7 +3385,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	mini_gc_init_cfg (cfg);
 
-	if (method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	if (method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 		/* These wrappers are using linkonce linkage, so they can't access GOT slots */

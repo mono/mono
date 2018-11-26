@@ -147,6 +147,31 @@ mcs-do-run-test-profiles: test-support-files
 mcs-do-xunit-run-test-profiles: test-support-files
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-xunit-test-profiles
 
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)/_tmpinst/bin
+	cp -L mono-test.sh $(TEST_BUNDLE_PATH)
+	cp -L -R etc $(TEST_BUNDLE_PATH)/_tmpinst
+	rm $(TEST_BUNDLE_PATH)/_tmpinst/etc/mono/config
+	sed -e 's,$$mono_libdir,$$test_root_dir,g' -e 's,target="$(libgdiplus_install_loc)",target="$$test_root_dir/mono-libgdiplus$(libsuffix)",g' $(top_builddir)/data/config > $(TEST_BUNDLE_PATH)/_tmpinst/etc/mono/config.tmpl
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	echo '#! /bin/sh' > $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/al.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/mcs.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	echo '"$$MONO_EXECUTABLE" $$(dirname "$$MONO_EXECUTABLE")/net_4_x/ilasm.exe "$$@"' >> $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/al
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/mcs
+	chmod +x $(TEST_BUNDLE_PATH)/_tmpinst/bin/ilasm
+	for profile in $(test_profiles); do \
+		cp -L -R $(mcs_topdir)/class/lib/$$profile $(TEST_BUNDLE_PATH); \
+	done
+	cp -L $(top_srcdir)/external/xunit-binaries/*.dll $(top_srcdir)/external/xunit-binaries/*.exe $(top_srcdir)/external/xunit-binaries/*.config $(TEST_BUNDLE_PATH)/net_4_x/
+	cp -L $(top_srcdir)/external/xunit-binaries/xunit.execution.dotnet.dll $(TEST_BUNDLE_PATH)/net_4_x/tests/
+	$(MAKE) -C $(mcs_topdir)/tests test-bundle
+	$(MAKE) -C $(mcs_topdir)/errors test-bundle
+	$(MAKE) -C $(mcs_topdir)/packages test-bundle
+	$(MAKE) -C $(mcs_topdir)/tools/mono-symbolicate test-bundle
+
 if HOST_WIN32
 if CROSS_COMPILING
 cur_dir_cmd = pwd

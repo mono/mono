@@ -503,21 +503,7 @@
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
 
 		<type fullname="System.Reflection.AssemblyName" preserve="fields" />
-
-		<!-- custom-attr.c: create_custom_attr_data -->
-		<type fullname="System.Reflection.CustomAttributeData">
-			<method signature="System.Void .ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)" />
-		</type>
-
-		<!-- reflection.c: create_cattr_named_arg - create an instance with the ctor using 2 parameters -->
-		<type fullname="System.Reflection.CustomAttributeNamedArgument">
-			<method signature="System.Void .ctor(System.Reflection.MemberInfo,System.Object)" />
-		</type>
 		
-		<!-- reflection.c: create_cattr_typed_arg - create an instance with the ctor using 2 parameters -->
-		<type fullname="System.Reflection.CustomAttributeTypedArgument">
-			<method signature="System.Void .ctor(System.Type,System.Object)" />
-		</type>
 		<type fullname="System.Reflection.EventInfo" preserve="fields">
 			<method name="AddEventFrame" />
 			<method name="StaticAddEventAdapterFrame" />
@@ -538,11 +524,6 @@
 			<method signature="System.Void .ctor()" />
 		</type>
 
-		<!-- reflection.c: mono_method_body_get_object -->
-		<type fullname="System.Reflection.MethodBody" preserve="fields" >
-			<!-- reflection.c mono_object_new_checked in method_body_object_construct -->
-			<method signature="System.Void .ctor()" />
-		</type>
 		<!-- domain.c: mono_defaults.method_info_class -->
 		<type fullname="System.Reflection.MethodInfo" preserve="nothing" />
 
@@ -858,5 +839,12 @@
 		<type fullname="Mono.RuntimeStructs/MonoError" />
 
 		<type fullname="System.Threading.WasmRuntime"/>
+
+		<!-- mini-generic-sharing.c -->
+		<type fullname="Mono.ValueTuple`1" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`2" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`3" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`4" preserve="fields"/>
+		<type fullname="Mono.ValueTuple`5" preserve="fields"/>
 	</assembly>
 </linker>

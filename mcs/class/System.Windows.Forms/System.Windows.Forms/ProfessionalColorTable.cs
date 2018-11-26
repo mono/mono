@@ -217,32 +217,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = Color.FromArgb (182, 189, 210);
 					menu_item_selected_gradient_end = Color.FromArgb (182, 189, 210);
 
-					menu_strip_gradient_begin = SystemColors.ButtonFace;
-					menu_strip_gradient_end = Color.FromArgb (246, 245, 244);
+					menu_strip_gradient_begin = SystemColors.Control;
+					menu_strip_gradient_end = SystemColors.ControlLight;
 
 					overflow_button_gradient_begin = Color.FromArgb (225, 222, 217);
 					overflow_button_gradient_end = SystemColors.ButtonShadow;
 					overflow_button_gradient_middle = Color.FromArgb (216, 213, 206);
 
-					rafting_container_gradient_begin = SystemColors.ButtonFace;
+					rafting_container_gradient_begin = SystemColors.Control;
 					rafting_container_gradient_end = Color.FromArgb (246, 245, 244);
 
 					separator_dark = Color.FromArgb (166, 166, 166);
 					separator_light = SystemColors.ButtonHighlight;
 
-					status_strip_gradient_begin = SystemColors.ButtonFace;
+					status_strip_gradient_begin = SystemColors.Control;
 					status_strip_gradient_end = Color.FromArgb (246, 245, 244);
 
 					tool_strip_border = Color.FromArgb (219, 216, 209);
-					tool_strip_content_panel_gradient_begin = SystemColors.ButtonFace;
+					tool_strip_content_panel_gradient_begin = SystemColors.Control;
 					tool_strip_content_panel_gradient_end = Color.FromArgb (246, 245, 244);
-					tool_strip_drop_down_background = SystemColors.Window;
+					tool_strip_drop_down_background = SystemColors.Menu;
 
-					tool_strip_gradient_begin = Color.FromArgb (245, 244, 242);
-					tool_strip_gradient_end = SystemColors.ButtonFace;
+					tool_strip_gradient_begin = SystemColors.ControlLight;
+					tool_strip_gradient_end = SystemColors.Control;
 					tool_strip_gradient_middle = Color.FromArgb (234, 232, 228);
 
-					tool_strip_panel_gradient_begin = SystemColors.ButtonFace;
+					tool_strip_panel_gradient_begin = SystemColors.Control;
 					tool_strip_panel_gradient_end = Color.FromArgb (246, 245, 244);
 					break;
 				case ColorSchemes.NormalColor:
@@ -288,32 +288,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = use_system_colors ? Color.FromArgb (193, 210, 238) : Color.FromArgb (255, 255, 222);
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (193, 210, 238) : Color.FromArgb (255, 203, 136);
 
-					menu_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (158, 190, 245);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
+					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (196, 218, 250);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (127, 177, 250);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (0, 53, 145);
 					overflow_button_gradient_middle = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (82, 127, 208);
 
-					rafting_container_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (158, 190, 245);
+					rafting_container_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
 					rafting_container_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
 
 					separator_dark = use_system_colors ? Color.FromArgb (197, 194, 184) : Color.FromArgb (106, 140, 203);
 					separator_light = use_system_colors ? SystemColors.ButtonHighlight : Color.FromArgb (241, 249, 255);
 
-					status_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (158, 190, 245);
+					status_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
 					status_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
 
 					tool_strip_border = use_system_colors ? Color.FromArgb (239, 237, 222) : Color.FromArgb (59, 97, 156);
-					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (158, 190, 245);
+					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
-					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 249) : Color.FromArgb (246, 246, 246);
+					tool_strip_drop_down_background = use_system_colors ? SystemColors.Menu : Color.FromArgb (246, 246, 246);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (227, 239, 255);
-					tool_strip_gradient_end = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (123, 164, 224);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (227, 239, 255);
+					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (123, 164, 224);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (203, 225, 252);
 
-					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (158, 190, 245);
+					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (158, 190, 245);
 					tool_strip_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (196, 218, 250);
 					break;
 				case ColorSchemes.HomeStead:
@@ -361,32 +361,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = use_system_colors ? Color.FromArgb (223, 227, 212) : Color.FromArgb (255, 255, 222);
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (223, 227, 212) : Color.FromArgb (255, 203, 136);
 
-					menu_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (217, 217, 167);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
+					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (242, 241, 228);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (242, 240, 228) : Color.FromArgb (186, 204, 150);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (96, 119, 107);
 					overflow_button_gradient_middle = use_system_colors ? Color.FromArgb (238, 235, 220) : Color.FromArgb (141, 160, 107);
 
-					rafting_container_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (217, 217, 167);
+					rafting_container_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
 					rafting_container_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
 
 					separator_dark = use_system_colors ? Color.FromArgb (197, 194, 184) : Color.FromArgb (96, 128, 88);
 					separator_light = use_system_colors ? SystemColors.ButtonHighlight : Color.FromArgb (244, 247, 222);
 
-					status_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (217, 217, 167);
+					status_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
 					status_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
 
 					tool_strip_border = use_system_colors ? Color.FromArgb (239, 237, 222) : Color.FromArgb (96, 128, 88);
-					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (217, 217, 167);
+					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
-					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 249) : Color.FromArgb (244, 244, 238);
+					tool_strip_drop_down_background = use_system_colors ? SystemColors.Menu : Color.FromArgb (244, 244, 238);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (251, 250, 246) : Color.FromArgb (255, 255, 237);
-					tool_strip_gradient_end = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (181, 196, 143);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (255, 255, 237);
+					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (181, 196, 143);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (246, 244, 236) : Color.FromArgb (206, 220, 167);
 
-					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (217, 217, 167);
+					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (217, 217, 167);
 					tool_strip_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 247) : Color.FromArgb (242, 241, 228);
 					break;
 				case ColorSchemes.Metallic:
@@ -434,32 +434,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = use_system_colors ? Color.FromArgb (232, 233, 236) : Color.FromArgb (255, 255, 222);
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (232, 233, 236) : Color.FromArgb (255, 203, 136);
 
-					menu_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (215, 215, 229);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
+					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (243, 243, 247);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (233, 233, 235) : Color.FromArgb (186, 185, 206);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (118, 116, 146);
 					overflow_button_gradient_middle = use_system_colors ? Color.FromArgb (227, 226, 230) : Color.FromArgb (156, 155, 180);
 
-					rafting_container_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (215, 215, 229);
+					rafting_container_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
 					rafting_container_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
 
 					separator_dark = use_system_colors ? Color.FromArgb (186, 186, 189) : Color.FromArgb (110, 109, 143);
 					separator_light = use_system_colors ? SystemColors.ButtonHighlight : Color.FromArgb (255, 255, 255);
 
-					status_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (215, 215, 229);
+					status_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
 					status_strip_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
 
 					tool_strip_border = use_system_colors ? Color.FromArgb (229, 228, 232) : Color.FromArgb (124, 124, 148);
-					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (215, 215, 229);
+					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
-					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (253, 250, 255);
+					tool_strip_drop_down_background = use_system_colors ? SystemColors.Menu : Color.FromArgb (253, 250, 255);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (248, 248, 249) : Color.FromArgb (249, 249, 255);
-					tool_strip_gradient_end = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (147, 145, 176);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (249, 249, 255);
+					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (147, 145, 176);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (240, 239, 241) : Color.FromArgb (225, 226, 236);
 
-					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (215, 215, 229);
+					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (215, 215, 229);
 					tool_strip_panel_gradient_end = use_system_colors ? Color.FromArgb (249, 248, 249) : Color.FromArgb (243, 243, 247);
 					break;
 				case ColorSchemes.MediaCenter:
@@ -507,32 +507,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = use_system_colors ? Color.FromArgb (194, 207, 229) : Color.FromArgb (194, 207, 229);
 					menu_item_selected_gradient_end = use_system_colors ? Color.FromArgb (194, 207, 229) : Color.FromArgb (194, 207, 229);
 
-					menu_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
-					menu_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
+					menu_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
+					menu_strip_gradient_end = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (251, 250, 251);
 
 					overflow_button_gradient_begin = use_system_colors ? Color.FromArgb (241, 240, 242) : Color.FromArgb (242, 242, 242);
 					overflow_button_gradient_end = use_system_colors ? SystemColors.ButtonShadow : Color.FromArgb (167, 166, 170);
 					overflow_button_gradient_middle = use_system_colors ? Color.FromArgb (237, 235, 239) : Color.FromArgb (224, 224, 225);
 
-					rafting_container_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
+					rafting_container_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					rafting_container_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
 
 					separator_dark = use_system_colors ? Color.FromArgb (193, 193, 196) : Color.FromArgb (193, 193, 196);
 					separator_light = use_system_colors ? SystemColors.ButtonHighlight : Color.FromArgb (255, 255, 255);
 
-					status_strip_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
+					status_strip_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					status_strip_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
 
 					tool_strip_border = use_system_colors ? Color.FromArgb (238, 237, 240) : Color.FromArgb (238, 237, 240);
-					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
+					tool_strip_content_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					tool_strip_content_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
-					tool_strip_drop_down_background = use_system_colors ? Color.FromArgb (252, 252, 252) : Color.FromArgb (252, 252, 252);
+					tool_strip_drop_down_background = use_system_colors ? SystemColors.Menu : Color.FromArgb (252, 252, 252);
 
-					tool_strip_gradient_begin = use_system_colors ? Color.FromArgb (250, 250, 251) : Color.FromArgb (252, 252, 252);
-					tool_strip_gradient_end = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
+					tool_strip_gradient_begin = use_system_colors ? SystemColors.ControlLight : Color.FromArgb (252, 252, 252);
+					tool_strip_gradient_end = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					tool_strip_gradient_middle = use_system_colors ? Color.FromArgb (245, 244, 246) : Color.FromArgb (245, 244, 246);
 
-					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.ButtonFace : Color.FromArgb (235, 233, 237);
+					tool_strip_panel_gradient_begin = use_system_colors ? SystemColors.Control : Color.FromArgb (235, 233, 237);
 					tool_strip_panel_gradient_end = use_system_colors ? Color.FromArgb (251, 250, 251) : Color.FromArgb (251, 250, 251);
 					break;
 				case ColorSchemes.Aero:
@@ -580,32 +580,32 @@ namespace System.Windows.Forms
 					menu_item_selected_gradient_begin = Color.FromArgb (194, 224, 255);
 					menu_item_selected_gradient_end = Color.FromArgb (194, 224, 255);
 
-					menu_strip_gradient_begin = SystemColors.ButtonFace;
-					menu_strip_gradient_end = Color.FromArgb (253, 253, 253);
+					menu_strip_gradient_begin = SystemColors.Control;
+					menu_strip_gradient_end = SystemColors.ControlLight;
 
 					overflow_button_gradient_begin = Color.FromArgb (247, 247, 247);
 					overflow_button_gradient_end = SystemColors.ButtonShadow;
 					overflow_button_gradient_middle = Color.FromArgb (245, 245, 245);
 
-					rafting_container_gradient_begin = SystemColors.ButtonFace;
+					rafting_container_gradient_begin = SystemColors.Control;
 					rafting_container_gradient_end = Color.FromArgb (253, 253, 253);
 
 					separator_dark = Color.FromArgb (189, 189, 189);
 					separator_light = SystemColors.ButtonHighlight;
 
-					status_strip_gradient_begin = SystemColors.ButtonFace;
+					status_strip_gradient_begin = SystemColors.Control;
 					status_strip_gradient_end = Color.FromArgb (253, 253, 253);
 
 					tool_strip_border = Color.FromArgb (246, 246, 246);
-					tool_strip_content_panel_gradient_begin = SystemColors.ButtonFace;
+					tool_strip_content_panel_gradient_begin = SystemColors.Control;
 					tool_strip_content_panel_gradient_end = Color.FromArgb (253, 253, 253);
-					tool_strip_drop_down_background = Color.FromArgb (253, 253, 253);
+					tool_strip_drop_down_background = SystemColors.Menu;
 
-					tool_strip_gradient_begin = Color.FromArgb (252, 252, 252);
-					tool_strip_gradient_end = SystemColors.ButtonFace;
+					tool_strip_gradient_begin = SystemColors.ControlLight;
+					tool_strip_gradient_end = SystemColors.Control;
 					tool_strip_gradient_middle = Color.FromArgb (250, 250, 250);
 
-					tool_strip_panel_gradient_begin = SystemColors.ButtonFace;
+					tool_strip_panel_gradient_begin = SystemColors.Control;
 					tool_strip_panel_gradient_end = Color.FromArgb (253, 253, 253);
 					break;
 			}

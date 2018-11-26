@@ -1,0 +1,5 @@
+HelixBase.cs
+HelixTestBase.cs
+MainlineTests.cs
+mono-helix-client.cs
+../../class/Mono.Options/Mono.Options/Options.cs

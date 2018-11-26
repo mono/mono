@@ -696,6 +696,7 @@ TESTS_CS_SRC=		\
 	verbose.cs \
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
+	bug-10837.cs	\
 	bug-gh-9507.cs
 
 # some tests fail to compile on mcs
@@ -933,6 +934,7 @@ TESTS_IL_SRC=			\
 	invalid-token.il	\
 	call_missing_method.il	\
 	call_missing_class.il	\
+	calli_sig_check.il	\
 	ldfld_missing_field.il	\
 	ldfld_missing_class.il	\
 	find-method.2.il	\
@@ -1405,6 +1407,7 @@ endif
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
 PROFILE_DISABLED_TESTS += \
 	constraints-load.exe \
+	calli_sig_check.exe \
 	bug-515884.exe
 
 PROFILE_DISABLED_TESTS += \
@@ -1530,7 +1533,8 @@ PROFILE_DISABLED_TESTS += \
 endif
 
 AOT_DISABLED_TESTS= \
-	constraints-load.exe
+	constraints-load.exe \
+	calli_sig_check.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1788,6 +1792,9 @@ INTERP_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 
+# expected InvalidProgramException not thrown
+INTERP_DISABLED_TESTS += calli_sig_check.exe
+
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1996,12 +2003,17 @@ test-env-options:
 	MONO_ENV_OPTIONS="--version" $(RUNTIME) array-init.exe | grep -q Architecture:
 
 TESTS_REGULAR = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
-
-generate-regular-test-list:
-	@echo $(TESTS_REGULAR) > $(TEST_LIST_PATH)
+TESTS_INCL_DEPS = $(shell find . -type f -name "*.exe" -o -name "*.dll" -o -name "*.netmodule" -o -name "*.config")
 
 # Target to precompile the test executables
 test-local: $(TESTS_REGULAR) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference test-runner.exe
+
+test-bundle-local:
+	mkdir -p $(addprefix $(TEST_BUNDLE_PATH)/tests/runtime/,$(sort $(dir $(TESTS_INCL_DEPS))))
+	@echo $(TESTS_REGULAR) > $(TEST_BUNDLE_PATH)/tests/runtime/runtime-test-list.txt
+	sed -e 's,$$mono_libdir,$$test_root_dir,g' tests-config > $(TEST_BUNDLE_PATH)/tests/runtime/tests-config.tmpl
+	cp -L .libs/libtest$(libsuffix) $(TEST_BUNDLE_PATH)/tests/runtime/
+	$(foreach asset,$(TESTS_INCL_DEPS),cp -L $(asset) $(TEST_BUNDLE_PATH)/tests/runtime/$(dir $(asset));)
 
 # Precompile the test assemblies in parallel
 compile-tests:
