@@ -900,7 +900,7 @@ gint32 il2cpp_mono_environment_exitcode_get()
 
 void il2cpp_mono_environment_exitcode_set(gint32 value)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
+    il2cpp::vm::Runtime::SetExitCode(value);
 }
 
 void il2cpp_mono_threadpool_suspend()

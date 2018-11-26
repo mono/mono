@@ -8750,10 +8750,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			while (suspend_count > 0)
 				resume_vm ();
 
+			mono_environment_exitcode_set (exit_code);
+			
 			if (!mono_runtime_try_shutdown ())
 				break;
-
-			mono_environment_exitcode_set (exit_code);
 
 			/* Suspend all managed threads since the runtime is going away */
 			DEBUG_PRINTF (1, "Suspending all threads...\n");
