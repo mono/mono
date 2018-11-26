@@ -37,6 +37,8 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoCasTests.System.CodeDom.Compiler {
 
 	[TestFixture]
@@ -50,7 +52,7 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		public void FixtureSetUp ()
 		{
 			// at full trust
-			temp = Path.GetTempPath ();
+			temp = PathHelpers.CreateTemporaryDirectory ();
 			array = new string[1];
 		}
 

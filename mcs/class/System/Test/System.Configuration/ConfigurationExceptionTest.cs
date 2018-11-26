@@ -33,6 +33,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Configuration
 {
 	[TestFixture]
@@ -43,17 +45,13 @@ namespace MonoTests.System.Configuration
 		[SetUp]
 		public void SetUp ()
 		{
-			foldername = Path.Combine (Path.GetTempPath (),
-				this.GetType ().FullName);
-			if (!Directory.Exists (foldername))
-				Directory.CreateDirectory (foldername);
+			foldername = PathHelpers.CreateTemporaryDirectory ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (foldername))
-				Directory.Delete (foldername, true);
+			PathHelpers.DeleteDirectory (foldername);
 		}
 
 		[Test] // ctor ()

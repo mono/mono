@@ -21,6 +21,7 @@ using System.Security.Permissions;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Net
 {
@@ -34,24 +35,15 @@ namespace MonoTests.System.Net
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "MonoTests.System.Net.FileWebRequestTest");
+			_tempDirectory = PathHelpers.CreateTemporaryDirectory ();
 			_tempFile = Path.Combine (_tempDirectory, "FileWebRequestTest.tmp");
-			if (!Directory.Exists (_tempDirectory)) {
-				Directory.CreateDirectory (_tempDirectory);
-			} else {
-				// ensure no files are left over from previous runs
-				string [] files = Directory.GetFiles (_tempDirectory, "*");
-				foreach (string file in files)
-					File.Delete (file);
-			}
 			_tempFileUri = GetTempFileUri ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
+			PathHelpers.DeleteDirectory (_tempDirectory);
 		}
 
 		[Test]

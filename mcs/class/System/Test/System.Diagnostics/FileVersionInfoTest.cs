@@ -19,6 +19,8 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
@@ -29,16 +31,13 @@ namespace MonoTests.System.Diagnostics
 		[SetUp]
 		public void SetUp ()
 		{
-			tempDir = Path.Combine (Path.GetTempPath (), Environment.UserName);
-			tempDir = Path.Combine (tempDir, "MonoTests.System.Diagnostics.AppDomainTest");
-			if (!Directory.Exists (tempDir))
-				Directory.CreateDirectory (tempDir);
+			tempDir = PathHelpers.CreateTemporaryDirectory ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			Directory.Delete (tempDir, true);
+			PathHelpers.DeleteDirectory (tempDir);
 		}
 
 		[Test]

@@ -53,6 +53,8 @@ using Microsoft.Win32;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
@@ -75,8 +77,7 @@ namespace MonoTests.System.Diagnostics
 				return;
 
 			// determine temp directory for eventlog store
-			_eventLogStore = Path.Combine (Path.GetTempPath (),
-				Guid.NewGuid ().ToString ());
+			_eventLogStore = PathHelpers.CreateTemporaryDirectory ();
 
 			// save original eventlog implementation type (if set)
 			_originalEventLogImpl = Environment.GetEnvironmentVariable (
@@ -98,8 +99,7 @@ namespace MonoTests.System.Diagnostics
 				_originalEventLogImpl);
 
 			// delete temp directory for eventlog store
-			if (Directory.Exists (_eventLogStore))
-				Directory.Delete (_eventLogStore, true);
+			PathHelpers.DeleteDirectory (_eventLogStore);
 		}
 
 		[Test]

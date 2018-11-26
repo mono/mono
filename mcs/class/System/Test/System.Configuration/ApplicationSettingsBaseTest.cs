@@ -42,6 +42,8 @@ using System.Collections.Specialized;
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Configuration {
 	class ProviderPoker : LocalFileSettingsProvider {
 		public override void Initialize (string name,
@@ -170,8 +172,7 @@ namespace MonoTests.System.Configuration {
 		public void FixtureSetup ()
 		{
 			// Use random temp directory to store settings files of tests.
-			tempDir = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());
-			Directory.CreateDirectory (tempDir);
+			tempDir = PathHelpers.CreateTemporaryDirectory ();
 			var localAppData = Path.Combine (tempDir, "LocalAppData");
 			Directory.CreateDirectory (localAppData);
 			var appData = Path.Combine (tempDir, "AppData");
