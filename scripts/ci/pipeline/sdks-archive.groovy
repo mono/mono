@@ -1,5 +1,5 @@
 // compression is incompatible with JEP-210 right now
-//properties([compressBuildLog()])
+properties([/* compressBuildLog() */])
 
 parallel (
     "Archive-android-debug-Darwin": {

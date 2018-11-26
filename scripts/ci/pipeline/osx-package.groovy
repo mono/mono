@@ -8,7 +8,7 @@ def packageFileName = null
 def commitHash = null
 def utils = null
 // compression is incompatible with JEP-210 right now
-//properties([compressBuildLog()])
+properties([ /* compressBuildLog() */ ])
 
 node ("mono-package") {
     ws ("workspace/${jobName}/${monoBranch}") {
