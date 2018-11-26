@@ -227,10 +227,10 @@ $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
-test_load_assembly = ${CURDIR}/TestLoadAssembly.dll
+test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
 
 $(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
-	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${CURDIR}/TestLoadAssembly.dll
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
 
 test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
 
