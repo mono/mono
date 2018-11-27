@@ -16,8 +16,8 @@
 #include <mono/metadata/class-abi-details.h>
 #include <mono/utils/mono-utils-debug.h>
 
-static const gboolean debug_tailcall_break_compile; // break in method_to_ir
-static const gboolean debug_tailcall_break_run;     // insert breakpoint in generated code
+static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
+static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 
 void
 mini_test_tailcall (MonoCompile *cfg, gboolean tailcall)
