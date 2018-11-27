@@ -70,11 +70,11 @@ LINKER_PROFILE_OPTIONS :=
 
 # Should be in sync with runtime sdk flags
 ifeq ($(PROFILE),monotouch)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature sre
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw --exclude-feature sre
 endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
