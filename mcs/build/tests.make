@@ -231,8 +231,14 @@ ifneq ($(wildcard $(MKBUNDLE_TEST_BIN)),)
 TEST_HARNESS_EXEC=$(MKBUNDLE_TEST_BIN)
 TEST_HARNESS_EXCLUDES:=$(TEST_HARNESS_EXCLUDES),StaticLinkedAotNotWorking
 else 
+
+ifneq ($(wildcard $(topdir)/class/lib/$(PROFILE)/mono),)
+TEST_HARNESS_EXEC=$(topdir)/class/lib/$(PROFILE)/mono $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS)
+else 
 TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS)
-endif
+endif # bundled mscorlib
+
+endif # MKBUNDLE_TEST_BIN
 
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig

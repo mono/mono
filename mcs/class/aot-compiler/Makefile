@@ -30,6 +30,7 @@ csc_SCI_image = $(images_dir)/System.Collections.Immutable.dll$(PLATFORM_AOT_SUF
 
 mscorlib_dll = $(the_libdir)/mscorlib.dll
 mscorlib_aot_image = $(mscorlib_dll)$(PLATFORM_AOT_SUFFIX)
+runtime_with_mscorlib = $(the_libdir)/mono
 
 # The $(dir $(RUNTIME)) is necessary to get path to the mono binary in case when we cross-compile
 # or just compile from a different directory than the top source dir
@@ -72,6 +73,26 @@ $(csc_SRM_image): $(csc_SRM_dll) $(runtime_dep)
 $(csc_SCI_image): $(csc_SCI_dll) $(runtime_dep)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(LOG_FILE) 2>&1 $(RUNTIME) --aot=bind-to-runtime-version$(profile_arg),outfile=$(csc_SCI_image) --debug $(csc_SCI_dll) || (cat $(LOG_FILE); exit 1)
 
+MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
+
+$(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
+	make -C $(topdir)/tools/mkbundle
+
+ifneq ($(AOT_MODE),)
+RUNTIME_AOT_MODE=--aot-mode $(AOT_MODE)
+else
+RUNTIME_AOT_MODE=
+endif
+
+ifneq ($(AOT_BUILD_ATTRS),)
+RUNTIME_AOT_ARGS=--aot-args $(AOT_BUILD_ATTRS),direct-icalls
+else
+RUNTIME_AOT_ARGS=--aot-args direct-icalls
+endif
+
+$(runtime_with_mscorlib): $(mscorlib_dll) $(runtime_dep) $(MKBUNDLE_EXE)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' PKG_CONFIG_PATH="$(topdir)/../data" $(RUNTIME) $(MKBUNDLE_EXE) -L $(the_libdir) -v --deps  $(mscorlib_dll) -o $(runtime_with_mscorlib) $(RUNTIME_AOT_MODE) --aot-runtime $(RUNTIME) $(RUNTIME_AOT_ARGS) --in-tree $(topdir)/.. --i18n all --no-managed-entry-point
+
 ifdef ENABLE_AOT
 
 CSC_IMAGES = $(csc_aot_image) $(csc_SRM_image) $(csc_SCI_image) $(csc_MC_image) $(csc_MCS_image)
@@ -82,7 +103,7 @@ clean-local:
 # AOT build profile to speed up build
 ifeq ($(PROFILE),build)
 
-IMAGES = $(mscorlib_aot_image)
+IMAGES = $(CORLIB_IMAGE)
 
 ifdef MCS_MODE
 IMAGES += $(mcs_aot_image)
@@ -97,7 +118,13 @@ endif
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 
-IMAGES = $(mscorlib_aot_image) $(mcs_aot_image) $(CSC_IMAGES)
+ifndef DISABLE_BUNDLE_CORLIB
+CORLIB_IMAGE = $(runtime_with_mscorlib)
+else
+CORLIB_IMAGE = $(mscorlib_aot_image)
+endif
+
+IMAGES = $(CORLIB_IMAGE) $(mcs_aot_image) $(CSC_IMAGES)
 
 all-local: $(IMAGES)
 install-local:

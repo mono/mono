@@ -61,7 +61,8 @@ int main (int argc, char* argv[])
 			newargs[k++] = mono_options[i++];
 	}
 
-	newargs [k++] = image_name;
+	if (image_name != NULL)
+		newargs [k++] = image_name;
 
 	for (i = 1; i < argc; i++) {
 		newargs [k++] = argv [i];

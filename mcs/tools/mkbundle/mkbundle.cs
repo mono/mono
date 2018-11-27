@@ -82,6 +82,7 @@ class MakeBundle {
 	static bool aot_compile = false;
 	static string aot_args = "static";
 	static DirectoryInfo aot_temp_dir = null;
+	static bool no_managed_entry_point = false;
 	static string aot_mode = "";
 	static string aot_runtime = null;
 	static string aot_dedup_assembly = null;
@@ -453,6 +454,9 @@ class MakeBundle {
 				aot_args = String.Format("static,{0}", args [++i]);
 				aot_compile = true;
 				static_link = true;
+				break;
+			case "--no-managed-entry-point":
+				no_managed_entry_point = true;
 				break;
 			case "--mono-api-struct-path":
 				if (i+1 == top) {
@@ -1085,8 +1089,10 @@ typedef struct {
 			tc.WriteLine ("\n}\n");
 			tc.WriteLine ("#endif\n");
 
-
-			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
+			if (no_managed_entry_point)
+				tc.WriteLine ("static char *image_name = NULL;", prog);
+			else
+				tc.WriteLine ("static char *image_name = \"{0}\";", prog);
 
 			if (ctor_func != null) {
 				tc.WriteLine ("\nextern void {0} (void);", ctor_func);

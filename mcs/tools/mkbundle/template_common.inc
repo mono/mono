@@ -18,8 +18,6 @@ void initialize_mono_api (const BundleMonoAPI *info)
 	mono_api.mono_register_machine_config = info->mono_register_machine_config;
 }
 
-#ifdef USE_COMPRESSED_ASSEMBLY
-
 static int
 validate_api_pointer (const char *name, void *ptr)
 {
@@ -68,4 +66,3 @@ init_default_mono_api_struct ()
 #endif // USE_DEFAULT_MONO_API_STRUCT
 }
 
-#endif
