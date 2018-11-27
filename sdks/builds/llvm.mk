@@ -1,11 +1,10 @@
+
 LLVM_SRC?=$(TOP)/sdks/builds/toolchains/llvm
 
 $(TOP)/sdks/builds/toolchains/llvm:
 	mkdir -p $(dir $@)
 	$(MAKE) -C $(TOP)/llvm -f build.mk $@/CMakeLists.txt \
 		LLVM_PATH="$@"
-
-$(LLVM_SRC)/CMakeLists.txt: | $(LLVM_SRC)
 
 LLVM36_SRC?=$(TOP)/sdks/builds/toolchains/llvm36
 
@@ -16,84 +15,44 @@ $(TOP)/sdks/builds/toolchains/llvm36:
 
 $(LLVM36_SRC)/configure: | $(LLVM36_SRC)
 
-.stamp-llvm-download:
-ifeq ($(UNAME),Darwin)
-ifeq ($(DISABLE_DOWNLOAD_LLVM),)
-	mkdir -p $(TOP)/sdks/builds/toolchains/llvm-download
-	$(MAKE) -C $(TOP)/llvm -f build.mk download-llvm \
-		LLVM_PREFIX="$(TOP)/sdks/builds/toolchains/llvm-download/usr"
-	touch $@
-endif
-endif
-
-.stamp-llvm36-download:
-ifeq ($(UNAME),Darwin)
-ifeq ($(DISABLE_DOWNLOAD_LLVM),)
-	mkdir -p $(TOP)/sdks/builds/toolchains/llvm36-download
-	-wget --no-verbose -O - http://xamjenkinsartifact.blob.core.windows.net/$(LLVM36_JENKINS_LANE)/llvm-osx64-$(LLVM36_HASH).tar.gz | tar -xC $(TOP)/sdks/builds/toolchains/llvm36-download -f -
-	touch $@
-endif
-endif
-
 ##
 # Parameters
 #  $(1): version
 #  $(2): target
-#  $(3): bitness
-#  $(4): configure script
+#  $(3): src
 define LLVMProvisionTemplate
-ifeq ($(UNAME),Darwin)
-.stamp-$(1)-$(2)-unpack:
-	cp -r $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)/* $$(TOP)/sdks/out/$(1)-$(2)
+_$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
+_$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
+_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+
+$$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
+	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
 	touch $$@
 
-.PHONY: unpack-$(1)-$(2)
-unpack-$(1)-$(2): .stamp-$(1)-$(2)-unpack
+.PHONY: download-$(1)-$(2)
+download-$(1)-$(2): $(3) | setup-$(1)-$(2)
+	-$$(MAKE) $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download
 
 .PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): .stamp-$(1)-download | setup-$(1)-$(2) $(4)
-	$$(MAKE) $$(if $$(wildcard $$(TOP)/sdks/builds/toolchains/$(1)-download/usr$(3)),unpack,package)-$(1)-$(2)
+provision-$(1)-$(2): | $(3) download-$(1)-$(2)
+	$$(if $$(wildcard $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download),,$$(MAKE) package-$(1)-$(2))
 
-.PHONY: clean-$(1)-$(2)
-clean-$(1)-$(2)::
-	rm -rf .stamp-$(1)-download .stamp-$(1)-$(2)-unpack $$(TOP)/sdks/builds/toolchains/$(1)-download $$(TOP)/sdks/out/$(1)-$(2)
-else
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): package-$(1)-$(2)
+.PHONY: archive-$(1)-$(2)
+archive-$(1)-$(2): package-$(1)-$(2)
+	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
+endef
+
+$(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(LLVM_SRC)))
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(LLVM_SRC)))
+ifeq ($(UNAME),Darwin)
+$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
 endif
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
-endef
-
-$(eval $(call LLVMProvisionTemplate,llvm,llvm32,32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm,llvm64,64,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMProvisionTemplate,llvm36,llvm32,32,$(LLVM36_SRC)/configure))
-
-##
-# Parameters
-#  $(1): version
-#  $(2): target
-#  $(3): bitness
-#  $(4): configure script
-define LLVMMXEProvisionTemplate
-.PHONY: provision-$(1)-$(2)
-provision-$(1)-$(2): | package-$(1)-$(2) $(4)
-
-.PHONY: provision
-provision: provision-$(1)-$(2)
-endef
-
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin32,32,$(LLVM_SRC)/CMakeLists.txt))
-$(eval $(call LLVMMXEProvisionTemplate,llvm,llvmwin64,64,$(LLVM_SRC)/CMakeLists.txt))
 
 ##
 # Parameters
 #  $(1): target
-#  $(2): arch
-#  $(3): src dir
-#  $(4): download stamp
-#  $(5): llvm version (llvm/llvm36)
 define LLVMTemplate
 
 _llvm-$(1)_CMAKE_ARGS = \
@@ -104,7 +63,7 @@ setup-llvm-$(1):
 	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
+package-llvm-$(1): setup-llvm-$(1) | $$(LLVM_SRC)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
 		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
@@ -120,9 +79,9 @@ clean-llvm-$(1)::
 
 endef
 
-llvm-llvm32_CMAKE_FLAGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMTemplate,llvm32,i386))
-$(eval $(call LLVMTemplate,llvm64,x86_64))
+llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
+$(eval $(call LLVMTemplate,llvm32))
+$(eval $(call LLVMTemplate,llvm64))
 
 ##
 # Parameters
@@ -177,33 +136,37 @@ clean-llvm36-$(1)::
 
 endef
 
+ifeq ($(UNAME),Darwin)
 $(eval $(call LLVM36Template,llvm32,i386))
+endif
 
 ##
 # Parameters
 #  $(1): target
 #  $(2): arch
+#  $(3): mxe
 define LLVMMxeTemplate
-
-_llvm-$(1)_CMAKE=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32$$(if $$(filter $$(UNAME),Darwin),.static)-cmake
 
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
 _llvm-$(1)_CMAKE_ARGS = \
-	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/NATIVE.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$$(LLVM_SRC)/cmake/modules/$(3).cmake \
 	-DLLVM_ENABLE_THREADS=Off \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
 	$$(llvm-$(1)_CMAKE_ARGS)
+
+$$(LLVM_SRC)/cmake/modules/$(3).cmake: $(3).cmake.in | $$(LLVM_SRC)
+	sed -e 's,@MXE_PATH@,$$(MXE_PREFIX),' -e 's,@MXE_SUFFIX@,$$(if $$(filter $(UNAME),Darwin),.static),' < $$< > $$@
 
 .PHONY: setup-llvm-$(1)
 setup-llvm-$(1):
 	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
 
 .PHONY: package-llvm-$(1)
-package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
+package-llvm-$(1): $$(LLVM_SRC)/cmake/modules/$(3).cmake setup-llvm-$(1) | $$(LLVM_SRC)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
-		CMAKE=$$(_llvm-$(1)_CMAKE) \
 		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
@@ -212,7 +175,6 @@ package-llvm-$(1): setup-llvm-$(1) $$(LLVM_SRC)/CMakeLists.txt
 .PHONY: clean-llvm-$(1)
 clean-llvm-$(1)::
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
-		CMAKE=$$(_llvm-$(1)_CMAKE) \
 		LLVM_PATH="$$(LLVM_SRC)" \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)"
@@ -221,6 +183,6 @@ endef
 
 ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
-$(eval $(call LLVMMxeTemplate,llvmwin32,i686))
-$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64))
+$(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
+$(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
 endif

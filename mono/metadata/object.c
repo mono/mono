@@ -2203,7 +2203,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
+		if (mono_object_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
@@ -2236,7 +2236,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			return NULL;
 		}
 
-		if (mono_object_get_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
+		if (mono_object_class ((MonoObject *)vt->type) != mono_defaults.runtimetype_class)
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
@@ -3285,7 +3285,7 @@ handle_enum:
 	case MONO_TYPE_VALUETYPE:
 		/* note that 't' and 'type->type' can be different */
 		if (type->type == MONO_TYPE_VALUETYPE && m_class_is_enumtype (type->data.klass)) {
-			t = mono_class_enum_basetype (type->data.klass)->type;
+			t = mono_class_enum_basetype_internal (type->data.klass)->type;
 			goto handle_enum;
 		} else {
 			MonoClass *klass = mono_class_from_mono_type (type);
@@ -7078,7 +7078,7 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 
 	MonoObjectHandle result = MONO_HANDLE_NEW (MonoObject, NULL);
 
-	if (!MONO_HANDLE_IS_NULL (obj) && mono_class_is_assignable_from (klass, mono_handle_class (obj)))
+	if (!MONO_HANDLE_IS_NULL (obj) && mono_class_is_assignable_from_internal (klass, mono_handle_class (obj)))
 		MONO_HANDLE_ASSIGN (result, obj);
 	return result;
 }
@@ -7119,14 +7119,14 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 
 		/* casting an array one of the invariant interfaces that must act as such */
 		if (m_class_is_array_special_interface (klass)) {
-			if (mono_class_is_assignable_from (klass, vt->klass)) {
+			if (mono_class_is_assignable_from_internal (klass, vt->klass)) {
 				MONO_HANDLE_ASSIGN (result, obj);
 				goto leave;
 			}
 		}
 
 		/*If the above check fails we are in the slow path of possibly raising an exception. So it's ok to it this way.*/
-		else if (mono_class_has_variant_generic_params (klass) && mono_class_is_assignable_from (klass, mono_handle_class (obj))) {
+		else if (mono_class_has_variant_generic_params (klass) && mono_class_is_assignable_from_internal (klass, mono_handle_class (obj))) {
 			MONO_HANDLE_ASSIGN (result, obj);
 			goto leave;
 		}

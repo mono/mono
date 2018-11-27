@@ -1066,18 +1066,16 @@ add_general (CallInfo *cinfo, ArgInfo *ainfo, int size, gboolean sign)
 		ainfo->storage = ArgOnStack;
 		if (ios_abi) {
 			/* Assume size == align */
-			cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, size);
-			ainfo->offset = cinfo->stack_usage;
-			ainfo->slot_size = size;
-			ainfo->sign = sign;
-			cinfo->stack_usage += size;
 		} else {
-			ainfo->offset = cinfo->stack_usage;
-			ainfo->slot_size = 8;
-			ainfo->sign = FALSE;
 			/* Put arguments into 8 byte aligned stack slots */
-			cinfo->stack_usage += 8;
+			size = 8;
+			sign = FALSE;
 		}
+		cinfo->stack_usage = ALIGN_TO (cinfo->stack_usage, size);
+		ainfo->offset = cinfo->stack_usage;
+		ainfo->slot_size = size;
+		ainfo->sign = sign;
+		cinfo->stack_usage += size;
 	} else {
 		ainfo->storage = ArgInIReg;
 		ainfo->reg = cinfo->gr;
@@ -1486,25 +1484,29 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
-	CallInfo *cinfo = get_call_info (NULL, sig);
+	MonoEECallbacks *interp_cb;
+	CallInfo *cinfo;
 	gpointer storage;
 	ArgInfo *ainfo;
 
-	if (sig->ret->type != MONO_TYPE_VOID) {
-		ainfo = &cinfo->ret;
-		if (ainfo->storage != ArgVtypeByRef) {
-			int temp_size = arg_need_temp (ainfo);
+	if (sig->ret->type == MONO_TYPE_VOID)
+		return;
 
-			if (temp_size)
-				storage = alloca (temp_size);
-			else
-				storage = arg_get_storage (ccontext, ainfo);
-			memset (ccontext, 0, sizeof (CallContext)); // FIXME
-			interp_cb->frame_arg_to_data ((MonoInterpFrameHandle)frame, sig, -1, storage);
-			if (temp_size)
-				arg_set_val (ccontext, ainfo, storage);
-		}
+	interp_cb = mini_get_interp_callbacks ();
+	cinfo = get_call_info (NULL, sig);
+	ainfo = &cinfo->ret;
+
+	if (ainfo->storage != ArgVtypeByRef) {
+		int temp_size = arg_need_temp (ainfo);
+
+		if (temp_size)
+			storage = alloca (temp_size);
+		else
+			storage = arg_get_storage (ccontext, ainfo);
+		memset (ccontext, 0, sizeof (CallContext)); // FIXME
+		interp_cb->frame_arg_to_data ((MonoInterpFrameHandle)frame, sig, -1, storage);
+		if (temp_size)
+			arg_set_val (ccontext, ainfo, storage);
 	}
 
 	g_free (cinfo);
@@ -1547,24 +1549,28 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
-	CallInfo *cinfo = get_call_info (NULL, sig);
+	MonoEECallbacks *interp_cb;
+	CallInfo *cinfo;
 	ArgInfo *ainfo;
 	gpointer storage;
 
-	if (sig->ret->type != MONO_TYPE_VOID) {
-		ainfo = &cinfo->ret;
-		if (ainfo->storage != ArgVtypeByRef) {
-			int temp_size = arg_need_temp (ainfo);
+	if (sig->ret->type == MONO_TYPE_VOID)
+		return;
 
-			if (temp_size) {
-				storage = alloca (temp_size);
-				arg_get_val (ccontext, ainfo, storage);
-			} else {
-				storage = arg_get_storage (ccontext, ainfo);
-			}
-			interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
+	interp_cb = mini_get_interp_callbacks ();
+	cinfo = get_call_info (NULL, sig);
+	ainfo = &cinfo->ret;
+
+	if (ainfo->storage != ArgVtypeByRef) {
+		int temp_size = arg_need_temp (ainfo);
+
+		if (temp_size) {
+			storage = alloca (temp_size);
+			arg_get_val (ccontext, ainfo, storage);
+		} else {
+			storage = arg_get_storage (ccontext, ainfo);
 		}
+		interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, -1, storage);
 	}
 
 	g_free (cinfo);
@@ -1575,7 +1581,7 @@ typedef struct {
 	CallInfo *cinfo;
 	MonoType *rtype;
 	MonoType **param_types;
-	int n_fpargs, n_fpret;
+	int n_fpargs, n_fpret, nullable_area;
 } ArchDynCallInfo;
 
 static gboolean
@@ -1628,7 +1634,7 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 {
 	ArchDynCallInfo *info;
 	CallInfo *cinfo;
-	int i;
+	int i, aindex;
 
 	cinfo = get_call_info (NULL, sig);
 
@@ -1657,6 +1663,28 @@ mono_arch_dyn_call_prepare (MonoMethodSignature *sig)
 	default:
 		break;
 	}
+
+	for (aindex = 0; aindex < sig->param_count; aindex++) {
+		MonoType *t = info->param_types [aindex];
+
+		if (t->byref)
+			continue;
+
+		switch (t->type) {
+		case MONO_TYPE_GENERICINST:
+			if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
+				MonoClass *klass = mono_class_from_mono_type (t);
+				int size;
+
+				/* Nullables need a temporary buffer, its stored at the end of DynCallArgs.regs after the stack args */
+				size = mono_class_value_size (klass, NULL);
+				info->nullable_area += size;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 	
 	return (MonoDynCallInfo*)info;
 }
@@ -1677,7 +1705,7 @@ mono_arch_dyn_call_get_buf_size (MonoDynCallInfo *info)
 	ArchDynCallInfo *ainfo = (ArchDynCallInfo*)info;
 
 	g_assert (ainfo->cinfo->stack_usage % MONO_ARCH_FRAME_ALIGNMENT == 0);
-	return sizeof (DynCallArgs) + ainfo->cinfo->stack_usage;
+	return sizeof (DynCallArgs) + ainfo->cinfo->stack_usage + ainfo->nullable_area;
 }
 
 static double
@@ -1705,6 +1733,7 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	MonoMethodSignature *sig = dinfo->sig;
 	CallInfo *cinfo = dinfo->cinfo;
 	int buffer_offset = 0;
+	guint8 *nullable_buffer;
 
 	p->res = 0;
 	p->ret = ret;
@@ -1715,6 +1744,9 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	arg_index = 0;
 	greg = 0;
 	pindex = 0;
+
+	/* Stored after the stack arguments */
+	nullable_buffer = (guint8*)&(p->regs [PARAM_REGS + 1 + (cinfo->stack_usage / sizeof (mgreg_t))]);
 
 	if (sig->hasthis)
 		p->regs [greg ++] = (mgreg_t)*(args [arg_index ++]);
@@ -1821,9 +1853,9 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 					 * if the nullable param is passed by ref.
 					 */
 					size = mono_class_value_size (klass, NULL);
-					nullable_buf = p->buffer + buffer_offset;
+					nullable_buf = nullable_buffer + buffer_offset;
 					buffer_offset += size;
-					g_assert (buffer_offset <= 256);
+					g_assert (buffer_offset <= dinfo->nullable_area);
 
 					/* The argument pointed to by arg is either a boxed vtype or null */
 					mono_nullable_init (nullable_buf, (MonoObject*)arg, klass);

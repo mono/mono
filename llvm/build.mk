@@ -42,6 +42,7 @@ $(LLVM_PATH):
 
 $(LLVM_PATH)/CMakeLists.txt: | $(LLVM_PATH)
 
+# -DLLVM_ENABLE_LIBXML2=Off is needed because xml2 is not used and it breaks 32-bit builds on 64-bit Linux hosts
 $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt | $(LLVM_BUILD)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
@@ -54,6 +55,8 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(LLVM_PATH)/CMakeLists.txt |
 		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
+		-DLLVM_ENABLE_LIBXML2=Off \
+		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \
 		$(dir $<)
 

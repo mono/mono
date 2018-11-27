@@ -13,7 +13,13 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
-XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Drawing Facades/System.Threading.Tasks
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks
+
+ifneq ($(PROFILE),monodroid)
+ifneq ($(PROFILE),monotouch)
+XTEST_LIB_REFS += System.Drawing
+endif
+endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration SMDiagnostics

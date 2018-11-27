@@ -40,6 +40,9 @@ netstandard_drawing_SUBDIRS = System.Drawing.Primitives netstandard
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
+monodroid_SUBDIRS = $(monotouch_SUBDIRS) $(netstandard_drawing_SUBDIRS)
+monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
+
 # We don't build netstandard/System.Drawing.Primitives on monotouch etc. profiles by default,
 # except when EXTERNAL_FACADE_DRAWING_REFERENCE is defined which allows us to build it in Mono CI
 # (since the dependent drawing types are normally built in the product repos).
@@ -62,9 +65,6 @@ System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives Syste
 System.Text.Encoding.CodePages
 
 build_PARALLEL_SUBDIRS = $(basic_PARALLEL_SUBDIRS) System.Text.RegularExpressions System.Diagnostics.Contracts
-
-monodroid_SUBDIRS = $(monotouch_SUBDIRS)
-monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)

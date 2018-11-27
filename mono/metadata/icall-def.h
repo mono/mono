@@ -91,11 +91,15 @@ HANDLES(ICALL(TLS_PROVIDER_FACTORY_1, "IsBtlsSupported", ves_icall_Mono_TlsProvi
 
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
 HANDLES(ICALL(RUNTIME_1, "DisableMicrosoftTelemetry", ves_icall_Mono_Runtime_DisableMicrosoftTelemetry))
+HANDLES(ICALL(RUNTIME_15, "DumpStateSingle_internal", ves_icall_Mono_Runtime_DumpStateSingle))
+HANDLES(ICALL(RUNTIME_16, "DumpStateTotal_internal", ves_icall_Mono_Runtime_DumpStateTotal))
 HANDLES(ICALL(RUNTIME_2, "EnableMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_EnableMicrosoftTelemetry))
 HANDLES(ICALL(RUNTIME_3, "ExceptionToState_internal", ves_icall_Mono_Runtime_ExceptionToState))
 HANDLES(ICALL(RUNTIME_4, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName))
 HANDLES(ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace))
+HANDLES(ICALL(RUNTIME_17, "RegisterReportingForNativeLib_internal", ves_icall_Mono_Runtime_RegisterReportingForNativeLib))
 HANDLES(ICALL(RUNTIME_13, "SendMicrosoftTelemetry_internal", ves_icall_Mono_Runtime_SendMicrosoftTelemetry))
+HANDLES(ICALL(RUNTIME_14, "WriteStateToFile_internal", ves_icall_Mono_Runtime_DumpTelemetry))
 
 ICALL_TYPE(RTCLASS, "Mono.RuntimeClassHandle", RTCLASS_1)
 HANDLES(ICALL(RTCLASS_1, "GetTypeFromClass", ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass))
@@ -842,7 +846,6 @@ HANDLES(ICALL(RNG_2, "RngGetBytes", ves_icall_System_Security_Cryptography_RNGCr
 HANDLES(ICALL(RNG_3, "RngInitialize", ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngInitialize))
 HANDLES(ICALL(RNG_4, "RngOpen", ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen))
 
-#ifndef DISABLE_POLICY_EVIDENCE
 ICALL_TYPE(EVID, "System.Security.Policy.Evidence", EVID_1)
 HANDLES(ICALL(EVID_1, "IsAuthenticodePresent", ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent))
 
@@ -865,7 +868,6 @@ HANDLES(ICALL(WINPRIN_2, "IsMemberOfGroupName", ves_icall_System_Security_Princi
 ICALL_TYPE(SECSTRING, "System.Security.SecureString", SECSTRING_1)
 ICALL(SECSTRING_1, "DecryptInternal", ves_icall_System_Security_SecureString_DecryptInternal)
 ICALL(SECSTRING_2, "EncryptInternal", ves_icall_System_Security_SecureString_EncryptInternal)
-#endif /* !DISABLE_POLICY_EVIDENCE */
 
 ICALL_TYPE(SECMAN, "System.Security.SecurityManager", SECMAN_1)
 NOHANDLES(ICALL(SECMAN_1, "get_RequiresElevatedPermissions", mono_security_core_clr_require_elevated_permissions))

@@ -3,7 +3,10 @@ ifeq ($(UNAME),Linux)
 LINUX_FLAVOR=$(shell ./determine-linux-flavor.sh)
 endif
 
-ifeq ($(LINUX_FLAVOR),Ubuntu)
+LINUX_WITH_MINGW=:Ubuntu:,:Debian:,:Debian GNU/Linux:
+LINUX_HAS_MINGW=$(if $(findstring :$(LINUX_FLAVOR):,$(LINUX_WITH_MINGW)),yes)
+
+ifeq ($(LINUX_HAS_MINGW),yes)
 MXE_PREFIX=/usr
 
 .PHONY: provision-mxe

@@ -519,7 +519,7 @@ type_to_llvm_type (EmitContext *ctx, MonoType *t)
 			return simd_class_to_llvm_type (ctx, klass);
 
 		if (m_class_is_enumtype (klass))
-			return type_to_llvm_type (ctx, mono_class_enum_basetype (klass));
+			return type_to_llvm_type (ctx, mono_class_enum_basetype_internal (klass));
 
 		ltype = (LLVMTypeRef)g_hash_table_lookup (ctx->module->llvm_types, klass);
 		if (!ltype) {
@@ -3026,7 +3026,8 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 			ctx->addresses [reg] = build_alloca (ctx, ainfo->type);
 
 			size = mono_class_value_size (mono_class_from_mono_type (ainfo->type), NULL);
-			if (size < TARGET_SIZEOF_VOID_P) {
+			if (size == 0) {
+			} else if (size < TARGET_SIZEOF_VOID_P) {
 				/* The upper bits of the registers might not be valid */
 				LLVMValueRef val = LLVMBuildExtractValue (builder, arg, 0, "");
 				LLVMValueRef dest = convert (ctx, ctx->addresses [reg], LLVMPointerType (LLVMIntType (size * 8), 0));
@@ -4555,13 +4556,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				else
 					cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], convert (ctx, lhs, IntPtrType ()), LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), "");
 			} else if (ins->opcode == OP_LCOMPARE_IMM) {
-				if (SIZEOF_REGISTER == 4 && COMPILE_LLVM (cfg))  {
-					/* The immediate is encoded in two fields */
-					guint64 l = ((guint64)(guint32)ins->inst_offset << 32) | ((guint32)ins->inst_imm);
-					cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], convert (ctx, lhs, LLVMInt64Type ()), LLVMConstInt (LLVMInt64Type (), l, FALSE), "");
-				} else {
-					cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], convert (ctx, lhs, LLVMInt64Type ()), LLVMConstInt (LLVMInt64Type (), ins->inst_imm, FALSE), "");
-				}
+				cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], lhs, rhs, "");
 			}
 			else if (ins->opcode == OP_COMPARE) {
 				if (LLVMGetTypeKind (LLVMTypeOf (lhs)) == LLVMPointerTypeKind && LLVMTypeOf (lhs) == LLVMTypeOf (rhs))
@@ -4965,7 +4960,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				break;
 			case OP_ISHL_IMM:
 			case OP_LSHL_IMM:
+				values [ins->dreg] = LLVMBuildShl (builder, lhs, imm, dname);
+				break;
 			case OP_SHL_IMM:
+				if (TARGET_SIZEOF_VOID_P == 8) {
+					/* The IL is not regular */
+					lhs = convert (ctx, lhs, LLVMInt64Type ());
+					imm = convert (ctx, imm, LLVMInt64Type ());
+				}
 				values [ins->dreg] = LLVMBuildShl (builder, lhs, imm, dname);
 				break;
 			case OP_ISHR_IMM:
@@ -5915,8 +5917,15 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 					addresses [ins->sreg1] = build_alloca (ctx, t);
 					g_assert (values [ins->sreg1]);
 					LLVMBuildStore (builder, convert (ctx, values [ins->sreg1], type_to_llvm_type (ctx, t)), addresses [ins->sreg1]);
+					addresses [ins->dreg] = addresses [ins->sreg1];
+				} else if (values [ins->sreg1] == addresses [ins->sreg1]) {
+					/* LLVMArgVtypeByRef, have to make a copy */
+					addresses [ins->dreg] = build_alloca (ctx, t);
+					LLVMValueRef v = LLVMBuildLoad (builder, addresses [ins->sreg1], "");
+					LLVMBuildStore (builder, convert (ctx, v, type_to_llvm_type (ctx, t)), addresses [ins->dreg]);
+				} else {
+					addresses [ins->dreg] = addresses [ins->sreg1];
 				}
-				addresses [ins->dreg] = addresses [ins->sreg1];
 			}
 			break;
 		}
@@ -7193,7 +7202,7 @@ emit_method_inner (EmitContext *ctx)
 			else
 				name = g_strdup_printf ("arg_%d", i);
 		}
-		LLVMSetValueName (values [cfg->args [i + sig->hasthis]->dreg], name);
+		LLVMSetValueName (LLVMGetParam (method, pindex), name);
 		g_free (name);
 		if (ainfo->storage == LLVMArgVtypeByVal)
 			mono_llvm_add_param_attr (LLVMGetParam (method, pindex), LLVM_ATTR_BY_VAL);
@@ -8899,7 +8908,9 @@ emit_aot_file_info (MonoLLVMModule *module)
 		fields [tindex ++] = AddJitGlobal (module, eltype, "imt_trampolines");
 		fields [tindex ++] = AddJitGlobal (module, eltype, "gsharedvt_arg_trampolines");
 		fields [tindex ++] = AddJitGlobal (module, eltype, "ftnptr_arg_trampolines");
+		fields [tindex ++] = AddJitGlobal (module, eltype, "unbox_arbitrary_trampolines");
 	} else {
+		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = LLVMConstNull (eltype);

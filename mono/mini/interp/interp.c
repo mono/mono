@@ -508,13 +508,10 @@ stackval_from_data (MonoType *type_, stackval *result, void *data, gboolean pinv
 	case MONO_TYPE_U4:
 		result->data.i = *(guint32*)data;
 		return;
-	case MONO_TYPE_R4: {
-		float tmp;
+	case MONO_TYPE_R4:
 		/* memmove handles unaligned case */
-		memmove (&tmp, data, sizeof (float));
-		result->data.f = tmp;
+		memmove (&result->data.f_r4, data, sizeof (float));
 		return;
-    }
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 		memmove (&result->data.l, data, sizeof (gint64));
@@ -531,7 +528,7 @@ stackval_from_data (MonoType *type_, stackval *result, void *data, gboolean pinv
 		return;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			stackval_from_data (mono_class_enum_basetype (type->data.klass), result, data, pinvoke);
+			stackval_from_data (mono_class_enum_basetype_internal (type->data.klass), result, data, pinvoke);
 			return;
 		} else if (pinvoke) {
 			memcpy (result->data.vt, data, mono_class_native_size (type->data.klass, NULL));
@@ -608,9 +605,8 @@ stackval_to_data (MonoType *type_, stackval *val, void *data, gboolean pinvoke)
 		return;
 	}
 	case MONO_TYPE_R4: {
-		float tmp = (float)val->data.f;
 		/* memmove handles unaligned case */
-		memmove (data, &tmp, sizeof (float));
+		memmove (data, &val->data.f_r4, sizeof (float));
 		return;
 	}
 	case MONO_TYPE_R8: {
@@ -633,7 +629,7 @@ stackval_to_data (MonoType *type_, stackval *val, void *data, gboolean pinvoke)
 	}
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			stackval_to_data (mono_class_enum_basetype (type->data.klass), val, data, pinvoke);
+			stackval_to_data (mono_class_enum_basetype_internal (type->data.klass), val, data, pinvoke);
 			return;
 		} else if (pinvoke) {
 			memcpy (data, val->data.vt, mono_class_native_size (type->data.klass, NULL));
@@ -684,6 +680,7 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
 	case MONO_TYPE_U8:
 		return &val->data.l;
 	case MONO_TYPE_R4:
+		return &val->data.f_r4;
 	case MONO_TYPE_R8:
 		return &val->data.f;
 	case MONO_TYPE_STRING:
@@ -695,7 +692,7 @@ stackval_to_data_addr (MonoType *type_, stackval *val)
 		return &val->data.p;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass))
-			return stackval_to_data_addr (mono_class_enum_basetype (type->data.klass), val);
+			return stackval_to_data_addr (mono_class_enum_basetype_internal (type->data.klass), val);
 		else
 			return val->data.vt;
 	case MONO_TYPE_TYPEDBYREF:
@@ -919,7 +916,7 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 	if (frame->ex)
 		return NULL;
 
-	if (needs_typecheck && !mono_class_is_assignable_from (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), m_class_get_element_class (required_type))) {
+	if (needs_typecheck && !mono_class_is_assignable_from_internal (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), m_class_get_element_class (required_type))) {
 		frame->ex = mono_get_exception_array_type_mismatch ();
 		FILL_IN_TRACE (frame->ex, frame);
 		return NULL;
@@ -1077,7 +1074,7 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
 			if (ptype == MONO_TYPE_R4)
-				* (float *) &(margs->fargs [int_f]) = (float) frame->stack_args [i].data.f;
+				* (float *) &(margs->fargs [int_f]) = frame->stack_args [i].data.f_r4;
 			else
 				margs->fargs [int_f] = frame->stack_args [i].data.f;
 #if DEBUG_INTERP
@@ -1410,6 +1407,8 @@ dump_stackval (GString *str, stackval *s, MonoType *type)
 			g_string_append_printf (str, "[vt:%p] ", s->data.p);
 		break;
 	case MONO_TYPE_R4:
+		g_string_append_printf (str, "[%g] ", s->data.f_r4);
+		break;
 	case MONO_TYPE_R8:
 		g_string_append_printf (str, "[%g] ", s->data.f);
 		break;
@@ -2003,12 +2002,9 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 			case MONO_TYPE_U8:
 				args [pindex ++] = &sval->data.l;
 				break;
-			case MONO_TYPE_R4: {
-				float tmp = (float)sval->data.f;
-				sval->data.i = *(int*)&tmp;
-				args [pindex ++] = &sval->data.i;
+			case MONO_TYPE_R4:
+				args [pindex ++] = &sval->data.f_r4;
 				break;
-			}
 			case MONO_TYPE_R8:
 				args [pindex ++] = &sval->data.f;
 				break;
@@ -2130,11 +2126,12 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		sp->data.l = *(guint64*)res_buf;
 		break;
 	case MONO_TYPE_R4:
-		sp->data.f = *(float*)res_buf;
+		sp->data.f_r4 = *(float*)res_buf;
 		break;
 	case MONO_TYPE_R8:
 		sp->data.f = *(double*)res_buf;
 		break;
+	case MONO_TYPE_TYPEDBYREF:
 	case MONO_TYPE_VALUETYPE:
 		/* The result was written to vt_sp */
 		sp->data.p = vt_sp;
@@ -2795,7 +2792,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			guint32 val;
 			++ip;
 			val = READ32(ip);
-			sp->data.f = * (float *)&val;
+			sp->data.f_r4 = * (float *)&val;
 			ip += 2;
 			++sp;
 			MINT_IN_BREAK;
@@ -3154,6 +3151,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BRFALSE_I8_S)
 			ZEROP_S(l, ==);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BRFALSE_R4_S)
+			ZEROP_S(f_r4, ==);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRFALSE_R8_S)
 			ZEROP_S(f, ==);
 			MINT_IN_BREAK;
@@ -3162,6 +3162,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRFALSE_I8)
 			ZEROP(l, ==);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BRFALSE_R4)
+			ZEROP_S(f_r4, ==);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRFALSE_R8)
 			ZEROP_S(f, ==);
@@ -3172,6 +3175,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BRTRUE_I8_S)
 			ZEROP_S(l, !=);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BRTRUE_R4_S)
+			ZEROP_S(f_r4, !=);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRTRUE_R8_S)
 			ZEROP_S(f, !=);
 			MINT_IN_BREAK;
@@ -3180,6 +3186,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRTRUE_I8)
 			ZEROP(l, !=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BRTRUE_R4)
+			ZEROP(f_r4, !=);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BRTRUE_R8)
 			ZEROP(f, !=);
@@ -3209,6 +3218,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BEQ_I8_S)
 			BRELOP_S(l, ==)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BEQ_R4_S)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 == sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8_S)
 			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3217,6 +3229,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_I8)
 			BRELOP(l, ==)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BEQ_R4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 == sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8)
 			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
@@ -3227,6 +3242,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BGE_I8_S)
 			BRELOP_S(l, >=)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGE_R4_S)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 >= sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8_S)
 			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3235,6 +3253,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_I8)
 			BRELOP(l, >=)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGE_R4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 >= sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8)
 			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
@@ -3245,6 +3266,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BGT_I8_S)
 			BRELOP_S(l, >)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGT_R4_S)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 > sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8_S)
 			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3253,6 +3277,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_I8)
 			BRELOP(l, >)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGT_R4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 > sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8)
 			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
@@ -3263,6 +3290,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BLT_I8_S)
 			BRELOP_S(l, <)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLT_R4_S)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 < sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8_S)
 			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3271,6 +3301,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_I8)
 			BRELOP(l, <)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLT_R4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 < sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8)
 			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
@@ -3281,6 +3314,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BLE_I8_S)
 			BRELOP_S(l, <=)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLE_R4_S)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 <= sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8_S)
 			CONDBR_S(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3289,6 +3325,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_I8)
 			BRELOP(l, <=)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLE_R4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 <= sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8)
 			CONDBR(!isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
@@ -3299,6 +3338,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BNE_UN_I8_S)
 			BRELOP_S(l, !=)
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BNE_UN_R4_S)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 != sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8_S)
 			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3307,6 +3349,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_I8)
 			BRELOP(l, !=)
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BNE_UN_R4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 != sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8)
 			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
@@ -3332,6 +3377,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BGE_UN_I8_S)
 			BRELOP_S_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGE_UN_R4_S)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 >= sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8_S)
 			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3340,6 +3388,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_I8)
 			BRELOP_CAST(l, >=, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGE_UN_R4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 >= sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8)
 			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
@@ -3350,6 +3401,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BGT_UN_I8_S)
 			BRELOP_S_CAST(l, >, guint64);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGT_UN_R4_S)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 > sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8_S)
 			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3358,6 +3412,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_I8)
 			BRELOP_CAST(l, >, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BGT_UN_R4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 > sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8)
 			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
@@ -3368,6 +3425,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BLE_UN_I8_S)
 			BRELOP_S_CAST(l, <=, guint64);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLE_UN_R4_S)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 <= sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8_S)
 			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3376,6 +3436,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_I8)
 			BRELOP_CAST(l, <=, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLE_UN_R4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 <= sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8)
 			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
@@ -3386,6 +3449,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_BLT_UN_I8_S)
 			BRELOP_S_CAST(l, <, guint64);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLT_UN_R4_S)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 < sp[1].data.f_r4)
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8_S)
 			CONDBR_S(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
 			MINT_IN_BREAK;
@@ -3394,6 +3460,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_I8)
 			BRELOP_CAST(l, <, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_BLT_UN_R4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 < sp[1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8)
 			CONDBR(isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
@@ -3450,7 +3519,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		}
 		MINT_IN_CASE(MINT_LDIND_R4)
 			++ip;
-			sp[-1].data.f = *(gfloat*)sp[-1].data.p;
+			sp[-1].data.f_r4 = *(gfloat*)sp[-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_R8)
 			++ip;
@@ -3493,7 +3562,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_STIND_R4)
 			++ip;
 			sp -= 2;
-			* (float *) sp->data.p = (gfloat)sp[1].data.f;
+			* (float *) sp->data.p = sp[1].data.f_r4;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_R8)
 			++ip;
@@ -3515,6 +3584,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_ADD_I8)
 			BINOP(l, +);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_ADD_R4)
+			BINOP(f_r4, +);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_ADD_R8)
 			BINOP(f, +);
 			MINT_IN_BREAK;
@@ -3531,6 +3603,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SUB_I8)
 			BINOP(l, -);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SUB_R4)
+			BINOP(f_r4, -);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SUB_R8)
 			BINOP(f, -);
@@ -3549,6 +3624,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_MUL_I8)
 			BINOP(l, *);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_MUL_R4)
+			BINOP(f_r4, *);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MUL_R8)
 			BINOP(f, *);
 			MINT_IN_BREAK;
@@ -3565,6 +3643,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			if (sp [-1].data.l == (-1) && sp [-2].data.l == G_MININT64)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(l, /);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_DIV_R4)
+			BINOP(f_r4, /);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_DIV_R8)
 			BINOP(f, /);
@@ -3597,6 +3678,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			if (sp [-1].data.l == (-1) && sp [-2].data.l == G_MININT64)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			BINOP(l, %);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_REM_R4)
+			/* FIXME: what do we actually do here? */
+			--sp;
+			sp [-1].data.f_r4 = fmodf (sp [-1].data.f_r4, sp [0].data.f_r4);
+			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_REM_R8)
 			/* FIXME: what do we actually do here? */
@@ -3668,6 +3755,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.l = - sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_NEG_R4)
+			sp [-1].data.f_r4 = - sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_NEG_R8)
 			sp [-1].data.f = - sp [-1].data.f;
 			++ip;
@@ -3686,6 +3777,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I1_I8)
 			sp [-1].data.i = (gint8)sp [-1].data.l;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_I1_R4)
+			sp [-1].data.i = (gint8) (gint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I1_R8)
@@ -3707,6 +3802,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.i = (guint8)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_U1_R4)
+			sp [-1].data.i = (guint8) (guint32) sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U1_R8)
 			sp [-1].data.i = (guint8) (guint32) sp [-1].data.f;
 			++ip;
@@ -3717,6 +3816,10 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_I8)
 			sp [-1].data.i = (gint16)sp [-1].data.l;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_I2_R4)
+			sp [-1].data.i = (gint16) (gint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I2_R8)
@@ -3731,8 +3834,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.i = (guint16)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_U2_R4)
+			sp [-1].data.i = (guint16) (guint32) sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U2_R8)
 			sp [-1].data.i = (guint16) (guint32) sp [-1].data.f;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_I4_R4)
+			sp [-1].data.i = (gint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I4_R8)
@@ -3746,6 +3857,17 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I4_I8_SP)
 			sp [-2].data.i = (gint32)sp [-2].data.l;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_U4_R4)
+			/* needed on arm64 */
+			if (isinf (sp [-1].data.f_r4))
+				sp [-1].data.i = 0;
+			/* needed by wasm */
+			else if (isnan (sp [-1].data.f_r4))
+				sp [-1].data.i = 0;
+			else
+				sp [-1].data.i = (guint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U4_R8)
@@ -3771,20 +3893,24 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.l = (guint32)sp [-1].data.i;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_I8_R4)
+			sp [-1].data.l = (gint64) sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_I8_R8)
 			sp [-1].data.l = (gint64)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_R4_I4)
-			sp [-1].data.f = (float)sp [-1].data.i;
+			sp [-1].data.f_r4 = (float)sp [-1].data.i;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_R4_I8)
-			sp [-1].data.f = (float)sp [-1].data.l;
+			sp [-1].data.f_r4 = (float)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_R4_R8)
-			sp [-1].data.f = (float)sp [-1].data.f;
+			sp [-1].data.f_r4 = (float)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_R8_I4)
@@ -3795,8 +3921,20 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.f = (double)sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_R8_R4)
+			sp [-1].data.f = (double) sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_R8_R4_SP)
+			sp [-2].data.f = (double) sp [-2].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U8_I4)
 			sp [-1].data.l = sp [-1].data.i & 0xffffffff;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_U8_R4)
+			sp [-1].data.l = (guint64) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_U8_R8)
@@ -4120,6 +4258,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			EXCEPTION_CHECKPOINT;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SAFEPOINT)
+			/* Do synchronous checking of abort requests */
+			EXCEPTION_CHECKPOINT;
+			/* Poll safepoint */
+			mono_threads_safepoint ();
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLDA_UNSAFE)
 			o = sp [-1].data.o;
 			sp[-1].data.p = (char *)o + * (guint16 *)(ip + 1);
@@ -4161,7 +4306,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_LDFLD_U2) LDFLD(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLD_I4) LDFLD(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLD_I8) LDFLD(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDFLD_R4) LDFLD(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDFLD_R4) LDFLD(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLD_R8) LDFLD(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLD_O) LDFLD(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLD_P) LDFLD(p, gpointer); MINT_IN_BREAK;
@@ -4250,7 +4395,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_STFLD_U2) STFLD(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STFLD_I4) STFLD(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STFLD_I8) STFLD(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STFLD_R4) STFLD(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STFLD_R4) STFLD(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STFLD_R8) STFLD(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STFLD_P) STFLD(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STFLD_O)
@@ -4421,8 +4566,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				THROW_EX (mono_get_exception_overflow (), ip);
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_OVF_U8_R4)
+			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXUINT64 || isnan (sp [-1].data.f_r4))
+				THROW_EX (mono_get_exception_overflow (), ip);
+			sp [-1].data.l = (guint64)sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U8_R8)
-			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT64)
+			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXUINT64 || isnan (sp [-1].data.f))
 				THROW_EX (mono_get_exception_overflow (), ip);
 			sp [-1].data.l = (guint64)sp [-1].data.f;
 			++ip;
@@ -4433,8 +4584,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.l = (gint64)sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_OVF_I8_R4)
+			if (sp [-1].data.f_r4 < G_MININT64 || sp [-1].data.f_r4 > G_MAXINT64 || isnan (sp [-1].data.f_r4))
+				THROW_EX (mono_get_exception_overflow (), ip);
+			sp [-1].data.l = (gint64)sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I8_R8)
-			if (sp [-1].data.f < G_MININT64 || sp [-1].data.f > G_MAXINT64)
+			if (sp [-1].data.f < G_MININT64 || sp [-1].data.f > G_MAXINT64 || isnan (sp [-1].data.f))
 				THROW_EX (mono_get_exception_overflow (), ip);
 			sp [-1].data.l = (gint64)sp [-1].data.f;
 			++ip;
@@ -4615,7 +4772,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				sp [0].data.l = mono_array_get_fast (o, guint64, aindex);
 				break;
 			case MINT_LDELEM_R4:
-				sp [0].data.f = mono_array_get_fast (o, float, aindex);
+				sp [0].data.f_r4 = mono_array_get_fast (o, float, aindex);
 				break;
 			case MINT_LDELEM_R8:
 				sp [0].data.f = mono_array_get_fast (o, double, aindex);
@@ -4687,7 +4844,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				mono_array_set_fast ((MonoArray *)o, gint64, aindex, sp [2].data.l);
 				break;
 			case MINT_STELEM_R4:
-				mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f);
+				mono_array_set_fast ((MonoArray *)o, float, aindex, sp [2].data.f_r4);
 				break;
 			case MINT_STELEM_R8:
 				mono_array_set_fast ((MonoArray *)o, double, aindex, sp [2].data.f);
@@ -4734,6 +4891,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp [-1].data.i = (gint32) sp [-1].data.l;
 			++ip;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_OVF_I4_R4)
+			if (sp [-1].data.f_r4 < G_MININT32 || sp [-1].data.f_r4 > G_MAXINT32)
+				THROW_EX (mono_get_exception_overflow (), ip);
+			sp [-1].data.i = (gint32) sp [-1].data.f_r4;
+			++ip;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_I4_R8)
 			if (sp [-1].data.f < G_MININT32 || sp [-1].data.f > G_MAXINT32)
 				THROW_EX (mono_get_exception_overflow (), ip);
@@ -4749,6 +4912,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			if (sp [-1].data.l < 0 || sp [-1].data.l > G_MAXUINT32)
 				THROW_EX (mono_get_exception_overflow (), ip);
 			sp [-1].data.i = (guint32) sp [-1].data.l;
+			++ip;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CONV_OVF_U4_R4)
+			if (sp [-1].data.f_r4 < 0 || sp [-1].data.f_r4 > G_MAXUINT32)
+				THROW_EX (mono_get_exception_overflow (), ip);
+			sp [-1].data.i = (guint32) sp [-1].data.f_r4;
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CONV_OVF_U4_R8)
@@ -5210,6 +5379,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_CEQ_I8)
 			RELOP(l, ==);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CEQ_R4)
+			RELOP_FP(f_r4, ==, 0);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CEQ_R8)
 			RELOP_FP(f, ==, 0);
 			MINT_IN_BREAK;
@@ -5218,6 +5390,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CNE_I8)
 			RELOP(l, !=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CNE_R4)
+			RELOP_FP(f_r4, !=, 1);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CNE_R8)
 			RELOP_FP(f, !=, 1);
@@ -5228,6 +5403,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_CGT_I8)
 			RELOP(l, >);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGT_R4)
+			RELOP_FP(f_r4, >, 0);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGT_R8)
 			RELOP_FP(f, >, 0);
 			MINT_IN_BREAK;
@@ -5236,6 +5414,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGE_I8)
 			RELOP(l, >=);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGE_R4)
+			RELOP_FP(f_r4, >=, 0);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGE_R8)
 			RELOP_FP(f, >=, 0);
@@ -5259,6 +5440,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_CGT_UN_I8)
 			RELOP_CAST(l, >, guint64);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CGT_UN_R4)
+			RELOP_FP(f_r4, >, 1);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CGT_UN_R8)
 			RELOP_FP(f, >, 1);
 			MINT_IN_BREAK;
@@ -5268,6 +5452,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_CLT_I8)
 			RELOP(l, <);
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLT_R4)
+			RELOP_FP(f_r4, <, 0);
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_R8)
 			RELOP_FP(f, <, 0);
 			MINT_IN_BREAK;
@@ -5276,6 +5463,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_UN_I8)
 			RELOP_CAST(l, <, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLT_UN_R4)
+			RELOP_FP(f_r4, <, 1);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLT_UN_R8)
 			RELOP_FP(f, <, 1);
@@ -5291,6 +5481,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLE_UN_I8)
 			RELOP_CAST(l, <=, guint64);
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_CLE_R4)
+			RELOP_FP(f_r4, <=, 0);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CLE_R8)
 			RELOP_FP(f, <=, 0);
@@ -5329,7 +5522,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_LDARG_U2) LDARG(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDARG_I4) LDARG(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDARG_I8) LDARG(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_R4) LDARG(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDARG_R4) LDARG(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDARG_R8) LDARG(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDARG_O) LDARG(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDARG_P) LDARG(p, gpointer); MINT_IN_BREAK;
@@ -5354,7 +5547,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_STARG_U2) STARG(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STARG_I4) STARG(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STARG_I8) STARG(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_R4) STARG(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STARG_R4) STARG(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STARG_R8) STARG(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STARG_O) STARG(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STARG_P) STARG(p, gpointer); MINT_IN_BREAK;
@@ -5380,7 +5573,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_STINARG_U2) STINARG(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STINARG_I4) STINARG(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STINARG_I8) STINARG(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STINARG_R4) STINARG(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STINARG_R4) STINARG(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STINARG_R8) STINARG(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STINARG_O) STINARG(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STINARG_P) STINARG(p, gpointer); MINT_IN_BREAK;
@@ -5430,7 +5623,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_LDLOC_U2) LDLOC(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDLOC_I4) LDLOC(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDLOC_I8) LDLOC(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDLOC_R4) LDLOC(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDLOC_R4) LDLOC(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDLOC_R8) LDLOC(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDLOC_O) LDLOC(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDLOC_P) LDLOC(p, gpointer); MINT_IN_BREAK;
@@ -5461,7 +5654,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		MINT_IN_CASE(MINT_STLOC_U2) STLOC(i, guint16); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STLOC_I4) STLOC(i, gint32); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STLOC_I8) STLOC(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STLOC_R4) STLOC(f, float); MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_STLOC_R4) STLOC(f_r4, float); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STLOC_R8) STLOC(f, double); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STLOC_O) STLOC(p, gpointer); MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STLOC_P) STLOC(p, gpointer); MINT_IN_BREAK;

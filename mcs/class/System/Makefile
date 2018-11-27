@@ -85,6 +85,10 @@ ifdef ONLY_APPLETLS
 LIB_MCS_FLAGS += -d:ONLY_APPLETLS
 endif
 
+ifdef MONO_FEATURE_APPLE_X509
+LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLE_X509
+endif
+
 ifndef PROFILE_DISABLE_BTLS
 ifdef HAVE_BTLS
 
@@ -128,7 +132,7 @@ EXTRA_DISTFILES = \
 
 include ../../build/library.make
 
-$(test_lib_output): $(TEST_RESOURCES) $(test_lib_dir)
+$(test_lib_output): $(TEST_RESOURCES) | $(test_lib_dir)
 
 # Helper target to run the perl regex test suite
 regex-check:

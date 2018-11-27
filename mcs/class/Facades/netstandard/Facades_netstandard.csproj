@@ -36,6 +36,11 @@
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <OutputPath>./../../../class/lib/monodroid/Facades</OutputPath>
+    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../../class/lib/monotouch/Facades</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-Facades</IntermediateOutputPath>
@@ -137,9 +142,17 @@
     <ProjectReference Include="../../System.Drawing/System.Drawing.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
-    <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">
+    <Reference Include="./../../../../external/binary-reference-assemblies/build/monodroid/Mono.Android.dll">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(EXTERNAL_FACADE_DRAWING_REFERENCE)</HintPath>
+      <HintPath>./../../../../external/binary-reference-assemblies/build/monodroid/Mono.Android.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
+    <Reference Include="./../../../../external/binary-reference-assemblies/build/monodroid/Mono.Android.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../../external/binary-reference-assemblies/build/monodroid/Mono.Android.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />

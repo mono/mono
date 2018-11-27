@@ -12,16 +12,6 @@
 
 PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
-ios_CPPFLAGS=-DMONOTOUCH=1
-
-ios_LDFLAGS=
-
-COMMON_LDFLAGS=-Wl,-no_weak_imports
-
-BITCODE_CFLAGS=-fexceptions
-BITCODE_LDFLAGS=-framework CoreFoundation -lobjc -lc++
-BITCODE_CONFIGURE_FLAGS=--enable-llvm-runtime --with-bitcode=yes
-
 ##
 # Device builds
 #
@@ -50,6 +40,8 @@ _ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
 	ac_cv_func_finite=no \
+	ac_cv_func_fstatat=no \
+	ac_cv_func_readlinkat=no \
 	ac_cv_func_getpwuid_r=no \
 	ac_cv_func_posix_getpwuid_r=yes \
 	ac_cv_header_curses_h=no \
@@ -76,10 +68,10 @@ _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_BITCODE_MARKER)
 
 _ios-$(1)_CPPFLAGS= \
-	$$(ios_CPPFLAGS) \
+	-DMONOTOUCH=1 \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(3) \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
+	-DSMALL_CONFIG -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 
 _ios-$(1)_LDFLAGS= \
 	-Wl,-no_weak_imports \
@@ -95,7 +87,6 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--disable-iconv \
 	--disable-mcs-build \
 	--disable-nls \
-	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-dtrace=no \
 	--enable-icall-export \
@@ -116,15 +107,17 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 
 $$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
 
+ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
+
 endef
 
 ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk -miphoneos-version-min=$(IOS_VERSION_MIN)
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
-watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
+watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no $(BITCODE_CONFIGURE_FLAGS)
-ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend $(BITCODE_CONFIGURE_FLAGS)
+ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes
+ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
@@ -143,8 +136,8 @@ ios-targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios-targetwatch_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios-targetwatch_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 
-ios-targettv_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
-ios-targetwatch_LDFLAGS = -Wl,-bitcode_bundle $(BITCODE_LDFLAGS)
+ios-targettv_LDFLAGS = -Wl,-bitcode_bundle -framework CoreFoundation -lobjc -lc++
+ios-targetwatch_LDFLAGS = -Wl,-bitcode_bundle -framework CoreFoundation -lobjc -lc++
 
 ios-targettv_AC_VARS = \
 	ac_cv_func_system=no			\
@@ -205,7 +198,7 @@ _ios-$(1)_CFLAGS= \
 	-Wl,-application_extension
 
 _ios-$(1)_CPPFLAGS= \
-	$$(ios_CPPFLAGS) \
+	-DMONOTOUCH=1 \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension
@@ -214,9 +207,6 @@ _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(2) \
 	-Wl,-application_extension
-
-_ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS)
 
 _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
@@ -241,6 +231,8 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	touch $$@
 
 $$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
+
+ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
 
 endef
 
@@ -323,7 +315,6 @@ _ios-$(1)_CPPFLAGS= \
 	-DMONOTOUCH=1
 
 _ios-$(1)_LDFLAGS= \
-	$$(ios_LDFLAGS) \
 	-stdlib=libc++
 
 _ios-$(1)_CONFIGURE_FLAGS= \
@@ -340,9 +331,20 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 
 $$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
 
+ios_TARGETS += ios-$(1)-$$(CONFIGURATION) $(5)
+
 endef
 
 $(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-llvm32,arm-apple-darwin10))
 $(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm-llvm64,aarch64-apple-darwin10))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
 $(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-llvm32,armv7k-apple-darwin))
+
+$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_tv monotouch_runtime monotouch_tv_runtime,monotouch))
+ios_TARGETS += ios-bcl
+
+$(eval $(call BclTemplate,ios-watchbcl,monotouch_watch monotouch_watch_runtime,))
+ios_TARGETS += ios-watchbcl
+
+# Both BCL builds can't be run concurrently
+build-ios-watchbcl: build-ios-bcl

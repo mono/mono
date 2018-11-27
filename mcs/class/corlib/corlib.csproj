@@ -1390,6 +1390,7 @@
     <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
     <Compile Include="System.Reflection\Assembly.cs" />
     <Compile Include="System.Reflection\AssemblyName.cs" />
+    <Compile Include="System.Reflection\Binder.cs" />
     <Compile Include="System.Reflection\ConstructorInfo.cs" />
     <Compile Include="System.Reflection\CustomAttributeData.cs" />
     <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />

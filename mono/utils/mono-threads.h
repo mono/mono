@@ -577,6 +577,7 @@ mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_d
 	gsize* const stack_size, MonoNativeThreadId *tid);
 
 void mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize);
+gboolean mono_threads_platform_is_main_thread (void);
 void mono_threads_platform_init (void);
 gboolean mono_threads_platform_in_critical_region (MonoNativeThreadId tid);
 gboolean mono_threads_platform_yield (void);
@@ -596,6 +597,9 @@ mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 
 MONO_API void
 mono_native_thread_set_name (MonoNativeThreadId tid, const char *name);
+
+size_t
+mono_native_thread_get_name (MonoNativeThreadId tid, char *name_out, size_t max_len);
 
 MONO_API gboolean
 mono_native_thread_join (MonoNativeThreadId tid);

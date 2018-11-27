@@ -7,7 +7,7 @@ ifeq ($(call CheckXcodeDir,$(XCODE_DIR)),)
 $(error Could not find Xcode at $(XCODE_DIR))
 endif
 
-endif # DISABLE_IOS
+endif
 
 ifndef DISABLE_ANDROID
 

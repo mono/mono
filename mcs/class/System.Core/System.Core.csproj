@@ -1315,9 +1315,6 @@
     <ProjectReference Include="../System/System.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
-    <ProjectReference Include="../Mono.Posix/Mono.Posix.csproj" />
-  </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <Reference Include="nunitlite">
       <HintPath>..\lib\testing_aot_hybrid\nunitlite.dll</HintPath>
@@ -1329,9 +1326,6 @@
       <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
-    <ProjectReference Include="../Mono.Posix/Mono.Posix.csproj" />
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->

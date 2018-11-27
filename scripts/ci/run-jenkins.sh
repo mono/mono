@@ -1,9 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash -xe
 
 export MONO_REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" && pwd )"
 export TESTCMD=${MONO_REPO_ROOT}/scripts/ci/run-step.sh
 
 export TEST_HARNESS_VERBOSE=1
+
+# workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
+# which won't clean untracked .git repos (remove once https://github.com/jenkinsci/git-plugin/pull/449 is available)
+for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "Cleaning $dir" && git clean -xdff); done
 
 make_timeout=300m
 
@@ -93,76 +97,84 @@ then
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-ios'* ]];
+if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
+	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds archive-llvm36-llvm32 archive-llvm-llvm{,win}{32,64} NINJA=
+	exit 0
+fi
+
+if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
+	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=provision-llvm --timeout=60m --fatal make -j4 -C sdks/builds provision-llvm36-llvm32 provision-llvm-llvm64
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-ios NINJA=
 
-	   ${TESTCMD} --label=build-sim-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{sim64,sim32,simtv,simwatch}
-	   ${TESTCMD} --label=build-dev-runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{target64,target32,targettv,targetwatch}
-	   ${TESTCMD} --label=build-cross-compilers --timeout=60m --fatal make -j4 -C sdks/builds package-ios-{cross64,cross32,crosswatch}
-
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
-	   ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
-	   ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
-	   ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
-	   if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-		   for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
-	   fi
-	   ${TESTCMD} --label=package --timeout=60m tar cvzf mono-product-sdk-$GIT_COMMIT.tar.gz -C sdks/out/ bcl llvm-llvm64 llvm36-llvm32 ios-cross32-release ios-cross64-release
+        if [[ ${CI_TAGS} != *'no-tests'* ]]; then
+            ${TESTCMD} --label=build-tests --timeout=10m --fatal make -C sdks/ios compile-tests
+            ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
+            ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+            if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+            fi
+        fi
 	   exit 0
 fi
 
-if [[ ${CI_TAGS} == *'product-sdks-android'* ]];
+if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
-        echo "IGNORE_PROVISION_ANDROID=1" > sdks/Make.config
-        echo "IGNORE_PROVISION_MXE=1" >> sdks/Make.config
-        echo "IGNORE_PROVISION_LLVM=1" >> sdks/Make.config
+        echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_WASM=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j4 -C sdks/builds provision-android
-        if [[ ${CI_TAGS} == *'provision-mxe'* ]]; then
-            ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j4 -C sdks/builds provision-mxe
+
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j12 -C sdks/builds provision-android
+        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j12 -C sdks/builds provision-mxe
+        if [[ ${CI_TAGS} != *'debug'* ]]; then
+            ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        else
+            ${TESTCMD} --label=archive --timeout=180m --fatal make -j12 -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
         fi
-        ${TESTCMD} --label=llvm --timeout=240m --fatal make -j4 -C sdks/builds provision-llvm-llvm{,win}{32,64}
-        ${TESTCMD} --label=runtimes --timeout=120m --fatal make -j4 -C sdks/builds package-android-{armeabi-v7a,arm64-v8a,x86,x86_64} package-android-host-{Darwin,mxe-Win64} package-android-cross-{arm,arm64,x86,x86_64}{,-win}
         exit 0
 fi
 
-if [[ ${CI_TAGS} == *'webassembly'* ]];
+if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_IOS=1" >> sdks/Make.config
-	   ${TESTCMD} --label=runtimes --timeout=60m --fatal make -j4 -C sdks/builds package-wasm-interp
-	   ${TESTCMD} --label=bcl --timeout=60m --fatal make -j4 -C sdks/builds package-bcl
-	   ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
-	   ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
-	   ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
-	   ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
-	   ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
-	   #The following tests are not passing yet, so enabling them would make us perma-red
-	   #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
-	   #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-	   # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
-	   ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
-	   ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
-	   ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
-	   ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
-	   ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+
+	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j4 -C sdks/builds archive-wasm NINJA=
+
+        if [[ ${CI_TAGS} != *'no-tests'* ]]; then
+            ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j4 -C sdks/wasm build
+            ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
+            ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
+            ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
+            #The following tests are not passing yet, so enabling them would make us perma-red
+            #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
+            #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
+            # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
+            ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
+            ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
+            ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+        fi
 	   exit 0
 fi
 

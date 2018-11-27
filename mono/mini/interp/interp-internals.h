@@ -59,6 +59,7 @@ typedef struct {
 			gint32 lo;
 			gint32 hi;
 		} pair;
+		float f_r4;
 		double f;
 		/* native size integer and pointer types */
 		MonoObject *o;
@@ -207,7 +208,7 @@ enum_type:
 		return MINT_TYPE_O;
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			type = mono_class_enum_basetype (type->data.klass);
+			type = mono_class_enum_basetype_internal (type->data.klass);
 			goto enum_type;
 		} else
 			return MINT_TYPE_VT;

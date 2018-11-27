@@ -372,7 +372,7 @@ mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean ad
 		 * an rgctx tramp before them.
 		 */
 		if (mono_aot_only) {
-			addr = mono_aot_get_unbox_trampoline (m);
+			addr = mono_aot_get_unbox_trampoline (m, addr);
 		} else {
 			unbox_trampolines ++;
 			addr = mono_arch_get_unbox_trampoline (m, addr);
@@ -482,7 +482,7 @@ mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboo
 		 * an rgctx tramp before them.
 		 */
 		if (mono_aot_only) {
-			addr = mono_aot_get_unbox_trampoline (m);
+			addr = mono_aot_get_unbox_trampoline (m, addr);
 		} else {
 			unbox_trampolines ++;
 			addr = mono_arch_get_unbox_trampoline (m, addr);
@@ -1455,7 +1455,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 
 	error_init (error);
 
-	if (mono_use_interpreter) {
+	if (mono_use_interpreter && !mono_aot_only) {
 		gpointer ret = mini_get_interp_callbacks ()->create_method_pointer (method, FALSE, error);
 		if (!mono_error_ok (error))
 			return NULL;

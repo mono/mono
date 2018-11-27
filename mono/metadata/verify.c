@@ -429,9 +429,9 @@ static MonoType*
 mono_type_get_underlying_type_any (MonoType *type)
 {
 	if (type->type == MONO_TYPE_VALUETYPE && m_class_is_enumtype (type->data.klass))
-		return mono_class_enum_basetype (type->data.klass);
+		return mono_class_enum_basetype_internal (type->data.klass);
 	if (type->type == MONO_TYPE_GENERICINST && m_class_is_enumtype (type->data.generic_class->container_class))
-		return mono_class_enum_basetype (type->data.generic_class->container_class);
+		return mono_class_enum_basetype_internal (type->data.generic_class->container_class);
 	return type;
 }
 
@@ -2218,7 +2218,7 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 		return FALSE;
 	}
 
-	if (mono_class_is_assignable_from (target, candidate))
+	if (mono_class_is_assignable_from_internal (target, candidate))
 		return TRUE;
 
 	if (!MONO_CLASS_IS_INTERFACE (target) || !mono_class_is_ginst (target) || m_class_get_rank (candidate) != 1)
