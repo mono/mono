@@ -794,6 +794,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
 ../../../external/corefx/src/Common/src/System/Net/DebugSafeHandle.cs
 ../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleMinusOneIsInvalid.cs
+../../../external/corefx/src/Common/src/System/Net/ExceptionCheck.cs
 ../../../external/corefx/src/Common/src/System/Net/HttpStatusDescription.cs
 ../../../external/corefx/src/Common/src/System/Net/NegotiationInfoClass.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityProtocol.cs

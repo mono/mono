@@ -4,12 +4,14 @@
 
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsAdapterPal.Windows.cs
 ../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleZeroOrMinusOneIsInvalid.cs
+../../../external/corefx/src/Common/src/System/Net/NTAuthentication.Common.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusAdapterPal.Windows.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Security/NegotiateStreamPal.Windows.cs
-../../../external/corefx/src/Common/src/System/Net/Security/SecurityContextTokenHandle.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/NetEventSource.Security.Windows.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/NetEventSource.Security.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SecurityContextTokenHandle.cs
+../../../external/corefx/src/Common/src/System/Net/Security/SSPIHandleCache.cs
 
 ../../../external/corefx/src/Common/src/Interop/Windows/Crypt32/Interop.certificates.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/Crypt32/Interop.certificates_types.cs
