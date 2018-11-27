@@ -1706,7 +1706,7 @@ typedef struct EmitGCSafeTransitionBuilder {
 static gboolean
 gc_safe_transition_builder_init (GCSafeTransitionBuilder *builder, MonoMethodBuilder *mb, gboolean func_param)
 {
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_target_is_blocking_transition_enabled ()) {
 		builder->mb = mb;
 		builder->func_param = func_param;
 		builder->coop_gc_stack_dummy = -1;
@@ -1912,7 +1912,7 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 		mono_mb_emit_calli (mb, csig);
 	} else if (MONO_CLASS_IS_IMPORT (mb->method->klass)) {
 #ifndef DISABLE_COM
-		if (!mono_threads_is_blocking_transition_enabled ()) {
+		if (!mono_threads_target_is_blocking_transition_enabled ()) {
 			mono_mb_emit_cominterop_call (mb, csig, &piinfo->method);
 		} else {
 			mono_mb_emit_ldloc (mb, gc_safe_transition_builder.coop_cominterop_fnptr);
@@ -4172,7 +4172,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	if (!MONO_TYPE_IS_VOID (sig->ret))
 		mono_mb_add_local (mb, sig->ret);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_target_is_blocking_transition_enabled ()) {
 		/* local 4, dummy local used to get a stack address for suspend funcs */
 		coop_gc_stack_dummy = mono_mb_add_local (mb, mono_get_int_type ());
 		/* local 5, the local to be used when calling the suspend funcs */
@@ -4184,7 +4184,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 	mono_mb_emit_byte (mb, CEE_LDNULL);
 	mono_mb_emit_byte (mb, CEE_STIND_REF);
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_target_is_blocking_transition_enabled ()) {
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_enter_gc_unsafe_region_unbalanced);
 		mono_mb_emit_stloc (mb, coop_gc_var);
@@ -4259,7 +4259,7 @@ emit_thunk_invoke_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 			mono_mb_emit_op (mb, CEE_BOX, mono_class_from_mono_type_internal (sig->ret));
 	}
 
-	if (mono_threads_is_blocking_transition_enabled ()) {
+	if (mono_threads_target_is_blocking_transition_enabled ()) {
 		mono_mb_emit_ldloc (mb, coop_gc_var);
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_exit_gc_unsafe_region_unbalanced);
