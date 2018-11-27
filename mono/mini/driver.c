@@ -2436,6 +2436,13 @@ mono_main (int argc, char* argv[])
 		mono_load_coree (argv [i]);
 #endif
 
+#ifdef TARGET_WATCHOS
+	/* Always emit safepoints for this target, even if host doesn't use
+	 * them.
+	 */
+	mini_target_set_safepoints_enabled (TRUE);
+#endif
+
 	/* Parse gac loading options before loading assemblies. */
 	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
 		mono_config_parse (config_file);
