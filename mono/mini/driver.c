@@ -2436,6 +2436,12 @@ mono_main (int argc, char* argv[])
 		mono_load_coree (argv [i]);
 #endif
 
+#if defined (MONO_CROSS_COMPILE) && defined (TARGET_WATCHOS)
+	/* Always use coop suspend for this target, even if host uses another policy.
+	 */
+	mono_threads_target_set_suspend_policy (MONO_THREADS_SUSPEND_FULL_COOP);
+#endif
+
 	/* Parse gac loading options before loading assemblies. */
 	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
 		mono_config_parse (config_file);
