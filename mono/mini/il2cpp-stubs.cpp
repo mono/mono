@@ -12,6 +12,7 @@
 #include "vm/Assembly.h"
 #include "vm/AssemblyName.h"
 #include "vm/Class.h"
+#include "vm/ClassInlines.h"
 #include "vm/Domain.h"
 #include "vm/Field.h"
 #include "vm/GenericContainer.h"
@@ -1823,7 +1824,7 @@ MonoMethod* il2cpp_get_interface_method(MonoClass* klass, MonoClass* itf, int sl
     IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
     return NULL;
 #else
-	const VirtualInvokeData* data = il2cpp::vm::Class::GetInterfaceInvokeDataFromVTable((Il2CppClass*)klass, (Il2CppClass*)itf, slot);
+	const VirtualInvokeData* data = il2cpp::vm::ClassInlines::GetInterfaceInvokeDataFromVTable((Il2CppClass*)klass, (Il2CppClass*)itf, slot);
 	if (!data)
 		return NULL;
 
