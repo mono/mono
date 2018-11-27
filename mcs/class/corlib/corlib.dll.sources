@@ -1005,7 +1005,7 @@ coreclr/Math.CoreCLR.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ParamsArray.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/PlatformNotSupportedException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Progress.cs
-../referencesource/mscorlib/system/random.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Random.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/RankException.cs
 ../referencesource/mscorlib/system/resid.cs
 ../referencesource/mscorlib/system/rttype.cs
@@ -1604,6 +1604,7 @@ corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/MethodInfo.cs
+corefx/RandomNumberGenerator.cs
 corefx/RuntimeImports.cs
 corefx/TimeSpanParse.cs
 
