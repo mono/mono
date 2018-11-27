@@ -577,8 +577,8 @@ threads_suspend_policy_getenv (void)
 
 static char threads_suspend_policy;
 
-static MonoThreadsSuspendPolicy
-mono_threads_suspend_policy (void)
+MonoThreadsSuspendPolicy
+mono_threads_host_suspend_policy (void)
 {
 	int policy = threads_suspend_policy;
 	if (G_UNLIKELY (policy == 0)) {
@@ -621,13 +621,12 @@ void
 mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy)
 {
 	threads_suspend_policy = (char)mono_threads_suspend_validate_policy (new_policy);
-	g_warning ("Overriding suspend policy.  Using %s suspend.", mono_threads_suspend_policy_name ());
+	g_warning ("Overriding suspend policy.  Using %s suspend.", mono_threads_suspend_policy_name (mono_threads_host_suspend_policy ()));
 }
 
 const char*
-mono_threads_suspend_policy_name (void)
+mono_threads_suspend_policy_name (MonoThreadsSuspendPolicy policy)
 {
-	MonoThreadsSuspendPolicy policy = mono_threads_suspend_policy ();
 	switch (policy) {
 	case MONO_THREADS_SUSPEND_FULL_COOP:
 		return "cooperative";
@@ -640,40 +639,66 @@ mono_threads_suspend_policy_name (void)
 	}
 }
 
+static gboolean
+blocking_transition_getenv_compat (void)
+{
+	static int inenv = -1;
+	if (G_UNLIKELY (inenv == -1))
+		inenv = g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION");
+	return inenv;
+}
+
+static gboolean
+blocking_transition_from_policy (MonoThreadsSuspendPolicy p)
+{
+	switch (mono_threads_host_suspend_policy ()) {
+	case MONO_THREADS_SUSPEND_FULL_COOP:
+	case MONO_THREADS_SUSPEND_HYBRID:
+		return TRUE;
+	case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
+		return FALSE;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
+gboolean
+mono_threads_suspend_policy_is_blocking_transition_enabled (MonoThreadsSuspendPolicy p)
+{
+	return blocking_transition_getenv_compat () ||
+		blocking_transition_from_policy (p);
+}
+
 gboolean
 mono_threads_is_cooperative_suspension_enabled (void)
 {
-	return (mono_threads_suspend_policy () == MONO_THREADS_SUSPEND_FULL_COOP);
+	return (mono_threads_host_suspend_policy () == MONO_THREADS_SUSPEND_FULL_COOP);
 }
 
 gboolean
 mono_threads_is_blocking_transition_enabled (void)
 {
-	static int is_blocking_transition_enabled = -1;
-	if (G_UNLIKELY (is_blocking_transition_enabled == -1)) {
-		if (g_hasenv ("MONO_ENABLE_BLOCKING_TRANSITION"))
-			is_blocking_transition_enabled = 1;
-		else {
-			switch (mono_threads_suspend_policy ()) {
-			case MONO_THREADS_SUSPEND_FULL_COOP:
-			case MONO_THREADS_SUSPEND_HYBRID:
-				is_blocking_transition_enabled = 1;
-				break;
-			case MONO_THREADS_SUSPEND_FULL_PREEMPTIVE:
-				is_blocking_transition_enabled = 0;
-				break;
-			default:
-				g_assert_not_reached ();
-			}
-		}
+	static int enabled = -1;
+	if (G_UNLIKELY (enabled == -1)) {
+		enabled = mono_threads_suspend_policy_is_blocking_transition_enabled (mono_threads_host_suspend_policy ());
 	}
-	return is_blocking_transition_enabled == 1;
+	return enabled == 1;
+}
+
+gboolean
+mono_threads_target_is_blocking_transition_enabled (void)
+{
+	static int enabled = -1;
+	if (G_UNLIKELY (enabled == -1)) {
+		enabled = mono_threads_suspend_policy_is_blocking_transition_enabled (mono_threads_target_suspend_policy ());
+	}
+	return enabled == 1;
 }
 
 gboolean
 mono_threads_is_hybrid_suspension_enabled (void)
 {
-	return (mono_threads_suspend_policy () == MONO_THREADS_SUSPEND_HYBRID);
+	return (mono_threads_host_suspend_policy () == MONO_THREADS_SUSPEND_HYBRID);
 }
 
 void
@@ -721,3 +746,23 @@ mono_threads_exit_no_safepoints_region (const char *func)
 	MONO_REQ_GC_UNSAFE_MODE;
 	mono_threads_transition_end_no_safepoints (mono_thread_info_current (), func);
 }
+
+#ifdef MONO_CROSS_COMPILE
+static char target_policy;
+
+void
+mono_threads_target_set_suspend_policy (MonoThreadsSuspendPolicy new_target_policy)
+{
+	target_policy = (char)new_target_policy;
+}
+
+MonoThreadsSuspendPolicy
+mono_threads_target_suspend_policy (void)
+{
+	if (G_UNLIKELY (target_policy == 0)) {
+		/* If not explicitly set, default to host policy */
+		target_policy = mono_threads_host_suspend_policy ();
+	}
+	return (MonoThreadsSuspendPolicy)target_policy;
+}
+#endif /* MONO_CROSS_COMPILE */

@@ -28,8 +28,51 @@ extern volatile size_t mono_polling_required;
 void
 mono_threads_state_poll (void);
 
+// 0 also used internally for uninitialized
+typedef enum {
+	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
+	MONO_THREADS_SUSPEND_FULL_COOP       = 2,
+	MONO_THREADS_SUSPEND_HYBRID          = 3,
+} MonoThreadsSuspendPolicy;
+
+static inline gboolean
+mono_threads_suspend_policy_are_safepoints_enabled (MonoThreadsSuspendPolicy p)
+{
+	switch (p) {
+	case MONO_THREADS_SUSPEND_FULL_COOP:
+	case MONO_THREADS_SUSPEND_HYBRID:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
+static inline gboolean
+mono_threads_suspend_policy_is_multiphase_stw_enabled (MonoThreadsSuspendPolicy p)
+{
+	/* So far, hybrid suspend is the only one using a multi-phase STW */
+	return p == MONO_THREADS_SUSPEND_HYBRID;
+}
+
+gboolean
+mono_threads_suspend_policy_is_blocking_transition_enabled (MonoThreadsSuspendPolicy p);
+
+MonoThreadsSuspendPolicy
+mono_threads_host_suspend_policy (void);
+#ifdef MONO_CROSS_COMPILE
+MonoThreadsSuspendPolicy
+mono_threads_target_suspend_policy (void);
+#else
+static inline MonoThreadsSuspendPolicy
+mono_threads_target_suspend_policy (void) {
+	return mono_threads_host_suspend_policy ();
+}
+#endif /* MONO_CROSS_COMPILE */
+
 const char*
-mono_threads_suspend_policy_name (void);
+mono_threads_suspend_policy_name (MonoThreadsSuspendPolicy p);
+
+/* Host policy */
 
 gboolean
 mono_threads_is_blocking_transition_enabled (void);
@@ -43,14 +86,13 @@ mono_threads_is_hybrid_suspension_enabled (void);
 static inline gboolean
 mono_threads_are_safepoints_enabled (void)
 {
-	return mono_threads_is_cooperative_suspension_enabled () || mono_threads_is_hybrid_suspension_enabled ();
+	return mono_threads_suspend_policy_are_safepoints_enabled (mono_threads_host_suspend_policy ());
 }
 
 static inline gboolean
 mono_threads_is_multiphase_stw_enabled (void)
 {
-	/* So far, hybrid suspend is the only one using a multi-phase STW */
-	return mono_threads_is_hybrid_suspension_enabled ();
+	return mono_threads_suspend_policy_is_multiphase_stw_enabled (mono_threads_host_suspend_policy ());
 }
 
 static inline void
@@ -60,16 +102,22 @@ mono_threads_safepoint (void)
 		mono_threads_state_poll ();
 }
 
-// 0 also used internally for uninitialized
-typedef enum {
-	MONO_THREADS_SUSPEND_FULL_PREEMPTIVE = 1,
-	MONO_THREADS_SUSPEND_FULL_COOP       = 2,
-	MONO_THREADS_SUSPEND_HYBRID          = 3,
-} MonoThreadsSuspendPolicy;
+static inline gboolean
+mono_threads_target_are_safepoints_enabled (void)
+{
+	return mono_threads_suspend_policy_are_safepoints_enabled (mono_threads_target_suspend_policy ());
+}
+
+gboolean
+mono_threads_target_is_blocking_transition_enabled (void);
 
 /* Don't use this. */
 void mono_threads_suspend_override_policy (MonoThreadsSuspendPolicy new_policy);
 
+#ifdef MONO_CROSS_COMPILE
+void
+mono_threads_target_set_suspend_policy (MonoThreadsSuspendPolicy target_policy);
+#endif
 
 /*
  * The following are used when detaching a thread. We need to pass the MonoThreadInfo*

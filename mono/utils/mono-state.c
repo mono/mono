@@ -439,7 +439,7 @@ mono_native_state_add_version (JsonWriter *writer)
 #endif
 #endif
 
-	const char *susp_policy = mono_threads_suspend_policy_name ();
+	const char *susp_policy = mono_threads_suspend_policy_name (mono_threads_host_suspend_policy ());
 	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key (writer, "suspend");
