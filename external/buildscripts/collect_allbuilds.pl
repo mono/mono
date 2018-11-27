@@ -51,13 +51,19 @@ close(MYFILE);
 
 system("zip -r builds.zip *") eq 0 or die("failed zipping up builds");
 
-if($^O eq "linux")
+my $externalzip = "$monoroot/../../mono-build-deps/build/7z/linux64/7za";
+
+if($^O eq "linux" || $^O eq 'darwin')
 {
-	system("$monoroot/../../mono-build-deps/build/7z/linux64/7za a builds.7z * -x!builds.zip") eq 0 or die("failed 7z up builds");
-}
-elsif($^O eq 'darwin')
-{
-	system("$monoroot/../../mono-build-deps/build/7z/osx/7za a builds.7z * -x!builds.zip") eq 0 or die("failed 7z up builds");
+	if(-f $externalzip)
+	{
+		system("$externalzip a builds.7z * -x!builds.zip") eq 0 or die("failed 7z up builds");
+	}
+	else
+	{
+		#Use 7z installed on the machine. If its not installed, please install it.
+		system("7z a builds.7z * -x!builds.zip") eq 0 or die("failed 7z up builds");
+	}
 }
 else
 {
