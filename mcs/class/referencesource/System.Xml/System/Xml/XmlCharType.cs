@@ -445,23 +445,25 @@ namespace System.Xml {
                 }
 
                 byte[] chProps = new byte[CharPropertiesSize];
-                s_CharProperties = chProps;
 
-                SetProperties( s_Whitespace,  fWhitespace );
-                SetProperties( s_LetterXml4e, fLetter );
-                SetProperties( s_NCStartName, fNCStartNameSC );
-                SetProperties( s_NCName,      fNCNameSC );
-                SetProperties( s_CharData,    fCharData );
-                SetProperties( s_NCNameXml4e, fNCNameXml4e );
-                SetProperties( s_Text,        fText );
-                SetProperties( s_AttrValue,   fAttrValue );
+                SetProperties( chProps, s_Whitespace,  fWhitespace );
+                SetProperties( chProps, s_LetterXml4e, fLetter );
+                SetProperties( chProps, s_NCStartName, fNCStartNameSC );
+                SetProperties( chProps, s_NCName,      fNCNameSC );
+                SetProperties( chProps, s_CharData,    fCharData );
+                SetProperties( chProps, s_NCNameXml4e, fNCNameXml4e );
+                SetProperties( chProps, s_Text,        fText );
+                SetProperties( chProps, s_AttrValue,   fAttrValue );
+
+                Thread.MemoryBarrier();  // For weak memory models (IA64)
+                s_CharProperties = chProps;
             }
         }
 
-        private static void SetProperties( string ranges, byte value ) {
+        private static void SetProperties(byte[] chProps, string ranges, byte value ) {
             for ( int p = 0; p < ranges.Length; p += 2 ) {
                 for ( int i = ranges[p], last = ranges[p + 1]; i <= last; i++ ) {
-                    s_CharProperties[i] |= value;
+                    chProps[i] |= value;
                 }
             }
         }
