@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.dll
 
-LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions Mono.Security
+LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
 	-nowarn:219,414,649,619,436 \
@@ -19,6 +19,10 @@ ifdef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
 LIB_REFS += System.EnterpriseServices System.Configuration
+endif
+
+ifndef NO_MONO_SECURITY
+LIB_REFS += Mono.Security
 endif
 
 ifdef MONO_FEATURE_APPLETLS
