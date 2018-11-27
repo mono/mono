@@ -4665,7 +4665,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GC_SAFE_POINT: {
 			guint8 *buf [1];
 
-			g_assert (mono_threads_are_safepoints_enabled ());
+			g_assert (mini_target_safepoints_enabled ());
 
 			arm_ldrx (code, ARMREG_IP1, ins->sreg1, 0);
 			/* Call it if it is non-null */
