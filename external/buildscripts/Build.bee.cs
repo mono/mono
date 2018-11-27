@@ -6,6 +6,7 @@ using NiceIO;
 using Unity.BuildTools;
 using System.Collections.Generic;
 using System.Text;
+using Bee.Stevedore.Program;
 
 namespace BuildProgram
 {
@@ -43,10 +44,11 @@ namespace BuildProgram
 
 				foreach (var item in artifactNameIdFilesDictionary)
 				{
-					var artifactName = item.Key.Key;
-					var artifactId = item.Key.Value;
+					var artifactName = item.Key.Item1;
+					var artifactId = item.Key.Item2;
+					var repoName = item.Key.Item3;
 					var artifactFiles = item.Value;
-					DownloadAndCopyArtifact(artifactId, artifactName, artifactFiles, monoBuildDeps, stevedoreArtifactsDir);
+					DownloadAndCopyArtifact(artifactId, artifactName, repoName, artifactFiles, monoBuildDeps, stevedoreArtifactsDir);
 				}
 			}
 			else
@@ -55,9 +57,9 @@ namespace BuildProgram
 			}
 		}
 
-		private static void DownloadAndCopyArtifact(string artifactId, string artifactName, IEnumerable<NPath> artifacts, NPath monoBuildDeps, NPath stevedoreArtifactsDir)
+		private static void DownloadAndCopyArtifact(string artifactId, string artifactName, string repoName, IEnumerable<NPath> artifacts, NPath monoBuildDeps, NPath stevedoreArtifactsDir)
 		{
-			var artifact = StevedoreArtifact.Testing(artifactId);
+			var artifact = new StevedoreArtifact(repoName, new ArtifactId(artifactId));
 			Backend.Current.Register(artifact);
 
 			var inputs = new List<NPath>();
@@ -125,19 +127,22 @@ namespace BuildProgram
 			# Dependencoes to pull down from Stevedore. Please follow the following format:
 			# name : <stevedore artifact name>
 			# id : <stevedore artifact id>
+			# repo : <stevedore repo name (can be testing/public/unityinternal)> 
 			# files : <folder and/or comma-separated list of files downloaded and unpacked> 
 
 			name: 7z
 			id: 7z/9df1e3b3b120_12ed325f6a47f0e5cebc247dbe9282a5da280d392cce4e6c9ed227d57ff1e2ff.7z
+			repo: testing
 			files : 7z
 
 			name: libgdiplus
 			id : libgdiplus/9df1e3b3b120_4cf7c08770db93922f54f38d2461b9122cddc898db58585864446e70c5ad3057.7z
+			repo: public
 			files : libgdiplus,lib2
 		*/
-		private static Dictionary<KeyValuePair<string, string>, List<NPath>> ParseBuildDependenciesConfigFile(string buildDependenciesConfigFile)
+		private static Dictionary<Tuple<string, string, string>, List<NPath>> ParseBuildDependenciesConfigFile(string buildDependenciesConfigFile)
 		{
-			var artifactNameIdFilesDictionary = new Dictionary<KeyValuePair<string, string>, List<NPath>>();
+			var artifactNameIdFilesDictionary = new Dictionary<Tuple<string, string, string>, List<NPath>>();
 
 			var fileStream = new FileStream(buildDependenciesConfigFile, FileMode.Open, FileAccess.Read);
 			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
@@ -152,6 +157,7 @@ namespace BuildProgram
 						{
 							var name = "";
 							var id = "";
+							var repoName = "";
 							var files = "";
 
 							//read name
@@ -161,13 +167,19 @@ namespace BuildProgram
 							if ((line = streamReader.ReadLine()) != null)
 								id = line.Split(':')[1].Trim();
 							else
-								throw new Exception($">>> Invalid {buildDependenciesConfigFile}");
+								throw new Exception($">>> Invalid {buildDependenciesConfigFile}, id name does not exist");
+
+							//read repo name
+							if ((line = streamReader.ReadLine()) != null)
+								repoName = line.Split(':')[1].Trim();
+							else
+								throw new Exception($">>> Invalid {buildDependenciesConfigFile}, repo name does not exist");
 
 							//read comma separated folder/files list
 							if ((line = streamReader.ReadLine()) != null)
 								files = line.Split(':')[1].Trim();
 							else
-								throw new Exception($">>> Invalid {buildDependenciesConfigFile}");
+								throw new Exception($">>> Invalid {buildDependenciesConfigFile}, files do not exist");
 
 							var filesList = new List<NPath>();
 							if (!string.IsNullOrEmpty(files))
@@ -181,7 +193,7 @@ namespace BuildProgram
 							{
 								throw new Exception($">>> Invalid {buildDependenciesConfigFile}");
 							}
-							artifactNameIdFilesDictionary.Add(new KeyValuePair<string, string>(name, id), filesList);
+							artifactNameIdFilesDictionary.Add(new Tuple<string, string, string>(name, id, repoName), filesList);
 						}
 					}
 				}

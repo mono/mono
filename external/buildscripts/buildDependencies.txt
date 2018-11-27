@@ -1,60 +1,75 @@
 # Dependencoes to pull down from Stevedore. Please follow the following format:
 # name : <stevedore artifact name>
 # id : <stevedore artifact id>
-# files : <folder and/or comma-separated list of files downloaded and unpacked> 
+# repo : <stevedore repo name (can be testing/public/unityinternal)> 
+# files : <folder and/or comma-separated list of files downloaded and unpacked>
 
 name : 7z 
 id: 7z/9df1e3b3b120_12ed325f6a47f0e5cebc247dbe9282a5da280d392cce4e6c9ed227d57ff1e2ff.7z
+repo: testing
 files : 7z
 
 name : libgdiplus 
 id : libgdiplus/9df1e3b3b120_4cf7c08770db93922f54f38d2461b9122cddc898db58585864446e70c5ad3057.7z
+repo: testing
 files : libgdiplus
 
 name : MacBuildEnvironment 
 id : MacBuildEnvironment/9df1e3b3b120_2fc8e616a2e5dfb7907fc42d9576b427e692223c266dc3bc305de4bf03714e30.7z
+repo: testing
 files : MacBuildEnvironment
 
 name : mono 
 id : mono/9df1e3b3b120_f81c172b91f45b2e045f4ba52d5f65cc54041da1527f2c854bf9db3a99495007.7z
-files : MacBuildEnvironment
+repo: testing
+files : mono
 
 name : MonoBleedingEdge 
 id : MonoBleedingEdge/9df1e3b3b120_ab6d2f131e6bd4fe2aacafb0f683e8fa4e1ccba35552b6fe89bf359b6ee16215.7z 
+repo: testing
 files : MonoBleedingEdge
 
 name : reference-assemblies 
 id : reference-assemblies/9df1e3b3b120_bbb4750c6bf0a1784bec7d7c04b8ef5881f31f6212136e014694f3864a388886.7z
+repo: testing
 files : reference-assemblies
 
 name : linux-sdk-20170609 
 id : linux-sdk-20170609/9df1e3b3b120_9a3a0847d5b3767579e908b5a9ce050936617b1b9275a79a8b71bb3229998957.7z
+repo: testing
 files : linux-sdk-20170609
 
 name : libtool-2-4-6 
 id : libtool-2-4-6/9df1e3b3b120_50f88211570edd89e1bf344d33e416a2eb04519f54940ae72d954a5ee0b8a69c.7z
-files : libtool-2-4-6 
+repo: testing
+files : libtool-2-4-6
 
 name : texinfo-4-8 
 id : texinfo-4-8/9df1e3b3b120_f0f8445fc0e8b8d6f52b8be4c3ff09fa59c30ff4424fe8c9bea951b9893540c9.7z
-files : texinfo-4-8 
+repo: testing
+files : texinfo-4-8
 
 name : automake-1-15 
 id : automake-1-15/9df1e3b3b120_815e3ebf8d8bd08aa7f6ac1bbdff50d0379febba2049a5520247f7f4a1a6b3a3.7z
+repo: testing
 files : automake-1-15
 
 name : autoconf-2-69 
 id : autoconf-2-69/9df1e3b3b120_08915db7451aeafc86abedc46ef88243a1179ebaef4829ac75e5de8bfc80d0d2.7z
+repo: testing
 files : autoconf-2-69
 
 name : android-ndk-r16b-darwin 
 id : android-ndk-r16b-darwin/9df1e3b3b120_c7cda5a221dd72799b7e618597b3f8766df7183d386becb2785631c2d3ac0d75.7z
+repo: testing
 files : android-ndk-r16b-darwin
 
 name : android-ndk-r16b-linux 
 id : android-ndk-r16b-linux/9df1e3b3b120_fbabd18208d82cbc810266e8b566bb0ea4e1e438de38d450a92deaa3e23757b6.7z
+repo: testing
 files : android-ndk-r16b-linux
 
 name : android-ndk-r16b-windows 
 id : android-ndk-r16b-windows/9df1e3b3b120_403e0d58eabae03f0d9e8d1d2cea2dbf1d14c380c3d1c7eeb6e8c60ffc15e1b8.7z
+repo: testing
 files : android-ndk-r16b-windows
