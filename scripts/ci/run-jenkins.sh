@@ -7,8 +7,6 @@ export CI_PR=$([[ ${CI_TAGS} == *'pull-request'* ]] && echo 1 || true)
 export CI_CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
 export TEST_HARNESS_VERBOSE=1
 
-export CI_TAGS="$CI_TAGS,microbench"
-
 # workaround for acceptance-tests submodules leaving files behind since Jenkins only does "git clean -xdf" (no second 'f')
 # which won't clean untracked .git repos (remove once https://github.com/jenkinsci/git-plugin/pull/449 is available)
 for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "Cleaning $dir" && git clean -xdff); done
@@ -98,10 +96,6 @@ fi
 if [[ ${CI_TAGS} == *'cxx'* ]]; then
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS -enable-cxx"
 	MSBUILD_CXX="/p:MONO_COMPILE_AS_CPP=true"
-fi
-
-if [[ ${CI_TAGS} == *'microbench'* ]]; then
-	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --with-profile4_x=yes"
 fi
 
 if [[ ${CI_TAGS} == *'win-'* ]];
@@ -284,7 +278,6 @@ if [[ ${CI_TAGS} == *'checked-all'* ]]; then export MONO_CHECK_MODE=all; fi
 export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS $MONO_TEST_ENV_OPTIONS"
 
 if   [[ ${CI_TAGS} == *'acceptance-tests'* ]];         then ${MONO_REPO_ROOT}/scripts/ci/run-test-acceptance-tests.sh;
-elif [[ ${CI_TAGS} == *'microbench'* ]];               then ${MONO_REPO_ROOT}/scripts/ci/run-test-microbench.sh;
 elif [[ ${CI_TAGS} == *'profiler-stress-tests'* ]];    then ${MONO_REPO_ROOT}/scripts/ci/run-test-profiler-stress-tests.sh;
 elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-stress-tests.sh;
 elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
