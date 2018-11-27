@@ -790,6 +790,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/IO/DelegatingStream.cs
 ../../../external/corefx/src/Common/src/System/IO/ChunkedMemoryStream.cs
 ../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+../../../external/corefx/src/Common/src/System/IO/ReadOnlyMemoryStream.cs
 
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsPal.cs
 ../../../external/corefx/src/Common/src/System/Net/DebugSafeHandle.cs
@@ -803,6 +804,7 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
+../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SecurityBufferType.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SecurityBuffer.cs
 
