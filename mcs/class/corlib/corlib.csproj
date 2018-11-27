@@ -2018,6 +2018,7 @@
     <Compile Include="corefx\CurrentSystemTimeZone.cs" />
     <Compile Include="corefx\DateTime.cs" />
     <Compile Include="corefx\DefaultBinder.cs" />
+    <Compile Include="corefx\CryptoConfigForwarder.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />

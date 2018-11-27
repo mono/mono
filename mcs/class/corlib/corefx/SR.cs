@@ -517,6 +517,19 @@ partial class SR
 	public const string Cryptography_Invalid_IA5String = "The string contains a character not in the 7 bit ASCII character set.";
 	public const string Cryptography_UnknownHashAlgorithm = "'{0}' is not a known hash algorithm.";
 	public const string Cryptography_WriteEncodedValue_OneValueAtATime = "The input to WriteEncodedValue must represent a single encoded value with no trailing data.";
+	public const string Arg_CryptographyException = "Error occurred during a cryptographic operation.";
+	public const string Cryptography_CryptoStream_FlushFinalBlockTwice = "FlushFinalBlock() method was called twice on a CryptoStream. It can only be called once.";
+	public const string Cryptography_DefaultAlgorithm_NotSupported = "This platform does not allow the automatic selection of an algorithm.";
+	public const string Cryptography_HashNotYetFinalized = "Hash must be finalized before the hash value is retrieved.";
+	public const string Cryptography_InvalidFeedbackSize = "Specified feedback size is not valid for this algorithm.";
+	public const string Cryptography_InvalidBlockSize = "Specified block size is not valid for this algorithm.";
+	public const string Cryptography_InvalidCipherMode = "Specified cipher mode is not valid for this algorithm.";
+	public const string Cryptography_InvalidIVSize = "Specified initialization vector (IV) does not match the block size for this algorithm.";
+	public const string Cryptography_InvalidKeySize = "Specified key is not a valid size for this algorithm.";
+	public const string Cryptography_InvalidPaddingMode = "Specified padding mode is not valid for this algorithm.";
+	public const string HashNameMultipleSetNotSupported = "Setting the hashname after it's already been set is not supported on this platform.";
+	public const string CryptoConfigNotSupported = "Accessing a hash algorithm by manipulating the HashName property is not supported on this platform. Instead, you must instantiate one of the supplied subtypes (such as HMACSHA1.)";
+	public const string InvalidOperation_IncorrectImplementation = "The algorithm's implementation is incorrect.";
 	public const string Cryptography_DpApi_ProfileMayNotBeLoaded = "The data protection operation was unsuccessful. This may have been caused by not having the user profile loaded for the current thread's user context, which may be the case when the thread is impersonating.";
 	public const string PlatformNotSupported_CryptographyProtectedData = "Windows Data Protection API (DPAPI) is not supported on this platform.";
 	public const string Cryptography_Partial_Chain = "A certificate chain could not be built to a trusted root authority.";
@@ -603,7 +616,6 @@ partial class SR
 	public const string Log_XmlContext = "Using context: {0}";
 	public const string Log_SignedXmlRecursionLimit = "Signed xml recursion limit hit while trying to decrypt the key. Reference {0} hashed with \"{1}\" and ({2}).";
 	public const string Log_UnsafeTransformMethod = "Transform method \"{0}\" is not on the safe list. Safe transform methods are: {1}.";
-	public const string Arg_CryptographyException = "Error occurred during a cryptographic operation.";
 	public const string Arg_InvalidHandle = "Invalid handle.";
 	public const string Arg_InvalidType = "Invalid type.";
 	public const string Chain_NoPolicyMatch = "The certificate has invalid policy.";
@@ -627,7 +639,6 @@ partial class SR
 	public const string Cryptography_Encryption_MessageTooLong = "The message exceeds the maximum allowable length for the chosen options ({0}).";
 	public const string Cryptography_HashAlgorithmNameNullOrEmpty = "The hash algorithm name cannot be null or empty.";
 	public const string Cryptography_InvalidOID = "Object identifier (OID) is unknown.";
-	public const string Cryptography_InvalidPaddingMode = "Specified padding mode is not valid for this algorithm.";
 	public const string Cryptography_InvalidPublicKey_Object = "The provided PublicKey object is invalid, valid Oid and EncodedKeyValue property values are required.";
 	public const string Cryptography_InvalidRsaParameters = "The specified RSA parameters are not valid; both Exponent and Modulus are required fields.";
 	public const string Cryptography_KeyTooSmall = "The key is too small for the requested operation.";
@@ -665,7 +676,6 @@ partial class SR
 	public const string Cryptography_X509_NoEphemeralPfx = "This platform does not support loading with EphemeralKeySet. Remove the flag to allow keys to be temporarily created on disk.";
 	public const string Cryptography_X509Store_WouldModifyUserTrust = "Removing the requested certificate would modify user trust settings, and has been denied.";
 	public const string Cryptography_X509Store_WouldModifyAdminTrust = "Removing the requested certificate would modify admin trust settings, and has been denied.";
-	public const string Cryptography_InvalidKeySize = "Specified key is not a valid size for this algorithm.";
 	public const string Cryptography_DSA_KeyGenNotSupported = "DSA keys can be imported, but new key generation is not supported on this platform.";
 	public const string Cryptography_InvalidDsaParameters_MissingFields = "The specified DSA parameters are not valid; P, Q, G and Y are all required.";
 	public const string Cryptography_InvalidDsaParameters_MismatchedPGY = "The specified DSA parameters are not valid; P, G and Y must be the same length (the key size).";
@@ -707,6 +717,7 @@ partial class SR
 	public const string Arg_DlgtNullInst = "Delegate to an instance method cannot have null 'this'.";
 	public const string Arg_DlgtTypeMis = "Delegates must be of the same type.";
 	public const string Arg_DuplicateWaitObjectException = "Duplicate objects in argument.";
+	public const string Arg_EHClauseNotFilter = "This ExceptionHandlingClause is not a filter.";
 	public const string Arg_EnumAndObjectMustBeSameType = "Object must be the same type as the enum. The type passed in was '{0}'; the enum type was '{1}'.";
 	public const string Arg_EntryPointNotFoundException = "Entry point was not found.";
 	public const string Arg_EntryPointNotFoundExceptionParameterized = "Unable to find an entry point named '{0}' in DLL '{1}'.";
@@ -779,6 +790,7 @@ partial class SR
 	public const string Arg_RanksAndBounds = "Number of lengths and lowerBounds must match.";
 	public const string Arg_RegGetOverflowBug = "RegistryKey.GetValue does not allow a String that has a length greater than Int32.MaxValue.";
 	public const string Arg_RegKeyNotFound = "The specified registry key does not exist.";
+	public const string Arg_RegInvalidKeyName = "Registry key name must start with a valid base key name.";
 	public const string Arg_StackOverflowException = "Operation caused a stack overflow.";
 	public const string Arg_SynchronizationLockException = "Object synchronization method was called from an unsynchronized block of code.";
 	public const string Arg_SystemException = "System error.";
@@ -849,6 +861,7 @@ partial class SR
 	public const string Argument_InvalidSerializedString = "The specified serialized string '{0}' is not supported.";
 	public const string Argument_InvalidTimeSpanStyles = "An undefined TimeSpanStyles value is being used.";
 	public const string Argument_MustBeFalse = "Argument must be initialized to false";
+	public const string Argument_MustBeRuntimeType = "Type must be a runtime Type object.";
 	public const string Argument_NoEra = "No Era was supplied.";
 	public const string Argument_NoRegionInvariantCulture = "There is no region associated with the Invariant Culture (Culture ID: 0x7F).";
 	public const string Argument_NotIsomorphic = "Object contains non-primitive or non-blittable data.";
@@ -887,7 +900,6 @@ partial class SR
 	public const string ArgumentNull_String = "String reference not set to an instance of a String.";
 	public const string ArgumentNull_Type = "Type cannot be null.";
 	public const string ArgumentNull_Waithandles = "The waitHandles parameter cannot be null.";
-	public const string ArgumentNull_WithParamName = "Parameter '{0}' cannot be null.";
 	public const string ArgumentOutOfRange_AddValue = "Value to add was out of range.";
 	public const string ArgumentOutOfRange_ActualValue = "Actual value was {0}.";
 	public const string ArgumentOutOfRange_BadYearMonthDay = "Year, Month, and Day parameters describe an un-representable DateTime.";
@@ -944,6 +956,7 @@ partial class SR
 	public const string ArgumentOutOfRange_Year = "Year must be between 1 and 9999.";
 	public const string Arithmetic_NaN = "Function does not accept floating point Not-a-Number values.";
 	public const string ArrayTypeMismatch_CantAssignType = "Source array type cannot be assigned to destination array type.";
+	public const string BadImageFormatException_CouldNotLoadFileOrAssembly = "Could not load file or assembly '{0}'. An attempt was made to load a program with an incorrect format.";
 	public const string CollectionCorrupted = "A prior operation on this collection was interrupted by an exception. Collection's state is no longer trusted.";
 	public const string Exception_EndOfInnerExceptionStack = "--- End of inner exception stack trace ---";
 	public const string Exception_WasThrown = "Exception of type '{0}' was thrown.";
@@ -1005,7 +1018,8 @@ partial class SR
 	public const string InvalidProgram_NativeCallable = "NativeCallable method cannot be called from managed code.";
 	public const string InvalidTimeZone_InvalidRegistryData = "The time zone ID '{0}' was found on the local computer, but the registry information was corrupt.";
 	public const string InvalidTimeZone_InvalidFileData = "The time zone ID '{0}' was found on the local computer, but the file at '{1}' was corrupt.";
-	public const string InvalidTimeZone_JulianDayNotSupported = "Julian dates in POSIX strings are unsupported.";
+	public const string InvalidTimeZone_InvalidJulianDay = "Invalid Julian day in POSIX strings.";
+	public const string InvalidTimeZone_NJulianDayNotSupported = "Julian n day in POSIX strings is not supported.";
 	public const string InvalidTimeZone_NoTTInfoStructures = "There are no ttinfo structures in the tzfile.  At least one ttinfo structure is required in order to construct a TimeZoneInfo object.";
 	public const string InvalidTimeZone_UnparseablePosixMDateString = "'{0}' is not a valid POSIX-TZ-environment-variable MDate rule.  A valid rule has the format 'Mm.w.d'.";
 	public const string IO_DriveNotFound_Drive = "Could not find the drive '{0}'. The drive might not be ready or might not be mapped.";
@@ -1200,6 +1214,7 @@ partial class SR
 	public const string InvalidOperation_NotSupportedOnWinRTEvent = "Adding or removing event handlers dynamically is not supported on WinRT events.";
 	public const string PlatformNotSupported_ReflectionOnly = "ReflectionOnly loading is not supported on this platform.";
 	public const string PlatformNotSupported_OSXFileLocking = "Locking/unlocking file regions is not supported on this platform. Use FileShare on the entire file instead.";
+	public const string PlatformNotSupported_ReflectionEmit = "Dynamic code generation is not supported on this platform.";
 	public const string MissingMember_Name = "Member '{0}' not found.";
 	public const string MissingMethod_Name = "Method '{0}' not found.";
 	public const string MissingField_Name = "Field '{0}' not found.";
@@ -1358,8 +1373,8 @@ partial class SR
 	public const string PlatformNotSupported_StrongNameSigning = "Strong-name signing is not supported on this platform.";
 	public const string Serialization_MissingDateTimeData = "Invalid serialized DateTime data. Unable to find 'ticks' or 'dateData'.";
 	public const string Serialization_DateTimeTicksOutOfRange = "Invalid serialized DateTime data. Ticks must be between DateTime.MinValue.Ticks and DateTime.MaxValue.Ticks.";
+	public const string FeatureRemoved_Message = "Code to support feature '{0}' was removed during publishing. If this is in error, update the project configuration to not disable feature '{0}'.";
 	public const string Arg_InvalidANSIString = "The ANSI string passed in could not be converted from the default ANSI code page to Unicode.";
-	public const string Arg_ExpectedNulTermination = "The value passed was not NUL terminated.";
 	public const string PlatformNotSupported_ArgIterator = "ArgIterator is not supported on this platform.";
 	public const string Arg_TypeUnloadedException = "Type had been unloaded.";
 	public const string Overflow_Currency = "Value was either too large or too small for a Currency.";
@@ -1464,6 +1479,11 @@ partial class SR
 	public const string HashCode_EqualityNotSupported = "HashCode is a mutable struct and should not be compared with other HashCodes.";
 	public const string IO_InvalidReadLength = "The read operation returned an invalid length.";
 	public const string Arg_BasePathNotFullyQualified = "Basepath argument is not fully qualified.";
+	public const string NullReference_InvokeNullRefReturned = "The target method returned a null reference.";
+	public const string Thread_Operation_RequiresCurrentThread = "This operation must be performed on the same thread as that represented by the Thread instance.";
+	public const string InvalidOperation_WrongAsyncResultOrEndReadCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndRead was called multiple times with the same IAsyncResult.";
+	public const string InvalidOperation_WrongAsyncResultOrEndWriteCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndWrite was called multiple times with the same IAsyncResult.";
+	public const string ArgumentOutOfRange_Week_ISO = "The week parameter must be in the range 1 through 53.";
 	public const string net_uri_BadAuthority = "Invalid URI: The Authority/Host could not be parsed.";
 	public const string net_uri_BadAuthorityTerminator = "Invalid URI: The Authority/Host cannot end with a backslash character ('\\\\').";
 	public const string net_uri_BadFormat = "Invalid URI: The format of the URI could not be determined.";
@@ -1497,7 +1517,6 @@ partial class SR
 	public const string Arg_RegSetMismatchedKind = "The type of the value object did not match the specified RegistryValueKind or the object could not be properly converted.";
 	public const string Arg_RegSetBadArrType = "RegistryKey.SetValue does not support arrays of type '{0}'. Only Byte[] and String[] are supported.";
 	public const string Arg_RegSetStrArrNull = "RegistryKey.SetValue does not allow a String[] that contains a null String reference.";
-	public const string Arg_RegInvalidKeyName = "Registry key name must start with a valid base key name.";
 	public const string Arg_DllInitFailure = "One machine may not have remote administration enabled, or both machines may not be running the remote registry service.";
 	public const string Argument_InvalidRegistryOptionsCheck = "The specified RegistryOptions value is invalid.";
 	public const string Argument_InvalidRegistryViewCheck = "The specified RegistryView value is invalid.";
@@ -1506,6 +1525,4 @@ partial class SR
 	public const string ObjectDisposed_RegKeyClosed = "Cannot access a closed registry key.";
 	public const string PlatformNotSupported_Registry = "Registry is not supported on this platform.";
 	public const string UnauthorizedAccess_RegistryNoWrite = "Cannot write to the registry key.";
-	public const string InvalidOperation_WrongAsyncResultOrEndReadCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndRead was called multiple times with the same IAsyncResult.";
-	public const string InvalidOperation_WrongAsyncResultOrEndWriteCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndWrite was called multiple times with the same IAsyncResult.";
 }

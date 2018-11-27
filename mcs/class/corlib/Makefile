@@ -28,7 +28,8 @@ endif
 
 RESX_EXTRA_ARGUMENTS = \
 	--in=ReferenceSources/SR.cs \
-	--in=ReferenceSources/SR2.cs
+	--in=ReferenceSources/SR2.cs \
+	--in=corefx/SR.missing.cs
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
@@ -49,6 +50,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Primitives/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Resources/Strings.resx \
