@@ -74,9 +74,15 @@ if BITCODE
 BITCODE_CHECK=yes
 endif
 
+ifneq (,$(wildcard $(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh))
+CI_TEST_SCRIPT=$(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh
+else
+CI_TEST_SCRIPT=$(srcdir)/scripts/ci/run-test-default.sh
+endif
+
 .PHONY: check-ci
 check-ci:
-	MONO_LLVMONLY=$(BITCODE_CHECK) $(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh
+	MONO_LLVMONLY=$(BITCODE_CHECK) $(CI_TEST_SCRIPT)
 
 .PHONY: validate do-build-mono-mcs mcs-do-clean mcs-do-tests
 validate: do-build-mono-mcs
