@@ -2765,4 +2765,10 @@ MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 MonoMethod*
 mini_method_to_shared (MonoMethod *method); // null if not shared
 
+gboolean
+mini_target_safepoints_enabled (void);
+
+void
+mini_target_set_safepoints_enabled (gboolean enable);
+
 #endif /* __MONO_MINI_H__ */

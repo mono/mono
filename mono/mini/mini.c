@@ -88,6 +88,7 @@ MonoMethodDesc *mono_break_at_bb_method;
 int mono_break_at_bb_bb_num;
 gboolean mono_do_x86_stack_align = TRUE;
 gboolean mono_using_xdebug;
+static int target_safepoints_enabled = -1;
 
 /* Counters */
 static guint32 discarded_code;
@@ -4342,4 +4343,19 @@ mono_target_pagesize (void)
 	 * for those cases.
 	 */
 	return 4 * 1024;
+}
+
+gboolean
+mini_target_safepoints_enabled (void)
+{
+	/* if not explicitly set for the target, use the host value. */
+	if (G_UNLIKELY (target_safepoints_enabled == -1))
+		target_safepoints_enabled = mono_threads_are_safepoints_enabled ();
+	return target_safepoints_enabled > 0;
+}
+
+void
+mini_target_set_safepoints_enabled (gboolean enable)
+{
+	target_safepoints_enabled = enable ? 1 : 0;
 }
