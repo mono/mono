@@ -680,7 +680,7 @@ process_wait (MonoW32Handle *handle_data, guint32 timeout, gboolean *alerted)
 	}
 
 	/* Process must have exited */
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s (%p, %" G_GUINT32_FORMAT "): Waited successfully", __func__, handle_data, timeout);
+	g_printerr ("XXX-MONO: %s (%p, %" G_GUINT32_FORMAT "): Waited successfully", __func__, handle_data, timeout);
 
 	status = process->status;
 	if (WIFSIGNALED (status))
