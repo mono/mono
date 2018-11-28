@@ -12,6 +12,7 @@ using NUnit.Framework;
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -27,8 +28,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		private X509Certificate2Collection coll_empty;
 		private X509Certificate2Collection coll;
 
-		string ReadWriteStore = "ReadWriteStore" + global::System.Diagnostics.Process.GetCurrentProcess ().Id;
-		string ReadOnlyStore = "ReadOnlyStore" + global::System.Diagnostics.Process.GetCurrentProcess ().Id;
+		string ReadWriteStore = "ReadWriteStore" + Process.GetCurrentProcess ().Id;
+		string ReadOnlyStore = "ReadOnlyStore" + Process.GetCurrentProcess ().Id;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
