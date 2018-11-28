@@ -2415,11 +2415,19 @@ lookup_start:
 	}
 #endif
 
-	if (!code)
+	if (!code) {
 		code = compile_special (method, target_domain, error);
 
-	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER)
+		if (!mono_error_ok (error))
+			return NULL;
+	}
+
+	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER) {
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
+
+		if (!mono_error_ok (error))
+			return NULL;
+	}
 
 	if (!code) {
 		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
@@ -3166,14 +3174,12 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	}
 #endif
 
-	if (info->use_interp) {
-		error_init (error);
-		return mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
-	}
-
 	MonoObject *result;
 
-	if (mono_llvm_only) {
+	if (info->use_interp) {
+		result = mini_get_interp_callbacks ()->runtime_invoke (method, obj, params, exc, error);
+		return_val_if_nok (error, NULL);
+	} else if (mono_llvm_only) {
 		result = mono_llvmonly_runtime_invoke (method, info, obj, params, exc, error);
 		if (!is_ok (error))
 			return NULL;

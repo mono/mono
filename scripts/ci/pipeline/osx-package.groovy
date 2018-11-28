@@ -7,7 +7,8 @@ def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins buil
 def packageFileName = null
 def commitHash = null
 def utils = null
-properties([compressBuildLog()])
+// compression is incompatible with JEP-210 right now
+properties([ /* compressBuildLog() */ ])
 
 node ("mono-package") {
     ws ("workspace/${jobName}/${monoBranch}") {

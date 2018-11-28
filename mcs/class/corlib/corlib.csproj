@@ -484,6 +484,15 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceLocation.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureArrayType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureByRefType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureConstructedGenericType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureGenericMethodParameterType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureGenericParameterType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureHasElementType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignaturePointerType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureTypeExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetInvocationException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetParameterCountException.cs" />
@@ -643,6 +652,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeoutException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.Enum.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeAccessException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeInitializationException.cs" />
@@ -1243,7 +1255,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandleExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\throwhelper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\type.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\unityserializationholder.cs" />
@@ -2006,7 +2017,9 @@
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\CurrentSystemTimeZone.cs" />
     <Compile Include="corefx\DateTime.cs" />
+    <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
+    <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
@@ -2020,6 +2033,7 @@
     <Compile Include="corert\DependencyReductionRootAttribute.cs" />
     <Compile Include="corert\EnvironmentAugments.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
+    <Compile Include="corert\RtType.cs" />
     <Compile Include="corert\RuntimeAugments.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
     <Compile Include="corert\Task.cs" />
