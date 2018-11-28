@@ -23,9 +23,6 @@ namespace BuildProgram
 			var buildScriptsRoot = monoRoot.Combine("external").Combine("buildscripts");
 			Console.WriteLine(">>> Build scripts directory: " + buildScriptsRoot);
 
-			var monoBuildDeps = monoRoot.Parent.Parent.Combine("mono-build-deps").Combine("build");
-			Console.WriteLine(">>> Mono build dependecies directory: " + monoBuildDeps);
-
 			var buildDependenciesConfigFile = buildScriptsRoot.Combine("buildDependencies.txt");
 			Console.WriteLine(">>> Mono build dependecies stevedore version config file: " + buildDependenciesConfigFile);
 
@@ -34,21 +31,14 @@ namespace BuildProgram
 
 			if (buildDependenciesConfigFile.Exists())
 			{
-				if (!monoBuildDeps.DirectoryExists())
-				{
-					Console.WriteLine(">>> " + monoBuildDeps + " does not exist. Creating it ...");
-					monoBuildDeps.CreateDirectory();
-				}
+				var artifactList = ParseBuildDependenciesConfigFile(buildDependenciesConfigFile.ToString());
 
-				var artifactNameIdFilesDictionary = ParseBuildDependenciesConfigFile(buildDependenciesConfigFile.ToString());
-
-				foreach (var item in artifactNameIdFilesDictionary)
+				foreach (var item in artifactList)
 				{
-					var artifactName = item.Key.Item1;
-					var artifactId = item.Key.Item2;
-					var repoName = item.Key.Item3;
-					var artifactFiles = item.Value;
-					DownloadAndCopyArtifact(artifactId, artifactName, repoName, artifactFiles, monoBuildDeps, stevedoreArtifactsDir);
+					var artifactName = item.Item1;
+					var artifactId = item.Item2;
+					var repoName = item.Item3;
+					DownloadArtifact(artifactId, artifactName, repoName);
 				}
 			}
 			else
@@ -57,46 +47,13 @@ namespace BuildProgram
 			}
 		}
 
-		private static void DownloadAndCopyArtifact(string artifactId, string artifactName, string repoName, IEnumerable<NPath> artifacts, NPath monoBuildDeps, NPath stevedoreArtifactsDir)
+		private static void DownloadArtifact(string artifactId, string artifactName, string repoName)
 		{
+			Console.WriteLine($">>> Registering artifact {artifactName}");
 			var artifact = new StevedoreArtifact(repoName, new ArtifactId(artifactId));
 			Backend.Current.Register(artifact);
-
-			var inputs = new List<NPath>();
-			var targetFiles = new List<NPath>();
-			foreach (var item in artifacts)
-			{
-				inputs.Add(stevedoreArtifactsDir.Combine(artifactName).Combine(item));
-				targetFiles.Add(monoBuildDeps.Combine(artifactName).Combine(item));
-			}
-
-			var targetDir = monoBuildDeps;
-			if (HostPlatform.IsWindows)
-			{
-				targetDir = monoBuildDeps.Combine(artifactName);
-			}
-
-			Backend.Current.AddAction(
-				actionName: "CopyArtifact",
-				targetFiles: targetFiles.ToArray(),
-				inputs: inputs.ToArray(),
-				executableStringFor: ExecutableStringForDirectoryCopy(stevedoreArtifactsDir.Combine(artifactName), targetDir),
-				commandLineArguments: new string[] { },
-				allowUnwrittenOutputFiles: true
-			);
 		}
 
-		private static void ExecuteBuildScript(NPath[] inputFiles, NPath buildScript, NPath buildRoot)
-		{
-			Backend.Current.AddAction(
-				actionName: "ExecuteBuildScript",
-				targetFiles: new[] { buildRoot},
-				inputs: inputFiles,
-				executableStringFor: $"perl {buildScript}",
-				commandLineArguments: new string[] { },
-				allowUnwrittenOutputFiles: true
-			);
-		}
 		private static NPath GetMonoRootDir()
 		{
 			var exePath = new NPath(System.Reflection.Assembly.GetEntryAssembly().Location);
@@ -107,13 +64,6 @@ namespace BuildProgram
 				monoRoot = monoRoot.Parent;
 
 			return monoRoot;
-		}
-
-		private static string ExecutableStringForDirectoryCopy(NPath from, NPath target)
-		{
-			return HostPlatform.IsWindows
-				? $"xcopy {from.InQuotes(SlashMode.Native)} {target.InQuotes(SlashMode.Native)} /s /e /d /Y"
-				: $"cp -r -v {from.InQuotes(SlashMode.Native)} {target.InQuotes(SlashMode.Native)}";
 		}
 
 		private static bool IsRunningOnBuildMachine()
@@ -128,21 +78,18 @@ namespace BuildProgram
 			# name : <stevedore artifact name>
 			# id : <stevedore artifact id>
 			# repo : <stevedore repo name (can be testing/public/unityinternal)> 
-			# files : <folder and/or comma-separated list of files downloaded and unpacked> 
 
 			name: 7z
 			id: 7z/9df1e3b3b120_12ed325f6a47f0e5cebc247dbe9282a5da280d392cce4e6c9ed227d57ff1e2ff.7z
 			repo: testing
-			files : 7z
 
 			name: libgdiplus
 			id : libgdiplus/9df1e3b3b120_4cf7c08770db93922f54f38d2461b9122cddc898db58585864446e70c5ad3057.7z
 			repo: public
-			files : libgdiplus,lib2
 		*/
-		private static Dictionary<Tuple<string, string, string>, List<NPath>> ParseBuildDependenciesConfigFile(string buildDependenciesConfigFile)
+		private static List<Tuple<string, string, string>> ParseBuildDependenciesConfigFile(string buildDependenciesConfigFile)
 		{
-			var artifactNameIdFilesDictionary = new Dictionary<Tuple<string, string, string>, List<NPath>>();
+			var artifactNameIdFilesDictionary = new List<Tuple<string, string, string>>();
 
 			var fileStream = new FileStream(buildDependenciesConfigFile, FileMode.Open, FileAccess.Read);
 			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
@@ -158,7 +105,6 @@ namespace BuildProgram
 							var name = "";
 							var id = "";
 							var repoName = "";
-							var files = "";
 
 							//read name
 							name = line.Split(':')[1].Trim();
@@ -175,25 +121,7 @@ namespace BuildProgram
 							else
 								throw new Exception($">>> Invalid {buildDependenciesConfigFile}, repo name does not exist");
 
-							//read comma separated folder/files list
-							if ((line = streamReader.ReadLine()) != null)
-								files = line.Split(':')[1].Trim();
-							else
-								throw new Exception($">>> Invalid {buildDependenciesConfigFile}, files do not exist");
-
-							var filesList = new List<NPath>();
-							if (!string.IsNullOrEmpty(files))
-							{
-								if (files.Contains(","))
-									files.Split(',').ForEach(f => { filesList.Add(new NPath(f.Trim())); });
-								else
-									filesList.Add(new NPath(files.Trim()));
-							}
-							else
-							{
-								throw new Exception($">>> Invalid {buildDependenciesConfigFile}");
-							}
-							artifactNameIdFilesDictionary.Add(new Tuple<string, string, string>(name, id, repoName), filesList);
+							artifactNameIdFilesDictionary.Add(new Tuple<string, string, string>(name, id, repoName));
 						}
 					}
 				}

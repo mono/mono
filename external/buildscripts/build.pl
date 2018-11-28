@@ -64,6 +64,7 @@ my $iphoneSimulatorArch="";
 my $tizen=0;
 my $tizenEmulator=0;
 my $windowsSubsystemForLinux=0;
+my $stevedoreBuildDeps=0;
 
 # Handy troubleshooting/niche options
 my $skipMonoMake=0;
@@ -115,6 +116,7 @@ GetOptions(
 	'tizenemulator=i'=>\$tizenEmulator,
 	'windowssubsystemforlinux=i'=>\$windowsSubsystemForLinux,
 	'enablecachefile=i'=>\$enableCacheFile,
+	'stevedorebuilddeps=i'=>\$stevedoreBuildDeps,
 ) or die ("illegal cmdline options");
 
 print ">>> Mono checkout = $monoroot\n";
@@ -173,8 +175,16 @@ if ($buildDeps ne "" && not $forceDefaultBuildDeps)
 }
 else
 {
-	$externalBuildDeps = "$monoroot/../../mono-build-deps/build";
+	if($stevedoreBuildDeps)
+	{
+		$externalBuildDeps = "$monoroot/external/buildscripts/artifacts/Stevedore";
+	}
+	else
+	{
+		$externalBuildDeps = "$monoroot/../../mono-build-deps/build";
+	}	
 }
+print(">>> External build deps = $externalBuildDeps\n");
 
 # Only clean up the path if the directory exists, if it doesn't exist,
 # abs_path ends up returning an empty string
@@ -356,41 +366,63 @@ if ($build)
 		my $automakeDir = "$externalBuildDeps/automake-1-15/automake-$automakeVersion";
 		my $libtoolDir = "$externalBuildDeps/libtool-2-4-6/libtool-$libtoolVersion";
 		my $builtToolsDir = "$externalBuildDeps/built-tools";
-
+		
 		$ENV{PATH} = "$builtToolsDir/bin:$ENV{PATH}";
 
-		if (!(-d "$autoconfDir"))
+		if ($stevedoreBuildDeps)
 		{
+			$autoconfDir = "$externalBuildDeps/autoconf-src/autoconf-$autoconfVersion";
+		}
+		elsif (!(-d "$autoconfDir"))
+		{
+			print(">>> Extracting autoconf\n");
 			chdir("$externalBuildDeps/autoconf-2-69") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf autoconf-$autoconfVersion.tar.gz") eq 0  or die ("failed to extract autoconf\n");
-
+		}
+		if (-d "$autoconfDir")
+		{
+			print(">>> Installing autoconf from $autoconfDir\n");
 			chdir("$autoconfDir") eq 1 or die ("failed to chdir to autoconf directory\n");
 			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure autoconf\n");
 			system("make") eq 0 or die ("failed to make autoconf\n");
 			system("make install") eq 0 or die ("failed to make install autoconf\n");
-
-			chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n");
+			chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n"); 
 		}
-
-		if (!(-d "$texinfoDir") and $windowsSubsystemForLinux)
+		
+		if ($stevedoreBuildDeps and $windowsSubsystemForLinux)
 		{
+			$texinfoDir = "$externalBuildDeps/texinfo-src/texinfo-$texinfoVersion";
+		}
+		elsif (!(-d "$texinfoDir") and $windowsSubsystemForLinux)
+		{
+			print(">>> Extracting texinfo\n");
 			chdir("$externalBuildDeps/texinfo-4-8") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf texinfo-$texinfoVersion.tar.gz") eq 0 or die ("failed to extract texinfo\n");
-
+		}
+		if (-d "$texinfoDir")
+		{
+			print(">>> Installing texinfo from $texinfoDir\n");
 			chdir($texinfoDir) eq 1 or die ("failed to chdir to texinfo directory\n");
 			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure texinfo\n");
 			system("make") eq 0 or die ("failed to make texinfo\n");
 			system("make install") eq 0 or die ("failed to make install texinfo\n");
-
 			chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n");
 		}
 
-		if (!(-d "$automakeDir"))
+		if ($stevedoreBuildDeps)
 		{
-			my $automakeMakeFlags = "";
+			$automakeDir = "$externalBuildDeps/automake-src/automake-$automakeVersion";
+		}
+		elsif (!(-d "$automakeDir"))
+		{
+			print(">>> Extracting automake\n");
 			chdir("$externalBuildDeps/automake-1-15") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf automake-$automakeVersion.tar.gz") eq 0  or die ("failed to extract automake\n");
-
+		}
+		if (-d "$automakeDir")
+		{
+			my $automakeMakeFlags = "";
+			print(">>> Installing automake from $automakeDir\n");
 			chdir("$automakeDir") eq 1 or die ("failed to chdir to automake directory\n");
 			if($windowsSubsystemForLinux)
 			{
@@ -404,16 +436,23 @@ if ($build)
 			chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n");
 		}
 
-		if (!(-d "$libtoolDir"))
+		if ($stevedoreBuildDeps)
 		{
+			$libtoolDir = "$externalBuildDeps/libtool-src/libtool-$libtoolVersion";
+		}
+		elsif (!(-d "$libtoolDir"))
+		{
+			print(">>> Extracting libtool\n");
 			chdir("$externalBuildDeps/libtool-2-4-6") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf libtool-$libtoolVersion.tar.gz") eq 0  or die ("failed to extract libtool\n");
-
+		}
+		if (-d "$libtoolDir")
+		{
+			print(">>> Installing libtool from $libtoolDir\n");
 			chdir("$libtoolDir") eq 1 or die ("failed to chdir to libtool directory\n");
 			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure libtool\n");
 			system("make") eq 0 or die ("failed to make libtool\n");
 			system("make install") eq 0 or die ("failed to make install libtool\n");
-
 			chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n");
 		}
 
