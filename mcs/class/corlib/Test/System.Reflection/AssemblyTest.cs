@@ -195,7 +195,7 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
-#if MONOTOUCH_WATCH
+#if MONOTOUCH_WATCH || WASM
 			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
 			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 #elif !MONODROID
@@ -461,6 +461,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void LoadWithPartialName ()
 		{
 // FIXME?
@@ -1244,6 +1245,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetCallingAssembly_Direct() {
 			var a = GetCallingAssemblyCallee.DirectCall ();
 			Assert.IsNotNull (a);
@@ -1252,6 +1254,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetCallingAssembly_SkipsReflection () {
 			// check that the calling assembly is this
 			// one, not mscorlib (aka, the reflection

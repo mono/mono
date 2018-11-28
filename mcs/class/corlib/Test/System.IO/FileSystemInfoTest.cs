@@ -235,6 +235,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void LastAccessTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.LastAccessTime.Test";

@@ -270,6 +270,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class IsDaylightSavingTimeTests
 		{
 			TimeZoneInfo london;
@@ -470,6 +471,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class ConvertTimeTests_LocalUtc : ConvertTimeTests
 		{
 			static TimeZoneInfo oldLocal;
@@ -491,6 +493,7 @@ namespace MonoTests.System
 		}
 
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class ConvertTimeTests
 		{
 			TimeZoneInfo london;
@@ -750,6 +753,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class IsInvalidTimeTests
 		{
 			TimeZoneInfo london;
@@ -784,6 +788,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class IsAmbiguousTimeTests
 		{
 			TimeZoneInfo london;
@@ -827,6 +832,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class GetSystemTimeZonesTests
 		{
 			[Test]
@@ -879,6 +885,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class FindSystemTimeZoneByIdTests
 		{
 			[Test]
@@ -1014,6 +1021,7 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class GetAmbiguousTimeOffsetsTests
 		{
 			[Test]
@@ -1249,6 +1257,7 @@ namespace MonoTests.System
     }
 
 		[TestFixture]
+		[Category ("NotWasm")]
 		public class GetDaylightChanges
 		{
 			MethodInfo getChanges;

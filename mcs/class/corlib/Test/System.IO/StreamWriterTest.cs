@@ -1059,6 +1059,7 @@ namespace MonoTests.System.IO
 	}
 
 	[Test]
+	[Category ("MultiThreaded")]
 	public void FlushAsync ()
 	{
 		ManualResetEvent mre = new ManualResetEvent (false);

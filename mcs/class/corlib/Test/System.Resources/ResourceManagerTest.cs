@@ -443,6 +443,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetObject_Name_Null ()
 		{
 			ResourceManager rm = new ResourceManager (typeof (string));
@@ -526,6 +527,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetResourceSet_Culture_Null ()
 		{
 			ResourceManager rm = new ResourceManager (typeof (string));
@@ -576,6 +578,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetString_Name_Null ()
 		{
 			ResourceManager rm = new ResourceManager (typeof (string));
@@ -670,6 +673,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void GetStream_Name_Null ()
 		{
 			ResourceManager rm = new ResourceManager (typeof (string));
@@ -787,6 +791,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("StackWalks")]
 		public void TestSatellites ()
 		{
 			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);

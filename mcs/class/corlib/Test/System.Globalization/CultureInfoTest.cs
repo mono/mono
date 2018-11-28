@@ -283,6 +283,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test] // bug #81930
+		[Category ("NotWasm")]
 		public void IsReadOnly ()
 		{
 			CultureInfo ci;
@@ -504,6 +505,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void UseUserOverride_CurrentCulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
@@ -515,6 +517,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void UseUserOverride_CurrentUICulture ()
 		{
 			CultureInfo ci = CultureInfo.CurrentCulture;
@@ -757,6 +760,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FlowCultureInfoFromParentThreadSinceNet46 ()
 		{
 			if (SynchronizationContext.Current != null) {

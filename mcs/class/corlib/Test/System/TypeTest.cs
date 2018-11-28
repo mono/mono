@@ -3393,6 +3393,7 @@ namespace MonoTests.System
 		}
 
 		[Test] //bug #471255
+		[Category("StackWalks")]
 		public void GetTypeCalledUsingReflection ()
 		{
 			Type expectedType = Type.GetType ("NoNamespaceClass");

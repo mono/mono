@@ -364,6 +364,7 @@ public class TimeZoneTest {
 		}
 		
 		[Test]
+		[Category ("NotWasm")]
 		public void FindSystemTimeZoneById ()
 		{
 			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (TimeZoneInfoTest.MapTimeZoneId ("Canada/Eastern"));
@@ -390,6 +391,7 @@ public class TimeZoneTest {
 		// ref: http://bugzilla.xamarin.com/show_bug.cgi?id=1790
 		
 		[Test]
+		[Category ("NotWasm")]
 		public void GetSystemTimeZones ()
 		{
 			Assert.That (TimeZoneInfo.GetSystemTimeZones ().Count, Is.GreaterThan (400), "GetSystemTimeZones");
