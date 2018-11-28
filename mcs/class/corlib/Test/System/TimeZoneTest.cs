@@ -61,11 +61,15 @@ public class TimeZoneTest {
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
 		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "B03");
-		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G", CultureInfo.InvariantCulture), "B04");
+#if !MOBILE
+		Assert.AreEqual("10/27/2002 01:59:59", d1.End.ToString ("G", CultureInfo.InvariantCulture), "B04");
+#endif
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
+#if !MOBILE
 		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
+#endif
 		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
@@ -291,9 +295,7 @@ public class TimeZoneTest {
 
 			TimeZoneInfo tzInfo = TimeZoneInfo.CreateCustomTimeZone("MY Standard Time", TimeSpan.Zero, "MST", "MST", "MDT", adjustments);
 
-			// There is no .NET API to set timezone. Use reflection to assign time zone to the TimeZoneInfo.local field.
-			FieldInfo localTimeZone = typeof(TimeZoneInfo).GetField("local", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-			localTimeZone.SetValue(null, tzInfo);
+			TimeZoneInfoTest.SetLocal(tzInfo);
 
 			DateTime st = new DateTime(2016, 3, 27, 1, 0, 0, DateTimeKind.Local);
 			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
@@ -304,17 +306,19 @@ public class TimeZoneTest {
 			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
 			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 2));
 			st = new DateTime(2016, 10, 30, 2, 0, 0, DateTimeKind.Local);
-			Assert.IsTrue (tzInfo.IsDaylightSavingTime(st));	
-			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
-			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+#if !MOBILE
+			Assert.IsFalse (tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsFalse (!tzInfo.IsAmbiguousTime(st));
+			Assert.IsFalse ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
 			st = new DateTime(2016, 10, 30, 3, 0, 0, DateTimeKind.Local);
 			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
-			Assert.IsTrue (tzInfo.IsAmbiguousTime(st));
+			Assert.IsFalse (tzInfo.IsAmbiguousTime(st));
 			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 3));
 			st = new DateTime(2016, 10, 30, 4, 0, 0, DateTimeKind.Local);
 			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
 			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
 			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 4));
+#endif
 		}
 
 		[Test]
