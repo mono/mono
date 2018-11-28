@@ -1669,6 +1669,10 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 		if (method == target_method && *(td->ip + 5) == CEE_RET && !(csignature->hasthis && m_class_is_valuetype (target_method->klass))) {
 			int offset;
+
+			if (td->inlined_method)
+				return FALSE;
+
 			if (td->verbose_level)
 				g_print ("Optimize tail call of %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 
