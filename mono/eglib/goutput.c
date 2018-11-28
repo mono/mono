@@ -279,13 +279,13 @@ g_set_printerr_handler (GPrintFunc func)
 static void
 unity_vprintf_GPrintFunc_adapter (const gchar *string)
 {
-	our_vprintf(string, NULL);
+	our_vprintf("%s", string);
 }
 
 static void
 unity_vprintf_GLogFunc_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
 {
-	our_vprintf(message, NULL);
+	our_vprintf("%s", message);
 }
 
 // Redirect all stdout output to unity vprintf function
