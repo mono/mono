@@ -217,13 +217,20 @@ satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(t
 
 $(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
+mscorlib_for_profile = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
+
+test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
+
+$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
 
 test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
 
@@ -232,7 +239,7 @@ $(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/Sys
 
 XTEST_LIB_FLAGS += -r:$(test_module)
 
-$(xtest_lib_output): $(test_module) $(test_lib_dir)
+$(xtest_lib_output): $(test_load_assembly) $(test_module) $(test_lib_dir)
 
 vtsdir_src = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtsdir = $(test_lib_dir)/vts
@@ -248,13 +255,13 @@ test-vts: $(vtslibs) $(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
 $(vtsdir)/%/Address.dll: $(vtsdir_src)/VersionTolerantSerializationTestLib/%/Address.cs
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -warn:0 -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -out:$@ $^
+	$(CSCOMPILE) -target:library -warn:0 -r:$(mscorlib_for_profile) -out:$@ $^
 
 $(test_lib_dir)/BinarySerializationOverVersionsTest.dll: $(vtsdir_src)/BinarySerializationOverVersionsTest.cs $(vtsdir)/1.0/Address.dll $(test_nunit_dep)
 	@mkdir -p $(dir $@)
 	$(CSCOMPILE) $(test_nunit_ref) -warn:0 \
 		-r:$(vtsdir)/1.0/Address.dll \
-		-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll \
+		-r:$(mscorlib_for_profile) \
 		-r:$(topdir)/class/lib/$(PROFILE)/System.dll \
 		-target:library \
 		$(vtsdir_src)/BinarySerializationOverVersionsTest.cs -out:$@
