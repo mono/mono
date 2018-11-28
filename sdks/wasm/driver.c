@@ -550,3 +550,15 @@ mono_wasm_exit (int exit_code)
 {
 	exit (exit_code);
 }
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_set_main_args (int argc, char* argv[])
+{
+	mono_runtime_set_main_args (argc, argv);
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_strdup (const char *s)
+{
+	return (int)strdup (s);
+}
