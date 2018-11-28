@@ -14,7 +14,7 @@ namespace System
             ref StackCrawlMark stackMark)
 		{
 			TypeSpec spec = TypeSpec.Parse (typeName);
-			return spec.Resolve (assemblyResolver, typeResolver, throwOnError, ignoreCase);
+			return spec.Resolve (assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
 		}
 	}
 }
