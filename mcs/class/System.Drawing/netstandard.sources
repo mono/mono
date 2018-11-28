@@ -1,4 +1,5 @@
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Color.cs
+../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
 ../../../external/corefx/src/Common/src/System/Drawing/KnownColorTable.cs
 ../../../external/corefx/src/Common/src/System/Drawing/KnownColor.cs
 System.Drawing/KnownColors.cs
