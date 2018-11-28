@@ -41,7 +41,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -113,7 +113,10 @@ wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
 
 endef
 
-$(eval $(call WasmCrossTemplate,cross,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
+# 64 bit cross compiler
+$(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,wasm-runtime,llvm-llvm64,wasm32-unknown-unknown))
+# Old 32 bit cross compiler
+$(eval $(call WasmCrossTemplate,cross-32,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
 
 ##
 # Parameters

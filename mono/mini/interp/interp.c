@@ -98,6 +98,8 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
  * Used for testing.
  */
 GSList *mono_interp_jit_classes;
+/* Optimizations enabled with interpreter */
+int mono_interp_opt = INTERP_OPT_INLINE;
 /* If TRUE, interpreted code will be interrupted at function entry/backward branches */
 static gboolean ss_enabled;
 
@@ -2116,6 +2118,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	case MONO_TYPE_R8:
 		sp->data.f = *(double*)res_buf;
 		break;
+	case MONO_TYPE_TYPEDBYREF:
 	case MONO_TYPE_VALUETYPE:
 		/* The result was written to vt_sp */
 		sp->data.p = vt_sp;
@@ -4775,6 +4778,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			sp -= numargs;
 
 			o = sp [0].data.o;
+			if (!o)
+				THROW_EX (mono_get_exception_null_reference (), ip);
 			sp->data.p = ves_array_element_address (frame, klass, (MonoArray *) o, &sp [1], needs_typecheck);
 			if (frame->ex)
 				THROW_EX (frame->ex, ip);
@@ -5973,6 +5978,8 @@ interp_parse_options (const char *options)
 			mono_interp_jit_classes = g_slist_prepend (mono_interp_jit_classes, arg + 4);
 		if (strncmp (arg, "interp-only=", 4) == 0)
 			mono_interp_only_classes = g_slist_prepend (mono_interp_only_classes, arg + strlen ("interp-only="));
+		if (strncmp (arg, "-inline", 7) == 0)
+			mono_interp_opt &= ~INTERP_OPT_INLINE;
 	}
 }
 
@@ -6225,6 +6232,8 @@ mono_ee_interp_init (const char *opts)
 	set_context (NULL);
 
 	interp_parse_options (opts);
+	if (mini_get_debug_options ()->mdb_optimizations)
+		mono_interp_opt &= ~INTERP_OPT_INLINE;
 	mono_interp_transform_init ();
 
 	MonoEECallbacks c;

@@ -1457,9 +1457,17 @@ handle_enum:
 
 	if (sig->ret->byref) {
 		/* perform indirect load and return by value */
+		int ldind_op;
 		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
 		g_assert (!ret_byval->byref);
-		mono_mb_emit_byte (mb, mono_type_to_ldind (ret_byval));
+		ldind_op = mono_type_to_ldind (ret_byval);
+		/* taken from similar code in mini-generic-sharing.c
+		 * we need to use mono_mb_emit_op to add method data when loading
+		 * a structure since method-to-ir needs this data for wrapper methods */
+		if (ldind_op == CEE_LDOBJ)
+			mono_mb_emit_op (mb, CEE_LDOBJ, mono_class_from_mono_type_internal (ret_byval));
+		else
+			mono_mb_emit_byte (mb, ldind_op);
 	}
 
 	switch (sig->ret->type) {
@@ -4931,7 +4939,7 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				m = get_method_nofail (mono_defaults.string_class, "get_Length", -1, 0);
 
 			if (!t->byref) {
-				char *msg = g_strdup_printf ("VBByRefStr marshalling requires a ref parameter.", encoding);
+				char *msg = g_strdup ("VBByRefStr marshalling requires a ref parameter.");
 				mono_mb_emit_exception_marshal_directive (mb, msg);
 				break;
 			}
@@ -6370,7 +6378,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 					local = mono_mb_add_local (mb, mono_get_object_type ());
 
 					if (!mb->volatile_locals) {
-						char *mem = (char *)mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
+						gpointer mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
 						mb->volatile_locals = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
 					}
 					mono_bitset_set (mb->volatile_locals, local);
@@ -6378,7 +6386,7 @@ emit_native_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethod *method, Mono
 				case ICALL_HANDLES_WRAP_VALUETYPE_REF:
 				case ICALL_HANDLES_WRAP_OBJ:
 					if (!mb->volatile_args) {
-						char *mem = (char *)mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
+						gpointer mem = mono_image_alloc0 (get_method_image (method), mono_bitset_alloc_size (csig->param_count + 1, 0));
 						mb->volatile_args = mono_bitset_mem_new (mem, csig->param_count + 1, 0);
 					}
 					mono_bitset_set (mb->volatile_args, i);

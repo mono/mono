@@ -39,16 +39,14 @@ namespace System.Reflection {
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
-		public
-		virtual
-		void AddEventHandler (object target, Delegate handler)
+		public virtual void AddEventHandler (object target, Delegate handler)
 		{
 // this optimization cause problems with full AOT
 // see bug https://bugzilla.xamarin.com/show_bug.cgi?id=3682
 #if FULL_AOT_RUNTIME
 			MethodInfo add = GetAddMethod ();
 			if (add == null)
-				throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
+				throw new InvalidOperationException (SR.InvalidOperation_NoPublicAddMethod);
 			if (target == null && !add.IsStatic)
 				throw new TargetException ("Cannot add a handler to a non static event with a null target");
 			add.Invoke (target, new object [] {handler});
@@ -56,7 +54,8 @@ namespace System.Reflection {
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
 				if (add == null)
-					throw new InvalidOperationException ("Cannot add a handler to an event that doesn't have a visible add method");
+					throw new InvalidOperationException (SR.InvalidOperation_NoPublicAddMethod);
+
 				if (add.DeclaringType.IsValueType) {
 					if (target == null && !add.IsStatic)
 						throw new TargetException ("Cannot add a handler to a non static event with a null target");
@@ -77,6 +76,7 @@ namespace System.Reflection {
 // see bug https://bugzilla.xamarin.com/show_bug.cgi?id=3682
 // do not revove the above delegate or it's field since it's required by the runtime!
 #if !FULL_AOT_RUNTIME
+
 		delegate void AddEvent<T, D> (T _this, D dele);
 		delegate void StaticAddEvent<D> (D dele);
 
@@ -139,15 +139,8 @@ namespace System.Reflection {
 		}
 #endif
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern EventInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
-
-		internal static EventInfo GetEventFromHandle (Mono.RuntimeEventHandle handle)
-		{
-			if (handle.Value == IntPtr.Zero)
-				throw new ArgumentException ("The handle is invalid.");
-			return internal_from_handle_type (handle.Value, IntPtr.Zero);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern EventInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
 
 		internal static EventInfo GetEventFromHandle (Mono.RuntimeEventHandle handle, RuntimeTypeHandle reflectedType)
 		{

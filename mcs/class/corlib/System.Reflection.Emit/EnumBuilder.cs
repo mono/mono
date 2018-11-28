@@ -441,6 +441,7 @@ namespace System.Reflection.Emit {
 			return base.IsAssignableFrom (typeInfo);
 		}
 
+		public override bool IsTypeDefinition => true;
 	}
 }
 #endif

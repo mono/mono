@@ -467,6 +467,13 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_SP(ctx) (((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__sp)
 	#define UCONTEXT_REG_R0(ctx) (((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__x [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__x))
+#elif defined(__FreeBSD__)
+#include <ucontext.h>
+	/* https://lists.freebsd.org/pipermail/freebsd-arm/2017-February/015611.html */
+	#define UCONTEXT_REG_PC(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_elr)
+	#define UCONTEXT_REG_SP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_sp)
+	#define UCONTEXT_REG_R0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x [ARMREG_R0])
+	#define UCONTEXT_GREGS(ctx) (&(((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x))
 #else
 #include <ucontext.h>
 	#define UCONTEXT_REG_PC(ctx) (((ucontext_t*)(ctx))->uc_mcontext.pc)
@@ -531,6 +538,28 @@ typedef struct ucontext
 # endif
 
 # define UCONTEXT_GREGS(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.gregs)
+#endif
+
+#elif defined (TARGET_RISCV)
+
+#if defined(MONO_CROSS_COMPILE)
+
+#define UCONTEXT_GREGS(ctx) (NULL)
+#define UCONTEXT_FREGS(ctx) (NULL)
+#define UCONTEXT_REG_PC(ctx) (NULL)
+#define UCONTEXT_REG_BP(ctx) (NULL)
+#define UCONTEXT_REG_SP(ctx) (NULL)
+
+#else
+
+#include <ucontext.h>
+
+#define UCONTEXT_GREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.gregs)
+#define UCONTEXT_FREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.fpregs)
+#define UCONTEXT_REG_PC(ctx) (UCONTEXT_GREGS ((ctx)) [REG_PC])
+#define UCONTEXT_REG_BP(ctx) (UCONTEXT_GREGS ((ctx)) [REG_S0])
+#define UCONTEXT_REG_SP(ctx) (UCONTEXT_GREGS ((ctx)) [REG_SP])
+
 #endif
 
 #endif

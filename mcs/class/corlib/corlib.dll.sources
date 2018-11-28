@@ -29,6 +29,8 @@ Mono/CertificateImportFlags.cs
 Mono/DependencyInjector.cs
 Mono/ISystemCertificateProvider.cs
 Mono/ISystemDependencyProvider.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 Mono/Runtime.cs
 Mono/RuntimeHandles.cs
 Mono/RuntimeMarshal.cs
@@ -133,6 +135,7 @@ corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
+System/TimeZoneInfo.WebAssembly.cs
 System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.WinRT.cs
 ../../build/common/MonoTODOAttribute.cs
@@ -244,6 +247,7 @@ System.Reflection/FieldInfo.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoAssembly.cs
 System.Reflection/MonoEvent.cs
@@ -823,6 +827,7 @@ System.Security.Principal/WindowsIdentity.cs
 System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
+System.Text/EncodingHelper.WebAssembly.cs
 System.Threading/CompressedStack.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
@@ -1019,7 +1024,9 @@ coreclr/Math.CoreCLR.cs
 ../referencesource/mscorlib/system/throwhelper.cs
 ../referencesource/mscorlib/system/timezoneinfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneNotFoundException.cs
-../referencesource/mscorlib/system/type.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.Enum.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Type.Helpers.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeAccessException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TypeInitializationException.cs
 ../referencesource/mscorlib/system/typeloadexception.cs
@@ -1117,7 +1124,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/io/__hresults.cs
 ../referencesource/mscorlib/system/io/binaryreader.cs
 ../referencesource/mscorlib/system/io/binarywriter.cs
-../referencesource/mscorlib/system/io/bufferedstream.cs
+../../../external/corefx/src/System.Runtime.Extensions/src/System/IO/BufferedStream.cs
 ../referencesource/mscorlib/system/io/directory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/DirectoryNotFoundException.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveNotFoundException.cs
@@ -1132,7 +1139,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
-../referencesource/mscorlib/system/io/stream.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Stream.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs
 ../referencesource/mscorlib/system/io/streamwriter.cs
 ../referencesource/mscorlib/system/io/stringreader.cs
@@ -1204,6 +1212,15 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ResourceLocation.cs
 ../../../external/corefx/src/System.Runtime/src/System/Reflection/RuntimeReflectionExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureArrayType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureByRefType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureConstructedGenericType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureGenericMethodParameterType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureGenericParameterType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureHasElementType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignaturePointerType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureType.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Reflection/SignatureTypeExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetInvocationException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/TargetParameterCountException.cs
@@ -1583,8 +1600,10 @@ corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/SR.missing.cs
 corefx/CompareInfo.cs
+corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
+corefx/MethodInfo.cs
 corefx/RuntimeImports.cs
 corefx/TimeSpanParse.cs
 
@@ -1593,11 +1612,11 @@ corert/AddrofIntrinsics.cs
 corert/EnvironmentAugments.cs
 corert/RelocatedTypeAttribute.cs
 corert/RuntimeThread.cs
-corert/Stream.cs
 corert/Task.cs
 corert/ThreadPool.cs
 corert/ThreadPoolBoundHandle.platformnotsupported.cs
 corert/Type.cs
+corert/RtType.cs
 corert/PreAllocatedOverlapped.platformnotsupported.cs
 corert/RuntimeAugments.cs
 ../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
@@ -1777,6 +1796,9 @@ corert/RuntimeAugments.cs
 
 ../../../external/corefx/src/Common/src/System/Collections/Concurrent/ConcurrentQueue_Segment.cs
 
+../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/LowLevelDictionary.cs
 ../../../external/corefx/src/Common/src/System/Collections/Generic/ReferenceEqualityComparer.cs
 
@@ -1784,6 +1806,10 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs

@@ -50,6 +50,11 @@ namespace WebAssembly.Net.Http.HttpClient
             handlerInit();
         }
 
+        private static WasmHttpMessageHandler GetHttpMessageHandler()
+        {
+            return new WasmHttpMessageHandler();
+        }
+
         private void handlerInit()
         {
             window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
@@ -129,18 +134,23 @@ namespace WebAssembly.Net.Http.HttpClient
                 }
 
                 JSObject abortController = null;
+                JSObject signal = null;
+                WasmHttpReadStream wasmHttpReadStream = null;
+
                 CancellationTokenRegistration abortRegistration = default(CancellationTokenRegistration);
                 if (cancellationToken.CanBeCanceled)
                 {
                     abortController = (JSObject)global.Invoke("__mono_wasm_abortcontroller_hook__");
-                    var signal = abortController.GetObjectProperty("signal");
+                    signal = (JSObject)abortController.GetObjectProperty("signal");
                     requestObject.SetObjectProperty("signal", signal);
                     abortRegistration = cancellationToken.Register(() =>
                     {
                         if (abortController.JSHandle != -1)
                         {
                             abortController.Invoke("abort");
+                            abortController?.Dispose();
                         }
+                        wasmHttpReadStream?.Dispose();
                     });
                 }
 
@@ -168,7 +178,7 @@ namespace WebAssembly.Net.Http.HttpClient
                 HttpResponseMessage httpresponse = new HttpResponseMessage((HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), status.Status.ToString()));
 
                 httpresponse.Content = StreamingSupported && StreamingEnabled
-                    ? new StreamContent(new WasmHttpReadStream(status))
+                    ? new StreamContent(wasmHttpReadStream = new WasmHttpReadStream(status))
                     : (HttpContent)new WasmHttpContent(status);
 
                 // Fill the response headers
@@ -183,7 +193,7 @@ namespace WebAssembly.Net.Http.HttpClient
                 {
                     // Here we invoke the forEach on the headers object
                     // Note: the Action takes 3 objects and not two.  The other seems to be the Header object.
-                    respHeaders.Invoke("forEach", new Action<object, object, object>((value, name, other) =>
+                    var foreachAction = new Action<object, object, object>((value, name, other) =>
                     {
 
                         if (!httpresponse.Headers.TryAddWithoutValidation((string)name, (string)value))
@@ -191,11 +201,27 @@ namespace WebAssembly.Net.Http.HttpClient
                                 if (!httpresponse.Content.Headers.TryAddWithoutValidation((string)name, (string)value))
                                     Console.WriteLine($"Warning: Can not add response header for name: {name} value: {value}");
                         ((JSObject)other).Dispose();
+                    });
+
+                    try
+                    {
+
+                        respHeaders.Invoke("forEach", foreachAction);
                     }
-                    ));
+                    finally
+                    {
+                        // Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
+                        // if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
+                        // The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
+                        // Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
+                        WebAssembly.Runtime.FreeObject(foreachAction);
+                    }
+
                 }
 
                 tcs.SetResult(httpresponse);
+
+                signal?.Dispose();
             }
             catch (Exception exception)
             {

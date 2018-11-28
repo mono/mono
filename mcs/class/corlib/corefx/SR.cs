@@ -1506,4 +1506,6 @@ partial class SR
 	public const string ObjectDisposed_RegKeyClosed = "Cannot access a closed registry key.";
 	public const string PlatformNotSupported_Registry = "Registry is not supported on this platform.";
 	public const string UnauthorizedAccess_RegistryNoWrite = "Cannot write to the registry key.";
+	public const string InvalidOperation_WrongAsyncResultOrEndReadCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndRead was called multiple times with the same IAsyncResult.";
+	public const string InvalidOperation_WrongAsyncResultOrEndWriteCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or EndWrite was called multiple times with the same IAsyncResult.";
 }

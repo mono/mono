@@ -1,1 +1,7 @@
-#include netstandard_test.sources
+System.Drawing/TestColor.cs
+System.Drawing/TestPoint.cs
+System.Drawing/TestPointF.cs
+System.Drawing/TestRectangle.cs
+System.Drawing/TestRectangleF.cs
+System.Drawing/TestSize.cs
+System.Drawing/TestSizeF.cs

@@ -1389,11 +1389,28 @@ mono_runtime_get_caller_no_system_or_reflection (void)
 	return dest;
 }
 
-static MonoReflectionTypeHandle
-type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAssembly **caller_assembly, MonoError *error)
+/*
+ * mono_runtime_get_caller_from_stack_mark:
+ *
+ *   Walk the stack and return the assembly of the method referenced
+ * by the stack mark STACK_MARK.
+ */
+MonoAssembly*
+mono_runtime_get_caller_from_stack_mark (MonoStackCrawlMark *stack_mark)
 {
-	MonoMethod *m, *dest;
+	// FIXME: Use the stack mark
+	MonoMethod *dest = NULL;
+	mono_stack_walk_no_il (get_caller_no_system_or_reflection, &dest);
+	if (dest)
+		return m_class_get_image (dest->klass)->assembly;
+	else
+		return NULL;
+}
 
+static MonoReflectionTypeHandle
+type_from_parsed_name (MonoTypeNameParse *info, MonoStackCrawlMark *stack_mark, MonoBoolean ignoreCase, MonoAssembly **caller_assembly, MonoError *error)
+{
+	MonoMethod *m;
 	MonoType *type = NULL;
 	MonoAssembly *assembly = NULL;
 	gboolean type_resolve = FALSE;
@@ -1407,35 +1424,13 @@ type_from_parsed_name (MonoTypeNameParse *info, MonoBoolean ignoreCase, MonoAsse
 	 * the metadata context (basedir currently) set to dir/b.dll we won't be able to load a dir/c.dll.
 	 */
 	m = mono_method_get_last_managed ();
-	dest = m;
 	if (m && m_class_get_image (m->klass) != mono_defaults.corlib) {
 		/* Happens with inlining */
+		assembly = m_class_get_image (m->klass)->assembly;
 	} else {
-		/* Ugly hack: type_from_parsed_name is called from
-		 * System.Type.internal_from_name, which is called most
-		 * directly from System.Type.GetType(string,bool,bool) but
-		 * also indirectly from places such as
-		 * System.Type.GetType(string,func,func) (via
-		 * System.TypeNameParser.GetType and System.TypeSpec.Resolve)
-		 * so we need to skip over all of those to find the true caller.
-		 *
-		 * It would be nice if we had stack marks.
-		 */
-		dest = mono_runtime_get_caller_no_system_or_reflection ();
-		if (!dest)
-			dest = m;
+		assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 	}
-
-	/*
-	 * FIXME: mono_method_get_last_managed() sometimes returns NULL, thus
-	 *        causing ves_icall_System_Reflection_Assembly_GetCallingAssembly()
-	 *        to crash.  This only seems to happen in some strange remoting
-	 *        scenarios and I was unable to figure out what's happening there.
-	 *        Dec 10, 2005 - Martin.
-	 */
-
-	if (dest) {
-		assembly = m_class_get_image (dest->klass)->assembly;
+	if (assembly) {
 		type_resolve = TRUE;
 		rootimage = assembly->image;
 	} else {
@@ -1480,15 +1475,20 @@ fail:
 }
 
 MonoReflectionTypeHandle
-ves_icall_System_Type_internal_from_name (MonoStringHandle name,
+ves_icall_System_RuntimeTypeHandle_internal_from_name (MonoStringHandle name,
+					  MonoStackCrawlMark *stack_mark,
+					  MonoReflectionAssemblyHandle callerAssembly,
 					  MonoBoolean throwOnError,
 					  MonoBoolean ignoreCase,
+					  MonoBoolean reflectionOnly,
 					  MonoError *error)
 {
 	MonoTypeNameParse info;
 	gboolean free_info = FALSE;
 	MonoAssembly *caller_assembly;
 	MonoReflectionTypeHandle type = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+
+	/* The callerAssembly argument is unused for now */
 
 	char *str = mono_string_handle_to_utf8 (name, error);
 	goto_if_nok (error, leave);
@@ -1499,7 +1499,7 @@ ves_icall_System_Type_internal_from_name (MonoStringHandle name,
 
 	/* mono_reflection_parse_type() mangles the string */
 
-	MONO_HANDLE_ASSIGN (type, type_from_parsed_name (&info, ignoreCase, &caller_assembly, error));
+	MONO_HANDLE_ASSIGN (type, type_from_parsed_name (&info, (MonoStackCrawlMark*)stack_mark, ignoreCase, &caller_assembly, error));
 
 	goto_if_nok (error, leave);
 
@@ -2738,6 +2738,9 @@ MonoBoolean
 ves_icall_RuntimeTypeHandle_IsByRefLike (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
+	/* .NET Core says byref types are not IsByRefLike */
+	if (type->byref)
+		return FALSE;
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
 	return m_class_is_byreflike (klass);
 }
@@ -6634,6 +6637,12 @@ ves_icall_System_Buffer_SetByteInternal (MonoArray *array, gint32 idx, gint8 val
 	mono_array_set_internal (array, gint8, idx, value);
 }
 
+void
+ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32 count)
+{
+	memcpy (dest, src, count);
+}
+
 MonoBoolean
 ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, MonoArray *dest, gint32 dest_offset, gint32 count) 
 {
@@ -6827,7 +6836,7 @@ mono_icall_is_64bit_os (void)
 	struct utsname name;
 
 	if (uname (&name) >= 0) {
-		return strcmp (name.machine, "x86_64") == 0 || strncmp (name.machine, "aarch64", 7) == 0 || strncmp (name.machine, "ppc64", 5) == 0;
+		return strcmp (name.machine, "x86_64") == 0 || strncmp (name.machine, "aarch64", 7) == 0 || strncmp (name.machine, "ppc64", 5) == 0 || strncmp (name.machine, "riscv64", 7) == 0;
 	}
 #endif
 	return FALSE;
@@ -7327,6 +7336,46 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 {
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
+
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
+
+G_EXTERN_C gpointer CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data);
+G_EXTERN_C gint32   CloseZStream (gpointer stream);
+G_EXTERN_C gint32   Flush (gpointer stream);
+G_EXTERN_C gint32   ReadZStream (gpointer stream, gpointer buffer, gint32 length);
+G_EXTERN_C gint32   WriteZStream (gpointer stream, gpointer buffer, gint32 length);
+
+gpointer
+ves_icall_System_IO_Compression_DeflateStreamNative_CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data)
+{
+	return CreateZStream (compress, gzip, feeder, data);
+}
+
+gint32
+ves_icall_System_IO_Compression_DeflateStreamNative_CloseZStream (gpointer stream)
+{
+	return CloseZStream (stream);
+}
+
+gint32
+ves_icall_System_IO_Compression_DeflateStreamNative_Flush (gpointer stream)
+{
+	return Flush (stream);
+}
+
+gint32
+ves_icall_System_IO_Compression_DeflateStreamNative_ReadZStream (gpointer stream, gpointer buffer, gint32 length)
+{
+	return ReadZStream (stream, buffer, length);
+}
+
+gint32
+ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer stream, gpointer buffer, gint32 length)
+{
+	return WriteZStream (stream, buffer, length);
+}
+
+#endif
 
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
@@ -8769,14 +8818,33 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 	return mono_cpu_count ();
 }
 
-// Generate wrappers.
+#if defined(ENABLE_MONODROID)
 
-#ifdef DISABLE_POLICY_EVIDENCE
-#define ENABLE_POLICY_EVIDENCE 0
-#else
-#define ENABLE_POLICY_EVIDENCE 1
+G_EXTERN_C gint32 CreateNLSocket (void);
+G_EXTERN_C gint32 ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size);
+G_EXTERN_C gint32 CloseNLSocket (gpointer sock);
+
+gint32
+ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CreateNLSocket (void)
+{
+	return CreateNLSocket ();
+}
+
+gint32
+ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
+{
+	return ReadEvents (sock, buffer, count, size);
+}
+
+gint32
+ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpointer sock)
+{
+	return CloseNLSocket (sock);
+}
+
 #endif
-#undef DISABLE_POLICY_EVIDENCE // Not redefined so keep at end of file.
+
+// Generate wrappers.
 
 #define ICALL_TYPE(id,name,first) /* nothing */
 #define ICALL(id,name,func) /* nothing */
@@ -8789,17 +8857,13 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 // i.e. the wrapper would also have a different name.
 #define HANDLES_REUSE_WRAPPER(...) /* nothing  */
 
-#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) \
-	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
-	MONO_HANDLE_IMPLEMENT_MAYBE (cond, id, name, func, ret, nargs, argtypes)
-
 #define HANDLES(id, name, func, ret, nargs, argtypes) \
-	HANDLES_MAYBE (TRUE, id, name, func, ret, nargs, argtypes)
+	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
+	MONO_HANDLE_IMPLEMENT (id, name, func, ret, nargs, argtypes)
 
 #include "metadata/icall-def.h"
 
 #undef HANDLES
-#undef HANDLES_MAYBE
 #undef HANDLES_REUSE_WRAPPER
 #undef ICALL_TYPE
 #undef ICALL

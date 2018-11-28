@@ -12,7 +12,7 @@ else
 ${TESTCMD} --label=mini --timeout=25m make -j ${CI_CPU_COUNT} -w -C mono/mini -k fullaotcheck
 fi
 
-${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1 CI=1
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k test-wrench V=1
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
@@ -40,3 +40,5 @@ ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 
 rm -fr /tmp/jenkins-temp-aspnet*
+
+${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

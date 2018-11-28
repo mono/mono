@@ -42,8 +42,8 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
-ifdef VALID_PROFILE
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
+ifdef VALID_TEST_PROFILE
 
 qcheck: run-mcs-tests 
 
@@ -61,6 +61,13 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 test-local: $(TEST_SUPPORT_FILES)
+
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/mcs-errors
+	cp -L -R dlls $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L *.cs *.inc *.dll *.snk *.pub $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L $(topdir)/class/lib/$(PROFILE)/compiler-tester.* $(TEST_BUNDLE_PATH)/tests/mcs-errors/
+	cp -L known-issues-$(PROFILE) $(TEST_BUNDLE_PATH)/tests/mcs-errors/known-issues-$(PROFILE)
 
 run-mcs-tests: test-local
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -reference-dir:$(topdir)/class/lib/$(PROFILE) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log $(TESTER_OPTIONS) $(TOPTIONS)

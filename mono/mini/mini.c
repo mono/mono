@@ -2131,7 +2131,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 				 * See tests/test-arr.cs
 				 */
 				if (strstr (info->name, "ves_array_new_va_") == NULL && strstr (info->name, "ves_array_element_address_") == NULL) {
-					patch_info->type = MONO_PATCH_INFO_INTERNAL_METHOD;
+					patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
 					patch_info->data.name = info->name;
 				}
 			}
@@ -2931,7 +2931,7 @@ mono_insert_safepoints (MonoCompile *cfg)
 		}
 	}
 
-	if (cfg->method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 
 		if (info && (info->subtype == WRAPPER_SUBTYPE_INTERP_IN || info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)) {
@@ -2947,10 +2947,21 @@ mono_insert_safepoints (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "BEFORE SAFEPOINTS");
 
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		if (bb->loop_body_start || bb == cfg->bb_entry || bb->flags & BB_EXCEPTION_HANDLER)
+	/* if the method doesn't contain
+	 *  (1) a call (so it's a leaf method)
+	 *  (2) and no loops
+	 * we can skip the GC safepoint on method entry. */
+	gboolean requires_safepoint = cfg->has_calls;
+
+	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
+		if (bb->loop_body_start || bb->flags & BB_EXCEPTION_HANDLER) {
+			requires_safepoint = TRUE;
 			mono_create_gc_safepoint (cfg, bb);
+		}
 	}
+
+	if (requires_safepoint)
+		mono_create_gc_safepoint (cfg, cfg->bb_entry);
 
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "AFTER SAFEPOINTS");
@@ -3049,7 +3060,7 @@ init_backend (MonoBackend *backend)
 #else
 	backend->monitor_enter_adjustment = MONO_ARCH_MONITOR_ENTER_ADJUSTMENT;
 #endif
-#if defined(__mono_ilp32__)
+#if defined(MONO_ARCH_ILP32)
 	backend->ilp32 = 1;
 #endif
 #ifdef MONO_ARCH_NEED_DIV_CHECK
@@ -3374,7 +3385,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	mini_gc_init_cfg (cfg);
 
-	if (method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	if (method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 		/* These wrappers are using linkonce linkage, so they can't access GOT slots */
@@ -3863,7 +3874,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		}
 
 		if (cfg->verbose_level > 0 && !cfg->compile_aot) {
-			nm = mono_method_full_name (cfg->method, TRUE);
+			nm = mono_method_get_full_name (cfg->method);
 			g_print ("LLVM Method %s emitted at %p to %p (code length %d) [%s]\n", 
 					 nm, 
 					 cfg->native_code, cfg->native_code + cfg->code_len, cfg->code_len, cfg->domain->friendly_name);
