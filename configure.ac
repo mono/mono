@@ -1411,6 +1411,15 @@ fi
 if test -z "$INSTALL_XAMMAC_TRUE"; then :
    default_profile=xammac
 fi
+if test -z "$INSTALL_TESTING_AOT_FULL_INTERP_TRUE"; then :
+   default_profile=testing_aot_full_interp
+fi
+if test -z "$INSTALL_TESTING_AOT_HYBRID_TRUE"; then :
+   default_profile=testing_aot_hybrid
+fi
+if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
+   default_profile=testing_aot_full
+fi
 if test -z "$INSTALL_WINAOT_TRUE"; then :
    default_profile=winaot
 fi
@@ -1425,15 +1434,6 @@ if test -z "$INSTALL_WASM_TRUE"; then :
 fi
 if test -z "$INSTALL_4_x_TRUE"; then :
    default_profile=net_4_x
-fi
-if test -z "$INSTALL_TESTING_AOT_FULL_INTERP_TRUE"; then :
-   default_profile=testing_aot_full_interp
-fi
-if test -z "$INSTALL_TESTING_AOT_HYBRID_TRUE"; then :
-   default_profile=testing_aot_hybrid
-fi
-if test -z "$INSTALL_TESTING_AOT_FULL_TRUE"; then :
-   default_profile=testing_aot_full
 fi
 DEFAULT_PROFILE=$default_profile
 AC_SUBST(DEFAULT_PROFILE)
