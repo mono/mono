@@ -23,10 +23,10 @@ _desktop-$(1)_CONFIGURE_FLAGS= \
 	--with-tls=pthread \
 	--without-ikvm-native
 
-$$(eval $$(call RuntimeTemplate,desktop-$(1),$(2)))
+$$(eval $$(call RuntimeTemplate,desktop,$(1),$(2)))
 
 endef
 
 $(eval $(call DesktopTemplate,x86_64,x86_64-apple-darwin17.2.0))
 
-$(eval $(call BclTemplate,desktop-bcl,net_4_x,))
+$(eval $(call BclTemplate,desktop,net_4_x,))

@@ -112,9 +112,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android-$(1),$(4)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
 
 endef
 
@@ -174,9 +172,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android-$(1)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,android,$(1)))
 
 endef
 
@@ -225,9 +221,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
-$$(eval $$(call RuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,android,$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static)))
 
 endef
 
@@ -273,16 +267,14 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
-$$(eval $$(call CrossRuntimeTemplate,android-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu)),$(3)-linux-android,$(4),$(5),$(6)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,android,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu)),$(3)-linux-android,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,android-armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,android-x86,llvm-llvm32,i686-none-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,android-x86_64,llvm-llvm64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
 
 ##
 # Parameters
@@ -335,16 +327,13 @@ _android-$(1)_CONFIGURE_FLAGS= \
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
-$$(eval $$(call CrossRuntimeTemplate,android-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-linux-android,$(4),$(5),$(6)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,android,$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-linux-android,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
-$(eval $(call BclTemplate,android-bcl,monodroid monodroid_tools,monodroid))
-android_TARGETS += android-bcl
+$(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid))
