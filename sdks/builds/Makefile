@@ -7,10 +7,18 @@ CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
+lowercase=$(shell echo "$(1)" | tr '[:upper:]' '[:lower:]')
+
 CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
 NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
+
+ifneq ($(UNAME),Darwin)
+ifneq ($(UNAME),Linux)
+$(error "Unsupported UNAME=$(UNAME)")
+endif
+endif
 
 ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
