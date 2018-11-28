@@ -44,5 +44,62 @@ namespace MonoTests.Helpers {
 
 			throw new ApplicationException ($"Could not find available local port after {counter} retries");
 		}
+
+		// Bind to the specified address using a system-assigned port.
+		// Returns the assigned port.
+		public static void Bind (this Socket socket, IPAddress address, out int port)
+		{
+			socket.Bind (new IPEndPoint (address, 0));
+			port = ((IPEndPoint) socket.LocalEndPoint).Port;
+		}
+
+
+		// Bind to the specified address using a system-assigned port.
+		// Returns the resulting end local end point.
+		public static void Bind (this Socket socket, IPAddress address, out IPEndPoint ep)
+		{
+			socket.Bind (new IPEndPoint (address, 0));
+			ep = (IPEndPoint) socket.LocalEndPoint;
+		}
+
+		// Creates and starts a TcpListener using a system-assigned port.
+		// Returns the assigned port.
+		public static TcpListener StartTcpListener (out int port)
+		{
+			var rv = new TcpListener (0);
+			rv.Start ();
+			port = ((IPEndPoint) rv.LocalEndpoint).Port;
+			return rv;
+		}
+
+		// Creates and starts a TcpListener using a system-assigned port.
+		// Returns the resulting local end point.
+		public static TcpListener StartTcpListener (out IPEndPoint ep)
+		{
+			var rv = new TcpListener (0);
+			rv.Start ();
+			ep = (IPEndPoint) rv.LocalEndpoint;
+			return rv;
+		}
+
+		// Creates and starts a TcpListener using the specified address and a system-assigned port.
+		// Returns the assigned port.
+		public static TcpListener StartTcpListener (IPAddress address, out int port)
+		{
+			var rv = new TcpListener (address, 0);
+			rv.Start ();
+			port = ((IPEndPoint) rv.LocalEndpoint).Port;
+			return rv;
+		}
+
+		// Creates and starts a TcpListener using the specified address and a system-assigned port.
+		// Returns the resulting local end point.
+		public static TcpListener StartTcpListener (IPAddress address, out IPEndPoint ep)
+		{
+			var rv = new TcpListener (address, 0);
+			rv.Start ();
+			ep = (IPEndPoint) rv.LocalEndpoint;
+			return rv;
+		}
 	}
 }

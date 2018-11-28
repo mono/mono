@@ -67,6 +67,14 @@ namespace MonoTests.Helpers
 			listenTask = Task.Run ((Action) Listen);
 		}
 
+		// Starts listening on IPAddress.Loopback on a system-assigned port.
+		// Returns the resulting IPEndPoint (which contains the assigned port).
+		public SocketResponder (out IPEndPoint ep, SocketRequestHandler rh)
+			: this (new IPEndPoint (IPAddress.Loopback, 0), rh)
+		{
+			ep = (IPEndPoint) tcpListener.LocalEndpoint;
+		}
+
 		public void Dispose ()
 		{
 			if (disposed)
