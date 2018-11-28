@@ -6,3 +6,5 @@ System.Drawing/KnownColors.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/PointF.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Rectangle.cs
 ../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/RectangleF.cs
+../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Size.cs
+../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/SizeF.cs
