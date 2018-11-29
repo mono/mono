@@ -30,7 +30,7 @@ using System;
 
 public class MainlineTests : HelixTestBase
 {
-    public MainlineTests () : base ("test/mainline/")
+    public MainlineTests (string type) : base ($"test/{type}/")
     {
     }
 
