@@ -3707,7 +3707,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void ConnectedProperty ()
 		{
-			var listener = NetworkHelpers.StartTcpListener (out int port);
+			var listener = NetworkHelpers.CreateAndStartTcpListener (out int port);
 
 			var client = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			client.Connect (IPAddress.Loopback, port);

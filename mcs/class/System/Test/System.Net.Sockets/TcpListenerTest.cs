@@ -29,7 +29,7 @@ namespace MonoTests.System.Net.Sockets
 		public void TcpListener ()
 		{
 			// listen with a new listener (IPv4 is the default)
-			TcpListener inListener = NetworkHelpers.StartTcpListener (out int port);
+			TcpListener inListener = NetworkHelpers.CreateAndStartTcpListener (out int port);
 			
 
 			// connect to it from a new socket
@@ -226,7 +226,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void EndAcceptTcpClient ()
 		{
-			var listenerSocket = NetworkHelpers.StartTcpListener (IPAddress.Any, out int port);
+			var listenerSocket = NetworkHelpers.CreateAndStartTcpListener (IPAddress.Any, out int port);
 			listenerSocket.BeginAcceptTcpClient (new AsyncCallback (l => {
 				listenerSocket.EndAcceptTcpClient (l);
 			}), null);

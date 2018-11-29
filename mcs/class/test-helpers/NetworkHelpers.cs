@@ -64,7 +64,7 @@ namespace MonoTests.Helpers {
 
 		// Creates and starts a TcpListener using a system-assigned port.
 		// Returns the assigned port.
-		public static TcpListener StartTcpListener (out int port)
+		public static TcpListener CreateAndStartTcpListener (out int port)
 		{
 			var rv = new TcpListener (0);
 			rv.Start ();
@@ -74,7 +74,7 @@ namespace MonoTests.Helpers {
 
 		// Creates and starts a TcpListener using a system-assigned port.
 		// Returns the resulting local end point.
-		public static TcpListener StartTcpListener (out IPEndPoint ep)
+		public static TcpListener CreateAndStartTcpListener (out IPEndPoint ep)
 		{
 			var rv = new TcpListener (0);
 			rv.Start ();
@@ -84,7 +84,7 @@ namespace MonoTests.Helpers {
 
 		// Creates and starts a TcpListener using the specified address and a system-assigned port.
 		// Returns the assigned port.
-		public static TcpListener StartTcpListener (IPAddress address, out int port)
+		public static TcpListener CreateAndStartTcpListener (IPAddress address, out int port)
 		{
 			var rv = new TcpListener (address, 0);
 			rv.Start ();
@@ -94,7 +94,7 @@ namespace MonoTests.Helpers {
 
 		// Creates and starts a TcpListener using the specified address and a system-assigned port.
 		// Returns the resulting local end point.
-		public static TcpListener StartTcpListener (IPAddress address, out IPEndPoint ep)
+		public static TcpListener CreateAndStartTcpListener (IPAddress address, out IPEndPoint ep)
 		{
 			var rv = new TcpListener (address, 0);
 			rv.Start ();
