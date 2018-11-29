@@ -2857,7 +2857,7 @@ insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	MONO_INST_NEW (cfg, ins, OP_GC_SAFE_POINT);
 	ins->sreg1 = poll_addr->dreg;
 
-	 if (bblock->flags & BB_EXCEPTION_HANDLER) {
+	if (bblock->flags & BB_EXCEPTION_HANDLER) {
 		MonoInst *eh_op = bblock->code;
 
 		if (eh_op && eh_op->opcode != OP_START_HANDLER && eh_op->opcode != OP_GET_EX_OBJ) {
@@ -2873,10 +2873,6 @@ insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 
 		mono_bblock_insert_after_ins (bblock, eh_op, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
-	} else if (bblock == cfg->bb_entry) {
-		mono_bblock_insert_after_ins (bblock, bblock->last_ins, poll_addr);
-		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
-
 	} else {
 		mono_bblock_insert_before_ins (bblock, NULL, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
