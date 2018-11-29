@@ -6230,6 +6230,8 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 	// See the array writes
 	mono_memory_barrier ();
 
+	mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
+
 	mono_summarize_native_state_begin (mem, provided_size);
 	for (int i=0; i < state->nthreads; i++) {
 		gpointer old_value = NULL;
@@ -6292,6 +6294,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
 
 	if (this_thread_controls) {
+		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
 		state.silent = silent;
 		summarizer_signal_other_threads (&state, current, current_idx);
 	}
@@ -6323,6 +6326,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", current);
 
 		// Dump and cleanup all the stack memory
+		mono_summarize_timeline_phase_log (MonoSummaryDumpTraversal);
 		summarizer_state_term (&state, out, mem, provided_size, &this_thread);
 	} else {
 		// Wait here, keeping our stack memory alive
@@ -6391,6 +6395,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 		} else if (signal_handler_controller) {
 			// We're done. We can't do anything.
 			MOSTLY_ASYNC_SAFE_PRINTF ("Attempted to dump for critical failure when already in dump. Error reporting crashed?");
+			mono_summarize_double_fault_log ();
 			break;
 		} else {
 			if (!silent)
