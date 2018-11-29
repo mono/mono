@@ -132,7 +132,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test] // https://github.com/mono/mono/issues/11663
-		[Category ("MobileNotWorking")] // Custom Encodings are not included by default on mobile platforms
 		public void EncodingIsBinaryCompatible ()
 		{
 			const string serializedEncoding = 
