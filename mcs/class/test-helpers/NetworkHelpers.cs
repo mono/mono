@@ -104,11 +104,6 @@ namespace MonoTests.Helpers {
 
 		public static HttpListener CreateAndStartHttpListener (string host, int port, string path, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
-			return CreateAndStartHttpListener (host, path, port, authSchemes, initializer);
-		}
-
-		public static HttpListener CreateAndStartHttpListener (string host, string path, int port, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
-		{
 			var prefix = host + port + path;
 			HttpListener listener = new HttpListener ();
 			if (initializer != null)
@@ -120,14 +115,14 @@ namespace MonoTests.Helpers {
 			return listener;
 		}
 
-		public static HttpListener CreateAndStartHttpListener (string host, string path, out int port, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
+		public static HttpListener CreateAndStartHttpListener (string host, out int port, string path, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
 			// There's no way to create an HttpListener with a system-assigned port.
 			// So we use NetworkHelpers.FindFreePort, and re-try if we fail because someone else has already used the port.
 			for (int i = 0; i < 10; i++) {
 				try {
 					var tentativePort = NetworkHelpers.FindFreePort ();
-					var listener = CreateAndStartHttpListener (host, path, tentativePort, authSchemes, initializer);
+					var listener = CreateAndStartHttpListener (host, tentativePort, path, authSchemes, initializer);
 					port = tentativePort;
 					return listener;
 				} catch (SocketException se) {
@@ -139,14 +134,9 @@ namespace MonoTests.Helpers {
 			throw new Exception ("Unable to create HttpListener after 10 attempts");
 		}
 
-		public static HttpListener CreateAndStartHttpListener (string host, out int port, string path, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
-		{
-			return CreateAndStartHttpListener (host, path, out port, authSchemes, initializer);
-		}
-
 		public static HttpListener CreateAndStartHttpListener (string host, out int port, string path, out string uri, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
-			var rv = CreateAndStartHttpListener (host, path, out port, authSchemes, initializer);
+			var rv = CreateAndStartHttpListener (host, out port, path, authSchemes, initializer);
 			uri = host + port + path;
 			return rv;
 		}
