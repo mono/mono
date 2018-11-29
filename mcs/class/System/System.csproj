@@ -135,6 +135,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleMinusOneIsInvalid.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ExceptionCheck.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DomainLiteralReader.cs" />
@@ -144,10 +145,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedPairReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedStringFormatReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\WhitespaceReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBufferType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TcpValidationHelpers.cs" />
