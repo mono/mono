@@ -4,12 +4,14 @@ using System.IO;
 using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Options;
+using Mono.Cecil.Cil;
 
 class Driver {
 	static bool enable_debug, enable_linker;
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_map = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
+	static List<string> root_search_paths = new List<string>();
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
@@ -55,6 +57,7 @@ class Driver {
 		Console.WriteLine ("\t--vfs=x         Set the VFS prefix to 'x' (default to 'managed')");
 		Console.WriteLine ("\t--template=x    Set the template name to  'x' (default to 'runtime.js')");
 		Console.WriteLine ("\t--asset=x       Add specified asset 'x' to list of assets to be copied");
+		Console.WriteLine ("\t--search-path=x Add specified path 'x' to list of paths used to resolve assemblies");
 		Console.WriteLine ("\t--copy=always|ifnewer        Set the type of copy to perform.");
 		Console.WriteLine ("\t\t              'always' overwrites the file if it exists.");
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
@@ -139,7 +142,16 @@ class Driver {
 		bool add_pdb = enable_debug && File.Exists (Path.ChangeExtension (ra, "pdb"));
 		if (add_pdb) {
 			rp.ReadSymbols = true;
+			// Facades do not have symbols
+			rp.ThrowIfSymbolsAreNotMatching = false;
+			rp.SymbolReaderProvider = new DefaultSymbolReaderProvider(false);
 		}
+
+		var resolver = new DefaultAssemblyResolver();
+		root_search_paths.ForEach(resolver.AddSearchDirectory);
+		resolver.AddSearchDirectory(bcl_facades_prefix);
+		resolver.AddSearchDirectory(bcl_prefix);
+		rp.AssemblyResolver = resolver;
 
 		rp.InMemory = true;
 		var image = ModuleDefinition.ReadModule (ra, rp);
@@ -153,8 +165,13 @@ class Driver {
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
 
 		foreach (var ar in image.AssemblyReferences) {
-			var resolve = Resolve (ar.Name, out kind);
-			Import (resolve, kind);
+			// Resolve using root search paths first
+			var resolved = image.AssemblyResolver.Resolve(ar, rp);
+
+			var searchName = resolved?.MainModule.FileName ?? ar.Name;
+
+			var resolve = Resolve(searchName, out kind);
+			Import(resolve, kind);
 		}
 	}
 
@@ -232,6 +249,7 @@ class Driver {
 				{ "aot", s => enable_aot = true },
 				{ "template=", s => runtimeTemplate = s },
 				{ "asset=", s => assets.Add(s) },
+				{ "search-path=", s => root_search_paths.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "help", s => print_usage = true },

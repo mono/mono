@@ -1,4 +1,5 @@
 #include net_4_x_System.dll.sources
+#include corefx.windows.sources
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 

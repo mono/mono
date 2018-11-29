@@ -836,5 +836,7 @@ namespace System
 				return RuntimeTypeHandle.IsByRefLike (this);
 			}
 		}
+
+		public override bool IsTypeDefinition => RuntimeTypeHandle.IsTypeDefinition (this);
 	}
 }

@@ -268,12 +268,12 @@ mono_call_inst_add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, int vreg, i
 	if (G_UNLIKELY (bank)) {
 		g_assert (vreg >= regbank_size [bank]);
 		g_assert (hreg < regbank_size [bank]);
-		call->used_fregs |= 1 << hreg;
+		call->used_fregs |= (regmask_t)1 << hreg;
 		call->out_freg_args = g_slist_append_mempool (cfg->mempool, call->out_freg_args, (gpointer)(gssize)(regpair));
 	} else {
 		g_assert (vreg >= MONO_MAX_IREGS);
 		g_assert (hreg < MONO_MAX_IREGS);
-		call->used_iregs |= 1 << hreg;
+		call->used_iregs |= (regmask_t)1 << hreg;
 		call->out_ireg_args = g_slist_append_mempool (cfg->mempool, call->out_ireg_args, (gpointer)(gssize)(regpair));
 	}
 }
@@ -724,7 +724,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_COND_EXC_INO:
 	case OP_COND_EXC_IC:
 	case OP_COND_EXC_INC:
-		g_string_append_printf (sbuf, " %s", ins->inst_p1);
+		g_string_append_printf (sbuf, " %s", (const char*)ins->inst_p1);
 		break;
 	default:
 		break;

@@ -346,6 +346,22 @@ typedef enum {
 	CallType_OneWay = 3
 } MonoCallType;
 
+/* System.Threading.StackCrawlMark */
+/*
+ * This type is used to identify the method where execution has entered
+ * the BCL during stack walks. The outermost public method should
+ * define it like this:
+ * StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+ * and pass the stackMark as a byref argument down the call chain
+ * until it reaches an icall.
+ */
+typedef enum {
+	STACK_CRAWL_ME = 0,
+	STACK_CRAWL_CALLER = 1,
+	STACK_CRAWL_CALLERS_CALLER = 2,
+	STACK_CRAWL_THREAD = 3
+} MonoStackCrawlMark;
+
 /* MonoSafeHandle is in class-internals.h. */
 /* Safely access System.Net.Sockets.SafeSocketHandle from native code */
 TYPED_HANDLE_DECL (MonoSafeHandle);
@@ -972,12 +988,6 @@ TYPED_HANDLE_DECL (MonoReflectionParameter);
 
 struct _MonoReflectionMethodBody {
 	MonoObject object;
-	MonoArray *clauses;
-	MonoArray *locals;
-	MonoArray *il;
-	MonoBoolean init_locals;
-	guint32 local_var_sig_token;
-	guint32 max_stack;
 };
 
 /* Safely access System.Reflection.MethodBody from native code */

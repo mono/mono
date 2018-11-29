@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 #if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
@@ -236,18 +237,22 @@ namespace System.Reflection {
 			return GetModules (getResourceModules);
 		}
 
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public
 		override
 		Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
-			return GetSatelliteAssembly (culture, null, true);
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, null, true, ref stackMark);
 		}
 
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public
 		override
 		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			return GetSatelliteAssembly (culture, version, true);
+            StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetSatelliteAssembly (culture, version, true, ref stackMark);
 		}
 
 		//FIXME remove GetManifestModule under v4, it's a v2 artifact

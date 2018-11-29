@@ -3949,8 +3949,8 @@ namespace System.Windows.Forms
 		{
 			int count = this.Items.Count;
 
-			if (count == 0)
-				return string.Format ("System.Windows.Forms.ListView, Items.Count: 0");
+			if (count == 0 || VirtualMode)
+				return string.Format ("System.Windows.Forms.ListView, Items.Count: {0}", count);
 			else
 				return string.Format ("System.Windows.Forms.ListView, Items.Count: {0}, Items[0]: {1}", count, this.Items [0].ToString ());
 		}
