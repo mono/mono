@@ -2921,7 +2921,6 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 
 	LLVMVerifyFunction(func, LLVMAbortProcessAction);
 	LLVMDisposeBuilder (builder);
-	return func;
 }
 
 static void
