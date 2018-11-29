@@ -51,7 +51,15 @@ close(MYFILE);
 
 system("zip -r builds.zip *") eq 0 or die("failed zipping up builds");
 
-my $externalzip = "$monoroot/../../mono-build-deps/build/7z/linux64/7za";
+my $externalzip = "";
+if($^O eq "linux")
+{
+	$externalzip = "$monoroot/../../mono-build-deps/build/7z/linux64/7za";
+}
+elsif($^O eq 'darwin')
+{
+	$externalzip = "$monoroot/../../mono-build-deps/build/7z/osx/7za";
+}
 
 if($^O eq "linux" || $^O eq 'darwin')
 {
