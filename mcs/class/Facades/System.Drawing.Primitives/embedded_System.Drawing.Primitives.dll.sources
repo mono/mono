@@ -1,12 +1,18 @@
 AssemblyInfo.cs
 
-../../System.Drawing/System.Drawing/Point.cs
-../../System.Drawing/System.Drawing/PointF.cs
-../../System.Drawing/System.Drawing/Rectangle.cs
-../../System.Drawing/System.Drawing/RectangleF.cs
-../../System.Drawing/System.Drawing/Size.cs
-../../System.Drawing/System.Drawing/SizeF.cs
-
-../../System.Drawing/System.Drawing/Color.cs
-../../System.Drawing/System.Drawing/KnownColor.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Color.cs
+../../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+../../../../external/corefx/src/Common/src/System/Drawing/KnownColorTable.cs
+../../../../external/corefx/src/Common/src/System/Drawing/KnownColor.cs
 ../../System.Drawing/System.Drawing/KnownColors.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Point.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/PointF.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Rectangle.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/RectangleF.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Size.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/SizeF.cs
+../../../../external/corefx/src/Common/src/System/Drawing/ColorUtil.netcoreapp21.cs
+../../../../external/corefx/src/Common/src/System/Drawing/ColorTable.cs
+../../System.Drawing/corefx/SR.cs
+../../System.Drawing/System.Drawing/SR.cs
+../../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SystemColors.cs
