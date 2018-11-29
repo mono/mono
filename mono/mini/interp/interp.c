@@ -5766,7 +5766,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 #endif
 	   MINT_IN_CASE(MINT_RETHROW) {
 			int exvar_offset = *(guint16*)(ip + 1);
-			THROW_EX_GENERAL (*(MonoException**)(frame->locals + exvar_offset), ip - 1, TRUE);
+			THROW_EX_GENERAL (*(MonoException**)(frame->locals + exvar_offset), ip, TRUE);
 			MINT_IN_BREAK;
 	   }
 	   MINT_IN_CASE(MINT_MONO_RETHROW) {
