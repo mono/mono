@@ -131,6 +131,7 @@ namespace MonoTests.System.Text
 			Assert.AreEqual ("Unicode (UTF-8)", Encoding.UTF8.EncodingName);
 		}
 
+#if !MOBILE // certain encodings aren't available on mobile
 		[Test] // https://github.com/mono/mono/issues/11529
 		public void AllEncodingsAreSerializable ()
 		{
@@ -147,6 +148,7 @@ namespace MonoTests.System.Text
 				}
 			}
 		}
+#endif
 
 		[Test] // https://github.com/mono/mono/issues/11663
 		public void EncodingIsBinaryCompatible ()
