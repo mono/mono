@@ -348,7 +348,7 @@ namespace MonoTests.System.Drawing {
 				colconv.ConvertFromInvariantString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -376,7 +376,7 @@ namespace MonoTests.System.Drawing {
 				colconv.ConvertFromString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -413,7 +413,7 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void ConvertFromString_FromHtml_PoundTooLarge ()
 		{
-			Assert.Throws<Exception> (() => colconv.ConvertFromString ("#100000000"));
+			Assert.Throws<ArgumentException> (() => colconv.ConvertFromString ("#100000000"));
 		}
 	}
 }
