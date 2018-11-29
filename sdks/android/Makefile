@@ -9,9 +9,6 @@ SDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/sdk
 NDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/ndk
 
 ADB       = $(SDK_DIR)/platform-tools/adb
-ANDROID   = $(SDK_DIR)/tools/android
-ANT       = ant
-NDK_BUILD = $(NDK_DIR)/ndk-build
 
 PACKAGE   = org.mono.android.AndroidTestRunner
 RUNNER    = org.mono.android.AndroidRunner

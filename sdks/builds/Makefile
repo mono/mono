@@ -1,16 +1,26 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
 
+all: package
+
 MAKEFLAGS += --no-builtin-rules
 
 CONFIGURATION?=release
 
 RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
+lowercase=$(shell echo "$(1)" | tr '[:upper:]' '[:lower:]')
+
 CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
 NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
+
+ifneq ($(UNAME),Darwin)
+ifneq ($(UNAME),Linux)
+$(error "Unsupported UNAME=$(UNAME)")
+endif
+endif
 
 ifneq ($(UNAME),Darwin)
 # iOS requires Xcode to be available, and Xcode is only available on macOS
@@ -40,19 +50,100 @@ configure-mono: $(TOP)/configure
 $(TOP)/configure: $(TOP)/configure.ac $(TOP)/autogen.sh
 	cd $(TOP) && PATH=$(EXTRA_PATH):$$PATH NOCONFIGURE=1 ./autogen.sh
 
-TARGETS=
+## Archive targets
 
 ifndef DISABLE_ANDROID
-android_TARGETS=
+android_ARCHIVE=
 endif
 
 ifndef DISABLE_IOS
-ios_TARGETS=
+ios_ARCHIVE=
 endif
 
 ifndef DISABLE_WASM
-wasm_TARGETS=
+wasm_ARCHIVE=
 endif
+
+##
+# Parameters:
+#  $(1): target (android, ios, wasm)
+define ArchiveTemplate
+_$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
+_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).zip
+
+.PHONY: archive-$(1)
+archive-$(1):
+	cd $$(TOP)/sdks/out && 7z a $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$($(1)_ARCHIVE))
+endef
+
+ifndef DISABLE_ANDROID
+$(eval $(call ArchiveTemplate,android))
+endif
+
+ifndef DISABLE_IOS
+$(eval $(call ArchiveTemplate,ios))
+endif
+
+ifndef DISABLE_WASM
+$(eval $(call ArchiveTemplate,wasm))
+endif
+
+## Targets
+
+.PHONY: build-custom-%
+build-custom-%:
+	$(MAKE) -C $*
+
+.PHONY: setup-custom-%
+setup-custom-%:
+	mkdir -p $(TOP)/sdks/out/$*
+
+##
+# Parameters:
+# $(1): product
+# $(2): target
+define TargetTemplate
+
+.PHONY: toolchain-$(1)-$(2)
+toolchain-$(1)-$(2): .stamp-$(1)-$(2)-toolchain
+
+.PHONY: toolchain
+toolchain: toolchain-$(1)-$(2)
+
+.stamp-$(1)-$(2)-configure: .stamp-$(1)-$(2)-toolchain
+
+.PHONY: configure-$(1)-$(2)
+configure-$(1)-$(2): .stamp-$(1)-$(2)-configure
+
+.PHONY: configure
+configure: configure-$(1)-$(2)
+
+.PHONY: build-$(1)-$(2)
+build-$(1)-$(2): .stamp-$(1)-$(2)-configure
+	$$(MAKE) build-custom-$(1)-$(2)
+
+.PHONY: build
+build: build-$(1)-$(2)
+
+.PHONY: setup-$(1)-$(2)
+setup-$(1)-$(2):
+	$$(MAKE) setup-custom-$(1)-$(2)
+
+.PHONY: package-$(1)-$(2)
+package-$(1)-$(2): setup-$(1)-$(2) build-$(1)-$(2)
+
+.PHONY: package
+package: package-$(1)-$(2)
+
+.PHONY: clean-$(1)-$(2)
+clean-$(1)-$(2):
+
+.PHONY: clean
+clean: clean-$(1)-$(2)
+
+endef
+
+## Products
 
 include runtime.mk
 include bcl.mk
@@ -86,78 +177,3 @@ endif
 ifndef DISABLE_WASM
 include wasm.mk
 endif
-
-## Archive targets
-
-##
-# Parameters:
-#  $(1): target (android, ios, wasm)
-define ArchiveTemplate
-_$(1)_HASH = $$(shell git -C $$(TOP) rev-parse HEAD)
-_$(1)_PACKAGE = $(1)-$$(CONFIGURATION)-$$(UNAME)-$$(_$(1)_HASH).zip
-
-.PHONY: archive-$(1)
-archive-$(1): $$(foreach target,$$(filter $(1)-%,$$(patsubst %-$$(CONFIGURATION),%,$$($(1)_TARGETS))),package-$$(target))
-	cd $$(TOP)/sdks/out && 7z a $$(TOP)/$$(_$(1)_PACKAGE) $$(sort $$(foreach target,$$($(1)_TARGETS),$$(or $$(wildcard $$(target)-$$(CONFIGURATION)),$$(target))))
-endef
-
-ifndef DISABLE_ANDROID
-$(eval $(call ArchiveTemplate,android))
-endif
-
-ifndef DISABLE_IOS
-$(eval $(call ArchiveTemplate,ios))
-endif
-
-ifndef DISABLE_WASM
-$(eval $(call ArchiveTemplate,wasm))
-endif
-
-## Generic targets
-.PHONY: $(foreach target,$(TARGETS),toolchain-$(target))
-$(foreach target,$(TARGETS),toolchain-$(target)): toolchain-%: .stamp-%-toolchain
-
-$(foreach target,$(TARGETS),.stamp-$(target)-configure): .stamp-%-configure: .stamp-%-toolchain
-
-.PHONY: $(foreach target,$(TARGETS),configure-$(target))
-$(foreach target,$(TARGETS),configure-$(target)): configure-%: .stamp-%-configure
-
-.PHONY: build-custom-%
-build-custom-%:
-	$(MAKE) -C $*
-
-.PHONY: $(foreach target,$(TARGETS),build-$(target))
-$(foreach target,$(TARGETS),build-$(target)): build-%: .stamp-%-configure
-	$(MAKE) build-custom-$*
-
-.PHONY: setup-custom-%
-setup-custom-%:
-	mkdir -p $(TOP)/sdks/out/$*
-
-.PHONY: $(foreach target,$(TARGETS),setup-$(target))
-$(foreach target,$(TARGETS),setup-$(target)): setup-%:
-	$(MAKE) setup-custom-$*
-
-.PHONY: $(foreach target,$(TARGETS),package-$(target))
-$(foreach target,$(TARGETS),package-$(target)): package-%: setup-% build-%
-
-.PHONY: $(foreach target,$(TARGETS),clean-$(target))
-$(foreach target,$(TARGETS),clean-$(target)): clean-%:
-
-## Global targets
-.PHONY: toolchain
-toolchain: $(foreach target,$(TARGETS),toolchain-$(target))
-
-.PHONY: configure
-configure: $(foreach target,$(TARGETS),configure-$(target))
-
-.PHONY: build
-build: $(foreach target,$(TARGETS),build-$(target))
-
-.PHONY: package
-package: $(foreach target,$(TARGETS),package-$(target))
-
-.PHONY: clean
-clean: $(foreach target,$(TARGETS),clean-$(target))
-
-all: package

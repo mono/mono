@@ -7,87 +7,40 @@ ANDROID_SDK_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/sdk
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
-$(ANDROID_TOOLCHAIN_CACHE_DIR) $(ANDROID_TOOLCHAIN_DIR):
-	mkdir -p $@
-
 ##
 # Parameters:
 #  $(1): target
 #  $(2): dir
-#  $(3): category
-#  $(4): url prefix
+#  $(3): subdir (optional)
+#  $(4): stamp (optional, default to $(1))
 define AndroidProvisioningTemplate
 
-$$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip: | $$(ANDROID_TOOLCHAIN_CACHE_DIR)
-	wget --no-verbose -O $$@ $(4)$(1).zip
+$$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip:
+	mkdir -p $$(dir $$@)
+	wget --no-verbose -O $$@ $$(ANDROID_URI)$(1).zip
 
-$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip | $$(ANDROID_TOOLCHAIN_DIR)
-	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))
-	./unzip-android-archive.sh "$$<" "$$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))"
+$$(ANDROID_TOOLCHAIN_DIR)/$(2)/.stamp-$$(or $(4),$(1)): $$(ANDROID_TOOLCHAIN_CACHE_DIR)/$(1).zip
+	mkdir -p $$(dir $$@)
+	rm -rf $$(ANDROID_TOOLCHAIN_DIR)/$(2)$$(if $(3),/$(3))
+	./unzip-android-archive.sh "$$<" "$$(ANDROID_TOOLCHAIN_DIR)/$(2)$$(if $(3),/$(3))"
 	touch $$@
 
-.PHONY: provision-android-$(3)-$(1)
-provision-android-$(3)-$(1): $$(ANDROID_TOOLCHAIN_DIR)/$(3)$$(if $(2),/$(2))/.stamp-$(1)
-
 .PHONY: provision-android
-provision-android: provision-android-$(3)-$(1)
+provision-android: $$(ANDROID_TOOLCHAIN_DIR)/$(2)/.stamp-$$(or $(4),$(1))
 
 endef
 
-AndroidNDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),,ndk,$(ANDROID_URI))
-
 ifeq ($(UNAME),Darwin)
-$(eval $(call AndroidNDKProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-darwin-x86_64))
+$(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-darwin-x86_64,ndk,,ndk))
+$(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,sdk,platform-tools))
+$(eval $(call AndroidProvisioningTemplate,sdk-tools-darwin-4333796,sdk,tools))
 else
 ifeq ($(UNAME),Linux)
-$(eval $(call AndroidNDKProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-linux-x86_64))
-else
-$(error "Unknown UNAME=$(UNAME)")
+$(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-linux-x86_64,ndk,,ndk))
+$(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,sdk,platform-tools))
+$(eval $(call AndroidProvisioningTemplate,sdk-tools-linux-4333796,sdk,tools))
 endif
 endif
-
-AndroidSDKProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),$(2),sdk,$(ANDROID_URI)$(3))
-
-ifeq ($(UNAME),Darwin)
-$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-macosx,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,platform-tools))
-$(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-darwin-4333796,tools))
-$(eval $(call AndroidSDKProvisioningTemplate,emulator-darwin-4266726,emulator))
-$(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-darwin-x86_64,cmake/3.6.4111459))
-else
-ifeq ($(UNAME),Linux)
-$(eval $(call AndroidSDKProvisioningTemplate,build-tools_r$(ANDROID_BUILD_TOOLS_VERSION)-linux,build-tools/$(or $(ANDROID_BUILD_TOOLS_DIR),$(ANDROID_BUILD_TOOLS_VERSION))))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,platform-tools))
-$(eval $(call AndroidSDKProvisioningTemplate,sdk-tools-linux-4333796,tools))
-$(eval $(call AndroidSDKProvisioningTemplate,emulator-linux-4266726,emulator))
-$(eval $(call AndroidSDKProvisioningTemplate,cmake-3.6.4111459-linux-x86_64,cmake/3.6.4111459))
-else
-$(error "Unknown UNAME=$(UNAME)")
-endif
-endif
-
-$(eval $(call AndroidSDKProvisioningTemplate,android-2.3.3_r02-linux,platforms/android-10))
-$(eval $(call AndroidSDKProvisioningTemplate,android-15_r03,platforms/android-15))
-$(eval $(call AndroidSDKProvisioningTemplate,android-16_r04,platforms/android-16))
-$(eval $(call AndroidSDKProvisioningTemplate,android-17_r02,platforms/android-17))
-$(eval $(call AndroidSDKProvisioningTemplate,android-18_r02,platforms/android-18))
-$(eval $(call AndroidSDKProvisioningTemplate,android-19_r03,platforms/android-19))
-$(eval $(call AndroidSDKProvisioningTemplate,android-20_r02,platforms/android-20))
-$(eval $(call AndroidSDKProvisioningTemplate,android-21_r02,platforms/android-21))
-$(eval $(call AndroidSDKProvisioningTemplate,android-22_r02,platforms/android-22))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-23_r03,platforms/android-23))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-24_r02,platforms/android-24))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-25_r03,platforms/android-25))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-26_r02,platforms/android-26))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-27_r03,platforms/android-27))
-$(eval $(call AndroidSDKProvisioningTemplate,platform-28_r04,platforms/android-28))
-$(eval $(call AndroidSDKProvisioningTemplate,docs-24_r01,docs))
-$(eval $(call AndroidSDKProvisioningTemplate,android_m2repository_r16,extras/android/m2repository))
-$(eval $(call AndroidSDKProvisioningTemplate,x86-21_r05,system-images/android-21/default/x86,sys-img/android/))
-
-AndroidAntProvisioningTemplate=$(call AndroidProvisioningTemplate,$(1),,ant,$(ANT_URI))
-
-$(eval $(call AndroidAntProvisioningTemplate,apache-ant-1.9.9-bin))
 
 ##
 # Parameters:
@@ -167,9 +120,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android-$(1),$(4)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
 
 endef
 
@@ -229,9 +180,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android-$(1)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,android,$(1)))
 
 endef
 
@@ -285,8 +234,6 @@ endif
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
-android_TARGETS += android-$(1)-$$(CONFIGURATION)
-
 $$(eval $$(call RuntimeTemplate,android,$(1),$(2)-w64-mingw32))
 
 endef
@@ -333,16 +280,14 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
-$$(eval $$(call CrossRuntimeTemplate,android-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-linux-android,$(4),$(5),$(6)))
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,android,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu)),$(3)-linux-android,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,android-armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,android-x86,llvm-llvm32,i686-none-linux-android))
-$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,android-x86_64,llvm-llvm64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
 
 ##
 # Parameters
@@ -396,18 +341,13 @@ _android-$(1)_CONFIGURE_FLAGS += \
 	--with-static-zlib=$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/lib/libz.a
 endif
 
-.stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
-
-android_TARGETS += android-$(1)-$$(CONFIGURATION) $(5)
-
 $$(eval $$(call CrossRuntimeTemplate,android,$(1),$(2)-w64-mingw32,$(3)-linux-android,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,android-armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
-$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,android-arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,android-x86,llvm-llvmwin32,i686-none-linux-android))
-$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,android-x86_64,llvm-llvmwin64,x86_64-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
+$(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
-$(eval $(call BclTemplate,android-bcl,monodroid monodroid_tools,monodroid))
-android_TARGETS += android-bcl
+$(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid))

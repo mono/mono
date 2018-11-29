@@ -104,9 +104,7 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
 
 endef
 
@@ -239,9 +237,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
 
 endef
 
@@ -343,18 +339,15 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--disable-crash-reporting
 
-$$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin))
 # 64->arm32 cross compiler
-$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,ios-target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10))
 
-$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime,monotouch monotouch_tv monotouch_watch))
-ios_TARGETS += ios-bcl
+$(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))
