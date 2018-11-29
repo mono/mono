@@ -6,7 +6,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {
