@@ -215,7 +215,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TwoListeners_SameURL ()
 		{
 			if (!CanOpenPort (port))
@@ -234,7 +233,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void MultipleSlashes ()
 		{
 			if (!CanOpenPort (port))
@@ -251,7 +249,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PercentSign ()
 		{
 			if (!CanOpenPort (port))
