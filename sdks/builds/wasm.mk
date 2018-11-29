@@ -78,9 +78,12 @@ package-wasm-runtime:
 clean-wasm-runtime:
 	rm -rf .stamp-wasm-runtime-toolchain .stamp-wasm-runtime-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)
 
-TARGETS += wasm-runtime
+$(eval $(call TargetTemplate,wasm,runtime))
 
-wasm_TARGETS += wasm-runtime-$(CONFIGURATION)
+.PHONY: archive-wasm
+archive-wasm: package-wasm-runtime
+
+wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
 
 ##
 # Parameters
@@ -107,16 +110,14 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
-$$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
-
-wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
 # 64 bit cross compiler
-$(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,wasm-runtime,llvm-llvm64,wasm32-unknown-unknown))
+$(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
 # Old 32 bit cross compiler
-$(eval $(call WasmCrossTemplate,cross-32,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
+$(eval $(call WasmCrossTemplate,cross-32,i686,wasm32,runtime,llvm-llvm32,wasm32-unknown-unknown))
 
 ##
 # Parameters
@@ -172,13 +173,10 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
-$$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
-
-wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 
-$(eval $(call BclTemplate,wasm-bcl,wasm wasm_tools,wasm))
-wasm_TARGETS += wasm-bcl
+$(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))
