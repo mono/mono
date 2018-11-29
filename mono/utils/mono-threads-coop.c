@@ -651,7 +651,7 @@ blocking_transition_getenv_compat (void)
 static gboolean
 blocking_transition_from_policy (MonoThreadsSuspendPolicy p)
 {
-	switch (mono_threads_host_suspend_policy ()) {
+	switch (p) {
 	case MONO_THREADS_SUSPEND_FULL_COOP:
 	case MONO_THREADS_SUSPEND_HYBRID:
 		return TRUE;
