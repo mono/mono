@@ -5,7 +5,6 @@ using System.Net;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {
