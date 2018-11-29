@@ -2873,6 +2873,10 @@ insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 
 		mono_bblock_insert_after_ins (bblock, eh_op, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
+	} else if (bblock == cfg->bb_entry) {
+		mono_bblock_insert_after_ins (bblock, bblock->last_ins, poll_addr);
+		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
+
 	} else {
 		mono_bblock_insert_before_ins (bblock, NULL, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
