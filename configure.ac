@@ -37,11 +37,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # of classes the runtime knows about, changing icall signature or
 # semantics etc), increment this variable.
 #
-# This can be reset to 0 when Mono's version number is bumped
-# since it's part of the corlib version (the prefix '1' in the full
-# version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=14
-MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
+MONO_CORLIB_VERSION=3C54B3AC-7701-412A-8055-9006B9C8B6E9
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
 AC_SUBST(MONO_CORLIB_VERSION)

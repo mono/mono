@@ -3276,14 +3276,18 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 #ifdef TARGET_OSX
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
-				// Do before forking
+				mono_summarize_timeline_start ();
+				// Returns success, so leave if !success
 				leave = !mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0);
 			}
 
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
-			if (!leave && !dump_for_merp)
+			if (!leave && !dump_for_merp) {
+				mono_summarize_timeline_phase_log (MonoSummaryCleanup);
 				mono_crash_dump (output, &hashes);
+				mono_summarize_timeline_phase_log (MonoSummaryDone);
+			}
 #endif
 		}
 
@@ -3319,11 +3323,10 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
 				} else if (output) {
 					mono_merp_invoke (crashed_pid, signal, output, &hashes);
+					mono_summarize_timeline_phase_log (MonoSummaryDone);
 				} else {
 					mono_runtime_printf_err ("\nMerp dump step not run, no dump created.\n");
 				}
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 				exit (1);
 			}
