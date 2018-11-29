@@ -34,7 +34,7 @@ namespace MonoTests.System.Net.WebSockets
 				if (_listener != null)
 					return _listener;
 
-				return HttpListener2Test.CreateAndStartListener ("http://localhost:", "/", out Port);
+				return NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", "/", out Port);
 			}
 		}
 

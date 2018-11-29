@@ -1888,7 +1888,7 @@ namespace MonoTests.System.Net
 		{
 			var filename = Path.GetTempFileName ();
 
-			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://localhost:", out var port, "/", out var serverUri);
+			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var serverUri);
 
 			using (var client = new WebClient ())
 			{

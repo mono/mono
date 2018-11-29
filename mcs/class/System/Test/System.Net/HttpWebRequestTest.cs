@@ -2514,7 +2514,7 @@ namespace MonoTests.System.Net
 				this.completed = completed;
 				this.eh = exceptionHandler;
 
-				this.listener = HttpListener2Test.CreateAndStartListener ("http://localhost:", "/", out port, AuthenticationSchemes.Anonymous);
+				this.listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", "/", out port, AuthenticationSchemes.Anonymous);
 
 				this.listener.BeginGetContext (this.RequestHandler, null);
 			}
