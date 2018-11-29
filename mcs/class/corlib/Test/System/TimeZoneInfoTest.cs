@@ -882,6 +882,7 @@ namespace MonoTests.System
 		
 			[Test]
 			[Category ("MobileNotWorking")]
+			[Category ("NotOnWindows")]
 			public void DSTInKinshasa ()
 			{
 				TimeZoneInfo kin = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Africa/Kinshasa"));
@@ -1244,6 +1245,7 @@ namespace MonoTests.System
 
 			[Test]
 			[Category ("MobileNotWorking")]
+			[Category ("NotOnWindows")]
 			public void TestSydneyDaylightChanges ()
 			{
 				TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Australia/Sydney"));
@@ -1257,6 +1259,7 @@ namespace MonoTests.System
 
 			[Test]
 			[Category ("MobileNotWorking")]
+			[Category ("NotOnWindows")]
 			public void TestAthensDaylightChanges ()
 			{
 				TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Athens"));

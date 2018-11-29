@@ -60,17 +60,9 @@ public class TimeZoneTest {
 		Assert.IsTrue("EDT" == t1.DaylightName || "Eastern Daylight Time" == t1.DaylightName, "B02");
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "B03");
-#if !MOBILE
-		Assert.AreEqual("10/27/2002 01:59:59", d1.End.ToString ("G", CultureInfo.InvariantCulture), "B04");
-#endif
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-#if !MOBILE
-		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
-		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
-#endif
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
 		DateTime d3 = new DateTime (2002,2,25);
