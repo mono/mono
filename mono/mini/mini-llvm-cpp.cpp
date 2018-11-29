@@ -424,6 +424,8 @@ mono_llvm_di_builder_finalize (void *di_builder)
 	builder->finalize ();
 }
 
+#endif /* #if LLVM_API_VERSION > 100 */
+
 LLVMValueRef
 mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 {
@@ -439,5 +441,3 @@ mono_llvm_get_or_insert_gc_safepoint_poll (LLVMModuleRef module)
 
 	return wrap(SafepointPoll);
 }
-
-#endif /* #if LLVM_API_VERSION > 100 */
