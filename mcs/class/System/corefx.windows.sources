@@ -6,6 +6,7 @@
 ../../../external/corefx/src/Common/src/System/Net/DebugCriticalHandleZeroOrMinusOneIsInvalid.cs
 ../../../external/corefx/src/Common/src/System/Net/SecurityStatusAdapterPal.Windows.cs
 
+../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Windows.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/NegotiateStreamPal.Windows.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SecurityContextTokenHandle.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/NetEventSource.Security.Windows.cs

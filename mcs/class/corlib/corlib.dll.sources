@@ -1395,7 +1395,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/dsa.cs
 ../referencesource/mscorlib/system/security/cryptography/dsasignaturedeformatter.cs
 ../referencesource/mscorlib/system/security/cryptography/dsasignatureformatter.cs
-../referencesource/mscorlib/system/security/cryptography/hashalgorithm.cs
+../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/HashAlgorithm.cs
+../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/CryptographicOperations.cs
 ../referencesource/mscorlib/system/security/cryptography/HashAlgorithmName.cs
 ../referencesource/mscorlib/system/security/cryptography/hmac.cs
 ../referencesource/mscorlib/system/security/cryptography/hmacmd5.cs
@@ -1600,6 +1601,7 @@ corefx/SynchronizationContext.cs
 corefx/SR.cs
 corefx/SR.missing.cs
 corefx/CompareInfo.cs
+corefx/CryptoConfigForwarder.cs
 corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs

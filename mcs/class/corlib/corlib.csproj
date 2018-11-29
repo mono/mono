@@ -852,6 +852,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Claims\src\System\Security\Claims\GenericIdentity.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\ICspAsymmetricAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\KeyNumber.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptographicOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\HashAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\ErrorCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Helpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
@@ -1192,7 +1194,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsa.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsasignaturedeformatter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsasignatureformatter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hashalgorithm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmac.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmacmd5.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmacripemd160.cs" />
@@ -2015,6 +2016,7 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\CryptoConfigForwarder.cs" />
     <Compile Include="corefx\CurrentSystemTimeZone.cs" />
     <Compile Include="corefx\DateTime.cs" />
     <Compile Include="corefx\DefaultBinder.cs" />

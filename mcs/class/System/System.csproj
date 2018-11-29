@@ -131,6 +131,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ChunkedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DelegatingStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ReadOnlyMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleMinusOneIsInvalid.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBufferType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TcpValidationHelpers.cs" />
@@ -1016,6 +1018,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1154,6 +1157,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1248,6 +1252,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1367,6 +1372,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1490,6 +1496,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1640,6 +1647,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
@@ -2107,6 +2115,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -2599,6 +2608,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3109,6 +3119,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3597,6 +3608,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3701,6 +3713,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3841,6 +3854,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3984,6 +3998,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
