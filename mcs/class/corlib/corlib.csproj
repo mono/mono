@@ -68,7 +68,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
@@ -484,6 +484,15 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\ResourceLocation.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureArrayType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureByRefType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureConstructedGenericType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureGenericMethodParameterType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureGenericParameterType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureHasElementType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignaturePointerType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\SignatureTypeExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetInvocationException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\TargetParameterCountException.cs" />
@@ -643,6 +652,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeoutException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Tuple.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TupleExtensions.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.Enum.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Type.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeAccessException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TypeInitializationException.cs" />
@@ -1243,7 +1255,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandleExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\throwhelper.cs" />
     <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\type.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\unityserializationholder.cs" />
@@ -2006,7 +2017,9 @@
     <Compile Include="corefx\CompareInfo.cs" />
     <Compile Include="corefx\CurrentSystemTimeZone.cs" />
     <Compile Include="corefx\DateTime.cs" />
+    <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
+    <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
@@ -2020,6 +2033,7 @@
     <Compile Include="corert\DependencyReductionRootAttribute.cs" />
     <Compile Include="corert\EnvironmentAugments.cs" />
     <Compile Include="corert\RelocatedTypeAttribute.cs" />
+    <Compile Include="corert\RtType.cs" />
     <Compile Include="corert\RuntimeAugments.cs" />
     <Compile Include="corert\RuntimeThread.cs" />
     <Compile Include="corert\Task.cs" />

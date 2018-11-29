@@ -7,10 +7,10 @@ ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotin
 #${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 #${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=System --timeout=10m make -w -C mcs/class/System run-test
-#${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
+${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
 ${TESTCMD} --label=Mono.Security --timeout=5m make -w -C mcs/class/Mono.Security run-test
-#${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
-#${TESTCMD} --label=System.Web.Services --timeout=5m make -w -C mcs/class/System.Web.Services run-test
+${TESTCMD} --label=System.Data --timeout=5m make -w -C mcs/class/System.Data run-test
+${TESTCMD} --label=System.Web.Services --timeout=5m make -w -C mcs/class/System.Web.Services run-test
 ${TESTCMD} --label=I18N.CJK --timeout=5m make -w -C mcs/class/I18N/CJK run-test
 ${TESTCMD} --label=I18N.West --timeout=5m make -w -C mcs/class/I18N/West run-test
 ${TESTCMD} --label=I18N.MidEast --timeout=5m make -w -C mcs/class/I18N/MidEast run-test
