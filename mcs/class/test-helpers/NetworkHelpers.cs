@@ -102,6 +102,12 @@ namespace MonoTests.Helpers {
 			return rv;
 		}
 
+		// Creates and starts an HttpListener using the specified host, port,
+		// path and authSchemes.
+		//
+		// If specified, the initializer will be called immediately after the
+		// HttpListener is created (typical usage would be to set/change
+		// properties before starting the listener)
 		public static HttpListener CreateAndStartHttpListener (string host, int port, string path, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
 			var prefix = host + port + path;
@@ -115,6 +121,15 @@ namespace MonoTests.Helpers {
 			return listener;
 		}
 
+		// Creates and starts an HttpListener using the specified host, path
+		// and authSchemes. The method will try to find an unused port, and
+		// use that (multiple attempts with random port numbers will be made).
+		//
+		// If specified, the initializer will be called immediately after the
+		// HttpListener is created (typical usage would be to set/change
+		// properties before starting the listener). Be aware that the
+		// initializer can be called multiple times (in case multiple creation
+		// attempts have to be made).
 		public static HttpListener CreateAndStartHttpListener (string host, out int port, string path, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
 			// There's no way to create an HttpListener with a system-assigned port.
@@ -134,6 +149,17 @@ namespace MonoTests.Helpers {
 			throw new Exception ("Unable to create HttpListener after 10 attempts");
 		}
 
+		// Creates and starts an HttpListener using the specified host, path
+		// and authSchemes. The method will try to find an unused port, and
+		// use that (multiple attempts with random port numbers will be made).
+		//
+		// If specified, the initializer will be called immediately after the
+		// HttpListener is created (typical usage would be to set/change
+		// properties before starting the listener). Be aware that the
+		// initializer can be called multiple times (in case multiple creation
+		// attempts have to be made).
+		//
+		// The resulting uri will also be returned (this is just host + port + path).
 		public static HttpListener CreateAndStartHttpListener (string host, out int port, string path, out string uri, AuthenticationSchemes? authSchemes = null, Action<HttpListener> initializer = null)
 		{
 			var rv = CreateAndStartHttpListener (host, out port, path, authSchemes, initializer);
