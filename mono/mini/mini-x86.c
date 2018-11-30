@@ -1506,7 +1506,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			g_assert (in->klass);
 
 			if (t->type == MONO_TYPE_TYPEDBYREF) {
-				size = sizeof (MonoTypedRef);
+				size = MONO_ABI_SIZEOF (MonoTypedRef);
 				align = sizeof (target_mgreg_t);
 			}
 			else {
