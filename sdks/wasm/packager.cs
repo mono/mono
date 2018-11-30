@@ -37,7 +37,6 @@ class Driver {
 
 	enum AssemblyKind {
 		User,
-		Framework,
 		Bcl,
 		None,
 	}
@@ -101,10 +100,6 @@ class Driver {
 		return ResolveWithExtension (app_prefix, asm_name);
 	}
 
-	static string ResolveFramework (string asm_name) {
-		return ResolveWithExtension (framework_prefix, asm_name);
-	}
-
 	static string ResolveBcl (string asm_name) {
 		return ResolveWithExtension (bcl_prefix, asm_name);
 	}
@@ -116,11 +111,6 @@ class Driver {
 	static string Resolve (string asm_name, out AssemblyKind kind) {
 		kind = AssemblyKind.User;
 		var asm = ResolveUser (asm_name);
-		if (asm != null)
-			return asm;
-
-		kind = AssemblyKind.Framework;
-		asm = ResolveFramework (asm_name);
 		if (asm != null)
 			return asm;
 
@@ -300,7 +290,7 @@ class Driver {
 			Import (resolved, kind);
 		}
 		if (add_binding)
-			Import (ResolveBcl (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
+			Import (ResolveBcl (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Bcl);
 
 		if (builddir != null) {
 			emit_ninja = true;
