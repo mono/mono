@@ -100,7 +100,7 @@ namespace Mono {
 		static extern void DisableMicrosoftTelemetry ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath);
+		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath, IntPtr configDir);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
@@ -147,7 +147,8 @@ namespace Mono {
 			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
 		}
 
-		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
+		// All must be set except for configDir_str
+		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str, string configDir_str)
 		{
 			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
 				using (var appBundleID_chars = RuntimeMarshal.MarshalString (appBundleID_str))
@@ -156,8 +157,9 @@ namespace Mono {
 				using (var merpGUIPath_chars = RuntimeMarshal.MarshalString (merpGUIPath_str))
 				using (var eventType_chars = RuntimeMarshal.MarshalString (eventType_str))
 				using (var appPath_chars = RuntimeMarshal.MarshalString (appPath_str))
+				using (var configDir_chars = RuntimeMarshal.MarshalString (configDir_str))
 				{
-					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value);
+					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value, configDir_chars.Value);
 				}
 			} else {
 				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
