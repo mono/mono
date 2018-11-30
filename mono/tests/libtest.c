@@ -5630,8 +5630,7 @@ mono_test_marshal_return_single_double_struct (void)
 	return res;
 }
 
-
-#ifndef TARGET_X86
+#ifndef HOST_X86
 
 LIBTEST_API int STDCALL
 mono_test_has_thiscall (void)
