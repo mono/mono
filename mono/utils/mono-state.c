@@ -14,6 +14,11 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/metadata/object-internals.h>
 
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <fcntl.h>
+#include <utils/mono-threads-debug.h>
+
 #ifndef DISABLE_CRASH_REPORTING
 
 extern GCStats mono_gc_stats;
@@ -203,7 +208,8 @@ static gchar output_dump_str [MONO_MAX_SUMMARY_LEN];
 static JsonWriter writer;
 static GString static_gstr;
 
-static void mono_json_writer_init_memory (gchar *output_dump_str, int len)
+static void 
+mono_json_writer_init_memory (gchar *output_dump_str, int len)
 {
 	memset (&static_gstr, 0, sizeof (static_gstr));
 	memset (&writer, 0, sizeof (writer));
@@ -217,12 +223,14 @@ static void mono_json_writer_init_memory (gchar *output_dump_str, int len)
 	writer.text = &static_gstr;
 }
 
-static void mono_json_writer_init_with_static (void) 
+static void 
+mono_json_writer_init_with_static (void) 
 {
 	return mono_json_writer_init_memory (output_dump_str, MONO_MAX_SUMMARY_LEN);
 }
 
-static void assert_has_space (void)
+static void 
+assert_has_space (void)
 {
 	// Each individual key/value append should be roughly less than this many characters
 	const int margin = 35;
@@ -515,9 +523,12 @@ mono_native_state_add_ee_info  (JsonWriter *writer)
 #define MONO_ARCHITECTURE MONO_ARCH_ARCHITECTURE
 #endif
 
+static char *mono_runtime_build_info;
+
 static void
 mono_native_state_add_version (JsonWriter *writer)
 {
+
 	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "configuration");
@@ -526,10 +537,9 @@ mono_native_state_add_version (JsonWriter *writer)
 	assert_has_space ();
 	mono_json_writer_indent (writer);
 	mono_json_writer_object_key(writer, "version");
-
-	char *build = mono_get_runtime_callbacks ()->get_runtime_build_info ();
-	mono_json_writer_printf (writer, "\"%s\",\n", build);
-	g_free (build);
+	if (!mono_runtime_build_info)
+		mono_runtime_build_info = mono_get_runtime_callbacks ()->get_runtime_build_info ();
+	mono_json_writer_printf (writer, "\"%s\",\n", mono_runtime_build_info);
 
 	assert_has_space ();
 	mono_json_writer_indent (writer);
@@ -808,24 +818,21 @@ mono_crash_dump (const char *jsonFile, MonoStackHash *hashes)
 
 	// Save up to 100 dump files for a given stacktrace hash
 	for (int increment = 0; increment < 100; increment++) {
-		FILE* fp;
-		char *name = g_strdup_printf ("mono_crash.%" PRIx64 ".%d.json", hashes->offset_free_hash, increment);
+		char name [100]; 
+		name [0] = '\0';
+		g_snprintf (name, sizeof (name), "mono_crash.%" PRIx64 ".%d.json", hashes->offset_free_hash, increment);
 
-		if ((fp = fopen (name, "ab"))) {
-			if (ftell (fp) == 0) {
-				fwrite (jsonFile, size, 1, fp);
-				success = TRUE;
-			}
+		int handle = g_open (name, O_WRONLY | O_CREAT | O_EXCL);
+		if (handle == -1) {
+			MOSTLY_ASYNC_SAFE_PRINTF ("Couldn't create crash file %s, name may be used. \n", name);
 		} else {
-			// Couldn't make file and file doesn't exist
-			g_warning ("Didn't have permission to access %s for file dump\n", name);
+			g_write (handle, jsonFile, (guint32) size);
+			success = TRUE;
 		}
 
 		/*cleanup*/
-		if (fp)
-			fclose (fp);
-
-		g_free (name);
+		if (handle)
+			close (handle);
 
 		if (success)
 			return;
