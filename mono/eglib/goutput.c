@@ -276,23 +276,31 @@ g_set_printerr_handler (GPrintFunc func)
 	return old;
 }
 
+void wrap_our_vprintf(const gchar *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	our_vprintf (format, args);
+	va_end (args);
+}
+
 static void
 unity_vprintf_GPrintFunc_adapter (const gchar *string)
 {
-	our_vprintf("%s", string);
+	wrap_our_vprintf ("%s", string);
 }
 
 static void
 unity_vprintf_GLogFunc_adapter (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
 {
-	our_vprintf("%s", message);
+	wrap_our_vprintf ("%s", message);
 }
 
 // Redirect all stdout output to unity vprintf function
 void set_vprintf_func(vprintf_func func)
 {
 	our_vprintf = func;
-	g_set_print_handler(unity_vprintf_GPrintFunc_adapter);
-	g_log_set_default_handler(unity_vprintf_GLogFunc_adapter, NULL);
+	g_set_print_handler (unity_vprintf_GPrintFunc_adapter);
+	g_log_set_default_handler (unity_vprintf_GLogFunc_adapter, NULL);
 }
 
