@@ -63,15 +63,17 @@ namespace System.Reflection {
 
 	abstract class RuntimeEventInfo : EventInfo, ISerializable
 	{
-		internal BindingFlags BindingFlags {
-			get {
-				return 0;
-			}
-		}
+        internal abstract BindingFlags GetBindingFlags ();
 
 		public override Module Module {
 			get {
 				return GetRuntimeModule ();
+			}
+		}
+
+		internal BindingFlags BindingFlags {
+			get {
+				return GetBindingFlags ();
 			}
 		}
 
@@ -117,7 +119,20 @@ namespace System.Reflection {
 		IntPtr handle;
 #pragma warning restore 169
 
-		public override EventAttributes Attributes {
+		internal override BindingFlags GetBindingFlags ()
+		{
+			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+
+			MethodInfo method = info.add_method;
+			if (method == null)
+				method = info.remove_method;
+			if (method == null)
+				method = info.raise_method;
+
+			return RuntimeType.FilterPreCalculate (method != null && method.IsPublic, GetDeclaringTypeInternal () != ReflectedType , method != null && method.IsStatic);
+		}
+
+        public override EventAttributes Attributes {
 			get {
 				return MonoEventInfo.GetEventInfo (this).attrs;
 			}

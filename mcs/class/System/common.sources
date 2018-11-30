@@ -139,10 +139,15 @@ System.Security.Authentication.ExtendedProtection.Configuration/ExtendedProtecti
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElement.cs
 System.Security.Authentication.ExtendedProtection.Configuration/ServiceNameElementCollection.cs
 
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerEncoder.cs
+../../../external/corefx/src/Common/src/System/Security/Cryptography/DerSequenceReader.cs
+
 System.Security.Cryptography/AsnEncodedData.cs
 ../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Encoding/src/System/Security/Cryptography/AsnEncodedDataEnumerator.cs
 
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Oids.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Internal/Cryptography/Pal.OSX/CertificateData.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/OpenFlags.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.Security.Cryptography.X509Certificates/PublicKey.cs
@@ -156,6 +161,7 @@ System.Security.Cryptography.X509Certificates/X509Certificate2Collection.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Enumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Impl.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2ImplMono.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2ImplUnix.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 System.Security.Cryptography.X509Certificates/X509CertificateImplCollection.cs
 System.Security.Cryptography.X509Certificates/X509Chain.cs

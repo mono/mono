@@ -197,7 +197,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TwoListeners_SameURL ()
 		{
 			HttpListener listener1 = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola/");
@@ -210,7 +209,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void MultipleSlashes ()
 		{
 			// this one throws on Start(), not when adding it.
@@ -223,7 +221,6 @@ namespace MonoTests.System.Net {
 #else
 		[ExpectedException (typeof (HttpListenerException))]
 #endif
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void PercentSign ()
 		{
 			HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://127.0.0.1:", out var port, "/hola%3E/");
