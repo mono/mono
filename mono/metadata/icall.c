@@ -5793,10 +5793,10 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 }
 
 ICALL_EXPORT void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, char *configDir, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath, configDir);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
