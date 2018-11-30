@@ -503,7 +503,12 @@ MonoDomain* il2cpp_mono_get_root_domain (void)
 
 void il2cpp_mono_runtime_quit (void)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
+#if UNITY_TINY
+    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
+    return 0;
+#else
+    il2cpp::vm::Runtime::Shutdown();
+#endif
 }
 
 gboolean il2cpp_mono_runtime_is_shutting_down (void)
@@ -1265,13 +1270,7 @@ MonoImage* il2cpp_mono_assembly_get_image(MonoAssembly* assembly)
 
 gboolean il2cpp_mono_runtime_try_shutdown()
 {
-#if UNITY_TINY
-    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
-    return 0;
-#else
-	il2cpp::vm::Runtime::Shutdown();
-	return TRUE;
-#endif
+    return TRUE;
 }
 
 gboolean il2cpp_mono_verifier_is_method_valid_generic_instantiation(MonoMethod* method)
