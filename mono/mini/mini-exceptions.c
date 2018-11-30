@@ -1575,6 +1575,8 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 
 	mono_exception_walk_trace (exc, summarize_frame_managed_walk, &data);
 	out->num_managed_frames = data.num_frames;
+
+	out->managed_exc_type = exc->object.vtable->klass;
 }
 
 
