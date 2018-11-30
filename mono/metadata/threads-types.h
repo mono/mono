@@ -401,6 +401,8 @@ typedef struct {
 
 	MonoContext *ctx;
 	MonoContext ctx_mem;
+
+	MonoClass *managed_exc_type;
 } MonoThreadSummary;
 
 gboolean
