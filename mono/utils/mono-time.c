@@ -20,7 +20,6 @@
 
 #if HAVE_MACH_ABSOLUTE_TIME
 #include <mach/mach_time.h>
-static mach_timebase_info_data_t s_TimebaseInfo;
 #endif
 
 #define MTICKS_PER_SEC (10 * 1000 * 1000)
@@ -109,6 +108,7 @@ mono_100ns_datetime (void)
 
 #include <time.h>
 
+#if 0
 static gint64
 get_boot_time (void)
 {
@@ -142,6 +142,7 @@ get_boot_time (void)
 	/* a made up uptime of 300 seconds */
 	return (gint64)300 * MTICKS_PER_SEC;
 }
+#endif
 
 /* Returns the number of milliseconds from boot time: this should be monotonic */
 /* Adapted from CoreCLR: https://github.com/dotnet/coreclr/blob/66d2738ea96fcce753dec1370e79a0c78f7b6adb/src/pal/src/misc/time.cpp */
@@ -165,6 +166,7 @@ mono_msec_boottime (void)
 
 #elif HAVE_MACH_ABSOLUTE_TIME
 	static gboolean timebase_inited;
+	static mach_timebase_info_data_t s_TimebaseInfo;
 
 	if (!timebase_inited) {
 		kern_return_t machRet;
@@ -175,6 +177,9 @@ mono_msec_boottime (void)
 		memcpy (&s_TimebaseInfo, &tmp, sizeof (mach_timebase_info_data_t));
 		mono_memory_barrier ();
 		timebase_inited = TRUE;
+	} else {
+		// This barrier prevents reading s_TimebaseInfo before reading timebase_inited.
+		mono_memory_barrier ();
 	}
 	return (mach_absolute_time () * s_TimebaseInfo.numer / s_TimebaseInfo.denom) / tccMillieSecondsToNanoSeconds;
 
