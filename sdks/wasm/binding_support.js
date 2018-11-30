@@ -2,7 +2,7 @@
 var BindingSupportLib = {
 	$BINDING__postset: 'BINDING.export_functions (Module);',
 	$BINDING: {
-		BINDING_ASM: "[binding_tests]WebAssembly.Runtime",
+		BINDING_ASM: "[WebAssembly.Bindings]WebAssembly.Runtime",
 		mono_wasm_object_registry: [],
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],

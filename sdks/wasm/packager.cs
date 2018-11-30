@@ -300,7 +300,7 @@ class Driver {
 			Import (resolved, kind);
 		}
 		if (add_binding)
-			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
+			Import (ResolveBcl (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
 
 		if (builddir != null) {
 			emit_ninja = true;

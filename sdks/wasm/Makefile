@@ -110,20 +110,22 @@ main.exe: $(APP_SOURCES)
 mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
-binding_tests.dll: WebAssembly.Bindings.dll $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+binding_tests.dll: .stamp-bindings $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:$(WASM_BCL_DIR)/WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
-WebAssembly.Bindings.dll: bindings.cs
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
+.stamp-bindings: bindings.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(WASM_BCL_DIR)/WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll bindings.cs
+	touch $@
 
-WebAssembly.Net.Http.dll: WebAssembly.Bindings.dll WasmHttpMessageHandler.cs
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+.stamp-http: .stamp-bindings WasmHttpMessageHandler.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(WASM_BCL_DIR)/WebAssembly.Net.Http.dll /r:$(WASM_BCL_DIR)/WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll WasmHttpMessageHandler.cs
+	touch $@
 
 Simple.Dependency.dll: dependency.cs
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
 
-sample.dll: Simple.Dependency.dll sample.cs WebAssembly.Bindings.dll WebAssembly.Net.Http.dll
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:WebAssembly.Bindings.dll /r:WebAssembly.Net.Http.dll sample.cs
+sample.dll: Simple.Dependency.dll sample.cs .stamp-bindings .stamp-http
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/WebAssembly.Bindings.dll /r:$(WASM_BCL_DIR)/WebAssembly.Net.Http.dll sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
@@ -134,15 +136,15 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll sample.dll debug.html runtime.js
+.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe .stamp-bindings .stamp-http sample.dll debug.html runtime.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
 	touch $@	
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe runtime-tests.js
-	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe .stamp-bindings binding_tests.dll .stamp-http mini_tests.dll main.exe runtime-tests.js
+	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_BCL_DIR)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	ninja -v -C obj/test-suite
 	touch $@
 
@@ -169,7 +171,7 @@ check-aot-mini run-aot-mini: build-aot-mini
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --nobinding --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
+	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --nobinding --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe $(WASM_BCL_DIR)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
@@ -253,12 +255,12 @@ package: build build-dbg-proxy build-framework-nuget
 	rm tmp/release/.stamp-build
 	cp bindings.cs tmp
 	mkdir tmp/framework
-	cp WebAssembly.Bindings.dll tmp/framework
-	cp WebAssembly.Bindings.pdb tmp/framework
+	cp $(TOP)/sdks/out/wasm-bcl/wasm/WebAssembly.Bindings.dll tmp/framework
+	cp $(TOP)/sdks/out/wasm-bcl/wasm/WebAssembly.Bindings.pdb tmp/framework
 	cp WasmHttpMessageHandler.cs tmp
-	cp WebAssembly.Net.Http.dll tmp/framework
-	cp WebAssembly.Net.Http.pdb tmp/framework
-	cp WebAssembly.Framework.0.1.0-alpha.nupkg tmp/framework
+	cp $(TOP)/sdks/out/wasm-bcl/wasm/WebAssembly.Net.Http.dll tmp/framework
+	cp $(TOP)/sdks/out/wasm-bcl/wasm/WebAssembly.Net.Http.pdb tmp/framework
+	cp WebAssembly.Framework.0.1.0-alpha.nupkg tmp/framework	
 	cp sample.html tmp/
 	cp sample.cs tmp/
 	cp dependency.cs tmp/
@@ -284,3 +286,18 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-sample
+
+clean-mono:
+	rm -rf ./bin
+	rm -rf .stamp-build-debug-sample
+	rm -rf .stamp-build-test-suite
+	rm -rf .stamp-bindings
+	rm -rf .stamp-http
+	rm -rf WebAssembly.Bindings.dll
+	rm -rf WebAssembly.Net.Http.dll
+	rm -rf sample.dll
+	rm -rf Simple.Dependency.dll
+	rm -rf packager.exe
+	rm -rf mini_tests.dll
+	rm -rf main.exe
+	rm -rf binding-tests.dll

@@ -16,9 +16,9 @@
   </metadata>
   <files>
     <!--file src="./WebAssembly.Framework/readme.txt" target="readme.txt" /-->
-    <file src="./WebAssembly.Bindings.dll" target="lib/portable/WebAssembly.Bindings.dll" />
-    <file src="./WebAssembly.Bindings.pdb" target="lib/portable/WebAssembly.Bindings.pdb" />
-    <file src="./WebAssembly.Net.Http.dll" target="lib/portable/WebAssembly.Net.Http.dll" />
-    <file src="./WebAssembly.Net.Http.pdb" target="lib/portable/WebAssembly.Net.Http.pdb" />
+    <file src="../out/wasm-bcl/wasm/WebAssembly.Bindings.dll" target="lib/portable/WebAssembly.Bindings.dll" />
+    <file src="../out/wasm-bcl/wasm/WebAssembly.Bindings.pdb" target="lib/portable/WebAssembly.Bindings.pdb" />
+    <file src="../out/wasm-bcl/wasm/WebAssembly.Net.Http.dll" target="lib/portable/WebAssembly.Net.Http.dll" />
+    <file src="../out/wasm-bcl/wasm/WebAssembly.Net.Http.pdb" target="lib/portable/WebAssembly.Net.Http.pdb" />
   </files>
 </package>
