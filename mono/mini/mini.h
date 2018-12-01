@@ -2398,7 +2398,7 @@ gpointer mono_arch_get_unbox_trampoline         (MonoMethod *m, gpointer addr);
 gpointer mono_arch_get_static_rgctx_trampoline  (gpointer arg, gpointer addr);
 gpointer mono_arch_get_ftnptr_arg_trampoline  (gpointer arg, gpointer addr);
 gpointer  mono_arch_get_llvm_imt_trampoline     (MonoDomain *domain, MonoMethod *method, int vt_offset);
-gpointer mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr);
+gpointer mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, target_mgreg_t arg, target_mgreg_t addr);
 void     mono_arch_patch_callsite               (guint8 *method_start, guint8 *code, guint8 *addr);
 void     mono_arch_patch_plt_entry              (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr);
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, host_mgreg_t *regs);

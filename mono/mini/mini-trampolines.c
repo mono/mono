@@ -1568,7 +1568,7 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 
 	*(gpointer*)(gpointer)buf = image;
 	buf += sizeof (gpointer);
-	*(guint32*)(gpointer)buf = token;
+	*(guint32*)buf = token;
 
 	tramp = mono_create_specific_trampoline (start, MONO_TRAMPOLINE_AOT, domain, NULL);
 
