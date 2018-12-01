@@ -24,6 +24,7 @@ namespace System {
         private const string EmbeddedIPv4Format = ":{0:d}.{1:d}.{2:d}.{3:d}";
         private const string Separator = ":";
 
+#if MARTIN_REMOVED
     // methods
 
         internal static string ParseCanonicalName(string str, int start, ref bool isLoopback, ref string scopeId) {
@@ -132,6 +133,7 @@ namespace System {
 
             return false;
         }
+#endif
 
         //
         // InternalIsValid

@@ -227,15 +227,15 @@ namespace System.Net {
                     unsafe
                     {
                         int offset = 0;
-                        if (ipString[0] != '[')
-                            ipString = ipString + ']'; //for Uri parser to find the terminator.
-                        else
-                            offset = 1;
+//						if (ipString[0] != '[')
+//							ipString = ipString + ']'; //for Uri parser to find the terminator.
+  //                      else
+    //                        offset = 1;
 
                         int end = ipString.Length;
                         fixed (char *name = ipString)
                         {
-                            if (IPv6AddressHelper.IsValidStrict(name, offset, ref end) || (end != ipString.Length))
+                            if (IPv6AddressHelper.IsValidStrict(name, offset, ref end, true) || (end != ipString.Length))
                             {
                                 ushort[] numbers = new ushort[NumberOfLabels];
                                 string scopeId = null;

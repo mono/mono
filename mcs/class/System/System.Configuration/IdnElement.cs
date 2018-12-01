@@ -51,7 +51,7 @@ namespace System.Configuration
 
 		[ConfigurationPropertyAttribute("enabled", DefaultValue = UriIdnScope.None,
 					Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public UriIdnScope Enabled {
+		internal UriIdnScope Enabled {
 			get { return (UriIdnScope) base [enabled_prop]; }
 			set { base [enabled_prop] = value; }
 		}
