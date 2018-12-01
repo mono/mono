@@ -505,7 +505,6 @@ void il2cpp_mono_runtime_quit (void)
 {
 #if UNITY_TINY
     IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
-    return 0;
 #else
     il2cpp::vm::Runtime::Shutdown();
 #endif
