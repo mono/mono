@@ -146,7 +146,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
  *   See tramp-x86.c for documentation.
  */
 gpointer
-mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, target_mgreg_t arg, target_mgreg_t addr)
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	int buf_len;
@@ -486,7 +486,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 #else
 
 gpointer
-mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, target_mgreg_t arg, target_mgreg_t addr)
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
 {
 	g_assert_not_reached ();
 	return NULL;

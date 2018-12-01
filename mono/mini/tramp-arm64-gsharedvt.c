@@ -25,7 +25,7 @@
  *   See tramp-x86.c for documentation.
  */
 gpointer
-mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, target_mgreg_t arg, target_mgreg_t addr)
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
 {
 	guint8 *code, *buf;
 	int buf_len = 40;

@@ -587,7 +587,7 @@ mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *co
  *   Return a trampoline which passes ARG to the gsharedvt in/out trampoline ADDR.
  */
 gpointer
-mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, target_mgreg_t arg, target_mgreg_t addr)
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
 	int buf_len;

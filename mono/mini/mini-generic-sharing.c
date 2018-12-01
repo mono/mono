@@ -1945,7 +1945,7 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 	if (mono_aot_only)
 		addr = mono_aot_get_gsharedvt_arg_trampoline (info, addr);
 	else
-		addr = mono_arch_get_gsharedvt_arg_trampoline (mono_domain_get (), (target_mgreg_t)(uintptr_t)info, (target_mgreg_t)(uintptr_t)addr);
+		addr = mono_arch_get_gsharedvt_arg_trampoline (mono_domain_get (), info, addr);
 
 	mono_atomic_inc_i32 (&gsharedvt_num_trampolines);
 
