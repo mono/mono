@@ -272,7 +272,7 @@ namespace Mono.AppleTls
 				ok = ValidateCertificate (certificates);
 			} catch (Exception ex) {
 				Debug ("Certificate validation failed: {0}", ex);
-				throw new TlsException (AlertDescription.CertificateUnknown, "Certificate validation threw exception.");
+				throw;
 			} finally {
 				if (trust != null)
 					trust.Dispose ();

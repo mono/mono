@@ -156,6 +156,15 @@ namespace System.Net.Security
 			return sslStream.Impl;
 		}
 
+		void SetFromClientOptions (SslClientAuthenticationOptions options)
+		{
+			SetAndVerifyValidationCallback (options.RemoteCertificateValidationCallback);
+			SetAndVerifySelectionCallback (options.LocalCertificateSelectionCallback);
+
+			if (!explicitSettings)
+				settings.CheckCertificateRevocationStatus = options.CertificateRevocationCheckMode != X509RevocationMode.NoCheck;
+		}
+
 		void SetAndVerifyValidationCallback (RemoteCertificateValidationCallback callback)
 		{
 			if (validationCallback == null) {
@@ -268,8 +277,7 @@ namespace System.Net.Security
 
 		public Task AuthenticateAsClientAsync (SslClientAuthenticationOptions sslClientAuthenticationOptions, CancellationToken cancellationToken)
 		{
-			SetAndVerifyValidationCallback (sslClientAuthenticationOptions.RemoteCertificateValidationCallback);
-			SetAndVerifySelectionCallback (sslClientAuthenticationOptions.LocalCertificateSelectionCallback);
+			SetFromClientOptions (sslClientAuthenticationOptions);
 			return Impl2.AuthenticateAsClientAsync (new MNS.MonoSslClientAuthenticationOptions (sslClientAuthenticationOptions), cancellationToken);
 		}
 

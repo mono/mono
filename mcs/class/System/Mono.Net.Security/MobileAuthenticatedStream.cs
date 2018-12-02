@@ -103,6 +103,8 @@ namespace Mono.Net.Security
 			private set;
 		}
 
+		public bool CheckCertRevocationStatus => Settings.CheckCertificateRevocationStatus;
+
 		internal void CheckThrow (bool authSuccessCheck, bool shutdownCheck = false)
 		{
 			if (lastException != null)
@@ -1106,11 +1108,6 @@ namespace Mono.Net.Security
 			}
 		}
 		public int KeyExchangeStrength {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public bool CheckCertRevocationStatus {
 			get {
 				throw new NotImplementedException ();
 			}

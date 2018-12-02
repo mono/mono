@@ -118,7 +118,7 @@ namespace Mono.Security.Interface
 
 		bool cloned = false;
 		bool checkCertName = true;
-		bool checkCertRevocationStatus = false;
+		bool checkCertRevocationStatus = true;
 		bool? useServicePointManagerCallback = null;
 		bool skipSystemValidators = false;
 		bool callbackNeedsChain = true;

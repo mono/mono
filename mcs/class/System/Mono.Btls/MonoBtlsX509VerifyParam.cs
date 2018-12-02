@@ -26,6 +26,7 @@
 #if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -232,6 +233,27 @@ namespace Mono.Btls
 			var ret = mono_btls_x509_verify_param_set_mono_flags (
 				Handle.DangerousGetHandle (), flags);
 			CheckError (ret);
+		}
+
+		public X509RevocationMode GetCertRevocationMode ()
+		{
+			var flags = GetMonoFlags ();
+			if ((flags & (MonoBtlsX509VerifyFlags.CRL_CHECK | MonoBtlsX509VerifyFlags.CRL_CHECK_ALL)) != 0)
+				return X509RevocationMode.Online;
+			return X509RevocationMode.NoCheck;
+		}
+
+		public void SetCertRevocationMode (X509RevocationMode mode)
+		{
+			switch (mode) {
+			case X509RevocationMode.Offline:
+			case X509RevocationMode.Online:
+				SetMonoFlags (MonoBtlsX509VerifyFlags.CRL_CHECK | MonoBtlsX509VerifyFlags.CRL_CHECK_ALL);
+				break;
+			default:
+				SetMonoFlags (MonoBtlsX509VerifyFlags.DEFAULT);
+				break;
+			}
 		}
 
 		public void SetPurpose (MonoBtlsX509Purpose purpose)

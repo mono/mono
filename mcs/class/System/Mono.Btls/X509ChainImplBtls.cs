@@ -63,6 +63,9 @@ namespace Mono.Btls
 
 			policy = new X509ChainPolicy ();
 
+			using (var param = storeCtx.GetVerifyParam ())
+				policy.RevocationMode = param.GetCertRevocationMode ();
+
 			untrustedChain = storeCtx.GetUntrusted ();
 
 			if (untrustedChain != null) {
@@ -132,7 +135,7 @@ namespace Mono.Btls
 
 		public override X509ChainStatus[] ChainStatus {
 			get { 
-				return chainStatusList.ToArray();
+				return chainStatusList?.ToArray() ?? new X509ChainStatus[0];
 			}
 		}
 
