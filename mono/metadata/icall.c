@@ -5873,6 +5873,14 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 
 #ifndef DISABLE_CRASH_REPORTING
 	if (mono_get_eh_callbacks ()->mono_summarize_exception) {
+		// FIXME: Push handles down into mini/mini-exceptions.c
+		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
+		MonoThreadSummary out;
+		mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+
+		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
+		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
+
 		MonoStateWriter writer;
 		char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
