@@ -1984,6 +1984,50 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 		emit_bytes (acfg, buf, code - buf);
 	}
 
+#ifdef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+#define FTNPTR_ARG_TRAMP_SIZE 40
+	/*
+	 * Similar to the other gsharing trampolines, but this one passes the
+	 * argument in ARMREG_IP. Used only on arm where the rgctx reg is not
+	 * scratch.
+	 */
+	sprintf (symbol, "%sftnptr_arg_trampolines_page", acfg->user_symbol_prefix);
+	emit_global (acfg, symbol, TRUE);
+	emit_label (acfg, symbol);
+	count = (pagesize - FTNPTR_ARG_TRAMP_SIZE) / 8;
+	code = buf;
+	imm8 = mono_arm_is_rotated_imm8 (pagesize, &rot_amount);
+	ARM_SUB_REG_IMM (code, ARMREG_IP, ARMREG_IP, imm8, rot_amount);
+	/*
+	 * We have 2 stack slots, one where we store the target address and one
+	 * where we store the data section
+	 */
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
+	ARM_STR_IMM (code, ARMREG_IP, ARMREG_SP, 0);
+	/* Save the target address on stack */
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, -4);
+	ARM_STR_IMM (code, ARMREG_IP, ARMREG_SP, 4);
+	/* Load argument in ARMREG_IP */
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_SP, 0);
+	ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, -8);
+	/* Pop target address in pc */
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4);
+	ARM_POP (code, 1 << ARMREG_PC);
+	/* Align the size to 8 bytes just in case */
+	ARM_NOP (code);
+	g_assert (code - buf == FTNPTR_ARG_TRAMP_SIZE);
+	/* Emit it */
+	emit_bytes (acfg, buf, code - buf);
+	for (i = 0; i < count; ++i) {
+		code = buf;
+		ARM_PUSH (code, 1 << ARMREG_PC);
+		ARM_B (code, 0);
+		arm_patch (code - 4, code - FTNPTR_ARG_TRAMP_SIZE - 8 * (i + 1));
+		g_assert (code - buf == 8);
+		emit_bytes (acfg, buf, code - buf);
+	}
+#endif
+
 	/* now the imt trampolines: each specific trampolines puts in the ip register
 	 * the instruction pointer address, so the generic trampoline at the start of the page
 	 * subtracts 4096 to get to the data page and loads the values
@@ -1992,6 +2036,7 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	sprintf (symbol, "%simt_trampolines_page", acfg->user_symbol_prefix);
 	emit_global (acfg, symbol, TRUE);
 	emit_label (acfg, symbol);
+	count = (pagesize - IMT_TRAMP_SIZE) / 8;
 	code = buf;
 	/* Need at least two free registers, plus a slot for storing the pc */
 	ARM_PUSH (code, (1 << ARMREG_R0)|(1 << ARMREG_R1)|(1 << ARMREG_R2));
@@ -2053,6 +2098,7 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT] = 72;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_GSHAREDVT_ARG] = 16;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_UNBOX_ARBITRARY] = 16;
+	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_FTNPTR_ARG] = FTNPTR_ARG_TRAMP_SIZE;
 
 	/* Unwind info for specifc trampolines */
 	sprintf (symbol, "%sspecific_trampolines_page_gen_p", acfg->user_symbol_prefix);
@@ -2097,6 +2143,8 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	sprintf (symbol, "%sunbox_arbitrary_trampolines_page_sp_p", acfg->user_symbol_prefix);
 	save_unwind_info (acfg, symbol, unwind_ops);
 	mono_free_unwind_info (unwind_ops);
+
+	/* FIXME no unwind info for ftntpr_arg trampoline */
 
 	/* Unwind info for imt trampolines */
 	sprintf (symbol, "%simt_trampolines_page_gen_p", acfg->user_symbol_prefix);
