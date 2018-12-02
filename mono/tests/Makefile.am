@@ -307,6 +307,7 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
+	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	typeload-unaligned.cs	\
@@ -1888,6 +1889,9 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
+
+merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 	$(MCS) -target:library -out:$@ $<
