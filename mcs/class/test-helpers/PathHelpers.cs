@@ -5,35 +5,35 @@ using System.Reflection;
 
 namespace MonoTests.Helpers {
 
-    /// <summary>
-    /// Represents a temporary directory.  Creating an instance creates a directory at the specified path,
-    /// and disposing the instance deletes the directory.
-    /// </summary>
+	/// <summary>
+	/// Represents a temporary directory.  Creating an instance creates a directory at the specified path,
+	/// and disposing the instance deletes the directory.
+	/// </summary>
 	public sealed class TempDirectory : IDisposable
 	{
-        /// <summary>Gets the created directory's path.</summary>
-        public string Path { get; private set; }
+		/// <summary>Gets the created directory's path.</summary>
+		public string Path { get; private set; }
 
 		public TempDirectory ()
 			: this (CreateTemporaryDirectory ())
 		{
 		}
 
-        public TempDirectory (string path)
-        {
-            Path = path;
-        }
+		public TempDirectory (string path)
+		{
+			Path = path;
+		}
 
-        ~TempDirectory ()
-        {
-        	Dispose ();
-        }
+		~TempDirectory ()
+		{
+			Dispose ();
+		}
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize (this);
-            DeleteDirectory (Path);
-        }
+		public void Dispose()
+		{
+			GC.SuppressFinalize (this);
+			DeleteDirectory (Path);
+		}
 
 		// Tries to recursively delete the specified path.
 		// Doesn't throw exceptions if path is null, empty, or doesn't exist.
