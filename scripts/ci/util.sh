@@ -20,12 +20,14 @@ function helix_set_env_vars {
     elif [[ ${CI_TAGS} == *'-armhf'* ]]; then export MONO_HELIX_ARCHITECTURE="armhf";
     else echo "Couldn't determine architecture for Helix."; return 1; fi
 
-    if [[ ${CI_TAGS} == *'linux-'* ]]; then export MONO_HELIX_OPERATINGSYSTEM="Debian 9";
-    else echo "Couldn't determine operating system for Helix."; return 1; fi
+    if   [[ ${CI_TAGS} == *'linux-'* ]]; then export MONO_HELIX_OPERATINGSYSTEM="Debian 9";    export MONO_HELIX_TARGET_QUEUE="Debian.9.Amd64";
+    elif [[ ${CI_TAGS} == *'osx-'*   ]]; then export MONO_HELIX_OPERATINGSYSTEM="macOS 10.12"; export MONO_HELIX_TARGET_QUEUE="OSX.1012.Amd64";
+    elif [[ ${CI_TAGS} == *'win-'*   ]]; then export MONO_HELIX_OPERATINGSYSTEM="Windows 10";  export MONO_HELIX_TARGET_QUEUE="Windows.10.Amd64";
+    else echo "Couldn't determine operating system and target queue for Helix."; return 1; fi
 
     if [[ ${CI_TAGS} == *'pull-request'* ]]; then
         export MONO_HELIX_CREATOR="$ghprbPullAuthorLogin"
-        export MONO_HELIX_TARGET_QUEUE="Debian.9.Amd64.Open"
+        export MONO_HELIX_TARGET_QUEUE="${MONO_HELIX_TARGET_QUEUE}.Open"
         export MONO_HELIX_SOURCE="pr/jenkins/mono/mono/$ghprbTargetBranch/"
         export MONO_HELIX_BUILD_MONIKER="$(git rev-parse HEAD)"
     else
@@ -36,7 +38,6 @@ function helix_set_env_vars {
         blame_rev=$(git blame configure.ac HEAD | grep AC_INIT | sed 's/ .*//')
         patch_ver=$(git log "$blame_rev"..HEAD --oneline | wc -l | sed 's/ //g')
         export MONO_HELIX_CREATOR="monojenkins"
-        export MONO_HELIX_TARGET_QUEUE="Debian.9.Amd64"
         export MONO_HELIX_SOURCE="official/mono/mono/$MONO_BRANCH/"
         export MONO_HELIX_BUILD_MONIKER=$(printf %d.%d.%d.%d "$major_ver" "$minor_ver" "$build_ver" "$patch_ver")
     fi
