@@ -359,12 +359,7 @@ MonoDomain* il2cpp_mono_get_root_domain (void)
 
 void il2cpp_mono_runtime_quit (void)
 {
-#if UNITY_TINY
-    IL2CPP_ASSERT(0 && "Not implemented yet for tiny");
-    return 0;
-#else
     il2cpp::vm::Runtime::Shutdown();
-#endif
 }
 
 gboolean il2cpp_mono_runtime_is_shutting_down (void)
@@ -792,7 +787,6 @@ void il2cpp_mono_thread_set_name_internal(MonoInternalThread* this_obj, MonoStri
 
 void il2cpp_mono_thread_suspend_all_other_threads()
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 }
 
 void il2cpp_mono_stack_mark_record_size(MonoThreadInfo* info, HandleStackMark* stackmark, const char* func_name)
