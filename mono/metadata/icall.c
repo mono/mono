@@ -5866,29 +5866,31 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 {
 	MonoStringHandle result;
 
-#ifdef TARGET_OSX
-	// FIXME: Push handles down into mini/mini-exceptions.c
-	MonoException *exc = MONO_HANDLE_RAW (exc_handle);
-	MonoThreadSummary out;
-	mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+#ifndef DISABLE_CRASH_REPORTING
+	if (mono_get_eh_callbacks ()->mono_summarize_exception) {
+		// FIXME: Push handles down into mini/mini-exceptions.c
+		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
+		MonoThreadSummary out;
+		mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
 
-	*portable_hash_out = (guint64) out.hashes.offset_free_hash;
-	*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
+		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
+		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
 
-	JsonWriter writer;
-	mono_json_writer_init (&writer);
-	mono_native_state_init (&writer);
-	gboolean first_thread_added = TRUE;
-	mono_native_state_add_thread (&writer, &out, NULL, first_thread_added);
-	char *output = mono_native_state_free (&writer, FALSE);
-	result = mono_string_new_handle (mono_domain_get (), output, error);
-	g_free (output);
-#else
+		JsonWriter writer;
+		mono_json_writer_init (&writer);
+		mono_native_state_init (&writer);
+		gboolean first_thread_added = TRUE;
+		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
+		char *output = mono_native_state_free (&writer, FALSE);
+		result = mono_string_new_handle (mono_domain_get (), output, error);
+		g_free (output);
+		return result;
+	}
+#endif
+
 	*portable_hash_out = 0;
 	*unportable_hash_out = 0;
 	result = mono_string_new_handle (mono_domain_get (), "", error);
-#endif
-
 	return result;
 }
 
@@ -5962,7 +5964,6 @@ ves_icall_Mono_Runtime_DumpStateSingle (guint64 *portable_hash, guint64 *unporta
 	return result;
 }
 
-
 // Number derived from trials on relevant hardware.
 // If it seems large, please confirm it's safe to shrink
 // before doing so.
@@ -6006,8 +6007,9 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, const char *module_name)
 {
-#ifdef TARGET_OSX
-	mono_get_eh_callbacks ()->mono_register_native_library (path_suffix, module_name);
+#ifndef DISABLE_CRASH_REPORTING
+	if (mono_get_eh_callbacks ()->mono_register_native_library)
+		mono_get_eh_callbacks ()->mono_register_native_library (path_suffix, module_name);
 #endif
 }
 
