@@ -3,7 +3,7 @@
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1
 
 # FIXME
-#${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
+${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 #${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 #${TESTCMD} --label=System --timeout=10m make -w -C mcs/class/System run-test
 ${TESTCMD} --label=System.XML --timeout=5m make -w -C mcs/class/System.XML run-test
