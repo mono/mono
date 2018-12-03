@@ -79,10 +79,7 @@ namespace Mono.Btls
 			var password = Guid.NewGuid ().ToString ();
 			using (var handle = new SafePasswordHandle (password)) {
 				var buffer = certificate.Export (X509ContentType.Pfx, password);
-
-				impl = new X509CertificateImplBtls ();
-				impl.Import (buffer, handle, X509KeyStorageFlags.DefaultKeySet);
-				return impl;
+				return new X509CertificateImplBtls (buffer, handle, X509KeyStorageFlags.DefaultKeySet);
 			}
 		}
 

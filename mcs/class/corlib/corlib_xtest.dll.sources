@@ -317,14 +317,14 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,StrongNameKeyPairTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBodyTests.cs,StrongNameKeyPairTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Runtime.Extensions
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,Random.netcoreapp.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
 
 # System.Runtime.InteropServices
 ../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs

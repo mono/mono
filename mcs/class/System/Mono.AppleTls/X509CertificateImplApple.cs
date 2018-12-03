@@ -1,4 +1,3 @@
-#if MONO_FEATURE_APPLETLS || MONO_FEATURE_APPLE_X509
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 #endif
@@ -19,7 +18,7 @@ using XamMac.CoreFoundation;
 
 namespace Mono.AppleTls
 {
-	class X509CertificateImplApple : X509CertificateImpl
+	class X509CertificateImplApple : X509Certificate2ImplUnix
 	{
 		IntPtr handle;
 		X509CertificateImpl fallback;
@@ -57,18 +56,17 @@ namespace Mono.AppleTls
 		[DllImport (CFHelpers.SecurityLibrary)]
 		extern static IntPtr SecCertificateCopyData (IntPtr cert);
 
-		public override byte[] RawData {
-			get {
-				ThrowIfContextInvalid ();
-				var data = SecCertificateCopyData (handle);
-				if (data == IntPtr.Zero)
-					throw new ArgumentException ("Not a valid certificate");
+		protected override byte[] GetRawCertData ()
+		{
+			ThrowIfContextInvalid ();
+			var data = SecCertificateCopyData (handle);
+			if (data == IntPtr.Zero)
+				throw new ArgumentException ("Not a valid certificate");
 
-				try {
-					return CFHelpers.FetchDataBuffer (data);
-				} finally {
-					CFHelpers.CFRelease (data);
-				}
+			try {
+				return CFHelpers.FetchDataBuffer (data);
+			} finally {
+				CFHelpers.CFRelease (data);
 			}
 		}
 
@@ -79,15 +77,6 @@ namespace Mono.AppleTls
 			string ret = CFHelpers.FetchString (cfstr);
 			CFHelpers.CFRelease (cfstr);
 			return ret;
-		}
-
-		public override byte[] Thumbprint {
-			get {
-				// FIXME: might just return 'null' when 'lazy' is true.
-				ThrowIfContextInvalid ();
-				SHA1 sha = SHA1.Create ();
-				return sha.ComputeHash (RawData);
-			}
 		}
 
 		public override bool Equals (X509CertificateImpl other, out bool result)
@@ -111,51 +100,42 @@ namespace Mono.AppleTls
 			fallback = new X509Certificate2ImplMono (mxCert);
 		}
 
-		public X509CertificateImpl FallbackImpl {
-			get {
-				MustFallback ();
-				return fallback;
-			}
+		#region X509Certificate2Impl implementation
+
+		/*
+		 * The AppleTls backend does not support X509Certificate2 yet, so we can safely throw
+		 * PlatformNotSupportedException here.
+		 */
+
+		public override bool HasPrivateKey => throw new PlatformNotSupportedException ();
+
+		public override AsymmetricAlgorithm PrivateKey {
+			get => throw new PlatformNotSupportedException ();
+			set => throw new PlatformNotSupportedException ();
 		}
 
-		public override string Subject => FallbackImpl.Subject;
-
-		public override string Issuer => FallbackImpl.Issuer;
-
-		public override string LegacySubject => FallbackImpl.LegacySubject;
-
-		public override string LegacyIssuer => FallbackImpl.LegacyIssuer;
-
-		public override DateTime NotAfter => FallbackImpl.NotAfter;
-
-		public override DateTime NotBefore => FallbackImpl.NotBefore;
-
-		public override string KeyAlgorithm => FallbackImpl.KeyAlgorithm;
-
-		public override byte[] KeyAlgorithmParameters => FallbackImpl.KeyAlgorithmParameters;
-
-		public override byte[] PublicKeyValue => FallbackImpl.PublicKeyValue;
-
-		public override byte[] SerialNumber => FallbackImpl.SerialNumber;
-
-		public override byte[] Export (X509ContentType contentType, SafePasswordHandle password)
+		public override RSA GetRSAPrivateKey ()
 		{
-			ThrowIfContextInvalid ();
-
-			switch (contentType) {
-			case X509ContentType.Cert:
-				return RawData;
-			case X509ContentType.Pfx: // this includes Pkcs12
-				// TODO
-				throw new NotSupportedException ();
-			case X509ContentType.SerializedCert:
-				// TODO
-				throw new NotSupportedException ();
-			default:
-				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-				throw new CryptographicException (msg);
-			}
+			throw new PlatformNotSupportedException ();
 		}
+
+		public override DSA GetDSAPrivateKey ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public override PublicKey PublicKey => throw new PlatformNotSupportedException ();
+
+		internal override X509CertificateImplCollection IntermediateCertificates => throw new PlatformNotSupportedException ();
+
+		internal override X509Certificate2Impl FallbackImpl => throw new PlatformNotSupportedException ();
+
+		public override bool Verify (X509Certificate2 thisCertificate)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		#endregion
 
 		protected override void Dispose (bool disposing)
 		{
@@ -170,4 +150,3 @@ namespace Mono.AppleTls
 		}
 	}
 }
-#endif

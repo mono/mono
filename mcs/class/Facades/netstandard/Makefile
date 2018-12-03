@@ -53,7 +53,7 @@ API_BIN_REFS := Xamarin.Mac OpenTK
 endif
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal wasm, $(PROFILE))
+REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal testing_aot_full wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

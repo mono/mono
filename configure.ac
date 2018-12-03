@@ -20,8 +20,8 @@ AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects]
 
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
-AM_EXTRA_RECURSIVE_TARGETS([test])
-AM_EXTRA_RECURSIVE_TARGETS([test-bundle])
+m4_ifdef([AM_EXTRA_RECURSIVE_TARGETS], AM_EXTRA_RECURSIVE_TARGETS([test]))
+m4_ifdef([AM_EXTRA_RECURSIVE_TARGETS], AM_EXTRA_RECURSIVE_TARGETS([test-bundle]))
 
 API_VER=2.0
 AC_SUBST(API_VER)
@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=00FA5053-3C12-4157-AD21-62D2C49DAC04
+MONO_CORLIB_VERSION=7A6EDC32-7F43-403B-8F6F-53AB0AD74819
 
 #
 # Put a quoted #define in config.h.
@@ -1166,7 +1166,7 @@ with_bitcode_default=no
 enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
 
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000,nftnptr-arg-trampolines=4000
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
@@ -1174,6 +1174,7 @@ if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
 elif test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
+   TEST_PROFILE=net_4_x
 elif test x$with_runtime_preset = xall; then
    with_profile4_x_default=yes
    with_monodroid_default=yes
@@ -1188,6 +1189,7 @@ elif test x$with_runtime_preset = xall; then
    with_testing_aot_full_interp_default=yes
    with_testing_aot_hybrid_default=yes
    with_testing_aot_full_default=yes
+   TEST_PROFILE=net_4_x
 elif test x$with_runtime_preset = xbitcode; then
    DISABLE_MCS_DOCS_default=yes
    with_testing_aot_full_default=yes
@@ -1323,6 +1325,7 @@ elif test x$with_runtime_preset = xwasm; then
    AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
 else
+   TEST_PROFILE=net_4_x
    with_profile4_x_default=yes
 fi
 
@@ -1396,6 +1399,7 @@ AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 AM_CONDITIONAL(AOT_FULL_INTERP_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp"])
+AM_CONDITIONAL(DEFAULT_TESTS, [test "x$TEST_PROFILE" = "xnet_4_x"])
 
 default_profile=net_4_x
 if test -z "$INSTALL_MONODROID_TRUE"; then :
@@ -5557,6 +5561,7 @@ AC_SUBST(CSC)
 
 AC_CONFIG_FILES([po/mcs/Makefile.in])
 
+AC_CONFIG_FILES([acceptance-tests/microbench-perf.sh],[chmod +x acceptance-tests/microbench-perf.sh])
 AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
 AC_CONFIG_FILES([runtime/monodis-wrapper],[chmod +x runtime/monodis-wrapper])
 
@@ -5900,6 +5905,22 @@ elif test x$host_linux = xyes; then
 	AC_MSG_RESULT(linux)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
+elif case $host_os in aix*|os400*) true;; *) false;; esac; then
+	mono_native_text="AIX"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=aix
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(aix)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_AIX"
 else
 	mono_native=no
 	mono_native_text="no"
@@ -5932,6 +5953,7 @@ AM_CONDITIONAL(MONO_NATIVE_COMPAT, test x$mono_native_compat = xyes)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_MACOS, test x$MONO_NATIVE_PLATFORM = xmacos)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_IOS, test x$MONO_NATIVE_PLATFORM = xios)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
 
 MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
 MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"

@@ -130,6 +130,25 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue ((int)ev.MetadataToken > 0);
 		}
 
+        [Test]
+        public void TestDerivedClassHidingEventWithPrivate ()
+        {
+			Type derived = typeof(Derived);
+			EventInfo[] events = derived.GetEvents (BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual(0, events.Length, "MyEvent event is private in derived class and should be hidden.");
+
+			Type staticDerived2 = typeof(StaticDerived2);
+			EventInfo[] events2 = staticDerived2.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			Console.WriteLine(events2.Length);
+		}
+
+        [Test]
+		public void TestDerivedClassOveridingEventWithStatic () {
+			Type staticDerived2 = typeof(StaticDerived2);
+			EventInfo[] events = staticDerived2.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual(0, events.Length, "MyEvent event is static in parent class and should be hidden.");
+		}
+
 #pragma warning disable 67
 		public class PrivateEvent
 		{
@@ -147,6 +166,35 @@ namespace MonoTests.System.Reflection
 			private event EventHandler priv;
 		}
 
+		private abstract class Base
+		{
+			public event Action MyEvent { add { } remove { } }
+			public int MyProp { get; }
+		}
+
+		private abstract class Derived : Base
+		{
+			private new event Action MyEvent { add { } remove { } }
+			private new int MyProp { get; }
+		}
+
+		private abstract class Derived2 : Derived
+		{
+		}
+
+		private class StaticBase
+		{
+			public event Action MyEvent { add { } remove { } }
+		}
+
+		private class StaticDerived : StaticBase
+		{
+			public new static event Action MyEvent { add { } remove { } }
+		}
+
+		private class StaticDerived2 : StaticDerived
+		{
+		}
 #pragma warning restore 67
 	}
 }

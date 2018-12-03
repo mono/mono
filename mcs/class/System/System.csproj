@@ -67,7 +67,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
@@ -131,9 +131,11 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ChunkedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DelegatingStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.CaseSensitivity.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\ReadOnlyMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsPal.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleMinusOneIsInvalid.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ExceptionCheck.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DomainLiteralReader.cs" />
@@ -143,9 +145,12 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedPairReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\QuotedStringFormatReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\WhitespaceReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NTAuthentication.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\NegotiationInfoClass.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityProtocol.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusPal.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SSPIHandleCache.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBuffer.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityBufferType.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TcpValidationHelpers.cs" />
@@ -153,6 +158,8 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\ManagedWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\WebSocketValidate.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerEncoder.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerSequenceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\StringExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\BlockingCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Collections.Concurrent\src\System\Collections\Concurrent\CDSCollectionETWBCLProvider.cs" />
@@ -475,6 +482,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidGroup.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Oids.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Pal.OSX\CertificateData.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
@@ -969,6 +978,7 @@
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2Enumerator.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2Impl.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2ImplMono.cs" />
+    <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2ImplUnix.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateCollection.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509CertificateImplCollection.cs" />
     <Compile Include="System.Security.Cryptography.X509Certificates\X509Chain.cs" />
@@ -1016,6 +1026,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1154,6 +1165,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1248,6 +1260,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1367,6 +1380,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1490,6 +1504,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -1640,6 +1655,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
@@ -2107,6 +2123,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -2599,6 +2616,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3109,6 +3127,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3597,6 +3616,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
@@ -3701,6 +3721,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3841,6 +3862,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -3984,6 +4006,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
@@ -4118,6 +4141,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll</HintPath>
@@ -4143,6 +4171,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monodroid/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monodroid/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4161,6 +4194,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4183,6 +4221,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4203,6 +4246,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_watch_runtime' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -4220,6 +4268,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Net.Http.dll">
@@ -4235,6 +4288,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4255,6 +4313,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4281,6 +4344,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4303,6 +4371,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4329,6 +4402,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4347,6 +4425,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
@@ -4369,6 +4452,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4387,6 +4475,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.7.1/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="./../../../external/binary-reference-assemblies/v4.7.1/System.Configuration.dll">
@@ -4414,6 +4507,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4434,6 +4532,11 @@
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">
       <Aliases>MonoSecurity</Aliases>
     </ProjectReference>
@@ -4452,6 +4555,11 @@
     <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/System.Numerics.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../Mono.Security/Mono.Security.csproj">

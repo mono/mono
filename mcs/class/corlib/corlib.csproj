@@ -68,7 +68,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;BIT64;REGISTRY_ASSEMBLY;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ENCODINGNLS;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;HAS_CORLIB_CONTRACTS;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_FEATURE_SRE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
@@ -415,6 +415,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ParseNumbers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\PlatformNotSupportedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Progress.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Random.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\RankException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.Fast.cs" />
@@ -465,6 +466,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodBase.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
@@ -852,6 +854,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Claims\src\System\Security\Claims\GenericIdentity.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\ICspAsymmetricAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\KeyNumber.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptographicOperations.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\HashAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\ErrorCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Helpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
@@ -1050,13 +1054,11 @@
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__fastresourcecomparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__hresults.cs" />
@@ -1192,7 +1194,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsa.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsasignaturedeformatter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsasignatureformatter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hashalgorithm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmac.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmacmd5.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\hmacripemd160.cs" />
@@ -1228,7 +1229,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\symmetricalgorithm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\utils.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\x509certificates\x509utils.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\safesecurityhandles.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitycontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitydocument.cs" />
@@ -2015,11 +2015,13 @@
     <Compile Include="corefx\AwaitTaskContinuation.cs" />
     <Compile Include="corefx\BinaryEnums.cs" />
     <Compile Include="corefx\CompareInfo.cs" />
+    <Compile Include="corefx\CryptoConfigForwarder.cs" />
     <Compile Include="corefx\CurrentSystemTimeZone.cs" />
     <Compile Include="corefx\DateTime.cs" />
     <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\MethodInfo.cs" />
+    <Compile Include="corefx\RandomNumberGenerator.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />

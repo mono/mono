@@ -113,6 +113,14 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		public abstract bool HasPrivateKey {
+			get;
+		}
+
+		public abstract RSA GetRSAPrivateKey ();
+
+		public abstract DSA GetDSAPrivateKey ();
+
 		public abstract byte[] Export (X509ContentType contentType, SafePasswordHandle password);
 
 		public sealed override bool Equals (object obj)
