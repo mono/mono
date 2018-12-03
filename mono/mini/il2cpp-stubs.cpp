@@ -594,7 +594,6 @@ char* il2cpp_mono_type_get_name_full(MonoType* type, MonoTypeNameFormat format)
 gboolean il2cpp_mono_class_is_nullable(MonoClass* klass)
 {
 	return il2cpp::vm::Class::IsNullable((Il2CppClass*)klass);
-#
 }
 
 MonoGenericContainer* il2cpp_mono_class_get_generic_container(MonoClass* klass)
