@@ -4793,6 +4793,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		case CEE_LEAVE:
 		case CEE_LEAVE_S: {
 			int offset;
+			int clause_index = td->clause_indexes [in_offset];
 
 			if (*td->ip == CEE_LEAVE)
 				offset = 5 + read32 (td->ip + 1);
@@ -4800,7 +4801,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				offset = 2 + (gint8)td->ip [1];
 
 			td->sp = td->stack;
-			if (td->clause_indexes [in_offset] != -1) {
+			if (clause_index != -1 && header->clauses [clause_index].flags == MONO_EXCEPTION_CLAUSE_NONE) {
 				/* LEAVE instructions in catch clauses need to check for abort exceptions */
 				handle_branch (td, MINT_LEAVE_S_CHECK, MINT_LEAVE_CHECK, offset);
 			} else {
