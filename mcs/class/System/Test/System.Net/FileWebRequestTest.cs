@@ -28,22 +28,22 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class FileWebRequestTest
 	{
-		private string _tempDirectory;
+		private TempDirectory _tempDirectory;
 		private string _tempFile;
 		private Uri _tempFileUri;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = PathHelpers.CreateTemporaryDirectory ();
-			_tempFile = Path.Combine (_tempDirectory, "FileWebRequestTest.tmp");
+			_tempDirectory = new TempDirectory ();
+			_tempFile = Path.Combine (_tempDirectory.Path, "FileWebRequestTest.tmp");
 			_tempFileUri = GetTempFileUri ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (_tempDirectory);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]
@@ -190,7 +190,7 @@ namespace MonoTests.System.Net
 			}
 
 			// the temp file should not be in use
-			Directory.Delete (_tempDirectory, true);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]
@@ -297,7 +297,7 @@ namespace MonoTests.System.Net
 			}
 
 			// the temp file should not be in use
-			Directory.Delete (_tempDirectory, true);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]

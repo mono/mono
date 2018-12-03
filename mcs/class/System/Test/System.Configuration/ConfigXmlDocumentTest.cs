@@ -39,18 +39,20 @@ using MonoTests.Helpers;
 namespace MonoTests.System.Configuration {
 	[TestFixture]
 	public class ConfigXmlDocumentTest {
+		private TempDirectory _tempFolder;
 		private string tempFolder;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			tempFolder = PathHelpers.CreateTemporaryDirectory ();
+			_tempFolder = new TempDirectory ();
+			tempFolder = _tempFolder.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (tempFolder);
+			_tempFolder.Dispose ();
 		}
 
 		[Test]

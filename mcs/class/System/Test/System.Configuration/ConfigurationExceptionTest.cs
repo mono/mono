@@ -40,18 +40,20 @@ namespace MonoTests.System.Configuration
 	[TestFixture]
 	public class ConfigurationExceptionTest
 	{
+		private TempDirectory temp;
 		private string foldername;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			foldername = PathHelpers.CreateTemporaryDirectory ();
+			temp = new TempDirectory ();
+			foldername = temp.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (foldername);
+			temp.Dispose ();
 		}
 
 		[Test] // ctor ()

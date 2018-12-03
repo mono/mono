@@ -45,6 +45,7 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 	[Category ("CAS")]
 	public class TempFileCollectionCas {
 
+		private TempDirectory _temp;
 		private string temp;
 		private string[] array;
 
@@ -52,7 +53,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		public void FixtureSetUp ()
 		{
 			// at full trust
-			temp = PathHelpers.CreateTemporaryDirectory ();
+			_temp = new TempDirectory ();
+			temp = _temp.Path;
 			array = new string[1];
 		}
 

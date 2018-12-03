@@ -25,6 +25,7 @@ namespace MonoTests.Microsoft.CSharp
 	[TestFixture]
 	public class CSharpCodeProviderTest
 	{
+		private TempDirectory _tempDirectory;
 		private string _tempDir;
 		private CodeDomProvider _codeProvider;
 
@@ -39,13 +40,14 @@ namespace MonoTests.Microsoft.CSharp
 		public void SetUp ()
 		{
 			_codeProvider = new CSharpCodeProvider ();
-			_tempDir = PathHelpers.CreateTemporaryDirectory ();
+			_tempDirectory = new TempDirectory ();
+			_tempDir = _tempDirectory.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (_tempDir);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]

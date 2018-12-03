@@ -34,14 +34,14 @@ namespace MonoTests.System.Net
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = PathHelpers.CreateTemporaryDirectory ();
-			_tempFile = Path.Combine (_tempDirectory, "FtpWebRequestTest.tmp");
+			_tempDirectory = new TempDirectory ();
+			_tempFile = Path.Combine (_tempDirectory.Path, "FtpWebRequestTest.tmp");
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (_tempDirectory);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]

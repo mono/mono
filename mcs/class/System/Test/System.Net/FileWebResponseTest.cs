@@ -21,22 +21,22 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class FileWebResponseTest
 	{
-		private string _tempDirectory;
+		private TempDirectory _tempDirectory;
 		private string _tempFile;
 		private Uri _tempFileUri;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = PathHelpers.CreateTemporaryDirectory ();
-			_tempFile = Path.Combine (_tempDirectory, "FileWebResponseTest.tmp");
+			_tempDirectory = new TempDirectory ();
+			_tempFile = Path.Combine (_tempDirectory.Path, "FileWebResponseTest.tmp");
 			_tempFileUri = GetTempFileUri ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (_tempDirectory);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]

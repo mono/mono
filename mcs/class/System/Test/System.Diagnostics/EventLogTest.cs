@@ -60,6 +60,7 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class EventLogTest
 	{
+		private TempDirectory _temp;
 		private string _originalEventLogImpl;
 		private string _eventLogStore;
 
@@ -77,7 +78,8 @@ namespace MonoTests.System.Diagnostics
 				return;
 
 			// determine temp directory for eventlog store
-			_eventLogStore = PathHelpers.CreateTemporaryDirectory ();
+			_temp = new TempDirectory ();
+			_eventLogStore = _temp.Path;
 
 			// save original eventlog implementation type (if set)
 			_originalEventLogImpl = Environment.GetEnvironmentVariable (
@@ -99,7 +101,7 @@ namespace MonoTests.System.Diagnostics
 				_originalEventLogImpl);
 
 			// delete temp directory for eventlog store
-			PathHelpers.DeleteDirectory (_eventLogStore);
+			_temp.Dispose ();
 		}
 
 		[Test]

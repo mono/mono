@@ -22,19 +22,21 @@ namespace MonoTests.System.Net.Mail
 	{
 		SmtpClient _smtp;
 		SmtpClient smtp { get { return _smtp ?? (_smtp = new SmtpClient ()); } }
+		TempDirectory _tempFolder;
 		string tempFolder;
 		
 		[SetUp]
 		public void GetReady ()
 		{
-			tempFolder = PathHelpers.CreateTemporaryDirectory ();
+			_tempFolder = new TempDirectory ();
+			tempFolder = _tempFolder.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
 			_smtp = null;
-			PathHelpers.DeleteDirectory (tempFolder);
+			_tempFolder.Dispose ();
 		}
 
 		[Test]

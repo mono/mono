@@ -26,18 +26,20 @@ namespace MonoTests.System.Diagnostics
 	[TestFixture]
 	public class FileVersionInfoTest
 	{
+		private TempDirectory _tempDir;
 		private string tempDir;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			tempDir = PathHelpers.CreateTemporaryDirectory ();
+			_tempDir = new TempDirectory ();
+			tempDir = _tempDir.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			PathHelpers.DeleteDirectory (tempDir);
+			_tempDir.Dispose ();
 		}
 
 		[Test]
