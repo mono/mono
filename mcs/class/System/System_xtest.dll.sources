@@ -8,6 +8,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
 ../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
+../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
 ../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
 
 # System.CodeDom
@@ -27,6 +28,7 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.WebSockets.cs
 ../../../external/corefx/src/System.Net.Requests/tests/FtpWebRequestTest.cs
 #../../../external/corefx/src/System.Net.Requests/tests/*.cs:AuthenticationManagerTest.cs
 
