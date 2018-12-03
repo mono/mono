@@ -6072,6 +6072,9 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 static gboolean
 mono_threads_summarize_native_self (MonoThreadSummary *out, MonoContext *ctx)
 {
+	if (!mono_get_eh_callbacks ()->mono_summarize_managed_stack)
+		return FALSE;
+
 	memset (out, 0, sizeof (MonoThreadSummary));
 	out->ctx = ctx;
 
@@ -6097,7 +6100,7 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 
 	// Finish this on the same thread
 
-	if (success)
+	if (success && mono_get_eh_callbacks ()->mono_summarize_managed_stack)
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (out);
 
 	return success;
@@ -6242,6 +6245,9 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 		// We are doing this dump on the controlling thread because this isn't
 		// an async context. There's still some reliance on malloc here, but it's
 		// much more stable to do it all from the controlling thread.
+		//
+		// This is non-null, checked in mono_threads_summarize
+		// with early exit there
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (thread);
 
 		mono_summarize_native_state_add_thread (thread, thread->ctx, thread == controlling);
@@ -6328,6 +6334,9 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 gboolean 
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
+	if (!mono_get_eh_callbacks ()->mono_summarize_managed_stack)
+		return FALSE;
+
 	// The staggered values are due to the need to use inc_i64 for the first value
 	static gint64 next_pending_request_id = 0;
 	static gint64 request_available_to_run = 1;
