@@ -399,7 +399,7 @@ mono_merp_fingerprint_payload (const char *non_param_data, const MERPStruct *mer
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "BlameModuleOffset:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->moduleOffset);
+	mono_json_writer_printf (&writer, "\"0x%llx\",\n", (unsigned long long)merp->moduleOffset);
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "ExceptionType:");
@@ -407,11 +407,11 @@ mono_merp_fingerprint_payload (const char *non_param_data, const MERPStruct *mer
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "StackChecksum:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->hashes.offset_free_hash);
+	mono_json_writer_printf (&writer, "\"0x%llx\",\n", merp->hashes.offset_free_hash);
 
 	mono_json_writer_indent (&writer);
 	mono_json_writer_object_key(&writer, "StackHash:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->hashes.offset_rich_hash);
+	mono_json_writer_printf (&writer, "\"0x%llx\",\n", merp->hashes.offset_rich_hash);
 
 	// Provided by icall
 	mono_json_writer_indent (&writer);
