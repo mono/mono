@@ -490,6 +490,10 @@ namespace System.Reflection.Emit
 		{
 			return new TypeBuilderInstantiation (type, typeArguments);
 		}
+
+		public override bool IsTypeDefinition => false;
+
+		public override bool IsConstructedGenericType => true;
 	}
 }
 #else

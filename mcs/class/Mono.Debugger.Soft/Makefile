@@ -5,7 +5,7 @@ LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
 
 LIB_REFS = System Mono.Cecil System.Core
-LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS /publicsign
+LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -D:ENABLE_CECIL /publicsign
 KEYFILE = $(LIBRARY_SNK)
 
 TEST_LIB_REFS = Mono.Cecil System System.Core

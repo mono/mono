@@ -173,8 +173,8 @@ find_tramp (gpointer key, gpointer value, gpointer user_data)
 }
 
 /* debug function */
-G_GNUC_UNUSED static char*
-get_method_from_ip (void *ip)
+char*
+mono_get_method_from_ip (void *ip)
 {
 	MonoJitInfo *ji;
 	MonoMethod *method;
@@ -239,7 +239,7 @@ get_method_from_ip (void *ip)
 G_GNUC_UNUSED char *
 mono_pmip (void *ip)
 {
-	return get_method_from_ip (ip);
+	return mono_get_method_from_ip (ip);
 }
 
 /**
@@ -2415,11 +2415,19 @@ lookup_start:
 	}
 #endif
 
-	if (!code)
+	if (!code) {
 		code = compile_special (method, target_domain, error);
 
-	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER)
+		if (!mono_error_ok (error))
+			return NULL;
+	}
+
+	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER) {
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
+
+		if (!mono_error_ok (error))
+			return NULL;
+	}
 
 	if (!code) {
 		if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {
@@ -3787,7 +3795,7 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 	if (is_interface)
 		offset = ((gint32)mono_method_get_imt_slot (method) - MONO_IMT_SIZE) * TARGET_SIZEOF_VOID_P;
 	else
-		offset = G_STRUCT_OFFSET (MonoVTable, vtable) + ((mono_method_get_vtable_index (method)) * (TARGET_SIZEOF_VOID_P));
+		offset = MONO_STRUCT_OFFSET (MonoVTable, vtable) + ((mono_method_get_vtable_index (method)) * (TARGET_SIZEOF_VOID_P));
 
 	idx = (offset / TARGET_SIZEOF_VOID_P + MONO_IMT_SIZE) * 2 + (load_imt_reg ? 1 : 0);
 	g_assert (idx >= 0);

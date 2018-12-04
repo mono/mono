@@ -18,12 +18,14 @@ using Microsoft.CSharp;
 using NUnit.Framework;
 using System.Text;
 using System.Linq;
+using MonoTests.Helpers;
 
 namespace MonoTests.Microsoft.CSharp
 {
 	[TestFixture]
 	public class CSharpCodeProviderTest
 	{
+		private TempDirectory _tempDirectory;
 		private string _tempDir;
 		private CodeDomProvider _codeProvider;
 
@@ -38,13 +40,14 @@ namespace MonoTests.Microsoft.CSharp
 		public void SetUp ()
 		{
 			_codeProvider = new CSharpCodeProvider ();
-			_tempDir = CreateTempDirectory ();
+			_tempDirectory = new TempDirectory ();
+			_tempDir = _tempDirectory.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			RemoveDirectory (_tempDir);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]
@@ -599,37 +602,6 @@ namespace MonoTests.Microsoft.CSharp
 
 			Assert.IsNotNull (results.Errors);
 			Assert.IsTrue (results.Output.Cast<string>().ToArray ()[1].Contains ("Trigger Some Warning"));
-		}
-
-		private static string CreateTempDirectory ()
-		{
-			// create a uniquely named zero-byte file
-			string tempFile = Path.GetTempFileName ();
-			// remove the temporary file
-			File.Delete (tempFile);
-			// create a directory named after the unique temporary file
-			Directory.CreateDirectory (tempFile);
-			// return the path to the temporary directory
-			return tempFile;
-		}
-
-		private static void RemoveDirectory (string path)
-		{
-			try {
-				if (Directory.Exists (path)) {
-					string[] directoryNames = Directory.GetDirectories (path);
-					foreach (string directoryName in directoryNames) {
-						RemoveDirectory (directoryName);
-					}
-					string[] fileNames = Directory.GetFiles (path);
-					foreach (string fileName in fileNames) {
-						File.Delete (fileName);
-					}
-					Directory.Delete (path, true);
-				}
-			} catch (Exception ex) {
-				throw new AssertionException ("Unable to cleanup '" + path + "'.", ex);
-			}
 		}
 
 		private static void AssertCompileResults (CompilerResults results, bool allowWarnings)

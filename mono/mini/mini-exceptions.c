@@ -1553,7 +1553,6 @@ summarize_frame_managed_walk (MonoMethod *method, gpointer ip, size_t frame_nati
 static gboolean
 summarize_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 {
-	MonoSummarizeUserData *ud = (MonoSummarizeUserData *) data;
 	// Don't record trampolines between managed frames
 	if (frame->ji && frame->ji->is_trampoline)
 		return TRUE;
@@ -1591,6 +1590,8 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 
 	mono_exception_walk_trace (exc, summarize_frame_managed_walk, &data);
 	out->num_managed_frames = data.num_frames;
+
+	out->managed_exc_type = exc->object.vtable->klass;
 }
 
 

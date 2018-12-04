@@ -2,7 +2,10 @@ using System.Reflection;
 
 namespace System {
 	partial class Type {
-        	internal const string DefaultTypeNameWhenMissingMetadata = "UnknownType";		
+		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => RuntimeType.GetTypeFromCLSIDImpl (clsid, server, throwOnError);
+		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => RuntimeType.GetTypeFromProgID (progID, server, throwOnError);
+
+		internal const string DefaultTypeNameWhenMissingMetadata = "UnknownType";		
 		
 		internal string FullNameOrDefault {
 			get {
@@ -10,7 +13,6 @@ namespace System {
 				// We'll still wrap the call in a try-catch as a failsafe.
 				if (InternalNameIfAvailable == null)
 					return DefaultTypeNameWhenMissingMetadata;
-
 				try {
 					return FullName;
 				} catch (MissingMetadataException) {
@@ -19,18 +21,18 @@ namespace System {
 			}
 		}
 
-		internal bool IsRuntimeImplemented () => true;
+		internal bool IsRuntimeImplemented () => this.UnderlyingSystemType is RuntimeType;
 
-		internal virtual string InternalGetNameIfAvailable (ref Type rootCauseForFailure) => Name;		
-
+		internal virtual string InternalGetNameIfAvailable (ref Type rootCauseForFailure) => Name;
+		
 		internal string InternalNameIfAvailable {
 			get {
 				Type ignore = null;
 				return InternalGetNameIfAvailable (ref ignore);
 			}
 		}
-
-		internal string NameOrDefault {
+		
+ 		internal string NameOrDefault {
 			get  {
 				return InternalNameIfAvailable ?? DefaultTypeNameWhenMissingMetadata;
 			}

@@ -42,6 +42,8 @@ using System.Collections.Specialized;
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Configuration {
 	class ProviderPoker : LocalFileSettingsProvider {
 		public override void Initialize (string name,
@@ -164,14 +166,15 @@ namespace MonoTests.System.Configuration {
 	[TestFixture]
 	public class ApplicationSettingsBaseTest
 	{
+		TempDirectory _tempDir;
 		string tempDir;
 
 		[TestFixtureSetUp]
 		public void FixtureSetup ()
 		{
 			// Use random temp directory to store settings files of tests.
-			tempDir = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());
-			Directory.CreateDirectory (tempDir);
+			_tempDir = new TempDirectory ();
+			tempDir = _tempDir.Path;
 			var localAppData = Path.Combine (tempDir, "LocalAppData");
 			Directory.CreateDirectory (localAppData);
 			var appData = Path.Combine (tempDir, "AppData");
@@ -186,7 +189,7 @@ namespace MonoTests.System.Configuration {
 		{
 			Environment.SetEnvironmentVariable ("XDG_DATA_HOME", null);
 			Environment.SetEnvironmentVariable ("XDG_CONFIG_HOME", null);
-			Directory.Delete (tempDir, true);
+			_tempDir.Dispose ();
 		}
 
 		[Test]

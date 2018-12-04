@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft {
 

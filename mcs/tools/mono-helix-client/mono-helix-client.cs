@@ -57,8 +57,8 @@ public class Program
             return 1;
         }
 
-        if (tests == "mainline") {
-            var t = new MainlineTests ();
+        if (tests == "mainline" || tests == "mainline-cxx") {
+            var t = new MainlineTests (tests);
             correlationId = await t.CreateJob ().SendJob ();
 
             if (!String.IsNullOrEmpty (correlationIdFile))

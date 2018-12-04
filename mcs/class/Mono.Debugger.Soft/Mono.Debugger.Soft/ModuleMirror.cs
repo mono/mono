@@ -1,6 +1,5 @@
 using System;
 using Mono.Debugger;
-using Mono.Cecil;
 
 namespace Mono.Debugger.Soft
 {

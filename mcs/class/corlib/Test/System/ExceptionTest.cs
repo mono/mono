@@ -266,6 +266,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void GetObjectData ()
 		{
 			string msg = "MESSAGE";
@@ -383,6 +384,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void Source ()
 		{
 			Exception ex1 = new Exception ("MSG");
@@ -461,6 +463,7 @@ namespace MonoTests.System
 				//      "managed_thread_ptr" : "0x0",
 				//      "thread_info_addr" : "0x0",
 				//      "native_thread_id" : "0x0",
+				//      "managed_exception_type" : "System.Exception",
 				//      "managed_frames" : [
 				//        {
 				//          "is_managed" : "true",

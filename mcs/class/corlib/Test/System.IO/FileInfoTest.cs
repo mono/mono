@@ -747,6 +747,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void MoveTo_DestFileName_DirectoryDoesNotExist ()
 		{
 			string sourceFile = TempFolder + Path.DirectorySeparatorChar + "foo";

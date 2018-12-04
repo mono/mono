@@ -155,8 +155,12 @@ namespace MonoTests.System.IO
 		static bool RunningAsRoot // FIXME?
 		{
 			get {
+#if WASM
+				return false;
+#else
 				//return RunningOnUnix && System.Security.WindowsIdentity.GetCurrentToken () == IntPtr.Zero;
 				return RunningOnUnix && geteuid () == 0;
+#endif
 			}
 		}
 
@@ -1193,6 +1197,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void LastAccessTime ()
 		{
 			string path = tmpFolder + Path.DirectorySeparatorChar + "lastAccessTime";
@@ -2777,6 +2782,7 @@ namespace MonoTests.System.IO
 #if MONOTOUCH_TV
 		[Ignore ("See bug #59239")]
 #endif
+		[Category ("NotWasm")]
 		public void SymLinkLoop ()
 		{
 			if (!RunningOnUnix)
