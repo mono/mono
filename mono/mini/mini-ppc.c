@@ -4684,8 +4684,6 @@ save_registers (MonoCompile *cfg, guint8* code, int pos, int base_reg, gboolean 
  *   -------------------
  *   	locals
  *   -------------------
- *   	optional 8 bytes for tracing (XXX: no longer true with mini mid-end tracing?)
- *   -------------------
  *   	param area             size is cfg->param_area
  *   -------------------
  *   	linkage area           size is PPC_STACK_PARAM_OFFSET
