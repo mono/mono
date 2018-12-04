@@ -154,6 +154,8 @@ var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['n
 var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
+var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
 
 const IGNORE_PARAM_COUNT = -1;
 
@@ -202,6 +204,17 @@ var App = {
 			for (var i = 2; i < args.length; ++i) {
 				obj_array_set (app_args, i - 2, string_from_js (args [i]));
 			}
+
+			var main_argc = args.length - 2 + 1;
+			var main_argv = Module._malloc (main_argc * 4);
+			aindex = 0;
+			Module.setValue (main_argv + (aindex * 4), wasm_strdup (args [1]), "i32")
+			aindex += 1;
+			for (var i = 2; i < args.length; ++i) {
+				Module.setValue (main_argv + (aindex * 4), wasm_strdup (args [i]), "i32");
+				aindex += 1;
+			}
+			wasm_set_main_args (main_argc, main_argv);
 
 			try {
 				var invoke_args = Module._malloc (4);
@@ -259,9 +272,18 @@ var App = {
 
 		Module.print("Driver binding complete.");
 
+		var main_argc = 1
+		var main_argv = Module._malloc (main_argc * 4);
+		Module.setValue (main_argv, wasm_strdup ("mono-wasm"), "i32")
+		wasm_set_main_args (main_argc, main_argv);
+
 		var bad_send_msg_detected = false;
 		for (var i = 0; i < testArguments.length; ++i) {
-
+			if (testArguments [i] == "--exclude") {
+				send_message ("--exclude", testArguments [i + 1]);
+				i ++;
+				continue;
+			}
 			var res = "";
 			try
 			{

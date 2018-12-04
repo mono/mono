@@ -89,6 +89,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ReRegisterForFinalizeTest ()
 		{
 			FinalizerHelpers.PerformNoPinAction (delegate () {

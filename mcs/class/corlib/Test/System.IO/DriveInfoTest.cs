@@ -65,6 +65,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void GetDrivesValidInfo ()
 		{
 			var drives = DriveInfo.GetDrives ();

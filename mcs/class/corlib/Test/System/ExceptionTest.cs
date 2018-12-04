@@ -266,6 +266,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void GetObjectData ()
 		{
 			string msg = "MESSAGE";
@@ -383,6 +384,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void Source ()
 		{
 			Exception ex1 = new Exception ("MSG");
