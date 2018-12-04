@@ -104,7 +104,7 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, Mo
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (m_class_is_valuetype (klass));
 
-	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dest, count, (gpointer)(intptr_t)m_class_get_gc_descr (klass), m_class_get_name (klass), klass);
+	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dest, count, (gpointer)(uintptr_t)m_class_get_gc_descr (klass), m_class_get_name (klass), klass);
 
 	if (sgen_ptr_in_nursery (dest) || ptr_on_stack (dest) || !sgen_gc_descr_has_references ((mword)m_class_get_gc_descr (klass))) {
 		size_t element_size = mono_class_value_size (klass, NULL);
