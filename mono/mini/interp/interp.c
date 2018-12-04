@@ -83,6 +83,12 @@
 typedef struct {
 	/* Where we start the frame execution from */
 	guint16 *start_with_ip;
+	/*
+	 * End ip of the exit_clause. We need it so we know whether the resume
+	 * state is for this frame (which is called from EH) or for the original
+	 * frame further down the stack.
+	 */
+	guint16 *end_at_ip;
 	/* When exiting this clause we also exit the frame */
 	int exit_clause;
 	/* Exception that we are filtering */
@@ -247,7 +253,7 @@ set_resume_state (ThreadContext *context, InterpFrame *frame)
  */
 #define CHECK_RESUME_STATE(context) do { \
 		if ((context)->has_resume_state) { \
-			if (frame == (context)->handler_frame) \
+			if (frame == (context)->handler_frame && (!clause_args || (context)->handler_ip < clause_args->end_at_ip)) \
 				SET_RESUME_STATE (context); \
 			else \
 				goto exit_frame; \
@@ -5936,7 +5942,7 @@ interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExce
 	/* Ditto */
 	if (ei)
 		*(MonoException**)(context->handler_frame->locals + ei->exvar_offset) = ex;
-	context->handler_ip = handler_ip;
+	context->handler_ip = (guint16*) handler_ip;
 }
 
 /*
@@ -5947,7 +5953,7 @@ interp_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExce
  * Return TRUE if the finally clause threw an exception.
  */
 static gboolean
-interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip)
+interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip, gpointer handler_ip_end)
 {
 	InterpFrame *iframe = (InterpFrame*)frame->interp_frame;
 	ThreadContext *context = get_context ();
@@ -5956,6 +5962,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 
 	memset (&clause_args, 0, sizeof (FrameClauseArgs));
 	clause_args.start_with_ip = (guint16*) handler_ip;
+	clause_args.end_at_ip = (guint16*) handler_ip_end;
 	clause_args.exit_clause = clause_index;
 
 	interp_exec_method_full (iframe, context, &clause_args);
@@ -5974,7 +5981,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
  * frame->interp_frame.
  */
 static gboolean
-interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip)
+interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip, gpointer handler_ip_end)
 {
 	InterpFrame *iframe = (InterpFrame*)frame->interp_frame;
 	ThreadContext *context = get_context ();
@@ -5993,6 +6000,7 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 
 	memset (&clause_args, 0, sizeof (FrameClauseArgs));
 	clause_args.start_with_ip = (guint16*) handler_ip;
+	clause_args.end_at_ip = (guint16*) handler_ip_end;
 	clause_args.filter_exception = ex;
 	clause_args.base_frame = iframe;
 
