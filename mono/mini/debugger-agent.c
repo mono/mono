@@ -741,6 +741,8 @@ static SingleStepReq *ss_req;
 static int ss_count;
 #endif
 
+bool g_unity_pause_point_active;
+
 /* The protocol version of the client */
 static int major_version, minor_version;
 
@@ -1165,13 +1167,27 @@ void mono_debugger_install_sequence_point_check(volatile uint32_t* check)
 	g_unity_check = check;
 }
 
+gboolean unity_debugger_agent_is_global_breakpoint_active()
+{
+	if (!ss_req)
+		return FALSE;
+	else
+		return ss_req->global;
+}
+
+int32_t unity_debugger_agent_is_single_stepping ()
+{
+    return ss_count;
+}
+
 #define INC_PAUSE_COUNT() do { mono_atomic_inc_i32 (g_unity_check); } while (0)
 #define DEC_PAUSE_COUNT() do { mono_atomic_dec_i32 (g_unity_check); } while (0)
-
+#define UPDATE_PAUSE_STATE() do { g_unity_pause_point_active = unity_debugger_agent_is_global_breakpoint_active() || unity_debugger_agent_is_single_stepping(); } while (0)
 #else
 
 #define INC_PAUSE_COUNT()
 #define DEC_PAUSE_COUNT()
+#define UPDATE_PAUSE_STATE()
 
 #endif // RUNTIME_IL2CPP
 
@@ -6014,6 +6030,7 @@ start_single_stepping (void)
 {
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_inc_i32 (&ss_count);
+	UPDATE_PAUSE_STATE();
 	INC_PAUSE_COUNT();
 
 	if (val == 1) {
@@ -6032,6 +6049,7 @@ stop_single_stepping (void)
 {
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_dec_i32 (&ss_count);
+	UPDATE_PAUSE_STATE();
 	DEC_PAUSE_COUNT();
 
 	if (val == 0) {
@@ -6068,6 +6086,7 @@ ss_stop (SingleStepReq *ss_req)
 	if (ss_req->global) {
 		stop_single_stepping ();
 		ss_req->global = FALSE;
+		UPDATE_PAUSE_STATE();
 	}
 }
 
@@ -6435,6 +6454,7 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint* sp, MonoSeqPointI
 	} else {
 		ss_req->global = FALSE;
 	}
+	UPDATE_PAUSE_STATE();
 
 	if (ss_req_bp_cache)
 		g_hash_table_destroy (ss_req_bp_cache);
@@ -6508,6 +6528,7 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint
 	{
 		ss_req->global = FALSE;
 	}
+	UPDATE_PAUSE_STATE();
 }
 
 #endif // RUNTIME_IL2CPP
@@ -12342,17 +12363,9 @@ unity_debugger_agent_breakpoint(Il2CppSequencePoint* sequencePoint)
 	unity_process_breakpoint_inner(tls, FALSE, sequencePoint);
 }
 
-gboolean unity_debugger_agent_is_global_breakpoint_active()
+gboolean unity_pause_point_active()
 {
-	if (!ss_req)
-		return FALSE;
-	else
-		return ss_req->global;
-}
-
-int32_t unity_debugger_agent_is_single_stepping ()
-{
-    return ss_count;
+	return unity_debugger_agent_is_global_breakpoint_active() || unity_debugger_agent_is_single_stepping();
 }
 
 gboolean unity_sequence_point_active(Il2CppSequencePoint *seqPoint)
