@@ -516,3 +516,4 @@ System.Collections.Concurrent/ParallelTestHelper.cs
 System.Net.WebSockets/ClientWebSocketTest.cs
 ../../test-helpers/NetworkHelpers.cs
 ../../test-helpers/SocketResponder.cs
+../../test-helpers/PathHelpers.cs

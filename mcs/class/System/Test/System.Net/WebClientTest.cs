@@ -139,28 +139,26 @@ namespace MonoTests.System.Net
 		[Test] // DownloadFile (string, string)
 		public void DownloadFile1_Address_SchemeNotSupported ()
 		{
-			string file = Path.Combine (Path.GetTempPath (), "tmp.out");
-			WebClient wc = new WebClient ();
-			try {
-				wc.DownloadFile ("tp://scheme.notsupported", file);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.Response, "#5");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#6");
+			using (var tmpdir = new TempDirectory ()) {
+				string file = Path.Combine (tmpdir.Path, "tmp.out");
+				WebClient wc = new WebClient ();
+				try {
+					wc.DownloadFile ("tp://scheme.notsupported", file);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.Response, "#5");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#6");
 
-				// The URI prefix is not recognized
-				Exception inner = ex.InnerException;
-				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-			}
-			finally {
-				if (File.Exists (file))
-					File.Delete (file);
+					// The URI prefix is not recognized
+					Exception inner = ex.InnerException;
+					Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
+					Assert.IsNull (inner.InnerException, "#8");
+					Assert.IsNotNull (inner.Message, "#9");
+				}
 			}
 		}
 
@@ -200,28 +198,26 @@ namespace MonoTests.System.Net
 		[Test] // DownloadFile (Uri, string)
 		public void DownloadFile2_Address_SchemeNotSupported ()
 		{
-			string file = Path.Combine (Path.GetTempPath (), "tmp.out");
-			WebClient wc = new WebClient ();
-			try {
-				wc.DownloadFile (new Uri ("tp://scheme.notsupported"), file);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.Response, "#5");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#6");
+			using (var tmpdir = new TempDirectory ()) {
+				string file = Path.Combine (tmpdir.Path, "tmp.out");
+				WebClient wc = new WebClient ();
+				try {
+					wc.DownloadFile (new Uri ("tp://scheme.notsupported"), file);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.Response, "#5");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#6");
 
-				// The URI prefix is not recognized
-				Exception inner = ex.InnerException;
-				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
-				Assert.IsNull (inner.InnerException, "#8");
-				Assert.IsNotNull (inner.Message, "#9");
-			}
-			finally {
-				if (File.Exists (file))
-					File.Delete (file);
+					// The URI prefix is not recognized
+					Exception inner = ex.InnerException;
+					Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
+					Assert.IsNull (inner.InnerException, "#8");
+					Assert.IsNotNull (inner.Message, "#9");
+				}
 			}
 		}
 
@@ -873,30 +869,31 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (string, string)
 		public void UploadFile1_FileName_NotFound ()
 		{
-			var tempPath = Path.GetTempPath ();
-			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
+			using (var tempPath = new TempDirectory ()) {
+				string tempFile = Path.Combine (tempPath.Path, Path.GetRandomFileName ());
 
-			WebClient wc = new WebClient ();
-			try {
-				wc.UploadFile ("tp://scheme.notsupported",
-					tempFile);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
+				WebClient wc = new WebClient ();
+				try {
+					wc.UploadFile ("tp://scheme.notsupported",
+						tempFile);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.Response, "#4");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
 
-				// Could not find file "..."
-				FileNotFoundException inner = ex.InnerException
-					as FileNotFoundException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
-				Assert.IsNotNull (inner.FileName, "#8");
-				Assert.AreEqual (tempFile, inner.FileName, "#9");
-				Assert.IsNull (inner.InnerException, "#10");
-				Assert.IsNotNull (inner.Message, "#11");
+					// Could not find file "..."
+					FileNotFoundException inner = ex.InnerException
+						as FileNotFoundException;
+					Assert.IsNotNull (inner, "#6");
+					Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
+					Assert.IsNotNull (inner.FileName, "#8");
+					Assert.AreEqual (tempFile, inner.FileName, "#9");
+					Assert.IsNull (inner.InnerException, "#10");
+					Assert.IsNotNull (inner.Message, "#11");
+				}
 			}
 		}
 
@@ -967,30 +964,31 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string)
 		public void UploadFile2_FileName_NotFound ()
 		{
-			var tempPath = Path.GetTempPath ();
-			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
+			using (var tempPath = new TempDirectory ()) {
+				string tempFile = Path.Combine (tempPath.Path, Path.GetRandomFileName ());
 
-			WebClient wc = new WebClient ();
-			try {
-				wc.UploadFile (new Uri ("tp://scheme.notsupported"),
-					tempFile);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
+				WebClient wc = new WebClient ();
+				try {
+					wc.UploadFile (new Uri ("tp://scheme.notsupported"),
+						tempFile);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.Response, "#4");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
 
-				// Could not find file "..."
-				FileNotFoundException inner = ex.InnerException
-					as FileNotFoundException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
-				Assert.IsNotNull (inner.FileName, "#8");
-				Assert.AreEqual (tempFile, inner.FileName, "#9");
-				Assert.IsNull (inner.InnerException, "#10");
-				Assert.IsNotNull (inner.Message, "#11");
+					// Could not find file "..."
+					FileNotFoundException inner = ex.InnerException
+						as FileNotFoundException;
+					Assert.IsNotNull (inner, "#6");
+					Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
+					Assert.IsNotNull (inner.FileName, "#8");
+					Assert.AreEqual (tempFile, inner.FileName, "#9");
+					Assert.IsNull (inner.InnerException, "#10");
+					Assert.IsNotNull (inner.Message, "#11");
+				}
 			}
 		}
 
@@ -1061,30 +1059,31 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (string, string, string)
 		public void UploadFile3_FileName_NotFound ()
 		{
-			var tempPath = Path.GetTempPath ();
-			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
+			using (var tempPath = new TempDirectory ()) {
+				string tempFile = Path.Combine (tempPath.Path, Path.GetRandomFileName ());
 
-			WebClient wc = new WebClient ();
-			try {
-				wc.UploadFile ("tp://scheme.notsupported",
-					"POST", tempFile);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
+				WebClient wc = new WebClient ();
+				try {
+					wc.UploadFile ("tp://scheme.notsupported",
+						"POST", tempFile);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.Response, "#4");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
 
-				// Could not find file "..."
-				FileNotFoundException inner = ex.InnerException
-					as FileNotFoundException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
-				Assert.IsNotNull (inner.FileName, "#8");
-				Assert.AreEqual (tempFile, inner.FileName, "#9");
-				Assert.IsNull (inner.InnerException, "#10");
-				Assert.IsNotNull (inner.Message, "#11");
+					// Could not find file "..."
+					FileNotFoundException inner = ex.InnerException
+						as FileNotFoundException;
+					Assert.IsNotNull (inner, "#6");
+					Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
+					Assert.IsNotNull (inner.FileName, "#8");
+					Assert.AreEqual (tempFile, inner.FileName, "#9");
+					Assert.IsNull (inner.InnerException, "#10");
+					Assert.IsNotNull (inner.Message, "#11");
+				}
 			}
 		}
 
@@ -1155,30 +1154,31 @@ namespace MonoTests.System.Net
 		[Test] // UploadFile (Uri, string, string)
 		public void UploadFile4_FileName_NotFound ()
 		{
-			var tempPath = Path.GetTempPath ();
-			string tempFile = Path.Combine (tempPath, Path.GetRandomFileName ());
+			using (var tempPath = new TempDirectory ()) {
+				string tempFile = Path.Combine (tempPath.Path, Path.GetRandomFileName ());
 
-			WebClient wc = new WebClient ();
-			try {
-				wc.UploadFile (new Uri ("tp://scheme.notsupported"),
-					"POST", tempFile);
-				Assert.Fail ("#1");
-			} catch (WebException ex) {
-				// An error occurred performing a WebClient request
-				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsNull (ex.Response, "#4");
-				Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
+				WebClient wc = new WebClient ();
+				try {
+					wc.UploadFile (new Uri ("tp://scheme.notsupported"),
+						"POST", tempFile);
+					Assert.Fail ("#1");
+				} catch (WebException ex) {
+					// An error occurred performing a WebClient request
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.Response, "#4");
+					Assert.AreEqual (WebExceptionStatus.UnknownError, ex.Status, "#5");
 
-				// Could not find file "..."
-				FileNotFoundException inner = ex.InnerException
-					as FileNotFoundException;
-				Assert.IsNotNull (inner, "#6");
-				Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
-				Assert.IsNotNull (inner.FileName, "#8");
-				Assert.AreEqual (tempFile, inner.FileName, "#9");
-				Assert.IsNull (inner.InnerException, "#10");
-				Assert.IsNotNull (inner.Message, "#11");
+					// Could not find file "..."
+					FileNotFoundException inner = ex.InnerException
+						as FileNotFoundException;
+					Assert.IsNotNull (inner, "#6");
+					Assert.AreEqual (typeof (FileNotFoundException), inner.GetType (), "#7");
+					Assert.IsNotNull (inner.FileName, "#8");
+					Assert.AreEqual (tempFile, inner.FileName, "#9");
+					Assert.IsNull (inner.InnerException, "#10");
+					Assert.IsNotNull (inner.Message, "#11");
+				}
 			}
 		}
 
