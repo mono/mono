@@ -79,6 +79,17 @@
 #pragma warning(disable:4102) // label' : unreferenced label
 #endif
 
+/* Arguments that are passed when invoking only a finally/filter clause from the frame */
+typedef struct {
+	/* Where we start the frame execution from */
+	guint16 *start_with_ip;
+	/* When exiting this clause we also exit the frame */
+	int exit_clause;
+	/* Exception that we are filtering */
+	MonoException *filter_exception;
+	InterpFrame *base_frame;
+} FrameClauseArgs;
+
 static inline void
 init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod, stackval *method_args, stackval *method_retval)
 {
@@ -96,7 +107,7 @@ init_frame (InterpFrame *frame, InterpFrame *parent_frame, InterpMethod *rmethod
 	init_frame ((frame), (parent_frame), _rmethod, (method_args), (method_retval)); \
 	} while (0)
 
-#define interp_exec_method(frame, context) interp_exec_method_full ((frame), (context), NULL, NULL, -1, NULL)
+#define interp_exec_method(frame, context) interp_exec_method_full ((frame), (context), NULL)
 
 /*
  * List of classes whose methods will be executed by transitioning to JITted code.
@@ -112,7 +123,7 @@ static gboolean interp_init_done = FALSE;
 
 static char* dump_frame (InterpFrame *inv);
 static MonoArray *get_trace_ips (MonoDomain *domain, InterpFrame *top);
-static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame);
+static void interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args);
 static InterpMethod* lookup_method_pointer (gpointer addr);
 
 typedef void (*ICallMethod) (InterpFrame *frame);
@@ -2606,7 +2617,7 @@ static int opcode_counts[512];
  * If BASE_FRAME is not NULL, copy arguments/locals from BASE_FRAME.
  */
 static void 
-interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *start_with_ip, MonoException *filter_exception, int exit_at_finally, InterpFrame *base_frame)
+interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args)
 {
 	InterpFrame child_frame;
 	GSList *finally_ips = NULL;
@@ -2653,16 +2664,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 		EXCEPTION_CHECKPOINT;
 	}
 
-	if (!start_with_ip) {
+	if (!clause_args) {
 		frame->args = g_newa (char, rtm->alloca_size);
 		memset (frame->args, 0, rtm->alloca_size);
 
 		ip = rtm->code;
 	} else {
-		ip = start_with_ip;
-		if (base_frame) {
+		ip = clause_args->start_with_ip;
+		if (clause_args->base_frame) {
 			frame->args = g_newa (char, rtm->alloca_size);
-			memcpy (frame->args, base_frame->args, rtm->alloca_size);
+			memcpy (frame->args, clause_args->base_frame->args, rtm->alloca_size);
 		}
 	}
 	sp = frame->stack = (stackval *) ((char *) frame->args + rtm->args_size);
@@ -2674,8 +2685,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 	frame->locals = locals;
 	child_frame.parent = frame;
 
-	if (filter_exception) {
-		sp->data.p = filter_exception;
+	if (clause_args && clause_args->filter_exception) {
+		sp->data.p = clause_args->filter_exception;
 		sp++;
 	}
 
@@ -5181,7 +5192,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			int clause_index = *ip;
 			gboolean pending_abort = mono_threads_end_abort_protected_block ();
 
-			if (clause_index == exit_at_finally)
+			if (clause_args && clause_index == clause_args->exit_clause)
 				goto exit_frame;
 			while (sp > frame->stack) {
 				--sp;
@@ -5845,8 +5856,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 
 exit_frame:
 
-	if (base_frame)
-		memcpy (base_frame->args, frame->args, rtm->alloca_size);
+	if (clause_args && clause_args->base_frame)
+		memcpy (clause_args->base_frame->args, frame->args, rtm->alloca_size);
 
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
 	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
@@ -5941,9 +5952,13 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	InterpFrame *iframe = (InterpFrame*)frame->interp_frame;
 	ThreadContext *context = get_context ();
 	const unsigned short *old_ip = iframe->ip;
+	FrameClauseArgs clause_args;
 
+	memset (&clause_args, 0, sizeof (FrameClauseArgs));
+	clause_args.start_with_ip = (guint16*) handler_ip;
+	clause_args.exit_clause = clause_index;
 
-	interp_exec_method_full (iframe, context, (guint16*)handler_ip, NULL, clause_index, NULL);
+	interp_exec_method_full (iframe, context, &clause_args);
 	if (context->has_resume_state) {
 		return TRUE;
 	} else {
@@ -5965,6 +5980,7 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	ThreadContext *context = get_context ();
 	InterpFrame child_frame;
 	stackval retval;
+	FrameClauseArgs clause_args;
 
 	/*
 	 * Have to run the clause in a new frame which is a copy of IFRAME, since
@@ -5975,7 +5991,12 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	child_frame.retval = &retval;
 	child_frame.parent = iframe;
 
-	interp_exec_method_full (&child_frame, context, (guint16*)handler_ip, ex, clause_index, iframe);
+	memset (&clause_args, 0, sizeof (FrameClauseArgs));
+	clause_args.start_with_ip = (guint16*) handler_ip;
+	clause_args.filter_exception = ex;
+	clause_args.base_frame = iframe;
+
+	interp_exec_method_full (&child_frame, context, &clause_args);
 	/* ENDFILTER stores the result into child_frame->retval */
 	return child_frame.retval->data.i ? TRUE : FALSE;
 }
