@@ -2000,7 +2000,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		}
 	}
 
-	interp_push_lmf (&ext, frame);
+	INTERP_PUSH_LMF_WITH_CTX (frame, ext, &&exit_jit_call);
 
 	switch (pindex) {
 	case 0: {
@@ -2135,6 +2135,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		break;
 	}
 
+exit_jit_call:
 	return sp;
 }
 
