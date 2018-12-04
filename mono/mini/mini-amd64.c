@@ -2882,9 +2882,6 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 	}
 }
 
-#undef PTR_TO_GREG
-#undef GREG_TO_PTR
-
 /*
  * mono_arch_finish_dyn_call:
  *
@@ -2913,7 +2910,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
-		*(gpointer*)ret = GREG_TO_PTR(res);
+		*(gpointer*)ret = GREG_TO_PTR (res);
 		break;
 	case MONO_TYPE_I1:
 		*(gint8*)ret = res;
@@ -2981,6 +2978,9 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 		g_assert_not_reached ();
 	}
 }
+
+#undef PTR_TO_GREG
+#undef GREG_TO_PTR
 
 /* emit an exception if condition is fail */
 #define EMIT_COND_SYSTEM_EXCEPTION(cond,signed,exc_name)            \
