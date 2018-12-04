@@ -65,3 +65,6 @@
 [submodule "external/helix-binaries"]
 	path = external/helix-binaries
 	url = git://github.com/mono/helix-binaries.git
+[submodule "external/wpf"]
+	path = external/wpf
+	url = git://github.com/dotnet/wpf.git
