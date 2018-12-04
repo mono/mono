@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+    <PropertyGroup>
+        <AssemblyName>TestServices</AssemblyName>
+        <RootNamespace>TestServices</RootNamespace>
+        <DefineConstants>$(DefineConstants);FRAMEWORK_NATIVEMETHODS;CORE_NATIVEMETHODS;DRT</DefineConstants>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <NoWarn>$(NoWarn);CS0618</NoWarn>
+        <Platforms>AnyCPU;x64</Platforms>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+</Project>

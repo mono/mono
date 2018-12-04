@@ -1,0 +1,1038 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="XCRChoiceOnlyInAC" xml:space="preserve">
+    <value>Choice is valid only in AlternateContent.</value>
+  </data>
+  <data name="XCRChoiceAfterFallback" xml:space="preserve">
+    <value>Choice cannot follow a Fallback.</value>
+  </data>
+  <data name="XCRRequiresAttribNotFound" xml:space="preserve">
+    <value>Choice must contain a Requires attribute.</value>
+  </data>
+  <data name="XCRInvalidRequiresAttribute" xml:space="preserve">
+    <value>Requires attribute must contain a valid namespace prefix.</value>
+  </data>
+  <data name="XCRFallbackOnlyInAC" xml:space="preserve">
+    <value>Fallback is valid only in AlternateContent.</value>
+  </data>
+  <data name="XCRChoiceNotFound" xml:space="preserve">
+    <value>AlternateContent must contain one or more Choice elements.</value>
+  </data>
+  <data name="XCRMultipleFallbackFound" xml:space="preserve">
+    <value>AlternateContent must contain only one Fallback element.</value>
+  </data>
+  <data name="XCRInvalidAttribInElement" xml:space="preserve">
+    <value>'{0}' attribute is not valid for '{1}' element.</value>
+  </data>
+  <data name="XCRUnknownCompatElement" xml:space="preserve">
+    <value>Unrecognized Compatibility element '{0}'.</value>
+  </data>
+  <data name="XCRInvalidACChild" xml:space="preserve">
+    <value>'{0}' element is not a valid child of AlternateContent. Only Choice and Fallback elements are valid children of an AlternateContent element.</value>
+  </data>
+  <data name="XCRInvalidFormat" xml:space="preserve">
+    <value>'{0}' format is not valid.</value>
+  </data>
+  <data name="XCRUndefinedPrefix" xml:space="preserve">
+    <value>'{0}' prefix is not defined.</value>
+  </data>
+  <data name="XCRUnknownCompatAttrib" xml:space="preserve">
+    <value>Unrecognized compatibility attribute '{0}'.</value>
+  </data>
+  <data name="XCRNSProcessContentNotIgnorable" xml:space="preserve">
+    <value>'{0}' namespace cannot process content; it must be declared Ignorable first.</value>
+  </data>
+  <data name="XCRDuplicateProcessContent" xml:space="preserve">
+    <value>Duplicate ProcessContent declaration for element '{1}' in namespace '{0}'.</value>
+  </data>
+  <data name="XCRInvalidProcessContent" xml:space="preserve">
+    <value>Cannot have both a specific and a wildcard ProcessContent declaration for namespace '{0}'.</value>
+  </data>
+  <data name="XCRDuplicateWildcardProcessContent" xml:space="preserve">
+    <value>Duplicate wildcard ProcessContent declaration for namespace '{0}'.</value>
+  </data>
+  <data name="XCRMustUnderstandFailed" xml:space="preserve">
+    <value>MustUnderstand condition failed on namespace '{0}'.</value>
+  </data>
+  <data name="XCRNSPreserveNotIgnorable" xml:space="preserve">
+    <value>'{0}' namespace cannot preserve items; it must be declared Ignorable first.</value>
+  </data>
+  <data name="XCRDuplicatePreserve" xml:space="preserve">
+    <value>Duplicate Preserve declaration for element '{1}' in namespace '{0}'.</value>
+  </data>
+  <data name="XCRInvalidPreserve" xml:space="preserve">
+    <value>Cannot have both a specific and a wildcard Preserve declaration for namespace '{0}'.</value>
+  </data>
+  <data name="XCRDuplicateWildcardPreserve" xml:space="preserve">
+    <value>Duplicate wildcard Preserve declaration for namespace '{0}'.</value>
+  </data>
+  <data name="XCRInvalidXMLName" xml:space="preserve">
+    <value>'{0}' attribute value is not a valid XML name.</value>
+  </data>
+  <data name="XCRCompatCycle" xml:space="preserve">
+    <value>There is a cycle of XML compatibility definitions, such that namespace '{0}' overrides itself. This could be due to inconsistent XmlnsCompatibilityAttributes in different assemblies. Please change the definitions to eliminate this cycle, or pass a non-conflicting set of Reference Assemblies in the XamlSchemaContext constructor.</value>
+  </data>
+  <data name="BadXmlnsDefinition" xml:space="preserve">
+    <value>An XmlnsDefinitionAttribute in assembly '{0}' is missing a required property. Set both the ClrNamespace and XmlNamespace properties, or remove the XmlnsDefinitionAttribute.</value>
+  </data>
+  <data name="BadXmlnsCompat" xml:space="preserve">
+    <value>An XmlnsCompatibleWithAttribute in assembly '{0}' is missing a required property. Set both the NewNamespace and OldNamespace properties, or remove the XmlnsCompatibleWithAttribute.</value>
+  </data>
+  <data name="BadXmlnsPrefix" xml:space="preserve">
+    <value>An XmlnsPrefixAttribute in assembly '{0}' is missing a required property. Set both the Prefix and XmlNamespace properties, or remove the XmlnsPrefixAttribute.</value>
+  </data>
+  <data name="BadInternalsVisibleTo1" xml:space="preserve">
+    <value>One of the InternalsVisibleToAttribute values in assembly '{0}' is not a valid assembly name. Use the format 'AssemblyShortName' or 'AssemblyShortName, PublicKey=...'.</value>
+  </data>
+  <data name="BadInternalsVisibleTo2" xml:space="preserve">
+    <value>InternalsVisibleToAttribute value '{0}' in assembly '{1}' is not a valid assembly name. Use the format 'AssemblyShortName' or 'AssemblyShortName, PublicKey=...'.</value>
+  </data>
+  <data name="DuplicateXmlnsCompat" xml:space="preserve">
+    <value>There is more than one XmlnsCompatibleWithAttribute in assembly '{0}' for OldNamespace '{1}'. Remove the extra attribute(s).</value>
+  </data>
+  <data name="XmlnsCompatCycle" xml:space="preserve">
+    <value>There is a cycle of XmlnsCompatibleWithAttribute definitions in assembly '{0}', such that namespace '{1}' overrides itself. Change the definitions to eliminate this cycle.</value>
+  </data>
+  <data name="UriNotFound" xml:space="preserve">
+    <value>Uri '{0}' was not found.</value>
+  </data>
+  <data name="DuplicateXmlnsCompatAcrossAssemblies" xml:space="preserve">
+    <value>There are conflicting XmlnsCompatibleWithAttributes in assemblies '{0}' and '{1}' for OldNamespace '{2}'. Change the attributes to have the same NewNamespace, or pass a non-conflicting set of Reference Assemblies in the XamlSchemaContext constructor.</value>
+  </data>
+  <data name="UnresolvedNamespace" xml:space="preserve">
+    <value>XAML namespace '{0}' is not resolved.</value>
+  </data>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>Type reference cannot find type named '{0}'.</value>
+  </data>
+  <data name="TypeNotPublic" xml:space="preserve">
+    <value>Type '{0}' is not public.</value>
+  </data>
+  <data name="TooManyTypeConverterAttributes" xml:space="preserve">
+    <value>Only one TypeConverter attribute is allowed on a type.</value>
+  </data>
+  <data name="CannotFindAssembly" xml:space="preserve">
+    <value>Cannot find Assembly '{0}' in URI '{1}'.</value>
+  </data>
+  <data name="MissingAssemblyName" xml:space="preserve">
+    <value>No local assembly provided to complete URI='{0}'.</value>
+  </data>
+  <data name="InvalidTypeArgument" xml:space="preserve">
+    <value>Type argument '{0}' is not a valid type.</value>
+  </data>
+  <data name="FileNotFoundExceptionMessage" xml:space="preserve">
+    <value>Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the specified file.</value>
+  </data>
+  <data name="DirectiveNotFound" xml:space="preserve">
+    <value>Directive '{0}' was not found in TargetNamespace '{1}'.</value>
+  </data>
+  <data name="MustNotCallSetter" xml:space="preserve">
+    <value>This setter is not intended to be used directly from your code. Do not call this setter.</value>
+  </data>
+  <data name="MissingLookPropertyBit" xml:space="preserve">
+    <value>Missing case handler in LookupPropertyBit.</value>
+  </data>
+  <data name="TooManyAttributes" xml:space="preserve">
+    <value>Error with member '{0}'.'{1}'.  It has more than one '{2}'.</value>
+  </data>
+  <data name="GetTargetTypeOnNonAttachableMember" xml:space="preserve">
+    <value>Cannot get TargetType on a non-attachable Member.</value>
+  </data>
+  <data name="SetTargetTypeOnNonAttachableMember" xml:space="preserve">
+    <value>Cannot set TargetType on a non-attachable Member.</value>
+  </data>
+  <data name="InvalidExpression" xml:space="preserve">
+    <value>Invalid expression: '{0}'</value>
+  </data>
+  <data name="MissingKey" xml:space="preserve">
+    <value>Missing key value on '{0}' object.</value>
+  </data>
+  <data name="PropertyDoesNotTakeText" xml:space="preserve">
+    <value>'{0}' property on '{1}' does not allow you to specify text.</value>
+  </data>
+  <data name="EventCannotBeAssigned" xml:space="preserve">
+    <value>'{0}' event cannot be assigned a value that is not assignable to '{1}'.</value>
+  </data>
+  <data name="TypeConverterFailed" xml:space="preserve">
+    <value>Failed to create a '{0}' from the text '{1}'.</value>
+  </data>
+  <data name="CantCreateUnknownType" xml:space="preserve">
+    <value>Cannot create unknown type '{0}'.</value>
+  </data>
+  <data name="CantSetUnknownProperty" xml:space="preserve">
+    <value>Cannot set unknown member '{0}'.</value>
+  </data>
+  <data name="MissingImplicitProperty" xml:space="preserve">
+    <value>Missing implicit property case.</value>
+  </data>
+  <data name="BuilderStackNotEmptyOnClose" xml:space="preserve">
+    <value>Builder Stack is not empty when end of XamlNode stream was reached.</value>
+  </data>
+  <data name="CannotSetSchemaContext" xml:space="preserve">
+    <value>Cannot set SchemaContext on ObjectWriter.</value>
+  </data>
+  <data name="MissingImplicitPropertyTypeCase" xml:space="preserve">
+    <value>Missing case for ImplicitPropertyType.</value>
+  </data>
+  <data name="ConstructImplicitType" xml:space="preserve">
+    <value>Failed attempting to create an Implicit Type with a constructor.</value>
+  </data>
+  <data name="NonMEWithPositionalParameters" xml:space="preserve">
+    <value>Type with positional parameters is not a markup extension.</value>
+  </data>
+  <data name="PositionalParamsWrongLength" xml:space="preserve">
+    <value>GetPositionalParameters returned the wrong length vector.</value>
+  </data>
+  <data name="BadStateObjectWriter" xml:space="preserve">
+    <value>Bad state in ObjectWriter. Non directive missing instance.</value>
+  </data>
+  <data name="DuplicateMemberSet" xml:space="preserve">
+    <value>'{0}' property has already been set on '{1}'.</value>
+  </data>
+  <data name="NotAmbientProperty" xml:space="preserve">
+    <value>'{0}'.'{1}' is not an ambient property.</value>
+  </data>
+  <data name="NotAmbientType" xml:space="preserve">
+    <value>'{0}' is not an ambient type.</value>
+  </data>
+  <data name="NoSuchConstructor" xml:space="preserve">
+    <value>No constructor with '{0}' arguments for '{1}'.</value>
+  </data>
+  <data name="UnresolvedForwardReferences" xml:space="preserve">
+    <value>Unresolved reference '{0}'.</value>
+  </data>
+  <data name="CantAssignRootInstance" xml:space="preserve">
+    <value>Cannot assign root instance of type '{0}' to type '{1}'.</value>
+  </data>
+  <data name="ForwardRefDirectives" xml:space="preserve">
+    <value>Attempt to reference named object(s) '{0}' which have not yet been defined. Forward references, or references to objects that contain forward references, are not supported on directives other than Key.</value>
+  </data>
+  <data name="TransitiveForwardRefDirectives" xml:space="preserve">
+    <value>Object '{0}' assigned to directive '{1}' has properties which are references to named object(s) '{2}' which have not yet been defined. Forward references, or references to objects that contain forward references, are not supported inside object construction directives.</value>
+  </data>
+  <data name="TypeHasNoContentProperty" xml:space="preserve">
+    <value>Type '{0}' does not have a content property. Specify the name of the property to set, or add a ContentPropertyAttribute or TypeConverterAttribute on the type.</value>
+  </data>
+  <data name="GetObjectNull" xml:space="preserve">
+    <value>Collection property '{0}'.'{1}' is null.</value>
+  </data>
+  <data name="NotAssignableFrom" xml:space="preserve">
+    <value>The type '{0}' is not assignable from the type '{1}'.</value>
+  </data>
+  <data name="NameScopeNameNotEmptyString" xml:space="preserve">
+    <value>Name cannot be an empty string.</value>
+  </data>
+  <data name="NameScopeNameNotFound" xml:space="preserve">
+    <value>Name '{0}' was not found.</value>
+  </data>
+  <data name="NameScopeDuplicateNamesNotAllowed" xml:space="preserve">
+    <value>Cannot register duplicate name '{0}' in this scope.</value>
+  </data>
+  <data name="NameScopeInvalidIdentifierName" xml:space="preserve">
+    <value>'{0}' name is not valid for identifier.</value>
+  </data>
+  <data name="NameScopeException" xml:space="preserve">
+    <value>Could not register named object. {0}</value>
+  </data>
+  <data name="ObjectWriterTypeNotAllowed" xml:space="preserve">
+    <value>'{0}' blocked the use of type '{1}' in XAML. If you want to load this type, change '{0}'.GetXamlType to return a non-null value for this type, or pass a different value in the schemaContext parameter of the XamlObjectWriter constructor.</value>
+  </data>
+  <data name="DirectiveNotAtRoot" xml:space="preserve">
+    <value>Directive '{0}' is only allowed on the root object. Remove this directive or move it to the root of the document.</value>
+  </data>
+  <data name="DirectiveMustBeString" xml:space="preserve">
+    <value>Directive '{0}' must be a value of type string. Remove this directive or change it to a string value.</value>
+  </data>
+  <data name="XClassMustMatchRootInstance" xml:space="preserve">
+    <value>Specified class name '{0}' doesn't match actual root instance type '{1}'. Remove the Class directive or provide an instance via XamlObjectWriterSettings.RootObjectInstance.</value>
+  </data>
+  <data name="SavedContextSchemaContextMismatch" xml:space="preserve">
+    <value>schemaContext parameter cannot be different from savedContext.SchemaContext</value>
+  </data>
+  <data name="SavedContextSchemaContextNull" xml:space="preserve">
+    <value>savedContext.SchemaContext cannot be null</value>
+  </data>
+  <data name="SettingPropertiesIsNotAllowed" xml:space="preserve">
+    <value>Setting properties is not allowed on a type converted instance. Property = '{0}'</value>
+  </data>
+  <data name="LateConstructionDirective" xml:space="preserve">
+    <value>Construction directive '{0}' must be an attribute or the first property element.</value>
+  </data>
+  <data name="ProvideValueCycle" xml:space="preserve">
+    <value>Cannot call MarkupExtension.ProvideValue because of a cyclical dependency. Properties inside a MarkupExtension cannot reference objects that reference the result of the MarkupExtension. The affected MarkupExtensions are:</value>
+  </data>
+  <data name="AttachedPropOnFwdRefTC" xml:space="preserve">
+    <value>Cannot set property '{0}' on object '{1}' because the object is a forward or incompletely initialized reference. The unresolved name(s) are: '{2}'.</value>
+  </data>
+  <data name="InitializationSyntaxWithoutTypeConverter" xml:space="preserve">
+    <value>Type '{0}' cannot be initialized from text (XamlLanguage.Initialization).  Add a TypeConverter to this type or change the XAML to use a constructor or factory method.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_SO" xml:space="preserve">
+    <value>XAML Node Stream: StartObject '{0}' requires a StartMember after StartObject '{1}'.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_NS" xml:space="preserve">
+    <value>XAML Node Stream: '{0}'='{1}' Namespace Declaration requires a StartMember after StartObject '{2}'.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_GO" xml:space="preserve">
+    <value>XAML Node Stream: GetObject requires a StartMember after StartObject '{0}'.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_GO_noType" xml:space="preserve">
+    <value>XAML Node Stream: GetObject must follow a StartObject and StartMember.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_V" xml:space="preserve">
+    <value>XAML Node Stream: Value of '{0}' requires a StartMember after StartObject '{1}'.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_V_noType" xml:space="preserve">
+    <value>XAML Node Stream: Value of '{0}' must follow a StartObject and StartMember.</value>
+  </data>
+  <data name="OpenPropertyInCurrentFrame_EO" xml:space="preserve">
+    <value>XAML Node Stream: Missing EndMember for '{0}.{1}' before EndObject.</value>
+  </data>
+  <data name="OpenPropertyInCurrentFrame_SM" xml:space="preserve">
+    <value>XAML Node Stream: Missing EndMember for '{0}.{1}' before StartMember '{2}'.</value>
+  </data>
+  <data name="NoTypeInCurrentFrame_SM" xml:space="preserve">
+    <value>XAML Node Stream: Missing StartObject before StartMember '{0}'.</value>
+  </data>
+  <data name="NoTypeInCurrentFrame_EO" xml:space="preserve">
+    <value>XAML Node Stream: Missing CurrentObject before EndObject.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_EM" xml:space="preserve">
+    <value>XAML Node Stream: Missing StartMember on Type '{0}' before EndMember.</value>
+  </data>
+  <data name="NoPropertyInCurrentFrame_EM_noType" xml:space="preserve">
+    <value>XAML Node Stream: EndMember must follow StartObject and StartMember.</value>
+  </data>
+  <data name="ValueMustBeFollowedByEndMember" xml:space="preserve">
+    <value>XAML Node Stream: Value nodes must be followed by EndMember.</value>
+  </data>
+  <data name="DictionaryFirstChanceException" xml:space="preserve">
+    <value>Dictionary of type '{0}' cannot add key '{1}'. A TypeConverter will convert the key to type '{2}'. To avoid seeing this error, override System.Collections.IDictionary.Add and perform the conversion there.</value>
+  </data>
+  <data name="CannotSetBaseUri" xml:space="preserve">
+    <value>BaseUri can only be set once at the root node (XamlXmlReader may provide a default at the root node).</value>
+  </data>
+  <data name="DependsOnMissing" xml:space="preserve">
+    <value>'{0}'.'{1}' Depends on '{0}'.{1}', which was not set.</value>
+  </data>
+  <data name="CloseInsideTemplate" xml:space="preserve">
+    <value>Close called while inside a deferred load section.</value>
+  </data>
+  <data name="UnexpectedClose" xml:space="preserve">
+    <value>Unexpected close of XAML Node Stream.</value>
+  </data>
+  <data name="TemplateNotCollected" xml:space="preserve">
+    <value>Deferred load section was not collected in '{0}'.</value>
+  </data>
+  <data name="DeferredPropertyNotCollected" xml:space="preserve">
+    <value>Deferred member was not collected in '{0}'.</value>
+  </data>
+  <data name="MissingCase" xml:space="preserve">
+    <value>Missing case '{0}' in DeferringWriter'{1}' method.</value>
+  </data>
+  <data name="NamespaceNotFound" xml:space="preserve">
+    <value>Namespace '{0}' was not found in scope.</value>
+  </data>
+  <data name="NameScopeOnRootInstance" xml:space="preserve">
+    <value>Cannot attach NameScope to null root instance.</value>
+  </data>
+  <data name="MissingNameResolver" xml:space="preserve">
+    <value>Service provider is missing the INameResolver service.</value>
+  </data>
+  <data name="ObjectNotTcOrMe" xml:space="preserve">
+    <value>Argument should be a Type Converter, Markup Extension or Null.</value>
+  </data>
+  <data name="SimpleFixupsMustHaveOneName" xml:space="preserve">
+    <value>Directly Assignable Fixups must only have one name.</value>
+  </data>
+  <data name="UnexpectedTokenAfterME" xml:space="preserve">
+    <value>Unexpected token after end of markup extension.</value>
+  </data>
+  <data name="WhitespaceAfterME" xml:space="preserve">
+    <value>White space is not allowed after end of markup extension.</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>Unexpected token '{0}' in rule: '{1}', in '{2}'.</value>
+  </data>
+  <data name="NoConstructorWithNArugments" xml:space="preserve">
+    <value>A Constructor for '{0}' with '{1}' arguments was not found.</value>
+  </data>
+  <data name="MissingComma1" xml:space="preserve">
+    <value>Unexpected equals sign '=' following '{0}'. Check for a missing comma separator.</value>
+  </data>
+  <data name="MissingComma2" xml:space="preserve">
+    <value>Unexpected equals sign '=' following '{0}'='{1}'. Check for a missing comma separator.</value>
+  </data>
+  <data name="TypeNameCannotHavePeriod" xml:space="preserve">
+    <value>Type name '{0}' cannot have a dot '.'.</value>
+  </data>
+  <data name="UnexpectedNodeType" xml:space="preserve">
+    <value>Unexpected '{0}' in parse rule '{1}'.</value>
+  </data>
+  <data name="ElementRuleException" xml:space="preserve">
+    <value>Element ::= . EmptyElement | ( StartElement ElementBody ).</value>
+  </data>
+  <data name="EmptyElementRuleException" xml:space="preserve">
+    <value>EmptyElement ::= . EMPTYELEMENT DIRECTIVE* ATTRIBUTE*.</value>
+  </data>
+  <data name="EmptyPropertyElementRuleException" xml:space="preserve">
+    <value>EmptyPropertyElement ::= EMPTYPROPERTYELEMENT.</value>
+  </data>
+  <data name="StartElementRuleException" xml:space="preserve">
+    <value>StartElement ::= . ELEMENT DIRECTIVE*.</value>
+  </data>
+  <data name="ElementBodyRuleException" xml:space="preserve">
+    <value>ElementBody ::= ATTRIBUTE* ( PropertyElement | Content )* . ENDTAG.</value>
+  </data>
+  <data name="NonemptyPropertyElementRuleException" xml:space="preserve">
+    <value>NonemptyPropertyElement ::= . PROPERTYELEMENT Content? ENDTAG.</value>
+  </data>
+  <data name="PropertyElementRuleException" xml:space="preserve">
+    <value>PropertyElement ::= EmptyPropertyElement | NonemptyPropertyElement</value>
+  </data>
+  <data name="MissingTagInNamespace" xml:space="preserve">
+    <value>Missing '{0}' in URI '{1}'.</value>
+  </data>
+  <data name="AssemblyTagMissing" xml:space="preserve">
+    <value>Part between semicolon ';' and equals sign '=' is not '{0}' URI '{1}'.</value>
+  </data>
+  <data name="UnknownAttributeProperty" xml:space="preserve">
+    <value>['{0}'('{1}')] on '{2}' is not a known property.</value>
+  </data>
+  <data name="NotDeclaringTypeAttributeProperty" xml:space="preserve">
+    <value>['{0}'('{1}')] on '{2}' is not a property declared on this type.</value>
+  </data>
+  <data name="UsableDuringInitializationOnME" xml:space="preserve">
+    <value>Error with type '{0}'. MarkupExtensions cannot use the 'UsableDuringInitialization' attribute.</value>
+  </data>
+  <data name="TooManyAttributesOnType" xml:space="preserve">
+    <value>Error with type '{0}'.  It has more than one '{1}'.</value>
+  </data>
+  <data name="MissingPropertyCaseClrType" xml:space="preserve">
+    <value>Missing case in ClrType 'Member' lookup.</value>
+  </data>
+  <data name="UnhandledBoolTypeBit" xml:space="preserve">
+    <value>Unhandled BoolTypeBit.</value>
+  </data>
+  <data name="AmbiguousCollectionItemType" xml:space="preserve">
+    <value>Cannot determine the item type of collection type '{0}' because it has more than one Add method or ICollection&lt;T&gt; implementation. To make this collection type usable in XAML, add a public Add(object) method, implement System.Collections.IList or a single System.Collections.Generic.ICollection&lt;T&gt;.</value>
+  </data>
+  <data name="AmbiguousDictionaryItemType" xml:space="preserve">
+    <value>Cannot determine the item type of dictionary type '{0}' because it has more than one Add method or IDictionary&lt;K,V&gt; implementation. To make this dictionary type usable in XAML, add a public Add(object,object) method, implement System.Collections.IDictionary or a single System.Collections.Generic.IDictionary&lt;K,V&gt;.</value>
+  </data>
+  <data name="MarkupExtensionWithDuplicateArity" xml:space="preserve">
+    <value>Cannot determine the positional parameters for type '{0}' because it has more than one constructor overload with '{1}' parameters. To make this markup extension usable in XAML, remove the duplicate constructor overload(s) or set XamlSchemaContextSettings.SupportMarkupExtensionsWithDuplicateArity to true.</value>
+  </data>
+  <data name="SetOnlyProperty" xml:space="preserve">
+    <value>'{0}'.'{1}' is a property without a getter and is not a valid XAML property.</value>
+  </data>
+  <data name="XaslTypePropertiesNotImplemented" xml:space="preserve">
+    <value>Need to implement public/internal sorting.</value>
+  </data>
+  <data name="AttachableMemberNotFound" xml:space="preserve">
+    <value>Attachable member '{0}' was not found.</value>
+  </data>
+  <data name="PropertyNotImplemented" xml:space="preserve">
+    <value>'{0}' is not implemented.</value>
+  </data>
+  <data name="PrefixNotFound" xml:space="preserve">
+    <value>Prefix '{0}' does not map to a namespace.</value>
+  </data>
+  <data name="LineNumberAndPosition" xml:space="preserve">
+    <value>'{0}' Line number '{1}' and line position '{2}'.</value>
+  </data>
+  <data name="LineNumberOnly" xml:space="preserve">
+    <value>'{0}' Line number '{1}'.</value>
+  </data>
+  <data name="QuoteCharactersOutOfPlace" xml:space="preserve">
+    <value>Quote characters ' or " are only allowed at the start of values.</value>
+  </data>
+  <data name="UnclosedQuote" xml:space="preserve">
+    <value>Unclosed quoted value.</value>
+  </data>
+  <data name="MalformedPropertyName" xml:space="preserve">
+    <value>Cannot parse the malformed property name '{0}'.</value>
+  </data>
+  <data name="AttributeUnhandledKind" xml:space="preserve">
+    <value>An unhandled scanner attribute was encountered.</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Unknown type '{0}'.</value>
+  </data>
+  <data name="UnknownMember" xml:space="preserve">
+    <value>Unknown member '{0}' on '{1}'.</value>
+  </data>
+  <data name="UnknownMemberSimple" xml:space="preserve">
+    <value>Unknown member '{0}'.</value>
+  </data>
+  <data name="UnknownMemberOnUnknownType" xml:space="preserve">
+    <value>Unknown member '{0}' on unknown type '{1}'.</value>
+  </data>
+  <data name="MemberIsInternal" xml:space="preserve">
+    <value>Member '{0}' on type '{1}' is internal.</value>
+  </data>
+  <data name="NoAttributeUsage" xml:space="preserve">
+    <value>'{0}' is not allowed in attribute usage.</value>
+  </data>
+  <data name="NoElementUsage" xml:space="preserve">
+    <value>'{0}' is not allowed in element usage.</value>
+  </data>
+  <data name="InvalidXamlMemberName" xml:space="preserve">
+    <value>'{0}' is not a valid XAML member name.</value>
+  </data>
+  <data name="ParentlessPropertyElement" xml:space="preserve">
+    <value>The property element '{0}' is not contained by an object element.</value>
+  </data>
+  <data name="SchemaContextNotInitialized" xml:space="preserve">
+    <value>SchemaContext on writer must be initialized before accessing the reader.</value>
+  </data>
+  <data name="ThreadAlreadyStarted" xml:space="preserve">
+    <value>Thread is already started.</value>
+  </data>
+  <data name="SchemaContextNull" xml:space="preserve">
+    <value>SchemaContext cannot be null.</value>
+  </data>
+  <data name="CloseXamlWriterBeforeReading" xml:space="preserve">
+    <value>Must close XamlWriter before reading from XamlNodeList.</value>
+  </data>
+  <data name="CannotWriteClosedWriter" xml:space="preserve">
+    <value>Cannot write on a closed XamlWriter.</value>
+  </data>
+  <data name="WriterIsClosed" xml:space="preserve">
+    <value>An attempt was made to write to a XamlWriter that has had its Closed method called.</value>
+  </data>
+  <data name="DirectiveGetter" xml:space="preserve">
+    <value>Directive getter is not implemented.</value>
+  </data>
+  <data name="BadMethod" xml:space="preserve">
+    <value>Bad method '{0}' on '{1}'.</value>
+  </data>
+  <data name="CannotResolveTypeForFactoryMethod" xml:space="preserve">
+    <value>Cannot resolve type '{0}' for method '{1}'.</value>
+  </data>
+  <data name="CannotCreateBadType" xml:space="preserve">
+    <value>Cannot create an instance of '{0}' because XamlType is not valid.</value>
+  </data>
+  <data name="CannotCreateBadEventDelegate" xml:space="preserve">
+    <value>Cannot create an instance of '{0}' because XamlType is not valid.</value>
+  </data>
+  <data name="AttachableEventNotImplemented" xml:space="preserve">
+    <value>Attachable events are not implemented.</value>
+  </data>
+  <data name="ListNotIList" xml:space="preserve">
+    <value>List collection is not an IList.</value>
+  </data>
+  <data name="ArrayAddNotImplemented" xml:space="preserve">
+    <value>Array Add method is not implemented.</value>
+  </data>
+  <data name="NoAddMethodFound" xml:space="preserve">
+    <value>No Add methods found on type '{0}' for a value of type '{1}'.</value>
+  </data>
+  <data name="MissingTypeConverter" xml:space="preserve">
+    <value>Creating from text without a TypeConverter is not allowed.</value>
+  </data>
+  <data name="CantSetReadonlyProperty" xml:space="preserve">
+    <value>Cannot set read-only property '{0}'.</value>
+  </data>
+  <data name="CantGetWriteonlyProperty" xml:space="preserve">
+    <value>Cannot get write-only property '{0}'.</value>
+  </data>
+  <data name="XmlDataNull" xml:space="preserve">
+    <value>The value for XmlData property '{0}' is null or not IXmlSerializable.</value>
+  </data>
+  <data name="XmlValueNotReader" xml:space="preserve">
+    <value>The value for XmlData property '{0}' is not an XmlReader.</value>
+  </data>
+  <data name="NameNotFound" xml:space="preserve">
+    <value>Name resolution failure. '{0}' was not found.</value>
+  </data>
+  <data name="MustHaveName" xml:space="preserve">
+    <value>Reference must have a Name to resolve.</value>
+  </data>
+  <data name="MethodInvocation" xml:space="preserve">
+    <value>The invocation of a method '{0}' that matches the specified binding constraints threw an exception.</value>
+  </data>
+  <data name="GetValue" xml:space="preserve">
+    <value>Get property '{0}' threw an exception.</value>
+  </data>
+  <data name="SetValue" xml:space="preserve">
+    <value>Set property '{0}' threw an exception.</value>
+  </data>
+  <data name="AddCollection" xml:space="preserve">
+    <value>Add value to collection of type '{0}' threw an exception.</value>
+  </data>
+  <data name="AddDictionary" xml:space="preserve">
+    <value>Add value to dictionary of type '{0}' threw an exception.</value>
+  </data>
+  <data name="SetConnectionId" xml:space="preserve">
+    <value>Set connectionId threw an exception.</value>
+  </data>
+  <data name="InitializationGuard" xml:space="preserve">
+    <value>Initialization of '{0}' threw an exception.</value>
+  </data>
+  <data name="SetUriBase" xml:space="preserve">
+    <value>Setting xml:base on '{0}' threw an exception.</value>
+  </data>
+  <data name="ProvideValue" xml:space="preserve">
+    <value>Provide value on '{0}' threw an exception.</value>
+  </data>
+  <data name="SetXmlInstance" xml:space="preserve">
+    <value>Setting xml instance on '{0}' threw an exception.</value>
+  </data>
+  <data name="GetConverterInstance" xml:space="preserve">
+    <value>Getting instance of '{0}' threw an exception.</value>
+  </data>
+  <data name="DeferredLoad" xml:space="preserve">
+    <value>Deferred load threw an exception.</value>
+  </data>
+  <data name="DeferredSave" xml:space="preserve">
+    <value>Save of deferred-load content threw an exception.</value>
+  </data>
+  <data name="FactoryReturnedNull" xml:space="preserve">
+    <value>The factory method '{0}' that matches the specified binding constraints returned null.</value>
+  </data>
+  <data name="ConstructorInvocation" xml:space="preserve">
+    <value>The invocation of the constructor on type '{0}' that matches the specified binding constraints threw an exception.</value>
+  </data>
+  <data name="NoDefaultConstructor" xml:space="preserve">
+    <value>No default constructor found for type '{0}'. You can use the Arguments or FactoryMethod directives to construct this type.</value>
+  </data>
+  <data name="NoConstructor" xml:space="preserve">
+    <value>No matching constructor found on type '{0}'. You can use the Arguments or FactoryMethod directives to construct this type.</value>
+  </data>
+  <data name="DeferringLoaderInstanceNull" xml:space="preserve">
+    <value>Cannot get a XamlDeferringLoader from XamlValueConverter '{0}' because its ConverterInstance property is null.</value>
+  </data>
+  <data name="TypeConverterFailed2" xml:space="preserve">
+    <value>Failed to convert '{0}' to type '{1}'.</value>
+  </data>
+  <data name="CanConvertFromFailed" xml:space="preserve">
+    <value>Failed to check convertibility from type '{0}' using '{1}'. This generally indicates an incorrectly implemented TypeConverter.</value>
+  </data>
+  <data name="CanConvertToFailed" xml:space="preserve">
+    <value>Failed to check convertibility to type '{0}' using '{1}'. This generally indicates an incorrectly implemented TypeConverter.</value>
+  </data>
+  <data name="ShouldSerializeFailed" xml:space="preserve">
+    <value>ShouldSerialize check failed for member '{0}'.</value>
+  </data>
+  <data name="GetItemsReturnedNull" xml:space="preserve">
+    <value>XamlTypeInvoker.GetItems returned null for type '{0}'. This generally indicates an incorrectly implemented collection type.</value>
+  </data>
+  <data name="GetItemsException" xml:space="preserve">
+    <value>Retrieving items in collection or dictionary of type '{0}' threw an exception.</value>
+  </data>
+  <data name="APSException" xml:space="preserve">
+    <value>Enumerating attached properties on object '{0}' threw an exception.</value>
+  </data>
+  <data name="CannotReassignSchemaContext" xml:space="preserve">
+    <value>Cannot reassign a previously set SchemaContext.</value>
+  </data>
+  <data name="CannotSetSchemaContextNull" xml:space="preserve">
+    <value>Cannot set SchemaContext to null.</value>
+  </data>
+  <data name="MissingCaseXamlNodes" xml:space="preserve">
+    <value>Missing case in Default processing of XamlNodes.</value>
+  </data>
+  <data name="MarkupExtensionTypeName" xml:space="preserve">
+    <value>TypeExtension must have TypeName property set before ProvideValue can be called.</value>
+  </data>
+  <data name="MarkupExtensionTypeNameBad" xml:space="preserve">
+    <value>'{0}' string is not valid for type.</value>
+  </data>
+  <data name="MarkupExtensionNoContext" xml:space="preserve">
+    <value>Markup extension '{0}' requires '{1}' be implemented in the IServiceProvider for ProvideValue.</value>
+  </data>
+  <data name="XamlXmlWriterWriteNotSupportedInCurrentState" xml:space="preserve">
+    <value>Unable to call '{0}' in current state.</value>
+  </data>
+  <data name="XamlXmlWriterWriteObjectNotSupportedInCurrentState" xml:space="preserve">
+    <value>Unable to call WriteObject with isObjectFromMember set to true in current state.</value>
+  </data>
+  <data name="XamlXmlWriterPrefixAlreadyDefinedInCurrentScope" xml:space="preserve">
+    <value>The prefix '{0}' is already defined in current scope.</value>
+  </data>
+  <data name="XamlXmlWriterNamespaceAlreadyHasPrefixInCurrentScope" xml:space="preserve">
+    <value>Namespace '{0}' already has a prefix defined in current scope.</value>
+  </data>
+  <data name="XamlXmlWriterDuplicateMember" xml:space="preserve">
+    <value>The member '{0}' has already been written.</value>
+  </data>
+  <data name="XamlXmlWriterIsObjectFromMemberSetForArraysOrNonCollections" xml:space="preserve">
+    <value>The argument isObjectFromMember can only be set to true when the type is a collection.</value>
+  </data>
+  <data name="XamlXmlWriterCannotWriteNonstringValue" xml:space="preserve">
+    <value>Cannot write a value that is not a string.</value>
+  </data>
+  <data name="ExpandPositionalParametersinTypeWithNoDefaultConstructor" xml:space="preserve">
+    <value>Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters due to the lack of a default constructor on the markup extension that contains the positional parameters.  Try moving the positional parameter member earlier in the node stream, to a place where XamlXmlWriter can still write attributes.</value>
+  </data>
+  <data name="ConstructorNotFoundForGivenPositionalParameters" xml:space="preserve">
+    <value>Cannot write the given positional parameters because a matching constructor was not found.</value>
+  </data>
+  <data name="ExpandPositionalParametersWithReadOnlyProperties" xml:space="preserve">
+    <value>Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters since not all properties are writable.  Try moving the positional parameter member earlier in the node stream, to a place where XamlXmlWriter can still write attributes.</value>
+  </data>
+  <data name="TypeHasInvalidXamlName" xml:space="preserve">
+    <value>The name of the type '{0}' contains characters that are invalid in XAML.</value>
+  </data>
+  <data name="MemberHasInvalidXamlName" xml:space="preserve">
+    <value>The name of the member '{0}' contains characters that are invalid in XAML.</value>
+  </data>
+  <data name="NamespaceDeclarationCannotBeXml" xml:space="preserve">
+    <value>The prefix 'xml' is reserved.</value>
+  </data>
+  <data name="ExpandPositionalParametersWithoutUnderlyingType" xml:space="preserve">
+    <value>Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters since UnderlyingType on type '{0}' is null.  Try moving the positional parameter member earlier in the node stream, to place where XamlXmlWriter can still write attributes.</value>
+  </data>
+  <data name="PrefixNotInFrames" xml:space="preserve">
+    <value>The prefix '{0}' could not be found.</value>
+  </data>
+  <data name="WhiteSpaceInCollection" xml:space="preserve">
+    <value>XamlXmlWriter cannot write value '{0}' which contains significant white space in collection '{1}'.</value>
+  </data>
+  <data name="CannotWriteXmlSpacePreserveOnMember" xml:space="preserve">
+    <value>The value '{1}' contains significant white space(s) but "xml:space = preserve" cannot be written down on the member '{0}'.</value>
+  </data>
+  <data name="InvalidTypeString" xml:space="preserve">
+    <value>The string '{0}' is not a valid XAML type name. Type names contain an optional prefix, a name, and optional type arguments; such as 'String', 'x:Int32', 'g:Dictionary(x:String,x:Int32)'.</value>
+  </data>
+  <data name="InvalidTypeListString" xml:space="preserve">
+    <value>The string '{0}' is not a valid XAML type name list. Type name lists are comma-delimited lists of types; such as 'x:String, x:Int32'.</value>
+  </data>
+  <data name="InvalidCharInTypeName" xml:space="preserve">
+    <value>Character '{0}' was unexpected in string '{1}'.  Invalid XAML type name.</value>
+  </data>
+  <data name="XamlTypeNameNamespaceIsNull" xml:space="preserve">
+    <value>Cannot convert this XamlTypeName instance to a string because the Namespace property is null. Set the Namespace property before calling XamlTypeName.ToString.</value>
+  </data>
+  <data name="XamlTypeNameNameIsNullOrEmpty" xml:space="preserve">
+    <value>Cannot convert this XamlTypeName instance to a string because the Name property is null or empty. Set the Name property before calling XamlTypeName.ToString.</value>
+  </data>
+  <data name="XamlTypeNameCannotGetPrefix" xml:space="preserve">
+    <value>Cannot convert this XamlTypeName instance to a string because the provided INamespacePrefixLookup could not generate a prefix for the namespace '{0}'.</value>
+  </data>
+  <data name="CollectionCannotContainNulls" xml:space="preserve">
+    <value>Collection '{0}' cannot contain null values.</value>
+  </data>
+  <data name="NamespaceDeclarationPrefixCannotBeNull" xml:space="preserve">
+    <value>NamespaceDeclaration.Prefix cannot be null.  Provide a value for this property.</value>
+  </data>
+  <data name="NamespaceDeclarationNamespaceCannotBeNull" xml:space="preserve">
+    <value>NamespaceDeclaration.Namespace cannot be null.  Provide a value for this property.</value>
+  </data>
+  <data name="IncorrectGetterParamNum" xml:space="preserve">
+    <value>Attached property getter methods must have one parameter and a non-void return type.</value>
+  </data>
+  <data name="IncorrectSetterParamNum" xml:space="preserve">
+    <value>Attached property setter and attached event adder methods must have two parameters.</value>
+  </data>
+  <data name="GetterOrSetterRequired" xml:space="preserve">
+    <value>Either getter or setter must be non-null.</value>
+  </data>
+  <data name="ObjectReaderDictionaryMethod1NotFound" xml:space="preserve">
+    <value>Unable to locate MemberMarkupInfo.DictionaryEntriesFromGeneric method.</value>
+  </data>
+  <data name="ObjectReaderXamlNamedElementAlreadyRegistered" xml:space="preserve">
+    <value>An element with the name '{0}' has already been registered in this scope.</value>
+  </data>
+  <data name="ObjectReaderXamlNameScopeResultsInClonedObject" xml:space="preserve">
+    <value>The object graph contains multiple references to an instance of type '{0}' and the serializer cannot find a commonly visible location to write the instance. You should examine your use of name scopes.</value>
+  </data>
+  <data name="ObjectReaderXamlNamePropertyMustBeString" xml:space="preserve">
+    <value>The name property '{0}' on type '{1}' must be of type System.String.</value>
+  </data>
+  <data name="ObjectReaderNoDefaultConstructor" xml:space="preserve">
+    <value>Unable to serialize type '{0}'.  Verify that the type is public and either has a default constructor or an instance descriptor.</value>
+  </data>
+  <data name="ObjectReaderNoMatchingConstructor" xml:space="preserve">
+    <value>Unable to find a suitable constructor for the specified constructor arguments on type '{0}'.</value>
+  </data>
+  <data name="ObjectReaderInstanceDescriptorIncompatibleArgumentTypes" xml:space="preserve">
+    <value>InstanceDescriptor provided an argument of type '{0}' where a parameter of type '{1}' was expected.</value>
+  </data>
+  <data name="ObjectReaderInstanceDescriptorIncompatibleArguments" xml:space="preserve">
+    <value>InstanceDescriptor did not provide the correct number of arguments.</value>
+  </data>
+  <data name="ObjectReaderInstanceDescriptorInvalidMethod" xml:space="preserve">
+    <value>InstanceDescriptor did not provide a valid constructor or method.</value>
+  </data>
+  <data name="ObjectReaderTypeCannotRoundtrip" xml:space="preserve">
+    <value>Unable to read objects of the type ‘{0}’ because there are no accessible constructors. To allow this type to be used in XAML, add a default constructor, use ConstructorArgumentAttribute, or provide an InstanceDescriptor.</value>
+  </data>
+  <data name="ObjectReaderTypeIsNested" xml:space="preserve">
+    <value>Unable to read objects of the type '{0}'.  Nested types are not supported.</value>
+  </data>
+  <data name="ObjectReaderAttachedPropertyNotFound" xml:space="preserve">
+    <value>Unable to find an attachable property named '{0}' on type '{1}'.</value>
+  </data>
+  <data name="XamlFactoryInvalidXamlNode" xml:space="preserve">
+    <value>Unexpected XAML node type '{0}' from XamlReader in XamlFactory.</value>
+  </data>
+  <data name="CannotAddPositionalParameters" xml:space="preserve">
+    <value>In markup extensions, all constructor argument values should be atoms.  For the object of type '{0}', one or more argument values are not atomic.</value>
+  </data>
+  <data name="ObjectReaderMultidimensionalArrayNotSupported" xml:space="preserve">
+    <value>Multidimensional arrays not supported.</value>
+  </data>
+  <data name="ObjectReaderTypeNotAllowed" xml:space="preserve">
+    <value>'{0}' blocked the use of type '{1}' in XAML. If you want to serialize this type, change '{0}'.GetXamlType to return a non-null value for this type, or pass a different value in the schemaContext parameter of the XamlObjectReader constructor.</value>
+  </data>
+  <data name="ObjectReader_TypeNotVisible" xml:space="preserve">
+    <value>Type '{0}' not visible. If the type is local, please set the LocalAssembly field in XamlReaderSettings.</value>
+  </data>
+  <data name="ExpectedObjectMarkupInfo" xml:space="preserve">
+    <value>Expected value of type ObjectMarkupInfo.</value>
+  </data>
+  <data name="AttachedPropertyOnTypeConvertedOrStringProperty" xml:space="preserve">
+    <value>An attachable property named '{2}' is attached to a property named '{1}'.  The property named '{1}' is either a string or can be type-converted to string; attaching on such properties are not supported.  For debugging, the property '{1}' contains an object '{0}'.</value>
+  </data>
+  <data name="AttachedPropertyOnDictionaryKey" xml:space="preserve">
+    <value>An attachable property named '{1}' is attached on a dictionary key '{0}' that is either a string or can be type-converted to string, which is not supported.</value>
+  </data>
+  <data name="MissingNameProvider" xml:space="preserve">
+    <value>Service provider is missing the IXamlNameProvider service.</value>
+  </data>
+  <data name="XamlMarkupExtensionWriterCannotSetSchemaContext" xml:space="preserve">
+    <value>Cannot set SchemaContext on XamlMarkupExtensionWriter.</value>
+  </data>
+  <data name="XamlMarkupExtensionWriterDuplicateMember" xml:space="preserve">
+    <value>The member '{0}' has already been written.</value>
+  </data>
+  <data name="XamlMarkupExtensionWriterCannotWriteNonstringValue" xml:space="preserve">
+    <value>Cannot write a value that is not a string.</value>
+  </data>
+  <data name="XamlMarkupExtensionWriterInputInvalid" xml:space="preserve">
+    <value>Errors detected in input.</value>
+  </data>
+  <data name="DefaultAttachablePropertyStoreCannotAddInstance" xml:space="preserve">
+    <value>Failed to add attached properties to item in ConditionalWeakTable.</value>
+  </data>
+  <data name="UnexpectedConstructorArg" xml:space="preserve">
+    <value>Invalid metadata for attribute '{0}' on '{1}'. Expected '{2}' argument(s) of type '{3}'.</value>
+  </data>
+  <data name="ShouldOverrideMethod" xml:space="preserve">
+    <value>Method '{0}' is not supported by default. It can be implemented in derived classes.</value>
+  </data>
+  <data name="ExpectedQualifiedTypeName" xml:space="preserve">
+    <value>Type name '{0}' is not assembly-qualified. You can obtain this value from System.Type.AssemblyQualifiedName.</value>
+  </data>
+  <data name="ExpectedQualifiedAssemblyName" xml:space="preserve">
+    <value>Assembly name '{0}' is not fully qualified. The Name, Version, Culture, and PublicKeyToken must all be provided.</value>
+  </data>
+  <data name="ExpectedLoadPermission" xml:space="preserve">
+    <value>Expected permission of type XamlLoadPermission.</value>
+  </data>
+  <data name="SecurityXmlUnexpectedTag" xml:space="preserve">
+    <value>Invalid security XML. Unexpected tag '{0}', expected '{1}'.</value>
+  </data>
+  <data name="SecurityXmlUnexpectedValue" xml:space="preserve">
+    <value>Invalid security XML. Unexpected value '{0}' in attribute '{1}', expected '{2}'.</value>
+  </data>
+  <data name="SecurityXmlMissingAttribute" xml:space="preserve">
+    <value>Invalid security XML. Missing expected attribute '{0}'.</value>
+  </data>
+  <data name="StringIsNullOrEmpty" xml:space="preserve">
+    <value>The string is null or empty.</value>
+  </data>
+  <data name="NotSupportedOnUnknownType" xml:space="preserve">
+    <value>This operation is not supported on unknown types.</value>
+  </data>
+  <data name="OnlySupportedOnCollections" xml:space="preserve">
+    <value>This operation is only supported on collection types.</value>
+  </data>
+  <data name="OnlySupportedOnDictionaries" xml:space="preserve">
+    <value>This operation is only supported on dictionary types.</value>
+  </data>
+  <data name="OnlySupportedOnCollectionsAndDictionaries" xml:space="preserve">
+    <value>This operation is only supported on collection and dictionary types.</value>
+  </data>
+  <data name="NotSupportedOnUnknownMember" xml:space="preserve">
+    <value>This operation is not supported on unknown members.</value>
+  </data>
+  <data name="NotSupportedOnDirective" xml:space="preserve">
+    <value>This operation is not supported on directive members.</value>
+  </data>
+  <data name="ArgumentRequired" xml:space="preserve">
+    <value>One of the following arguments must be non-null: '{0}'.</value>
+  </data>
+  <data name="ConverterMustDeriveFromBase" xml:space="preserve">
+    <value>Converter type '{0}' doesn't derive from expected base type '{1}'.</value>
+  </data>
+  <data name="ReferenceIsNull" xml:space="preserve">
+    <value>Value cannot be null. Object reference: '{0}'.</value>
+  </data>
+  <data name="MarkupExtensionArrayType" xml:space="preserve">
+    <value>Must set Type before calling ProvideValue on ArrayExtension.</value>
+  </data>
+  <data name="MarkupExtensionArrayBadType" xml:space="preserve">
+    <value>Items in the array must be type '{0}'. One or more items cannot be cast to this type.</value>
+  </data>
+  <data name="MarkupExtensionBadStatic" xml:space="preserve">
+    <value>'{0}' StaticExtension value cannot be resolved to an enumeration, static field, or static property.</value>
+  </data>
+  <data name="MarkupExtensionStaticMember" xml:space="preserve">
+    <value>StaticExtension must have Member property set before ProvideValue can be called.</value>
+  </data>
+  <data name="MustBeOfType" xml:space="preserve">
+    <value>'{0}' must be of type '{1}'.</value>
+  </data>
+  <data name="ToStringNull" xml:space="preserve">
+    <value>(null)</value>
+  </data>
+  <data name="ConvertToException" xml:space="preserve">
+    <value>'{0}' ValueSerializer cannot convert '{1}' to '{2}'.</value>
+  </data>
+  <data name="ConvertFromException" xml:space="preserve">
+    <value>'{0}' ValueSerializer cannot convert from '{1}'.</value>
+  </data>
+  <data name="ServiceTypeAlreadyAdded" xml:space="preserve">
+    <value>This serviceType is already registered to another service.</value>
+  </data>
+  <data name="QualifiedNameHasWrongFormat" xml:space="preserve">
+    <value>'{0}' type name does not have the expected format 'className, assembly'.</value>
+  </data>
+  <data name="ParserAttributeArgsHigh" xml:space="preserve">
+    <value>Too many attributes are specified for '{0}'.</value>
+  </data>
+  <data name="ParserAttributeArgsLow" xml:space="preserve">
+    <value>'{0}' requires more attributes.</value>
+  </data>
+  <data name="ParserAssemblyLoadVersionMismatch" xml:space="preserve">
+    <value>Cannot load assembly '{0}' because a different version of that same assembly is loaded '{1}'.</value>
+  </data>
+  <data name="FrugalList_TargetMapCannotHoldAllData" xml:space="preserve">
+    <value>Cannot promote from '{0}' to '{1}' because the target map is too small.</value>
+  </data>
+  <data name="FrugalList_CannotPromoteBeyondArray" xml:space="preserve">
+    <value>Cannot promote from Array.</value>
+  </data>
+  <data name="ValueInArrayIsNull" xml:space="preserve">
+    <value>A value in the '{0}' array is null.</value>
+  </data>
+  <data name="InvalidEvent" xml:space="preserve">
+    <value>Event argument is invalid.</value>
+  </data>
+  <data name="InvalidClosingBracketCharacers" xml:space="preserve">
+    <value>Encountered a closing BracketCharacter '{0}' without a corresponding opening BracketCharacter.</value>
+  </data>
+  <data name="MalformedBracketCharacters" xml:space="preserve">
+    <value>BracketCharacter '{0}' does not have a corresponding opening/closing BracketCharacter.</value>
+  </data>
+</root>

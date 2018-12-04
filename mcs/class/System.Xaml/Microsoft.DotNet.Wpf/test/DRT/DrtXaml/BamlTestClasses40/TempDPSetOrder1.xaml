@@ -1,0 +1,29 @@
+<StackPanel x:Class="BamlTestClasses40.TempDPSetOrder1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:System.Collections;assembly=mscorlib" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:l="clr-namespace:BamlTestClasses40">
+    <StackPanel.Resources>
+        <c:ArrayList x:Key="Bookings3">
+            <s:String>a</s:String>
+        </c:ArrayList>
+        <c:ArrayList x:Key="Bookings4">
+            <s:String>a</s:String>
+        </c:ArrayList>
+        <c:ArrayList x:Key="list">
+            <s:String>Not Resident</s:String>
+            <s:String>Resident</s:String>
+            <s:String>Checked-Out</s:String>
+        </c:ArrayList>
+        <CollectionViewSource x:Key="status" Source="{StaticResource list}"/>
+        <DataTemplate x:Key="BookingTemplate">
+            <l:TempDPSetOrder1ListBox ItemsSource="{Binding Source={StaticResource status}}" SelectedIndex="{Binding Path=Length, Mode=OneWay}" IsSynchronizedWithCurrentItem="False"/>
+        </DataTemplate>
+    </StackPanel.Resources>
+    <StackPanel>
+        <ListBox ItemsSource="{StaticResource Bookings3}" ItemTemplate="{StaticResource BookingTemplate}"/>
+        <ListBox ItemsSource="{StaticResource Bookings4}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <l:TempDPSetOrder1ListBox ItemsSource="{Binding Source={StaticResource status}}" SelectedIndex="{Binding Path=Length, Mode=OneWay}" IsSynchronizedWithCurrentItem="False"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</StackPanel>

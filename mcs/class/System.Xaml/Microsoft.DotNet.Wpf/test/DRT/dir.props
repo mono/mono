@@ -1,0 +1,6 @@
+<Project>
+  <Import Condition="Exists('..\dir.props')" Project="..\dir.props" />
+  <Import 
+    Condition="Exists('$(MsBuildThisFileDirecotry)Directory.Build.props')" 
+    Project="$(MsBuildThisFileDirecotry)Directory.Build.props" />
+</Project>

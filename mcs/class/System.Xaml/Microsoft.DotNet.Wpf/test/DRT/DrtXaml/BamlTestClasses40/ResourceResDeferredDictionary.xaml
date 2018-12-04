@@ -1,0 +1,92 @@
+﻿ <!--Check when there is a resource definition inside the deferred content with the
+ the pre-resolved Static Resource reference that it re-resolves to the nearer, better
+ value.-->
+<Grid x:Class="BamlTestClasses40.ResourceResolution_DeferredDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid.Resources>
+        <Rectangle x:Key="dict_temp_dict0" Height="20" Width="50" Fill="Red" />
+        <Rectangle x:Key="dict_temp_dict1" Height="20" Width="50" Fill="Red" />
+        <Rectangle x:Key="temp_dict0" Height="20" Width="50" Fill="Red" />
+        <Rectangle x:Key="temp_dict1" Height="20" Width="50" Fill="Red" />
+    </Grid.Resources>
+    <Border Name="_border">
+        <Border.Resources>
+
+            <!-- Resources are outside of the Deferred template node stream -->
+            <ControlTemplate x:Key="tpl">
+                <ControlTemplate.Resources>
+                    <Rectangle x:Key="dict_temp_dict0" Height="10" Width="50" Fill="Cyan" />
+                </ControlTemplate.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <Label>Cyan=</Label>
+                    <ContentControl Name="_colorRectangle1" Content="{StaticResource dict_temp_dict0}" />
+                    <Label>Resource just outside the template</Label>
+                </StackPanel>
+            </ControlTemplate>
+
+            <!-- Resources are inside the Deferred template node stream -->
+            <ControlTemplate x:Key="tpl2">
+                <ContentControl>
+                    <ContentControl.Resources>
+                        <Rectangle x:Key="dict_temp_dict1" Height="10" Width="50" Fill="Cyan" />
+                    </ContentControl.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Cyan=</Label>
+                        <ContentControl Name="_colorRectangle2" Content="{StaticResource dict_temp_dict1}" />
+                        <Label>Resource inside the template</Label>
+                    </StackPanel>
+                </ContentControl>
+            </ControlTemplate>
+            <Rectangle x:Key="dict_temp_dict0" Height="20" Width="50" Fill="Orange" />
+            <Rectangle x:Key="dict_temp_dict1" Height="20" Width="50" Fill="Orange" />
+            <Rectangle x:Key="temp_dict0" Height="20" Width="50" Fill="Orange" />
+            <Rectangle x:Key="temp_dict1" Height="20" Width="50" Fill="Orange" />
+        </Border.Resources>
+
+        <StackPanel>
+            <Label>
+                <Underline>Resource Resolution in Templates</Underline>
+            </Label>
+            <Label>Templates from Dictionaries:</Label>
+            <ContentControl Name="_templateParent1" Template="{StaticResource tpl}" />
+            <ContentControl Name="_templateParent2" Template="{StaticResource tpl2}" />
+
+            <Label>Inline Templates not in Dictionaries:</Label>
+            
+            <!-- Resources are inside the Deferred template node stream, in an inline template -->
+            <ContentControl Name="_templateParent3">
+                <ContentControl.Template>
+                    <ControlTemplate>
+                        <ContentControl>
+                            <ContentControl.Resources>
+                                <Rectangle x:Key="temp_dict0" Height="10" Width="50" Fill="Cyan" />
+                            </ContentControl.Resources>
+                            <StackPanel Orientation="Horizontal">
+                                <Label>Cyan=</Label>
+                                <ContentControl Name="_colorRectangle3" Content="{StaticResource temp_dict0}" />
+                                <Label>Resource just outside the template</Label>
+                            </StackPanel>
+                        </ContentControl>
+                    </ControlTemplate>
+                </ContentControl.Template>
+            </ContentControl>
+
+            <!-- Resources are outside of the Deferred template node stream, in an inline template -->
+            <ContentControl Name="_templateParent4">
+                <ContentControl.Template>
+                    <ControlTemplate>
+                        <ControlTemplate.Resources>
+                            <Rectangle x:Key="temp_dict1" Height="10" Width="50" Fill="Cyan" />
+                        </ControlTemplate.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Cyan=</Label>
+                            <ContentControl Name="_colorRectangle4" Content="{StaticResource temp_dict1}" />
+                            <Label>Resource inside the template</Label>
+                        </StackPanel>
+                    </ControlTemplate>
+                </ContentControl.Template>
+            </ContentControl>
+        </StackPanel>
+    </Border>
+</Grid>

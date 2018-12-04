@@ -1,0 +1,48 @@
+﻿<!-- 
+    The Overwrite and Insert tests are the same except.
+    The Overwrite test overwrites the dictionary entries.
+    The Insert test inserts new dictionary entries between the usage and the correct resolution.
+    All the StaticResource lookups should resolve to one of the Test0, Test1, Test2, ...
+    Other Strings are added in the xaml.cs file (in the constructor) in an attempt to interfere. 
+-->
+<Border x:Class="BamlTestClasses40.ResourceResolution_OverWrite"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Border.Resources>
+        <sys:String x:Key="Test0">Test0</sys:String>
+        <sys:String x:Key="Test1">Test1</sys:String>
+        <sys:String x:Key="Test2">Test2</sys:String>
+        <sys:String x:Key="Test3">Test3</sys:String>
+        <sys:String x:Key="Test4">Test4</sys:String>
+        
+        <TextBlock x:Key="TextBlock_test1" Text="{StaticResource Test1}" />
+        
+        <ControlTemplate x:Key="Template_Test2" TargetType="Button">
+            <Button Name="_templateButton2" Content="{StaticResource Test2}"/>
+        </ControlTemplate>
+
+        <TextBlock x:Key="TextBlock_Test3" Text="{StaticResource Test3}" />
+        
+        <ControlTemplate x:Key="Template_Test3" TargetType="Button">
+            <Button Name="_templateButton3"  Content="{StaticResource TextBlock_Test3}"/>
+        </ControlTemplate>
+    </Border.Resources>
+
+    <Border.Child>
+        <StackPanel>
+            <Label>Insert Test</Label>
+            <Button Name="_button0" Content="{StaticResource Test0}" />
+            <Button Name="_button1" Content="{StaticResource TextBlock_test1}" />
+            <Button Name="_button2" Template="{StaticResource Template_Test2}" />
+            <Button Name="_button3" Template="{StaticResource Template_Test3}" />
+            <Button Name="_button4">
+                <Button.Template>
+                    <ControlTemplate>
+                        <Button Name="_templateButton4" Content="{StaticResource Test4}"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Border.Child>
+</Border>

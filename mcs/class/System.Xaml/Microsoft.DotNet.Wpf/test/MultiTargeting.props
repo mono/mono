@@ -1,0 +1,61 @@
+<Project>
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);NET4X</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.StartsWith('netcoreapp3'))">$(DefineConstants);NETCOREAPP3_X</DefineConstants>
+
+    <DefineConstants Condition="$(TargetFramework.Equals('net40'))">$(DefineConstants);NET40</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net45'))">$(DefineConstants);NET45</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net451'))">$(DefineConstants);NET451</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net452'))">$(DefineConstants);NET452</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net453'))">$(DefineConstants);NET453</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net46'))">$(DefineConstants);NET46</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net461'))">$(DefineConstants);NET461</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net462'))">$(DefineConstants);NET462</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net47'))">$(DefineConstants);NET47</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net471'))">$(DefineConstants);NET471</DefineConstants>
+    <DefineConstants Condition="$(TargetFramework.Equals('net472'))">$(DefineConstants);NET472</DefineConstants>
+    
+    <DefineConstants Condition="$(TargetFramework.Equals('netcoreapp3.0'))">$(DefineConstants);NETCOREAPP3_0</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)'!='net35'">
+    <PackageReference Include="System.Reflection.Emit" Version="$(SystemReflectionEmitVersion)" />
+  </ItemGroup>
+  
+  <!-- When IsUnitTestProject is set by Arcade, these ProjectReferences are implicitly included -->
+  <ItemGroup Condition="'$(TargetFramework)'!='net35' and '$(IsUnitTestProject)'!='true'">
+    <PackageReference Include="xunit" Version="$(XUnitVersion)" />
+    <PackageReference Include="xunit.runner.console" Version="$(XUnitRunnerConsoleVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVisualStudioVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">   
+    <Reference Include="System.Xaml" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="Accessibility" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)'=='net35'">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+</Project>

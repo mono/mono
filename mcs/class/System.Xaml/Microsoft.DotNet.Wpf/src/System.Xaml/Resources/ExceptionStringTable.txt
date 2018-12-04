@@ -1,0 +1,417 @@
+
+;
+; US-EN Exception String Table
+; Default Resource (used for English and non-represented locales)
+;
+
+
+; XmlCompatibilityReader
+XCRChoiceOnlyInAC=Choice is valid only in AlternateContent.
+XCRChoiceAfterFallback=Choice cannot follow a Fallback.
+XCRRequiresAttribNotFound=Choice must contain a Requires attribute.
+XCRInvalidRequiresAttribute=Requires attribute must contain a valid namespace prefix.
+XCRFallbackOnlyInAC=Fallback is valid only in AlternateContent.
+XCRChoiceNotFound=AlternateContent must contain one or more Choice elements.
+XCRMultipleFallbackFound=AlternateContent must contain only one Fallback element.
+XCRInvalidAttribInElement='{0}' attribute is not valid for '{1}' element.
+XCRUnknownCompatElement=Unrecognized Compatibility element '{0}'.
+XCRInvalidACChild='{0}' element is not a valid child of AlternateContent. Only Choice and Fallback elements are valid children of an AlternateContent element.
+XCRInvalidFormat='{0}' format is not valid.
+XCRUndefinedPrefix='{0}' prefix is not defined.
+XCRUnknownCompatAttrib=Unrecognized compatibility attribute '{0}'.
+XCRNSProcessContentNotIgnorable='{0}' namespace cannot process content; it must be declared Ignorable first.
+XCRDuplicateProcessContent=Duplicate ProcessContent declaration for element '{1}' in namespace '{0}'.
+XCRInvalidProcessContent=Cannot have both a specific and a wildcard ProcessContent declaration for namespace '{0}'.
+XCRDuplicateWildcardProcessContent=Duplicate wildcard ProcessContent declaration for namespace '{0}'.
+XCRMustUnderstandFailed=MustUnderstand condition failed on namespace '{0}'.
+XCRNSPreserveNotIgnorable='{0}' namespace cannot preserve items; it must be declared Ignorable first.
+XCRDuplicatePreserve=Duplicate Preserve declaration for element '{1}' in namespace '{0}'.
+XCRInvalidPreserve=Cannot have both a specific and a wildcard Preserve declaration for namespace '{0}'.
+XCRDuplicateWildcardPreserve=Duplicate wildcard Preserve declaration for namespace '{0}'.
+XCRInvalidXMLName='{0}' attribute value is not a valid XML name.
+XCRCompatCycle=There is a cycle of XML compatibility definitions, such that namespace '{0}' overrides itself. This could be due to inconsistent XmlnsCompatibilityAttributes in different assemblies. Please change the definitions to eliminate this cycle, or pass a non-conflicting set of Reference Assemblies in the XamlSchemaContext constructor.
+
+; XamlSystemBinding
+BadXmlnsDefinition=An XmlnsDefinitionAttribute in assembly '{0}' is missing a required property. Set both the ClrNamespace and XmlNamespace properties, or remove the XmlnsDefinitionAttribute.
+BadXmlnsCompat=An XmlnsCompatibleWithAttribute in assembly '{0}' is missing a required property. Set both the NewNamespace and OldNamespace properties, or remove the XmlnsCompatibleWithAttribute.
+BadXmlnsPrefix=An XmlnsPrefixAttribute in assembly '{0}' is missing a required property. Set both the Prefix and XmlNamespace properties, or remove the XmlnsPrefixAttribute.
+BadInternalsVisibleTo1=One of the InternalsVisibleToAttribute values in assembly '{0}' is not a valid assembly name. Use the format 'AssemblyShortName' or 'AssemblyShortName, PublicKey=...'.
+BadInternalsVisibleTo2=InternalsVisibleToAttribute value '{0}' in assembly '{1}' is not a valid assembly name. Use the format 'AssemblyShortName' or 'AssemblyShortName, PublicKey=...'.
+DuplicateXmlnsCompat=There is more than one XmlnsCompatibleWithAttribute in assembly '{0}' for OldNamespace '{1}'. Remove the extra attribute(s).
+XmlnsCompatCycle=There is a cycle of XmlnsCompatibleWithAttribute definitions in assembly '{0}', such that namespace '{1}' overrides itself. Change the definitions to eliminate this cycle.
+UriNotFound=Uri '{0}' was not found.
+DuplicateXmlnsCompatAcrossAssemblies=There are conflicting XmlnsCompatibleWithAttributes in assemblies '{0}' and '{1}' for OldNamespace '{2}'. Change the attributes to have the same NewNamespace, or pass a non-conflicting set of Reference Assemblies in the XamlSchemaContext constructor.
+
+; ClrNamespace
+UnresolvedNamespace=XAML namespace '{0}' is not resolved.
+TypeNotFound=Type reference cannot find type named '{0}'.
+TypeNotPublic=Type '{0}' is not public.
+TooManyTypeConverterAttributes=Only one TypeConverter attribute is allowed on a type.
+CannotFindAssembly=Cannot find Assembly '{0}' in URI '{1}'.
+MissingAssemblyName=No local assembly provided to complete URI='{0}'.
+InvalidTypeArgument=Type argument '{0}' is not a valid type.
+FileNotFoundExceptionMessage=Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the specified file.
+
+; XaslNamespace
+DirectiveNotFound=Directive '{0}' was not found in TargetNamespace '{1}'.
+
+; Xaml
+MustNotCallSetter=This setter is not intended to be used directly from your code. Do not call this setter.
+
+; XamlProperty
+MissingLookPropertyBit=Missing case handler in LookupPropertyBit.
+TooManyAttributes=Error with member '{0}'.'{1}'.  It has more than one '{2}'.
+
+; XaslMember
+GetTargetTypeOnNonAttachableMember=Cannot get TargetType on a non-attachable Member.
+SetTargetTypeOnNonAttachableMember=Cannot set TargetType on a non-attachable Member.
+
+; XamlObjectWriter
+InvalidExpression=Invalid expression: '{0}'
+MissingKey=Missing key value on '{0}' object.
+PropertyDoesNotTakeText='{0}' property on '{1}' does not allow you to specify text.
+EventCannotBeAssigned='{0}' event cannot be assigned a value that is not assignable to '{1}'.
+TypeConverterFailed=Failed to create a '{0}' from the text '{1}'.
+CantCreateUnknownType=Cannot create unknown type '{0}'.
+CantSetUnknownProperty=Cannot set unknown member '{0}'.
+MissingImplicitProperty=Missing implicit property case.
+BuilderStackNotEmptyOnClose=Builder Stack is not empty when end of XamlNode stream was reached.
+CannotSetSchemaContext=Cannot set SchemaContext on ObjectWriter.
+MissingImplicitPropertyTypeCase=Missing case for ImplicitPropertyType.
+ConstructImplicitType=Failed attempting to create an Implicit Type with a constructor.
+NonMEWithPositionalParameters=Type with positional parameters is not a markup extension.
+PositionalParamsWrongLength=GetPositionalParameters returned the wrong length vector.
+BadStateObjectWriter=Bad state in ObjectWriter. Non directive missing instance.
+DuplicateMemberSet='{0}' property has already been set on '{1}'.
+NotAmbientProperty='{0}'.'{1}' is not an ambient property.
+NotAmbientType='{0}' is not an ambient type.
+NoSuchConstructor=No constructor with '{0}' arguments for '{1}'.
+UnresolvedForwardReferences=Unresolved reference '{0}'.
+CantAssignRootInstance=Cannot assign root instance of type '{0}' to type '{1}'.
+ForwardRefDirectives=Attempt to reference named object(s) '{0}' which have not yet been defined. Forward references, or references to objects that contain forward references, are not supported on directives other than Key.
+TransitiveForwardRefDirectives=Object '{0}' assigned to directive '{1}' has properties which are references to named object(s) '{2}' which have not yet been defined. Forward references, or references to objects that contain forward references, are not supported inside object construction directives.
+TypeHasNoContentProperty=Type '{0}' does not have a content property. Specify the name of the property to set, or add a ContentPropertyAttribute or TypeConverterAttribute on the type.
+GetObjectNull=Collection property '{0}'.'{1}' is null.
+NotAssignableFrom=The type '{0}' is not assignable from the type '{1}'.
+NameScopeNameNotEmptyString=Name cannot be an empty string.
+NameScopeNameNotFound=Name '{0}' was not found.
+NameScopeDuplicateNamesNotAllowed=Cannot register duplicate name '{0}' in this scope.
+NameScopeInvalidIdentifierName='{0}' name is not valid for identifier.
+NameScopeException=Could not register named object. {0}
+ObjectWriterTypeNotAllowed='{0}' blocked the use of type '{1}' in XAML. If you want to load this type, change '{0}'.GetXamlType to return a non-null value for this type, or pass a different value in the schemaContext parameter of the XamlObjectWriter constructor.
+DirectiveNotAtRoot=Directive '{0}' is only allowed on the root object. Remove this directive or move it to the root of the document.
+DirectiveMustBeString=Directive '{0}' must be a value of type string. Remove this directive or change it to a string value.
+XClassMustMatchRootInstance=Specified class name '{0}' doesn't match actual root instance type '{1}'. Remove the Class directive or provide an instance via XamlObjectWriterSettings.RootObjectInstance.
+SavedContextSchemaContextMismatch=schemaContext parameter cannot be different from savedContext.SchemaContext
+SavedContextSchemaContextNull=savedContext.SchemaContext cannot be null
+SettingPropertiesIsNotAllowed=Setting properties is not allowed on a type converted instance. Property = '{0}'
+LateConstructionDirective=Construction directive '{0}' must be an attribute or the first property element.
+ProvideValueCycle=Cannot call MarkupExtension.ProvideValue because of a cyclical dependency. Properties inside a MarkupExtension cannot reference objects that reference the result of the MarkupExtension. The affected MarkupExtensions are:
+AttachedPropOnFwdRefTC=Cannot set property '{0}' on object '{1}' because the object is a forward or incompletely initialized reference. The unresolved name(s) are: '{2}'.
+InitializationSyntaxWithoutTypeConverter=Type '{0}' cannot be initialized from text (XamlLanguage.Initialization).  Add a TypeConverter to this type or change the XAML to use a constructor or factory method.
+NoPropertyInCurrentFrame_SO=XAML Node Stream: StartObject '{0}' requires a StartMember after StartObject '{1}'.
+NoPropertyInCurrentFrame_NS=XAML Node Stream: '{0}'='{1}' Namespace Declaration requires a StartMember after StartObject '{2}'.
+NoPropertyInCurrentFrame_GO=XAML Node Stream: GetObject requires a StartMember after StartObject '{0}'.
+NoPropertyInCurrentFrame_GO_noType=XAML Node Stream: GetObject must follow a StartObject and StartMember.
+NoPropertyInCurrentFrame_V=XAML Node Stream: Value of '{0}' requires a StartMember after StartObject '{1}'.
+NoPropertyInCurrentFrame_V_noType=XAML Node Stream: Value of '{0}' must follow a StartObject and StartMember.
+OpenPropertyInCurrentFrame_EO=XAML Node Stream: Missing EndMember for '{0}.{1}' before EndObject.
+OpenPropertyInCurrentFrame_SM=XAML Node Stream: Missing EndMember for '{0}.{1}' before StartMember '{2}'.
+NoTypeInCurrentFrame_SM=XAML Node Stream: Missing StartObject before StartMember '{0}'.
+NoTypeInCurrentFrame_EO=XAML Node Stream: Missing CurrentObject before EndObject.
+NoPropertyInCurrentFrame_EM=XAML Node Stream: Missing StartMember on Type '{0}' before EndMember.
+NoPropertyInCurrentFrame_EM_noType=XAML Node Stream: EndMember must follow StartObject and StartMember.
+ValueMustBeFollowedByEndMember=XAML Node Stream: Value nodes must be followed by EndMember.
+DictionaryFirstChanceException=Dictionary of type '{0}' cannot add key '{1}'. A TypeConverter will convert the key to type '{2}'. To avoid seeing this error, override System.Collections.IDictionary.Add and perform the conversion there.
+CannotSetBaseUri=BaseUri can only be set once at the root node (XamlXmlReader may provide a default at the root node).
+
+; DeferringWriter
+DependsOnMissing='{0}'.'{1}' Depends on '{0}'.{1}', which was not set.
+CloseInsideTemplate=Close called while inside a deferred load section.
+UnexpectedClose=Unexpected close of XAML Node Stream.
+TemplateNotCollected=Deferred load section was not collected in '{0}'.
+DeferredPropertyNotCollected=Deferred member was not collected in '{0}'.
+MissingCase=Missing case '{0}' in DeferringWriter'{1}' method.
+
+; ObjectWriterContext
+NamespaceNotFound=Namespace '{0}' was not found in scope.
+NameScopeOnRootInstance=Cannot attach NameScope to null root instance.
+MissingNameResolver=Service provider is missing the INameResolver service.
+ObjectNotTcOrMe=Argument should be a Type Converter, Markup Extension or Null.
+SimpleFixupsMustHaveOneName=Directly Assignable Fixups must only have one name.
+
+; MePullParser
+UnexpectedTokenAfterME=Unexpected token after end of markup extension.
+WhitespaceAfterME=White space is not allowed after end of markup extension.
+UnexpectedToken=Unexpected token '{0}' in rule: '{1}', in '{2}'.
+NoConstructorWithNArugments=A Constructor for '{0}' with '{1}' arguments was not found.
+MissingComma1=Unexpected equals sign '=' following '{0}'. Check for a missing comma separator.
+MissingComma2=Unexpected equals sign '=' following '{0}'='{1}'. Check for a missing comma separator.
+
+; XamlName
+TypeNameCannotHavePeriod=Type name '{0}' cannot have a dot '.'.
+
+; XamlPullParser
+UnexpectedNodeType=Unexpected '{0}' in parse rule '{1}'.
+ElementRuleException=Element ::= . EmptyElement | ( StartElement ElementBody ).
+EmptyElementRuleException=EmptyElement ::= . EMPTYELEMENT DIRECTIVE* ATTRIBUTE*.
+EmptyPropertyElementRuleException=EmptyPropertyElement ::= EMPTYPROPERTYELEMENT.
+StartElementRuleException=StartElement ::= . ELEMENT DIRECTIVE*.
+ElementBodyRuleException=ElementBody ::= ATTRIBUTE* ( PropertyElement | Content )* . ENDTAG.
+NonemptyPropertyElementRuleException=NonemptyPropertyElement ::= . PROPERTYELEMENT Content? ENDTAG.
+PropertyElementRuleException=PropertyElement ::= EmptyPropertyElement | NonemptyPropertyElement
+
+
+; ClrNamespaceUriParser
+MissingTagInNamespace=Missing '{0}' in URI '{1}'.
+AssemblyTagMissing=Part between semicolon ';' and equals sign '=' is not '{0}' URI '{1}'.
+
+; TypeReflector
+UnknownAttributeProperty=['{0}'('{1}')] on '{2}' is not a known property.
+NotDeclaringTypeAttributeProperty=['{0}'('{1}')] on '{2}' is not a property declared on this type.
+UsableDuringInitializationOnME=Error with type '{0}'. MarkupExtensions cannot use the 'UsableDuringInitialization' attribute.
+TooManyAttributesOnType=Error with type '{0}'.  It has more than one '{1}'.
+MissingPropertyCaseClrType=Missing case in ClrType 'Member' lookup.
+UnhandledBoolTypeBit=Unhandled BoolTypeBit.
+AmbiguousCollectionItemType=Cannot determine the item type of collection type '{0}' because it has more than one Add method or ICollection<T> implementation. To make this collection type usable in XAML, add a public Add(object) method, implement System.Collections.IList or a single System.Collections.Generic.ICollection<T>.
+AmbiguousDictionaryItemType=Cannot determine the item type of dictionary type '{0}' because it has more than one Add method or IDictionary<K,V> implementation. To make this dictionary type usable in XAML, add a public Add(object,object) method, implement System.Collections.IDictionary or a single System.Collections.Generic.IDictionary<K,V>.
+MarkupExtensionWithDuplicateArity=Cannot determine the positional parameters for type '{0}' because it has more than one constructor overload with '{1}' parameters. To make this markup extension usable in XAML, remove the duplicate constructor overload(s) or set XamlSchemaContextSettings.SupportMarkupExtensionsWithDuplicateArity to true.
+
+; ClrProperty
+SetOnlyProperty='{0}'.'{1}' is a property without a getter and is not a valid XAML property.
+
+
+; XaslType
+XaslTypePropertiesNotImplemented=Need to implement public/internal sorting.
+AttachableMemberNotFound=Attachable member '{0}' was not found.
+PropertyNotImplemented='{0}' is not implemented.
+
+; XamlContext 
+PrefixNotFound=Prefix '{0}' does not map to a namespace.
+
+; XamlException
+LineNumberAndPosition='{0}' Line number '{1}' and line position '{2}'.
+LineNumberOnly='{0}' Line number '{1}'.
+
+; MeScanner
+QuoteCharactersOutOfPlace=Quote characters ' or " are only allowed at the start of values.
+UnclosedQuote=Unclosed quoted value.
+MalformedPropertyName=Cannot parse the malformed property name '{0}'.
+
+; XamlScanner
+AttributeUnhandledKind=An unhandled scanner attribute was encountered.
+UnknownType=Unknown type '{0}'.
+UnknownMember=Unknown member '{0}' on '{1}'.
+UnknownMemberSimple=Unknown member '{0}'.
+UnknownMemberOnUnknownType=Unknown member '{0}' on unknown type '{1}'.
+MemberIsInternal=Member '{0}' on type '{1}' is internal.
+NoAttributeUsage='{0}' is not allowed in attribute usage.
+NoElementUsage='{0}' is not allowed in element usage.
+InvalidXamlMemberName='{0}' is not a valid XAML member name.
+ParentlessPropertyElement=The property element '{0}' is not contained by an object element.
+
+; XamlBackgroundReader
+SchemaContextNotInitialized=SchemaContext on writer must be initialized before accessing the reader.
+ThreadAlreadyStarted=Thread is already started.
+
+; ReaderBaseDelegate
+SchemaContextNull=SchemaContext cannot be null.
+
+; XamlNodeList
+CloseXamlWriterBeforeReading=Must close XamlWriter before reading from XamlNodeList.
+CannotWriteClosedWriter=Cannot write on a closed XamlWriter.
+WriterIsClosed=An attempt was made to write to a XamlWriter that has had its Closed method called.
+
+; ClrObjectRuntime
+DirectiveGetter=Directive getter is not implemented.
+BadMethod=Bad method '{0}' on '{1}'.
+CannotResolveTypeForFactoryMethod=Cannot resolve type '{0}' for method '{1}'.
+CannotCreateBadType=Cannot create an instance of '{0}' because XamlType is not valid.
+CannotCreateBadEventDelegate=Cannot create an instance of '{0}' because XamlType is not valid.
+AttachableEventNotImplemented=Attachable events are not implemented.
+ListNotIList=List collection is not an IList.
+ArrayAddNotImplemented=Array Add method is not implemented.
+NoAddMethodFound=No Add methods found on type '{0}' for a value of type '{1}'.
+MissingTypeConverter=Creating from text without a TypeConverter is not allowed.
+CantSetReadonlyProperty=Cannot set read-only property '{0}'.
+CantGetWriteonlyProperty=Cannot get write-only property '{0}'.
+XmlDataNull=The value for XmlData property '{0}' is null or not IXmlSerializable.
+XmlValueNotReader=The value for XmlData property '{0}' is not an XmlReader.
+NameNotFound=Name resolution failure. '{0}' was not found.
+MustHaveName=Reference must have a Name to resolve.
+MethodInvocation=The invocation of a method '{0}' that matches the specified binding constraints threw an exception.
+GetValue=Get property '{0}' threw an exception.
+SetValue=Set property '{0}' threw an exception.
+AddCollection=Add value to collection of type '{0}' threw an exception.
+AddDictionary=Add value to dictionary of type '{0}' threw an exception.
+SetConnectionId=Set connectionId threw an exception.
+InitializationGuard=Initialization of '{0}' threw an exception.
+SetUriBase=Setting xml:base on '{0}' threw an exception.
+ProvideValue=Provide value on '{0}' threw an exception.
+SetXmlInstance=Setting xml instance on '{0}' threw an exception.
+GetConverterInstance=Getting instance of '{0}' threw an exception.
+DeferredLoad=Deferred load threw an exception.
+DeferredSave=Save of deferred-load content threw an exception.
+FactoryReturnedNull=The factory method '{0}' that matches the specified binding constraints returned null.
+ConstructorInvocation=The invocation of the constructor on type '{0}' that matches the specified binding constraints threw an exception.
+NoDefaultConstructor=No default constructor found for type '{0}'. You can use the Arguments or FactoryMethod directives to construct this type.
+NoConstructor=No matching constructor found on type '{0}'. You can use the Arguments or FactoryMethod directives to construct this type.
+DeferringLoaderInstanceNull=Cannot get a XamlDeferringLoader from XamlValueConverter '{0}' because its ConverterInstance property is null.
+TypeConverterFailed2=Failed to convert '{0}' to type '{1}'.
+CanConvertFromFailed=Failed to check convertibility from type '{0}' using '{1}'. This generally indicates an incorrectly implemented TypeConverter.
+CanConvertToFailed=Failed to check convertibility to type '{0}' using '{1}'. This generally indicates an incorrectly implemented TypeConverter.
+ShouldSerializeFailed=ShouldSerialize check failed for member '{0}'.
+GetItemsReturnedNull=XamlTypeInvoker.GetItems returned null for type '{0}'. This generally indicates an incorrectly implemented collection type.
+GetItemsException=Retrieving items in collection or dictionary of type '{0}' threw an exception.
+APSException=Enumerating attached properties on object '{0}' threw an exception.
+
+; XamlWriter
+CannotReassignSchemaContext=Cannot reassign a previously set SchemaContext.
+CannotSetSchemaContextNull=Cannot set SchemaContext to null.
+MissingCaseXamlNodes=Missing case in Default processing of XamlNodes.
+
+; TypeExension
+MarkupExtensionTypeName=TypeExtension must have TypeName property set before ProvideValue can be called.
+MarkupExtensionTypeNameBad='{0}' string is not valid for type.
+MarkupExtensionNoContext=Markup extension '{0}' requires '{1}' be implemented in the IServiceProvider for ProvideValue.
+
+; XamlXmlWriter
+XamlXmlWriterWriteNotSupportedInCurrentState=Unable to call '{0}' in current state.
+XamlXmlWriterWriteObjectNotSupportedInCurrentState=Unable to call WriteObject with isObjectFromMember set to true in current state.
+XamlXmlWriterPrefixAlreadyDefinedInCurrentScope=The prefix '{0}' is already defined in current scope.
+XamlXmlWriterNamespaceAlreadyHasPrefixInCurrentScope=Namespace '{0}' already has a prefix defined in current scope.
+XamlXmlWriterDuplicateMember=The member '{0}' has already been written.
+XamlXmlWriterIsObjectFromMemberSetForArraysOrNonCollections=The argument isObjectFromMember can only be set to true when the type is a collection.
+XamlXmlWriterCannotWriteNonstringValue=Cannot write a value that is not a string.
+ExpandPositionalParametersinTypeWithNoDefaultConstructor=Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters due to the lack of a default constructor on the markup extension that contains the positional parameters.  Try moving the positional parameter member earlier in the node stream, to a place where XamlXmlWriter can still write attributes.
+ConstructorNotFoundForGivenPositionalParameters=Cannot write the given positional parameters because a matching constructor was not found.
+ExpandPositionalParametersWithReadOnlyProperties=Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters since not all properties are writable.  Try moving the positional parameter member earlier in the node stream, to a place where XamlXmlWriter can still write attributes.
+TypeHasInvalidXamlName=The name of the type '{0}' contains characters that are invalid in XAML.
+MemberHasInvalidXamlName=The name of the member '{0}' contains characters that are invalid in XAML.
+NamespaceDeclarationCannotBeXml=The prefix 'xml' is reserved.
+ExpandPositionalParametersWithoutUnderlyingType=Cannot write positional parameters in the current state.  The writer cannot write the positional parameters in attribute form because the writer has started to write elements, nor can the writer expand the positional parameters since UnderlyingType on type '{0}' is null.  Try moving the positional parameter member earlier in the node stream, to place where XamlXmlWriter can still write attributes.
+PrefixNotInFrames=The prefix '{0}' could not be found.
+WhiteSpaceInCollection=XamlXmlWriter cannot write value '{0}' which contains significant white space in collection '{1}'.
+CannotWriteXmlSpacePreserveOnMember=The value '{1}' contains significant white space(s) but "xml:space = preserve" cannot be written down on the member '{0}'.
+
+; XamlTypeName
+InvalidTypeString=The string '{0}' is not a valid XAML type name. Type names contain an optional prefix, a name, and optional type arguments; such as 'String', 'x:Int32', 'g:Dictionary(x:String,x:Int32)'.
+InvalidTypeListString=The string '{0}' is not a valid XAML type name list. Type name lists are comma-delimited lists of types; such as 'x:String, x:Int32'.
+InvalidCharInTypeName=Character '{0}' was unexpected in string '{1}'.  Invalid XAML type name.
+XamlTypeNameNamespaceIsNull=Cannot convert this XamlTypeName instance to a string because the Namespace property is null. Set the Namespace property before calling XamlTypeName.ToString.
+XamlTypeNameNameIsNullOrEmpty=Cannot convert this XamlTypeName instance to a string because the Name property is null or empty. Set the Name property before calling XamlTypeName.ToString.
+XamlTypeNameCannotGetPrefix=Cannot convert this XamlTypeName instance to a string because the provided INamespacePrefixLookup could not generate a prefix for the namespace '{0}'.
+
+; General
+CollectionCannotContainNulls=Collection '{0}' cannot contain null values.
+
+; NamespaceDeclaration
+NamespaceDeclarationPrefixCannotBeNull=NamespaceDeclaration.Prefix cannot be null.  Provide a value for this property.
+NamespaceDeclarationNamespaceCannotBeNull=NamespaceDeclaration.Namespace cannot be null.  Provide a value for this property.
+
+; ClrAttachedProperty
+IncorrectGetterParamNum=Attached property getter methods must have one parameter and a non-void return type.
+IncorrectSetterParamNum=Attached property setter and attached event adder methods must have two parameters.
+GetterOrSetterRequired=Either getter or setter must be non-null.
+
+; ObjectReader
+ObjectReaderDictionaryMethod1NotFound=Unable to locate MemberMarkupInfo.DictionaryEntriesFromGeneric method.
+ObjectReaderXamlNamedElementAlreadyRegistered=An element with the name '{0}' has already been registered in this scope.
+ObjectReaderXamlNameScopeResultsInClonedObject=The object graph contains multiple references to an instance of type '{0}' and the serializer cannot find a commonly visible location to write the instance. You should examine your use of name scopes.
+ObjectReaderXamlNamePropertyMustBeString=The name property '{0}' on type '{1}' must be of type System.String.
+ObjectReaderNoDefaultConstructor=Unable to serialize type '{0}'.  Verify that the type is public and either has a default constructor or an instance descriptor.
+ObjectReaderNoMatchingConstructor=Unable to find a suitable constructor for the specified constructor arguments on type '{0}'.
+ObjectReaderInstanceDescriptorIncompatibleArgumentTypes=InstanceDescriptor provided an argument of type '{0}' where a parameter of type '{1}' was expected.
+ObjectReaderInstanceDescriptorIncompatibleArguments=InstanceDescriptor did not provide the correct number of arguments.
+ObjectReaderInstanceDescriptorInvalidMethod=InstanceDescriptor did not provide a valid constructor or method.
+ObjectReaderTypeCannotRoundtrip=Unable to read objects of the type ‘{0}’ because there are no accessible constructors. To allow this type to be used in XAML, add a default constructor, use ConstructorArgumentAttribute, or provide an InstanceDescriptor.
+ObjectReaderTypeIsNested=Unable to read objects of the type '{0}'.  Nested types are not supported.
+ObjectReaderAttachedPropertyNotFound=Unable to find an attachable property named '{0}' on type '{1}'.
+XamlFactoryInvalidXamlNode=Unexpected XAML node type '{0}' from XamlReader in XamlFactory.
+CannotAddPositionalParameters=In markup extensions, all constructor argument values should be atoms.  For the object of type '{0}', one or more argument values are not atomic.
+ObjectReaderMultidimensionalArrayNotSupported=Multidimensional arrays not supported.
+ObjectReaderTypeNotAllowed='{0}' blocked the use of type '{1}' in XAML. If you want to serialize this type, change '{0}'.GetXamlType to return a non-null value for this type, or pass a different value in the schemaContext parameter of the XamlObjectReader constructor.
+ObjectReader_TypeNotVisible=Type '{0}' not visible. If the type is local, please set the LocalAssembly field in XamlReaderSettings.
+ExpectedObjectMarkupInfo=Expected value of type ObjectMarkupInfo.
+AttachedPropertyOnTypeConvertedOrStringProperty=An attachable property named '{2}' is attached to a property named '{1}'.  The property named '{1}' is either a string or can be type-converted to string; attaching on such properties are not supported.  For debugging, the property '{1}' contains an object '{0}'.
+AttachedPropertyOnDictionaryKey=An attachable property named '{1}' is attached on a dictionary key '{0}' that is either a string or can be type-converted to string, which is not supported.
+MissingNameProvider=Service provider is missing the IXamlNameProvider service.
+
+; XamlMarkupExtensionWriter
+XamlMarkupExtensionWriterCannotSetSchemaContext=Cannot set SchemaContext on XamlMarkupExtensionWriter.
+XamlMarkupExtensionWriterDuplicateMember=The member '{0}' has already been written.
+XamlMarkupExtensionWriterCannotWriteNonstringValue=Cannot write a value that is not a string.
+XamlMarkupExtensionWriterInputInvalid=Errors detected in input.
+
+; AttachablePropertyStore
+DefaultAttachablePropertyStoreCannotAddInstance=Failed to add attached properties to item in ConditionalWeakTable.
+
+; AttributeReflector
+UnexpectedConstructorArg=Invalid metadata for attribute '{0}' on '{1}'. Expected '{2}' argument(s) of type '{3}'.
+
+; XamlDeferringLoader
+ShouldOverrideMethod=Method '{0}' is not supported by default. It can be implemented in derived classes.
+
+; XamlAccessLevel
+ExpectedQualifiedTypeName=Type name '{0}' is not assembly-qualified. You can obtain this value from System.Type.AssemblyQualifiedName.
+ExpectedQualifiedAssemblyName=Assembly name '{0}' is not fully qualified. The Name, Version, Culture, and PublicKeyToken must all be provided.
+
+; XamlLoadPermission
+ExpectedLoadPermission=Expected permission of type XamlLoadPermission.
+SecurityXmlUnexpectedTag=Invalid security XML. Unexpected tag '{0}', expected '{1}'.
+SecurityXmlUnexpectedValue=Invalid security XML. Unexpected value '{0}' in attribute '{1}', expected '{2}'.
+SecurityXmlMissingAttribute=Invalid security XML. Missing expected attribute '{0}'.
+
+; XamlServices
+StringIsNullOrEmpty=The string is null or empty.
+
+; XamlTypeInvoker
+NotSupportedOnUnknownType=This operation is not supported on unknown types.
+OnlySupportedOnCollections=This operation is only supported on collection types.
+OnlySupportedOnDictionaries=This operation is only supported on dictionary types.
+OnlySupportedOnCollectionsAndDictionaries=This operation is only supported on collection and dictionary types.
+
+; XamlMemberInvoker
+NotSupportedOnUnknownMember=This operation is not supported on unknown members.
+NotSupportedOnDirective=This operation is not supported on directive members.
+
+; XamlValueConverter
+ArgumentRequired=One of the following arguments must be non-null: '{0}'.
+ConverterMustDeriveFromBase=Converter type '{0}' doesn't derive from expected base type '{1}'.
+
+; XamlSchemaContext
+ReferenceIsNull=Value cannot be null. Object reference: '{0}'.
+
+
+; Markup Extensions
+MarkupExtensionArrayType=Must set Type before calling ProvideValue on ArrayExtension.
+MarkupExtensionArrayBadType=Items in the array must be type '{0}'. One or more items cannot be cast to this type.
+MarkupExtensionBadStatic='{0}' StaticExtension value cannot be resolved to an enumeration, static field, or static property.
+MarkupExtensionStaticMember=StaticExtension must have Member property set before ProvideValue can be called.
+MustBeOfType='{0}' must be of type '{1}'.
+
+;System.Windows.Markup
+ToStringNull=(null)
+ConvertToException='{0}' ValueSerializer cannot convert '{1}' to '{2}'.
+ConvertFromException='{0}' ValueSerializer cannot convert from '{1}'.
+
+;System.Windows.Markup
+ServiceTypeAlreadyAdded=This serviceType is already registered to another service.
+QualifiedNameHasWrongFormat='{0}' type name does not have the expected format 'className, assembly'.
+ParserAttributeArgsHigh=Too many attributes are specified for '{0}'.
+ParserAttributeArgsLow='{0}' requires more attributes.
+ParserAssemblyLoadVersionMismatch=Cannot load assembly '{0}' because a different version of that same assembly is loaded '{1}'.
+
+; FrugalList
+FrugalList_TargetMapCannotHoldAllData=Cannot promote from '{0}' to '{1}' because the target map is too small.
+FrugalList_CannotPromoteBeyondArray=Cannot promote from Array.
+
+; ServiceProviderContext
+ValueInArrayIsNull=A value in the '{0}' array is null.
+
+; EventTrace
+InvalidEvent=Event argument is invalid.
+
+; MarkupExtensionBracketCharacters
+InvalidClosingBracketCharacers=Encountered a closing BracketCharacter '{0}' without a corresponding opening BracketCharacter.
+MalformedBracketCharacters=BracketCharacter '{0}' does not have a corresponding opening/closing BracketCharacter.

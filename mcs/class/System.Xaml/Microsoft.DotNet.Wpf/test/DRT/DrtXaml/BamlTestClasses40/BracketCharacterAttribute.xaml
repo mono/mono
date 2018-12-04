@@ -1,0 +1,50 @@
+﻿<Grid x:Class="BamlTestClasses40.BracketCharacterAttribute"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:BamlTestClasses40"
+             >
+    <!--Single Argument in MarkupExtension constructor variations-->
+    <TextBlock Text='{local:BCMarkup Animals["poodle,doodle"]}' Tag='Path: Animals["poodle,doodle"] , Mode: '/>
+    <TextBlock Text='{local:BCMarkup Animals("poodle,doodle")}' Tag='Path: Animals("poodle,doodle") , Mode: '/>
+    <TextBlock Text='{local:BCMarkup Animals[poodle,doodle,moodle]}' Tag='Path: Animals[poodle,doodle,moodle] , Mode: '/>
+    <TextBlock Text='{local:BCMarkup Animals["poodle,doodle(a,b,c)"]}' Tag='Path: Animals["poodle,doodle(a,b,c)"] , Mode: '/>
+    <TextBlock Text='{local:BCMarkup Animals["poodle,doodle"](a,b,c,d=e)}' Tag='Path: Animals["poodle,doodle"](a,b,c,d=e) , Mode: '/>
+
+    <!--Two Arguments in MarkupExtension constructor variations-->
+    <TextBlock Text='{local:BCMarkup fn1(a,b), fn2$a,b^}' Tag='Path: fn1(a,b) , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,b), fn2}' Tag='Path: fn1(a,b) , Mode: fn2'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,b=c,d), fn2$a,b=c,d^}' Tag='Path: fn1(a,b=c,d) , Mode: fn2$a,b=c,d^'/>
+    <TextBlock Text='{local:BCMarkup fn1, fn2$a,b^}' Tag='Path: fn1 , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,[,,],b), $a,b^}' Tag='Path: fn1(a,[,,],b) , Mode: $a,b^'/>
+
+    <!--One constructor argument, One property variations-->
+    <TextBlock Text='{local:BCMarkup fn1(a,b), Mode = fn2$a,b^}' Tag='Path: fn1(a,b) , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,b), Mode = fn2}' Tag='Path: fn1(a,b) , Mode: fn2'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,b=c,d), Mode = fn2$a,b=c,d^}' Tag='Path: fn1(a,b=c,d) , Mode: fn2$a,b=c,d^'/>
+    <TextBlock Text='{local:BCMarkup fn1, Mode= fn2$a,b^}' Tag='Path: fn1 , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup fn1(a,[,,],b), Mode= $a,b^}' Tag='Path: fn1(a,[,,],b) , Mode: $a,b^'/>
+
+    <!--Zero constructor argument, Two properties variations-->
+    <TextBlock Text='{local:BCMarkup Path = fn1(a,b), Mode = fn2$a,b^}' Tag='Path: fn1(a,b) , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup Path = fn1(a,b), Mode = fn2}' Tag='Path: fn1(a,b) , Mode: fn2'/>
+    <TextBlock Text='{local:BCMarkup Path = fn1(a,b=c,d), Mode = fn2$a,b=c,d^}' Tag='Path: fn1(a,b=c,d) , Mode: fn2$a,b=c,d^'/>
+    <TextBlock Text='{local:BCMarkup Path = fn1, Mode= fn2$a,b^}' Tag='Path: fn1 , Mode: fn2$a,b^'/>
+    <TextBlock Text='{local:BCMarkup Path =  fn1(a,[,,],b), Mode= $a,b^}' Tag='Path: fn1(a,[,,],b) , Mode: $a,b^'/>
+
+    <!--Nested MarkupExtension Variation-->
+    <TextBlock Text='{local:BCMarkup Path = {local:BCNestedMarkup fn1(a,b)}}' Tag='Path: fn1(a,b) , Mode: '/>
+    <TextBlock Text='{local:BCMarkup {local:BCNestedMarkup fn1(a,b)}}' Tag='Path: fn1(a,b) , Mode: '/>
+    <TextBlock Text='{local:BCMarkup {local:BCNestedMarkup fn1(a,b)}, {local:BCNestedMarkup fn2(a[,]b)}}' Tag='Path: fn1(a,b) , Mode: fn2(a[,]b)'/>
+
+    <!--Double quotes outside-->
+    <TextBlock Text="{local:BCMarkup Animals['poodle,doodle']}" Tag="Path: Animals['poodle,doodle'] , Mode: "/>
+    <TextBlock Text="{local:BCMarkup Animals('poodle,doodle')}" Tag="Path: Animals('poodle,doodle') , Mode: "/>
+    <TextBlock Text="{local:BCMarkup Animals[poodle,doodle,moodle]}" Tag="Path: Animals[poodle,doodle,moodle] , Mode: "/>
+    <TextBlock Text="{local:BCMarkup Animals['poodle,doodle(a,b,c)']}" Tag="Path: Animals['poodle,doodle(a,b,c)'] , Mode: "/>
+    <TextBlock Text="{local:BCMarkup Animals['poodle,doodle'](a,b,c,d=e)}" Tag="Path: Animals['poodle,doodle'](a,b,c,d=e) , Mode: "/>
+
+    <!--Escape character within BracketCharacters variation-->
+  <TextBlock Text='{local:BCMarkup Animals[\"poodle\"]}' Tag='Path: Animals["poodle"] , Mode: ' />
+  <TextBlock Text="{local:BCMarkup Animals[\'poodle\']}" Tag="Path: Animals['poodle'] , Mode: " />
+  
+</Grid>

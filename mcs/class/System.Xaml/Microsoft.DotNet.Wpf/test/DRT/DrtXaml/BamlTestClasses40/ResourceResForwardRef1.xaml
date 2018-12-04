@@ -1,0 +1,15 @@
+﻿
+<Grid x:Class="BamlTestClasses40.ResourceResolutionForwardReference1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <Border Name="_border" Height="200" Width="400">
+        <Border.Resources>
+            <!-- Simple Forward reference.  This should throw. -->
+            <Rectangle x:Key="CyanRect" Fill="{StaticResource CyanBrush}" Height="10" Width="100"/>
+            <SolidColorBrush x:Key="CyanBrush" Color="Cyan"/>
+        </Border.Resources>
+        <ContentControl Content="{StaticResource CyanRect}" />
+    </Border>
+</Grid>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <AssemblyName>BamlTestClasses40</AssemblyName>
+    <RootNamespace>BamlTestClasses40</RootNamespace>
+    <Platforms>AnyCPU;x64</Platforms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+</Project>

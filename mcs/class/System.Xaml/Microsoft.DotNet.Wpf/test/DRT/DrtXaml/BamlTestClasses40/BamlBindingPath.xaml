@@ -1,0 +1,16 @@
+﻿<Window x:Class="BamlTestClasses40.BamlBindingPath"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.Resources>
+            <Style x:Key="foo" TargetType="{x:Type Button}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding (UIElement2.IsVisible)}" Value="True">
+                        <Setter Property="Background" Value="Red"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+        <Button DataContext="{Binding RelativeSource={RelativeSource Self}}" Style="{StaticResource foo}">Hello</Button>
+    </Grid>
+</Window>

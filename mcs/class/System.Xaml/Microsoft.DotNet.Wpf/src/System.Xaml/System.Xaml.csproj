@@ -1,0 +1,104 @@
+﻿<Project Sdk="Microsoft.NET.SDK">
+  <PropertyGroup>
+    <ProjectGuid>{9AC36357-34B7-40A1-95CA-FE9F46D089A7}</ProjectGuid>
+    <AssemblyName>System.Xaml</AssemblyName>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <Platforms>AnyCPU;x64</Platforms>
+    
+    <NoWarn>$(NoWarn);0618;NU5125</NoWarn>
+    <DefineConstants>$(DefineConstants);OLDRESOURCES;SYSTEM_XAML</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    
+    <PackageRuntimeIdentifierPrefix Condition="'$(Platform)'!='AnyCPU'">runtime.win-$(Platform)</PackageRuntimeIdentifierPrefix>
+    <PackageRuntimeIdentifierPrefix Condition="'$(Platform)'=='AnyCPU'">runtime.win-x86</PackageRuntimeIdentifierPrefix>
+    
+    <PackageId>$(PackageRuntimeIdentifierPrefix).Microsoft.DotNet.Wpf.Private</PackageId>
+    <Product>Microsoft.DotNet.Wpf</Product>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\TypeConverterHelper.cs">
+      <Link>Common\WPF\System\Windows\Markup\TypeConverterHelper.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\Replacements\TypeUriConverter.cs" />
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\ReflectionHelper.cs">
+      <Link>Common\WPF\System\Windows\Markup\ReflectionHelper.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\Xaml\Parser\SpecialBracketCharacters.cs">
+      <Link>Common\WPF\MS\Internal\Xaml\Parser\SpecialBracketCharacters.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\SafeSecurityHelper.cs">
+      <Link>Common\WPF\MS\Internal\SafeSecurityHelper.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\SecurityCriticalDataForSet.cs">
+      <Link>Common\WPF\MS\Internal\SecurityCriticalDataForSet.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\CriticalExceptions.cs">
+      <Link>Common\WPF\MS\Internal\CriticalExceptions.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\RuntimeIdentifierPropertyAttribute.cs">
+      <Link>Common\WPF\System\Windows\Markup\RuntimeIdentifierPropertyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\Xaml\Context\XamlContextStack.cs">
+      <Link>Common\WPF\MS\Internal\Xaml\Context\XamlContextStack.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\Xaml\Context\XamlFrame.cs">
+      <Link>Common\WPF\MS\Internal\Xaml\Context\XamlFrame.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\XmlCompatibilityReader.cs">
+      <Link>Common\WPF\System\Windows\Markup\XmlCompatibilityReader.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)System\Windows\Markup\XmlWrappingReader.cs">
+      <Link>Common\WPF\System\Windows\Markup\XmlWrappingReader.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Internal\FriendAccessAllowedAttribute.cs">
+      <Link>Common\WPF\MS\Internal\FriendAccessAllowedAttribute.cs</Link>
+    </Compile>
+    <Compile Include="$(WpfSharedDir)MS\Utility\FrugalList.cs">
+      <Link>Common\WPF\MS\Utility\FrugalList.cs</Link>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="$(WpfCommonDir)src\System\SR.cs">
+        <Link>Common\System\SR.cs</Link>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="System\Xaml\XamlProperty.cs" />
+    <Compile Remove="System\Windows\Markup\ValueSerializerAttribute.cs" />
+    <Compile Remove="System\Xaml\Schema\ClrProperty.cs" />
+    <Compile Remove="System\Xaml\Schema\ImplicitProperty.cs" />
+    <Compile Remove="System\Xaml\Schema\ClrAttachableEvent.cs" />
+    <Compile Remove="System\Xaml\Schema\ClrAttachableProperty.cs" />
+    <Compile Remove="System\Xaml\Schema\ClrEvent.cs" />
+    <Compile Remove="System\Xaml\Schema\Xasl*.cs" />
+    <Compile Remove="System\Xaml\IXamlSavedContextProvider.cs" />
+    <Compile Remove="System\Xaml\ObjectReaderSettings.cs" />
+    <Compile Remove="System\Xaml\Schema\UnknownProperty.cs" />
+    <Compile Remove="System\Xaml\Schema\IXamlTemplate.cs" />
+    <Compile Remove="System\Xaml\Schema\Permissions\*.cs" />
+    <Compile Remove="System\Xaml\InfosetObjects\XamlTextReader.cs" />
+    <Compile Remove="System\Xaml\InfosetObjects\ObjectWriterSettings.cs" />
+    <Compile Remove="System\Xaml\Schema\XmlNamespace.cs" />
+    <Compile Remove="System\Xaml\IXamlTemplate.cs" />
+    <Compile Remove="System\Xaml\Schema\DirectiveProperty.cs" />
+    <Compile Remove="System\Xaml\MS\Impl\XamlDirectiveCollection.cs" />
+    <Compile Remove="System\Xaml\Events\ObjectCreatedEventArgs.cs" />
+    <Compile Remove="System\Xaml\InfosetObjects\XamlTextReaderSettings.cs" />
+    <Compile Remove="System\Xaml\Context\HashSet.cs" />
+    <Compile Remove="System\Xaml\MS\Impl\ConcurrentDictionary.cs" />
+    <Compile Remove="System\Xaml\MS\Impl\XamlPropertyInfoKey.cs" />
+    
+    
+    <!-- <Compile Remove="" /> -->
+    
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Security.Permissions" Version="$(SystemSecurityVersion)" />
+  </ItemGroup>
+</Project>

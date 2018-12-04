@@ -1,0 +1,44 @@
+﻿<Grid x:Class="BamlTestClasses40.ResourceResolutionForwardReference2"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <Grid.Resources>
+        <SolidColorBrush x:Key="CyanBrush" Color="Cyan"/>
+    </Grid.Resources>
+
+    <Border Name="_border" Height="200" Width="400">
+        <!-- CyanBrush should resolve to the one above, never forward -->
+        <Border.Resources>
+            <Rectangle x:Key="CyanRect" Fill="{StaticResource CyanBrush}" Height="10" Width="100"/>
+            <SolidColorBrush x:Key="CyanBrush" Color="Orange"/>
+        </Border.Resources>
+        <StackPanel>
+            <!-- CyanRect should resolve to the one above, never forward -->
+            <ContentControl Name="_contentControl1" Content="{StaticResource CyanRect}">
+                <ContentControl.Resources>
+                    <Rectangle x:Key="CyanRect" Fill="Pink" Height="10" Width="100"/>
+                </ContentControl.Resources>
+            </ContentControl>
+
+<!--
+    The Contents of a Template (the tempalate property here) are
+    processed as a different case in the implementation so we need a seperate test here
+-->
+            <ContentControl Name="_contentControl2">
+                <ContentControl.Resources>
+                    <SolidColorBrush x:Key="CyanBrush2" Color="Cyan"/>
+                </ContentControl.Resources>
+                <ContentControl.Template>
+                    <ControlTemplate>
+                        <ControlTemplate.Resources>
+                            <!-- CyanBrush2 should resolve to the one above, never forward -->
+                            <Rectangle x:Key="CyanRect2" Fill="{StaticResource CyanBrush2}" Height="10" Width="100"/>
+                            <SolidColorBrush x:Key="CyanBrush2" Color="Red"/>
+                        </ControlTemplate.Resources>
+                        <ContentControl Name="_innerContentControl2" Content="{StaticResource CyanRect2}" />
+                    </ControlTemplate>
+                </ContentControl.Template>
+            </ContentControl>
+        </StackPanel>
+    </Border>
+</Grid>

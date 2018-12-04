@@ -6,7 +6,7 @@ RESOURCE_FILES =
 
 LIBRARY = System.Xaml.dll
 LIB_REFS = System System.Xml System.Core
-LIB_MCS_FLAGS = $(RESOURCE_FILES:%=/resource:%)
+LIB_MCS_FLAGS = $(RESOURCE_FILES:%=/resource:%) -d:SYSTEM_XAML
 
 TEST_RESOURCE_FILES = \
 	$(wildcard Test/XmlFiles/*.xml) \

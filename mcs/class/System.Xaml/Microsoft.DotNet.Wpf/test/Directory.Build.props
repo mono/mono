@@ -1,0 +1,13 @@
+<Project>
+  <Import Condition="Exists('../Directory.Build.props')" Project="../Directory.Build.props" />
+  <PropertyGroup>
+    <WpfTestsDir>$(MsBuildThisFileDirectory)</WpfTestsDir>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <EmbeddedResource>
+      <GenerateSource>false</GenerateSource>
+    </EmbeddedResource>
+  </ItemDefinitionGroup>
+  <Import Project="$(WpfTestsDir)MultiTargeting.props" />
+</Project>
