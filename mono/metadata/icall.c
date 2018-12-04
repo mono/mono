@@ -5722,7 +5722,7 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 }
 
 void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, char *configDir, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath, configDir);
@@ -5775,7 +5775,7 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 }
 
 void
-ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	if (!mono_merp_enabled ())
@@ -5799,7 +5799,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_h
 }
 
 void
-ves_icall_Mono_Runtime_DumpTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_DumpTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
 #ifndef DISABLE_CRASH_REPORTING
 	MonoStackHash hashes;
