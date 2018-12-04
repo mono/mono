@@ -165,6 +165,10 @@
 
     <Target Name="_SetupMonoLLVMBuildProperties" Condition="$(MONO_ENABLE_LLVM)=='true'">
 
+        <_CheckConfigurationProperty ConfFile="$(MONO_DIR)/cygconfig.h" ConfRegEx=".*#define.*INTERNAL_LLVM_ASSERTS.*1" Condition="'$(MONO_ENABLE_LLVM_ASSERTS)' != 'true'">
+            <Output TaskParameter="ConfPropertyFoundMatch" PropertyName="MONO_ENABLE_LLVM_ASSERTS" />
+        </_CheckConfigurationProperty>
+
         <Error Text="LLVM config executable $(_MonoLLVMConfig) not found." Condition="!Exists($(_MonoLLVMConfig))" />
 
         <_GetLLVMConfiguration LLVMConfTool="$(_MonoLLVMConfig)" LLVMConfToolArg="--version">
