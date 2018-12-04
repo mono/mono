@@ -3458,7 +3458,7 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	} else if (tls->il2cpp_context->frameCount > 0) {
 		for (int frame_index = tls->il2cpp_context->frameCount - 1; frame_index >= 0; --frame_index)
 		{
-			Il2CppSequencePoint* seq_point = il2cpp_get_sequence_point (tls->il2cpp_context->executionContexts[frame_index]->currentSequencePoint);
+			Il2CppSequencePoint* seq_point = tls->il2cpp_context->executionContexts[frame_index]->currentSequencePoint;
 			StackFrame* frame = g_new0(StackFrame, 1);
             MonoMethod *sp_method = il2cpp_get_seq_point_method(seq_point);
 			frame->method = sp_method;
@@ -5886,7 +5886,7 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal, Il2CppSeq
 #ifndef RUNTIME_IL2CPP
 	process_event (EVENT_KIND_STEP, jinfo_get_method (ji), il_offset, ctx, events, suspend_policy);
 #else
-	Il2CppSequencePoint* sequence_pt = il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint);
+	Il2CppSequencePoint* sequence_pt = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint;
     MonoMethod *sp_method = il2cpp_get_seq_point_method(sequence_pt);
 
 	/*
@@ -6481,7 +6481,7 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint
 	} else {
 		if (ss_req->depth == STEP_DEPTH_OVER)
 		{
-			MonoMethod* currentMethod = il2cpp_get_seq_point_method(il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint));
+			MonoMethod* currentMethod = il2cpp_get_seq_point_method(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint);
 
 			void *seqPointIter = NULL;
 			Il2CppSequencePoint *seqPoint;
@@ -6497,7 +6497,7 @@ ss_start_il2cpp(SingleStepReq *ss_req, DebuggerTlsData *tls, Il2CppSequencePoint
 
 		if (tls->il2cpp_context->frameCount > 1)
 		{
-		Il2CppSequencePoint* sequencePointForStepOut = il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 2]->currentSequencePoint);
+		Il2CppSequencePoint* sequencePointForStepOut = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 2]->currentSequencePoint;
 		g_assert(sequencePointForStepOut->kind == kSequencePointKind_StepOut);
 			ss_bp_add_one_il2cpp(ss_req, &ss_req_bp_count, &ss_req_bp_cache, sequencePointForStepOut);
 		}
@@ -6593,7 +6593,7 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 
 	if (tls->il2cpp_context->frameCount > 0)
 	{
-		Il2CppSequencePoint* seq_point = il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint);
+		Il2CppSequencePoint* seq_point = tls->il2cpp_context->executionContexts[tls->il2cpp_context->frameCount - 1]->currentSequencePoint;
         MonoMethod *sp_method = il2cpp_get_seq_point_method(seq_point);
 		ss_req->start_method = sp_method;
 		ss_req->last_method = sp_method;
@@ -6829,7 +6829,7 @@ static Il2CppSequencePoint* il2cpp_find_catch_sequence_point(DebuggerTlsData *tl
 	int frameIndex = tls->il2cpp_context->frameCount - 1;
 	while (frameIndex >= 0)
 	{
-		Il2CppSequencePoint* sp = il2cpp_find_catch_sequence_point_in_method(il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint), tls->exception);
+		Il2CppSequencePoint* sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint, tls->exception);
 		if (sp)
 			return sp;
 
@@ -6853,7 +6853,7 @@ static Il2CppSequencePoint* il2cpp_find_catch_sequence_point_from_exeption(Debug
 	int frameIndex = tls->il2cpp_context->frameCount - 1;
 	while (frameIndex >= 0)
 	{
-		sp = il2cpp_find_catch_sequence_point_in_method(il2cpp_get_sequence_point(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint), exc);
+		sp = il2cpp_find_catch_sequence_point_in_method(tls->il2cpp_context->executionContexts[frameIndex]->currentSequencePoint, exc);
 		if (sp)
 			return sp;
 
@@ -12363,27 +12363,48 @@ unity_debugger_agent_breakpoint(Il2CppSequencePoint* sequencePoint)
 	unity_process_breakpoint_inner(tls, FALSE, sequencePoint);
 }
 
-gboolean unity_pause_point_active()
+void unity_debugger_agent_pausepoint()
 {
-	return unity_debugger_agent_is_global_breakpoint_active() || unity_debugger_agent_is_single_stepping();
+    if (is_debugger_thread())
+        return;
+
+    save_thread_context(NULL);
+    suspend_current();
 }
 
-gboolean unity_sequence_point_active(Il2CppSequencePoint *seqPoint)
+gboolean unity_pause_point_active()
 {
-	gboolean global = unity_debugger_agent_is_global_breakpoint_active();
+    return unity_debugger_agent_is_global_breakpoint_active() || unity_debugger_agent_is_single_stepping();
+}
 
-	if ((seqPoint->ilOffset != METHOD_ENTRY_IL_OFFSET) && (seqPoint->ilOffset != METHOD_EXIT_IL_OFFSET))
-		return seqPoint->isActive || global || unity_debugger_agent_is_single_stepping ();
-
+gboolean unity_sequence_point_active_entry(Il2CppSequencePoint *seqPoint)
+{
 	int i = 0;
 	while (i < event_requests->len)
 	{
 		EventRequest *req = (EventRequest *)g_ptr_array_index (event_requests, i);
 
-		if ((req->event_kind == EVENT_KIND_METHOD_ENTRY && seqPoint->ilOffset == METHOD_ENTRY_IL_OFFSET) ||
-		    (req->event_kind == EVENT_KIND_METHOD_EXIT && seqPoint->ilOffset == METHOD_EXIT_IL_OFFSET))
+		if (req->event_kind == EVENT_KIND_METHOD_ENTRY)
 		{
-			return seqPoint->isActive || global || unity_debugger_agent_is_single_stepping ();
+			return seqPoint->isActive || g_unity_pause_point_active;
+		}
+
+		++i;
+	}
+
+	return FALSE;
+}
+
+gboolean unity_sequence_point_active_exit(Il2CppSequencePoint *seqPoint)
+{
+	int i = 0;
+	while (i < event_requests->len)
+	{
+		EventRequest *req = (EventRequest *)g_ptr_array_index (event_requests, i);
+
+		if (req->event_kind == EVENT_KIND_METHOD_EXIT)
+		{
+			return seqPoint->isActive || g_unity_pause_point_active;
 		}
 
 		++i;
