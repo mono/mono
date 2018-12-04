@@ -12,7 +12,7 @@
 #include <config.h>
 #include <glib.h>
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 #include "mono-merp.h"
 
 #include <unistd.h>
