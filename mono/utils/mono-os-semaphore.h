@@ -37,8 +37,6 @@
 #define MONO_HAS_SEMAPHORES 1
 
 #define MONO_NSEC_PER_SEC (1000 * 1000 * 1000)
-//usr/include/mach/clock_types.h:86:9: note: previous definition is here
-//#define NSEC_PER_SEC    1000000000ull   /* nanoseconds per second */
 
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
 
