@@ -1071,6 +1071,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/BidiCategory.cs
 ../referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarAlgorithmType.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Globalization/ISOWeek.cs
 ../referencesource/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarWeekRule.cs
