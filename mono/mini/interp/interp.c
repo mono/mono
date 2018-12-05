@@ -73,6 +73,7 @@
 #ifdef TARGET_ARM
 #include <mono/mini/mini-arm.h>
 #endif
+#include <mono/metadata/icall-decl.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable:4102) // label' : unreferenced label
@@ -3981,7 +3982,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
 				s = (MonoString*)mono_method_get_wrapper_data (method, strtoken);
 			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
-				s = mono_string_new_wrapper_internal ((const char*)mono_method_get_wrapper_data (method, strtoken));
+				s = mono_string_new_wrapper_internal_raw ((const char*)mono_method_get_wrapper_data (method, strtoken));
 			} else {
 				g_assert_not_reached ();
 			}

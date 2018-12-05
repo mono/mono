@@ -40,7 +40,7 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/unlocked.h>
-
+#include <mono/metadata/icall-decl.h>
 
 #if HAVE_BOEHM_GC
 
@@ -1177,7 +1177,7 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
  always_slowpath:
 	if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, ves_icall_string_alloc);
+		mono_mb_emit_icall (mb, ves_icall_string_alloc_raw);
 	} else {
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_icall (mb, ves_icall_object_new_specific);

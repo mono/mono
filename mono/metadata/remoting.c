@@ -24,6 +24,7 @@
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/assembly.h"
+#include "icall-decl.h"
 
 typedef enum {
 	MONO_MARSHAL_NONE,			/* No marshalling needed */
@@ -82,6 +83,8 @@ mono_context_set_icall (MonoAppContext *new_context);
 static MonoAppContext*
 mono_context_get_icall (void);
 
+static MonoObject*
+mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error);
 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (remoting_services, "System.Runtime.Remoting", "RemotingServices")
@@ -223,7 +226,7 @@ mono_remoting_marshal_init (void)
 		register_icall (type_from_handle, "type_from_handle", "object ptr", FALSE);
 		register_icall (mono_marshal_set_domain_by_id, "mono_marshal_set_domain_by_id", "int32 int32 int32", FALSE);
 		register_icall (mono_marshal_check_domain_image, "mono_marshal_check_domain_image", "int32 int32 ptr", FALSE);
-		register_icall (ves_icall_mono_marshal_xdomain_copy_value, "ves_icall_mono_marshal_xdomain_copy_value", "object object", FALSE);
+		register_icall (ves_icall_mono_marshal_xdomain_copy_value_raw, "ves_icall_mono_marshal_xdomain_copy_value", "object object", FALSE);
 		register_icall (mono_marshal_xdomain_copy_out_value, "mono_marshal_xdomain_copy_out_value", "void object object", FALSE);
 		register_icall (mono_remoting_wrapper, "mono_remoting_wrapper", "object ptr ptr", FALSE);
 		register_icall (mono_remoting_update_exception, "mono_remoting_update_exception", "object object", FALSE);
@@ -605,7 +608,7 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst)
 static void
 mono_marshal_emit_xdomain_copy_value (MonoMethodBuilder *mb, MonoClass *pclass)
 {
-	mono_mb_emit_icall (mb, ves_icall_mono_marshal_xdomain_copy_value);
+	mono_mb_emit_icall (mb, ves_icall_mono_marshal_xdomain_copy_value_raw);
 	mono_mb_emit_op (mb, CEE_CASTCLASS, pclass);
 }
 
@@ -2130,13 +2133,10 @@ mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error)
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.
  */
-MonoObject *
-ves_icall_mono_marshal_xdomain_copy_value (MonoObject *val)
+MonoObjectHandle
+ves_icall_mono_marshal_xdomain_copy_value (MonoObjectHandle val, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoObject *result = mono_marshal_xdomain_copy_value (val, error);
-	mono_error_set_pending_exception (error);
-	return result;
+	return mono_marshal_xdomain_copy_value_handle (val, error);
 }
 
 static void

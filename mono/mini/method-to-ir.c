@@ -69,6 +69,7 @@
 #include <mono/utils/mono-utils-debug.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/icall-decl.h>
 
 #include "trace.h"
 
@@ -8411,7 +8412,7 @@ calli_end:
 					EMIT_NEW_LDSTRLITCONST (cfg, iargs [0], str);
 				else
 					EMIT_NEW_PCONST (cfg, iargs [0], str);
-				*sp = mono_emit_jit_icall (cfg, mono_string_new_wrapper_internal, iargs);
+				*sp = mono_emit_jit_icall (cfg, mono_string_new_wrapper_internal_raw, iargs);
 			} else {
 				if (cfg->opt & MONO_OPT_SHARED) {
 					MonoInst *iargs [3];
