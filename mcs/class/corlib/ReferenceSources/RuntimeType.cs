@@ -675,7 +675,7 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetEvents_native (IntPtr name, BindingFlags bindingAttr,  MemberListType listType);
+		extern IntPtr GetEvents_native (IntPtr name,  MemberListType listType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
@@ -699,7 +699,7 @@ namespace System
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, bindingAttr, listType))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, listType))) {
 				int n = h.Length;
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {

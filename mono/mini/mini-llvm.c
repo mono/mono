@@ -3380,6 +3380,19 @@ needs_extra_arg (EmitContext *ctx, MonoMethod *method)
 	return TRUE;
 }
 
+static inline gboolean
+is_supported_callconv (EmitContext *ctx, MonoCallInst *call)
+{
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+	gboolean result = (call->signature->call_convention == MONO_CALL_DEFAULT) ||
+			  (call->signature->call_convention == MONO_CALL_C) ||
+			  (call->signature->call_convention == MONO_CALL_STDCALL);
+#else
+	gboolean result = (call->signature->call_convention == MONO_CALL_DEFAULT) || ((call->signature->call_convention == MONO_CALL_C) && ctx->llvm_only);
+#endif
+	return result;
+}
+
 static void
 process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, MonoInst *ins)
 {
@@ -3403,7 +3416,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	if (call->imt_arg_reg)
 		call->rgctx_arg_reg = 0;
 
-	if ((call->signature->call_convention != MONO_CALL_DEFAULT) && !((call->signature->call_convention == MONO_CALL_C) && ctx->llvm_only)) {
+	if (!is_supported_callconv (ctx, call)) {
 		set_failure (ctx, "non-default callconv");
 		return;
 	}
@@ -5210,6 +5223,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			values [ins->dreg] = LLVMBuildSub (builder, LLVMConstInt (LLVMInt32Type (), 0, FALSE), convert (ctx, lhs, LLVMInt32Type ()), dname);
 			break;
 		case OP_LNEG:
+			if (LLVMTypeOf (lhs) != LLVMInt64Type ())
+				lhs = convert (ctx, lhs, LLVMInt64Type ());
 			values [ins->dreg] = LLVMBuildSub (builder, LLVMConstInt (LLVMInt64Type (), 0, FALSE), lhs, dname);
 			break;
 		case OP_FNEG:
@@ -5226,6 +5241,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_LNOT: {
+			if (LLVMTypeOf (lhs) != LLVMInt64Type ())
+				lhs = convert (ctx, lhs, LLVMInt64Type ());
 			guint64 v = 0xffffffffffffffffLL;
 			values [ins->dreg] = LLVMBuildXor (builder, LLVMConstInt (LLVMInt64Type (), v, FALSE), lhs, dname);
 			break;
@@ -5236,7 +5253,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			rhs = LLVMBuildSExt (builder, convert (ctx, rhs, LLVMInt32Type ()), LLVMInt64Type (), "");
 
-			v1 = LLVMBuildMul (builder, convert (ctx, rhs, IntPtrType ()), LLVMConstInt (IntPtrType (), (1 << ins->backend.shift_amount), FALSE), "");
+			v1 = LLVMBuildMul (builder, convert (ctx, rhs, IntPtrType ()), LLVMConstInt (IntPtrType (), ((unsigned long long)1 << ins->backend.shift_amount), FALSE), "");
 			v2 = LLVMBuildAdd (builder, convert (ctx, lhs, IntPtrType ()), v1, "");
 			values [ins->dreg] = LLVMBuildAdd (builder, v2, LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), dname);
 			break;
@@ -7722,10 +7739,6 @@ emit_method_inner (EmitContext *ctx)
 	}
 
 	if (cfg->llvm_only) {
-		GHashTableIter iter;
-		MonoMethod *method;
-		GSList *callers, *l, *l2;
-
 		g_ptr_array_add (ctx->module->cfgs, cfg);
 
 		/*
@@ -8928,11 +8941,15 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 		default_lib_nodes[i] = LLVMMDNode (default_lib_args + i, 1);
 	}
 
+#if LLVM_API_VERSION < 600
 	linker_option_args[0] = LLVMConstInt (LLVMInt32Type (), 1, FALSE);
 	linker_option_args[1] = LLVMMDString (linker_options, G_N_ELEMENTS (linker_options) - 1);
 	linker_option_args[2] = LLVMMDNode (default_lib_nodes, G_N_ELEMENTS (default_lib_nodes));
 
 	LLVMAddNamedMetadataOperand (module->lmodule, "llvm.module.flags", LLVMMDNode (linker_option_args, G_N_ELEMENTS (linker_option_args)));
+#else
+	LLVMAddNamedMetadataOperand (module->lmodule, "llvm.linker.options", LLVMMDNode (default_lib_args, G_N_ELEMENTS (default_lib_args)));
+#endif
 #endif
 
 	/* Add GOT */
@@ -8995,9 +9012,7 @@ void
 mono_llvm_fixup_aot_module (void)
 {
 	MonoLLVMModule *module = &aot_module;
-	GHashTableIter iter;
 	MonoMethod *method;
-	GSList *callers, *l;
 
 	if (!module->llvm_only)
 		return;
@@ -9011,7 +9026,7 @@ mono_llvm_fixup_aot_module (void)
 
 	GHashTable *patches_to_null = g_hash_table_new (mono_patch_info_hash, mono_patch_info_equal);
 	for (int sindex = 0; sindex < module->callsite_list->len; ++sindex) {
-		CallSite *site = g_ptr_array_index (module->callsite_list, sindex);
+		CallSite *site = (CallSite*)g_ptr_array_index (module->callsite_list, sindex);
 		method = site->method;
 		LLVMValueRef lmethod = (LLVMValueRef)g_hash_table_lookup (module->method_to_lmethod, method);
 

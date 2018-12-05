@@ -90,6 +90,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
@@ -181,7 +182,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (135,
+			Assert.AreEqual (136,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 
@@ -214,6 +215,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
 		public void TestGetMethod ()
 		{
 			Assert.IsNotNull (frame1.GetMethod (),
@@ -321,7 +323,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (271,
+			Assert.AreEqual (273,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}
@@ -346,6 +348,7 @@ namespace MonoTests.System.Diagnostics
 		/// Test whether GetFrames contains the frames for nested exceptions
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
 		public void GetFramesAndNestedExc ()
 		{
 			try
@@ -381,6 +384,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting method associated with frame works.
 		/// </summary>
 		[Test]
+		[Category("StackWalks")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");

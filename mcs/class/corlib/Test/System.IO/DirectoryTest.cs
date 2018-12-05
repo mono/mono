@@ -1003,6 +1003,7 @@ public class DirectoryTest
 	}
 
 	[Test]
+	[Category ("NotWasm")]
 	public void LastAccessTime ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.AccessTime.1";

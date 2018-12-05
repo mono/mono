@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [5.21.0],
+AC_INIT(mono, [5.23.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -20,8 +20,8 @@ AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects]
 
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
-AM_EXTRA_RECURSIVE_TARGETS([test])
-AM_EXTRA_RECURSIVE_TARGETS([test-bundle])
+m4_ifdef([AM_EXTRA_RECURSIVE_TARGETS], AM_EXTRA_RECURSIVE_TARGETS([test]))
+m4_ifdef([AM_EXTRA_RECURSIVE_TARGETS], AM_EXTRA_RECURSIVE_TARGETS([test-bundle]))
 
 API_VER=2.0
 AC_SUBST(API_VER)
@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=00FA5053-3C12-4157-AD21-62D2C49DAC04
+MONO_CORLIB_VERSION=7A6EDC32-7F43-403B-8F6F-53AB0AD74819
 
 #
 # Put a quoted #define in config.h.
@@ -1094,7 +1094,7 @@ AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you w
 AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
-AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,bitcode,unreal,fullaotinterp  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
+AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,bitcode,unreal,fullaotinterp,fullaotinterp_llvm  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no   If you want to build the runtime with compiler flags that enable Spectre mitigation (defaults to no)], [], [with_spectre_mitigation=default])
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
@@ -1166,7 +1166,7 @@ with_bitcode_default=no
 enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
 
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000,nftnptr-arg-trampolines=1000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000,nftnptr-arg-trampolines=4000
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
@@ -1257,6 +1257,15 @@ elif test x$with_runtime_preset = xfullaotinterp; then
    mono_feature_disable_com='yes'
 
    AOT_BUILD_FLAGS="--aot=full,interp,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot-interp"
+elif test x$with_runtime_preset = xfullaotinterp_llvm; then
+   with_testing_aot_full_interp_default=yes
+   TEST_PROFILE=testing_aot_full_interp_llvm
+
+   # mscorlib.dll aot compilation crashes
+   mono_feature_disable_com='yes'
+
+   AOT_BUILD_FLAGS="-O=gsharedvt --llvm --aot=full,interp,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--full-aot-interp"
 elif test x$with_runtime_preset = xaot; then
    with_profile4_x_default=yes
@@ -1399,6 +1408,7 @@ AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 AM_CONDITIONAL(AOT_FULL_INTERP_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp"])
+AM_CONDITIONAL(AOT_FULL_INTERP_LLVM_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp_llvm"])
 AM_CONDITIONAL(DEFAULT_TESTS, [test "x$TEST_PROFILE" = "xnet_4_x"])
 
 default_profile=net_4_x
@@ -2907,6 +2917,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(setpgid)
 	AC_CHECK_FUNCS(system)
 	AC_CHECK_FUNCS(fork execv execve)
+	AC_CHECK_FUNCS(waitpid)
 	AC_CHECK_FUNCS(accept4)
 	AC_CHECK_FUNCS(localtime_r)
 	AC_CHECK_FUNCS(mkdtemp)
@@ -4256,12 +4267,10 @@ case "$TARGET" in
 WASM)
 	AC_DEFINE(TARGET_WASM, 1, [...])
 	arch_target=wasm
-	target_sizeof_void_p=4
 	;;
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
 	arch_target=x86
-	target_sizeof_void_p=4
 	;;
 AMD64)
 	AC_DEFINE(TARGET_AMD64, 1, [...])
@@ -4271,7 +4280,6 @@ ARM)
 	AC_DEFINE(TARGET_ARM, 1, [...])
 	arch_target=arm
 	ACCESS_UNALIGNED="no"
-	target_sizeof_void_p=4
 	;;
 ARM64)
 	AC_DEFINE(TARGET_ARM64, 1, [...])
@@ -4304,6 +4312,18 @@ RISCV64)
 	AC_DEFINE([TARGET_RISCV], [1], [Target is RISC-V])
 	AC_DEFINE([TARGET_RISCV64], [1], [Target is 64-bit RISC-V])
 	;;
+esac
+
+case "$TARGET" in
+*32* | ARM | X86 | POWERPC | MIPS | SPARC | WASM | ARM6432)
+    target_sizeof_void_p=4
+    ;;
+*64* | S390X)
+    target_sizeof_void_p=8
+    ;;
+*)
+    AC_MSG_ERROR([unknown target])
+    ;;
 esac
 
 case "$HOST" in
@@ -4456,19 +4476,14 @@ else
    AC_DEFINE(TARGET_BYTE_ORDER,G_BYTE_ORDER,[byte order of target])
 fi
 
-if test "x$target_sizeof_void_p" != "x"; then
-   AC_DEFINE_UNQUOTED(TARGET_SIZEOF_VOID_P,${target_sizeof_void_p},[wordsize of target])
-   # This is true for all the current cross-compiling targets
-   AC_DEFINE(SIZEOF_REGISTER,TARGET_SIZEOF_VOID_P,[size of target machine integer registers])
+AC_DEFINE_UNQUOTED(TARGET_SIZEOF_VOID_P,${target_sizeof_void_p},[wordsize of target])
+
+if test "x$sizeof_register" = "x4"; then
+  AC_DEFINE(SIZEOF_REGISTER,4,[size of target machine integer registers])
+elif test "x$sizeof_register" = "x8"; then
+  AC_DEFINE(SIZEOF_REGISTER,8,[size of target machine integer registers])
 else
-   AC_DEFINE(TARGET_SIZEOF_VOID_P,SIZEOF_VOID_P,[wordsize of target])
-   if test "x$sizeof_register" = "x4"; then
-      AC_DEFINE(SIZEOF_REGISTER,4,[size of target machine integer registers])
-   elif test "x$sizeof_register" = "x8"; then
-      AC_DEFINE(SIZEOF_REGISTER,8,[size of target machine integer registers])
-   else
-      AC_DEFINE(SIZEOF_REGISTER,SIZEOF_VOID_P,[size of target machine integer registers])
-   fi
+  AC_DEFINE_UNQUOTED(SIZEOF_REGISTER,${target_sizeof_void_p},[size of target machine integer registers])
 fi
 
 if test "x$have_visibility_hidden" = "xyes"; then
@@ -4636,6 +4651,7 @@ AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf)
 AC_CHECK_FUNCS(getrlimit)
 AC_CHECK_FUNCS(fork execv execve)
+AC_CHECK_FUNCS(waitpid)
 
 AC_ARG_WITH([overridable-allocators], [  --with-overridable-allocators	allow g_*alloc/g_free to call custom allocators set via g_mem_set_vtable])
 
@@ -4717,7 +4733,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 	unsigned long *a = (size_t*)0;
 ])], [
 	AC_MSG_RESULT(yes)
-	AC_SUBST(GSIZE_FORMAT, '"%lu"')
+	AC_SUBST(GSIZE_FORMAT, '"lu"')
 ], [
 	AC_MSG_RESULT(no)
 	AC_MSG_CHECKING(if size_t is unsigned int)
@@ -4726,7 +4742,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 		unsigned *a = (size_t*)0;
 	])], [
 		AC_MSG_RESULT(yes)
-		AC_SUBST(GSIZE_FORMAT, '"%u"')
+		AC_SUBST(GSIZE_FORMAT, '"u"')
 	], [
 # At this point the majority of systems have their answer,
 # and we descend into non-standard or new-standard territory.
@@ -4740,7 +4756,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 			unsigned __int64 *a = (size_t*)0;
 		])], [
 			AC_MSG_RESULT(yes)
-			AC_SUBST(GSIZE_FORMAT, '"%I64u"')
+			AC_SUBST(GSIZE_FORMAT, '"I64u"')
 		], [
 			AC_MSG_RESULT(no)
 			AC_MSG_CHECKING(if size_t is unsigned long long)
@@ -4749,7 +4765,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 				unsigned long long *a = (size_t*)0;
 			])], [
 				AC_MSG_RESULT(yes)
-				AC_SUBST(GSIZE_FORMAT, '"%llu"')
+				AC_SUBST(GSIZE_FORMAT, '"llu"')
 			], [
 				AC_MSG_RESULT(no)
 				AC_MSG_ERROR(Unable to determine size_t among unsigned long, int, __int64, long long)
@@ -5905,6 +5921,22 @@ elif test x$host_linux = xyes; then
 	AC_MSG_RESULT(linux)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
+elif case $host_os in aix*|os400*) true;; *) false;; esac; then
+	mono_native_text="AIX"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=aix
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(aix)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_AIX"
 else
 	mono_native=no
 	mono_native_text="no"
@@ -5937,6 +5969,7 @@ AM_CONDITIONAL(MONO_NATIVE_COMPAT, test x$mono_native_compat = xyes)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_MACOS, test x$MONO_NATIVE_PLATFORM = xmacos)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_IOS, test x$MONO_NATIVE_PLATFORM = xios)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
 
 MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
 MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"

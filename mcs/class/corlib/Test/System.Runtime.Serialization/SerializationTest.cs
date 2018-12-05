@@ -30,7 +30,6 @@ namespace MonoTests.System.Runtime.Serialization
 
 #if FEATURE_REMOTING
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();

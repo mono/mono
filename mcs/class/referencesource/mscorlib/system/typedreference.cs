@@ -19,7 +19,11 @@ namespace System {
     [CLSCompliant(false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     [System.Runtime.Versioning.NonVersionable] // This only applies to field layout
-    public struct TypedReference
+    public
+#if MONO
+    ref
+#endif
+    struct TypedReference
     {
 #if MONO
 #pragma warning disable 169

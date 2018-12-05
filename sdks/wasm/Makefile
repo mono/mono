@@ -102,6 +102,9 @@ runtime:
 cross:
 	$(MAKE) -C ../builds package-wasm-cross
 
+bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
 main.exe: $(APP_SOURCES)
@@ -147,12 +150,12 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	touch $@
 
 # For development
-aot-sample: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
+aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js bug.exe
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
+	(cd bin/aot-sample && $(SM) runtime.js --run bug.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -176,7 +179,7 @@ clean-aot-$(1):
 	$(RM) -r obj/aot-$(1) bin/aot-$(1)
 
 check-aot-$(1) run-aot-$(1): build-aot-$(1)
-	(cd bin/aot-$(1) && $$(SM) runtime.js $(3))
+	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking $(3))
 
 endef
 

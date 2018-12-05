@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 using System.Threading.Tasks;
+
+#if ENABLE_CECIL
+using C = Mono.Cecil;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -17,7 +19,6 @@ namespace Mono.Debugger.Soft
 		MethodMirror[] methods;
 		AssemblyMirror ass;
 		ModuleMirror module;
-		C.TypeDefinition meta;
 		FieldInfoMirror[] fields;
 		PropertyInfoMirror[] properties;
 		TypeInfo info;
@@ -29,6 +30,10 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] type_args;
 		bool cached_base_type;
 		bool inited;
+
+#if ENABLE_CECIL
+		C.TypeDefinition meta;
+#endif
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -613,6 +618,7 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
+#if ENABLE_CECIL
 		public C.TypeDefinition Metadata {
 			get {
 				if (meta == null) {
@@ -623,6 +629,7 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
+#endif
 
 		TypeInfo GetInfo () {
 			if (info == null)
@@ -705,8 +712,10 @@ namespace Mono.Debugger.Soft
 
 		void AppendCustomAttrs (IList<CustomAttributeDataMirror> attrs, TypeMirror type, bool inherit)
 		{
+#if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
+#endif
 
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);

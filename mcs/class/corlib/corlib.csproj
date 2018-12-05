@@ -415,6 +415,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ParseNumbers.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\PlatformNotSupportedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Progress.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Random.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\RankException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.Fast.cs" />
@@ -465,6 +466,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MemberTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodAttributes.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodBase.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodImplAttributes.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\MethodInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Reflection\Missing.cs" />
@@ -1052,13 +1054,11 @@
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\random.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\mdimport.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\memberinfoserializationholder.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\reflection\methodbase.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__fastresourcecomparer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\resources\__hresults.cs" />
@@ -1229,7 +1229,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\symmetricalgorithm.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\utils.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\x509certificates\x509utils.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\safesecurityhandles.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitycontext.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\securitydocument.cs" />
@@ -2022,6 +2021,7 @@
     <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\MethodInfo.cs" />
+    <Compile Include="corefx\RandomNumberGenerator.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />

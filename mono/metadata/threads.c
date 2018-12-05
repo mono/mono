@@ -57,6 +57,10 @@
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/mono-state.h>
 
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
+
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -1623,7 +1627,6 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThreadObjectHandle thread
 
 	res = create_thread (this_obj, internal, start, NULL, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	if (!res) {
-		mono_error_cleanup (error);
 		UNLOCK_THREAD (internal);
 		return FALSE;
 	}
@@ -2654,26 +2657,38 @@ ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThreadObjectHandle
 	MonoInternalThread *thread = thread_handle_to_internal_ptr (this_obj);
 
 	if (!thread->abort_state_handle)
-		return MONO_HANDLE_NEW (MonoObject, NULL);
+		return NULL_HANDLE; // No state. No error.
 
+	// Convert gc handle to coop handle.
 	MonoObjectHandle state = mono_gchandle_get_target_handle (thread->abort_state_handle);
-	g_assert (!MONO_HANDLE_IS_NULL (state));
+	g_assert (MONO_HANDLE_BOOL (state));
 
 	MonoDomain *domain = mono_domain_get ();
 	if (MONO_HANDLE_DOMAIN (state) == domain)
-		return state;
+		return state; // No need to cross domain, return state directly.
 
+	// Attempt move state cross-domain.
 	MonoObjectHandle deserialized = mono_object_xdomain_representation (state, domain, error);
-	if (!MONO_HANDLE_IS_NULL (deserialized))
-		return deserialized;
 
+	// If deserialized is null, there must be an error, and vice versa.
+	g_assert (is_ok (error) == MONO_HANDLE_BOOL (deserialized));
+
+	if (MONO_HANDLE_BOOL (deserialized))
+		return deserialized; // Cross-domain serialization succeeded. Return it.
+
+	// Wrap error in InvalidOperationException.
 	ERROR_DECL (error_creating_exception);
 	MonoExceptionHandle invalid_op_exc = mono_exception_new_invalid_operation (
 		"Thread.ExceptionState cannot access an ExceptionState from a different AppDomain", error_creating_exception);
 	mono_error_assert_ok (error_creating_exception);
-	if (g_assert (!is_ok (error)))
-		MONO_HANDLE_SET (invalid_op_exc, inner_ex, mono_error_convert_to_exception_handle (error));
-	return deserialized;
+	g_assert (!is_ok (error) && 1);
+	MONO_HANDLE_SET (invalid_op_exc, inner_ex, mono_error_convert_to_exception_handle (error));
+	error_init_reuse (error);
+	mono_error_set_exception_handle (error, invalid_op_exc);
+	g_assert (!is_ok (error) && 2);
+
+	// There is state, but we failed to return it.
+	return NULL_HANDLE;
 }
 
 static gboolean
@@ -6072,6 +6087,9 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 static gboolean
 mono_threads_summarize_native_self (MonoThreadSummary *out, MonoContext *ctx)
 {
+	if (!mono_get_eh_callbacks ()->mono_summarize_managed_stack)
+		return FALSE;
+
 	memset (out, 0, sizeof (MonoThreadSummary));
 	out->ctx = ctx;
 
@@ -6097,12 +6115,13 @@ mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx)
 
 	// Finish this on the same thread
 
-	if (success)
+	if (success && mono_get_eh_callbacks ()->mono_summarize_managed_stack)
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (out);
 
 	return success;
 }
 
+#define TIMEOUT_CRASH_REPORTER_FATAL 30
 #define MAX_NUM_THREADS 128
 typedef struct {
 	gint32 has_owner; // state of this memory
@@ -6117,6 +6136,99 @@ typedef struct {
 
 	gboolean silent; // print to stdout
 } SummarizerGlobalState;
+
+#if defined(HAVE_KILL) && !defined(HOST_ANDROID) && defined(HAVE_WAITPID) && ((!defined(HOST_DARWIN) && defined(SYS_fork)) || HAVE_FORK)
+#define HAVE_MONO_SUMMARIZER_SUPERVISOR 1
+#endif
+
+typedef struct {
+	MonoSemType supervisor;
+	pid_t pid;
+	pid_t supervisor_pid;
+} SummarizerSupervisorState;
+
+#ifndef HAVE_MONO_SUMMARIZER_SUPERVISOR
+static void
+summarizer_supervisor_wait (SummarizerSupervisorState *state)
+{
+	return;
+}
+
+static pid_t
+summarizer_supervisor_start (SummarizerSupervisorState *state)
+{
+	// nonzero, so caller doesn't think it's the supervisor
+	return (pid_t) 1;
+}
+
+static void
+summarizer_supervisor_end (SummarizerSupervisorState *state)
+{
+	return;
+}
+
+#else
+static void
+summarizer_supervisor_wait (SummarizerSupervisorState *state)
+{
+	sleep (TIMEOUT_CRASH_REPORTER_FATAL);
+
+	// If we haven't been SIGKILL'ed yet, we signal our parent
+	// and then exit
+#ifdef HAVE_KILL
+	MOSTLY_ASYNC_SAFE_PRINTF("Crash Reporter has timed out, sending SIGSEGV\n");
+	kill (state->pid, SIGSEGV);
+#else
+	g_error ("kill () is not supported by this platform");
+#endif
+
+	exit (1);
+}
+
+static pid_t
+summarizer_supervisor_start (SummarizerSupervisorState *state)
+{
+	memset (state, 0, sizeof (*state));
+	pid_t pid;
+
+	state->pid = getpid();
+
+	/*
+	* glibc fork acquires some locks, so if the crash happened inside malloc/free,
+	* it will deadlock. Call the syscall directly instead.
+	*/
+#if defined(HOST_ANDROID)
+	/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
+	// We disable this when we set HAVE_MONO_SUMMARIZER_SUPERVISOR above
+	g_assert_not_reached ();
+#elif !defined(HOST_DARWIN) && defined(SYS_fork)
+	pid = (pid_t) syscall (SYS_fork);
+#elif HAVE_FORK
+	pid = (pid_t) fork ();
+#else
+	g_assert_not_reached ();
+#endif
+
+	if (pid != 0)
+		state->supervisor_pid = pid;
+
+	return pid;
+}
+
+static void
+summarizer_supervisor_end (SummarizerSupervisorState *state)
+{
+#ifdef HAVE_KILL
+	kill (state->supervisor_pid, SIGKILL);
+#endif
+
+#if defined (HAVE_WAITPID)
+	// Accessed on same thread that sets it.
+	int status;
+	waitpid (state->supervisor_pid, &status, 0);
+#endif
+}
+#endif
 
 static gboolean
 summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
@@ -6195,7 +6307,7 @@ summarizer_post_dump (SummarizerGlobalState *state, MonoThreadSummary *this_thre
 static void
 summary_timedwait (SummarizerGlobalState *state, int timeout_seconds)
 {
-	gint64 milliseconds_in_second = 1000;
+	const gint64 milliseconds_in_second = 1000;
 	gint64 timeout_total = milliseconds_in_second * timeout_seconds;
 
 	gint64 end = mono_msec_ticks () + timeout_total;
@@ -6242,6 +6354,9 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 		// We are doing this dump on the controlling thread because this isn't
 		// an async context. There's still some reliance on malloc here, but it's
 		// much more stable to do it all from the controlling thread.
+		//
+		// This is non-null, checked in mono_threads_summarize
+		// with early exit there
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (thread);
 
 		mono_summarize_native_state_add_thread (thread, thread->ctx, thread == controlling);
@@ -6328,6 +6443,9 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 gboolean 
 mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gboolean silent, gboolean signal_handler_controller, gchar *mem, size_t provided_size)
 {
+	if (!mono_get_eh_callbacks ()->mono_summarize_managed_stack)
+		return FALSE;
+
 	// The staggered values are due to the need to use inc_i64 for the first value
 	static gint64 next_pending_request_id = 0;
 	static gint64 request_available_to_run = 1;
@@ -6359,7 +6477,13 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 			if (!already_async)
 				mono_thread_info_set_is_async_context (TRUE);
 
-			success = mono_threads_summarize_execute (ctx, out, hashes, silent, mem, provided_size);
+			SummarizerSupervisorState synch;
+			if (summarizer_supervisor_start (&synch)) {
+				success = mono_threads_summarize_execute (ctx, out, hashes, silent, mem, provided_size);
+				summarizer_supervisor_end (&synch);
+			} else {
+				summarizer_supervisor_wait (&synch);
+			}
 
 			if (!already_async)
 				mono_thread_info_set_is_async_context (FALSE);
