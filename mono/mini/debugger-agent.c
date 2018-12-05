@@ -8051,7 +8051,7 @@ clear_assembly_from_modifier (EventRequest *req, Modifier *m, MonoAssembly *asse
 {
 	int i;
 
-	if (m->kind == MOD_KIND_EXCEPTION_ONLY && m->data.exc_class && mono_image_get_assembly (mono_class_get_image (m->data.exc_class) == assembly))
+	if (m->kind == MOD_KIND_EXCEPTION_ONLY && m->data.exc_class && mono_image_get_assembly (mono_class_get_image (m->data.exc_class)) == assembly)
 		m->kind = MOD_KIND_NONE;
 	if (m->kind == MOD_KIND_ASSEMBLY_ONLY && m->data.assemblies) {
 		int count = 0, match_count = 0, pos;
