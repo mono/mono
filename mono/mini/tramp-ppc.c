@@ -204,7 +204,7 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guin
 
 	/* Either got or regs is set */
 	if (!got)
-		got = (gpointer*) regs [30];
+		got = (gpointer*)(gsize) regs [30];
 	*(guint8**)((guint8*)got + offset) = addr;
 }
 
