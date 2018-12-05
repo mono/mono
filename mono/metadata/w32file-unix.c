@@ -43,7 +43,6 @@
 
 #include "w32file.h"
 #include "w32file-internals.h"
-
 #include "w32file-unix-glob.h"
 #include "w32error.h"
 #include "fdhandle.h"
@@ -54,13 +53,7 @@
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
 #include "utils/refcount.h"
-
-#if 0 // FIXME icall-decl.h sometimes breaks things because of Boehm's handling of dlopen.
 #include "icall-decl.h"
-#else
-guint32
-ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error);
-#endif
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -4905,7 +4898,7 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	libc_handle = mono_dlopen ("/usr/lib/libc.dylib", 0);
 	g_assert (libc_handle);
 	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
 #endif
