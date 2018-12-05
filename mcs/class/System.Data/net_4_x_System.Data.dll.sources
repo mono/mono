@@ -15,7 +15,7 @@ System.Data.SqlClient/SQLDebugging.cs
 ../referencesource/System.Data/Misc/PrivilegedConfigurationManager.cs
 ../referencesource/System.Data/System/Data/Common/DbProviderConfigurationHandler.cs
 ../referencesource/System.Data/System/Data/Common/DbProviderFactoriesConfigurationHandler.cs
-../../../external/corefx/src/System.Data.Common/src/System/Data/Common/DbProviderFactories.cs
+../referencesource/System.Data/System/Data/Common/DbProviderFactories.cs
 ../referencesource/System.Data/System/Data/Common/HandlerBase.cs
 ../referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../referencesource/System.Data/System/Data/Odbc/OdbcConnectionOpen.cs
