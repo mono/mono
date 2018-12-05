@@ -4919,7 +4919,7 @@ mono_w32file_cleanup (void)
 	mono_coop_mutex_destroy (&finds_mutex);
 
 #if HOST_DARWIN
-	dlclose (libc_handle);
+	mono_dl_close (libc_handle);
 #endif
 }
 
