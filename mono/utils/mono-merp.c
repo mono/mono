@@ -250,16 +250,45 @@ mono_merp_write_params (MERPStruct *merp)
 	return TRUE;
 }
 
-static void
+static gboolean
 mono_merp_send (MERPStruct *merp)
 {
+	gboolean invoke_success = FALSE;
+
+#if defined(HAVE_EXECV) && defined(HAVE_FORK)
+	pid_t pid = (pid_t) fork ();
+
+	// Only one we define on OSX
+	if (pid == 0) {
+		const char *open_path = "/usr/bin/open";
+		const char *argvOpen[] = {open_path, "-a", config.merpGUIPath, NULL};
+		execv (open_path, (char**)argvOpen);
+		exit (-1);
+	} else {
+		int status;
+		waitpid (pid, &status, 0);
+		gboolean exit_success = FALSE;
+		int exit_status = FALSE;
+
+		while (TRUE) {
+			if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
+				break;
+
+			if (WIFEXITED(status)) {
+				exit_status = WEXITSTATUS(status);
+				exit_success = TRUE;
+				invoke_success = exit_status == TRUE;
+				break;
+			} else if (WIFSIGNALED(status)) {
+				break;
+			}
+		}
+	}
+
 	// // Create process to launch merp gui application
-	const char *argvOpen[] = {"/usr/bin/open", "-a", config.merpGUIPath, NULL};
-	int status = posix_spawn(NULL, "/usr/bin/open", NULL, NULL, (char *const*)(argvOpen), NULL);
+#endif
 
-	g_assertf (status != 0, "Could not start the Microsoft Error Reporting client (at %s). Error code: %d\n", config.merpGUIPath, status);
-
-	return;
+	return invoke_success;
 }
 
 static void
@@ -324,7 +353,7 @@ static gboolean
 mono_merp_write_fingerprint_payload (const char *non_param_data, const MERPStruct *merp)
 {
 	int handle = g_open (merp->crashLogPath, O_TRUNC | O_WRONLY | O_CREAT, merp_file_permissions);
-	g_assertf (handle != -1, "Could not open crash log file at %s", merp->merpFilePath);
+	g_assertf (handle != -1, "Could not open crash log file at %s", merp->crashLogPath);
 
 	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "{\n");
 	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\"payload\" : \n");
@@ -415,7 +444,8 @@ mono_write_wer_template (MERPStruct *merp)
 	return TRUE;
 }
 
-void
+// Returns success
+gboolean
 mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes)
 {
 	MERPStruct merp;
@@ -425,18 +455,22 @@ mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *no
 
 	mono_init_merp (crashed_pid, signal, hashes, &merp);
 	if (!mono_merp_write_params (&merp))
-		return;
+		return FALSE;
 
 	if (!mono_merp_write_fingerprint_payload (non_param_data, &merp))
-		return;
+		return FALSE;
 
 	if (!mono_write_wer_template (&merp))
-		return;
+		return FALSE;
 
 	// Start program
 	mono_summarize_timeline_phase_log (MonoSummaryMerpInvoke);
-	mono_merp_send (&merp);
-	mono_summarize_timeline_phase_log (MonoSummaryCleanup);
+	gboolean success = mono_merp_send (&merp);
+
+	if (success)
+		mono_summarize_timeline_phase_log (MonoSummaryCleanup);
+
+	return success;
 }
 
 void

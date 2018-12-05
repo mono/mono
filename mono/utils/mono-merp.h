@@ -42,11 +42,13 @@ gboolean mono_merp_enabled (void);
  * \arg crashed_pid the PID of the thread that encountered the native fault
  * \arg thread_pointer the address of the stack pointer when the native fault occurred
  *
+ * returns: Success of sending message
+ *
  * This either returns after the MERP handler has successfully uploaded crashed_pid's
  * crash dump (leaving the caller to call exit), or terminates the runtime
  * when the registered telemetry application does not respond.
  */
-void
+gboolean
 mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *dump_file, MonoStackHash *hashes);
 
 
