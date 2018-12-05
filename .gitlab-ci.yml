@@ -18,8 +18,19 @@ run_all_builds:
 build_osx_runtime:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_osx_runtime_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_osx_runtime_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   when: manual
   script:
   - git submodule update --init --recursive
@@ -41,8 +52,19 @@ build_osx_runtime:
 build_osx_classlibs:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_osx_classlibs_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_osx_classlibs_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   when: manual
   script:
   - git submodule update --init --recursive
@@ -68,8 +90,19 @@ build_osx_classlibs:
 build_android:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_android_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_android_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   when: manual
   script:
   - git submodule update --init --recursive
