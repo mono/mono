@@ -43,7 +43,16 @@ class C
 		} catch (Exception exc) {
 			var send = monoType.GetMethod("SendExceptionToTelemetry", BindingFlags.NonPublic | BindingFlags.Static);
 			var send_params = new object[] {exc};
-			send.Invoke(null, send_params);
+
+			bool caught_expected_exception = false;
+			try {
+				send.Invoke(null, send_params);
+			} catch (Exception exc2) {
+				if (exc2.InnerException != null && exc2.InnerException.Message == "We were unable to start the Microsoft Error Reporting client.")
+					caught_expected_exception = true;
+				else
+					throw new Exception (String.Format ("Got exception from Merp icall with wrong message {0}", exc2.InnerException != null ? exc2.InnerException.Message : exc2.Message));
+			}
 		}
 
 		var xmlFilePath = String.Format("{0}CustomLogsMetadata.xml", configDir);

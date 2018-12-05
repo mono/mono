@@ -5791,7 +5791,11 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 port
 	// Tells mono that we want to send the HANG EXC_TYPE.
 	const char *signal = "SIGTERM";
 
-	mono_merp_invoke (crashed_pid, signal, payload, &hashes);
+	gboolean success = mono_merp_invoke (crashed_pid, signal, payload, &hashes);
+	if (!success) {
+		//g_assert_not_reached ();
+		mono_error_set_generic_error (error, "System", "Exception", "We were unable to start the Microsoft Error Reporting client.");
+	}
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
