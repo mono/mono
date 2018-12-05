@@ -31,7 +31,6 @@ build_osx_runtime:
           config:
             env_vars:
               - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
-  when: manual
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
@@ -65,7 +64,6 @@ build_osx_classlibs:
           config:
             env_vars:
               - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
-  when: manual
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
@@ -103,7 +101,6 @@ build_android:
           config:
             env_vars:
               - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
-  when: manual
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
@@ -126,7 +123,6 @@ build_win:
   tags:
   - buildfarm
   - windows
-  when: manual
   script:
   - git submodule update --init --recursive
   - cd external/buildscripts
@@ -148,7 +144,6 @@ build_win_x86:
   tags:
   - buildfarm
   - windows
-  when: manual
   script:
   - git submodule update --init --recursive
   - cd external/buildscripts
@@ -192,7 +187,6 @@ build_linux_x64:
   tags:
   - buildfarm
   - linux
-  when: manual
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
@@ -215,7 +209,6 @@ build_linux_x86:
   tags:
   - buildfarm
   - linux
-  when: manual
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
@@ -236,7 +229,6 @@ build_linux_x86:
 collate_builds:
   image: ubuntu:latest
   stage: collate
-  when: manual
   dependencies:
   - build_android
   - build_osx_runtime
