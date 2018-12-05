@@ -28,13 +28,17 @@
 
 namespace System.Diagnostics.Tracing
 {
-	public class EventCounter
+	public class EventCounter : IDisposable
 	{
 		public EventCounter (string name, EventSource eventSource)
 		{
 		}
 
 		public void WriteMetric (float value)
+		{
+		}
+
+		public void Dispose ()
 		{
 		}
 	}

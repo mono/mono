@@ -189,7 +189,7 @@ System.Diagnostics.SymbolStore/ISymbolScope.cs
 System.Diagnostics.SymbolStore/ISymbolVariable.cs
 System.Diagnostics.SymbolStore/ISymbolWriter.cs
 System.Diagnostics.SymbolStore/SymAddressKind.cs
-System.Diagnostics.SymbolStore/SymbolToken.cs
+../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/SymbolStore/SymbolToken.cs
 System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
