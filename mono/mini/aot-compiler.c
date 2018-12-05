@@ -13111,7 +13111,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
-		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, TRUE, acfg->aot_opts.static_link, acfg->aot_opts.llvm_only);
+		LLVMModuleFlags flags = LLVM_MODULE_FLAG_DWARF;
+		if (acfg->aot_opts.static_link)
+			flags |= LLVM_MODULE_FLAG_STATIC;
+		if (acfg->aot_opts.llvm_only)
+			flags |= LLVM_MODULE_FLAG_LLVM_ONLY;
+		if (acfg->aot_opts.interp)
+			flags |= LLVM_MODULE_FLAG_INTERP;
+		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, flags);
 	}
 #endif
 
