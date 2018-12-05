@@ -4898,9 +4898,9 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = mono_dlopen ("/usr/lib/libc.dylib", 0);
+	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
+	clonefile_ptr = (clonefile_fn)mono_dl_symbol (libc_handle, "clonefile");
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
