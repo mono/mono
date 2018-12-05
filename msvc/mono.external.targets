@@ -113,6 +113,7 @@
         <_LLVMSourceDir Condition="'$(_LLVMSourceDir)' == ''">$(_MonoSourceDir)\external\llvm</_LLVMSourceDir>
         <_LLVMBuildDir>$([System.IO.Path]::GetFullPath('$(MONO_BUILD_DIR_PREFIX)$(Platform)\obj\external\llvm-build\$(Configuration)'))</_LLVMBuildDir>
         <_LLVMInstallDir>$(_LLVMBuildDir)\install</_LLVMInstallDir>
+        <_MonoLLVMConfig>$(_LLVMInstallDir)\bin\llvm-config.exe</_MonoLLVMConfig>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -159,7 +160,6 @@
         <PropertyGroup Condition="'$(MONO_EXTERNAL_LLVM_CONFIG)' == ''">
             <_MonoEnableExternalLLVM>false</_MonoEnableExternalLLVM>
             <_MonoEnableInternalLLVM>true</_MonoEnableInternalLLVM>
-            <_MonoLLVMConfig>$(_LLVMInstallDir)\bin\llvm-config.exe</_MonoLLVMConfig>
         </PropertyGroup>
     </Target>
 
