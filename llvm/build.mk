@@ -27,7 +27,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/ll
 		-DLLVM_INCLUDE_TESTS=Off \
 		-DLLVM_BUILD_EXAMPLES=Off \
 		-DLLVM_INCLUDE_EXAMPLES=Off \
-		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
+		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis;llvm-cbe" \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(EXTRA_LLVM_ARGS)	\
 		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
