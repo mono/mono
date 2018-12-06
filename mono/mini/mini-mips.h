@@ -249,7 +249,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 #endif
 
-#define MIPS_RET_ADDR_OFFSET	(-sizeof(gpointer))
+#define MIPS_RET_ADDR_OFFSET	(-sizeof (target_mgreg_t))
 #define MIPS_FP_ADDR_OFFSET	(-8)
 #define MIPS_STACK_ALIGNMENT	16
 #define MIPS_STACK_PARAM_OFFSET 16		/* from sp to first parameter */
