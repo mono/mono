@@ -5682,19 +5682,23 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 					opcode = OP_IMIN;
 				if (fsig->params [0]->type == MONO_TYPE_U4)
 					opcode = OP_IMIN_UN;
+#ifdef __mono_ppc64__
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
 					opcode = OP_LMIN;
 				else if (fsig->params [0]->type == MONO_TYPE_U8)
 					opcode = OP_LMIN_UN;
+#endif
 			} else if (strcmp (cmethod->name, "Max") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMAX;
 				if (fsig->params [0]->type == MONO_TYPE_U4)
 					opcode = OP_IMAX_UN;
+#ifdef __mono_ppc64__
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
 					opcode = OP_LMAX;
 				else if (fsig->params [0]->type == MONO_TYPE_U8)
 					opcode = OP_LMAX_UN;
+#endif
 			}
 			/*
 			 * TODO: Floating point version with fsel, but fsel has
