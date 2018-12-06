@@ -391,6 +391,15 @@ long_xor_imm: dest:i src1:i clob:1 len:4
 lcompare: src1:i src2:i len:4
 lcompare_imm: src1:i len:12
 
+long_min: dest:i src1:i src2:i len:8 clob:1
+long_min_un: dest:i src1:i src2:i len:8 clob:1
+long_max: dest:i src1:i src2:i len:8 clob:1
+long_max_un: dest:i src1:i src2:i len:8 clob:1
+int_min: dest:i src1:i src2:i len:8 clob:1
+int_max: dest:i src1:i src2:i len:8 clob:1
+int_min_un: dest:i src1:i src2:i len:8 clob:1
+int_max_un: dest:i src1:i src2:i len:8 clob:1
+
 #long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
 
 vcall2: len:36 clob:c

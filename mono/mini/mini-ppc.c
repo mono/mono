@@ -4245,6 +4245,39 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* emulated */
 			g_assert_not_reached ();
 			break;
+		/* These min/max require POWER5 */
+		case OP_IMIN:
+			ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMIN_UN:
+			ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMAX:
+			ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_IMAX_UN:
+			ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_LMIN:
+			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_LMIN_UN:
+			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_LMAX:
+			ppc_cmp (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
+		case OP_LMAX_UN:
+			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
+			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
 		case OP_FCOMPARE:
 			ppc_fcmpu (code, 0, ins->sreg1, ins->sreg2);
 			break;
@@ -5634,6 +5667,44 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_freg (cfg);
 			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		/* Check for Min/Max for (u)int(32|64) */
+		opcode = 0;
+		if (1) { /* XXX: Check for POWER5 and maybe 64-bitness? */
+			if (strcmp (cmethod->name, "Min") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMIN;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMIN_UN;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMIN_UN;
+			} else if (strcmp (cmethod->name, "Max") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMAX;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMAX_UN;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMAX_UN;
+			}
+			/*
+			 * TODO: Floating point version with fsel, but fsel has
+			 * some peculiarities (need a scratch reg unless
+			 * comparing with 0, NaN/Inf behaviour (then MathF too)
+			 */
+		}
+
+		if (opcode && fsig->param_count == 2) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = fsig->params [0]->type == MONO_TYPE_I4 ? STACK_I4 : STACK_I8;
+			ins->dreg = mono_alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 	}

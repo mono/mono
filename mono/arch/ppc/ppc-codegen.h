@@ -754,6 +754,16 @@ my and Ximian's copyright to this code. ;)
 
 /* this marks the end of my work, ct */
 
+/*
+ * Introduced in Power ISA 2.03 (P5)
+ * This is an A-form instruction like many of the FP arith ops,
+ * but arranged slightly differently (swap record and reserved area)
+ */
+#define ppc_isel(c,D,A,B,C) ppc_emit32(c, (31 << 26) | (D << 21) | (A << 16) | (B << 11) | (C << 6) | (15 << 1) | 0)
+#define ppc_isellt(c,D,A,B) ppc_isel(c,D,A,B,0)
+#define ppc_iselgt(c,D,A,B) ppc_isel(c,D,A,B,1)
+#define ppc_iseleq(c,D,A,B) ppc_isel(c,D,A,B,2)
+
 /* PPC64 */
 
 /* The following FP instructions are not are available to 32-bit
