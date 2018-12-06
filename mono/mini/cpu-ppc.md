@@ -209,7 +209,9 @@ endfilter: src1:i len:32
 aotconst: dest:i len:8
 load_gotaddr: dest:i len:32
 got_entry: dest:i src1:b len:32
+abs: dest:f src1:f len:4
 sqrt: dest:f src1:f len:4
+sqrtf: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
 subcc: dest:i src1:i src2:i len:4

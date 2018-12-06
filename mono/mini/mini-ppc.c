@@ -40,6 +40,9 @@
 #include <sys/systemcfg.h>
 #endif
 
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
+static GENERATE_TRY_GET_CLASS_WITH_CACHE (mathf, "System", "MathF")
+
 #define FORCE_INDIR_CALL 1
 
 enum {
@@ -4214,6 +4217,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 #endif
 		}
+		case OP_ABS:
+			ppc_fabsd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_SQRTF:
+			ppc_fsqrtsd (code, ins->dreg, ins->sreg1);
+			break;
 		case OP_SQRT:
 			ppc_fsqrtd (code, ins->dreg, ins->sreg1);
 			break;
@@ -5610,8 +5619,38 @@ mono_arch_get_cie_program (void)
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	/* FIXME: */
-	return NULL;
+	MonoInst *ins = NULL;
+	int opcode = 0;
+
+	if (cmethod->klass == mono_class_try_get_math_class ()) {
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRT;
+		} else if (strcmp (cmethod->name, "Abs") == 0 && fsig->params [0]->type == MONO_TYPE_R8) {
+			opcode = OP_ABS;
+		}
+
+		if (opcode && fsig->param_count == 1) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R8;
+			ins->dreg = mono_alloc_freg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+	}
+	if (cmethod->klass == mono_class_try_get_mathf_class ()) {
+		if (strcmp (cmethod->name, "Sqrt") == 0) {
+			opcode = OP_SQRTF;
+		} /* XXX: POWER has no single-precision normal FPU abs? */
+
+		if (opcode && fsig->param_count == 1) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = STACK_R4;
+			ins->dreg = mono_alloc_freg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+	}
+	return ins;
 }
 
 host_mgreg_t
