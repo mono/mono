@@ -65,7 +65,7 @@ function helix_send_build_start_event {
         }" "${url}" > "helix-telemetry/${1}/job-token.txt"
     helix_job_token=$(cat "helix-telemetry/${1}/job-token.txt" | sed 's/"//g')
 
-    wget -O- --method="POST" --header='Accept: application/json' --header="X-Helix-Job-Token: ${helix_job_token}" "https://helix.dot.net/api/2018-03-14/telemetry/job/build?buildUri=${BUILD_URL}" > "helix-telemetry/${1}/build-id.txt"
+    wget -O- --method="POST" --header='Accept: application/json' --header="X-Helix-Job-Token: ${helix_job_token}" "https://helix.dot.net/api/2018-03-14/telemetry/job/build?buildUri=${BUILD_URL//+/%2B}" > "helix-telemetry/${1}/build-id.txt"
 }
 
 function helix_send_build_done_event {
