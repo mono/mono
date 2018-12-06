@@ -165,7 +165,6 @@ build_win_bare_minimum:
   tags:
   - buildfarm
   - windows
-  when: manual
   script:
   - git submodule update --init --recursive
   - cd external/buildscripts
