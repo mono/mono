@@ -157,7 +157,7 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll $(BROWSER_TEST)/HttpTestSuite.cs
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) /r:WebAssembly.Bindings.dll /r:WebAssembly.Net.Http.dll $(BROWSER_TEST)/HttpTestSuite.cs 
-	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=./tests/browser/runtime.js $(BROWSER_TEST_ASSETS) ./tests/browser/HttpTestSuite.dll
+	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
