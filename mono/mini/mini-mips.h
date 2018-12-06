@@ -253,7 +253,7 @@ typedef struct MonoCompileArch {
 #define MIPS_FP_ADDR_OFFSET	(-8)
 #define MIPS_STACK_ALIGNMENT	16
 #define MIPS_STACK_PARAM_OFFSET 16		/* from sp to first parameter */
-#define MIPS_MINIMAL_STACK_SIZE (4 * sizeof (target_mgreg_t) + 4 * sizeof (target_mgreg_t))
+#define MIPS_MINIMAL_STACK_SIZE (8 * sizeof (target_mgreg_t))
 #define MIPS_EXTRA_STACK_SIZE	16		/* from last parameter to top of frame */
 
 #if _MIPS_SIM == _ABIO32
