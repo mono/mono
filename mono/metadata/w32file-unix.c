@@ -4900,7 +4900,7 @@ mono_w32file_init (void)
 #if HOST_DARWIN
 	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)mono_dl_symbol (libc_handle, "clonefile");
+	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
