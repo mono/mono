@@ -65,6 +65,7 @@ enum {
 	PPC_ISA_2X            = 1 << 3,
 	PPC_ISA_64            = 1 << 4,
 	PPC_MOVE_FPR_GPR      = 1 << 5,
+	PPC_ISA_2_03          = 1 << 6,
 	PPC_HW_CAP_END
 };
 
@@ -555,6 +556,9 @@ mono_arch_init (void)
 
 	if (mono_hwcap_ppc_is_isa_2x)
 		cpu_hw_caps |= PPC_ISA_2X;
+
+	if (mono_hwcap_ppc_is_isa_2_03)
+		cpu_hw_caps |= PPC_ISA_2_03;
 
 	if (mono_hwcap_ppc_is_isa_64)
 		cpu_hw_caps |= PPC_ISA_64;
@@ -5672,7 +5676,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 		/* Check for Min/Max for (u)int(32|64) */
 		opcode = 0;
-		if (1) { /* XXX: Check for POWER5 and maybe 64-bitness? */
+		if (cpu_hw_caps & PPC_ISA_2X) {
 			if (strcmp (cmethod->name, "Min") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMIN;
