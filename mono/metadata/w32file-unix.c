@@ -111,7 +111,7 @@ static MonoCoopMutex finds_mutex;
 
 #if HOST_DARWIN
 typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
-static void *libc_handle;
+static MonoDl *libc_handle;
 static clonefile_fn clonefile_ptr;
 #endif
 
