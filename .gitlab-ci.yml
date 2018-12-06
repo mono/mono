@@ -18,15 +18,26 @@ run_all_builds:
 build_osx_runtime:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_osx_runtime_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_osx_runtime_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
   - cd ../..
-  - perl external/buildscripts/build_runtime_osx.pl
+  - perl external/buildscripts/build_runtime_osx.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/osx-i386
   - cp -r builds/ incomingbuilds/osx-i386/
   artifacts:
@@ -40,15 +51,26 @@ build_osx_runtime:
 build_osx_classlibs:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_osx_classlibs_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_osx_classlibs_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
   - cd ../..
-  - perl external/buildscripts/build_classlibs_osx.pl
+  - perl external/buildscripts/build_classlibs_osx.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/classlibs
   - cp -r ZippedClasslibs.tar.gz incomingbuilds/classlibs/
   - cd incomingbuilds/classlibs
@@ -66,15 +88,26 @@ build_osx_classlibs:
 build_android:
   stage: build
   tags:
-    - buildfarm
-    - darwin
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_android_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_android_vm
+          image: buildfarm/mac:latest
+          flavor: m1.mac
+          type: Unity::VM::osx
+          num_instances: 1
+          config:
+            env_vars:
+              - PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin
   script:
   - git submodule update --init --recursive
   - chmod +x external/buildscripts/bee
   - cd external/buildscripts
   - ./bee
   - cd ../..
-  - bash external/buildscripts/build_runtime_android.sh
+  - perl external/buildscripts/build_runtime_android.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/android/
   - cp -r builds/* incomingbuilds/android/
   artifacts:
@@ -95,7 +128,7 @@ build_win:
   - cd external/buildscripts
   - ./bee.exe
   - cd ../..
-  - perl external/buildscripts/build_runtime_win64.pl
+  - perl external/buildscripts/build_runtime_win64.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/win64
   - cp -r builds/* incomingbuilds/win64/
   artifacts:
@@ -116,7 +149,7 @@ build_win_x86:
   - cd external/buildscripts
   - ./bee.exe
   - cd ../..
-  - perl external/buildscripts/build_runtime_win.pl
+  - perl external/buildscripts/build_runtime_win.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/win32
   - cp -r builds/* incomingbuilds/win32/
   artifacts:
@@ -159,7 +192,7 @@ build_linux_x64:
   - cd external/buildscripts
   - ./bee
   - cd ../..
-  - perl external/buildscripts/build_runtime_linux.pl -build64=1
+  - perl external/buildscripts/build_runtime_linux.pl -build64=1 --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/linux64
   - cp -r builds/* incomingbuilds/linux64/
   artifacts:
@@ -181,7 +214,7 @@ build_linux_x86:
   - cd external/buildscripts
   - ./bee
   - cd ../..
-  - perl external/buildscripts/build_runtime_linux.pl
+  - perl external/buildscripts/build_runtime_linux.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/linux32
   - cp -r builds/* incomingbuilds/linux32/
   artifacts:

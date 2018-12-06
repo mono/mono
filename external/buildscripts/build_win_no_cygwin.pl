@@ -37,6 +37,7 @@ my $winPerl = "perl";
 my $winMonoRoot = $monoroot;
 my $msBuildVersion = "14.0";
 my $buildDeps = "";
+my $stevedoreBuildDeps=0;
 
 print(">>> Build All Args = @ARGV\n");
 
@@ -53,6 +54,7 @@ GetOptions(
 	'checkoutonthefly=i'=>\$checkoutOnTheFly,
 	'builddeps=s'=>\$buildDeps,
 	'forcedefaultbuilddeps=i'=>\$forceDefaultBuildDeps,
+	'stevedorebuilddeps=i'=>\$stevedoreBuildDeps,
 ) or die ("illegal cmdline options");
 
 my $monoRevision = `git rev-parse HEAD`;
@@ -72,8 +74,16 @@ if ($buildDeps ne "" && not $forceDefaultBuildDeps)
 }
 else
 {
-	$externalBuildDeps = "$monoroot/../../mono-build-deps/build";
+	if($stevedoreBuildDeps)
+	{
+		$externalBuildDeps = "$monoroot/external/buildscripts/artifacts/Stevedore";
+	}
+	else
+	{
+		$externalBuildDeps = "$monoroot/../../mono-build-deps/build";
+	}
 }
+print(">>> External build deps = $externalBuildDeps\n");
 
 my $existingExternalMonoRoot = "$externalBuildDeps\\mono";
 my $existingExternalMono = "$existingExternalMonoRoot\\win";
