@@ -325,10 +325,11 @@ icompare_imm: src1:i len:12
 
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:32
 
-long_min: dest:i src1:i src2:i len:8 clob:1
-long_min_un: dest:i src1:i src2:i len:8 clob:1
-long_max: dest:i src1:i src2:i len:8 clob:1
-long_max_un: dest:i src1:i src2:i len:8 clob:1
+# shouldn't use long stuff on ppc32
+#long_min: dest:i src1:i src2:i len:8 clob:1
+#long_min_un: dest:i src1:i src2:i len:8 clob:1
+#long_max: dest:i src1:i src2:i len:8 clob:1
+#long_max_un: dest:i src1:i src2:i len:8 clob:1
 int_min: dest:i src1:i src2:i len:8 clob:1
 int_max: dest:i src1:i src2:i len:8 clob:1
 int_min_un: dest:i src1:i src2:i len:8 clob:1

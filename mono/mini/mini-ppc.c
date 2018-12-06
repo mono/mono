@@ -4266,19 +4266,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
 			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LMIN:
+		CASE_PPC64 (OP_LMIN)
 			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
 			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LMIN_UN:
+		CASE_PPC64 (OP_LMIN_UN)
 			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
 			ppc_isellt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LMAX:
+		CASE_PPC64 (OP_LMAX)
 			ppc_cmp (code, 0, 1, ins->sreg1, ins->sreg2);
 			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LMAX_UN:
+		CASE_PPC64 (OP_LMAX_UN)
 			ppc_cmpl (code, 0, 1, ins->sreg1, ins->sreg2);
 			ppc_iselgt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
