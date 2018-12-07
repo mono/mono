@@ -63,7 +63,12 @@ describe("The WebAssembly Browser Test Suite",function(){
         (result) => 
         {
             //console.log("we are here: " + result);
-            assert.equal(result, 500000);
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
             done();
         },
         (error) =>
