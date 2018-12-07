@@ -1136,7 +1136,13 @@ gboolean sgen_nursery_canaries_enabled (void);
 
 #define CANARY_VALID(addr) (strncmp ((char*) (addr), CANARY_STRING, CANARY_SIZE) == 0)
 
-#define CHECK_CANARY_FOR_OBJECT(addr,fail) if (sgen_nursery_canaries_enabled ()) {	\
+void
+sgen_check_canary_for_object (gpointer addr, gboolean fail);
+
+#define CHECK_CANARY_FOR_OBJECT(addr,fail) if (sgen_nursery_canaries_enabled ()) \
+	sgen_check_canary_for_object ((addr), (fail))
+
+#define CHECK_CANARY_FOR_OBJECT_IMPL if (sgen_nursery_canaries_enabled ()) { \
 				guint size = sgen_safe_object_get_size_unaligned ((GCObject *) (addr)); \
 				char* canary_ptr = (char*) (addr) + size;	\
 				if (!CANARY_VALID(canary_ptr)) {	\

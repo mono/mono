@@ -3875,4 +3875,10 @@ sgen_timestamp (void)
 	return SGEN_TV_ELAPSED (sgen_init_timestamp, timestamp);
 }
 
+void
+sgen_check_canary_for_object (gpointer addr, gboolean fail)
+{
+	CHECK_CANARY_FOR_OBJECT_IMPL
+}
+
 #endif /* HAVE_SGEN_GC */
