@@ -151,10 +151,10 @@ namespace System {
 		public static string CurrentDirectory
 		{
 			get {
-				return Directory.GetCurrentDirectory ();
+				return Directory.InsecureGetCurrentDirectory ();
 			}
 			set {
-				Directory.SetCurrentDirectory (value);
+				Directory.InsecureSetCurrentDirectory  (value);
 			}
 		}
 		

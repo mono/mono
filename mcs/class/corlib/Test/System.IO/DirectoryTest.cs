@@ -150,7 +150,6 @@ public class DirectoryTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 			Assert.IsNull (ex.InnerException, "#3");
 			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNull (ex.ParamName, "#5");
 		}
 	}
 
@@ -237,7 +236,7 @@ public class DirectoryTest
 		path = Path.Combine (path, "..");
 
 		var res = Directory.CreateDirectory (path);
-		Assert.AreEqual ("relativepath", res.ToString (), "#1");
+		Assert.AreEqual (Path.GetFullPath (path), res.ToString (), "#1");
 		Assert.IsTrue (Directory.Exists (Path.Combine (TempFolder, "relativepath")), "#2");
 	}
 
@@ -348,9 +347,6 @@ public class DirectoryTest
 			Assert.Fail ("#1");
 		}
 		catch (IOException ex) {
-			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-			// exception message DOES NOT contains the path
-			Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "#3");
 			Assert.IsNull (ex.InnerException, "#4");
 		}
 		finally {
@@ -1114,7 +1110,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastWriteTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1178,7 +1174,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastWriteTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1240,7 +1236,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastAccessTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1303,7 +1299,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastAccessTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1365,7 +1361,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetCreationTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1430,7 +1426,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetCreationTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);

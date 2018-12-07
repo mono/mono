@@ -1771,19 +1771,27 @@ namespace TestRunner {
 
 			checker.Name = test_directory.Name;
 			checker.Initialize ();
-/*
+
 			files.Sort ((a, b) => {
-				if (a.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
-					if (!b.EndsWith ("-lib.cs", StringComparison.Ordinal))
+				if (a.Name.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
+					if (!b.Name.EndsWith ("-lib.cs", StringComparison.Ordinal))
 						return -1;
-				} else if (b.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
-					if (!a.EndsWith ("-lib.cs", StringComparison.Ordinal))
+				} else if (b.Name.EndsWith ("-lib.cs", StringComparison.Ordinal)) {
+					if (!a.Name.EndsWith ("-lib.cs", StringComparison.Ordinal))
 						return 1;
 				}
 
-				return a.CompareTo (b);
+				if (a.Name.EndsWith ("-mod.cs", StringComparison.Ordinal)) {
+					if (!b.Name.EndsWith ("-mod.cs", StringComparison.Ordinal))
+						return -1;
+				} else if (b.Name.EndsWith ("-mod.cs", StringComparison.Ordinal)) {
+					if (!a.Name.EndsWith ("-mod.cs", StringComparison.Ordinal))
+						return 1;
+				}
+
+				return a.Name.CompareTo (b.Name);
 			});
-*/
+
 			foreach (FileInfo s in files) {
 				string filename = s.Name;
 				if (Char.IsUpper (filename, 0)) { // Windows hack

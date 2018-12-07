@@ -34,5 +34,8 @@ namespace System
 			}
 		}
 		public static bool IsInAppContainer => false;
+		public static bool IsRedHatFamily6 => false;
+		public static bool IsAlpine => false;
+		public static bool IsNetCore => false;
 	}
 }
