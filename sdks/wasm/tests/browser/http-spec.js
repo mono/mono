@@ -71,7 +71,7 @@ describe("The WebAssembly Browser Test Suite",function(){
             }
             done();
         },
-        (error) =>
+        (error) => done.fail(error)
         {
             console.log("we are Error: " + error);
             assert.equal("bad", "bad");
