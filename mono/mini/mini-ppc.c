@@ -4221,6 +4221,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 #endif
 		}
+		case OP_ROUND:
+			ppc_frind (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_TRUNC:
+			ppc_frizd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_CEIL:
+			ppc_fripd (code, ins->dreg, ins->sreg1);
+			break;
+		case OP_PPC_FLOOR:
+			ppc_frimd (code, ins->dreg, ins->sreg1);
+			break;
 		case OP_ABS:
 			ppc_fabsd (code, ins->dreg, ins->sreg1);
 			break;
@@ -5676,7 +5688,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 
 		/* Check for Min/Max for (u)int(32|64) */
 		opcode = 0;
-		if (cpu_hw_caps & PPC_ISA_2X) {
+		if (cpu_hw_caps & PPC_ISA_2_03) {
 			if (strcmp (cmethod->name, "Min") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMIN;
@@ -5714,6 +5726,32 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->sreg1 = args [0]->dreg;
 			ins->sreg2 = args [1]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		/* Rounding instructions */
+		opcode = 0;
+		if ((cpu_hw_caps & PPC_ISA_2X) && (fsig->param_count == 1) && (fsig->params [0]->type == MONO_TYPE_R8)) {
+			/*
+			 * XXX: sysmath.c and frin imply round is a little bit
+			 * more complicated than expected? but amd64 does this?
+			 * (also, no float versions of these ops, but frsp
+			 * could be preprended?)
+			 */
+			if (!strcmp (cmethod->name, "Round"))
+				opcode = OP_ROUND;
+			else if (!strcmp (cmethod->name, "Floor"))
+				opcode = OP_PPC_FLOOR;
+			else if (!strcmp (cmethod->name, "Ceiling"))
+				opcode = OP_PPC_CEIL;
+			else if (!strcmp (cmethod->name, "Truncate"))
+				opcode = OP_PPC_TRUNC;
+			if (opcode != 0) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->type = STACK_R8;
+				ins->dreg = mono_alloc_freg (cfg);
+				ins->sreg1 = args [0]->dreg;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
 		}
 	}
 	if (cmethod->klass == mono_class_try_get_mathf_class ()) {

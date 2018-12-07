@@ -212,6 +212,10 @@ got_entry: dest:i src1:b len:32
 abs: dest:f src1:f len:4
 sqrt: dest:f src1:f len:4
 sqrtf: dest:f src1:f len:4
+round: dest:f src1:f len:4
+ppc_trunc: dest:f src1:f len:4
+ppc_ceil: dest:f src1:f len:4
+ppc_floor: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
 subcc: dest:i src1:i src2:i len:4
