@@ -69,14 +69,8 @@ describe("The WebAssembly Browser Test Suite",function(){
             } catch (e) {
               done.fail(e);
             }
-            done();
         },
         (error) => done.fail(error)
-        {
-            console.log("we are Error: " + error);
-            assert.equal("bad", "bad");
-            done();
-        }
 
       );
       
@@ -90,15 +84,14 @@ describe("The WebAssembly Browser Test Suite",function(){
         (result) => 
         {
             //console.log("we are here: " + result);
-            assert.equal(result, 500000);
-            done();
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
         },
-        (error) =>
-        {
-            console.log("we are Error: " + error);
-            assert.equal("bad", "bad");
-            done();
-        }
+        (error) => done.fail(error)
 
       );
       
@@ -113,15 +106,14 @@ describe("The WebAssembly Browser Test Suite",function(){
         (result) => 
         {
             //console.log("we are here: " + result);
-            assert.equal(result, 500000);
-            done();
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
         },
-        (error) =>
-        {
-            console.log("we are Error: " + error);
-            assert.equal("bad", "bad");
-            done();
-        }
+        (error) => done.fail(error)
 
       );
       
@@ -135,15 +127,14 @@ describe("The WebAssembly Browser Test Suite",function(){
         (result) => 
         {
             //console.log("we are here: " + result);
-            assert.equal(result, 500000);
-            done();
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
         },
-        (error) =>
-        {
-            console.log("we are Error: " + error);
-            assert.equal("bad", "bad");
-            done();
-        }
+        (error) => done.fail(error)
 
       );
       
@@ -156,15 +147,15 @@ describe("The WebAssembly Browser Test Suite",function(){
       _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:GetStreamAsync_ReadZeroBytes_Success", []).then(
         (result) => 
         {
-            assert.equal(result, 0);
-            done();
+            //console.log("we are here: " + result);
+            try {
+              assert.equal(result, 0, "result doesn't match expected result 0");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
         },
-        (error) =>
-        {
-            console.log("we are Error: " + error);
-            assert.equal("bad", "bad");  // we need to do something else here
-            done();
-        }
+        (error) => done.fail(error)
 
       );
       
