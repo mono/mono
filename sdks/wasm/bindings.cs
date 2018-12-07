@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 /*
  * TODO:
  * - Expose annotated C# type to JS
- * - Add property fetch to JSObject
  * - Add typed method invoke support (get a delegate?)
  * - Add JS helpers to fetch wrapped methods, like to Module.cwrap
  * - Better Wrap C# exception when passing them as object (IE, on task failure)
@@ -39,7 +38,11 @@ namespace WebAssembly
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern object ReleaseHandle(int js_obj_handle, out int exceptional_result);
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern object ReleaseObject(object obj, out int exceptional_result);
+        internal static extern object ReleaseObject(int js_obj_handle, out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object NewArrayJS(out int exceptional_result);
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal static extern object NewObjectJS(int js_obj_handle, object[] _params, out int exceptional_result);
 
         /// <summary>
 	///   Execute the provided string in the JavaScript context
@@ -54,6 +57,28 @@ namespace WebAssembly
 
         static Dictionary<int, JSObject> bound_objects = new Dictionary<int, JSObject>();
         static Dictionary<object, JSObject> raw_to_js = new Dictionary<object, JSObject>();
+
+        /// <summary>
+	///   Creates a new JavaScript array object
+        public static JSObject NewJSArray()
+        {
+            int exception;
+            var res = NewArrayJS(out exception);
+            if (exception != 0)
+                throw new JSException((string)res);
+            return res as JSObject;
+        }
+
+        /// <summary>
+	///   Creates a new JavaScript object 
+        public static JSObject NewJSObject(JSObject js_func_ptr = null, object[] _params = null)
+        {
+            int exception;
+            var res = NewObjectJS(js_func_ptr?.JSHandle ?? 0, _params, out exception);
+            if (exception != 0)
+                throw new JSException((string)res);
+            return res as JSObject;
+        }
 
         static int BindJSObject(int js_id)
         {
@@ -79,69 +104,68 @@ namespace WebAssembly
 
         }
 
-        static int BindJSObject(JSObject obj)
-        {
-
-            int js_id = obj.JSHandle;
-            if (js_id <= 0)
-                throw new JSException($"Invalid JS Object Handle {js_id}");
-
-            if (bound_objects.ContainsKey(js_id))
-                obj = bound_objects[js_id];
-            else
-                bound_objects[js_id] = obj;
-
-            return (int)(IntPtr)obj.Handle;
-        }
-
-        static int UnBindJSObjectAndFree(int js_id)
+        static void UnBindJSObjectAndFree(int js_id)
         {
             if (bound_objects.ContainsKey(js_id))
             {
-                var obj = bound_objects[js_id];
+                bound_objects[js_id].RawObject = null;
+                JSObject obj = bound_objects[js_id];
                 bound_objects.Remove(js_id);
-                var gCHandle = obj.Handle;
-                obj.Handle.Free();
                 obj.JSHandle = -1;
                 obj.RawObject = null;
-                return (int)(IntPtr)gCHandle;
+                obj.Handle.Free();
+
             }
-            return 0;
 
         }
 
 
-        static int UnBindRawJSObjectAndFree(int gcHandle)
+        static void UnBindRawJSObjectAndFree(int gcHandle)
         {
 
             GCHandle h = (GCHandle)(IntPtr)gcHandle;
             JSObject obj = (JSObject)h.Target;
             if (obj != null && obj.RawObject != null)
             {
-                var raw_obj = obj.RawObject;
-                if (raw_to_js.ContainsKey(raw_obj))
-                {
-                    raw_to_js.Remove(raw_obj);
-                }
+                raw_to_js.Remove(obj.RawObject);
 
-                obj.Dispose();
-
-                var gCHandle = obj.Handle;
-                obj.Handle.Free();
+                int exception;
+                ReleaseHandle(obj.JSHandle, out exception);
+                if (exception != 0)
+                    throw new JSException($"Error releasing handle on (js-obj js '{obj.JSHandle}' mono '{(IntPtr)obj.Handle} raw '{obj.RawObject != null})");
+                
+                // Calling Release Handle above only removes the reference from the JavaScript side but does not 
+                // release the bridged JSObject associated with the raw object so we have to do that ourselves.
                 obj.JSHandle = -1;
-                return (int)(IntPtr)gCHandle;
+                obj.RawObject = null;
+
+                obj.Handle.Free();
             }
-            return 0;
 
         }
 
         public static void FreeObject (object obj)
         {
-            int exception;
-            Runtime.ReleaseObject(obj, out exception);
-            if (exception != 0)
-                throw new JSException($"Error releasing object on (raw-obj)");
-   
+            if (raw_to_js.ContainsKey(obj))
+            {
+                JSObject jsobj = raw_to_js[obj];
+                
+                raw_to_js.Remove(obj);
+                 
+                int exception;
+                Runtime.ReleaseObject(jsobj.JSHandle, out exception);
+                if (exception != 0)
+                    throw new JSException($"Error releasing object on (raw-obj)");
+
+                jsobj.JSHandle = -1;
+                jsobj.RawObject = null;
+                jsobj.Handle.Free();
+
+            }
+            else
+            {
+                throw new JSException($"Error releasing object on (obj)");
+            }
         }
 
         static object CreateTaskSource(int js_id)
@@ -511,7 +535,9 @@ namespace WebAssembly
         public int JSHandle { get; internal set; }
         internal GCHandle Handle;
         internal object RawObject;
-
+        // to detect redundant calls
+        private bool disposed = false;
+         
         internal JSObject(int js_handle)
         {
             this.JSHandle = js_handle;
@@ -608,7 +634,6 @@ namespace WebAssembly
 
         protected void FreeHandle()
         {
-
             int exception;
             Runtime.ReleaseHandle(JSHandle, out exception);
             if (exception != 0)
@@ -640,19 +665,25 @@ namespace WebAssembly
         // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
-            if (JSHandle < 0)
+            if (JSHandle == -1)
                 return;
 
-            if (disposing)
+            if (!disposed)
             {
+                if (disposing)
+                {
 
-                // Free any other managed objects here.
-                //
+                    // Free any other managed objects here.
+                    //
+                    RawObject = null;
+                }
+
+                disposed = true;
+                
+                // Free any unmanaged objects here.
+                FreeHandle();
+
             }
-
-            // Free any unmanaged objects here.
-            //
-            FreeHandle();
         }
 
         public override string ToString()
