@@ -349,8 +349,6 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 			mono_value_copy_internal (ea, va, ec);
 		else
 			mono_gc_memmove_atomic (ea, va, esize);
-		mono_gchandle_free_internal (value_gchandle);
-		value_gchandle = 0;
 		goto leave;
 	}
 
@@ -532,10 +530,8 @@ array_set_value_impl (MonoArrayHandle arr, MonoObjectHandle value, guint32 pos, 
 #undef ASSIGN_SIGNED
 #undef ASSIGN_REAL
 leave:
-	if (arr_gchandle)
-		mono_gchandle_free_internal (arr_gchandle);
-	if (value_gchandle)
-		mono_gchandle_free_internal (value_gchandle);
+	mono_gchandle_free_internal (arr_gchandle);
+	mono_gchandle_free_internal (value_gchandle);
 	return;
 }
 
@@ -724,9 +720,8 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 	mono_gc_bzero_atomic (mono_array_addr_with_size_fast (MONO_HANDLE_RAW (arr), sz, idx), length * sz);
 }
 
-
 MonoBoolean
-ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* dest, int dest_idx, int length)
+ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArrayHandle dest, int dest_idx, int length, MonoError *error)
 {
 	int element_size;
 	void * dest_addr;
@@ -736,18 +731,18 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 	MonoClass *src_class;
 	MonoClass *dest_class;
 
-	src_vtable = source->obj.vtable;
-	dest_vtable = dest->obj.vtable;
+	src_vtable = MONO_HANDLE_GETVAL (source, obj.vtable);
+	dest_vtable = MONO_HANDLE_GETVAL (dest, obj.vtable);
 
 	if (src_vtable->rank != dest_vtable->rank)
 		return FALSE;
 
-	if (source->bounds || dest->bounds)
+	if (MONO_HANDLE_GETVAL (source, bounds) || MONO_HANDLE_GETVAL (dest, bounds))
 		return FALSE;
 
 	/* there's no integer overflow since mono_array_length_internal returns an unsigned integer */
-	if ((dest_idx + length > mono_array_length_internal (dest)) ||
-		(source_idx + length > mono_array_length_internal (source)))
+	if ((dest_idx + length > mono_array_handle_length (dest)) ||
+		(source_idx + length > mono_array_handle_length (source)))
 		return FALSE;
 
 	src_class = m_class_get_element_class (src_vtable->klass);
@@ -774,18 +769,24 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 			return FALSE;
 	}
 
+	gchandle_t source_gchandle = 0;
+	gchandle_t dest_gchandle = 0;
+
 	if (m_class_is_valuetype (dest_class)) {
-		element_size = mono_array_element_size (source->obj.vtable->klass);
-		source_addr = mono_array_addr_with_size_fast (source, element_size, source_idx);
+		element_size = mono_array_element_size (MONO_HANDLE_GETVAL (source, obj.vtable->klass));
+		source_addr = mono_array_handle_pin_with_size (source, element_size, source_idx, &source_gchandle);
 		if (m_class_has_references (dest_class)) {
-			mono_value_copy_array_internal (dest, dest_idx, source_addr, length);
+			mono_value_copy_array_handle (dest, dest_idx, source_addr, length);
 		} else {
-			dest_addr = mono_array_addr_with_size_fast (dest, element_size, dest_idx);
+			dest_addr = mono_array_handle_pin_with_size (dest, element_size, dest_idx, &dest_gchandle);
 			mono_gc_memmove_atomic (dest_addr, source_addr, element_size * length);
 		}
 	} else {
-		mono_array_memcpy_refs_fast (dest, dest_idx, source, source_idx, length);
+		mono_array_handle_memcpy_refs (dest, dest_idx, source, source_idx, length);
 	}
+
+	mono_gchandle_free_internal (dest_gchandle);
+	mono_gchandle_free_internal (source_gchandle);
 
 	return TRUE;
 }

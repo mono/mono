@@ -6938,6 +6938,12 @@ mono_value_copy_array_internal (MonoArray *dest, int dest_idx, gpointer src, int
 	mono_gc_wbarrier_value_copy_internal (d, src, count, m_class_get_element_class (mono_object_class (dest)));
 }
 
+void
+mono_value_copy_array_handle (MonoArrayHandle dest, int dest_idx, gpointer src, int count)
+{
+	mono_value_copy_array_internal (MONO_HANDLE_RAW (dest), dest_idx, src, count);
+}
+
 /**
  * mono_value_copy_array:
  * \param dest destination array
