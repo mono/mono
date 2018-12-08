@@ -953,7 +953,8 @@ mono_string_builder_to_utf8 (MonoStringBuilder *sb)
 	memcpy (res, tmp, byte_count);
 	res [byte_count] = 0;
 exit:
-	g_error_free (gerror);
+	if (gerror)
+		g_error_free (gerror);
 	mono_marshal_free (str_utf16);
 	g_free (tmp);
 	return res;
