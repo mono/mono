@@ -1174,6 +1174,8 @@ typedef enum {
 	JIT_FLAG_DIRECT_PINVOKE = (1 << 7),
 	/* Whenever this is a compile-all run and the result should be discarded */
 	JIT_FLAG_DISCARD_RESULTS = (1 << 8),
+	/* Whenever to generate code which can work with the interpreter */
+	JIT_FLAG_INTERP = (1 << 9),
 } JitFlags;
 
 /* Bit-fields in the MonoBasicBlock.region */
@@ -1387,6 +1389,7 @@ typedef struct {
 	guint            gsharedvt : 1;
 	guint            r4fp : 1;
 	guint            llvm_only : 1;
+	guint            interp : 1;
 	guint            domainvar_inited : 1;
 	guint8           uses_simd_intrinsics;
 	int              r4_stack_type;

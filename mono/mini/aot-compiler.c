@@ -8150,6 +8150,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_NO_DIRECT_ICALLS);
 	if (acfg->aot_opts.direct_pinvoke)
 		flags = (JitFlags)(flags | JIT_FLAG_DIRECT_PINVOKE);
+	if (acfg->aot_opts.interp)
+		flags = (JitFlags)(flags | JIT_FLAG_INTERP);
 
 	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
