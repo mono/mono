@@ -20,6 +20,7 @@
 #include <mono/metadata/security.h>
 #include <mono/utils/strenc.h>
 #include "reflection-internals.h"
+#include "icall-decl.h"
 
 #ifndef HOST_WIN32
 #ifdef HAVE_GRP_H
@@ -621,7 +622,6 @@ mono_invoke_protected_memory_method (MonoArrayHandle data, MonoObjectHandle scop
 	};
 	mono_runtime_invoke_handle_void (method, NULL_HANDLE, params, error);
 }
-
 
 void
 ves_icall_System_Security_SecureString_DecryptInternal (MonoArrayHandle data, MonoObjectHandle scope, MonoError *error)
