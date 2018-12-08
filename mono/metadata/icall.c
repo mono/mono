@@ -723,16 +723,8 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 MonoBoolean
 ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArrayHandle dest, int dest_idx, int length, MonoError *error)
 {
-	int element_size;
-	void * dest_addr;
-	void * source_addr;
-	MonoVTable *src_vtable;
-	MonoVTable *dest_vtable;
-	MonoClass *src_class;
-	MonoClass *dest_class;
-
-	src_vtable = MONO_HANDLE_GETVAL (source, obj.vtable);
-	dest_vtable = MONO_HANDLE_GETVAL (dest, obj.vtable);
+	MonoVTable * const src_vtable = MONO_HANDLE_GETVAL (source, obj.vtable);
+	MonoVTable * const dest_vtable = MONO_HANDLE_GETVAL (dest, obj.vtable);
 
 	if (src_vtable->rank != dest_vtable->rank)
 		return FALSE;
@@ -745,8 +737,8 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 		(source_idx + length > mono_array_handle_length (source)))
 		return FALSE;
 
-	src_class = m_class_get_element_class (src_vtable->klass);
-	dest_class = m_class_get_element_class (dest_vtable->klass);
+	MonoClass * const src_class = m_class_get_element_class (src_vtable->klass);
+	MonoClass * const dest_class = m_class_get_element_class (dest_vtable->klass);
 
 	/*
 	 * Handle common cases.
@@ -769,16 +761,21 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 			return FALSE;
 	}
 
+	gboolean pin = FALSE; // FIXME Making a gchandle is inefficient and breaks profiler tests.
 	gchandle_t source_gchandle = 0;
 	gchandle_t dest_gchandle = 0;
 
 	if (m_class_is_valuetype (dest_class)) {
-		element_size = mono_array_element_size (MONO_HANDLE_GETVAL (source, obj.vtable->klass));
-		source_addr = mono_array_handle_pin_with_size (source, element_size, source_idx, &source_gchandle);
+		gsize const element_size = mono_array_element_size (MONO_HANDLE_GETVAL (source, obj.vtable->klass));
+		gconstpointer const source_addr =
+			pin ? mono_array_handle_pin_with_size (source, element_size, source_idx, &source_gchandle)
+			    : mono_array_addr_with_size_fast (MONO_HANDLE_RAW (source), element_size, source_idx);
 		if (m_class_has_references (dest_class)) {
 			mono_value_copy_array_handle (dest, dest_idx, source_addr, length);
 		} else {
-			dest_addr = mono_array_handle_pin_with_size (dest, element_size, dest_idx, &dest_gchandle);
+			gpointer const dest_addr =
+				pin ? mono_array_handle_pin_with_size (dest, element_size, dest_idx, &dest_gchandle)
+				    : mono_array_addr_with_size_fast (MONO_HANDLE_RAW (dest), element_size, dest_idx);
 			mono_gc_memmove_atomic (dest_addr, source_addr, element_size * length);
 		}
 	} else {
@@ -794,20 +791,16 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 void
 ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
 {
+	// FIXME?
 	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
 
 	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-	MonoClass *ac;
-	gint32 esize;
-	gpointer *ea;
-
-	ac = mono_object_class (arr);
-
-	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	MonoClass * const ac = mono_object_class (arr);
+	gsize const esize = mono_array_element_size (ac);
+	gconstpointer * const ea = (gconstpointer*)((char*)arr->vector + (pos * esize));
 
 	mono_gc_memmove_atomic (value, ea, esize);
 }
@@ -815,21 +808,19 @@ ves_icall_System_Array_GetGenericValueImpl (MonoArray *arr, guint32 pos, gpointe
 void
 ves_icall_System_Array_SetGenericValueImpl (MonoArray *arr, guint32 pos, gpointer value)
 {
+	// FIXME?
 	// Generic ref/out parameters are not supported by HANDLES(), so NOHANDLES().
 
 	icallarray_print ("%s arr:%p pos:%u value:%p\n", __func__, arr, pos, value);
 
 	MONO_REQ_GC_UNSAFE_MODE;	// because of gpointer value
 
-	MonoClass *ac, *ec;
-	gint32 esize;
-	gpointer *ea;
 
-	ac = mono_object_class (arr);
-	ec = m_class_get_element_class (ac);
+	MonoClass * const ac = mono_object_class (arr);
+	MonoClass * const ec = m_class_get_element_class (ac);
 
-	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+	gsize const esize = mono_array_element_size (ac);
+	gpointer * const ea = (gpointer*)((char*)arr->vector + (pos * esize));
 
 	if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (ec))) {
 		g_assert (esize == sizeof (gpointer));
