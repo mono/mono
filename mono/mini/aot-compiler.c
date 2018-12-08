@@ -6182,6 +6182,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
+	case MONO_PATCH_INFO_METHOD_FTNDESC:
 	case MONO_PATCH_INFO_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_METHOD_RGCTX:
@@ -7921,6 +7922,7 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 {
 	switch (patch_info->type) {
 	case MONO_PATCH_INFO_METHOD:
+	case MONO_PATCH_INFO_METHOD_FTNDESC:
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT: {
 		MonoMethod *method = patch_info->data.method;
@@ -8271,13 +8273,14 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 			case MONO_PATCH_INFO_RGCTX_FETCH:
 			case MONO_PATCH_INFO_RGCTX_SLOT_INDEX:
 			case MONO_PATCH_INFO_METHOD:
+			case MONO_PATCH_INFO_METHOD_FTNDESC:
 			case MONO_PATCH_INFO_METHOD_RGCTX: {
 				MonoMethod *m = NULL;
 
 				if (patch_info->type == MONO_PATCH_INFO_RGCTX_FETCH || patch_info->type == MONO_PATCH_INFO_RGCTX_SLOT_INDEX) {
 					MonoJumpInfoRgctxEntry *e = patch_info->data.rgctx_entry;
 
-					if (e->info_type == MONO_RGCTX_INFO_GENERIC_METHOD_CODE)
+					if (e->info_type == MONO_RGCTX_INFO_GENERIC_METHOD_CODE || e->info_type == MONO_RGCTX_INFO_METHOD_FTNDESC)
 						m = e->data->data.method;
 				} else {
 					m = patch_info->data.method;

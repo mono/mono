@@ -973,7 +973,6 @@ typedef enum {
 	MONO_RGCTX_INFO_TYPE                         = 4,
 	MONO_RGCTX_INFO_REFLECTION_TYPE              = 5,
 	MONO_RGCTX_INFO_METHOD                       = 6,
-	/* In llvmonly mode, this is a function descriptor */
 	MONO_RGCTX_INFO_GENERIC_METHOD_CODE          = 7,
 	MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER        = 8,
 	MONO_RGCTX_INFO_CLASS_FIELD                  = 9,
@@ -1019,6 +1018,8 @@ typedef enum {
 	MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS = 31,
 	/* The MonoDelegateTrampInfo instance */
 	MONO_RGCTX_INFO_DELEGATE_TRAMP_INFO           = 32,
+	/* Same as MONO_PATCH_INFO_METHOD_FTNDESC */
+	MONO_RGCTX_INFO_METHOD_FTNDESC                = 33,
 } MonoRgctxInfoType;
 
 typedef struct _MonoRuntimeGenericContextInfoTemplate {
