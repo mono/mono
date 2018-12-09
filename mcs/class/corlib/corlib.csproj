@@ -365,7 +365,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\SeekOrigin.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamHelpers.CopyValidation.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\StreamWriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\TextReader.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\TextWriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryAccessor.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\UnmanagedMemoryStreamWrapper.cs" />
@@ -1062,10 +1064,8 @@
     <Compile Include="..\referencesource\mscorlib\system\io\__hresults.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\binaryreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\binarywriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\streamwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringreader.cs" />
     <Compile Include="..\referencesource\mscorlib\system\io\stringwriter.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\io\textwriter.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\CustomAttributeExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\methodbuilder.cs" />
     <Compile Include="..\referencesource\mscorlib\system\reflection\emit\symboltype.cs" />
