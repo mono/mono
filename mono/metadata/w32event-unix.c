@@ -406,15 +406,15 @@ mono_w32event_open (const gchar *utf8_name, gint32 rights G_GNUC_UNUSED, gint32 
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		*win32error = ERROR_INVALID_HANDLE;
-		goto cleanup;
+		return handle;
 	} else if (!handle) {
 		/* This name doesn't exist */
 		*win32error = ERROR_FILE_NOT_FOUND;
-		goto cleanup;
+		return handle;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_EVENT, "%s: returning named event handle %p", __func__, handle);
-cleanup:
+
 	return handle;
 }
 

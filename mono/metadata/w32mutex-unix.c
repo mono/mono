@@ -306,15 +306,13 @@ static gpointer mutex_create (gboolean owned)
 static gpointer
 namedmutex_create (gboolean owned, const char *utf8_name, gsize utf8_len)
 {
-	gpointer handle;
-
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_MUTEX, "%s: creating %s handle",
 		__func__, mono_w32handle_get_typename (MONO_W32TYPE_NAMEDMUTEX));
 
 	// Opening named objects does not race.
 	mono_w32handle_namespace_lock ();
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
+	gpointer handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
 
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
@@ -448,8 +446,6 @@ ves_icall_System_Threading_Mutex_OpenMutex_internal (const gunichar2 *name, gint
 gpointer
 mono_w32mutex_open (const char* utf8_name, gint32 rights G_GNUC_UNUSED, gint32 *win32error)
 {
-	gpointer handle;
-
 	*win32error = ERROR_SUCCESS;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_MUTEX, "%s: Opening named mutex [%s]",
@@ -458,24 +454,23 @@ mono_w32mutex_open (const char* utf8_name, gint32 rights G_GNUC_UNUSED, gint32 *
 	// Opening named objects does not race.
 	mono_w32handle_namespace_lock ();
 
-	handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
+	gpointer handle = mono_w32handle_namespace_search_handle (MONO_W32TYPE_NAMEDMUTEX, utf8_name);
 
 	mono_w32handle_namespace_unlock ();
 
 	if (handle == INVALID_HANDLE_VALUE) {
 		/* The name has already been used for a different object. */
 		*win32error = ERROR_INVALID_HANDLE;
-		goto cleanup;
+		return handle;
 	} else if (!handle) {
 		/* This name doesn't exist */
 		*win32error = ERROR_FILE_NOT_FOUND;
-		goto cleanup;
+		return handle;
 	}
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_MUTEX, "%s: returning named mutex handle %p",
 		__func__, handle);
 
-cleanup:
 	return handle;
 }
 
