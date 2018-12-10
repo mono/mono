@@ -201,12 +201,14 @@ System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
 System.IO/DriveInfo.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveType.cs
-System.IO/File.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/File.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileAccess.cs
 ../../../external/corefx/src/System.Runtime/src/System/IO/FileAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileMode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileShare.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Iterator.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/ReadLinesIterator.cs
 System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/HGlobalUnmanagedMemoryStream.cs
@@ -1882,3 +1884,4 @@ corefx/DirectoryInfo.cs
 corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
+corefx/File.cs

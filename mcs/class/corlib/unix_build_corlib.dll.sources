@@ -2,6 +2,7 @@
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystem.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystemInfo.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileStatus.Unix.cs
+../../../external/corefx/src/Common/src/CoreLib/Internal/IO/File.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEntry.Unix.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathInternal.Unix.cs
@@ -20,6 +21,7 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.ChMod.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MkDir.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.UTime.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.UTimes.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.RmDir.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MountPoints.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs
