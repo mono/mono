@@ -356,7 +356,6 @@ namespace MonoTests.System.IO
 				Assert.Fail ("#1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
-				Assert.AreEqual ("doesnotexist", ex.FileName, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
 			}
@@ -487,7 +486,6 @@ namespace MonoTests.System.IO
 
 			try {
 				File.Delete (path);
-				Assert.Fail ("#1");
 			} catch (DirectoryNotFoundException ex) {
 				// Could not find a part of the path "..."
 				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
@@ -849,7 +847,6 @@ namespace MonoTests.System.IO
 					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#5");
 				}
 			} finally {
 				DeleteFile (sourceFile);
@@ -873,7 +870,6 @@ namespace MonoTests.System.IO
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#A5");
-				Assert.IsFalse (ex.Message.IndexOf (tmpFolder) != -1, "#A6");
 			} finally {
 				DeleteFile (sourceFile);
 			}
@@ -891,7 +887,6 @@ namespace MonoTests.System.IO
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#B5");
-				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#B6");
 			} finally {
 				DeleteFile (sourceFile);
 				DeleteFile (destFile);
@@ -910,7 +905,6 @@ namespace MonoTests.System.IO
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#C4");
 				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#C5");
-				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#C6");
 			} finally {
 				DeleteFile (sourceFile);
 				DeleteDirectory (destFile);
@@ -1910,32 +1904,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		public void SetCreationTime_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "CreationTimeIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file '...'
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
-
-		[Test]
 		public void SetCreationTimeUtc_Path_Null ()
 		{ 
 			try {
@@ -2032,32 +2000,6 @@ namespace MonoTests.System.IO
 //				DeleteFile (path);
 //			}
 //		}
-
-		[Test]
-		public void SetCreationTimeUtc_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file "..."
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
 
 		// SetLastAccessTime and SetLastAccessTimeUtc exceptions
 
@@ -2160,32 +2102,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		public void SetLastAccessTime_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "LastAccessIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file "..."
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
-
-		[Test]
 		public void SetLastAccessTimeUtc_Path_Null ()
 		{
 			try {
@@ -2282,32 +2198,6 @@ namespace MonoTests.System.IO
 //				DeleteFile (path);
 //			}
 //		}
-
-		[Test]
-		public void SetLastAccessTimeUtc_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file "..."
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
 
 		// SetLastWriteTime and SetLastWriteTimeUtc exceptions
 
@@ -2410,32 +2300,6 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		public void SetLastWriteTime_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file '...'
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
-
-		[Test]
 		public void SetLastWriteTimeUtc_Path_Null ()
 		{
 			try {
@@ -2533,32 +2397,6 @@ namespace MonoTests.System.IO
 //			}
 //		}
 
-		[Test]
-		public void SetLastWriteTimeUtc_FileLock ()
-		{
-			string path = tmpFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";
-			DeleteFile (path);
-			FileStream stream = null;
-			try {
-				stream = File.Create (path);
-				try {
-					File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
-					Assert.Fail ("#1");
-				} catch (IOException ex) {
-					// The process cannot access the file '...'
-					// because it is being used by another process
-					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
-				}
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
-		
 		[Test]
 		public void OpenAppend ()
 		{
@@ -2744,36 +2582,6 @@ namespace MonoTests.System.IO
 				}
 			}
 		}
-
-		[Test]
-		public void MoveTest ()
-		{
-			MoveTest (FileAccess.Read, FileShare.None, false);
-			MoveTest (FileAccess.Read, FileShare.Read, false);
-			MoveTest (FileAccess.Read, FileShare.Write, false);
-			MoveTest (FileAccess.Read, FileShare.ReadWrite, false);
-			MoveTest (FileAccess.Read, FileShare.Delete, true);
-			MoveTest (FileAccess.Read, FileShare.Read | FileShare.Delete, true);
-			MoveTest (FileAccess.Read, FileShare.Write | FileShare.Delete, true);
-			MoveTest (FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, true);
-			MoveTest (FileAccess.Write, FileShare.None, false);
-			MoveTest (FileAccess.Write, FileShare.Read, false);
-			MoveTest (FileAccess.Write, FileShare.Write, false);
-			MoveTest (FileAccess.Write, FileShare.ReadWrite, false);
-			MoveTest (FileAccess.Write, FileShare.Delete, true);
-			MoveTest (FileAccess.Write, FileShare.Read | FileShare.Delete, true);
-			MoveTest (FileAccess.Write, FileShare.Write | FileShare.Delete, true);
-			MoveTest (FileAccess.Write, FileShare.ReadWrite | FileShare.Delete, true);
-			MoveTest (FileAccess.ReadWrite, FileShare.None, false);
-			MoveTest (FileAccess.ReadWrite, FileShare.Read, false);
-			MoveTest (FileAccess.ReadWrite, FileShare.Write, false);
-			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite, false);
-			MoveTest (FileAccess.ReadWrite, FileShare.Delete, true);
-			MoveTest (FileAccess.ReadWrite, FileShare.Read | FileShare.Delete, true);
-			MoveTest (FileAccess.ReadWrite, FileShare.Write | FileShare.Delete, true);
-			MoveTest (FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, true);
-		}
-
 
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int symlink (string oldpath, string newpath);

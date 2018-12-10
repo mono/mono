@@ -1536,4 +1536,5 @@ partial class SR
 	public const string Arg_FileIsDirectory_Name = "The target file '{0}' is a directory, not a file.";
 	public const string Arg_PathIsVolume = "Path must not be a drive.";
 	public const string IO_FileCreateAlreadyExists = "Cannot create a file when that file already exists.";
+	public const string PlatformNotSupported_FileEncryption = "File encryption is not supported on this platform.";
 }
