@@ -121,6 +121,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_gint   			ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gint32   			ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gint64   			ICALL_HANDLES_WRAP_NONE
+#define MONO_HANDLE_TYPE_WRAP_gint8   			ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gpointer   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gconstpointer   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gsize   			ICALL_HANDLES_WRAP_NONE
@@ -236,10 +237,18 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_RETURN_BEGIN_ICALL_HANDLES_WRAP_NONE(type)  type icall_result =
 #define MONO_HANDLE_RETURN_BEGIN_ICALL_HANDLES_WRAP_OBJ(type)   type ## Handle icall_result =
 
-#define MONO_HANDLE_RETURN_END(type)				MONO_HANDLE_DO (MONO_HANDLE_RETURN_END_, type);
-#define MONO_HANDLE_RETURN_END_Void				HANDLE_FUNCTION_RETURN ()
-#define MONO_HANDLE_RETURN_END_ICALL_HANDLES_WRAP_NONE   	HANDLE_FUNCTION_RETURN_VAL (icall_result)
-#define MONO_HANDLE_RETURN_END_ICALL_HANDLES_WRAP_OBJ		HANDLE_FUNCTION_RETURN_OBJ (icall_result)
+#define MONO_HANDLE_RETURN_END_WITH_FRAME(type)				MONO_HANDLE_DO (MONO_HANDLE_RETURN_END_WITH_FRAME_, type);
+#define MONO_HANDLE_RETURN_END_WITH_FRAME_Void				HANDLE_FUNCTION_RETURN ()
+#define MONO_HANDLE_RETURN_END_WITH_FRAME_ICALL_HANDLES_WRAP_NONE   	HANDLE_FUNCTION_RETURN_VAL (icall_result)
+#define MONO_HANDLE_RETURN_END_WITH_FRAME_ICALL_HANDLES_WRAP_OBJ	HANDLE_FUNCTION_RETURN_OBJ (icall_result)
+
+#define HANDLE_FUNCTION_ENTER_NO_FRAME()	/* nothing */
+#define HANDLE_FUNCTION_ENTER_WITH_FRAME() 	HANDLE_FUNCTION_ENTER()
+
+#define MONO_HANDLE_RETURN_END_NO_FRAME(type)			MONO_HANDLE_DO (MONO_HANDLE_RETURN_END_NO_FRAME_, type);
+#define MONO_HANDLE_RETURN_END_NO_FRAME_Void			return
+#define MONO_HANDLE_RETURN_END_NO_FRAME_ICALL_HANDLES_WRAP_NONE return icall_result
+#define MONO_HANDLE_RETURN_END_NO_FRAME_ICALL_HANDLES_WRAP_OBJ	error_returning_a_managed_type_requires_a_frame
 
 #define MONO_HANDLE_MARSHAL(type, n)					MONO_HANDLE_DO (MONO_HANDLE_MARSHAL_, type) (type, n)
 #define MONO_HANDLE_MARSHAL_ICALL_HANDLES_WRAP_NONE(type, n)     	a ## n
@@ -349,11 +358,11 @@ func ## _raw ( MONO_HANDLE_FOREACH_ARG_RAW_ ## n argtypes MONO_HANDLE_COMMA_ ## 
 // Implement ves_icall_foo_raw over ves_icall_foo.
 // Raw handles are converted to/from typed handles and the rest is passed through.
 
-#define MONO_HANDLE_IMPLEMENT(id, name, func, rettype, n, argtypes)	\
+#define MONO_HANDLE_IMPLEMENT_FRAME(id, name, func, rettype, n, argtypes, frame) \
 										\
 MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 {										\
-	HANDLE_FUNCTION_ENTER ();						\
+	HANDLE_FUNCTION_ENTER_ ## frame ();					\
 										\
 	/* FIXME Should be ERROR_DECL but for fragile test. */			\
 	error_init (error);							\
@@ -364,7 +373,13 @@ MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 										\
 	mono_error_set_pending_exception (error);				\
 										\
-	MONO_HANDLE_RETURN_END (rettype)					\
+	MONO_HANDLE_RETURN_END_ ## frame (rettype)				\
 }										\
+
+#define MONO_HANDLE_IMPLEMENT(id, name, func, rettype, n, argtypes) \
+	MONO_HANDLE_IMPLEMENT_FRAME(id, name, func, rettype, n, argtypes, WITH_FRAME)
+
+#define MONO_HANDLE_IMPLEMENT_NO_FRAME(id, name, func, rettype, n, argtypes) \
+	MONO_HANDLE_IMPLEMENT_FRAME(id, name, func, rettype, n, argtypes, NO_FRAME)
 
 #endif

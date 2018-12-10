@@ -78,6 +78,11 @@
  * HANDLES() additional small wrappers are generated statically by icall-table.h, using the signatures here, producing
  * type-safe handles, i.e. MonoString* => MonoRawHandle* => struct { MonoString** raw }.
  *
+ * NO_FRAME() is like HANDLES() in that parameters are wrapped as handles,
+ * and MonoError is provided, but these functions must not create additional handles.
+ * This saves some overhead that some (many?) functions do not need.
+ * If functions usually create no handles but sometimes do, they can
+ * also create their own frames conditionally.
  */
 
 //
@@ -220,11 +225,11 @@ HANDLES(ARRAY_12, "SetValue",         ves_icall_System_Array_SetValue, void, 3, 
 HANDLES(ARRAY_13, "SetValueImpl",  ves_icall_System_Array_SetValueImpl, void, 3, (MonoArray, MonoObject, guint32))
 
 ICALL_TYPE(BUFFER, "System.Buffer", BUFFER_1)
-ICALL(BUFFER_1, "InternalBlockCopy", ves_icall_System_Buffer_BlockCopyInternal)
+NO_FRAME(BUFFER_1, "InternalBlockCopy", ves_icall_System_Buffer_BlockCopyInternal, MonoBoolean, 5, (MonoArray, gint32, MonoArray, gint32, gint32))
 NOHANDLES(ICALL(BUFFER_5, "InternalMemcpy", ves_icall_System_Buffer_MemcpyInternal))
-ICALL(BUFFER_2, "_ByteLength", ves_icall_System_Buffer_ByteLengthInternal)
-ICALL(BUFFER_3, "_GetByte", ves_icall_System_Buffer_GetByteInternal)
-ICALL(BUFFER_4, "_SetByte", ves_icall_System_Buffer_SetByteInternal)
+NO_FRAME(BUFFER_2, "_ByteLength", ves_icall_System_Buffer_ByteLengthInternal, gint32, 1, (MonoArray))
+NO_FRAME(BUFFER_3, "_GetByte", ves_icall_System_Buffer_GetByteInternal, gint8, 2, (MonoArray, gint32))
+NO_FRAME(BUFFER_4, "_SetByte", ves_icall_System_Buffer_SetByteInternal, void, 3, (MonoArray, gint32, gint8))
 
 ICALL_TYPE(CLRCONFIG, "System.CLRConfig", CLRCONFIG_1)
 HANDLES(CLRCONFIG_1, "CheckThrowUnobservedTaskExceptions", ves_icall_System_CLRConfig_CheckThrowUnobservedTaskExceptions, MonoBoolean, 0, ())

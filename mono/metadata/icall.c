@@ -6591,22 +6591,19 @@ ves_icall_System_Delegate_GetVirtualMethod_internal (MonoDelegateHandle delegate
 
 /* System.Buffer */
 
-static inline gint32 
-mono_array_get_byte_length (MonoArray *array)
+static inline gint32
+mono_array_get_byte_length (MonoArrayHandle array)
 {
-	MonoClass *klass;
 	int length;
-	int i;
+	MonoClass *klass = MONO_HANDLE_GETVAL (array, obj.vtable->klass);
 
-	klass = array->obj.vtable->klass;
-
-	if (array->bounds == NULL)
-		length = array->max_length;
+	if (MONO_HANDLE_GETVAL (array, bounds) == NULL)
+		length = MONO_HANDLE_GETVAL (array, max_length);
 	else {
 		length = 1;
 		int klass_rank = m_class_get_rank (klass);
-		for (i = 0; i < klass_rank; ++ i)
-			length *= array->bounds [i].length;
+		for (int i = 0; i < klass_rank; ++ i)
+			length *= MONO_HANDLE_GETVAL (array, bounds [i].length);
 	}
 
 	switch (m_class_get_byval_arg (m_class_get_element_class (klass))->type) {
@@ -6635,21 +6632,23 @@ mono_array_get_byte_length (MonoArray *array)
 }
 
 gint32 
-ves_icall_System_Buffer_ByteLengthInternal (MonoArray *array) 
+ves_icall_System_Buffer_ByteLengthInternal (MonoArrayHandle array, MonoError *error)
 {
 	return mono_array_get_byte_length (array);
 }
 
 gint8 
-ves_icall_System_Buffer_GetByteInternal (MonoArray *array, gint32 idx) 
+ves_icall_System_Buffer_GetByteInternal (MonoArrayHandle array, gint32 idx, MonoError *error)
 {
-	return mono_array_get_internal (array, gint8, idx);
+	gint8 result = 0;
+	MONO_HANDLE_ARRAY_GETVAL (result, array, gint8, idx);
+	return result;
 }
 
 void 
-ves_icall_System_Buffer_SetByteInternal (MonoArray *array, gint32 idx, gint8 value) 
+ves_icall_System_Buffer_SetByteInternal (MonoArrayHandle array, gint32 idx, gint8 value, MonoError *error)
 {
-	mono_array_set_internal (array, gint8, idx, value);
+	MONO_HANDLE_ARRAY_SETVAL (array, gint8, idx, value);
 }
 
 void
@@ -6659,34 +6658,27 @@ ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32
 }
 
 MonoBoolean
-ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, MonoArray *dest, gint32 dest_offset, gint32 count) 
+ves_icall_System_Buffer_BlockCopyInternal (MonoArrayHandle src, gint32 src_offset,
+	MonoArrayHandle dest, gint32 dest_offset, gint32 count, MonoError *error)
 {
-	guint8 *src_buf, *dest_buf;
-
 	if (count < 0) {
-		ERROR_DECL (error);
 		mono_error_set_argument (error, "count", "is negative");
-		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
-	g_assert (count >= 0);
-
 	/* This is called directly from the class libraries without going through the managed wrapper */
-	MONO_CHECK_ARG_NULL (src, FALSE);
-	MONO_CHECK_ARG_NULL (dest, FALSE);
+	MONO_CHECK_ARG_NULL_HANDLE (src, FALSE);
+	MONO_CHECK_ARG_NULL_HANDLE (dest, FALSE);
 
 	/* watch out for integer overflow */
 	if ((src_offset > mono_array_get_byte_length (src) - count) || (dest_offset > mono_array_get_byte_length (dest) - count))
 		return FALSE;
 
-	src_buf = (guint8 *)src->vector + src_offset;
-	dest_buf = (guint8 *)dest->vector + dest_offset;
+	gconstpointer src_buf = (guint8 *)MONO_HANDLE_RAW (src)->vector + src_offset;
+	gpointer dest_buf = (guint8 *)MONO_HANDLE_RAW (dest)->vector + dest_offset;
 
-	if (src != dest)
-		memcpy (dest_buf, src_buf, count);
-	else
-		memmove (dest_buf, src_buf, count); /* Source and dest are the same array */
+	// memmove in case of same arrays and overlap.
+	memmove (dest_buf, src_buf, count);
 
 	return TRUE;
 }
@@ -8865,6 +8857,10 @@ ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpoint
 	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
 	MONO_HANDLE_IMPLEMENT (id, name, func, ret, nargs, argtypes)
 
+#define NO_FRAME(id, name, func, ret, nargs, argtypes) \
+	MONO_HANDLE_DECLARE (id, name, func, ret, nargs, argtypes); \
+	MONO_HANDLE_IMPLEMENT_NO_FRAME (id, name, func, ret, nargs, argtypes)
+
 #include "metadata/icall-def.h"
 
 #undef HANDLES
@@ -8872,3 +8868,4 @@ ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpoint
 #undef ICALL_TYPE
 #undef ICALL
 #undef NOHANDLES
+#undef NO_FRAME
