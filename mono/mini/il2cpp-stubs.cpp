@@ -27,6 +27,7 @@
 #include "vm/Runtime.h"
 #include "vm/String.h"
 #include "vm-utils/Debugger.h"
+#include "os/Thread.h"
 
 #include <glib.h>
 #include <mono/utils/mono-coop-mutex.h>
