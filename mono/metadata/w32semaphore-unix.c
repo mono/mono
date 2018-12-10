@@ -194,7 +194,7 @@ namedsem_create (gint32 initial, gint32 max, const gunichar2 *name, gint32 name_
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: creating %s handle, initial %d max %d name \"%s\"",
 		    __func__, mono_w32handle_get_typename (MONO_W32TYPE_NAMEDSEM), initial, max, (const char*)name);
 
-	glong utf8_len = 0;
+	gsize utf8_len = 0;
 	char *utf8_name = mono_utf16_to_utf8len (name, name_length, &utf8_len, error);
 	goto_if_nok (error, exit);
 

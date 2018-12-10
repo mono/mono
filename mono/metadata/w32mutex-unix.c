@@ -359,11 +359,11 @@ ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, const 
 	if (!name) {
 		mutex = mutex_create (owned);
 	} else {
-		gsize utf8_length = 0;
-		char *utf8_name = mono_utf16_to_utf8len (name, name_length, &utf8_length, error);
+		gsize utf8_name_length = 0;
+		char *utf8_name = mono_utf16_to_utf8len (name, name_length, &utf8_name_length, error);
 		return_val_if_nok (error, NULL);
 
-		mutex = namedmutex_create (owned, utf8_name, utf8_length);
+		mutex = namedmutex_create (owned, utf8_name, utf8_name_length);
 
 		if (mono_w32error_get_last () == ERROR_ALREADY_EXISTS)
 			*created = FALSE;
