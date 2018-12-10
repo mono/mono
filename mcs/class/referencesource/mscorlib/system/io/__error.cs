@@ -111,7 +111,7 @@ namespace System.IO {
             }
             
             if (!safeToReturn) {
-                if (Path.IsDirectorySeparator(path[path.Length - 1]))
+                if (PathInternal.IsDirectorySeparator(path[path.Length - 1]))
                     path = Environment.GetResourceString("IO.IO_NoPermissionToDirectoryName");
                 else
                     path = Path.GetFileName(path);

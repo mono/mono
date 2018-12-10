@@ -215,7 +215,9 @@ System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
 System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
-System.IO/Path.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IO/Path.cs
+corefx/Path.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.MAX_PATH.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/SearchOption.cs
 System.IO/SearchPattern.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/SeekOrigin.cs
