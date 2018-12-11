@@ -5617,9 +5617,8 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 	}
 }
 
-// FIXME these will move to header soon
 static MonoObjectHandle
-mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error);
+mono_object_new_by_vtable (MonoObjectHandleOut o, MonoVTable *vtable, MonoError *error);
 
 /**
  * object_new_common_tail:
@@ -5723,14 +5722,33 @@ mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoVTable *vtable;
+	MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
+	return_val_if_nok (error, NULL);
 
-	vtable = mono_class_vtable_checked (domain, klass, error);
-	if (!is_ok (error))
-		return NULL;
+	return mono_object_new_specific_checked (vtable, error);
+}
 
-	MonoObject *o = mono_object_new_specific_checked (vtable, error);
-	return o;
+/**
+ * mono_object_new_assign:
+ * \param o the handle to assign new object to
+ * \param klass the class of the object that we want to create
+ * \param error set on error
+ * \returns a newly created object whose definition is
+ * looked up using \p klass.   This will not invoke any constructors,
+ * so the consumer of this routine has to invoke any constructors on
+ * its own to initialize the object.
+ *
+ * It returns NULL on failure and sets \p error.
+ */
+MonoObjectHandle
+mono_object_new_assign (MonoObjectHandleOut o, MonoDomain *domain, MonoClass *klass, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	MonoVTable* const vtable = mono_class_vtable_checked (domain, klass, error);
+	return_val_if_nok (error, NULL_HANDLE);
+
+	return mono_object_new_by_vtable (o, vtable, error);
 }
 
 /**
@@ -5748,12 +5766,7 @@ MonoObjectHandle
 mono_object_new_handle (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoVTable* const vtable = mono_class_vtable_checked (domain, klass, error);
-
-	return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
-
-	return mono_object_new_by_vtable (vtable, error);
+	return mono_object_new_assign (mono_new_null (), domain, klass, error);
 }
 
 /**
@@ -5855,15 +5868,13 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 	return mono_object_new_alloc_specific_checked (vtable, error);
 }
 
-static MonoObjectHandle
-mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
+MonoObjectHandle
+mono_object_new_by_vtable (MonoObjectHandleOut o, MonoVTable *vtable, MonoError *error)
 {
 	// This function handles remoting and COM.
 	// mono_object_new_alloc_by_vtable does not.
 
 	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoObjectHandle o = MONO_HANDLE_NEW (MonoObject, NULL);
 
 	error_init (error);
 
@@ -5879,27 +5890,27 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 				mono_class_init_internal (klass);
 
 			im = mono_class_get_method_from_name_checked (klass, "CreateProxyForType", 1, 0, error);
-			return_val_if_nok (error, mono_new_null ());
+			return_val_if_nok (error, NULL_HANDLE);
 			if (!im) {
 				mono_error_set_not_supported (error, "Linked away.");
-				return MONO_HANDLE_NEW (MonoObject, NULL);
+				return NULL_HANDLE;
 			}
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 
 		// FIXMEcoop
 		gpointer pa[ ] = { mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (vtable->klass), error) };
-		return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+		return_val_if_nok (error, NULL_HANDLE);
 
 		// FIXMEcoop
-		o = MONO_HANDLE_NEW (MonoObject, mono_runtime_invoke_checked (im, NULL, pa, error));
-		return_val_if_nok (error, MONO_HANDLE_NEW (MonoObject, NULL));
+		MONO_HANDLE_ASSIGN_RAW (o, mono_runtime_invoke_checked (im, NULL, pa, error));
+		return_val_if_nok (error, NULL_HANDLE);
 
 		if (!MONO_HANDLE_IS_NULL (o))
 			return o;
 	}
 
-	return mono_object_new_alloc_by_vtable (vtable, error);
+	return mono_object_new_alloc_by_vtable (o, vtable, error);
 }
 
 MonoObject *
@@ -5961,14 +5972,14 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 }
 
 MonoObjectHandle
-mono_object_new_alloc_by_vtable (MonoVTable *vtable, MonoError *error)
+mono_object_new_alloc_by_vtable (MonoObjectHandleOut o, MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoClass* const klass = vtable->klass;
 	int const size = m_class_get_instance_size (klass);
 
-	MonoObjectHandle o = mono_gc_alloc_handle_obj (vtable, size);
+	o = mono_gc_alloc_handle_obj (o, vtable, size);
 
 	return object_new_handle_common_tail (o, klass, error);
 }
@@ -6103,7 +6114,7 @@ mono_object_clone_handle (MonoObjectHandle obj, MonoError *error)
 
 	int const size = m_class_get_instance_size (klass);
 
-	MonoObjectHandle o = mono_gc_alloc_handle_obj (vtable, size);
+	MonoObjectHandle o = mono_gc_alloc_handle_obj (mono_new_null (), vtable, size);
 
 	if (G_LIKELY (!MONO_HANDLE_IS_NULL (o))) {
 		/* If the object doesn't contain references this will do a simple memmove. */
@@ -6596,6 +6607,12 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 	return s;
 }
 
+MonoStringHandle
+mono_string_new_utf16_assign (MonoStringHandle handle, MonoDomain *domain, const gunichar2 *text, gsize len, MonoError *error)
+{
+	return MONO_HANDLE_CAST (MonoString, MONO_HANDLE_ASSIGN_RAW (handle, mono_string_new_utf16_checked (domain, text, len, error)));
+}
+
 /**
  * mono_string_new_utf16_handle:
  * \param text a pointer to an utf16 string
@@ -6607,7 +6624,7 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
-	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
+	return mono_string_new_utf16_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, len, error);
 }
 
 /**
@@ -6732,6 +6749,55 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 }
 
 /**
+ * mono_string_new_utf8_assign:
+ * \param o    handle to assign to
+ * \param text a pointer to an utf8 string
+ * \param length number of bytes in \p text to consider
+ * \param error set on error
+ * \returns o NULL_HANDLE_STRING and sets \p error.
+ */
+MonoStringHandle
+mono_string_new_utf8_assign (MonoStringHandleOut o, MonoDomain *domain, const char *text, gsize length, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	GError *eg_error = NULL;
+	glong items_written;
+
+	gunichar2 *ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
+
+	if (eg_error) {
+		o = NULL_HANDLE_STRING;
+		// Like mono_ldstr_utf8:
+		mono_error_set_argument (error, "string", eg_error->message);
+		// FIXME? See mono_string_new_checked.
+		//mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
+		g_error_free (eg_error);
+	} else {
+		o = mono_string_new_utf16_assign (o, domain, ut, items_written, error);
+	}
+
+	g_free (ut);
+
+	return o;
+}
+
+/**
+ * mono_string_new_utf8_assign:
+ * \param o    handle to assign to
+ * \param text a pointer to a nul (z for zero) terminated utf8 string
+ * \param error set on error
+ * \returns o NULL_HANDLE_STRING and sets \p error.
+ */
+MonoStringHandle
+mono_string_new_utf8z_assign (MonoStringHandleOut o, MonoDomain *domain, const char *text, MonoError *error)
+{
+	return mono_string_new_utf8_assign (o, domain, text, strlen (text), error);
+}
+
+/**
  * mono_string_new_utf8_len:
  * \param text a pointer to an utf8 string
  * \param length number of bytes in \p text to consider
@@ -6742,31 +6808,7 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	error_init (error);
-
-	GError *eg_error = NULL;
-	MonoStringHandle o = NULL_HANDLE_STRING;
-	gunichar2 *ut = NULL;
-	glong items_written;
-
-	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
-
-	if (eg_error) {
-		o = NULL_HANDLE_STRING;
-		// Like mono_ldstr_utf8:
-		mono_error_set_argument (error, "string", eg_error->message);
-		// FIXME? See mono_string_new_checked.
-		//mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
-		g_error_free (eg_error);
-	} else {
-		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
-	}
-
-	g_free (ut);
-
-	return o;
+	return mono_string_new_utf8_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, length, error);
 }
 
 MonoString*
@@ -6971,7 +7013,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 
 	int size = mono_class_instance_size (klass);
 
-	MonoObjectHandle res_handle = mono_object_new_alloc_by_vtable (vtable, error);
+	MonoObjectHandle res_handle = mono_object_new_alloc_by_vtable (mono_new_null (), vtable, error);
 	return_val_if_nok (error, NULL_HANDLE);
 
 	size -= MONO_ABI_SIZEOF (MonoObject);
@@ -7722,9 +7764,6 @@ mono_string_to_utf8_checked_internal (MonoString *s, MonoError *error)
 
 	if (s == NULL)
 		return NULL;
-
-	if (!s->length)
-		return g_strdup ("");
 
 	return mono_utf16_to_utf8 (mono_string_chars_internal (s), s->length, error);
 }
