@@ -6501,6 +6501,12 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 	return s;
 }
 
+MonoStringHandle
+mono_string_new_utf16_assign (MonoStringHandle handle, MonoDomain *domain, const gunichar2 *text, gsize len, MonoError *error)
+{
+	return MONO_HANDLE_CAST (MonoString, MONO_HANDLE_ASSIGN_RAW (handle, mono_string_new_utf16_checked (domain, text, len, error)));
+}
+
 /**
  * mono_string_new_utf16_handle:
  * \param text a pointer to an utf16 string
@@ -6512,7 +6518,7 @@ mono_string_new_utf16_checked (MonoDomain *domain, const gunichar2 *text, gint32
 MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error)
 {
-	return MONO_HANDLE_NEW (MonoString, mono_string_new_utf16_checked (domain, text, len, error));
+	return mono_string_new_utf16_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, len, error);
 }
 
 /**
@@ -6529,12 +6535,11 @@ mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gi
 
 	MonoString *s;
 	mono_unichar2 *utf16_output = NULL;
-	gint32 utf16_len = 0;
 	
 	error_init (error);
 	utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
 	
-	while (utf16_output [utf16_len]) utf16_len++;
+	gint32 utf16_len = g_utf16_len (utf16_output);
 	
 	s = mono_string_new_size_checked (domain, utf16_len, error);
 	goto_if_nok (error, exit);
@@ -6638,6 +6643,42 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 }
 
 /**
+ * mono_string_new_utf8_assign:
+ * \param text a pointer to an utf8 string
+ * \param length number of bytes in \p text to consider
+ * \param error set on error
+ * \returns A newly created string object which contains \p text. On
+ * failure returns NULL and sets \p error.
+ */
+MonoStringHandle
+mono_string_new_utf8_assign (MonoStringHandleOut o, MonoDomain *domain, const char *text, gsize length, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	GError *eg_error = NULL;
+	glong items_written;
+
+	gunichar2 *ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
+
+	if (eg_error) {
+		o = NULL_HANDLE_STRING;
+		// Like mono_ldstr_utf8:
+		mono_error_set_argument (error, "string", eg_error->message);
+		// FIXME? See mono_string_new_checked.
+		//mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
+		g_error_free (eg_error);
+	} else {
+		o = mono_string_new_utf16_assign (o, domain, ut, items_written, error);
+	}
+
+	g_free (ut);
+
+	return o;
+}
+
+/**
  * mono_string_new_utf8_len:
  * \param text a pointer to an utf8 string
  * \param length number of bytes in \p text to consider
@@ -6648,27 +6689,7 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	error_init (error);
-
-	GError *eg_error = NULL;
-	MonoStringHandle o = NULL_HANDLE_STRING;
-	gunichar2 *ut = NULL;
-	glong items_written;
-
-	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
-
-	if (!eg_error)
-		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
-	else {
-		mono_error_set_argument (error, "string", eg_error->message);
-		g_error_free (eg_error);
-	}
-
-	g_free (ut);
-
-	return o;
+	return mono_string_new_utf8_assign (MONO_HANDLE_NEW (MonoString, NULL), domain, text, length, error);
 }
 
 MonoString*
@@ -7542,14 +7563,15 @@ mono_string_to_utf8 (MonoString *s)
 }
 
 /**
- * mono_utf16_to_utf8:
+ * mono_utf16_to_utf8len:
  */
 char *
-mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
+mono_utf16_to_utf8len (const gunichar2 *s, gsize slength, gsize *utf8_length, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	long written = 0;
+	*utf8_length = 0;
 	char *as;
 	GError *gerror = NULL;
 
@@ -7562,6 +7584,7 @@ mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 		return g_strdup ("");
 
 	as = g_utf16_to_utf8 (s, slength, NULL, &written, &gerror);
+	*utf8_length = written;
 	if (gerror) {
 		mono_error_set_argument (error, "string", gerror->message);
 		g_error_free (gerror);
@@ -7574,9 +7597,23 @@ mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 		memcpy (as2, as, written);
 		g_free (as);
 		as = as2;
+
+		// FIXME utf8_length is ambiguous here.
+		// For now it is what strlen would report.
+		// A lot of code does not deal correctly with embedded nuls.
 	}
 
 	return as;
+}
+
+/**
+ * mono_utf16_to_utf8:
+ */
+char *
+mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
+{
+	gsize utf8_length = 0;
+	return mono_utf16_to_utf8len (s, slength, &utf8_length, error);
 }
 
 char *
@@ -7585,14 +7622,22 @@ mono_string_to_utf8_checked_internal (MonoString *s, MonoError *error)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
-
 	if (s == NULL)
 		return NULL;
-
-	if (!s->length)
-		return g_strdup ("");
-
 	return mono_utf16_to_utf8 (mono_string_chars_internal (s), s->length, error);
+}
+
+char *
+mono_string_to_utf8len (MonoStringHandle s, gsize *utf8len, MonoError *error)
+{
+	*utf8len = 0;
+	if (MONO_HANDLE_IS_NULL (s))
+		return NULL;
+
+	uint32_t gchandle = 0;
+	char *utf8 = mono_utf16_to_utf8len (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s), utf8len, error);
+	mono_gchandle_free_internal (gchandle);
+	return utf8;
 }
 
 /**

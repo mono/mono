@@ -1683,7 +1683,6 @@ mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
 char *
 mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error);
 
-
 MonoArrayHandle
 mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array, MonoError *error);
 
@@ -2042,6 +2041,12 @@ mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 
 MonoStringHandle
 mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
+MonoStringHandle
+mono_string_new_utf16_assign (MonoStringHandleOut handle, MonoDomain *domain, const gunichar2 *text, gsize length, MonoError *error);
+
+MonoStringHandle
+mono_string_new_utf8_assign (MonoStringHandleOut handle, MonoDomain *domain, const char *text, gsize length, MonoError *error);
+
 MonoString *
 mono_string_from_utf16_checked (const mono_unichar2 *data, MonoError *error);
 
@@ -2053,6 +2058,9 @@ mono_ldstr_utf8 (MonoImage *image, guint32 idx, MonoError *error);
 
 char*
 mono_utf16_to_utf8 (const mono_unichar2 *s, gsize slength, MonoError *error);
+
+char*
+mono_utf16_to_utf8len (const mono_unichar2 *s, gsize slength, gsize *utf8_length, MonoError *error);
 
 gboolean
 mono_runtime_object_init_checked (MonoObject *this_obj, MonoError *error);
@@ -2170,6 +2178,9 @@ mono_string_length_internal (MonoString *s);
 
 MonoString*
 mono_string_empty_internal (MonoDomain *domain);
+
+char *
+mono_string_to_utf8len (MonoStringHandle s, gsize *utf8len, MonoError *error);
 
 char*
 mono_string_to_utf8_checked_internal (MonoString *string_obj, MonoError *error);
