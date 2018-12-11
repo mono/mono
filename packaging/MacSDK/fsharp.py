@@ -26,3 +26,4 @@ class FsharpPackage(GitHubTarballPackage):
         Package.make(self)
 
 FsharpPackage()
+
