@@ -3113,8 +3113,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 #ifdef ENABLE_LLVM
 	gboolean llvm = (flags & JIT_FLAG_LLVM) ? 1 : 0;
 #endif
-	static gboolean verbose_method_inited;
-	static char **verbose_method_names;
+	static char const * const  verbose_method_names_empty [ ] = { NULL };
+	static char const * const *verbose_method_names;
 
 	mono_atomic_inc_i32 (&mono_jit_stats.methods_compiled);
 	MONO_PROFILER_RAISE (jit_begin, (method));
@@ -3304,11 +3304,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 #ifdef ENABLE_LLVM
 	{
-		static gboolean inited;
-
-		if (!inited)
-			inited = TRUE;
-
 		/* 
 		 * Check for methods which cannot be compiled by LLVM early, to avoid
 		 * the extra compilation pass.
@@ -3400,33 +3395,29 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->opt |= MONO_OPT_ABCREM;
 	}
 
-	if (!verbose_method_inited) {
-		char *env = g_getenv ("MONO_VERBOSE_METHOD");
-		if (env != NULL)
-			verbose_method_names = g_strsplit (env, ";", -1);
-		
-		verbose_method_inited = TRUE;
-	}
-	if (verbose_method_names) {
-		int i;
-		
-		for (i = 0; verbose_method_names [i] != NULL; i++){
-			const char *name = verbose_method_names [i];
+	char const * const *local_verbose_method_names = verbose_method_names;
 
-			if ((strchr (name, '.') > name) || strchr (name, ':')) {
-				MonoMethodDesc *desc;
-				
-				desc = mono_method_desc_new (name, TRUE);
-				if (desc) {
-					if (mono_method_desc_full_match (desc, cfg->method)) {
-						cfg->verbose_level = 4;
-					}
-					mono_method_desc_free (desc);
-				}
-			} else {
-				if (strcmp (cfg->method->name, name) == 0)
+	if (!local_verbose_method_names) {
+		char *env = g_getenv ("MONO_VERBOSE_METHOD");
+		local_verbose_method_names = (char const * const *)(env ? g_strsplit (env, ";", -1) : verbose_method_names_empty);
+		mono_memory_barrier ();
+		verbose_method_names = local_verbose_method_names;
+	}
+
+	for (int i = 0; local_verbose_method_names [i]; i++) {
+		const char *name = local_verbose_method_names [i];
+
+		if ((strchr (name, '.') > name) || strchr (name, ':')) {
+			MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
+			if (desc) {
+				if (mono_method_desc_full_match (desc, cfg->method)) {
 					cfg->verbose_level = 4;
+				}
+				mono_method_desc_free (desc);
 			}
+		} else {
+			if (strcmp (cfg->method->name, name) == 0)
+				cfg->verbose_level = 4;
 		}
 	}
 
