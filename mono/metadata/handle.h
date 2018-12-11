@@ -350,6 +350,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		MONO_OBJECT_SETREF_INTERNAL (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), FIELD, __val); \
 	} while (0)
 
+// handle->field = value for managed pointer
 #define MONO_HANDLE_SET(HANDLE, FIELD, VALUE) do {			\
 		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);	\
 		do {							\
@@ -384,6 +385,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE))->FIELD = __val); \
 	 } while (0)
 
+// handle [idx] = value (for managed pointers)
 #define MONO_HANDLE_ARRAY_SETREF(HANDLE, IDX, VALUE) do {	\
 		uintptr_t __idx = (IDX);	\
    		MonoObjectHandle __val = MONO_HANDLE_CAST (MonoObject, VALUE);		\
@@ -394,6 +396,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		}							\
 	} while (0)
 
+// handle [idx] = (type)value (for non-managed types)
 #define MONO_HANDLE_ARRAY_SETVAL(HANDLE, TYPE, IDX, VALUE) do {		\
 		uintptr_t __idx = (IDX);				\
    		TYPE __val = (VALUE);					\
@@ -421,11 +424,12 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		(DEST) =  __result;					\
 	} while (0)
 
+// dest = handle [idx] (for managed pointers)
 #define MONO_HANDLE_ARRAY_GETREF(DEST, HANDLE, IDX) do {		\
 		mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)); \
 	} while (0)
 
-#define MONO_HANDLE_ASSIGN_RAW(DESTH, SRCP) (mono_handle_assign_raw (MONO_HANDLE_CAST (MonoObject, (DESTH)), SRCP))
+#define MONO_HANDLE_ASSIGN_RAW(DESTH, SRCP) (mono_handle_assign_raw (MONO_HANDLE_CAST (MonoObject, (DESTH)), (SRCP)))
 #define MONO_HANDLE_ASSIGN(DESTH, SRCH)     (MONO_HANDLE_ASSIGN_RAW ((DESTH), MONO_HANDLE_RAW (SRCH)))
 
 #define MONO_HANDLE_DOMAIN(HANDLE) MONO_HANDLE_SUPPRESS (mono_object_domain (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)))))
