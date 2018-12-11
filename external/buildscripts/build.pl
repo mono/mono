@@ -64,7 +64,7 @@ my $iphoneSimulatorArch="";
 my $tizen=0;
 my $tizenEmulator=0;
 my $windowsSubsystemForLinux=0;
-my $stevedoreBuildDeps=0;
+my $stevedoreBuildDeps=1;
 
 # Handy troubleshooting/niche options
 my $skipMonoMake=0;
@@ -304,20 +304,30 @@ if ($build)
 
 		if (!(-d "$externalBuildDeps"))
 		{
-			if (not $checkoutonthefly)
+			if($stevedoreBuildDeps)
 			{
-				print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
+				print(">>> Running bee to download build-deps...\n");
+				chdir($buildscriptsdir) eq 1 or die ("failed to chdir to $buildscriptsdir directory\n");
+				system("./bee") eq 0 or die ("failed to run bee\n");
+				chdir("$monoroot") eq 1 or die ("failed to chdir to $monoroot\n");
 			}
-
-			# Check out on the fly
-			print(">>> Checking out mono build dependencies to : $externalBuildDeps\n");
-			my $repo = "https://ono.unity3d.com/unity-extra/mono-build-deps";
-			print(">>> Cloning $repo at $externalBuildDeps\n");
-			my $checkoutResult = system("hg", "clone", $repo, "$externalBuildDeps");
-
-			if ($checkoutOnTheFly && $checkoutResult ne 0)
+			else
 			{
-				die("failed to checkout mono build dependencies\n");
+				if (not $checkoutonthefly)
+				{
+					print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
+				}
+
+				# Check out on the fly
+				print(">>> Checking out mono build dependencies to : $externalBuildDeps\n");
+				my $repo = "https://ono.unity3d.com/unity-extra/mono-build-deps";
+				print(">>> Cloning $repo at $externalBuildDeps\n");
+				my $checkoutResult = system("hg", "clone", $repo, "$externalBuildDeps");
+
+				if ($checkoutOnTheFly && $checkoutResult ne 0)
+				{
+					die("failed to checkout mono build dependencies\n");
+				}
 			}
 
 			# Only clean up if the dir exists.   Otherwise abs_path will return empty string
