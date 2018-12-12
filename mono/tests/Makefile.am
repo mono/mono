@@ -868,6 +868,13 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
+if HOST_DARWIN
+else
+PLATFORM_DISABLED_TESTS += \
+	merp-json-valid.exe
+endif
+
+
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 endif
