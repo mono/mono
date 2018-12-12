@@ -5401,7 +5401,7 @@ static MonoMethod* notify_debugger_of_wait_completion_method_cache = NULL;
 static MonoMethod*
 get_notify_debugger_of_wait_completion_method (void)
 {
-#if UNITY_TINY
+#if IL2CPP_TINY
     return NULL;
 #else
 	if (notify_debugger_of_wait_completion_method_cache != NULL)
@@ -5414,7 +5414,7 @@ get_notify_debugger_of_wait_completion_method (void)
 	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
 	return notify_debugger_of_wait_completion_method_cache;
-#endif // UNITY_TINY
+#endif // IL2CPP_TINY
 }
 
 #ifndef RUNTIME_IL2CPP
