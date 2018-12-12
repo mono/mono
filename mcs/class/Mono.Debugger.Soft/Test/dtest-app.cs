@@ -239,7 +239,7 @@ public sealed class DebuggerTaskScheduler : TaskScheduler, IDisposable
 				}
 			});
 			//the new task will be executed by a foreground thread ensuring that it will be executed ultil the end.
-			t.IsBackground = true;
+			t.IsBackground = false;
 			t.Start();
 			return t;
 
