@@ -114,12 +114,15 @@ Different names indicate different scenarios, but the same code.
 #define goto_if_ok(error, label)  goto_if (is_ok (error), label)
 #define goto_if_nok(error, label) goto_if (!is_ok (error), label)
 
+#if 0
 /* Only use this in icalls */
 #define return_val_and_set_pending_if_nok(error, value) \
 do { 							\
 	if (mono_error_set_pending_exception ((error)))	\
 		return (value); 			\
 } while (0)						\
+
+#endif
 
 /*
  * Three macros to assert that a MonoError is ok:

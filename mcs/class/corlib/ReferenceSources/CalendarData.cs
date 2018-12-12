@@ -47,6 +47,12 @@ namespace System.Globalization
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern bool fill_calendar_data (string localeName, int datetimeIndex);
+		private extern unsafe bool fill_calendar_data_icall (char *localeName, int localeName_length, int datetimeIndex);
+
+		unsafe bool fill_calendar_data (string localeName, int datetimeIndex)
+		{
+			fixed (char* fixed_localeName = localeName)
+				return fill_calendar_data_icall (fixed_localeName, localeName?.Length ?? 0, datetimeIndex);
+		}
 	}
 }

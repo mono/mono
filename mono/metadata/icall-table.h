@@ -192,8 +192,11 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomain			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoAppDomainSetup		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoArray				ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCalendarData			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComInteropProxy		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoComObject			ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCultureData			ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoCultureInfo			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoDelegate			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionDynamicMethod 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoException			ICALL_HANDLES_WRAP_OBJ
@@ -201,6 +204,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoObject			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoManifestResourceInfo 		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoMulticastDelegate		ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoNumberFormatInfo		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionAssembly		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionAssemblyBuilder 	ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionEvent		ICALL_HANDLES_WRAP_OBJ
@@ -216,6 +220,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionSigHelper		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionType		ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoReflectionTypeBuilder		ICALL_HANDLES_WRAP_OBJ
+#define MONO_HANDLE_TYPE_WRAP_MonoRegionInfo			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoString			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoStringBuilder			ICALL_HANDLES_WRAP_OBJ
 #define MONO_HANDLE_TYPE_WRAP_MonoThreadObject			ICALL_HANDLES_WRAP_OBJ

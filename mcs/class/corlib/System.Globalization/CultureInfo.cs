@@ -624,7 +624,13 @@ namespace System.Globalization
 		private extern bool construct_internal_locale_from_lcid (int lcid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool construct_internal_locale_from_name (string name);
+		private unsafe extern bool construct_internal_locale_from_name_icall (char* name, int name_length);
+
+		private unsafe bool construct_internal_locale_from_name (string name)
+		{
+			fixed (char* fixed_name = name)
+				return construct_internal_locale_from_name_icall (fixed_name, name?.Length ?? 0);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string get_current_locale_name ();
