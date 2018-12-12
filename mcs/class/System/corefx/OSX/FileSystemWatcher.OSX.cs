@@ -2,10 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Text;
 
 using CFStringRef = System.IntPtr;
 using FSEventStreamRef = System.IntPtr;
@@ -146,8 +148,6 @@ namespace System.IO
             // The EventStream to listen for events on
             private SafeEventStreamHandle _eventStream;
 
-            // A reference to the RunLoop that we can use to start or stop a Watcher
-            private CFRunLoopRef _watcherRunLoop;
 
             // Callback delegate for the EventStream events 
             private Interop.EventStream.FSEventStreamCallback _callback;
@@ -158,7 +158,8 @@ namespace System.IO
 
             // Calling RunLoopStop multiple times SegFaults so protect the call to it
             private bool _stopping;
-            private object StopLock => this;
+
+            private ExecutionContext context;
 
             internal RunningInstance(
                 FileSystemWatcher watcher,
@@ -171,7 +172,6 @@ namespace System.IO
                 Debug.Assert(!cancelToken.IsCancellationRequested);
 
                 _weakWatcher = new WeakReference<FileSystemWatcher>(watcher);
-                _watcherRunLoop = IntPtr.Zero;
                 _fullDirectory = System.IO.Path.GetFullPath(directory);
                 _includeChildren = includeChildren;
                 _filterFlags = filter;
@@ -183,47 +183,50 @@ namespace System.IO
             private static class StaticWatcherRunLoopManager
             {
                 // A reference to the RunLoop that we can use to start or stop a Watcher
-                private static CFRunLoopRef _watcherRunLoop = IntPtr.Zero;
+                private static CFRunLoopRef s_watcherRunLoop = IntPtr.Zero;
 
-                private static int scheduledStreamsCount = 0;
+                private static int s_scheduledStreamsCount = 0;
 
-                private static object lockObject = new object();
+                private static readonly object s_lockObject = new object();
 
-                public static void ScheduleEventStream(SafeEventStreamHandle _eventStream)
+                public static void ScheduleEventStream(SafeEventStreamHandle eventStream)
                 {
-                    if(_watcherRunLoop == IntPtr.Zero)
+                    lock (s_lockObject)
                     {
-                        lock (lockObject)
+                        if (s_watcherRunLoop != IntPtr.Zero)
                         {
-                            if (_watcherRunLoop == IntPtr.Zero)
-                            {
-                                var runLoopStarted = new ManualResetEventSlim();
-                                new Thread(WatchForFileSystemEventsThreadStart) { IsBackground = true }.Start(new object[] { runLoopStarted, _eventStream });
-                                runLoopStarted.Wait();
-
-                                Interlocked.Increment(ref scheduledStreamsCount);
-                                return;
-                            }
+                            // Schedule the EventStream to run on the thread's RunLoop
+                            s_scheduledStreamsCount++;
+                            Interop.EventStream.FSEventStreamScheduleWithRunLoop(eventStream, s_watcherRunLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
+                            return;
                         }
-                    }
 
-                    // Schedule the EventStream to run on the thread's RunLoop
-                    Interop.EventStream.FSEventStreamScheduleWithRunLoop(_eventStream, _watcherRunLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
-                    Interlocked.Increment(ref scheduledStreamsCount);
+                        s_scheduledStreamsCount = 1;
+                        var runLoopStarted = new ManualResetEventSlim();
+                        new Thread(WatchForFileSystemEventsThreadStart) { IsBackground = true }.Start(new object[] { runLoopStarted, eventStream });
+                        runLoopStarted.Wait();
+                    }
                 }
 
-                public static void UnscheduleFromRunLoop(SafeEventStreamHandle _eventStream)
+                public static void UnscheduleFromRunLoop(SafeEventStreamHandle eventStream)
                 {
-                    if (_watcherRunLoop != IntPtr.Zero)
+                    if (s_watcherRunLoop != IntPtr.Zero)
                     {
-                        // Always unschedule the RunLoop before cleaning up
-                        Interop.EventStream.FSEventStreamUnscheduleFromRunLoop(_eventStream, _watcherRunLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
-                        Interlocked.Decrement(ref scheduledStreamsCount);
-
-                        if (scheduledStreamsCount == 0)
+                        lock (s_lockObject)
                         {
-                            // Stop the FS event message pump
-                            Interop.RunLoop.CFRunLoopStop(_watcherRunLoop);
+                            if (s_watcherRunLoop != IntPtr.Zero)
+                            {
+                                // Always unschedule the RunLoop before cleaning up
+                                Interop.EventStream.FSEventStreamUnscheduleFromRunLoop(eventStream, s_watcherRunLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
+                                s_scheduledStreamsCount--;
+
+                                if (s_scheduledStreamsCount == 0)
+                                {
+                                    // Stop the FS event message pump
+                                    Interop.RunLoop.CFRunLoopStop(s_watcherRunLoop);
+                                    s_watcherRunLoop = IntPtr.Zero;
+                                }
+                            }
                         }
                     }
                 }
@@ -234,16 +237,17 @@ namespace System.IO
                     var runLoopStarted = (ManualResetEventSlim)inputArgs[0];
                     var _eventStream = (SafeEventStreamHandle)inputArgs[1];
                     // Get this thread's RunLoop
-                    _watcherRunLoop = Interop.RunLoop.CFRunLoopGetCurrent();
-                    Debug.Assert(_watcherRunLoop != IntPtr.Zero);
+                    var runLoop = Interop.RunLoop.CFRunLoopGetCurrent();
+                    s_watcherRunLoop = runLoop;
+                    Debug.Assert(s_watcherRunLoop != IntPtr.Zero);
 
                     // Retain the RunLoop so that it doesn't get moved or cleaned up before we're done with it.
-                    IntPtr retainResult = Interop.CoreFoundation.CFRetain(_watcherRunLoop);
-                    Debug.Assert(retainResult == _watcherRunLoop, "CFRetain is supposed to return the input value");
+                    IntPtr retainResult = Interop.CoreFoundation.CFRetain(runLoop);
+                    Debug.Assert(retainResult == runLoop, "CFRetain is supposed to return the input value");
 
 
                     // Schedule the EventStream to run on the thread's RunLoop
-                    Interop.EventStream.FSEventStreamScheduleWithRunLoop(_eventStream, _watcherRunLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
+                    Interop.EventStream.FSEventStreamScheduleWithRunLoop(_eventStream, runLoop, Interop.RunLoop.kCFRunLoopDefaultMode);
 
                     runLoopStarted.Set();
                     try
@@ -253,11 +257,10 @@ namespace System.IO
                     }
                     finally
                     {
-                        // Release the WatcherLoop Core Foundation object.
-                        lock (lockObject)
+                        lock (s_lockObject)
                         {
-                            Interop.CoreFoundation.CFRelease(_watcherRunLoop);
-                            _watcherRunLoop = IntPtr.Zero;
+                            Interop.CoreFoundation.CFRelease(runLoop);
+                            s_watcherRunLoop = IntPtr.Zero;
                         }
                     }
                 }
@@ -265,20 +268,18 @@ namespace System.IO
 
             private void CancellationCallback()
             {
-                lock (StopLock) {               
-                    if (!_stopping && _eventStream != null)
-                    {
-                        _stopping = true;
+                if (!_stopping && _eventStream != null)
+                {
+                    _stopping = true;
 
-                        try
-                        {
-                            // When we get here, we've requested to stop so cleanup the EventStream and unschedule from the RunLoop
-                            Interop.EventStream.FSEventStreamStop(_eventStream);
-                        }
-                        finally 
-                        {
-                            StaticWatcherRunLoopManager.UnscheduleFromRunLoop(_eventStream);
-                        }
+                    try
+                    {
+                        // When we get here, we've requested to stop so cleanup the EventStream and unschedule from the RunLoop
+                        Interop.EventStream.FSEventStreamStop(_eventStream);
+                    }
+                    finally
+                    {
+                        StaticWatcherRunLoopManager.UnscheduleFromRunLoop(_eventStream);
                     }
                 }
             }
@@ -322,6 +323,7 @@ namespace System.IO
                     _callback = new Interop.EventStream.FSEventStreamCallback(FileSystemEventCallback);
                 }
 
+                context = ExecutionContext.Capture();
                 // Make sure the OS file buffer(s) are fully flushed so we don't get events from cached I/O
                 Interop.Sys.Sync();
 
@@ -339,17 +341,12 @@ namespace System.IO
                     throw Interop.GetExceptionForIoErrno(Interop.Sys.GetLastErrorInfo(), _fullDirectory, true);
                 }
 
-                // Create and start our watcher thread then wait for the thread to initialize and start 
-                // the RunLoop. We wait for that to prevent this function from returning before the RunLoop
-                // has a chance to start so that any callers won't race with the background thread's initialization
-                // and calling Stop, which would attempt to stop a RunLoop that hasn't started yet.
-
                 StaticWatcherRunLoopManager.ScheduleEventStream(_eventStream);
 
                 bool started = Interop.EventStream.FSEventStreamStart(_eventStream);
                 if (!started)
-                {  
-                    // Try to get the Watcher to raise the error event; if we can't do that, just silently exist since the watcher is gone anyway
+                {
+                    // Try to get the Watcher to raise the error event; if we can't do that, just silently exit since the watcher is gone anyway
                     FileSystemWatcher watcher;
                     if (_weakWatcher.TryGetTarget(out watcher))
                     {
@@ -382,97 +379,102 @@ namespace System.IO
                     return;
                 }
 
-                // Since renames come in pairs, when we find the first we need to search for the next one. Once we find it, we'll add it to this
-                // list so when the for-loop comes across it, we'll skip it since it's already been processed as part of the original of the pair.
-                List<FSEventStreamEventId> handledRenameEvents = null;
-
-                for (long i = 0; i < numEvents.ToInt32(); i++)
+                ExecutionContext.Run(context, delegate (object state)
                 {
-                    Debug.Assert(eventPaths[i].Length > 0, "Empty events are not supported");
-                    Debug.Assert(eventPaths[i][eventPaths[i].Length - 1] != '/', "Trailing slashes on events is not supported");
+                    // Since renames come in pairs, when we find the first we need to search for the next one. Once we find it, we'll add it to this
+                    // list so when the for-loop comes across it, we'll skip it since it's already been processed as part of the original of the pair.
+                    List<FSEventStreamEventId> handledRenameEvents = null;
 
-                    // Match Windows and don't notify us about changes to the Root folder
-                    string path = eventPaths[i];
-                    if (string.Compare(path, 0, _fullDirectory, 0, path.Length, StringComparison.OrdinalIgnoreCase) == 0)
+                    for (long i = 0; i < numEvents.ToInt32(); i++)
                     {
-                        continue;
-                    }
+                        Debug.Assert(eventPaths[i].Length > 0, "Empty events are not supported");
+                        Debug.Assert(eventPaths[i][eventPaths[i].Length - 1] != '/', "Trailing slashes on events is not supported");
 
-                    WatcherChangeTypes eventType = 0;
-                    // First, we should check if this event should kick off a re-scan since we can't really rely on anything after this point if that is true
-                    if (ShouldRescanOccur(eventFlags[i]))
-                    {
-                        watcher.OnError(new ErrorEventArgs(new IOException(SR.FSW_BufferOverflow, (int)eventFlags[i])));
-                        break;
-                    }
-                    else if ((handledRenameEvents != null) && (handledRenameEvents.Contains(eventIds[i])))
-                    {
-                        // If this event is the second in a rename pair then skip it
-                        continue;
-                    }
-                    else if (CheckIfPathIsNested(path) && ((eventType = FilterEvents(eventFlags[i], path)) != 0))
-                    {
-                        // The base FileSystemWatcher does a match check against the relative path before combining with 
-                        // the root dir; however, null is special cased to signify the root dir, so check if we should use that.
-                        string relativePath = null;
-                        if (path.Equals(_fullDirectory, StringComparison.OrdinalIgnoreCase) == false)
+                        // Match Windows and don't notify us about changes to the Root folder
+                        string path = eventPaths[i];
+                        if (string.Compare(path, 0, _fullDirectory, 0, path.Length, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            // Remove the root directory to get the relative path
-                            relativePath = path.Remove(0, _fullDirectory.Length);
+                            continue;
                         }
+                        WatcherChangeTypes eventType = 0;
+                        // First, we should check if this event should kick off a re-scan since we can't really rely on anything after this point if that is true
+                        if (ShouldRescanOccur(eventFlags[i]))
+                        {
 
-                        // Raise a notification for the event
-                        if (((eventType & WatcherChangeTypes.Changed) > 0))
-                        {
-                            watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Changed, relativePath);
+                            watcher.OnError(new ErrorEventArgs(new IOException(SR.FSW_BufferOverflow, (int)eventFlags[i])));
+                            break;
                         }
-                        if (((eventType & WatcherChangeTypes.Created) > 0))
+                        else if ((handledRenameEvents != null) && (handledRenameEvents.Contains(eventIds[i])))
                         {
-                            watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Created, relativePath);
+                            // If this event is the second in a rename pair then skip it
+                            continue;
                         }
-                        if (((eventType & WatcherChangeTypes.Deleted) > 0))
+                        else if (CheckIfPathIsNested(path) && ((eventType = FilterEvents(eventFlags[i], path)) != 0))
                         {
-                            watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Deleted, relativePath);
-                        }
-                        if (((eventType & WatcherChangeTypes.Renamed) > 0))
-                        {
-                            // Find the rename that is paired to this rename, which should be the next rename in the list
-                            long pairedId = FindRenameChangePairedChange(i, eventPaths, eventFlags, eventIds);
-                            if (pairedId == long.MinValue)
+                            // The base FileSystemWatcher does a match check against the relative path before combining with 
+                            // the root dir; however, null is special cased to signify the root dir, so check if we should use that.
+                            string relativePath = null;
+                            if (path.Equals(_fullDirectory, StringComparison.OrdinalIgnoreCase) == false)
                             {
-                                // Getting here means we have a rename without a pair, meaning it should be a create for the 
-                                // move from unwatched folder to watcher folder scenario or a move from the watcher folder out.
-                                // Check if the item exists on disk to check which it is
-                                // Don't send a new notification if we already sent one for this event.
-                                if (DoesItemExist(path, IsFlagSet(eventFlags[i], Interop.EventStream.FSEventStreamEventFlags.kFSEventStreamEventFlagItemIsFile)))
+                                // Remove the root directory to get the relative path
+                                relativePath = path.Remove(0, _fullDirectory.Length);
+                            }
+                            // Raise a notification for the event
+                            if (((eventType & WatcherChangeTypes.Changed) > 0))
+                            {
+                                watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Changed, relativePath);
+                            }
+                            if (((eventType & WatcherChangeTypes.Created) > 0))
+                            {
+                                watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Created, relativePath);
+                            }
+                            if (((eventType & WatcherChangeTypes.Deleted) > 0))
+                            {
+                                watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Deleted, relativePath);
+                            }
+                            if (((eventType & WatcherChangeTypes.Renamed) > 0))
+                            {
+                                // Find the rename that is paired to this rename, which should be the next rename in the list
+                                long pairedId = FindRenameChangePairedChange(i, eventPaths, eventFlags, eventIds);
+                                if (pairedId == long.MinValue)
                                 {
-                                    if ((eventType & WatcherChangeTypes.Created) == 0)
+                                    // Getting here means we have a rename without a pair, meaning it should be a create for the 
+                                    // move from unwatched folder to watcher folder scenario or a move from the watcher folder out.
+                                    // Check if the item exists on disk to check which it is
+                                    // Don't send a new notification if we already sent one for this event.
+                                    if (DoesItemExist(path, IsFlagSet(eventFlags[i], Interop.EventStream.FSEventStreamEventFlags.kFSEventStreamEventFlagItemIsFile)))
                                     {
-                                        watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Created, relativePath);
+                                        if ((eventType & WatcherChangeTypes.Created) == 0)
+                                        {
+                                            watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Created, relativePath);
+                                        }
+                                    }
+                                    else if ((eventType & WatcherChangeTypes.Deleted) == 0)
+                                    {
+                                        watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Deleted, relativePath);
                                     }
                                 }
-                                else if ((eventType & WatcherChangeTypes.Deleted) == 0)
+                                else
                                 {
-                                    watcher.NotifyFileSystemEventArgs(WatcherChangeTypes.Deleted, relativePath);
-                                }
-                            }
-                            else
-                            {
-                                // Remove the base directory prefix and add the paired event to the list of 
-                                // events to skip and notify the user of the rename 
-                                string newPathRelativeName = eventPaths[pairedId].Remove(0, _fullDirectory.Length);
-                                watcher.NotifyRenameEventArgs(WatcherChangeTypes.Renamed, newPathRelativeName, relativePath);
+                                    // Remove the base directory prefix and add the paired event to the list of 
+                                    // events to skip and notify the user of the rename 
+                                    string newPathRelativeName = eventPaths[pairedId].Remove(0, _fullDirectory.Length);
+                                    watcher.NotifyRenameEventArgs(WatcherChangeTypes.Renamed, newPathRelativeName, relativePath);
 
-                                // Create a new list, if necessary, and add the event
-                                if (handledRenameEvents == null)
-                                {
-                                    handledRenameEvents = new List<FSEventStreamEventId>();
+                                    // Create a new list, if necessary, and add the event
+                                    if (handledRenameEvents == null)
+                                    {
+                                        handledRenameEvents = new List<FSEventStreamEventId>();
+                                    }
+                                    handledRenameEvents.Add(eventIds[pairedId]);
                                 }
-                                handledRenameEvents.Add(eventIds[pairedId]);
                             }
                         }
                     }
-                }
+
+                    var instance = (RunningInstance)state;
+                    instance.context = ExecutionContext.Capture();
+                }, this);
             }
 
             /// <summary>
