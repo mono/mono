@@ -404,11 +404,7 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		if (args.Length > 0 && args [0] == "step-out-void-async") {
-			DebuggerTaskScheduler dts = new DebuggerTaskScheduler(2);
-			var wait =  new ManualResetEvent (false);
-			step_out_void_async (wait);
-			wait.WaitOne ();//Don't exist until step_out_void_async is executed...
-			dts.Dispose();
+			run_step_out_void_async();
 			return 0;
 		}
 		assembly_load ();
@@ -1843,6 +1839,15 @@ public class Tests : TestsBase, ITest2
 	public static void Bug59649 ()
 	{
 		UninitializedClass.Call();//Breakpoint here and step in
+	}
+	
+	public static void run_step_out_void_async()
+	{
+		DebuggerTaskScheduler dts = new DebuggerTaskScheduler(2);
+		var wait =  new ManualResetEvent (false);
+		step_out_void_async (wait);
+		wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+		dts.Dispose();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
