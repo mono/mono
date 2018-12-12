@@ -2130,9 +2130,11 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	 * vtable field in MonoObject, since we can no longer assume the
 	 * vtable is reachable by other roots after the appdomain is unloaded.
 	 */
-	if (!mono_gc_is_moving () && domain != mono_get_root_domain () && !mono_dont_free_domains)
+#if HAVE_BOEHM_GC
+	if (domain != mono_get_root_domain () && !mono_dont_free_domains)
 		vt->gc_descr = MONO_GC_DESCRIPTOR_NULL;
 	else
+#endif
 		vt->gc_descr = m_class_get_gc_descr (klass);
 
 	gc_bits = mono_gc_get_vtable_bits (klass);
