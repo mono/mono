@@ -1620,9 +1620,10 @@ start_debugger_thread (void)
 
 	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, error);
 	mono_error_assert_ok (error);
-
-	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
+	if (!mono_runtime_is_shutting_down () )
+		debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
 	g_assert (debugger_thread_handle);
+	
 }
 
 /*
