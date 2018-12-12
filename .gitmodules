@@ -65,3 +65,6 @@
 [submodule "external/helix-binaries"]
 	path = external/helix-binaries
 	url = git://github.com/mono/helix-binaries.git
+[submodule "external/sysdrawing-coregraphics"]
+	path = external/sysdrawing-coregraphics
+	url = git://github.com/mono/sysdrawing-coregraphics.git

@@ -12,34 +12,40 @@ LIBRARY = System.Drawing.Common.dll
 KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = 
+LIB_REFS = System System.Core
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
-ifdef false # we'll enable this at a later point
+SYSDRAWING_COREGRAPHICS_RESOURCE_FILES = \
+	../../../../external/sysdrawing-coregraphics/Resources/Error.ico \
+	../../../../external/sysdrawing-coregraphics/Resources/Information.ico \
+	../../../../external/sysdrawing-coregraphics/Resources/Mono.ico \
+	../../../../external/sysdrawing-coregraphics/Resources/Question.ico\
+	../../../../external/sysdrawing-coregraphics/Resources/Shield.ico \
+	../../../../external/sysdrawing-coregraphics/Resources/Warning.ico \
+	../../../../external/sysdrawing-coregraphics/Resources/WinLogo.ico
 
-# xammac_net_4_5 and the testing_* profiles are special, they don't build
-# System.Drawing.dll or equivalent neither in Mono nor in the XM repo.
-# For now we embed the types directly here.
-# TODO: find a better solution.
-EMBEDDED_DRAWING_DEP := $(filter xammac_net_4_5 testing_aot_full testing_aot_hybrid, $(PROFILE))
+ifeq ($(PROFILE),monotouch)
+API_BIN_REFS := Xamarin.iOS
+RESOURCE_FILES = $(SYSDRAWING_COREGRAPHICS_RESOURCE_FILES)
+EXTRA_DISTFILES = \
+	$(RESOURCE_FILES)
+LIB_MCS_FLAGS += /unsafe -d:__IOS__ -d:__MOBILE__ -d:__UNIFIED__ -d:MONOTOUCH
+endif
 
-ifndef EMBEDDED_DRAWING_DEP
+ifeq ($(PROFILE),xammac)
+API_BIN_REFS := Xamarin.Mac
+RESOURCE_FILES = $(SYSDRAWING_COREGRAPHICS_RESOURCE_FILES)
+EXTRA_DISTFILES = \
+	$(RESOURCE_FILES)
+LIB_MCS_FLAGS += /unsafe -d:__UNIFIED__ -d:__MACOS__ -d:MONOMAC
+endif
 
 # profiles which build a System.Drawing.dll in the repo
 REPO_DRAWING_DEP := $(filter net_4_x orbis winaot unreal testing_aot_full wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing
-else
-# When System.Drawing.dll is not built in the Mono repo but in
-# the product repo like in the XI/XA case we need to pass in a reference
-# to the assembly containing drawing types like Rectangle etc. from there.
-# This needs to be passed in via EXTERNAL_FACADE_DRAWING_REFERENCE.
-LIB_MCS_FLAGS += /r:$(EXTERNAL_FACADE_DRAWING_REFERENCE)
-endif
-
-endif
-
+LIB_MCS_FLAGS += -d:MONO_HAS_SYSTEM_DRAWING
 endif
 
 PLATFORM_DEBUG_FLAGS =

@@ -1,0 +1,9 @@
+#include sysdrawing-coregraphics_shared_System.Drawing.Common.dll.sources
+
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/PrinterSettings.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/KnownColors.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/Graphics.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/PageSettings.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/Extensions.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/SystemIcons.mac.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/StandardPrintController.mac.cs
