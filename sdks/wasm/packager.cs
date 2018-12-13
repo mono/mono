@@ -299,8 +299,11 @@ class Driver {
 			var resolved = Resolve (ra, out kind);
 			Import (resolved, kind);
 		}
-		if (add_binding)
-			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
+		if (add_binding) {
+			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
+			Import (bindings, AssemblyKind.Framework);
+			root_assemblies.Add (bindings);
+		}
 
 		if (builddir != null) {
 			emit_ninja = true;
