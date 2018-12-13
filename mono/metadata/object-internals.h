@@ -700,8 +700,8 @@ typedef struct {
 typedef struct {
 	MonoObject obj;
 	MonoString *str;
-	gint32 options;
 	MonoArray *key;
+	gint32 options;
 	gint32 lcid;
 } MonoSortKey;
 
