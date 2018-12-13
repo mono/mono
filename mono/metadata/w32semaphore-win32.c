@@ -32,8 +32,8 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)
-{ 
+ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount, MonoError *error)
+{
 	return ReleaseSemaphore (handle, releaseCount, (PLONG)prevcount);
 }
 

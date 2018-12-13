@@ -14,10 +14,6 @@
 void
 mono_w32semaphore_init (void);
 
-ICALL_EXPORT
-MonoBoolean
-ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount);
-
 typedef struct MonoW32HandleNamedSemaphore MonoW32HandleNamedSemaphore;
 
 MonoW32HandleNamespace*

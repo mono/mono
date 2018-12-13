@@ -237,14 +237,14 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 { 
 	if (maximumCount <= 0) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: maximumCount <= 0", __func__);
+invalid_parameter:
 		*win32error = ERROR_INVALID_PARAMETER;
 		return NULL;
 	}
 
 	if (initialCount > maximumCount || initialCount < 0) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_SEMAPHORE, "%s: initialCount > maximumCount or < 0", __func__);
-		*win32error = ERROR_INVALID_PARAMETER;
-		return NULL;
+		goto invalid_parameter;
 	}
 
 	/* Need to blow away any old errors here, because code tests
@@ -260,23 +260,22 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCou
 }
 
 MonoBoolean
-ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount)
+ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount, MonoError *error)
 {
-	MonoW32Handle *handle_data;
+	MonoW32Handle *handle_data = NULL;
 	MonoW32HandleSemaphore *sem_handle;
-	MonoBoolean ret;
+	MonoBoolean ret = FALSE;
 
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		g_warning ("%s: unkown handle %p", __func__, handle);
+invalid_handle:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
+		goto exit;
 	}
 
 	if (handle_data->type != MONO_W32TYPE_SEM && handle_data->type != MONO_W32TYPE_NAMEDSEM) {
 		g_warning ("%s: unknown sem handle %p", __func__, handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_w32handle_unref (handle_data);
-		return FALSE;
+		goto invalid_handle;
 	}
 
 	sem_handle = (MonoW32HandleSemaphore*) handle_data->specific;
@@ -303,13 +302,13 @@ ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle,
 
 		sem_handle->val += releaseCount;
 		mono_w32handle_set_signal_state (handle_data, TRUE, TRUE);
-
 		ret = TRUE;
 	}
 
 	mono_w32handle_unlock (handle_data);
-	mono_w32handle_unref (handle_data);
-
+exit:
+	if (handle_data)
+		mono_w32handle_unref (handle_data);
 	return ret;
 }
 
