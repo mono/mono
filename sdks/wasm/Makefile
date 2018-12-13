@@ -98,11 +98,6 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 
 build-native: debug/.stamp-build release/.stamp-build
 
-do-runtime:
-	make -j4 -C ../builds package-wasm-runtime
-	make -j4 -C ../builds package-wasm-bcl
-	make build-native
-
 runtime:
 	$(MAKE) -C ../builds package-wasm-runtime
 
@@ -111,6 +106,8 @@ cross:
 
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
+
+mono: runtime cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
