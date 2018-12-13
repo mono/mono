@@ -342,7 +342,7 @@ namedmutex_create (gboolean owned, const char *utf8_name, gsize utf8_len)
 }
 
 gpointer
-ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, const gunichar2 *name,
+ves_icall_System_Threading_Mutex_CreateMutex_icall (MonoBoolean owned, const gunichar2 *name,
 	gint32 name_length, MonoBoolean *created, MonoError *error)
 {
 	gpointer mutex;
@@ -433,7 +433,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 }
 
 gpointer
-ves_icall_System_Threading_Mutex_OpenMutex_internal (const gunichar2 *name, gint32 name_length, gint32 rights G_GNUC_UNUSED, gint32 *win32error, MonoError *error)
+ves_icall_System_Threading_Mutex_OpenMutex_icall (const gunichar2 *name, gint32 name_length, gint32 rights G_GNUC_UNUSED, gint32 *win32error, MonoError *error)
 {
 	*win32error = ERROR_SUCCESS;
 	char *utf8_name = mono_utf16_to_utf8 (name, name_length, error);

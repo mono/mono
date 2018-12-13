@@ -22,7 +22,7 @@ mono_w32mutex_init (void)
 }
 
 gpointer
-ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned, const gunichar2 *name,
+ves_icall_System_Threading_Mutex_CreateMutex_icall (MonoBoolean owned, const gunichar2 *name,
 	gint32 name_length, MonoBoolean *created, MonoError *error)
 {
 	HANDLE mutex;
@@ -50,7 +50,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 }
 
 gpointer
-ves_icall_System_Threading_Mutex_OpenMutex_internal (const gunichar2 *name, gint32 name_length,
+ves_icall_System_Threading_Mutex_OpenMutex_icall (const gunichar2 *name, gint32 name_length,
 	gint32 rights, gint32 *win32error, MonoError *error)
 {
 	HANDLE ret;
