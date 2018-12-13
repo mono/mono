@@ -5871,7 +5871,7 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 {
 	MonoStringHandle result;
 
-#ifndef DISABLE_CRASH_REPORTING
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	if (mono_get_eh_callbacks ()->mono_summarize_exception) {
 		// FIXME: Push handles down into mini/mini-exceptions.c
 		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
@@ -6020,7 +6020,7 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, const char *module_name)
 {
-#ifndef DISABLE_CRASH_REPORTING
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	if (mono_get_eh_callbacks ()->mono_register_native_library)
 		mono_get_eh_callbacks ()->mono_register_native_library (path_suffix, module_name);
 #endif
@@ -6029,7 +6029,7 @@ ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, c
 ICALL_EXPORT void
 ves_icall_Mono_Runtime_EnableCrashReportingLog (const char *directory, MonoError *error)
 {
-#ifndef DISABLE_CRASH_REPORTING
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	mono_summarize_set_timeline_dir (directory);
 #endif
 }
@@ -6038,7 +6038,7 @@ ICALL_EXPORT int
 ves_icall_Mono_Runtime_CheckCrashReportingLog (const char *directory, MonoBoolean clear, MonoError *error)
 {
 	int ret;
-#ifndef DISABLE_CRASH_REPORTING
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	ret = (int) mono_summarize_timeline_read_level (directory, clear != 0);
 #else
 	ret = 0;

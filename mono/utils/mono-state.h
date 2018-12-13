@@ -12,7 +12,6 @@
 #define __MONO_UTILS_NATIVE_STATE__
 
 #ifdef TARGET_OSX
-
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/mono-context.h>
 #include <mono/metadata/threads-types.h>

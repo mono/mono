@@ -8,8 +8,6 @@
  * (C) 2018 Microsoft, Inc.
  *
  */
-#ifdef TARGET_OSX
-
 #include <config.h>
 #include <glib.h>
 #include <mono/utils/mono-state.h>
@@ -19,6 +17,7 @@
 #include <fcntl.h>
 #include <utils/mono-threads-debug.h>
 
+#ifdef TARGET_OSX
 extern GCStats mono_gc_stats;
 
 // For AOT mode
