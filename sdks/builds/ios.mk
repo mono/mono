@@ -273,6 +273,8 @@ $(eval $(call iOSSimulatorTemplate,simtv,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 
 ##
+# Cross compiler builds
+#
 # Parameters:
 #  $(1): target (cross32 or cross64)
 #  $(2): host arch (i386 or x86_64)
@@ -280,6 +282,7 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 #  $(4): device target (target32, target64, ...)
 #  $(5): llvm (llvm32 or llvm64)
 #  $(6): offsets dumper abi
+#  $(7): xcode dir
 #
 # Flags:
 #  ios-$(1)_AC_VARS
@@ -290,19 +293,20 @@ $(eval $(call iOSSimulatorTemplate,simwatch,i386))
 define iOSCrossTemplate
 
 _ios-$(1)_OFFSETS_DUMPER_ARGS=--gen-ios
+_ios_$(1)_PLATFORM_BIN=$(7)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(_ios_$(1)_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
 _ios-$(1)_CFLAGS= \
-	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
+	-isysroot $(7)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments
 
 _ios-$(1)_CXXFLAGS= \
-	-isysroot $$(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
+	-isysroot $(7)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-Qunused-arguments \
 	-stdlib=libc++
 
@@ -328,11 +332,11 @@ $$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3)-darwin,$(
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
 # 64->arm32 cross compiler
-$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))
