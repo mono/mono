@@ -12,7 +12,7 @@ my $build = 1;
 my $clean = 1;
 my $mcsOnly = 0;
 my $skipMonoMake = 0;
-my $stevedoreBuildDeps=0;
+my $stevedoreBuildDeps=1;
 
 # Handy troubleshooting/niche options
 

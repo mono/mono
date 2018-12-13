@@ -11,7 +11,7 @@ my $buildScriptsRoot = "$monoroot/external/buildscripts";
 my $androidArch = "";
 my $clean = 1;
 my $windowsSubsystemForLinux = 0;
-my $stevedoreBuildDeps = 0;
+my $stevedoreBuildDeps = 1;
 
 GetOptions(
    "androidarch=s"=>\$androidArch,
@@ -28,5 +28,5 @@ if ($androidArch eq "")
 }
 else
 {
-	system("perl", "$buildScriptsRoot/build.pl", "--build=1", "--clean=$clean", "--artifact=1", "--arch32=1", "--androidarch=$androidArch", "--forcedefaultbuilddeps=1", "--windowssubsystemforlinux=$windowsSubsystemForLinux") eq 0 or die ("Failed building mono for $androidArch\n");
+	system("perl", "$buildScriptsRoot/build.pl", "--build=1", "--clean=$clean", "--artifact=1", "--arch32=1", "--androidarch=$androidArch", "--forcedefaultbuilddeps=1", "--windowssubsystemforlinux=$windowsSubsystemForLinux",  "--stevedorebuilddeps=$stevedoreBuildDeps") eq 0 or die ("Failed building mono for $androidArch\n");
 }

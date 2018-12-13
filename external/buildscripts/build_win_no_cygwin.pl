@@ -37,7 +37,7 @@ my $winPerl = "perl";
 my $winMonoRoot = $monoroot;
 my $msBuildVersion = "14.0";
 my $buildDeps = "";
-my $stevedoreBuildDeps=0;
+my $stevedoreBuildDeps=1;
 
 print(">>> Build All Args = @ARGV\n");
 
@@ -98,58 +98,9 @@ if ($clean)
 
 if ($build)
 {
-	if ($existingMonoRootPath eq "")
+	if (!(-d "$externalBuildDeps"))
 	{
-		print(">>> No existing mono supplied.  Checking for external...\n");
-
-		if (!(-d "$externalBuildDeps"))
-		{
-			if (not $checkoutonthefly)
-			{
-				print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
-			}
-
-			# Check out on the fly
-			print(">>> Checking out mono build dependencies to : $externalBuildDeps\n");
-			my $repo = "https://ono.unity3d.com/unity-extra/mono-build-deps";
-			print(">>> Cloning $repo at $externalBuildDeps\n");
-			my $checkoutResult = system("hg", "clone", $repo, "$externalBuildDeps");
-
-			if ($checkoutOnTheFly && $checkoutResult ne 0)
-			{
-				die("failed to checkout mono build dependencies\n");
-			}
-		}
-
-		if (-d "$existingExternalMono")
-		{
-			print(">>> External mono found at : $existingExternalMono\n");
-
-			if (-d "$existingExternalMono/builds")
-			{
-				print(">>> Mono already extracted at : $existingExternalMono/builds\n");
-			}
-
-			if (!(-d "$existingExternalMono/builds"))
-			{
-				# We need to extract builds.zip
-				print(">>> Extracting mono builds.zip...\n");
-				my $SevenZip = "$externalBuildDeps/7z/win64/7za.exe";
-				print(">>> Using 7z : $SevenZip\n");
-				system("$SevenZip", "x", "$existingExternalMono/builds.zip", "-o$existingExternalMono") eq 0 or die("Failed extracting mono builds.zip\n");
-			}
-
-			$existingMonoRootPath = "$existingExternalMono/builds";
-		}
-		else
-		{
-			print(">>> No external mono found.  Trusting a new enough mono is in your PATH.\n");
-		}
-	}
-
-	if ($existingMonoRootPath ne "" && !(-d $existingMonoRootPath))
-	{
-		die("Existing mono not found at : $existingMonoRootPath\n");
+		print(">>> mono-build-deps is not required for windows runtime builds...\n");
 	}
 
 	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--gc=bdwgc") eq 0 or die ('failed building mono bdwgc with VS\n');

@@ -7,7 +7,7 @@ use File::Path;
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
 my $monoroot = abs_path($monoroot);
 my $buildScriptsRoot = "$monoroot/external/buildscripts";
-my $stevedoreBuildDeps = 0;
+my $stevedoreBuildDeps = 1;
 
 GetOptions(
    "stevedorebuilddeps=i"=>\$stevedoreBuildDeps,

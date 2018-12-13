@@ -122,9 +122,6 @@ build_win:
   - windows
   script:
   - git submodule update --init --recursive
-  - cd external/buildscripts
-  - ./bee.exe
-  - cd ../..
   - perl external/buildscripts/build_runtime_win64.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/win64
   - cp -r builds/* incomingbuilds/win64/
@@ -143,9 +140,6 @@ build_win_x86:
   - windows
   script:
   - git submodule update --init --recursive
-  - cd external/buildscripts
-  - ./bee.exe
-  - cd ../..
   - perl external/buildscripts/build_runtime_win.pl --stevedorebuilddeps=1
   - mkdir -p incomingbuilds/win32
   - cp -r builds/* incomingbuilds/win32/
@@ -164,9 +158,6 @@ build_win_bare_minimum:
   - windows
   script:
   - git submodule update --init --recursive
-  - cd external/buildscripts
-  - ./bee.exe
-  - cd ../..
   - perl external/buildscripts/build_unityscript_bareminimum_win.pl
   - mkdir -p incomingbuilds/bareminimum
   - cp -r builds/* incomingbuilds/bareminimum/
