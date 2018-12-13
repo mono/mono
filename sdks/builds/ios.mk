@@ -341,11 +341,5 @@ $(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,ll
 # 64->arm32 cross compiler
 $(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,ios-target32,llvm-llvm64,arm-apple-darwin10))
 
-$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_tv monotouch_runtime monotouch_tv_runtime,monotouch))
+$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime,monotouch monotouch_tv monotouch_watch))
 ios_TARGETS += ios-bcl
-
-$(eval $(call BclTemplate,ios-watchbcl,monotouch_watch monotouch_watch_runtime,))
-ios_TARGETS += ios-watchbcl
-
-# Both BCL builds can't be run concurrently
-build-ios-watchbcl: build-ios-bcl
