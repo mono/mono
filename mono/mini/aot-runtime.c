@@ -2101,6 +2101,7 @@ if (container_assm_name && !container_amodule) {
 			}
 			g_free (aot_name);
 		}
+#ifndef PLATFORM_ANDROID
 		if (!sofile) {
 			char *basename = g_path_get_basename (assembly->image->name);
 			aot_name = g_strdup_printf ("%s/mono/aot-cache/%s/%s%s", mono_assembly_getrootdir(), MONO_ARCHITECTURE, basename, MONO_SOLIB_EXT);
@@ -2112,6 +2113,7 @@ if (container_assm_name && !container_amodule) {
 			}
 			g_free (aot_name);
 		}
+#endif
 		if (!sofile) {
 			GList *l;
 
