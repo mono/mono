@@ -2660,6 +2660,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		break;
 
 	case MONO_AOT_MODE_NORMAL:
+	case MONO_AOT_MODE_NONE:
 		break;
 
 	default:
