@@ -4457,11 +4457,11 @@ public class DebuggerTests
 		e = run_until ("threadpool_bp");
 		var req = create_step (e);
 		e = step_out (); // leave threadpool_bp
+		
 		e = step_out (); // leave threadpool_io
 	}
 
 	[Test]
-	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
 	public void StepOutAsync () {
 		vm.Detach ();
 		Start (new string [] { dtest_app_path, "step-out-void-async" });
@@ -4475,8 +4475,8 @@ public class DebuggerTests
 		vm.Resume ();
 		var e3 = GetNextEvent ();
 		//after step-out from async void, execution should continue
-		//and runtime should exit
-		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		//and runtime should Step
+		Assert.IsTrue (e3 is StepEvent, e3.GetType().FullName);
 		vm = null;
 	}
 
