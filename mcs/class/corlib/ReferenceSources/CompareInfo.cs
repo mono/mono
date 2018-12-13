@@ -77,15 +77,7 @@ namespace System.Globalization
 		{
 			if (UseManagedCollation)
 				return GetCollator ().GetSortKey (source, options);
-			SortKey key=new SortKey (culture, source, options);
-
-			/* Need to do the icall here instead of in the
-			 * SortKey constructor, as we need access to
-			 * this instance's collator.
-			 */
-			key.key = assign_sortkey (source);
-			
-			return(key);        	
+			return new SortKey (culture, source, options);
 		}
 
 		int internal_index_switch (string s1, int sindex, int count, string s2, CompareOptions opt, bool first)
@@ -127,9 +119,6 @@ namespace System.Globalization
 				GetCollator ().IndexOf (s1, s2, sindex, count, opt) :
 				GetCollator ().LastIndexOf (s1, s2, sindex, count, opt);
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern byte[] assign_sortkey (string source);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int internal_compare (string str1, int offset1,
