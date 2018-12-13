@@ -83,7 +83,7 @@ namespace System.Globalization
 			 * SortKey constructor, as we need access to
 			 * this instance's collator.
 			 */
-			assign_sortkey (key, source, options);
+			key.key = assign_sortkey (source);
 			
 			return(key);        	
 		}
@@ -129,8 +129,7 @@ namespace System.Globalization
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void assign_sortkey (object key, string source,
-							CompareOptions options);		
+		private static extern byte[] assign_sortkey (string source);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int internal_compare (string str1, int offset1,

@@ -740,7 +740,8 @@ int ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo
 					 options));
 }
 
-void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo *this_obj, MonoSortKey *key, MonoString *source, gint32 options)
+MonoArray*
+ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoString *source)
 {
 	ERROR_DECL (error);
 	MonoArray *arr;
@@ -751,13 +752,13 @@ void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo 
 	arr=mono_array_new_checked (mono_domain_get (), mono_get_byte_class (),
 				    keylen, error);
 	if (mono_error_set_pending_exception (error))
-		return;
+		return NULL;
 
 	for(i=0; i<keylen; i++) {
 		mono_array_set_internal (arr, guint8, i, mono_string_chars_internal (source)[i]);
 	}
-	
-	MONO_OBJECT_SETREF_INTERNAL (key, key, arr);
+
+	return arr;
 }
 
 int ves_icall_System_Globalization_CompareInfo_internal_index (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, MonoString *value, gint32 options, MonoBoolean first)
