@@ -215,6 +215,7 @@ typedef struct {
 
 struct CallInfo {
 	int nargs;
+	guint32 unaligned_stack_usage;
 	guint32 stack_usage;
 	/* The index of the vret arg in the argument list for RegTypeStructByAddr */
 	int vret_arg_index;
