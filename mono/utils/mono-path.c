@@ -259,9 +259,11 @@ mono_path_path_separator_length (const char *a, size_t length)
  *
  * Return \c TRUE if \p filename is in \p basedir
  *
- * Both paths must be absolute and be mostly normalized.
+ * Both paths should be absolute and be mostly normalized.
  * If the file is in a subdirectory of \p basedir, returns \c FALSE.
  * This function doesn't touch a filesystem, it looks solely at path names.
+ *
+ * In fact, filename might not be absolute, in which case, FALSE.
  */
 gboolean
 mono_path_filename_in_basedir (const char *filename, const char *basedir)
@@ -272,8 +274,9 @@ mono_path_filename_in_basedir (const char *filename, const char *basedir)
 	size_t filename_length = strlen (filename);
 	size_t basedir_length = strlen (basedir);
 
-	g_assertf (mono_path_contains_separator (filename, filename_length), "%s", filename);
-	g_assertf (mono_path_contains_separator (basedir, basedir_length), "%s", basedir);
+	if (!mono_path_contains_separator (filename, filename_length))
+		return FALSE;
+	g_assertf (mono_path_contains_separator (basedir, basedir_length), "filename:%s basedir:%s", filename, basedir);
 
 	mono_path_remove_trailing_path_separators (filename, &filename_length);
 	mono_path_remove_trailing_path_separators (basedir, &basedir_length);
