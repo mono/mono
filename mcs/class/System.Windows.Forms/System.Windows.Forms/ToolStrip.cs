@@ -744,10 +744,7 @@ namespace System.Windows.Forms
 					ToolStripManager.RemoveToolStrip (this);
 
 					if (tooltip_timer != null)
-					{
-						tooltip_timer.Stop();
 						tooltip_timer.Dispose();
-					}
 
 					if (tooltip_window != null)
 						tooltip_window.Dispose();
