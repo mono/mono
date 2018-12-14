@@ -260,6 +260,7 @@ mono_path_path_separator_length (const char *a, size_t length)
  * This function doesn't touch a filesystem, it looks solely at path names.
  *
  * In fact, filename might not be absolute, in which case, FALSE.
+ * Ditto basedir.
  */
 gboolean
 mono_path_filename_in_basedir (const char *filename, const char *basedir)
@@ -272,7 +273,10 @@ mono_path_filename_in_basedir (const char *filename, const char *basedir)
 
 	if (!mono_path_contains_separator (filename, filename_length))
 		return FALSE;
-	g_assertf (mono_path_contains_separator (basedir, basedir_length), "filename:%s basedir:%s", filename, basedir);
+	if (!mono_path_contains_separator (basedir, basedir_length))
+		return FALSE;
+	//g_assertf (mono_path_contains_separator (filename, filename_length), "filename:%s basedir:%s", filename, basedir);
+	//g_assertf (mono_path_contains_separator (basedir, basedir_length), "filename:%s basedir:%s", filename, basedir);
 
 	mono_path_remove_trailing_path_separators (filename, &filename_length);
 	mono_path_remove_trailing_path_separators (basedir, &basedir_length);
