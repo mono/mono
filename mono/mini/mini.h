@@ -740,6 +740,7 @@ struct MonoCallInst {
 	MonoInst *out_args;
 	MonoInst *vret_var;
 	gconstpointer fptr;
+	guint unaligned_stack_usage;
 	guint stack_usage;
 	guint stack_align_amount;
 	guint is_virtual : 1;

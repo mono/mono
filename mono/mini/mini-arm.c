@@ -1624,10 +1624,10 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 		add_general (&gr, &stack_size, &cinfo->sig_cookie, TRUE);
 	}
 
+	// Alignment causes tailcall to copy extra data unnecessarily.
 	DEBUG (g_print ("      stack size: %d (%d)\n", (stack_size + 15) & ~15, stack_size));
-	stack_size = ALIGN_TO (stack_size, MONO_ARCH_FRAME_ALIGNMENT);
-
-	cinfo->stack_usage = stack_size;
+	cinfo->unaligned_stack_usage = stack_size;
+	cinfo->stack_usage = ALIGN_TO (stack_size, MONO_ARCH_FRAME_ALIGNMENT);
 	return cinfo;
 }
 
@@ -2661,6 +2661,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 	call->call_info = cinfo;
 	call->stack_usage = cinfo->stack_usage;
+	call->unaligned_stack_usage = cinfo->unaligned_stack_usage;
 }
 
 static void
@@ -5020,7 +5021,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			gboolean const tailcall_reg = ins->opcode == OP_TAILCALL_REG;
 			MonoCallInst *call = (MonoCallInst*)ins;
 
-			max_len += call->stack_usage / sizeof (target_mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
+			max_len += call->unaligned_stack_usage / sizeof (target_mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
 
 			if (IS_HARD_FLOAT)
 				code = emit_float_args (cfg, call, code, &max_len, &offset);
@@ -5054,13 +5055,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * Need to copy the arguments from the callee argument area to
 			 * the caller argument area, and pop the frame.
 			 */
-			if (call->stack_usage) {
+
+			if (call->unaligned_stack_usage) {
 				int i, prev_sp_offset = 0;
-				int saved_ip_offset = 0;
+				int saved_ip_offset_sp = 0;
+				int saved_ip_offset_fp = 0;
 
 				if (tailcall_membase || tailcall_reg) {
 					ARM_PUSH (code, 1 << ARMREG_IP);
-					saved_ip_offset = 4;
+					saved_ip_offset_sp = 4;
 				}
 
 				/* Compute size of saved registers restored below */
@@ -5074,16 +5077,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 
 				code = emit_big_add (code, ARMREG_IP, cfg->frame_reg, cfg->stack_usage + prev_sp_offset);
+				if (cfg->frame_reg == ARMREG_SP)
+					saved_ip_offset_fp = saved_ip_offset_sp;
 
 				/* Copy arguments on the stack to our argument area */
 				// FIXME a fixed size memcpy is desirable here,
 				// at least for larger values of stack_usage.
-				for (i = 0; i < call->stack_usage; i += sizeof (target_mgreg_t)) {
-					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i + saved_ip_offset);
-					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i + saved_ip_offset);
+				for (i = 0; i < call->unaligned_stack_usage; i += sizeof (target_mgreg_t)) {
+					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i + saved_ip_offset_sp);
+					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i + saved_ip_offset_fp);
 				}
 
-				if (saved_ip_offset)
+				if (saved_ip_offset_sp)
 					ARM_POP (code, 1 << ARMREG_IP);
 			}
 
