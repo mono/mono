@@ -8753,12 +8753,20 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 
 			mono_environment_exitcode_set (exit_code);
 
+			/*
+			 * We don't have a good way to suspend threads in IL2CPP, so just
+			 * skip this code and call exit below. We will not shut down cleanly
+			 * (e.g. run finalizers) but we don't care too much about that with
+			 * IL2CPP.
+			*/
+#ifndef RUNTIME_IL2CPP
 			/* Suspend all managed threads since the runtime is going away */
 			DEBUG_PRINTF (1, "Suspending all threads...\n");
 			mono_thread_suspend_all_other_threads ();
 			DEBUG_PRINTF (1, "Shutting down the runtime...\n");
 			mono_runtime_quit ();
 			transport_close2 ();
+#endif
 			DEBUG_PRINTF (1, "Exiting...\n");
 
 			exit (exit_code);
