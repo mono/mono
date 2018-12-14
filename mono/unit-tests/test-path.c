@@ -8,7 +8,7 @@
 #include "glib.h"
 
 gboolean mono_host_win32;
-#define mono_host_win32 mono_host_win32
+#define HOST_WIN32 mono_host_win32
 #include "utils/mono-path.c"
 
 static char*
