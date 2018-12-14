@@ -21,9 +21,9 @@ make_path (const char *a, int itrail, int slash, int upcase, int win32)
 	char *b = g_strdup_printf ("%s%s", a, trail);
 	if (win32) {
 		if (slash)
-			g_strdelimit (b, "/", '\\');
+			g_strdelimit (b, '/', '\\');
 		if (upcase)
-			g_strdelimit (b, "f", 'F');
+			g_strdelimit (b, 'f', 'F');
 	}
 	return b;
 }
