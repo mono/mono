@@ -5057,38 +5057,48 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 
 			if (call->unaligned_stack_usage) {
-				int i, prev_sp_offset = 0;
+				int prev_sp_offset = cfg->stack_usage;
 				int saved_ip_offset_sp = 0;
 				int saved_ip_offset_fp = 0;
-
-				if (tailcall_membase || tailcall_reg) {
-					ARM_PUSH (code, 1 << ARMREG_IP);
-					saved_ip_offset_sp = 4;
-				}
+				int frame_reg = cfg->frame_reg;
 
 				/* Compute size of saved registers restored below */
 				if (iphone_abi)
-					prev_sp_offset = 2 * 4;
+					prev_sp_offset += 2 * 4;
 				else
-					prev_sp_offset = 1 * 4;
-				for (i = 0; i < 16; ++i) {
+					prev_sp_offset += 1 * 4;
+				for (int i = 0; i < 16; ++i) {
 					if (cfg->used_int_regs & (1 << i))
 						prev_sp_offset += 4;
 				}
 
-				code = emit_big_add (code, ARMREG_IP, cfg->frame_reg, cfg->stack_usage + prev_sp_offset);
-				if (cfg->frame_reg == ARMREG_SP)
-					saved_ip_offset_fp = saved_ip_offset_sp;
+				// Is locals + parameters encodable as immediate?
+				// If not, use temporary IP to get past locals.
+				// parameters alone must be encodable, per mono_arch_tailcall_supported,
+				// and 4K is very large for that.
+				const gboolean far = (prev_sp_offset + call->unaligned_stack_usage >= 4096);
+				if (far) {
+					if (tailcall_membase || tailcall_reg) {
+						ARM_PUSH (code, 1 << ARMREG_IP);
+						saved_ip_offset_sp = 4;
+					}
+
+					code = emit_big_add (code, ARMREG_IP, frame_reg, prev_sp_offset);
+					if (frame_reg == ARMREG_SP)
+						saved_ip_offset_fp = saved_ip_offset_sp;
+					frame_reg = ARMREG_IP;
+					prev_sp_offset = 0;
+				}
 
 				/* Copy arguments on the stack to our argument area */
 				// FIXME a fixed size memcpy is desirable here,
 				// at least for larger values of stack_usage.
-				for (i = 0; i < call->unaligned_stack_usage; i += sizeof (target_mgreg_t)) {
+				for (int i = 0; i < call->unaligned_stack_usage; i += sizeof (target_mgreg_t)) {
 					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i + saved_ip_offset_sp);
-					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i + saved_ip_offset_fp);
+					ARM_STR_IMM (code, ARMREG_LR, frame_reg, i + saved_ip_offset_fp + prev_sp_offset);
 				}
 
-				if (saved_ip_offset_sp)
+				if (saved_ip_offset_sp) // far implied
 					ARM_POP (code, 1 << ARMREG_IP);
 			}
 
