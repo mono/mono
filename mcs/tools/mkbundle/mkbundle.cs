@@ -80,6 +80,7 @@ class MakeBundle {
 	static string runtime = null;
 
 	static bool aot_compile = false;
+	static bool aot_emit_c = true;
 	static string aot_args = "static";
 	static DirectoryInfo aot_temp_dir = null;
 	static string aot_mode = "";
@@ -453,6 +454,12 @@ class MakeBundle {
 				aot_args = String.Format("static,{0}", args [++i]);
 				aot_compile = true;
 				static_link = true;
+				break;
+			case "--emit-c-code":
+				compile_only = true;
+				aot_compile = true;
+				static_link = true;
+				aot_emit_c = true;
 				break;
 			case "--mono-api-struct-path":
 				if (i+1 == top) {
@@ -1553,6 +1560,10 @@ typedef struct {
 		Console.WriteLine ("Aoting files:");
 
 		for (int i=0; i < files.Count; i++) {
+			var emit_c_code_arg = "";
+			if (aot_emit_c)
+				emit_c_code_arg = String.Format(",llvm-outfile={0},emit_c_code");
+
 			var file_name = files [i];
 			string path = LocateFile (new Uri (file_name).LocalPath);
 			string outPath = String.Format ("{0}.aot_out", path);
@@ -1563,11 +1574,11 @@ typedef struct {
 			if (aot_dedup_assembly != null) {
 				all_assemblies.Append (path);
 				all_assemblies.Append (" ");
-				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4}{5} {6}",
-					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path));
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4}{7}{5} {6}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, emit_c_code_arg));
 			} else {
-				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{4} {5}",
-					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, path));
+				Execute (String.Format ("MONO_PATH={0} {1} --aot={2},outfile={3}{6}{4} {5}",
+					Path.GetDirectoryName (path), aot_runtime, aot_args, outPath, aot_mode_string, path, emit_c_code_arg));
 			}
 		}
 		if (aot_dedup_assembly != null) {
