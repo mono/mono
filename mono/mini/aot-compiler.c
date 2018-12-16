@@ -185,6 +185,7 @@ typedef struct MonoAotOptions {
 	gboolean interp;
 	gboolean no_dlsym;
 	gboolean static_link;
+	gboolean emit_c_code;
 	gboolean asm_only;
 	gboolean asm_writer;
 	gboolean nodebug;
@@ -7660,6 +7661,13 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "static")) {
 			opts->static_link = TRUE;
 			opts->no_dlsym = TRUE;
+		} else if (str_begins_with (arg, "emit_c_code")) {
+			opts->emit_c_code = TRUE;
+
+			opts->asm_only = TRUE;
+			opts->mode = MONO_AOT_MODE_FULL;
+			opts->llvm = TRUE;
+			opts->llvm_only = TRUE;
 		} else if (str_begins_with (arg, "asmonly")) {
 			opts->asm_only = TRUE;
 		} else if (str_begins_with (arg, "asmwriter")) {
@@ -9250,17 +9258,26 @@ execute_system (const char * command)
 static gboolean
 emit_llvm_file (MonoAotCompile *acfg)
 {
-	char *command, *opts, *tempbc, *optbc, *output_fname;
+	char *command, *opts, *tempbc, *optbc, *output_fname, *output_cfile;
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only) {
 		if (acfg->aot_opts.no_opt)
 			tempbc = g_strdup (acfg->aot_opts.llvm_outfile);
 		else
 			tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
-		optbc = g_strdup (acfg->aot_opts.llvm_outfile);
+
+		if (!acfg->aot_opts.emit_c_code)
+			optbc = g_strdup (acfg->aot_opts.llvm_outfile);
+		else if (acfg->aot_opts.no_opt)
+			optbc = g_strdup (acfg->aot_opts.llvm_outfile);
+		else
+			optbc = g_strdup_printf ("%s.opt.bc", acfg->tmpbasename);
+
+		output_cfile = g_strdup (acfg->aot_opts.llvm_outfile);
 	} else {
 		tempbc = g_strdup_printf ("%s.bc", acfg->tmpbasename);
 		optbc = g_strdup_printf ("%s.opt.bc", acfg->tmpbasename);
+		output_cfile = NULL;
 	}
 
 	mono_llvm_emit_aot_module (tempbc, g_path_get_basename (acfg->image->name));
@@ -9312,6 +9329,18 @@ emit_llvm_file (MonoAotCompile *acfg)
 	if (execute_system (command) != 0)
 		return FALSE;
 	g_free (opts);
+
+	if (acfg->aot_opts.emit_c_code) {
+		g_assert (output_cfile);
+		command = g_strdup_printf ("\"%sllvm-cbe\" %s -o %s", acfg->aot_opts.llvm_path, optbc, acfg->aot_opts.llvm_outfile);
+
+		aot_printf (acfg, "Executing llvm-cbe: %s\n", command);
+		if (execute_system (command) != 0)
+			return FALSE;
+
+		/* Nothing else to do */
+		return TRUE;
+	}
 
 	if (acfg->aot_opts.llvm_only && acfg->aot_opts.asm_only)
 		/* Nothing else to do */
@@ -12986,7 +13015,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		mini_llvm_init ();
 
 		if (acfg->aot_opts.asm_only && !acfg->aot_opts.llvm_outfile) {
-			aot_printerrf (acfg, "Compiling with LLVM and the asm-only option requires the llvm-outfile= option.\n");
+			aot_printerrf (acfg, "Compiling with LLVM and the asm-only option (or C codegen) requires the llvm-outfile= option.\n");
 			return 1;
 		}
 	}
