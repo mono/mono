@@ -50,6 +50,13 @@ BINDING_TEST_SOURCES = \
 
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
+BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
+BROWSER_TEST_ASSETS = \
+    --asset=$(BROWSER_TEST)/http-spec.html   \
+    --asset=$(BROWSER_TEST)/http-spec.js   \
+    --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
@@ -91,11 +98,6 @@ release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support
 
 build-native: debug/.stamp-build release/.stamp-build
 
-do-runtime:
-	make -j4 -C ../builds package-wasm-runtime
-	make -j4 -C ../builds package-wasm-bcl
-	make build-native
-
 runtime:
 	$(MAKE) -C ../builds package-wasm-runtime
 
@@ -104,6 +106,8 @@ cross:
 
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
+
+mono: runtime cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
@@ -148,6 +152,13 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
 	ninja -v -C obj/test-suite
 	touch $@
+
+$(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll $(BROWSER_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) /r:WebAssembly.Bindings.dll /r:WebAssembly.Net.Http.dll $(BROWSER_TEST)/HttpTestSuite.cs 
+	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
 
 # For development
 aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
@@ -233,7 +244,22 @@ run-all-%:
 	make -C . run-sm-$*
 	make -C . run-jsc-$*
 
+run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+	(cd $(BROWSER_TEST) && npm test)
+
 clean:
+	$(RM) -r ./bin
+	$(RM) -r .stamp-build-debug-sample
+	$(RM) -r .stamp-build-test-suite
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/node-modules
+	$(RM) -r $(BROWSER_TEST)/publish
+	$(RM) -r sample.dll
+	$(RM) -r Simple.Dependency.dll
+	$(RM) -r packager.exe
+	$(RM) -r mini_tests.dll
+	$(RM) -r main.exe
+	$(RM) -r binding-tests.dll
 
 package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp

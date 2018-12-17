@@ -60,6 +60,7 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/bsearch.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -2553,7 +2554,7 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 	MethodRef ref;
 	gboolean res;
 	gpointer addr;
-	ERROR_DECL_VALUE (inner_error);
+	ERROR_DECL (inner_error);
 
 	error_init (error);
 
@@ -2568,12 +2569,12 @@ mono_aot_get_method_from_vt_slot (MonoDomain *domain, MonoVTable *vtable, int sl
 		return NULL;
 
 	for (i = 0; i < slot; ++i) {
-		decode_method_ref (amodule, &ref, p, &p, &inner_error);
-		mono_error_cleanup (&inner_error); /* FIXME don't swallow the error */
+		decode_method_ref (amodule, &ref, p, &p, inner_error);
+		mono_error_cleanup (inner_error); /* FIXME don't swallow the error */
 	}
 
-	res = decode_method_ref (amodule, &ref, p, &p, &inner_error);
-	mono_error_cleanup (&inner_error); /* FIXME don't swallow the error */
+	res = decode_method_ref (amodule, &ref, p, &p, inner_error);
+	mono_error_cleanup (inner_error); /* FIXME don't swallow the error */
 	if (!res)
 		return NULL;
 	if (ref.no_aot_trampoline)
@@ -3692,6 +3693,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	switch (ji->type) {
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
+	case MONO_PATCH_INFO_METHOD_FTNDESC:
 	case MONO_PATCH_INFO_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_METHOD_RGCTX:
@@ -4339,12 +4341,19 @@ gboolean
 mono_aot_can_dedup (MonoMethod *method)
 {
 #ifdef TARGET_WASM
-	/* Use a set of wrappers/instances which work */
+	/* Use a set of wrappers/instances which work and useful */
 	switch (method->wrapper_type) {
 	case MONO_WRAPPER_RUNTIME_INVOKE:
-	case MONO_WRAPPER_OTHER:
 		return TRUE;
 		break;
+	case MONO_WRAPPER_OTHER: {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+		if (info->subtype == WRAPPER_SUBTYPE_PTR_TO_STRUCTURE ||
+			info->subtype == WRAPPER_SUBTYPE_STRUCTURE_TO_PTR)
+			return FALSE;
+		return TRUE;
+	}
 	default:
 		break;
 	}
@@ -4667,7 +4676,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 	MonoAotModule *amodule = m_class_get_image (klass)->aot_module;
 	guint8 *code;
 	gboolean cache_result = FALSE;
-	ERROR_DECL_VALUE (inner_error);
+	ERROR_DECL (inner_error);
 
 	error_init (error);
 
@@ -4749,8 +4758,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && m_class_get_rank (method->klass) && strstr (method->name, "System.Collections.Generic")) {
 			MonoMethod *m = mono_aot_get_array_helper_from_wrapper (method);
 
-			code = (guint8 *)mono_aot_get_method (domain, m, &inner_error);
-			mono_error_cleanup (&inner_error);
+			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
+			mono_error_cleanup (inner_error);
 			if (code)
 				return code;
 		}
@@ -4785,8 +4794,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			 * Get the code for the <object> instantiation which should be emitted into
 			 * the mscorlib aot image by the AOT compiler.
 			 */
-			code = (guint8 *)mono_aot_get_method (domain, m, &inner_error);
-			mono_error_cleanup (&inner_error);
+			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
+			mono_error_cleanup (inner_error);
 			if (code)
 				return code;
 		}
@@ -4826,8 +4835,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 			 * Get the code for the <object> instantiation which should be emitted into
 			 * the mscorlib aot image by the AOT compiler.
 			 */
-			code = (guint8 *)mono_aot_get_method (domain, m, &inner_error);
-			mono_error_cleanup (&inner_error);
+			code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
+			mono_error_cleanup (inner_error);
 			if (code)
 				return code;
 		}
@@ -4854,8 +4863,8 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 
 					m = mono_marshal_get_array_accessor_wrapper (m);
 					if (m != method) {
-						code = (guint8 *)mono_aot_get_method (domain, m, &inner_error);
-						mono_error_cleanup (&inner_error);
+						code = (guint8 *)mono_aot_get_method (domain, m, inner_error);
+						mono_error_cleanup (inner_error);
 						if (code)
 							return code;
 					}
@@ -5869,6 +5878,22 @@ mono_aot_get_unbox_arbitrary_trampoline (gpointer addr)
 	return mono_create_ftnptr (mono_domain_get (), code);
 }
 
+static int
+i32_idx_comparer (const void *key, const void *member)
+{
+	gint32 idx1 = GPOINTER_TO_INT (key);
+	gint32 idx2 = *(gint32*)member;
+	return idx1 - idx2;
+}
+
+static int
+i16_idx_comparer (const void *key, const void *member)
+{
+	int idx1 = GPOINTER_TO_INT (key);
+	int idx2 = *(gint16*)member;
+	return idx1 - idx2;
+}
+
 gpointer
 mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 {
@@ -5904,6 +5929,27 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 		 *   (2) the receiver is a value type, thus needs unboxing */
 		g_assert (mono_use_interpreter);
 		return mono_aot_get_unbox_arbitrary_trampoline (addr);
+	}
+
+	if (amodule->info.llvm_unbox_tramp_indexes) {
+		int unbox_tramp_idx;
+
+		/* Search the llvm_unbox_tramp_indexes table using a binary search */
+		if (amodule->info.llvm_unbox_tramp_elemsize == sizeof (guint32)) {
+			void *ptr = mono_binary_search (GINT_TO_POINTER (method_index), amodule->info.llvm_unbox_tramp_indexes, amodule->info.llvm_unbox_tramp_num, amodule->info.llvm_unbox_tramp_elemsize, i32_idx_comparer);
+			g_assert (ptr);
+			g_assert (*(int*)ptr == method_index);
+			unbox_tramp_idx = (guint32*)ptr - (guint32*)amodule->info.llvm_unbox_tramp_indexes;
+		} else {
+			void *ptr = mono_binary_search (GINT_TO_POINTER (method_index), amodule->info.llvm_unbox_tramp_indexes, amodule->info.llvm_unbox_tramp_num, amodule->info.llvm_unbox_tramp_elemsize, i16_idx_comparer);
+			g_assert (ptr);
+			g_assert (*(gint16*)ptr == method_index);
+			unbox_tramp_idx = (guint16*)ptr - (guint16*)amodule->info.llvm_unbox_tramp_indexes;
+		}
+		g_assert (unbox_tramp_idx < amodule->info.llvm_unbox_tramp_num);
+		code = ((gpointer*)(amodule->info.llvm_unbox_trampolines))[unbox_tramp_idx];
+		g_assert (code);
+		return code;
 	}
 
 	if (amodule->info.llvm_get_unbox_tramp) {

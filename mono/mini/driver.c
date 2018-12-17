@@ -706,7 +706,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 		}
 
 		if (method_should_be_regression_tested (method, TRUE)) {
-			ERROR_DECL_VALUE (interp_error);
+			ERROR_DECL (interp_error);
 			MonoObject *exc = NULL;
 
 			if (do_regression_retries) {
@@ -717,8 +717,8 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				++regression_test_skip_index;
 			}
 
-			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, &interp_error);
-			if (!mono_error_ok (&interp_error)) {
+			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, interp_error);
+			if (!mono_error_ok (interp_error)) {
 				cfailed++;
 				g_print ("Test '%s' execution failed.\n", method->name);
 			} else if (exc != NULL) {
@@ -2139,6 +2139,8 @@ mono_main (int argc, char* argv[])
 			mono_jit_set_aot_mode (MONO_AOT_MODE_HYBRID);
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+		} else if (strcmp (argv [i], "--llvmonly-interp") == 0) {
+			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {

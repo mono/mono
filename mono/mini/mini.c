@@ -3099,7 +3099,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 {
 	MonoMethodHeader *header;
 	MonoMethodSignature *sig;
-	ERROR_DECL_VALUE (err);
 	MonoCompile *cfg;
 	int i;
 	gboolean try_generic_shared, try_llvm = FALSE;
@@ -3196,6 +3195,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->gen_seq_points = !mini_debug_options.no_seq_points_compact_data || mini_debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
+	cfg->interp = (flags & JIT_FLAG_INTERP) != 0;
 	cfg->backend = current_backend;
 
 #ifdef HOST_ANDROID
@@ -3283,12 +3283,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 	cfg->method_to_register = method_to_register;
 
-	error_init (&err);
-	sig = mono_method_signature_checked (cfg->method, &err);	
+	ERROR_DECL (err);
+	sig = mono_method_signature_checked (cfg->method, err);	
 	if (!sig) {
 		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
-		cfg->exception_message = g_strdup (mono_error_get_message (&err));
-		mono_error_cleanup (&err);
+		cfg->exception_message = g_strdup (mono_error_get_message (err));
+		mono_error_cleanup (err);
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;

@@ -49,13 +49,8 @@ static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
 static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,
 					gint32 count, MonoString *value,
 					MonoBoolean first);
-static gint32 string_invariant_indexof_char (MonoString *source, gint32 sindex,
-					     gint32 count, gunichar2 value,
-					     MonoBoolean first);
 
 static const CultureInfoEntry* culture_info_entry_from_lcid (int lcid);
-
-static const RegionInfoEntry* region_info_entry_from_lcid (int lcid);
 
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (culture_info, "System.Globalization", "CultureInfo")
@@ -429,22 +424,6 @@ culture_info_entry_from_lcid (int lcid)
 	return ci;
 }
 
-static const RegionInfoEntry*
-region_info_entry_from_lcid (int lcid)
-{
-	const RegionInfoEntry *entry;
-	const CultureInfoEntry *ne;
-
-	ne = (const CultureInfoEntry *)mono_binary_search (&lcid, culture_entries, NUM_CULTURE_ENTRIES, sizeof (CultureInfoEntry), culture_lcid_locator);
-
-	if (ne == NULL)
-		return FALSE;
-
-	entry = &region_entries [ne->region_entry_index];
-
-	return entry;
-}
-
 #if defined (__APPLE__)
 static gchar*
 get_darwin_locale (void)
@@ -663,21 +642,6 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specif
 	return ret;
 }
 */
-MonoBoolean
-ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this_obj,
-		gint lcid)
-{
-	ERROR_DECL (error);
-	const RegionInfoEntry *ri;
-	
-	ri = region_info_entry_from_lcid (lcid);
-	if(ri == NULL)
-		return FALSE;
-
-	MonoBoolean result = construct_region (this_obj, ri, error);
-	mono_error_set_pending_exception (error);
-	return result;
-}
 
 MonoBoolean
 ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (MonoRegionInfo *this_obj,
@@ -776,35 +740,9 @@ int ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo
 					 options));
 }
 
-void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo *this_obj, MonoSortKey *key, MonoString *source, gint32 options)
-{
-	ERROR_DECL (error);
-	MonoArray *arr;
-	gint32 keylen, i;
-
-	keylen=mono_string_length_internal (source);
-	
-	arr=mono_array_new_checked (mono_domain_get (), mono_get_byte_class (),
-				    keylen, error);
-	if (mono_error_set_pending_exception (error))
-		return;
-
-	for(i=0; i<keylen; i++) {
-		mono_array_set_internal (arr, guint8, i, mono_string_chars_internal (source)[i]);
-	}
-	
-	MONO_OBJECT_SETREF_INTERNAL (key, key, arr);
-}
-
 int ves_icall_System_Globalization_CompareInfo_internal_index (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, MonoString *value, gint32 options, MonoBoolean first)
 {
 	return(string_invariant_indexof (source, sindex, count, value, first));
-}
-
-int ves_icall_System_Globalization_CompareInfo_internal_index_char (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, gunichar2 value, gint32 options, MonoBoolean first)
-{
-	return(string_invariant_indexof_char (source, sindex, count, value,
-					      first));
 }
 
 int
@@ -939,32 +877,6 @@ static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,
 			}
 		}
 		
-		return(-1);
-	}
-}
-
-static gint32 string_invariant_indexof_char (MonoString *source, gint32 sindex,
-					     gint32 count, gunichar2 value,
-					     MonoBoolean first)
-{
-	gint32 pos;
-	gunichar2 *src;
-
-	src = mono_string_chars_internal (source);
-	if(first) {
-		for (pos = sindex; pos != count + sindex; pos++) {
-			if (src [pos] == value) {
-				return(pos);
-			}
-		}
-
-		return(-1);
-	} else {
-		for (pos = sindex; pos > sindex - count; pos--) {
-			if (src [pos] == value)
-				return(pos);
-		}
-
 		return(-1);
 	}
 }

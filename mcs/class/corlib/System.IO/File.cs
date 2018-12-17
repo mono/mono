@@ -718,5 +718,20 @@ namespace System.IO
 
 			return (int) error;
 		}
+#region Copied from corefx
+
+		internal static DateTimeOffset GetUtcDateTimeOffset(DateTime dateTime)
+		{
+			// File and Directory UTC APIs treat a DateTimeKind.Unspecified as UTC whereas
+			// ToUniversalTime treats this as local.
+			if (dateTime.Kind == DateTimeKind.Unspecified)
+			{
+				return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+			}
+
+			return dateTime.ToUniversalTime();
+		}
+#endregion
+
 	}
 }

@@ -617,9 +617,9 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 		g_assert (current_thread_field);
 	}
 
-	ERROR_DECL_VALUE (thread_vt_error);
-	mono_class_vtable_checked (domain, mono_defaults.thread_class, &thread_vt_error);
-	mono_error_assert_ok (&thread_vt_error);
+	ERROR_DECL (thread_vt_error);
+	mono_class_vtable_checked (domain, mono_defaults.thread_class, thread_vt_error);
+	mono_error_assert_ok (thread_vt_error);
 	mono_domain_lock (domain);
 	offset = GPOINTER_TO_UINT (g_hash_table_lookup (domain->special_static_fields, current_thread_field));
 	mono_domain_unlock (domain);
@@ -1282,6 +1282,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	mono_threads_lock ();
 	if (shutting_down && !(flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE)) {
 		mono_threads_unlock ();
+		mono_error_set_execution_engine (error, "Couldn't create thread. Runtime is shutting down.");
 		return FALSE;
 	}
 	if (threads_starting_up == NULL) {
@@ -4912,7 +4913,7 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 		unlock = FALSE;
 	} else if (MONO_HANDLE_GETVAL (thread, thread_interrupt_requested)) {
 		// thread->thread_interrupt_requested = FALSE
-		MONO_HANDLE_SETVAL (thread, thread_interrupt_requested, gboolean, FALSE);
+		MONO_HANDLE_SETVAL (thread, thread_interrupt_requested, MonoBoolean, FALSE);
 		unlock_thread_handle (thread);
 		unlock = FALSE;
 		ERROR_DECL (error);

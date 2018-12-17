@@ -116,8 +116,6 @@ endef
 
 # 64 bit cross compiler
 $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
-# Old 32 bit cross compiler
-$(eval $(call WasmCrossTemplate,cross-32,i686,wasm32,runtime,llvm-llvm32,wasm32-unknown-unknown))
 
 ##
 # Parameters

@@ -1525,4 +1525,15 @@ partial class SR
 	public const string ObjectDisposed_RegKeyClosed = "Cannot access a closed registry key.";
 	public const string PlatformNotSupported_Registry = "Registry is not supported on this platform.";
 	public const string UnauthorizedAccess_RegistryNoWrite = "Cannot write to the registry key.";
+	public const string ArgumentNull_FileName = "File name cannot be null.";
+	public const string Argument_EmptyFileName = "Empty file name is not legal.";
+	public const string IO_CannotCreateDirectory = "The specified directory '{0}' cannot be created.";
+	public const string Arg_InvalidFileAttrs = "Invalid File or Directory attributes value.";
+	public const string Arg_Path2IsRooted = "Second path fragment must not be a drive or UNC name.";
+	public const string Argument_InvalidSubPath = "The directory specified, '{0}', is not a subdirectory of '{1}'.";
+	public const string IO_SourceDestMustBeDifferent = "Source and destination path must be different.";
+	public const string IO_SourceDestMustHaveSameRoot = "Source and destination path must have identical roots. Move will not work across volumes.";
+	public const string Arg_FileIsDirectory_Name = "The target file '{0}' is a directory, not a file.";
+	public const string Arg_PathIsVolume = "Path must not be a drive.";
+	public const string IO_FileCreateAlreadyExists = "Cannot create a file when that file already exists.";
 }

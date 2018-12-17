@@ -2576,7 +2576,7 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 		goto leave;
 	}
 
-	MONO_HANDLE_SETVAL (ref_tb, state, MonoTypeBuilderState, MonoTypeBuilderEntered);
+	MONO_HANDLE_SETVAL (ref_tb, state, gint32/*MonoTypeBuilderState*/, MonoTypeBuilderEntered);
 	MonoReflectionModuleBuilderHandle module_ref;
 	module_ref = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, ref_tb, module);
 	GHashTable *unparented_classes;
@@ -3795,8 +3795,8 @@ remove_instantiations_of_and_ensure_contents (gpointer key,
 	MonoType *type = (MonoType*)key;
 	MonoClass *klass = data->klass;
 	gboolean already_failed = !is_ok (data->error);
-	ERROR_DECL_VALUE (lerror);
-	MonoError *error = already_failed ? &lerror : data->error;
+	ERROR_DECL (lerror);
+	MonoError *error = already_failed ? lerror : data->error;
 
 	if ((type->type == MONO_TYPE_GENERICINST) && (type->data.generic_class->container_class == klass)) {
 		MonoClass *inst_klass = mono_class_from_mono_type_internal (type);

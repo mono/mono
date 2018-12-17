@@ -29,12 +29,12 @@ namespace MonoTests.System.IO
 
 			public void UpdateLine ()
 			{
-				CoreNewLine = new char [] {'Z'};
+				NewLine = "Z";
 			}
 
 			public void UpdateLine2 ()
 			{
-				CoreNewLine [0] = 'Y';
+				NewLine = "Y";
 			}
 		}
 
