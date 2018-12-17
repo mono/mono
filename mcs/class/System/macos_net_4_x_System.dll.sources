@@ -17,3 +17,13 @@ Mono.AppleTls/SafeHandles.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeEventStreamHandle.OSX.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.OSX.cs
 Internal.Cryptography/OidLookup.Managed.cs
+
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/Process.BSD.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/Process.OSX.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.BSD.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.OSX.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessThread.OSX.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.libproc.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/System/StringExtensions.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetTimestamp.cs

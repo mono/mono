@@ -8,21 +8,10 @@ System/Platform.cs
 System/SRDescriptionAttribute.cs
 System/UriTypeConverter.cs
 
-System.Diagnostics/DataReceivedEventArgs.cs
-System.Diagnostics/DataReceivedEventHandler.cs
 System.Diagnostics/DefaultTraceListener.cs
 System.Diagnostics/FileVersionInfo.cs
-System.Diagnostics/MonitoringDescriptionAttribute.cs
-System.Diagnostics/Process.cs
-System.Diagnostics/ProcessModule.cs
-System.Diagnostics/ProcessPriorityClass.cs
-System.Diagnostics/ProcessStartInfo.cs
-System.Diagnostics/ProcessThread.cs
-System.Diagnostics/ProcessWindowStyle.cs
+
 System.Diagnostics/Stopwatch.cs
-System.Diagnostics/ThreadPriorityLevel.cs
-System.Diagnostics/ThreadState.cs
-System.Diagnostics/ThreadWaitReason.cs
 System.Diagnostics/TraceImpl.cs
 
 System.IO.Compression/DeflateStream.cs
@@ -768,12 +757,27 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
 
-../referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
-../referencesource/System/services/monitoring/system/diagnosticts/Process.cs
-../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
-../referencesource/System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs
-../referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
-../referencesource/System/services/monitoring/system/diagnosticts/ProcessThreadCollection.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/Microsoft/Win32/SafeHandles/SafeProcessHandle.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Collections/Specialized/DictionaryWrapper.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/AsyncStreamReader.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/DataReceivedEventArgs.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/Process.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessInfo.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessModule.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessModuleCollection.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessPriorityClass.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessStartInfo.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessThread.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessThreadCollection.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessWindowStyle.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ThreadInfo.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ThreadPriorityLevel.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ThreadState.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ThreadWaitReason.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/MonitoringDescriptionAttribute.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Collections/Specialized/StringDictionaryWrapper.cs
+../../../external/corefx/src/Common/src/System/PasteArguments.cs
 
 ../referencesource/System/services/timers/system/timers/ElapsedEventHandler.cs
 ../referencesource/System/services/timers/system/timers/Timer.cs
@@ -786,7 +790,6 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/compmod/system/codedom/compiler/GeneratedCodeAttribute.cs
 
-../referencesource/System/compmod/microsoft/win32/safehandles/SafeProcessHandle.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/ValueListBuilder.cs
 

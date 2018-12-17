@@ -1,1 +1,8 @@
 #include unix_net_4_x_System.dll.sources
+
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/Process.Linux.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.Linux.cs
+../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessThread.Linux.cs
+../../../external/corefx/src/Common/src/Interop/Linux/procfs/Interop.ProcFsStat.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SchedGetSetAffinity.cs
+../../../external/corefx/src/Common/src/System/Text/ReusableTextReader.cs

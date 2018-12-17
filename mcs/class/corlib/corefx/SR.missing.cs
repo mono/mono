@@ -23,4 +23,10 @@ partial class SR
 	public const string Argument_MemberAndArray = "Argument_MemberAndArray";
 	public const string Argument_MustSupplyContainer = "Argument_MustSupplyContainer";
 	public const string Serialization_NoID = "Serialization_NoID";
+	public const string StandardInputEncodingNotAllowed = "StandardInputEncodingNotAllowed";
+	public const string UseShellExecuteNotSupported = "UseShellExecuteNotSupported";
+	public const string CantSetDuplicatePassword = "CantSetDuplicatePassword";
+	public const string CantGetProcessStartInfo = "CantGetProcessStartInfo";
+	public const string CantSetProcessStartInfo = "CantSetProcessStartInfo";
+	public const string ArgumentAndArgumentListInitialized = "ArgumentAndArgumentListInitialized";
 }
