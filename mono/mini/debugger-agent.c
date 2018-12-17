@@ -1161,12 +1161,6 @@ void mono_debugger_install_runtime_callbacks(MonoDebuggerRuntimeCallbacks* cbs)
 	callbacks = *cbs;
 }
 
-uint32_t* g_unity_check;
-void mono_debugger_install_sequence_point_check(volatile uint32_t* check)
-{
-	g_unity_check = check;
-}
-
 gboolean unity_debugger_agent_is_global_breakpoint_active()
 {
 	if (!ss_req)
@@ -1180,13 +1174,9 @@ int32_t unity_debugger_agent_is_single_stepping ()
     return ss_count;
 }
 
-#define INC_PAUSE_COUNT() do { mono_atomic_inc_i32 (g_unity_check); } while (0)
-#define DEC_PAUSE_COUNT() do { mono_atomic_dec_i32 (g_unity_check); } while (0)
 #define UPDATE_PAUSE_STATE() do { g_unity_pause_point_active = unity_debugger_agent_is_global_breakpoint_active() || unity_debugger_agent_is_single_stepping(); } while (0)
 #else
 
-#define INC_PAUSE_COUNT()
-#define DEC_PAUSE_COUNT()
 #define UPDATE_PAUSE_STATE()
 
 #endif // RUNTIME_IL2CPP
@@ -4864,7 +4854,6 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 			inst->seq_point = seqPoint;
 
 			seqPoint->isActive++;
-			INC_PAUSE_COUNT();
 
 			mono_loader_lock();
 			g_ptr_array_add(bp->children, inst);
@@ -4954,7 +4943,6 @@ static MonoBreakpoint* set_breakpoint_fast(Il2CppSequencePoint *sp, EventRequest
 	inst->seq_point = sp;
 
 	sp->isActive++;
-	INC_PAUSE_COUNT();
 
 	mono_loader_lock();
 	g_ptr_array_add(bp->children, inst);
@@ -4991,7 +4979,6 @@ clear_breakpoint (MonoBreakpoint *bp)
 		remove_breakpoint(inst);
 #else
 		inst->seq_point->isActive--;
-		DEC_PAUSE_COUNT();
 #endif
 
 		g_free (inst);
@@ -5069,7 +5056,6 @@ clear_breakpoints_for_domain (MonoDomain *domain)
 				remove_breakpoint (inst);
 #else
 				inst->seq_point->isActive--;
-				DEC_PAUSE_COUNT();
 #endif
 
 				g_free (inst);
@@ -6031,7 +6017,6 @@ start_single_stepping (void)
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_inc_i32 (&ss_count);
 	UPDATE_PAUSE_STATE();
-	INC_PAUSE_COUNT();
 
 	if (val == 1) {
 		mono_arch_start_single_stepping ();
@@ -6050,7 +6035,6 @@ stop_single_stepping (void)
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	int val = mono_atomic_dec_i32 (&ss_count);
 	UPDATE_PAUSE_STATE();
-	DEC_PAUSE_COUNT();
 
 	if (val == 0) {
 		mono_arch_stop_single_stepping ();
@@ -6567,7 +6551,6 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 	DEBUG_PRINTF (1, "[dbg] Starting single step of thread %p (depth=%s).\n", thread, ss_depth_to_string (depth));
 
 	ss_req = g_new0 (SingleStepReq, 1);
-	INC_PAUSE_COUNT();
 	ss_req->req = req;
 	ss_req->thread = thread;
 	ss_req->size = size;
@@ -6709,7 +6692,6 @@ ss_destroy (SingleStepReq *req)
 	ss_stop (ss_req);
 
 	g_free (ss_req);
-	DEC_PAUSE_COUNT();
 	ss_req = NULL;
 }
 
