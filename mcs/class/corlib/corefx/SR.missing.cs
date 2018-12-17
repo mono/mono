@@ -29,4 +29,15 @@ partial class SR
 	public const string CantGetProcessStartInfo = "CantGetProcessStartInfo";
 	public const string CantSetProcessStartInfo = "CantSetProcessStartInfo";
 	public const string ArgumentAndArgumentListInitialized = "ArgumentAndArgumentListInitialized";
+	public const string CantGetAllPids = "CantGetAllPids";
+	public const string NegativePidNotSupported = "NegativePidNotSupported";
+	public const string RUsageFailure = "RUsageFailure";
+	public const string ProcessorAffinityNotSupported = "ProcessorAffinityNotSupported";
+	public const string OsxExternalProcessWorkingSetNotSupported = "OsxExternalProcessWorkingSetNotSupported";
+	public const string MinimumWorkingSetNotSupported = "MinimumWorkingSetNotSupported";
+	public const string ProcessStartIdentityNotSupported = "ProcessStartIdentityNotSupported";
+	public const string ThreadPriorityNotSupported = "ThreadPriorityNotSupported";
+	public const string RemoteMachinesNotSupported = "RemoteMachinesNotSupported";
+	public const string DirectoryNotValidAsInput = "DirectoryNotValidAsInput";
+	public const string UserDoesNotExist = "UserDoesNotExist";
 }
