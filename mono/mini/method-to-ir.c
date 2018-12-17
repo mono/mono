@@ -2360,7 +2360,7 @@ mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass
 	static MonoMethod *bzero_method;
 
 	/* FIXME: Optimize this for the case when dest is an LDADDR */
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 	if (mini_is_gsharedvt_klass (klass)) {
 		size_ins = mini_emit_get_gsharedvt_info_klass (cfg, klass, MONO_RGCTX_INFO_VALUE_SIZE);
 		bzero_ins = mini_emit_get_gsharedvt_info_klass (cfg, klass, MONO_RGCTX_INFO_BZERO);
@@ -2696,6 +2696,9 @@ static MonoInst*
 emit_get_rgctx_method (MonoCompile *cfg, int context_used,
 					   MonoMethod *cmethod, MonoRgctxInfoType rgctx_type)
 {
+	if (context_used == -1)
+		context_used = mono_method_check_context_used (cmethod);
+
 	if (!context_used) {
 		MonoInst *ins;
 
@@ -2705,6 +2708,9 @@ emit_get_rgctx_method (MonoCompile *cfg, int context_used,
 			return ins;
 		case MONO_RGCTX_INFO_METHOD_RGCTX:
 			EMIT_NEW_METHOD_RGCTX_CONST (cfg, ins, cmethod);
+			return ins;
+		case MONO_RGCTX_INFO_METHOD_FTNDESC:
+			EMIT_NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_METHOD_FTNDESC, cmethod);
 			return ins;
 		default:
 			g_assert_not_reached ();
@@ -2983,12 +2989,14 @@ handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass, int co
 		/* FIXME: What if the class is shared?  We might not
 		   have to get the address of the method from the
 		   RGCTX. */
-		addr = emit_get_rgctx_method (cfg, context_used, method,
-									  MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
 		if (cfg->llvm_only) {
+			addr = emit_get_rgctx_method (cfg, context_used, method,
+										  MONO_RGCTX_INFO_METHOD_FTNDESC);
 			cfg->signatures = g_slist_prepend_mempool (cfg->mempool, cfg->signatures, mono_method_signature_internal (method));
 			return mini_emit_llvmonly_calli (cfg, mono_method_signature_internal (method), &val, addr);
 		} else {
+			addr = emit_get_rgctx_method (cfg, context_used, method,
+										  MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
 			rgctx = emit_get_rgctx (cfg, context_used);
 
 			return mini_emit_calli (cfg, mono_method_signature_internal (method), &val, addr, NULL, rgctx);
@@ -3252,7 +3260,7 @@ mini_emit_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass, int context_us
 		if (context_used) {
 			if (cfg->llvm_only && cfg->gsharedvt) {
 				MonoInst *addr = emit_get_rgctx_method (cfg, context_used, method,
-														MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+														MONO_RGCTX_INFO_METHOD_FTNDESC);
 				return mini_emit_llvmonly_calli (cfg, mono_method_signature_internal (method), &val, addr);
 			} else {
 				/* FIXME: What if the class is shared?  We might not
@@ -3395,7 +3403,7 @@ mini_handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_th
 	}
 
 	{
-		MonoInst *load, *and_, *cmp, *ceq;
+		MonoInst *load = NULL, *and_, *cmp, *ceq;
 		int enum_reg = is_i4 ? alloc_ireg (cfg) : alloc_lreg (cfg);
 		int and_reg = is_i4 ? alloc_ireg (cfg) : alloc_lreg (cfg);
 		int dest_reg = alloc_ireg (cfg);
@@ -3413,7 +3421,7 @@ mini_handle_enum_has_flag (MonoCompile *cfg, MonoClass *klass, MonoInst *enum_th
 		ceq->type = STACK_I4;
 
 		if (!is_i4) {
-			load = mono_decompose_opcode (cfg, load);
+			load = load ? mono_decompose_opcode (cfg, load) : NULL;
 			and_ = mono_decompose_opcode (cfg, and_);
 			cmp = mono_decompose_opcode (cfg, cmp);
 			ceq = mono_decompose_opcode (cfg, ceq);
@@ -3677,9 +3685,9 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 				if (mini_is_gsharedvt_type (fsig->params [i]) || MONO_TYPE_IS_PRIMITIVE (fsig->params [i])) {
 					EMIT_NEW_VARLOADA_VREG (cfg, ins, sp [i + 1]->dreg, fsig->params [i]);
 					addr_reg = ins->dreg;
-					EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [4]->dreg, i * sizeof (mgreg_t), addr_reg);
+					EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [4]->dreg, i * sizeof (target_mgreg_t), addr_reg);
 				} else {
-					EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [4]->dreg, i * sizeof (mgreg_t), sp [i + 1]->dreg);
+					EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STORE_MEMBASE_REG, args [4]->dreg, i * sizeof (target_mgreg_t), sp [i + 1]->dreg);
 				}
 			}
 		} else {
@@ -3963,7 +3971,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	if (mini_is_gsharedvt_variable_klass (klass)) {
 		size = -1;
 	} else {
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 		size = mono_class_array_element_size (klass);
 	}
 
@@ -4028,7 +4036,7 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	MonoInst *ins;
 	guint32 size;
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 	size = mono_class_array_element_size (klass);
 
 	index1 = index_ins1->dreg;
@@ -5547,7 +5555,7 @@ handle_ctor_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 
 		if (cfg->llvm_only) {
 			MonoInst *addr = emit_get_rgctx_method (cfg, context_used, cmethod,
-													MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+													MONO_RGCTX_INFO_METHOD_FTNDESC);
 			mini_emit_llvmonly_calli (cfg, fsig, sp, addr);
 		} else {
 			cmethod_addr = emit_get_rgctx_method (cfg, context_used,
@@ -7068,7 +7076,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (!m_class_is_inited (cmethod->klass))
-				if (!mono_class_init (cmethod->klass))
+				if (!mono_class_init_internal (cmethod->klass))
 					TYPE_LOAD_ERROR (cmethod->klass);
 
 			fsig = mono_method_signature_internal (cmethod);
@@ -7621,7 +7629,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (cfg->gsharedvt && mini_is_gsharedvt_variable_signature (fsig))
 						addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER);
 					else
-						addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+						addr = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD_FTNDESC);
 					// FIXME: Avoid initializing imt_arg/vtable_arg
 					ins = mini_emit_llvmonly_calli (cfg, fsig, sp, addr);
 					if (inst_tailcall) // FIXME
@@ -8473,7 +8481,7 @@ calli_end:
 
 			mono_save_token_info (cfg, image, token, cmethod);
 
-			if (!mono_class_init (cmethod->klass))
+			if (!mono_class_init_internal (cmethod->klass))
 				TYPE_LOAD_ERROR (cmethod->klass);
 
 			context_used = mini_method_check_context_used (cfg, cmethod);
@@ -8937,7 +8945,7 @@ calli_end:
 			}
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE (method, field);
-			mono_class_init (klass);
+			mono_class_init_internal (klass);
 
 			/* if the class is Critical then transparent code cannot access it's fields */
 			if (!is_instance && mono_security_core_clr_enabled ())
@@ -9639,7 +9647,7 @@ field_access_end:
 			if (il_op == MONO_CEE_LDELEM) {
 				klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
-				mono_class_init (klass);
+				mono_class_init_internal (klass);
 			}
 			else
 				klass = array_access_to_klass (il_op);
@@ -9687,7 +9695,7 @@ field_access_end:
 			if (il_op == MONO_CEE_STELEM) {
 				klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
-				mono_class_init (klass);
+				mono_class_init_internal (klass);
 			}
 			else
 				klass = array_access_to_klass (il_op);
@@ -9809,7 +9817,7 @@ field_access_end:
 			}
 			if (!handle)
 				LOAD_ERROR;
-			mono_class_init (handle_class);
+			mono_class_init_internal (handle_class);
 			if (cfg->gshared) {
 				if (mono_metadata_token_table (n) == MONO_TABLE_TYPEDEF ||
 						mono_metadata_token_table (n) == MONO_TABLE_TYPEREF) {
@@ -9860,7 +9868,7 @@ field_access_end:
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 					MonoClass *tclass = mono_class_from_mono_type_internal ((MonoType *)handle);
 
-					mono_class_init (tclass);
+					mono_class_init_internal (tclass);
 					if (context_used) {
 						ins = mini_emit_get_rgctx_klass (cfg, context_used,
 							tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);
@@ -10227,7 +10235,7 @@ mono_ldptr:
 			MonoInst *iargs [2];
 
 			klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
-			mono_class_init (klass);
+			mono_class_init_internal (klass);
 			NEW_DOMAINCONST (cfg, iargs [0]);
 			MONO_ADD_INS (cfg->cbb, iargs [0]);
 			NEW_CLASSCONST (cfg, iargs [1], klass);
@@ -10255,7 +10263,7 @@ mono_ldptr:
 			--sp;
 			klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 			g_assert (m_class_is_valuetype (klass));
-			mono_class_init (klass);
+			mono_class_init_internal (klass);
 
 			{
 				MonoInst *src, *dest, *temp;
@@ -10634,7 +10642,7 @@ mono_ldptr:
 			cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			mono_class_init (cmethod->klass);
+			mono_class_init_internal (cmethod->klass);
 
 			mono_save_token_info (cfg, image, n, cmethod);
 
@@ -10707,7 +10715,7 @@ mono_ldptr:
 			cmethod = mini_get_method (cfg, method, n, NULL, generic_context);
 			CHECK_CFG_ERROR;
 
-			mono_class_init (cmethod->klass);
+			mono_class_init_internal (cmethod->klass);
 
 			context_used = mini_method_check_context_used (cfg, cmethod);
 
@@ -10718,13 +10726,12 @@ mono_ldptr:
 			 * Optimize the common case of ldvirtftn+delegate creation
 			 */
 			if (previous_il_op == MONO_CEE_DUP && (sp > stack_start) && (next_ip + 4 < end) && ip_in_bb (cfg, cfg->cbb, next_ip) && (next_ip [0] == CEE_NEWOBJ)) {
-
 				MonoMethod *ctor_method = mini_get_method (cfg, method, read32 (next_ip + 1), NULL, generic_context);
 				if (ctor_method && (m_class_get_parent (ctor_method->klass) == mono_defaults.multicastdelegate_class)) {
 					MonoInst *target_ins, *handle_ins;
 					MonoMethod *invoke;
 					int invoke_context_used;
-					gboolean is_virtual = cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL;
+					const gboolean is_virtual = (cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) != 0;
 
 					invoke = mono_get_delegate_invoke_internal (ctor_method->klass);
 					if (!invoke || !mono_method_signature_internal (invoke))
@@ -10737,7 +10744,7 @@ mono_ldptr:
 					if (mono_security_core_clr_enabled ())
 						ensure_method_is_allowed_to_call_method (cfg, method, ctor_method);
 
-					if ((invoke_context_used == 0 || !cfg->gsharedvt) || cfg->llvm_only) {
+					if (invoke_context_used == 0 || !cfg->gsharedvt || cfg->llvm_only) {
 						if (cfg->verbose_level > 3)
 							g_print ("converting (in B%d: stack: %d) %s", cfg->cbb->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip + 6, NULL));
 						if ((handle_ins = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod, context_used, invoke_context_used, is_virtual))) {

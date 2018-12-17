@@ -1099,7 +1099,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 	MonoGCDescriptor gc_descr;
 
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 
 	if (m_class_is_gc_descr_inited (klass))
 		return;
@@ -1962,7 +1962,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	gpointer iter;
 	gpointer *interface_offsets;
 
-	mono_loader_lock (); /*FIXME mono_class_init acquires it*/
+	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
 	mono_domain_lock (domain);
 
 	runtime_info = m_class_get_runtime_info (klass);
@@ -1973,7 +1973,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		goto exit;
 	}
 	if (!m_class_is_inited (klass) || mono_class_has_failure (klass)) {
-		if (!mono_class_init (klass) || mono_class_has_failure (klass)) {
+		if (!mono_class_init_internal (klass) || mono_class_has_failure (klass)) {
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			mono_error_set_for_class_failure (error, klass);
@@ -1985,9 +1985,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_ARRAY || m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY) {
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (!m_class_is_inited (element_class))
-			mono_class_init (element_class);
+			mono_class_init_internal (element_class);
 
-		/*mono_class_init can leave the vtable layout to be lazily done and we can't afford this here*/
+		/*mono_class_init_internal can leave the vtable layout to be lazily done and we can't afford this here*/
 		if (!mono_class_has_failure (element_class) && !m_class_get_vtable_size (element_class))
 			mono_class_setup_vtable (element_class);
 		
@@ -2003,7 +2003,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	}
 
 	/* 
-	 * For some classes, mono_class_init () already computed klass->vtable_size, and 
+	 * For some classes, mono_class_init_internal () already computed klass->vtable_size, and 
 	 * that is all that is needed because of the vtable trampolines.
 	 */
 	if (!m_class_get_vtable_size (klass))
@@ -3150,6 +3150,12 @@ MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
 {
 	return MONO_HANDLE_NEW (MonoObject, mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (obj), params, error));
+}
+
+void
+mono_runtime_invoke_handle_void (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error)
+{
+	mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (obj), params, error);
 }
 
 /**
@@ -4732,7 +4738,7 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoClass * const klass = mono_class_get_unhandled_exception_event_args_class ();
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	/* UnhandledExceptionEventArgs only has 1 public ctor with 2 args */
 	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 2, METHOD_ATTRIBUTE_PUBLIC, error);
@@ -4984,9 +4990,9 @@ prepare_thread_to_exec_main (MonoDomain *domain, MonoMethod *method)
 		}
 	}
 
-	ERROR_DECL_VALUE (cattr_error);
-	cinfo = mono_custom_attrs_from_method_checked (method, &cattr_error);
-	mono_error_cleanup (&cattr_error); /* FIXME warn here? */
+	ERROR_DECL (cattr_error);
+	cinfo = mono_custom_attrs_from_method_checked (method, cattr_error);
+	mono_error_cleanup (cattr_error); /* FIXME warn here? */
 	if (cinfo) {
 		has_stathread_attribute = mono_custom_attrs_has_attr (cinfo, mono_class_get_sta_thread_attribute_class ());
 		if (!cinfo->cached)
@@ -5052,13 +5058,13 @@ do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 
 	/* FIXME: check signature of method */
 	if (mono_method_signature_internal (method)->ret->type == MONO_TYPE_I4) {
-		ERROR_DECL_VALUE (inner_error);
+		ERROR_DECL (inner_error);
 		MonoObject *res;
-		res = mono_runtime_try_invoke (method, NULL, pa, exc, &inner_error);
-		if (*exc == NULL && !mono_error_ok (&inner_error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (&inner_error);
+		res = mono_runtime_try_invoke (method, NULL, pa, exc, inner_error);
+		if (*exc == NULL && !mono_error_ok (inner_error))
+			*exc = (MonoObject*) mono_error_convert_to_exception (inner_error);
 		else
-			mono_error_cleanup (&inner_error);
+			mono_error_cleanup (inner_error);
 
 		if (*exc == NULL)
 			rval = *(guint32 *)(mono_object_get_data (res));
@@ -5067,12 +5073,12 @@ do_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 
 		mono_environment_exitcode_set (rval);
 	} else {
-		ERROR_DECL_VALUE (inner_error);
-		mono_runtime_try_invoke (method, NULL, pa, exc, &inner_error);
-		if (*exc == NULL && !mono_error_ok (&inner_error))
-			*exc = (MonoObject*) mono_error_convert_to_exception (&inner_error);
+		ERROR_DECL (inner_error);
+		mono_runtime_try_invoke (method, NULL, pa, exc, inner_error);
+		if (*exc == NULL && !mono_error_ok (inner_error))
+			*exc = (MonoObject*) mono_error_convert_to_exception (inner_error);
 		else
-			mono_error_cleanup (&inner_error);
+			mono_error_cleanup (inner_error);
 
 		if (*exc == NULL)
 			rval = 0;
@@ -5721,7 +5727,7 @@ mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 			MonoClass *klass = mono_class_get_activation_services_class ();
 
 			if (!m_class_is_inited (klass))
-				mono_class_init (klass);
+				mono_class_init_internal (klass);
 
 			im = mono_class_get_method_from_name_checked (klass, "CreateProxyForType", 1, 0, error);
 			return_val_if_nok (error, NULL);
@@ -5768,7 +5774,7 @@ mono_object_new_by_vtable (MonoVTable *vtable, MonoError *error)
 			MonoClass *klass = mono_class_get_activation_services_class ();
 
 			if (!m_class_is_inited (klass))
-				mono_class_init (klass);
+				mono_class_init_internal (klass);
 
 			im = mono_class_get_method_from_name_checked (klass, "CreateProxyForType", 1, 0, error);
 			return_val_if_nok (error, mono_new_null ());
@@ -6210,7 +6216,7 @@ mono_array_new_full_checked (MonoDomain *domain, MonoClass *array_class, uintptr
 	error_init (error);
 
 	if (!m_class_is_inited (array_class))
-		mono_class_init (array_class);
+		mono_class_init_internal (array_class);
 
 	len = 1;
 
@@ -6639,8 +6645,10 @@ mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint len
 
 	if (!eg_error)
 		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
-	else 
+	else {
+		mono_error_set_argument (error, "string", eg_error->message);
 		g_error_free (eg_error);
+	}
 
 	g_free (ut);
 
@@ -7108,7 +7116,7 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 	error_init (error);
 	
 	if (!m_class_is_inited (klass))
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 
 	if (mono_class_is_marshalbyref (klass) || mono_class_is_interface (klass)) {
 		return mono_object_handle_isinst_mbyref (obj, klass, error);
@@ -7448,43 +7456,16 @@ mono_ldstr_metadata_sig (MonoDomain *domain, const char* sig, MonoError *error)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	error_init (error);
-	const char *str = sig;
-	MonoString *o, *interned;
-	size_t len2;
 
-	len2 = mono_metadata_decode_blob_size (str, &str);
-	len2 >>= 1;
-
-	o = mono_string_new_utf16_checked (domain, (gunichar2*)str, len2, error);
+	const gsize len = mono_metadata_decode_blob_size (sig, &sig) / sizeof (gunichar2);
+	MonoString *o = mono_string_new_utf16_checked (domain, (gunichar2*)sig, len, error);
 	return_val_if_nok (error, NULL);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
-	{
-		int i;
-		gunichar2 *p2 = (gunichar2*)mono_string_chars_internal (o);
-		for (i = 0; i < len2; ++i) {
-			*p2 = GUINT16_FROM_LE (*p2);
-			++p2;
-		}
-	}
+	gunichar2 *p = mono_string_chars_internal (o);
+	for (gsize i = 0; i < len; ++i)
+		p [i] = GUINT16_FROM_LE (p [i]);
 #endif
-	ldstr_lock ();
-	interned = (MonoString *)mono_g_hash_table_lookup (domain->ldstr_table, o);
-	ldstr_unlock ();
-	if (interned)
-		return interned; /* o will get garbage collected */
-
-	o = mono_string_get_pinned (o, error);
-	if (o) {
-		ldstr_lock ();
-		interned = (MonoString *)mono_g_hash_table_lookup (domain->ldstr_table, o);
-		if (!interned) {
-			mono_g_hash_table_insert (domain->ldstr_table, o, o);
-			interned = o;
-		}
-		ldstr_unlock ();
-	}
-
-	return interned;
+	return mono_string_intern_checked (o, error);
 }
 
 /*
@@ -8995,6 +8976,8 @@ mono_array_length (MonoArray *array)
 	MONO_EXTERNAL_ONLY (uintptr_t, mono_array_length_internal (array));
 }
 
+#ifdef ENABLE_CHECKED_BUILD_GC
+
 /**
  * mono_string_handle_length:
  * \param s \c MonoString
@@ -9007,6 +8990,8 @@ mono_string_handle_length (MonoStringHandle s)
 
 	return MONO_HANDLE_GETVAL (s, length);
 }
+
+#endif
 
 /**
  * mono_array_addr_with_size:

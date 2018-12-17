@@ -1384,8 +1384,8 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 		LSCAN_DEBUG (printf ("R%d %s -> 0x%x\n", inst->dreg, mono_type_full_name (t), slot));
 
 		if (inst->flags & MONO_INST_LMF) {
-			size = sizeof (MonoLMF);
-			align = sizeof (mgreg_t);
+			size = MONO_ABI_SIZEOF (MonoLMF);
+			align = sizeof (target_mgreg_t);
 			reuse_slot = FALSE;
 		}
 
@@ -1394,12 +1394,12 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 
 		if (slot == 0xffffff) {
 			/*
-			 * Allways allocate valuetypes to sizeof (gpointer) to allow more
+			 * Allways allocate valuetypes to sizeof (target_mgreg_t) to allow more
 			 * efficient copying (and to work around the fact that OP_MEMCPY
 			 * and OP_MEMSET ignores alignment).
 			 */
 			if (MONO_TYPE_ISSTRUCT (t)) {
-				align = MAX (align, sizeof (gpointer));
+				align = MAX (align, sizeof (target_mgreg_t));
 				align = MAX (align, mono_class_min_align (mono_class_from_mono_type_internal (t)));
 			}
 
@@ -1484,7 +1484,7 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 
 	vars = mono_varlist_sort (cfg, vars, 0);
 	offset = 0;
-	*stack_align = sizeof(mgreg_t);
+	*stack_align = sizeof (target_mgreg_t);
 	for (l = vars; l; l = l->next) {
 		vmv = (MonoMethodVar *)l->data;
 		inst = cfg->varinfo [vmv->idx];
@@ -1628,8 +1628,8 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 			 * This variable represents a MonoLMF structure, which has no corresponding
 			 * CLR type, so hard-code its size/alignment.
 			 */
-			size = sizeof (MonoLMF);
-			align = sizeof (mgreg_t);
+			size = MONO_ABI_SIZEOF (MonoLMF);
+			align = sizeof (target_mgreg_t);
 			reuse_slot = FALSE;
 		}
 
@@ -1638,12 +1638,12 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 
 		if (slot == 0xffffff) {
 			/*
-			 * Allways allocate valuetypes to sizeof (gpointer) to allow more
+			 * Allways allocate valuetypes to sizeof (target_mgreg_t) to allow more
 			 * efficient copying (and to work around the fact that OP_MEMCPY
 			 * and OP_MEMSET ignores alignment).
 			 */
 			if (MONO_TYPE_ISSTRUCT (t)) {
-				align = MAX (align, sizeof (gpointer));
+				align = MAX (align, sizeof (target_mgreg_t));
 				align = MAX (align, mono_class_min_align (mono_class_from_mono_type_internal (t)));
 				/* 
 				 * Align the size too so the code generated for passing vtypes in
@@ -3099,7 +3099,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 {
 	MonoMethodHeader *header;
 	MonoMethodSignature *sig;
-	ERROR_DECL_VALUE (err);
 	MonoCompile *cfg;
 	int i;
 	gboolean try_generic_shared, try_llvm = FALSE;
@@ -3196,6 +3195,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->gen_seq_points = !mini_debug_options.no_seq_points_compact_data || mini_debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
+	cfg->interp = (flags & JIT_FLAG_INTERP) != 0;
 	cfg->backend = current_backend;
 
 #ifdef HOST_ANDROID
@@ -3283,12 +3283,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 	cfg->method_to_register = method_to_register;
 
-	error_init (&err);
-	sig = mono_method_signature_checked (cfg->method, &err);	
+	ERROR_DECL (err);
+	sig = mono_method_signature_checked (cfg->method, err);	
 	if (!sig) {
 		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
-		cfg->exception_message = g_strdup (mono_error_get_message (&err));
-		mono_error_cleanup (&err);
+		cfg->exception_message = g_strdup (mono_error_get_message (err));
+		mono_error_cleanup (err);
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;

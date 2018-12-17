@@ -2225,7 +2225,7 @@ ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *rfield)
 	MonoType *t;
 	ERROR_DECL (error);
 
-	mono_class_init (field->parent);
+	mono_class_init_internal (field->parent);
 
 	t = mono_field_get_type_checked (field, error);
 	if (!is_ok (error)) {
@@ -2723,7 +2723,7 @@ ves_icall_RuntimeTypeHandle_HasReferences (MonoReflectionTypeHandle ref_type, Mo
 	MonoClass *klass;
 
 	klass = mono_class_from_mono_type_internal (type);
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 	return m_class_has_references (klass);
 }
 
@@ -4405,7 +4405,7 @@ handle_parent:
 
 		g_hash_table_insert (events, event, event);
 	}
-	if (klass = m_class_get_parent (klass))
+	if ((klass = m_class_get_parent (klass)))
 		goto handle_parent;
 
 	g_hash_table_destroy (events);
@@ -4502,6 +4502,7 @@ MonoReflectionTypeHandle
 ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHandle assembly_h, MonoReflectionModuleHandle module, MonoStringHandle name, MonoBoolean throwOnError, MonoBoolean ignoreCase, MonoError *error)
 {
 	error_init (error);
+	ERROR_DECL (parse_error);
 
 	MonoTypeNameParse info;
 	gboolean type_resolve;
@@ -4512,11 +4513,10 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHand
 	goto_if_nok (error, fail);
 
 	/*g_print ("requested type %s in %s\n", str, assembly->assembly->aname.name);*/
-	ERROR_DECL_VALUE (parse_error);
-	if (!mono_reflection_parse_type_checked (str, &info, &parse_error)) {
+	if (!mono_reflection_parse_type_checked (str, &info, parse_error)) {
 		g_free (str);
 		mono_reflection_free_type_info (&info);
-		mono_error_cleanup (&parse_error);
+		mono_error_cleanup (parse_error);
 		if (throwOnError) {
 			mono_error_set_argument (error, "typeName", "failed to parse the type");
 			goto fail;
@@ -4607,9 +4607,9 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssemblyHand
 
 	if (!type) {
 		if (throwOnError) {
-			ERROR_DECL_VALUE (inner_error);
-			char *type_name = mono_string_handle_to_utf8 (name, &inner_error);
-			mono_error_assert_ok (&inner_error);
+			ERROR_DECL (inner_error);
+			char *type_name = mono_string_handle_to_utf8 (name, inner_error);
+			mono_error_assert_ok (inner_error);
 			MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
 			char *assmname = mono_stringify_assembly_name (&assembly->aname);
 			mono_error_set_type_load_name (error, type_name, assmname, "%s", "");
@@ -5517,8 +5517,8 @@ image_get_type (MonoDomain *domain, MonoImage *image, MonoTableInfo *tdef, int t
 {
 	error_init (error);
 	HANDLE_FUNCTION_ENTER ();
-	ERROR_DECL_VALUE (klass_error);
-	MonoClass *klass = mono_class_get_checked (image, table_idx | MONO_TOKEN_TYPE_DEF, &klass_error);
+	ERROR_DECL (klass_error);
+	MonoClass *klass = mono_class_get_checked (image, table_idx | MONO_TOKEN_TYPE_DEF, klass_error);
 
 	if (klass) {
 		MonoReflectionTypeHandle rt = mono_type_get_object_handle (domain, m_class_get_byval_arg (klass), error);
@@ -5526,7 +5526,7 @@ image_get_type (MonoDomain *domain, MonoImage *image, MonoTableInfo *tdef, int t
 
 		MONO_HANDLE_ARRAY_SETREF (res, count, rt);
 	} else {
-		MonoException *ex = mono_error_convert_to_exception (&klass_error);
+		MonoException *ex = mono_error_convert_to_exception (klass_error);
 		MONO_HANDLE_ARRAY_SETRAW (exceptions, count, ex);
 	}
 	HANDLE_FUNCTION_RETURN ();
@@ -5604,11 +5604,10 @@ static void
 set_class_failure_in_array (MonoArrayHandle exl, int i, MonoClass *klass)
 {
 	HANDLE_FUNCTION_ENTER ();
-	ERROR_DECL_VALUE (unboxed_error);
-	error_init (&unboxed_error);
-	mono_error_set_for_class_failure (&unboxed_error, klass);
+	ERROR_DECL (unboxed_error);
+	mono_error_set_for_class_failure (unboxed_error, klass);
 
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (&unboxed_error));
+	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (unboxed_error));
 	MONO_HANDLE_ARRAY_SETREF (exl, i, exc);
 	HANDLE_FUNCTION_RETURN ();
 }
@@ -5713,7 +5712,7 @@ ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoo
 void
 ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 {
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	mono_merp_disable ();
 #else
 	// Icall has platform check in managed too.
@@ -5722,10 +5721,10 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 }
 
 void
-ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSignature, char *appVersion, char *merpGUIPath, char *eventType, char *appPath, MonoError *error)
+ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir, MonoError *error)
 {
-#ifdef TARGET_OSX
-	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath);
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
+	mono_merp_enable (appBundleID, appSignature, appVersion, merpGUIPath, eventType, appPath, configDir);
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 #else
@@ -5733,6 +5732,11 @@ ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (char *appBundleID, char *appSig
 	g_assert_not_reached ();
 #endif
 }
+
+// Number derived from trials on relevant hardware.
+// If it seems large, please confirm it's safe to shrink
+// before doing so.
+#define MONO_MAX_SUMMARY_LEN_ICALL 500000
 
 MonoStringHandle
 ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64 *portable_hash_out, guint64 *unportable_hash_out, MonoError *error)
@@ -5749,14 +5753,16 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
 		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
 
-		JsonWriter writer;
-		mono_json_writer_init (&writer);
+		MonoStateWriter writer;
+		char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
+		mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_native_state_init (&writer);
 		gboolean first_thread_added = TRUE;
 		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
 		char *output = mono_native_state_free (&writer, FALSE);
 		result = mono_string_new_handle (mono_domain_get (), output, error);
 		g_free (output);
+		g_free (scratch);
 		return result;
 	}
 #endif
@@ -5768,9 +5774,9 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 }
 
 void
-ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 	if (!mono_merp_enabled ())
 		g_error ("Cannot send telemetry without registering parameters first");
 
@@ -5784,7 +5790,11 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_h
 	// Tells mono that we want to send the HANG EXC_TYPE.
 	const char *signal = "SIGTERM";
 
-	mono_merp_invoke (crashed_pid, signal, payload, &hashes);
+	gboolean success = mono_merp_invoke (crashed_pid, signal, payload, &hashes);
+	if (!success) {
+		//g_assert_not_reached ();
+		mono_error_set_generic_error (error, "System", "Exception", "We were unable to start the Microsoft Error Reporting client.");
+	}
 #else
 	// Icall has platform check in managed too.
 	g_assert_not_reached ();
@@ -5792,7 +5802,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (char *payload, guint64 portable_h
 }
 
 void
-ves_icall_Mono_Runtime_DumpTelemetry (char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
+ves_icall_Mono_Runtime_DumpTelemetry (const char *payload, guint64 portable_hash, guint64 unportable_hash, MonoError *error)
 {
 #ifndef DISABLE_CRASH_REPORTING
 	MonoStackHash hashes;
@@ -5822,14 +5832,16 @@ ves_icall_Mono_Runtime_DumpStateSingle (guint64 *portable_hash, guint64 *unporta
 	*portable_hash = (guint64) this_thread.hashes.offset_free_hash;
 	*unportable_hash = (guint64) this_thread.hashes.offset_rich_hash;
 
-	JsonWriter writer;
-	mono_json_writer_init (&writer);
+	MonoStateWriter writer;
+	char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
+	mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 	mono_native_state_init (&writer);
 	gboolean first_thread_added = TRUE;
 	mono_native_state_add_thread (&writer, &this_thread, NULL, first_thread_added, TRUE);
 	char *output = mono_native_state_free (&writer, FALSE);
 	result = mono_string_new_handle (mono_domain_get (), output, error);
 	g_free (output);
+	g_free (scratch);
 #else
 	*portable_hash = 0;
 	*unportable_hash = 0;
@@ -5849,10 +5861,25 @@ ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, c
 #endif
 }
 
-// Number derived from trials on relevant hardware.
-// If it seems large, please confirm it's safe to shrink
-// before doing so.
-#define MONO_MAX_SUMMARY_LEN_ICALL 500000
+void
+ves_icall_Mono_Runtime_EnableCrashReportingLog (const char *directory, MonoError *error)
+{
+#ifndef DISABLE_CRASH_REPORTING
+	mono_summarize_set_timeline_dir (directory);
+#endif
+}
+
+int
+ves_icall_Mono_Runtime_CheckCrashReportingLog (const char *directory, MonoBoolean clear, MonoError *error)
+{
+	int ret;
+#ifndef DISABLE_CRASH_REPORTING
+	ret = (int) mono_summarize_timeline_read_level (directory, clear != 0);
+#else
+	ret = 0;
+#endif
+	return ret;
+}
 
 MonoStringHandle
 ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportable_hash, MonoError *error)
@@ -5869,7 +5896,10 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 
+	mono_summarize_timeline_start ();
+
 	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE, FALSE, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
+	mono_summarize_timeline_phase_log (MonoSummaryCleanup);
 
 	if (!success)
 		return mono_string_new_handle (mono_domain_get (), "", error);
@@ -5880,6 +5910,8 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 
 	// out is now a pointer into garbage memory
 	g_free (scratch);
+
+	mono_summarize_timeline_phase_log (MonoSummaryDone);
 #else
 	*portable_hash = 0;
 	*unportable_hash = 0;
@@ -6096,17 +6128,17 @@ module_resolve_type_token (MonoImage *image, guint32 token, MonoArrayHandle type
 
 	if (image_is_dynamic (image)) {
 		if ((table == MONO_TABLE_TYPEDEF) || (table == MONO_TABLE_TYPEREF)) {
-			ERROR_DECL_VALUE (inner_error);
-			klass = (MonoClass *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, &inner_error);
-			mono_error_cleanup (&inner_error);
+			ERROR_DECL (inner_error);
+			klass = (MonoClass *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, inner_error);
+			mono_error_cleanup (inner_error);
 			result = klass ? m_class_get_byval_arg (klass) : NULL;
 			goto leave;
 		}
 
 		init_generic_context_from_args_handles (&context, type_args, method_args);
-		ERROR_DECL_VALUE (inner_error);
-		klass = (MonoClass *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, &inner_error);
-		mono_error_cleanup (&inner_error);
+		ERROR_DECL (inner_error);
+		klass = (MonoClass *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, inner_error);
+		mono_error_cleanup (inner_error);
 		result = klass ? m_class_get_byval_arg (klass) : NULL;
 		goto leave;
 	}
@@ -6155,9 +6187,9 @@ module_resolve_method_token (MonoImage *image, guint32 token, MonoArrayHandle ty
 
 	if (image_is_dynamic (image)) {
 		if (table == MONO_TABLE_METHOD) {
-			ERROR_DECL_VALUE (inner_error);
-			method = (MonoMethod *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, &inner_error);
-			mono_error_cleanup (&inner_error);
+			ERROR_DECL (inner_error);
+			method = (MonoMethod *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, inner_error);
+			mono_error_cleanup (inner_error);
 			goto leave;
 		}
 
@@ -6167,9 +6199,9 @@ module_resolve_method_token (MonoImage *image, guint32 token, MonoArrayHandle ty
 		}
 
 		init_generic_context_from_args_handles (&context, type_args, method_args);
-		ERROR_DECL_VALUE (inner_error);
-		method = (MonoMethod *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, &inner_error);
-		mono_error_cleanup (&inner_error);
+		ERROR_DECL (inner_error);
+		method = (MonoMethod *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, inner_error);
+		mono_error_cleanup (inner_error);
 		goto leave;
 	}
 
@@ -6247,9 +6279,9 @@ module_resolve_field_token (MonoImage *image, guint32 token, MonoArrayHandle typ
 
 	if (image_is_dynamic (image)) {
 		if (table == MONO_TABLE_FIELD) {
-			ERROR_DECL_VALUE (inner_error);
-			field = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, &inner_error);
-			mono_error_cleanup (&inner_error);
+			ERROR_DECL (inner_error);
+			field = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL, inner_error);
+			mono_error_cleanup (inner_error);
 			goto leave;
 		}
 
@@ -6259,9 +6291,9 @@ module_resolve_field_token (MonoImage *image, guint32 token, MonoArrayHandle typ
 		}
 
 		init_generic_context_from_args_handles (&context, type_args, method_args);
-		ERROR_DECL_VALUE (inner_error);
-		field = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, &inner_error);
-		mono_error_cleanup (&inner_error);
+		ERROR_DECL (inner_error);
+		field = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, FALSE, NULL, &context, inner_error);
+		mono_error_cleanup (inner_error);
 		goto leave;
 	}
 
@@ -6490,12 +6522,12 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_
 	}
 
 	if (mono_security_core_clr_enabled ()) {
-		ERROR_DECL_VALUE (security_error);
-		if (!mono_security_core_clr_ensure_delegate_creation (method, &security_error)) {
+		ERROR_DECL (security_error);
+		if (!mono_security_core_clr_ensure_delegate_creation (method, security_error)) {
 			if (throwOnBindFailure)
-				mono_error_move (error, &security_error);
+				mono_error_move (error, security_error);
 			else
-				mono_error_cleanup (&security_error);
+				mono_error_cleanup (security_error);
 			return NULL_HANDLE;
 		}
 	}
@@ -7993,7 +8025,7 @@ ves_icall_property_info_get_default_value (MonoReflectionProperty *property)
 	const char *def_value;
 	MonoObject *o;
 
-	mono_class_init (prop->parent);
+	mono_class_init_internal (prop->parent);
 
 	if (!(prop->attrs & PROPERTY_ATTRIBUTE_HAS_DEFAULT)) {
 		mono_error_set_invalid_operation (error, NULL);

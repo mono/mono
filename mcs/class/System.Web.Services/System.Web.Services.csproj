@@ -1057,8 +1057,8 @@
         <Compile Include="..\referencesource\System.Web.Services\System\Web\Services\WsiProfiles.cs" />
         <Compile Include="..\referencesource\System.Web.Services\inc\InvariantComparer.cs" />
         <Compile Include="..\referencesource\System.Web.Services\inc\PrivilegedConfigurationManager.cs" />
-        <Compile Include="ReferenceSources\Res.Helpers.cs" />
-        <Compile Include="ReferenceSources\Res.cs" />
+        <Compile Include="corefx\SR.Helpers.cs" />
+        <Compile Include="corefx\SR.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">

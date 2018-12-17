@@ -1249,7 +1249,7 @@ scan_from_registered_roots (char *addr_start, char *addr_end, int root_type, Sca
 	void **start_root;
 	RootRecord *root;
 	SGEN_HASH_TABLE_FOREACH (&sgen_roots_hash [root_type], void **, start_root, RootRecord *, root) {
-		SGEN_LOG (6, "Precise root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)root->root_desc);
+		SGEN_LOG (6, "Precise root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)(uintptr_t)root->root_desc);
 		precisely_scan_objects_from (start_root, (void**)root->end_root, addr_start, addr_end, root->root_desc, ctx);
 	} SGEN_HASH_TABLE_FOREACH_END;
 }
@@ -3873,6 +3873,38 @@ sgen_timestamp (void)
 	SGEN_TV_DECLARE (timestamp);
 	SGEN_TV_GETTIME (timestamp);
 	return SGEN_TV_ELAPSED (sgen_init_timestamp, timestamp);
+}
+
+void
+sgen_check_canary_for_object (gpointer addr)
+{
+	if (sgen_nursery_canaries_enabled ()) {
+		guint size = sgen_safe_object_get_size_unaligned ((GCObject *) (addr));
+		char* canary_ptr = (char*) (addr) + size;
+		if (!CANARY_VALID(canary_ptr)) {
+			char *window_start, *window_end;
+			window_start = (char*)(addr) - 128;
+			if (!sgen_ptr_in_nursery (window_start))
+				window_start = sgen_get_nursery_start ();
+			window_end = (char*)(addr) + 128;
+			if (!sgen_ptr_in_nursery (window_end))
+				window_end = sgen_get_nursery_end ();
+			fprintf (stderr, "\nCANARY ERROR - Type:%s Size:%d Address:%p Data:\n", sgen_client_vtable_get_name (SGEN_LOAD_VTABLE ((addr))), size,  (char*) addr);
+			fwrite (addr, sizeof (char), size, stderr);
+			fprintf (stderr, "\nCanary zone (next 12 chars):\n");
+			fwrite (canary_ptr, sizeof (char), 12, stderr);
+			fprintf (stderr, "\nOriginal canary string:\n");
+			fwrite (CANARY_STRING, sizeof (char), 8, stderr);
+			for (int x = -8; x <= 8; x++) {
+				if (canary_ptr + x < (char*) addr)
+					continue;
+				if (CANARY_VALID(canary_ptr +x))
+					fprintf (stderr, "\nCANARY ERROR - canary found at offset %d\n", x);
+			}
+			fprintf (stderr, "\nSurrounding nursery (%p - %p):\n", window_start, window_end);
+			fwrite (window_start, sizeof (char), window_end - window_start, stderr);
+		}
+	}
 }
 
 #endif /* HAVE_SGEN_GC */

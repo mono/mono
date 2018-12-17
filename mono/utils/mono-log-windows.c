@@ -26,6 +26,7 @@
 #include <process.h>
 #include "mono-logger-internals.h"
 #include "mono-proclib.h"
+#include "mono-time.h"
 
 static FILE *logFile = NULL;
 static void *logUserData = NULL;
@@ -96,7 +97,7 @@ mono_log_write_syslog(const char *domain, GLogLevelFlags level, mono_bool hdr, c
 	time(&t);
 	tod = localtime(&t);
 	pid = mono_process_current_pid ();
-	strftime(logTime, sizeof(logTime), "%F %T", tod);
+	strftime(logTime, sizeof(logTime), MONO_STRFTIME_F " " MONO_STRFTIME_T, tod);
 
 	fprintf (logFile, "%s level[%c] mono[%d]: %s\n", logTime, mapLogFileLevel (level), pid, message);
 

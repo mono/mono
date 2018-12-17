@@ -43,7 +43,6 @@
 
 #include "w32file.h"
 #include "w32file-internals.h"
-
 #include "w32file-unix-glob.h"
 #include "w32error.h"
 #include "fdhandle.h"
@@ -54,6 +53,7 @@
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
 #include "utils/refcount.h"
+#include "icall-decl.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -66,7 +66,7 @@
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
 
-#define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 
 typedef struct {
 	guint64 device;
@@ -111,7 +111,7 @@ static MonoCoopMutex finds_mutex;
 
 #if HOST_DARWIN
 typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
-static void *libc_handle;
+static MonoDl *libc_handle;
 static clonefile_fn clonefile_ptr;
 #endif
 
@@ -4868,14 +4868,11 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	offset = ((gint64)offset_high << 32) | offset_low;
 	length = ((gint64)length_high << 32) | length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #else
 	offset = offset_low;
 	length = length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %p, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #endif
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 
 	ret = _wapi_unlock_file_region (((MonoFDHandle*) filehandle)->fd, offset, length);
 
@@ -4901,9 +4898,9 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0, NULL);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
+	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
@@ -4922,7 +4919,7 @@ mono_w32file_cleanup (void)
 	mono_coop_mutex_destroy (&finds_mutex);
 
 #if HOST_DARWIN
-	dlclose (libc_handle);
+	mono_dl_close (libc_handle);
 #endif
 }
 

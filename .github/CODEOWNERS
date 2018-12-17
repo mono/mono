@@ -73,6 +73,7 @@
 
 /mcs/tools @marek-safar @akoeplinger
 /mcs/tools/gensources @kg @akoeplinger
+/mcs/tools/resx2sr @baulig
 /mcs/tools/upload-to-sentry @alexanderkyte @akoeplinger
 
 /mono/arch @vargaz @lewurm

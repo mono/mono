@@ -4896,7 +4896,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	if (!acfg->ginst_hash)
 		acfg->ginst_hash = g_hash_table_new (NULL, NULL);
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	if (mono_class_is_ginst (klass) && mono_class_get_generic_class (klass)->context.class_inst->is_open)
 		return;
@@ -6182,6 +6182,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
+	case MONO_PATCH_INFO_METHOD_FTNDESC:
 	case MONO_PATCH_INFO_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_METHOD_RGCTX:
@@ -6796,7 +6797,7 @@ emit_klass_info (MonoAotCompile *acfg, guint32 token)
 
 	g_assert (klass);
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	mono_class_get_nested_types (klass, &iter);
 	g_assert (m_class_is_nested_classes_inited (klass));
@@ -7921,6 +7922,7 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 {
 	switch (patch_info->type) {
 	case MONO_PATCH_INFO_METHOD:
+	case MONO_PATCH_INFO_METHOD_FTNDESC:
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT: {
 		MonoMethod *method = patch_info->data.method;
@@ -8150,6 +8152,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		flags = (JitFlags)(flags | JIT_FLAG_NO_DIRECT_ICALLS);
 	if (acfg->aot_opts.direct_pinvoke)
 		flags = (JitFlags)(flags | JIT_FLAG_DIRECT_PINVOKE);
+	if (acfg->aot_opts.interp)
+		flags = (JitFlags)(flags | JIT_FLAG_INTERP);
 
 	jit_timer = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
@@ -8269,13 +8273,14 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 			case MONO_PATCH_INFO_RGCTX_FETCH:
 			case MONO_PATCH_INFO_RGCTX_SLOT_INDEX:
 			case MONO_PATCH_INFO_METHOD:
+			case MONO_PATCH_INFO_METHOD_FTNDESC:
 			case MONO_PATCH_INFO_METHOD_RGCTX: {
 				MonoMethod *m = NULL;
 
 				if (patch_info->type == MONO_PATCH_INFO_RGCTX_FETCH || patch_info->type == MONO_PATCH_INFO_RGCTX_SLOT_INDEX) {
 					MonoJumpInfoRgctxEntry *e = patch_info->data.rgctx_entry;
 
-					if (e->info_type == MONO_RGCTX_INFO_GENERIC_METHOD_CODE)
+					if (e->info_type == MONO_RGCTX_INFO_GENERIC_METHOD_CODE || e->info_type == MONO_RGCTX_INFO_METHOD_FTNDESC)
 						m = e->data->data.method;
 				} else {
 					m = patch_info->data.method;
@@ -10668,6 +10673,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
 	}
+	symbols [sindex ++] = NULL;
+	symbols [sindex ++] = NULL;
 
 	if (acfg->data_outfile) {
 		for (i = 0; i < MONO_AOT_TABLE_NUM; ++i)
@@ -10766,6 +10773,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	emit_int32 (acfg, info->tramp_page_size);
 	emit_int32 (acfg, info->nshared_got_entries);
 	emit_int32 (acfg, info->datafile_size);
+	emit_int32 (acfg, 0);
+	emit_int32 (acfg, 0);
 
 	for (i = 0; i < MONO_AOT_TABLE_NUM; ++i)
 		emit_int32 (acfg, info->table_offsets [i]);
@@ -13111,7 +13120,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		llvm_acfg = acfg;
-		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, TRUE, acfg->aot_opts.static_link, acfg->aot_opts.llvm_only);
+		LLVMModuleFlags flags = LLVM_MODULE_FLAG_DWARF;
+		if (acfg->aot_opts.static_link)
+			flags |= LLVM_MODULE_FLAG_STATIC;
+		if (acfg->aot_opts.llvm_only)
+			flags |= LLVM_MODULE_FLAG_LLVM_ONLY;
+		if (acfg->aot_opts.interp)
+			flags |= LLVM_MODULE_FLAG_INTERP;
+		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, flags);
 	}
 #endif
 

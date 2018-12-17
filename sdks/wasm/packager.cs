@@ -387,7 +387,7 @@ class Driver {
 			foreach(var asset in assets)
 			{
 				CopyFile (asset, 
-						Path.Combine (out_prefix, asset), copyType, "Asset: ");
+						Path.Combine (out_prefix, Path.GetFileName (asset)), copyType, "Asset: ");
 			}
 		}
 

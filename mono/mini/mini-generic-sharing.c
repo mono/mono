@@ -568,6 +568,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	}
 
 	case MONO_RGCTX_INFO_METHOD:
+	case MONO_RGCTX_INFO_METHOD_FTNDESC:
 	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE:
 	case MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER:
 	case MONO_RGCTX_INFO_METHOD_RGCTX:
@@ -583,7 +584,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 
 		mono_metadata_free_type (inflated_type);
 
-		mono_class_init (inflated_class);
+		mono_class_init_internal (inflated_class);
 
 		g_assert (!method->wrapper_type);
 
@@ -596,7 +597,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, error);
 			g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
 		}
-		mono_class_init (inflated_method->klass);
+		mono_class_init_internal (inflated_method->klass);
 		g_assert (inflated_method->klass == inflated_class);
 		return inflated_method;
 	}
@@ -643,7 +644,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 
 		mono_metadata_free_type (inflated_type);
 
-		mono_class_init (inflated_class);
+		mono_class_init_internal (inflated_class);
 
 		if (method->wrapper_type) {
 			winfo = mono_marshal_get_wrapper_info (method);
@@ -662,7 +663,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, error);
 			g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
 		}
-		mono_class_init (inflated_method->klass);
+		mono_class_init_internal (inflated_method->klass);
 		g_assert (inflated_method->klass == inflated_class);
 
 		if (winfo) {
@@ -964,7 +965,7 @@ class_type_info (MonoDomain *domain, MonoClass *klass, MonoRgctxInfoType info_ty
 		else
 			return GUINT_TO_POINTER (MONO_GSHAREDVT_BOX_TYPE_VTYPE);
 	case MONO_RGCTX_INFO_CLASS_IS_REF_OR_CONTAINS_REFS:
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 		/* Can't return 0 */
 		if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (klass)) || m_class_has_references (klass))
 			return GUINT_TO_POINTER (2);
@@ -1951,7 +1952,7 @@ mini_get_gsharedvt_wrapper (gboolean gsharedvt_in, gpointer addr, MonoMethodSign
 
 	/* Cache it */
 	tramp_info = (GSharedVtTrampInfo *)mono_domain_alloc0 (domain, sizeof (GSharedVtTrampInfo));
-	memcpy (tramp_info, &tinfo, sizeof (GSharedVtTrampInfo));
+	*tramp_info = tinfo;
 
 	mono_domain_lock (domain);
 	/* Duplicates are not a problem */
@@ -2031,20 +2032,23 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE: {
 		MonoMethod *m = (MonoMethod*)data;
 		gpointer addr;
+
+		g_assert (!mono_llvm_only);
+		addr = mono_compile_method_checked (m, error);
+		return_val_if_nok (error, NULL);
+		return mini_add_method_trampoline (m, addr, mono_method_needs_static_rgctx_invoke (m, FALSE), FALSE);
+	}
+	case MONO_RGCTX_INFO_METHOD_FTNDESC: {
+		MonoMethod *m = (MonoMethod*)data;
+		gpointer addr;
 		gpointer arg = NULL;
 
-		if (mono_llvm_only) {
-			addr = mono_compile_method_checked (m, error);
-			return_val_if_nok (error, NULL);
-			addr = mini_add_method_wrappers_llvmonly (m, addr, FALSE, FALSE, &arg);
-
-			/* Returns an ftndesc */
-			return mini_create_llvmonly_ftndesc (domain, addr, arg);
-		} else {
-			addr = mono_compile_method_checked ((MonoMethod *)data, error);
-			return_val_if_nok (error, NULL);
-			return mini_add_method_trampoline ((MonoMethod *)data, addr, mono_method_needs_static_rgctx_invoke ((MonoMethod *)data, FALSE), FALSE);
-		}
+		/* Returns an ftndesc */
+		g_assert (mono_llvm_only);
+		MonoJumpInfo ji;
+		ji.type = MONO_PATCH_INFO_METHOD_FTNDESC;
+		ji.data.method = m;
+		return mono_resolve_patch_target (m, domain, NULL, &ji, FALSE, error);
 	}
 	case MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER: {
 		MonoMethod *m = (MonoMethod*)data;
@@ -2447,6 +2451,7 @@ mono_rgctx_info_type_to_str (MonoRgctxInfoType type)
 	case MONO_RGCTX_INFO_TYPE: return "TYPE";
 	case MONO_RGCTX_INFO_REFLECTION_TYPE: return "REFLECTION_TYPE";
 	case MONO_RGCTX_INFO_METHOD: return "METHOD";
+	case MONO_RGCTX_INFO_METHOD_FTNDESC: return "METHOD_FTNDESC";
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO: return "GSHAREDVT_INFO";
 	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE: return "GENERIC_METHOD_CODE";
 	case MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER: return "GSHAREDVT_OUT_WRAPPER";
@@ -2556,6 +2561,7 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX:
 		return mono_class_from_mono_type_internal ((MonoType *)data1) == mono_class_from_mono_type_internal ((MonoType *)data2);
 	case MONO_RGCTX_INFO_METHOD:
+	case MONO_RGCTX_INFO_METHOD_FTNDESC:
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO:
 	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE:
 	case MONO_RGCTX_INFO_GSHAREDVT_OUT_WRAPPER:
