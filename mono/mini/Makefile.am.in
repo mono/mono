@@ -707,6 +707,11 @@ endif
 libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources)
 libmini_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
+# Avoid C++ runtime dependency despite the LLVM .cpp files.
+# See https://github.com/mono/mono/issues/12060.
+# See https://www.gnu.org/software/automake/manual/html_node/How-the-Linker-is-Chosen.html.
+libmini_la_LINK = $(LINK)
+
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS) @CXX_ADD_CFLAGS@
 
