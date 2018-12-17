@@ -200,10 +200,10 @@ $(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
 
 AOT_TEST_SUITES=corlib System.Core
 
-build-aot-all:
+build-aot-all: build
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
-run-aot-all:
+run-aot-all: build-aot-all
 	for suite in System.Core; do make run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample

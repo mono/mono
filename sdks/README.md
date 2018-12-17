@@ -58,7 +58,7 @@ mono$ make -C sdks/builds archive-mac [upcoming]
 
 ## WebAssembly
 
-First, ensure the `bcl`, `AOT` and `wasm-runtime` have been built and packaged in the `builds` directory:
+First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `builds` directory:
 
 ```
 mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
@@ -74,6 +74,8 @@ Go to the `wasm` directory for building and testing WebAssembly. Right now the f
 - run-all-system-core: Run System.Core test suite
 - run-all-binding: Run bindings test suite
 - run-browser-tests: Run tests that require a browser environment
+- build-aot-all: build all AOT samples and tests
+- run-aot-all: run all AOT samples and tests
 - clean: cleans the wasm directory
 
 For bcl or runtime changes, you must manually run the corresponding build/package steps in `builds`.
