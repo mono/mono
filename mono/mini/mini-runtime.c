@@ -766,8 +766,14 @@ register_icall_with_wrapper (gpointer func, const char *name, const char *sigstr
  * Register an icall where FUNC is dynamically generated or otherwise not
  * possible to link to it using NAME during AOT.
  */
+#ifdef __cplusplus
+template <typename T>
+static void
+register_icall_with_wrapper (T func, const char *name, const char *sigstr)
+#else
 static void
 register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
+#endif
 {
 	MonoMethodSignature *sig;
 
