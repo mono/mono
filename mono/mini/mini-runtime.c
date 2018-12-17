@@ -769,7 +769,7 @@ register_icall_with_wrapper (gpointer func, const char *name, const char *sigstr
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall_with_wrapper (T func, const char *name, const char *sigstr)
+register_dyn_icall (T func, const char *name, const char *sigstr)
 #else
 static void
 register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
