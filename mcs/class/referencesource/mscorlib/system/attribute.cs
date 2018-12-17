@@ -106,7 +106,10 @@ namespace System {
             var method = ((MonoMethod)(MethodInfo) member).GetBaseMethod ();
 
             while (true) {
-                var param = method.GetParametersInternal () [parameter.Position];
+                var parameters = method.GetParametersInternal ();
+                if (parameters?.Length == 0 || parameter.Position < 0)
+                    return false;
+                var param = parameters [parameter.Position];
                 if (param.IsDefined (attributeType, false))
                     return true;
 
