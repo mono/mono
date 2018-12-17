@@ -526,5 +526,14 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (new DateTime (1), type.GetMethod ("M4").GetParameters () [0].RawDefaultValue);
 			Assert.AreEqual (null, type.GetMethod ("M5").GetParameters () [0].RawDefaultValue);
 		}		
+
+		[Test]
+		public void ReturnParameter_IsDefined_False ()
+		{
+			Type type = typeof (object);
+			MethodInfo method = type.GetMethod ("ToString");
+			ParameterInfo paramInfo = method.ReturnParameter;
+			Assert.IsFalse (paramInfo.IsDefined (typeof (Attribute)));
+		}
 	}
 }
