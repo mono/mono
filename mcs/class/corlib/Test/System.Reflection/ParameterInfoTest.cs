@@ -506,5 +506,14 @@ namespace MonoTests.System.Reflection
 			
 			Assert.AreEqual (expected, actual, "#1");
 		}
+
+		[Test]
+		public void ReturnParameter_IsDefined_False ()
+		{
+			Type type = typeof (object);
+			MethodInfo method = type.GetMethod ("ToString");
+			ParameterInfo paramInfo = method.ReturnParameter;
+			Assert.IsFalse (paramInfo.IsDefined (typeof (Attribute)));
+		}
 	}
 }
