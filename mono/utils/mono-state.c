@@ -628,9 +628,9 @@ mono_native_state_add_version (MonoStateWriter *writer)
 	mono_state_writer_object_key (writer, "llvm_support");
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
-	mono_state_writer_printf (writer, "\"%d\",\n", LLVM_API_VERSION);
+	mono_state_writer_printf (writer, "\"%d\"\n", LLVM_API_VERSION);
 #else
-	mono_state_writer_printf (writer, "\"disabled\",\n");
+	mono_state_writer_printf (writer, "\"disabled\"\n");
 #endif
 #endif
 
