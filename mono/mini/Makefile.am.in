@@ -77,6 +77,10 @@ AM_CFLAGS = \
 	$(JEMALLOC_CFLAGS)	\
 	$(PLATFORM_CFLAGS) $(ARCH_CFLAGS) $(SHARED_CFLAGS)
 
+if !CXX
+AM_CFLAGS += @ALWAYS_CXX_REMOVE_CFLAGS@
+endif
+
 AM_CXXFLAGS = $(LLVM_CXXFLAGS) $(GLIB_CFLAGS)
 
 if HOST_WIN32
@@ -162,7 +166,7 @@ lib_LTLIBRARIES += $(interp_libs)
 endif
 
 if SHARED_MONO
-mini_common_lib = libmini.la
+mini_common_lib = libmini.la libmini-cpp.la
 else
 mini_common_lib = 
 endif
@@ -178,9 +182,16 @@ endif
 libmain_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
 if LOADED_LLVM
+
+# Compile .cpp files separately, as .c files, that #include .cpp, with -xc++,
+# to prevent automake from using CXX to link.
+noinst_LTLIBRARIES += libmono-llvm-cpp.la
+libmono_llvm_cpp_la_SOURCES = mini-llvm-cpp.c llvm-jit-cpp.c
+libmono_llvm_cpp_la_CFLAGS = $(filter-out @ALWAYS_CXX_REMOVE_CFLAGS@, $(libmono_llvm_la_CFLAGS) $(AM_CXXFLAGS) -xc++)
+
 lib_LTLIBRARIES += libmono-llvm.la
-libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
-libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
+libmono_llvm_la_SOURCES = mini-llvm.c
+libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS) libmono-llvm-cpp.la
 
 if HOST_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace 
@@ -389,9 +400,12 @@ llvm_sources = \
 else
 llvm_sources = \
 	mini-llvm.c		\
-	mini-llvm-loaded.c \
-	mini-llvm-cpp.cpp \
-	llvm-jit.cpp
+	mini-llvm-loaded.c
+# Compile .cpp files separately, as .c files, that #include .cpp, with -xc++,
+# to prevent automake from using CXX to link.
+llvm_sources_cpp = \
+	mini-llvm-cpp.c \
+	llvm-jit-cpp.c
 endif
 endif
 
@@ -411,12 +425,12 @@ interp_libs_with_mini = $(interp_libs)
 endif
 
 if ENABLE_LLVM
-llvm_runtime_sources = \
-	llvm-runtime.cpp
+llvm_runtime_sources_cpp = \
+	llvm-runtime-cpp.c
 else
 if ENABLE_LLVM_RUNTIME
-llvm_runtime_sources = \
-	llvm-runtime.cpp
+llvm_runtime_sources_cpp = \
+	llvm-runtime-cpp.c
 endif
 endif
 
@@ -704,8 +718,14 @@ endif
 # This library is shared between mono and mono-sgen, since the code in mini/ doesn't contain
 # compile time dependencies on boehm/sgen.
 #
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(arch_sources) $(os_sources)
 libmini_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+libmini_la_LIBADD = libmini-cpp.la
+
+# Compile .cpp files separately, as .c files, that #include .cpp, with -xc++,
+# to prevent automake from using CXX to link.
+libmini_cpp_la_SOURCES = empty.c $(llvm_sources_cpp) $(llvm_runtime_sources_cpp)
+libmini_cpp_la_CFLAGS = $(filter-out @ALWAYS_CXX_REMOVE_CFLAGS@, $(libmini_la_CFLAGS) $(AM_CXXFLAGS) -xc++)
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS) @CXX_ADD_CFLAGS@
@@ -1053,5 +1073,6 @@ Makefile.am: Makefile.am.in
 
 endif
 
-# Per-library because linking doesn't like -xc++, it treats libraries as C++.
-CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+# Remove from CFLAGS, the flags that are not allowed with C++.
+# They or C++ flags will then be added back selectively.
+CFLAGS := $(filter-out @ALWAYS_CXX_REMOVE_CFLAGS@, @CFLAGS@)

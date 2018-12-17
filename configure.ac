@@ -1041,38 +1041,51 @@ fi
 
 AC_SUBST(CXXFLAGS_COMMON)
 
+AM_CONDITIONAL(CXX, [test "x$enable_cxx" = "xyes"])
+
+# "always" as in, this variable is always defined, independently
+# of configure -enable-cxx
+#
+# This used to suppress libc++ despite the presence of .cpp files
+# in LLVM support, even when overall compiling mono as C.
+#
+# It is needed when mono is C++ also, thus the "always".
+
+# -std=gnu99 -xc++ is not allowed and errors.
+ALWAYS_CXX_REMOVE_CFLAGS="-std=gnu99"
+
+# These give warnings and should be removed. They are C-only.
+# i.e. C++ never allows these, they are always errors and their warningness is not controllable.
+ALWAYS_CXX_REMOVE_CFLAGS="$ALWAYS_CXX_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
+
+# Likewise with CentOS 6 gcc 4.4.
+ALWAYS_CXX_REMOVE_CFLAGS="$ALWAYS_CXX_REMOVE_CFLAGS -Werror-implicit-function-declaration"
+
+# The C-only-ness of -Wno-format-zero-length varies with gcc version.
+# It is C-only prior to 4.7. Using it with C++ prior to 4.7
+# generates a warning every time we run gcc which is very unsightly.
+# The warning is for e.g. sprintf(foo, "") which can just be
+# foo[0] = 0 but Mono's use is more elaborate, not as easy to "fix",
+# and completely legal and valid.
+# We have to switch to C++ and not just use -xc++ because of -std=gnu99 (error when combined with -xc++).
+# Alternatively, just run $CXX -xc++ -c /dev/null.
+AC_LANG_PUSH(C++)
+ORIG_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS -Werror -Wno-format-zero-length -xc++ "
+AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
+AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
+			 [ AC_MSG_RESULT(no)
+			   ALWAYS_CXX_REMOVE_CFLAGS="$ALWAYS_CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
+CXXFLAGS=$ORIG_CXXFLAGS
+AC_LANG_POP(C++)
+
 if test "x$enable_cxx" = "xyes"; then
-
+	CXX_REMOVE_CFLAGS="$ALWAYS_CXX_REMOVE_CFLAGS"
 	CXX_ADD_CFLAGS=" -xc++ $CXXFLAGS_COMMON "
-
-	# -std=gnu99 -xc++ is not allowed and errors.
-	CXX_REMOVE_CFLAGS=-std=gnu99
-	# These give warnings and should be removed. They are C-only.
-	# i.e. C++ never allows these, they are always errors and their warningness is not controllable.
-	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs"
-	# Likewise with CentOS 6 gcc 4.4.
-	CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Werror-implicit-function-declaration"
-
-	# The C-only-ness of -Wno-format-zero-length varies with gcc version.
-	# It is C-only prior to 4.7. Using it with C++ prior to 4.7
-	# generates a warning every time we run gcc which is very unsightly.
-	# The warning is for e.g. sprintf(foo, "") which can just be
-	# foo[0] = 0 but Mono's use is more elaborate, not as easy to "fix",
-	# and completely legal and valid.
-	# We have to switch to C++ and not just use -xc++ because of -std=gnu99 (error when combined with -xc++).
-	# Alternatively, just run $CXX -xc++ -c /dev/null.
-	AC_LANG_PUSH(C++)
-	ORIG_CXXFLAGS=$CXXFLAGS
-	CXXFLAGS="$CXXFLAGS -Werror -Wno-format-zero-length -xc++ "
-	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
-	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes) ],
-				 [ AC_MSG_RESULT(no)
-				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
-	CXXFLAGS=$ORIG_CXXFLAGS
-	AC_LANG_POP(C++)
 fi
 AC_SUBST(CXX_ADD_CFLAGS)
 AC_SUBST(CXX_REMOVE_CFLAGS)
+AC_SUBST(ALWAYS_CXX_REMOVE_CFLAGS)
 
 #
 # Set the build profiles and options before things which use them
