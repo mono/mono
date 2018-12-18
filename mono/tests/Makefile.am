@@ -308,6 +308,7 @@ TESTS_CS_SRC=		\
 	exception17.cs		\
 	exception18.cs		\
 	merp-json-valid.cs		\
+	merp-crash-test.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	exception21.cs		\
@@ -1054,7 +1055,8 @@ PLATFORM_DISABLED_TESTS=\
 if HOST_DARWIN
 else
 PLATFORM_DISABLED_TESTS += \
-	merp-json-valid.exe
+	merp-json-valid.exe \
+	merp-crash-test.exe
 endif
 
 
@@ -1917,6 +1919,9 @@ reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingRe
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+merp-crash-test.exe: merp-crash-test.cs
 	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
