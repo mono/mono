@@ -35,7 +35,7 @@ common_sources = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_uid.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_time.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_time.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_process.c \
+	pal_process-tmp.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_process.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_signal.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_signal.h \
