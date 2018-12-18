@@ -56,7 +56,6 @@
 #include <mono/utils/unlocked.h>
 #include "external-only.h"
 #include "monitor.h"
-typedef guint32 gchandle_t; // FIXME
 
 // If no symbols in an object file in a static library are referenced, its exports will not be exported.
 // There are a few workarounds:
@@ -7281,16 +7280,15 @@ mono_string_get_pinned (MonoStringHandle str, MonoError *error)
 		mono_error_set_out_of_memory (error, "Could not allocate %" G_GSIZE_FORMAT " bytes", size);
 		return news;
 	}
-	const gboolean pin = FALSE; // FIXME pin is slow and breaks profiler test.
-	gchandle_t str_gchandle = 0;
-	gchandle_t new_gchandle = 0;
-	memcpy (pin ? mono_string_handle_pin_chars (news, &new_gchandle)
-		    : mono_string_chars_internal (MONO_HANDLE_RAW (news)),
-		pin ? mono_string_handle_pin_chars (str, &str_gchandle)
-		    : mono_string_chars_internal (MONO_HANDLE_RAW (str)),
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	memcpy (mono_string_chars_internal (MONO_HANDLE_RAW (news)),
+		mono_string_chars_internal (MONO_HANDLE_RAW (str)),
 		length * sizeof (gunichar2));
-	mono_gchandle_free_internal (str_gchandle);
-	mono_gchandle_free_internal (new_gchandle);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
 	MONO_HANDLE_SETVAL (news, length, int, length);
 	return news;
 }
