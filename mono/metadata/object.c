@@ -3733,8 +3733,10 @@ mono_get_constant_value_from_blob (MonoDomain* domain, MonoTypeEnum type, const 
 	if (!mono_metadata_read_constant_value (blob, type, value, error))
 		goto exit;
 
-	if (type == MONO_TYPE_STRING)
+	if (type == MONO_TYPE_STRING) {
+		// FIXMEcoop
 		*(gpointer*)value = MONO_HANDLE_RAW (mono_ldstr_metadata_sig (domain, *(const char**)value, error));
+	}
 
 	result = 0;
 exit:
@@ -7402,6 +7404,7 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, guint32 idx, MonoError
 	}
 	if (!mono_verifier_verify_string_signature (image, idx, error))
 		goto exit;
+	// FIXMEcoop
 	str = MONO_HANDLE_RAW (mono_ldstr_metadata_sig (domain, mono_metadata_user_string (image, idx), error));
 exit:
 	HANDLE_FUNCTION_RETURN_VAL (str);
