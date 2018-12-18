@@ -761,29 +761,26 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 			return FALSE;
 	}
 
-	gboolean pin = FALSE; // FIXME Making a gchandle is inefficient and breaks profiler tests.
-	gchandle_t source_gchandle = 0;
-	gchandle_t dest_gchandle = 0;
-
 	if (m_class_is_valuetype (dest_class)) {
 		gsize const element_size = mono_array_element_size (MONO_HANDLE_GETVAL (source, obj.vtable->klass));
+
+		MONO_ENTER_NO_SAFEPOINTS; // gchandle would also work here, is slow, breaks profiler tests.
+
 		gconstpointer const source_addr =
-			pin ? mono_array_handle_pin_with_size (source, element_size, source_idx, &source_gchandle)
-			    : mono_array_addr_with_size_fast (MONO_HANDLE_RAW (source), element_size, source_idx);
+			mono_array_addr_with_size_fast (MONO_HANDLE_RAW (source), element_size, source_idx);
 		if (m_class_has_references (dest_class)) {
 			mono_value_copy_array_handle (dest, dest_idx, source_addr, length);
 		} else {
 			gpointer const dest_addr =
-				pin ? mono_array_handle_pin_with_size (dest, element_size, dest_idx, &dest_gchandle)
-				    : mono_array_addr_with_size_fast (MONO_HANDLE_RAW (dest), element_size, dest_idx);
+				mono_array_addr_with_size_fast (MONO_HANDLE_RAW (dest), element_size, dest_idx);
 			mono_gc_memmove_atomic (dest_addr, source_addr, element_size * length);
 		}
+
+		MONO_EXIT_NO_SAFEPOINTS;
+
 	} else {
 		mono_array_handle_memcpy_refs (dest, dest_idx, source, source_idx, length);
 	}
-
-	mono_gchandle_free_internal (dest_gchandle);
-	mono_gchandle_free_internal (source_gchandle);
 
 	return TRUE;
 }
