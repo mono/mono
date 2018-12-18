@@ -1106,6 +1106,7 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 		case MONO_TYPE_U8:
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_GENERICINST:
+		case MONO_TYPE_TYPEDBYREF:
 			margs->retval = &(frame->retval->data.p);
 			margs->is_float_ret = 0;
 			break;

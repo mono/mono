@@ -35,6 +35,7 @@ handle_enum:
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_STRING:
+	case MONO_TYPE_TYPEDBYREF:
 		return 'I';
 	case MONO_TYPE_R4:
 		return 'F';
