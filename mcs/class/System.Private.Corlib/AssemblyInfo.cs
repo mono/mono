@@ -1,3 +1,3 @@
 //
-// NetCore AssemblyInfo file.
+// System.Private.Corlib Assembly
 //
