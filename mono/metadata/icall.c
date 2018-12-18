@@ -108,6 +108,7 @@
 #include <sys/utsname.h>
 #endif
 #include "icall-decl.h"
+#include "mono/utils/mono-threads-coop.h"
 
 //#define MONO_DEBUG_ICALLARRAY
 
