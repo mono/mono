@@ -54,7 +54,7 @@
 //     variables.  These are used in the case that an async hook
 //     completes synchronously as its important to not yield in that
 //     case or we would hang.
-//    
+//     
 //     Many of Mono modules used to be declared async, but they would
 //     actually be completely synchronous, this might resurface in the
 //     future with other modules.
@@ -139,6 +139,9 @@ namespace System.Web
 		// The Pipeline
 		//
 		IEnumerator pipeline;
+
+		/// Async state machine that drives processing of asynchronous handlers of RequestEndEvent
+		IEnumerator endRequestState;
 
 		// To flag when we are done processing a request from BeginProcessRequest.
 		ManualResetEvent done;
@@ -924,9 +927,22 @@ namespace System.Web
 		internal void Tick ()
 		{
 			try {
-				if (pipeline.MoveNext ()){
-					if ((bool)pipeline.Current)
-						PipelineDone ();
+				if (endRequestState != null) {
+					if (!endRequestState.MoveNext()) {
+						FinishPipeline();
+					}
+				} else if (pipeline.MoveNext ()) {
+					if ((bool) pipeline.Current) {
+						endRequestState = ProcessEndRequest();
+						if (!endRequestState.MoveNext()) {
+							FinishPipeline();
+						}
+					}
+				} else {
+					endRequestState = ProcessEndRequest();
+					if (!endRequestState.MoveNext()) {
+						FinishPipeline();
+					}
 				}
 			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
@@ -940,7 +956,14 @@ namespace System.Web
 				}
 				
 				stop_processing = true;
-				PipelineDone ();
+				if (endRequestState == null) {
+					endRequestState = ProcessEndRequest();
+					if (!endRequestState.MoveNext()) {
+						FinishPipeline();
+					}
+				} else {
+					FinishPipeline();
+				}
 			} catch (Exception e) {
 				ThreadAbortException inner = e.InnerException as ThreadAbortException;
 				if (inner != null && FlagEnd.Value == inner.ExceptionState && !HttpRuntime.DomainUnloading) {
@@ -950,7 +973,14 @@ namespace System.Web
 					ProcessError (e);
 				}
 				stop_processing = true;
-				PipelineDone ();
+				if (endRequestState == null) {
+					endRequestState = ProcessEndRequest();
+					if (!endRequestState.MoveNext()) {
+						FinishPipeline();
+					}
+				} else {
+					FinishPipeline();
+				}
 			}
 		}
 
@@ -1086,18 +1116,52 @@ namespace System.Web
 		}
 		
 		//
-		// Invoked at the end of the pipeline execution
+		// Invoked at the end of the pipeline execution.
+		// Returns enumerator that yields nulls until async event handlers have finished
 		//
-		void PipelineDone ()
+		IEnumerator ProcessEndRequest ()
 		{
-			try {
-				EventHandler handler = Events [EndRequestEvent] as EventHandler;
-				if (handler != null)
-					handler (this, EventArgs.Empty);
-			} catch (Exception e){
-				ProcessError (e);
-			}
+			StartTimer ("EndRequest");
+			Delegate eventHandler = Events [EndRequestEvent];
+			if (eventHandler != null) {
+				Delegate [] delegates = eventHandler.GetInvocationList ();
 
+				foreach (EventHandler d in delegates){
+					if (d.Target != null && (d.Target is AsyncInvoker)){
+						current_ai = (AsyncInvoker) d.Target;
+
+						try {
+							must_yield = true;
+							in_begin = true;
+							context.BeginTimeoutPossible ();
+							current_ai.begin (this, EventArgs.Empty, async_callback_completed_cb, current_ai.data);
+						} finally {
+							in_begin = false;
+							context.EndTimeoutPossible ();
+						}
+
+						//
+						// If things are still moving forward, yield this
+						// thread now
+						//
+						if (must_yield) {
+							yield return null;
+						}
+					} else {
+						try {
+							context.BeginTimeoutPossible ();
+							d (this, EventArgs.Empty);
+						} finally {
+							context.EndTimeoutPossible ();
+						}
+					}
+				}
+			}
+			StopTimer ();
+		}
+
+		void FinishPipeline()
+		{
 			try {
 				OutputPage ();
 			} catch (ThreadAbortException taex) {
@@ -1117,6 +1181,7 @@ namespace System.Web
 				// context = null; -> moved to PostDone
 				pipeline = null;
 				current_ai = null;
+				endRequestState = null;
 			}
 			PostDone ();
 
@@ -1418,10 +1483,6 @@ namespace System.Web
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
-
-			StartTimer ("PipelineDone");
-			PipelineDone ();
-			StopTimer ();
 		}
 
 
@@ -1511,7 +1572,7 @@ namespace System.Web
 				HttpException exc = HttpException.NewWithCode (String.Empty, e, WebEventCodes.RuntimeErrorRequestAbort);
 				context.Response.StatusCode = 500;
 				FinalErrorWrite (context.Response, exc.GetHtmlErrorMessage ());
-				PipelineDone ();
+				FinishPipeline();
 				return;
 			}
 
