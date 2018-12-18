@@ -5,6 +5,7 @@ Internal.Cryptography/OidLookup.Managed.cs
 
 
 # Temp copy-paste: use *.UnknownUnix.cs for build-profile (for Process API)
+corefx/Unix/Process.cs
 ../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/Process.UnknownUnix.cs
 ../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessManager.UnknownUnix.cs
 ../../../external/corefx/src/System.Diagnostics.Process/src/System/Diagnostics/ProcessThread.UnknownUnix.cs
