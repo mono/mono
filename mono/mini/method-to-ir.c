@@ -7819,7 +7819,10 @@ calli_end:
 			ins_flag = 0;
 			constrained_class = NULL;
 			if (need_seq_point)
-				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
+			{
+				gboolean sym_seq_point = sym_seq_points && mono_bitset_test_fast (seq_point_locs, ip - header->code);
+				emit_seq_point (cfg, method, next_ip, FALSE,((sp == stack_start) || !sym_seq_point));
+			}
 			break;
 		}
 		case MONO_CEE_RET:

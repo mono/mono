@@ -4481,7 +4481,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category("NotWorking")]
 	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
 		Event e = run_until ("ss_nested_with_two_args_wrapper");
 
