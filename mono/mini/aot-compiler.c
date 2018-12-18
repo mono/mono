@@ -196,6 +196,7 @@ typedef struct MonoAotOptions {
 	char *gen_msym_dir_path;
 	gboolean direct_pinvoke;
 	gboolean direct_icalls;
+	gboolean direct_cross_amod;
 	gboolean no_direct_calls;
 	gboolean use_trampolines_page;
 	gboolean no_instances;
@@ -4877,6 +4878,24 @@ check_type_depth (MonoType *t, int depth)
 	return FALSE;
 }
 
+static gboolean
+aot_is_direct_deduped (MonoAotCompile *acfg, MonoMethod *method)
+{
+	if (!acfg->aot_opts.llvm_only)
+		return FALSE;
+
+	if (!acfg->aot_opts.dedup && !acfg->aot_opts.dedup_include)
+		return FALSE;
+
+	if (!acfg->aot_opts.direct_cross_amod)
+		return FALSE;
+
+	if (!acfg->aot_opts.static_link)
+		return FALSE;
+
+	return mono_aot_can_dedup (method);
+}
+
 static void
 add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method);
 
@@ -5515,6 +5534,7 @@ static gboolean
 is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patch_info)
 {
 	if ((patch_info->type == MONO_PATCH_INFO_METHOD) && (m_class_get_image (patch_info->data.method->klass) == acfg->image)) {
+		// If this is in this amodule
 		MonoCompile *callee_cfg = (MonoCompile *)g_hash_table_lookup (acfg->method_to_cfg, patch_info->data.method);
 		if (callee_cfg) {
 			gboolean direct_callable = TRUE;
@@ -5845,6 +5865,11 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 					}
 
 					acfg->stats.all_calls ++;
+				} else if ((patch_info->type == MONO_PATCH_INFO_METHOD) && aot_is_direct_deduped (acfg, patch_info->data.method)) {
+					// If it's in another module, call it through the mangled name if we enable this mode
+					direct_call = TRUE;
+					direct_call_target = mono_aot_get_mangled_method_name (patch_info->data.method);
+
 				} else if (patch_info->type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 					if (!got_only && is_direct_callable (acfg, method, patch_info)) {
 						if (!(patch_info->data.method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
@@ -6088,11 +6113,15 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
 
-		// Comment out to force dedup to link these symbols and forbid compiling
-		// in duplicated code. This is an "assert when linking if broken" trick.
-		/*if (mono_aot_can_dedup (method) && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include))*/
-			/*debug_sym = mono_aot_get_mangled_method_name (method);*/
-		/*else*/
+		// If we are deduping it, it's unique. Declare it with the mangled name to directly call it.
+		// Need self-initing, so only with bitcode
+		gboolean direct_deduped = FALSE;
+		if (aot_is_direct_deduped (acfg, method))
+			direct_deduped = TRUE;
+
+		if (direct_deduped)
+			debug_sym = mono_aot_get_mangled_method_name (method);
+		else
 			debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
 
 		cfg->asm_debug_symbol = g_strdup (debug_sym);
@@ -6100,11 +6129,9 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		if (acfg->need_no_dead_strip)
 			fprintf (acfg->fp, "	.no_dead_strip %s\n", debug_sym);
 
-		// Comment out to force dedup to link these symbols and forbid compiling
-		// in duplicated code. This is an "assert when linking if broken" trick.
-		/*if (mono_aot_can_dedup (method) && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include))*/
-			/*emit_global_inner (acfg, debug_sym, TRUE);*/
-		/*else*/
+		if (direct_deduped)
+			emit_global_inner (acfg, debug_sym, TRUE);
+		else
 			emit_local_symbol (acfg, debug_sym, symbol, TRUE);
 
 		emit_label (acfg, debug_sym);
@@ -7700,6 +7727,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			mini_debug_options.no_seq_points_compact_data = FALSE;
 			opts->gen_msym_dir = TRUE;
 			opts->gen_msym_dir_path = g_strdup (arg + strlen ("msym_dir="));;
+		} else if (str_begins_with (arg, "direct-cross-asm-calls")) {
+			opts->direct_cross_amod = TRUE;
 		} else if (str_begins_with (arg, "direct-pinvoke")) {
 			opts->direct_pinvoke = TRUE;
 		} else if (str_begins_with (arg, "direct-icalls")) {
@@ -12951,6 +12980,16 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 	if (acfg->aot_opts.direct_pinvoke && !acfg->aot_opts.static_link) {
 		aot_printerrf (acfg, "The 'direct-pinvoke' AOT option also requires the 'static' AOT option.\n");
+		return 1;
+	}
+
+	if (acfg->aot_opts.direct_cross_amod && !acfg->aot_opts.static_link) {
+		aot_printerrf (acfg, "The 'direct-cross-amod' AOT option also requires the 'static' AOT option.\n");
+		return 1;
+	}
+
+	if (acfg->aot_opts.direct_cross_amod && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include)) {
+		aot_printerrf (acfg, "The 'direct-cross-amod' AOT option also requires one of the two 'dedup' AOT options.\n");
 		return 1;
 	}
 
