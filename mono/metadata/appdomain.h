@@ -27,6 +27,7 @@ typedef struct _MonoJitInfo MonoJitInfo;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
 typedef void (*MonoDomainAssemblyFunc) (MonoAssembly *assembly, void* user_data);
+typedef void (*MonoUnityExceptionFunc) (MonoObject* exc);
 
 MONO_API MonoDomain*
 mono_init                  (const char *filename);
@@ -100,7 +101,7 @@ MONO_API void
 mono_domain_unload (MonoDomain *domain);
 
 MONO_API void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc);
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc,  MonoUnityExceptionFunc callback);
 
 MONO_API mono_bool
 mono_domain_is_unloading   (MonoDomain *domain);

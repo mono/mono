@@ -736,6 +736,13 @@ void mono_unity_domain_install_capture_context_method(MonoDomain* domain, gpoint
 	domain->capture_context_method = callback;
 }
 
+
+void mono_unity_domain_unload (MonoDomain* domain, MonoUnityExceptionFunc callback)
+{
+	MonoObject *exc = NULL;
+	mono_domain_try_unload (domain, &exc, callback);
+}
+
 //array
 
 int mono_unity_array_get_element_size(MonoArray *arr)
