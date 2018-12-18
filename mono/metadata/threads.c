@@ -617,9 +617,9 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 		g_assert (current_thread_field);
 	}
 
-	ERROR_DECL_VALUE (thread_vt_error);
-	mono_class_vtable_checked (domain, mono_defaults.thread_class, &thread_vt_error);
-	mono_error_assert_ok (&thread_vt_error);
+	ERROR_DECL (thread_vt_error);
+	mono_class_vtable_checked (domain, mono_defaults.thread_class, thread_vt_error);
+	mono_error_assert_ok (thread_vt_error);
 	mono_domain_lock (domain);
 	offset = GPOINTER_TO_UINT (g_hash_table_lookup (domain->special_static_fields, current_thread_field));
 	mono_domain_unlock (domain);
@@ -1282,6 +1282,7 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 	mono_threads_lock ();
 	if (shutting_down && !(flags & MONO_THREAD_CREATE_FLAGS_FORCE_CREATE)) {
 		mono_threads_unlock ();
+		mono_error_set_execution_engine (error, "Couldn't create thread. Runtime is shutting down.");
 		return FALSE;
 	}
 	if (threads_starting_up == NULL) {
@@ -3999,7 +4000,7 @@ mono_threads_perform_thread_dump (void)
 		struct tm tod;
 		mono_get_time_of_day (&tv);
 		mono_local_time(&tv, &tod);
-		strftime(time_str, sizeof(time_str), "%Y-%m-%d_%H-%M-%S", &tod);
+		strftime(time_str, sizeof(time_str), MONO_STRFTIME_F "_" MONO_STRFTIME_T, &tod);
 		ms = tv.tv_usec / 1000;
 		g_string_append_printf (path, "%s/%s.%03ld.tdump", thread_dump_dir, time_str, ms);
 		output_file = fopen (path->str, "w");
@@ -4912,7 +4913,7 @@ mono_thread_execute_interruption (MonoExceptionHandle *pexc)
 		unlock = FALSE;
 	} else if (MONO_HANDLE_GETVAL (thread, thread_interrupt_requested)) {
 		// thread->thread_interrupt_requested = FALSE
-		MONO_HANDLE_SETVAL (thread, thread_interrupt_requested, gboolean, FALSE);
+		MONO_HANDLE_SETVAL (thread, thread_interrupt_requested, MonoBoolean, FALSE);
 		unlock_thread_handle (thread);
 		unlock = FALSE;
 		ERROR_DECL (error);
@@ -6333,6 +6334,8 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 	// See the array writes
 	mono_memory_barrier ();
 
+	mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
+
 	mono_summarize_native_state_begin (mem, provided_size);
 	for (int i=0; i < state->nthreads; i++) {
 		gpointer old_value = NULL;
@@ -6395,6 +6398,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 	gboolean this_thread_controls = summarizer_state_init (&state, current, &current_idx);
 
 	if (this_thread_controls) {
+		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
 		state.silent = silent;
 		summarizer_signal_other_threads (&state, current, current_idx);
 	}
@@ -6426,6 +6430,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Dump and cleanup all the stack memory
+		mono_summarize_timeline_phase_log (MonoSummaryDumpTraversal);
 		summarizer_state_term (&state, out, mem, provided_size, &this_thread);
 	} else {
 		// Wait here, keeping our stack memory alive
@@ -6494,6 +6499,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 		} else if (signal_handler_controller) {
 			// We're done. We can't do anything.
 			MOSTLY_ASYNC_SAFE_PRINTF ("Attempted to dump for critical failure when already in dump. Error reporting crashed?");
+			mono_summarize_double_fault_log ();
 			break;
 		} else {
 			if (!silent)

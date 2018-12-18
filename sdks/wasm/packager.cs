@@ -299,8 +299,11 @@ class Driver {
 			var resolved = Resolve (ra, out kind);
 			Import (resolved, kind);
 		}
-		if (add_binding)
-			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
+		if (add_binding) {
+			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
+			Import (bindings, AssemblyKind.Framework);
+			root_assemblies.Add (bindings);
+		}
 
 		if (builddir != null) {
 			emit_ninja = true;
@@ -387,7 +390,7 @@ class Driver {
 			foreach(var asset in assets)
 			{
 				CopyFile (asset, 
-						Path.Combine (out_prefix, asset), copyType, "Asset: ");
+						Path.Combine (out_prefix, Path.GetFileName (asset)), copyType, "Asset: ");
 			}
 		}
 

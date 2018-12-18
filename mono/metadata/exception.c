@@ -18,7 +18,6 @@
 #include <mono/metadata/environment.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/exception-internals.h>
-
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
@@ -26,10 +25,10 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <string.h>
-
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
+#include "class-init.h"
 
 static MonoUnhandledExceptionFunc unhandled_exception_hook = NULL;
 static gpointer unhandled_exception_hook_data = NULL;
@@ -822,7 +821,7 @@ mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExcep
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System", "TypeInitializationException");
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
@@ -1022,7 +1021,7 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException");
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	/* Find the Type[], Exception[] ctor */
 	iter = NULL;
@@ -1248,16 +1247,16 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	if (unhandled_exception_hook) {
 		unhandled_exception_hook (exc, unhandled_exception_hook_data);
 	} else {
-		ERROR_DECL_VALUE (inner_error);
+		ERROR_DECL (inner_error);
 		MonoObject *other = NULL;
-		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
+		MonoString *str = mono_object_try_to_string (exc, &other, inner_error);
 		char *msg = NULL;
 		
-		if (str && is_ok (&inner_error)) {
-			msg = mono_string_to_utf8_checked_internal (str, &inner_error);
-			if (!is_ok (&inner_error)) {
+		if (str && is_ok (inner_error)) {
+			msg = mono_string_to_utf8_checked_internal (str, inner_error);
+			if (!is_ok (inner_error)) {
 				msg = g_strdup_printf ("Nested exception while formatting original exception");
-				mono_error_cleanup (&inner_error);
+				mono_error_cleanup (inner_error);
 			}
 		} else if (other) {
 			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);

@@ -77,15 +77,7 @@ namespace System.Globalization
 		{
 			if (UseManagedCollation)
 				return GetCollator ().GetSortKey (source, options);
-			SortKey key=new SortKey (culture, source, options);
-
-			/* Need to do the icall here instead of in the
-			 * SortKey constructor, as we need access to
-			 * this instance's collator.
-			 */
-			assign_sortkey (key, source, options);
-			
-			return(key);        	
+			return new SortKey (culture, source, options);
 		}
 
 		int internal_index_switch (string s1, int sindex, int count, string s2, CompareOptions opt, bool first)
@@ -96,7 +88,7 @@ namespace System.Globalization
 			
 			return UseManagedCollation ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
-				internal_index (s1, sindex, count, s2, opt, first);
+				internal_index (s1, sindex, count, s2, first);
 		}
 
 		int internal_compare_switch (string str1, int offset1, int length1, string str2, int offset2, int length2, CompareOptions options)
@@ -129,25 +121,29 @@ namespace System.Globalization
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void assign_sortkey (object key, string source,
-							CompareOptions options);		
+		private static unsafe extern int internal_compare_icall (char* str1, int length1,
+			char* str2, int length2, CompareOptions options);
+
+		private static unsafe int internal_compare (string str1, int offset1,
+			int length1, string str2, int offset2, int length2, CompareOptions options)
+		{
+			fixed (char* fixed_str1 = str1,
+				     fixed_str2 = str2)
+				return internal_compare_icall (fixed_str1 + offset1, length1,
+					fixed_str2 + offset2, length2, options);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_compare (string str1, int offset1,
-							 int length1, string str2,
-							 int offset2, int length2,
-							 CompareOptions options);
+		private static unsafe extern int internal_index_icall (char *source, int sindex,
+			int count, char *value, int value_length, bool first);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_index (string source, int sindex,
-						   int count, char value,
-						   CompareOptions options,
-						   bool first);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int internal_index (string source, int sindex,
-						   int count, string value,
-						   CompareOptions options,
-						   bool first);
+		private static unsafe int internal_index (string source, int sindex,
+			int count, string value, bool first)
+		{
+			fixed (char* fixed_source = source,
+				     fixed_value = value)
+				return internal_index_icall (fixed_source, sindex, count,
+					fixed_value, value?.Length ?? 0, first);
+		}
 	}
 }

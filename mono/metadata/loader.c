@@ -239,17 +239,17 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	 */
 	sig_type = (MonoType *)find_cached_memberref_sig (image, cols [MONO_MEMBERREF_SIGNATURE]);
 	if (!sig_type) {
-		ERROR_DECL_VALUE (inner_error);
-		sig_type = mono_metadata_parse_type_checked (image, NULL, 0, FALSE, ptr, &ptr, &inner_error);
+		ERROR_DECL (inner_error);
+		sig_type = mono_metadata_parse_type_checked (image, NULL, 0, FALSE, ptr, &ptr, inner_error);
 		if (sig_type == NULL) {
-			mono_error_set_field_missing (error, klass, fname, NULL, "Could not parse field signature %08x due to: %s", token, mono_error_get_message (&inner_error));
-			mono_error_cleanup (&inner_error);
+			mono_error_set_field_missing (error, klass, fname, NULL, "Could not parse field signature %08x due to: %s", token, mono_error_get_message (inner_error));
+			mono_error_cleanup (inner_error);
 			return NULL;
 		}
 		sig_type = (MonoType *)cache_memberref_sig (image, cols [MONO_MEMBERREF_SIGNATURE], sig_type);
 	}
 
-	mono_class_init (klass); /*FIXME is this really necessary?*/
+	mono_class_init_internal (klass); /*FIXME is this really necessary?*/
 	if (retklass)
 		*retklass = klass;
 	field = mono_class_get_field_from_name_full (klass, fname, sig_type);
@@ -289,9 +289,9 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 		MonoClass *handle_class;
 
 		*retklass = NULL;
-		ERROR_DECL_VALUE (inner_error);
-		result = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, TRUE, &handle_class, context, &inner_error);
-		mono_error_cleanup (&inner_error);
+		ERROR_DECL (inner_error);
+		result = (MonoClassField *)mono_lookup_dynamic_token_class (image, token, TRUE, &handle_class, context, inner_error);
+		mono_error_cleanup (inner_error);
 		// This checks the memberref type as well
 		if (!result || handle_class != mono_defaults.fieldhandle_class) {
 			mono_error_set_bad_image (error, image, "Bad field token 0x%08x", token);
@@ -318,15 +318,14 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 		if (!k)
 			return NULL;
 
-		mono_class_init (k);
+		mono_class_init_internal (k);
 		if (retklass)
 			*retklass = k;
 		if (mono_class_has_failure (k)) {
-			ERROR_DECL_VALUE (causedby_error);
-			error_init (&causedby_error);
-			mono_error_set_for_class_failure (&causedby_error, k);
-			mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x, due to: %s", token, mono_error_get_message (&causedby_error));
-			mono_error_cleanup (&causedby_error);
+			ERROR_DECL (causedby_error);
+			mono_error_set_for_class_failure (causedby_error, k);
+			mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x, due to: %s", token, mono_error_get_message (causedby_error));
+			mono_error_cleanup (causedby_error);
 		} else {
 			field = mono_class_get_field (k, token);
 			if (!field) {
@@ -842,7 +841,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	}
 
 	g_assert (klass);
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	sig_idx = cols [MONO_MEMBERREF_SIGNATURE];
 
@@ -878,7 +877,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 			break;
 		}
 
-		/* we're an array and we created these methods already in klass in mono_class_init () */
+		/* we're an array and we created these methods already in klass in mono_class_init_internal () */
 		method = mono_method_search_in_array_class (klass, mname, sig);
 		break;
 	}
@@ -2047,7 +2046,7 @@ mono_method_get_param_names (MonoMethod *method, const char **names)
 	if (m_class_get_rank (klass))
 		return;
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	MonoImage *klass_image = m_class_get_image (klass);
 	if (image_is_dynamic (klass_image)) {
@@ -2108,7 +2107,7 @@ mono_method_get_param_token (MonoMethod *method, int index)
 	MonoTableInfo *methodt;
 	guint32 idx;
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	MonoImage *klass_image = m_class_get_image (klass);
 	g_assert (!image_is_dynamic (klass_image));
@@ -2164,7 +2163,7 @@ mono_method_get_marshal_info (MonoMethod *method, MonoMarshalSpec **mspecs)
 		return;
 	}
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	MonoImage *klass_image = m_class_get_image (klass);
 	methodt = &klass_image->tables [MONO_TABLE_METHOD];
@@ -2219,7 +2218,7 @@ mono_method_has_marshal_info (MonoMethod *method)
 		return FALSE;
 	}
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	methodt = &m_class_get_image (klass)->tables [MONO_TABLE_METHOD];
 	paramt = &m_class_get_image (klass)->tables [MONO_TABLE_PARAM];

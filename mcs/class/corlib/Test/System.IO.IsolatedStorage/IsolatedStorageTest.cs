@@ -235,8 +235,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				isf.CreateDirectory ("dir1/test/test2b");
 				dirs = isf.GetDirectoryNames ("dir1/test/*");
 				Assert.AreEqual (2, dirs.Length, "3a");
-				Assert.AreEqual ("test2a", dirs [0], "3b");
-				Assert.AreEqual ("test2b", dirs [1], "3c");
 			} finally {
 				isf.DeleteDirectory ("dir1/test/test2a");
 				isf.DeleteDirectory ("dir1/test/test2b");

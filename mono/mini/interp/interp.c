@@ -1229,6 +1229,7 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 	g_free (margs->fargs);
 	g_free (margs);
 #endif
+	goto exit_pinvoke; // prevent unused label warning in some configurations
 exit_pinvoke:
 	return;
 }
@@ -1318,7 +1319,7 @@ static MONO_NEVER_INLINE void
 ves_imethod (InterpFrame *frame, MonoMethod *method, MonoMethodSignature *sig, stackval *sp, stackval *retval)
 {
 	const char *name = method->name;
-	mono_class_init (method->klass);
+	mono_class_init_internal (method->klass);
 
 	if (method->klass == mono_defaults.array_class) {
 		if (!strcmp (name, "UnsafeMov")) {
@@ -1888,7 +1889,7 @@ do_icall (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gp
 
 	interp_pop_lmf (&ext);
 
-
+	goto exit_icall; // prevent unused label warning in some configurations
 exit_icall:
 	return sp;
 }
@@ -2375,7 +2376,7 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	MonoMethodSignature *sig;
 	CallContext *ccontext = (CallContext*) ccontext_untyped;
 	InterpMethod *rmethod = (InterpMethod*) rmethod_untyped;
-	gpointer orig_domain, attach_cookie;
+	gpointer orig_domain = NULL, attach_cookie;
 	int i;
 
 	if (rmethod->needs_thread_attach)
@@ -2608,7 +2609,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 #endif
 	int i32;
 	unsigned char *vt_sp;
-	unsigned char *locals;
+	unsigned char *locals = NULL;
 	ERROR_DECL (error);
 	MonoObject *o = NULL;
 	MonoClass *c;
