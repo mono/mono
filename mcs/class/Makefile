@@ -369,6 +369,9 @@ xbuild_4_0_dirs := \
 	Microsoft.Build.Tasks	\
 	Microsoft.Build
 
+core_dirs_parallell := \
+	NetCore
+
 monodroid_SUBDIRS := $(mobile_common_dirs)
 monodroid_PARALLEL_SUBDIRS := $(monodroid_dirs_parallel)
 monodroid_tools_SUBDIRS := 
@@ -421,12 +424,15 @@ wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
 wasm_tools_SUBDIRS :=
 wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
+core_SUBDIRS := $(core_dirs)
+core_PARALLEL_SUBDIRS := $(core_dirs_parallel)
+
 include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
 $(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
-$(testing_aot_full_interp_dirs_parallel) dlr aot-compiler reference-assemblies Facades
+$(testing_aot_full_interp_dirs_parallel) $(core_dirs) $(core_dirs_parallel) dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess

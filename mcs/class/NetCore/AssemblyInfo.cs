@@ -1,0 +1,3 @@
+//
+// NetCore AssemblyInfo file.
+//

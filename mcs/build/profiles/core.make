@@ -1,0 +1,25 @@
+# -*- makefile -*-
+
+BOOTSTRAP_PROFILE = build
+
+BOOTSTRAP_MCS = mcs
+MCS = $(BOOTSTRAP_MCS)
+
+PLATFORMS = macos linux win32 unix
+
+# nuttzing!
+
+profile-check:
+	@:
+
+DEFAULT_REFERENCES = mscorlib
+PROFILE_MCS_FLAGS = -d:NETCORE -d:NET_4_0 -d:NET_4_5 -d:NET_4_6 -d:MONO -d:WIN_PLATFORM -nowarn:1699 -nostdlib $(PLATFORM_DEBUG_FLAGS)
+API_BIN_PROFILE = build/netcore
+FRAMEWORK_VERSION = 3.0
+
+ENFORCE_LIBRARY_WARN_AS_ERROR = yes
+
+ifdef PLATFORM_MACOS
+MONO_FEATURE_APPLETLS=1
+ENABLE_GSS=1
+endif

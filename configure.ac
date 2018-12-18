@@ -754,6 +754,13 @@ AC_ARG_WITH(mcs-path, [  --with-mcs-path=/path/to/mcs      Specify an alternate 
 
 AC_ARG_WITH(jumptables, [  --with-jumptables=yes,no      enable/disable support for jumptables (ARM-only for now) (defaults to no)],[],[with_jumptables=no])
 
+AC_ARG_WITH(core,       [  --with-core=yes,no,only       controls whether to build Mono as a .NET Core runtime, not build it, or just build core (defaults to no)],[],[with_core=no])
+if test x$with_core = xyes; then
+    AC_DEFINE(ENABLE_NETCORE,1,[Enables the support for .NET Core Features in the MonoVM])
+fi
+AM_CONDITIONAL(ENABLE_CORE, test x$with_core = xyes)
+AM_CONDITIONAL(ONLY_CORE, test x$with_core = xonly)
+
 #
 # A sanity check to catch cases where the package was unpacked
 # with an ancient tar program (Solaris)
@@ -6308,6 +6315,7 @@ echo "
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
+	.NET Core:       $with_core
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then
