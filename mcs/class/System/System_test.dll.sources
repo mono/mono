@@ -8,7 +8,7 @@ Microsoft.CSharp/CodeGeneratorFromTypeTest.cs
 Microsoft.CSharp/CodeGeneratorIdentifierTest.cs
 Microsoft.CSharp/CodeGeneratorTestBase.cs
 Microsoft.CSharp/CodeGeneratorTypeOutputTest.cs
-Microsoft.CSharp/CSharpCodeProviderTest.cs
+#Microsoft.CSharp/CSharpCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorTestBase.cs
 Microsoft.VisualBasic/VBCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromBinaryOperatorTest.cs
@@ -182,7 +182,7 @@ System.Configuration/SettingsPropertyValueCollectionTest.cs
 System.Configuration/SettingsPropertyValueTest.cs
 System.Diagnostics/DebugTest.cs
 System.Diagnostics/DelimitedListTraceListenerTest.cs
-System.Diagnostics/EventLogTest.cs
+#System.Diagnostics/EventLogTest.cs
 System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/SourceSwitchTest.cs
 System.Diagnostics/TextWriterTraceListenerHelper.cs

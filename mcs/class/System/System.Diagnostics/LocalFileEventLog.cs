@@ -416,13 +416,13 @@ namespace System.Diagnostics
 			try {
 				p = Process.Start (pi);
 			} catch (Exception ex) {
-				throw new SecurityException ("Access permissions could not be modified.", ex);
+				throw new SecurityException ($"Access permissions ({permissions}) for {path} could not be modified.", ex);
 			}
 
 			p.WaitForExit ();
 			if (p.ExitCode != 0) {
 				p.Close ();
-				throw new SecurityException ("Access permissions could not be modified.");
+				throw new SecurityException ($"Access permissions ({permissions}) for {path} could not be modified.");
 			}
 			p.Close ();
 		}
