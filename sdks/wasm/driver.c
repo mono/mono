@@ -9,6 +9,7 @@
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 
+#ifndef ENABLE_AOT
 // FIXME: Autogenerate this
 
 typedef struct {
@@ -262,6 +263,8 @@ static PinvokeImport sysnative_imports [] = {
 	{"SystemNative_GetNonCryptographicallySecureRandomBytes", SystemNative_GetNonCryptographicallySecureRandomBytes},
 };
 
+#endif /* !ENABLE_AOT */
+
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
 extern MonoObject* mono_wasm_get_object_property (int js_handle, MonoString *method, int *is_exception);
@@ -400,6 +403,8 @@ mono_wasm_setenv (const char *name, const char *value)
 	monoeg_g_setenv (strdup (name), strdup (value), 1);
 }
 
+#ifndef ENABLE_AOT
+
 static int sysnative_dl_handle;
 
 static void*
@@ -421,14 +426,13 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 	}
 	return NULL;
 }
+#endif /* !ENABLE_AOT */
 
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
-
-	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
 
 #ifdef ENABLE_AOT
 	// Defined in driver-gen.c
@@ -438,6 +442,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
+	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
 #endif
 
 #ifndef ENABLE_AOT
