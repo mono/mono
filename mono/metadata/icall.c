@@ -7746,7 +7746,6 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 {
 	MonoClass *klass;
 	MonoType *ftype = NULL;
-	guint8 *p = NULL;
 	int i;
 
 	memset (res, 0, sizeof (MonoTypedRef));
@@ -7755,6 +7754,7 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 
 	klass = mono_handle_class (target);
 
+	int offset = 0;
 	for (i = 0; i < mono_array_handle_length (fields); ++i) {
 		MonoClassField *f;
 		MONO_HANDLE_ARRAY_GETVAL (f, fields, MonoClassField*, i);
@@ -7762,16 +7762,16 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 		g_assert (f);
 
 		if (i == 0)
-			p = (guint8*)MONO_HANDLE_RAW (target) + f->offset;
+			offset = f->offset;
 		else
-			p += f->offset - sizeof (MonoObject);
+			offset += f->offset - sizeof (MonoObject);
 		klass = mono_class_from_mono_type_internal (f->type);
 		ftype = f->type;
 	}
 
 	res->type = ftype;
 	res->klass = mono_class_from_mono_type_internal (ftype);
-	res->value = p;
+	res->value = (guint8*)MONO_HANDLE_RAW (target) + offset;
 }
 
 static void
