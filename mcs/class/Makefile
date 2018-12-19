@@ -421,7 +421,7 @@ wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
 wasm_tools_SUBDIRS :=
 wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
-netcore_SUBDIRS := System.Private.Corlib
+netcore_SUBDIRS := System.Private.CoreLib
 netcore_PARALLEL_SUBDIRS :=
 
 include ../build/rules.make

@@ -1,8 +1,8 @@
-thisdir = class/System.Private.Corlib
+thisdir = class/System.Private.CoreLib
 SUBDIRS =
 include ../../build/rules.make
 
-LIBRARY = System.Private.Corlib.dll
+LIBRARY = System.Private.CoreLib.dll
 LIB_REFS =
 EXTRA_DIST_FILES =
 
