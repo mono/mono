@@ -215,5 +215,16 @@ namespace Mono {
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void AnnotateMicrosoftTelemetry_internal (IntPtr key, IntPtr val);
+
+		static void AnnotateMicrosoftTelemetry (string key, string val)
+		{
+			using (var key_chars = RuntimeMarshal.MarshalString (key))
+			using (var val_chars = RuntimeMarshal.MarshalString (val))
+			{
+				AnnotateMicrosoftTelemetry_internal (key_chars.Value, val_chars.Value);
+			}
+		}
 	}
 }
