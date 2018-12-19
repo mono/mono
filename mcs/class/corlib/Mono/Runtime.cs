@@ -194,6 +194,18 @@ namespace Mono {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForNativeLib_internal (IntPtr modulePathSuffix, IntPtr moduleName);
+
+		static void RegisterReportingForNativeLib (string modulePathSuffix_str, string moduleName_str)
+		{
+			using (var modulePathSuffix_chars = RuntimeMarshal.MarshalString (modulePathSuffix_str))
+			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
+			{
+				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void EnableCrashReportLog_internal (IntPtr directory);
 
 		static void EnableCrashReportLog (string directory_str)
