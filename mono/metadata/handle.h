@@ -499,7 +499,7 @@ extern const MonoObjectHandle mono_null_value_handle;
 #define NULL_HANDLE_ARRAY  (MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
 
 static inline MonoObjectHandle
-mono_handle_assign_raw (MonoObjectHandle dest, void *src)
+mono_handle_assign_raw (MonoObjectHandleOut dest, void *src)
 {
 	g_assert (dest.__raw);
 	MONO_HANDLE_SUPPRESS (*dest.__raw = (MonoObject*)src);
