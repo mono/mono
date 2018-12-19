@@ -366,9 +366,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 {
 	gint ret;
 
-	MONO_ENTER_GC_SAFE;
 	ret = utime (filename, buf);
-	MONO_EXIT_GC_SAFE;
 	if (ret == -1 && errno == ENOENT && IS_PORTABILITY_SET) {
 		gint saved_errno = errno;
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
@@ -378,9 +376,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 			return -1;
 		}
 
-		MONO_ENTER_GC_SAFE;
 		ret = utime (located_filename, buf);
-		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
 
@@ -393,9 +389,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 {
 	gint ret;
 
-	MONO_ENTER_GC_SAFE;
 	ret = utimes (filename, times);
-	MONO_EXIT_GC_SAFE;
 	if (ret == -1 && errno == ENOENT && IS_PORTABILITY_SET) {
 		gint saved_errno = errno;
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
@@ -405,9 +399,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 			return -1;
 		}
 
-		MONO_ENTER_GC_SAFE;
 		ret = utimes (located_filename, times);
-		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
 
