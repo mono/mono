@@ -7743,45 +7743,42 @@ mono_ArgIterator_IntGetNextArgType (MonoArgIterator *iter)
 }
 
 MonoObjectHandle
-mono_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
+ves_icall_System_TypedReference_ToObject (MonoTypedRef* tref, MonoError *error)
 {
 	return typed_reference_to_object (tref, error);
 }
 
-MonoTypedRef
-mono_TypedReference_MakeTypedReferenceInternal (MonoObject *target, MonoArray *fields)
+void
+ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, MonoObjectHandle target, MonoArrayHandle fields, MonoReflectionTypeHandle last_field, MonoError *error)
 {
-	MonoTypedRef res;
-	MonoReflectionField *f;
 	MonoClass *klass;
 	MonoType *ftype = NULL;
 	guint8 *p = NULL;
 	int i;
 
-	memset (&res, 0, sizeof (res));
+	memset (res, 0, sizeof (MonoTypedRef));
 
-	g_assert (fields);
-	g_assert (mono_array_length_internal (fields) > 0);
+	g_assert (mono_array_handle_length (fields) > 0);
 
-	klass = target->vtable->klass;
+	klass = mono_handle_class (target);
 
-	for (i = 0; i < mono_array_length_internal (fields); ++i) {
-		f = mono_array_get_internal (fields, MonoReflectionField*, i);
+	for (i = 0; i < mono_array_handle_length (fields); ++i) {
+		MonoClassField *f;
+		MONO_HANDLE_ARRAY_GETVAL (f, fields, MonoClassField*, i);
+
 		g_assert (f);
 
 		if (i == 0)
-			p = (guint8*)target + f->field->offset;
+			p = (guint8*)MONO_HANDLE_RAW (target) + f->offset;
 		else
-			p += f->field->offset - sizeof (MonoObject);
-		klass = mono_class_from_mono_type_internal (f->field->type);
-		ftype = f->field->type;
+			p += f->offset - sizeof (MonoObject);
+		klass = mono_class_from_mono_type_internal (f->type);
+		ftype = f->type;
 	}
 
-	res.type = ftype;
-	res.klass = mono_class_from_mono_type_internal (ftype);
-	res.value = p;
-
-	return res;
+	res->type = ftype;
+	res->klass = mono_class_from_mono_type_internal (ftype);
+	res->value = p;
 }
 
 static void

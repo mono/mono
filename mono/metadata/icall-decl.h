@@ -92,7 +92,6 @@ ICALL_EXPORT MonoReflectionType* ves_icall_Remoting_RealProxy_InternalGetProxyTy
 ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
-ICALL_EXPORT MonoTypedRef mono_TypedReference_MakeTypedReferenceInternal (MonoObject*, MonoArray*);
 ICALL_EXPORT double ves_icall_System_Math_Abs_double (double);
 ICALL_EXPORT double ves_icall_System_Math_Acos (double);
 ICALL_EXPORT double ves_icall_System_Math_Acosh (double);
