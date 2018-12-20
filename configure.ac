@@ -6010,7 +6010,8 @@ elif test x$target_wasm = xyes; then
 	mono_native_text="wasm"
 	MONO_NATIVE_CC=$CC
 	MONO_NATIVE_CXX=$CXX
-	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	# The system.native code uses _WASM_ to check for wasm
+	MONO_NATIVE_CPPFLAGS="$CPPFLAGS -D_WASM_"
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
 	MONO_NATIVE_CFLAGS=$CFLAGS
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
