@@ -269,7 +269,7 @@ namespace System.Net.Http
  					bucket.StreamCanBeDisposed = true;
 					// remove headers in a redirect for Authentication.
 					request.Headers.Authorization = null;
- 					var redirectResponse = await SendAsync (redirectRequest, cancellationToken, false).ConfigureAwait (false);
+ 					var redirectResponse = await SendAsync (request, cancellationToken, false).ConfigureAwait (false);
  					return redirectResponse;
  				}
  				return initialRequest;
