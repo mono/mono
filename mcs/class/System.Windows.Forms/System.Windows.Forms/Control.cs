@@ -1393,8 +1393,8 @@ namespace System.Windows.Forms
 			}
 
 			if (background_image == null) {
-				if (!tbstyle_flat) {
-					Rectangle paintRect = pevent.ClipRectangle;
+				if (!tbstyle_flat && pevent.ClipRectangle != null) {
+					Rectangle paintRect = pevent.ClipRectangle; 					
 					Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
 					pevent.Graphics.FillRectangle(pen, paintRect);
 				}
