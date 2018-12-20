@@ -25,8 +25,6 @@
 #include <mono/utils/checked-build.h>
 #include <mono/metadata/class-internals.h>
 
-G_BEGIN_DECLS
-
 /*
 Handle stack.
 
@@ -403,12 +401,14 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		}							\
 	} while (0)
 
+#if 0 // This is never used.
 #define MONO_HANDLE_ARRAY_SETRAW(HANDLE, IDX, VALUE) do {	\
 		MONO_HANDLE_SUPPRESS_SCOPE(1);			\
 		uintptr_t __idx = MONO_HANDLE_UNSUPPRESS(IDX);	\
 		MonoObject *__val = (MonoObject*)(VALUE);	\
 		mono_array_setref_fast (MONO_HANDLE_RAW (MONO_HANDLE_UNSUPPRESS (HANDLE)), __idx, __val); \
 	} while (0)
+#endif
 
 /* N.B. DEST is evaluated AFTER all the other arguments */
 #define MONO_HANDLE_ARRAY_GETVAL(DEST, HANDLE, TYPE, IDX) do {		\
@@ -586,7 +586,5 @@ mono_handle_hash (MonoObjectHandle object);
 
 guint32
 mono_gchandle_new_weakref_from_handle_track_resurrection (MonoObjectHandle handle);
-
-G_END_DECLS
 
 #endif /* __MONO_HANDLE_H__ */

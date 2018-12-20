@@ -102,7 +102,7 @@ typedef struct {
 	size_t moduleOffset;
 
 	const char *osVersion; 
-	int uiLidArg; // Application LCID 
+	int uiLidArg; // MONO_LOCALE_INVARIANT 0x007F
 
 	char systemModel [100];
 	const char *systemManufacturer;
@@ -334,7 +334,7 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 
 	merp->moduleOffset = 0;
 
-	merp->uiLidArg = ves_icall_System_Threading_Thread_current_lcid ();
+	merp->uiLidArg = MONO_LOCALE_INVARIANT;
 
 	merp->osVersion = os_version_string ();
 
@@ -399,7 +399,7 @@ mono_write_wer_template (MERPStruct *merp)
 	g_assertf (handle != -1, "Could not open WER XML file at %s", merp->werXmlPath);
 
 	// Provided by icall
-	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<WERReportMetadata>\n");
 	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<ProblemSignatures>\n");
 	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<EventType>%s</EventType>\n", merp->eventType);

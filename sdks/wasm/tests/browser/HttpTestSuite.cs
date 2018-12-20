@@ -31,13 +31,9 @@ namespace TestSuite
                 return httpClient.BaseAddress.ToString();
         }
 
-        private static async Task<object> RequestStream(bool streamingEnabled = true)
+        private static async Task<object> RequestStream(bool streamingEnabled, string url)
         {
             var requestTcs = new TaskCompletionSource<object>();
-
-            string ApiFile = "base/publish/NowIsTheTime.txt";
-            //string ApiFile = "SampleJPGImage_30mbmb.jpg";
-
             cts = new CancellationTokenSource();
 
             try
@@ -47,7 +43,7 @@ namespace TestSuite
                     Console.WriteLine($"streaming supported: { WasmHttpMessageHandler.StreamingSupported}");
                     WasmHttpMessageHandler.StreamingEnabled = streamingEnabled;
                     Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");                
-                    using (var rspMsg = await httpClient.GetAsync(ApiFile, cts.Token))
+                    using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
                     {
                         requestTcs.SetResult((int)rspMsg.Content?.ReadAsStreamAsync().Result.Length);
                     }
@@ -55,19 +51,15 @@ namespace TestSuite
             }
             catch (Exception exc2)
             {
-                requestTcs.SetException(new Exception("bad"));
+                requestTcs.SetException(exc2);
             }
 
             return requestTcs.Task;
         }
 
-        private static async Task<object> RequestByteArray(bool streamingEnabled = true)
+        private static async Task<object> RequestByteArray(bool streamingEnabled, string url)
         {
             var requestTcs = new TaskCompletionSource<object>();
-
-            string ApiFile = "base/publish/NowIsTheTime.txt";
-            //string ApiFile = "SampleJPGImage_30mbmb.jpg";
-
             cts = new CancellationTokenSource();
 
             try
@@ -77,8 +69,9 @@ namespace TestSuite
                     Console.WriteLine($"streaming supported: { WasmHttpMessageHandler.StreamingSupported}");
                     WasmHttpMessageHandler.StreamingEnabled = streamingEnabled;
                     Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");
-
-                    using (var rspMsg = await httpClient.GetAsync(ApiFile, cts.Token))
+                    Console.WriteLine($"url: {url}");
+                    
+                    using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
                     {
                         requestTcs.SetResult(rspMsg.Content?.ReadAsByteArrayAsync().Result.Length);
                     }
@@ -86,7 +79,7 @@ namespace TestSuite
             }
             catch (Exception exc2)
             {
-                requestTcs.SetException(new Exception("bad"));
+                requestTcs.SetException(exc2);
             }
             return requestTcs.Task;
         }
