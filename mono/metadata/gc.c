@@ -760,7 +760,7 @@ mono_gc_finalize_notify (void)
 	g_message ( "%s: prodding finalizer", __func__);
 #endif
 
-	if (mono_gc_is_null () || mono_gc_is_disabled())
+	if (mono_gc_is_null ())
 		return;
 
 #ifdef HOST_WASM
@@ -928,6 +928,18 @@ finalizer_thread (gpointer unused)
 	/* Register a hazard free queue pump callback */
 	mono_hazard_pointer_install_free_queue_size_callback (hazard_free_queue_is_too_big);
 
+	/* if GC is disabled, we run no finalizer, but we still run mono_w32process_signal_finished 
+	on the finalizer thread, so that processes can exit. */
+	if (mono_gc_is_disabled())
+	{
+		while (!finished)
+		{
+			mono_coop_sem_wait (&finalizer_sem, MONO_SEM_FLAGS_ALERTABLE);
+			mono_w32process_signal_finished();
+		}
+		return 0;
+	}
+	
 	while (!finished) {
 		/* Wait to be notified that there's at least one
 		 * finaliser to run
@@ -995,10 +1007,8 @@ mono_gc_init (void)
 
 	mono_gc_base_init ();
 
-	if (mono_gc_is_disabled ()) {
+	if (mono_gc_is_disabled ())
 		gc_disabled = TRUE;
-		return;
-	}
 
 #ifdef TARGET_WIN32
 	pending_done_event = CreateEvent (NULL, TRUE, FALSE, NULL);
@@ -1025,9 +1035,9 @@ mono_gc_cleanup (void)
 
 	if (mono_gc_is_null ())
 		return;
-
+	
+	finished = TRUE;
 	if (!gc_disabled) {
-		finished = TRUE;
 		if (mono_thread_internal_current () != gc_thread) {
 			int ret;
 			gint64 start;
