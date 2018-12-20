@@ -267,7 +267,7 @@ namespace System.Net.Http
  				var status = initialRequest.StatusCode;
  				if (IsRedirect (status) && allowAutoRedirect) {
  					bucket.StreamCanBeDisposed = true;
-					// remove headers in a redirec for Authentication.
+					// remove headers in a redirect for Authentication.
 					request.Headers.Authorization = null;
  					var redirectResponse = await SendAsync (redirectRequest, cancellationToken, false).ConfigureAwait (false);
  					return redirectResponse;
