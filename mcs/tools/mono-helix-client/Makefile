@@ -5,7 +5,7 @@ include ../../build/rules.make
 PROGRAM = mono-helix-client.exe
 NO_INSTALL = yes
 
-LIB_REFS = System System.Net.Http Facades/netstandard
+LIB_REFS = System System.Net.Http Facades/netstandard Facades/System.Runtime Facades/System.Threading.Tasks
 helix_binaries = $(topdir)/../external/helix-binaries
 LOCAL_MCS_FLAGS = -r:$(helix_binaries)/Microsoft.DotNet.Helix.Client.dll -r:$(helix_binaries)/Microsoft.DotNet.Helix.JobSender.dll -r:$(helix_binaries)/Microsoft.Rest.ClientRuntime.dll
 

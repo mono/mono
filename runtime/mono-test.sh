@@ -283,6 +283,6 @@ if [ "$test_suite" = "--runtime" ]; then
     cd tests/runtime || exit 1
 
     # TODO: only ported runtest-managed for now
-    "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug test-runner.exe --verbose --xunit "${xunit_results_path}" --config tests-config --runtime "${MONO_EXECUTABLE}" --mono-path "$r/net_4_x" -j a --testsuite-name "runtime" --timeout 300 --disabled "$DISABLED_TESTS" $(cat runtime-test-list.txt)
+    "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug test-runner.exe --verbose --xunit "${xunit_results_path}" --config tests-config --runtime "${MONO_EXECUTABLE}" --mono-path "$r/net_4_x" -j a --testsuite-name "runtime" --timeout 300 --disabled "$DISABLED_TESTS" --input-file runtime-test-list.txt
     exit $?
 fi
