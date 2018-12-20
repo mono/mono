@@ -829,4 +829,11 @@ partial class SR
 	public const string Odbc_OpenConnectionNoOwner = "An internal connection does not have an owner.";
 	public const string Odbc_PlatformNotSupported = "System.Data.ODBC is not supported on this platform.";
 	public const string Odbc_UnixOdbcNotFound = "Dependency unixODBC with minimum version 2.3.1 is required.";
+	public const string ADP_InvalidMixedUsageOfAccessTokenAndIntegratedSecurity = "Cannot set the AccessToken property if the 'Integrated Security' connection string keyword has been set to 'true' or 'SSPI'.";
+	public const string ADP_InvalidMixedUsageOfAccessTokenAndUserIDPassword = "Cannot set the AccessToken property if 'UserID', 'UID', 'Password', or 'PWD' has been specified in connection string.";
+	public const string ADP_InvalidMixedUsageOfCredentialAndAccessToken = "Cannot set the Credential property if the AccessToken property is already set.";
+	public const string SQL_ParsingErrorAuthLibraryType = "Internal connection fatal error. Error state: {0}, Authentication Library Type: {1}.";
+	public const string SQL_ParsingErrorWithState = "Internal connection fatal error. Error state: {0}.";
+	public const string SQL_ParsingErrorValue = "Internal connection fatal error. Error state: {0}, Value: {1}.";
+	public const string SQL_ParsingErrorFeatureId = "Internal connection fatal error. Error state: {0}, Feature Id: {1}.";
 }
