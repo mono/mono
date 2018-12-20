@@ -152,7 +152,7 @@ assembly_load_hook (MonoAssembly* assembly, void* user_data)
 	// Can not reflect over mscorlib
 	if (strcmp ("mscorlib", aname))  // not equal
 	{
-		MonoClass* klass = mono_class_from_name(mono_assembly_get_image(assembly), "WebAssembly.Library", "Support");
+		MonoClass* klass = mono_class_from_name(mono_assembly_get_image(assembly), "WebAssembly.Library", "ScriptsSupport");
 		if (klass)
 		{
 			MonoMethod* init_method = mono_class_get_method_from_name(klass, "Initialize", -1);
@@ -160,7 +160,7 @@ assembly_load_hook (MonoAssembly* assembly, void* user_data)
 			MonoString* ret = (MonoString*)mono_runtime_invoke(init_method, NULL, NULL, (MonoObject**)&exc);
 			if(!exc)
 			{
-				fprintf (stdout, "Value of resource is: %s\n", mono_string_to_utf8 (ret));
+				//fprintf (stdout, "Value of resource is: %s\n", mono_string_to_utf8 (ret));
 				int *invReturn;
 				mono_wasm_invoke_js(ret, invReturn);
 			}
