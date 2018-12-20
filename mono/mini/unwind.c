@@ -14,6 +14,7 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/freebsd-dwarf.h>
 #include <mono/utils/hazard-pointer.h>
+#include <mono/utils/mono-logger-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
 
@@ -83,7 +84,7 @@ static int map_hw_reg_to_dwarf_reg [ppc_lr + 1] = { 0, 1, 2, 3, 4, 5, 6, 7, 8,
 										  9, 10, 11, 12, 13, 14, 15, 16,
 										  17, 18, 19, 20, 21, 22, 23, 24,
 										  25, 26, 27, 28, 29, 30, 31 };
-#define DWARF_DATA_ALIGN (-(gint32)sizeof (mgreg_t))
+#define DWARF_DATA_ALIGN (-(gint32)sizeof (target_mgreg_t))
 #if _CALL_ELF == 2
 #define DWARF_PC_REG 65
 #else
@@ -111,12 +112,32 @@ static int map_hw_reg_to_dwarf_reg [32] = {
 	24, 25, 26, 27, 28, 29, 30, 31
 };
 #define NUM_DWARF_REGS 32
-#define DWARF_DATA_ALIGN (-(gint32)sizeof (mgreg_t))
+#define DWARF_DATA_ALIGN (-(gint32)sizeof (target_mgreg_t))
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (mips_ra))
+#elif defined(TARGET_RISCV)
+
+/*
+ * These values have not currently been formalized in the RISC-V psABI. See
+ * instead gcc/config/riscv/riscv.h in the GCC source tree.
+ */
+
+#define NUM_DWARF_REGS (RISCV_N_GREGS + RISCV_N_FREGS)
+#define DWARF_DATA_ALIGN (-4)
+#define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (RISCV_RA))
+
+static int map_hw_reg_to_dwarf_reg [NUM_DWARF_REGS] = {
+	// x0..x31
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+	16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	// f0..f31
+	32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+};
+
 #else
 static int map_hw_reg_to_dwarf_reg [16];
 #define NUM_DWARF_REGS 16
-#define DWARF_DATA_ALIGN 0
+#define DWARF_DATA_ALIGN 1
 #define DWARF_PC_REG -1
 #endif
 
@@ -637,7 +658,11 @@ mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len,
 	if (save_locations)
 		memset (save_locations, 0, save_locations_len * sizeof (host_mgreg_t*));
 
-	g_assert (cfa_reg != -1);
+	if (cfa_reg == -1) {
+		mono_runtime_printf_err ("Unset cfa_reg in method %s. Memory around ip (%p):", mono_get_method_from_ip (ip), ip);
+		mono_dump_mem (ip - 0x10, 0x40);
+		g_assert_not_reached ();
+	}
 	cfa_val = (guint8*)regs [mono_dwarf_reg_to_hw_reg (cfa_reg)] + cfa_offset;
 	for (hwreg = 0; hwreg < NUM_HW_REGS; ++hwreg) {
 		if (reg_saved [hwreg] && locations [hwreg].loc_type == LOC_OFFSET) {

@@ -5,7 +5,7 @@ SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
 check-local:
 	ok=:; \
 	$(MAKE) test-tailcall || ok=false; \
-	$(MAKE) test-jit || ok=false; \
+	if test x$(IGNORE_TEST_JIT) == x; then $(MAKE) test-jit || ok=false; fi; \
 	$(MAKE) test-generic-sharing || ok=false; \
 	$(MAKE) test-type-load || ok=false; \
 	$(MAKE) test-multi-netmodule || ok=false; \
@@ -207,6 +207,10 @@ if AOT_FULL_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
+if AOT_FULL_INTERP_LLVM_TESTS
+PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
+endif
+
 MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
@@ -312,6 +316,7 @@ TESTS_CS_SRC=		\
 	exception17.cs		\
 	exception18.cs		\
 	exception-invokes.cs		\
+	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	typeload-unaligned.cs	\
@@ -696,6 +701,7 @@ TESTS_CS_SRC=		\
 	verbose.cs \
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
+	bug-10837.cs	\
 	bug-gh-9507.cs
 
 # some tests fail to compile on mcs
@@ -933,6 +939,7 @@ TESTS_IL_SRC=			\
 	invalid-token.il	\
 	call_missing_method.il	\
 	call_missing_class.il	\
+	calli_sig_check.il	\
 	ldfld_missing_field.il	\
 	ldfld_missing_class.il	\
 	find-method.2.il	\
@@ -1062,10 +1069,14 @@ PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw
 PLATFORM_DISABLED_TESTS += verbose.exe
 endif
 
+
+
 if HOST_DARWIN
 
 # see https://github.com/mono/mono/issues/10845
 PLATFORM_DISABLED_TESTS += monitor-wait-abort.exe
+else
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe
 endif
 
 if AMD64
@@ -1405,6 +1416,7 @@ endif
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
 PROFILE_DISABLED_TESTS += \
 	constraints-load.exe \
+	calli_sig_check.exe \
 	bug-515884.exe
 
 PROFILE_DISABLED_TESTS += \
@@ -1507,15 +1519,127 @@ PROFILE_DISABLED_TESTS += \
 endif
 
 if AOT_FULL_INTERP_TESTS
+
+# AppDomain tests
 PROFILE_DISABLED_TESTS += \
-	bug-80307.exe \
-	threadpool-exceptions2.exe \
-	threadpool-exceptions5.exe \
-	threadpool-exceptions4.exe
+	appdomain1.exe \
+	appdomain2.exe \
+	appdomain-async-invoke.exe \
+	appdomain.exe \
+	appdomain-exit.exe \
+	appdomain-loader.exe \
+	appdomain-marshalbyref-assemblyload.exe \
+	appdomain-serialize-exception.exe \
+	appdomain-thread-abort.exe \
+	appdomain-threadpool-unload.exe \
+	appdomain-unload-asmload.exe \
+	appdomain-unload-callback.exe \
+	appdomain-unload-doesnot-raise-pending-events.exe \
+	appdomain-unload.exe \
+	assemblyresolve_event6.exe \
+	bug-335131.2.exe \
+	bug-415577.exe \
+	cross-domain.exe \
+	dataslot.exe \
+	delegate9.exe \
+	domain-stress.exe \
+	generic-marshalbyref.2.exe \
+	generic-unloading.2.exe \
+	generic-xdomain.2.exe \
+	hostname.exe \
+	marshal-valuetypes.exe \
+	monitor.exe \
+	pinvoke3.exe \
+	remoting4.exe \
+	stackframes-async.2.exe \
+	suspend-stress-test.exe \
+	thread6.exe \
+	threadpool-exceptions7.exe \
+	unhandled-exception-7.exe \
+	unhandled-exception-test-case.2.exe \
+	unload-appdomain-on-shutdown.exe \
+	xdomain-threads.exe
+
+# Tests which load assemblies which are not in the profile
+PROFILE_DISABLED_TESTS += \
+	assembly-load-remap.exe
+
+# Tests which needs named Mutex support
+PROFILE_DISABLED_TESTS += \
+	namedmutex-destroy-race.exe
+
+# Test which needs System.Web support
+PROFILE_DISABLED_TESTS += \
+	bug-80307.exe
+
+PROFILE_DISABLED_TESTS += \
+	bug-70561.exe \
+	transparentproxy.exe
+endif
+
+if AOT_FULL_INTERP_LLVM_TESTS
+# AppDomain tests
+PROFILE_DISABLED_TESTS += \
+	appdomain1.exe \
+	appdomain2.exe \
+	appdomain-async-invoke.exe \
+	appdomain.exe \
+	appdomain-exit.exe \
+	appdomain-loader.exe \
+	appdomain-marshalbyref-assemblyload.exe \
+	appdomain-serialize-exception.exe \
+	appdomain-thread-abort.exe \
+	appdomain-threadpool-unload.exe \
+	appdomain-unload-asmload.exe \
+	appdomain-unload-callback.exe \
+	appdomain-unload-doesnot-raise-pending-events.exe \
+	appdomain-unload.exe \
+	assemblyresolve_event6.exe \
+	bug-335131.2.exe \
+	bug-415577.exe \
+	cross-domain.exe \
+	dataslot.exe \
+	delegate9.exe \
+	domain-stress.exe \
+	generic-marshalbyref.2.exe \
+	generic-unloading.2.exe \
+	generic-xdomain.2.exe \
+	hostname.exe \
+	marshal-valuetypes.exe \
+	monitor.exe \
+	pinvoke3.exe \
+	remoting4.exe \
+	stackframes-async.2.exe \
+	suspend-stress-test.exe \
+	thread6.exe \
+	threadpool-exceptions7.exe \
+	unhandled-exception-7.exe \
+	unhandled-exception-test-case.2.exe \
+	unload-appdomain-on-shutdown.exe \
+	xdomain-threads.exe
+
+# Tests which load assemblies which are not in the profile
+PROFILE_DISABLED_TESTS += \
+	assembly-load-remap.exe
+
+# Tests which needs named Mutex support
+PROFILE_DISABLED_TESTS += \
+	namedmutex-destroy-race.exe
+
+# Test which needs System.Web support
+PROFILE_DISABLED_TESTS += \
+	bug-80307.exe
+
+PROFILE_DISABLED_TESTS += \
+	bug-70561.exe \
+	transparentproxy.exe \
+	finalizer-exception.exe
+
 endif
 
 AOT_DISABLED_TESTS= \
-	constraints-load.exe
+	constraints-load.exe \
+	calli_sig_check.exe
 
 CI_DISABLED_TESTS = \
 	main-returns-background-resetabort.exe \
@@ -1773,6 +1897,9 @@ INTERP_DISABLED_TESTS += tailcall/interface-conservestack/7.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/8.exe
 INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 
+# expected InvalidProgramException not thrown
+INTERP_DISABLED_TESTS += calli_sig_check.exe
+
 
 # bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
@@ -1800,7 +1927,6 @@ INTERP_DISABLED_TESTS += \
 	delegate-async-exit.exe \
 	delegate-delegate-exit.exe \
 	delegate-exit.exe \
-	delegate-with-null-target.exe \
 	delegate1.exe \
 	delegate3.exe \
 	delegate5.exe \
@@ -1838,7 +1964,6 @@ if ARM64
 INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-80307.exe \
-	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
 	pinvoke3.exe
 endif
@@ -1849,7 +1974,6 @@ INTERP_DISABLED_TESTS += \
 	bug-48015.exe \
 	bug-60862.exe \
 	cominterop.exe \
-	delegate-with-null-target.exe \
 	dim-diamondshape.exe \
 	pinvoke3.exe
 endif
@@ -1902,7 +2026,9 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
 if !AOT_FULL_INTERP_TESTS
+if !AOT_FULL_INTERP_LLVM_TESTS
 TEST_DRIVER_HARD_KILL_FEATURE=-r:$(CLASS)/Mono.Posix.dll
+endif
 endif
 endif
 endif
@@ -1935,6 +2061,9 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
+merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 	$(MCS) -target:library -out:$@ $<
 
@@ -1962,9 +2091,6 @@ test-platform:	test-iomap-regression
 endif
 endif
 
-# Target to precompile the test executables
-tests: compile-tests
-
 #
 # Test that no symbols are missed in eglib-remap.h
 #
@@ -1986,11 +2112,22 @@ test-eglib-remap:
 test-env-options:
 	MONO_ENV_OPTIONS="--version" $(RUNTIME) array-init.exe | grep -q Architecture:
 
+TESTS_REGULAR = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+TESTS_INCL_DEPS = $(shell find . -type f -name "*.exe" -o -name "*.dll" -o -name "*.netmodule" -o -name "*.config")
+
+# Target to precompile the test executables
+test-local: $(TESTS_REGULAR) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference test-runner.exe
+
+test-bundle-local:
+	mkdir -p $(addprefix $(TEST_BUNDLE_PATH)/tests/runtime/,$(sort $(dir $(TESTS_INCL_DEPS))))
+	@echo $(TESTS_REGULAR) > $(TEST_BUNDLE_PATH)/tests/runtime/runtime-test-list.txt
+	sed -e 's,$$mono_libdir,$$test_root_dir,g' tests-config > $(TEST_BUNDLE_PATH)/tests/runtime/tests-config.tmpl
+	cp -L .libs/libtest$(libsuffix) $(TEST_BUNDLE_PATH)/tests/runtime/
+	$(foreach asset,$(TESTS_INCL_DEPS),cp -L $(asset) $(TEST_BUNDLE_PATH)/tests/runtime/$(dir $(asset));)
+
 # Precompile the test assemblies in parallel
 compile-tests:
-	$(MAKE) -j4 compile-tests-parallel
-
-compile-tests-parallel: $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTS_GSHARED) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) $(TESTSAOT_GSHARED) $(TESTS_TAILCALL) $(TESTSAOT_TAILCALL) compile-gac-loading compile-assembly-load-reference
+	$(MAKE) -j4 test
 
 # Remove empty .stdout and .stderr files for wrench
 rm-empty-logs:
@@ -2006,7 +2143,7 @@ runtest: compile-tests
 	failed_tests="";\
 	if [ "x$$V" = "x1" ]; then dump_action="dump-output"; else dump_action="no-dump"; fi; \
 	rm -f testlist testlist.sorted; \
-	for i in $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH); do echo $${i} >> testlist; sort testlist > testlist.sorted; done; \
+	for i in $(TESTS_REGULAR); do echo $${i} >> testlist; sort testlist > testlist.sorted; done; \
 	for i in `cat testlist.sorted`; do \
 		rm -f $${i}.so; \
 		$(with_mono_path) $(JITTEST_PROG_RUN) --aot $(TEST_AOT_BUILD_FLAGS) --debug $${i} > $${i}.aotlog 2>&1 || exit 1; \
@@ -2034,10 +2171,10 @@ runtest: compile-tests
 	fi
 
 runtest-managed: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --testsuite-name "runtime" --timeout 300 --disabled "$(DISABLED_TESTS)" $(TESTS_REGULAR)
 
 runtest-managed-serial: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j 1 --testsuite-name "runtime" --disabled "$(DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j 1 --testsuite-name "runtime" --disabled "$(DISABLED_TESTS)" $(TESTS_REGULAR)
 
 test-jit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
@@ -2049,10 +2186,10 @@ testtrace:
 	@$(MAKE) TEST_RUNTIME_ARGS="$${TEST_RUNTIME_ARGS} --trace" runtest
 
 testinterp: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--interpreter" --testsuite-name "runtime-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_REGULAR)
 
 testfullaotinterp: test-runner.exe compile-tests
-	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--full-aot-interp" --testsuite-name "runtime-aot-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH)
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--full-aot-interp" --testsuite-name "runtime-aot-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_REGULAR)
 
 testjitspeed: $(JITTEST_PROG) compile-tests
 	for i in $(TESTS_BENCH); do	\
@@ -2956,16 +3093,16 @@ test-pedump: test-runner.exe
 .PHONY: test-gac-loading test-eglib-remap
 
 runtest-gac-loading: test-runner.exe
-	$(MAKE) -C testing_gac runtest
+	$(MAKE) -C testing_gac run-test
 
 compile-gac-loading:
-	$(MAKE) -C testing_gac compile-tests
+	$(MAKE) -C testing_gac test
 
 runtest-assembly-load-reference: test-runner.exe
-	$(MAKE) -C assembly-load-reference runtest
+	$(MAKE) -C assembly-load-reference run-test
 
 compile-assembly-load-reference:
-	$(MAKE) -C assembly-load-reference compile-tests
+	$(MAKE) -C assembly-load-reference test
 
 
 TESTS_STRESS_PROCESS_SRC=	\
@@ -3086,6 +3223,6 @@ Mono.Runtime.Testing.dll: weakattribute.cs
 weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
-CLEANFILES = $(TESTS_CS) $(TESTS_IL) $(TESTS_BENCH) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
+CLEANFILES = $(TESTS_REGULAR) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
 CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 CLEANFILES += $(BUILT_SOURCES)

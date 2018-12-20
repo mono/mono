@@ -36,7 +36,7 @@ suppression_DATA = mono-profiler-coverage.suppression
 #
 # See: https://bugzilla.xamarin.com/show_bug.cgi?id=57011
 if !ENABLE_COOP_SUSPEND
-check_targets = testlog
+check_targets = run-test
 endif
 
 endif
@@ -159,7 +159,17 @@ MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:01
 %.exe: %.cs
 	$(MCS) -out:$@ $<
 
-testlog: $(PLOG_TESTS)
+test-local: $(PLOG_TESTS)
+
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/profiler/
+	cp -L .libs/libmono-profiler-log$(libsuffix) $(TEST_BUNDLE_PATH)/
+	cp -L $(PLOG_TESTS) $(TEST_BUNDLE_PATH)/tests/profiler/
+	cp -L ptestrunner.pl $(TEST_BUNDLE_PATH)/tests/profiler/
+	cp -L mprof-report $(TEST_BUNDLE_PATH)/
+	chmod +x $(TEST_BUNDLE_PATH)/mprof-report
+
+run-test: test
 	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir) nunit TestResult-profiler.xml
 
 check-local: $(check_targets)

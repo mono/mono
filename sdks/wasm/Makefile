@@ -50,6 +50,13 @@ BINDING_TEST_SOURCES = \
 
 MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 
+BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
+BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
+BROWSER_TEST_ASSETS = \
+    --asset=$(BROWSER_TEST)/http-spec.html   \
+    --asset=$(BROWSER_TEST)/http-spec.js   \
+    --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
@@ -80,21 +87,29 @@ release/:
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/libmono-ee-interp.a $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a $(TOP)/sdks/out/wasm-runtime-release/lib/libmono-ilgen.a $(TOP)/sdks/out/wasm-runtime-release/lib/libmono-icall-table.a
 
+EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1
+
 debug/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
-	$(EMCC) -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o debug/mono.js
 	touch $@
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
 release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release/
-	$(EMCC) -Oz --llvm-opts 2 --llvm-lto 1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s NO_EXIT_RUNTIME=1 -s "EXPORTED_FUNCTIONS=['_putchar']" -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
+	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
 build-native: debug/.stamp-build release/.stamp-build
 
-do-runtime:
-	make -j4 -C ../builds package-wasm-runtime
-	make -j4 -C ../builds package-wasm-bcl
-	make build-native
+runtime:
+	$(MAKE) -C ../builds package-wasm-runtime
+
+cross:
+	$(MAKE) -C ../builds package-wasm-cross
+
+bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+
+mono: runtime cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
 
@@ -121,12 +136,6 @@ sample.dll: Simple.Dependency.dll sample.cs WebAssembly.Bindings.dll WebAssembly
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
-$(WASM_BCL_DIR)/monolinker.exe: $(TOP)/mcs/class/lib/wasm_tools/monolinker.exe
-	cp $< $@
-
-$(WASM_BCL_DIR)/Mono.Cecil.dll: Mono.Cecil.dll
-	cp $< $@
-
 Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
@@ -146,13 +155,20 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	ninja -v -C obj/test-suite
 	touch $@
 
+$(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe WebAssembly.Bindings.dll WebAssembly.Net.Http.dll $(BROWSER_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) /r:WebAssembly.Bindings.dll /r:WebAssembly.Net.Http.dll $(BROWSER_TEST)/HttpTestSuite.cs 
+	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
+	(cd $(BROWSER_TEST) && npm install)
+	touch $@
+
+
 # For development
-aot-sample: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js mini_tests.dll
+aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js bug.exe
 	ninja -v -C obj/aot-sample
 
 do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --regression mini_tests.dll)
+	(cd bin/aot-sample && $(SM) runtime.js --run bug.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -176,7 +192,7 @@ clean-aot-$(1):
 	$(RM) -r obj/aot-$(1) bin/aot-$(1)
 
 check-aot-$(1) run-aot-$(1): build-aot-$(1)
-	(cd bin/aot-$(1) && $$(SM) runtime.js $(3))
+	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking $(3))
 
 endef
 
@@ -196,7 +212,7 @@ build-debug-sample: .stamp-build-debug-sample
 
 build-test-suite: .stamp-build-test-suite
 
-build-managed: build-debug-sample build-test-suite $(WASM_BCL_DIR)/monolinker.exe $(WASM_BCL_DIR)/Mono.Cecil.dll
+build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
@@ -230,7 +246,22 @@ run-all-%:
 	make -C . run-sm-$*
 	make -C . run-jsc-$*
 
+run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
+	(cd $(BROWSER_TEST) && npm test)
+
 clean:
+	$(RM) -r ./bin
+	$(RM) -r .stamp-build-debug-sample
+	$(RM) -r .stamp-build-test-suite
+	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite
+	$(RM) -r $(BROWSER_TEST)/node-modules
+	$(RM) -r $(BROWSER_TEST)/publish
+	$(RM) -r sample.dll
+	$(RM) -r Simple.Dependency.dll
+	$(RM) -r packager.exe
+	$(RM) -r mini_tests.dll
+	$(RM) -r main.exe
+	$(RM) -r binding-tests.dll
 
 package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp

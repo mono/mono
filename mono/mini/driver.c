@@ -347,26 +347,24 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 	if (strncmp (method->name, "test_", 5) != 0)
 		return FALSE;
 
-	if (interp) {
-		static gboolean filter_method_init = FALSE;
-		static const char *filter_method = NULL;
+	static gboolean filter_method_init = FALSE;
+	static const char *filter_method = NULL;
 
-		if (!filter_method_init) {
-			filter_method = g_getenv ("INTERP_FILTER_METHOD");
-			filter_method_init = TRUE;
-		}
+	if (!filter_method_init) {
+		filter_method = g_getenv ("REGRESSION_FILTER_METHOD");
+		filter_method_init = TRUE;
+	}
 
-		if (filter_method) {
-			const char *name = filter_method;
+	if (filter_method) {
+		const char *name = filter_method;
 
-			if ((strchr (name, '.') > name) || strchr (name, ':')) {
-				MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
-				gboolean res = mono_method_desc_full_match (desc, method);
-				mono_method_desc_free (desc);
-				return res;
-			} else {
-				return strcmp (method->name, name) == 0;
-			}
+		if ((strchr (name, '.') > name) || strchr (name, ':')) {
+			MonoMethodDesc *desc = mono_method_desc_new (name, TRUE);
+			gboolean res = mono_method_desc_full_match (desc, method);
+			mono_method_desc_free (desc);
+			return res;
+		} else {
+			return strcmp (method->name, name) == 0;
 		}
 	}
 
@@ -431,7 +429,6 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		GTimer *timer, MonoDomain *domain)
 {
 	int result, expected, failed, cfailed, run, code_size;
-	TestMethod func;
 	double elapsed, comp_time, start_time;
 	char *n;
 	int i;
@@ -464,6 +461,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 		}
 		if (method_should_be_regression_tested (method, FALSE)) {
 			MonoCompile *cfg = NULL;
+			TestMethod func = NULL;
 
 			expected = atoi (method->name + 5);
 			run++;
@@ -592,7 +590,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 
 		if (!strncmp (method->name, "test_", 5) && mini_stats_fd) {
 			fprintf (mini_stats_fd, "\"%s\",", method->name);
@@ -664,7 +662,9 @@ mini_regression_list (int verbose, int count, char *images [])
 	
 	total_run =  total = 0;
 	for (i = 0; i < count; ++i) {
-		ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
+		MonoAssemblyOpenRequest req;
+		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		ass = mono_assembly_request_open (images [i], &req, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -706,7 +706,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 		}
 
 		if (method_should_be_regression_tested (method, TRUE)) {
-			ERROR_DECL_VALUE (interp_error);
+			ERROR_DECL (interp_error);
 			MonoObject *exc = NULL;
 
 			if (do_regression_retries) {
@@ -717,8 +717,8 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				++regression_test_skip_index;
 			}
 
-			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, &interp_error);
-			if (!mono_error_ok (&interp_error)) {
+			result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, interp_error);
+			if (!mono_error_ok (interp_error)) {
 				cfailed++;
 				g_print ("Test '%s' execution failed.\n", method->name);
 			} else if (exc != NULL) {
@@ -770,7 +770,7 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 			mono_error_cleanup (error);
 			continue;
 		}
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 	}
 
 	total = 0;
@@ -789,7 +789,9 @@ mono_interp_regression_list (int verbose, int count, char *images [])
 
 	total_run = total = 0;
 	for (i = 0; i < count; ++i) {
-		MonoAssembly *ass = mono_assembly_open_predicate (images [i], MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
+		MonoAssemblyOpenRequest req;
+		mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+		MonoAssembly *ass = mono_assembly_request_open (images [i], &req, NULL);
 		if (!ass) {
 			g_warning ("failed to load assembly: %s", images [i]);
 			continue;
@@ -1397,7 +1399,9 @@ load_agent (MonoDomain *domain, char *desc)
 		args = NULL;
 	}
 
-	agent_assembly = mono_assembly_open_predicate (agent, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
+	MonoAssemblyOpenRequest req;
+	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+	agent_assembly = mono_assembly_request_open (agent, &req, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
 		g_free (agent);
@@ -2135,6 +2139,8 @@ mono_main (int argc, char* argv[])
 			mono_jit_set_aot_mode (MONO_AOT_MODE_HYBRID);
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
+		} else if (strcmp (argv [i], "--llvmonly-interp") == 0) {
+			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2433,7 +2439,7 @@ mono_main (int argc, char* argv[])
 #endif
 
 	/* Parse gac loading options before loading assemblies. */
-	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
+	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER || action == DO_REGRESSION) {
 		mono_config_parse (config_file);
 	}
 
@@ -2505,7 +2511,9 @@ mono_main (int argc, char* argv[])
 		apply_root_domain_configuration_file_bindings (domain, extra_bindings_config_file);
 	}
 
-	assembly = mono_assembly_open_predicate (aname, MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, &open_status);
+	MonoAssemblyOpenRequest open_req;
+	mono_assembly_request_prepare (&open_req.request, sizeof (open_req), MONO_ASMCTX_DEFAULT);
+	assembly = mono_assembly_request_open (aname, &open_req, &open_status);
 	if (!assembly) {
 		fprintf (stderr, "Cannot open assembly '%s': %s.\n", aname, mono_image_strerror (open_status));
 		mini_cleanup (domain);

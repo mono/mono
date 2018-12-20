@@ -455,7 +455,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	const guint kMaxCodeSize = 256;
 
 #ifdef TARGET_WIN32
-	const int dummy_stack_space = 6 * sizeof(mgreg_t);	/* Windows expects stack space allocated for all 6 dummy args. */
+	const int dummy_stack_space = 6 * sizeof (target_mgreg_t);	/* Windows expects stack space allocated for all 6 dummy args. */
 #else
 	const int dummy_stack_space = 0;
 #endif
@@ -486,47 +486,47 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	 */
 
 	arg_offsets [0] = dummy_stack_space + 0;
-	arg_offsets [1] = dummy_stack_space + sizeof(mgreg_t);
-	arg_offsets [2] = dummy_stack_space + sizeof(mgreg_t) * 2;
-	arg_offsets [3] = dummy_stack_space + sizeof(mgreg_t) * 3;
-	ctx_offset = dummy_stack_space + sizeof(mgreg_t) * 4;
+	arg_offsets [1] = dummy_stack_space + sizeof (target_mgreg_t);
+	arg_offsets [2] = dummy_stack_space + sizeof (target_mgreg_t) * 2;
+	arg_offsets [3] = dummy_stack_space + sizeof (target_mgreg_t) * 3;
+	ctx_offset = dummy_stack_space + sizeof (target_mgreg_t) * 4;
 	regs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, gregs);
 
 	/* Save registers */
 	for (i = 0; i < AMD64_NREG; ++i)
 		if (i != AMD64_RSP)
-			amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (i * sizeof(mgreg_t)), i, sizeof(mgreg_t));
+			amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (i * sizeof (target_mgreg_t)), i, sizeof (target_mgreg_t));
 	/* Save RSP */
-	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, stack_size + sizeof(mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RSP * sizeof(mgreg_t)), X86_EAX, sizeof(mgreg_t));
+	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, stack_size + sizeof (target_mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RSP * sizeof (target_mgreg_t)), X86_EAX, sizeof (target_mgreg_t));
 	/* Save IP */
-	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, stack_size, sizeof(mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RIP * sizeof(mgreg_t)), AMD64_RAX, sizeof(mgreg_t));
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, stack_size, sizeof (target_mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RIP * sizeof (target_mgreg_t)), AMD64_RAX, sizeof (target_mgreg_t));
 	/* Set arg1 == ctx */
 	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, ctx_offset);
-	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof(mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof (target_mgreg_t));
 	/* Set arg2 == exc/ex_token_index */
 	if (resume_unwind)
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [1], 0, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [1], 0, sizeof (target_mgreg_t));
 	else
-		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_ARG_REG1, sizeof(mgreg_t));
+		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_ARG_REG1, sizeof (target_mgreg_t));
 	/* Set arg3 == rethrow/pc offset */
 	if (resume_unwind) {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof (target_mgreg_t));
 	} else if (corlib) {
 		if (llvm_abs)
 			/*
 			 * The caller doesn't pass in a pc/pc offset, instead we simply use the
 			 * caller ip. Negate the pc adjustment done in mono_amd64_throw_corlib_exception ().
 			 */
-			amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 1, sizeof(mgreg_t));
+			amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 1, sizeof  (target_mgreg_t));
 		else
-			amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG2, sizeof(mgreg_t));
+			amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG2, sizeof (target_mgreg_t));
 	} else {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], rethrow, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], rethrow, sizeof (target_mgreg_t));
 
 		/* Set arg4 == preserve_ips */
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [3], preserve_ips, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [3], preserve_ips, sizeof (target_mgreg_t));
 	}
 
 	if (aot) {
@@ -934,6 +934,16 @@ mono_amd64_get_exception_trampolines (gboolean aot)
 
 	return tramps;
 }
+
+#else
+
+GSList*
+mono_amd64_get_exception_trampolines (gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
 #endif /* !DISABLE_JIT */
 
 void
@@ -1932,57 +1942,6 @@ mono_arch_setup_resume_sighandler_ctx (MonoContext *ctx, gpointer func)
 		MONO_CONTEXT_SET_SP (ctx, (guint64)MONO_CONTEXT_GET_SP (ctx) - 8);
 	MONO_CONTEXT_SET_IP (ctx, func);
 }
-
-#ifdef DISABLE_JIT
-gpointer
-mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-gpointer
-mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-
-GSList*
-mono_amd64_get_exception_trampolines (gboolean aot)
-{
-	g_assert_not_reached ();
-	return NULL;
-}
-#endif /* DISABLE_JIT */
 
 #if !MONO_SUPPORT_TASKLETS || defined(DISABLE_JIT)
 MonoContinuationRestore

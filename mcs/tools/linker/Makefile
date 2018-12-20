@@ -15,11 +15,14 @@ TEST_CASES := \
 	mscorlib/test-methodimpl-01.cs \
 	mscorlib/test-reflection-01.cs \
 	mscorlib/test-reflection-02.cs \
+	mscorlib/test-reflection-03.cs \
+	mscorlib/test-reflection-04.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
-	System/test-security.cs
+	System/test-security.cs \
+	System.Core/test-plinq-01.cs
 
 # Disabled tests
 #	mscorlib/test-marshaling.cs
@@ -59,6 +62,9 @@ mscorlib/test-marshaling.cs: $(MARSHALING_TEST_NATIVE)
 System/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
+System.Core/test-%.cs:
+	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
+
 System.Net.Http/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
@@ -68,11 +74,11 @@ LINKER_PROFILE_OPTIONS :=
 
 # Should be in sync with runtime sdk flags
 ifeq ($(PROFILE),monotouch)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature sre
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw --exclude-feature sre
 endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
@@ -83,7 +89,7 @@ TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-a
 
 .NOTPARALLEL:
 
-System.Net.Http/test-%.exe System/test-%.exe mscorlib/test-%.exe:
+System.Net.Http/test-%.exe System.Core/test-%.exe System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@

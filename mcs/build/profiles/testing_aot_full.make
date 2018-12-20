@@ -10,11 +10,7 @@ PROFILE_MCS_FLAGS += \
 
 AOT_FRIENDLY_PROFILE = yes
 NO_VTS_TEST = yes
-NO_SRE=1
-
-# Note need for trailing comma. If you add, keep it
-PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
+NO_SRE = yes
 
 ALWAYS_AOT_BCL = yes
 ALWAYS_AOT_TESTS = yes
-

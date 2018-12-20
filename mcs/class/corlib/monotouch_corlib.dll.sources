@@ -1,4 +1,4 @@
-#include corlib.dll.sources
+#include unix_build_corlib.dll.sources
 CommonCrypto/CommonCrypto.cs
 CommonCrypto/CryptorTransform.cs
 CommonCrypto/FastCryptorTransform.cs
@@ -7,8 +7,6 @@ CommonCrypto/RijndaelManaged.cs
 CommonCrypto/RNGCryptoServiceProvider.cryptor.cs
 CommonCrypto/RC4CommonCrypto.cs
 CoreFoundation/CFHelpers.cs
-Mono/MonoNativePlatform.cs
-Mono/MonoNativePlatformType.cs
 System.Text/EncodingHelper.MonoTouch.cs
 System/Environment.iOS.cs
 System/Guid.MonoTouch.cs

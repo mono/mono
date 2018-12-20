@@ -215,14 +215,14 @@ and
 options. This feature is experimental.
 .TP
 .I llvmopts=[options]
-Use this option to override the built-in set of flags passed to the
+Use this option to add more flags to the built-in set of flags passed to the
 LLVM optimizer.   The list of possible flags that can be passed can be
 obtained by calling the bundled 
 .I opt
 program that comes with Mono.
 .TP
 .I llvmllc=[options]
-Use this option to override the built-in set of flags passed to the
+Use this option to add more flags to the built-in set of flags passed to the
 LLVM static compiler (llc).   The list of possible flags that can be passed can be
 obtained by calling the bundled 
 .I llc
@@ -830,7 +830,7 @@ This compiles a method (namespace.name:methodname), this is used for
 testing the compiler performance or to examine the output of the code
 generator. 
 .TP
-\fB--compileall\fR
+\fB--compile-all\fR
 Compiles all the methods in an assembly.  This is used to test the
 compiler performance or to examine the output of the code generator
 .TP 
@@ -854,7 +854,7 @@ on.
 .TP
 \fB--ncompile\fR
 Instruct the runtime on the number of times that the method specified
-by --compile (or all the methods if --compileall is used) to be
+by --compile (or all the methods if --compile-all is used) to be
 compiled.  This is used for testing the code generator performance. 
 .TP 
 \fB--stats\fR

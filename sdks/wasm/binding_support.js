@@ -170,6 +170,8 @@ var BindingSupportLib = {
 				});
 
 				this.call_method (this.setup_js_cont, null, "mo", [ mono_obj, cont_obj ]);
+				obj.__mono_js_cont__ = cont_obj.__mono_gchandle__;
+				cont_obj.__mono_js_task__ = obj.__mono_gchandle__;
 				return promise;
 			}
 
@@ -690,11 +692,18 @@ var BindingSupportLib = {
 		mono_wasm_unregister_obj: function(js_id) {
 			var obj = this.mono_wasm_object_registry[js_id - 1];
 			if (typeof obj  !== "undefined" && obj !== null) {
+				// if this is the global object then do not
+				// unregister it.
+				if (___mono_wasm_global___ && ___mono_wasm_global___ === obj)
+					return obj;
+
 				var gc_handle = obj.__mono_gchandle__;
 				if (typeof gc_handle  !== "undefined") {
 					this.wasm_unbind_js_obj_and_free(js_id);
-					delete obj.__mono_gchandle__;
-					delete obj.__mono_jshandle__;
+
+					obj.__mono_gchandle__ = undefined;
+					obj.__mono_jshandle__ = undefined;
+
 					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
 				}
@@ -704,6 +713,16 @@ var BindingSupportLib = {
 		mono_wasm_free_handle: function(handle) {
 			this.mono_wasm_unregister_obj(handle);
 		},
+		mono_wasm_free_object: function(mono_obj) {
+			var js_id = this.call_method (this.get_js_id, null, "m", [mono_obj]);
+			if (js_id)
+			{
+				var obj = this.mono_wasm_object_registry[js_id - 1];
+				if (typeof obj  !== "undefined" && obj !== null) {
+					this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ obj.__mono_gchandle__ ]);
+				}
+			}
+		},		
 		mono_wasm_get_global: function() {
 			function testGlobal(obj) {
 				obj['___mono_wasm_global___'] = obj;
@@ -855,6 +874,16 @@ var BindingSupportLib = {
 
 		return BINDING.js_to_mono_obj (globalObj);
 	},
+	mono_wasm_release_handle: function(js_handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_free_handle(js_handle);
+	},	
+	mono_wasm_release_object: function(mono_obj, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_free_object(mono_obj);
+	},	
 
 };
 

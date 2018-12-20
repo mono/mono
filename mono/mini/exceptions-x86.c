@@ -858,7 +858,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	} else if (*lmf) {
 		g_assert ((((gsize)(*lmf)->previous_lmf) & 2) == 0);
 
-		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
+		if ((ji = mini_jit_info_table_find (domain, (gpointer)(uintptr_t)(*lmf)->eip, NULL))) {
 			frame->ji = ji;
 		} else {
 			if (!(*lmf)->method)
@@ -1103,7 +1103,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
-#if defined(MONO_ARCH_USE_SIGACTION) && !defined(MONO_CROSS_COMPILE)
+#if defined (MONO_ARCH_USE_SIGACTION) && !defined (MONO_CROSS_COMPILE)
 	MonoException *exc = NULL;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (gpointer)UCONTEXT_REG_EIP (ctx), NULL);

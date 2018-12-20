@@ -1972,7 +1972,7 @@ namespace System
         #region Static Members
 
         #region Internal
-#if !MONO
+
         internal static RuntimeType GetType(String typeName, bool throwOnError, bool ignoreCase, bool reflectionOnly,
             ref StackCrawlMark stackMark)
         {
@@ -1989,6 +1989,7 @@ namespace System
                 typeName, throwOnError, ignoreCase, reflectionOnly, ref stackMark, false);
         }
 
+#if !MONO
         internal static MethodBase GetMethodBase(RuntimeModule scope, int typeMetadataToken)
         {
             return GetMethodBase(ModuleHandle.ResolveMethodHandleInternal(scope, typeMetadataToken));
@@ -2638,7 +2639,11 @@ namespace System
                             for(int i = 0; i < parameterInfos.Length; i ++)
                             {
                                 // a null argument type implies a null arg which is always a perfect match
+#if MONO                                
+                                if ((object)argumentTypes[i] != null && !argumentTypes[i].MatchesParameterTypeExactly(parameterInfos[i]))
+#else
                                 if ((object)argumentTypes[i] != null && !Object.ReferenceEquals(parameterInfos[i].ParameterType, argumentTypes[i]))
+#endif
                                     return false;
                             }
                         }
@@ -3208,6 +3213,7 @@ namespace System
         #endregion
 
         #region Find XXXInfo
+#if !MONO        
         protected override MethodInfo GetMethodImpl(
             String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
             Type[] types, ParameterModifier[] modifiers) 
@@ -3245,7 +3251,7 @@ namespace System
 
             return binder.SelectMethod(bindingAttr, candidates.ToArray(), types, modifiers) as MethodInfo;                  
         }
-
+#endif
 
         protected override ConstructorInfo GetConstructorImpl(
             BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, 
@@ -4258,6 +4264,10 @@ namespace System
 
                 if (rtInstantiationElem == null)
                 {
+#if MONO                    
+                    if (instantiationElem.IsSignatureType)
+                        return MakeGenericSignatureType (this, instantiation);
+#endif
                     Type[] instantiationCopy = new Type[instantiation.Length];
                     for (int iCopy = 0; iCopy < instantiation.Length; iCopy++)
                         instantiationCopy[iCopy] = instantiation[iCopy];

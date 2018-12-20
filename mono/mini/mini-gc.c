@@ -45,7 +45,8 @@ get_provenance_func (void)
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/unlocked.h>
 
-#define SIZEOF_SLOT ((int)sizeof (mgreg_t))
+//#define SIZEOF_SLOT ((int)sizeof (host_mgreg_t))
+//#define SIZEOF_SLOT ((int)sizeof (target_mgreg_t))
 
 #define GC_BITS_PER_WORD (sizeof (mword) * 8)
 
@@ -145,7 +146,7 @@ typedef struct {
 	MonoThreadUnwindState unwind_state;
 	MonoThreadInfo *info;
 	/* For debugging */
-	mgreg_t tid;
+	host_mgreg_t tid;
 	gpointer ref_to_track;
 	/* Number of frames collected during the !precise pass */
 	int nframes;
@@ -408,6 +409,11 @@ encode_frame_reg (int frame_reg)
 		return 0;
 	else if (frame_reg == S390_FP)
 		return 1;
+#elif defined (TARGET_RISCV)
+	if (frame_reg == RISCV_SP)
+		return 0;
+	else if (frame_reg == RISCV_FP)
+		return 1;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -438,6 +444,11 @@ decode_frame_reg (int encoded)
 		return S390_SP;
 	else if (encoded == 1)
 		return S390_FP;
+#elif defined (TARGET_RISCV)
+	if (encoded == 0)
+		return RISCV_SP;
+	else if (encoded == 1)
+		return RISCV_FP;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -469,6 +480,11 @@ static int callee_saved_regs [] = {
   ppc_r29, ppc_r30, ppc_r31 };
 #elif defined(TARGET_POWERPC)
 static int callee_saved_regs [] = { ppc_r6, ppc_r7, ppc_r8, ppc_r9, ppc_r10, ppc_r11, ppc_r12, ppc_r13, ppc_r14 };
+#elif defined (TARGET_RISCV)
+static int callee_saved_regs [] = {
+	RISCV_S0, RISCV_S1, RISCV_S2, RISCV_S3, RISCV_S4, RISCV_S5,
+	RISCV_S6, RISCV_S7, RISCV_S8, RISCV_S9, RISCV_S10, RISCV_S11,
+};
 #endif
 
 static guint32
@@ -721,6 +737,11 @@ get_frame_pointer (MonoContext *ctx, int frame_reg)
 			return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 		else if (frame_reg == S390_FP)
 			return (host_mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+#elif defined (TARGET_RISCV)
+		if (frame_reg == RISCV_SP)
+			return MONO_CONTEXT_GET_SP (ctx);
+		else if (frame_reg == RISCV_FP)
+			return MONO_CONTEXT_GET_BP (ctx);
 #endif
 		g_assert_not_reached ();
 		return 0;
@@ -1848,7 +1869,7 @@ process_variables (MonoCompile *cfg)
 			set_slot_everywhere (gcfg, pos, SLOT_NOREF);
 			if (cfg->verbose_level > 1)
 				printf ("\tnoref%s at %s0x%x(fp) (R%d, slot = %d): %s\n", (is_arg ? " arg" : ""), ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
-			if (!t->byref && sizeof (mgreg_t) == 4 && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R8)) {
+			if (!t->byref && sizeof (host_mgreg_t) == 4 && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R8)) {
 				set_slot_everywhere (gcfg, pos + 1, SLOT_NOREF);
 				if (cfg->verbose_level > 1)
 					printf ("\tnoref at %s0x%x(fp) (R%d, slot = %d): %s\n", ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)(ins->inst_offset + 4) : (int)ins->inst_offset + 4, vmv->vreg, pos + 1, mono_type_full_name (ins->inst_vtype));
@@ -1950,10 +1971,10 @@ process_param_area_slots (MonoCompile *cfg)
 			if (MONO_TYPE_ISSTRUCT (t)) {
 				size = mini_type_stack_size_full (t, &align, FALSE);
 			} else {
-				size = sizeof (mgreg_t);
+				size = sizeof (target_mgreg_t);
 			}
 
-			for (i = 0; i < size / sizeof (mgreg_t); ++i) {
+			for (i = 0; i < size / sizeof (target_mgreg_t); ++i) {
 				g_assert (slot + i >= 0 && slot + i < gcfg->nslots);
 				is_param [slot + i] = TRUE;
 			}

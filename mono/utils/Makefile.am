@@ -91,6 +91,7 @@ monoutils_sources = \
 	mono-filemap.c		\
 	mono-mmap.c  		\
 	mono-mmap-windows.c  		\
+	mono-mmap-wasm.c  		\
 	mono-mmap.h  		\
 	mono-mmap-internals.h	\
 	mono-mmap-windows-internals.h	\
@@ -290,6 +291,10 @@ endif
 
 if S390X
 arch_sources += mono-hwcap-s390x.c
+endif
+
+if RISCV
+arch_sources += mono-hwcap-riscv.c
 endif
 
 if HOST_WASM

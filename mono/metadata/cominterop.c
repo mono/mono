@@ -91,7 +91,7 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
-	mono_register_jit_icall (func, name, sig, save);
+	mono_register_jit_icall_full (func, name, sig, save, name);
 }
 
 static mono_bstr
@@ -646,7 +646,7 @@ cominterop_type_from_handle (MonoType *handle)
 	MonoDomain *domain = mono_domain_get (); 
 	MonoClass *klass = mono_class_from_mono_type_internal (handle);
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	ret = mono_type_get_object_checked (domain, handle, error);
 	mono_error_set_pending_exception (error);

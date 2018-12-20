@@ -346,6 +346,22 @@ typedef enum {
 	CallType_OneWay = 3
 } MonoCallType;
 
+/* System.Threading.StackCrawlMark */
+/*
+ * This type is used to identify the method where execution has entered
+ * the BCL during stack walks. The outermost public method should
+ * define it like this:
+ * StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+ * and pass the stackMark as a byref argument down the call chain
+ * until it reaches an icall.
+ */
+typedef enum {
+	STACK_CRAWL_ME = 0,
+	STACK_CRAWL_CALLER = 1,
+	STACK_CRAWL_CALLERS_CALLER = 2,
+	STACK_CRAWL_THREAD = 3
+} MonoStackCrawlMark;
+
 /* MonoSafeHandle is in class-internals.h. */
 /* Safely access System.Net.Sockets.SafeSocketHandle from native code */
 TYPED_HANDLE_DECL (MonoSafeHandle);
@@ -682,14 +698,6 @@ typedef struct {
 } MonoRegionInfo;
 
 typedef struct {
-	MonoObject obj;
-	MonoString *str;
-	gint32 options;
-	MonoArray *key;
-	gint32 lcid;
-} MonoSortKey;
-
-typedef struct {
 	MonoObject object;
 	guint32 intType;
 } MonoInterfaceTypeAttribute;
@@ -972,12 +980,6 @@ TYPED_HANDLE_DECL (MonoReflectionParameter);
 
 struct _MonoReflectionMethodBody {
 	MonoObject object;
-	MonoArray *clauses;
-	MonoArray *locals;
-	MonoArray *il;
-	MonoBoolean init_locals;
-	guint32 local_var_sig_token;
-	guint32 max_stack;
 };
 
 /* Safely access System.Reflection.MethodBody from native code */
@@ -1655,8 +1657,21 @@ mono_string_from_blob (const char *str, MonoError *error);
 void
 mono_release_type_locks (MonoInternalThread *thread);
 
+/**
+ * mono_string_handle_length:
+ * \param s \c MonoString
+ * \returns the length in characters of the string
+ */
+#ifdef ENABLE_CHECKED_BUILD_GC
+
 int
 mono_string_handle_length (MonoStringHandle s);
+
+#else
+
+#define mono_string_handle_length(s) (MONO_HANDLE_GETVAL ((s), length))
+
+#endif
 
 char *
 mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
@@ -2042,6 +2057,9 @@ mono_runtime_invoke_checked (MonoMethod *method, void *obj, void **params, MonoE
 MonoObjectHandle
 mono_runtime_invoke_handle (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
 
+void
+mono_runtime_invoke_handle_void (MonoMethod *method, MonoObjectHandle obj, void **params, MonoError* error);
+
 MonoObject*
 mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			       MonoObject **exc, MonoError *error);
@@ -2159,6 +2177,8 @@ mono_string_empty_handle (MonoDomain *domain);
 
 gpointer
 mono_object_get_data (MonoObject *o);
+
+#define mono_handle_get_data_unsafe(handle) ((gpointer)((guint8*)MONO_HANDLE_RAW (handle) + MONO_ABI_SIZEOF (MonoObject)))
 
 gpointer
 mono_vtype_get_field_addr (gpointer vtype, MonoClassField *field);

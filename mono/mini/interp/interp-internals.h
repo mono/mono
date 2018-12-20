@@ -38,6 +38,10 @@ enum {
 	VAL_OBJ     = 3 + VAL_POINTER
 };
 
+enum {
+	INTERP_OPT_INLINE = 1
+};
+
 #if SIZEOF_VOID_P == 4
 typedef guint32 mono_u;
 typedef gint32  mono_i;
@@ -135,12 +139,9 @@ struct _InterpFrame {
 	unsigned char  invoke_trap;
 	const unsigned short  *ip;
 	MonoException     *ex;
-	MonoExceptionClause *ex_handler;
-	MonoDomain *domain;
 };
 
 typedef struct {
-	InterpFrame *current_frame;
 	/* Resume state for resuming execution in mixed mode */
 	gboolean       has_resume_state;
 	/* Frame to resume execution at */
@@ -152,6 +153,7 @@ typedef struct {
 } ThreadContext;
 
 extern int mono_interp_traceopt;
+extern int mono_interp_opt;
 extern GSList *mono_interp_jit_classes;
 
 void

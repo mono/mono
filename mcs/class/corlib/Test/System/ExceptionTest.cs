@@ -266,6 +266,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void GetObjectData ()
 		{
 			string msg = "MESSAGE";
@@ -383,6 +384,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category("StackWalks")]
 		public void Source ()
 		{
 			Exception ex1 = new Exception ("MSG");
@@ -461,6 +463,7 @@ namespace MonoTests.System
 				//      "managed_thread_ptr" : "0x0",
 				//      "thread_info_addr" : "0x0",
 				//      "native_thread_id" : "0x0",
+				//      "managed_exception_type" : "System.Exception",
 				//      "managed_frames" : [
 				//        {
 				//          "is_managed" : "true",
@@ -504,6 +507,39 @@ namespace MonoTests.System
 			Assert.IsTrue (portable_hash != 0, "#1");
 			Assert.IsTrue (unportable_hash != 0, "#2");
 			Assert.IsTrue (dump.Length > 0, "#3");
+		}
+
+		void DumpLogSet ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("EnableCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			convert.Invoke(null, new object[] { "./" });
+		}
+
+		void DumpLogUnset ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("EnableCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			convert.Invoke(null, new object[] { null });
+		}
+
+		void DumpLogCheck ()
+		{
+			var monoType = Type.GetType ("Mono.Runtime", false);
+			var convert = monoType.GetMethod("CheckCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
+			var result = (int) convert.Invoke(null, new object[] { "./", true });
+			var monoSummaryDone = 8;
+			Assert.AreEqual (monoSummaryDone, result, "#DLC1");
+		}
+
+		[Test]
+		[Category("NotOnWindows")]
+		public void DumpICallTotalLogged ()
+		{
+			DumpLogSet ();
+			DumpTotal ();
+			DumpLogUnset ();
+			DumpLogCheck ();
 		}
 
 		[Test]

@@ -43,7 +43,6 @@
 
 #include "w32file.h"
 #include "w32file-internals.h"
-
 #include "w32file-unix-glob.h"
 #include "w32error.h"
 #include "fdhandle.h"
@@ -54,6 +53,7 @@
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
 #include "utils/refcount.h"
+#include "icall-decl.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -66,7 +66,7 @@
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
 
-#define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 
 typedef struct {
 	guint64 device;
@@ -111,7 +111,7 @@ static MonoCoopMutex finds_mutex;
 
 #if HOST_DARWIN
 typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
-static void *libc_handle;
+static MonoDl *libc_handle;
 static clonefile_fn clonefile_ptr;
 #endif
 
@@ -4315,10 +4315,15 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 }
 #endif
 
-#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
+#ifndef PLATFORM_NO_DRIVEINFO
 gboolean
 mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
+	g_assert (free_bytes_avail);
+	g_assert (total_number_of_bytes);
+	g_assert (total_number_of_free_bytes);
+
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
 #elif defined(HAVE_STATFS)
@@ -4375,51 +4380,23 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	}
 
 	/* total number of free bytes for non-root */
-	if (free_bytes_avail != NULL) {
-		if (isreadonly) {
-			*free_bytes_avail = 0;
-		}
-		else {
-			*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
-		}
-	}
+	if (isreadonly)
+		*free_bytes_avail = 0;
+	else
+		*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 
 	/* total number of bytes available for non-root */
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
-	}
+	*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 
 	/* total number of bytes available for root */
-	if (total_number_of_free_bytes != NULL) {
-		if (isreadonly) {
-			*total_number_of_free_bytes = 0;
-		}
-		else {
-			*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
-		}
-	}
-	
-	return(TRUE);
-}
-#else
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
-{
-	if (free_bytes_avail != NULL) {
-		*free_bytes_avail = (guint64) -1;
-	}
-
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = (guint64) -1;
-	}
-
-	if (total_number_of_free_bytes != NULL) {
-		*total_number_of_free_bytes = (guint64) -1;
-	}
-
-	return(TRUE);
-}
+	if (isreadonly)
+		*total_number_of_free_bytes = 0;
+	else
+		*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 #endif
+	return(TRUE);
+}
+#endif // PLATFORM_NO_DRIVEINFO
 
 /*
  * General Unix support
@@ -4708,8 +4685,10 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 #endif
 
 guint32
-mono_w32file_get_drive_type(const gunichar2 *root_path_name)
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
 {
+	// FIXME Check for embedded nuls here or in managed.
+
 	gchar *utf8_root_path_name;
 	guint32 drive_type;
 
@@ -4889,14 +4868,11 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	offset = ((gint64)offset_high << 32) | offset_low;
 	length = ((gint64)length_high << 32) | length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #else
 	offset = offset_low;
 	length = length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %p, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #endif
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 
 	ret = _wapi_unlock_file_region (((MonoFDHandle*) filehandle)->fd, offset, length);
 
@@ -4922,9 +4898,9 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0, NULL);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
+	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
@@ -4943,7 +4919,7 @@ mono_w32file_cleanup (void)
 	mono_coop_mutex_destroy (&finds_mutex);
 
 #if HOST_DARWIN
-	dlclose (libc_handle);
+	mono_dl_close (libc_handle);
 #endif
 }
 

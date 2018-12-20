@@ -1,5 +1,4 @@
 Microsoft.Win32/RegistryKeyTest.cs
-../../../build/common/MonoNativeConfig.cs
 Mono/DataConvertTest.cs
 ../Mono/DataConverter.cs
 Mono/NativePlatformTest.cs

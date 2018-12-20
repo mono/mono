@@ -329,6 +329,11 @@ namespace System.Windows.Forms
 			set { SetSystemColors (KnownColor.ControlLightLight, value); }
 		}
 
+		public virtual Color ColorButtonFace {
+			get { return SystemColors.ButtonFace;}
+			set { SetSystemColors (KnownColor.ButtonFace, value); }
+		}
+
 		public virtual Color ColorInfoText {
 			get { return SystemColors.InfoText;}
 			set { SetSystemColors (KnownColor.InfoText, value); }

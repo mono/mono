@@ -261,5 +261,64 @@ namespace System
 		[PreserveDependency (".ctor()", "System.Runtime.CompilerServices.IsByRefLikeAttribute")]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool IsByRefLike (RuntimeType type);
+
+		internal static bool IsTypeDefinition (RuntimeType type)
+		{
+			// That's how it has been done on CoreFX but we have no GetCorElementType method implementation
+			// see https://github.com/dotnet/coreclr/pull/11355
+
+			// CorElementType corElemType = GetCorElementType (type);
+			// if (!((corElemType >= CorElementType.Void && corElemType < CorElementType.Ptr) ||
+			// 		corElemType == CorElementType.ValueType ||
+			// 		corElemType == CorElementType.Class ||
+			// 		corElemType == CorElementType.TypedByRef ||
+			// 		corElemType == CorElementType.I ||
+			// 		corElemType == CorElementType.U ||
+			// 		corElemType == CorElementType.Object))
+			// 	return false;
+			// if (HasInstantiation (type) && !IsGenericTypeDefinition (type))
+			// 	return false;
+			// return true;
+
+			// It's like a workaround mentioned in https://github.com/dotnet/corefx/issues/17345
+			return !type.HasElementType && !type.IsConstructedGenericType && !type.IsGenericParameter;
+		}		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern RuntimeType internal_from_name (string name, ref StackCrawlMark stackMark, Assembly callerAssembly, bool throwOnError, bool ignoreCase, bool reflectionOnly);
+
+		internal static RuntimeType GetTypeByName(string typeName, bool throwOnError, bool ignoreCase, bool reflectionOnly, ref StackCrawlMark stackMark,
+												  bool loadTypeFromPartialName)
+		{
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			if (typeName == String.Empty)
+				if (throwOnError)
+					throw new TypeLoadException ("A null or zero length string does not represent a valid Type.");
+				else
+					return null;
+
+			if (reflectionOnly) {
+				int idx = typeName.IndexOf (',');
+				if (idx < 0 || idx == 0 || idx == typeName.Length - 1)
+					throw new ArgumentException ("Assembly qualifed type name is required", "typeName");
+				string an = typeName.Substring (idx + 1);
+				Assembly a;
+				try {
+					a = Assembly.ReflectionOnlyLoad (an);
+				} catch {
+					if (throwOnError)
+						throw;
+					return null;
+				}
+				return (RuntimeType)a.GetType (typeName.Substring (0, idx), throwOnError, ignoreCase);
+			}
+
+			var t = internal_from_name (typeName, ref stackMark, null, throwOnError, ignoreCase, false);
+			if (throwOnError && t == null)
+				throw new TypeLoadException ("Error loading '" + typeName + "'");
+			return t;
+		}
 	}
 }

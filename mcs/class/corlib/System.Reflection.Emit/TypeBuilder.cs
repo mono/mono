@@ -2027,6 +2027,8 @@ namespace System.Reflection.Emit
 		{
 			throw new ArgumentException("Constant does not match the defined type.");
 		}
+
+		public override bool IsTypeDefinition => true;
 	}
 }
 #endif

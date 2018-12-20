@@ -15,7 +15,7 @@ public class Driver
 
 	public static void RunTests ()
 	{
-		string exclude = "NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,SatelliteAssembliesNotWorking,AndroidNotWorking";
+		string exclude = "NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking";
 		if (IntPtr.Size == 4)
 			exclude += ",LargeFileSupport";
 

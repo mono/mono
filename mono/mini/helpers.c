@@ -65,7 +65,7 @@ static const gint16 opidx [] = {
 /*This enables us to use the right tooling when building the cross compiler for iOS.*/
 #if defined (__APPLE__) && defined (TARGET_ARM) && (defined(__i386__) || defined(__x86_64__))
 
-#define ARCH_PREFIX "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/"
+//#define ARCH_PREFIX "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/"
 
 #endif
 
@@ -239,6 +239,10 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 #define AS_CMD "as -arch ppc64"
 #elif defined(__powerpc64__)
 #define AS_CMD "as -mppc64"
+#elif defined (TARGET_RISCV64)
+#define AS_CMD "as -march=rv64ima"
+#elif defined (TARGET_RISCV32)
+#define AS_CMD "as -march=rv32ima"
 #else
 #define AS_CMD "as"
 #endif

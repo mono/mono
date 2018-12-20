@@ -214,7 +214,12 @@ typedef struct {
 #define MONO_ARCH_AOT_SUPPORTED 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
+
 #define MONO_ARCH_LLVM_SUPPORTED 1
+#if defined(HOST_WIN32) && defined(TARGET_WIN32)
+// Only supported for Windows cross compiler builds, host == Win32, target != Win32.
+#undef MONO_ARCH_LLVM_SUPPORTED
+#endif
 
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 
@@ -329,12 +334,12 @@ guint32
 mono_x86_get_this_arg_offset (MonoMethodSignature *sig);
 
 void
-mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
-						  mgreg_t eip, gboolean rethrow, gboolean preserve_ips);
+mono_x86_throw_exception (host_mgreg_t *regs, MonoObject *exc,
+						  host_mgreg_t eip, gboolean rethrow, gboolean preserve_ips);
 
 void
-mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index, 
-								 mgreg_t eip, gint32 pc_offset);
+mono_x86_throw_corlib_exception (host_mgreg_t *regs, guint32 ex_token_index,
+								 host_mgreg_t eip, gint32 pc_offset);
 
 void 
 mono_x86_patch (unsigned char* code, gpointer target);

@@ -98,7 +98,7 @@ typedef enum {
 	WRAPPER_SUBTYPE_STRING_CTOR,
 	/* Subtypes of MONO_WRAPPER_STELEMREF */
 	WRAPPER_SUBTYPE_VIRTUAL_STELEMREF,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER,
 	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4,
 	WRAPPER_SUBTYPE_FAST_MONITOR_EXIT,
@@ -116,7 +116,7 @@ typedef enum {
 	WRAPPER_SUBTYPE_ICALL_WRAPPER,
 	WRAPPER_SUBTYPE_NATIVE_FUNC_AOT,
 	WRAPPER_SUBTYPE_PINVOKE,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
 	WRAPPER_SUBTYPE_GSHAREDVT_IN,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
@@ -126,7 +126,7 @@ typedef enum {
 	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
 	WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL,
 	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG,
 	WRAPPER_SUBTYPE_INTERP_IN,
@@ -313,8 +313,6 @@ typedef struct {
 	void (*mb_emit_exception) (MonoMethodBuilder *mb, const char *exc_nspace, const char *exc_name, const char *msg);
 	void (*mb_emit_byte) (MonoMethodBuilder *mb, guint8 op);
 } MonoMarshalCallbacks;
-
-G_BEGIN_DECLS
 
 /*type of the function pointer of methods returned by mono_marshal_get_runtime_invoke*/
 typedef MonoObject *(*RuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
@@ -566,10 +564,10 @@ void
 mono_string_utf16_to_builder (MonoStringBuilder *sb, const gunichar2 *text);
 
 void
-mono_string_to_byvalstr (gpointer dst, MonoString *src, int size);
+mono_string_to_byvalstr (char *dst, MonoString *src, int size);
 
 void
-mono_string_to_byvalwstr (gpointer dst, MonoString *src, int size);
+mono_string_to_byvalwstr (gunichar2 *dst, MonoString *src, int size);
 
 gpointer
 mono_delegate_to_ftnptr (MonoDelegate *delegate);
@@ -890,7 +888,5 @@ MonoMethod*
 mono_mb_create_and_cache_full (GHashTable *cache, gpointer key,
 							   MonoMethodBuilder *mb, MonoMethodSignature *sig,
 							   int max_stack, WrapperInfo *info, gboolean *out_found);
-
-G_END_DECLS
 
 #endif /* __MONO_MARSHAL_H__ */

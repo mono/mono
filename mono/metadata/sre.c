@@ -2576,7 +2576,7 @@ reflection_setup_internal_class_internal (MonoReflectionTypeBuilderHandle ref_tb
 		goto leave;
 	}
 
-	MONO_HANDLE_SETVAL (ref_tb, state, MonoTypeBuilderState, MonoTypeBuilderEntered);
+	MONO_HANDLE_SETVAL (ref_tb, state, gint32/*MonoTypeBuilderState*/, MonoTypeBuilderEntered);
 	MonoReflectionModuleBuilderHandle module_ref;
 	module_ref = MONO_HANDLE_NEW_GET (MonoReflectionModuleBuilder, ref_tb, module);
 	GHashTable *unparented_classes;
@@ -3588,7 +3588,7 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 
 	if (klass->parent) {
 		if (!klass->parent->size_inited)
-			mono_class_init (klass->parent);
+			mono_class_init_internal (klass->parent);
 		instance_size = klass->parent->instance_size;
 	} else {
 		instance_size = MONO_ABI_SIZEOF (MonoObject);
@@ -3795,8 +3795,8 @@ remove_instantiations_of_and_ensure_contents (gpointer key,
 	MonoType *type = (MonoType*)key;
 	MonoClass *klass = data->klass;
 	gboolean already_failed = !is_ok (data->error);
-	ERROR_DECL_VALUE (lerror);
-	MonoError *error = already_failed ? &lerror : data->error;
+	ERROR_DECL (lerror);
+	MonoError *error = already_failed ? lerror : data->error;
 
 	if ((type->type == MONO_TYPE_GENERICINST) && (type->data.generic_class->container_class == klass)) {
 		MonoClass *inst_klass = mono_class_from_mono_type_internal (type);
@@ -4236,7 +4236,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		MonoType *type = mono_reflection_type_get_handle ((MonoReflectionType*)obj, error);
 		goto_if_nok (error, return_null);
 		MonoClass *mc = mono_class_from_mono_type_internal (type);
-		if (!mono_class_init (mc)) {
+		if (!mono_class_init_internal (mc)) {
 			mono_error_set_for_class_failure (error, mc);
 			goto return_null;
 		}
@@ -4398,7 +4398,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		void *args [16];
 		args [0] = obj;
 		obj = mono_runtime_invoke_checked (resolve_method, NULL, args, error);
-		mono_error_assert_ok (error);
+		goto_if_nok (error, return_null);
 		g_assert (obj);
 		result = mono_reflection_resolve_object (image, obj, handle_class, context, error);
 		goto exit;

@@ -18,8 +18,6 @@
 #include "mono-threads.h"
 #include "mono-threads-api.h"
 
-G_BEGIN_DECLS
-
 /* JIT specific interface */
 extern volatile size_t mono_polling_required;
 
@@ -44,6 +42,13 @@ static inline gboolean
 mono_threads_are_safepoints_enabled (void)
 {
 	return mono_threads_is_cooperative_suspension_enabled () || mono_threads_is_hybrid_suspension_enabled ();
+}
+
+static inline gboolean
+mono_threads_is_multiphase_stw_enabled (void)
+{
+	/* So far, hybrid suspend is the only one using a multi-phase STW */
+	return mono_threads_is_hybrid_suspension_enabled ();
 }
 
 static inline void
@@ -104,7 +109,5 @@ mono_threads_enter_gc_unsafe_region_with_info (THREAD_INFO_TYPE *, MonoStackData
 G_EXTERN_C // due to THREAD_INFO_TYPE varying
 gpointer
 mono_threads_enter_gc_unsafe_region_unbalanced_with_info (THREAD_INFO_TYPE *info, MonoStackData *stackdata);
-
-G_END_DECLS
 
 #endif

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {

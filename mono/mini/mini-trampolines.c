@@ -350,7 +350,7 @@ mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean ad
 			callee_array_helper = TRUE;
 			m = info->d.generic_array_helper.method;
 		}
-	} else if (m->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	} else if (m->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (m);
 
 		/* Same for synchronized inner wrappers */
@@ -458,7 +458,7 @@ mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboo
 		if (info && info->subtype == WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER) {
 			m = info->d.generic_array_helper.method;
 		}
-	} else if (m->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	} else if (m->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (m);
 
 		/* Same for synchronized inner wrappers */
@@ -1050,9 +1050,9 @@ mono_aot_trampoline (host_mgreg_t *regs, guint8 *code, guint8 *token_info,
 
 	UnlockedIncrement (&trampoline_calls);
 
-	image = (MonoImage *)*(gpointer*)(gpointer)token_info;
+	image = (MonoImage *)*(gpointer*)token_info;
 	token_info += sizeof (gpointer);
-	token = *(guint32*)(gpointer)token_info;
+	token = *(guint32*)token_info;
 
 	addr = mono_aot_get_method_from_token (mono_domain_get (), image, token, error);
 	if (!is_ok (error))
@@ -1159,7 +1159,7 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 	MonoMethod *invoke = tramp_info->invoke;
 	guint8 *impl_this = (guint8 *)tramp_info->impl_this;
 	guint8 *impl_nothis = (guint8 *)tramp_info->impl_nothis;
-	ERROR_DECL_VALUE (err);
+	ERROR_DECL (err);
 	MonoMethodSignature *sig;
 	gpointer addr, compiled_method;
 	gboolean is_remote = FALSE;
@@ -1183,14 +1183,14 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 #ifndef DISABLE_REMOTING
 		if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
 			is_remote = TRUE;
-			error_init (&err);
+			error_init (err);
 #ifndef DISABLE_COM
 			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
 			   !mono_class_is_com_object (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class))
 #endif
-				method = mono_marshal_get_remoting_invoke (method, &err);
-			if (!is_ok (&err)) {
-				mono_error_set_pending_exception (&err);
+				method = mono_marshal_get_remoting_invoke (method, err);
+			if (!is_ok (err)) {
+				mono_error_set_pending_exception (err);
 				return NULL;
 			}
 		}
@@ -1198,10 +1198,10 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 		if (!is_remote) {
 			sig = tramp_info->sig;
 			if (!(sig && method == tramp_info->method)) {
-				error_init (&err);
-				sig = mono_method_signature_checked (method, &err);
+				error_init (err);
+				sig = mono_method_signature_checked (method, err);
 				if (!sig) {
-					mono_error_set_pending_exception (&err);
+					mono_error_set_pending_exception (err);
 					return NULL;
 				}
 			}
@@ -1232,10 +1232,10 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 	if (method) {
 		sig = tramp_info->sig;
 		if (!(sig && method == tramp_info->method)) {
-			error_init (&err);
-			sig = mono_method_signature_checked (method, &err);
+			error_init (err);
+			sig = mono_method_signature_checked (method, err);
 			if (!sig) {
-				mono_error_set_pending_exception (&err);
+				mono_error_set_pending_exception (err);
 				return NULL;
 			}
 		}
@@ -1454,7 +1454,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 
 	error_init (error);
 
-	if (mono_use_interpreter) {
+	if (mono_use_interpreter && !mono_aot_only) {
 		gpointer ret = mini_get_interp_callbacks ()->create_method_pointer (method, FALSE, error);
 		if (!mono_error_ok (error))
 			return NULL;
@@ -1566,9 +1566,9 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 
 	buf = start = (guint8 *)mono_domain_alloc0 (domain, 2 * sizeof (gpointer));
 
-	*(gpointer*)(gpointer)buf = image;
+	*(gpointer*)buf = image;
 	buf += sizeof (gpointer);
-	*(guint32*)(gpointer)buf = token;
+	*(guint32*)buf = token;
 
 	tramp = mono_create_specific_trampoline (start, MONO_TRAMPOLINE_AOT, domain, NULL);
 

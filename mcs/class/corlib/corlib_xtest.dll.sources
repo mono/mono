@@ -18,7 +18,7 @@
 
 ../../../external/corefx/src/System.Reflection/tests/Common.cs
 
-../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyNameTests.cs,MethodInfoTests.cs,ModuleTests.cs
+../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/*.cs
 
@@ -152,14 +152,6 @@
 ../../../external/corefx/src/System.Text.Encoding.Extensions/tests/*.cs
 
 ../../../external/corefx/src/System.ValueTuple/tests/*.cs
-
-# System.Runtime
-# TODO: Many more to be included
-../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/NullableTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,AssemblyTests.cs,CustomAttributeDataTests.cs,MethodBaseTests.cs,MethodBaseTests.netcoreapp.cs,MethodBodyTests.cs,ModuleTests.cs,PointerTests.cs,SignatureTypes.netcoreapp.cs,StrongNameKeyPairTests.cs,TypeDelegatorTests.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
-../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Threading.Tasks
 ../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/*.cs
@@ -304,6 +296,8 @@
 ../../../external/corefx/src/System.Runtime/tests/System/SByteTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SingleTests.cs
 #../../../external/corefx/src/System.Runtime/tests/System/SingleTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt16Tests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/UInt32Tests.cs
@@ -316,11 +310,21 @@
 ../../../external/corefx/src/System.Runtime/tests/System/IO/*.cs:FileLoadException.InteropTests.cs,DirectoryNotFoundException.InteropTests.cs,FileNotFoundException.InteropTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Threading/*.cs:WaitHandleTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/BadImageFormatExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/StackOverflowExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/String.SplitTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/StringSplitExtensions.cs
+../../../external/corefx/src/System.Runtime/tests/System/SystemExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/TypeUnloadedExceptionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/VersionTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBodyTests.cs,StrongNameKeyPairTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
+../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
 # System.Runtime.Extensions
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
 ../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,Random.netcoreapp.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
 
 # System.Runtime.InteropServices
 ../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
@@ -337,3 +341,51 @@
 ../../../external/corefx/src/System.IO/tests/TextReader/*.cs
 ../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
 ../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+
+# System.IO.Stream
+../../../external/corefx/src/Common/tests/System/IO/CallTrackingStream.cs
+../../../external/corefx/src/System.IO/tests/Stream/*.cs
+
+# System.IO.BufferedStream
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.CloseTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.FlushTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriterTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteByteCharTests.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/StreamReaderTests.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+../../../external/corefx/src/Common/tests/System/IO/WrappedMemoryStream.cs
+../../../external/corefx/src/System.IO/tests/BufferedStream/*.cs
+
+# FileSystem Helper (not used on Windows)
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.Unix.cs
+
+# System.IO.FileInfo
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/tests/System/IO/PathFeatures.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/TestData.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FSAssert.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AdminHelpers.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/ReadWriteAllLines.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/ReadWriteAllText.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/Copy.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/Create.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/Delete.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/Move.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileStream/ctor_*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/PortedCommon/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs
+
+# System.IO.Directory
+../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs
+
+# System.IO.DirectoryInfo
+../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs
+
+# System.IO.TextWriter/StreamWriter
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs

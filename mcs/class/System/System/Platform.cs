@@ -30,6 +30,8 @@ namespace System {
 	internal static class Platform {
 		static bool checkedOS;
 		static bool isMacOS;
+		static bool isAix;
+		static bool isIBMi;
 
 #if MONOTOUCH || XAMMAC
 		const bool isFreeBSD = false;
@@ -68,6 +70,12 @@ namespace System {
 				case "FreeBSD":
 					isFreeBSD = true;
 					break;
+				case "AIX":
+					isAix = true;
+					break;
+				case "OS400":
+					isIBMi = true;
+					break;
 				}
 			}
 			Marshal.FreeHGlobal (buf);
@@ -88,6 +96,22 @@ namespace System {
 				if (!checkedOS)
 					CheckOS();
 				return isFreeBSD;
+			}
+		}
+
+		public static bool IsIBMi {
+			get {
+				if (!checkedOS)
+					CheckOS();
+				return isIBMi;
+			}
+		}
+
+		public static bool IsAix {
+			get {
+				if (!checkedOS)
+					CheckOS();
+				return isAix;
 			}
 		}
 	}

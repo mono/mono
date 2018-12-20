@@ -20,6 +20,7 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-7399.diff; exit 0)
 	touch $@
 
 .PHONY: provision-wasm
@@ -41,7 +42,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -78,9 +79,12 @@ package-wasm-runtime:
 clean-wasm-runtime:
 	rm -rf .stamp-wasm-runtime-toolchain .stamp-wasm-runtime-$(CONFIGURATION)-configure $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)
 
-TARGETS += wasm-runtime
+$(eval $(call TargetTemplate,wasm,runtime))
 
-wasm_TARGETS += wasm-runtime-$(CONFIGURATION)
+.PHONY: archive-wasm
+archive-wasm: package-wasm-runtime
+
+wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
 
 ##
 # Parameters
@@ -107,13 +111,12 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 	--enable-hybrid-suspend=no \
 	--with-cross-offsets=wasm32-unknown-none.h
 
-$$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
-
-wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu,$$(error "Unknown UNAME='$$(UNAME)'"))),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call WasmCrossTemplate,cross,i686,wasm32,wasm-runtime,llvm-llvm32,wasm32-unknown-unknown))
+# 64 bit cross compiler
+$(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
 
 ##
 # Parameters
@@ -169,13 +172,10 @@ _wasm-$(1)_CONFIGURE_FLAGS= \
 
 .stamp-wasm-$(1)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_MXE),,provision-mxe)
 
-$$(eval $$(call CrossRuntimeTemplate,wasm-$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
-
-wasm_TARGETS += wasm-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $(UNAME),Darwin),.static),$(3)-unknown-none,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,wasm-runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 
-$(eval $(call BclTemplate,wasm-bcl,wasm wasm_tools,wasm))
-wasm_TARGETS += wasm-bcl
+$(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

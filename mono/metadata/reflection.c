@@ -475,7 +475,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 			return (MonoReflectionType *)vtable->type;
 	}
 
-	mono_loader_lock (); /*FIXME mono_class_init and mono_class_vtable acquire it*/
+	mono_loader_lock (); /*FIXME mono_class_init_internal and mono_class_vtable acquire it*/
 	mono_domain_lock (domain);
 	if (!domain->type_hash)
 		domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
@@ -895,7 +895,7 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 	if (!missing_value_field) {
 		MonoClass *missing_klass;
 		missing_klass = mono_class_get_missing_class ();
-		mono_class_init (missing_klass);
+		mono_class_init_internal (missing_klass);
 		missing_value_field = mono_class_get_field_from_name_full (missing_klass, "Value", NULL);
 		g_assert (missing_value_field);
 	}
@@ -1196,7 +1196,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
-/* WARNING: This method can return NULL on sucess */
+/* WARNING: This method can return NULL on success */
 static MonoReflectionMethodBodyHandle
 method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoMethod *method, gpointer user_data, MonoError *error)
 {
@@ -1206,6 +1206,10 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	char *ptr;
 	unsigned char format, flags;
 	int i;
+	gpointer params [6];
+	MonoBoolean init_locals_param;
+	gint32 sig_token_param;
+	gint32 max_stack_param;
 
 	error_init (error);
 
@@ -1248,17 +1252,23 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	} else
 		local_var_sig_token = 0; //FIXME
 
+	static MonoMethod *ctor;
+	if (!ctor) {
+		MonoMethod *tmp = mono_class_get_method_from_name_checked (mono_class_get_method_body_class (), ".ctor", 6, 0, error);
+		mono_error_assert_ok (error);
+		g_assert (tmp);
+
+		mono_memory_barrier ();
+		ctor = tmp;
+	}
+
 	MonoReflectionMethodBodyHandle ret;
 	ret = MONO_HANDLE_CAST (MonoReflectionMethodBody, mono_object_new_handle (domain, mono_class_get_method_body_class (), error));
 	goto_if_nok (error, fail);
 
-	MONO_HANDLE_SETVAL (ret, init_locals, MonoBoolean, header->init_locals);
-	MONO_HANDLE_SETVAL (ret, max_stack, guint32, header->max_stack);
-	MONO_HANDLE_SETVAL (ret, local_var_sig_token, guint32, local_var_sig_token);
 	MonoArrayHandle il_arr;
 	il_arr = mono_array_new_handle (domain, mono_defaults.byte_class, header->code_size, error);
 	goto_if_nok (error, fail);
-	MONO_HANDLE_SET (ret, il, il_arr);
 	uint32_t il_gchandle;
 	guint8* il_data;
 	il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
@@ -1269,7 +1279,6 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	MonoArrayHandle locals_arr;
 	locals_arr = mono_array_new_handle (domain, mono_class_get_local_variable_info_class (), header->num_locals, error);
 	goto_if_nok (error, fail);
-	MONO_HANDLE_SET (ret, locals, locals_arr);
 	for (i = 0; i < header->num_locals; ++i) {
 		if (!add_local_var_info_to_array (domain, header, i, locals_arr, error))
 			goto fail;
@@ -1279,13 +1288,30 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	MonoArrayHandle exn_clauses;
 	exn_clauses = mono_array_new_handle (domain, mono_class_get_exception_handling_clause_class (), header->num_clauses, error);
 	goto_if_nok (error, fail);
-	MONO_HANDLE_SET (ret, clauses, exn_clauses);
 	for (i = 0; i < header->num_clauses; ++i) {
 		if (!add_exception_handling_clause_to_array (domain, header, i, exn_clauses, error))
 			goto fail;
 	}
 
+	/*
+	  MethodBody (ExceptionHandlingClause[] clauses, LocalVariableInfo[] locals,
+	              byte[] il, bool init_locals, int sig_token, int max_stack)
+	*/
+	init_locals_param = header->init_locals;
+	sig_token_param = local_var_sig_token;
+	max_stack_param = header->max_stack;
 	mono_metadata_free_mh (header);
+	header = NULL;
+
+	params [0] = MONO_HANDLE_RAW (exn_clauses);
+	params [1] = MONO_HANDLE_RAW (locals_arr);
+	params [2] = MONO_HANDLE_RAW (il_arr);
+	params [3] = &init_locals_param;
+	params [4] = &sig_token_param;
+	params [5] = &max_stack_param;
+	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
+	mono_error_assert_ok (error);
+
 	return ret;
 fail:
 	if (header)
@@ -1343,7 +1369,7 @@ get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types)
 	if (!methodsig->param_count)
 		return;
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	if (image_is_dynamic (image)) {
 		MonoReflectionMethodAux *aux;
@@ -1624,6 +1650,7 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 			if (!*p) //XXX test
 				return 0;
 			if (*p  == ',' || *p == '*' || *p == ']') { //array
+				gboolean bounded = FALSE;
 				isptr = 0;
 				rank = 1;
 				while (*p) {
@@ -1632,13 +1659,19 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 					if (*p == ',')
 						rank++;
 					else if (*p == '*') /* '*' means unknown lower bound */
-						info->modifiers = g_list_append (info->modifiers, GUINT_TO_POINTER (-2));
+						bounded = TRUE;
 					else
 						return 0;
 					++p;
 				}
 				if (*p++ != ']')
 					return 0;
+				/* bounded only allowed when rank == 1 */
+				if (bounded && rank > 1)
+					return 0;
+				/* n.b. bounded needs both modifiers: -2 == bounded, 1 == rank 1 array */
+				if (bounded)
+					info->modifiers = g_list_append (info->modifiers, GUINT_TO_POINTER (-2));
 				info->modifiers = g_list_append (info->modifiers, GUINT_TO_POINTER (rank));
 			} else {
 				if (rank || isptr) /* generic args after array spec or ptr*/ //XXX test
@@ -1923,7 +1956,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 		MonoClass *parent;
 
 		parent = klass;
-		mono_class_init (parent);
+		mono_class_init_internal (parent);
 
 		while ((klass = mono_class_get_nested_types (parent, &iter))) {
 			const char *lastp;
@@ -2268,9 +2301,9 @@ mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError 
 	tmp = g_strdup (name);
 	
 	/*g_print ("requested type %s\n", str);*/
-	ERROR_DECL_VALUE (parse_error);
-	if (!mono_reflection_parse_type_checked (tmp, &info, &parse_error)) {
-		mono_error_cleanup (&parse_error);
+	ERROR_DECL (parse_error);
+	if (!mono_reflection_parse_type_checked (tmp, &info, parse_error)) {
+		mono_error_cleanup (parse_error);
 		goto leave;
 	}
 	type = _mono_reflection_get_type_from_info (&info, image, FALSE, error);
@@ -2330,7 +2363,7 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST (MonoReflectionType, obj), error);
 		return_val_if_nok (error, 0);
 		MonoClass *mc = mono_class_from_mono_type_internal (type);
-		if (!mono_class_init (mc)) {
+		if (!mono_class_init_internal (mc)) {
 			mono_error_set_for_class_failure (error, mc);
 			return 0;
 		}
@@ -2367,7 +2400,7 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		MonoMethod *method = MONO_HANDLE_GETVAL (MONO_HANDLE_CAST (MonoReflectionMethod, member_impl), method);
 
 		token = mono_method_get_param_token (method, MONO_HANDLE_GETVAL (p, PositionImpl));
-	} else if (strcmp (klass_name, "Module") == 0 || strcmp (klass_name, "MonoModule") == 0 || strcmp (klass_name, "ModuleBuilder") == 0) {
+	} else if (strcmp (klass_name, "MonoModule") == 0 || strcmp (klass_name, "ModuleBuilder") == 0) {
 		MonoReflectionModuleHandle m = MONO_HANDLE_CAST (MonoReflectionModule, obj);
 
 		token = MONO_HANDLE_GETVAL (m, token);
@@ -2777,7 +2810,7 @@ mono_declsec_get_demands (MonoMethod *method, MonoDeclSecurityActions* demands)
 
 	/* First we look for method-level attributes */
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		result = mono_declsec_get_method_demands_params (method, demands, 
@@ -2788,7 +2821,7 @@ mono_declsec_get_demands (MonoMethod *method, MonoDeclSecurityActions* demands)
 	flags = mono_declsec_flags_from_class (method->klass);
 	if (flags & mask) {
 		if (!result) {
-			mono_class_init (method->klass);
+			mono_class_init_internal (method->klass);
 			memset (demands, 0, sizeof (MonoDeclSecurityActions));
 		}
 		result |= mono_declsec_get_class_demands_params (method->klass, demands, 
@@ -2829,7 +2862,7 @@ mono_declsec_get_linkdemands (MonoMethod *method, MonoDeclSecurityActions* klass
 
 	/* First we look for method-level attributes */
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 
 		result = mono_declsec_get_method_demands_params (method, cmethod, 
 			SECURITY_ACTION_LINKDEMAND, SECURITY_ACTION_NONCASLINKDEMAND, SECURITY_ACTION_LINKDEMANDCHOICE);
@@ -2838,7 +2871,7 @@ mono_declsec_get_linkdemands (MonoMethod *method, MonoDeclSecurityActions* klass
 	/* Here we use (or create) the class declarative cache to look for demands */
 	flags = mono_declsec_flags_from_class (method->klass);
 	if (flags & (MONO_DECLSEC_FLAG_LINKDEMAND | MONO_DECLSEC_FLAG_NONCAS_LINKDEMAND | MONO_DECLSEC_FLAG_LINKDEMAND_CHOICE)) {
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 
 		result |= mono_declsec_get_class_demands_params (method->klass, klass, 
 			SECURITY_ACTION_LINKDEMAND, SECURITY_ACTION_NONCASLINKDEMAND, SECURITY_ACTION_LINKDEMANDCHOICE);
@@ -2868,7 +2901,7 @@ mono_declsec_get_inheritdemands_class (MonoClass *klass, MonoDeclSecurityActions
 	/* Here we use (or create) the class declarative cache to look for demands */
 	flags = mono_declsec_flags_from_class (klass);
 	if (flags & (MONO_DECLSEC_FLAG_INHERITANCEDEMAND | MONO_DECLSEC_FLAG_NONCAS_INHERITANCEDEMAND | MONO_DECLSEC_FLAG_INHERITANCEDEMAND_CHOICE)) {
-		mono_class_init (klass);
+		mono_class_init_internal (klass);
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		result |= mono_declsec_get_class_demands_params (klass, demands, 
@@ -2898,7 +2931,7 @@ mono_declsec_get_inheritdemands_method (MonoMethod *method, MonoDeclSecurityActi
 	}
 
 	if (method->flags & METHOD_ATTRIBUTE_HAS_SECURITY) {
-		mono_class_init (method->klass);
+		mono_class_init_internal (method->klass);
 		memset (demands, 0, sizeof (MonoDeclSecurityActions));
 
 		return mono_declsec_get_method_demands_params (method, demands, 
@@ -3005,11 +3038,11 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 	params [0] = mono_type_get_object_checked (mono_domain_get (), m_class_get_byval_arg (oklass), error);
 	return_val_if_nok (error, FALSE);
 
-	ERROR_DECL_VALUE (inner_error);
-	res = mono_runtime_try_invoke (method, &mono_class_get_ref_info_raw (klass)->type.object, params, &exc, &inner_error); /* FIXME use handles */
+	ERROR_DECL (inner_error);
+	res = mono_runtime_try_invoke (method, &mono_class_get_ref_info_raw (klass)->type.object, params, &exc, inner_error); /* FIXME use handles */
 
-	if (exc || !is_ok (&inner_error)) {
-		mono_error_cleanup (&inner_error);
+	if (exc || !is_ok (inner_error)) {
+		mono_error_cleanup (inner_error);
 		return FALSE;
 	} else
 		return *(MonoBoolean*)mono_object_unbox_internal (res);

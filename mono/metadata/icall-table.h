@@ -59,6 +59,7 @@ typedef MonoProperty *MonoProperty_ptr;
 typedef MonoPropertyInfo *MonoPropertyInfo_ref;
 typedef MonoType *MonoType_ptr;
 typedef MonoTypedRef *MonoTypedRef_ptr;
+typedef MonoStackCrawlMark *MonoStackCrawlMark_ptr;
 typedef unsigned *unsigned_ptr;
 typedef mono_unichar2 *mono_unichar2_ptr;
 typedef WSABUF *WSABUF_ptr;
@@ -173,6 +174,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_MonoNativeOverlapped_ptr	ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoType_ptr  		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_MonoTypedRef_ptr 		ICALL_HANDLES_WRAP_NONE
+#define MONO_HANDLE_TYPE_WRAP_MonoStackCrawlMark_ptr  	ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_gint32_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_guint32_ptr   		ICALL_HANDLES_WRAP_NONE
 #define MONO_HANDLE_TYPE_WRAP_guint64_ptr   		ICALL_HANDLES_WRAP_NONE
@@ -347,12 +349,10 @@ func ## _raw ( MONO_HANDLE_FOREACH_ARG_RAW_ ## n argtypes MONO_HANDLE_COMMA_ ## 
 // Implement ves_icall_foo_raw over ves_icall_foo.
 // Raw handles are converted to/from typed handles and the rest is passed through.
 
-#define MONO_HANDLE_IMPLEMENT_MAYBE(cond, id, name, func, rettype, n, argtypes)	\
+#define MONO_HANDLE_IMPLEMENT(id, name, func, rettype, n, argtypes)	\
 										\
 MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 {										\
-	g_assert (cond);							\
-										\
 	HANDLE_FUNCTION_ENTER ();						\
 										\
 	/* FIXME Should be ERROR_DECL but for fragile test. */			\
@@ -366,8 +366,5 @@ MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 										\
 	MONO_HANDLE_RETURN_END (rettype)					\
 }										\
-
-#define MONO_HANDLE_IMPLEMENT(id, name, func, rettype, n, argtypes)			\
-	MONO_HANDLE_IMPLEMENT_MAYBE (TRUE, id, name, func, rettype, n, argtypes)
 
 #endif

@@ -196,15 +196,15 @@ find_event_index (MonoClass *klass, MonoEvent *event)
 static MonoType*
 cattr_type_from_name (char *n, MonoImage *image, gboolean is_enum, MonoError *error)
 {
-	ERROR_DECL_VALUE (inner_error);
-	MonoType *t = mono_reflection_type_from_name_checked (n, image, &inner_error);
+	ERROR_DECL (inner_error);
+	MonoType *t = mono_reflection_type_from_name_checked (n, image, inner_error);
 	if (!t) {
 		mono_error_set_type_load_name (error, g_strdup(n), NULL,
 					       "Could not load %s %s while decoding custom attribute: %s",
 					       is_enum ? "enum type": "type",
 					       n,
-					       mono_error_get_message (&inner_error));
-		mono_error_cleanup (&inner_error);
+					       mono_error_get_message (inner_error));
+		mono_error_cleanup (inner_error);
 		return NULL;
 	}
 	return t;
@@ -844,7 +844,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 
 	error_init (error);
 
-	mono_class_init (method->klass);
+	mono_class_init_internal (method->klass);
 
 	if (!mono_verifier_verify_cattr_content (image, method, data, len, error))
 		goto fail;
@@ -1036,7 +1036,7 @@ mono_reflection_create_custom_attr_data_args (MonoImage *image, MonoMethod *meth
 	if (!mono_verifier_verify_cattr_content (image, method, data, len, error))
 		return;
 
-	mono_class_init (method->klass);
+	mono_class_init_internal (method->klass);
 	
 	domain = mono_domain_get ();
 
@@ -1197,7 +1197,7 @@ mono_reflection_create_custom_attr_data_args_noalloc (MonoImage *image, MonoMeth
 	if (!mono_verifier_verify_cattr_content (image, method, data, len, error))
 		goto fail;
 
-	mono_class_init (method->klass);
+	mono_class_init_internal (method->klass);
 
 	if (len < 2 || read16 (p) != 0x0001) /* Prolog */
 		goto fail;
@@ -1338,7 +1338,7 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 	method = ref_method->method;
 	domain = mono_object_domain (ref_method);
 
-	if (!mono_class_init (method->klass)) {
+	if (!mono_class_init_internal (method->klass)) {
 		mono_error_set_for_class_failure (error, method->klass);
 		goto leave;
 	}
@@ -2063,14 +2063,14 @@ mono_reflection_get_custom_attrs_info_checked (MonoObjectHandle obj, MonoError *
 		MonoType *type = mono_reflection_type_handle_mono_type (MONO_HANDLE_CAST(MonoReflectionType, obj), error);
 		goto_if_nok (error, leave);
 		klass = mono_class_from_mono_type_internal (type);
-		/*We cannot mono_class_init the class from which we'll load the custom attributes since this must work with broken types.*/
+		/*We cannot mono_class_init_internal the class from which we'll load the custom attributes since this must work with broken types.*/
 		cinfo = mono_custom_attrs_from_class_checked (klass, error);
 		goto_if_nok (error, leave);
 	} else if (strcmp ("Assembly", klass_name) == 0 || strcmp ("MonoAssembly", klass_name) == 0) {
 		MonoReflectionAssemblyHandle rassembly = MONO_HANDLE_CAST (MonoReflectionAssembly, obj);
 		cinfo = mono_custom_attrs_from_assembly_checked (MONO_HANDLE_GETVAL (rassembly, assembly), FALSE, error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("Module", klass_name) == 0 || strcmp ("MonoModule", klass_name) == 0) {
+	} else if (strcmp ("MonoModule", klass_name) == 0) {
 		MonoReflectionModuleHandle module = MONO_HANDLE_CAST (MonoReflectionModule, obj);
 		cinfo = mono_custom_attrs_from_module (MONO_HANDLE_GETVAL (module, image), error);
 		goto_if_nok (error, leave);

@@ -9,6 +9,9 @@
 #Disables build WebAssembly
 #DISABLE_WASM = 1
 
+#Disables WebAssembly Windows cross build
+#DISABLE_WASM_CROSS = 1
+
 #Disables building the BCL
 #DISABLE_BCL = 1
 

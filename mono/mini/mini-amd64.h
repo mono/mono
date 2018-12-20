@@ -282,13 +282,13 @@ struct SeqPointInfo {
 };
 
 typedef struct {
-	mgreg_t res;
+	host_mgreg_t res;
 	guint8 *ret;
 	double fregs [8];
-	mgreg_t has_fp;
-	mgreg_t nstack_args;
+	host_mgreg_t has_fp;
+	host_mgreg_t nstack_args;
 	/* This should come last as the structure is dynamically extended */
-	mgreg_t regs [PARAM_REGS];
+	host_mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 typedef enum {
@@ -448,6 +448,12 @@ typedef struct {
 #define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
+#if defined(HOST_WIN32) && defined(TARGET_WIN32) && !defined(_MSC_VER)
+// Only supported for Windows cross compiler builds, host == Win32, target != Win32
+// and only using MSVC for none cross compiler builds.
+#undef MONO_ARCH_LLVM_SUPPORTED
+#endif
+
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
@@ -580,8 +586,11 @@ mono_arch_unwindinfo_get_size (guchar code_count)
 	// of unwind codes. Adding extra bytes to the total size will make sure we can properly align the RUNTIME_FUNCTION
 	// struct. Since our UNWIND_INFO follows RUNTIME_FUNCTION struct in memory, it will automatically be DWORD aligned
 	// as well. Also make sure to allocate room for a padding UNWIND_CODE, if needed.
-	return (sizeof (mgreg_t) + sizeof (UNWIND_INFO)) -
+	return (sizeof (target_mgreg_t) + sizeof (UNWIND_INFO)) -
 		(sizeof (UNWIND_CODE) * ((MONO_MAX_UNWIND_CODES - ((code_count + 1) & ~1))));
+/* FIXME Something simpler should work:
+	return sizeof (UNWIND_INFO) + sizeof (UNWIND_CODE) * (code_count + (code_count & 1));
+*/
 }
 
 guchar

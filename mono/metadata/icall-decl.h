@@ -52,7 +52,6 @@ typedef enum {
 #include "icall-table.h"
 
 #define NOHANDLES(inner) inner
-#define HANDLES_MAYBE(cond, id, name, func, ret, nargs, argtypes) HANDLES (id, name, func, ret, nargs, argtypes)
 #define HANDLES_REUSE_WRAPPER(...) /* nothing */
 
 // Generate prototypes for coop icall wrappers.
@@ -65,7 +64,6 @@ typedef enum {
 #undef ICALL_TYPE
 #undef ICALL
 #undef HANDLES
-#undef HANDLES_MAYBE
 #undef HANDLES_REUSE_WRAPPER
 #undef NOHANDLES
 
@@ -80,7 +78,7 @@ ICALL_EXPORT MonoBoolean ves_icall_System_Buffer_BlockCopyInternal (MonoArray*, 
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_GetIs64BitOperatingSystem (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_get_HasShutdownStarted (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle);
-ICALL_EXPORT MonoBoolean ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (MonoString*, guint64*, guint64*, guint64*, gint32*);
+ICALL_EXPORT MonoBoolean ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2*, gint32, guint64*, guint64*, guint64*, gint32*);
 ICALL_EXPORT MonoBoolean ves_icall_System_Reflection_AssemblyName_ParseAssemblyName (const char*, MonoAssemblyName*, MonoBoolean*, MonoBoolean* is_token_defined_arg);
 ICALL_EXPORT MonoBoolean ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Thread_YieldInternal (void);
@@ -91,7 +89,6 @@ ICALL_EXPORT MonoObject* ves_icall_MonoField_GetRawConstantValue (MonoReflection
 ICALL_EXPORT MonoObject* ves_icall_MonoField_GetValueInternal (MonoReflectionField* field, MonoObject* obj);
 ICALL_EXPORT MonoObject* ves_icall_property_info_get_default_value (MonoReflectionProperty*);
 ICALL_EXPORT MonoReflectionType* ves_icall_Remoting_RealProxy_InternalGetProxyType (MonoTransparentProxy*);
-ICALL_EXPORT MonoString* ves_icall_System_IO_DriveInfo_GetDriveFormat (MonoString*);
 ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator*);
 ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
@@ -156,7 +153,6 @@ ICALL_EXPORT gint64 ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollect
 ICALL_EXPORT gint64 ves_icall_System_Threading_Timer_GetTimeMonotonic (void);
 ICALL_EXPORT gint8 ves_icall_System_Buffer_GetByteInternal (MonoArray*, gint32);
 ICALL_EXPORT gpointer ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle);
-ICALL_EXPORT guint32 ves_icall_System_IO_DriveInfo_GetDriveType (MonoString*);
 ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int);
 ICALL_EXPORT int ves_icall_System_Environment_get_Platform (void);
 ICALL_EXPORT int ves_icall_System_GC_GetCollectionCount (int);
@@ -167,6 +163,7 @@ ICALL_EXPORT void mono_ArgIterator_Setup (MonoArgIterator*, char*, char*);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char*, const char*);
 ICALL_EXPORT void ves_icall_System_Array_GetGenericValueImpl (MonoArray*, guint32, gpointer);
 ICALL_EXPORT void ves_icall_System_Array_SetGenericValueImpl (MonoArray*, guint32, gpointer);
+ICALL_EXPORT void ves_icall_System_Buffer_MemcpyInternal (gpointer dest, gconstpointer src, gint32 count);
 ICALL_EXPORT void ves_icall_System_Buffer_SetByteInternal (MonoArray*, gint32, gint8);
 ICALL_EXPORT void ves_icall_System_Environment_Exit (int);
 ICALL_EXPORT void ves_icall_System_GCHandle_FreeHandle (guint32 handle);
@@ -180,5 +177,17 @@ ICALL_EXPORT void ves_icall_System_Runtime_RuntimeImports_Memmove (guint8*, guin
 ICALL_EXPORT void ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier (guint8*, guint8*, guint, MonoType*);
 ICALL_EXPORT void ves_icall_System_Runtime_RuntimeImports_ZeroMemory (guint8*, guint);
 ICALL_EXPORT void ves_icall_System_Runtime_RuntimeImports_ecvt_s(char*, size_t, double, int, int*, int*);
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
+ICALL_EXPORT gpointer ves_icall_System_IO_Compression_DeflateStreamNative_CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data);
+ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_CloseZStream (gpointer stream);
+ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_Flush (gpointer stream);
+ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_ReadZStream (gpointer stream, gpointer buffer, gint32 length);
+ICALL_EXPORT gint32 ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer stream, gpointer buffer, gint32 length);
+#endif
+#if defined(ENABLE_MONODROID)
+ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CreateNLSocket (void);
+ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size);
+ICALL_EXPORT gint32 ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpointer sock);
+#endif
 
 #endif // __MONO_METADATA_ICALL_H__

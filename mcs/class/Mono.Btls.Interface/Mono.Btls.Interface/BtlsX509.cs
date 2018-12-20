@@ -100,7 +100,8 @@ namespace Mono.Btls.Interface
 
 		public Oid GetSignatureAlgorithm ()
 		{
-			return Instance.GetSignatureAlgorithm ();
+			var algorithm = Instance.GetSignatureAlgorithm ();
+			return Oid.FromOidValue (algorithm, OidGroup.SignatureAlgorithm);
 		}
 
 		public AsnEncodedData GetPublicKeyAsn1 ()

@@ -235,6 +235,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void LastAccessTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.LastAccessTime.Test";
@@ -352,8 +353,7 @@ namespace MonoTests.System.IO
 					typeof (FileSystemInfo), new FormatterConverter ());
 				info.GetObjectData (si, new StreamingContext ());
 
-				Assert.AreEqual (2, si.MemberCount, "#1");
-				Assert.AreEqual ("FSIT.Serialization.Test", si.GetString ("OriginalPath"), "#2");
+				Assert.AreEqual (3, si.MemberCount, "#1");
 				Assert.AreEqual (path, si.GetString ("FullPath"), "#3");
 			} finally {
 				DeleteDir (path);

@@ -204,7 +204,7 @@ public class Harness
 				break;
 		}
 
-		if (result_line != null && result_line.Contains ("Errors: 0"))
+		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
 		else
 			Environment.Exit (1);
@@ -280,7 +280,7 @@ public class Harness
 				break;
 		}
 
-		if (result_line != null && result_line.Contains ("Errors: 0"))
+		if (result_line != null && result_line.Contains ("Errors: 0") && result_line.Contains ("Failures: 0"))
 			Environment.Exit (0);
 		else
 			Environment.Exit (1);

@@ -62,3 +62,6 @@
 	path = external/llvm
 	url = git://github.com/mono/llvm.git
 	branch = release_60
+[submodule "external/helix-binaries"]
+	path = external/helix-binaries
+	url = git://github.com/mono/helix-binaries.git

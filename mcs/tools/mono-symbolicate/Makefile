@@ -58,6 +58,10 @@ AOT_SUPPORTED = $(shell $(MONO) --aot 2>&1 | grep -q "AOT compilation is not sup
 
 test-local: $(TEST_EXE)
 
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/symbolicate
+	cp -L $(TEST_EXE) $(TEST_EXE:.exe=.pdb) $(SYMBOLICATE_EXPECTED_FILE) $(TEST_BUNDLE_PATH)/tests/symbolicate/
+
 $(TEST_EXE): $(TEST_CS)
 	$(CSCOMPILE) $(TEST_CS) -r:$(LIB_PATH)/mscorlib.dll -r:$(LIB_PATH)/System.Core.dll -warn:0 -out:$(TEST_EXE)
 

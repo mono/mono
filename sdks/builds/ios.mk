@@ -70,7 +70,7 @@ _ios-$(1)_CPPFLAGS= \
 	-DMONOTOUCH=1 \
 	$$(ios-$(1)_SYSROOT) \
 	-arch $(3) \
-	-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
+	-DSMALL_CONFIG -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 
 _ios-$(1)_LDFLAGS= \
 	-Wl,-no_weak_imports \
@@ -104,15 +104,13 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)-apple-darwin10))
 
 endef
 
 ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk -miphoneos-version-min=$(IOS_VERSION_MIN)
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
-watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCH_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
+watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
@@ -229,9 +227,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios-$(1),$(2)-apple-darwin10))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION)
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)-apple-darwin10))
 
 endef
 
@@ -328,18 +324,15 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=com,remoting \
 	--disable-crash-reporting
 
-$$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
-
-ios_TARGETS += ios-$(1)-$$(CONFIGURATION) $(5)
+$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,ios-target32,llvm36-llvm32,arm-apple-darwin10))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,ios-target64,llvm-llvm64,aarch64-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,ios-targetwatch,llvm36-llvm32,armv7k-apple-darwin))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin))
 # 64->arm32 cross compiler
-$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,ios-target32,llvm-llvm64,arm-apple-darwin10))
+$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10))
 
-$(eval $(call BclTemplate,ios-bcl,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime,monotouch monotouch_tv monotouch_watch))
-ios_TARGETS += ios-bcl
+$(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))

@@ -563,14 +563,14 @@ mono_arch_get_argument_info (MonoMethodSignature *csig,
 	int offset = 8;
 
 	if (MONO_TYPE_ISSTRUCT (csig->ret)) { 
-		frame_size += sizeof (gpointer);
+		frame_size += sizeof (target_mgreg_t);
 		offset += 8;
 	}
 
 	arg_info [0].offset = offset;
 
 	if (csig->hasthis) {
-		frame_size += sizeof (gpointer);
+		frame_size += sizeof (target_mgreg_t);
 		offset += 8;
 	}
 
@@ -1042,7 +1042,7 @@ add_stackParm (guint *gr, size_data *sz, ArgInfo *ainfo, gint size)
 		ainfo->reg	= STK_BASE;
 		ainfo->offset   = sz->stack_size;
 		ainfo->regtype  = RegTypeStructByAddrOnStack; 
-		sz->stack_size += sizeof (gpointer);
+		sz->stack_size += sizeof (target_mgreg_t);
 		sz->parm_size  += sizeof(gpointer);
 		sz->offStruct  += sizeof(gpointer);
 	} else {
@@ -1192,7 +1192,7 @@ enum_retvalue:
                         break;
 		}
 		case MONO_TYPE_TYPEDBYREF:
-			size = sizeof (MonoTypedRef);
+			size = MONO_ABI_SIZEOF (MonoTypedRef);
 			cinfo->struct_ret = 1;
 			cinfo->ret.size   = size;
 			cinfo->ret.vtsize = size;
@@ -1217,10 +1217,10 @@ enum_retvalue:
              (sig->param_count > 0 && 
 	      MONO_TYPE_IS_REFERENCE (mini_get_underlying_type (sig->params [0]))))) {
 		if (sig->hasthis) {
-			cinfo->args[nParm].size = sizeof (gpointer);
+			cinfo->args[nParm].size = sizeof (target_mgreg_t);
 			add_general (&gr, sz, cinfo->args + nParm);
 		} else {
-			cinfo->args[nParm].size = sizeof (gpointer);
+			cinfo->args[nParm].size = sizeof (target_mgreg_t);
 			add_general (&gr, sz, &cinfo->args [sig->hasthis + nParm]);
 			pstart = 1;
 		}
@@ -1231,7 +1231,7 @@ enum_retvalue:
 	} else {
 		/* this */
 		if (sig->hasthis) {
-			cinfo->args[nParm].size = sizeof (gpointer);
+			cinfo->args[nParm].size = sizeof (target_mgreg_t);
 			add_general (&gr, sz, cinfo->args + nParm);
 			nParm ++;
 		}
@@ -1390,7 +1390,7 @@ enum_retvalue:
 		}
 			break;
 		case MONO_TYPE_TYPEDBYREF: {
-			int size = sizeof (MonoTypedRef);
+			int size = MONO_ABI_SIZEOF (MonoTypedRef);
 
 			cinfo->args[nParm].vtsize  = 0;
 			cinfo->args[nParm].size    = 0;
@@ -1559,7 +1559,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			inst->inst_basereg = frame_reg;
 			offset 		   = S390_ALIGN(offset, sizeof(gpointer));
 			inst->inst_offset  = offset;
-			offset 		  += sizeof (gpointer);
+			offset 		  += sizeof (target_mgreg_t);
 		}
 		curinst = sArg = 1;
 	} else {
@@ -1578,11 +1578,11 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			case RegTypeStructByAddr : {
 				MonoInst *indir;
 
-				size = sizeof (gpointer);
+				size = sizeof (target_mgreg_t);
 
 				inst->opcode       = OP_REGOFFSET;
 				inst->inst_basereg = frame_reg;
-				offset             = S390_ALIGN (offset, sizeof (gpointer));
+				offset             = S390_ALIGN (offset, sizeof (target_mgreg_t));
 				inst->inst_offset  = offset;
 
 				/* Add a level of indirection */
@@ -1595,7 +1595,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			case RegTypeStructByAddrOnStack : {
 				MonoInst *indir;
 
-				size = sizeof (gpointer);
+				size = sizeof (target_mgreg_t);
 
 				/* Similar to the == STK_BASE case below */
 				cfg->arch.bkchain_reg = s390_r12;
@@ -1900,8 +1900,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			guint32 size;
 
 			if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
-				size = sizeof (MonoTypedRef);
-				align = sizeof (gpointer);
+				size = MONO_ABI_SIZEOF (MonoTypedRef);
+				align = sizeof (target_mgreg_t);
 			}
 			else
 				if (sig->pinvoke)
@@ -3734,14 +3734,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_THROW: {
 			s390_lgr  (code, s390_r2, ins->sreg1);
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
 					     (gpointer) "mono_arch_throw_exception");
 			S390_CALL_TEMPLATE(code, s390_r14);
 		}
 			break;
 		case OP_RETHROW: {
 			s390_lgr  (code, s390_r2, ins->sreg1);
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
 					     (gpointer) "mono_arch_rethrow_exception");
 			S390_CALL_TEMPLATE(code, s390_r14);
 		}
@@ -3848,7 +3848,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_tm (code, ins->sreg1, byte_offset, bitmask);
 			s390_jo (code, 0); CODEPTR(code, jump);
 
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD,
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL,
 						"mono_generic_class_init");
 			S390_CALL_TEMPLATE(code, s390_r14);
 
@@ -5348,7 +5348,7 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 				s390_patch_addr (ip, (guint64) target);
 				continue;
 			case MONO_PATCH_INFO_METHOD:
-			case MONO_PATCH_INFO_INTERNAL_METHOD:
+			case MONO_PATCH_INFO_JIT_ICALL:
 			case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 			case MONO_PATCH_INFO_RGCTX_FETCH:
 			case MONO_PATCH_INFO_ABS: {
@@ -5634,7 +5634,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* On return from this call r2 have the address of the &lmf	 */
 		/*---------------------------------------------------------------*/
 		mono_add_patch_info (cfg, code - cfg->native_code, 
-				MONO_PATCH_INFO_INTERNAL_METHOD, 
+				MONO_PATCH_INFO_JIT_ICALL, 
 				(gpointer)"mono_tls_get_lmf_addr");
 		S390_CALL_TEMPLATE(code, s390_r1);
 
@@ -5915,7 +5915,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				/*---------------------------------------------*/
 				/* Reuse the current patch to set the jump     */
 				/*---------------------------------------------*/
-				patch_info->type      = MONO_PATCH_INFO_INTERNAL_METHOD;
+				patch_info->type      = MONO_PATCH_INFO_JIT_ICALL;
 				patch_info->data.name = "mono_arch_throw_corlib_exception";
 				patch_info->ip.i      = code - cfg->native_code;
 				S390_BR_TEMPLATE (code, s390_r1);
