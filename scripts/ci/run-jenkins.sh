@@ -104,6 +104,10 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
+	   # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+
 	   echo "DISABLE_ANDROID=1" > sdks/Make.config
 	   echo "DISABLE_WASM=1" >> sdks/Make.config
 	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
