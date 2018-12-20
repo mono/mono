@@ -879,6 +879,9 @@ static void
 dump_memory_around_ip (void *ctx)
 {
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
+	if (!ctx)
+		return;
+
 	MonoContext mctx;
 	mono_sigctx_to_monoctx (ctx, &mctx);
 	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
@@ -958,47 +961,49 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		MonoStackHash hashes;
 
 #ifndef DISABLE_CRASH_REPORTING
-		MonoContext mctx;
-		if (ctx) {
-			gboolean leave = FALSE;
-			gboolean dump_for_merp = FALSE;
+		gboolean leave = FALSE;
+		gboolean dump_for_merp = FALSE;
 #if defined(TARGET_OSX)
-			dump_for_merp = mono_merp_enabled ();
+		dump_for_merp = mono_merp_enabled ();
 #endif
 
-			if (!dump_for_merp) {
+		if (!dump_for_merp) {
 #ifdef DISABLE_STRUCTURED_CRASH
-				leave = TRUE;
+			leave = TRUE;
 #else
-				mini_register_sigterm_handler ();
+			mini_register_sigterm_handler ();
 #endif
-			}
-
-			if (!leave) {
-				mono_sigctx_to_monoctx (ctx, &mctx);
-				mono_summarize_timeline_start ();
-				// Returns success, so leave if !success
-				leave = !mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0);
-			}
-
-			if (!leave) {
-				// Wait for the other threads to clean up and exit their handlers
-				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
-				// while dumping. 
-				mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
-				sleep (1);
-			}
-
-			// We want our crash, and don't have telemetry
-			// So we dump to disk
-			if (!leave && !dump_for_merp) {
-				mono_summarize_timeline_phase_log (MonoSummaryCleanup);
-				mono_crash_dump (output, &hashes);
-				mono_summarize_timeline_phase_log (MonoSummaryDone);
-			}
-
 		}
-#endif
+
+		MonoContext mctx;
+		MonoContext *passed_ctx = NULL;
+		if (!leave && ctx) {
+			mono_sigctx_to_monoctx (ctx, &mctx);
+			passed_ctx = &mctx;
+		}
+
+		if (!leave) {
+			mono_summarize_timeline_start ();
+			// Returns success, so leave if !success
+			leave = !mono_threads_summarize (passed_ctx, &output, &hashes, FALSE, TRUE, NULL, 0);
+		}
+
+		if (!leave) {
+			// Wait for the other threads to clean up and exit their handlers
+			// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
+			// while dumping. 
+			mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
+			sleep (1);
+		}
+
+		// We want our crash, and don't have telemetry
+		// So we dump to disk
+		if (!leave && !dump_for_merp) {
+			mono_summarize_timeline_phase_log (MonoSummaryCleanup);
+			mono_crash_dump (output, &hashes);
+			mono_summarize_timeline_phase_log (MonoSummaryDone);
+		}
+#endif // DISABLE_CRASH_REPORTING
 
 		/*
 		* glibc fork acquires some locks, so if the crash happened inside malloc/free,
@@ -1028,9 +1033,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 		if (mono_merp_enabled ()) {
 			if (pid == 0) {
-				if (!ctx) {
-					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
-				} else if (output) {
+				if (output) {
 					gboolean merp_upload_success = mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 					g_assert (merp_upload_success);
