@@ -199,38 +199,6 @@ namespace System.Net.Http
 			return await SendAsync (request, cancellationToken, true).ConfigureAwait (false);
 		}
 		
-		static async Task<HttpRequestMessage> CreateHttpRequestMessageRedirectAsync (HttpRequestMessage req)
-		{
-			var str = req.RequestUri.OriginalString;
-			var clone = new HttpRequestMessage (req.Method, str);
-
-			// Copy the request's content (via a MemoryStream) into the cloned object
-			var ms = new MemoryStream ();
-			if (req.Content != null) {
-				await req.Content.CopyToAsync (ms).ConfigureAwait (false);
-				clone.Content = new StreamContent (ms);
-
-				// Copy the content headers
-				if (req.Content.Headers != null)
-					foreach (var h in req.Content.Headers)
-						clone.Content.Headers.Add (h.Key, h.Value);
-			}
-
-			clone.Version = req.Version;
-
-			foreach (KeyValuePair<string, object> prop in req.Properties) {
-				clone.Properties.Add (prop);
-			}
-
-			foreach (KeyValuePair<string, IEnumerable<string>> header in req.Headers) {
-				if (header.Key == "Authorization")
-					continue; // we do not keep it in the redirect
-				clone.Headers.TryAddWithoutValidation (header.Key, header.Value);
-			}
-
-			return clone;
-		}
-
 		internal async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken, bool isFirstRequest)
 		{
 			sentRequest = true;
@@ -299,7 +267,8 @@ namespace System.Net.Http
  				var status = initialRequest.StatusCode;
  				if (IsRedirect (status) && allowAutoRedirect) {
  					bucket.StreamCanBeDisposed = true;
- 					var redirectRequest = await CreateHttpRequestMessageRedirectAsync (request).ConfigureAwait (false);
+					// remove headers in a redirec for Authentication.
+					request.Headers.Authorization = null;
  					var redirectResponse = await SendAsync (redirectRequest, cancellationToken, false).ConfigureAwait (false);
  					return redirectResponse;
  				}
