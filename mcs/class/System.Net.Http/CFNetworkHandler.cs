@@ -269,13 +269,11 @@ namespace System.Net.Http
  					bucket.StreamCanBeDisposed = true;
 					// remove headers in a redirect for Authentication.
 					request.Headers.Authorization = null;
- 					var redirectResponse = await SendAsync (request, cancellationToken, false).ConfigureAwait (false);
- 					return redirectResponse;
+ 					return await SendAsync (request, cancellationToken, false).ConfigureAwait (false);
  				}
  				return initialRequest;
- 			} else {
- 				return await response.Task;
- 			}
+ 			} 
+			return await response.Task;
 		}
 
 		// Decide if we redirect or not, similar to what is done in the managed handler
