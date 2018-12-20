@@ -46,7 +46,7 @@ mono_w32event_reset (gpointer handle)
 }
 
 gpointer
-ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manual, MonoBoolean initial,
+ves_icall_System_Threading_Events_CreateEvent_icall (MonoBoolean manual, MonoBoolean initial,
 	const gunichar2 *name, gint32 name_length, gint32 *win32error, MonoError *error)
 {
 	gpointer event;
@@ -78,7 +78,7 @@ ves_icall_System_Threading_Events_CloseEvent_internal (gpointer handle)
 }
 
 gpointer
-ves_icall_System_Threading_Events_OpenEvent_internal (const gunichar2 *name, gint32 name_length,
+ves_icall_System_Threading_Events_OpenEvent_icall (const gunichar2 *name, gint32 name_length,
 	gint32 rights, gint32 *win32error, MonoError *error)
 {
 	gpointer handle;
