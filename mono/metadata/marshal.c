@@ -874,7 +874,7 @@ mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *te
 void
 mono_string_utf16_to_builder_impl (MonoStringBuilderHandle sb, const gunichar2 *text, MonoError *error)
 {
-	mono_string_utf16_to_builder_copy (sb, text, text ? g_utf16_len (text) : 0, error);
+	mono_string_utf16len_to_builder (sb, text, text ? g_utf16_len (text) : 0, error);
 }
 
 /**
