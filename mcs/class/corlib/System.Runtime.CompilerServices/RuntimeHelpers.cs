@@ -35,7 +35,7 @@ using System.Reflection;
 
 namespace System.Runtime.CompilerServices
 {
-	public static class RuntimeHelpers
+	public static partial class RuntimeHelpers
 	{
 		public delegate void TryCode (Object userData);
 
@@ -106,24 +106,24 @@ namespace System.Runtime.CompilerServices
 			return SufficientExecutionStack ();
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegions ()
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegionsNoOP ()
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void ProbeForSufficientStack()
 		{
@@ -139,7 +139,7 @@ namespace System.Runtime.CompilerServices
 		// then adds that combination to e.g. AppDomain.DomainUnload, then the client is responsible
 		// for his own preparation.
 		[System.Security.SecurityCritical]  // auto-generated_required
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		public static void PrepareDelegate (Delegate d)
 		{
 		}
@@ -157,18 +157,17 @@ namespace System.Runtime.CompilerServices
 		// NOTE: that for the NGen case you can sidestep the required ReliabilityContract
 		// by using the [PrePrepareMethod] attribute.
 		[System.Security.SecurityCritical]  // auto-generated_required
-		[ResourceExposure(ResourceScope.None)]
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		public static void PrepareContractedDelegate(Delegate d)
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		public static void PrepareMethod (RuntimeMethodHandle method)
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
+//		[MonoTODO("Currently a no-op")]
 		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation)
 		{
 		}
@@ -190,9 +189,11 @@ namespace System.Runtime.CompilerServices
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
 		}
 
+#if !NETCORE
 		public static object GetUninitializedObject (Type type)
 		{
 			return FormatterServices.GetUninitializedObject (type);
 		}
+#endif
 	}
 }

@@ -42,7 +42,6 @@ using System.Security;
 using System.Threading;
 using System.Text;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 	
@@ -175,7 +174,6 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
-            Contract.EndContractBlock();
 
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
@@ -695,7 +693,6 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
-            Contract.EndContractBlock();
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
                 Name,

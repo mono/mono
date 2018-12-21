@@ -38,7 +38,7 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading
 {
-	public static class Interlocked 
+	public static partial class Interlocked
 	{
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -37,7 +37,11 @@ using System.Runtime.InteropServices;
 namespace System 
 {
 	[StructLayout (LayoutKind.Auto)]
-	public struct ArgIterator
+	public
+#if NETCORE
+	ref
+#endif
+	struct ArgIterator
 	{
 #pragma warning disable 169, 414
 		IntPtr sig;
@@ -73,7 +77,7 @@ namespace System
 
 		public override bool Equals (object o)
 		{
-			throw new NotSupportedException (Locale.GetText ("ArgIterator does not support Equals."));
+			throw new NotSupportedException ("ArgIterator does not support Equals.");
 		}
 
 		public override int GetHashCode ()
@@ -85,7 +89,7 @@ namespace System
 		public TypedReference GetNextArg ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
+				throw new InvalidOperationException ("Invalid iterator position.");
 			TypedReference result = new TypedReference ();
 			unsafe {
 				IntGetNextArg (&result);
@@ -100,7 +104,7 @@ namespace System
 		public TypedReference GetNextArg (RuntimeTypeHandle rth)
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
+				throw new InvalidOperationException ("Invalid iterator position.");
 			TypedReference result = new TypedReference ();
 			unsafe {
 				IntGetNextArgWithType (&result, rth.Value);
@@ -114,7 +118,7 @@ namespace System
 		public RuntimeTypeHandle GetNextArgType ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
+				throw new InvalidOperationException ("Invalid iterator position.");
 			return new RuntimeTypeHandle (IntGetNextArgType ());
 		}
 

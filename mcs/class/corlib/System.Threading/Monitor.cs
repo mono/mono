@@ -31,7 +31,9 @@
 //
 
 using System.Runtime.CompilerServices;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Contexts;
+#endif
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
