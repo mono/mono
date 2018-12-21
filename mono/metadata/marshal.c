@@ -954,7 +954,7 @@ mono_string_builder_to_utf16_impl (MonoStringBuilderHandle sb, MonoError *error)
 	guint len = mono_string_builder_capacity (sb);
 
 	if (len == 0)
-		len = 1; // why?
+		len = 1; // Why?
 
 	gunichar2 *str = (gunichar2 *)mono_marshal_alloc ((len + 1) * sizeof (gunichar2), error);
 	return_val_if_nok (error, NULL);
