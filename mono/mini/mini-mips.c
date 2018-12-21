@@ -30,6 +30,7 @@
 #include "ir-emit.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #define SAVE_FP_REGS		0
 
@@ -3438,8 +3439,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * So instead of emitting a trap, we emit a call a C function and place a 
 			 * breakpoint there.
 			 */
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-								 (gpointer)"mono_break");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+								 &mono_jit_icall_info.mono_break);
 			mips_load (code, mips_t9, 0x1f1f1f1f);
 			mips_jalr (code, mips_t9, mips_ra);
 			mips_nop (code);

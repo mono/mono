@@ -174,10 +174,6 @@ typedef struct {
 } GenericArrayHelperWrapperInfo;
 
 typedef struct {
-	gpointer func;
-} ICallWrapperInfo;
-
-typedef struct {
 	MonoMethod *method;
 } ArrayAccessorWrapperInfo;
 
@@ -251,7 +247,7 @@ typedef struct {
 		/* GENERIC_ARRAY_HELPER */
 		GenericArrayHelperWrapperInfo generic_array_helper;
 		/* ICALL_WRAPPER */
-		ICallWrapperInfo icall;
+		MonoJitICallInfo *icall_info;
 		/* ARRAY_ACCESSOR */
 		ArrayAccessorWrapperInfo array_accessor;
 		/* PROXY_ISINST etc. */

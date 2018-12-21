@@ -59,7 +59,7 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/profiler/aot.h>
 #include <mono/utils/w32api.h>
-
+#include <mono/metadata/register-icall-def.h>
 #include "aot-compiler.h"
 #include "aot-runtime.h"
 #include "seq-points.h"
@@ -68,6 +68,7 @@
 #include "mini-gc.h"
 #include "mini-llvm.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 static MonoMethod*
 try_get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
@@ -3521,15 +3522,15 @@ encode_signature (MonoAotCompile *acfg, MonoMethodSignature *sig, guint8 *buf, g
 	*endbuf = p;
 }
 
-static void
-encode_icall (gpointer func, guint8 *p, guint8 **end)
-{
-	MonoJitICallInfo *callinfo = mono_find_jit_icall_by_addr (func);
-	g_assert (callinfo);
-	strcpy ((char *) p, callinfo->name);
-	p += strlen (callinfo->name) + 1;
-	*end = p;
-}
+//static void
+//encode_icall (gpointer func, guint8 *p, guint8 **end)
+//{
+//	MonoJitICallInfo *callinfo = mono_find_jit_icall_by_addr (func);
+//	g_assert (callinfo);
+//	strcpy ((char *) p, callinfo->name);
+//	p += strlen (callinfo->name) + 1;
+//	*end = p;
+//}
 
 #define MAX_IMAGE_INDEX 250
 
@@ -3616,7 +3617,7 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
-				encode_icall (info->d.icall.func, p, &p);
+				encode_value (mono_jit_icall_info_index (info->d.icall_info), p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT)
 				encode_value (info->d.aot_init.subtype, p, &p);
 			break;
@@ -3625,7 +3626,7 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			g_assert (info);
 			encode_value (info->subtype, p, &p);
 			if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				encode_icall (info->d.icall.func, p, &p);
+				encode_value (mono_jit_icall_info_index (info->d.icall_info), p, &p);
 			} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			} else {
@@ -3865,8 +3866,10 @@ static inline gboolean
 is_plt_patch (MonoJumpInfo *patch_info)
 {
 	switch (patch_info->type) {
-	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assertf (!"MONO_PATCH_INFO_JIT_ICALL", "%s", patch_info->data.name);
+	case MONO_PATCH_INFO_METHOD:
+	case MONO_PATCH_INFO_JIT_ICALL_INFO:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
@@ -4154,12 +4157,9 @@ add_extra_method (MonoAotCompile *acfg, MonoMethod *method)
 }
 
 static void
-add_jit_icall_wrapper (gpointer key, gpointer value, gpointer user_data)
+add_jit_icall_wrapper (MonoAotCompile *acfg, MonoJitICallInfo *callinfo)
 {
-	MonoAotCompile *acfg = (MonoAotCompile *)user_data;
-	MonoJitICallInfo *callinfo = (MonoJitICallInfo *)value;
-
-	if (!callinfo->sig)
+	if (!callinfo->inited || !callinfo->sig)
 		return;
 
 	add_method (acfg, mono_marshal_get_icall_wrapper (callinfo, TRUE));
@@ -4516,8 +4516,8 @@ add_wrappers (MonoAotCompile *acfg)
 		add_method (acfg, mono_marshal_get_isinst_with_cache ());
 
 		/* JIT icall wrappers */
-		/* FIXME: locking - this is "safe" as full-AOT threads don't mutate the icall hash*/
-		g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
+		for (int i = 0; i < mono_jit_icall_count; ++i)
+			add_jit_icall_wrapper (acfg, &mono_jit_icall_info.array [i]);
 	}
 
 	/* 
@@ -6006,9 +6006,14 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 						g_assert (strlen (sym) < 1000);
 						direct_call_target = g_strdup_printf ("%s%s", acfg->user_symbol_prefix, sym);
 					}
-				} else if (patch_info->type == MONO_PATCH_INFO_JIT_ICALL) {
-					MonoJitICallInfo *info = mono_find_jit_icall_by_name (patch_info->data.name);
-					const char *sym = mono_lookup_jit_icall_symbol (patch_info->data.name);
+				} else if (patch_info->type == MONO_PATCH_INFO_JIT_ICALL || patch_info->type == MONO_PATCH_INFO_JIT_ICALL_INFO) {
+					MonoJitICallInfo *info;
+					if (patch_info->type == MONO_PATCH_INFO_JIT_ICALL_INFO)
+						info = patch_info->data.icall_info;
+					else {
+						g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
+					}
+					const char *sym = info ? info->c_symbol : NULL;
 					if (!got_only && sym && acfg->aot_opts.direct_icalls && info->func == info->wrapper) {
 						/* Call to a jit icall without a wrapper */
 						direct_call = TRUE;
@@ -6291,6 +6296,7 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 static void
 encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint8 **endbuf)
 {
+	const char *name;
 	guint8 *p = buf;
 
 	switch (patch_info->type) {
@@ -6334,14 +6340,18 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
 		encode_value (patch_info->data.index, p, &p);
 		break;
+	case MONO_PATCH_INFO_JIT_ICALL_INFO:
+		encode_value (mono_jit_icall_info_index (patch_info->data.icall_info), p, &p);
+		break;
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
-		guint32 len = strlen (patch_info->data.name);
-
+		guint32 len;
+		name = patch_info->data.name;
+		len = strlen (name);
 		encode_value (len, p, &p);
-
-		memcpy (p, patch_info->data.name, len);
+		memcpy (p, name, len);
 		p += len;
 		*p++ = '\0';
 		break;
@@ -7028,7 +7038,11 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 		debug_sym = get_debug_sym (ji->data.method, prefix, cache);
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
 		debug_sym = g_strdup_printf ("%s_jit_icall_%s", prefix, ji->data.name);
+		break;
+	case MONO_PATCH_INFO_JIT_ICALL_INFO:
+		debug_sym = g_strdup_printf ("%s_jit_icall_%s", prefix, ji->data.icall_info->name);
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 		debug_sym = g_strdup_printf ("%s_rgctx_fetch_%d", prefix, acfg->label_generator ++);
@@ -9349,10 +9363,16 @@ mono_aot_get_direct_call_symbol (MonoJumpInfoType type, gconstpointer data)
 				sym = mono_lookup_icall_symbol (method);
 			else if (llvm_acfg->aot_opts.direct_pinvoke)
 				sym = get_pinvoke_import (llvm_acfg, method);
-		} else if (type == MONO_PATCH_INFO_JIT_ICALL) {
-			MonoJitICallInfo *info = mono_find_jit_icall_by_name ((const char*)data);
-			const char *name = mono_lookup_jit_icall_symbol ((const char*)data);
-			if (name && llvm_acfg->aot_opts.direct_icalls && info->func == info->wrapper)
+		} else if (type == MONO_PATCH_INFO_JIT_ICALL || type == MONO_PATCH_INFO_JIT_ICALL_INFO) {
+			MonoJitICallInfo *info = NULL;
+			const char *name = NULL;
+			if (type == MONO_PATCH_INFO_JIT_ICALL_INFO) {
+				info = (MonoJitICallInfo*)data;
+				name = info ? info->c_symbol : NULL;
+			} else {
+				g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
+			}
+			if (name && info->func == info->wrapper)
 				sym = name;
 		}
 		if (sym)
@@ -12658,18 +12678,19 @@ static void aot_dump (MonoAotCompile *acfg)
 	mono_json_writer_destroy (&writer);
 }
 
-static const char *preinited_jit_icalls[] = {
-	"mini_llvm_init_method",
-	"mini_llvm_init_gshared_method_this",
-	"mini_llvm_init_gshared_method_mrgctx",
-	"mini_llvm_init_gshared_method_vtable",
-	"mini_llvmonly_throw_nullref_exception",
-	"mono_llvm_throw_corlib_exception",
-	"mono_threads_state_poll",
-	"mini_llvmonly_init_vtable_slot",
-	"mono_helper_ldstr_mscorlib",
-	"mono_fill_method_rgctx",
-	"mono_fill_class_rgctx"
+// FIXME Could be 2 or 4 bytes each and position independent.
+static MonoJitICallInfo * const preinited_jit_icalls[] = {
+	&mono_jit_icall_info.mini_llvm_init_method,
+	&mono_jit_icall_info.mini_llvm_init_gshared_method_this,
+	&mono_jit_icall_info.mini_llvm_init_gshared_method_mrgctx,
+	&mono_jit_icall_info.mini_llvm_init_gshared_method_vtable,
+	&mono_jit_icall_info.mini_llvmonly_throw_nullref_exception,
+	&mono_jit_icall_info.mono_llvm_throw_corlib_exception,
+	&mono_jit_icall_info.mono_threads_state_poll,
+	&mono_jit_icall_info.mini_llvmonly_init_vtable_slot,
+	&mono_jit_icall_info.mono_helper_ldstr_mscorlib,
+	&mono_jit_icall_info.mono_fill_method_rgctx,
+	&mono_jit_icall_info.mono_fill_class_rgctx
 };
 
 static void
@@ -12744,10 +12765,10 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	ji->data.name = "mono_threads_attach_coop";
 	add_preinit_slot (acfg, ji);
 
-	for (i = 0; i < sizeof (preinited_jit_icalls) / sizeof (char*); ++i) {
+	for (i = 0; i < G_N_ELEMENTS (preinited_jit_icalls); ++i) {
 		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoAotCompile));
-		ji->type = MONO_PATCH_INFO_JIT_ICALL;
-		ji->data.name = preinited_jit_icalls [i];
+		ji->type = MONO_PATCH_INFO_JIT_ICALL_INFO;
+		ji->data.icall_info = preinited_jit_icalls [i];
 		add_preinit_slot (acfg, ji);
 	}
 
@@ -13370,10 +13391,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 #endif
 
 	if (mono_aot_mode_is_interp (&acfg->aot_opts) && mono_is_corlib_image (acfg->image->assembly->image)) {
-		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ("mono_interp_to_native_trampoline", (gpointer) mono_interp_to_native_trampoline);
+		MonoMethod *wrapper = mini_get_interp_lmf_wrapper (&mono_jit_icall_info.mono_interp_to_native_trampoline);
 		add_method (acfg, wrapper);
 
-		wrapper = mini_get_interp_lmf_wrapper ("mono_interp_entry_from_trampoline", (gpointer) mono_interp_entry_from_trampoline);
+		wrapper = mini_get_interp_lmf_wrapper (&mono_jit_icall_info.mono_interp_entry_from_trampoline);
 		add_method (acfg, wrapper);
 
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
@@ -13390,7 +13411,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
 			add_gc_wrappers (acfg);
 
-			g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
+			for (int i = 0; i < mono_jit_icall_count; ++i)
+				add_jit_icall_wrapper (acfg, &mono_jit_icall_info.array [i]);
 		}
 	}
 

@@ -41,6 +41,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/unlocked.h>
 #include <mono/metadata/icall-decl.h>
+#include "register-icall-def.h"
 
 #if HAVE_BOEHM_GC
 

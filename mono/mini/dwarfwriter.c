@@ -1400,8 +1400,7 @@ disasm_ins (MonoMethod *method, const guchar *ip, const guint8 **endip)
 			MonoJitICallInfo *info;
 
 			token = read32 (ip + 2);
-			data = mono_method_get_wrapper_data (method, token);
-			info = mono_find_jit_icall_by_addr (data);
+			info = (MonoJitICallInfo*)mono_method_get_wrapper_data (method, token);
 			g_assert (info);
 
 			dis = g_strdup_printf ("IL_%04x: mono_icall <%s>", (int)(ip - header->code), info->name);

@@ -61,7 +61,6 @@
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/bsearch.h>
-
 #include "mini.h"
 #include "seq-points.h"
 #include "version.h"
@@ -70,6 +69,7 @@
 #include "aot-runtime.h"
 #include "jit-icalls.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_AOT
 
@@ -1090,9 +1090,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				ref->method = mini_get_interp_in_wrapper (sig);
 				g_free (sig);
 			} else if (subtype == WRAPPER_SUBTYPE_INTERP_LMF) {
-				MonoJitICallInfo *info = mono_find_jit_icall_by_name ((char *) p);
-				g_assert (info);
-				ref->method = mini_get_interp_lmf_wrapper (info->name, (gpointer) info->func);
+				MonoJitICallInfo *info = &mono_jit_icall_info.array [decode_value (p, &p)];
+				ref->method = mini_get_interp_lmf_wrapper (info);
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {
 				MonoMethodSignature *sig = decode_signature (module, p, &p);
 				if (!sig)
@@ -1147,10 +1146,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			char *name;
 
 			if (subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				name = (char*)p;
-
-				MonoJitICallInfo *info = mono_find_jit_icall_by_name (name);
-				g_assert (info);
+				MonoJitICallInfo *info = &mono_jit_icall_info.array [decode_value (p, &p)];
 				ref->method = mono_icall_get_wrapper_method (info);
 			} else {
 				m = decode_resolve_method_ref (module, p, &p, error);
@@ -3767,14 +3763,17 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
 		guint32 len = decode_value (p, &p);
-
 		ji->data.name = (char*)p;
 		p += len + 1;
 		break;
 	}
+	case MONO_PATCH_INFO_JIT_ICALL_INFO:
+		ji->data.icall_info = &mono_jit_icall_info.array [decode_value (p, &p)];
+		break;
 	case MONO_PATCH_INFO_METHODCONST:
 		/* Shared */
 		ji->data.method = decode_resolve_method_ref (aot_module, p, &p, error);
@@ -5123,11 +5122,17 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	 * patches, so have to translate between the two.
 	 * FIXME: Clean this up, but how ?
 	 */
-	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL || ji.type == MONO_PATCH_INFO_ICALL_ADDR || ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR || ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
+	if (ji.type == MONO_PATCH_INFO_ABS
+			|| ji.type == MONO_PATCH_INFO_JIT_ICALL
+			|| ji.type == MONO_PATCH_INFO_JIT_ICALL_INFO
+			|| ji.type == MONO_PATCH_INFO_ICALL_ADDR || ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR
+			|| ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
+		g_assert (ji.type != MONO_PATCH_INFO_JIT_ICALL);
 		/* These should already have a function descriptor */
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* Our function descriptors have a 0 environment, gcc created ones don't */
-		if (ji.type != MONO_PATCH_INFO_JIT_ICALL && ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR)
+		if (ji.type != MONO_PATCH_INFO_JIT_ICALL && ji.type != MONO_PATCH_INFO_JIT_ICALL_INFO &&
+				ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR)
 			g_assert (((gpointer*)target) [2] == 0);
 #endif
 		/* Empty */

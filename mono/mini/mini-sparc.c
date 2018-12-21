@@ -37,6 +37,7 @@
 #include "cpu-sparc.h"
 #include "jit-icalls.h"
 #include "ir-emit.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
  * Sparc V9 means two things:
@@ -3059,14 +3060,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_THROW:
 			sparc_mov_reg_reg (code, ins->sreg1, sparc_o0);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_throw_exception");
+			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_jit_icall_info.mono_arch_throw_exception);
 			EMIT_CALL ();
 			break;
 		case OP_RETHROW:
 			sparc_mov_reg_reg (code, ins->sreg1, sparc_o0);
-			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_rethrow_exception");
+			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_jit_icall_info.mono_arch_rethrow_exception;
 			EMIT_CALL ();
 			break;
 		case OP_START_HANDLER: {
@@ -4067,8 +4068,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		sparc_set (code, cfg->method, sparc_o7);
 		sparc_sti_imm (code, sparc_o7, sparc_fp, lmf_offset + G_STRUCT_OFFSET (MonoLMF, method));
 
-		mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-							 (gpointer)"mono_arch_get_lmf_addr");		
+		mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+							 &mono_jit_icall_info.mono_arch_get_lmf_addr;		
 		EMIT_CALL ();
 
 		code = (guint32*)mono_sparc_emit_save_lmf (code, lmf_offset);
@@ -4248,8 +4249,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 					nthrows ++;
 				}
 
-				patch_info->data.name = "mono_arch_throw_corlib_exception";
-				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
+				patch_info->data.name = &mono_jit_icall_info.mono_arch_throw_corlib_exception;
+				patch_info->type = MONO_PATCH_INFO_JIT_ICALL_INFO;
 				patch_info->ip.i = (guint8*)code - cfg->native_code;
 
 				EMIT_CALL ();

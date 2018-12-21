@@ -34,6 +34,7 @@
 #include "utils/mono-threads.h"
 #include "metadata/w32handle.h"
 #include "icall-decl.h"
+#include "register-icall-def.h"
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,

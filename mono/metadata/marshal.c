@@ -62,6 +62,8 @@
 #include <errno.h>
 #include "icall-decl.h"
 #include "icall-signatures.h"
+#include "register-icall-def.h"
+#include "class-internals.h"
 
 static void
 mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text, gsize len, MonoError *error);
@@ -120,37 +122,44 @@ get_method_image (MonoMethod *method)
 #ifdef __cplusplus
 template <typename T>
 static void
-register_dyn_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+register_dyn_icall_info (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #else
 static void
-register_dyn_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+register_dyn_icall_info (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
+	// FIXME There are near duplicates of this function, in marshal.c and mini-runtime.c.
+	mono_register_jit_icall_info_full (info, func, name, sig, no_wrapper, NULL);
 }
 
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+register_icall_info (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #else
 static void
-register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+register_icall_info (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, no_wrapper, name);
+	// FIXME Some versions of register_icall_info pass NULL for last parameter, some pass name.
+	// marshal.c: name
+	// remoting.c: NULL (via mono_register_jit_icall_info)
+	// cominterop.c: name
+	// mini-runtime.c: name
+	mono_register_jit_icall_info_full (info, func, name, sig, no_wrapper, name);
 }
 
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall_no_wrapper (T func, const char *name, MonoMethodSignature *sig)
+register_icall_info_no_wrapper (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig)
 #else
 static void
-register_icall_no_wrapper (gpointer func, const char *name, MonoMethodSignature *sig)
+register_icall_info_no_wrapper (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, TRUE, name);
+	// FIXME There are near duplicates of this function in mini-runtime.c and marshal.c.
+	mono_register_jit_icall_info_full (info, func, name, sig, TRUE, name);
 }
 
 MonoMethodSignature*
@@ -265,12 +274,12 @@ mono_marshal_init (void)
 		register_icall (mono_marshal_free_array, "mono_marshal_free_array", mono_icall_sig_void_ptr_int32, FALSE);
 		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", mono_icall_sig_void_ptr_ptr_int32, FALSE);
 		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", mono_icall_sig_void_ptr_ptr_int32, FALSE);
-		register_dyn_icall (g_free, "g_free", mono_icall_sig_void_ptr, FALSE);
+		register_dyn_icall (g_free, g_free, mono_icall_sig_void_ptr, FALSE);
 		register_icall_no_wrapper (mono_object_isinst_icall, "mono_object_isinst_icall", mono_icall_sig_object_object_ptr);
 		register_icall (mono_struct_delete_old, "mono_struct_delete_old", mono_icall_sig_void_ptr_ptr, FALSE);
 		register_icall (mono_delegate_begin_invoke, "mono_delegate_begin_invoke", mono_icall_sig_object_object_ptr, FALSE);
 		register_icall (mono_delegate_end_invoke, "mono_delegate_end_invoke", mono_icall_sig_object_object_ptr, FALSE);
-		register_dyn_icall (mono_gc_wbarrier_generic_nostore_internal, "wb_generic_internal", mono_icall_sig_void_ptr, FALSE);
+		register_dyn_icall (mono_gc_wbarrier_generic_nostore_internal, mono_gc_wbarrier_generic_nostore_internal, mono_icall_sig_void_ptr, FALSE);
 		register_icall (mono_gchandle_get_target_internal, "mono_gchandle_get_target_internal", mono_icall_sig_object_int32, TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", mono_icall_sig_object_object_ptr_ptr, FALSE);
 		register_icall (mono_threads_enter_gc_safe_region_unbalanced, "mono_threads_enter_gc_safe_region_unbalanced", mono_icall_sig_ptr_ptr, TRUE);
@@ -2918,8 +2927,8 @@ emit_return_noilgen (MonoMethodBuilder *mb)
 
 /**
  * mono_marshal_get_icall_wrapper:
- * Generates IL code for the icall wrapper. The generated method
- * calls the unmanaged code in \p func.
+ * Generates IL code for the JIT icall wrapper. The generated method
+ * calls the unmanaged code in \p callinfo->func.
  */
 MonoMethod *
 mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions)
@@ -2957,8 +2966,9 @@ mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_excep
 		csig->call_convention = 0;
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_ICALL_WRAPPER);
-	info->d.icall.func = (gpointer)func;
+	info->d.icall_info = callinfo;
 	res = mono_mb_create_and_cache_full (cache, (gpointer) func, mb, csig, csig->param_count + 16, info, NULL);
+
 	mono_mb_free (mb);
 	g_free (name);
 

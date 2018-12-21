@@ -57,16 +57,9 @@ void
 mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *opt_sig);
 
 void
-mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func);
+mono_mb_emit_icall_info (MonoMethodBuilder *mb, MonoJitICallInfo *jit_icall_info);
 
-#ifdef __cplusplus
-template <typename T>
-inline void
-mono_mb_emit_icall (MonoMethodBuilder *mb, T func)
-{
-	mono_mb_emit_icall (mb, (gpointer)func);
-}
-#endif // __cplusplus
+#define mono_mb_emit_icall(mb, name) (mono_mb_emit_icall_info ((mb), &mono_jit_icall_info.name))
 
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);

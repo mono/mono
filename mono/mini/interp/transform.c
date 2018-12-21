@@ -22,9 +22,9 @@
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/unlocked.h>
-
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
+#include <mono/metadata/register-icall-def.h>
 
 #include "mintops.h"
 #include "interp-internals.h"
@@ -825,7 +825,7 @@ static int mono_class_get_magic_index (MonoClass *k)
 static void
 interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *target_method)
 {
-	MonoJitICallInfo *info = mono_find_jit_icall_by_name ("mono_throw_method_access");
+	MonoJitICallInfo *info = &mono_jit_icall_info.mono_throw_method_access;
 
 	/* Inject code throwing MethodAccessException */
 	interp_add_ins (td, MINT_MONO_LDPTR);
@@ -4834,14 +4834,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				}
 				case CEE_MONO_ICALL: {
 					guint32 token;
-					gpointer func;
 					MonoJitICallInfo *info;
 					int icall_op;
 
+					// FIXME enum instead of pointer would be good here
+
 					token = read32 (td->ip + 1);
 					td->ip += 5;
-					func = mono_method_get_wrapper_data (method, token);
-					info = mono_find_jit_icall_by_addr (func);
+					info = (MonoJitICallInfo*)mono_method_get_wrapper_data (method, token);
 					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
@@ -4864,7 +4864,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						g_assert (icall_op != -1);
 
 						interp_add_ins (td, icall_op);
-						td->last_ins->data [0] = get_data_item_index (td, func);
+						// FIXME try making info have gpointer instead of gconstpointer
+						td->last_ins->data [0] = get_data_item_index (td, (gpointer)info->func);
 					}
 					td->sp -= info->sig->param_count;
 
@@ -5681,7 +5682,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 			const char *name = method->name;
 			if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 				if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor_interp");
+					MonoJitICallInfo *mi = &mono_jit_icall_info.ves_icall_mono_delegate_ctor_interp;
 					g_assert (mi);
 					nm = mono_marshal_get_icall_wrapper (mi, TRUE);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {

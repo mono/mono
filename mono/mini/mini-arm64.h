@@ -277,7 +277,7 @@ void mono_arm_throw_exception (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_
 
 void mono_arm_gsharedvt_init (void);
 
-GSList* mono_arm_get_exception_trampolines (gboolean aot);
+GSList* mono_arm_get_exception_trampolines (gboolean aot, gboolean reg);
 
 void mono_arm_resume_unwind (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
 

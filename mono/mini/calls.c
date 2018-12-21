@@ -645,6 +645,8 @@ mini_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer
 	MonoJumpInfo *ji = mono_patch_info_new (cfg->mempool, 0, patch_type, data);
 	MonoInst *ins;
 
+	g_assert (patch_type != MONO_PATCH_INFO_JIT_ICALL);
+
 	/* 
 	 * We pass ji as the call address, the PATCH_INFO_ABS resolving code will
 	 * handle it.

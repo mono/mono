@@ -341,6 +341,7 @@ if (ins->inst_true_bb->native_offset) { 					\
 #include "mini-gc.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*========================= End of Includes ========================*/
 
@@ -3734,15 +3735,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_THROW: {
 			s390_lgr  (code, s390_r2, ins->sreg1);
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer) "mono_arch_throw_exception");
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_jit_icall_info.mono_arch_throw_exception;
 			S390_CALL_TEMPLATE(code, s390_r14);
 		}
 			break;
 		case OP_RETHROW: {
 			s390_lgr  (code, s390_r2, ins->sreg1);
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer) "mono_arch_rethrow_exception");
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_jit_icall_info.mono_arch_rethrow_exception);
 			S390_CALL_TEMPLATE(code, s390_r14);
 		}
 			break;
@@ -3848,8 +3849,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_tm (code, ins->sreg1, byte_offset, bitmask);
 			s390_jo (code, 0); CODEPTR(code, jump);
 
-			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL,
-						"mono_generic_class_init");
+			mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+						&mono_jit_icall_info.mono_generic_class_init);
 			S390_CALL_TEMPLATE(code, s390_r14);
 
 			PTRSLOT (code, jump);
@@ -5345,8 +5346,10 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 			case MONO_PATCH_INFO_EXC:
 				s390_patch_addr (ip, (guint64) target);
 				continue;
-			case MONO_PATCH_INFO_METHOD:
 			case MONO_PATCH_INFO_JIT_ICALL:
+				g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
+			case MONO_PATCH_INFO_JIT_ICALL_INFO:
+			case MONO_PATCH_INFO_METHOD:
 			case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 			case MONO_PATCH_INFO_RGCTX_FETCH:
 			case MONO_PATCH_INFO_ABS: {
@@ -5632,8 +5635,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* On return from this call r2 have the address of the &lmf	 */
 		/*---------------------------------------------------------------*/
 		mono_add_patch_info (cfg, code - cfg->native_code, 
-				MONO_PATCH_INFO_JIT_ICALL, 
-				(gpointer)"mono_tls_get_lmf_addr");
+				MONO_PATCH_INFO_JIT_ICALL_INFO,
+				&mono_jit_icall_info.mono_tls_get_lmf_addr);
 		S390_CALL_TEMPLATE(code, s390_r1);
 
 		/*---------------------------------------------------------------*/	
@@ -5913,8 +5916,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				/*---------------------------------------------*/
 				/* Reuse the current patch to set the jump     */
 				/*---------------------------------------------*/
-				patch_info->type      = MONO_PATCH_INFO_JIT_ICALL;
-				patch_info->data.name = "mono_arch_throw_corlib_exception";
+				patch_info->type      = MONO_PATCH_INFO_JIT_ICALL_INFO;
+				patch_info->data.name = &mono_jit_icall_info.mono_arch_throw_corlib_exception;
 				patch_info->ip.i      = code - cfg->native_code;
 				S390_BR_TEMPLATE (code, s390_r1);
 			}

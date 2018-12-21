@@ -2102,14 +2102,14 @@ void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst)
 
 void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
 
-void              mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
+void     mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *jit_icall_info, const char* name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
 
 #ifdef __cplusplus
 template <typename T>
 inline void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_throw)
+mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *jit_icall_info, const char* name, MonoMethodSignature *sig, T func, gboolean no_throw)
 {
-	mini_register_opcode_emulation (opcode, name, sig, (gpointer)func, symbol, no_throw);
+	mini_register_opcode_emulation_info (opcode, jit_icall_info, name, sig, (gpointer)func, no_throw);
 }
 #endif // __cplusplus
 
@@ -2720,7 +2720,7 @@ gboolean mini_gsharedvt_runtime_invoke_supported (MonoMethodSignature *sig);
 G_EXTERN_C void mono_interp_entry_from_trampoline (gpointer ccontext, gpointer imethod);
 G_EXTERN_C void mono_interp_to_native_trampoline (gpointer addr, gpointer ccontext);
 MonoMethod* mini_get_interp_in_wrapper (MonoMethodSignature *sig);
-MonoMethod* mini_get_interp_lmf_wrapper (const char *name, gpointer target);
+MonoMethod* mini_get_interp_lmf_wrapper (MonoJitICallInfo *jit_icall_info);
 char* mono_get_method_from_ip (void *ip);
 
 /* SIMD support */
