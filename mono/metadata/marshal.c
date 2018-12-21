@@ -4879,6 +4879,7 @@ mono_marshal_string_to_utf16 (MonoString *s)
 	// FIXME This should be an intrinsic.
 	// FIXMEcoop The input parameter is easy to deal with,
 	// but what happens with the result?
+	// See https://github.com/mono/mono/issues/12165.
 	return s ? mono_string_chars_internal (s) : NULL;
 }
 
