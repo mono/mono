@@ -61,6 +61,9 @@
 #include <errno.h>
 #include "icall-decl.h"
 
+static void
+mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text, gsize len, MonoError *error);
+
 /* #define DEBUG_RUNTIME_CODE */
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
@@ -809,7 +812,7 @@ mono_string_utf16_to_builder2_impl (const gunichar2 *text, MonoError *error)
 	MonoStringBuilderHandle sb = mono_string_builder_new (len, error);
 	return_val_if_nok (error, NULL_HANDLE_STRING_BUILDER);
 
-	mono_string_utf16_to_builder_copy (sb, text, len, error);
+	mono_string_utf16len_to_builder (sb, text, len, error);
 	return_val_if_nok (error, NULL_HANDLE_STRING_BUILDER);
 
 	return sb;
