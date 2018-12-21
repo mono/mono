@@ -1465,6 +1465,7 @@ typedef struct {
 	/* Used to implement dyn_call */
 	MonoInst *dyn_call_var;
 
+	MonoInst *last_seq_point;
 	/*
 	 * List of sequence points represented as IL offset+native offset pairs.
 	 * Allocated using glib.

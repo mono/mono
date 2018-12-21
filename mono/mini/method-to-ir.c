@@ -2865,6 +2865,7 @@ emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_
 		if (nonempty_stack)
 			ins->flags |= MONO_INST_NONEMPTY_STACK;
 		MONO_ADD_INS (cfg->cbb, ins);
+		cfg->last_seq_point = ins;
 	}
 }
 
@@ -5955,6 +5956,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoDebugMethodInfo *minfo;
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
+	gboolean emitted_funccall_seq_point = FALSE;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
 
@@ -6574,6 +6576,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			else
 				MONO_INST_NEW (cfg, ins, OP_NOP);
 			MONO_ADD_INS (cfg->cbb, ins);
+			emitted_funccall_seq_point = FALSE;
 			break;
 		case MONO_CEE_BREAK:
 			if (mini_should_insert_breakpoint (cfg->method)) {
@@ -7820,11 +7823,16 @@ calli_end:
 			constrained_class = NULL;
 			
 			if (need_seq_point) {
-				gboolean sym_seq_point = sym_seq_points && mono_bitset_test_fast (seq_point_locs, ip - header->code);
-				if (sp != stack_start && sym_seq_point) 
-					emit_seq_point (cfg, method, next_ip, FALSE, FALSE);
-				else
-					emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
+				//check is is a nested call and remove the non_empty_stack of the last call, only for non native methods
+				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
+					if (emitted_funccall_seq_point) {
+						if (cfg->last_seq_point)
+							cfg->last_seq_point->flags = 0;
+					}
+					else
+						emitted_funccall_seq_point = TRUE;
+				}
+				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
 			}
 
 			break;
