@@ -80,7 +80,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 }
 
 gpointer
-mono_string_to_utf8str (MonoStringHandle s, MonoError *error)
+mono_string_to_utf8str_impl (MonoStringHandle s, MonoError *error)
 {
 	char *as, *tmp;
 	glong len;
