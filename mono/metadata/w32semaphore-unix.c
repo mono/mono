@@ -232,7 +232,7 @@ exit:
 }
 
 gpointer
-ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount,
+ves_icall_System_Threading_Semaphore_CreateSemaphore_icall (gint32 initialCount, gint32 maximumCount,
 	const gunichar2 *name, gint32 name_length, gint32 *win32error, MonoError *error)
 { 
 	if (maximumCount <= 0) {
@@ -313,7 +313,7 @@ exit:
 }
 
 gpointer
-ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (const gunichar2 *name, gint32 name_length,
+ves_icall_System_Threading_Semaphore_OpenSemaphore_icall (const gunichar2 *name, gint32 name_length,
 	gint32 rights, gint32 *win32error, MonoError *error)
 {
 	g_assert (name);
