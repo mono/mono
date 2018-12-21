@@ -8707,39 +8707,44 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
+mono_register_jit_icall_info_full (MonoJitICallInfo *info, gconstpointer func,
+	const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
-	MonoJitICallInfo *info;
-
+	g_assert (info);
 	g_assert (func);
 	g_assert (name);
 
 	mono_icall_lock ();
 
 	if (!jit_icall_hash_name) {
-		jit_icall_hash_name = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
+		jit_icall_hash_name = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 		jit_icall_hash_addr = g_hash_table_new (NULL, NULL);
 	}
 
-	if ((info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name))) {
-		g_warning ("jit icall already defined \"%s\" \"%s\" %p %p\n", name, info->name, func, info->func);
-		g_assert_not_reached ();
+	MonoJitICallInfo *existing_info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name);
+
+	g_assertf (!existing_info, "jit icall name already defined \"%s\" \"%s\" %p %p\n",
+		name, existing_info->name, func, existing_info->func);
+
+	if ((existing_info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)func))) {
+		// mono_tls_get_lmf_addr, mono_get_lmf_addr
+		//
+		//g_warning ("jit icall func already defined \"%s\" \"%s\" %p %p\n",
+		//	name, existing_info->name, func, existing_info->func);
 	}
 
-	info = g_new0 (MonoJitICallInfo, 1);
-	
+	g_assertf (!info->inited, "%s", name);
+	info->inited = TRUE;
 	info->name = name;
 	info->func = func;
 	info->sig = sig;
 	info->c_symbol = c_symbol;
 
-	if (avoid_wrapper) {
-		info->wrapper = func;
-	} else {
-		info->wrapper = NULL;
-	}
+	// Fill in wrapper ahead of time, to just be func, to avoid
+	// later initializing it to anything else. So therefore, no wrapper.
+	info->wrapper = avoid_wrapper ? func : NULL;
 
-	g_hash_table_insert (jit_icall_hash_name, (gpointer)info->name, info);
+	g_hash_table_insert (jit_icall_hash_name, (gpointer)name, info);
 	g_hash_table_insert (jit_icall_hash_addr, (gpointer)func, info);
 
 	mono_icall_unlock ();
@@ -8747,9 +8752,10 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 }
 
 MonoJitICallInfo *
-mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
+mono_register_jit_icall_info (MonoJitICallInfo *info, gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)	
 {
-	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
+	// FIXME Sometimes register_not_full has NULL last parameter, sometimes it repeats name.
+	return mono_register_jit_icall_info_full (info, func, name, sig, no_wrapper, NULL);
 }
 
 int

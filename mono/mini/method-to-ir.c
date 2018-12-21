@@ -2176,13 +2176,10 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 	 * threads when debugging.
 	 */
 	if (direct_icalls_enabled (cfg)) {
-		char *name;
 		int costs;
 
 		if (!info->wrapper_method) {
-			name = g_strdup_printf ("__icall_wrapper_%s", info->name);
-			info->wrapper_method = mono_marshal_get_icall_wrapper (info->sig, name, info->func, TRUE);
-			g_free (name);
+			info->wrapper_method = mono_marshal_get_icall_wrapper (info, TRUE);
 			mono_memory_barrier ();
 		}
 
@@ -10102,12 +10099,8 @@ field_access_end:
 
 		case MONO_CEE_MONO_ICALL: {
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			gpointer func;
-			MonoJitICallInfo *info;
-
-			func = mono_method_get_wrapper_data (method, token);
-			info = mono_find_jit_icall_by_addr (func);
-			if (!info)
+			MonoJitICallInfo *info = (MonoJitICallInfo*)mono_method_get_wrapper_data (method, token);
+			if (!info || !info->func)
 				g_error ("Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
 			g_assert (info);
 

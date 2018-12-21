@@ -36,6 +36,8 @@
 #include "utils/mono-threads-coop.h"
 #include "utils/mono-threads.h"
 #include "metadata/w32handle.h"
+#include "class-internals.h"
+#include "register-icall-def.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -55,8 +57,7 @@ gboolean sgen_mono_xdomain_checks = FALSE;
 /* Functions supplied by the runtime to be called by the GC */
 static MonoGCCallbacks gc_callbacks;
 
-#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
-	a = i,
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) a = i,
 
 enum {
 #include "mono/cil/opcode.def"

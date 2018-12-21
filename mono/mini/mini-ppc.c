@@ -39,6 +39,7 @@
 #ifdef _AIX
 #include <sys/systemcfg.h>
 #endif
+#include "mono/metadata/register-icall-def.h"
 
 #define FORCE_INDIR_CALL 1
 
@@ -3329,8 +3330,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_break");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_break_icall_info);
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -3909,8 +3910,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW: {
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_throw_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_arch_throw_exception_icall_info);
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -3923,8 +3924,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RETHROW: {
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_rethrow_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+					     &mono_arch_rethrow_exception_icall_info);
 			if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 				ppc_load_func (code, PPC_CALL_REG, 0);
 				ppc_mtlr (code, PPC_CALL_REG);
@@ -4628,6 +4629,8 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		break;
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
+	case MONO_PATCH_INFO_JIT_ICALL_INFO:
 	case MONO_PATCH_INFO_ABS:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
@@ -5107,8 +5110,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			/* Compute the got address which is needed by the PLT entry */
 			code = mono_arch_emit_load_got_addr (cfg->native_code, code, cfg, NULL);
 		}
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-			     (gpointer)"mono_tls_get_lmf_addr");
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_INFO,
+			     &mono_tls_get_lmf_addr_icall_info);
 		if ((FORCE_INDIR_CALL || cfg->method->dynamic) && !cfg->compile_aot) {
 			ppc_load_func (code, PPC_CALL_REG, 0);
 			ppc_mtlr (code, PPC_CALL_REG);
@@ -5383,8 +5386,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			ppc_load (code, ppc_r3, m_class_get_type_token (exc_class));
 			/* we got here from a conditional call, so the calling ip is set in lr */
 			ppc_mflr (code, ppc_r4);
-			patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-			patch_info->data.name = "mono_arch_throw_corlib_exception";
+			patch_info->type = MONO_PATCH_INFO_JIT_ICALL_INFO;
+			patch_info->data.icall_info = &mono_arch_throw_corlib_exception_icall_info;
 			patch_info->ip.i = code - cfg->native_code;
 			if (FORCE_INDIR_CALL || cfg->method->dynamic) {
 				ppc_load_func (code, PPC_CALL_REG, 0);

@@ -3725,11 +3725,18 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_ICALL:
+		g_assert (!"MONO_PATCH_INFO_JIT_ICALL");
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
 		guint32 len = decode_value (p, &p);
-
 		ji->data.name = (char*)p;
+		p += len + 1;
+		break;
+	}
+	case MONO_PATCH_INFO_JIT_ICALL_INFO: {
+		// FIXME Here is where an enum would help.
+		guint32 len = decode_value (p, &p);
+		ji->data.icall_info = mono_find_jit_icall_by_name ((const char*)p);
 		p += len + 1;
 		break;
 	}
@@ -5117,11 +5124,16 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	 * patches, so have to translate between the two.
 	 * FIXME: Clean this up, but how ?
 	 */
-	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL || ji.type == MONO_PATCH_INFO_ICALL_ADDR || ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR || ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
+	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL
+			|| ji.type == MONO_PATCH_INFO_JIT_ICALL_INFO
+			|| ji.type == MONO_PATCH_INFO_ICALL_ADDR || ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR
+			|| ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
+		g_assert (ji.type != MONO_PATCH_INFO_JIT_ICALL);
 		/* These should already have a function descriptor */
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* Our function descriptors have a 0 environment, gcc created ones don't */
-		if (ji.type != MONO_PATCH_INFO_JIT_ICALL && ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR)
+		if (ji.type != MONO_PATCH_INFO_JIT_ICALL && ji.type != MONO_PATCH_INFO_JIT_ICALL_INFO &&
+				ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR)
 			g_assert (((gpointer*)target) [2] == 0);
 #endif
 		/* Empty */

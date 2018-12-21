@@ -34,9 +34,9 @@
 #include "utils/mono-threads.h"
 #include "metadata/w32handle.h"
 #include "icall-decl.h"
+#include "register-icall-def.h"
 
-#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
-	a = i,
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) a = i,
 
 enum {
 #include "mono/cil/opcode.def"
@@ -553,4 +553,3 @@ mono_sgen_mono_ilgen_init (void)
 	mono_install_sgen_mono_callbacks (&cb);
 }
 #endif
-

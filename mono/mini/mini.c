@@ -1647,16 +1647,16 @@ mono_find_jit_opcode_emulation (int opcode)
 }
 
 void
-mini_register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpointer func, const char *symbol, gboolean no_wrapper)
+mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *name, const char *sigstr, gpointer func, const char *symbol, gboolean no_wrapper)
 {
-	MonoJitICallInfo *info;
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
-	info = mono_register_jit_icall_full (func, name, sig, no_wrapper, symbol);
+	info = mono_register_jit_icall_info_full (info, func, name, sig, no_wrapper, symbol);
 
+//FIXME #ifndef DISABLE_JIT
 	if (emul_opcode_num >= emul_opcode_alloced) {
 		int incr = emul_opcode_alloced? emul_opcode_alloced/2: 16;
 		emul_opcode_alloced += incr;
@@ -1667,6 +1667,7 @@ mini_register_opcode_emulation (int opcode, const char *name, const char *sigstr
 	emul_opcode_opcodes [emul_opcode_num] = opcode;
 	emul_opcode_num++;
 	emul_opcode_hit_cache [opcode >> (EMUL_HIT_SHIFT + 3)] |= (1 << (opcode & EMUL_HIT_MASK));
+//FIXME #endif
 }
 
 static void
@@ -2061,8 +2062,8 @@ mono_postprocess_patches (MonoCompile *cfg)
 			 * absolute address.
 			 */
 			if (info) {
-				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-				patch_info->data.name = info->name;
+				patch_info->type = MONO_PATCH_INFO_JIT_ICALL_INFO;
+				patch_info->data.icall_info = info;
 			}
 
 			if (patch_info->type == MONO_PATCH_INFO_ABS) {

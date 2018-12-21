@@ -25,6 +25,11 @@
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/assembly.h"
 #include "icall-decl.h"
+#include "register-icall-def.h"
+
+#undef MONO_REGISTER_JIT_ICALL
+#define MONO_REGISTER_JIT_ICALL(x) static MonoJitICallInfo x ## _icall_info;
+MONO_REGISTER_JIT_ICALL (type_from_handle)
 
 typedef enum {
 	MONO_MARSHAL_NONE,			/* No marshalling needed */
@@ -35,8 +40,7 @@ typedef enum {
 
 #ifndef DISABLE_REMOTING
 
-#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
-	a = i,
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) a = i,
 
 enum {
 #include "mono/cil/opcode.def"
@@ -106,15 +110,19 @@ mono_compile_method_icall (MonoMethod *method);
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (T func, const char *name, const char *sigstr, gboolean save)
+register_icall_info (MonoJitICallInfo *info, T func, const char *name, const char *sigstr, gboolean save)
 #else
 static void
-register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
+register_icall_info (MonoJitICallInfo *info, gpointer func, const char *name, const char *sigstr, gboolean save)
 #endif
 {
+	// FIXME Some versions of register_icall_info pass NULL for last parameter, some pass name.
+	// marshal.c: name
+	// remoting.c: NULL (via mono_register_jit_icall_info)
+	// cominterop.c: name
+	// mini-runtime.c: name
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
-
-	mono_register_jit_icall (func, name, sig, save);
+	mono_register_jit_icall_info (info, func, name, sig, save);
 }
 
 static inline void
